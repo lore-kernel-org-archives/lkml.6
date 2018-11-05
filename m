@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0B8ECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9826CC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC84620827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B41720854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:26:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="te6Hid59"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC84620827
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="nOTPyZhv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B41720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbeKEVqS (ORCPT
+        id S1729783AbeKEVqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:46:18 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37331 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbeKEVqR (ORCPT
+        Mon, 5 Nov 2018 16:46:21 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44800 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729508AbeKEVqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:46:17 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y10-v6so813462edr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:26:45 -0800 (PST)
+        Mon, 5 Nov 2018 16:46:18 -0500
+Received: by mail-ed1-f68.google.com with SMTP id n19-v6so7282155edq.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cnKaeRoQQa8i6RB5+OFZeMivpWgE29k57o0EeueExqw=;
-        b=te6Hid59cIIWKRRQciZfIZ1h7Cv6AXnsglt3poBcaSqT2WaDwyp8N5qxRwMBsSSl3Y
-         ny/nTAL66fQ54S//nu8XROrYTQjQPtUmQXfKx6pCmq0R4nFez80ld4//OJd0ZFFGL0en
-         fkRXfFxM7j0hhLFp7UW9HzXXBpSbODwUwQsetLMukMJ+xY1sCWkKOdqi21wdGXOEDomL
-         /p/mez+f3j3JEEyzyM/MSzBmrp4PT5GFOGxNnlAc0I5KxiEiNepNxQ3ynkEX3cnGDl8N
-         fwt5+GWY8pfQLq+Hqh1wAgi/nMIcbxo5jw0NWT7L9bwKkVRQ9lEJiSeyubq2LZspnMRt
-         awKQ==
+        bh=qJENJpltTXoiY8uShjo3N2WZ0qX/Eh5ypT7qWea+7hU=;
+        b=nOTPyZhvHlRZZJSqC/inx6HuM5Y4hEXarqJ/WeXDj1PbOsxqyGK8tepJEDpADpeMD0
+         +FnbeTJfnngKgyv9yK/RN+1z9BPOhNFnhNDqjALIxKFFyS44ijofaIQWSD0rYu9jI/9z
+         xas7ToYlwiXidA9WpMbMtbu6mYJ3UgB6RqNKnAGh+HPJBgh+yUS2j0JK91a3T0ZkEk7h
+         V4drlT9IcBgPtWxw/tGOMgcSF9V69howmCirMbd+WgVDMuYxqy6A4Lm3xF9xRVNSlgTL
+         /Q3/VkXtnKF2mbcHFYjprUFORjhECBB/kzt0GzSHGdK4J2DTxtlOoW42kRf/acmpv9ZJ
+         /P5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cnKaeRoQQa8i6RB5+OFZeMivpWgE29k57o0EeueExqw=;
-        b=fW66v28/3Mb5tDUbFfZEO0glVhdx4jsEyCuG6r2bjEZDdtnab9/9+5L5aBe2/XVSgN
-         InRq1VIPRdgxFr96cZgQKp+Lp9xmbG+awRH2POA+8mzic+QZFeL44OxtvNK355XiDLjO
-         S79A8wiGdGbibF4ILiN8pDzoCOgQZ3Cco1bFpBmk8CLNx4sQ0D4yO1p8p537QW0+go4J
-         iNUJNZemdgvI8uN6az7Lsoy19ybsyRjSCkvjMmfvTx0MSl2qB77YuIFeD+9YTlKlUMKs
-         iDWE+4rV4gxfgBH/Ihx8CM4KQTUjHrlTmQWAs1scbVhZ5FH4PWyowm2xCDKq6OUfjzcE
-         lfRQ==
-X-Gm-Message-State: AGRZ1gKOp61mCZW7SL0FcDbP+kSX1/00SYUrnN9hIIpvdca4yoglT/eU
-        50myd7VXmWST+SOn8q87qDOD+w==
-X-Google-Smtp-Source: AJdET5ej0cCSl8cvEGawBuv/2L9zrSC6apK1d/eaAxf4ucQS8Q2vCY7HpQQpBaOjsG6HOw75wYhvVw==
-X-Received: by 2002:a17:906:5387:: with SMTP id g7-v6mr14054240ejo.174.1541420804987;
-        Mon, 05 Nov 2018 04:26:44 -0800 (PST)
+        bh=qJENJpltTXoiY8uShjo3N2WZ0qX/Eh5ypT7qWea+7hU=;
+        b=MoGxqoiE0qkL+iVcIoNQ3llP7OHST09bqvQSZo9RerSCcf59vx9QacSOoUFhm9UJ80
+         XP+m1Ve0F+4qe/6TSAGJPZT9CtdG5g2gSgiBODi01pkID2NxDX1uhZkbpOsvSe76roPf
+         PE9Fw6Cp3zUS40IBsJ1kaN7z0qTq/YF2/43btowGn77oFjsmNE5oJFvvRC+MFuyRMj6/
+         GCTO4LX17AvT3VokafoAArw6HVe67WA5c0cK0zAnWUECqxTsB55qeNfyuaEYP5u9MAnI
+         9i2bmSwofFCz6fVrs4VRI9ttfVwNI83x93OkvHlu5U4vh/a5JJ67etR7WS21IPHLdfQx
+         tR7w==
+X-Gm-Message-State: AGRZ1gJrWi28seJS51NyrzzZeEbiMWOwi7ljHXpwHDqrclwyUih0dZFn
+        4TeG0H5C41w5v80zBJfOqNmhOw==
+X-Google-Smtp-Source: AJdET5eM63YBhgP3FtkdAWJXWPpZJUy8vfpfrUUjLwHN7bS/CF5q6iWNKEOOPreCWkh4x0rdYl5Wtg==
+X-Received: by 2002:a17:906:b243:: with SMTP id ce3-v6mr13728220ejb.87.1541420806230;
+        Mon, 05 Nov 2018 04:26:46 -0800 (PST)
 Received: from ch-lap-hans.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm7046056ejw.46.2018.11.05.04.26.43
+        by smtp.gmail.com with ESMTPSA id 9-v6sm7046056ejw.46.2018.11.05.04.26.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 04:26:44 -0800 (PST)
+        Mon, 05 Nov 2018 04:26:45 -0800 (PST)
 From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To:     Matias Bjorling <mb@lightnvm.io>
 Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH v2 2/7] lightnvm: pblk: account for write error sectors in emeta
-Date:   Mon,  5 Nov 2018 13:26:05 +0100
-Message-Id: <20181105122610.1555-3-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH v2 3/7] lightnvm: pblk: stop writes gracefully when running out of lines
+Date:   Mon,  5 Nov 2018 13:26:06 +0100
+Message-Id: <20181105122610.1555-4-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181105122610.1555-1-hans.ml.holmberg@owltronix.com>
 References: <20181105122610.1555-1-hans.ml.holmberg@owltronix.com>
@@ -76,70 +76,242 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Lines inflicted with write errors lines might be recovered
-if they have not been recycled after write error garbage collection.
-
-Ensure that the emeta accounting of valid lbas is correct
-for such lines to avoid recovery inconsistencies.
+If mapping fails (i.e. when running out of lines), handle the error
+and stop writing.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-write.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-map.c   | 47 +++++++++++++++++++++--------------
+ drivers/lightnvm/pblk-write.c | 30 ++++++++++++++--------
+ drivers/lightnvm/pblk.h       |  4 +--
+ 3 files changed, 51 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index 3ddd16f47106..750f04b8a227 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -105,14 +105,20 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
- }
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index 6dcbd44e3acb..5a3c28cce8ab 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -33,6 +33,9 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 	int nr_secs = pblk->min_write_pgs;
+ 	int i;
  
- /* Map remaining sectors in chunk, starting from ppa */
--static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
-+static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa,
-+		int rqd_ppas)
- {
- 	struct pblk_line *line;
- 	struct ppa_addr map_ppa = *ppa;
-+	__le64 addr_empty = cpu_to_le64(ADDR_EMPTY);
-+	__le64 *lba_list;
- 	u64 paddr;
- 	int done = 0;
-+	int n = 0;
- 
- 	line = pblk_ppa_to_line(pblk, *ppa);
-+	lba_list = emeta_to_lbas(pblk, line->emeta->buf);
++	if (!line)
++		return -ENOSPC;
 +
- 	spin_lock(&line->lock);
+ 	if (pblk_line_is_full(line)) {
+ 		struct pblk_line *prev_line = line;
  
- 	while (!done)  {
-@@ -121,10 +127,17 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
- 		if (!test_and_set_bit(paddr, line->map_bitmap))
- 			line->left_msecs--;
+@@ -42,8 +45,11 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 		line = pblk_line_replace_data(pblk);
+ 		pblk_line_close_meta(pblk, prev_line);
  
-+		if (n < rqd_ppas && lba_list[paddr] != addr_empty)
-+			line->nr_valid_lbas--;
+-		if (!line)
+-			return -EINTR;
++		if (!line) {
++			pblk_pipeline_stop(pblk);
++			return -ENOSPC;
++		}
 +
-+		lba_list[paddr] = addr_empty;
-+
- 		if (!test_and_set_bit(paddr, line->invalid_bitmap))
- 			le32_add_cpu(line->vsc, -1);
- 
- 		done = nvm_next_ppa_in_chk(pblk->dev, &map_ppa);
-+
-+		n++;
  	}
  
- 	line->w_err_gc->has_write_err = 1;
-@@ -202,7 +215,7 @@ static void pblk_submit_rec(struct work_struct *work)
+ 	emeta = line->emeta;
+@@ -84,7 +90,7 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 	return 0;
+ }
  
- 	pblk_log_write_err(pblk, rqd);
+-void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
++int pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+ 		 unsigned long *lun_bitmap, unsigned int valid_secs,
+ 		 unsigned int off)
+ {
+@@ -93,20 +99,22 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+ 	unsigned int map_secs;
+ 	int min = pblk->min_write_pgs;
+ 	int i;
++	int ret;
  
--	pblk_map_remaining(pblk, ppa_list);
-+	pblk_map_remaining(pblk, ppa_list, rqd->nr_ppas);
- 	pblk_queue_resubmit(pblk, c_ctx);
+ 	for (i = off; i < rqd->nr_ppas; i += min) {
+ 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
+-		if (pblk_map_page_data(pblk, sentry + i, &ppa_list[i],
+-					lun_bitmap, &meta_list[i], map_secs)) {
+-			bio_put(rqd->bio);
+-			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
+-			pblk_pipeline_stop(pblk);
+-		}
++
++		ret = pblk_map_page_data(pblk, sentry + i, &ppa_list[i],
++					lun_bitmap, &meta_list[i], map_secs);
++		if (ret)
++			return ret;
+ 	}
++
++	return 0;
+ }
  
- 	pblk_up_rq(pblk, c_ctx->lun_bitmap);
+ /* only if erase_ppa is set, acquire erase semaphore */
+-void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
++int pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 		       unsigned int sentry, unsigned long *lun_bitmap,
+ 		       unsigned int valid_secs, struct ppa_addr *erase_ppa)
+ {
+@@ -119,15 +127,16 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 	unsigned int map_secs;
+ 	int min = pblk->min_write_pgs;
+ 	int i, erase_lun;
++	int ret;
++
+ 
+ 	for (i = 0; i < rqd->nr_ppas; i += min) {
+ 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
+-		if (pblk_map_page_data(pblk, sentry + i, &ppa_list[i],
+-					lun_bitmap, &meta_list[i], map_secs)) {
+-			bio_put(rqd->bio);
+-			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
+-			pblk_pipeline_stop(pblk);
+-		}
++
++		ret = pblk_map_page_data(pblk, sentry + i, &ppa_list[i],
++					lun_bitmap, &meta_list[i], map_secs);
++		if (ret)
++			return ret;
+ 
+ 		erase_lun = pblk_ppa_to_pos(geo, ppa_list[i]);
+ 
+@@ -163,7 +172,7 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 	 */
+ 	e_line = pblk_line_get_erase(pblk);
+ 	if (!e_line)
+-		return;
++		return -ENOSPC;
+ 
+ 	/* Erase blocks that are bad in this line but might not be in next */
+ 	if (unlikely(pblk_ppa_empty(*erase_ppa)) &&
+@@ -174,7 +183,7 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 		bit = find_next_bit(d_line->blk_bitmap,
+ 						lm->blk_per_line, bit + 1);
+ 		if (bit >= lm->blk_per_line)
+-			return;
++			return 0;
+ 
+ 		spin_lock(&e_line->lock);
+ 		if (test_bit(bit, e_line->erase_bitmap)) {
+@@ -188,4 +197,6 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 		*erase_ppa = pblk->luns[bit].bppa; /* set ch and lun */
+ 		erase_ppa->a.blk = e_line->id;
+ 	}
++
++	return 0;
+ }
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 750f04b8a227..2bf78f81862d 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -334,12 +334,13 @@ static int pblk_setup_w_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 	}
+ 
+ 	if (likely(!e_line || !atomic_read(&e_line->left_eblks)))
+-		pblk_map_rq(pblk, rqd, c_ctx->sentry, lun_bitmap, valid, 0);
++		ret = pblk_map_rq(pblk, rqd, c_ctx->sentry, lun_bitmap,
++							valid, 0);
+ 	else
+-		pblk_map_erase_rq(pblk, rqd, c_ctx->sentry, lun_bitmap,
++		ret = pblk_map_erase_rq(pblk, rqd, c_ctx->sentry, lun_bitmap,
+ 							valid, erase_ppa);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int pblk_calc_secs_to_sync(struct pblk *pblk, unsigned int secs_avail,
+@@ -563,7 +564,7 @@ static void pblk_free_write_rqd(struct pblk *pblk, struct nvm_rq *rqd)
+ 							c_ctx->nr_padded);
+ }
+ 
+-static int pblk_submit_write(struct pblk *pblk)
++static int pblk_submit_write(struct pblk *pblk, int *secs_left)
+ {
+ 	struct bio *bio;
+ 	struct nvm_rq *rqd;
+@@ -572,6 +573,8 @@ static int pblk_submit_write(struct pblk *pblk)
+ 	unsigned long pos;
+ 	unsigned int resubmit;
+ 
++	*secs_left = 0;
++
+ 	spin_lock(&pblk->resubmit_lock);
+ 	resubmit = !list_empty(&pblk->resubmit_list);
+ 	spin_unlock(&pblk->resubmit_lock);
+@@ -601,17 +604,17 @@ static int pblk_submit_write(struct pblk *pblk)
+ 		 */
+ 		secs_avail = pblk_rb_read_count(&pblk->rwb);
+ 		if (!secs_avail)
+-			return 1;
++			return 0;
+ 
+ 		secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
+ 		if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
+-			return 1;
++			return 0;
+ 
+ 		secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
+ 					secs_to_flush);
+ 		if (secs_to_sync > pblk->max_write_pgs) {
+ 			pblk_err(pblk, "bad buffer sync calculation\n");
+-			return 1;
++			return 0;
+ 		}
+ 
+ 		secs_to_com = (secs_to_sync > secs_avail) ?
+@@ -640,6 +643,7 @@ static int pblk_submit_write(struct pblk *pblk)
+ 	atomic_long_add(secs_to_sync, &pblk->sub_writes);
+ #endif
+ 
++	*secs_left = 1;
+ 	return 0;
+ 
+ fail_free_bio:
+@@ -648,16 +652,22 @@ static int pblk_submit_write(struct pblk *pblk)
+ 	bio_put(bio);
+ 	pblk_free_rqd(pblk, rqd, PBLK_WRITE);
+ 
+-	return 1;
++	return -EINTR;
+ }
+ 
+ int pblk_write_ts(void *data)
+ {
+ 	struct pblk *pblk = data;
++	int secs_left;
++	int write_failure = 0;
+ 
+ 	while (!kthread_should_stop()) {
+-		if (!pblk_submit_write(pblk))
+-			continue;
++		if (!write_failure) {
++			write_failure = pblk_submit_write(pblk, &secs_left);
++
++			if (secs_left)
++				continue;
++		}
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		io_schedule();
+ 	}
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 02bb2e98f8a9..f415aae600c8 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -871,10 +871,10 @@ int pblk_write_gc_to_cache(struct pblk *pblk, struct pblk_gc_rq *gc_rq);
+ /*
+  * pblk map
+  */
+-void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
++int pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 		       unsigned int sentry, unsigned long *lun_bitmap,
+ 		       unsigned int valid_secs, struct ppa_addr *erase_ppa);
+-void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
++int pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+ 		 unsigned long *lun_bitmap, unsigned int valid_secs,
+ 		 unsigned int off);
+ 
 -- 
 2.17.1
 
