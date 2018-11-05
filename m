@@ -2,130 +2,116 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65001C32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B42EC32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1783920685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:52:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1783920685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C77F20685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:53:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nVifOrga"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C77F20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbeKEMJY (ORCPT
+        id S1728814AbeKEMKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 07:09:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39780 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeKEMJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 07:09:24 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 02B3089AC1;
-        Mon,  5 Nov 2018 02:52:01 +0000 (UTC)
-Received: from [10.72.12.184] (ovpn-12-184.pek2.redhat.com [10.72.12.184])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C80960BEC;
-        Mon,  5 Nov 2018 02:51:54 +0000 (UTC)
-Subject: Re: [PATCH 0/1] vhost: parallel virtqueue handling
-To:     Vitaly Mayatskikh <v.mayatskih@gmail.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181102160710.3741-1-v.mayatskih@gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <baca6444-0ef8-2b3b-4ff9-84737f4ecd32@redhat.com>
-Date:   Mon, 5 Nov 2018 10:51:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 07:10:50 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:24744 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeKEMKt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 07:10:49 -0500
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wA52rIH4030771;
+        Mon, 5 Nov 2018 11:53:19 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wA52rIH4030771
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541386399;
+        bh=7mMub48cGUd9y2ecHB+M9RPzNI5RzJ+jK2O4TfhTw2M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nVifOrga/iaq7YCj52vp1WJPNkDonv8proPF0F6b6eZYJYDTsR1nOoLDMlP9IlG8d
+         k74Vu1dikZm2NSCWsWTSL8sjB0AWwiJTpe6jgS59IEJPw4pmYlFG86DVaGiSaLxlu+
+         WQumod5WKFUilb+twBlu95UpJO6TbN1/9pf3GPyc63ElJ0idLFz2GoNpdnR3wwH/Ui
+         FzUtPNrH4C3hBc6qEKsDFjjNioKQ4RlLP9WsdpUS0/EDI9G7sP8qwWWnHDhdeMVYo2
+         XL7VxongXGKhG62nnYnDFjgcvZ6JITaKJGEQzPSvcBvM2npabK9j1+tP2BOND+wqud
+         eaantQMyYotnw==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id k14so4230168vsm.10;
+        Sun, 04 Nov 2018 18:53:19 -0800 (PST)
+X-Gm-Message-State: AGRZ1gK0BfGBgWWHaM7JbXD0LgG6wFaOjwriHAN8y+4wlDmFh0Pr48h/
+        DQBfSKgu+3f0OB1Ego3om3j3VlJdpXPH3Edy/58=
+X-Google-Smtp-Source: AJdET5e3ukfcttIa4hIqRgUCmYlNLBflocbnY5cM6KGo7Y9JCer3ywPS50uPO9NeLDVAulCGn0hSiXo68ll2OWYJ5jk=
+X-Received: by 2002:a67:5f03:: with SMTP id t3mr8724909vsb.155.1541386398029;
+ Sun, 04 Nov 2018 18:53:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181102160710.3741-1-v.mayatskih@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 05 Nov 2018 02:52:01 +0000 (UTC)
+References: <20181104231133.30848-1-joel@jms.id.au> <20181104231133.30848-2-joel@jms.id.au>
+In-Reply-To: <20181104231133.30848-2-joel@jms.id.au>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 5 Nov 2018 11:52:42 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASeoiNa0Z08KCVhS_nzLEcKE9G6=d_m-dQbX1oep3UPtQ@mail.gmail.com>
+Message-ID: <CAK7LNASeoiNa0Z08KCVhS_nzLEcKE9G6=d_m-dQbX1oep3UPtQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Makefile: Export clang toolchain variables
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Joel,
 
-On 2018/11/3 上午12:07, Vitaly Mayatskikh wrote:
-> Hi,
+
+On Mon, Nov 5, 2018 at 9:53 AM Joel Stanley <joel@jms.id.au> wrote:
 >
-> I stumbled across poor performance of virtio-blk while working on a
-> high-performance network storage protocol. Moving virtio-blk's host
-> side to kernel did increase single queue IOPS, but multiqueue disk
-> still was not scaling well. It turned out that vhost handles events
-> from all virtio queues in one helper thread, and that's pretty much a
-> big serialization point.
+> The powerpc makefile will use these in it's boot wrapper.
 >
-> The following patch enables events handling in per-queue thread and
-> increases IO concurrency, see IOPS numbers:
-
-
-Thanks a lot for the patches. Here's some thoughts:
-
-- This is not the first attempt that tries to parallelize vhost workers. 
-So we need a comparing among them.
-
-1) Multiple vhost workers from Anthony, 
-https://www.spinics.net/lists/netdev/msg189432.html
-
-2) ELVIS from IBM, http://www.mulix.org/pubs/eli/elvis-h319.pdf
-
-3) CMWQ from Bandan, 
-http://www.linux-kvm.org/images/5/52/02x08-Aspen-Bandan_Das-vhost-sharing_is_better.pdf
-
-- vhost-net use a different multiqueue model. Each vhost device on host 
-is only dealing with a specific queue pair instead of a whole device. 
-This allow great flexibility and multiqueue could be implemented without 
-touching vhost codes.
-
-- current vhost-net implementation depends heavily on the assumption of 
-single thread model especially its busy polling code. It would be broken 
-by this attempt. If we decide to go this way, this needs to be fixed. 
-And we do need performance result of networking.
-
-- Having more threads is not necessarily a win, at least we need a 
-module parameter to other stuffs to control the number of threads I 
-believe.
-
-
-Thanks
-
-
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  Makefile | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> # num-queues
-> # bare metal
-> # virtio-blk
-> # vhost-blk
+> diff --git a/Makefile b/Makefile
+> index 9aa352b38815..a2db3c885b38 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -495,6 +495,9 @@ endif
+>  ifneq ($(GCC_TOOLCHAIN),)
+>  CLANG_GCC_TC   := --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+> +export CLANG_TARGET
+> +export CLANG_GCC_TC
+> +export CLANG_PREFIX
+>  KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+>  KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+>  KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+> --
+> 2.19.1
 >
-> 1  171k  148k 195k
-> 2  328k  249k 349k
-> 3  479k  179k 501k
-> 4  622k  143k 620k
-> 5  755k  136k 737k
-> 6  887k  131k 830k
-> 7  1004k 126k 926k
-> 8  1099k 117k 1001k
-> 9  1194k 115k 1055k
-> 10 1278k 109k 1130k
-> 11 1345k 110k 1119k
-> 12 1411k 104k 1201k
-> 13 1466k 106k 1260k
-> 14 1517k 103k 1296k
-> 15 1552k 102k 1322k
-> 16 1480k 101k 1346k
->
-> Vitaly Mayatskikh (1):
->    vhost: add per-vq worker thread
->
->   drivers/vhost/vhost.c | 123 +++++++++++++++++++++++++++++++-----------
->   drivers/vhost/vhost.h |  11 +++-
->   2 files changed, 100 insertions(+), 34 deletions(-)
->
+
+
+Before exporting these compiler flags,
+I'd like to do a cleanup work.
+
+
+Could you take a look at my patch, please?
+
+https://patchwork.kernel.org/patch/10667369/
+
+
+By using it as a prerequisite,
+your patch set will be more simplified.
+
+
+-- 
+Best Regards
+Masahiro Yamada
