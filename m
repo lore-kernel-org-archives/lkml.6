@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2EAC46465
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85859C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB8821019
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BF8321104
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:27:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXo48jhP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB8821019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="moea1QgF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BF8321104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbeKFItM (ORCPT
+        id S1729212AbeKFItP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 03:49:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
+        Tue, 6 Nov 2018 03:49:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725839AbeKFItM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727560AbeKFItM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Nov 2018 03:49:12 -0500
 Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA7A2085B;
-        Mon,  5 Nov 2018 23:27:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 267152086B;
+        Mon,  5 Nov 2018 23:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541460422;
-        bh=7uBKmHeSwBFlJdNMLkOBT0S9i+y9nbvxwIu3NmULkjI=;
+        s=default; t=1541460423;
+        bh=MTnniRuC21q6ao1T6Bax0ts89XPAf67g1vIPUukekYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXo48jhPv8GCdfzdTd7Y2qsNawtD+HMEEHpUfgLPeMbETaW4NdWx/UVOFLtKtrh0l
-         0KZRCGRAtd2ocEwuGsG8Bfiig9m0KMmw4h2doj09wZgZtGKYEDhpzA8aCO9YySiPJI
-         EBl2IElhBzqbG0GJpDI3UmgMm48dhoVCa66LHRCk=
+        b=moea1QgFs7FF7uqerXdzrjYtCR9je3w89V+P5nQ6zvW1X5jEY4duB8yJPsTtfXf8S
+         H9RGHCeFFclBGLDgPr17Ip7DMPyVzuYjA429f+9O52c4XM9lNXBgaAxIbkp0ihBWt0
+         wDLXu4p+8xb6a4z8f9mRbk9+hpGVRhvSZQU3eavc=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     linux-fscrypt@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     linux-fscrypt@vger.kernel.org,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         Samuel Neves <samuel.c.p.neves@gmail.com>,
         Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Subject: [RFC PATCH v3 01/15] crypto: chacha20-generic - add HChaCha20 library function
-Date:   Mon,  5 Nov 2018 15:25:12 -0800
-Message-Id: <20181105232526.173947-2-ebiggers@kernel.org>
+Subject: [RFC PATCH v3 06/15] crypto: arm/chacha20 - limit the preemption-disabled section
+Date:   Mon,  5 Nov 2018 15:25:17 -0800
+Message-Id: <20181105232526.173947-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <20181105232526.173947-1-ebiggers@kernel.org>
 References: <20181105232526.173947-1-ebiggers@kernel.org>
@@ -62,113 +62,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Refactor the unkeyed permutation part of chacha20_block() into its own
-function, then add hchacha20_block() which is the ChaCha equivalent of
-HSalsa20 and is an intermediate step towards XChaCha20 (see
-https://cr.yp.to/snuffle/xsalsa-20081128.pdf).  HChaCha20 skips the
-final addition of the initial state, and outputs only certain words of
-the state.  It should not be used for streaming directly.
+To improve responsivesess, disable preemption for each step of the walk
+(which is at most PAGE_SIZE) rather than for the entire
+encryption/decryption operation.
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- include/crypto/chacha20.h |  2 ++
- lib/chacha20.c            | 50 ++++++++++++++++++++++++++++++++++-----
- 2 files changed, 46 insertions(+), 6 deletions(-)
+ arch/arm/crypto/chacha20-neon-glue.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/crypto/chacha20.h b/include/crypto/chacha20.h
-index f76302d99e2b..fbec4e6a8789 100644
---- a/include/crypto/chacha20.h
-+++ b/include/crypto/chacha20.h
-@@ -19,6 +19,8 @@ struct chacha20_ctx {
- };
+diff --git a/arch/arm/crypto/chacha20-neon-glue.c b/arch/arm/crypto/chacha20-neon-glue.c
+index 7386eb1c1889..2bc035cb8f23 100644
+--- a/arch/arm/crypto/chacha20-neon-glue.c
++++ b/arch/arm/crypto/chacha20-neon-glue.c
+@@ -68,22 +68,22 @@ static int chacha20_neon(struct skcipher_request *req)
+ 	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+ 		return crypto_chacha_crypt(req);
  
- void chacha20_block(u32 *state, u8 *stream);
-+void hchacha20_block(const u32 *in, u32 *out);
-+
- void crypto_chacha20_init(u32 *state, struct chacha20_ctx *ctx, u8 *iv);
- int crypto_chacha20_setkey(struct crypto_skcipher *tfm, const u8 *key,
- 			   unsigned int keysize);
-diff --git a/lib/chacha20.c b/lib/chacha20.c
-index d907fec6a9ed..6a484e16171d 100644
---- a/lib/chacha20.c
-+++ b/lib/chacha20.c
-@@ -1,5 +1,5 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539
-+ * The "hash function" used as the core of the ChaCha20 stream cipher (RFC7539)
-  *
-  * Copyright (C) 2015 Martin Willi
-  *
-@@ -16,14 +16,10 @@
- #include <asm/unaligned.h>
- #include <crypto/chacha20.h>
+-	err = skcipher_walk_virt(&walk, req, true);
++	err = skcipher_walk_virt(&walk, req, false);
  
--void chacha20_block(u32 *state, u8 *stream)
-+static void chacha20_permute(u32 *x)
- {
--	u32 x[16];
- 	int i;
+ 	crypto_chacha_init(state, ctx, walk.iv);
  
--	for (i = 0; i < ARRAY_SIZE(x); i++)
--		x[i] = state[i];
--
- 	for (i = 0; i < 20; i += 2) {
- 		x[0]  += x[4];    x[12] = rol32(x[12] ^ x[0],  16);
- 		x[1]  += x[5];    x[13] = rol32(x[13] ^ x[1],  16);
-@@ -65,6 +61,25 @@ void chacha20_block(u32 *state, u8 *stream)
- 		x[8]  += x[13];   x[7]  = rol32(x[7]  ^ x[8],   7);
- 		x[9]  += x[14];   x[4]  = rol32(x[4]  ^ x[9],   7);
+-	kernel_neon_begin();
+ 	while (walk.nbytes > 0) {
+ 		unsigned int nbytes = walk.nbytes;
+ 
+ 		if (nbytes < walk.total)
+ 			nbytes = round_down(nbytes, walk.stride);
+ 
++		kernel_neon_begin();
+ 		chacha20_doneon(state, walk.dst.virt.addr, walk.src.virt.addr,
+ 				nbytes);
++		kernel_neon_end();
+ 		err = skcipher_walk_done(&walk, walk.nbytes - nbytes);
  	}
-+}
-+
-+/**
-+ * chacha20_block - generate one keystream block and increment block counter
-+ * @state: input state matrix (16 32-bit words)
-+ * @stream: output keystream block (64 bytes)
-+ *
-+ * This is the ChaCha20 core, a function from 64-byte strings to 64-byte
-+ * strings.  The caller has already converted the endianness of the input.  This
-+ * function also handles incrementing the block counter in the input matrix.
-+ */
-+void chacha20_block(u32 *state, u8 *stream)
-+{
-+	u32 x[16];
-+	int i;
-+
-+	memcpy(x, state, 64);
-+
-+	chacha20_permute(x);
+-	kernel_neon_end();
  
- 	for (i = 0; i < ARRAY_SIZE(x); i++)
- 		put_unaligned_le32(x[i] + state[i], &stream[i * sizeof(u32)]);
-@@ -72,3 +87,26 @@ void chacha20_block(u32 *state, u8 *stream)
- 	state[12]++;
+ 	return err;
  }
- EXPORT_SYMBOL(chacha20_block);
-+
-+/**
-+ * hchacha20_block - abbreviated ChaCha20 core, for XChaCha20
-+ * @in: input state matrix (16 32-bit words)
-+ * @out: output (8 32-bit words)
-+ *
-+ * HChaCha20 is the ChaCha equivalent of HSalsa20 and is an intermediate step
-+ * towards XChaCha20 (see https://cr.yp.to/snuffle/xsalsa-20081128.pdf).
-+ * HChaCha20 skips the final addition of the initial state, and outputs only
-+ * certain words of the state.  It should not be used for streaming directly.
-+ */
-+void hchacha20_block(const u32 *in, u32 *out)
-+{
-+	u32 x[16];
-+
-+	memcpy(x, in, 64);
-+
-+	chacha20_permute(x);
-+
-+	memcpy(&out[0], &x[0], 16);
-+	memcpy(&out[4], &x[12], 16);
-+}
-+EXPORT_SYMBOL(hchacha20_block);
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
