@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE5AC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74503C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3B1520819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D6EA20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:07:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="m+eBcnwv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B1520819
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KmUYYljo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6EA20819
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbeKEV0a (ORCPT
+        id S1729721AbeKEV0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:26:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54008 "EHLO
+        Mon, 5 Nov 2018 16:26:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53134 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729789AbeKEV0a (ORCPT
+        with ESMTP id S1727337AbeKEV0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:26:30 -0500
+        Mon, 5 Nov 2018 16:26:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=7ENi49e5M9cIAlcFkxuQ1g5ThAkY+RnGkj47Kqm/Hg4=; b=m+eBcnwvfIlO
-        sJ/Xr2oHiJOUDH3MO7rePWMcG/HZq5eFO62m3XR+oye3bxdUdJO8VZ2a2bY5eNUD/ODWBEAUNolDu
-        3h5ljazrkvycj4yCojmFnPdL6OhaIjqyHq0glyqFnZtxLD6WKOhDezcLwaukcZ1dQ4h5wWxJJOYyB
-        Aw8xE=;
+        List-Archive; bh=mIBRuY6R59xSLIH+ecT3OCqw2NUx1YMcGtIqjnuPT/M=; b=KmUYYljoARGc
+        CDmDgmlwUPo0QzTAFVU7+lK8XQNPBK2/3Bsnp0tf3vrCtjEtw8IUbYxB9GLI0lYGvGmgUfftxLYSH
+        8Xnk+q7ds0u5IGw0t2EswmXCa7Nzr+sRWuPKqKk5iqhl/i+S9b6YAiJqr96A26SQJBnSwwwM85aRE
+        aruQ4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJdel-0008Oi-9B; Mon, 05 Nov 2018 12:06:59 +0000
+        id 1gJdeI-0008Nb-Ea; Mon, 05 Nov 2018 12:06:30 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0191B1124D98; Mon,  5 Nov 2018 12:06:58 +0000 (GMT)
+        id 2BE051124D98; Mon,  5 Nov 2018 12:06:30 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Emil Renner Berthing <kernel@esmil.dk>
 Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
@@ -50,10 +50,10 @@ Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rockchip: make spi_enable_chip take bool" to the spi tree
-In-Reply-To:  <20181031105711.19575-2-esmil@mailme.dk>
-Message-Id: <20181105120659.0191B1124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:06:58 +0000 (GMT)
+Subject: Applied "spi: rockchip: remove master pointer from dev data" to the spi tree
+In-Reply-To:  <20181031105711.19575-9-esmil@mailme.dk>
+Message-Id: <20181105120630.2BE051124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:06:30 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: rockchip: make spi_enable_chip take bool
+   spi: rockchip: remove master pointer from dev data
 
 has been applied to the spi tree at
 
@@ -86,100 +86,117 @@ to this mail.
 Thanks,
 Mark
 
-From 30688e4e670d21126aa596df4523940e2f8d24de Mon Sep 17 00:00:00 2001
+From d790c342e689ea77a5cf72d5b993299911ee5276 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
-Date: Wed, 31 Oct 2018 11:56:58 +0100
-Subject: [PATCH] spi: rockchip: make spi_enable_chip take bool
+Date: Wed, 31 Oct 2018 11:57:05 +0100
+Subject: [PATCH] spi: rockchip: remove master pointer from dev data
 
-The spi_enable_chip function takes a boolean
-argument. Change the type to reflect that.
+In almost all cases we already have a pointer to the
+spi master structure where we have the driver data.
+
+The only exceptions are the dma callbacks which are
+easily fixed by passing them the master and using
+spi_master_get_devdata to retrieve the driver data.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rockchip.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/spi/spi-rockchip.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 51ef632bca52..7e54e1a69cc8 100644
+index f3fe6d4cf6f6..45a1479c1a29 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -208,9 +208,9 @@ struct rockchip_spi {
- 	struct rockchip_spi_dma_data dma_tx;
- };
+@@ -159,7 +159,6 @@
  
--static inline void spi_enable_chip(struct rockchip_spi *rs, int enable)
-+static inline void spi_enable_chip(struct rockchip_spi *rs, bool enable)
+ struct rockchip_spi {
+ 	struct device *dev;
+-	struct spi_master *master;
+ 
+ 	struct clk *spiclk;
+ 	struct clk *apb_pclk;
+@@ -350,19 +349,21 @@ static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
+ 
+ static void rockchip_spi_dma_rxcb(void *data)
  {
--	writel_relaxed((enable ? 1 : 0), rs->regs + ROCKCHIP_SPI_SSIENR);
-+	writel_relaxed((enable ? 1U : 0U), rs->regs + ROCKCHIP_SPI_SSIENR);
+-	struct rockchip_spi *rs = data;
++	struct spi_master *master = data;
++	struct rockchip_spi *rs = spi_master_get_devdata(master);
+ 	int state = atomic_fetch_andnot(RXDMA, &rs->state);
+ 
+ 	if (state & TXDMA)
+ 		return;
+ 
+ 	spi_enable_chip(rs, false);
+-	spi_finalize_current_transfer(rs->master);
++	spi_finalize_current_transfer(master);
  }
  
- static inline void spi_set_clk(struct rockchip_spi *rs, u16 div)
-@@ -339,7 +339,7 @@ static int rockchip_spi_unprepare_message(struct spi_master *master,
+ static void rockchip_spi_dma_txcb(void *data)
  {
- 	struct rockchip_spi *rs = spi_master_get_devdata(master);
+-	struct rockchip_spi *rs = data;
++	struct spi_master *master = data;
++	struct rockchip_spi *rs = spi_master_get_devdata(master);
+ 	int state = atomic_fetch_andnot(TXDMA, &rs->state);
  
--	spi_enable_chip(rs, 0);
-+	spi_enable_chip(rs, false);
+ 	if (state & RXDMA)
+@@ -372,7 +373,7 @@ static void rockchip_spi_dma_txcb(void *data)
+ 	wait_for_idle(rs);
  
- 	return 0;
+ 	spi_enable_chip(rs, false);
+-	spi_finalize_current_transfer(rs->master);
++	spi_finalize_current_transfer(master);
  }
-@@ -379,7 +379,7 @@ static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
+ 
+ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+@@ -401,7 +402,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+ 			return -EINVAL;
+ 
+ 		rxdesc->callback = rockchip_spi_dma_rxcb;
+-		rxdesc->callback_param = rs;
++		rxdesc->callback_param = master;
+ 	}
+ 
+ 	txdesc = NULL;
+@@ -426,7 +427,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+ 		}
+ 
+ 		txdesc->callback = rockchip_spi_dma_txcb;
+-		txdesc->callback_param = rs;
++		txdesc->callback_param = master;
+ 	}
+ 
+ 	/* rx must be started before tx due to spi instinct */
+@@ -633,7 +634,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 
+ 	spi_enable_chip(rs, false);
+ 
+-	rs->master = master;
+ 	rs->dev = &pdev->dev;
+ 	rs->max_freq = clk_get_rate(rs->spiclk);
+ 
+@@ -746,9 +746,8 @@ static int rockchip_spi_suspend(struct device *dev)
  {
- 	int remain = 0;
+ 	int ret;
+ 	struct spi_master *master = dev_get_drvdata(dev);
+-	struct rockchip_spi *rs = spi_master_get_devdata(master);
  
--	spi_enable_chip(rs, 1);
-+	spi_enable_chip(rs, true);
+-	ret = spi_master_suspend(rs->master);
++	ret = spi_master_suspend(master);
+ 	if (ret < 0)
+ 		return ret;
  
- 	do {
- 		if (rs->tx) {
-@@ -399,7 +399,7 @@ static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
- 	if (rs->tx)
- 		wait_for_idle(rs);
+@@ -773,7 +772,7 @@ static int rockchip_spi_resume(struct device *dev)
+ 	if (ret < 0)
+ 		return ret;
  
--	spi_enable_chip(rs, 0);
-+	spi_enable_chip(rs, false);
- 
- 	return 0;
- }
-@@ -413,7 +413,7 @@ static void rockchip_spi_dma_rxcb(void *data)
- 
- 	rs->state &= ~RXBUSY;
- 	if (!(rs->state & TXBUSY)) {
--		spi_enable_chip(rs, 0);
-+		spi_enable_chip(rs, false);
- 		spi_finalize_current_transfer(rs->master);
- 	}
- 
-@@ -432,7 +432,7 @@ static void rockchip_spi_dma_txcb(void *data)
- 
- 	rs->state &= ~TXBUSY;
- 	if (!(rs->state & RXBUSY)) {
--		spi_enable_chip(rs, 0);
-+		spi_enable_chip(rs, false);
- 		spi_finalize_current_transfer(rs->master);
- 	}
- 
-@@ -503,7 +503,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs)
- 		dma_async_issue_pending(rs->dma_rx.ch);
- 	}
- 
--	spi_enable_chip(rs, 1);
-+	spi_enable_chip(rs, true);
- 
- 	if (txdesc) {
- 		spin_lock_irqsave(&rs->lock, flags);
-@@ -705,7 +705,7 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 		goto err_disable_apbclk;
- 	}
- 
--	spi_enable_chip(rs, 0);
-+	spi_enable_chip(rs, false);
- 
- 	rs->type = SSI_MOTO_SPI;
- 	rs->master = master;
+-	ret = spi_master_resume(rs->master);
++	ret = spi_master_resume(master);
+ 	if (ret < 0) {
+ 		clk_disable_unprepare(rs->spiclk);
+ 		clk_disable_unprepare(rs->apb_pclk);
 -- 
 2.19.0.rc2
 
