@@ -2,258 +2,121 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4082C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93ACC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B7820869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A8DA20866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:57:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3a+91989"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B7820869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="JYEIx2Q7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8DA20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387901AbeKFCSV (ORCPT
+        id S2387939AbeKFCS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:18:21 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39632 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387873AbeKFCSU (ORCPT
+        Mon, 5 Nov 2018 21:18:28 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41052 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387921AbeKFCS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:18:20 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs4im097176;
-        Mon, 5 Nov 2018 16:56:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=e4nq5W7ylu4kZTMXUCyrfywE4H+lLmEWKsUJ1QdtmAk=;
- b=3a+919899+0bGMO/woZ+DiAZzuoJJapd18aXdHMl+marmb5+NS6qN3LY1Mw7bjxLSaPo
- 9UdXriaF+d2VPsTc6zCE5tEWw/SFD4omKspePPxhnEJk3On1zSK2bsyAR4H8Z0eMUHAj
- BuHvJ6Ll0ndY+TpbBJeOmpnGjkQDjMQ7RU8R4hdDdWZrEOUwMCewH6zKd16iePMtdNt+
- 72G1jeywyuSDzQlzxddYNR/Tj6RgXKwX59XxqVYsl64aWt3CQZlCHdRbvoTYTGklp9Lz
- LCPc064n4jNwj9QQJbpxOpOiZnk9//9B68VBZDyLBQBvLCs+2bdLifQrTCqlLAAqJ2Pk 6g== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2nh33tr6a0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 16:56:06 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5Gu5LE024075
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 16:56:05 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5Gu4wH018511;
-        Mon, 5 Nov 2018 16:56:04 GMT
-Received: from localhost.localdomain (/73.60.114.248)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 08:56:04 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     linux-mm@kvack.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
-        alex.williamson@redhat.com, bsd@redhat.com,
-        daniel.m.jordan@oracle.com, darrick.wong@oracle.com,
-        dave.hansen@linux.intel.com, jgg@mellanox.com, jwadams@google.com,
-        jiangshanlai@gmail.com, mhocko@kernel.org, mike.kravetz@oracle.com,
-        Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
-        rdunlap@infradead.org, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz
-Subject: [RFC PATCH v4 00/13] ktask: multithread CPU-intensive kernel work
-Date:   Mon,  5 Nov 2018 11:55:45 -0500
-Message-Id: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
+        Mon, 5 Nov 2018 21:18:26 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p16-v6so4737867plr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:57:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=g.ncu.edu.tw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mSxcJ+NqUwwsDva2pIi4AZ2HPVWuV9mkjnC/RXmq2wk=;
+        b=JYEIx2Q7cXi2hk0D/Ee6F/5wwEzR94WovjwJaIwXSIlY57n1HcB8qp8WmyKRF4KmPZ
+         JZGWaJrIzkc3qmAc9Qx2HoF8ewtf0gkLH/A5qBjs/8TFwA0gR/kdzl2po8vLba6PR03t
+         G8m95rCtmrz8/rhpI3bCqTHCWheOyNbFlHOeE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mSxcJ+NqUwwsDva2pIi4AZ2HPVWuV9mkjnC/RXmq2wk=;
+        b=d2X/rNInV5UxvwTJRXvGXkNsYyJIFZ9vMDc45sIK6nSsbT+mILDt7AVmdOP5ABPFi1
+         p/O6X4Qym22JzjdJoq37NlVysFY0R4oSzGiM18XOaGL5bCwBzhPprb8MZIj5RZt4FpKR
+         QPH+wEoO6k5kq5vkpXkPc2KdjjtiHkxsHeBdBcnPQp3l288irdIsEuRb5Z2gIg0McNuf
+         4AH9oTdpY7VQCVgY/B528ptZb5Dn4TrbLeZcGZ8wM8zVJVejX0xyvicmEXZUn/p11Fw8
+         twJVEShL69mYxHg62jHvbnoA3c39U7zQRdX26z3HD8GC+U5IO+T0NV2uzwm5GtpamDXR
+         0HKg==
+X-Gm-Message-State: AGRZ1gLPFtHCq1qb8eShEbBhf0HLCTvXjWQ3rrNZm+quM7mGdvY63H1S
+        1xrsuzN2wLWjrMupFkWcAtMnvw==
+X-Google-Smtp-Source: AJdET5dzRpilVyXatJ8OXLK+w7bWGn37bT6HDjck+62jGvSCQMz4pJZ+eSimiAkTuDfJKWgAbIYjSw==
+X-Received: by 2002:a17:902:a418:: with SMTP id p24-v6mr22029953plq.29.1541437072012;
+        Mon, 05 Nov 2018 08:57:52 -0800 (PST)
+Received: from starnight.local ([150.116.248.145])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm58445129pfj.179.2018.11.05.08.57.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 08:57:51 -0800 (PST)
+From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
+To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Subject: [PATCH V2 7/7] net: lorawan: List LORAWAN in menuconfig
+Date:   Tue,  6 Nov 2018 00:55:45 +0800
+Message-Id: <20181105165544.5215-8-starnight@g.ncu.edu.tw>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
+References: <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811050153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+List LORAWAN and MACLORAWAN in menuconfig and enable them to be built.
 
-This version addresses some of the feedback from Andrew and Michal last year
-and describes the plan for tackling the rest.  I'm posting now since I'll be
-presenting ktask at Plumbers next week.
+Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+---
+V2:
+- Split the LoRaWAN class module patch in V1 into LoRaWAN socket and
+  LoRaWAN Soft MAC modules
 
-Andrew, you asked about parallelizing in more places[0].  This version adds
-multithreading for VFIO page pinning, and there are more planned users listed
-below.
+ net/Kconfig  | 2 ++
+ net/Makefile | 2 ++
+ 2 files changed, 4 insertions(+)
 
-Michal, you mentioned that ktask should be sensitive to CPU utilization[1].
-ktask threads now run at the lowest priority on the system to avoid disturbing
-busy CPUs (more details in patches 4 and 5).  Does this address your concern?
-The plan to address your other comments is explained below.
-
-Alex, any thoughts about the VFIO changes in patches 6-9?
-
-Tejun and Lai, what do you think of patch 5?
-
-And for everyone, questions and comments welcome.  Any suggestions for more
-users?
-
-         Thanks,
-            Daniel
-
-P.S.  This series is big to address the above feedback, but I can send patches
-7 and 8 separately.
-
-
-TODO
-----
-
- - Implement cgroup-aware unbound workqueues in a separate series, picking up
-   Bandan Das's effort from two years ago[2].  This should hopefully address
-   Michal's comment about running ktask threads within the limits of the calling
-   context[1].
-
- - Make ktask aware of power management.  A starting point is to disable the
-   framework when energy-conscious cpufreq settings are enabled (e.g.
-   powersave, conservative scaling governors).  This should address another
-   comment from Michal about keeping CPUs under power constraints idle[1].
-
- - Add more users.  On my list:
-    - __ib_umem_release in IB core, which Jason Gunthorpe mentioned[3]
-    - XFS quotacheck and online repair, as suggested by Darrick Wong
-    - vfs object teardown at umount time, as Andrew mentioned[0]
-    - page freeing in munmap/exit, as Aaron Lu posted[4]
-    - page freeing in shmem
-   The last three will benefit from scaling zone->lock and lru_lock.
-
- - CPU hotplug support for ktask to adjust its per-CPU data and resource
-   limits.
-
- - Check with IOMMU folks that iommu_map is safe for all IOMMU backend
-   implementations (it is for x86).
-
-
-Summary
--------
-
-A single CPU can spend an excessive amount of time in the kernel operating
-on large amounts of data.  Often these situations arise during initialization-
-and destruction-related tasks, where the data involved scales with system size.
-These long-running jobs can slow startup and shutdown of applications and the
-system itself while extra CPUs sit idle.
-    
-To ensure that applications and the kernel continue to perform well as core
-counts and memory sizes increase, harness these idle CPUs to complete such jobs
-more quickly.
-    
-ktask is a generic framework for parallelizing CPU-intensive work in the
-kernel.  The API is generic enough to add concurrency to many different kinds
-of tasks--for example, zeroing a range of pages or evicting a list of
-inodes--and aims to save its clients the trouble of splitting up the work,
-choosing the number of threads to use, maintaining an efficient concurrency
-level, starting these threads, and load balancing the work between them.
-
-The first patch has more documentation, and the second patch has the interface.
-
-Current users:
- 1) VFIO page pinning before kvm guest startup (others hitting slowness too[5])
- 2) deferred struct page initialization at boot time
- 3) clearing gigantic pages
- 4) fallocate for HugeTLB pages
-
-This patchset is based on the 2018-10-30 head of mmotm/master.
-
-Changelog:
-
-v3 -> v4:
- - Added VFIO page pinning use case (Andrew's "more users" comment)
- - Made ktask helpers run at the lowest priority on the system (Michal's
-   concern about sensitivity to CPU utilization)
- - ktask learned to undo part of a task on error (required for VFIO)
- - Changed mm->locked_vm to an atomic to improve performance for VFIO.  This can
-   be split out into a smaller series (there wasn't time before posting this)
- - Removed /proc/sys/debug/ktask_max_threads (it was a debug-only thing)
- - Some minor improvements in the ktask code itself (shorter, cleaner, etc)
- - Updated Documentation to cover these changes
-
-v2 -> v3:
- - Changed cpu to CPU in the ktask Documentation, as suggested by Randy Dunlap
- - Saved more boot time now that Pavel Tatashin's deferred struct page init
-   patches are in mainline (https://lkml.org/lkml/2017/10/13/692).  New
-   performance results in patch 7.
- - Added resource limits, per-node and system-wide, to maintain efficient
-   concurrency levels (addresses a concern from my Plumbers talk)
- - ktask no longer allocates memory internally during a task so it can be used
-   in sensitive contexts
- - Added the option to run work anywhere on the system rather than always
-   confining it to a specific node
- - Updated Documentation patch with these changes and reworked motivation
-   section
-
-v1 -> v2:
- - Added deferred struct page initialization use case.
- - Explained the source of the performance improvement from parallelizing
-   clear_gigantic_page (comment from Dave Hansen).
- - Fixed Documentation and build warnings from CONFIG_KTASK=n kernels.
-
-ktask v3 RFC: lkml.kernel.org/r/20171205195220.28208-1-daniel.m.jordan@oracle.com
-
-[0] https://lkml.kernel.org/r/20171205142300.67489b1a90605e1089c5aaa9@linux-foundation.org
-[1] https://lkml.kernel.org/r/20171206143509.GG7515@dhcp22.suse.cz
-[2] https://lkml.kernel.org/r/1458339291-4093-1-git-send-email-bsd@redhat.com
-[3] https://lkml.kernel.org/r/20180928153922.GA17076@ziepe.ca
-[4] https://lkml.kernel.org/r/1489568404-7817-1-git-send-email-aaron.lu@intel.com
-[5] https://www.redhat.com/archives/vfio-users/2018-April/msg00020.html
-
-Daniel Jordan (13):
-  ktask: add documentation
-  ktask: multithread CPU-intensive kernel work
-  ktask: add undo support
-  ktask: run helper threads at MAX_NICE
-  workqueue, ktask: renice helper threads to prevent starvation
-  vfio: parallelize vfio_pin_map_dma
-  mm: change locked_vm's type from unsigned long to atomic_long_t
-  vfio: remove unnecessary mmap_sem writer acquisition around locked_vm
-  vfio: relieve mmap_sem reader cacheline bouncing by holding it longer
-  mm: enlarge type of offset argument in mem_map_offset and mem_map_next
-  mm: parallelize deferred struct page initialization within each node
-  mm: parallelize clear_gigantic_page
-  hugetlbfs: parallelize hugetlbfs_fallocate with ktask
-
- Documentation/core-api/index.rst    |   1 +
- Documentation/core-api/ktask.rst    | 213 +++++++++
- arch/powerpc/kvm/book3s_64_vio.c    |  15 +-
- arch/powerpc/mm/mmu_context_iommu.c |  16 +-
- drivers/fpga/dfl-afu-dma-region.c   |  16 +-
- drivers/vfio/vfio_iommu_spapr_tce.c |  14 +-
- drivers/vfio/vfio_iommu_type1.c     | 159 ++++---
- fs/hugetlbfs/inode.c                | 114 ++++-
- fs/proc/task_mmu.c                  |   2 +-
- include/linux/ktask.h               | 267 ++++++++++++
- include/linux/mm_types.h            |   2 +-
- include/linux/workqueue.h           |   5 +
- init/Kconfig                        |  11 +
- init/main.c                         |   2 +
- kernel/Makefile                     |   2 +-
- kernel/fork.c                       |   2 +-
- kernel/ktask.c                      | 646 ++++++++++++++++++++++++++++
- kernel/workqueue.c                  | 106 ++++-
- mm/debug.c                          |   3 +-
- mm/internal.h                       |   7 +-
- mm/memory.c                         |  32 +-
- mm/mlock.c                          |   4 +-
- mm/mmap.c                           |  18 +-
- mm/mremap.c                         |   6 +-
- mm/page_alloc.c                     |  91 +++-
- 25 files changed, 1599 insertions(+), 155 deletions(-)
- create mode 100644 Documentation/core-api/ktask.rst
- create mode 100644 include/linux/ktask.h
- create mode 100644 kernel/ktask.c
-
+diff --git a/net/Kconfig b/net/Kconfig
+index 053b36998c18..b12b8bed6abb 100644
+--- a/net/Kconfig
++++ b/net/Kconfig
+@@ -224,6 +224,8 @@ source "net/6lowpan/Kconfig"
+ source "net/ieee802154/Kconfig"
+ source "net/mac802154/Kconfig"
+ source "net/lora/Kconfig"
++source "net/lorawan/Kconfig"
++source "net/maclorawan/Kconfig"
+ source "net/sched/Kconfig"
+ source "net/dcb/Kconfig"
+ source "net/dns_resolver/Kconfig"
+diff --git a/net/Makefile b/net/Makefile
+index e80b84313851..9d5515965a8f 100644
+--- a/net/Makefile
++++ b/net/Makefile
+@@ -63,6 +63,8 @@ obj-$(CONFIG_6LOWPAN)		+= 6lowpan/
+ obj-$(CONFIG_IEEE802154)	+= ieee802154/
+ obj-$(CONFIG_MAC802154)		+= mac802154/
+ obj-$(CONFIG_LORA)		+= lora/
++obj-$(CONFIG_LORAWAN)		+= lorawan/
++obj-$(CONFIG_MACLORAWAN)	+= maclorawan/
+ 
+ ifeq ($(CONFIG_NET),y)
+ obj-$(CONFIG_SYSCTL)		+= sysctl_net.o
 -- 
 2.19.1
 
