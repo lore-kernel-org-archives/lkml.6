@@ -3,129 +3,178 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F36E1C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A5EC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A8320825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:18:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A8320825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2A2AE20825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:20:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2AE20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbeKEThH (ORCPT
+        id S1727344AbeKETj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:37:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36648 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726358AbeKEThH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:37:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C8B1AF4D;
-        Mon,  5 Nov 2018 10:18:06 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: remove unnecessary unlikely()
-To:     Yangtao Li <tiny.windzz@gmail.com>, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <20181104125028.3572-1-tiny.windzz@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <2c42ba08-f78a-36f6-5a5d-21dd00861872@suse.cz>
-Date:   Mon, 5 Nov 2018 11:18:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181104125028.3572-1-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Nov 2018 14:39:26 -0500
+Received: from leonov.paulk.fr ([185.233.101.22]:47740 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbeKETjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:39:25 -0500
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 01974BFE1D;
+        Mon,  5 Nov 2018 11:20:25 +0100 (CET)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 412FAC1062; Mon,  5 Nov 2018 11:20:25 +0100 (CET)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 73D0FC1050;
+        Mon,  5 Nov 2018 11:20:18 +0100 (CET)
+Message-ID: <48d864c0da9200ff052ec0cc0879d7b00de23b7a.camel@paulk.fr>
+Subject: Re: [PATCH v2 1/7] drm/sun4i: tcon: Pass encoder instead of using
+ panel for RGB setup
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com
+Date:   Mon, 05 Nov 2018 11:21:09 +0100
+In-Reply-To: <20181105085927.tvg5vy3oyygw65z6@flea>
+References: <20181101200045.6078-1-contact@paulk.fr>
+         <20181101200045.6078-2-contact@paulk.fr>
+         <20181105085927.tvg5vy3oyygw65z6@flea>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-2RKZOHW4noP3lk/w0Veq"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC Dmitry
 
-On 11/4/18 1:50 PM, Yangtao Li wrote:
-> WARN_ON() already contains an unlikely(), so it's not necessary to use
-> unlikely.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+--=-2RKZOHW4noP3lk/w0Veq
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Hi,
 
-Maybe also change it back to WARN_ON_ONCE? I already considered it while
-reviewing Dmitry's patch and wasn't sure. Now I think that what can
-happen is that either a kernel bug is introduced that _ONCE is enough to
-catch (two separate bugs introduced to both hit this would be rare, and
-in that case the second one will be reported after the first one is
-fixed), or this gets called with a user-supplied value, and then we want
-to avoid spamming dmesg with multiple warnings that the user could
-trigger at will.
+Le lundi 05 novembre 2018 =C3=A0 09:59 +0100, Maxime Ripard a =C3=A9crit :
+> Hi,
+>=20
+> On Thu, Nov 01, 2018 at 09:00:39PM +0100, Paul Kocialkowski wrote:
+> > Features such as dithering and pixel data edge configuration currently
+> > rely on the panel registered with the TCON driver. However, bridges are
+> > also supported in addition panels.
+> >=20
+> > Instead of retrieving the connector from the panel, pass the encoder
+> > from the calling function, as is done for other interfaces.
+> >=20
+> > The connector is then retrieved from the encoder with the dedicated
+> > helper. Even in the case of bridges, the connector is registered with
+> > the encoder from our driver and is accessible when iterating connectors=
+.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 +++++++++-------------
+> >  1 file changed, 9 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i=
+/sun4i_tcon.c
+> > index f949287d926c..262ffb6b0f82 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -478,8 +478,11 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i=
+_tcon *tcon,
+> >  }
+> > =20
+> >  static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+> > +				     const struct drm_encoder *encoder,
+> >  				     const struct drm_display_mode *mode)
+> >  {
+> > +	struct drm_connector *connector =3D sun4i_tcon_get_connector(encoder)=
+;
+> > +	struct drm_display_info display_info =3D connector->display_info;
+> >  	unsigned int bp, hsync, vsync;
+> >  	u8 clk_delay;
+> >  	u32 val =3D 0;
+> > @@ -491,8 +494,7 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_t=
+con *tcon,
+> >  	sun4i_tcon0_mode_set_common(tcon, mode);
+> > =20
+> >  	/* Set dithering if needed */
+> > -	if (tcon->panel)
+> > -		sun4i_tcon0_mode_set_dithering(tcon, tcon->panel->connector);
+> > +	sun4i_tcon0_mode_set_dithering(tcon, connector);
+> > =20
+> >  	/* Adjust clock delay */
+> >  	clk_delay =3D sun4i_tcon_get_clk_delay(mode, 0);
+> > @@ -556,17 +558,11 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i=
+_tcon *tcon,
+> >  	 * Following code is a way to avoid quirks all around TCON
+> >  	 * and DOTCLOCK drivers.
+> >  	 */
+> > -	if (tcon->panel) {
+> > -		struct drm_panel *panel =3D tcon->panel;
+> > -		struct drm_connector *connector =3D panel->connector;
+> > -		struct drm_display_info display_info =3D connector->display_info;
+> > -
+> > -		if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
+> > -			clk_set_phase(tcon->dclk, 240);
+> > +	if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
+> > +		clk_set_phase(tcon->dclk, 240);
+> > =20
+> > -		if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
+> > -			clk_set_phase(tcon->dclk, 0);
+> > -	}
+> > +	if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
+> > +		clk_set_phase(tcon->dclk, 0);
+>=20
+> You're doing multiple things here: you're changing the function API,
+> and then moving the display info checks outside of the tcon->panel
+> condition.
+>=20
+> You should do two separate patches for that.
 
-> ---
->  mm/slab_common.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 7eb8dc136c1c..4f54684f5435 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1029,10 +1029,8 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
->  
->  		index = size_index[size_index_elem(size)];
->  	} else {
-> -		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
-> -			WARN_ON(1);
-> +		if (WARN_ON(size > KMALLOC_MAX_CACHE_SIZE))
->  			return NULL;
-> -		}
->  		index = fls(size - 1);
->  	}
->  
-> 
+Thanks, I'll do that in the next revision then.
+
+Cheers,
+
+Paul
+
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-2RKZOHW4noP3lk/w0Veq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvgGZUACgkQhP3B6o/u
+lQz6Ug/+MWE2rvdL11jDYpl7QhEJUt3CXDbQ+ZDuHD5LMhqlpbj98RBkqIvs4cK2
+P8Br2W/NfKcajvFd+AWLWhFdYW3JwuiXOLhpsc95zmVZQP+XD8ZC75HOLsOE9775
+ZbVv8CYxrkvPJX3buVC65bpPglq/I1JpwWg+T7gxHPEFvK7L6OmZfsc7SgsIfqCa
+xeJedS8ueD0uO+829fMiqjuG6UzTur29eQ/8lXckR+pwnQxIiy39v0ox1eg6il6R
+xoNLcPe2xASxdYX/t56gH9DTpPvm4BzkYS5ESFc4Ax+7UMR91hg1gPjL7i/RvpF1
+Ierb70p6Vlp77FaTOvbLTSVpggUg+9zVbP5yqW5FwEbR9oA6Y/jKQviMgxnHiUDv
+8eOpXGwzMlF5zibP6HmZLY5PekT+AKBOS0jG6G17XKOytdbSXezNBdlqmLAhEgsm
+lbu+1qsu2cZizRrk9WL/HWxOm65HITjeeiV4NSW6JpClAMjjTkXYfRHowX4lQXWm
+jN2SkclHmAQPPxJgbozcahOQ+NsUgjT07BDce0+ES7qyQ+LURz4mSQS3H+iXOy2H
+wRrUiEGep25YFhYmd5OZM+ShIqkHlPjiXbmZkgg0uqpgdd5BzDW6PQtpriL3hCKc
+j8k4MGNiVB1b86ec+Y56d7Il9Jd/xKM/+1PvT+emBz5lHGdj0i8=
+=TYY3
+-----END PGP SIGNATURE-----
+
+--=-2RKZOHW4noP3lk/w0Veq--
 
