@@ -2,361 +2,126 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3DFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 439AEC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC7020854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC7020854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 0485220831
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:47:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0485220831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeKESEJ (ORCPT
+        id S1727247AbeKESFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:04:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34939 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbeKESEI (ORCPT
+        Mon, 5 Nov 2018 13:05:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726086AbeKESFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:04:08 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gJaVm-0002P5-0a; Mon, 05 Nov 2018 08:45:30 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     ulf.hansson@linaro.org, stern@rowland.harvard.edu,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 5/5 v7] memstick: rtsx_usb_ms: Support runtime power management
-Date:   Mon,  5 Nov 2018 16:45:06 +0800
-Message-Id: <20181105084506.6476-6-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181105084506.6476-1-kai.heng.feng@canonical.com>
-References: <20181105084506.6476-1-kai.heng.feng@canonical.com>
+        Mon, 5 Nov 2018 13:05:40 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA58iFq4033253
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 03:47:03 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2njhhru46t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:47:03 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 5 Nov 2018 08:47:01 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 08:46:59 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA58kv4N52166902
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 08:46:57 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 636DAA4040;
+        Mon,  5 Nov 2018 08:46:57 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9848A4057;
+        Mon,  5 Nov 2018 08:46:56 +0000 (GMT)
+Received: from [9.145.180.113] (unknown [9.145.180.113])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Nov 2018 08:46:56 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v1 3/7] vfio: ap: AP Queue Interrupt structures
+ definitions
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1541009577-29656-1-git-send-email-pmorel@linux.ibm.com>
+ <1541009577-29656-4-git-send-email-pmorel@linux.ibm.com>
+ <c440a74d-bea6-1416-4b54-0894e21c4a6c@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Mon, 5 Nov 2018 09:46:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <c440a74d-bea6-1416-4b54-0894e21c4a6c@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110508-4275-0000-0000-000002D979F0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110508-4276-0000-0000-000037E6903B
+Message-Id: <e6bf348b-0fa3-3d65-fae7-9326cf358b8c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=909 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to let host's parent device, rtsx_usb, to use USB remote wake
-up signaling to do card detection, it needs to be suspended. Hence it's
-necessary to add runtime PM support for the memstick host.
+On 02/11/2018 16:14, Tony Krowiak wrote:
+> On 10/31/18 2:12 PM, Pierre Morel wrote:
+>> We define all the structures we need to let GISA handle
+>> the AP Queues Interrupt.
 
-To keep memstick host stays suspended when it's not in use, convert the
-card detection function from kthread to delayed_work, which can be
-scheduled when the host is resumed and can be canceled when the host is
-suspended.
+...
 
-Put the device to suspend when there's no card and the power mode is
-MEMSTICK_POWER_OFF.
+>> +struct aqic_gisa {
+>> +    uint8_t  rzone;
+>> +    uint8_t  izone;
+>> +    unsigned    ir:1;
+>> +    unsigned    reserved1:4;
+>> +    unsigned    gisc:3;
+>> +    unsigned    reserved2:6;
+>> +    unsigned    f:2;
+>> +    unsigned    reserved3:1;
+>> +    unsigned    gisao:27;
+>> +    unsigned    t:1;
+>> +    unsigned    isc:3;
+>> +}  __packed __aligned(8);
+> 
+> This struct is redundant with the 'struct ap_qirq_ctrl'
+> defined in arch/s390/include/asm/ap.h. That file also includes
+> the asm for the ap_aqic function.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/memstick/host/rtsx_usb_ms.c | 165 +++++++++++++++++-----------
- 1 file changed, 102 insertions(+), 63 deletions(-)
+Exact.
+My code is quite old and I forgot to adapt it to the new definitions.
+I will do it for this, aqic, the inline assembler and the status.
 
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-index 24e9e6acf01a..5968c7701603 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -40,15 +40,14 @@ struct rtsx_usb_ms {
- 
- 	struct mutex		host_mutex;
- 	struct work_struct	handle_req;
--
--	struct task_struct	*detect_ms;
--	struct completion	detect_ms_exit;
-+	struct delayed_work	poll_card;
- 
- 	u8			ssc_depth;
- 	unsigned int		clock;
- 	int			power_mode;
- 	unsigned char           ifmode;
- 	bool			eject;
-+	bool			system_suspending;
- };
- 
- static inline struct device *ms_dev(struct rtsx_usb_ms *host)
-@@ -545,7 +544,7 @@ static void rtsx_usb_ms_handle_req(struct work_struct *work)
- 						host->req->error);
- 			}
- 		} while (!rc);
--		pm_runtime_put(ms_dev(host));
-+		pm_runtime_put_sync(ms_dev(host));
- 	}
- 
- }
-@@ -585,14 +584,14 @@ static int rtsx_usb_ms_set_param(struct memstick_host *msh,
- 			break;
- 
- 		if (value == MEMSTICK_POWER_ON) {
--			pm_runtime_get_sync(ms_dev(host));
-+			pm_runtime_get_noresume(ms_dev(host));
- 			err = ms_power_on(host);
-+			if (err)
-+				pm_runtime_put_noidle(ms_dev(host));
- 		} else if (value == MEMSTICK_POWER_OFF) {
- 			err = ms_power_off(host);
--			if (host->msh->card)
-+			if (!err)
- 				pm_runtime_put_noidle(ms_dev(host));
--			else
--				pm_runtime_put(ms_dev(host));
- 		} else
- 			err = -EINVAL;
- 		if (!err)
-@@ -638,12 +637,16 @@ static int rtsx_usb_ms_set_param(struct memstick_host *msh,
- 	}
- out:
- 	mutex_unlock(&ucr->dev_mutex);
--	pm_runtime_put(ms_dev(host));
-+	pm_runtime_put_sync(ms_dev(host));
- 
- 	/* power-on delay */
--	if (param == MEMSTICK_POWER && value == MEMSTICK_POWER_ON)
-+	if (param == MEMSTICK_POWER && value == MEMSTICK_POWER_ON) {
- 		usleep_range(10000, 12000);
- 
-+		if (!host->eject)
-+			schedule_delayed_work(&host->poll_card, 100);
-+	}
-+
- 	dev_dbg(ms_dev(host), "%s: return = %d\n", __func__, err);
- 	return err;
- }
-@@ -654,9 +657,24 @@ static int rtsx_usb_ms_suspend(struct device *dev)
- 	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
- 	struct memstick_host *msh = host->msh;
- 
--	dev_dbg(ms_dev(host), "--> %s\n", __func__);
-+	/* Since we use rtsx_usb's resume callback to runtime resume its
-+	 * children to implement remote wakeup signaling, this causes
-+	 * rtsx_usb_ms' runtime resume callback runs after its suspend
-+	 * callback:
-+	 * rtsx_usb_ms_suspend()
-+	 * rtsx_usb_resume()
-+	 *   -> rtsx_usb_ms_runtime_resume()
-+	 *     -> memstick_detect_change()
-+	 *
-+	 * rtsx_usb_suspend()
-+	 *
-+	 * To avoid this, skip runtime resume/suspend if system suspend is
-+	 * underway.
-+	 */
- 
-+	host->system_suspending = true;
- 	memstick_suspend_host(msh);
-+
- 	return 0;
- }
- 
-@@ -665,58 +683,85 @@ static int rtsx_usb_ms_resume(struct device *dev)
- 	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
- 	struct memstick_host *msh = host->msh;
- 
--	dev_dbg(ms_dev(host), "--> %s\n", __func__);
--
- 	memstick_resume_host(msh);
-+	host->system_suspending = false;
-+
- 	return 0;
- }
- #endif /* CONFIG_PM_SLEEP */
- 
--/*
-- * Thread function of ms card slot detection. The thread starts right after
-- * successful host addition. It stops while the driver removal function sets
-- * host->eject true.
-- */
--static int rtsx_usb_detect_ms_card(void *__host)
-+#ifdef CONFIG_PM
-+static int rtsx_usb_ms_runtime_suspend(struct device *dev)
- {
--	struct rtsx_usb_ms *host = (struct rtsx_usb_ms *)__host;
-+	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
-+
-+	if (host->system_suspending)
-+		return 0;
-+
-+	if (host->msh->card || host->power_mode != MEMSTICK_POWER_OFF)
-+		return -EAGAIN;
-+
-+	return 0;
-+}
-+
-+static int rtsx_usb_ms_runtime_resume(struct device *dev)
-+{
-+	struct rtsx_usb_ms *host = dev_get_drvdata(dev);
-+
-+
-+	if (host->system_suspending)
-+		return 0;
-+
-+	memstick_detect_change(host->msh);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM */
-+
-+static const struct dev_pm_ops rtsx_usb_ms_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(rtsx_usb_ms_suspend, rtsx_usb_ms_resume)
-+	SET_RUNTIME_PM_OPS(rtsx_usb_ms_runtime_suspend, rtsx_usb_ms_runtime_resume, NULL)
-+};
-+
-+
-+static void rtsx_usb_ms_poll_card(struct work_struct *work)
-+{
-+	struct rtsx_usb_ms *host = container_of(work, struct rtsx_usb_ms,
-+			poll_card.work);
- 	struct rtsx_ucr *ucr = host->ucr;
--	u8 val = 0;
- 	int err;
-+	u8 val;
- 
--	for (;;) {
--		pm_runtime_get_sync(ms_dev(host));
--		mutex_lock(&ucr->dev_mutex);
--
--		/* Check pending MS card changes */
--		err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &val);
--		if (err) {
--			mutex_unlock(&ucr->dev_mutex);
--			goto poll_again;
--		}
-+	if (host->eject || host->power_mode != MEMSTICK_POWER_ON)
-+		return;
- 
--		/* Clear the pending */
--		rtsx_usb_write_register(ucr, CARD_INT_PEND,
--				XD_INT | MS_INT | SD_INT,
--				XD_INT | MS_INT | SD_INT);
-+	pm_runtime_get_sync(ms_dev(host));
-+	mutex_lock(&ucr->dev_mutex);
- 
-+	/* Check pending MS card changes */
-+	err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &val);
-+	if (err) {
- 		mutex_unlock(&ucr->dev_mutex);
-+		goto poll_again;
-+	}
- 
--		if (val & MS_INT) {
--			dev_dbg(ms_dev(host), "MS slot change detected\n");
--			memstick_detect_change(host->msh);
--		}
-+	/* Clear the pending */
-+	rtsx_usb_write_register(ucr, CARD_INT_PEND,
-+			XD_INT | MS_INT | SD_INT,
-+			XD_INT | MS_INT | SD_INT);
- 
--poll_again:
--		pm_runtime_put(ms_dev(host));
--		if (host->eject)
--			break;
-+	mutex_unlock(&ucr->dev_mutex);
- 
--		schedule_timeout_idle(HZ);
-+	if (val & MS_INT) {
-+		dev_dbg(ms_dev(host), "MS slot change detected\n");
-+		memstick_detect_change(host->msh);
- 	}
- 
--	complete(&host->detect_ms_exit);
--	return 0;
-+poll_again:
-+	pm_runtime_put_sync(ms_dev(host));
-+
-+	if (!host->eject && host->power_mode == MEMSTICK_POWER_ON)
-+		schedule_delayed_work(&host->poll_card, 100);
- }
- 
- static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
-@@ -747,40 +792,36 @@ static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
- 	mutex_init(&host->host_mutex);
- 	INIT_WORK(&host->handle_req, rtsx_usb_ms_handle_req);
- 
--	init_completion(&host->detect_ms_exit);
--	host->detect_ms = kthread_create(rtsx_usb_detect_ms_card, host,
--			"rtsx_usb_ms_%d", pdev->id);
--	if (IS_ERR(host->detect_ms)) {
--		dev_dbg(&(pdev->dev),
--				"Unable to create polling thread.\n");
--		err = PTR_ERR(host->detect_ms);
--		goto err_out;
--	}
-+	INIT_DELAYED_WORK(&host->poll_card, rtsx_usb_ms_poll_card);
- 
- 	msh->request = rtsx_usb_ms_request;
- 	msh->set_param = rtsx_usb_ms_set_param;
- 	msh->caps = MEMSTICK_CAP_PAR4;
- 
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_get_noresume(ms_dev(host));
-+	pm_runtime_set_active(ms_dev(host));
-+	pm_runtime_enable(ms_dev(host));
-+
- 	err = memstick_add_host(msh);
- 	if (err)
- 		goto err_out;
- 
--	wake_up_process(host->detect_ms);
-+	pm_runtime_put(ms_dev(host));
-+
- 	return 0;
- err_out:
- 	memstick_free_host(msh);
- 	pm_runtime_disable(ms_dev(host));
-+	pm_runtime_put_noidle(ms_dev(host));
- 	return err;
- }
- 
- static int rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- {
- 	struct rtsx_usb_ms *host = platform_get_drvdata(pdev);
--	struct memstick_host *msh;
-+	struct memstick_host *msh = host->msh;
- 	int err;
- 
--	msh = host->msh;
- 	host->eject = true;
- 	cancel_work_sync(&host->handle_req);
- 
-@@ -798,7 +839,6 @@ static int rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- 	}
- 	mutex_unlock(&host->host_mutex);
- 
--	wait_for_completion(&host->detect_ms_exit);
- 	memstick_remove_host(msh);
- 	memstick_free_host(msh);
- 
-@@ -817,9 +857,6 @@ static int rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(rtsx_usb_ms_pm_ops,
--		rtsx_usb_ms_suspend, rtsx_usb_ms_resume);
--
- static struct platform_device_id rtsx_usb_ms_ids[] = {
- 	{
- 		.name = "rtsx_usb_ms",
-@@ -835,7 +872,9 @@ static struct platform_driver rtsx_usb_ms_driver = {
- 	.id_table       = rtsx_usb_ms_ids,
- 	.driver		= {
- 		.name	= "rtsx_usb_ms",
-+#ifdef CONFIG_PM
- 		.pm	= &rtsx_usb_ms_pm_ops,
-+#endif
- 	},
- };
- module_platform_driver(rtsx_usb_ms_driver);
+Thanks,
+
+Pierre
+
 -- 
-2.19.1
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
