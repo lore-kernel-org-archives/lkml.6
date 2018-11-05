@@ -2,118 +2,145 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4594C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF55ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6F820827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6F820827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BDB820831
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:48:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BDB820831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbeKEPFJ (ORCPT
+        id S1729284AbeKEPGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 10:05:09 -0500
-Received: from mga06.intel.com ([134.134.136.31]:33454 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728918AbeKEPFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 10:05:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 21:47:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,466,1534834800"; 
-   d="scan'208";a="93696497"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Nov 2018 21:47:11 -0800
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [PATCH 1/1] iommu/vtd: Fix NULL pointer dereference in
- prq_event_thread()
-To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20181105021858.16958-1-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439D5DF53@SHSMSX104.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <f35802b2-124f-ff54-5be3-a1fb99b2b2c6@linux.intel.com>
-Date:   Mon, 5 Nov 2018 13:44:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 10:06:03 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39786 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729042AbeKEPGD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 10:06:03 -0500
+Received: by mail-ed1-f66.google.com with SMTP id w25so529342edx.6;
+        Sun, 04 Nov 2018 21:48:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QscRBHoDrekLthW+NW6+qZ6aBPRecqLNZaYb/z7gxjA=;
+        b=G6s0rYspcUdEAzDP9qBjwM9wL7rHZQPfWutgO0I01tUh8cpnjUo1m6KyZB9evjlhBp
+         zYFjmKLKhOPEK8wJAhtORULrkiDf+3wKDO/rZzlZv/1TQPeLaRgXtlLb+oWg1DfmZILI
+         M/9H4HeZaEMkfhT84sWxx/CUGPLLjyj+Clnuo4XEAvhd5F8vl/jcm+tckHLMjTmueIVv
+         ckRnB9SLcf103CzOsuFG1fDmE1pjoFZj+wxO0Bq1RLR67G8GlivtGxgz72Lv08CfA1tt
+         l986YGPhLhUQf3dObiaIR6/BfJSz0tVQ7ycGCNLbtBEXjKDCql3Zlifdm5GxvqgNNKWg
+         sJvw==
+X-Gm-Message-State: AGRZ1gIAd4R3akz7VBQFLN5soxFpmgo0qDViXGQAWa1g0KkL/SIywJcT
+        rrSViwJe30/hqx+T/ci0zvAJUbnoLqg=
+X-Google-Smtp-Source: AJdET5dpEthADtzjJFotdZXOauJo/DQy+mQb97Wp1iOAfj/MihlDuUVGCYjjMPogwjvnKK+rXxjzuw==
+X-Received: by 2002:a50:9a45:: with SMTP id o63-v6mr16491582edb.105.1541396885314;
+        Sun, 04 Nov 2018 21:48:05 -0800 (PST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id j9-v6sm5932465edk.88.2018.11.04.21.48.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Nov 2018 21:48:03 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id 74-v6so7997083wrb.13;
+        Sun, 04 Nov 2018 21:48:03 -0800 (PST)
+X-Received: by 2002:adf:e307:: with SMTP id b7-v6mr19491637wrj.91.1541396882691;
+ Sun, 04 Nov 2018 21:48:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <A2975661238FB949B60364EF0F2C257439D5DF53@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-5-oskari@lemmela.net>
+ <20181024135633.GA342@bogus> <20181028154011.04efdecf@archlinux>
+ <20181029130757.m5okrfvusjl5fu5m@qschulz> <CAGb2v65JKj_7VcEr1KuZVop85hn-3h73NrExprpmLbKZiosD5Q@mail.gmail.com>
+ <20181103102153.4f0481ad@archlinux>
+In-Reply-To: <20181103102153.4f0481ad@archlinux>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 5 Nov 2018 13:47:50 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66mH5_J0K4ArFduvvQ2aE7mZxcyLORNPODj79-xhiKapQ@mail.gmail.com>
+Message-ID: <CAGb2v66mH5_J0K4ArFduvvQ2aE7mZxcyLORNPODj79-xhiKapQ@mail.gmail.com>
+Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
+To:     jic23@jic23.retrosnub.co.uk
+Cc:     Rob Herring <robh@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        devicetree <devicetree@vger.kernel.org>, oskari@lemmela.net,
+        linux-gpio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yi,
+On Sat, Nov 3, 2018 at 6:22 PM Jonathan Cameron
+<jic23@jic23.retrosnub.co.uk> wrote:
+>
+> On Wed, 31 Oct 2018 10:29:59 +0800
+> Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> > On Mon, Oct 29, 2018 at 9:10 PM Quentin Schulz
+> > <quentin.schulz@bootlin.com> wrote:
+> > >
+> > > Hi Jonathan,
+> > >
+> > > On Sun, Oct 28, 2018 at 03:40:11PM +0000, Jonathan Cameron wrote:
+> > > > On Wed, 24 Oct 2018 08:56:33 -0500
+> > > > Rob Herring <robh@kernel.org> wrote:
+> > > >
+> > > > > On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
+> > > > > > The AXP803 ADC is compatible with AXP813 ADC, but add
+> > > > > > specific compatible for it.
+> > > > > >
+> > > > > > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> > > > > > ---
+> > > > > >  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
+> > > > > >  1 file changed, 2 insertions(+)
+> > > > > >
+> > > > >
+> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > >
+> > > > This doesn't seem to have any dependencies with the other patches
+> > > > so applied to the togreg branch of iio.git and pushed out as testing
+> > > > for the autobuilders to ignore.  However I am a little curious to know
+> > > > why we would add the ID and then not use it (that I can see)?
+> > > >
+> > >
+> > > Sometimes with Allwinner (and X-Powers), two IPs seem identical until we
+> > > discover something that is slightly different. When this happens, we
+> > > have to add a compatible to differentiate both. However, we would also
+> > > need to change the Device Tree to change the compatible. We would need
+> > > to handle the driver behaviour for both Device Trees.
+> > >
+> > > So better anticipate a possible difference so that we don't have to do
+> > > some hacks in the driver to handle the device correctly.
+> > >
+> > > As always, Chen-Yu or Maxime may know better so I'm just stating what I
+> > > seem to recall.
+> >
+> > With Allwinner stuff (X-Powers included), sometimes the documents are
+> > incomplete or have errors. We tend to add a model-specific compatible
+> > just in case things turn out not to be so compatible, unless someone
+> > has triple-checked everything, documents and actual hardware included.
+> >
+> > However we don't actually document these, so this patch isn't strictly
+> > needed. (I suppose this might annoy the device tree binding maintainers.)
+> >
+> > ChenYu
+> I don't think it does any harm so I'll leave it in place.  Thanks for
+> the explanations.
 
-On 11/5/18 1:21 PM, Liu, Yi L wrote:
-> Hi Baolu,
-> 
->> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
->> bounces@lists.linux-foundation.org] On Behalf Of Lu Baolu
->> Sent: Monday, November 5, 2018 10:19 AM
->> To: Joerg Roedel <joro@8bytes.org>; David Woodhouse <dwmw2@infradead.org>
->> Cc: Raj, Ashok <ashok.raj@intel.com>; linux-kernel@vger.kernel.org;
->> iommu@lists.linux-foundation.org
->> Subject: [PATCH 1/1] iommu/vtd: Fix NULL pointer dereference in prq_event_thread()
->>
->> When handling page request without pasid event, go to "no_pasid"
->> branch instead of "bad_req". Otherwise, a NULL pointer deference will happen there.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Sohil Mehta <sohil.mehta@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/intel-svm.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c index
->> db301efe126d..887150907526 100644
->> --- a/drivers/iommu/intel-svm.c
->> +++ b/drivers/iommu/intel-svm.c
->> @@ -595,7 +595,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
->>   			pr_err("%s: Page request without PASID: %08llx %08llx\n",
->>   			       iommu->name, ((unsigned long long *)req)[0],
->>   			       ((unsigned long long *)req)[1]);
->> -			goto bad_req;
->> +			goto no_pasid;
->>   		}
->>
->>   		if (!svm || svm->pasid != req->pasid) {
->> --
-> 
-> I'm afraid it is still necessary to goto "bad_req". The following code behind
-> "bad_req" will trigger fault_cb registered by in-kernel drivers. It is reasonable
-> that PRQ without PASID can be handled by such callbacks. So I would suggest
-> to keep the existing logic.
+It might cause a bit of confusion though. We are not targetting these
+compatibles in terms of driver support, and they should not be used
+individually. IMO dropping this patch altogether is better. In the
+device tree we would use the tuplet axp803 + axp813.
 
-A page fault without a pasid is triggered by a DMA transfer without
-PASID. It doesn't relate to the SVM functionality hence there's no
-@svm or @sdev related to it. It's unnecessary to report it to the
-drivers as far as I can see.
-
-Best regards,
-Lu Baolu
-
-> 
->                  if (sdev && sdev->ops && sdev->ops->fault_cb) {
->                          int rwxp = (req->rd_req << 3) | (req->wr_req << 2) |
->                                   (req->exe_req << 1) | (req->priv_req);
->                          sdev->ops->fault_cb(sdev->dev, req->pasid, req->addr, req->private, rwxp, result);
->                   }
-> 
-> Thanks,
-> Yi Liu
-> 
+ChenYu
