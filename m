@@ -2,299 +2,139 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8496C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073AEC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4998420825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C103920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuING5Fc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4998420825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="IgLZ6tfA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C103920862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387732AbeKFDYz (ORCPT
+        id S2387802AbeKFDZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:24:55 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52917 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387640AbeKFDYy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:24:54 -0500
-Received: by mail-it1-f193.google.com with SMTP id t190-v6so8286116itb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 10:04:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+er0QjC8/KchoMTa1bcsQtR1+dyD0CK7fgXnMXx1MRQ=;
-        b=CuING5Fczsql+fs/DdXF5U2FnUX1najL/JDWVbbZBO7lrx+++kMPOwWzVuKhapjnM1
-         sBJknf0Gu995ACCA1iit9Ugd1jzNY8fXCUR82VCe9nZaCkxMPasn4neZO7LacCesPJ++
-         UPCt+laPKP0n+PJWtE23TzuTcaq4HMas918Dk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+er0QjC8/KchoMTa1bcsQtR1+dyD0CK7fgXnMXx1MRQ=;
-        b=crnKDsqNrN5l88Fm7KyZ/oen7uCPXnaJvVpJd0v2vgX1Q3xSoU8Laq24OJcxiNYxLS
-         XpC0u/OvgmVC5QxWrN+P16DOPZSK6LdzCOWTwrJ2pUG/gVO3Mh5rnKp2CPjpmce+qtUJ
-         Z5zjfmvrqeHKpHuuGaLzihrlWmXvm1fDNx7U6nCJywP4lZa+PE/NFrku25WUxpfF0GaF
-         G/nmqY0vT4bOWEbC/P62SH+dfBcQ840WulYumpp+ztGJWrhSoKIFWJWcoq7R1JKAE8DR
-         e6iQce3zVblZoxUlFg/y5s+RfobA5qa3l9K3L8Qg4aDUOPi6TMADllwoqa0FVjDRzida
-         YvjA==
-X-Gm-Message-State: AGRZ1gKULG+JtSwHcxwdeV2SzMpLyFJTIr/FVB027g4kkWv1G3Wk5fnF
-        QK/00GUOlQ58W++pc5RRjojCYKyz1jJ2Q63AqgqtnA==
-X-Google-Smtp-Source: AJdET5cAZqOj4AVt+dEOSiiYdKuNI3g2/GPx9vI6y0nm3Ze8/t4wZbYzJ2FP0lqOFiCpoBLZA0Drj+WWvt1Wk6FDKtQ=
-X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr8291884ite.158.1541441044284;
- Mon, 05 Nov 2018 10:04:04 -0800 (PST)
+        Mon, 5 Nov 2018 22:25:36 -0500
+Received: from mail-eopbgr730087.outbound.protection.outlook.com ([40.107.73.87]:10752
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387640AbeKFDZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 22:25:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7wrFNQTX85OiT8J1W98MYQKCkA9qcJhRzgPJqOGG/UM=;
+ b=IgLZ6tfAO+XDGtaEqwvvY70QpLRk0OGCWRD3a1IVN1ZhkfXyH6H2zG+jK9bSmxT9b3va1xA54wak99XwDzmRHmqDOiYkO91biR63dp51Qza7iJ0n3axowjxWOAbr9cukth5X4EB02FnxaeQJHo/L5SfEynvBdHl0p+Wa/4zeAc8=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5848.namprd05.prod.outlook.com (20.178.49.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.15; Mon, 5 Nov 2018 18:04:42 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::49cd:7d04:35b7:b2a2]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::49cd:7d04:35b7:b2a2%5]) with mapi id 15.20.1294.032; Mon, 5 Nov 2018
+ 18:04:42 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v3 6/7] x86/alternatives: use temporary mm for text poking
+Thread-Topic: [PATCH v3 6/7] x86/alternatives: use temporary mm for text
+ poking
+Thread-Index: AQHUcwQ5CMopNGTk70+f2dIwnm2sU6VBMXWAgABMjQA=
+Date:   Mon, 5 Nov 2018 18:04:42 +0000
+Message-ID: <EFF64D16-26DE-437E-99B5-A870921B7D5F@vmware.com>
+References: <20181102232946.98461-1-namit@vmware.com>
+ <20181102232946.98461-7-namit@vmware.com>
+ <20181105133041.GC22467@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181105133041.GC22467@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5848;20:H5tK3DtZZiQLKsULxMwRmqGtJHDvD7MuuKmRtu2Qad/QHAEHiK4tF1ezJkPE+8Rhtpczj4iVeN/1B6qheH/P2qBFs0np7ponUUh+JU4KCWVPIBiO7eJ4GcAuIth5uhoHgrgFmeqQ6rXgorNxdODi4I+fmS/WTBW8c8eAKCyVHH4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3e11b123-9c96-4ae2-d8a7-08d64349298d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5848;
+x-ms-traffictypediagnostic: BYAPR05MB5848:
+x-microsoft-antispam-prvs: <BYAPR05MB58488DFE7CDEDB1067686CA3D0CA0@BYAPR05MB5848.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(61668805478150)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5848;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5848;
+x-forefront-prvs: 08476BC6EF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(396003)(366004)(39860400002)(189003)(199004)(7736002)(53546011)(8676002)(36756003)(6436002)(8936002)(2906002)(97736004)(305945005)(6246003)(81166006)(316002)(81156014)(256004)(99286004)(14444005)(3846002)(76176011)(6486002)(6506007)(86362001)(6512007)(102836004)(26005)(7416002)(53936002)(6116002)(478600001)(83716004)(71190400001)(71200400001)(82746002)(476003)(486006)(2616005)(68736007)(446003)(5660300001)(6916009)(11346002)(54906003)(66066001)(14454004)(186003)(4326008)(33656002)(25786009)(229853002)(2900100001)(106356001)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5848;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: IOhL5QhbQOvE6vgM2X4/WTcEOfBrCGjy8Gpq9T/wI1HYutaCHHodr/6Z5aGmvEly+8pRvdA+ruV76mpN2hysWaZnN1UEHDguWERIs5yCdC9egzYhv5Ymfn+FJobMaOs1TTeQNRIToEIfHm+qoMIk0osJ7fv50+sQT+RrMTmPhsUqnIZCNsNQJ5C03ap1EMzWj2k55Nf6unPgwS1EDndJaj5m9JC882LIplQ7NvDDM2uO26hPfMe0FaLcZmdYMKcEcsE0dNuhGeI0/8em4uRvexfXxZNpmBerqIs0pVxSWQfW+XR1b2LfEzOIrkDQyR3EQg04IrCGaTZSr7W5erLSRyap3b926XMQb5XghgfvXGI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6AE980EF71EDCD45975C6490CD42D3E0@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 10:04:03 -0800 (PST)
-In-Reply-To: <20181105175722.removbbpilqxu7tr@redbean>
-References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de>
- <20181105175722.removbbpilqxu7tr@redbean>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 19:04:03 +0100
-Message-ID: <CAKv+Gu8nd2gyX6K8uAWig7BQa=qFMTajPKgEYPLcHkxmYedgsA@mail.gmail.com>
-Subject: Re: [PATCH] arm64/module: use plt section indices for relocations
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e11b123-9c96-4ae2-d8a7-08d64349298d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2018 18:04:42.5407
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5848
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 November 2018 at 18:57, Jessica Yu <jeyu@kernel.org> wrote:
-> Instead of saving a pointer to the .plt and .init.plt sections to apply
-> plt-based relocations, save and use their section indices instead.
->
-> The mod->arch.{core,init}.plt pointers were problematic for livepatch
-> because they pointed within temporary section headers (provided by the
-> module loader via info->sechdrs) that would be freed after module load.
-> Since livepatch modules may need to apply relocations post-module-load
-> (for example, to patch a module that is loaded later), using section
-> indices to offset into the section headers (instead of accessing them
-> through a saved pointer) allows livepatch modules on arm64 to pass in
-> their own copy of the section headers to apply_relocate_add() to apply
-> delayed relocations.
->
-> Signed-off-by: Jessica Yu <jeyu@kernel.org>
-> ---
->
-> Note: Addressed Will's comment about the pltsec -> plt_info rename and
-> removed that change to reduce unnecessary code churn. That is the only
-> change from the first version. I didn't include the Ack's for this reason
-> so let me know if this version is OK as well.
->
-> arch/arm64/include/asm/module.h |  8 +++++---
-> arch/arm64/kernel/module-plts.c | 36 ++++++++++++++++++++----------------
-> arch/arm64/kernel/module.c      |  9 +++++----
-> 3 files changed, 30 insertions(+), 23 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/module.h
-> b/arch/arm64/include/asm/module.h
-> index 97d0ef12e2ff..f81c1847312d 100644
-> --- a/arch/arm64/include/asm/module.h
-> +++ b/arch/arm64/include/asm/module.h
-> @@ -22,7 +22,7 @@
->
-> #ifdef CONFIG_ARM64_MODULE_PLTS
-> struct mod_plt_sec {
-> -       struct elf64_shdr       *plt;
-> +       int                     plt_shndx;
->         int                     plt_num_entries;
->         int                     plt_max_entries;
-> };
-> @@ -36,10 +36,12 @@ struct mod_arch_specific {
-> };
-> #endif
->
-> -u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela
-> *rela,
-> +u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
-> +                         void *loc, const Elf64_Rela *rela,
->                           Elf64_Sym *sym);
->
-> -u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val);
-> +u64 module_emit_veneer_for_adrp(struct module *mod, Elf64_Shdr *sechdrs,
-> +                               void *loc, u64 val);
->
-> #ifdef CONFIG_RANDOMIZE_BASE
-> extern u64 module_alloc_base;
-> diff --git a/arch/arm64/kernel/module-plts.c
-> b/arch/arm64/kernel/module-plts.c
-> index f0690c2ca3e0..c04b0d6abde0 100644
-> --- a/arch/arm64/kernel/module-plts.c
-> +++ b/arch/arm64/kernel/module-plts.c
-> @@ -16,12 +16,13 @@ static bool in_init(const struct module *mod, void *loc)
->         return (u64)loc - (u64)mod->init_layout.base <
-> mod->init_layout.size;
-> }
->
-> -u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela
-> *rela,
-> +u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
-> +                         void *loc, const Elf64_Rela *rela,
->                           Elf64_Sym *sym)
-> {
->         struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
->                                                           &mod->arch.init;
-> -       struct plt_entry *plt = (struct plt_entry *)pltsec->plt->sh_addr;
-> +       struct plt_entry *plt = (struct plt_entry *)(sechdrs +
-> pltsec->plt_shndx)->sh_addr;
+From: Peter Zijlstra
+Sent: November 5, 2018 at 1:30:41 PM GMT
+> To: Nadav Amit <namit@vmware.com>
+> Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, x86@ker=
+nel.org, H. Peter Anvin <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.d=
+e>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.co=
+m>, Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>, D=
+ave Hansen <dave.hansen@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
+> Subject: Re: [PATCH v3 6/7] x86/alternatives: use temporary mm for text p=
+oking
+>=20
+>=20
+> On Fri, Nov 02, 2018 at 04:29:45PM -0700, Nadav Amit wrote:
+>> +	unuse_temporary_mm(prev);
+>> +
+>> +	pte_unmap_unlock(ptep, ptl);
+>=20
+> That; that does kunmap_atomic() on 32bit.
+>=20
+> I've been thinking that the whole kmap_atomic thing on x86_32 is
+> terminally broken, and with that most of x86_32 is.
+>=20
+> kmap_atomic does the per-cpu fixmap pte fun-and-games we're here saying
+> is broken. Yes, only the one CPU will (explicitly) use those fixmap PTEs
+> and thus the local invalidate _should_ work. However nothing prohibits
+> speculation on another CPU from using our fixmap addresses. Which can
+> lead to the remote CPU populating its TLBs for our fixmap entry.
+>=20
+> And, as we've found, there are AMD parts that #MC when there are
+> mis-matched TLB entries.
+>=20
+> So what do we do? mark x86_32 SMP broken?
 
-What's wrong with
+pte_unmap() seems to only use kunmap_atomic() when CONFIG_HIGHPTE is set, n=
+o?
 
-(struct plt_entry *)sechdrs[pltsec->plt_shndx].sh_addr
+Do most distributions run with CONFIG_HIGHPTE?
 
-?
-
-
->         int i = pltsec->plt_num_entries;
->         u64 val = sym->st_value + rela->r_addend;
->
-> @@ -43,11 +44,12 @@ u64 module_emit_plt_entry(struct module *mod, void *loc,
-> const Elf64_Rela *rela,
-> }
->
-> #ifdef CONFIG_ARM64_ERRATUM_843419
-> -u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val)
-> +u64 module_emit_veneer_for_adrp(struct module *mod, Elf64_Shdr *sechdrs,
-> +                               void *loc, u64 val)
-> {
->         struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
->                                                           &mod->arch.init;
-> -       struct plt_entry *plt = (struct plt_entry *)pltsec->plt->sh_addr;
-> +       struct plt_entry *plt = (struct plt_entry *)(sechdrs +
-> pltsec->plt_shndx)->sh_addr;
->         int i = pltsec->plt_num_entries++;
->         u32 mov0, mov1, mov2, br;
->         int rd;
-> @@ -202,7 +204,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
-> *sechdrs,
->         unsigned long core_plts = 0;
->         unsigned long init_plts = 0;
->         Elf64_Sym *syms = NULL;
-> -       Elf_Shdr *tramp = NULL;
-> +       Elf_Shdr *pltsec, *tramp = NULL;
->         int i;
->
->         /*
-> @@ -211,9 +213,9 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
-> *sechdrs,
->          */
->         for (i = 0; i < ehdr->e_shnum; i++) {
->                 if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
-> -                       mod->arch.core.plt = sechdrs + i;
-> +                       mod->arch.core.plt_shndx = i;
->                 else if (!strcmp(secstrings + sechdrs[i].sh_name,
-> ".init.plt"))
-> -                       mod->arch.init.plt = sechdrs + i;
-> +                       mod->arch.init.plt_shndx = i;
->                 else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
->                          !strcmp(secstrings + sechdrs[i].sh_name,
->                                  ".text.ftrace_trampoline"))
-> @@ -222,7 +224,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
-> *sechdrs,
->                         syms = (Elf64_Sym *)sechdrs[i].sh_addr;
->         }
->
-> -       if (!mod->arch.core.plt || !mod->arch.init.plt) {
-> +       if (!mod->arch.core.plt_shndx || !mod->arch.init.plt_shndx) {
->                 pr_err("%s: module PLT section(s) missing\n", mod->name);
->                 return -ENOEXEC;
->         }
-> @@ -254,17 +256,19 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
-> *sechdrs,
->                                                 sechdrs[i].sh_info, dstsec);
->         }
->
-> -       mod->arch.core.plt->sh_type = SHT_NOBITS;
-> -       mod->arch.core.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
-> -       mod->arch.core.plt->sh_addralign = L1_CACHE_BYTES;
-> -       mod->arch.core.plt->sh_size = (core_plts  + 1) * sizeof(struct
-> plt_entry);
-> +       pltsec = sechdrs + mod->arch.core.plt_shndx;
-> +       pltsec->sh_type = SHT_NOBITS;
-> +       pltsec->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
-> +       pltsec->sh_addralign = L1_CACHE_BYTES;
-> +       pltsec->sh_size = (core_plts  + 1) * sizeof(struct plt_entry);
->         mod->arch.core.plt_num_entries = 0;
->         mod->arch.core.plt_max_entries = core_plts;
->
-> -       mod->arch.init.plt->sh_type = SHT_NOBITS;
-> -       mod->arch.init.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
-> -       mod->arch.init.plt->sh_addralign = L1_CACHE_BYTES;
-> -       mod->arch.init.plt->sh_size = (init_plts + 1) * sizeof(struct
-> plt_entry);
-> +       pltsec = sechdrs + mod->arch.init.plt_shndx;
-> +       pltsec->sh_type = SHT_NOBITS;
-> +       pltsec->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
-> +       pltsec->sh_addralign = L1_CACHE_BYTES;
-> +       pltsec->sh_size = (init_plts + 1) * sizeof(struct plt_entry);
->         mod->arch.init.plt_num_entries = 0;
->         mod->arch.init.plt_max_entries = init_plts;
->
-> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-> index f0f27aeefb73..c2abe59c6f8f 100644
-> --- a/arch/arm64/kernel/module.c
-> +++ b/arch/arm64/kernel/module.c
-> @@ -198,7 +198,8 @@ static int reloc_insn_imm(enum aarch64_reloc_op op,
-> __le32 *place, u64 val,
->         return 0;
-> }
->
-> -static int reloc_insn_adrp(struct module *mod, __le32 *place, u64 val)
-> +static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
-> +                          __le32 *place, u64 val)
-> {
->         u32 insn;
->
-> @@ -215,7 +216,7 @@ static int reloc_insn_adrp(struct module *mod, __le32
-> *place, u64 val)
->                 insn &= ~BIT(31);
->         } else {
->                 /* out of range for ADR -> emit a veneer */
-> -               val = module_emit_veneer_for_adrp(mod, place, val & ~0xfff);
-> +               val = module_emit_veneer_for_adrp(mod, sechdrs, place, val &
-> ~0xfff);
->                 if (!val)
->                         return -ENOEXEC;
->                 insn = aarch64_insn_gen_branch_imm((u64)place, val,
-> @@ -368,7 +369,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
->                 case R_AARCH64_ADR_PREL_PG_HI21_NC:
->                         overflow_check = false;
->                 case R_AARCH64_ADR_PREL_PG_HI21:
-> -                       ovf = reloc_insn_adrp(me, loc, val);
-> +                       ovf = reloc_insn_adrp(me, sechdrs, loc, val);
->                         if (ovf && ovf != -ERANGE)
->                                 return ovf;
->                         break;
-> @@ -413,7 +414,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
->
->                         if (IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
->                             ovf == -ERANGE) {
-> -                               val = module_emit_plt_entry(me, loc,
-> &rel[i], sym);
-> +                               val = module_emit_plt_entry(me, sechdrs,
-> loc, &rel[i], sym);
->                                 if (!val)
->                                         return -ENOEXEC;
->                                 ovf = reloc_insn_imm(RELOC_OP_PREL, loc,
-> val, 2,
-> --
-> 2.14.5
->
