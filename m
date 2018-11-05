@@ -2,238 +2,299 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1DAC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8496C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 007B22085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:02:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4998420825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:04:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="foflXelm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007B22085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuING5Fc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4998420825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387855AbeKFDW4 (ORCPT
+        id S2387732AbeKFDYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:22:56 -0500
-Received: from esa5.dell-outbound.iphmx.com ([68.232.153.95]:17477 "EHLO
-        esa5.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387701AbeKFDW4 (ORCPT
+        Mon, 5 Nov 2018 22:24:55 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52917 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387640AbeKFDYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:22:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1541440925; x=1572976925;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Jj4P1YnfPBj+V2dfYX3Ml2zvCrxklk581Pg0rdOgfp8=;
-  b=foflXelm8V4uDZKE7iWGf5Peh0/lJW0+zhQRisjTi/GoniaVCkb2eLG4
-   3rborl8VDLobId8DXWBkMGvVZ8uGy/BBwMBGRPKErQGBkfzPorS0opIBP
-   qlZzoNlLu4t++qoTjl0I8pkRUb48liwjW+rjTTsxos+ODb1bNvTf5qRg9
-   E=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FkAABvheBbhyWd50NlGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBVAMBAQELAYFVghQoCoNsiHeLOIINg0CUAYFmCwEBhGwCF4M7Ijc?=
- =?us-ascii?q?KDQEDAQECAQECAQECEAEBARUJCCkvgjYigmMBAQEBAgESEQQNMxIFCwIBCBg?=
- =?us-ascii?q?CAiYCAgJFEAIEAQ0FCBqCf4F6CJ42AoEQiVgBAQFtezOKHoELimuCF4ERgxK?=
- =?us-ascii?q?ESwESAQgugm2CVwKBKgGHOiABhW6PalQGAQKNLoNbIIF3jmkslnMCBAIEBQI?=
- =?us-ascii?q?UgVkhZnFwgW6BToInDgmOG2+LZIEfgR8BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2FkAABvheBbhyWd50NlGwEBAQEDAQEBBwMBAQGBVAMBA?=
- =?us-ascii?q?QELAYFVghQoCoNsiHeLOIINg0CUAYFmCwEBhGwCF4M7IjcKDQEDAQECAQECA?=
- =?us-ascii?q?QECEAEBARUJCCkvgjYigmMBAQEBAgESEQQNMxIFCwIBCBgCAiYCAgJFEAIEA?=
- =?us-ascii?q?Q0FCBqCf4F6CJ42AoEQiVgBAQFtezOKHoELimuCF4ERgxKESwESAQgugm2CV?=
- =?us-ascii?q?wKBKgGHOiABhW6PalQGAQKNLoNbIIF3jmkslnMCBAIEBQIUgVkhZnFwgW6BT?=
- =?us-ascii?q?oInDgmOG2+LZIEfgR8BAQ?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa5.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Nov 2018 12:01:56 -0600
-Received: from pps.filterd (m0144103.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5HrYYt015105;
-        Mon, 5 Nov 2018 13:01:55 -0500
-Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
-        by mx0b-00154901.pphosted.com with ESMTP id 2njjk6k0u5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 05 Nov 2018 13:01:55 -0500
-From:   <Justin.Lee1@Dell.com>
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 06 Nov 2018 00:01:44 +0600
-X-LoopCount0: from 10.166.135.96
-X-IronPort-AV: E=Sophos;i="5.54,468,1534827600"; 
-   d="scan'208";a="1322152710"
-To:     <sam@mendozajonas.com>, <netdev@vger.kernel.org>
-CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>
-Subject: RE: [PATCH net-next 5/6] net/ncsi: Reset channel state in
- ncsi_start_dev()
-Thread-Topic: [PATCH net-next 5/6] net/ncsi: Reset channel state in
- ncsi_start_dev()
-Thread-Index: AQHUZpcV/jLZttPJVESchUXzrlpHT6U4CxHwgAPm3ICABZsmMA==
-Date:   Mon, 5 Nov 2018 18:01:51 +0000
-Message-ID: <ea740068c02a47e2a5411f84c61e69b3@AUSX13MPS302.AMER.DELL.COM>
-References: <20181018035917.19413-1-sam@mendozajonas.com>
-         <20181018035917.19413-6-sam@mendozajonas.com>
-         <96158616f0774e3d9fae0e99bb16e605@AUSX13MPS306.AMER.DELL.COM>
- <c4f0fdcc971ca258539899a8b15755b96b2353f5.camel@mendozajonas.com>
-In-Reply-To: <c4f0fdcc971ca258539899a8b15755b96b2353f5.camel@mendozajonas.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 5 Nov 2018 22:24:54 -0500
+Received: by mail-it1-f193.google.com with SMTP id t190-v6so8286116itb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 10:04:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+er0QjC8/KchoMTa1bcsQtR1+dyD0CK7fgXnMXx1MRQ=;
+        b=CuING5Fczsql+fs/DdXF5U2FnUX1najL/JDWVbbZBO7lrx+++kMPOwWzVuKhapjnM1
+         sBJknf0Gu995ACCA1iit9Ugd1jzNY8fXCUR82VCe9nZaCkxMPasn4neZO7LacCesPJ++
+         UPCt+laPKP0n+PJWtE23TzuTcaq4HMas918Dk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+er0QjC8/KchoMTa1bcsQtR1+dyD0CK7fgXnMXx1MRQ=;
+        b=crnKDsqNrN5l88Fm7KyZ/oen7uCPXnaJvVpJd0v2vgX1Q3xSoU8Laq24OJcxiNYxLS
+         XpC0u/OvgmVC5QxWrN+P16DOPZSK6LdzCOWTwrJ2pUG/gVO3Mh5rnKp2CPjpmce+qtUJ
+         Z5zjfmvrqeHKpHuuGaLzihrlWmXvm1fDNx7U6nCJywP4lZa+PE/NFrku25WUxpfF0GaF
+         G/nmqY0vT4bOWEbC/P62SH+dfBcQ840WulYumpp+ztGJWrhSoKIFWJWcoq7R1JKAE8DR
+         e6iQce3zVblZoxUlFg/y5s+RfobA5qa3l9K3L8Qg4aDUOPi6TMADllwoqa0FVjDRzida
+         YvjA==
+X-Gm-Message-State: AGRZ1gKULG+JtSwHcxwdeV2SzMpLyFJTIr/FVB027g4kkWv1G3Wk5fnF
+        QK/00GUOlQ58W++pc5RRjojCYKyz1jJ2Q63AqgqtnA==
+X-Google-Smtp-Source: AJdET5cAZqOj4AVt+dEOSiiYdKuNI3g2/GPx9vI6y0nm3Ze8/t4wZbYzJ2FP0lqOFiCpoBLZA0Drj+WWvt1Wk6FDKtQ=
+X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr8291884ite.158.1541441044284;
+ Mon, 05 Nov 2018 10:04:04 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050160
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 10:04:03 -0800 (PST)
+In-Reply-To: <20181105175722.removbbpilqxu7tr@redbean>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de>
+ <20181105175722.removbbpilqxu7tr@redbean>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 5 Nov 2018 19:04:03 +0100
+Message-ID: <CAKv+Gu8nd2gyX6K8uAWig7BQa=qFMTajPKgEYPLcHkxmYedgsA@mail.gmail.com>
+Subject: Re: [PATCH] arm64/module: use plt section indices for relocations
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Torsten Duwe <duwe@lst.de>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gT24gVHVlLCAyMDE4LTEwLTMwIGF0IDIxOjI2ICswMDAwLCBKdXN0aW4uTGVlMUBEZWxs
-LmNvbSB3cm90ZToNCj4gPiA+ICtpbnQgbmNzaV9yZXNldF9kZXYoc3RydWN0IG5jc2lfZGV2ICpu
-ZCkNCj4gPiA+ICt7DQo+ID4gPiArCXN0cnVjdCBuY3NpX2Rldl9wcml2ICpuZHAgPSBUT19OQ1NJ
-X0RFVl9QUklWKG5kKTsNCj4gPiA+ICsJc3RydWN0IG5jc2lfY2hhbm5lbCAqbmMsICphY3RpdmU7
-DQo+ID4gPiArCXN0cnVjdCBuY3NpX3BhY2thZ2UgKm5wOw0KPiA+ID4gKwl1bnNpZ25lZCBsb25n
-IGZsYWdzOw0KPiA+ID4gKwlib29sIGVuYWJsZWQ7DQo+ID4gPiArCWludCBzdGF0ZTsNCj4gPiA+
-ICsNCj4gPiA+ICsJYWN0aXZlID0gTlVMTDsNCj4gPiA+ICsJTkNTSV9GT1JfRUFDSF9QQUNLQUdF
-KG5kcCwgbnApIHsNCj4gPiA+ICsJCU5DU0lfRk9SX0VBQ0hfQ0hBTk5FTChucCwgbmMpIHsNCj4g
-PiA+ICsJCQlzcGluX2xvY2tfaXJxc2F2ZSgmbmMtPmxvY2ssIGZsYWdzKTsNCj4gPiA+ICsJCQll
-bmFibGVkID0gbmMtPm1vbml0b3IuZW5hYmxlZDsNCj4gPiA+ICsJCQlzdGF0ZSA9IG5jLT5zdGF0
-ZTsNCj4gPiA+ICsJCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZuYy0+bG9jaywgZmxhZ3MpOw0K
-PiA+ID4gKw0KPiA+ID4gKwkJCWlmIChlbmFibGVkKQ0KPiA+ID4gKwkJCQluY3NpX3N0b3BfY2hh
-bm5lbF9tb25pdG9yKG5jKTsNCj4gPiA+ICsJCQlpZiAoc3RhdGUgPT0gTkNTSV9DSEFOTkVMX0FD
-VElWRSkgew0KPiA+ID4gKwkJCQlhY3RpdmUgPSBuYzsNCj4gPiA+ICsJCQkJYnJlYWs7DQo+ID4g
-DQo+ID4gSXMgdGhlIG9yaWdpbmFsIGludGVudGlvbiB0byBwcm9jZXNzIHRoZSBjaGFubmVsIG9u
-ZSBieSBvbmU/DQo+ID4gSWYgaXQgaXMgdGhlIGNhc2UsIHRoZXJlIGFyZSB0d28gbG9vcHMgYW5k
-IHdlIG1pZ2h0IG5lZWQgdG8gdXNlDQo+ID4gImdvdG8gZm91bmQiIGluc3RlYWQuDQo+IA0KPiBZ
-ZXMgd2UnbGwgbmVlZCB0byBicmVhayBvdXQgb2YgdGhlIHBhY2thZ2UgbG9vcCBoZXJlIGFzIHdl
-bGwuDQo+IA0KPiA+IA0KPiA+ID4gKwkJCX0NCj4gPiA+ICsJCX0NCj4gPiA+ICsJfQ0KPiA+ID4g
-Kw0KPiA+IA0KPiA+IGZvdW5kOiA/DQo+ID4gDQo+ID4gPiArCWlmICghYWN0aXZlKSB7DQo+ID4g
-PiArCQkvKiBEb25lICovDQo+ID4gPiArCQlzcGluX2xvY2tfaXJxc2F2ZSgmbmRwLT5sb2NrLCBm
-bGFncyk7DQo+ID4gPiArCQluZHAtPmZsYWdzICY9IH5OQ1NJX0RFVl9SRVNFVDsNCj4gPiA+ICsJ
-CXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJm5kcC0+bG9jaywgZmxhZ3MpOw0KPiA+ID4gKwkJcmV0
-dXJuIG5jc2lfY2hvb3NlX2FjdGl2ZV9jaGFubmVsKG5kcCk7DQo+ID4gPiArCX0NCj4gPiA+ICsN
-Cj4gPiA+ICsJc3Bpbl9sb2NrX2lycXNhdmUoJm5kcC0+bG9jaywgZmxhZ3MpOw0KPiA+ID4gKwlu
-ZHAtPmZsYWdzIHw9IE5DU0lfREVWX1JFU0VUOw0KPiA+ID4gKwluZHAtPmFjdGl2ZV9jaGFubmVs
-ID0gYWN0aXZlOw0KPiA+ID4gKwluZHAtPmFjdGl2ZV9wYWNrYWdlID0gYWN0aXZlLT5wYWNrYWdl
-Ow0KPiA+ID4gKwlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZuZHAtPmxvY2ssIGZsYWdzKTsNCj4g
-PiA+ICsNCj4gPiA+ICsJbmQtPnN0YXRlID0gbmNzaV9kZXZfc3RhdGVfc3VzcGVuZDsNCj4gPiA+
-ICsJc2NoZWR1bGVfd29yaygmbmRwLT53b3JrKTsNCj4gPiA+ICsJcmV0dXJuIDA7DQo+ID4gPiAr
-fQ0KPiA+IA0KPiA+IEFsc28gc2ltaWxhciBpc3N1ZSBpbiBuY3NpX2Nob29zZV9hY3RpdmVfY2hh
-bm5lbCgpIGZ1bmN0aW9uIGJlbG93Lg0KPiA+IA0KPiA+ID4gQEAgLTkxNiwzMiArMTA0NSw0OSBA
-QCBzdGF0aWMgaW50IG5jc2lfY2hvb3NlX2FjdGl2ZV9jaGFubmVsKHN0cnVjdCBuY3NpX2Rldl9w
-cml2ICpuZHApDQo+ID4gPiAgDQo+ID4gPiAgCQkJbmNtID0gJm5jLT5tb2Rlc1tOQ1NJX01PREVf
-TElOS107DQo+ID4gPiAgCQkJaWYgKG5jbS0+ZGF0YVsyXSAmIDB4MSkgew0KPiA+ID4gLQkJCQlz
-cGluX3VubG9ja19pcnFyZXN0b3JlKCZuYy0+bG9jaywgZmxhZ3MpOw0KPiA+ID4gIAkJCQlmb3Vu
-ZCA9IG5jOw0KPiA+ID4gLQkJCQlnb3RvIG91dDsNCj4gPiA+ICsJCQkJd2l0aF9saW5rID0gdHJ1
-ZTsNCj4gPiA+ICAJCQl9DQo+ID4gPiAgDQo+ID4gPiAtCQkJc3Bpbl91bmxvY2tfaXJxcmVzdG9y
-ZSgmbmMtPmxvY2ssIGZsYWdzKTsNCj4gPiA+ICsJCQkvKiBJZiBtdWx0aV9jaGFubmVsIGlzIGVu
-YWJsZWQgY29uZmlndXJlIGFsbCB2YWxpZA0KPiA+ID4gKwkJCSAqIGNoYW5uZWxzIHdoZXRoZXIg
-b3Igbm90IHRoZXkgY3VycmVudGx5IGhhdmUgbGluaw0KPiA+ID4gKwkJCSAqIHNvIHRoZXkgd2ls
-bCBoYXZlIEFFTnMgZW5hYmxlZC4NCj4gPiA+ICsJCQkgKi8NCj4gPiA+ICsJCQlpZiAod2l0aF9s
-aW5rIHx8IG5wLT5tdWx0aV9jaGFubmVsKSB7DQo+ID4gDQo+ID4gSSBub3RpY2UgdGhhdCB0aGVy
-ZSBpcyBhIGNhc2UgdGhhdCB3ZSB3aWxsIG1pc2NvbmZpZ3VyZSB0aGUgaW50ZXJmYWNlLg0KPiA+
-IEZvciBleGFtcGxlIGJlbG93LCBtdWx0aS1jaGFubmVsIGlzIG5vdCBlbmFibGUgZm9yIHBhY2th
-Z2UgMS4NCj4gPiBCdXQgd2UgZW5hYmxlIHRoZSBjaGFubmVsIGZvciBuY3NpMiBiZWxvdyAocGFj
-a2FnZSAxIGNoYW5uZWwgMCkgYXMgdGhhdCBpbnRlcmZhY2UgaXMgdGhlIGZpcnN0DQo+ID4gY2hh
-bm5lbCBmb3IgdGhhdCBwYWNrYWdlIHdpdGggbGluay4NCj4gDQo+IEkgZG9uJ3QgdGhpbmsgSSBz
-ZWUgdGhlIGlzc3VlIGhlcmU7IG11bHRpLWNoYW5uZWwgaXMgbm90IHNldCBvbiBwYWNrYWdlDQo+
-IDEsIGJ1dCBib3RoIGNoYW5uZWxzIGFyZSBpbiB0aGUgY2hhbm5lbCB3aGl0ZWxpc3QuIENoYW5u
-ZWwgMCBpcw0KPiBjb25maWd1cmVkIHNpbmNlIGl0J3MgdGhlIGZpcnN0IGZvdW5kIG9uIHBhY2th
-Z2UgMSwgYW5kIGNoYW5uZWwgMSBpcyBub3QNCj4gc2luY2UgY2hhbm5lbCAwIGlzIGFscmVhZHkg
-Zm91bmQuIEFyZSB5b3UgZXhwZWN0aW5nIHNvbWV0aGluZyBkaWZmZXJlbnQ/DQo+ICANCg0KVGhl
-IHNldHRpbmcgaXMgdGhhdCBtdWx0aS1wYWNrYWdlIGlzIGVuYWJsZSBmb3IgYm90aCBwYWNrYWdl
-IDAgYW5kIDEuDQpNdWx0aS1jaGFubmVsIGlzIG9ubHkgZW5hYmxlZCBmb3IgcGFja2FnZSAwLg0K
-DQo+ID4gDQo+ID4gY2F0IC9zeXMva2VybmVsL2RlYnVnL25jc2lfcHJvdG9jb2wvbmNzaV9kZXZp
-Y2VfDQo+ID4gSUZJRFggSUZOQU1FIE5BTUUgICBQSUQgQ0lEIFJYIFRYIE1QIE1DIFdQIFdDIFBD
-IENTIFBTIExTIFJVIENSIE5RIEhBDQo+ID4gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+ID4gICAyICAgZXRoMiAg
-IG5jc2kwICAwMDAgMDAwIDEgIDEgIDEgIDEgIDEgIDEgIDAgIDIgIDEgIDEgIDEgIDEgIDAgIDEN
-Cj4gPiAgIDIgICBldGgyICAgbmNzaTEgIDAwMCAwMDEgMSAgMCAgMSAgMSAgMSAgMSAgMCAgMiAg
-MSAgMSAgMSAgMSAgMCAgMQ0KPiA+ICAgMiAgIGV0aDIgICBuY3NpMiAgMDAxIDAwMCAxICAwICAx
-ICAwICAxICAxICAwICAyICAxICAxICAxICAxICAwICAxDQoNCkkgd2FzIHJlcGx5aW5nIHRvIHRo
-ZSB3cm9uZyBvbGQgZW1haWwgYW5kIGl0IG1pZ2h0IGNhdXNlIGEgYml0IGNvbmZ1c2lvbi4NClRo
-ZSBmaXJzdCAxIG1lYW5pbmcgY2hhbm5lbCBpcyBlbmFibGVkIGZvciBwYWNrYWdlIDEgY2hhbm5l
-bCAwIChuY3NpMikuIA0KRm9yIGV0aDIsIHdlIGFscmVhZHkgaGFzIG5jc2kwIGFzIHRoZSBhY3Rp
-dmUgY2hhbm5lbCB3aXRoIFRYIGVuYWJsZS4NCkkgd291bGQgdGhpbmsgdGhhdCBwYWNrYWdlIGRv
-ZXNuJ3QgaGF2ZSB0aGUgbXVsdGktY2hhbm5lbCBlbmFibGVkIGFuZA0Kd2Ugc2hvdWxkIG5vdCBl
-bmFibGUgdGhlIGNoYW5uZWwgZm9yIG5jc2kyLiBUaGUgcHJvYmxlbSBpcyB0aGF0IHBhY2thZ2Ug
-MSBkb2Vzbid0DQplbmFibGUgdGhlIG11bHRpLWNoYW5uZWwgYW5kIGl0IGJlbGlldmVzIGl0IG5l
-ZWRzIHRvIGVuYWJsZSBvbmUgY2hhbm5lbCBmb3IgaXRzIHBhY2thZ2UgDQpidXQgaXQgZG9lc24n
-dCBhd2FyZSB0aGF0IHRoZSBvdGhlciBwYWNrYWdlIGFscmVhZHkgaGFzIG9uZSBhY3RpdmUgY2hh
-bm5lbC4NCg0KPiA+ICAgMiAgIGV0aDIgICBuY3NpMyAgMDAxIDAwMSAwICAwICAxICAwICAxICAx
-ICAwICAxICAwICAxICAxICAxICAwICAxDQo+ID4gPT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+ID4gTVA6IE11bHRp
-LW1vZGUgUGFja2FnZSAgICAgV1A6IFdoaXRlbGlzdCBQYWNrYWdlDQo+ID4gTUM6IE11bHRpLW1v
-ZGUgQ2hhbm5lbCAgICAgV0M6IFdoaXRlbGlzdCBDaGFubmVsDQo+ID4gUEM6IFByaW1hcnkgQ2hh
-bm5lbCAgICAgICAgQ1M6IENoYW5uZWwgU3RhdGUgSUEvQS9JViAxLzIvMw0KPiA+IFBTOiBQb2xs
-IFN0YXR1cyAgICAgICAgICAgIExTOiBMaW5rIFN0YXR1cw0KPiA+IFJVOiBSdW5uaW5nICAgICAg
-ICAgICAgICAgIENSOiBDYXJyaWVyIE9LDQo+ID4gTlE6IFF1ZXVlIFN0b3BwZWQgICAgICAgICAg
-SEE6IEhhcmR3YXJlIEFyYml0cmF0aW9uDQo+ID4gDQo+ID4gSSB0ZW1wb3JhbGx5IGNoYW5nZSB0
-byB0aGUgZm9sbG93aW5nIHRvIGF2b2lkIHRoYXQuDQo+ID4gCQkJaWYgKCh3aXRoX2xpbmsgJiYN
-Cj4gPiAJCQkgICAgICFucC0+bXVsdGlfY2hhbm5lbCAmJg0KPiA+IAkJCSAgICAgbGlzdF9lbXB0
-eSgmbmRwLT5jaGFubmVsX3F1ZXVlKSkgfHwgbnAtPm11bHRpX2NoYW5uZWwpIHsNCj4gPiANCj4g
-PiA+ICsJCQkJc3Bpbl9sb2NrX2lycXNhdmUoJm5kcC0+bG9jaywgZmxhZ3MpOw0KPiA+ID4gKwkJ
-CQlsaXN0X2FkZF90YWlsX3JjdSgmbmMtPmxpbmssDQo+ID4gPiArCQkJCQkJICAmbmRwLT5jaGFu
-bmVsX3F1ZXVlKTsNCj4gPiA+ICsJCQkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmbmRwLT5sb2Nr
-LCBmbGFncyk7DQo+ID4gPiArDQo+ID4gPiArCQkJCW5ldGRldl9kYmcobmRwLT5uZGV2LmRldiwN
-Cj4gPiA+ICsJCQkJCSAgICJOQ1NJOiBDaGFubmVsICV1IGFkZGVkIHRvIHF1ZXVlIChsaW5rICVz
-KVxuIiwNCj4gPiA+ICsJCQkJCSAgIG5jLT5pZCwNCj4gPiA+ICsJCQkJCSAgIG5jbS0+ZGF0YVsy
-XSAmIDB4MSA/ICJ1cCIgOiAiZG93biIpOw0KPiA+ID4gKwkJCX0NCj4gPiA+ICsNCj4gPiA+ICsJ
-CQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZuYy0+bG9jaywgY2ZsYWdzKTsNCj4gPiA+ICsNCj4g
-PiA+ICsJCQlpZiAod2l0aF9saW5rICYmICFucC0+bXVsdGlfY2hhbm5lbCkNCj4gPiA+ICsJCQkJ
-YnJlYWs7DQo+ID4gDQo+ID4gU2ltaWxhciBpc3N1ZSBoZXJlLiBBcyB3ZSBhcmUgdXNpbmcgYnJl
-YWssIHNvIGVhY2ggcGFja2FnZSB3aWxsIGNvbmZpZ3VyZSBvbmUgYWN0aXZlIFRYLg0KPiA+IA0K
-PiANCj4gSSBiZWxpZXZlIHRoaXMgaXMgaGFuZGxlZCBwcm9wZXJseSBpbiBuY3NpX2NoYW5uZWxf
-aXNfdHgoKSBpbiB0aGUgbW9zdA0KPiByZWNlbnQgcmV2aXNpb24uDQoNCkkgc2F3IHRoaXMgaXNz
-dWUgd2l0aCB0aGUgbGFzdCByZXZpc2lvbi4gSSB3YXMgdXNpbmcgdGhlIHdyb25nIGVtYWlsIHRv
-IHJlcGx5Lg0KDQo+IA0KPiA+ID4gIAkJfQ0KPiA+ID4gKwkJaWYgKHdpdGhfbGluayAmJiAhbmRw
-LT5tdWx0aV9wYWNrYWdlKQ0KPiA+ID4gKwkJCWJyZWFrOw0KPiA+ID4gIAl9DQo+ID4gPiAgDQo+
-ID4gPiAtCWlmICghZm91bmQpIHsNCj4gPiA+ICsJaWYgKGxpc3RfZW1wdHkoJm5kcC0+Y2hhbm5l
-bF9xdWV1ZSkgJiYgZm91bmQpIHsNCj4gPiA+ICsJCW5ldGRldl9pbmZvKG5kcC0+bmRldi5kZXYs
-DQo+ID4gPiArCQkJICAgICJOQ1NJOiBObyBjaGFubmVsIHdpdGggbGluayBmb3VuZCwgY29uZmln
-dXJpbmcgY2hhbm5lbCAldVxuIiwNCj4gPiA+ICsJCQkgICAgZm91bmQtPmlkKTsNCj4gPiA+ICsJ
-CXNwaW5fbG9ja19pcnFzYXZlKCZuZHAtPmxvY2ssIGZsYWdzKTsNCj4gPiA+ICsJCWxpc3RfYWRk
-X3RhaWxfcmN1KCZmb3VuZC0+bGluaywgJm5kcC0+Y2hhbm5lbF9xdWV1ZSk7DQo+ID4gPiArCQlz
-cGluX3VubG9ja19pcnFyZXN0b3JlKCZuZHAtPmxvY2ssIGZsYWdzKTsNCj4gPiA+ICsJfSBlbHNl
-IGlmICghZm91bmQpIHsNCj4gPiA+ICAJCW5ldGRldl93YXJuKG5kcC0+bmRldi5kZXYsDQo+ID4g
-PiAtCQkJICAgICJOQ1NJOiBObyBjaGFubmVsIGZvdW5kIHdpdGggbGlua1xuIik7DQo+ID4gPiAr
-CQkJICAgICJOQ1NJOiBObyBjaGFubmVsIGZvdW5kIHRvIGNvbmZpZ3VyZSFcbiIpOw0KPiA+ID4g
-IAkJbmNzaV9yZXBvcnRfbGluayhuZHAsIHRydWUpOw0KPiA+ID4gIAkJcmV0dXJuIC1FTk9ERVY7
-DQo+ID4gPiAgCX0NCj4gPiANCj4gPiBBbHNvLCBmb3IgZGVzZWxlY3QgcGFja2FnZSBoYW5kbGVy
-IGZ1bmN0aW9uLCBkbyB3ZSB3YW50IHRvIHNldCB0byBpbmFjdGl2ZSBoZXJlPw0KPiA+IElmIHdl
-IGp1c3QgY2hhbmdlIHRoZSBzdGF0ZSwgdGhlIGNhY2hlZCBkYXRhIHN0aWxsIGtlZXBzIHRoZSBv
-bGQgdmFsdWUuIElmIHRoZSBuZXcgDQo+ID4gbmNzaV9yZXNldF9kZXYoKSBmdW5jdGlvbiBpcyBo
-YW5kbGluZyBvbmUgYnkgb25lLCBjYW4gd2Ugc2tpcCB0aGlzIHBhcnQ/DQo+IA0KPiBUZWNobmlj
-YWxseSB5ZXMgd2UgY291bGQgc2tpcCB0aGUgc3RhdGUgY2hhbmdlIGhlcmUgc2luY2UNCj4gbmNz
-aV9yZXNldF9kZXYoKSB3aWxsIGhhdmUgYWxyZWFkeSBkb25lIGl0LiBIb3dldmVyIGlmIHdlIHNl
-bmQgYSBEUA0KPiBjb21tYW5kIHZpYSBzb21lIG90aGVyIG1lYW5zIHRoZW4gaXQgaXMgcHJvYmFi
-bHkgYmVzdCB0byBlbnN1cmUgd2UgdHJlYXQNCj4gYWxsIGNoYW5uZWxzIG9uIHRoYXQgcGFja2Fn
-ZSBhcyBpbmFjdGl2ZS4NCg0KV2hlbiBJIHRlc3RlZCwgaWYgSSBkaWRuJ3QgY29tbWVudCBvdXQg
-dGhlIHN0YXRlIGNoYW5nZSBpbiByZXNwb25zZSBoYW5kbGVyLA0KbmNzaV9yZXNldF9kZXYoKSBm
-dW5jdGlvbiB3aWxsIG5vdCBoYW5kbGUgcHJvcGVybHkgYW5kIHNvbWUgY2hhbm5lbHMgZ290IGlu
-dG8NCmludmlzaWJsZSBzdGF0ZSBhbmQgYXQgdGhlIGVuZCB3ZSBsb3N0IHRob3NlIHNlbGVjdGFi
-bGUgY2hhbm5lbHMuDQoNCj4gDQo+ID4gDQo+ID4gc3RhdGljIGludCBuY3NpX3JzcF9oYW5kbGVy
-X2RwKHN0cnVjdCBuY3NpX3JlcXVlc3QgKm5yKQ0KPiA+IHsNCj4gPiAJc3RydWN0IG5jc2lfcnNw
-X3BrdCAqcnNwOw0KPiA+IAlzdHJ1Y3QgbmNzaV9kZXZfcHJpdiAqbmRwID0gbnItPm5kcDsNCj4g
-PiAJc3RydWN0IG5jc2lfcGFja2FnZSAqbnA7DQo+ID4gCXN0cnVjdCBuY3NpX2NoYW5uZWwgKm5j
-Ow0KPiA+IAl1bnNpZ25lZCBsb25nIGZsYWdzOw0KPiA+IA0KPiA+IAkvKiBGaW5kIHRoZSBwYWNr
-YWdlICovDQo+ID4gCXJzcCA9IChzdHJ1Y3QgbmNzaV9yc3BfcGt0ICopc2tiX25ldHdvcmtfaGVh
-ZGVyKG5yLT5yc3ApOw0KPiA+IAluY3NpX2ZpbmRfcGFja2FnZV9hbmRfY2hhbm5lbChuZHAsIHJz
-cC0+cnNwLmNvbW1vbi5jaGFubmVsLA0KPiA+IAkJCQkgICAgICAmbnAsIE5VTEwpOw0KPiA+IAlp
-ZiAoIW5wKQ0KPiA+IAkJcmV0dXJuIC1FTk9ERVY7DQo+ID4gDQo+ID4gCS8qIENoYW5nZSBzdGF0
-ZSBvZiBhbGwgY2hhbm5lbHMgYXR0YWNoZWQgdG8gdGhlIHBhY2thZ2UgKi8NCj4gPiAJTkNTSV9G
-T1JfRUFDSF9DSEFOTkVMKG5wLCBuYykgew0KPiA+IAkJc3Bpbl9sb2NrX2lycXNhdmUoJm5jLT5s
-b2NrLCBmbGFncyk7DQo+ID4gCQluYy0+c3RhdGUgPSBOQ1NJX0NIQU5ORUxfSU5BQ1RJVkU7DQo+
-ID4gDQo+ID4gCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZuYy0+bG9jaywgZmxhZ3MpOw0KPiA+
-IAl9DQo+ID4gDQo+ID4gCXJldHVybiAwOw0KPiA+IH0NCj4gPiANCj4gPiANCg0KDQo=
+On 5 November 2018 at 18:57, Jessica Yu <jeyu@kernel.org> wrote:
+> Instead of saving a pointer to the .plt and .init.plt sections to apply
+> plt-based relocations, save and use their section indices instead.
+>
+> The mod->arch.{core,init}.plt pointers were problematic for livepatch
+> because they pointed within temporary section headers (provided by the
+> module loader via info->sechdrs) that would be freed after module load.
+> Since livepatch modules may need to apply relocations post-module-load
+> (for example, to patch a module that is loaded later), using section
+> indices to offset into the section headers (instead of accessing them
+> through a saved pointer) allows livepatch modules on arm64 to pass in
+> their own copy of the section headers to apply_relocate_add() to apply
+> delayed relocations.
+>
+> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> ---
+>
+> Note: Addressed Will's comment about the pltsec -> plt_info rename and
+> removed that change to reduce unnecessary code churn. That is the only
+> change from the first version. I didn't include the Ack's for this reason
+> so let me know if this version is OK as well.
+>
+> arch/arm64/include/asm/module.h |  8 +++++---
+> arch/arm64/kernel/module-plts.c | 36 ++++++++++++++++++++----------------
+> arch/arm64/kernel/module.c      |  9 +++++----
+> 3 files changed, 30 insertions(+), 23 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/module.h
+> b/arch/arm64/include/asm/module.h
+> index 97d0ef12e2ff..f81c1847312d 100644
+> --- a/arch/arm64/include/asm/module.h
+> +++ b/arch/arm64/include/asm/module.h
+> @@ -22,7 +22,7 @@
+>
+> #ifdef CONFIG_ARM64_MODULE_PLTS
+> struct mod_plt_sec {
+> -       struct elf64_shdr       *plt;
+> +       int                     plt_shndx;
+>         int                     plt_num_entries;
+>         int                     plt_max_entries;
+> };
+> @@ -36,10 +36,12 @@ struct mod_arch_specific {
+> };
+> #endif
+>
+> -u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela
+> *rela,
+> +u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
+> +                         void *loc, const Elf64_Rela *rela,
+>                           Elf64_Sym *sym);
+>
+> -u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val);
+> +u64 module_emit_veneer_for_adrp(struct module *mod, Elf64_Shdr *sechdrs,
+> +                               void *loc, u64 val);
+>
+> #ifdef CONFIG_RANDOMIZE_BASE
+> extern u64 module_alloc_base;
+> diff --git a/arch/arm64/kernel/module-plts.c
+> b/arch/arm64/kernel/module-plts.c
+> index f0690c2ca3e0..c04b0d6abde0 100644
+> --- a/arch/arm64/kernel/module-plts.c
+> +++ b/arch/arm64/kernel/module-plts.c
+> @@ -16,12 +16,13 @@ static bool in_init(const struct module *mod, void *loc)
+>         return (u64)loc - (u64)mod->init_layout.base <
+> mod->init_layout.size;
+> }
+>
+> -u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela
+> *rela,
+> +u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
+> +                         void *loc, const Elf64_Rela *rela,
+>                           Elf64_Sym *sym)
+> {
+>         struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
+>                                                           &mod->arch.init;
+> -       struct plt_entry *plt = (struct plt_entry *)pltsec->plt->sh_addr;
+> +       struct plt_entry *plt = (struct plt_entry *)(sechdrs +
+> pltsec->plt_shndx)->sh_addr;
+
+What's wrong with
+
+(struct plt_entry *)sechdrs[pltsec->plt_shndx].sh_addr
+
+?
+
+
+>         int i = pltsec->plt_num_entries;
+>         u64 val = sym->st_value + rela->r_addend;
+>
+> @@ -43,11 +44,12 @@ u64 module_emit_plt_entry(struct module *mod, void *loc,
+> const Elf64_Rela *rela,
+> }
+>
+> #ifdef CONFIG_ARM64_ERRATUM_843419
+> -u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val)
+> +u64 module_emit_veneer_for_adrp(struct module *mod, Elf64_Shdr *sechdrs,
+> +                               void *loc, u64 val)
+> {
+>         struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
+>                                                           &mod->arch.init;
+> -       struct plt_entry *plt = (struct plt_entry *)pltsec->plt->sh_addr;
+> +       struct plt_entry *plt = (struct plt_entry *)(sechdrs +
+> pltsec->plt_shndx)->sh_addr;
+>         int i = pltsec->plt_num_entries++;
+>         u32 mov0, mov1, mov2, br;
+>         int rd;
+> @@ -202,7 +204,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
+> *sechdrs,
+>         unsigned long core_plts = 0;
+>         unsigned long init_plts = 0;
+>         Elf64_Sym *syms = NULL;
+> -       Elf_Shdr *tramp = NULL;
+> +       Elf_Shdr *pltsec, *tramp = NULL;
+>         int i;
+>
+>         /*
+> @@ -211,9 +213,9 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
+> *sechdrs,
+>          */
+>         for (i = 0; i < ehdr->e_shnum; i++) {
+>                 if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+> -                       mod->arch.core.plt = sechdrs + i;
+> +                       mod->arch.core.plt_shndx = i;
+>                 else if (!strcmp(secstrings + sechdrs[i].sh_name,
+> ".init.plt"))
+> -                       mod->arch.init.plt = sechdrs + i;
+> +                       mod->arch.init.plt_shndx = i;
+>                 else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+>                          !strcmp(secstrings + sechdrs[i].sh_name,
+>                                  ".text.ftrace_trampoline"))
+> @@ -222,7 +224,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
+> *sechdrs,
+>                         syms = (Elf64_Sym *)sechdrs[i].sh_addr;
+>         }
+>
+> -       if (!mod->arch.core.plt || !mod->arch.init.plt) {
+> +       if (!mod->arch.core.plt_shndx || !mod->arch.init.plt_shndx) {
+>                 pr_err("%s: module PLT section(s) missing\n", mod->name);
+>                 return -ENOEXEC;
+>         }
+> @@ -254,17 +256,19 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr
+> *sechdrs,
+>                                                 sechdrs[i].sh_info, dstsec);
+>         }
+>
+> -       mod->arch.core.plt->sh_type = SHT_NOBITS;
+> -       mod->arch.core.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+> -       mod->arch.core.plt->sh_addralign = L1_CACHE_BYTES;
+> -       mod->arch.core.plt->sh_size = (core_plts  + 1) * sizeof(struct
+> plt_entry);
+> +       pltsec = sechdrs + mod->arch.core.plt_shndx;
+> +       pltsec->sh_type = SHT_NOBITS;
+> +       pltsec->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+> +       pltsec->sh_addralign = L1_CACHE_BYTES;
+> +       pltsec->sh_size = (core_plts  + 1) * sizeof(struct plt_entry);
+>         mod->arch.core.plt_num_entries = 0;
+>         mod->arch.core.plt_max_entries = core_plts;
+>
+> -       mod->arch.init.plt->sh_type = SHT_NOBITS;
+> -       mod->arch.init.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+> -       mod->arch.init.plt->sh_addralign = L1_CACHE_BYTES;
+> -       mod->arch.init.plt->sh_size = (init_plts + 1) * sizeof(struct
+> plt_entry);
+> +       pltsec = sechdrs + mod->arch.init.plt_shndx;
+> +       pltsec->sh_type = SHT_NOBITS;
+> +       pltsec->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+> +       pltsec->sh_addralign = L1_CACHE_BYTES;
+> +       pltsec->sh_size = (init_plts + 1) * sizeof(struct plt_entry);
+>         mod->arch.init.plt_num_entries = 0;
+>         mod->arch.init.plt_max_entries = init_plts;
+>
+> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+> index f0f27aeefb73..c2abe59c6f8f 100644
+> --- a/arch/arm64/kernel/module.c
+> +++ b/arch/arm64/kernel/module.c
+> @@ -198,7 +198,8 @@ static int reloc_insn_imm(enum aarch64_reloc_op op,
+> __le32 *place, u64 val,
+>         return 0;
+> }
+>
+> -static int reloc_insn_adrp(struct module *mod, __le32 *place, u64 val)
+> +static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
+> +                          __le32 *place, u64 val)
+> {
+>         u32 insn;
+>
+> @@ -215,7 +216,7 @@ static int reloc_insn_adrp(struct module *mod, __le32
+> *place, u64 val)
+>                 insn &= ~BIT(31);
+>         } else {
+>                 /* out of range for ADR -> emit a veneer */
+> -               val = module_emit_veneer_for_adrp(mod, place, val & ~0xfff);
+> +               val = module_emit_veneer_for_adrp(mod, sechdrs, place, val &
+> ~0xfff);
+>                 if (!val)
+>                         return -ENOEXEC;
+>                 insn = aarch64_insn_gen_branch_imm((u64)place, val,
+> @@ -368,7 +369,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+>                 case R_AARCH64_ADR_PREL_PG_HI21_NC:
+>                         overflow_check = false;
+>                 case R_AARCH64_ADR_PREL_PG_HI21:
+> -                       ovf = reloc_insn_adrp(me, loc, val);
+> +                       ovf = reloc_insn_adrp(me, sechdrs, loc, val);
+>                         if (ovf && ovf != -ERANGE)
+>                                 return ovf;
+>                         break;
+> @@ -413,7 +414,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+>
+>                         if (IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
+>                             ovf == -ERANGE) {
+> -                               val = module_emit_plt_entry(me, loc,
+> &rel[i], sym);
+> +                               val = module_emit_plt_entry(me, sechdrs,
+> loc, &rel[i], sym);
+>                                 if (!val)
+>                                         return -ENOEXEC;
+>                                 ovf = reloc_insn_imm(RELOC_OP_PREL, loc,
+> val, 2,
+> --
+> 2.14.5
+>
