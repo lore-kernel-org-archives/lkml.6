@@ -2,125 +2,69 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D2EC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40306C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B10820827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:29:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ZRfkjajb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B10820827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 1278D20827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1278D20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbeKFCuB (ORCPT
+        id S1730137AbeKFCuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:50:01 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:24512 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729692AbeKFCuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:50:00 -0500
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wA5HSuKm031803;
-        Tue, 6 Nov 2018 02:28:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wA5HSuKm031803
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541438937;
-        bh=IYwV7hRb+zvP1QmrH2b7ksnh9KdD8BQuBnj+U7T28dk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZRfkjajbiUuZNnyjfBneDjVTPW6jZwcAApVlb8+VuaI4B+CIXlW70u5nnmYvi+JtQ
-         O5pKvaxFRwUqiOjgabZ5iiZQ5SEh8JgdJVwCMNgxuibDsv/Jh8fAkMFRKku1KJuBF6
-         INyBVYwUKzOWjgtZOxA+uFj9wRyvKSUMcpkrXUA2n5VoJnqFt0DewKKgkDY/5VJaoq
-         g+MKJjE7lZXf9YR0unBBfK5zTRRcyPWMZIjqzoFz2FEczayhG+R3FKHvXBaKRGxJBV
-         7aP8s1ZjopQpyveMrrJl54Wn6SDbfstx5S3bTlghTJh0ijlu6gRvWhkcuL8A9+f7T7
-         2oaPt4IFadWFA==
-X-Nifty-SrcIP: [209.85.221.172]
-Received: by mail-vk1-f172.google.com with SMTP id v70so2196304vkv.7;
-        Mon, 05 Nov 2018 09:28:57 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJpUySwzE+v1MmqIn45EB5Yx/DAJAd/8s24x1DgOUU/0zWJb+O0
-        RMS70L4SuSINaio9Euv4KWph9Rl7Al5f9F1H7NQ=
-X-Google-Smtp-Source: AJdET5epT+bTC+jQEevuNHvErj1iHKg2rC39BkvwapWPl91CILSMIQj/+DEXh4umAZ5xmT24URGh+K5Ojp675oKBd4U=
-X-Received: by 2002:a1f:5e47:: with SMTP id s68mr2276736vkb.64.1541438936187;
- Mon, 05 Nov 2018 09:28:56 -0800 (PST)
+        Mon, 5 Nov 2018 21:50:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33860 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729692AbeKFCuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:50:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 33867B0B7;
+        Mon,  5 Nov 2018 17:29:32 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 18:29:31 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     linux-mm@kvack.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aarcange@redhat.com,
+        aaron.lu@intel.com, akpm@linux-foundation.org,
+        alex.williamson@redhat.com, bsd@redhat.com,
+        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
+        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
+        mike.kravetz@oracle.com, Pavel.Tatashin@microsoft.com,
+        prasad.singamsetty@oracle.com, rdunlap@infradead.org,
+        steven.sistare@oracle.com, tim.c.chen@intel.com, tj@kernel.org,
+        vbabka@suse.cz
+Subject: Re: [RFC PATCH v4 00/13] ktask: multithread CPU-intensive kernel work
+Message-ID: <20181105172931.GP4361@dhcp22.suse.cz>
+References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-References: <20181026212034.5491-1-linux@rasmusvillemoes.dk>
- <20181027194725.GA30155@avx2> <408ef493-de1d-37bb-de66-69134c5a1aca@rasmusvillemoes.dk>
-In-Reply-To: <408ef493-de1d-37bb-de66-69134c5a1aca@rasmusvillemoes.dk>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 6 Nov 2018 02:28:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASdTAjuBKsLTym0N34XDELQw4B4pDJBxQ=K7RYDqRJpbw@mail.gmail.com>
-Message-ID: <CAK7LNASdTAjuBKsLTym0N34XDELQw4B4pDJBxQ=K7RYDqRJpbw@mail.gmail.com>
-Subject: Re: [PATCH] fs: proc: move linux_proc_banner to where it is used
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 5:18 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 2018-10-27 21:47, Alexey Dobriyan wrote:
-> > On Fri, Oct 26, 2018 at 11:20:34PM +0200, Rasmus Villemoes wrote:
-> >> +#include <generated/compile.h>
-> >
-> >> +#define linux_proc_banner \
-> >> +    "%s version %s" \
-> >> +    " (" LINUX_COMPILE_BY "@" LINUX_COMPILE_HOST ")" \
-> >> +    " (" LINUX_COMPILER ") %s\n"
-> >
-> > Include doesn't work if compiling from scratch:
->
-> Urgh, thanks. I assumed that all the include/generated/ stuff was always
-> generated by the prepare steps in the top Makefile. But the logic for
-> making compile.h is in init/Makefile.
->
-> >       rm -rf ../obj
-> >       mkdir ../obj
-> >       make O=../obj defconfig
-> >       make O=../obj fs/proc/version.o
-> >
-> >   CC      fs/proc/version.o
-> > fs/proc/version.c:2:10: fatal error: generated/compile.h: No such file or directory
->
-> The same happens in current mainline for arch/x86/boot/version.o:
->
-> $ make arch/x86/boot/version.o
->   CALL    scripts/checksyscalls.sh
->   DESCEND  objtool
->   CC      arch/x86/boot/version.o
-> arch/x86/boot/version.c:17:31: fatal error: generated/compile.h: No such
-> file or directory
->
-> Cc kbuild: Wouldn't it be a little nicer creating generated/compile.h
-> along with the other files in generated/, so that everybody can rely on
-> them being there instead of having the logic for compile.h hidden away
-> in init/Makefile and listing it as an explicit dependency? Or is there
-> some reason compile.h is special?
->
-> Rasmus
->
+On Mon 05-11-18 11:55:45, Daniel Jordan wrote:
+> Michal, you mentioned that ktask should be sensitive to CPU utilization[1].
+> ktask threads now run at the lowest priority on the system to avoid disturbing
+> busy CPUs (more details in patches 4 and 5).  Does this address your concern?
+> The plan to address your other comments is explained below.
 
-I think the basic idea is,
-the build version should not be incremented
-if you do incremental build without touching any source file.
+I have only glanced through the documentation patch and it looks like it
+will be much less disruptive than the previous attempts. Now the obvious
+question is how does this behave on a moderately or even busy system
+when you compare that to a single threaded execution. Some numbers about
+best/worst case execution would be really helpful.
 
-If you create/update <generated/compile.h> first,
-you never know whether the .version should be incremented or not.
-
-
+I will look closer later.
 
 -- 
-Best Regards
-Masahiro Yamada
+Michal Hocko
+SUSE Labs
