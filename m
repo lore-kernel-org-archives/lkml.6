@@ -2,153 +2,113 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F3CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A85AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BAA12081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:52:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HtRL+MA7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAA12081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1BA1B2081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA1B2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729990AbeKFCNa (ORCPT
+        id S1730013AbeKFCOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:13:30 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:33563 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729681AbeKFCNa (ORCPT
+        Mon, 5 Nov 2018 21:14:38 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:43600 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729681AbeKFCOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:13:30 -0500
-Received: by mail-vs1-f68.google.com with SMTP id p74so5531529vsc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:52:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iyyUKHmtexwbpZfeWTOttjiouC1YbaLmdZ2FAklqlcc=;
-        b=HtRL+MA7LPQS7WsvxNfQjR47oBTR9wZBOaVQn0ZEGdFWS9rBxNQB4Tr2e1z3raFmDh
-         pfaD8yXuDj3oQs4i3PDs9st0VpxqdY02Ip5yyrCcc/U9zJplibxch5TzFjfSIp1RBpIK
-         tO3Wyw3AJMVWXiGgiq/KUM16jLz78wXVTHs8s=
+        Mon, 5 Nov 2018 21:14:38 -0500
+Received: from mr1.cc.vt.edu (smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id wA5Gs4WL001192
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 11:54:04 -0500
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id wA5Grx4m017929
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 11:54:04 -0500
+Received: by mail-qk1-f200.google.com with SMTP id c84so22774301qkb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:54:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iyyUKHmtexwbpZfeWTOttjiouC1YbaLmdZ2FAklqlcc=;
-        b=lJQOgz7ROwh9iERfLs1KGOm/ammeU+b1yUg01ge4NR0Nk5kazKo8m75dD4v0311imx
-         7zjolwdb0Y8yWkCAQIOgVvsH4pPxudYDaZ5kraXsCJ2hzdWlSJP0J5IEf/oPjUkIouVD
-         mgBiadWck4FUmR2SKAZyDP72pBZoDr/nBUj8L6XoGP5dhhm8v//wiOveIZM6bU6Dmmbm
-         K5OfqV6PDHP5YfdZSvRxWtq5cnwOTeMP+rV4sfMgMbdaIzjOGhxvs+uCuDaoMZ8Z2x8f
-         8y7K3vsW1oHIm1vv/ss2h8siBgP+57wP9MsO3Py4JMpIdmlWw1w7TYawOy1kRGQjhsyr
-         hiPQ==
-X-Gm-Message-State: AGRZ1gLP3ePWyQliHlbXDdBpwFu1J8VP9I+mB0qE4g7GE5AkwWETQr37
-        bKQSCrGI5X0yWOPYPz7ivsbCA41+lwE=
-X-Google-Smtp-Source: AJdET5eFOQUr1TWXDaG1s1Oz7mXBbdNkfJfB4Rk2dohEWtS6iqgl3B9epJfQJhOP69eJAYf96VA1Dg==
-X-Received: by 2002:a67:8a88:: with SMTP id m130mr9646146vsd.206.1541436775672;
-        Mon, 05 Nov 2018 08:52:55 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id b77sm11354014vka.21.2018.11.05.08.52.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 08:52:54 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id z11so1505943uaa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:52:54 -0800 (PST)
-X-Received: by 2002:a9f:3829:: with SMTP id p38mr10470451uad.25.1541436773650;
- Mon, 05 Nov 2018 08:52:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20181026173544.136037-1-evgreen@chromium.org> <20181026173544.136037-2-evgreen@chromium.org>
- <154129921872.88331.15831802252403117971@swboyd.mtv.corp.google.com>
-In-Reply-To: <154129921872.88331.15831802252403117971@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 5 Nov 2018 08:52:39 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UKfDsthT4W3H4jR0Qvw-izLShCjWngN2uBrY-FUEtDDQ@mail.gmail.com>
-Message-ID: <CAD=FV=UKfDsthT4W3H4jR0Qvw-izLShCjWngN2uBrY-FUEtDDQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] dt-bindings: phy-qcom-qmp: Fix register underspecification
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        cang@codeaurora.org, LKML <linux-kernel@vger.kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=1wziqTN7Fdza7mxD6Ka5sSVZsQe1xBnHGG3bPBOWNKw=;
+        b=qpdrQdMun9ztdiEQu7mswDI8flXDIABGypFO3/ThFNbXjVe73MFkl935FLoVHzNzkq
+         lVb1t7uiy8pUFiDvGm/vL9U+JLzC8BToYK1bNFuXc9q4xkStp6kxeWf2jnjDC8XwkQTt
+         5rh6yOkerBK8uL/f5xNDoH/y80j6pxX7jZJdC1BQVoXNO2EDGqBXOZkGfq0r3nvw9cIJ
+         4Ept/lImOFdhT+t9VbVYOmzcaTCs/Z31V6BXY89C0IbEesn9HcTx8S7ng+aylCg8pgjX
+         2/5HoFs2zS8J7npFcNO8wTS2rUu0Y5HKszlPw0BvTcPU7yk4T43Wckq5ASG8mRUieWmr
+         FrXA==
+X-Gm-Message-State: AGRZ1gIFStDHoXx2SlXLxukenf8grU8feAi62AdLGLVduouVBVj+fO5Q
+        /EEleNlbKbHOAdCVmlPLazxq3qaq2HY5dweOQUC8DN0fExir2nqA2Eqdmu0GKH6a9RcJDlmhKJ2
+        RY/i8Xs4/tHRpP3kyk3eLUma0lbXPOmyAAfs=
+X-Received: by 2002:a37:8f02:: with SMTP id r2mr21677927qkd.246.1541436839576;
+        Mon, 05 Nov 2018 08:53:59 -0800 (PST)
+X-Google-Smtp-Source: AJdET5eKTL1E1IsaVSqLtz70svXn+78e3/jPnMlvKVSvBXq6pCTkZlYy6V761tMZkkjCMzFfK+lZYA==
+X-Received: by 2002:a37:8f02:: with SMTP id r2mr21677879qkd.246.1541436838992;
+        Mon, 05 Nov 2018 08:53:58 -0800 (PST)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id v3-v6sm29387972qth.74.2018.11.05.08.53.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 08:53:57 -0800 (PST)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
+Cc:     Adam Borowski <kilobyte@angband.pl>,
+        Pintu Agarwal <pintu.ping@gmail.com>, linux-mm@kvack.org,
+        open list <linux-kernel@vger.kernel.org>,
+        kernelnewbies@kernelnewbies.org
+Subject: Re: Creating compressed backing_store as swapfile
+In-Reply-To: <6a1f57b6-503c-48a2-689b-3c321cd6d29f@gmail.com>
+References: <CAOuPNLjuM5qq3go9ZFZcK0G5pQxTQb0DY36xu+8SL4vC4zJntw@mail.gmail.com> <20181105155815.i654i5ctmfpqhggj@angband.pl> <79d0c96a-a0a2-63ec-db91-42fd349d50c1@gmail.com> <42594.1541434463@turing-police.cc.vt.edu>
+ <6a1f57b6-503c-48a2-689b-3c321cd6d29f@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1541436836_4003P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 05 Nov 2018 11:53:56 -0500
+Message-ID: <83467.1541436836@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--==_Exmh_1541436836_4003P
+Content-Type: text/plain; charset=us-ascii
 
-On Sat, Nov 3, 2018 at 7:40 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Evan Green (2018-10-26 10:35:40)
-> >                         (or)
-> > @@ -150,3 +153,54 @@ Example:
-> >                 ...
-> >                 ...
-> >         };
-> > +
-> > +       phy@88eb000 {
-> > +               compatible = "qcom,sdm845-qmp-usb3-uni-phy";
-> > +               reg = <0x88eb000 0x18c>;
-> > +               #clock-cells = <1>;
-> > +               #address-cells = <1>;
-> > +               #size-cells = <1>;
-> > +               ranges;
-> > +
-> > +               clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
-> > +                        <&gcc GCC_USB_PHY_CFG_AHB2PHY_CLK>,
-> > +                        <&gcc GCC_USB3_SEC_CLKREF_CLK>,
-> > +                        <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>;
-> > +               clock-names = "aux", "cfg_ahb", "ref", "com_aux";
-> > +
-> > +               resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR>,
-> > +                        <&gcc GCC_USB3_PHY_SEC_BCR>;
-> > +               reset-names = "phy", "common";
-> > +
-> > +               lane@88eb200 {
-> > +                       reg = <0x88eb200 0x128>,
-> > +                             <0x88eb400 0x1fc>,
-> > +                             <0x88eb800 0x218>,
-> > +                             <0x88eb600 0x70>;
-> > +                       #phy-cells = <0>;
-> > +                       clocks = <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
-> > +                       clock-names = "pipe0";
-> > +                       clock-output-names = "usb3_uni_phy_pipe_clk_src";
->
-> If this has clock-output-names then I would expect to see a #clock-cells
-> property, but that isn't here in this node. Are we relying on the same
-> property in the parent node?
+On Mon, 05 Nov 2018 11:28:49 -0500, "Austin S. Hemmelgarn" said:
 
-If I had to guess, I believe it's yet more confusing than that.  I
-believe you actually point to the parent phandle if you want to use
-the clock.  I notice that the parent has #clock-cells as 1 so
-presumably this is how you point to one child or the other?  ...but I
-don't think it's documented how this works.  The lane nodes don't have
-any sort of ID as far as I can tell.  ...and in any case having
-#clock-cells of 1 makes no sense for USB 3 PHYs which are supposed to
-only have one child?
+> Also, it's probably worth noting that BTRFS doesn't need to decompress
+> the entire file to read or write blocks in the middle, it splits the
+> file into 128k blocks and compresses each of those independent of the
+> others, so it can just decompress the 128k block that holds the actual
+> block that's needed.
 
-Let's look at the code, maybe?  Hrm, phy_pipe_clk_register() takes no
-ID or anything.  Huh?  OK, so as far as I can tell
-of_clk_add_provider() is never called on this clock...
+Presumably it does something sane with block allocation for the now-compressed
+128K that's presumably much smaller.  Also, that limits the damage from writing to
+the middle of a compression unit....
 
-So I think the answer is that #clock-cells should be <0> and should
-move to the child node to match with clock-output-names.  Then I guess
-(if anyone references this clock from the device tree rather than
-relying on the global clock-output-names) we should add the
-of_clk_add_provider() into the code?
-
-Maybe we can add that as a patch to the end of this series?  There are
-so many crazy / random things wrong with these bindings that it makes
-sense to make smaller / incremental changes?
+That *does* however increase the memory requirement - you can OOM or
+deadlock if your read/write from the swap needs an additional 128K for the
+compression buffer at an inconvenient time...
 
 
--Doug
+--==_Exmh_1541436836_4003P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBW+B1pI0DS38y7CIcAQIaSwgAlaWBTJLuKtJT7ru/WLIqVahEPpFO8vgl
+0Wd9hwwQSj1a4HtpAkeRTo3/24JBDnIg315A8Q+YW0/zF9MP2cecGTCDT4tmJUR1
+NhN2hoAnKvLleU5ZebPygptkEkiQdbs7G92ok/Zi32lPUwWVt1ZdQG3HVYHWtNxJ
+ret95nyOWAgBJFJmb+I9kiO8O3RewbnfPjLRiUA1d1iaaK6Zilur44fG6K5KN5Yv
+jxN/ee4UM+w/u3cTEpVyAdFqAVq8phDKn1Pa53LSa6TtHXoUOI3ir/k2owUxfzE6
+pO+Len2d4Y2U1VcrfyB5yaLyd5gFGoe82qwsgregzqCbaygKQ4UgPg==
+=OHwC
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1541436836_4003P--
