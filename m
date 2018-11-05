@@ -2,88 +2,134 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FB8C46464
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A34C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A6A2147D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:28:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sR1d/bzk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A6A2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C5B222147D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:32:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B222147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbeKFItM (ORCPT
+        id S1727128AbeKFIyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 03:49:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbeKFItL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 03:49:11 -0500
-Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67E2C20862;
-        Mon,  5 Nov 2018 23:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541460422;
-        bh=qUwqEechARY9nZcoYFLGIbQ8l7d+5rhd8+k1jHebbtk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sR1d/bzkrpWo/+sNBgzkK60qzEvgakTQJ86vrFD95LjeQlDt3VEpKjxabtzkMGEh1
-         eauwrd1ohLhiCa9rusEju8hl7LBde97t/R30kM9VFibGLphv4D2pJ6RI76b31eqccD
-         F1//EFbNZuFUhU+NjEFnp5qFDBoWQZ+nck8dCyBs=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-crypto@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Subject: [RFC PATCH v3 02/15] crypto: chacha20-generic - don't unnecessarily use atomic walk
-Date:   Mon,  5 Nov 2018 15:25:13 -0800
-Message-Id: <20181105232526.173947-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
-In-Reply-To: <20181105232526.173947-1-ebiggers@kernel.org>
-References: <20181105232526.173947-1-ebiggers@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 6 Nov 2018 03:54:11 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46018 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeKFIyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 03:54:11 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B5FF904;
+        Mon,  5 Nov 2018 23:32:00 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 15:31:59 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Vitaly Wool <vitalywool@gmail.com>
+Cc:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org,
+        Oleksiy.Avramchenko@sony.com, Guenter Roeck <linux@roeck-us.net>,
+        snild@sony.com, Jongseok Kim <ks77sj@gmail.com>
+Subject: Re: [PATCH] z3fold: fix possible reclaim races
+Message-Id: <20181105153159.0c1825bcb956c53a1d02a6ca@linux-foundation.org>
+In-Reply-To: <20181105162225.74e8837d03583a9b707cf559@gmail.com>
+References: <20181105162225.74e8837d03583a9b707cf559@gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, 5 Nov 2018 16:22:25 +0100 Vitaly Wool <vitalywool@gmail.com> wrote:
 
-chacha20-generic doesn't use SIMD instructions or otherwise disable
-preemption, so passing atomic=true to skcipher_walk_virt() is
-unnecessary.
+> Reclaim and free can race on an object which is basically fine but
+> in order for reclaim to be able to  map "freed" object we need to
+> encode object length in the handle. handle_to_chunks() is then
+> introduced to extract object length from a handle and use it during
+> mapping.
+> 
+> Moreover, to avoid racing on a z3fold "headless" page release, we
+> should not try to free that page in z3fold_free() if the reclaim
+> bit is set. Also, in the unlikely case of trying to reclaim a page
+> being freed, we should not proceed with that page.
+> 
+> While at it, fix the page accounting in reclaim function.
+> 
+> This patch supersedes "[PATCH] z3fold: fix reclaim lock-ups".
 
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+This conflicts with z3fold-fix-wrong-handling-of-headless-pages.patch,
+below.  What should we do?
+
+(I think we're still awaiting your input on this one.  Or I might have
+missed an amail.)
+
+
+
+From: Jongseok Kim <ks77sj@gmail.com>
+Subject: mm/z3fold.c: fix wrong handling of headless pages
+
+During the processing of headless pages in z3fold_reclaim_page(), there
+was a problem that the zhdr pointed to another page or a page was already
+released in z3fold_free().  So, the wrong page is encoded in headless, or
+test_bit does not work properly in z3fold_reclaim_page().  This patch
+fixed these problems.
+
+Link: http://lkml.kernel.org/r/1530853846-30215-1-git-send-email-ks77sj@gmail.com
+Signed-off-by: Jongseok Kim <ks77sj@gmail.com>
+Cc: Vitaly Wool <vitalywool@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- crypto/chacha20_generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/chacha20_generic.c b/crypto/chacha20_generic.c
-index 3ae96587caf9..3529521d72a4 100644
---- a/crypto/chacha20_generic.c
-+++ b/crypto/chacha20_generic.c
-@@ -81,7 +81,7 @@ int crypto_chacha20_crypt(struct skcipher_request *req)
- 	u32 state[16];
- 	int err;
+ mm/z3fold.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/mm/z3fold.c~z3fold-fix-wrong-handling-of-headless-pages
++++ a/mm/z3fold.c
+@@ -746,6 +746,9 @@ static void z3fold_free(struct z3fold_po
+ 	}
  
--	err = skcipher_walk_virt(&walk, req, true);
-+	err = skcipher_walk_virt(&walk, req, false);
+ 	if (bud == HEADLESS) {
++		if (test_bit(UNDER_RECLAIM, &page->private))
++			return;
++
+ 		spin_lock(&pool->lock);
+ 		list_del(&page->lru);
+ 		spin_unlock(&pool->lock);
+@@ -836,20 +839,20 @@ static int z3fold_reclaim_page(struct z3
+ 		}
+ 		list_for_each_prev(pos, &pool->lru) {
+ 			page = list_entry(pos, struct page, lru);
++			zhdr = page_address(page);
+ 			if (test_bit(PAGE_HEADLESS, &page->private))
+ 				/* candidate found */
+ 				break;
  
- 	crypto_chacha20_init(state, ctx, walk.iv);
+-			zhdr = page_address(page);
+ 			if (!z3fold_page_trylock(zhdr))
+ 				continue; /* can't evict at this point */
+ 			kref_get(&zhdr->refcount);
+ 			list_del_init(&zhdr->buddy);
+ 			zhdr->cpu = -1;
+-			set_bit(UNDER_RECLAIM, &page->private);
+ 			break;
+ 		}
  
--- 
-2.19.1.930.g4563a0d9d0-goog
++		set_bit(UNDER_RECLAIM, &page->private);
+ 		list_del_init(&page->lru);
+ 		spin_unlock(&pool->lock);
+ 
+@@ -898,6 +901,7 @@ next:
+ 		if (test_bit(PAGE_HEADLESS, &page->private)) {
+ 			if (ret == 0) {
+ 				free_z3fold_page(page);
++				atomic64_dec(&pool->pages_nr);
+ 				return 0;
+ 			}
+ 			spin_lock(&pool->lock);
+_
 
