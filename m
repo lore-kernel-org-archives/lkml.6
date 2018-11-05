@@ -2,122 +2,167 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5835C32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF08AECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 803F420827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:00:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 803F420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 957E420827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:00:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wIDfBR3a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957E420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbeKEMSF (ORCPT
+        id S1729001AbeKEMSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 07:18:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47510 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeKEMSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 07:18:05 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 919AC3084293;
-        Mon,  5 Nov 2018 03:00:40 +0000 (UTC)
-Received: from [10.72.12.184] (ovpn-12-184.pek2.redhat.com [10.72.12.184])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CC6C71726F;
-        Mon,  5 Nov 2018 03:00:28 +0000 (UTC)
-Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
-To:     Vitaly Mayatskikh <v.mayatskih@gmail.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>
-References: <20181102182123.29420-1-v.mayatskih@gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
-Date:   Mon, 5 Nov 2018 11:00:23 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 07:18:16 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:63454 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728918AbeKEMSQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 07:18:16 -0500
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id wA530lfh010732;
+        Mon, 5 Nov 2018 12:00:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wA530lfh010732
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541386848;
+        bh=l4y18zLZqDgZFI+jloFmLZDjPOoj279+eEDHAM3k6I8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wIDfBR3a+IKD4VwIawpICb6OuH3lNvagqi6cIPO9vehTf9A6NeTs48He18z50kOyo
+         4nq6bPaZZ5RCKj7K0W3zpEqv8yOMG+bcB5U1Tx3DlN1MO9wC6E9YrfIwF4ycTllkaq
+         KcrSyheISuznPihuX7hFd/CdpsBNfaOZghC2K749/bh6X88ELGQHaFvR2IXGpQIFYs
+         3I72dYLAGOLbvURP7Cm5BsZouSLmEBOZKzGOXhDC5gVJVAryXLrZ37kXAPRvSwIL38
+         2nxg3h3cRth3H6yV1l5BJKaJuZ0yhdZa27LlxQxEFNNb2d/rU2drJTBWi6Q5sRuaFz
+         sAIAQzzoSYndQ==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id s9so4239669vsk.7;
+        Sun, 04 Nov 2018 19:00:48 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJVzpIUpuY6QMrOmZ2lJs3KLzS4gqRyISRTy9l16Ca6ARFMPTvC
+        FH8dalFAE/Zr7ZXC09Ci7ndtLnNWar0DM4xSXCk=
+X-Google-Smtp-Source: AJdET5dCVhgXCG81MmqM2uafb7aXBUwQWwhRnYmIbp+X7J898+av+j2pDQ+38DjMXGs2PJKMDZu9I67mI124L3TcKXQ=
+X-Received: by 2002:a67:385a:: with SMTP id f87mr8668695vsa.179.1541386846870;
+ Sun, 04 Nov 2018 19:00:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181102182123.29420-1-v.mayatskih@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 05 Nov 2018 03:00:40 +0000 (UTC)
+References: <20181031145907.1ee2e866@canb.auug.org.au> <661e44c7-396a-6d58-efa7-ed292f2677c6@infradead.org>
+ <CAK8P3a3aygFrD3PyZ8P==JzeYamE-x--MWCL54xzXDE_8u_R6Q@mail.gmail.com>
+ <CAK7LNATirQwke8tqk5XukhkwKra6mWEXZ3AHcywNcwGFD2-voA@mail.gmail.com>
+ <20181101142946.u5luuctqav6fec6k@mail.google.com> <CAK7LNAQbBG=KV5Q8o5-JiNCswuse94jECoqT+T+UEY7bLCRPNw@mail.gmail.com>
+ <CAK8P3a1w8p8OC-9_0mtMUxEojvyVfXvF8Ka4J7TnoyZ=gr2Fow@mail.gmail.com>
+ <CAK7LNAQp2xU_ThE_q3TmoT16cwUjKx=rB9msVB12+Y9FkaQVmw@mail.gmail.com> <20181104233857.b4ou3b7doclw2vi2@mail.google.com>
+In-Reply-To: <20181104233857.b4ou3b7doclw2vi2@mail.google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 5 Nov 2018 12:00:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQeHqKQr8puhr=qz9FY9L48_b2uLv5AHWW3M-98b3EunA@mail.gmail.com>
+Message-ID: <CAK7LNAQeHqKQr8puhr=qz9FY9L48_b2uLv5AHWW3M-98b3EunA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Oct 31 (vboxguest)
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2018/11/3 上午2:21, Vitaly Mayatskikh wrote:
-> vhost_blk is a host-side kernel mode accelerator for virtio-blk. The
-> driver allows VM to reach a near bare-metal disk performance. See IOPS
-> numbers below (fio --rw=randread --bs=4k).
+On Mon, Nov 5, 2018 at 9:54 AM Changbin Du <changbin.du@gmail.com> wrote:
 >
-> This implementation uses kiocb interface. It is slightly slower than
-> going directly through bio, but is simpler and also works with disk
-> images placed on a file system.
+> On Sun, Nov 04, 2018 at 11:43:44AM +0900, Masahiro Yamada wrote:
+> > On Sat, Nov 3, 2018 at 12:55 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On 11/2/18, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> > > > On Thu, Nov 1, 2018 at 11:32 PM Changbin Du <changbin.du@gmail.com> wrote:
+> > > >> On Thu, Nov 01, 2018 at 12:32:48PM +0900, Masahiro Yamada wrote:
+> > > >
+> > > > How about clang?
+> > > >
+> > > > For clang, -Og might be equivalent to -O1 at this moment, but I am not
+> > > > sure.
+> > > >
+> > > > In my understanding, Clang does not inline functions marked with 'static
+> > > > inline'
+> > > > for -Og (or -O1) optimization level.
+> > > >
+> > > > Theoretically, 'inline' keyword is a just hint for the compiler, after all.
+> > >
+> > > I think this means that we cannot build the kernel in that configuration,
+> > > at least with CONFIG_OPTIMIZE_INLINING=y. Without that option,
+> > > every 'inline' becomes 'always_inline'.
+> > >
+> >
+> > Sorry, I missed that fact.
+> >
+> >
+> > At this moment of time, it is OK given the following:
+> >
+> >  - CONFIG_OPTIMIZE_INLINING is defined only for x86
+> >  - Clang cannot build x86 due to missing asm-goto
+> >
+> >
+> > However, Clang with -Og
+> > does not inline even such simple code like this:
+> >
+> >
+> > -----test code------
+> > static inline int foo(int x)
+> > {
+> >         return x;
+> > }
+> >
+> > int bar(int x)
+> > {
+> >         return foo(x);
+> > }
+> > -------------------
+> >
+> >
+> >
+> > $ clang -Og -c -o bar.o  bar.c
+> > $ objdump -d  bar.o
+> > bar.o:     file format elf64-x86-64
+> >
+> >
+> > Disassembly of section .text:
+> >
+> > 0000000000000000 <bar>:
+> >    0: eb 0e                jmp    10 <foo>
+> >    2: 66 2e 0f 1f 84 00 00 nopw   %cs:0x0(%rax,%rax,1)
+> >    9: 00 00 00
+> >    c: 0f 1f 40 00          nopl   0x0(%rax)
+> >
+> > 0000000000000010 <foo>:
+> >   10: 89 f8                mov    %edi,%eax
+> >   12: c3                    retq
+> >
+> >
+> I see. Thanks for your explanation. So I think we should disable
+> CONFIG_DEBUG_EXPERIENCE for clang. Do you know how to distinguish
+> different copmilers in Kconfig?
 >
-> # fio num-jobs
-> # A: bare metal over block
-> # B: bare metal over file
-> # C: virtio-blk over block
-> # D: virtio-blk over file
-> # E: vhost-blk bio over block
-> # F: vhost-blk kiocb over block
-> # G: vhost-blk kiocb over file
-> #
-> #  A     B     C    D    E     F     G
->
-> 1  171k  151k  148k 151k 195k  187k  175k
-> 2  328k  302k  249k 241k 349k  334k  296k
-> 3  479k  437k  179k 174k 501k  464k  404k
-> 4  622k  568k  143k 183k 620k  580k  492k
-> 5  755k  697k  136k 128k 737k  693k  579k
-> 6  887k  808k  131k 120k 830k  782k  640k
-> 7  1004k 926k  126k 131k 926k  863k  693k
-> 8  1099k 1015k 117k 115k 1001k 931k  712k
-> 9  1194k 1119k 115k 111k 1055k 991k  711k
-> 10 1278k 1207k 109k 114k 1130k 1046k 695k
-> 11 1345k 1280k 110k 108k 1119k 1091k 663k
-> 12 1411k 1356k 104k 106k 1201k 1142k 629k
-> 13 1466k 1423k 106k 106k 1260k 1170k 607k
-> 14 1517k 1486k 103k 106k 1296k 1179k 589k
-> 15 1552k 1543k 102k 102k 1322k 1191k 571k
-> 16 1480k 1506k 101k 102k 1346k 1202k 566k
->
-> Vitaly Mayatskikh (1):
->    Add vhost_blk driver
->
->   drivers/vhost/Kconfig  |  13 ++
->   drivers/vhost/Makefile |   3 +
->   drivers/vhost/blk.c    | 510 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 526 insertions(+)
->   create mode 100644 drivers/vhost/blk.c
->
 
-Hi:
 
-Thanks for the patches.
+You can add 'depends on CC_IS_GCC'
+to make sure this option is visible only when you use GCC.
 
-This is not the first attempt for having vhost-blk:
 
-- Badari's version: https://lwn.net/Articles/379864/
+config CC_OPTIMIZE_FOR_DEBUGGING
+        bool "Optimize for better debugging experience (-Og)"
+        depends on CC_IS_GCC
+        depends on $(cc-option,-Og)
+        select NO_AUTO_INLINE
 
-- Asias' version: https://lwn.net/Articles/519880/
 
-It's better to describe the differences (kiocb vs bio? performance?). 
-E.g if my memory is correct, Asias said it doesn't give much improvement 
-compared with userspace qemu.
 
-And what's more important, I believe we tend to use virtio-scsi nowdays. 
-So what's the advantages of vhost-blk over vhost-scsi?
-
-Thanks
-
+--
+Best Regards
+Masahiro Yamada
