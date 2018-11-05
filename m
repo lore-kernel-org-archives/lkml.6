@@ -2,149 +2,147 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2046C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E87DC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7881E20827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHJHpcyy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7881E20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4742120685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4742120685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbeKEX5W (ORCPT
+        id S1730085AbeKEX5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:57:22 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40981 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729449AbeKEX5W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:57:22 -0500
-Received: by mail-pf1-f195.google.com with SMTP id e22-v6so4519852pfn.8;
-        Mon, 05 Nov 2018 06:37:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8+8I/eQqiDXhce3J03v8grupt2D0goqdxCeIffJZIPI=;
-        b=KHJHpcyyCjnMnhdCno+ewTY1WcXdICYeWpWYDzzSzXmb+oWV7Gl8EOY+YUuiOCqblL
-         2wy03AmSPYT/nr5QwAEjSEA8N8mPVSlRdGf8+TkxXBqZhv6/h2N6K5q41fDxdjLl3B/e
-         gB4cWHppTTb6hkn5e0Y0QBIRES7iXmrCwgnBHEU2x9iluJn4yvybQoE90aulOQ0j5RAz
-         wph1jiMtJ4DjV/peVX3hlnsc8WG2hYw/CGDTYLK/ei4vigX2pN0e7j/sXqzxn01UEgTV
-         t22EFw6u+f0GWJQ76e65WRHUZNSf7bAmS7DdfOVjB9by4ni6+Sa35Zz9/LC3wvC4GLMl
-         +5pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8+8I/eQqiDXhce3J03v8grupt2D0goqdxCeIffJZIPI=;
-        b=til27UrWaFShjJRoYoib9PavsmCy4g8sMaWGc3xeCuEe83rlgDSfGcBuUVOyhJL6mT
-         fhMA5XvZkPb76ozNlgJ6oKCRdV39VlSitH5hfdFQXB6dRrG2X84rGRbcTsO689BhbmJW
-         Hk0pypM4th32f7KBVvBuz8d93lG2xgBM+nDj6ufNg/sTVh29vq1of9e3/n/onR9Pv4mj
-         LXRSyQR9PU/qCiWTMMPIY9/Kwk8Q0ORiKoqf4QIh9foKUI6YsllCa7NsmktJeS/JfL3Q
-         3InuUr8b8nkRJgYvSPb9IMhJrLYN6IlPYgQIY5HeZlnnLHLoaYjLz5I72K7FVxd98FnH
-         GpKQ==
-X-Gm-Message-State: AGRZ1gK0eBsQ0VI3rpCNYGd4GGXg61Z8yjLnMCz5yETBPmTH1Vi41Vuz
-        1QLDWkcf/m/8WkiQQ+ClMAg=
-X-Google-Smtp-Source: AJdET5fkK2/hs2SnHha1d6NCj5Jn7T0bxtWO/CGzHqAgTwpq8584JS5RLaLxYIGwopd/BlhvEBLy6g==
-X-Received: by 2002:a63:1342:: with SMTP id 2-v6mr20148687pgt.19.1541428641125;
-        Mon, 05 Nov 2018 06:37:21 -0800 (PST)
-Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id p14-v6sm50648616pgn.45.2018.11.05.06.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 06:37:20 -0800 (PST)
-Date:   Mon, 5 Nov 2018 14:37:18 +0000
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Changbin Du <changbin.du@gmail.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
-        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: avoid link error with CONFIG_NO_AUTO_INLINE
-Message-ID: <20181105143717.xrarjgcdgaipmsqd@mail.google.com>
-References: <20181103153941.1881966-1-arnd@arndb.de>
+        Mon, 5 Nov 2018 18:57:35 -0500
+Received: from mga18.intel.com ([134.134.136.126]:57668 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729089AbeKEX5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:57:35 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:37:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="86796944"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga007.jf.intel.com with ESMTP; 05 Nov 2018 06:37:32 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gJg0R-0005mo-NB; Mon, 05 Nov 2018 16:37:31 +0200
+Date:   Mon, 5 Nov 2018 16:37:31 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 1/4] device property: Introduce fwnode_name()
+Message-ID: <20181105143731.GK10650@smile.fi.intel.com>
+References: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
+ <20181105091727.25544-2-heikki.krogerus@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181103153941.1881966-1-arnd@arndb.de>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+In-Reply-To: <20181105091727.25544-2-heikki.krogerus@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for this fix.
-
-Reviewed-by: Changbin Du <changbin.du@gmail.com>
-
-On Sat, Nov 03, 2018 at 04:39:28PM +0100, Arnd Bergmann wrote:
-> On 32-bit ARM with gcc-8, I see a link error with the addition of the
-> CONFIG_NO_AUTO_INLINE option:
+On Mon, Nov 05, 2018 at 12:17:24PM +0300, Heikki Krogerus wrote:
+> This helper returns the name of the node. The name is
+> primarily expected to be returned from a new fwnode
+> operation meant for this purpose, but when no name is
+> returned, the helper will also attempt to read a device
+> property "name".
 > 
-> fs/btrfs/super.o: In function `btrfs_statfs':
-> super.c:(.text+0x67b8): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x67fc): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x6858): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x6920): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x693c): undefined reference to `__aeabi_uldivmod'
-> fs/btrfs/super.o:super.c:(.text+0x6958): more undefined references to `__aeabi_uldivmod' follow
-> 
-> So far this is the only file that shows the behavior, so I'd propose
-> to just work around it by marking the functions as 'static inline'
-> that normally get inlined here.
-> 
-> The reference to __aeabi_uldivmod comes from a div_u64() which has an
-> optimization for a constant division that uses a straight '/' operator
-> when the result should be known to the compiler. My interpretation is
-> that as we turn off inlining, gcc still expects the result to be constant
-> but fails to use that constant value.
-> 
-> Cc: Changbin Du <changbin.du@gmail.com>
-> Fixes: 943b8435c3bd ("kernel hacking: add a config option to disable compiler auto-inlining")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 > ---
->  fs/btrfs/super.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/base/property.c  | 18 ++++++++++++++++++
+>  include/linux/fwnode.h   |  1 +
+>  include/linux/property.h |  2 ++
+>  3 files changed, 21 insertions(+)
 > 
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index c3c1e7bee49d..b7af0b8936ad 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -1922,7 +1922,7 @@ static int btrfs_remount(struct super_block *sb, int *flags,
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index 240ab5230ff6..1e4eb7ab2b84 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -1156,6 +1156,24 @@ void fwnode_handle_put(struct fwnode_handle *fwnode)
 >  }
+>  EXPORT_SYMBOL_GPL(fwnode_handle_put);
 >  
->  /* Used to sort the devices by max_avail(descending sort) */
-> -static int btrfs_cmp_device_free_bytes(const void *dev_info1,
-> +static inline int btrfs_cmp_device_free_bytes(const void *dev_info1,
->  				       const void *dev_info2)
->  {
->  	if (((struct btrfs_device_info *)dev_info1)->max_avail >
-> @@ -1951,8 +1951,8 @@ static inline void btrfs_descending_sort_devices(
->   * The helper to calc the free space on the devices that can be used to store
->   * file data.
->   */
-> -static int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-> -				       u64 *free_bytes)
-> +static inline int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-> +					      u64 *free_bytes)
->  {
->  	struct btrfs_device_info *devices_info;
->  	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
+> +/**
+> + * fwnode_name - Get the name of a device node
+> + * @fwnode: Pointer to the device node.
+> + *
+> + * Returns the node name of @fwnode. If @fwnode does not have a "unit name",
+> + * this code will also attempt to read a string property named "name".
+> + */
+> +const char *fwnode_name(const struct fwnode_handle *fwnode)
+> +{
+> +	const char *name = fwnode_call_ptr_op(fwnode, name);
+> +
+> +	if (!name)
+> +		fwnode_call_int_op(fwnode, property_read_string_array,
+> +				   "name", &name, 1);
+
+Is it going to be extended in the future?
+
+Otherwise I would rather go with (few more LOCs, yes)
+
+	const char *name;
+
+	name = fwnode_call_ptr_op(fwnode, name);
+	if (name)
+		return name;
+
+	fwnode_call_int_op(fwnode, property_read_string_array, "name", &name, 1);
+	return name;
+
+> +	return name;
+> +}
+> +EXPORT_SYMBOL_GPL(fwnode_name);
+> +
+>  /**
+>   * fwnode_device_is_available - check if a device is available for use
+>   * @fwnode: Pointer to the fwnode of the device.
+> diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
+> index faebf0ca0686..2e445fed4df4 100644
+> --- a/include/linux/fwnode.h
+> +++ b/include/linux/fwnode.h
+> @@ -72,6 +72,7 @@ struct fwnode_reference_args {
+>  struct fwnode_operations {
+>  	struct fwnode_handle *(*get)(struct fwnode_handle *fwnode);
+>  	void (*put)(struct fwnode_handle *fwnode);
+> +	const char *(*name)(const struct fwnode_handle *fwnode);
+>  	bool (*device_is_available)(const struct fwnode_handle *fwnode);
+>  	const void *(*device_get_match_data)(const struct fwnode_handle *fwnode,
+>  					     const struct device *dev);
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index ac8a1ebc4c1b..44781d37dd96 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -109,6 +109,8 @@ struct fwnode_handle *device_get_named_child_node(struct device *dev,
+>  struct fwnode_handle *fwnode_handle_get(struct fwnode_handle *fwnode);
+>  void fwnode_handle_put(struct fwnode_handle *fwnode);
+>  
+> +const char *fwnode_name(const struct fwnode_handle *fwnode);
+> +
+>  int fwnode_irq_get(struct fwnode_handle *fwnode, unsigned int index);
+>  
+>  unsigned int device_get_child_node_count(struct device *dev);
 > -- 
-> 2.18.0
->
+> 2.19.1
+> 
 
 -- 
-Thanks,
-Changbin Du
+With Best Regards,
+Andy Shevchenko
+
+
