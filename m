@@ -1,90 +1,152 @@
 Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACC4C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE281C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 483C120881
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C4972086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:59:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sLqniWXq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483C120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AMyvzpDV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4972086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387864AbeKFDTy (ORCPT
+        id S2387870AbeKFDUJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:19:54 -0500
-Received: from mail-wr1-f45.google.com ([209.85.221.45]:35953 "EHLO
-        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387503AbeKFDTy (ORCPT
+        Mon, 5 Nov 2018 22:20:09 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36032 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387651AbeKFDUJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:19:54 -0500
-Received: by mail-wr1-f45.google.com with SMTP id z13-v6so8154715wrs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:59:05 -0800 (PST)
+        Mon, 5 Nov 2018 22:20:09 -0500
+Received: by mail-pf1-f196.google.com with SMTP id j22-v6so4803060pfh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:59:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9Ig45HcKxXPZ8wpLDf4gDrU6dgmN+LF/Vm4M5ekoS8I=;
-        b=sLqniWXql67kdIF3VlpJHIn0EEkDSpM5q12Flmh7/oRpchlDf1jp70ZMr4z+XzGSQd
-         IqXYEsLauGWz8Q6gMK+S7Kib+j2ybihs+83dAI56LsG0VlSVZ8O39iiJII/b/7SS1Ses
-         ZbBkhBayhBJfRseYG3A/+tG2/7gCIhHQ5ZJNe0VcFCvJW5l9jzs7iHhx3OhWWf7v/Odv
-         JUdR4sNFaMLqdZ8oGGj07bpyWSlNjXhWDdfNIZZMQXZrGnPy8sAWVRLwuo0txNT/plrC
-         lVRUQxU4/4arg46I7x7nkgG3p4NzmsG9q+5RyLYZx+OrjQMNAqvNg3q9T2kXyzLRohMh
-         beBQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XJirzculLSk5q3m7YlBP8o38DUdPeBuNIG5Fi2euPRE=;
+        b=AMyvzpDVsy805XeIvLCqf/7hRBoNGNo2B+u+ZuxzBjYhG7DvkKkz3tsLVF0xwS8ZKB
+         zacRiKG5mc3l6zjB86B8kb5c2XDNTea/RkDrVqP0xfOPLD54oUGULEIA229iAl2XcoT3
+         5s0noaU1q1SLuunvoPpe8iFlCPhe0WWIKrEa5cSApLijdzP76hBcYcUZwbL0CdlkmZhY
+         FHjoL1tVR2xZEuT5wZ3ZqeXEr4Vr2JM3DfITOXb1kxMbf6Ge1Fu17suQapFEQRprf7Wg
+         fqcDstiSxkyziEoRyrwpjwtsIavhq+K8vcD/xtmY3oDaG6xxC6jl2k+kbpYrxiihfGRK
+         QfsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Ig45HcKxXPZ8wpLDf4gDrU6dgmN+LF/Vm4M5ekoS8I=;
-        b=C1aasUg+B3YrXgXkeuAFuGSzaxSBRRAASSL009rfojIuJtRycwi7VAE4tPLNt5vCTz
-         maLJMB92l0EIR1wRPL7EgTXktKzLUHtfE/QD91AFIHvl0YBzo3mx4UNgXvqLNDSGmheG
-         VdP2QxnnpwqsZYJA/+0e6Y6DsQF6OT272YvE4Jf7isULbPS6aAOI5RgDcfGCjEvGeYEk
-         prj1oyZL7Ze/2jmJ0pKsvIShgtx7ScHbpSPCNeJOI2lLyzJ43x8aMDOcdcZzAw6NF0+r
-         I3iY8Bbj+ptR7ExxZxqoOGV8Ye3AR2WmH7FGEMH5r5d7cWA2AOogl+5lrAv1ZqepS+uy
-         PjJg==
-X-Gm-Message-State: AGRZ1gLc4gne9qzJNUGnra7kFUZmxQuorGNDJGPC0CtrOrQmu/6BQwL/
-        gl3beqLtNTKPswB9bSW9OFM=
-X-Google-Smtp-Source: AJdET5fugrVnbtraH70Fk5d/ujfoft45Mfji4QvN2qwWpvRqqTC05/lLN9VnURtoFL8wD2z3FoUKDQ==
-X-Received: by 2002:a5d:4406:: with SMTP id z6-v6mr20782595wrq.294.1541440744728;
-        Mon, 05 Nov 2018 09:59:04 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id k73-v6sm21193146wmd.33.2018.11.05.09.59.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 09:59:04 -0800 (PST)
-Date:   Mon, 5 Nov 2018 18:59:02 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Eial Czerwacki <eial@scalemp.com>
-Cc:     linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3] x86/vsmp_64.c: Remove dependency on pv_irq_ops
-Message-ID: <20181105175902.GA32060@gmail.com>
-References: <1541439114-28297-1-git-send-email-eial@scalemp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XJirzculLSk5q3m7YlBP8o38DUdPeBuNIG5Fi2euPRE=;
+        b=tYHTtrxDqPv/4d6pGQxZ/P8RXsAL8qmekzJAVP0UhWeZtuaMiM4Atw/ejjttUlARKh
+         +pWmk+IUwg8HCiy7aj1sUghagRIKndWTJVBme5D3IbV9rKXykSg8+LHrfYS6G0puw3Zh
+         eaKofxp9itgtT9IJfKsN4LkF3e7XWP6aIAQqnNVz6y+074ttMoGz3uzpdZUe+erxhpsE
+         I3qhLvMKznc7Jcx61P0KQYDYPhohS3JDJz1REhuMNVTyH8jKf5pOA8NR/MuhJdu2Ku2p
+         ENeHq/ANwwY0GIZsOQAMh1tO/uAL17hUyT8cn2isfDbMPH/R6hANuqzqRVxcxJfo2e7A
+         jbwA==
+X-Gm-Message-State: AGRZ1gLgBniAAUCkwTN3BkC7S8jseZ/FItm7Kt/+7c5qZyxQRHcgLICG
+        CFy52Ma+BnAjAv10BfxSQkva1TE8/dJSKZlQK6V2BA==
+X-Google-Smtp-Source: AJdET5d8ZVBA9vKFQ6mwGljOzTZiwZo8sUTcQ26ya9umPDTFzs4VoEB+h56toMmZuIHc0JxRp35TeY2WdG5SuGXMpaM=
+X-Received: by 2002:a63:bf0b:: with SMTP id v11mr4550048pgf.302.1541440760891;
+ Mon, 05 Nov 2018 09:59:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541439114-28297-1-git-send-email-eial@scalemp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1541386099-13118-1-git-send-email-yamada.masahiro@socionext.com>
+ <a55e4534ef759585088a037e4cfd8468@agner.ch> <CAK7LNAT3ftcuNDfEhecMnfjG0Fkkh42wR7XQ1R9Tkr9OMrzAng@mail.gmail.com>
+In-Reply-To: <CAK7LNAT3ftcuNDfEhecMnfjG0Fkkh42wR7XQ1R9Tkr9OMrzAng@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 5 Nov 2018 09:59:09 -0800
+Message-ID: <CAKwvOdn1Shqc3nW6z0Ji_=4uMrOimhUbX3TRG7fQuysja64zog@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: consolidate Clang compiler flags
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chris Fries <cfries@google.com>, joel@jms.id.au,
+        dja@axtens.net, Michal Marek <michal.lkml@markovi.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 5, 2018 at 1:19 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Mon, Nov 5, 2018 at 6:10 PM Stefan Agner <stefan@agner.ch> wrote:
+> >
+> > On 05.11.2018 03:48, Masahiro Yamada wrote:
+> > > Add basic options for Clang such as --target, --prefix, --gcc-toolchain,
+> > > -no-integrated-as to a single variable CLANG_FLAGS.
+> > >
+> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > ---
+> > >
+> > >  Makefile | 13 ++++++-------
+> > >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/Makefile b/Makefile
+> > > index 93315eb..58c838a 100644
+> > > --- a/Makefile
+> > > +++ b/Makefile
+> > > @@ -487,18 +487,17 @@ endif
+> > >
+> > >  ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+> > >  ifneq ($(CROSS_COMPILE),)
+> > > -CLANG_TARGET := --target=$(notdir $(CROSS_COMPILE:%-=%))
+> > > +CLANG_FLAGS  = --target=$(notdir $(CROSS_COMPILE:%-=%))
+> > >  GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+> > > -CLANG_PREFIX := --prefix=$(GCC_TOOLCHAIN_DIR)
+> > > +CLANG_FLAGS  += --prefix=$(GCC_TOOLCHAIN_DIR)
+> >
+> > So this will expand later now, is this ok?
+> >
+> > --
+> > Stefan
+> >
+> > >  GCC_TOOLCHAIN        := $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+> > >  endif
+> > >  ifneq ($(GCC_TOOLCHAIN),)
+> > > -CLANG_GCC_TC := --gcc-toolchain=$(GCC_TOOLCHAIN)
+> > > +CLANG_FLAGS  += --gcc-toolchain=$(GCC_TOOLCHAIN)
+> > >  endif
+> > > -KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> > > -KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> > > -KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+> > > -KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+> > > +CLANG_FLAGS  += $(call cc-option, -no-integrated-as)
+> > > +KBUILD_CFLAGS        += $(CLANG_FLAGS)
+> > > +KBUILD_AFLAGS        += $(CLANG_FLAGS)
+>
+>
+> CLANG_FLAGS is expanded here because KBUILD_CFLAGS and KBUILD_AFLAGS
+> are defined by using :=
+>
+> So, it should be OK, but turning CLANG_FLAGS into a simple variable
+> will be a little more efficient since $(call cc-option, -no-integrated-as)
+> is evaluated just once.
+>
+> (Or, this cc-option may not be necessary any longer.)
+>
+> Will send v2.
 
-* Eial Czerwacki <eial@scalemp.com> wrote:
+If the ultimate goal is not evaluate cc-option more than once,
+removing cc-option from both KBUILD_CFLAGS and KBUILD_AFLAGS for clang
+is the better approach; we always want those for clang
+unconditionally. And if you by chance have an ancient version of clang
+that doesn't support those flags, you wont be able to compile a kernel
+anyways.  Eventually we want to get Clang's integrated assembler in
+shape to be used to assemble the kernel, but I think we're a ways off
+there still.
 
-> +#if defined(CONFIG_PCI)
 
-This is shorter:
-
-   #ifdef CONFIG_PCI
-
+-- 
 Thanks,
-
-	Ingo
+~Nick Desaulniers
