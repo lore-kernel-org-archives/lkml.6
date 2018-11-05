@@ -2,139 +2,99 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3A1C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4322CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E345420854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:38:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E345420854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EBE4220825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:40:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RrnwQV+X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE4220825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbeKEV6O (ORCPT
+        id S1729708AbeKEV7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:58:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38416 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729015AbeKEV6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:58:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B0381AD07;
-        Mon,  5 Nov 2018 12:38:38 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 13:38:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH] mm, memory_hotplug: teach has_unmovable_pages about of
- LRU migrateable pages
-Message-ID: <20181105123837.GH4361@dhcp22.suse.cz>
-References: <20181101091055.GA15166@MiWiFi-R3L-srv>
- <20181102155528.20358-1-mhocko@kernel.org>
- <20181105002009.GF27491@MiWiFi-R3L-srv>
- <20181105091407.GB4361@dhcp22.suse.cz>
- <20181105092851.GD4361@dhcp22.suse.cz>
- <20181105102520.GB22011@MiWiFi-R3L-srv>
+        Mon, 5 Nov 2018 16:59:46 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36176 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbeKEV7q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:59:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UOpDLTXAtnnzTE/vKm8sfJOjSgQ2KHxQQ3HhKFWQ9J8=; b=RrnwQV+XZueYT88CbnNdx2pTV
+        gQwtzEwI1MMlw9F/eEgwTjVP5FrKui4quOkeLqJ+h21uNkBuwcR6DuAUSO3APVyLfbesYpssMjVXt
+        jHjhF2XjCtnIfSsg6/y4BmqfkE7X/h/5COxYVXpNY0LKlV7X7fpcTgDi9nOnb5EpfKs54h0+wg6iQ
+        w3lE4PpJzPGOxpfhV7iV1Q2GSo7ww/v4oVP5fjFSx7lCJZvvZY9Cj7oifM6t16VOnur0+yug5KQdo
+        ldxADe7FalimceGziEGt5uyM8bB2bg+J8eip2EFd4NNp2VVAv1EcnEg5KNxHiLGItRKCzKKU5TAhn
+        foUemamZQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJeAe-0005TX-RK; Mon, 05 Nov 2018 12:39:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 06EE82029F9FF; Mon,  5 Nov 2018 13:39:54 +0100 (CET)
+Date:   Mon, 5 Nov 2018 13:39:53 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during
+ early_init
+Message-ID: <20181105123953.GA22467@hirez.programming.kicks-ass.net>
+References: <20181102232946.98461-1-namit@vmware.com>
+ <20181102232946.98461-3-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105102520.GB22011@MiWiFi-R3L-srv>
+In-Reply-To: <20181102232946.98461-3-namit@vmware.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 05-11-18 18:25:20, Baoquan He wrote:
-> Hi Michal,
+On Fri, Nov 02, 2018 at 04:29:41PM -0700, Nadav Amit wrote:
+> diff --git a/init/main.c b/init/main.c
+> index a664246450d1..b0fa26637496 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -117,6 +117,8 @@ extern void radix_tree_init(void);
+>   */
+>  bool early_boot_irqs_disabled __read_mostly;
+>  
+> +u8 early_boot_done __read_mostly;
+> +
+>  enum system_states system_state __read_mostly;
+>  EXPORT_SYMBOL(system_state);
+
+Should this not be using system_state ^ ? The site is very close to
+SYSTEM_SCHEDULING, can we use that or should we add another state ?
+
+> @@ -735,6 +737,8 @@ asmlinkage __visible void __init start_kernel(void)
+>  		efi_free_boot_services();
+>  	}
+>  
+> +	early_boot_done = true;
+> +
+>  	/* Do the rest non-__init'ed, we're now alive */
+>  	rest_init();
+>  }
+> -- 
+> 2.17.1
 > 
-> On 11/05/18 at 10:28am, Michal Hocko wrote:
-> > 
-> > Or something like this. Ugly as hell, no question about that. I also
-> > have to think about this some more to convince myself this will not
-> > result in an endless loop under some situations.
-> 
-> It failed. Paste the log and patch diff here, please help check if I made
-> any mistake on manual code change. The log is at bottom.
-
-The retry patch is obviously still racy, it just makes the race window
-slightly smaller and I hoped it would catch most of those races but this
-is obviously not the case.
-
-I was thinking about your MIGRATE_MOVABLE check some more and I still do
-not like it much, we just change migrate type at many places and I have
-hard time to actually see this is always safe wrt. to what we need here.
-
-We should be able to restore the zone type check though. The
-primary problem fixed by 15c30bc09085 ("mm, memory_hotplug: make
-has_unmovable_pages more robust") was that early allocations made it to
-the zone_movable range. If we add the check _after_ the PageReserved()
-check then we should be able to rule all bootmem allocation out.
-
-So what about the following (on top of the previous patch which makes
-sense on its own I believe).
-
-
-From d7ffd1342529c892f1de8999c3a5609211599c9d Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Mon, 5 Nov 2018 13:28:51 +0100
-Subject: [PATCH] mm, memory_hotplug: check zone_movable in has_unmovable_pages
-
-Page state checks are racy. Under a heavy memory workload (e.g. stress
--m 200 -t 2h) it is quite easy to hit a race window when the page is
-allocated but its state is not fully populated yet. A debugging patch to
-dump the struct page state shows
-: [  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
-: [  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
-: [  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-
-Note that the state has been checked for both PageLRU and PageSwapBacked
-already. Closing this race completely would require some sort of retry
-logic. This can be tricky and error prone (think of potential endless
-or long taking loops).
-
-Workaround this problem for movable zones at least. Such a zone should
-only contain movable pages. 15c30bc09085 ("mm, memory_hotplug: make
-has_unmovable_pages more robust") has told us that this is not strictly
-true though. Bootmem pages should be marked reserved though so we can
-move the original check after the PageReserved check. Pages from other
-zones are still prone to races but we even do not pretend that memory
-hotremove works for those so pre-mature failure doesn't hurt that much.
-
-Reported-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/page_alloc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 48ceda313332..5b64c5bc6ea0 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7788,6 +7788,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		if (PageReserved(page))
- 			goto unmovable;
- 
-+		/*
-+		 * If the zone is movable and we have ruled out all reserved
-+		 * pages then it should be reasonably safe to assume the rest
-+		 * is movable.
-+		 */
-+		if (zone_idx(zone) == ZONE_MOVABLE)
-+			continue;
-+
- 		/*
- 		 * Hugepages are not in LRU lists, but they're movable.
- 		 * We need not scan over tail pages bacause we don't
--- 
-2.19.1
-
--- 
-Michal Hocko
-SUSE Labs
