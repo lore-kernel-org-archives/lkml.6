@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DABC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7BBC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E04720819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD0920819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:09:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="loDNsaRA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jp/tSRfd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E04720819
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OlxG4vU6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QP07V2v9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD0920819
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729906AbeKEW2e (ORCPT
+        id S1729947AbeKEW2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:28:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39626 "EHLO
+        Mon, 5 Nov 2018 17:28:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40518 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729228AbeKEW2d (ORCPT
+        with ESMTP id S1729228AbeKEW2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:28:33 -0500
+        Mon, 5 Nov 2018 17:28:38 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3371061374; Mon,  5 Nov 2018 13:08:51 +0000 (UTC)
+        id 414C461359; Mon,  5 Nov 2018 13:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541423331;
-        bh=v/yCb6KJRhz5JTPTuGjIacBs0I1J8aW3YqhhGZNAjeA=;
+        s=default; t=1541423337;
+        bh=1w9PcEo2AEM6ciEmzopxhnYhqKyAQIJsIXl0C7DxP1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=loDNsaRAejyigYp9z3MGhX5Www/Gj2eK0kpqocz59ZRWluHp5I4XAbSce0CY1q3kG
-         QbBMOTAwfgNzZzmDnYRHOjt/9w4irv//jdXEegFx8RBEOGh5y+53BYQxNYv6Dn43qJ
-         GIclMsE31Vq8Jsyyo8Ly2IGCWesnjTrxI/+OKzJI=
+        b=OlxG4vU6KB8Vkg+2F0hMmEMy4A1iRWteEEmAANbJKOk32H9NPl88x0ur0jF8O52hM
+         BxpllL889NdzuT1U43ew4c2PfUkiDOmqiHpB9ocbcqugckT5TOlA+dZsy1wlFeFVXY
+         i+CrEk3mtqIG7f/1NQUSgS+BSR0TgOEDYbyikAZQ=
 Received: from svishnoi-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: govinds@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9589A61317;
-        Mon,  5 Nov 2018 13:08:46 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9E23761343;
+        Mon,  5 Nov 2018 13:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541423330;
-        bh=v/yCb6KJRhz5JTPTuGjIacBs0I1J8aW3YqhhGZNAjeA=;
+        s=default; t=1541423334;
+        bh=1w9PcEo2AEM6ciEmzopxhnYhqKyAQIJsIXl0C7DxP1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jp/tSRfd0XzBejazKIca12xkrKzjG1flm3BknXcwukpBhj/cAwMXRqAwXpWgmxezT
-         uyd1YWZoOgA4QOMxvC24sUu+fJnYPWiO+GHoK5MACVF/jrZ6GRhc/L4Luj9eZvElVu
-         k9c1e5PCPHjeV3lfQ3X1dR5x1xb7MRnNG4lupu1U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9589A61317
+        b=QP07V2v94ou6eCW5upLN+D49faBdWlSwT5qF8lDAAvDxjjtp4WFDEmP8j9FOv9Uuz
+         VkBblUYD4gvShJo7W9LatRYH10EeDsb7SSOOQl0B11iXHcuTH1hh1pF4SGgW02Miz2
+         NjreMDfj+6FtWxPLSZOgXt5/Xz2UZgT+JDV/7OzU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E23761343
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
 From:   Govind Singh <govinds@codeaurora.org>
@@ -60,9 +60,9 @@ To:     briannorris@chromium.org, andy.gross@linaro.org,
         sboyd@kernel.org, dianders@chromium.org,
         linux-kernel@vger.kernel.org
 Cc:     Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 1/3] dt: bindings: add missing dt properties for WCN3990 wifi node
-Date:   Mon,  5 Nov 2018 18:38:36 +0530
-Message-Id: <1541423318-19312-2-git-send-email-govinds@codeaurora.org>
+Subject: [PATCH v4 2/3] dts: arm64/sdm845: Add WCN3990 WLAN module device node
+Date:   Mon,  5 Nov 2018 18:38:37 +0530
+Message-Id: <1541423318-19312-3-git-send-email-govinds@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
 References: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
@@ -71,107 +71,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing optional properties in WCN3990 wifi node.
+Add device node for the ath10k SNOC platform driver probe
+and add resources required for WCN3990 on SDM845 soc.
 
 Signed-off-by: Govind Singh <govinds@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Brian Norris <briannorris@chromium.org>
 Tested-by: Brian Norris <briannorris@chromium.org>
 ---
- .../bindings/net/wireless/qcom,ath10k.txt          | 57 +++++++++++++---------
- 1 file changed, 35 insertions(+), 22 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  8 ++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi    | 26 ++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-index 7fd4e8c..55d255c 100644
---- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-+++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-@@ -21,10 +21,22 @@ can be provided per device.
- 
- SNOC based devices (i.e. wcn3990) uses compatible string "qcom,wcn3990-wifi".
- 
--Optional properties:
- - reg: Address and length of the register set for the device.
- - reg-names: Must include the list of following reg names,
- 	     "membase"
-+- interrupts: reference to the list of 17 interrupt numbers for "qcom,ipq4019-wifi"
-+	      compatible target.
-+	      reference to the list of 12 interrupt numbers for "qcom,wcn3990-wifi"
-+	      compatible target.
-+	      Must contain interrupt-names property per entry for
-+	      "qcom,ath10k", "qcom,ipq4019-wifi" compatible targets.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index eedfaf8..c062c5c 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -440,3 +440,11 @@
+ 		bias-pull-up;
+ 	};
+ };
 +
-+- interrupt-names: Must include the entries for MSI interrupt
-+		   names ("msi0" to "msi15") and legacy interrupt
-+		   name ("legacy") for "qcom,ath10k", "qcom,ipq4019-wifi"
-+		   compatible targets.
++&wifi {
++	status = "okay";
++	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
++	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
++	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
++	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index b72bdb0..324be5b 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -87,6 +87,11 @@
+ 			reg = <0 0x86200000 0 0x2d00000>;
+ 			no-map;
+ 		};
 +
-+Optional properties:
- - resets: Must contain an entry for each entry in reset-names.
-           See ../reset/reseti.txt for details.
- - reset-names: Must include the list of following reset names,
-@@ -37,12 +49,9 @@ Optional properties:
- - clocks: List of clock specifiers, must contain an entry for each required
-           entry in clock-names.
- - clock-names: Should contain the clock names "wifi_wcss_cmd", "wifi_wcss_ref",
--               "wifi_wcss_rtc".
--- interrupts: List of interrupt lines. Must contain an entry
--	      for each entry in the interrupt-names property.
--- interrupt-names: Must include the entries for MSI interrupt
--		   names ("msi0" to "msi15") and legacy interrupt
--		   name ("legacy"),
-+	       "wifi_wcss_rtc" for "qcom,ipq4019-wifi" compatible target and
-+	       "cxo_ref_clk_pin" for "qcom,wcn3990-wifi"
-+	       compatible target.
- - qcom,msi_addr: MSI interrupt address.
- - qcom,msi_base: Base value to add before writing MSI data into
- 		MSI address register.
-@@ -55,7 +64,8 @@ Optional properties:
- - qcom,ath10k-pre-calibration-data : pre calibration data as an array,
- 				     the length can vary between hw versions.
- - <supply-name>-supply: handle to the regulator device tree node
--			   optional "supply-name" is "vdd-0.8-cx-mx".
-+			   optional "supply-name" are "vdd-0.8-cx-mx",
-+			   "vdd-1.8-xo", "vdd-1.3-rfa" and "vdd-3.3-ch0".
++		wlan_msa_mem: memory@96700000 {
++			reg = <0 0x96700000 0 0x100000>;
++			no-map;
++		};
+ 	};
  
- Example (to supply the calibration data alone):
- 
-@@ -133,20 +143,23 @@ wifi@18000000 {
- 		compatible = "qcom,wcn3990-wifi";
- 		reg = <0x18800000 0x800000>;
- 		reg-names = "membase";
--		clocks = <&clock_gcc clk_aggre2_noc_clk>;
--		clock-names = "smmu_aggre2_noc_clk"
-+		clocks = <&clock_gcc clk_rf_clk2_pin>;
-+		clock-names = "cxo_ref_clk_pin";
- 		interrupts =
--			   <0 130 0 /* CE0 */ >,
--			   <0 131 0 /* CE1 */ >,
--			   <0 132 0 /* CE2 */ >,
--			   <0 133 0 /* CE3 */ >,
--			   <0 134 0 /* CE4 */ >,
--			   <0 135 0 /* CE5 */ >,
--			   <0 136 0 /* CE6 */ >,
--			   <0 137 0 /* CE7 */ >,
--			   <0 138 0 /* CE8 */ >,
--			   <0 139 0 /* CE9 */ >,
--			   <0 140 0 /* CE10 */ >,
--			   <0 141 0 /* CE11 */ >;
-+			<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
- 		vdd-0.8-cx-mx-supply = <&pm8998_l5>;
-+		vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
-+		vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
-+		vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
+ 	cpus {
+@@ -1403,5 +1408,26 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		wifi: wifi@18800000 {
++			compatible = "qcom,wcn3990-wifi";
++			status = "disabled";
++			reg = <0x18800000 0x800000>;
++			reg-names = "membase";
++			memory-region = <&wlan_msa_mem>;
++			interrupts =
++				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
++		};
+ 	};
  };
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
