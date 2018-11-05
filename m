@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB5DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCF8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC7C2084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:12:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC7C2084F
+	by mail.kernel.org (Postfix) with ESMTP id 46B0A2084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:12:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B0A2084F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387918AbeKFGdr (ORCPT
+        id S2387944AbeKFGdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:33:47 -0500
+        Tue, 6 Nov 2018 01:33:51 -0500
 Received: from mga05.intel.com ([192.55.52.43]:42509 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387862AbeKFGdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:33:46 -0500
+        id S2387862AbeKFGdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 01:33:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 13:12:10 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 13:12:15 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
-   d="scan'208";a="105639154"
+   d="scan'208";a="105639171"
 Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 05 Nov 2018 13:12:09 -0800
-Subject: [driver-core PATCH v5 6/9] driver core: Probe devices
- asynchronously instead of the driver
+  by orsmga001.jf.intel.com with ESMTP; 05 Nov 2018 13:12:15 -0800
+Subject: [driver-core PATCH v5 7/9] driver core: Attach devices on CPU local
+ to device node
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
@@ -41,8 +41,8 @@ Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
         pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
         dave.jiang@intel.com, bvanassche@acm.org,
         alexander.h.duyck@linux.intel.com
-Date:   Mon, 05 Nov 2018 13:12:10 -0800
-Message-ID: <154145232994.29224.4383053368766089653.stgit@ahduyck-desk1.jf.intel.com>
+Date:   Mon, 05 Nov 2018 13:12:15 -0800
+Message-ID: <154145233508.29224.9891071445860629874.stgit@ahduyck-desk1.jf.intel.com>
 In-Reply-To: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
 References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
 User-Agent: StGit/unknown-version
@@ -54,204 +54,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes it so that we probe devices asynchronously instead of the
-driver. This results in us seeing the same behavior if the device is
-registered before the driver or after. This way we can avoid serializing
-the initialization should the driver not be loaded until after the devices
-have already been added.
+This change makes it so that we call the asynchronous probe routines on a
+CPU local to the device node. By doing this we should be able to improve
+our initialization time significantly as we can avoid having to access the
+device from a remote node which may introduce higher latency.
 
-The motivation behind this is that if we have a set of devices that
-take a significant amount of time to load we can greatly reduce the time to
-load by processing them in parallel instead of one at a time. In addition,
-each device can exist on a different node so placing a single thread on one
-CPU to initialize all of the devices for a given driver can result in poor
-performance on a system with multiple nodes.
-
-I am using the driver_data member of the device struct to store the driver
-pointer while we wait on the deferred probe call. This should be safe to do
-as the value will either be set to NULL on a failed probe or driver load
-followed by unload, or the driver value itself will be set on a successful
-driver load. In addition I have used the async_probe flag to add additional
-protection as it will be cleared if someone overwrites the driver_data
-member as a part of loading the driver.
+For example, in the case of initializing memory for NVDIMM this can have a
+significant impact as initialing 3TB on remote node can take up to 39
+seconds while initialing it on a local node only takes 23 seconds. It is
+situations like this where we will see the biggest improvement.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/base/bus.c     |   23 +++------------------
- drivers/base/dd.c      |   52 ++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/device.h |   26 +++++++++++++++++++++++-
- 3 files changed, 80 insertions(+), 21 deletions(-)
+ drivers/base/dd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 8a630f9bd880..0cd2eadd0816 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -606,17 +606,6 @@ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
- }
- static DRIVER_ATTR_WO(uevent);
- 
--static void driver_attach_async(void *_drv, async_cookie_t cookie)
--{
--	struct device_driver *drv = _drv;
--	int ret;
--
--	ret = driver_attach(drv);
--
--	pr_debug("bus: '%s': driver %s async attach completed: %d\n",
--		 drv->bus->name, drv->name, ret);
--}
--
- /**
-  * bus_add_driver - Add a driver to the bus.
-  * @drv: driver.
-@@ -649,15 +638,9 @@ int bus_add_driver(struct device_driver *drv)
- 
- 	klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
- 	if (drv->bus->p->drivers_autoprobe) {
--		if (driver_allows_async_probing(drv)) {
--			pr_debug("bus: '%s': probing driver %s asynchronously\n",
--				drv->bus->name, drv->name);
--			async_schedule(driver_attach_async, drv);
--		} else {
--			error = driver_attach(drv);
--			if (error)
--				goto out_unregister;
--		}
-+		error = driver_attach(drv);
-+		if (error)
-+			goto out_unregister;
- 	}
- 	module_add_driver(drv->owner, drv);
- 
 diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index ed19cf0d6f9a..2fdfe45bb6ea 100644
+index 2fdfe45bb6ea..cf7681309ee3 100644
 --- a/drivers/base/dd.c
 +++ b/drivers/base/dd.c
-@@ -808,6 +808,7 @@ static int __device_attach(struct device *dev, bool allow_async)
- 			ret = 1;
- 		else {
- 			dev->driver = NULL;
-+			dev_set_drvdata(dev, NULL);
- 			ret = 0;
+@@ -834,7 +834,7 @@ static int __device_attach(struct device *dev, bool allow_async)
+ 			dev_dbg(dev, "scheduling asynchronous probe\n");
+ 			get_device(dev);
+ 			dev->async_probe = true;
+-			async_schedule(__device_attach_async_helper, dev);
++			async_schedule_dev(__device_attach_async_helper, dev);
+ 		} else {
+ 			pm_request_idle(dev);
  		}
- 	} else {
-@@ -925,6 +926,32 @@ int device_driver_attach(struct device_driver *drv, struct device *dev)
- 	return ret;
- }
- 
-+static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
-+{
-+	struct device *dev = _dev;
-+	struct device_driver *drv;
-+
-+	__device_driver_lock(dev, dev->parent);
-+
-+	/*
-+	 * If someone attempted to bind a driver either successfully or
-+	 * unsuccessfully before we got here we should just skip the driver
-+	 * probe call.
-+	 */
-+	drv = dev_get_drv_async(dev);
-+	if (drv && !dev->driver)
-+		driver_probe_device(drv, dev);
-+
-+	/* We made our attempt at an async_probe, clear the flag */
-+	dev->async_probe = false;
-+
-+	__device_driver_unlock(dev, dev->parent);
-+
-+	put_device(dev);
-+
-+	dev_dbg(dev, "async probe completed\n");
-+}
-+
- static int __driver_attach(struct device *dev, void *data)
- {
- 	struct device_driver *drv = data;
-@@ -952,6 +979,25 @@ static int __driver_attach(struct device *dev, void *data)
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
-+	if (driver_allows_async_probing(drv)) {
-+		/*
-+		 * Instead of probing the device synchronously we will
-+		 * probe it asynchronously to allow for more parallelism.
-+		 *
-+		 * We only take the device lock here in order to guarantee
-+		 * that the dev->driver and driver_data fields are protected
-+		 */
-+		dev_dbg(dev, "scheduling asynchronous probe\n");
-+		device_lock(dev);
-+		if (!dev->driver) {
-+			get_device(dev);
-+			dev_set_drv_async(dev, drv);
-+			async_schedule(__driver_attach_async_helper, dev);
-+		}
-+		device_unlock(dev);
-+		return 0;
-+	}
-+
- 	device_driver_attach(drv, dev);
- 
- 	return 0;
-@@ -1049,6 +1095,12 @@ void device_release_driver_internal(struct device *dev,
- {
- 	__device_driver_lock(dev, parent);
- 
-+	/*
-+	 * We shouldn't need to add a check for any pending async_probe here
-+	 * because the only caller that will pass us a driver, driver_detach,
-+	 * should have been called after the driver was removed from the bus
-+	 * and will call async_synchronize_full before we get to this point.
-+	 */
- 	if (!drv || drv == dev->driver)
- 		__device_release_driver(dev, parent);
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index fc7091d436c2..4d9a39769081 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -910,7 +910,9 @@ struct dev_links_info {
-  * 		variants, which GPIO pins act in what additional roles, and so
-  * 		on.  This shrinks the "Board Support Packages" (BSPs) and
-  * 		minimizes board-specific #ifdefs in drivers.
-- * @driver_data: Private pointer for driver specific info.
-+ * @driver_data: Private pointer for driver specific info if driver is
-+ *		non-NULL. Pointer to deferred driver to be attached if driver
-+ *		is NULL.
-  * @links:	Links to suppliers and consumers of this device.
-  * @power:	For device power management.
-  *		See Documentation/driver-api/pm/devices.rst for details.
-@@ -1116,9 +1118,31 @@ static inline void *dev_get_drvdata(const struct device *dev)
- 
- static inline void dev_set_drvdata(struct device *dev, void *data)
- {
-+	/*
-+	 * clear async_probe to prevent us from attempting to read driver_data
-+	 * as a driver. We can reset this to true for the one case where we are
-+	 * using this to record an actual driver.
-+	 */
-+	dev->async_probe = false;
- 	dev->driver_data = data;
- }
- 
-+static inline struct device_driver *dev_get_drv_async(const struct device *dev)
-+{
-+	return dev->async_probe ? dev->driver_data : NULL;
-+}
-+
-+static inline void dev_set_drv_async(struct device *dev,
-+				     struct device_driver *drv)
-+{
-+	/*
-+	 * Set async_probe to true indicating we are waiting for this data to be
-+	 * loaded as a potential driver.
-+	 */
-+	dev->driver_data = drv;
-+	dev->async_probe = true;
-+}
-+
- static inline struct pm_subsys_data *dev_to_psd(struct device *dev)
- {
- 	return dev ? dev->power.subsys_data : NULL;
+@@ -992,7 +992,7 @@ static int __driver_attach(struct device *dev, void *data)
+ 		if (!dev->driver) {
+ 			get_device(dev);
+ 			dev_set_drv_async(dev, drv);
+-			async_schedule(__driver_attach_async_helper, dev);
++			async_schedule_dev(__driver_attach_async_helper, dev);
+ 		}
+ 		device_unlock(dev);
+ 		return 0;
 
