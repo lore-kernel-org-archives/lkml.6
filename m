@@ -2,110 +2,93 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AE1C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D5DECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 077D920869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:55:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGgGesDT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077D920869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C26A420819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:55:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26A420819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbeKEWOx (ORCPT
+        id S1729854AbeKEWPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:14:53 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40726 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728971AbeKEWOw (ORCPT
+        Mon, 5 Nov 2018 17:15:18 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54088 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728136AbeKEWPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:14:52 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y16so13162874qki.7;
-        Mon, 05 Nov 2018 04:55:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nE6D3TcWm51I/5N4yCHXVCpDeNk8J1NZRSK213iJ1oc=;
-        b=DGgGesDTVM4g15L8ORVff8n0IjwvyRjVqM18tTKHDIws/XO2ZUT9xKCp4ePojOGw2X
-         ZyGgwUumI/tRJ1TBsIBBMdlLA9KC9P7R+wtul+sB4WuEUnbC7CBasZreFszMIs7/tB5o
-         QaBDQoGpdpZOVvU5R2oxaBOP3pdsBZR+Dk+AzPGCy52nvWO6R2+TEHWRF60tmrmE1l7O
-         eMkzzMtYlaNUgDolwbe1wUkTYMtS6bCKkqzVGORyCa6Zswdcwy5Wb2JuspDzPfhUmA9J
-         sxaEXtha90jwLqHkYgKtPUwWrJwYwa+t4BMGwgTMBK1tLEe5+yzHJLFOnqDRq4yBM0MK
-         4kNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nE6D3TcWm51I/5N4yCHXVCpDeNk8J1NZRSK213iJ1oc=;
-        b=g+bIjxiF5nW8+zvI6Z0e8vV/h4tnGxCLGhxJBAteEqQ8MmVxsc/QTkFqygzTLK35qD
-         8A8waH3VYrI9dNB3ZdQrekMkVFQxZuqHKenrRy+LswCGyvIYzcyN0gBcb/46pLAaDNar
-         yhWajkmVAzcfjWbx29PLvidfKSPbE89Mp7qc+iyVW/8cnnJK2rQ099vnTYNJ2GYWH0Gi
-         fpwYFYGW2q3eSGUv5WDUSlNuaAN+PCPGlri6PHn58ejCZ5R3f5yPRbdwQMbZT7BnP7Wo
-         LFzxfTrJFKOzHdXqvClAE4UWQbmXqyir4JIu6W6XE5a507rWsEGeJQ69qzZdAIikMjj3
-         9Vzw==
-X-Gm-Message-State: AGRZ1gK7J+iJBDUzz/2LDOU59oMFbM2f18+vSqNWA5Dvk2DohaTQsZyx
-        c1CHs45YImytddu8sBYi656MDkX9iHKLosv7EjQ=
-X-Google-Smtp-Source: AJdET5fof/xxT7bxQBozb0Bk6smZgRj5M3o8+1JqJS1BmBi2KQw93PG3+UZDsGQqpoug2uUJgK7vW9gA1O6zC2tZw0Q=
-X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr19185933qkc.219.1541422515079;
- Mon, 05 Nov 2018 04:55:15 -0800 (PST)
+        Mon, 5 Nov 2018 17:15:18 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 2641572CC68;
+        Mon,  5 Nov 2018 15:55:38 +0300 (MSK)
+Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id D9F944A4A29;
+        Mon,  5 Nov 2018 15:55:37 +0300 (MSK)
+Date:   Mon, 5 Nov 2018 15:55:37 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: Re: [PATCH v2 0/2] crypto: streebog - add Streebog hash function
+Message-ID: <20181105125537.ux4eehruuncqukli@sole.flsd.net>
+Mail-Followup-To: Mimi Zohar <zohar@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+References: <20181010121254.12220-1-vt@altlinux.org>
+ <20181012061659.mextetc3v7urqkzx@gondor.apana.org.au>
+ <20181012064105.bchujbwoaszrcu3l@sole.flsd.net>
+ <20181017060851.r5mxvpq3l2ycvpio@gondor.apana.org.au>
+ <20181103055145.ndvxd7nbnoqtwrk5@sole.flsd.net>
+ <1541422113.21115.44.camel@linux.ibm.com>
 MIME-Version: 1.0
-References: <1541414431-84128-1-git-send-email-peng.hao2@zte.com.cn> <1541414431-84128-3-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1541414431-84128-3-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 5 Nov 2018 14:55:03 +0200
-Message-ID: <CAHp75VeJHjYUNz-O83qm1m8JZtW5t9JJDKxKRpbLtPYXr2VbnQ@mail.gmail.com>
-Subject: Re: [PATCH V7 3/9] misc/pvpanic: add MMIO support
-To:     peng.hao2@zte.com.cn
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com,
-        Linux Documentation List <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <1541422113.21115.44.camel@linux.ibm.com>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 4:31 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
->
-> On some architectures (e.g. arm64), it's preferable to use MMIO, since
-> this can be used standalone. Add MMIO support to the pvpanic driver.
+Mimi,
 
-Thanks for an update, looks quite good, though couple of comments below.
+On Mon, Nov 05, 2018 at 07:48:33AM -0500, Mimi Zohar wrote:
+> On Sat, 2018-11-03 at 08:51 +0300, Vitaly Chikunov wrote:
+> > On Wed, Oct 17, 2018 at 02:08:51PM +0800, Herbert Xu wrote:
+> > > On Fri, Oct 12, 2018 at 09:41:05AM +0300, Vitaly Chikunov wrote:
+> > > >
+> > > > It is the first part of attempts to add to the Integrity subsystem
+> > > > ability of verifying file and module signatures by Russian GOST
+> > > > algorithms.
+> > > 
+> > > It would be better if these patches are posted together.  That
+> > > way we don't end up with a situation where the algorithm goes into
+> > > the kernel but the ultimate user is rejected.
+> > 
+> > IMA does not need any particular patching inside of their subtree to
+> > support new hash, because it is using any hash registered in Hash Info
+> > which is still under crypto subtree. I added appropriate patch into v3
+> > which is already posted a week ago, and tested it to work correctly with
+> > ima_appraise=fix.
+> 
+> That's true, but the target subsystem should be made aware of the new
+> usage.
 
->         if (acpi_dev_resource_io(res, &r)) {
-> -               port = r.start;
+Did you mean by re-sending the patch with Cc to linux-integrity? Or
+something more?
 
-> +               base = (void __iomem *) ioport_map(r.start,
-> +                                       r.end - r.start + 1);
+Thanks,
 
-I'm so sorry I didn't notice this stuff.
-
-1. ioport_map() already returns void __iomem *. No need to cast.
-2. To calculate resource size we have a helper macro resource_size().
-
-> +               return AE_OK;
-> +       } else if (acpi_dev_resource_memory(res, &r)) {
-> +               base = ioremap(r.start, r.end - r.start + 1);
-
-Ditto for the size calculation.
-
->                 return AE_OK;
-
-
--- 
-With Best Regards,
-Andy Shevchenko
