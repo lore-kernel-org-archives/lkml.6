@@ -2,76 +2,79 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B217C32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25004C32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B775A20685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:46:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B775A20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 8B4F820685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:48:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4F820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbeKEKCz (ORCPT
+        id S1729311AbeKEKFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 05:02:55 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:46640 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbeKEKCy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 05:02:54 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4F1C814883D3B;
-        Sun,  4 Nov 2018 16:45:58 -0800 (PST)
-Date:   Sun, 04 Nov 2018 16:45:57 -0800 (PST)
-Message-Id: <20181104.164557.2006286407522148282.davem@davemloft.net>
-To:     jarod@redhat.com
-Cc:     linux-kernel@vger.kernel.org, maheshb@google.com,
-        netdev@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net v2] bonding/802.3ad: fix link_failure_count tracking
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181104195946.33861-1-jarod@redhat.com>
-References: <20181101212240.26768-1-jarod@redhat.com>
-        <20181104195946.33861-1-jarod@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 04 Nov 2018 16:45:58 -0800 (PST)
+        Mon, 5 Nov 2018 05:05:17 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:38438 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727047AbeKEKFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 05:05:17 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id A15AB390CAAA07AC5547;
+        Mon,  5 Nov 2018 08:48:17 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wA50mBEE052168;
+        Mon, 5 Nov 2018 08:48:11 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018110508481363-8567096 ;
+          Mon, 5 Nov 2018 08:48:13 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     mingo@redhat.com, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Yi Wang <wang.yi59@zte.com.cn>
+Subject: [RESEND PATCH] sched/fair: fix a comment in task_numa_fault()
+Date:   Mon, 5 Nov 2018 08:50:13 +0800
+Message-Id: <1541379013-11352-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-05 08:48:13,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-05 08:48:10,
+        Serialize complete at 2018-11-05 08:48:10
+X-MAIL: mse01.zte.com.cn wA50mBEE052168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarod Wilson <jarod@redhat.com>
-Date: Sun,  4 Nov 2018 14:59:46 -0500
+Fix the comment in task_numa_fault() to avoid confusing.
 
-> Commit 4d2c0cda07448ea6980f00102dc3964eb25e241c set slave->link to
-> BOND_LINK_DOWN for 802.3ad bonds whenever invalid speed/duplex values
-> were read, to fix a problem with slaves getting into weird states, but
-> in the process, broke tracking of link failures, as going straight to
-> BOND_LINK_DOWN when a link is indeed down (cable pulled, switch rebooted)
-> means we broke out of bond_miimon_inspect()'s BOND_LINK_DOWN case because
-> !link_state was already true, we never incremented commit, and never got
-> a chance to call bond_miimon_commit(), where slave->link_failure_count
-> would be incremented. I believe the simple fix here is to mark the slave
-> as BOND_LINK_FAIL, and let bond_miimon_inspect() transition the link from
-> _FAIL to either _UP or _DOWN, and in the latter case, we now get proper
-> incrementing of link_failure_count again.
-> 
-> Fixes: 4d2c0cda0744 ("bonding: speed/duplex update at NETDEV_UP event")
-> CC: Mahesh Bandewar <maheshb@google.com>
-> CC: David S. Miller <davem@davemloft.net>
-> CC: netdev@vger.kernel.org
-> CC: stable@vger.kernel.org
-> Signed-off-by: Jarod Wilson <jarod@redhat.com>
-> ---
-> v2: fix Fixes line
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Reviewed-by: Xi Xu <xu.xi8@zte.com.cn>
+---
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied and queued up for -stable.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 908c9cd..6430c0a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2422,8 +2422,8 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
+ 		local = 1;
+ 
+ 	/*
+-	 * Retry task to preferred node migration periodically, in case it
+-	 * case it previously failed, or the scheduler moved us.
++	 * Retry to migrate task to preferred node periodically, in case it
++	 * previously failed, or the scheduler moved us.
+ 	 */
+ 	if (time_after(jiffies, p->numa_migrate_retry)) {
+ 		task_numa_placement(p);
+-- 
+1.8.3.1
+
