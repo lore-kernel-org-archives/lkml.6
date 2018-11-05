@@ -2,92 +2,58 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41A6C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54415C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D122081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D122081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gydle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C1782081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1782081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbeKFAvo (ORCPT
+        id S1730107AbeKFAwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:51:44 -0500
-Received: from mail.gydle.com ([64.18.173.180]:51398 "EHLO mail.gydle.com"
+        Mon, 5 Nov 2018 19:52:07 -0500
+Received: from mga06.intel.com ([134.134.136.31]:6649 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727623AbeKFAvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:51:43 -0500
-X-Received: from [192.168.1.136] (unknown [69.70.179.254])
-        (using TLSv1 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sboisvert@gydle.com)
-        by mail.gydle.com (Postfix) with ESMTPSA id EDA74440D3;
-        Mon,  5 Nov 2018 10:31:27 -0500 (EST)
-Subject: Re: [PATCH v2 7/7] lightnvm: pblk: remove dead code in pblk_recov_l2p
-To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>,
-        Matias Bjorling <mb@lightnvm.io>
-Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-References: <20181105122610.1555-1-hans.ml.holmberg@owltronix.com>
- <20181105122610.1555-8-hans.ml.holmberg@owltronix.com>
-From:   Sebastien Boisvert <sboisvert@gydle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sboisvert@gydle.com; keydata=
- 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
- vnOzfc5OOiR/D+lE
-Message-ID: <844bd112-b9be-f63d-dfb1-42763fa83f0d@gydle.com>
-Date:   Mon, 5 Nov 2018 10:31:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1729960AbeKFAwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:52:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 07:31:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="84112992"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga008.fm.intel.com with ESMTP; 05 Nov 2018 07:31:48 -0800
+Subject: Re: USB-C device hotplug issue
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bin Liu <b-liu@ti.com>,
+        Maxim Moseychuk <franchesko.salias.hudro.pedros@gmail.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Dominik Bozek <dominikx.bozek@intel.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+References: <Pine.LNX.4.44L0.1810261000040.1467-100000@iolanthe.rowland.org>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <ac4ea7fa-9fd7-0987-a70c-11a26465e680@linux.intel.com>
+Date:   Mon, 5 Nov 2018 17:35:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181105122610.1555-8-hans.ml.holmberg@owltronix.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <Pine.LNX.4.44L0.1810261000040.1467-100000@iolanthe.rowland.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -95,32 +61,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-11-05 7:26 a.m., Hans Holmberg wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On 26.10.2018 17:07, Alan Stern wrote:
+> On Fri, 26 Oct 2018, Dennis Wassenberg wrote:
 > 
-> Remove the call to pblk_line_replace_data as it returns
-> directly as we have not set l_mg->data_next yet.
+>>>> --- a/drivers/usb/core/hub.c
+>>>> +++ b/drivers/usb/core/hub.c
+>>>> @@ -2815,7 +2815,9 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+>>>>   					USB_PORT_FEAT_C_BH_PORT_RESET);
+>>>>   			usb_clear_port_feature(hub->hdev, port1,
+>>>>   					USB_PORT_FEAT_C_PORT_LINK_STATE);
+>>>> -			usb_clear_port_feature(hub->hdev, port1,
+>>>> +
+>>>> +			if (!warm)
+>>>> +				usb_clear_port_feature(hub->hdev, port1,
+>>>>   					USB_PORT_FEAT_C_CONNECTION);
+>>>>   
+>>>>   			/*
+>>>
+>>> The key fact is that connection events can get lost if they happen to
+>>> occur during a port reset.
+>> Yes.
+>>>
+>>> I'm not entirely certain of the logic here, but it looks like the
+>>> correct test to add should be "if (udev != NULL)", not "if (!warm)".
+>>> Perhaps Mathias can confirm this
 
-You have the word "as" twice. Replace the second with "because".
+Sorry about the late response, got distracted while performing git
+archeology.
 
+"if (udev != NULL)" would seem more reasonable.
+
+Logs show that clearing the FEAT_C_CONNECTION was originally added
+after a hot reset failed, and before issuing a warm reset to a SS.Inactive
+link.  (see 10d674a USB: When hot reset for USB3 fails, try warm reset.)
+
+Apparently all the change flags needed to be cleared for some specific
+host + device combination before issuing a warm reset for the enumeration
+to work properly.
+
+The change to always clear FEAT_C_CONNECTION for USB3 was done later in patch:
+a24a607 USB: Rip out recursive call on warm port reset.
+
+Motivation was:
+
+"In hub_port_finish_reset, unconditionally clear the connect status
+  change (CSC) bit for USB 3.0 hubs when the port reset is done.  If we
+  had to issue multiple warm resets for a device, that bit may have been
+  set if the device went into SS.Inactive and then was successfully warm
+  reset."
+
+>> I don't know if clearing the USB_PORT_FEAT_C_CONNECTION bit is
+>> correct in case of a non warm reset. In my case I always observed a
+>> warm reset because of the link state change.
+>> Thats why I checked the warm variable to not change the behavoir for
+>> cases a didn't checked for the first shot.
 > 
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> ---
->  drivers/lightnvm/pblk-recovery.c | 1 -
->  1 file changed, 1 deletion(-)
+> (The syntax of that last sentence is pretty mangled; I can't understand
+> it.)
 > 
-> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-> index 0fbd30e0a587..416d9840544b 100644
-> --- a/drivers/lightnvm/pblk-recovery.c
-> +++ b/drivers/lightnvm/pblk-recovery.c
-> @@ -805,7 +805,6 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
->  		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
->  							&l_mg->meta_bitmap));
->  		spin_unlock(&l_mg->free_lock);
-> -		pblk_line_replace_data(pblk);
->  	} else {
->  		spin_lock(&l_mg->free_lock);
->  		/* Allocate next line for preparation */
+> Think of it this way:
 > 
+> 	If a device was not attached before the reset, we don't want
+> 	to clear the connect-change status because then we wouldn't
+> 	recognize a device that was plugged in during the reset.
+> 
+> 	If a device was attached before the reset, we don't want any
+> 	connect-change status which might be provoked by the reset to
+> 	last, because we don't want the core to think that the device
+> 	was unplugged and replugged when all that happened was a reset.
+> 
+> So the important criterion is whether or not a device was attached to
+> the port when the reset started.  It's something of a coincidence that
+> you only observe warm resets when there's nothing attached.
+> 
+>> During the first run of usb_hub_reset the udev is NULL because in
+>> this situation the device is not attached logically.
+>>
+>> [  112.889810] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+>> [  113.201192] usb 4-1-port1: XXX: hub_port_reset: udev:            (nil)!
+>> [  113.201198] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+>> [  113.253612] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+>> [  113.377208] usb 4-1-port1: XXX: hub_port_reset: udev: ffff88046b302800!
+>> [  113.377214] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>> [  113.429478] usb 4-1.1: new SuperSpeed USB device number 7 using xhci_hcd
+>> [  113.442370] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5596
+>> [  113.442376] usb 4-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+>> [  113.442381] usb 4-1.1: Product: Ultra T C
+>> [  113.442385] usb 4-1.1: Manufacturer: SanDisk
+>> [  113.442388] usb 4-1.1: SerialNumber: 4C530001131013121031
+>>
+>> Or maybe we can skip clearing the USB_PORT_FEAT_C_CONNECTION bit in
+>> case of hub_port_reset completely without any other check?
+> 
+> See above.
+
+Checking for udev sounds reasonable to me.
+Not sure if we should worry about the specific host+device combo that needed flags
+cleared before warm reset. See patch:
+
+10d674a USB: When hot reset for USB3 fails, try warm reset.
+https://marc.info/?l=linux-usb&m=131603549603799&w=2
+
+-Mathias
