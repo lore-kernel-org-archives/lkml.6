@@ -2,95 +2,88 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05121C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531EEC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45A820862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:53:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EizfVLI2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45A820862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 257312085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257312085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbeKFANZ (ORCPT
+        id S2387396AbeKFAOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:13:25 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42816 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729375AbeKFANZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:13:25 -0500
-Received: by mail-qk1-f196.google.com with SMTP id u68so15052509qkg.9
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 06:53:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=yfo1+UsnEF5hy4ZmoOvDeWugDXvGpcNA/YXatLFEP/k=;
-        b=EizfVLI2xPw2/ENVKGANr4KS/SgdlxLcZ1cbm0W9OJskulz9tVBQU/R4nj3dkZoPNI
-         sKoy1W+RFkRyNnnXcvib5wdz22wKbHHVFl9bReUO2+ibl9uNU1oXxX0DLauCOMuaqtti
-         L/t28Bz2IRquG9v/C19zvZLwYFRp3co6Gh+4hwoSR39eha+QHwN6lumd+ybW3a8hjlXF
-         GyeaxM2RFqK4rPcS6GgWCWtKGjk7nDG5MnbYbNhIwh+VPhopw7VhYwIopkIjMl6kRDta
-         3/0vQx/dylfWbW6glUdxY7x2mBLPNyGzCsIwxQCiRtU8Vg5Hr+wURIvOXDejMDwV1WSi
-         fCGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=yfo1+UsnEF5hy4ZmoOvDeWugDXvGpcNA/YXatLFEP/k=;
-        b=rLRK0SQUXjE/L6bouvt9hrxZHiktH21Q4CrjDC57Anjmp9b9AOQKB8lKNqBjBk698/
-         rlG0i9NNUPaN74Gcz0IrrhfxkO8ff5bwM73b/aTXhbijPJN0qH1n48ld3js+0EIOAP6O
-         bn9k+5ljkIKn9oWb8dmXIvIQz5vpxSiVuYO2iE+pEDieXGqwo0hOFtnZRWX905rLeMZJ
-         goQwvCjCsY2aUWhRUJZ8CERr7SB1A7aWMoNdwmzG5HyD5RnAdqGfT2MATTA2WvhEHlrl
-         vqHy3aV0zk8NsXtsBh1e8Z6+xFWgOhfIz/6xeuOyTmJYT4QPrwc8ygk2RVrsxotrST0b
-         04xg==
-X-Gm-Message-State: AGRZ1gLHD509r97aC7dqeNVytky47NMAYjXIivLtj0B5t5GM7jCE1esr
-        9v4XY5FQ+URUdGOkn6MTsgfzfxjgrS+ycLDffXA=
-X-Google-Smtp-Source: AJdET5d36+zY4IXu5VDkCNjmZRReS/sGCC5OGvbgcMrmKltZsw08mt7XvbzkwayX/qNByJej2imZjigH/cTqMbOqom0=
-X-Received: by 2002:a0c:d992:: with SMTP id y18mr22334591qvj.161.1541429599925;
- Mon, 05 Nov 2018 06:53:19 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 06:53:19 -0800 (PST)
-In-Reply-To: <alpine.DEB.2.21.1811051225430.1566@nanos.tec.linutronix.de>
-References: <20181102154935.2073592-1-arnd@arndb.de> <alpine.DEB.2.21.1811051225430.1566@nanos.tec.linutronix.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 5 Nov 2018 15:53:19 +0100
-X-Google-Sender-Auth: N1WVP3pJxzHIwdDlhqXLTjp1W8g
-Message-ID: <CAK8P3a1D8p=WXb83bCTQ38VuKymAGQTYMoNx_Whg_yLJ3nyY2g@mail.gmail.com>
-Subject: Re: [PATCH] x86: vsmp: avoid link error with gcc -Og
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 5 Nov 2018 19:14:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:45286 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbeKFAOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:14:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E922A78;
+        Mon,  5 Nov 2018 06:54:16 -0800 (PST)
+Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4C6AC3F5CF;
+        Mon,  5 Nov 2018 06:54:14 -0800 (PST)
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH v2 0/3] util_est regression fixup and cleanups
+Date:   Mon,  5 Nov 2018 14:53:57 +0000
+Message-Id: <20181105145400.935-1-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18, Thomas Gleixner <tglx@linutronix.de> wrote:
-> Arnd,
->
-> On Fri, 2 Nov 2018, Arnd Bergmann wrote:
->
->> When the compiler skips optimizations for ease of debugging,
->> teh vsmp_cap_cpus() function is not eliminated from the build
->> with CONFIG_PCI=n:
->
-> thanks for that, but the code has other issues, which are addressed with
-> this:
->
->
-> https://lkml.kernel.org/r/1541404864-31603-1-git-send-email-eial@scalemp.com
->
-> That should also solve the problem you've observed.
+This is a respin of:
 
-Ok, I've dropped my patch from my test tree, will let you know if
-I see any other issues with the new patch applied.
+   https://lore.kernel.org/lkml/20181030160947.19581-1-patrick.bellasi@arm.com/
 
-      Arnd
+rebased on v4.20-rc1, which addresses Peter's comments by also adding a
+couple of additional cleanup patches on top.
+
+Tests on a 40 CPUs Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz system
+still reports the ~10-15% Execl Throughput improvements after applying
+the first patch. Those benefits are not there if we remove the
+additional test on "current == p" which Peter was asking about.
+
+I guess the race condition described in the new inline comment I've now
+added could be the reason for the additional test being required, but I
+did not really verified that guess.
+I've just kept both conditions but swapped them since we will probably
+be more likely to call cpu_util_without() with a task which is
+eventually marked as task_on_rq_queued().
+
+The second patch is pretty simple, while the last one implements what
+Peter suggested in the previous review. I did not used something similar
+to sub_positive, as suggested by Peter, just because in my tests that
+implementation seems to affect negatively the Execl Throughput tests
+results by reducing the speedup we get with the proposed version.
+
+Best Patrick
+
+Patrick Bellasi (3):
+  sched/fair: util_est: fix cpu_util_wake for execl
+  sched/fair: util_est: mask UTIL_AVG_UNCHANGED usages
+  sched/fair: add lsub_positive and use it consistently
+
+ kernel/sched/fair.c | 85 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 64 insertions(+), 21 deletions(-)
+
+-- 
+2.18.0
+
