@@ -3,92 +3,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BCEC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE319C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4C320819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:56:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4C320819
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D97F20825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:58:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D97F20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbeKEUPJ (ORCPT
+        id S1729022AbeKEURy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:15:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51988 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeKEUPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:15:09 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D65AA30820D8;
-        Mon,  5 Nov 2018 10:56:01 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-33.pek2.redhat.com [10.72.8.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 75DEA104C529;
-        Mon,  5 Nov 2018 10:55:54 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 18:55:50 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Jens Axboe <axboe@fb.com>,
-        Linux Block Layer Mailinglist <linux-block@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH] block: respect virtual boundary mask in bvecs
-Message-ID: <20181105105548.GC12367@ming.t460p>
-References: <20181105102301.9752-1-jthumshirn@suse.de>
+        Mon, 5 Nov 2018 15:17:54 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:44311 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727440AbeKEURx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 15:17:53 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 8128E40003;
+        Mon,  5 Nov 2018 10:58:43 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 11:58:41 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] [media] ov7670: make "xclk" clock optional
+Message-ID: <20181105105841.GJ20885@w540>
+References: <20181004212903.364064-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lildS9pRFgpM/xzO"
 Content-Disposition: inline
-In-Reply-To: <20181105102301.9752-1-jthumshirn@suse.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 05 Nov 2018 10:56:01 +0000 (UTC)
+In-Reply-To: <20181004212903.364064-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 11:23:01AM +0100, Johannes Thumshirn wrote:
-> With drivers like iSer we are seeing a lot of bio splitting and smaller I/Os
-> being submitted to the driver.
-> 
-> The root cause of this issue that the virtual boundary mask code does not take
-> into consideration that some of the memory segments in the SG list may have
-> come from a huge memory page that is being managed in the SG list as 4K
 
-I guess you mean something like 64K PAGE_SIZE, instead of huge page.
+--lildS9pRFgpM/xzO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> blocks.  This means that many of the segments in the SG list will have an
-> offset into the page that is not 0 but will be a multiple of 4K.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Sagi Grimberg <sagi@grimberg.me>
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Hi Lubomir,
+   +Sakari in Cc
+
+I just noticed this, and the patch is now in v4.20, but let me comment
+anyway on this.
+
+On Thu, Oct 04, 2018 at 11:29:03PM +0200, Lubomir Rintel wrote:
+> When the "xclk" clock was added, it was made mandatory. This broke the
+> driver on an OLPC plaform which doesn't know such clock. Make it
+> optional.
+>
+
+I don't think this is correct. The sensor needs a clock to work.
+
+With this patch clock_speed which is used to calculate
+the framerate is defaulted to 30MHz, crippling all the calculations if
+that default value doesn't match what is actually installed on the
+board.
+
+If this patch breaks the OLPC, then might it be the DTS for said
+device needs to be fixed instead of working around the issue here?
+
+Also, the DT bindings should be updated too if we decide this property
+can be omitted. At this point, with a follow-up patch.
+
+Thanks
+   j
+
+> Tested on a OLPC XO-1 laptop.
+>
+> Cc: stable@vger.kernel.org # 4.11+
+> Fixes: 0a024d634cee ("[media] ov7670: get xclk")
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
->  block/blk-merge.c | 2 +-
->  block/blk.h       | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 6b5ad275ed56..208658a901c6 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -46,7 +46,7 @@ static inline bool bio_will_gap(struct request_queue *q,
->  		bio_get_first_bvec(prev_rq->bio, &pb);
->  	else
->  		bio_get_first_bvec(prev, &pb);
-> -	if (pb.bv_offset)
-> +	if (pb.bv_offset & queue_virt_boundary(q))
->  		return true;
+>  drivers/media/i2c/ov7670.c | 27 +++++++++++++++++----------
+>  1 file changed, 17 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> index 31bf577b0bd3..64d1402882c8 100644
+> --- a/drivers/media/i2c/ov7670.c
+> +++ b/drivers/media/i2c/ov7670.c
+> @@ -1808,17 +1808,24 @@ static int ov7670_probe(struct i2c_client *client,
+>  			info->pclk_hb_disable = true;
+>  	}
+>
+> -	info->clk = devm_clk_get(&client->dev, "xclk");
+> -	if (IS_ERR(info->clk))
+> -		return PTR_ERR(info->clk);
+> -	ret = clk_prepare_enable(info->clk);
+> -	if (ret)
+> -		return ret;
+> +	info->clk = devm_clk_get(&client->dev, "xclk"); /* optional */
+> +	if (IS_ERR(info->clk)) {
+> +		ret = PTR_ERR(info->clk);
+> +		if (ret == -ENOENT)
+> +			info->clk = NULL;
+> +		else
+> +			return ret;
+> +	}
+> +	if (info->clk) {
+> +		ret = clk_prepare_enable(info->clk);
+> +		if (ret)
+> +			return ret;
+>
+> -	info->clock_speed = clk_get_rate(info->clk) / 1000000;
+> -	if (info->clock_speed < 10 || info->clock_speed > 48) {
+> -		ret = -EINVAL;
+> -		goto clk_disable;
+> +		info->clock_speed = clk_get_rate(info->clk) / 1000000;
+> +		if (info->clock_speed < 10 || info->clock_speed > 48) {
+> +			ret = -EINVAL;
+> +			goto clk_disable;
+> +		}
+>  	}
+>
+>  	ret = ov7670_init_gpio(client, info);
+> --
+> 2.19.0
+>
 
-The change should only make difference in case that PAGE_SIZE is bigger
-than 4K. If yes, please add the description in commit log.
+--lildS9pRFgpM/xzO
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Thanks,
-Ming
+iQIcBAABCAAGBQJb4CJhAAoJEHI0Bo8WoVY8T4EP/20jk08NU+3uAbP5KtpmbirC
+bfLr1t5zfjIaq6okDqw1aslMbPzlOtb0BpcJX3adttCtUUWQT7bkWfiPUZLfkLAz
+zSBvPHZarIqhTtnc3wIA+2H4d1XB63j/+a8hAmqIK3CqLhUJOC3SxA7dxxive+hW
+HMfY3g4g33OtehF4OzVlFlrKUHBkFFuzUjy27MAZ3si7D8nHCzKONxIXuWbTkPj6
+Swsrg4Hl198IuMGdqWW9/rM84/Foa6osGZmr5DGlnw3slmbcCgiSWPQ4/+gkojNl
+4AtjRtwVAVHxUyE0EvK1T8TMnLD3vRWUu6m3Xmwqs+B7T2k5Ww8FiT3uHTVfsX0c
+SoOCuDfslzcK70xLeH+I/uK1PJCIVkhpNkmZnNJf0oG5C0oODg7gopYmbOQEFAF9
+IQdPwxdg4Z1YuA68SdE6vwNiBfuqWq9DQ3FqRHcQqOQDe0X2YcuMLK/sMa1XYkYn
+waduL0DD4LwhcnB39p1XNRRZ6UQ+rU8oWt8c/9HMq/ldVilVGkNhNE+fUmEZGtLk
+V0YPVw5pQKKjye6WPmQm66VxhFUD5w9A6wpcLUhrZI4OXxuMkkrtVBSHYHpGofIi
+zKAR5Fa9I5gNmXjmwvccJEi6Wir1mEDUIlAs4DR+b7EEMKyrXsRH/audZpnVEVY0
+Noq3MtAR6KxAtfNpppkA
+=WJ6g
+-----END PGP SIGNATURE-----
+
+--lildS9pRFgpM/xzO--
