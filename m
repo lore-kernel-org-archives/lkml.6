@@ -2,85 +2,110 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF5FECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA05ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7C020862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 071B820854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:09:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZJ7zAvdp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7C020862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="VsHHEIsL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071B820854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbeKES1l (ORCPT
+        id S1728728AbeKES1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:27:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53528 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeKES1l (ORCPT
+        Mon, 5 Nov 2018 13:27:55 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:57292 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeKES1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:27:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=l3y/CO+0xDtVPVTAZdr/0+Ai079D0gY/8QOevfiqFiw=; b=ZJ7zAvdpt6se/Q//+yR+VF1EVO
-        o+6hS32l4lBXiXa6YaTte9wSj5Qirtpho4hpmJvANl2rh8LLxQjQ7JyIy91GG9C8BLlmuHKqmlJO4
-        5GN3uHjnYJ5WzdnCvPhWXvqCM5WLCbxjCE+qAnDXZDoqVouY8RxZcAvfbZUppN8bvfX8Zox7p6htE
-        Y0L/yJiCWU46DBohoEO1RC8RBaavCw5Nh9ZtByqAhzhgKAsmdnt2LAyB9vm8N8OboRzCHQXfp0Mh5
-        v0L6mwkn6rS4Dey5J2frCPlLyyiPY9HgvtRbE93gmkd4ooG/33ya4izZeOgHwyhfruzJIwCIeOWqU
-        WDSA/qDQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gJasO-0004CY-CL; Mon, 05 Nov 2018 09:08:52 +0000
-Date:   Mon, 5 Nov 2018 01:08:52 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Vincent Chen <vincentc@andestech.com>, aou@eecs.berkeley.edu,
-        alankao@andestech.com, greentime@andestech.com, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, zong@andestech.com,
-        kito@andestech.com, linux-riscv@lists.infradead.org,
-        deanbo422@gmail.com
-Subject: Re: [RFC 0/2] RISC-V: A proposal to add vendor-specific code
-Message-ID: <20181105090852.GA14924@infradead.org>
-References: <CAAhSdy0Y_jdc=2Lf8epof_+7HigCfhDxMNe8EF0fHfncqhs-zA@mail.gmail.com>
- <mhng-01f0ac6a-c2fd-41be-9d53-44d1c139d453@palmer-si-x1c4>
- <20181101174857.du2zu4vnrhpu5asf@excalibur.cnev.de>
- <20181105065807.GA1286@andestech.com>
- <20181105070551.GA7274@infradead.org>
- <CAK8P3a2c98VVPArCkdAR=-nnDBq1gYRCLDDgQB71eGiTSRdb4A@mail.gmail.com>
+        Mon, 5 Nov 2018 13:27:54 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 34C415C0A09;
+        Mon,  5 Nov 2018 10:09:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1541408951;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qe+KkULrxlCZcJNfNGvzFG1C9YdiRj2CoJUjuqrmeXE=;
+        b=VsHHEIsLCOBYmNd57ZgUllDzjPWnwrH2EgZIBqGCyj6d3E0c9orPnw77jy1w2rhbrBTEI1
+        ArBN7Qg4LvmNa9WBCXvfTqnJB51Aaim+5b4UurbDxbyP3K8/mI+AiKi6Hcl6X9o56gvhly
+        pF602Ho/6oG2g+avHtHLNhcStcF6eWw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK8P3a2c98VVPArCkdAR=-nnDBq1gYRCLDDgQB71eGiTSRdb4A@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 05 Nov 2018 10:09:11 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chris Fries <cfries@google.com>, Joel Stanley <joel@jms.id.au>,
+        Daniel Axtens <dja@axtens.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: consolidate Clang compiler flags
+In-Reply-To: <1541386099-13118-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1541386099-13118-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <a55e4534ef759585088a037e4cfd8468@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 09:52:52AM +0100, Arnd Bergmann wrote:
-> > I fundamentally disagree with this… and think it should be the contrary.
-> >
-> > 1. The kernel shall support no vendor specific instructions whatsoever,
-> > period.
+On 05.11.2018 03:48, Masahiro Yamada wrote:
+> Add basic options for Clang such as --target, --prefix, --gcc-toolchain,
+> -no-integrated-as to a single variable CLANG_FLAGS.
 > 
-> I think what was meant above is
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 > 
-> 1. If a vendor extension requires kernel support, that support
-> must be able to be built into a kernel image without breaking support
-> for CPUs that do not have that extension, to allow building a single
-> kernel image that works on all CPUs.
+>  Makefile | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 93315eb..58c838a 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -487,18 +487,17 @@ endif
+>  
+>  ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+>  ifneq ($(CROSS_COMPILE),)
+> -CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
+> +CLANG_FLAGS	= --target=$(notdir $(CROSS_COMPILE:%-=%))
+>  GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+> -CLANG_PREFIX	:= --prefix=$(GCC_TOOLCHAIN_DIR)
+> +CLANG_FLAGS	+= --prefix=$(GCC_TOOLCHAIN_DIR)
 
-No.  This literally means no vendor extensions involving instructions
-or CSRs in the kernel.  They are fine for userspace, or for the M-mode
-code including impementation of the SBI, but not for the kernel.
+So this will expand later now, is this ok?
+
+--
+Stefan
+
+>  GCC_TOOLCHAIN	:= $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+>  endif
+>  ifneq ($(GCC_TOOLCHAIN),)
+> -CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
+> +CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+> -KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> -KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> -KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+> -KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+> +CLANG_FLAGS	+= $(call cc-option, -no-integrated-as)
+> +KBUILD_CFLAGS	+= $(CLANG_FLAGS)
+> +KBUILD_AFLAGS	+= $(CLANG_FLAGS)
+>  endif
+>  
+>  RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern
+> -mindirect-branch-register
