@@ -2,119 +2,122 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA67DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A78C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A0C82081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:07:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQXr5oHD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0C82081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 226842081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226842081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=liunx.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387490AbeKFB2G (ORCPT
+        id S2387514AbeKFB31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 20:28:06 -0500
-Received: from mail-io1-f54.google.com ([209.85.166.54]:46420 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387398AbeKFB2G (ORCPT
+        Mon, 5 Nov 2018 20:29:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387398AbeKFB31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 20:28:06 -0500
-Received: by mail-io1-f54.google.com with SMTP id y22-v6so6836169ioj.13
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:07:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k9p+tBu5HvWbjVvK+KG64/i7HPnw3HQt2b0njU5ufOg=;
-        b=UQXr5oHDBc74XwmpgdW+NCg+pphV6IWkQEfgLb6T08mCr/a9PS4+0eduhe3OOe9OAj
-         psf8YZKaFyZTqBkdz7CuGBm+T3NEkJStqDCc+07Uoq0wSL/GFejuQz+d4rLjye5sNrRS
-         h7q0M2jF4a/9J9mxj1uLdW3cwZli4NskUhG8oZTRn0fKpdPx/tLYIKOk3Cc82+G0uc9w
-         l79adcjfvjX/gVify+EUnJD0dWlRwp+j99r3aONqzq966IetNnLWXQvGK9Q8DP3Y60Px
-         k5tfXGzCrzvz1KfO56MUFXGj6ZAHwok4T0HBP/jgwomMde3dlumBclMG978Fsxo3tR6k
-         qaCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k9p+tBu5HvWbjVvK+KG64/i7HPnw3HQt2b0njU5ufOg=;
-        b=GFA+VhMu+tZZTfcmctjSOprwU9Zw+Dy+tDMAJLP3y6bKllB+MopslYBwcdLofaMpwa
-         CJRXQxMRJu7r37e4dmixYnX4WRFnUpfrH0ZMRladAPiZlAhNlYNARc1+qhm48v4+VWku
-         4qQgkuL4kgVCuBirl70SSrZwlbBxPjfG7wHGoLEex6ketp3anR0ZGXk5TZGvPIYGpW7x
-         2j2+FuoJA1MtvdHIzTbevbmcEuKslo+O+2+4dyH0e8jtClepBAKqmIEAD29TpKIB7Tz2
-         0n/EJv9VjHFTjFsN5VKRP+4LFwEZe91qVuQ4IcBc0KmzkJAvaj+RRiPzWqJT+dhuHzo1
-         LV1Q==
-X-Gm-Message-State: AGRZ1gKkj/fg+yccCkF0RGUyTM6VwAfGq6cmiegQkK4NXhbummgL6CLr
-        KU4feyduugO5RVxhVjHuNBw=
-X-Google-Smtp-Source: AJdET5egfXXEeT1ry7Sz85sif/n4dHiv4/8cyYc8ym3WkZWN+UU0tqAbtAneSQ4Xo0aYT8WKZd7xCw==
-X-Received: by 2002:a6b:8e44:: with SMTP id q65-v6mr11534227iod.197.1541434062444;
-        Mon, 05 Nov 2018 08:07:42 -0800 (PST)
-Received: from [191.9.209.46] (rrcs-147-0-47-180.central.biz.rr.com. [147.0.47.180])
-        by smtp.gmail.com with ESMTPSA id k3-v6sm2698375iop.26.2018.11.05.08.07.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 08:07:41 -0800 (PST)
-Subject: Re: Creating compressed backing_store as swapfile
-To:     Adam Borowski <kilobyte@angband.pl>,
-        Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     linux-mm@kvack.org, open list <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org
-References: <CAOuPNLjuM5qq3go9ZFZcK0G5pQxTQb0DY36xu+8SL4vC4zJntw@mail.gmail.com>
- <20181105155815.i654i5ctmfpqhggj@angband.pl>
-From:   "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
-Message-ID: <79d0c96a-a0a2-63ec-db91-42fd349d50c1@gmail.com>
-Date:   Mon, 5 Nov 2018 11:07:12 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 5 Nov 2018 20:29:27 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5G748W060125
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 11:09:03 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njqfywba5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 11:09:02 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ldufour@liunx.vnet.ibm.com>;
+        Mon, 5 Nov 2018 16:08:58 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 16:08:49 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5G8mWq63963304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 16:08:48 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D644AE057;
+        Mon,  5 Nov 2018 16:08:48 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE0AAAE045;
+        Mon,  5 Nov 2018 16:08:45 +0000 (GMT)
+Received: from pomme.local (unknown [9.145.22.14])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Nov 2018 16:08:45 +0000 (GMT)
+Subject: Re: [PATCH v11 00/26] Speculative page faults
+To:     Balbir Singh <bsingharora@gmail.com>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc:     akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, hpa@zytor.com,
+        Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        sergey.senozhatsky.work@gmail.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        kemi.wang@intel.com, Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Punit Agrawal <punitagrawal@gmail.com>,
+        vinayak menon <vinayakm.list@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, npiggin@gmail.com,
+        paulmck@linux.vnet.ibm.com, Tim Chen <tim.c.chen@linux.intel.com>,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20181105104204.GB9042@350D>
+From:   Laurent Dufour <ldufour@liunx.vnet.ibm.com>
+Date:   Mon, 5 Nov 2018 17:08:45 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181105155815.i654i5ctmfpqhggj@angband.pl>
+In-Reply-To: <20181105104204.GB9042@350D>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110516-0012-0000-0000-000002C3ACFF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110516-0013-0000-0000-000020F7EC87
+Message-Id: <8dce53f8-b085-c4a7-3d87-de66bbcdc18c@liunx.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=810 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/2018 10:58 AM, Adam Borowski wrote:
-> On Mon, Nov 05, 2018 at 08:31:46PM +0530, Pintu Agarwal wrote:
->> Hi,
+Le 05/11/2018 à 11:42, Balbir Singh a écrit :
+> On Thu, May 17, 2018 at 01:06:07PM +0200, Laurent Dufour wrote:
+>> This is a port on kernel 4.17 of the work done by Peter Zijlstra to handle
+>> page fault without holding the mm semaphore [1].
 >>
->> I have one requirement:
->> I wanted to have a swapfile (64MB to 256MB) on my system.
->> But I wanted the data to be compressed and stored on the disk in my swapfile.
->> [Similar to zram, but compressed data should be moved to disk, instead of RAM].
->>
->> Note: I wanted to optimize RAM space, so performance is not important
->> right now for our requirement.
->>
->> So, what are the options available, to perform this in 4.x kernel version.
->> My Kernel: 4.9.x
->> Board: any - (arm64 mostly).
->>
->> As I know, following are the choices:
->> 1) ZRAM: But it compresses and store data in RAM itself
->> 2) frontswap + zswap : Didn't explore much on this, not sure if this
->> is helpful for our case.
->> 3) Manually creating swapfile: but how to compress it ?
->> 4) Any other options ?
+>> The idea is to try to handle user space page faults without holding the
+>> mmap_sem. This should allow better concurrency for massively threaded
 > 
-> Loop device on any filesystem that can compress (such as btrfs)?  The
-> performance would suck, though -- besides the indirection of loop, btrfs
-> compresses in blocks of 128KB while swap wants 4KB writes.  Other similar
-> option is qemu-nbd -- it can use compressed disk images and expose them to a
-> (local) nbd client.
+> Question -- I presume mmap_sem (rw_semaphore implementation tested against)
+> was qrwlock?
 
-Swap on any type of a networked storage device (NBD, iSCSI, ATAoE, etc) 
-served from the local system is _really_ risky.  The moment the local 
-server process for the storage device gets forced out to swap, you deadlock.
+I don't think so, this series doesn't change the mmap_sem definition so 
+it still belongs to the 'struct rw_semaphore'.
 
-Performance isn't _too_ bad for the BTRFS case though (I've actually 
-tested this before), just make sure you disable direct I/O mode on the 
-loop device, otherwise you run the risk of data corruption.
+Laurent.
+
