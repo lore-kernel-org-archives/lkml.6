@@ -2,111 +2,128 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB48C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E30C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40DCC2084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:50:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtJx1zLI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40DCC2084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC8512084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:51:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC8512084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387916AbeKFHMh (ORCPT
+        id S2388050AbeKFHM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:12:37 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34661 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387672AbeKFHMh (ORCPT
+        Tue, 6 Nov 2018 02:12:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54576 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387846AbeKFHM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:12:37 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i138-v6so5930632oib.1;
-        Mon, 05 Nov 2018 13:50:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/lN2GsyAQNM8x2pLOTo7dTfaaAQAsVSc+LDp1na5p4Y=;
-        b=KtJx1zLIfKlC/NgubJp7Nw9yWOx7eZc6+RUT1zbxlq3E1k4XZ11Y939VGfcppXcPvs
-         c1KeKy+iWgHImESmpOi0TNJry7Qs8iHiuAVt8zl8QKoo13Lu7AiYoLD9iLWYLfrhfRVS
-         5fWTAy4OCCuThyMWUVFFru5BbnisinNKYeKUR6GwyudZhM0x2XnU34sbF9AOoHemRrIO
-         bROqy0BnoyLhbKLLMu/cRCm4xXou1NAznDC1pbdU+dK4kFuFtsrD+IN+4a46UUa5Fvv6
-         jJEmzSadFsSsJMJvYTSClcFyONEF8NSpLFTvn1K2qvjALImbDDlZrgRdNfPDdogg5N4d
-         rQRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/lN2GsyAQNM8x2pLOTo7dTfaaAQAsVSc+LDp1na5p4Y=;
-        b=iZfPQCtK0DHPuoAZXRMccClgLNsUNlQJlMEBIEVznCDNyC1PuGPeaEeptFmeRfir9L
-         d3cq/9SC3aNvRVblNim/l7Kpbyaz8rzb+H0kP6JpY02zfZJqvJR8z3EDnO+0VTOkptKk
-         nEiHeHxdlAVPjB/suG98wFDIaAor62ylTSrBOML457DAYpdYfHa0Cnd1OTM4g9dBPvpa
-         5i8dT6zJf/YTY2oK6IIznO7ZJ9vXo3BoAMvM27b5U/o0gp7/LbbBgJ2MqgW8Xtry1Obr
-         SUtZc71HZGB8V0xzGOAxdqWNhvzE6c9b4fDFTiLdKVaJTcnCWjnhzcs+bdRbQY1A8z2E
-         OaVA==
-X-Gm-Message-State: AGRZ1gLw4lrpkiO53P3YGRbLls9OU6KSIYBm5t4zmHgvAZMXDTe+gyyN
-        A3CSaIRruiBs3NQrdta2R4iacPLvLq3H48n1CnM=
-X-Google-Smtp-Source: AJdET5fKQdYVN1S6SsC6VWiFRYFaY416JMXJXHbPaC4vZpi0Di2UwXTjFQcaOo5tJJgWndnDreqy+0Ih8WLsLX3mVWQ=
-X-Received: by 2002:aca:b357:: with SMTP id c84-v6mr14743847oif.266.1541454651435;
- Mon, 05 Nov 2018 13:50:51 -0800 (PST)
+        Tue, 6 Nov 2018 02:12:59 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5LokcD095969
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 16:51:13 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njx4t80n7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 16:51:12 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Mon, 5 Nov 2018 21:51:09 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 21:51:05 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Lp4lj42663964
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 21:51:04 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFEBB124053;
+        Mon,  5 Nov 2018 21:51:04 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9ACF6124054;
+        Mon,  5 Nov 2018 21:51:04 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Nov 2018 21:51:04 +0000 (GMT)
+Subject: Re: [PATCH v3 02/16] tpm: fix invalid return value in pubek_show()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-3-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Mon, 5 Nov 2018 16:51:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20181104155501.14767-1-TheSven73@googlemail.com>
- <20181104155501.14767-2-TheSven73@googlemail.com> <20181105212049.GA320@bogus>
-In-Reply-To: <20181105212049.GA320@bogus>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Mon, 5 Nov 2018 16:50:40 -0500
-Message-ID: <CAGngYiUZTm-r0KJ07tKsPmgKCUWcqAOx2S82iLPRjkcDiw0R3g@mail.gmail.com>
-Subject: Re: [PATCH anybus v3 1/6] misc: support the Arcx anybus bridge
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sven Van Asbroeck <svendev@arcx.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-        john.garry@huawei.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181105014552.20262-3-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18110521-0060-0000-0000-000002CDBAB3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009993; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01113186; UDB=6.00577032; IPR=6.00893286;
+ MB=3.00024037; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 21:51:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110521-0061-0000-0000-000047194B46
+Message-Id: <e007b417-c9a0-8aed-3ecb-5ffcda644462@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=840 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 4:20 PM Rob Herring <robh@kernel.org> wrote:
+On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
+> Return zero when tpm_buf_init() fails as we do for other functions in
+> tpm-sysfs.c.
 >
-> bridge vs. host are confusing me as those are often the same thing. But
-> here bridge is just some auxilliary controls for the bus and the host is
-> the actual bus with devices? I'm not sure why you split this into 2 DT
-> nodes? How many devices are connected to the host processor (i.MX) bus?
+> Fixes: da379f3c1db0c ("tpm: migrate pubek_show to struct tpm_buf")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+
+> ---
+>   drivers/char/tpm/tpm-sysfs.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+> index c2769e55cb6c..7ed7eb6f906a 100644
+> --- a/drivers/char/tpm/tpm-sysfs.c
+> +++ b/drivers/char/tpm/tpm-sysfs.c
+> @@ -47,9 +47,8 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+>
+>   	memset(&anti_replay, 0, sizeof(anti_replay));
+>
+> -	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
+> -	if (rc)
+> -		return rc;
+> +	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
+> +		return 0;
+>
+>   	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
 >
 
-The anybus can only have a single client card (device) on the bus. I
-know, we can criticise the name, but that's how HMS Industrial
-Networks designed it.
-
-The anybus-bridge is how we (at arcx / Archronix) physically connect
-anybus slots to the iMX. It is a CPLD chip connected to the i.MX WEIM
-bus on the SoC side. On the other side of the CPLD, there are two
-anybus slots. Each slot may hold an anybus card (profinet, flnet,
-cc-link, ...)
-
-The anybuss-host implements the anybus specification in a
-platform-independent way. Some other company could attach anybus slots
-to their CPU through a completely different bus, or spi, and they
-could still attach the anybuss-host driver onto it. All the driver
-needs is a regmap providing access to the anybus slot memory, an
-interrupt, and a reset controller.
-
-Sven
