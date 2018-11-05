@@ -2,316 +2,249 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1BEC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC36ECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352EC20827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352EC20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 391FB20827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="CdciSMe+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391FB20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbeKEVB2 (ORCPT
+        id S1729573AbeKEVCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:01:28 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48664 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729017AbeKEVB1 (ORCPT
+        Mon, 5 Nov 2018 16:02:01 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35553 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729016AbeKEVB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:01:27 -0500
-Received: from localhost.localdomain (unknown [IPv6:2a02:8109:92c0:207d:59be:d485:5b1c:9e22])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robertfoss)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4AD3B27DECA;
-        Mon,  5 Nov 2018 11:42:05 +0000 (GMT)
-From:   Robert Foss <robert.foss@collabora.com>
-To:     airlied@linux.ie, kraxel@redhat.com,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Cc:     Robert Foss <robert.foss@collabora.com>
-Subject: [PATCH v4 1/4] drm/virtio: add virtio_gpu_alloc_fence()
-Date:   Mon,  5 Nov 2018 12:41:49 +0100
-Message-Id: <20181105114152.2088-2-robert.foss@collabora.com>
+        Mon, 5 Nov 2018 16:01:28 -0500
+Received: by mail-it1-f195.google.com with SMTP id v11so5944038itj.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:42:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=4/SOEJeNpK4zMhDsDG4WztvjmNWqKUp83yV/qo+EqKE=;
+        b=CdciSMe++rz0NZMC0OTbTweJD/Os/swtlSaFRz/HqfdkbPx2vHnY9gmyIkh78+OgXP
+         iEtVbGYms36XVMhiNDtkrZsgw/K3+h3HuGEFuwBPQaexkbF7dK+LoZ5FheWlDQhkU7jM
+         biM6m4ud8NT6ouJGY8GgQyeavANvARlJZTdZSAnVC4p+ovjM9C1/nBaM2PDKRVjXpW7J
+         dx18ZRqOlWEGfw5D2gnwOZe2LGaPh2q4ysqPUCgEL9IwF1ebGP6Bs/aes9mfEqxlmfj5
+         lYD7bWYD0Q2p+YodsWoc4mMlCm5Y2/oIx9ygeTgCwVyDZzsLFKwm5uBEQUECR7AXr4CD
+         8cGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=4/SOEJeNpK4zMhDsDG4WztvjmNWqKUp83yV/qo+EqKE=;
+        b=d5xqCU1E3b6tAhAoM7SyM0poQOIw9UECo9V+cBcOVOJzHe1aO9bW1Rm1auKQPdQylc
+         NTSD3AcAdBU7SFlS1HV7Jw6PG3o88SZwmuRXyeo0r/Y3Hn1h1k4eBo2mpz6scIO/obYT
+         MOr10sesVIva3wHyK7f1qTsC1J7llZcoJ/vrJfPK2Tovj4ZXJwzP5rjoSJaV9CVe79p5
+         or6qCyoll2HewhQ+XhyRdnviZoKMepwb7sQSc8LIstVihhoUu73vva2AEBVixChoVOkI
+         hP1dS/ZdctkQ4oaVGbgG9H9nAd1ArCDf4GF9SQlQkdUG9qR/H1IdNW/qa/7n0HvNm7le
+         etBg==
+X-Gm-Message-State: AGRZ1gLIaPNBYVMAYTWPQhyDeQEZYmzytEGdYSrkPXJWDYs6A/H9DNxk
+        u9S3jpxRhEqWPrDav0wB8ot6w1nTMt+SqQ==
+X-Google-Smtp-Source: AJdET5f6sfnTK2GqFNPsgVMuwtBLX7Ykky8IbNfLe5TssEc+flrnq4whKf0p7+6ctXIp/+AL1u/0+w==
+X-Received: by 2002:a24:c0c5:: with SMTP id u188-v6mr6323100itf.142.1541418128901;
+        Mon, 05 Nov 2018 03:42:08 -0800 (PST)
+Received: from ch-lap-hans.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id 186-v6sm14880824itf.11.2018.11.05.03.42.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 03:42:08 -0800 (PST)
+From:   Hans Holmberg <hans@owltronix.com>
+X-Google-Original-From: Hans Holmberg <hans.ml.holmberg@cnexlabs.com>
+To:     Matias Bjorling <mb@lightnvm.io>
+Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.ml.holmberg@owltronix.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH 4/7] lightnvm: pblk: set conservative threshold for user writes
+Date:   Mon,  5 Nov 2018 12:41:10 +0100
+Message-Id: <20181105114113.30932-5-hans.ml.holmberg@cnexlabs.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181105114152.2088-1-robert.foss@collabora.com>
-References: <20181105114152.2088-1-robert.foss@collabora.com>
+In-Reply-To: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
+References: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor fence creation, add fences to relevant GPU
-operations and add cursor helper functions.
+From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
 
-This removes the potential for allocation failures from the
-cmd_submit and atomic_commit paths.
-Now a fence will be allocated first and only after that
-will we proceed with the rest of the execution.
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-Signed-off-by: Robert Foss <robert.foss@collabora.com>
-Suggested-by: Rob Herring <robh@kernel.org>
+In a worst-case scenario (random writes), OP% of sectors
+in each line will be invalid, and we will then need
+to move data out of 100/OP% lines to free a single line.
+
+So, to prevent the possibility of running out of lines,
+temporarily block user writes when there is less than
+100/OP% free lines.
+
+Also ensure that pblk creation does not produce instances
+with insufficient over provisioning.
+
+Insufficient over-provising is not a problem on real hardware,
+but often an issue when running QEMU simulations (with few lines).
+100 lines is enough to create a sane instance with the standard
+(11%) over provisioning.
+
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
-Changes since v3:
- - Gerd: Clarified and extended commit message
- - Emil: Fixed whitespace issue
- - Emil: Changed label name from fail_fence to fail_backoff
- - Emil: Remove special case for !fence->drv in virtio_gpu_fence_cleanup()
+ drivers/lightnvm/pblk-init.c | 43 ++++++++++++++++++++++++------------
+ drivers/lightnvm/pblk-rl.c   |  5 ++---
+ drivers/lightnvm/pblk.h      | 12 +++++++++-
+ 3 files changed, 42 insertions(+), 18 deletions(-)
 
- drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 +++
- drivers/gpu/drm/virtio/virtgpu_fence.c | 29 ++++++++++++----
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 30 +++++++++++++++--
- drivers/gpu/drm/virtio/virtgpu_plane.c | 46 +++++++++++++++++++++++---
- drivers/gpu/drm/virtio/virtgpu_vq.c    |  2 +-
- 5 files changed, 96 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 6474e83cbf3d..acd130c58e33 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -131,6 +131,7 @@ struct virtio_gpu_framebuffer {
- 	int x1, y1, x2, y2; /* dirty rect */
- 	spinlock_t dirty_lock;
- 	uint32_t hw_res_handle;
-+	struct virtio_gpu_fence *fence;
- };
- #define to_virtio_gpu_framebuffer(x) \
- 	container_of(x, struct virtio_gpu_framebuffer, base)
-@@ -349,6 +350,9 @@ void virtio_gpu_ttm_fini(struct virtio_gpu_device *vgdev);
- int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma);
- 
- /* virtio_gpu_fence.c */
-+struct virtio_gpu_fence *virtio_gpu_fence_alloc(
-+	struct virtio_gpu_device *vgdev);
-+void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence);
- int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
- 			  struct virtio_gpu_fence **fence);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_fence.c b/drivers/gpu/drm/virtio/virtgpu_fence.c
-index 00c742a441bf..6b5d92215cfb 100644
---- a/drivers/gpu/drm/virtio/virtgpu_fence.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_fence.c
-@@ -67,6 +67,28 @@ static const struct dma_fence_ops virtio_fence_ops = {
- 	.timeline_value_str  = virtio_timeline_value_str,
- };
- 
-+struct virtio_gpu_fence *virtio_gpu_fence_alloc(struct virtio_gpu_device *vgdev)
-+{
-+	struct virtio_gpu_fence_driver *drv = &vgdev->fence_drv;
-+	struct virtio_gpu_fence *fence = kzalloc(sizeof(struct virtio_gpu_fence),
-+							GFP_ATOMIC);
-+	if (!fence)
-+		return fence;
-+
-+	fence->drv = drv;
-+	dma_fence_init(&fence->f, &virtio_fence_ops, &drv->lock, drv->context, 0);
-+
-+	return fence;
-+}
-+
-+void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence)
-+{
-+	if (!fence)
-+		return;
-+
-+	dma_fence_put(&fence->f);
-+}
-+
- int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
- 			  struct virtio_gpu_fence **fence)
-@@ -74,15 +96,8 @@ int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 	struct virtio_gpu_fence_driver *drv = &vgdev->fence_drv;
- 	unsigned long irq_flags;
- 
--	*fence = kmalloc(sizeof(struct virtio_gpu_fence), GFP_ATOMIC);
--	if ((*fence) == NULL)
--		return -ENOMEM;
--
- 	spin_lock_irqsave(&drv->lock, irq_flags);
--	(*fence)->drv = drv;
- 	(*fence)->seq = ++drv->sync_seq;
--	dma_fence_init(&(*fence)->f, &virtio_fence_ops, &drv->lock,
--		       drv->context, (*fence)->seq);
- 	dma_fence_get(&(*fence)->f);
- 	list_add_tail(&(*fence)->node, &drv->fences);
- 	spin_unlock_irqrestore(&drv->lock, irq_flags);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index bc5afa4f906e..d69fc356df0a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -168,6 +168,13 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 		ret = PTR_ERR(buf);
- 		goto out_unresv;
- 	}
-+
-+	fence = virtio_gpu_fence_alloc(vgdev);
-+	if (!fence) {
-+		kfree(buf);
-+		ret = -ENOMEM;
-+		goto out_unresv;
-+	}
- 	virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
- 			      vfpriv->ctx_id, &fence);
- 
-@@ -283,11 +290,17 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
- 		rc_3d.nr_samples = cpu_to_le32(rc->nr_samples);
- 		rc_3d.flags = cpu_to_le32(rc->flags);
- 
-+		fence = virtio_gpu_fence_alloc(vgdev);
-+		if (!fence) {
-+			ret = -ENOMEM;
-+			goto fail_backoff;
-+		}
-+
- 		virtio_gpu_cmd_resource_create_3d(vgdev, qobj, &rc_3d, NULL);
- 		ret = virtio_gpu_object_attach(vgdev, qobj, &fence);
- 		if (ret) {
--			ttm_eu_backoff_reservation(&ticket, &validate_list);
--			goto fail_unref;
-+			virtio_gpu_fence_cleanup(fence);
-+			goto fail_backoff;
- 		}
- 		ttm_eu_fence_buffer_objects(&ticket, &validate_list, &fence->f);
- 	}
-@@ -312,6 +325,8 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
- 		dma_fence_put(&fence->f);
- 	}
- 	return 0;
-+fail_backoff:
-+	ttm_eu_backoff_reservation(&ticket, &validate_list);
- fail_unref:
- 	if (vgdev->has_virgl_3d) {
- 		virtio_gpu_unref_list(&validate_list);
-@@ -374,6 +389,12 @@ static int virtio_gpu_transfer_from_host_ioctl(struct drm_device *dev,
- 		goto out_unres;
- 
- 	convert_to_hw_box(&box, &args->box);
-+
-+	fence = virtio_gpu_fence_alloc(vgdev);
-+	if (!fence) {
-+		ret = -ENOMEM;
-+		goto out_unres;
-+	}
- 	virtio_gpu_cmd_transfer_from_host_3d
- 		(vgdev, qobj->hw_res_handle,
- 		 vfpriv->ctx_id, offset, args->level,
-@@ -423,6 +444,11 @@ static int virtio_gpu_transfer_to_host_ioctl(struct drm_device *dev, void *data,
- 			(vgdev, qobj, offset,
- 			 box.w, box.h, box.x, box.y, NULL);
- 	} else {
-+		fence = virtio_gpu_fence_alloc(vgdev);
-+		if (!fence) {
-+			ret = -ENOMEM;
-+			goto out_unres;
-+		}
- 		virtio_gpu_cmd_transfer_to_host_3d
- 			(vgdev, qobj,
- 			 vfpriv ? vfpriv->ctx_id : 0, offset,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index a9f4ae7d4483..b84ac8c25856 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -137,6 +137,41 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
- 				      plane->state->src_h >> 16);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 13822594647c..8b89bb26b0f1 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -635,13 +635,13 @@ static unsigned int calc_emeta_len(struct pblk *pblk)
+ 	return (lm->emeta_len[1] + lm->emeta_len[2] + lm->emeta_len[3]);
  }
  
-+static int virtio_gpu_cursor_prepare_fb(struct drm_plane *plane,
-+					struct drm_plane_state *new_state)
-+{
-+	struct drm_device *dev = plane->dev;
-+	struct virtio_gpu_device *vgdev = dev->dev_private;
-+	struct virtio_gpu_framebuffer *vgfb;
-+	struct virtio_gpu_object *bo;
+-static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
++static int pblk_set_provision(struct pblk *pblk, long nr_free_chks)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+ 	struct pblk_line_meta *lm = &pblk->lm;
+ 	struct nvm_geo *geo = &dev->geo;
+-	sector_t provisioned;
++	sector_t provisioned, minimum;
+ 	int sec_meta, blk_meta;
+ 
+ 	if (geo->op == NVM_TARGET_DEFAULT_OP)
+@@ -649,17 +649,34 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
+ 	else
+ 		pblk->op = geo->op;
+ 
+-	provisioned = nr_free_blks;
++	minimum = pblk_get_min_chks(pblk);
++	provisioned = nr_free_chks;
+ 	provisioned *= (100 - pblk->op);
+ 	sector_div(provisioned, 100);
+ 
+-	pblk->op_blks = nr_free_blks - provisioned;
++	if ((nr_free_chks - provisioned) < minimum) {
++		if (geo->op != NVM_TARGET_DEFAULT_OP) {
++			pblk_err(pblk, "OP too small to create a sane instance\n");
++			return -EINTR;
++		}
 +
-+	if (!new_state->fb)
-+		return 0;
++		/* If the user did not specify an OP value, and PBLK_DEFAULT_OP
++		 * is not enough, calculate and set sane value
++		 */
 +
-+	vgfb = to_virtio_gpu_framebuffer(new_state->fb);
-+	bo = gem_to_virtio_gpu_obj(vgfb->base.obj[0]);
-+	if (bo && bo->dumb && (plane->state->fb != new_state->fb)) {
-+		vgfb->fence = virtio_gpu_fence_alloc(vgdev);
-+		if (!vgfb->fence)
-+			return -ENOMEM;
++		provisioned = nr_free_chks - minimum;
++		pblk->op =  (100 * minimum) / nr_free_chks;
++		pblk_info(pblk, "Default OP insufficient, adjusting OP to %d\n",
++				pblk->op);
 +	}
 +
++	pblk->op_blks = nr_free_chks - provisioned;
+ 
+ 	/* Internally pblk manages all free blocks, but all calculations based
+ 	 * on user capacity consider only provisioned blocks
+ 	 */
+-	pblk->rl.total_blocks = nr_free_blks;
+-	pblk->rl.nr_secs = nr_free_blks * geo->clba;
++	pblk->rl.total_blocks = nr_free_chks;
++	pblk->rl.nr_secs = nr_free_chks * geo->clba;
+ 
+ 	/* Consider sectors used for metadata */
+ 	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
+@@ -667,8 +684,10 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
+ 
+ 	pblk->capacity = (provisioned - blk_meta) * geo->clba;
+ 
+-	atomic_set(&pblk->rl.free_blocks, nr_free_blks);
+-	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
++	atomic_set(&pblk->rl.free_blocks, nr_free_chks);
++	atomic_set(&pblk->rl.free_user_blocks, nr_free_chks);
++
 +	return 0;
-+}
+ }
+ 
+ static int pblk_setup_line_meta_chk(struct pblk *pblk, struct pblk_line *line,
+@@ -1025,13 +1044,9 @@ static int pblk_lines_init(struct pblk *pblk)
+ 								line->state);
+ 	}
+ 
+-	if (!nr_free_chks) {
+-		pblk_err(pblk, "too many bad blocks prevent for sane instance\n");
+-		ret = -EINTR;
++	ret = pblk_set_provision(pblk, nr_free_chks);
++	if (ret)
+ 		goto fail_free_lines;
+-	}
+-
+-	pblk_set_provision(pblk, nr_free_chks);
+ 
+ 	vfree(chunk_meta);
+ 	return 0;
+diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+index db55a1c89997..76116d5f78e4 100644
+--- a/drivers/lightnvm/pblk-rl.c
++++ b/drivers/lightnvm/pblk-rl.c
+@@ -214,11 +214,10 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	struct nvm_geo *geo = &dev->geo;
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+ 	struct pblk_line_meta *lm = &pblk->lm;
+-	int min_blocks = lm->blk_per_line * PBLK_GC_RSV_LINE;
+ 	int sec_meta, blk_meta;
+-
+ 	unsigned int rb_windows;
+ 
 +
-+static void virtio_gpu_cursor_cleanup_fb(struct drm_plane *plane,
-+					 struct drm_plane_state *old_state)
+ 	/* Consider sectors used for metadata */
+ 	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
+ 	blk_meta = DIV_ROUND_UP(sec_meta, geo->clba);
+@@ -226,7 +225,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	rl->high = pblk->op_blks - blk_meta - lm->blk_per_line;
+ 	rl->high_pw = get_count_order(rl->high);
+ 
+-	rl->rsv_blocks = min_blocks;
++	rl->rsv_blocks = pblk_get_min_chks(pblk);
+ 
+ 	/* This will always be a power-of-2 */
+ 	rb_windows = budget / NVM_MAX_VLBA;
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index f415aae600c8..e5b88a25d4d6 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -905,7 +905,6 @@ int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta);
+ #define PBLK_GC_MAX_READERS 8	/* Max number of outstanding GC reader jobs */
+ #define PBLK_GC_RQ_QD 128	/* Queue depth for inflight GC requests */
+ #define PBLK_GC_L_QD 4		/* Queue depth for inflight GC lines */
+-#define PBLK_GC_RSV_LINE 1	/* Reserved lines for GC */
+ 
+ int pblk_gc_init(struct pblk *pblk);
+ void pblk_gc_exit(struct pblk *pblk, bool graceful);
+@@ -1370,4 +1369,15 @@ static inline char *pblk_disk_name(struct pblk *pblk)
+ 
+ 	return disk->disk_name;
+ }
++
++static inline unsigned int pblk_get_min_chks(struct pblk *pblk)
 +{
-+	struct virtio_gpu_framebuffer *vgfb;
++	struct pblk_line_meta *lm = &pblk->lm;
++	/* In a worst-case scenario every line will have OP invalid sectors.
++	 * We will then need a minimum of 1/OP lines to free up a single line
++	 */
 +
-+	if (!plane->state->fb)
-+		return;
++	return DIV_ROUND_UP(100, pblk->op) * lm->blk_per_line;
 +
-+	vgfb = to_virtio_gpu_framebuffer(plane->state->fb);
-+	if (vgfb->fence)
-+		virtio_gpu_fence_cleanup(vgfb->fence);
 +}
-+
- static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
- 					   struct drm_plane_state *old_state)
- {
-@@ -144,7 +179,6 @@ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
- 	struct virtio_gpu_device *vgdev = dev->dev_private;
- 	struct virtio_gpu_output *output = NULL;
- 	struct virtio_gpu_framebuffer *vgfb;
--	struct virtio_gpu_fence *fence = NULL;
- 	struct virtio_gpu_object *bo = NULL;
- 	uint32_t handle;
- 	int ret = 0;
-@@ -170,13 +204,13 @@ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
- 			(vgdev, bo, 0,
- 			 cpu_to_le32(plane->state->crtc_w),
- 			 cpu_to_le32(plane->state->crtc_h),
--			 0, 0, &fence);
-+			 0, 0, &vgfb->fence);
- 		ret = virtio_gpu_object_reserve(bo, false);
- 		if (!ret) {
- 			reservation_object_add_excl_fence(bo->tbo.resv,
--							  &fence->f);
--			dma_fence_put(&fence->f);
--			fence = NULL;
-+							  &vgfb->fence->f);
-+			dma_fence_put(&vgfb->fence->f);
-+			vgfb->fence = NULL;
- 			virtio_gpu_object_unreserve(bo);
- 			virtio_gpu_object_wait(bo, false);
- 		}
-@@ -218,6 +252,8 @@ static const struct drm_plane_helper_funcs virtio_gpu_primary_helper_funcs = {
- };
- 
- static const struct drm_plane_helper_funcs virtio_gpu_cursor_helper_funcs = {
-+	.prepare_fb		= virtio_gpu_cursor_prepare_fb,
-+	.cleanup_fb		= virtio_gpu_cursor_cleanup_fb,
- 	.atomic_check		= virtio_gpu_plane_atomic_check,
- 	.atomic_update		= virtio_gpu_cursor_plane_update,
- };
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 51bef1775e47..93f2c3a51ee8 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -896,9 +896,9 @@ void virtio_gpu_object_detach(struct virtio_gpu_device *vgdev,
- 			      struct virtio_gpu_object *obj)
- {
- 	bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
--	struct virtio_gpu_fence *fence;
- 
- 	if (use_dma_api && obj->mapped) {
-+		struct virtio_gpu_fence *fence = virtio_gpu_fence_alloc(vgdev);
- 		/* detach backing and wait for the host process it ... */
- 		virtio_gpu_cmd_resource_inval_backing(vgdev, obj->hw_res_handle, &fence);
- 		dma_fence_wait(&fence->f, true);
+ #endif /* PBLK_H_ */
 -- 
 2.17.1
 
