@@ -2,124 +2,95 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E611EC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AE2C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE1332086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:51:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUuaJYs8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE1332086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 73DBF20827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73DBF20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbeKEXL0 (ORCPT
+        id S2387410AbeKEXLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:11:26 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39494 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbeKEXL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:11:26 -0500
-Received: by mail-qk1-f196.google.com with SMTP id e4so14693267qkh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 05:51:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=xkosleulG3JXCOYkWyXDfCwTpAjMrSZKbQYqjNHEjLo=;
-        b=ZUuaJYs8moHi4C4/+JQnVsJdfoMHiXibncYRDtFGE7JsV8fiB7kwiBoZFDcxEwYgSD
-         gZqxYbN7YNWwVb/pLIbStW9zr7obfnaWeRqF7ZY2cbBq+X1TavcloN282zQY/wbayI1L
-         EqHyAedLKiWCgUE690ki9I6E1+/Q7ZtTjNa5/uH4RttXsKND9/qgMH219HUyVah0QXys
-         9u4S2anYDMq29bdxzFcPZTi8uDHFZvler9RqNsL89LZRrvVC6rcHE7j0UTZIj24lvNS+
-         fFJrbr5um5AQ3CmwpoFgQAD3V2aM0QC64ix9o0v6ZRjFK08rHRodDscUav2EKgQ1X3Z+
-         7f4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=xkosleulG3JXCOYkWyXDfCwTpAjMrSZKbQYqjNHEjLo=;
-        b=TikAEl7yczpH04r/uFPk++BPwo71UbLvkzEUAv79RvgAvmqQFTmt8lxVJrNvc90AgD
-         zemkYBHC+N6zsCDidzNnsLLKUXe2Vf1KS3oGZCpiqTxkTon35GmfnPP74pfRfQ11hwY3
-         DUL4BaBjVX7Va+Yrn7rGwmPNHCdTLdTvpD5cHU/C1K14L2MvDFnMPRDrizEeTh6fzBF6
-         5aIYk28yyZpDljXhoXz1YwGUHL6pUT2iMgOCIYzTg3RQjNCWRJaqRzeDFWCcA04OEBVL
-         DutBuHEd5hnj4wWHGjdXyFD+7bObU6it9whHBrsernTGvqu19xGFR+VZIDt/9xQV5c9j
-         6esQ==
-X-Gm-Message-State: AGRZ1gLj24mi8ge/Tc981/dMxyKTo1wAPa8uTUFBeWcV7ZWVznAsdDOS
-        UlKd2jqrkCNkUljEliAan+o/Lh850S6LbU16g6w=
-X-Google-Smtp-Source: AJdET5dL2IAwW3iokujRJKl6sLUkshy9GyWnWB4sg6tQpf1Vl+WEWZIllFrQFES34y/l+ud4ijiDEjPAJfh/boNKNc0=
-X-Received: by 2002:a0c:d992:: with SMTP id y18mr22061687qvj.161.1541425894314;
- Mon, 05 Nov 2018 05:51:34 -0800 (PST)
+        Mon, 5 Nov 2018 18:11:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39390 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387396AbeKEXLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:11:50 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3C2563154867;
+        Mon,  5 Nov 2018 13:51:59 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE058173FB;
+        Mon,  5 Nov 2018 13:51:58 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 08:51:57 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     axboe@kernel.dk, linuxppc-dev@lists.ozlabs.org,
+        satheera@in.ibm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: System not booting since dm changes? (was Linux 4.20-rc1)
+Message-ID: <20181105135157.GA11485@redhat.com>
+References: <CAHk-=whDiwASMgw8Q7TNA2MJhf3s=ouK4+_3ioqmobs-yagnkQ@mail.gmail.com>
+ <87tvkvddnk.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 05:51:33 -0800 (PST)
-In-Reply-To: <20181105090852.GA14924@infradead.org>
-References: <CAAhSdy0Y_jdc=2Lf8epof_+7HigCfhDxMNe8EF0fHfncqhs-zA@mail.gmail.com>
- <mhng-01f0ac6a-c2fd-41be-9d53-44d1c139d453@palmer-si-x1c4>
- <20181101174857.du2zu4vnrhpu5asf@excalibur.cnev.de> <20181105065807.GA1286@andestech.com>
- <20181105070551.GA7274@infradead.org> <CAK8P3a2c98VVPArCkdAR=-nnDBq1gYRCLDDgQB71eGiTSRdb4A@mail.gmail.com>
- <20181105090852.GA14924@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 5 Nov 2018 14:51:33 +0100
-X-Google-Sender-Auth: UVcM89bK9AjWEg2bVYa3d_3uM7U
-Message-ID: <CAK8P3a2MSK-S+AzDGjq6t8WjcKrkj0XmynNL+fMPvL=JgnoEVA@mail.gmail.com>
-Subject: Re: [RFC 0/2] RISC-V: A proposal to add vendor-specific code
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Vincent Chen <vincentc@andestech.com>, aou@eecs.berkeley.edu,
-        alankao@andestech.com, greentime@andestech.com, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, zong@andestech.com,
-        kito@andestech.com, linux-riscv@lists.infradead.org,
-        deanbo422@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tvkvddnk.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 05 Nov 2018 13:51:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18, Christoph Hellwig <hch@infradead.org> wrote:
-> On Mon, Nov 05, 2018 at 09:52:52AM +0100, Arnd Bergmann wrote:
->> > I fundamentally disagree with this=E2=80=A6 and think it should be the
->> > contrary.
->> >
->> > 1. The kernel shall support no vendor specific instructions whatsoever=
-,
->> > period.
->>
->> I think what was meant above is
->>
->> 1. If a vendor extension requires kernel support, that support
->> must be able to be built into a kernel image without breaking support
->> for CPUs that do not have that extension, to allow building a single
->> kernel image that works on all CPUs.
+On Mon, Nov 05 2018 at  5:25am -0500,
+Michael Ellerman <mpe@ellerman.id.au> wrote:
+
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
+> ...
+> > Mike Snitzer (1):
+> >     device mapper updates
+> 
+> Hi Mike,
+> 
+> Replying here because I can't find the device-mapper pull or the patch
+> in question on LKML. I guess I should be subscribed to dm-devel.
+> 
+> We have a box that doesn't boot any more, bisect points at one of:
+> 
+>   cef6f55a9fb4 Mike Snitzer       dm table: require that request-based DM be layered on blk-mq devices 
+>   953923c09fe8 Mike Snitzer       dm: rename DM_TYPE_MQ_REQUEST_BASED to DM_TYPE_REQUEST_BASED 
+>   6a23e05c2fe3 Jens Axboe         dm: remove legacy request-based IO path 
+> 
+> 
+> It's a Power8 system running Rawhide, it does have multipath, but I'm
+> told it was setup by the Fedora installer, ie. nothing fancy.
+> 
+> The symptom is the system can't find its root filesystem and drops into
+> the initramfs shell. The dmesg includes a bunch of errors like below:
+> 
+>   [   43.263460] localhost multipathd[1344]: sdb: fail to get serial
+>   [   43.268762] localhost multipathd[1344]: mpatha: failed in domap for addition of new path sdb
+>   [   43.268762] localhost multipathd[1344]: uevent trigger error
+>   [   43.282065] localhost kernel: device-mapper: table: table load rejected: not all devices are blk-mq request-stackable
+...
 >
-> No.  This literally means no vendor extensions involving instructions
-> or CSRs in the kernel.  They are fine for userspace, or for the M-mode
-> code including impementation of the SBI, but not for the kernel.
+> Any ideas what's going wrong here?
 
-I was trying to interpret what Vincent wrote, not what you wrote,
-you were pretty clear already ;-)
+"table load rejected: not all devices are blk-mq request-stackable"
+speaks to the fact that you aren't using blk-mq for scsi (aka scsi-mq).
 
-With the stricter policy you suggest, we'd loose the ability to support
-some extensions that might be common:
+You need to use scsi_mod.use_blk_mq=Y on the kernel commandline (or set
+CONFIG_SCSI_MQ_DEFAULT in your kernel config)
 
-- an extension for user space that adds new registers that must be
-  saved and restored on a task switch, e.g. FPU, DSP or NPU
-  instructions. ARM supports several incompatible extensions like
-  that in one kernel, and this is really ugly, but I suspect RISC-V
-  will already need the same thing to support all combinations of
-  standard extensions, so from a practical perspective it's not
-  much different for custom extension, aside from the question
-  how far you want to go to discourage custom extensions by
-  requiring users to patch their kernels.
-
-- A crypto instruction for a cipher that is used in the kernel
-  for speeding up network or block data encryption.
-  This would typically be a standalone loadable module, so
-  the impact of allowing custom extensions in addition to
-  standard ones is minimal.
-
-       Arnd
+Mike
