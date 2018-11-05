@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E74FECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAC2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4372B2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4372B2082A
+	by mail.kernel.org (Postfix) with ESMTP id EB87B2082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB87B2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbeKELFj (ORCPT
+        id S1728888AbeKELFr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 06:05:39 -0500
-Received: from mga09.intel.com ([134.134.136.24]:30648 "EHLO mga09.intel.com"
+        Mon, 5 Nov 2018 06:05:47 -0500
+Received: from mga07.intel.com ([134.134.136.100]:56584 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726474AbeKELFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 06:05:39 -0500
+        id S1726474AbeKELFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 06:05:47 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 17:48:28 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 17:48:36 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,466,1534834800"; 
-   d="scan'208";a="271354408"
+   d="scan'208";a="271354436"
 Received: from unknown (HELO localhost) ([10.249.254.144])
-  by orsmga005.jf.intel.com with ESMTP; 04 Nov 2018 17:47:53 -0800
+  by orsmga005.jf.intel.com with ESMTP; 04 Nov 2018 17:48:31 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 14/16] tpm: introduce tpm_chip_start() and tpm_chip_stop()
-Date:   Mon,  5 Nov 2018 03:45:47 +0200
-Message-Id: <20181105014552.20262-15-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3 15/16] tpm: take TPM chip power gating out of tpm_transmit()
+Date:   Mon,  5 Nov 2018 03:45:48 +0200
+Message-Id: <20181105014552.20262-16-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
 References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
@@ -57,266 +57,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Encapsulate power gating and locality functionality to tpm_chip_start()
-and tpm_chip_stop() in order to clean up the branching mess in
-tpm_transmit().
+Call tpm_chip_start() and tpm_chip_stop() in
+
+* tpm_try_get_ops() and tpm_put_ops()
+* tpm_chip_register()
+* tpm2_del_space()
+
+And remove these calls from tpm_transmit(). The core reason for this
+change is that in tpm_vtpm_proxy a locality change requires a virtual
+TPM command (a command made up just for that driver).
+
+The consequence of this is that this commit removes the remaining nested
+calls.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm-chip.c      | 110 +++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm-interface.c |  87 +-----------------------
- drivers/char/tpm/tpm.h           |   2 +
- 3 files changed, 115 insertions(+), 84 deletions(-)
+ drivers/char/tpm/tpm-chip.c       | 19 ++++++-------------
+ drivers/char/tpm/tpm-interface.c  |  4 ----
+ drivers/char/tpm/tpm.h            |  9 ---------
+ drivers/char/tpm/tpm2-space.c     |  5 ++++-
+ drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
+ 5 files changed, 11 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 157505b0f755..65f1561eba81 100644
+index 65f1561eba81..87570182f75e 100644
 --- a/drivers/char/tpm/tpm-chip.c
 +++ b/drivers/char/tpm/tpm-chip.c
-@@ -37,6 +37,116 @@ struct class *tpm_class;
- struct class *tpmrm_class;
- dev_t tpm_devt;
+@@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+ {
+ 	int rc;
  
-+static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
-+{
-+	int rc;
-+
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return 0;
-+
-+	if (!chip->ops->request_locality)
-+		return 0;
-+
-+	rc = chip->ops->request_locality(chip, 0);
-+	if (rc < 0)
-+		return rc;
-+
-+	chip->locality = rc;
-+	return 0;
-+}
-+
-+static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
-+{
-+	int rc;
-+
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return;
-+
-+	if (!chip->ops->relinquish_locality)
-+		return;
-+
-+	rc = chip->ops->relinquish_locality(chip, chip->locality);
+-	if (flags & TPM_TRANSMIT_NESTED)
+-		return 0;
+-
+ 	if (!chip->ops->request_locality)
+ 		return 0;
+ 
+@@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+ {
+ 	int rc;
+ 
+-	if (flags & TPM_TRANSMIT_NESTED)
+-		return;
+-
+ 	if (!chip->ops->relinquish_locality)
+ 		return;
+ 
+@@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+ 
+ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+ {
+-	if (flags & TPM_TRANSMIT_NESTED)
+-		return 0;
+-
+ 	if (!chip->ops->cmd_ready)
+ 		return 0;
+ 
+@@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+ 
+ static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+ {
+-	if (flags & TPM_TRANSMIT_NESTED)
+-		return 0;
+-
+ 	if (!chip->ops->go_idle)
+ 		return 0;
+ 
+@@ -169,7 +157,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+ 		goto out_lock;
+ 
+ 	mutex_lock(&chip->tpm_mutex);
+-	return 0;
++	return tpm_chip_start(chip, 0);
+ out_lock:
+ 	up_read(&chip->ops_sem);
+ 	put_device(&chip->dev);
+@@ -186,6 +174,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+  */
+ void tpm_put_ops(struct tpm_chip *chip)
+ {
++	tpm_chip_stop(chip, 0);
+ 	mutex_unlock(&chip->tpm_mutex);
+ 	up_read(&chip->ops_sem);
+ 	put_device(&chip->dev);
+@@ -563,7 +552,11 @@ int tpm_chip_register(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
++	rc = tpm_chip_start(chip, 0);
 +	if (rc)
-+		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
-+
-+	chip->locality = -1;
-+}
-+
-+static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
-+{
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return 0;
-+
-+	if (!chip->ops->cmd_ready)
-+		return 0;
-+
-+	return chip->ops->cmd_ready(chip);
-+}
-+
-+static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
-+{
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return 0;
-+
-+	if (!chip->ops->go_idle)
-+		return 0;
-+
-+	return chip->ops->go_idle(chip);
-+}
-+
-+/**
-+ * tpm_chip_start() - power on the TPM
-+ * @chip:	a TPM chip to use
-+ * @flags:	TPM transmit flags
-+ *
-+ * Return:
-+ * * The response length	- OK
-+ * * -errno			- A system error
-+ */
-+int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
-+{
-+	int ret;
-+
-+	if (chip->ops->clk_enable)
-+		chip->ops->clk_enable(chip, true);
-+
-+	if (chip->locality == -1) {
-+		ret = tpm_request_locality(chip, flags);
-+		if (ret) {
-+			chip->ops->clk_enable(chip, false);
-+			return ret;
-+		}
-+	}
-+
-+	ret = tpm_cmd_ready(chip, flags);
-+	if (ret) {
-+		tpm_relinquish_locality(chip, flags);
-+		if (chip->ops->clk_enable)
-+			chip->ops->clk_enable(chip, false);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * tpm_chip_stop() - power off the TPM
-+ * @chip:	a TPM chip to use
-+ * @flags:	TPM transmit flags
-+ *
-+ * Return:
-+ * * The response length	- OK
-+ * * -errno			- A system error
-+ */
-+void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
-+{
-+	tpm_go_idle(chip, flags);
-+	tpm_relinquish_locality(chip, flags);
-+	if (chip->ops->clk_enable)
-+		chip->ops->clk_enable(chip, false);
-+}
-+
-+
- /**
-  * tpm_try_get_ops() - Get a ref to the tpm_chip
-  * @chip: Chip to ref
++		return rc;
+ 	rc = tpm_auto_startup(chip);
++	tpm_chip_stop(chip, 0);
+ 	if (rc)
+ 		return rc;
+ 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 8456162e1260..866e5405ca46 100644
+index 866e5405ca46..697091f37057 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -62,64 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
--{
--	int rc;
--
--	if (flags & TPM_TRANSMIT_NESTED)
--		return 0;
--
--	if (!chip->ops->request_locality)
--		return 0;
--
--	rc = chip->ops->request_locality(chip, 0);
--	if (rc < 0)
--		return rc;
--
--	chip->locality = rc;
--
--	return 0;
--}
--
--static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
--{
--	int rc;
--
--	if (flags & TPM_TRANSMIT_NESTED)
--		return;
--
--	if (!chip->ops->relinquish_locality)
--		return;
--
--	rc = chip->ops->relinquish_locality(chip, chip->locality);
--	if (rc)
--		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
--
--	chip->locality = -1;
--}
--
--static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
--{
--	if (flags & TPM_TRANSMIT_NESTED)
--		return 0;
--
--	if (!chip->ops->cmd_ready)
--		return 0;
--
--	return chip->ops->cmd_ready(chip);
--}
--
--static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
--{
--	if (flags & TPM_TRANSMIT_NESTED)
--		return 0;
--
--	if (!chip->ops->go_idle)
--		return 0;
--
--	return chip->ops->go_idle(chip);
--}
--
- static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 				unsigned int flags)
- {
-@@ -214,7 +156,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 	/* space for header and handles */
- 	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
- 	unsigned int delay_msec = TPM2_DURATION_SHORT;
--	bool has_locality = false;
- 	u32 rc = 0;
- 	ssize_t ret;
- 	const size_t save_size = min(sizeof(save), bufsiz);
-@@ -229,34 +170,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+@@ -170,11 +170,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
  	memcpy(save, buf, save_size);
  
  	for (;;) {
--		if (chip->ops->clk_enable != NULL)
--			chip->ops->clk_enable(chip, true);
--
--		if (chip->locality == -1) {
--			ret = tpm_request_locality(chip, flags);
--			if (ret)
--				goto out_locality;
--			has_locality = true;
--		}
--
--		ret = tpm_cmd_ready(chip, flags);
-+		ret = tpm_chip_start(chip, flags);
- 		if (ret)
--			goto out_locality;
--
-+			return ret;
+-		ret = tpm_chip_start(chip, flags);
+-		if (ret)
+-			return ret;
  		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
-+		tpm_chip_stop(chip, flags);
+-		tpm_chip_stop(chip, flags);
  
--		/* This may fail but do not override ret. */
--		tpm_go_idle(chip, flags);
--
--out_locality:
--		if (has_locality)
--			tpm_relinquish_locality(chip, flags);
--
--		if (chip->ops->clk_enable != NULL)
--			chip->ops->clk_enable(chip, false);
--
--		if (ret < 0)
--			break;
  		rc = be32_to_cpu(header->return_code);
  		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
- 			break;
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index addd699317e4..9d4065804477 100644
+index 9d4065804477..8555fcc1ac0a 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -526,6 +526,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
+@@ -488,15 +488,6 @@ extern const struct file_operations tpm_fops;
+ extern const struct file_operations tpmrm_fops;
+ extern struct idr dev_nums_idr;
  
-+int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
-+void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
- struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
+-/**
+- * enum tpm_transmit_flags - flags for tpm_transmit()
+- *
+- * %TPM_TRANSMIT_NESTED:	discard setup steps (power management, locality)
+- */
+-enum tpm_transmit_flags {
+-	TPM_TRANSMIT_NESTED      = BIT(0),
+-};
+-
+ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 		     unsigned int flags);
+ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index 9ced3acdc8f7..763c93f4d950 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)
+ void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
+ {
+ 	mutex_lock(&chip->tpm_mutex);
+-	tpm2_flush_sessions(chip, space);
++	if (!tpm_chip_start(chip, 0)) {
++		tpm2_flush_sessions(chip, space);
++		tpm_chip_stop(chip, 0);
++	}
+ 	mutex_unlock(&chip->tpm_mutex);
+ 	kfree(space->context_buf);
+ 	kfree(space->session_buf);
+diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+index 2c09bcfd0cc9..bd489d0c3cd7 100644
+--- a/drivers/char/tpm/tpm_vtpm_proxy.c
++++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+@@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+ 
+ 	proxy_dev->state |= STATE_DRIVER_COMMAND;
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
+-			      "attempting to set locality");
++	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
+ 
+ 	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
+ 
 -- 
 2.19.1
 
