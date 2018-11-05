@@ -2,113 +2,99 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EEFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513FDC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1335420819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:07:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="WlqNOR7b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1335420819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 685352146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:08:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685352146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387755AbeKFD15 (ORCPT
+        id S2387816AbeKFD3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:27:57 -0500
-Received: from mail-eopbgr710099.outbound.protection.outlook.com ([40.107.71.99]:55860
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387640AbeKFD14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:27:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/Vamk++5Wq+YHE87L9LLDLsFIRjOJMsx666yYVhclXg=;
- b=WlqNOR7by4R8EV9jBUKWHqVNYQ5HzkyapIqR6HN8nrtlYQUilh3wVSYkPfUFqg99Kn2N957rngpw3p4wD0DJ8aRgGjj2JBR4JLWPWKnFXplUQbmq3wls7xAb4AEgbPNq1fOeEtqzlUaVIddQitdT5V4aYMLjTblXeyYwuZmODIk=
-Received: from MWHSPR00MB117.namprd22.prod.outlook.com (10.175.52.23) by
- MWHPR2201MB1504.namprd22.prod.outlook.com (10.174.170.153) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Mon, 5 Nov 2018 18:07:03 +0000
-Received: from MWHSPR00MB117.namprd22.prod.outlook.com
- ([fe80::b95a:a3f9:be06:b045]) by MWHSPR00MB117.namprd22.prod.outlook.com
- ([fe80::b95a:a3f9:be06:b045%2]) with mapi id 15.20.1294.032; Mon, 5 Nov 2018
- 18:07:03 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MIPS: OCTEON: fix out of bounds array access on CN68XX
-Thread-Topic: [PATCH] MIPS: OCTEON: fix out of bounds array access on CN68XX
-Thread-Index: AQHUbX3cns7kB0qKe0CjF3KIYTsAB6VBibUA
-Date:   Mon, 5 Nov 2018 18:07:02 +0000
-Message-ID: <20181105180700.2fwggvcy5mzlxscz@pburton-laptop>
-References: <20181026224634.30560-1-aaro.koskinen@iki.fi>
-In-Reply-To: <20181026224634.30560-1-aaro.koskinen@iki.fi>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR08CA0047.namprd08.prod.outlook.com
- (2603:10b6:300:c0::21) To MWHSPR00MB117.namprd22.prod.outlook.com
- (2603:10b6:300:10c::23)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1504;6:Gw/5Nkx4LT9QIM7IJom7ZrG/F7Vd8b7/sxu0nkben4sgP0oefItvj5fS6ID3u7AwTiGrGjmP0gHyIhRoEFHbMSsp91vf6YJETL/eYY2VRbSVJXwumoEmaagGwAP8cVOGPrTw8AhJmXb/ByeGCMa8YGoiLBM/PnQZ0EhmDHCVD0mu7dxTg1UvHjmXjIqbr5PEXOoMThpYmKoa2HI8EkLNn3ZCP3M4kSeHP6+cBMK0xtmgSaDaincjWM5qKe9kBZ3ET3c3EaqJePIU5YZPL8RkJ717IhIipT95yw35RBT4RjjhQFFDQmqQMvDEN+9zaNSXycxGfn+jEK165a86TX2+T5t7U1/0H7yOKy0AtbAZ/Fg8Ymdd6zREh9HbrLJo9DTUr51Ee7GstlNDPsnBBfL/+M+jnAqoHeP0qrXRIY7w7Cka2jsHjQH35kk5qjwOaFHqq8OqBItnWYJ/bAR8QpUNJg==;5:bZ/4EXz/S+wWJ8UY3l+xKlBTdbI/+aelPPqWGVYRNtQ/pLQdGBlKHaTCHt5GtHgndrqxRcTIlqy2LzbXaMYeQO5V1/tuffqWqyC3eBQ1YnfBR9qV8Ea/fQYEjypyUePLzlOs2MOWFrZKWR9gZXDW+xAhKZB39WbyOGTNjQy2sGQ=;7:xcRTFrDoBMWVn2/1XMSPG4UEEvyiXs3MiILlKOq5kzCzF0GLU4+NYaz8OKqqgabNukhVE6jly3AVLg1aOVTHBO2ySJtLWjlvW0xKnIhLWEhh4aH7eycZ2ijl5+rCTb30OrcBm8WCqZ+6L9KwMZEaBw==
-x-ms-office365-filtering-correlation-id: 574bb642-51d5-40f9-5aa1-08d643497c43
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1504;
-x-ms-traffictypediagnostic: MWHPR2201MB1504:
-x-microsoft-antispam-prvs: <MWHPR2201MB15048F30A869914A48AF30AEC1CA0@MWHPR2201MB1504.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(3002001)(3231382)(944501410)(52105095)(10201501046)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(2016111802025)(20161123560045)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1504;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1504;
-x-forefront-prvs: 08476BC6EF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(346002)(376002)(39840400004)(366004)(396003)(199004)(189003)(6916009)(8676002)(1076002)(81156014)(6116002)(14454004)(97736004)(54906003)(3846002)(58126008)(106356001)(7736002)(305945005)(316002)(42882007)(105586002)(5660300001)(446003)(8936002)(11346002)(68736007)(44832011)(229853002)(508600001)(25786009)(26005)(6246003)(186003)(81166006)(6512007)(53936002)(71200400001)(71190400001)(52116002)(4326008)(76176011)(486006)(256004)(14444005)(66066001)(33896004)(33716001)(2900100001)(6506007)(386003)(9686003)(6486002)(476003)(2906002)(6436002)(102836004)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1504;H:MWHSPR00MB117.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: DabvvCM3RrS8hcN+8eEW1Mzhh2Dq8CKXeJGG4m6AWuFHyDEkWIx+4Yte+JFv7E4YQs8gnZrQyhft5NewK9c3gGkAU7+V2oCa2BFPIDrL91Rwe84SJYqgiZb339uM2tk8WuRTuBp8x8vLJbuX1BYPT71+ET/eMu/alpEIZ6/62npJHoGKM/rCxOitFKJ4/SJlKLq3/lxOjxVTO5xNnTdFCApHASZuLCYD4DYhLlATIYiqRXmedL9vKXoo07b7bBOBJ80b2E1yhptC4Bl3wHOLfp2hbgXcHJ6JXF7lLFp4ZXWUMKnn8E68MzhfONCaSoEFqW0D75QQSr+1wFbnlJYNWDTPNHojUqHuhRePH5e5mAs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <635D4B5312EF7C46BC097AADE0A9CF4C@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 5 Nov 2018 22:29:12 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50274 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387640AbeKFD3M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 22:29:12 -0500
+Received: from [IPv6:2a02:8109:92c0:207d:797b:9adc:b59e:ee7c] (unknown [IPv6:2a02:8109:92c0:207d:797b:9adc:b59e:ee7c])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: robertfoss)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5445D260E1F;
+        Mon,  5 Nov 2018 18:08:20 +0000 (GMT)
+Subject: Re: [PATCH v4 3/4] drm/virtio: add in/out fence support for explicit
+ synchronization
+To:     Emil Velikov <emil.l.velikov@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Emil Velikov <emil.velikov@collabora.com>
+References: <20181105114152.2088-1-robert.foss@collabora.com>
+ <20181105114152.2088-4-robert.foss@collabora.com>
+ <CACvgo53vCBbgmu4OV4e0WeOYQSXNk=3qwyRBtPx+XAcCSZO8aQ@mail.gmail.com>
+From:   Robert Foss <robert.foss@collabora.com>
+Message-ID: <995bbb2f-ecaa-e4f5-045b-b9cc7b287a66@collabora.com>
+Date:   Mon, 5 Nov 2018 19:08:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 574bb642-51d5-40f9-5aa1-08d643497c43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2018 18:07:02.9207
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1504
+In-Reply-To: <CACvgo53vCBbgmu4OV4e0WeOYQSXNk=3qwyRBtPx+XAcCSZO8aQ@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aaro,
+Heya,
 
-On Sat, Oct 27, 2018 at 01:46:34AM +0300, Aaro Koskinen wrote:
-> The maximum number of interfaces is returned by
-> cvmx_helper_get_number_of_interfaces(), and the value is used to access
-> interface_port_count[]. When CN68XX support was added, we forgot
-> to increase the array size. Fix that.
->=20
-> Fixes: 2c8c3f0201333 ("MIPS: Octeon: Support additional interfaces on CN6=
-8XX")
-> Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-> ---
->  arch/mips/cavium-octeon/executive/cvmx-helper.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 2018-11-05 18:25, Emil Velikov wrote:
+> On Mon, 5 Nov 2018 at 11:42, Robert Foss <robert.foss@collabora.com> wrote:
+>>
+>> When the execbuf call receives an in-fence it will get the dma_fence
+>> related to that fence fd and wait on it before submitting the draw call.
+>>
+>> On the out-fence side we get fence returned by the submitted draw call
+>> and attach it to a sync_file and send the sync_file fd to userspace. On
+>> error -1 is returned to userspace.
+>>
+>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+>> Signed-off-by: Robert Foss <robert.foss@collabora.com>
+>> Suggested-by: Rob Herring <robh@kernel.org>
+>> Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+>> ---
+>>
+>> Changes since v3:
+>>   - Move all in_fence handling to the same VIRTGPU_EXECBUF_FENCE_FD_IN block
+> Fwiw my suggestion was to explicitly document whether the IOCTL can
+> support, simultaneously, IN and OUT fence.
+I can't say I understood that part, but I'll happily spin another revision
+with more documentation added.
 
-Thanks - applied to mips-fixes.
+But the change above does not entirely come from your feedback.
+While looking into how other drivers do this, an issue in msm was found.
+Since this code is being added to virtgpu now, we might as well do the
+right thing here, and also end up with all of the in fence handling in a
+single chunk.
 
-Paul
+> Merging the two patches makes things a bit meh. But as before - it's
+> for Gerd to make the final call.
+> 
+> -Emil
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
