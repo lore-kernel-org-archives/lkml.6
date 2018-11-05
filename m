@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A3FC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC6BC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C38B02085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:59:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38B02085B
+	by mail.kernel.org (Postfix) with ESMTP id 4AA262085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:59:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA262085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbeKFATm (ORCPT
+        id S1730123AbeKFATn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:19:42 -0500
+        Mon, 5 Nov 2018 19:19:43 -0500
 Received: from mga12.intel.com ([192.55.52.136]:50023 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeKFATl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:19:41 -0500
+        id S1726255AbeKFATn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:19:43 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:59:34 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:59:36 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="105410056"
+   d="scan'208";a="105410058"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Nov 2018 06:59:32 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 05 Nov 2018 06:59:34 -0800
 From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -38,9 +38,9 @@ Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: [PATCH 1/6] driver core: platform: Remove duplicated device_remove_properties() call
-Date:   Mon,  5 Nov 2018 17:59:23 +0300
-Message-Id: <20181105145928.46819-2-heikki.krogerus@linux.intel.com>
+Subject: [PATCH 2/6] drivers core: Prepare support for multiple platform notifications
+Date:   Mon,  5 Nov 2018 17:59:24 +0300
+Message-Id: <20181105145928.46819-3-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105145928.46819-1-heikki.krogerus@linux.intel.com>
 References: <20181105145928.46819-1-heikki.krogerus@linux.intel.com>
@@ -51,25 +51,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-device_remove_properties() is called for every device in device_del().
+Since it should be possible to support several hardware
+description models at the same time (at least in theory),
+for example ACPI and devicetree on a running system, the
+platform notifications need to be handled differently.
+
+For now a single "platform_notify" callback function was
+used to notify the underlying base system which is in charge
+of the hardware description when a new device entry was
+added to the system, but that callback is available to only
+a single base system at the time. This will add a function
+device_platform_notify() and replace all direct
+platform_notify() calls with it.
+
+device_platform_notify() will first simply call the
+platform_notify() callback, so this commit has no functional
+affect, however, the idea is that individual base systems
+will put their direct notification calls there instead of
+using the platform_notify function pointer.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/base/platform.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/base/core.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 41b91af95afb..0fb5f140f1b0 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -448,7 +448,6 @@ void platform_device_del(struct platform_device *pdev)
- 	int i;
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 04bbcd779e11..3972ef3f080b 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -728,6 +728,16 @@ static inline int device_is_not_partition(struct device *dev)
+ }
+ #endif
  
- 	if (pdev) {
--		device_remove_properties(&pdev->dev);
- 		device_del(&pdev->dev);
++static int
++device_platform_notify(struct device *dev, enum kobject_action action)
++{
++	if (platform_notify && action == KOBJ_ADD)
++		platform_notify(dev);
++	else if (platform_notify_remove && action == KOBJ_REMOVE)
++		platform_notify_remove(dev);
++	return 0;
++}
++
+ /**
+  * dev_driver_string - Return a device's driver name, if at all possible
+  * @dev: struct device to get the name of
+@@ -1883,8 +1893,9 @@ int device_add(struct device *dev)
+ 	}
  
- 		if (pdev->id_auto) {
+ 	/* notify platform of device entry */
+-	if (platform_notify)
+-		platform_notify(dev);
++	error = device_platform_notify(dev, KOBJ_ADD);
++	if (error)
++		goto platform_error;
+ 
+ 	error = device_create_file(dev, &dev_attr_uevent);
+ 	if (error)
+@@ -1960,6 +1971,8 @@ int device_add(struct device *dev)
+  SymlinkError:
+ 	device_remove_file(dev, &dev_attr_uevent);
+  attrError:
++	device_platform_notify(dev, KOBJ_REMOVE);
++platform_error:
+ 	kobject_uevent(&dev->kobj, KOBJ_REMOVE);
+ 	glue_dir = get_glue_dir(dev);
+ 	kobject_del(&dev->kobj);
+@@ -2077,14 +2090,10 @@ void device_del(struct device *dev)
+ 	bus_remove_device(dev);
+ 	device_pm_remove(dev);
+ 	driver_deferred_probe_del(dev);
++	device_platform_notify(dev, KOBJ_REMOVE);
+ 	device_remove_properties(dev);
+ 	device_links_purge(dev);
+ 
+-	/* Notify the platform of the removal, in case they
+-	 * need to do anything...
+-	 */
+-	if (platform_notify_remove)
+-		platform_notify_remove(dev);
+ 	if (dev->bus)
+ 		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+ 					     BUS_NOTIFY_REMOVED_DEVICE, dev);
 -- 
 2.19.1
 
