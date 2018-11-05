@@ -2,182 +2,130 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE1CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B723C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE65920825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE65920825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0451420854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:57:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Ip8cK/wB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0451420854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbeKEVPR (ORCPT
+        id S1728943AbeKEVQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:15:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:41806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729416AbeKEVPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:15:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67B5D16A3;
-        Mon,  5 Nov 2018 03:55:54 -0800 (PST)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 12DF83F5BD;
-        Mon,  5 Nov 2018 03:55:52 -0800 (PST)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, vladimir.murzin@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 7/7] arm64: capabilities: Batch cpu_enable callbacks
-Date:   Mon,  5 Nov 2018 11:55:17 +0000
-Message-Id: <1541418917-14219-8-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
-References: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
+        Mon, 5 Nov 2018 16:16:52 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37488 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeKEVQw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:16:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=o8MTLegWK+ElgG+wOkbg3lttm7lK/IuvB7lhcy2TAfQ=; b=Ip8cK/wB0kyQ
+        FXpOwmcHZhF7wR0TCCS4VuDxPU5GazAmBi/oQsndMdGYuQI8P04Zv+7EFt6K/d2vLviWf/1Lse/A0
+        gLC52Dp2SvUozJ2S2NQQSdruF7mmQ4SCxgtI7tF1PeCh7woizIS4o5ThycH4VC+jCoU2dPyBbWhZq
+        6kDXc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gJdVK-0008HK-2v; Mon, 05 Nov 2018 11:57:14 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id A86111124D98; Mon,  5 Nov 2018 11:57:13 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     Mark Brown <broonie@kernel.org>, plai@codeaurora.org,
+        bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        srinivas.kandagatla@linaro.org, rohitkr@codeaurora.org,
+        niklas.cassel@linaro.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6afe: Fix wrong MI2S SD line mask" to the asoc tree
+In-Reply-To:  <1541073067-29553-1-git-send-email-rohitkr@codeaurora.org>
+Message-Id: <20181105115713.A86111124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 11:57:13 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We use a stop_machine call for each available capability to
-enable it on all the CPUs available at boot time. Instead
-we could batch the cpu_enable callbacks to a single stop_machine()
-call to save us some time.
+The patch
 
-Cc: Vladimir Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+   ASoC: qdsp6: q6afe: Fix wrong MI2S SD line mask
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 112b57fa737445b2361be332ce8cc0fd3e2b994e Mon Sep 17 00:00:00 2001
+From: Rohit kumar <rohitkr@codeaurora.org>
+Date: Thu, 1 Nov 2018 17:21:07 +0530
+Subject: [PATCH] ASoC: qdsp6: q6afe: Fix wrong MI2S SD line mask
+
+SD line mask for MI2S starts from BIT 0 instead of BIT 1.
+Fix all bit mask for MI2S SD lines.
+
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/cpufeature.h |  3 ++
- arch/arm64/kernel/cpufeature.c      | 70 +++++++++++++++++++++++--------------
- 2 files changed, 47 insertions(+), 26 deletions(-)
+ sound/soc/qcom/qdsp6/q6afe.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 7e2ec64..0a15e2c 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -357,6 +357,9 @@ extern DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
- extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
- extern struct static_key_false arm64_const_caps_ready;
- 
-+#define for_each_available_cap(cap)		\
-+	for_each_set_bit(cap, cpu_hwcaps, ARM64_NCAPS)
-+
- bool this_cpu_has_cap(unsigned int cap);
- 
- static inline bool cpu_have_feature(unsigned int num)
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index fff430d..9a1cccc 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1527,11 +1527,27 @@ static void update_cpu_capabilities(u16 scope_mask)
- 	}
- }
- 
--static int __enable_cpu_capability(void *arg)
-+/*
-+ * Enable all the available capabilities on this CPU. The capabilities
-+ * with BOOT_CPU scope are handled separately and hence skipped here.
-+ */
-+static int cpu_enable_non_boot_scope_capabilities(void *__unused)
- {
--	const struct arm64_cpu_capabilities *cap = arg;
-+	int i;
-+	u16 non_boot_scope = SCOPE_ALL & ~SCOPE_BOOT_CPU;
- 
--	cap->cpu_enable(cap);
-+	for_each_available_cap(i) {
-+		const struct arm64_cpu_capabilities *cap = cpu_hwcaps_ptrs[i];
-+
-+		if (WARN_ON(!cap))
-+			continue;
-+
-+		if (!(cap->type & non_boot_scope))
-+			continue;
-+
-+		if (cap->cpu_enable)
-+			cap->cpu_enable(cap);
-+	}
- 	return 0;
- }
- 
-@@ -1539,21 +1555,29 @@ static int __enable_cpu_capability(void *arg)
-  * Run through the enabled capabilities and enable() it on all active
-  * CPUs
-  */
--static void __init
--__enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			  u16 scope_mask)
-+static void __init enable_cpu_capabilities(u16 scope_mask)
- {
-+	int i;
-+	const struct arm64_cpu_capabilities *caps;
-+	bool boot_scope;
-+
- 	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
--	for (; caps->matches; caps++) {
--		unsigned int num = caps->capability;
-+	boot_scope = !!(scope_mask & SCOPE_BOOT_CPU);
- 
--		if (!(caps->type & scope_mask) || !cpus_have_cap(num))
-+	for (i = 0; i < ARM64_NCAPS; i++) {
-+		unsigned int num;
-+
-+		caps = cpu_hwcaps_ptrs[i];
-+		if (!caps || !(caps->type & scope_mask))
-+			continue;
-+		num = caps->capability;
-+		if (!cpus_have_cap(num))
- 			continue;
- 
- 		/* Ensure cpus_have_const_cap(num) works */
- 		static_branch_enable(&cpu_hwcap_keys[num]);
- 
--		if (caps->cpu_enable) {
-+		if (boot_scope && caps->cpu_enable)
- 			/*
- 			 * Capabilities with SCOPE_BOOT_CPU scope are finalised
- 			 * before any secondary CPU boots. Thus, each secondary
-@@ -1562,25 +1586,19 @@ __enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 			 * the boot CPU, for which the capability must be
- 			 * enabled here. This approach avoids costly
- 			 * stop_machine() calls for this case.
--			 *
--			 * Otherwise, use stop_machine() as it schedules the
--			 * work allowing us to modify PSTATE, instead of
--			 * on_each_cpu() which uses an IPI, giving us a PSTATE
--			 * that disappears when we return.
- 			 */
--			if (scope_mask & SCOPE_BOOT_CPU)
--				caps->cpu_enable(caps);
--			else
--				stop_machine(__enable_cpu_capability,
--					     (void *)caps, cpu_online_mask);
--		}
-+			caps->cpu_enable(caps);
- 	}
--}
- 
--static void __init enable_cpu_capabilities(u16 scope_mask)
--{
--	__enable_cpu_capabilities(arm64_errata, scope_mask);
--	__enable_cpu_capabilities(arm64_features, scope_mask);
-+	/*
-+	 * For all non-boot scope capabilities, use stop_machine()
-+	 * as it schedules the work allowing us to modify PSTATE,
-+	 * instead of on_each_cpu() which uses an IPI, giving us a
-+	 * PSTATE that disappears when we return.
-+	 */
-+	if (!boot_scope)
-+		stop_machine(cpu_enable_non_boot_scope_capabilities,
-+			     NULL, cpu_online_mask);
- }
- 
- /*
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 000775b4bba8..829b5e987b2a 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -49,14 +49,14 @@
+ #define AFE_PORT_I2S_SD1		0x2
+ #define AFE_PORT_I2S_SD2		0x3
+ #define AFE_PORT_I2S_SD3		0x4
+-#define AFE_PORT_I2S_SD0_MASK		BIT(0x1)
+-#define AFE_PORT_I2S_SD1_MASK		BIT(0x2)
+-#define AFE_PORT_I2S_SD2_MASK		BIT(0x3)
+-#define AFE_PORT_I2S_SD3_MASK		BIT(0x4)
+-#define AFE_PORT_I2S_SD0_1_MASK		GENMASK(2, 1)
+-#define AFE_PORT_I2S_SD2_3_MASK		GENMASK(4, 3)
+-#define AFE_PORT_I2S_SD0_1_2_MASK	GENMASK(3, 1)
+-#define AFE_PORT_I2S_SD0_1_2_3_MASK	GENMASK(4, 1)
++#define AFE_PORT_I2S_SD0_MASK		BIT(0x0)
++#define AFE_PORT_I2S_SD1_MASK		BIT(0x1)
++#define AFE_PORT_I2S_SD2_MASK		BIT(0x2)
++#define AFE_PORT_I2S_SD3_MASK		BIT(0x3)
++#define AFE_PORT_I2S_SD0_1_MASK		GENMASK(1, 0)
++#define AFE_PORT_I2S_SD2_3_MASK		GENMASK(3, 2)
++#define AFE_PORT_I2S_SD0_1_2_MASK	GENMASK(2, 0)
++#define AFE_PORT_I2S_SD0_1_2_3_MASK	GENMASK(3, 0)
+ #define AFE_PORT_I2S_QUAD01		0x5
+ #define AFE_PORT_I2S_QUAD23		0x6
+ #define AFE_PORT_I2S_6CHS		0x7
 -- 
-2.7.4
+2.19.0.rc2
 
