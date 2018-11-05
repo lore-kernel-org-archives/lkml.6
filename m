@@ -2,323 +2,163 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF451C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F197C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC912081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:39:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC912081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 220B020700
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:49:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VfMQlgDK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220B020700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387682AbeKFDAB (ORCPT
+        id S2387690AbeKFDK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:00:01 -0500
-Received: from mga01.intel.com ([192.55.52.88]:6154 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387515AbeKFDAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:00:01 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:39:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271545063"
-Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 09:39:06 -0800
-Date:   Mon, 5 Nov 2018 19:39:05 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-Message-ID: <20181105173905.GG4502@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <20181104081512.GA7829@rapoport-lnx>
+        Mon, 5 Nov 2018 22:10:26 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43661 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387590AbeKFDK0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 22:10:26 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y3-v6so10197379wrh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=K6FhVTqVVUuW/ADxHVPs56HcvIicW0s7Z480AD0vQpg=;
+        b=VfMQlgDK1Xqb0qf9C/ar2i16zKqVIEq2XmQ3LffLeJ1emNizQPMCEVG7k7NjQKoJuH
+         JxU6IGSXtllqNhPr8xyLhHvRcGkpYsdGPsIa0iDCfyLqMCSOeXYTNmh0a7RSBVr2Gzgs
+         SwjSXIBaZJDDWg/ascnYjdWcd9KLQUjy5E39c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=K6FhVTqVVUuW/ADxHVPs56HcvIicW0s7Z480AD0vQpg=;
+        b=Q6W0iGjcuh/jYVzSLiTQ2P9Yp3DzU8EuKEwNnm384LAXHHmFjjhwDQ+Hz9hkVWBWs4
+         1gSYazdr0ishTaCJKIUVehqVe4EOlfewK8g9iHhISEUvluquAPDiOYWXgMMmodgD0jXx
+         /5Tm8DQLXuhWH9frjQ8Gm9Mw3whDLyYesvec3Z4EzBwhYtaaR3YG1TOBP4Axdy6H+IqV
+         UkZzNM+zpkJS/tT0J4SO1woT1+jGxt6bLtdP77HFmyqZcujS9jclHFEv9VAA4iqTPsgP
+         NsM47dMioy5wTc3d1ZMXiez/68Tik5mUjVlWrJtgOMnob5IPSQ06+GnA7NQVrCroUw9f
+         7e/A==
+X-Gm-Message-State: AGRZ1gKeLPn7UjOKsrUfBu+3XMvK1KtmsvnNrDuayxX8y2lmYxbxiY9i
+        dwGLivL0VcXZIGVrHzTkhcB1Fel2kBObKUyimVBxPA==
+X-Google-Smtp-Source: AJdET5eQq0knOziaKk0pw+yGa/C8oKMmqg6Ax5/xPHPpM1zIVd/Nak3s9R+idlQJPU43C4p6GfxKNQ2T/zEqdRGhLDA=
+X-Received: by 2002:adf:9f0b:: with SMTP id l11-v6mr20511899wrf.206.1541440178262;
+ Mon, 05 Nov 2018 09:49:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181104081512.GA7829@rapoport-lnx>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a1c:4054:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 09:49:37 -0800 (PST)
+In-Reply-To: <87o9b3g927.fsf@codeaurora.org>
+References: <1540490241-32021-1-git-send-email-john.stultz@linaro.org> <87o9b3g927.fsf@codeaurora.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 5 Nov 2018 09:49:37 -0800
+Message-ID: <CALAqxLXPWLp_ah7qO9AdGrk=Wh00iD_VHFD-qBrmgAUys+165g@mail.gmail.com>
+Subject: Re: [RFC][PATCH] wlcore: Fixup "Add support for optional wakeirq"
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 04, 2018 at 10:15:13AM +0200, Mike Rapoport wrote:
-> On Sat, Nov 03, 2018 at 01:11:22AM +0200, Jarkko Sakkinen wrote:
-> > Documentation of the features of the Software Guard eXtensions used
-> > by the Linux kernel and basic design choices for the core and driver
-> > and functionality.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  Documentation/index.rst         |   1 +
-> >  Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
-> >  2 files changed, 186 insertions(+)
-> >  create mode 100644 Documentation/x86/intel_sgx.rst
-> > 
-> > diff --git a/Documentation/index.rst b/Documentation/index.rst
-> > index 5db7e87c7cb1..1cdc139adb40 100644
-> > --- a/Documentation/index.rst
-> > +++ b/Documentation/index.rst
-> > @@ -104,6 +104,7 @@ implementation.
-> >     :maxdepth: 2
-> > 
-> >     sh/index
-> > +   x86/index
-> 
-> It seems there is no Documentation/x86/index.rst, probably you'd want to
-> create one and link intel_sgx.rst there
+On Mon, Nov 5, 2018 at 1:36 AM, Kalle Valo <kvalo@codeaurora.org> wrote:
+> John Stultz <john.stultz@linaro.org> writes:
+>
+>> After commit 3c83dd577c7f ("wlcore: Add support for optional
+>> wakeirq") landed upstream, I started seeing the following oops
+>> on my HiKey board:
+>>
+>> [    1.870279] Unable to handle kernel read from unreadable memory at virtual address 0000000000000010
+>> [    1.870283] Mem abort info:
+>> [    1.870287]   ESR = 0x96000005
+>> [    1.870292]   Exception class = DABT (current EL), IL = 32 bits
+>> [    1.870296]   SET = 0, FnV = 0
+>> [    1.870299]   EA = 0, S1PTW = 0
+>> [    1.870302] Data abort info:
+>> [    1.870306]   ISV = 0, ISS = 0x00000005
+>> [    1.870309]   CM = 0, WnR = 0
+>> [    1.870312] [0000000000000010] user address but active_mm is swapper
+>> [    1.870318] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+>> [    1.870327] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-05129-gb3d1e8e #48
+>> [    1.870331] Hardware name: HiKey Development Board (DT)
+>> [    1.870350] Workqueue: events_freezable mmc_rescan
+>> [    1.870358] pstate: 60400005 (nZCv daif +PAN -UAO)
+>> [    1.870366] pc : wl1271_probe+0x210/0x350
+>> [    1.870371] lr : wl1271_probe+0x210/0x350
+>> [    1.870374] sp : ffffff80080739b0
+>> [    1.870377] x29: ffffff80080739b0 x28: 0000000000000000
+>> [    1.870384] x27: 0000000000000000 x26: 0000000000000000
+>> [    1.870391] x25: 0000000000000036 x24: ffffffc074ecb598
+>> [    1.870398] x23: ffffffc07ffdce78 x22: ffffffc0744ed808
+>> [    1.870404] x21: ffffffc074ecbb98 x20: ffffff8008ff9000
+>> [    1.870411] x19: ffffffc0744ed800 x18: ffffff8008ff9a48
+>> [    1.870418] x17: 0000000000000000 x16: 0000000000000000
+>> [    1.870425] x15: ffffffc074ecb503 x14: ffffffffffffffff
+>> [    1.870431] x13: ffffffc074ecb502 x12: 0000000000000030
+>> [    1.870438] x11: 0101010101010101 x10: 0000000000000040
+>> [    1.870444] x9 : ffffffc075400248 x8 : ffffffc075400270
+>> [    1.870451] x7 : 0000000000000000 x6 : 0000000000000000
+>> [    1.870457] x5 : 0000000000000000 x4 : 0000000000000000
+>> [    1.870463] x3 : 0000000000000000 x2 : 0000000000000000
+>> [    1.870469] x1 : 0000000000000028 x0 : 0000000000000000
+>> [    1.870477] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
+>> [    1.870480] Call trace:
+>> [    1.870485]  wl1271_probe+0x210/0x350
+>> [    1.870491]  sdio_bus_probe+0x100/0x128
+>> [    1.870500]  really_probe+0x1a8/0x2b8
+>> [    1.870506]  driver_probe_device+0x58/0x100
+>> [    1.870511]  __device_attach_driver+0x94/0xd8
+>> [    1.870517]  bus_for_each_drv+0x70/0xc8
+>> [    1.870522]  __device_attach+0xe0/0x140
+>> [    1.870527]  device_initial_probe+0x10/0x18
+>> [    1.870532]  bus_probe_device+0x94/0xa0
+>> [    1.870537]  device_add+0x374/0x5b8
+>> [    1.870542]  sdio_add_func+0x60/0x88
+>> [    1.870546]  mmc_attach_sdio+0x1b0/0x358
+>> [    1.870551]  mmc_rescan+0x2cc/0x390
+>> [    1.870558]  process_one_work+0x12c/0x320
+>> [    1.870563]  worker_thread+0x48/0x458
+>> [    1.870569]  kthread+0xf8/0x128
+>> [    1.870575]  ret_from_fork+0x10/0x18
+>> [    1.870583] Code: 92400c21 b2760021 a90687a2 97e95bf9 (f9400803)
+>> [    1.870587] ---[ end trace 1e15f81d3c139ca9 ]---
+>>
+>> It seems since we don't have a wakeirq value in the dts, the wakeirq
+>> value in wl1271_probe() is zero, which then causes trouble in
+>> irqd_get_trigger_type(irq_get_irq_data(wakeirq)).
+>>
+>> This patch tries to address this by checking if wakeirq is zero,
+>> and not trying to add it to the resources if that is the case.
+>>
+>> Cc: Tony Lindgren <tony@atomide.com>
+>> Cc: Kalle Valo <kvalo@codeaurora.org>
+>> Cc: Eyal Reizer <eyalr@ti.com>
+>> Cc: Anders Roxell <anders.roxell@linaro.org>
+>> Cc: linux-wireless@vger.kernel.org
+>> Acked-by: Tony Lindgren <tony@atomide.com>
+>> Signed-off-by: John Stultz <john.stultz@linaro.org>
+>
+> Any particular reason why you marked this as RFC? I'm asking because I
 
-Thanks I'll update this!
+Mostly out of habit. I do that on the first pass submissions. But yea,
+no objection if it were to be taken.
 
-> 
-> > 
-> >  Filesystem Documentation
-> >  ------------------------
-> > diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
-> > new file mode 100644
-> > index 000000000000..f6b7979c41f2
-> > --- /dev/null
-> > +++ b/Documentation/x86/intel_sgx.rst
-> > @@ -0,0 +1,185 @@
-> > +===================
-> > +Intel(R) SGX driver
-> > +===================
-> > +
-> > +Introduction
-> > +============
-> > +
-> > +Intel(R) SGX is a set of CPU instructions that can be used by applications to
-> > +set aside private regions of code and data. The code outside the enclave is
-> > +disallowed to access the memory inside the enclave by the CPU access control.
-> > +In a way you can think that SGX provides inverted sandbox. It protects the
-> > +application from a malicious host.
-> > +
-> > +You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
-> > +
-> > +	``cat /proc/cpuinfo  | grep sgx``
-> > +
-> > +Overview of SGX
-> > +===============
-> > +
-> > +SGX has a set of data structures to maintain information about the enclaves and
-> > +their security properties. BIOS reserves a fixed size region of physical memory
-> > +for these structures by setting Processor Reserved Memory Range Registers
-> > +(PRMRR).
-> > +
-> > +This memory range is protected from outside access by the CPU and all the data
-> > +coming in and out of the CPU package is encrypted by a key that is generated for
-> > +each boot cycle.
-> > +
-> > +Enclaves execute in ring-3 in a special enclave submode using pages from the
-> > +reserved memory range. A fixed logical address range for the enclave is reserved
-> > +by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
-> > +the documentation commonly as the ELRANGE.
-> > +
-> > +Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
-> > +executing in the enclave mode inside the enclave, #GP is raised. On the other
-> > +hand enclave code can make memory accesses both inside and outside of the
-> 
-> comma  ^
-> 
-> > +ELRANGE.
-> > +
-> > +Enclave can only execute code inside the ELRANGE. Instructions that may cause
-> > +VMEXIT, IO instructions and instructions that require a privilege change are
-> > +prohibited inside the enclave. Interrupts and exceptions always cause enclave
-> > +to exit and jump to an address outside the enclave given when the enclave is
-> > +entered by using the leaf instruction ENCLS(EENTER).
-> > +
-> > +Data types
-> > +----------
-> > +
-> > +The protected memory range contains the following data:
-> > +
-> > +* **Enclave Page Cache (EPC):** protected pages
-> > +* **Enclave Page Cache Map (EPCM):** a database that describes the state of the
-> > +  pages and link them to an enclave.
-> 
-> I think it's better to use "definition list" here
-> 
-> http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#definition-lists
+> would like to apply this patch as is and push to 4.20.
+>
+> I'll just add:
+>
+> Fixes: 3c83dd577c7f ("wlcore: Add support for optional wakeirq")
 
-Ack.
+That would be great!
 
-> 
-> > +EPC has a number of different types of pages:
-> > +
-> > +* **SGX Enclave Control Structure (SECS)**: describes the global
-> > +  properties of an enclave.
-> > +* **Regular (REG):** code and data pages in the ELRANGE.
-> > +* **Thread Control Structure (TCS):** pages that define entry points inside an
-> > +  enclave. The enclave can only be entered through these entry points and each
-> > +  can host a single hardware thread at a time.
-> > +* **Version Array (VA)**: 64-bit version numbers for pages that have been
-> > +  swapped outside the enclave. Each page contains 512 version numbers.
-> 
-> ditto
-> 
-> > +Launch control
-> > +--------------
-> > +
-> > +To launch an enclave, two structures must be provided for ENCLS(EINIT):
-> > +
-> > +1. **SIGSTRUCT:** signed measurement of the enclave binary.
-> > +2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
-> > +   *launch key*, which is re-generated for each boot cycle.
-> 
-> ditto
-> 
-> > +The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
-> > +IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
-> > +key do not require a valid EINITTOKEN and can be authorized with special
-> > +privileges. One of those privileges is ability to acquire the launch key with
-> > +ENCLS(EGETKEY).
-> > +
-> > +**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
-> > +IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
-> > +feature control register and handing over control to the operating system.
-> > +
-> > +Enclave construction
-> > +--------------------
-> > +
-> > +The construction is started by filling out the SECS that contains enclave
-> > +address range, privileged attributes and measurement of TCS and REG pages (pages
-> > +that will be mapped to the address range) among the other things. This structure
-> > +is passed out to the ENCLS(ECREATE) together with a physical address of a page
-> > +in EPC that will hold the SECS.
-> > +
-> > +The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
-> > +SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
-> > +
-> > +After all of the pages have been added, the enclave is initialized with
-> > +ENCLS(EINIT). ENCLS(INIT) checks that the SIGSTRUCT is signed with the contained
-> 
->                        EINIT?
-
-Yep.
-
-> 
-> > +public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
-> > +the token is valid (CMAC'd with the launch key). If the token is not valid,
-> > +the CPU will check whether the enclave is signed with a key matching to the
-> > +IA32_SGXLEPUBKEYHASHn MSRs.
-> > +
-> > +Swapping pages
-> > +--------------
-> > +
-> > +Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
-> > +addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
-> > +structure (Page Crypto MetaData) as input. The VA page will seal a version
-> > +number for the page. PCMD is 128 byte structure that contains tracking
-> > +information for the page, most importantly its MAC. With these structures the
-> > +enclave is sealed and rollback protected while it resides in the unprotected
-> > +memory.
-> > +
-> > +Before the page can be swapped out it must not have any active TLB references.
-> > +ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
-> > +that no new TLB entries can be created to it by the hardware threads.
-> > +
-> > +After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
-> > +increased counter value to the entering hardware threads. ENCLS(EWB) will
-> > +return SGX_NOT_TRACKED error while there are still threads with the earlier
-> > +couner value because that means that there might be hardware thread inside
-> > +the enclave with TLB entries to pages that are to be swapped.
-> > +
-> > +Kernel internals
-> > +================
-> > +
-> > +Requirements
-> > +------------
-> > +
-> > +Because SGX has an ever evolving and expanding feature set, it's possible for
-> > +a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-> > +e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-> > +*not* support such a heterogeneous system configuration, nor does it even
-> > +attempt to play nice in the face of a misconfigured system.  With the exception
-> > +of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-> > +CPUs have a configuration that is identical to the boot CPU.
-> > +
-> > +
-> > +Roles and responsibilities
-> > +--------------------------
-> > +
-> > +SGX introduces system resources, e.g. EPC memory, that must be accessible to
-> > +multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
-> > +and KVM (to expose SGX to VMs), ideally without introducing any dependencies
-> > +between each SGX entity.  To that end, the kernel owns and manages the shared
-> > +system resources, i.e. the EPC and Launch Control MSRs, and defines functions
-> > +that provide appropriate access to the shared resources.  SGX support for
-> > +user space and VMs is left to the SGX platform driver and KVM respectively.
-> > +
-> > +Launching enclaves
-> > +------------------
-> > +
-> > +The current kernel implementation supports only unlocked MSRs i.e.
-> > +FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
-> > +MSRs to the hash of the public key modulus of the enclave signer, which is one
-> > +f the fields in the SIGSTRUCT.
-> 
->   of
-> 
-> > +
-> > +EPC management
-> > +--------------
-> > +
-> > +Due to the unique requirements for swapping EPC pages, and because EPC pages
-> > +(currently) do not have associated page structures, management of the EPC is
-> > +not handled by the standard Linux swapper.  SGX directly handles swapping
-> > +of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
-> > +mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
-> > +implement function callbacks that can be invoked by the kernel to age,
-> > +swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
-> > +controls what happens and when, while the consumers (driver, KVM, etc..) do
-> > +the actual work.
-> > +
-> > +SGX uapi
-> > +========
-> > +
-> > +.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
-> > +   :functions: sgx_ioc_enclave_create
-> > +               sgx_ioc_enclave_add_page
-> > +               sgx_ioc_enclave_init
-> > +
-> > +.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
-> > +
-> > +References
-> > +==========
-> > +
-> > +* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
-> > -- 
-> > 2.19.1
-> > 
-> 
-> -- 
-> Sincerely yours,
-> Mike.
-> 
-
-Thank for your remarks!
-
-/Jarkko
+thanks
+-john
