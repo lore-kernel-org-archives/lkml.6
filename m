@@ -2,130 +2,190 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCE5C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED1DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8347420870
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:37:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8347420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1F6872081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:40:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6872081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=intenta.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeKERz5 (ORCPT
+        id S1726922AbeKER7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 12:55:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47792 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726086AbeKERz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 12:55:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8153FACE7;
-        Mon,  5 Nov 2018 08:37:21 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AF1DE1E07AB; Mon,  5 Nov 2018 09:37:19 +0100 (CET)
-Date:   Mon, 5 Nov 2018 09:37:19 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH v4 2/3] mm: introduce put_user_page*(), placeholder
- versions
-Message-ID: <20181105083719.GA6953@quack2.suse.cz>
-References: <20181008211623.30796-1-jhubbard@nvidia.com>
- <20181008211623.30796-3-jhubbard@nvidia.com>
- <20181008171442.d3b3a1ea07d56c26d813a11e@linux-foundation.org>
- <5198a797-fa34-c859-ff9d-568834a85a83@nvidia.com>
- <20181010164541.ec4bf53f5a9e4ba6e5b52a21@linux-foundation.org>
- <20181011084929.GB8418@quack2.suse.cz>
- <20181011132013.GA5968@ziepe.ca>
- <97e89e08-5b94-240a-56e9-ece2b91f6dbc@nvidia.com>
- <20181022194329.GG30059@ziepe.ca>
- <532c7ae5-7277-74a7-93f2-afe8b7dc13fc@nvidia.com>
+        Mon, 5 Nov 2018 12:59:21 -0500
+Received: from mail.intenta.de ([178.249.25.132]:28848 "EHLO mail.intenta.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbeKER7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 12:59:21 -0500
+Received: from [10.10.16.42] (port=61437 helo=ICSMA001.intenta.de)
+        by mail.intenta.de with esmtps (TLSv1.2:AES256-SHA:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Helmut.Grohne@intenta.de>)
+        id 1gJaR7-0005xY-1K; Mon, 05 Nov 2018 09:40:41 +0100
+Received: from localhost (10.10.136.105) by ICSMA001.intenta.de (10.10.16.42)
+ with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 5 Nov 2018 09:40:41
+ +0100
+X-CTCH-RefID: str=0001.0A0C0213.5BE00209.00BC,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Date:   Mon, 5 Nov 2018 09:40:43 +0100
+From:   Helmut Grohne <helmut.grohne@intenta.de>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+CC:     <boris.brezillon@bootlin.com>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <marek.vasut@gmail.com>,
+        <kyungmin.park@samsung.com>, <absahu@codeaurora.org>,
+        <peterpandong@micron.com>, <frieder.schrempf@exceet.de>,
+        <linus.walleij@linaro.org>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <michals@xilinx.com>,
+        <nagasureshkumarrelli@gmail.com>
+Subject: Re: [LINUX PATCH v12] mtd: rawnand: pl353: Add basic driver for arm
+ pl353 smc nand interface
+Message-ID: <20181105084040.xyxzkmcrlg7iyics@laureti-dev>
+References: <1533620414-3332-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <532c7ae5-7277-74a7-93f2-afe8b7dc13fc@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1533620414-3332-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Originating-IP: [10.10.136.105]
+X-ClientProxiedBy: ICSMA001.intenta.de (10.10.16.42) To ICSMA001.intenta.de
+ (10.10.16.42)
+X-EsetResult: clean, is OK
+X-EsetId: 47C16134FCD33539178C3D
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 04-11-18 23:17:58, John Hubbard wrote:
-> On 10/22/18 12:43 PM, Jason Gunthorpe wrote:
-> > On Thu, Oct 11, 2018 at 06:23:24PM -0700, John Hubbard wrote:
-> >> On 10/11/18 6:20 AM, Jason Gunthorpe wrote:
-> >>> On Thu, Oct 11, 2018 at 10:49:29AM +0200, Jan Kara wrote:
-> >>>
-> >>>>> This is a real worry.  If someone uses a mistaken put_page() then how
-> >>>>> will that bug manifest at runtime?  Under what set of circumstances
-> >>>>> will the kernel trigger the bug?
-> >>>>
-> >>>> At runtime such bug will manifest as a page that can never be evicted from
-> >>>> memory. We could warn in put_page() if page reference count drops below
-> >>>> bare minimum for given user pin count which would be able to catch some
-> >>>> issues but it won't be 100% reliable. So at this point I'm more leaning
-> >>>> towards making get_user_pages() return a different type than just
-> >>>> struct page * to make it much harder for refcount to go wrong...
-> >>>
-> >>> At least for the infiniband code being used as an example here we take
-> >>> the struct page from get_user_pages, then stick it in a sgl, and at
-> >>> put_page time we get the page back out of the sgl via sg_page()
-> >>>
-> >>> So type safety will not help this case... I wonder how many other
-> >>> users are similar? I think this is a pretty reasonable flow for DMA
-> >>> with user pages.
-> >>>
-> >>
-> >> That is true. The infiniband code, fortunately, never mixes the two page
-> >> types into the same pool (or sg list), so it's actually an easier example
-> >> than some other subsystems. But, yes, type safety doesn't help there. I can 
-> >> take a moment to look around at the other areas, to quantify how much a type
-> >> safety change might help.
-> > 
-> > Are most (all?) of the places working with SGLs?
+On Tue, Aug 07, 2018 at 11:10:14AM +0530, Naga Sureshkumar Relli wrote:
+> Add driver for arm pl353 static memory controller nand interface with
+> HW ECC support. This controller is used in Xilinx Zynq SoC for
+> interfacing the NAND flash memory.
 > 
-> I finally put together a spreadsheet, in order to answer this sort of thing.
-> Some notes:
-> 
-> a) There are around 100 call sites of either get_user_pages*(), or indirect
-> calls via iov_iter_get_pages*().
+> Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+> ---
+> Changes in v12:
 
-Quite a bit...
+I attempted to apply this v12 together with the v11 of pl353-smc (which seems
+to be the latest version) onto a vanilla v4.19 kernel tree. Application was
+smooth and a build was without errors. During boot, my dmesg was spammed with
+lots of repetitions of this:
 
-> b) There are only a few SGL users. Most are ad-hoc, instead: some loop that
-> either can be collapsed nicely into the new put_user_pages*() APIs, or...
-> cannot.
-> 
-> c) The real problem is: around 20+ iov_iter_get_pages*() call sites. I need
-> to change both the  iov_iter system a little bit, and also change the callers
-> so that they don't pile all the gup-pinned pages into the same page** array
-> that also contains other allocation types. This can be done, it just takes
-> time, that's the good news.
+[    5.816275] ------------[ cut here ]------------
+[    5.820981] WARNING: CPU: 0 PID: 1 at .../linux/drivers/mtd/nand/raw/nand_base.c:2773 nand_subop_get_data_len+0x60/0xa4
+[    5.836868] Modules linked in:
+[    5.836912] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-dirty #3
+[    5.836929] Hardware name: Xilinx Zynq Platform
+[    5.836943] Backtrace: 
+[    5.836981] [<c0015430>] (dump_backtrace) from [<c0015710>] (show_stack+0x20/0x24)
+[    5.837004]  r7:c062e618 r6:00000000 r5:600f0013 r4:c062e618
+[    5.837027] [<c00156f0>] (show_stack) from [<c0423e78>] (dump_stack+0xac/0xd8)
+[    5.837055] [<c0423dcc>] (dump_stack) from [<c002352c>] (__warn+0x118/0x130)
+[    5.837079]  r10:00000000 r9:c0270be8 r8:00000ad5 r7:c0550358 r6:00000009 r5:00000000
+[    5.837097]  r4:00000000 r3:de4c6000
+[    5.837122] [<c0023414>] (__warn) from [<c0023634>] (warn_slowpath_null+0x50/0x58)
+[    5.837146]  r9:de4c78c5 r8:da4d1010 r7:de4c78f8 r6:c0270be8 r5:00000ad5 r4:c0550358
+[    5.837173] [<c00235e4>] (warn_slowpath_null) from [<c0270be8>] (nand_subop_get_data_len+0x60/0xa4)
+[    5.837192]  r6:0000003c r5:00000003 r4:de4c7870
+[    5.837217] [<c0270b88>] (nand_subop_get_data_len) from [<c027c954>] (pl353_nand_exec_op_cmd+0x60/0x314)
+[    5.837238]  r7:de4c78f8 r6:0000003c r5:de4c7870 r4:00000003
+[    5.837262] [<c027c8f4>] (pl353_nand_exec_op_cmd) from [<c02712a4>] (nand_op_parser_exec_op+0x484/0x4e8)
+[    5.837285]  r10:00000002 r9:00000014 r8:de4c790c r7:00000004 r6:c0634260 r5:c052cc44
+[    5.837301]  r4:c0620bcc
+[    5.837325] [<c0270e20>] (nand_op_parser_exec_op) from [<c027be20>] (pl353_nfc_exec_op+0x24/0x2c)
+[    5.837348]  r10:de4c7a18 r9:00000080 r8:03463678 r7:89705f41 r6:36b4a597 r5:de4c78d0
+[    5.837364]  r4:da4d1010
+[    5.837387] [<c027bdfc>] (pl353_nfc_exec_op) from [<c026ec40>] (nand_erase_op+0x150/0x1f0)
+[    5.837411] [<c026eaf0>] (nand_erase_op) from [<c026f010>] (single_erase+0x28/0x2c)
+[    5.837434]  r9:e08c1000 r8:00000006 r7:00000040 r6:00000001 r5:0001ff80 r4:da4d1010
+[    5.837459] [<c026efe8>] (single_erase) from [<c02771b4>] (nand_erase_nand+0x1f8/0x3f8)
+[    5.837484] [<c0276fbc>] (nand_erase_nand) from [<c02780d8>] (write_bbt+0x30c/0x748)
+[    5.837508]  r10:00000006 r9:e08c1000 r8:00000006 r7:00000002 r6:da4d1010 r5:00000000
+[    5.837524]  r4:0ffc0000
+[    5.837549] [<c0277dcc>] (write_bbt) from [<c027900c>] (nand_create_bbt+0x30c/0x6d0)
+[    5.837572]  r10:c061fd2c r9:c061fce8 r8:00000000 r7:c061fd2c r6:00000000 r5:00000003
+[    5.837587]  r4:00000000
+[    5.837614] [<c0278d00>] (nand_create_bbt) from [<c0275a90>] (nand_scan_with_ids+0x1248/0x1e74)
+[    5.837636]  r10:c0620524 r9:00000004 r8:00000001 r7:00000004 r6:da4d1378 r5:00000001
+[    5.837652]  r4:da4d1010
+[    5.837676] [<c0274848>] (nand_scan_with_ids) from [<c027c09c>] (pl353_nand_probe+0x144/0x208)
+[    5.837699]  r10:00000000 r9:c0620ae0 r8:c0633ba0 r7:00000000 r6:da4d8e10 r5:da4d8e00
+[    5.837715]  r4:da4d1010
+[    5.837738] [<c027bf58>] (pl353_nand_probe) from [<c0253994>] (platform_drv_probe+0x44/0x7c)
+[    5.837757]  r6:c0e0205c r5:c0620ae0 r4:da4d8e10
+[    5.837783] [<c0253950>] (platform_drv_probe) from [<c02518f8>] (really_probe+0x27c/0x408)
+[    5.837801]  r5:da4d8e10 r4:c0e02058
+[    5.837827] [<c025167c>] (really_probe) from [<c0251d58>] (driver_probe_device+0x138/0x198)
+[    5.837850]  r10:00000000 r9:00000000 r8:c0e02014 r7:00000001 r6:de4c7c70 r5:c0620ae0
+[    5.837865]  r4:da4d8e10
+[    5.837891] [<c0251c20>] (driver_probe_device) from [<c0251fd4>] (__device_attach_driver+0xc8/0x144)
+[    5.837913]  r9:00000000 r8:c0e02014 r6:de4c7c70 r5:da4d8e10 r4:c0620ae0
+[    5.837938] [<c0251f0c>] (__device_attach_driver) from [<c024f6b8>] (bus_for_each_drv+0x70/0xa4)
+[    5.837958]  r7:00000001 r6:c0251f0c r5:de4c7c70 r4:00000000
+[    5.837982] [<c024f648>] (bus_for_each_drv) from [<c02515f0>] (__device_attach+0xb0/0x11c)
+[    5.838001]  r6:c061e8d0 r5:da4d8e44 r4:da4d8e10
+[    5.838027] [<c0251540>] (__device_attach) from [<c02520ac>] (device_initial_probe+0x1c/0x20)
+[    5.838047]  r7:da4d8e10 r6:c061e8d0 r5:da4d8e10 r4:da4d8e18
+[    5.838073] [<c0252090>] (device_initial_probe) from [<c0250768>] (bus_probe_device+0x98/0xa0)
+[    5.838097] [<c02506d0>] (bus_probe_device) from [<c024d0ac>] (device_add+0x380/0x5dc)
+[    5.838117]  r7:da4d8e10 r6:de595e00 r5:00000000 r4:da4d8e18
+[    5.838142] [<c024cd2c>] (device_add) from [<c02d936c>] (of_device_add+0x44/0x4c)
+[    5.838164]  r10:c0563da4 r9:dfbf0a70 r8:dfbf0ac0 r7:00000000 r6:de595e00 r5:00000000
+[    5.838180]  r4:da4d8e00
+[    5.838205] [<c02d9328>] (of_device_add) from [<c02d9944>] (of_platform_device_create_pdata+0xa0/0xd0)
+[    5.838229] [<c02d98a4>] (of_platform_device_create_pdata) from [<c02d9994>] (of_platform_device_create+0x20/0x24)
+[    5.838252]  r9:dfbf0a70 r8:dfbf0780 r7:c0470470 r6:ddfe9f50 r5:00000000 r4:de595e00
+[    5.838280] [<c02d9974>] (of_platform_device_create) from [<c02dfc48>] (pl353_smc_probe+0x1b0/0x244)
+[    5.838305] [<c02dfa98>] (pl353_smc_probe) from [<c0223a34>] (amba_probe+0xa4/0xb8)
+[    5.838328]  r10:00000000 r9:c06262f4 r8:c0633ba0 r7:00000000 r6:c06262f4 r5:de595e00
+[    5.838345]  r4:c04706bc r3:c02dfa98
+[    5.838370] [<c0223990>] (amba_probe) from [<c02518f8>] (really_probe+0x27c/0x408)
+[    5.838391]  r7:00000000 r6:c0e0205c r5:de595e00 r4:c0e02058
+[    5.838416] [<c025167c>] (really_probe) from [<c0251d58>] (driver_probe_device+0x138/0x198)
+[    5.838439]  r10:c06311e0 r9:00000000 r8:00000000 r7:c0633ac8 r6:c06262f4 r5:c06262f4
+[    5.838455]  r4:de595e00
+[    5.838480] [<c0251c20>] (driver_probe_device) from [<c0251ef0>] (__driver_attach+0x138/0x154)
+[    5.838502]  r9:00000000 r8:00000000 r6:c06262f4 r5:de595e34 r4:de595e00
+[    5.838527] [<c0251db8>] (__driver_attach) from [<c024f5e0>] (bus_for_each_dev+0x68/0xa4)
+[    5.838547]  r7:c0633ac8 r6:c0251db8 r5:c06262f4 r4:de595e00
+[    5.838572] [<c024f578>] (bus_for_each_dev) from [<c0251100>] (driver_attach+0x2c/0x30)
+[    5.838591]  r6:c061c22c r5:da4cc900 r4:c06262f4
+[    5.838616] [<c02510d4>] (driver_attach) from [<c0250a74>] (bus_add_driver+0x1b8/0x278)
+[    5.838641] [<c02508bc>] (bus_add_driver) from [<c025270c>] (driver_register+0x88/0x11c)
+[    5.838663]  r8:c05eeeec r7:c06311e0 r6:c05ff420 r5:c05c8be0 r4:c06262f4
+[    5.838687] [<c0252684>] (driver_register) from [<c02238ac>] (amba_driver_register+0x60/0x64)
+[    5.838704]  r5:c05c8be0 r4:c0630960
+[    5.838730] [<c022384c>] (amba_driver_register) from [<c05c8c00>] (pl353_smc_driver_init+0x20/0x24)
+[    5.838756] [<c05c8be0>] (pl353_smc_driver_init) from [<c000ac60>] (do_one_initcall+0x8c/0x368)
+[    5.838779] [<c000abd4>] (do_one_initcall) from [<c05a0308>] (kernel_init_freeable+0x3ac/0x484)
+[    5.838802]  r9:c063a9c0 r8:c05eeeec r7:c063a9c0 r6:c05ff420 r5:00000007 r4:de4c6000
+[    5.838827] [<c059ff5c>] (kernel_init_freeable) from [<c043a3ac>] (kernel_init+0x1c/0x108)
+[    5.838849]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c043a390
+[    5.838866]  r4:0000a9c0
+[    5.838888] [<c043a390>] (kernel_init) from [<c00090ac>] (ret_from_fork+0x14/0x28)
+[    5.838905] Exception stack(0xde4c7fb0 to 0xde4c7ff8)
+[    5.838925] 7fa0:                                     00000000 00000000 00000000 00000000
+[    5.838947] 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    5.838967] 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    5.838984]  r5:c043a390 r4:00000000
+[    5.839001] irq event stamp: 224953
+[    5.839027] hardirqs last  enabled at (224959): [<c007d294>] console_unlock+0x4bc/0x664
+[    5.839053] hardirqs last disabled at (224964): [<c007cebc>] console_unlock+0xe4/0x664
+[    5.839078] softirqs last  enabled at (224936): [<c000a450>] __do_softirq+0x458/0x540
+[    5.839103] softirqs last disabled at (224921): [<c00299f8>] irq_exit+0x148/0x14c
+[    5.839123] ---[ end trace eb0330276aefb0c8 ]---
 
-Yes, but looking into iov_iter_get_pages() users, lot of them then end up
-feeding the result either in SGL, SKB (which is basically the same thing,
-just for networking), or BVEC (which is again a very similar thing, just for
-generic block layer). I'm not saying that we must have _sgl() interface as
-untangling all those users might be just too complex but there is certainly
-some space for unification and common interfaces ;)
+The respective mtd character devices were created, but e.g. reading them
+results in -EIO.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The device tested on works fine with v4.14 and a driver close to the
+xilinx kernel tree at github.
+
+I acknowledge that th v12 submission predates the v4.19 release, but at
+this time, the driver will need reworking.
+
+Helmut
