@@ -6,50 +6,54 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E072C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC110C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35AA920854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B53D20869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:02:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="fwQKq/0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35AA920854
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="QAlPiY73"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B53D20869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729542AbeKEVVS (ORCPT
+        id S1729590AbeKEVV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:21:18 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45024 "EHLO
+        Mon, 5 Nov 2018 16:21:27 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45316 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbeKEVVR (ORCPT
+        with ESMTP id S1727814AbeKEVV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:21:17 -0500
+        Mon, 5 Nov 2018 16:21:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=AKh5mOY/r5VLx0NJBjhFxlW6nwTZMVjL9b2fTvAUTgU=; b=fwQKq/0S0OTS
-        wJ7vp6MFkKMyOWoXMGEjq5bU62ETYd6eSE/kFTql20xVDsai8y49XR8c29Af3192Ex5z2pVz03+6j
-        7LF80D1IHj2IuOVniGIC+/izRDPDOQmZCVwM++7OzM65vhgzfJRHGeKfXzau8NuLoSCgEHFOmDTEI
-        n/G+A=;
+        List-Archive; bh=i/dhJ8a4J4Pn3Vo+oiRbuM2a76RD24TfOQ1Y0bIMQ0g=; b=QAlPiY73LWMm
+        5252UOwuQFDrH3FiFvCzQo4iXDcZ6Quq2Cp9uIhioG0CRtYJHDVy8Go5NkMK49ioB4ZW55byKY0Gg
+        RZOruM39XOqwykPB70Y58ZxapHRZaDe88lVlFPO2D1mRuIQx5xcDEYksVT6QFxJJImiPDhYXXfPb9
+        8zWN0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJdZl-0008KK-VC; Mon, 05 Nov 2018 12:01:50 +0000
+        id 1gJdZq-0008KR-8D; Mon, 05 Nov 2018 12:01:54 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A4F341124D98; Mon,  5 Nov 2018 12:01:49 +0000 (GMT)
+        id EB1181124D98; Mon,  5 Nov 2018 12:01:53 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-sh-msiof: simplify getting .driver_data" to the spi tree
-In-Reply-To:  <20181021200048.2114-3-wsa+renesas@sang-engineering.com>
-Message-Id: <20181105120149.A4F341124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:01:49 +0000 (GMT)
+To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        stable@vger.kernel.org, masami.hiramatsu@linaro.org,
+        jaswinder.singh@linaro.org, linux-kernel@vger.kernel.org,
+        hayashibara.keiji@socionext.com, linux-spi@vger.kernel.org
+Subject: Applied "spi: uniphier: re-add addressing properties" to the spi tree
+In-Reply-To:  <1540533525-1816-3-git-send-email-hayashibara.keiji@socionext.com>
+Message-Id: <20181105120153.EB1181124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:01:53 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-sh-msiof: simplify getting .driver_data
+   spi: uniphier: re-add addressing properties
 
 has been applied to the spi tree at
 
@@ -82,43 +86,44 @@ to this mail.
 Thanks,
 Mark
 
-From 07c7df3ecdba3d8b9a4145edd9cac47b27dd7f67 Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Sun, 21 Oct 2018 22:00:46 +0200
-Subject: [PATCH] spi: spi-sh-msiof: simplify getting .driver_data
+From 2a35a643f138a97e3bfee0c599c72e5ca80ebe7c Mon Sep 17 00:00:00 2001
+From: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Date: Fri, 26 Oct 2018 14:58:45 +0900
+Subject: [PATCH] spi: uniphier: re-add addressing properties
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+In commit 7662d1dc17d4 ("spi: uniphier: fix incorrect property items")
+addressing properties of #address-cells and #size-cells were removed.
+Since it is not necessary to remove them, they are back again.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-sh-msiof.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/spi/spi-uniphier.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index adf384323934..d495d8604397 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1426,16 +1426,14 @@ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- #ifdef CONFIG_PM_SLEEP
- static int sh_msiof_spi_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+	struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
- 
- 	return spi_master_suspend(p->master);
- }
- 
- static int sh_msiof_spi_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
-+	struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
- 
- 	return spi_master_resume(p->master);
- }
+diff --git a/Documentation/devicetree/bindings/spi/spi-uniphier.txt b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+index b04e66a52de5..e1201573a29a 100644
+--- a/Documentation/devicetree/bindings/spi/spi-uniphier.txt
++++ b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+@@ -5,6 +5,8 @@ UniPhier SoCs have SCSSI which supports SPI single channel.
+ Required properties:
+  - compatible: should be "socionext,uniphier-scssi"
+  - reg: address and length of the spi master registers
++ - #address-cells: must be <1>, see spi-bus.txt
++ - #size-cells: must be <0>, see spi-bus.txt
+  - interrupts: a single interrupt specifier
+  - pinctrl-names: should be "default"
+  - pinctrl-0: pin control state for the default mode
+@@ -16,6 +18,8 @@ Example:
+ spi0: spi@54006000 {
+ 	compatible = "socionext,uniphier-scssi";
+ 	reg = <0x54006000 0x100>;
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	interrupts = <0 39 4>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_spi0>;
 -- 
 2.19.0.rc2
 
