@@ -2,104 +2,69 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80777C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347C5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39CEB20854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2FCC20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:19:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjpLEszX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CEB20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VFaNKUKz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FCC20819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbeKEVi3 (ORCPT
+        id S1729466AbeKEVjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeKEVi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:38:28 -0500
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B08F20819;
-        Mon,  5 Nov 2018 12:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541420339;
-        bh=gwRHNGp1f3k6w8LXB20VUOr930FG6U9aiCvejZ7hycc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BjpLEszXDyEywe0kgR+eLnkrI5nNjvd/Fq5bTlm3HuH9HlIJdUY2fCQdPLxG15Qin
-         JY/olXynROxIy7WjyLzDl6IbaofKjM4y3k2Goo3Ya24u3HZ3ysWt/pRK3hpJeYqPAS
-         /vyCyhFVk4vXJxnv2yfxMjX7vKtbBEYAomEKZvg0=
-Message-ID: <efbaeb736e4738bb7a0e2f8529bf1db8459bbe56.camel@kernel.org>
-Subject: Re: [PATCH 04/12] gfs2: properly initial file_lock used for unlock.
-From:   Jeff Layton <jlayton@kernel.org>
-To:     NeilBrown <neilb@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 05 Nov 2018 07:18:56 -0500
-In-Reply-To: <154138144777.31651.4516223215037533891.stgit@noble>
-References: <154138128401.31651.1381177427603557514.stgit@noble>
-         <154138144777.31651.4516223215037533891.stgit@noble>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Nov 2018 16:39:09 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40566 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeKEVjJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:39:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aDX20y0q0VhkGrp6OlR0HtpvcLo5DGSBG4VAoCu1hNg=; b=VFaNKUKzjsijNjgfWmzwetUqo
+        4oxVS6BIgpgC4WE0WF2UkIStxBFv78HUafgGLiylgAEuV/TBa5AWmRryARwU6yJ5ijv9bzB7ns7X+
+        A93IthdunXLgT8pqXVi9aDjPRJ98GYw57NLnIoQTVQBXiL4rRRfojb6P3nbb/agov40kh4wTS+muz
+        H4jZBzSjDS3B77lNgo/JrHo1XpBu08Q07D+pR0aPrmPUv1ebH32hGnQNG74F7TGlj/P7VTGLOYxx1
+        3VTjGhYnT3z9OKo7ptLQK9f5gED4rDVC1ZMavh5cID0NQgg5IG9kzOQB6s+7NdHkUy03Ei1KWeHyn
+        izBAlaiBQ==;
+Received: from 213-225-37-95.nat.highway.a1.net ([213.225.37.95] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJdqx-0003HV-9M; Mon, 05 Nov 2018 12:19:35 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Guo Ren <ren_guo@c-sky.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: move the arm arch_dma_alloc implementation to common code
+Date:   Mon,  5 Nov 2018 13:19:22 +0100
+Message-Id: <20181105121931.13481-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-05 at 12:30 +1100, NeilBrown wrote:
-> Rather than assuming all-zeros is sufficient, use the available API to
-> initialize the file_lock structure use for unlock.
-> VFS-level changes will soon make it important that the
-> list_heads in file_lock are always properly initialized.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  fs/gfs2/file.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index 45a17b770d97..271f847705e3 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -1199,13 +1199,13 @@ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
->  	mutex_lock(&fp->f_fl_mutex);
->  
->  	if (gfs2_holder_initialized(fl_gh)) {
-> +		struct file_lock request;
->  		if (fl_gh->gh_state == state)
->  			goto out;
-> -		locks_lock_file_wait(file,
-> -				     &(struct file_lock) {
-> -					     .fl_type = F_UNLCK,
-> -					     .fl_flags = FL_FLOCK
-> -				     });
-> +		locks_init_lock(&request);
-> +		request.fl_type = F_UNLOCK;
+Hi all,
 
-F_UNLCK ?
-
-The ocfs2 patch has the same bug.
-
-> +		request.fl_flags = FL_FLOCK;
-> +		locks_lock_file_wait(file, &request);
->  		gfs2_glock_dq(fl_gh);
->  		gfs2_holder_reinit(state, flags, fl_gh);
->  	} else {
-> 
-> 
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+this series moves the existing arm64 implementation of arch_dma_alloc and
+arch_dma_free to common code given that it is not arm64-specific, and
+then also uses it for csky.  Given how many architectures remap memory
+for the DMA coherent implementation it should be usable for many more,
+and the new cache flushing hook and the generic atomic pool are also
+enablers for implementing the IOMMU API dma ops in common code in a
+follow on series.
