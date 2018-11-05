@@ -2,79 +2,102 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25004C32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9237EC32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4F820685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:48:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4F820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 4D96920685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 00:50:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D96920685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbeKEKFR (ORCPT
+        id S1728936AbeKEKHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 05:05:17 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:38438 "EHLO mxct.zte.com.cn"
+        Mon, 5 Nov 2018 05:07:03 -0500
+Received: from mga14.intel.com ([192.55.52.115]:9299 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727047AbeKEKFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 05:05:17 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id A15AB390CAAA07AC5547;
-        Mon,  5 Nov 2018 08:48:17 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wA50mBEE052168;
-        Mon, 5 Nov 2018 08:48:11 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018110508481363-8567096 ;
-          Mon, 5 Nov 2018 08:48:13 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Yi Wang <wang.yi59@zte.com.cn>
-Subject: [RESEND PATCH] sched/fair: fix a comment in task_numa_fault()
-Date:   Mon, 5 Nov 2018 08:50:13 +0800
-Message-Id: <1541379013-11352-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-05 08:48:13,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-05 08:48:10,
-        Serialize complete at 2018-11-05 08:48:10
-X-MAIL: mse01.zte.com.cn wA50mBEE052168
+        id S1726173AbeKEKHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 05:07:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 16:50:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,466,1534834800"; 
+   d="scan'208";a="105239613"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.27])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Nov 2018 16:50:04 -0800
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, "Aaron Lu" <aaron.lu@intel.com>
+Subject: Re: [PATCH 1/2] mm: use kvzalloc for swap_info_struct allocation
+References: <37b60523-d085-71e9-fef9-80b90bfcef18@virtuozzo.com>
+Date:   Mon, 05 Nov 2018 08:50:04 +0800
+In-Reply-To: <37b60523-d085-71e9-fef9-80b90bfcef18@virtuozzo.com> (Vasily
+        Averin's message of "Mon, 5 Nov 2018 01:13:04 +0300")
+Message-ID: <87wopsbb5v.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the comment in task_numa_fault() to avoid confusing.
+Vasily Averin <vvs@virtuozzo.com> writes:
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Reviewed-by: Xi Xu <xu.xi8@zte.com.cn>
----
- kernel/sched/fair.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> commit a2468cc9bfdf ("swap: choose swap device according to numa node")
+> increased size of swap_info_struct up to 44 Kbytes, now it requires
+> 4th order page.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 908c9cd..6430c0a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2422,8 +2422,8 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
- 		local = 1;
- 
- 	/*
--	 * Retry task to preferred node migration periodically, in case it
--	 * case it previously failed, or the scheduler moved us.
-+	 * Retry to migrate task to preferred node periodically, in case it
-+	 * previously failed, or the scheduler moved us.
- 	 */
- 	if (time_after(jiffies, p->numa_migrate_retry)) {
- 		task_numa_placement(p);
--- 
-1.8.3.1
+Why swap_info_struct could be so large?  Because MAX_NUMNODES could be
+thousands so that 'avail_lists' field could be tens KB?  If so, I think
+it's fair to use kvzalloc().  Can you add one line comment?  Because
+struct swap_info_struct is quite small in default configuration.
 
+Best Regards,
+Huang, Ying
+
+> Switch to kvzmalloc allows to avoid unexpected allocation failures.
+>
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> ---
+>  mm/swapfile.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 644f746e167a..8688ae65ef58 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -2813,7 +2813,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  	unsigned int type;
+>  	int i;
+>  
+> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	p = kvzalloc(sizeof(*p), GFP_KERNEL);
+>  	if (!p)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -2824,7 +2824,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  	}
+>  	if (type >= MAX_SWAPFILES) {
+>  		spin_unlock(&swap_lock);
+> -		kfree(p);
+> +		kvfree(p);
+>  		return ERR_PTR(-EPERM);
+>  	}
+>  	if (type >= nr_swapfiles) {
+> @@ -2838,7 +2838,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  		smp_wmb();
+>  		nr_swapfiles++;
+>  	} else {
+> -		kfree(p);
+> +		kvfree(p);
+>  		p = swap_info[type];
+>  		/*
+>  		 * Do not memset this entry: a racing procfs swap_next()
