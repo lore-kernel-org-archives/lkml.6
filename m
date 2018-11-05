@@ -2,88 +2,116 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89084C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BF0C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 462942081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:45:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 462942081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 57EF52081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:47:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agqNif+s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57EF52081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbeKFGHY (ORCPT
+        id S1730223AbeKFGIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:07:24 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46958 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbeKFGHY (ORCPT
+        Tue, 6 Nov 2018 01:08:37 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34310 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726578AbeKFGIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:07:24 -0500
-Received: by mail-oi1-f196.google.com with SMTP id k64-v6so8720151oia.13;
-        Mon, 05 Nov 2018 12:45:54 -0800 (PST)
+        Tue, 6 Nov 2018 01:08:37 -0500
+Received: by mail-qk1-f195.google.com with SMTP id a132so17222902qkg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 12:47:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=POR74V9H1zLlU/gAT03opgctU3tVzADNURrjgzcNZV0=;
+        b=agqNif+sl8IqnaNO34h/gZldTm0rTltoiZ4Q2SmL9bTRjlaEM96UtIva+3N/QFFPQq
+         CmhvG3DE2uJFJouNKOpi9shVZSb+kDGjAtuZ6SgEIWU3UrSjy1a9r4b7SXUEy3lFlVGN
+         69Jo80PbvTK6QGBRLSwYMexx+FyYd+9pjH9tZ+Uz+25y/Zd53en5kv2ypRh+TmYot1wr
+         1HMnbAsOmEcLyL1YGNqCpACIBJ1tDAtec/arxryKEmlEZJ2NVA38HHZGF21CqEF5YszB
+         ZRVeZiAeSx76mwKqtiZrAdH6GW5mDKw6C8eGkyMF5O8vlr0u09vT7uy2txiQMLoijDy9
+         SEtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VXLNcBt0llxfTL+O3uJcnDX1x/s5upjviRgMS83l+u4=;
-        b=MT6WhDL4n/ot4sEs+ZI8F8AlJNUwH8cL1bjthGlXPqVxGnJq4bpERH6eubqnWwHNVL
-         ynLyNoqrigP8h38C2T8sveg48X2f63U2nss1pK2ZrKebqvCYhg1yTz41D19SZJxWQqka
-         U0Piac8FpoAwZlL0+MHAtCl3A/RtMPwlOOBBhrnFy4aMyD+hk9PV1iAIwJ8QWK5EbGn2
-         QQEpzeHs5YsAcUAoLi6LruIkr65QOO6GsfEh5QbW8CXc0cGX7uAAC2B/YeJu1F+DzWAn
-         nSfFAc80CcAofFhRP0fT8RztJ64uM5alLAb5oZJJS2iob+GnZHacn1x/zSi3awoA3E5K
-         1r5w==
-X-Gm-Message-State: AGRZ1gLBbHqbq5APxAZoyCynHZEbO1rd+crAA0dZZOWHk3t8XKd05Ucs
-        GRwNg4zsFnEve3Pd9DvrTaxYgZY=
-X-Google-Smtp-Source: AJdET5eDvIyZo3hDkhE837PXmSoHVKCTRKfswZYb0oTA3OjAj1UsVaJxGgldPD9BNKfstYTWcO/4dA==
-X-Received: by 2002:aca:5884:: with SMTP id m126-v6mr14321023oib.233.1541450753571;
-        Mon, 05 Nov 2018 12:45:53 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m63-v6sm15514737oia.30.2018.11.05.12.45.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 12:45:52 -0800 (PST)
-Date:   Mon, 5 Nov 2018 14:45:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     thesven73@gmail.com
-Cc:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org,
-        lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
-        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
-        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH anybus v3 3/6] dt-bindings: anybus-bridge: document
- devicetree binding
-Message-ID: <20181105204552.GA19286@bogus>
-References: <20181104155501.14767-1-TheSven73@googlemail.com>
- <20181104155501.14767-4-TheSven73@googlemail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=POR74V9H1zLlU/gAT03opgctU3tVzADNURrjgzcNZV0=;
+        b=HJRyQbS0UanNxUWvYvoULJn/wO8WTi0ZZAAjMhhsEU7yZpMKyWcBB39DBK2cS3kdja
+         E/gtiFouG1WKi4enBlyI6K18BOsPqUz+kAHc7hRTvF27p+9OZFKoLz72HrU2S3wcOUAe
+         7Axwp023XsNYsGh+jzVcdDMFW3KwJQsyMXEgne1oaWmO1r3PF6ofeyKmRQlakfi4QjML
+         BbeB5Iclw4RxN7BNw9PkvACI4i1aapt93ajg6y5BDoLZuL2LA96ap63ETLoPHnmMAy4c
+         9uLUG6YZFn5NeTwrZZJvUJRQbm/LUykeO+uF9AkwhZYy35cN6uGJjMl5ysGTxXMvLkE1
+         tDxg==
+X-Gm-Message-State: AGRZ1gIMqlHrAqOkdTq69byEk35jR/QS0DaW6nRCZXTv8S8b3fOMiOi+
+        UEJAluK2r9S19zXdOUum/DL3vy1f1QQg40/L1JA+RRsL
+X-Google-Smtp-Source: AJdET5cBoWenJwTLt63glInRw8dxCbHTJorzZNodonqYE1m4pn+ikXe5dx1Ft/mEtPF8U7Ouprvf8El9uKBNYJbR53s=
+X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr20874355qkc.219.1541450825994;
+ Mon, 05 Nov 2018 12:47:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181104155501.14767-4-TheSven73@googlemail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181102112456.780127-1-arnd@arndb.de> <943d10e2-299c-4393-f2f5-4ac8bbe400c3@linux.intel.com>
+ <CAK8P3a1FCVTuB+ydE6syMHYPWnUW0WTCFDuyMmm35VNnpTTGBw@mail.gmail.com>
+ <adc83eaa-b7c0-2c76-a434-f1d5872337f6@linux.intel.com> <20181105133545.GF10650@smile.fi.intel.com>
+ <CAK8P3a0kdUtK_UuSJEPiWPxhdDULmW6RYEzu-Ug7f8VBoeWVog@mail.gmail.com>
+ <s5h1s7z35t8.wl-tiwai@suse.de> <5c21e5d9-6a14-ff4f-04f2-9dbfc8665250@linux.intel.com>
+In-Reply-To: <5c21e5d9-6a14-ff4f-04f2-9dbfc8665250@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 5 Nov 2018 22:46:54 +0200
+Message-ID: <CAHp75Vc8W6sOOOF4WUaoVD2rGijwG_5J083UG1YFgptTkuzk=w@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: skl: always select SND_SOC_HDAC_HDA
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        guneshwor.o.singh@intel.com, naveen.m@intel.com,
+        pankaj.laxminarayan.bharadiya@intel.com,
+        rakesh.a.ughreja@intel.com, sanyog.r.kale@intel.com,
+        sriramx.periyasamy@intel.com, Mark Brown <broonie@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, liam.r.girdwood@linux.intel.com,
+        yang.jie@linux.intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  4 Nov 2018 10:54:58 -0500, thesven73@gmail.com wrote:
-> From: Sven Van Asbroeck <svendev@arcx.com>
-> 
-> This patch adds devicetree binding documentation for the
-> Arcx anybus bridge.
-> 
-> Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
-> ---
->  .../bindings/misc/arcx,anybus-bridge.txt      | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/arcx,anybus-bridge.txt
-> 
+On Mon, Nov 5, 2018 at 7:19 PM Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+>
+> >>> We have this ("strange") lines over the drivers:
+> >>>
+> >>> config BAR
+> >>> depends on FOO || FOO=n
+> >>>
+> >>> which guarantees that FOO will be not module when BAR is built-in.
+> >> That's what I normally use, but I could not figure this one out.
+> >> One problem is that SND_SOC_ALL_CODECS selects
+> >> SND_SOC_HDAC_HDA, and SND_SOC_ALL_CODECS itself
+> >> may be =m, causing the failure for
+> >> SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=y.
+> >>
+> >> It might work with a separate dummy symbol:
+> >>
+> >> config SND_SOC_HDAC_HDA_FORCE
+> >>           tristate
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> >>           depends on SND_SOC_ALL_CODECS != n
+
+Forgot to mention that AFAIU above line is no-op in symbols which are hidden.
+
+> >>           default SND_SOC_INTEL_SKYLAKE
+> >>           select SND_SOC_HDAC_HDA
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
