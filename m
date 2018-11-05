@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE811ECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27021C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F50020825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA9072086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TUBw3rUk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F50020825
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ct6HK5kg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9072086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbeKEVZo (ORCPT
+        id S1729662AbeKEVZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:25:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52570 "EHLO
+        Mon, 5 Nov 2018 16:25:49 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52724 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729089AbeKEVZo (ORCPT
+        with ESMTP id S1727337AbeKEVZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:25:44 -0500
+        Mon, 5 Nov 2018 16:25:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=59F3mF78XfYEFCUofceLGHijk3OAuHV+szbpcwrFXWY=; b=TUBw3rUkyn3W
-        nFxiqKQEyYegHXgl9bDCoQJt/xtw1fYZuj6W2Pz5/2qlN76PsZUT8e3h9hQXxW/sWBXA0HB4PQynP
-        yLO3YRwJucb7WXzvvntV3v8iD0cioje5f6qwOLQLzPbU6EZscg2jvMZRnjQns3hpvS6HwNaMHRucE
-        tMH/s=;
+        List-Archive; bh=anRtuzG54tE9SikVM/b13B3sTjYwYZTxqyVknY0zoo4=; b=ct6HK5kgZ5BZ
+        yvL6ebBgVMMgDjiyPGSGk/ii6mn0YAKlfPlAVZJ57765Bn0c7E+QrNRL01JUnlROUGEHZ3LBHx11E
+        4UPszzo5FRnxpOskUjjEjpPbBlNDSqaTxCEAtl+9pnXZOrpvfzLYKEzF+34c8EG+GFEscQw6xSTzN
+        tGebE=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJde1-0008My-B9; Mon, 05 Nov 2018 12:06:13 +0000
+        id 1gJddx-0008MP-Hj; Mon, 05 Nov 2018 12:06:09 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 163091124D98; Mon,  5 Nov 2018 12:06:13 +0000 (GMT)
+        id 37CCD1124D98; Mon,  5 Nov 2018 12:06:09 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Emil Renner Berthing <kernel@esmil.dk>
 Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
@@ -50,10 +50,10 @@ Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rockchip: use irq rather than polling" to the spi tree
-In-Reply-To:  <20181031105711.19575-13-esmil@mailme.dk>
-Message-Id: <20181105120613.163091124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:06:13 +0000 (GMT)
+Subject: Applied "spi: rockchip: support 4bit words" to the spi tree
+In-Reply-To:  <20181031105711.19575-14-esmil@mailme.dk>
+Message-Id: <20181105120609.37CCD1124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:06:09 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: rockchip: use irq rather than polling
+   spi: rockchip: support 4bit words
 
 has been applied to the spi tree at
 
@@ -86,282 +86,113 @@ to this mail.
 Thanks,
 Mark
 
-From 01b59ce5dac856323a0c13c1d51d99a819f32efe Mon Sep 17 00:00:00 2001
+From 65498c6ae2414a1425aa6c4231e79e2998afec05 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
-Date: Wed, 31 Oct 2018 11:57:09 +0100
-Subject: [PATCH] spi: rockchip: use irq rather than polling
+Date: Wed, 31 Oct 2018 11:57:10 +0100
+Subject: [PATCH] spi: rockchip: support 4bit words
 
-Register an interrupt handler to fill/empty the
-tx and rx fifos rather than busy-looping.
+The hardware supports 4, 8 and 16bit spi words,
+so add the missing support for 4bit words.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rockchip.c | 155 ++++++++++++++++++++++---------------
- 1 file changed, 92 insertions(+), 63 deletions(-)
+ drivers/spi/spi-rockchip.c | 41 +++++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 5fe6099ff366..1297f081818d 100644
+index 1297f081818d..9e47e81553a1 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -172,6 +172,11 @@ struct rockchip_spi {
- 	dma_addr_t dma_addr_rx;
- 	dma_addr_t dma_addr_tx;
+@@ -54,6 +54,9 @@
  
-+	const void *tx;
-+	void *rx;
-+	unsigned int tx_left;
-+	unsigned int rx_left;
-+
- 	atomic_t state;
+ /* Bit fields in CTRLR0 */
+ #define CR0_DFS_OFFSET				0
++#define CR0_DFS_4BIT				0x0
++#define CR0_DFS_8BIT				0x1
++#define CR0_DFS_16BIT				0x2
  
- 	/*depth of the FIFO buffer */
-@@ -182,11 +187,6 @@ struct rockchip_spi {
- 	u8 n_bytes;
- 	u8 rsd;
+ #define CR0_CFS_OFFSET				2
  
--	const void *tx;
--	const void *tx_end;
--	void *rx;
--	void *rx_end;
--
- 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
- };
- 
-@@ -222,24 +222,6 @@ static u32 get_fifo_len(struct rockchip_spi *rs)
- 	return (fifo == 31) ? 0 : fifo;
- }
- 
--static inline u32 tx_max(struct rockchip_spi *rs)
--{
--	u32 tx_left, tx_room;
--
--	tx_left = (rs->tx_end - rs->tx) / rs->n_bytes;
--	tx_room = rs->fifo_len - readl_relaxed(rs->regs + ROCKCHIP_SPI_TXFLR);
--
--	return min(tx_left, tx_room);
--}
--
--static inline u32 rx_max(struct rockchip_spi *rs)
--{
--	u32 rx_left = (rs->rx_end - rs->rx) / rs->n_bytes;
--	u32 rx_room = (u32)readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFLR);
--
--	return min(rx_left, rx_room);
--}
--
- static void rockchip_spi_set_cs(struct spi_device *spi, bool enable)
+@@ -464,15 +467,14 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 		struct spi_device *spi, struct spi_transfer *xfer,
+ 		bool use_dma)
  {
- 	struct spi_master *master = spi->master;
-@@ -277,6 +259,9 @@ static void rockchip_spi_handle_err(struct spi_master *master,
- 	 */
- 	spi_enable_chip(rs, false);
+-	u32 dmacr = 0;
+-
+ 	u32 cr0 = CR0_FRF_SPI  << CR0_FRF_OFFSET
+ 	        | CR0_BHT_8BIT << CR0_BHT_OFFSET
+ 	        | CR0_SSD_ONE  << CR0_SSD_OFFSET
+ 	        | CR0_EM_BIG   << CR0_EM_OFFSET;
++	u32 cr1;
++	u32 dmacr = 0;
  
-+	/* make sure all interrupts are masked */
-+	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_IMR);
-+
- 	if (atomic_read(&rs->state) & TXDMA)
- 		dmaengine_terminate_async(master->dma_tx);
+ 	cr0 |= rs->rsd << CR0_RSD_OFFSET;
+-	cr0 |= (rs->n_bytes << CR0_DFS_OFFSET);
+ 	cr0 |= (spi->mode & 0x3U) << CR0_SCPH_OFFSET;
  
-@@ -286,14 +271,17 @@ static void rockchip_spi_handle_err(struct spi_master *master,
- 
- static void rockchip_spi_pio_writer(struct rockchip_spi *rs)
- {
--	u32 max = tx_max(rs);
--	u32 txw = 0;
-+	u32 tx_free = rs->fifo_len - readl_relaxed(rs->regs + ROCKCHIP_SPI_TXFLR);
-+	u32 words = min(rs->tx_left, tx_free);
-+
-+	rs->tx_left -= words;
-+	for (; words; words--) {
-+		u32 txw;
- 
--	while (max--) {
- 		if (rs->n_bytes == 1)
--			txw = *(u8 *)(rs->tx);
-+			txw = *(u8 *)rs->tx;
- 		else
--			txw = *(u16 *)(rs->tx);
-+			txw = *(u16 *)rs->tx;
- 
- 		writel_relaxed(txw, rs->regs + ROCKCHIP_SPI_TXDR);
- 		rs->tx += rs->n_bytes;
-@@ -302,46 +290,72 @@ static void rockchip_spi_pio_writer(struct rockchip_spi *rs)
- 
- static void rockchip_spi_pio_reader(struct rockchip_spi *rs)
- {
--	u32 max = rx_max(rs);
--	u32 rxw;
-+	u32 words = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFLR);
-+	u32 rx_left = rs->rx_left - words;
-+
-+	/* the hardware doesn't allow us to change fifo threshold
-+	 * level while spi is enabled, so instead make sure to leave
-+	 * enough words in the rx fifo to get the last interrupt
-+	 * exactly when all words have been received
-+	 */
-+	if (rx_left) {
-+		u32 ftl = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXFTLR) + 1;
-+
-+		if (rx_left < ftl) {
-+			rx_left = ftl;
-+			words = rs->rx_left - rx_left;
-+		}
-+	}
-+
-+	rs->rx_left = rx_left;
-+	for (; words; words--) {
-+		u32 rxw = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXDR);
-+
-+		if (!rs->rx)
-+			continue;
- 
--	while (max--) {
--		rxw = readl_relaxed(rs->regs + ROCKCHIP_SPI_RXDR);
- 		if (rs->n_bytes == 1)
--			*(u8 *)(rs->rx) = (u8)rxw;
-+			*(u8 *)rs->rx = (u8)rxw;
- 		else
--			*(u16 *)(rs->rx) = (u16)rxw;
-+			*(u16 *)rs->rx = (u16)rxw;
- 		rs->rx += rs->n_bytes;
- 	}
- }
- 
--static int rockchip_spi_pio_transfer(struct rockchip_spi *rs)
-+static irqreturn_t rockchip_spi_isr(int irq, void *dev_id)
- {
--	int remain = 0;
-+	struct spi_master *master = dev_id;
-+	struct rockchip_spi *rs = spi_master_get_devdata(master);
- 
--	spi_enable_chip(rs, true);
-+	if (rs->tx_left)
-+		rockchip_spi_pio_writer(rs);
- 
--	do {
--		if (rs->tx) {
--			remain = rs->tx_end - rs->tx;
--			rockchip_spi_pio_writer(rs);
--		}
-+	rockchip_spi_pio_reader(rs);
-+	if (!rs->rx_left) {
-+		spi_enable_chip(rs, false);
-+		writel_relaxed(0, rs->regs + ROCKCHIP_SPI_IMR);
-+		spi_finalize_current_transfer(master);
-+	}
- 
--		if (rs->rx) {
--			remain = rs->rx_end - rs->rx;
--			rockchip_spi_pio_reader(rs);
--		}
-+	return IRQ_HANDLED;
-+}
- 
--		cpu_relax();
--	} while (remain);
-+static int rockchip_spi_prepare_irq(struct rockchip_spi *rs,
-+		struct spi_transfer *xfer)
-+{
-+	rs->tx = xfer->tx_buf;
-+	rs->rx = xfer->rx_buf;
-+	rs->tx_left = rs->tx ? xfer->len / rs->n_bytes : 0;
-+	rs->rx_left = xfer->len / rs->n_bytes;
- 
--	/* If tx, wait until the FIFO data completely. */
--	if (rs->tx)
--		wait_for_idle(rs);
-+	writel_relaxed(INT_RF_FULL, rs->regs + ROCKCHIP_SPI_IMR);
-+	spi_enable_chip(rs, true);
- 
--	spi_enable_chip(rs, false);
-+	if (rs->tx_left)
-+		rockchip_spi_pio_writer(rs);
- 
--	return 0;
-+	/* 1 means the transfer is in progress */
-+	return 1;
- }
- 
- static void rockchip_spi_dma_rxcb(void *data)
-@@ -465,7 +479,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 		cr0 |= CR0_XFM_TR << CR0_XFM_OFFSET;
- 	else if (xfer->rx_buf)
- 		cr0 |= CR0_XFM_RO << CR0_XFM_OFFSET;
--	else
-+	else if (use_dma)
+ 	if (xfer->rx_buf && xfer->tx_buf)
+@@ -482,6 +484,27 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 	else if (use_dma)
  		cr0 |= CR0_XFM_TO << CR0_XFM_OFFSET;
  
++	switch (xfer->bits_per_word) {
++	case 4:
++		cr0 |= CR0_DFS_4BIT << CR0_DFS_OFFSET;
++		cr1 = xfer->len - 1;
++		break;
++	case 8:
++		cr0 |= CR0_DFS_8BIT << CR0_DFS_OFFSET;
++		cr1 = xfer->len - 1;
++		break;
++	case 16:
++		cr0 |= CR0_DFS_16BIT << CR0_DFS_OFFSET;
++		cr1 = xfer->len / 2 - 1;
++		break;
++	default:
++		/* we only whitelist 4, 8 and 16 bit words in
++		 * master->bits_per_word_mask, so this shouldn't
++		 * happen
++		 */
++		unreachable();
++	}
++
  	if (use_dma) {
-@@ -484,8 +498,14 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 	else
- 		writel_relaxed((xfer->len * 2) - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
+ 		if (xfer->tx_buf)
+ 			dmacr |= TF_DMA_EN;
+@@ -490,13 +513,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 	}
  
--	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_TXFTLR);
--	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
-+	/* unfortunately setting the fifo threshold level to generate an
-+	 * interrupt exactly when the fifo is full doesn't seem to work,
-+	 * so we need the strict inequality here
-+	 */
-+	if (xfer->len < rs->fifo_len)
-+		writel_relaxed(xfer->len - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
-+	else
-+		writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_RXFTLR);
- 
- 	writel_relaxed(rs->fifo_len / 2 - 1, rs->regs + ROCKCHIP_SPI_DMATDLR);
- 	writel_relaxed(0, rs->regs + ROCKCHIP_SPI_DMARDLR);
-@@ -527,11 +547,6 @@ static int rockchip_spi_transfer_one(
- 
- 	rs->n_bytes = xfer->bits_per_word >> 3;
- 
--	rs->tx = xfer->tx_buf;
--	rs->tx_end = rs->tx + xfer->len;
--	rs->rx = xfer->rx_buf;
--	rs->rx_end = rs->rx + xfer->len;
+ 	writel_relaxed(cr0, rs->regs + ROCKCHIP_SPI_CTRLR0);
 -
+-	if (rs->n_bytes == 1)
+-		writel_relaxed(xfer->len - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
+-	else if (rs->n_bytes == 2)
+-		writel_relaxed((xfer->len / 2) - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
+-	else
+-		writel_relaxed((xfer->len * 2) - 1, rs->regs + ROCKCHIP_SPI_CTRLR1);
++	writel_relaxed(cr1, rs->regs + ROCKCHIP_SPI_CTRLR1);
+ 
+ 	/* unfortunately setting the fifo threshold level to generate an
+ 	 * interrupt exactly when the fifo is full doesn't seem to work,
+@@ -545,7 +562,7 @@ static int rockchip_spi_transfer_one(
+ 		return -EINVAL;
+ 	}
+ 
+-	rs->n_bytes = xfer->bits_per_word >> 3;
++	rs->n_bytes = xfer->bits_per_word <= 8 ? 1 : 2;
+ 
  	use_dma = master->can_dma ? master->can_dma(master, spi, xfer) : false;
  
- 	rockchip_spi_config(rs, spi, xfer, use_dma);
-@@ -539,7 +554,7 @@ static int rockchip_spi_transfer_one(
- 	if (use_dma)
- 		return rockchip_spi_prepare_dma(rs, master, xfer);
- 
--	return rockchip_spi_pio_transfer(rs);
-+	return rockchip_spi_prepare_irq(rs, xfer);
- }
- 
- static bool rockchip_spi_can_dma(struct spi_master *master,
-@@ -547,8 +562,13 @@ static bool rockchip_spi_can_dma(struct spi_master *master,
- 				 struct spi_transfer *xfer)
- {
- 	struct rockchip_spi *rs = spi_master_get_devdata(master);
-+	unsigned int bytes_per_word = xfer->bits_per_word <= 8 ? 1 : 2;
- 
--	return (xfer->len > rs->fifo_len);
-+	/* if the numbor of spi words to transfer is less than the fifo
-+	 * length we can just fill the fifo and wait for a single irq,
-+	 * so don't bother setting up dma
-+	 */
-+	return xfer->len / bytes_per_word >= rs->fifo_len;
- }
- 
- static int rockchip_spi_probe(struct platform_device *pdev)
-@@ -603,6 +623,15 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 
- 	spi_enable_chip(rs, false);
- 
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0)
-+		goto err_disable_spiclk;
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, ret, rockchip_spi_isr, NULL,
-+			IRQF_ONESHOT, dev_name(&pdev->dev), master);
-+	if (ret)
-+		goto err_disable_spiclk;
-+
- 	rs->dev = &pdev->dev;
- 	rs->freq = clk_get_rate(rs->spiclk);
+@@ -667,7 +684,7 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
+ 	master->num_chipselect = ROCKCHIP_SPI_MAX_CS_NUM;
+ 	master->dev.of_node = pdev->dev.of_node;
+-	master->bits_per_word_mask = SPI_BPW_MASK(16) | SPI_BPW_MASK(8);
++	master->bits_per_word_mask = SPI_BPW_MASK(16) | SPI_BPW_MASK(8) | SPI_BPW_MASK(4);
+ 	master->min_speed_hz = rs->freq / BAUDR_SCKDV_MAX;
+ 	master->max_speed_hz = min(rs->freq / BAUDR_SCKDV_MIN, MAX_SCLK_OUT);
  
 -- 
 2.19.0.rc2
