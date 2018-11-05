@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855EEC0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CF5ECDE43
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2067B2085A
+	by mail.kernel.org (Postfix) with ESMTP id 9892A2085A
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:23:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2067B2085A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9892A2085A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729578AbeKEUmF (ORCPT
+        id S1729618AbeKEUmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:42:05 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55807 "EHLO
+        Mon, 5 Nov 2018 15:42:32 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39963 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbeKEUmF (ORCPT
+        with ESMTP id S1727563AbeKEUmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:42:05 -0500
+        Mon, 5 Nov 2018 15:42:32 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5BMUC8309753
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5BN4YW309802
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 5 Nov 2018 03:22:30 -0800
+        Mon, 5 Nov 2018 03:23:04 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5BMU8r309750;
-        Mon, 5 Nov 2018 03:22:30 -0800
-Date:   Mon, 5 Nov 2018 03:22:30 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5BN3WS309799;
+        Mon, 5 Nov 2018 03:23:03 -0800
+Date:   Mon, 5 Nov 2018 03:23:03 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Ming Lei <tipbot@zytor.com>
-Message-ID: <tip-5c903e108d0b005cf59904ca3520934fca4b9439@git.kernel.org>
-Cc:     sagi@grimberg.me, hare@suse.com, hpa@zytor.com, mingo@kernel.org,
-        ming.lei@redhat.com, linux-kernel@vger.kernel.org,
-        keith.busch@intel.com, tglx@linutronix.de, axboe@kernel.dk
-Reply-To: sagi@grimberg.me, hare@suse.com, hpa@zytor.com,
-          ming.lei@redhat.com, mingo@kernel.org, keith.busch@intel.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org, axboe@kernel.dk
-In-Reply-To: <20181102145951.31979-3-ming.lei@redhat.com>
-References: <20181102145951.31979-3-ming.lei@redhat.com>
+Message-ID: <tip-060746d9e394084b7401e7532f2de528ecbfb521@git.kernel.org>
+Cc:     axboe@kernel.dk, hare@suse.com, linux-kernel@vger.kernel.org,
+        ming.lei@redhat.com, sagi@grimberg.me, hpa@zytor.com,
+        keith.busch@intel.com, mingo@kernel.org, tglx@linutronix.de
+Reply-To: sagi@grimberg.me, axboe@kernel.dk, ming.lei@redhat.com,
+          hare@suse.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, keith.busch@intel.com
+In-Reply-To: <20181102145951.31979-4-ming.lei@redhat.com>
+References: <20181102145951.31979-4-ming.lei@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/affinity: Move two stage affinity spreading
- into a helper function
-Git-Commit-ID: 5c903e108d0b005cf59904ca3520934fca4b9439
+Subject: [tip:irq/core] genirq/affinity: Pass first vector to
+ __irq_build_affinity_masks()
+Git-Commit-ID: 060746d9e394084b7401e7532f2de528ecbfb521
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,17 +59,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5c903e108d0b005cf59904ca3520934fca4b9439
-Gitweb:     https://git.kernel.org/tip/5c903e108d0b005cf59904ca3520934fca4b9439
+Commit-ID:  060746d9e394084b7401e7532f2de528ecbfb521
+Gitweb:     https://git.kernel.org/tip/060746d9e394084b7401e7532f2de528ecbfb521
 Author:     Ming Lei <ming.lei@redhat.com>
-AuthorDate: Fri, 2 Nov 2018 22:59:49 +0800
+AuthorDate: Fri, 2 Nov 2018 22:59:50 +0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Mon, 5 Nov 2018 12:16:26 +0100
 
-genirq/affinity: Move two stage affinity spreading into a helper function
+genirq/affinity: Pass first vector to __irq_build_affinity_masks()
 
-No functional change. Prepares for supporting allocating and affinitizing
-interrupt sets.
+No functional change.
+
+Prepares for support of allocating and affinitizing sets of interrupts, in
+which each set of interrupts needs a full two stage spreading. The first
+vector argument is necessary for this so the affinitizing starts from the
+first vector of each set.
 
 [ tglx: Minor changelog tweaks ]
 
@@ -80,150 +84,81 @@ Cc: linux-block@vger.kernel.org
 Cc: Hannes Reinecke <hare@suse.com>
 Cc: Keith Busch <keith.busch@intel.com>
 Cc: Sagi Grimberg <sagi@grimberg.me>
-Link: https://lkml.kernel.org/r/20181102145951.31979-3-ming.lei@redhat.com
+Link: https://lkml.kernel.org/r/20181102145951.31979-4-ming.lei@redhat.com
 
 ---
- kernel/irq/affinity.c | 92 +++++++++++++++++++++++++++++++--------------------
- 1 file changed, 56 insertions(+), 36 deletions(-)
+ kernel/irq/affinity.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index e12cdf637c71..2f9812b6035e 100644
+index 2f9812b6035e..e028b773e38a 100644
 --- a/kernel/irq/affinity.c
 +++ b/kernel/irq/affinity.c
-@@ -94,7 +94,7 @@ static int get_nodes_in_cpumask(cpumask_var_t *node_to_cpumask,
- 	return nodes;
+@@ -95,14 +95,14 @@ static int get_nodes_in_cpumask(cpumask_var_t *node_to_cpumask,
  }
  
--static int irq_build_affinity_masks(const struct irq_affinity *affd,
-+static int __irq_build_affinity_masks(const struct irq_affinity *affd,
- 				    int startvec, int numvecs,
+ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
+-				    int startvec, int numvecs,
++				    int startvec, int numvecs, int firstvec,
  				    cpumask_var_t *node_to_cpumask,
  				    const struct cpumask *cpu_mask,
-@@ -165,6 +165,58 @@ out:
- 	return done;
- }
- 
-+/*
-+ * build affinity in two stages:
-+ *	1) spread present CPU on these vectors
-+ *	2) spread other possible CPUs on these vectors
-+ */
-+static int irq_build_affinity_masks(const struct irq_affinity *affd,
-+				    int startvec, int numvecs,
-+				    cpumask_var_t *node_to_cpumask,
-+				    struct cpumask *masks)
-+{
-+	int curvec = startvec, usedvecs = -1;
-+	cpumask_var_t nmsk, npresmsk;
-+
-+	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
-+			return usedvecs;
-+
-+	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
-+			goto fail;
-+
-+	/* Stabilize the cpumasks */
-+	get_online_cpus();
-+	build_node_to_cpumask(node_to_cpumask);
-+
-+	/* Spread on present CPUs starting from affd->pre_vectors */
-+	usedvecs = __irq_build_affinity_masks(affd, curvec, numvecs,
-+					    node_to_cpumask, cpu_present_mask,
-+					    nmsk, masks);
-+
-+	/*
-+	 * Spread on non present CPUs starting from the next vector to be
-+	 * handled. If the spreading of present CPUs already exhausted the
-+	 * vector space, assign the non present CPUs to the already spread
-+	 * out vectors.
-+	 */
-+	if (usedvecs >= numvecs)
-+		curvec = affd->pre_vectors;
-+	else
-+		curvec = affd->pre_vectors + usedvecs;
-+	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
-+	usedvecs += __irq_build_affinity_masks(affd, curvec, numvecs,
-+					     node_to_cpumask, npresmsk,
-+					     nmsk, masks);
-+	put_online_cpus();
-+
-+	free_cpumask_var(npresmsk);
-+
-+ fail:
-+	free_cpumask_var(nmsk);
-+
-+	return usedvecs;
-+}
-+
- /**
-  * irq_create_affinity_masks - Create affinity masks for multiqueue spreading
-  * @nvecs:	The total number of vectors
-@@ -177,7 +229,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 				    struct cpumask *nmsk,
+ 				    struct cpumask *masks)
  {
- 	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
- 	int curvec, usedvecs;
--	cpumask_var_t nmsk, npresmsk, *node_to_cpumask;
-+	cpumask_var_t *node_to_cpumask;
- 	struct cpumask *masks = NULL;
+ 	int n, nodes, cpus_per_vec, extra_vecs, done = 0;
+-	int last_affv = affd->pre_vectors + numvecs;
++	int last_affv = firstvec + numvecs;
+ 	int curvec = startvec;
+ 	nodemask_t nodemsk = NODE_MASK_NONE;
  
- 	/*
-@@ -187,15 +239,9 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	if (nvecs == affd->pre_vectors + affd->post_vectors)
- 		return NULL;
+@@ -119,7 +119,7 @@ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
+ 		for_each_node_mask(n, nodemsk) {
+ 			cpumask_or(masks + curvec, masks + curvec, node_to_cpumask[n]);
+ 			if (++curvec == last_affv)
+-				curvec = affd->pre_vectors;
++				curvec = firstvec;
+ 		}
+ 		done = numvecs;
+ 		goto out;
+@@ -129,7 +129,7 @@ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
+ 		int ncpus, v, vecs_to_assign, vecs_per_node;
  
--	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
--		return NULL;
--
--	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
--		goto outcpumsk;
--
- 	node_to_cpumask = alloc_node_to_cpumask();
- 	if (!node_to_cpumask)
--		goto outnpresmsk;
-+		return NULL;
+ 		/* Spread the vectors per node */
+-		vecs_per_node = (numvecs - (curvec - affd->pre_vectors)) / nodes;
++		vecs_per_node = (numvecs - (curvec - firstvec)) / nodes;
  
- 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
- 	if (!masks)
-@@ -205,30 +251,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
- 		cpumask_copy(masks + curvec, irq_default_affinity);
+ 		/* Get the cpus on this node which are in the mask */
+ 		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
+@@ -157,7 +157,7 @@ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
+ 		if (done >= numvecs)
+ 			break;
+ 		if (curvec >= last_affv)
+-			curvec = affd->pre_vectors;
++			curvec = firstvec;
+ 		--nodes;
+ 	}
  
--	/* Stabilize the cpumasks */
--	get_online_cpus();
--	build_node_to_cpumask(node_to_cpumask);
--
--	/* Spread on present CPUs starting from affd->pre_vectors */
- 	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
+@@ -190,8 +190,9 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
+ 
+ 	/* Spread on present CPUs starting from affd->pre_vectors */
+ 	usedvecs = __irq_build_affinity_masks(affd, curvec, numvecs,
 -					    node_to_cpumask, cpu_present_mask,
 -					    nmsk, masks);
--
--	/*
--	 * Spread on non present CPUs starting from the next vector to be
--	 * handled. If the spreading of present CPUs already exhausted the
--	 * vector space, assign the non present CPUs to the already spread
--	 * out vectors.
--	 */
--	if (usedvecs >= affvecs)
--		curvec = affd->pre_vectors;
--	else
--		curvec = affd->pre_vectors + usedvecs;
--	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
--	usedvecs += irq_build_affinity_masks(affd, curvec, affvecs,
++					      affd->pre_vectors,
++					      node_to_cpumask,
++					      cpu_present_mask, nmsk, masks);
+ 
+ 	/*
+ 	 * Spread on non present CPUs starting from the next vector to be
+@@ -205,8 +206,9 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
+ 		curvec = affd->pre_vectors + usedvecs;
+ 	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
+ 	usedvecs += __irq_build_affinity_masks(affd, curvec, numvecs,
 -					     node_to_cpumask, npresmsk,
 -					     nmsk, masks);
--	put_online_cpus();
-+					    node_to_cpumask, masks);
++					       affd->pre_vectors,
++					       node_to_cpumask, npresmsk,
++					       nmsk, masks);
+ 	put_online_cpus();
  
- 	/* Fill out vectors at the end that don't need affinity */
- 	if (usedvecs >= affvecs)
-@@ -240,10 +264,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 
- outnodemsk:
- 	free_node_to_cpumask(node_to_cpumask);
--outnpresmsk:
--	free_cpumask_var(npresmsk);
--outcpumsk:
--	free_cpumask_var(nmsk);
- 	return masks;
- }
- 
+ 	free_cpumask_var(npresmsk);
