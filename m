@@ -2,100 +2,91 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA95AECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B622C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E2BA20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dX4jRc4T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E2BA20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E4CAA20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CAA20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbeKESTS (ORCPT
+        id S1728758AbeKESTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:19:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49370 "EHLO mail.kernel.org"
+        Mon, 5 Nov 2018 13:19:33 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57326 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeKESTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:19:17 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A37F320862;
-        Mon,  5 Nov 2018 09:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541408438;
-        bh=UoWWfEvbRM0oO+cNrgEn3kjbwCO6FsRAuztRWoTbi0A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dX4jRc4TmbPtLzBN6IZ4bLBnoSHUgSURnc+N6fStNZtR48+jwOoCEPH/fb+65qnhe
-         VPpLJkREbXeuIR0kBpWLEAeQqqOTjt3GPZ6kIiyw8gYRGj1UwngfTAuDbiH2xLjHnE
-         2eVucgaRS/VRen14DKUC6Zx9A55tOZKuGfEl2SXg=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v2 01/12] tracing/uprobes: Add busy check when cleanup all uprobes
-Date:   Mon,  5 Nov 2018 18:00:15 +0900
-Message-Id: <154140841557.17322.12653952888762532401.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <154140838606.17322.15294184388075458777.stgit@devbox>
-References: <154140838606.17322.15294184388075458777.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1726774AbeKESTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:19:33 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 51558207B0; Mon,  5 Nov 2018 10:00:52 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1A4EC206A1;
+        Mon,  5 Nov 2018 10:00:42 +0100 (CET)
+Date:   Mon, 5 Nov 2018 10:00:42 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Corentin Labbe <clabbe@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 0/3] Allwinner H6 Ethernet support
+Message-ID: <20181105090042.u5x2h6rek4nyaghc@flea>
+References: <20181103123238.4665-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tg23n6htzoo3f5qs"
+Content-Disposition: inline
+In-Reply-To: <20181103123238.4665-1-icenowy@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a busy check loop in cleanup_all_probes() before
-trying to remove all events in uprobe_events as same as
-kprobe_events does.
 
-Without this change, writing null to uprobe_events will
-try to remove events but if one of them is enabled, it
-stopped there but some of events are already cleared.
+--tg23n6htzoo3f5qs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With this change, writing null to uprobe_events make
-sure all events are not enabled before removing events.
-So, it clears all events, or return an error (-EBUSY)
-with keeping all events.
+On Sat, Nov 03, 2018 at 08:32:35PM +0800, Icenowy Zheng wrote:
+> This patchset introduces Allwinner H6 Ethernet support with code already
+> available for A64.
+>=20
+> As the EMAC on H6 is similar to A64 ones, support for them are directly
+> reused, by using fallback compatible strings.
+>=20
+> Patches about system controller in v1 is sent by Jernej Skabrec as part
+> of his H6 display patchset, and already gets applied.
+>=20
+> NOTE: This patchset targets the final version of Pine H64, and also
+> supports the early sample of Pine H64 model B. However, it's not
+> compatible with the early sample of Pine H64 model A. Please DO NOT test
+> this patchset on the Pine H64 model A samples.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/trace/trace_uprobe.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+Applied thanks!
+Maxime
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 31ea48eceda1..b708e4ff7ea7 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -587,12 +587,19 @@ static int cleanup_all_probes(void)
- 	int ret = 0;
- 
- 	mutex_lock(&uprobe_lock);
-+	/* Ensure no probe is in use. */
-+	list_for_each_entry(tu, &uprobe_list, list)
-+		if (trace_probe_is_enabled(&tu->tp)) {
-+			ret = -EBUSY;
-+			goto end;
-+		}
- 	while (!list_empty(&uprobe_list)) {
- 		tu = list_entry(uprobe_list.next, struct trace_uprobe, list);
- 		ret = unregister_trace_uprobe(tu);
- 		if (ret)
- 			break;
- 	}
-+end:
- 	mutex_unlock(&uprobe_lock);
- 	return ret;
- }
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--tg23n6htzoo3f5qs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AGugAKCRDj7w1vZxhR
+xU3yAP9MqILXYjRDYrZ6Tcr+9q3wmubfZhvB1YvUK1G46CKKQgEA3qq4F3blV9r9
+SjmheEMcyEyQAX2BHV773+nW0NL+1gY=
+=6teA
+-----END PGP SIGNATURE-----
+
+--tg23n6htzoo3f5qs--
