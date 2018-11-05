@@ -2,111 +2,111 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 246DDC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4833C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E571920854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:14:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E571920854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 761DA20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:15:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HDAFC3eC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761DA20819
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbeKEVeG (ORCPT
+        id S1729502AbeKEVed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:34:06 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42402 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729078AbeKEVeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:34:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F44B80D;
-        Mon,  5 Nov 2018 04:14:39 -0800 (PST)
-Received: from [10.1.215.12] (unknown [10.1.215.12])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE36E3F5BD;
-        Mon,  5 Nov 2018 04:14:37 -0800 (PST)
-Subject: Re: [PATCH 0/7] arm64: capabilities: Optimize checking and enabling
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        catalin.marinas@arm.com, mark.rutland@arm.com
-References: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <0ea1330a-685c-b7b3-1424-1cc521a672e8@arm.com>
-Date:   Mon, 5 Nov 2018 12:14:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 5 Nov 2018 16:34:33 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37091 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729078AbeKEVed (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:34:33 -0500
+Received: by mail-io1-f67.google.com with SMTP id k17-v6so6299960ioc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:15:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Y1q5v58v/6Ck2XolErxmYzdO5X/qMLyw5rYY/tQh7Gs=;
+        b=HDAFC3eCS3hE6oq/z8TEQfC5OFHR/+lDNCyVYoNLfjIoONYqrvpfidJiLZERRPUXB9
+         w6557ROFXo8GLrAV3OaVxpbH/Re2gKTXWGZU1piDB3Cjn8FxnNB0zb7VDvDZEfFtj7yf
+         a32XR+PRTNiXvqd0xKLKKwfTWTJLgXRJVdr70=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Y1q5v58v/6Ck2XolErxmYzdO5X/qMLyw5rYY/tQh7Gs=;
+        b=NLqSmzeAdPqe1DfrfBPOEznes5aDTuSTlT25atnAICoBbH7CAn3ovdb/m9yyHQaPgs
+         cBDKwq5lSGSdT4kLOoQQ4txiL/aXlJqpWDvN7wtEFr6MO7PlDKbmwDEDZxFdUqSTWiNw
+         RrAsQp6aR3JNxY3cqZax1LucZUZdunebGbDYxcQhun6jA4Ab7rVoZGOY/vuM98dfJ24b
+         E08MPfeqEdd5BQfAklKOhZrR2/Ck9HZCCqeNy+kU84N/iV7/izOdnAEn7YH2JQV8E2x8
+         QtwhNBvKmWt+ZPabDeQRpd3K/qj/yJablqBYh4sTZvaXyu5sLsFitJRDXz7LMgf4VEak
+         TrMA==
+X-Gm-Message-State: AGRZ1gJfoDpZrKwoeKayfRfv9KbHi1ixek67WUkvqAemxTw0OFQH9zVP
+        tqnoE/rirvKUz6L/IiM+KS92VyI/KgWn8LP8LydpDG4c
+X-Google-Smtp-Source: AJdET5ei82Y/UDnCjuvtV5Mc+gtreeV7ELfKWfWDZ1tRuQr2z1J8rqTvnsyYAIggajkCiE73SHcqN00blGh6dHdn90A=
+X-Received: by 2002:a6b:5d18:: with SMTP id r24-v6mr16986228iob.170.1541420105082;
+ Mon, 05 Nov 2018 04:15:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 04:15:04 -0800 (PST)
+In-Reply-To: <1541419502-7286-1-git-send-email-gilad@benyossef.com>
+References: <1541419502-7286-1-git-send-email-gilad@benyossef.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 5 Nov 2018 13:15:04 +0100
+Message-ID: <CAKv+Gu8cmGbJVCe4HJ0Jsyh4bB=X0psk02cFkq9e20ev9C-Opg@mail.gmail.com>
+Subject: Re: [PATCH] crypto: cts: document NIST standard status
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <Ofir.Drang@arm.com>,
+        Yael Chemla <Yael.Chemla@arm.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On 5 November 2018 at 13:05, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> cts(cbc(aes)) as used in the kernel has been added to NIST
+> standard as CBC-CS3. Document it as such.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> Suggested-by: Stephan Mueller <smueller@chronox.de>
 
-On 05/11/18 11:55, Suzuki K Poulose wrote:
-> We maintain two separate tables (i.e, arm64_features and arm64_errata) of
-> struct arm64_cpu_capabilities which decide the capabilities of the system.
-> We iterate over the two tables for detecting/verifying/enabling the capabilities.
-> e.g, this_cpu_has_cap() needs to iterate over the two tables one by one to
-> find the "capability" structure corresponding to the cap number and then
-> check it on the CPU.
-> 
-> Also, we enable all the non-boot scoped capabilities after all the SMP cpus
-> are brought up by the kernel, using stop_machine() for each available
-> capability. We could batch all the "enabling" activity to a single
-> stop_machine() callback. But that implies you need a way to map
-> a given capability number to the corresponding capability entry
-> to finish the operation quickly.
-> 
-> So we need a quicker way to access the entry for a given capability.
-> We have two choices :
-> 
->  1) Unify both the tables to a static/dynamic sorted entry based on
->     the capability number. This has the following drawbacks :
->      a) The entries must be unique. i.e, no duplicate entries for a
->         capability.
->      b) Looses the separation of "features" vs. "errata" classification
->      c) Statically sorting the list is error prone. Runtime sorting the
->         array means more time for booting.
-> 
->  2) Keep an array of pointers to the capability sorted at boot time
->     based on the capability.
->      a) As for (1), the entries must be unique for a capability.
-> 
-> This series implements (2) and uses the new list for optimizing the
-> operations on the entries. As a prepatory step, we remove the
-> duplicate entries for the same capabilities (Patch 1-3).
-> 
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Thanks a lot for getting it sorted out! In case it'd help:
-
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Tested-by: Vladimir Murzin <vladimir.murzin@arm.com>
-
-Cheers
-Vladimir
-
-> 
-> Suzuki K Poulose (7):
->   arm64: capabilities: Merge entries for ARM64_WORKAROUND_CLEAN_CACHE
->   arm64: capabilities: Merge duplicate Cavium erratum entries
->   arm64: capabilities: Merge duplicate entries for Qualcomm erratum 1003
->   arm64: capabilities: Speed up capability lookup
->   arm64: capabilities: Optimize this_cpu_has_cap
->   arm64: capabilities: Use linear array for detection and verification
->   arm64: capabilities: Batch cpu_enable callbacks
-> 
->  arch/arm64/include/asm/cpufeature.h |   3 +
->  arch/arm64/include/asm/cputype.h    |   2 +
->  arch/arm64/kernel/cpu_errata.c      |  94 ++++++++++----------
->  arch/arm64/kernel/cpufeature.c      | 165 ++++++++++++++++++++----------------
->  4 files changed, 145 insertions(+), 119 deletions(-)
-> 
-
+> ---
+>  crypto/Kconfig | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index f7a235d..9176023 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -430,11 +430,14 @@ config CRYPTO_CTS
+>         help
+>           CTS: Cipher Text Stealing
+>           This is the Cipher Text Stealing mode as described by
+> -         Section 8 of rfc2040 and referenced by rfc3962.
+> -         (rfc3962 includes errata information in its Appendix A)
+> +         Section 8 of rfc2040 and referenced by rfc3962
+> +         (rfc3962 includes errata information in its Appendix A) or
+> +         CBC-CS3 as defined by NIST in Sp800-38A addendum from Oct 2010.
+>           This mode is required for Kerberos gss mechanism support
+>           for AES encryption.
+>
+> +         See: https://csrc.nist.gov/publications/detail/sp/800-38a/addendum/final
+> +
+>  config CRYPTO_ECB
+>         tristate "ECB support"
+>         select CRYPTO_BLKCIPHER
+> --
+> 2.7.4
+>
