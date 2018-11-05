@@ -3,112 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE2FC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35357C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8703320862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8703320862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E4E1F20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:19:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E1F20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387625AbeKFCit (ORCPT
+        id S2387666AbeKFCkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:38:49 -0500
-Received: from mga05.intel.com ([192.55.52.43]:23088 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387458AbeKFCit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:38:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:18:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="93824909"
-Received: from patelp1x-mobl3.amr.corp.intel.com (HELO [10.252.130.246]) ([10.252.130.246])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Nov 2018 09:18:08 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: skl: always select SND_SOC_HDAC_HDA
-To:     Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        alsa-devel@alsa-project.org,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        Naveen Manohar <naveen.m@intel.com>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181102112456.780127-1-arnd@arndb.de>
- <943d10e2-299c-4393-f2f5-4ac8bbe400c3@linux.intel.com>
- <CAK8P3a1FCVTuB+ydE6syMHYPWnUW0WTCFDuyMmm35VNnpTTGBw@mail.gmail.com>
- <adc83eaa-b7c0-2c76-a434-f1d5872337f6@linux.intel.com>
- <20181105133545.GF10650@smile.fi.intel.com>
- <CAK8P3a0kdUtK_UuSJEPiWPxhdDULmW6RYEzu-Ug7f8VBoeWVog@mail.gmail.com>
- <s5h1s7z35t8.wl-tiwai@suse.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <5c21e5d9-6a14-ff4f-04f2-9dbfc8665250@linux.intel.com>
-Date:   Mon, 5 Nov 2018 11:18:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 21:40:16 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40090 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387458AbeKFCkP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:40:15 -0500
+Received: by mail-vs1-f67.google.com with SMTP id s9so5563152vsk.7;
+        Mon, 05 Nov 2018 09:19:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yeqCh/RL/DBT9DzwrUpxA2QCznWJ3GvMbgliS2owqF0=;
+        b=PRvK0lsKEiGYbNKCxvYnuyvd4kC4q2nzMN4pGxmQiW6YJVIcHkgigR5n68BJVqcJwg
+         3KlDWpwEYHnP6mbELn4wnF3CCA/GPqnWmOPHFm9cGH5vhOo/fb9Nz+ng0WpP9gCmj5Tt
+         yvGABwS9orTS7O+hvg2OYvB2VUYh2yzI5vQs91zKsDZcHLG6fQF8ZK8/DbRUjKo9cU+i
+         rL4ITYw27tzAzC73WTss/T7KXi6lJ+DpJOF5u6AJ5k68NIGQX/JJpN823+IxhpfBOUp0
+         hpEAG4xnu8hxhrOdoIm6qaDLDN/RXMxydw+2t7o5Kp+G1q8+svrt8vtYHBQmlLrt0ut6
+         +eLA==
+X-Gm-Message-State: AGRZ1gIamGs2/Xt0pc1G1Xlod+rsh04pawDDs4lM8rZaT+mYLltISsa/
+        bbuWVJllQ8FEyUTTtYZfH7CIamT6xjnYQG1b+cHLmWsZ
+X-Google-Smtp-Source: AJdET5cfNTxubsDU8szvQ6PiZtMQiz4bxfXzAKYiDCCG6LW7J1Du6RhYLV9YZHEBkNlevz7b+1mSu4D8Oa+ps9HyITA=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr6499579vsi.96.1541438374474;
+ Mon, 05 Nov 2018 09:19:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <s5h1s7z35t8.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 5 Nov 2018 18:19:22 +0100
+Message-ID: <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacopo,
 
->>> We have this ("strange") lines over the drivers:
->>>
->>> config BAR
->>> depends on FOO || FOO=n
->>>
->>> which guarantees that FOO will be not module when BAR is built-in.
->> That's what I normally use, but I could not figure this one out.
->> One problem is that SND_SOC_ALL_CODECS selects
->> SND_SOC_HDAC_HDA, and SND_SOC_ALL_CODECS itself
->> may be =m, causing the failure for
->> SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=y.
->>
->> It might work with a separate dummy symbol:
->>
->> config SND_SOC_HDAC_HDA_FORCE
->>           tristate
->>           depends on SND_SOC_ALL_CODECS != n
->>           default SND_SOC_INTEL_SKYLAKE
->>           select SND_SOC_HDAC_HDA
->>
->> This would make SND_SOC_HDAC_HDA built-in even
->> with SND_SOC_ALL_CODECS=m and
->> SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=n
->>
->> It seems a bit ugly, and would need some testing.
-> The mixture of depends and select is often more confusing, so IMO, we
-> should align with only select as Pierre's suggestion, in this
-> particular case.
+On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
+>
+> On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
+> could appear on different sets of pins, usually the 'a' and 'b' one.
+>
+> With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
+>
+> VIN_DATA_PIN_GROUP(vin4_data_a, 8)
+>
+> which results in the group being named as "vin4_data_a_8" which is
+> un-consistent with the canonical group names (eg. "vin4_data8_a").
+>
+> This series adds a macro that allows to specify the group 'version' along with
+> the pin and mux numbers in patch [1/1]. I haven't been able to find a better
+> term than 'version' as 'group' was already taken. Suggestions welcome.
 
-I tried to avoid re-adding a "depends on" which we tried to remove last 
-year, but there is still a conditional statement which assumes a very 
-specific evaluation order.
+Yeah, the datasheet also calls these groups :-(
+A possible alternative is to use "variant"?
 
-1. SKYLAKE is enabled as m or y
+Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
+macro varargs, and passing the "variant" as the (optional) third parameter?
+That way existing users work as a before, while you can also write e.g.
 
-2. that enables some machine drivers (through an if statement), some of 
-which might select HDA audio
+    VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
 
-3. the selections done within the SKYLAKE config are conditional on the 
-outcome of #2.
+> As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
+> wired, I made sure the macro creates correct names and fields not only by
+> compile testing it, but with a small C program [1] that replicates the VIN data
+> layout defined in the PFC module and access fields (and has helped me testing
+> more easily the preprocessor stringification/concatenation process).
+>
+> Final note: Simon, you took the E3 patches in your tree, and I expect them to
+> land on v4.20-rc1. They use the old macros, are follow up patches ok?)
 
-it seems to work but I don't know if it's by design or an accident :-). 
-One could argue it's a hidden "depends on".
+Which patches are using these macro names, and are in v4.20-rc1?
 
+BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
+have broken groups names on r8a7792, r8a7795, and r8a7796.
+Fortunately we have no known users of them, so they can be fixed.
 
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
