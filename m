@@ -2,95 +2,125 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80293C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41A6C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395FD2081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oGkbEyAY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395FD2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A5D122081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:31:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D122081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gydle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbeKFAvj (ORCPT
+        id S1730015AbeKFAvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:51:39 -0500
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:38117 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbeKFAvj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:51:39 -0500
-Received: by mail-pf1-f172.google.com with SMTP id b11-v6so4597809pfi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:31:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rFkC9Y6Kb82JbIDrTQLTl8fF+d+Ila4aP14DdPrTO0w=;
-        b=oGkbEyAYBjVK3CcLs7VYniUjY5eaNbWH/Ru0dW5TShpOew+0IK5TxK0BimGmyNynmY
-         9ciFqoSnvEt8P4yOkyI51hSYjcRn78mMs5jTaRG7ZplVRsN2vXhmDY0KHaYhLVN+MzDY
-         22K8VCzGtmW1+ipo2C86PQN/RNC5M8RFIsvf1fhBWgxF+AQjODwwyMzIXhG0OwEF7pad
-         Ez4amFQtDMhVGxnQYYgfZ1uWIYAxoVT6rHJy0fu4XJCS/KB4/JDFcXsILhomtDS4saDb
-         T8PvSPa/9icBLcmi0JUSk0ZiHKew49U3j4uDzJ9MmwVDx0DgwSAr0vWTqZEAP7DztCz4
-         rSyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rFkC9Y6Kb82JbIDrTQLTl8fF+d+Ila4aP14DdPrTO0w=;
-        b=YCxj2jsq8P0Ei24kWzSiAUA0uzla2/FmLONO9bN5vvMH93/yM1oWsWfBOsPhQ0ABop
-         XKI9rWmRvOOVT4S8rSOa6LgMxnjYjl3nmMt3d+i69g1GQCPaEuo6GiwURs9hOaa/xnMs
-         VehX6ZKogNk3Fni7YiCDgbxjzoQ+J2AXmyMhUfoJp72Jif/FI4Tyw+5VLG9eSFnySIML
-         Z/o4Qf9CNwwzhK1P8Rzcra+eHIjoQHSNWNcPV/hNz7R6yiJQt1vhVtTfrkAtmnT955y6
-         +FkNIKF93ksN3J3bLxlM7lHRyDst3OvJVq4mK2pby2FxBBs7+bv0IzTN23BVmI+skEms
-         K0yg==
-X-Gm-Message-State: AGRZ1gI11McREv3c8advWEokgkrKFnSRQdeQ72sy574eOOyYlqiPcOcb
-        XbSLS6MRHKE1maEML/UGOx0=
-X-Google-Smtp-Source: AJdET5f1nGCIl8m3jQDpcLZlIUSPiEAk4qQAVtLYZAkcdjiHzBMdFfuDQ1cspNglslcjx+z7yeRDiA==
-X-Received: by 2002:a63:205:: with SMTP id 5mr18635639pgc.327.1541431884362;
-        Mon, 05 Nov 2018 07:31:24 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id p14-v6sm50796603pgn.45.2018.11.05.07.31.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 07:31:23 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [RESEND] Staging: rtl8712: fix small typo
-Date:   Mon,  5 Nov 2018 10:31:21 -0500
-Message-Id: <20181105153121.6813-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 5 Nov 2018 19:51:44 -0500
+Received: from mail.gydle.com ([64.18.173.180]:51398 "EHLO mail.gydle.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727623AbeKFAvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:51:43 -0500
+X-Received: from [192.168.1.136] (unknown [69.70.179.254])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sboisvert@gydle.com)
+        by mail.gydle.com (Postfix) with ESMTPSA id EDA74440D3;
+        Mon,  5 Nov 2018 10:31:27 -0500 (EST)
+Subject: Re: [PATCH v2 7/7] lightnvm: pblk: remove dead code in pblk_recov_l2p
+To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>,
+        Matias Bjorling <mb@lightnvm.io>
+Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+References: <20181105122610.1555-1-hans.ml.holmberg@owltronix.com>
+ <20181105122610.1555-8-hans.ml.holmberg@owltronix.com>
+From:   Sebastien Boisvert <sboisvert@gydle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=sboisvert@gydle.com; keydata=
+ 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
+ vnOzfc5OOiR/D+lE
+Message-ID: <844bd112-b9be-f63d-dfb1-42763fa83f0d@gydle.com>
+Date:   Mon, 5 Nov 2018 10:31:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181105122610.1555-8-hans.ml.holmberg@owltronix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ture->true
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/staging/rtl8712/rtl871x_cmd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8712/rtl871x_cmd.h b/drivers/staging/rtl8712/rtl871x_cmd.h
-index 24da2ccea04f..37960b04beee 100644
---- a/drivers/staging/rtl8712/rtl871x_cmd.h
-+++ b/drivers/staging/rtl8712/rtl871x_cmd.h
-@@ -434,7 +434,7 @@ struct getrfintfs_parm {
-  *
-  *	mac[0] == 0
-  *	==> CMD mode, return H2C_SUCCESS.
-- *	The following condition must be ture under CMD mode
-+ *	The following condition must be true under CMD mode
-  *		mac[1] == mac[4], mac[2] == mac[3], mac[0]=mac[5]= 0;
-  *		s0 == 0x1234, s1 == 0xabcd, w0 == 0x78563412, w1 == 0x5aa5def7;
-  *		s2 == (b1 << 8 | b0);
--- 
-2.17.0
+On 2018-11-05 7:26 a.m., Hans Holmberg wrote:
+> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> 
+> Remove the call to pblk_line_replace_data as it returns
+> directly as we have not set l_mg->data_next yet.
 
+You have the word "as" twice. Replace the second with "because".
+
+> 
+> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> ---
+>  drivers/lightnvm/pblk-recovery.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+> index 0fbd30e0a587..416d9840544b 100644
+> --- a/drivers/lightnvm/pblk-recovery.c
+> +++ b/drivers/lightnvm/pblk-recovery.c
+> @@ -805,7 +805,6 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+>  		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+>  							&l_mg->meta_bitmap));
+>  		spin_unlock(&l_mg->free_lock);
+> -		pblk_line_replace_data(pblk);
+>  	} else {
+>  		spin_lock(&l_mg->free_lock);
+>  		/* Allocate next line for preparation */
+> 
