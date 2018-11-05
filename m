@@ -2,160 +2,109 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40E1C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BD3C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826D920869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A50420869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:37:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVxEGz0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826D920869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="faW+f0Gr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A50420869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbeKET4E (ORCPT
+        id S1729011AbeKET4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:56:04 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41324 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeKET4D (ORCPT
+        Mon, 5 Nov 2018 14:56:08 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43828 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbeKET4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:56:03 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c16so5737052lfj.8;
-        Mon, 05 Nov 2018 02:36:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=t0WvrQTAK1cl+miP2jL8xiPiYqfdI7dTrVN6+Bdywfk=;
-        b=MVxEGz0yym6KAiZboDK4kDrEFJiCqvWberQ6a1EudrXzwORhXCJiyZHn0hjTwshnhX
-         RqZ0JFN1Ylkr+5RMlmYG/wW7xytze/zX7NZtjV1Wx1CVkCzqgQE9jGxzFrgMcFApJwjY
-         4ASLAHcgar4DQXhmrU7IBHAyd1L2cHrVKyEvrDhzpsubeZXmgcmMuqtNA2XXrn5Q0ref
-         LOAEZNQhilyDKdCCAwE4i1ykqS4Ynao16phxWFsPhALp8xi6BfyklcA9TFO3ZCEfbCOM
-         t01JyxxbDk1wQrJixl61rTPosjXvfWBqVMO+iqGgwJP6ZmdlncFtM7Mls0qu0MDmOt2Q
-         es8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=t0WvrQTAK1cl+miP2jL8xiPiYqfdI7dTrVN6+Bdywfk=;
-        b=m7+Zcpo3G0J3FCRdoi7Pz0E+qduuTGPuY7mkyl9OzY29/Yu4SKNt+rrWOrToqUgnSN
-         wca1sLBvyM6mZ2+TjUrlFJ74eaMuPSJc9as+ly0DAJSy35fOtDjUwa5OATW9RMQ6QWi2
-         cx8pWLqMxDJ+/U0zXamH5t8TbxA8ZnvsCkQ5TTPq4rwwpWvLMR0PTuAseZUuMPm2aqeW
-         LHkywRFSmLIEXMHuisAsSfDtIz39M436vkphgprIRUyMF/lVjJQZ3jNJo4qBGlxakF4T
-         SomW3Y+9dJpbGk0JD86KHp03Fd0sQOKIiI2iQM+CdCgvQDu3Qz7AL6J6RuuIgcW7oxKA
-         PJQQ==
-X-Gm-Message-State: AGRZ1gLT7Pnzdz7WsOqoz7nmdLb3pSULVDPnDHb9kEFFjOxkkM/L/Hqx
-        5OybBdvr2pNR8mNNQobrZQ==
-X-Google-Smtp-Source: AJdET5ep5RdQ0VyD6eP9WrHJXAUDfR1blYvSLYUt/sULsyx0ofc/qCe4hWhVxAcZGll0NIA2LkspMw==
-X-Received: by 2002:a19:641d:: with SMTP id y29mr11983778lfb.14.1541414218858;
-        Mon, 05 Nov 2018 02:36:58 -0800 (PST)
-Received: from localhost.localdomain (89-64-7-227.dynamic.chello.pl. [89.64.7.227])
-        by smtp.gmail.com with ESMTPSA id h140-v6sm5413605lfg.4.2018.11.05.02.36.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 02:36:57 -0800 (PST)
-From:   Piotr Bugalski <bugalski.piotr@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Piotr Bugalski <bugalski.piotr@gmail.com>
-Subject: [PATCH v3 0/6] New QuadSPI driver for Atmel SAMA5D2
-Date:   Mon,  5 Nov 2018 11:36:19 +0100
-Message-Id: <20181105103625.9644-1-bugalski.piotr@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 5 Nov 2018 14:56:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dzJx/94Dhr2d+VPZTwtd1d3FBD2VDyjrmGIjKRJYdo4=; b=faW+f0Gr1hfWf0zdYZaNhg79b
+        8LAcMc/G99mjotPYZD2oT50JV+vXYVr88AFZbEBFyOwA6a9w7ZJf/G0uv11wNTTsqqoSg1J2mxHky
+        o0AEVcIwQ1FmmQjHHXvuYbL8KR0FmSBvM516ADk9b9fKN3erH3THoxw3WlZIugJ99AYsA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gJcFe-0008Cv-2k; Mon, 05 Nov 2018 10:36:58 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id AAA261124D96; Mon,  5 Nov 2018 10:36:57 +0000 (GMT)
+Date:   Mon, 5 Nov 2018 10:36:57 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     sh liu <liush.damon@gmail.com>
+Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: wm8996: fix small typo
+Message-ID: <20181105103657.GA5365@sirena.org.uk>
+References: <CADnCVLz__D9n+UpFLChVcZkjmFZxKZacCCgufRx8y0_03OGgSg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
+In-Reply-To: <CADnCVLz__D9n+UpFLChVcZkjmFZxKZacCCgufRx8y0_03OGgSg@mail.gmail.com>
+X-Cookie: Contents may settle during shipment.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-Atmel SAMA5D2 is equipped with two QSPI interfaces. These interfaces can
-work as in SPI-compatible mode or use two / four lines to improve
-communication speed. At the moment there is QSPI driver strongly tied to
-NOR-flash memory and MTD subsystem.
-Intention of this change is to provide new driver which will not be tied
-to MTD and allows using QSPI with NAND-flash memory or other peripherals
-New spi-mem API provides abstraction layer which can disconnect QSPI
-from MTD. This driver doesn't support regular SPI interface, it should
-be used with spi-mem interface only.
-Unfortunately SAMA5D2 hardware by default supports only NOR-flash
-memory. It allows 24- and 32-bit addressing while NAND-flash requires
-16-bit long. To workaround hardware limitation driver is a bit more
-complicated.
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Request to spi-mem contains three fiels: opcode (command), address,
-dummy bytes. SAMA5D2 QSPI hardware supports opcode, address, dummy and
-option byte where address field can only be 24- or 32- bytes long.
-Handling 8-bits long addresses is done using option field. For 16-bits
-address behaviour depends of number of requested dummy bits. If there
-are 8 or more dummy cycles, address is shifted and sent with first dummy
-byte. Otherwise opcode is disabled and first byte of address contains
-command opcode (works only if opcode and address use the same buswidth).
-The limitation is when 16-bit address is used without enough dummy
-cycles and opcode is using different buswidth than address. Other modes
-are supported with described workaround.
+On Fri, Nov 02, 2018 at 09:30:06AM +0800, sh liu wrote:
+> From e9b923690675ca8fa883fd25dcead5b457856735 Mon Sep 17 00:00:00 2001
+> From: liush <liush@allwinnertech.com>
+> Date: Fri, 2 Nov 2018 08:57:00 +0800
+> Subject: [PATCH] ASoC: wm8996: fix small typo
+>=20
+> atleast -> at least
+>=20
+> Change-Id: Icc970b438166daef13518b7d1a62b13eb8752f5f
+> Signed-off-by: liush <liush@allwinnertech.com>
 
-It looks like hardware has some limitation in performance. The same issue
-exists in current QSPI driver (MTD/nor-flash) and soft-pack (bare-metal
-library from Atmel). Without using DMA read speed is much worse than
-maximum bandwidth (efficiency 30-40%). Any help with performance
-improvement is highly welcome, especially for NAND-flash memories which
-offers higher capacity than NOR-flash used with previous driver.
+This patch is corrupted and can't be applied:
 
-Best Regards,
-Piotr
+> *codec, int fll_id, int source,
+>   if (i2c->irq)
+>   timeout *=3D 10;
+>   else
+> - /* ensure timeout of atleast 1 jiffies */
+> + /* ensure timeout of at least 1 jiffies */
+>   timeout =3D timeout/2 ? : 1;
+>=20
 
-v3 changes:
- - add get_name implementation
- - email address fix
+It looks like tabs have been replaced by spaces in whatever you're using
+to send it.
 
-v2 changes:
- - driver is now replacement of existing atmel-quadspi
- - code was re-written to follow original code structure
- - deinitialization order fixed
- - empty atmel_qspi_adjust_op_size function removed
- - code formatting fixes
- - use spi_device->max_speed_hz to get spi speed
- - spi freqency set in spi_controller->setup() hook
- - address range checkng for 4-bytes addressing
- - use timeout to avoid infinite waiting
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Piotr Bugalski (6):
-  mtd: spi-nor: atmel-quaspi: Typo fix
-  mtd: spi-nor: atmel-quadspi: Add spi-mem support to atmel-quadspi
-  mtd: spi-nor: atmel-quadspi: Use spi-mem interface for atmel-quadspi
-    driver
-  mtd: spi-nor: atmel-quadspi: Remove unused code from atmel-quadspi
-    driver
-  spi: Add QuadSPI driver for Atmel SAMA5D2
-  dt-bindings: spi: QuadSPI driver for Atmel SAMA5D2
+-----BEGIN PGP SIGNATURE-----
 
- .../bindings/{mtd => spi}/atmel-quadspi.txt        |   0
- drivers/mtd/spi-nor/Kconfig                        |   9 -
- drivers/mtd/spi-nor/Makefile                       |   1 -
- drivers/spi/Kconfig                                |   9 +
- drivers/spi/Makefile                               |   1 +
- drivers/{mtd/spi-nor => spi}/atmel-quadspi.c       | 528 ++++++---------------
- 6 files changed, 158 insertions(+), 390 deletions(-)
- rename Documentation/devicetree/bindings/{mtd => spi}/atmel-quadspi.txt (100%)
- rename drivers/{mtd/spi-nor => spi}/atmel-quadspi.c (53%)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvgHUgACgkQJNaLcl1U
+h9DPNQf8DyEl8ZqUljGGgyyP48lIp5J+gF2eNUOVP+ebotrVxn197W3Fgp2BU0eU
+FVcPNAUqBoRdjN0r9CWjL+2+9xCdHyJHbCCE9OnZrNxwY7CFG2RpchJPTyg/K3FC
+Z9ZJkItrmsb615X2elTQbtLu3UipFYk4+BZ4/eQLTSOr3SiAGlxDbTNtqkxFdL0q
+ktHpqHlIDhIrrBTNGikjCAkrU5vkkrydY53wVyJhDhz0ljsVh8b1rbMEdgXKlYzv
+po1CSPMjprfpx4PGIOKRLHv/+3yNJ/KdFOAYpdPe6y3ca95QA80zZ72s5Rs5XXDg
+yL+F8NmbSCoCrOZMED5nLhrIjkrSYw==
+=1xwh
+-----END PGP SIGNATURE-----
 
--- 
-2.11.0
-
+--x+6KMIRAuhnl3hBn--
