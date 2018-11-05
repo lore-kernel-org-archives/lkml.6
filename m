@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0805AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C26C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE4C720827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 370BA20827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="UgTp+ct+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4C720827
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="11jtr3QY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370BA20827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbeKEVBd (ORCPT
+        id S1729547AbeKEVBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:01:33 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38431 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729450AbeKEVBb (ORCPT
+        Mon, 5 Nov 2018 16:01:36 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51745 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728874AbeKEVBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:01:31 -0500
-Received: by mail-it1-f195.google.com with SMTP id k141-v6so10272579itk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:42:12 -0800 (PST)
+        Mon, 5 Nov 2018 16:01:33 -0500
+Received: by mail-it1-f196.google.com with SMTP id h13so12199011itl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:42:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mq2pXsxBVKjyR6ETTb+oyHYfaQtkfPqHe/RfPr8ip58=;
-        b=UgTp+ct+aU5PtwaUn6O3C8Sq3F5oN6oCcmhY9THHY5jVrBd3GYIq96ufAPzeal6VHd
-         KZR4ZcRc9DYtRvajRD4zU+yDLPIOYON5bD9JYxRQ/DsixzE2UlPGxOlU91PzYAHhbOPN
-         +TBJq7vlEYMASC3GV0WPvYkiXk2KxJRpVto3D9SW2vXTV8Jm81IdSiYZ8raMywmJmkhM
-         cdy2ECWGRj6C+MwQRtBfeHUlVfm7h/i5U6RAkDOrJ8oatsjJaTxB7cqYzDb3/8BIbX5Z
-         m+MYJhv1ssWET6hgqJnHMdTS4cs/eppFpij7y3MiG9VDYGRDVd/6SfQZtG3k6fep+4Tb
-         BROQ==
+        bh=I6VkKo/gA/7rVfoOYCcmwPUmucAY3X1LV11ImaJxs6o=;
+        b=11jtr3QYUGJC75M6G9/yF2SxEoJkQYw0fygbIYrunsLG5UIwZPc+gRerMD+gQXbdTD
+         Am+qjFjZipPuQyffjG23RotRgKgETqXOIvp0J3tAufz1E6uMseos+IC+pwo3VDbXqZGf
+         B+GYhd+faNgv3oPs/7PTh9nJLjdzAKpH/Q2HRx8uDHCOTu/Re+KNpbZnaq+rhYh7X8jK
+         SDc9cduLR7oBuUg3925BlzaR5c35/nrm6v0IE1emmaZskHKMcG+juyEJ7SkmjfJGr4kI
+         xTz2DRYLrUD5KqYPcnfPk2e139oEKkTUQZscKWPOLhqZNfs0jtH8/Q6z3TxyvZWHvP9f
+         PXHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mq2pXsxBVKjyR6ETTb+oyHYfaQtkfPqHe/RfPr8ip58=;
-        b=lL5nAPz7s7jGbTzcvICcNVWQ5U0KeCLUf13wE/DtqXu7wdnND6B7fM72WIMYSbDaaw
-         ECCaIEZjbNt3xZbVfoqBfe/xtsIqcqSPrQaeyMXPenTSXnv2BSUIe90pvyvltcGk9Gji
-         vHsIwS0BD+PEv1rIxi85lzcZLuWzUvLV2k4oH4YLKyV5TPPNNPlR9K/mi8KA4ziMu1Sw
-         0sAMGqT5o6aAyungWS3NWSzcaNOzj+wmGbLoZ1mxNGjJAqKWxbAVBqyghoFfVTsEWwAg
-         XZpYTGHXSXiFm96arirUdb+vYOH0RRPoSnQL6VxR4EUqrR+vykcHwPVYiccrU1IXCoZ6
-         SXRA==
-X-Gm-Message-State: AGRZ1gISdow5qfjG3fJSxyx7jbLJT0UN2RxqdwRo+uVy51+KQssJau4e
-        wWkT7dEZrscUFuNSG4/+S1vzqg==
-X-Google-Smtp-Source: AJdET5cJ1rI+ft7/vUO3bvpx/k/ItUMtrMwHSZ+Go19X1/S9cXv/7cmklU8xDN77WdYuZXmDyaNj1w==
-X-Received: by 2002:a02:5f96:: with SMTP id x22-v6mr20275912jad.43.1541418132408;
-        Mon, 05 Nov 2018 03:42:12 -0800 (PST)
+        bh=I6VkKo/gA/7rVfoOYCcmwPUmucAY3X1LV11ImaJxs6o=;
+        b=MQqFwPjajkV1rLmH/BuFa70xlUMFsBv6wiLk/67sCisRNyAqeawXSQtzSG7/DLuyUw
+         jRSLe/NzcK2pM5bOGOoLITMianOENt8G4OLPYuG6Jkm4sMfYhGrbY/T3KgcNIunXmrFQ
+         c9q/cztDGJZfpxpAahagRqGjO624ElbX/Hj0j/QdHsOP1sS5jxBDtcaY86Hokjo2w5l+
+         DNw9o5caN5+puXL5xaEzgD1NRPLdAn6yIGYj+oDaU3rJRIDjnjcFAakSVDove/OXNG5r
+         m46VPoxAwCBxFRPSX/x8b3armDBCfXJTrg3Ewv32ek3TeIO3uosXMApavdtABTEUrM7o
+         05fg==
+X-Gm-Message-State: AGRZ1gIMmCSwsbpMaAcdkIy+tBFUHQpykogdCIolE5A6mKV6SbOsKahF
+        Ae2MiA+Ho/gXSC8PBjPXOeNzmg==
+X-Google-Smtp-Source: AJdET5fARmOuOai4beCJqrcljzIAFavigSNdSetlSuDFLUjc9j8oND9BqbCzq3fe2E7aMePelUF2GQ==
+X-Received: by 2002:a24:2b43:: with SMTP id h64-v6mr3414946ita.115.1541418134196;
+        Mon, 05 Nov 2018 03:42:14 -0800 (PST)
 Received: from ch-lap-hans.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id 186-v6sm14880824itf.11.2018.11.05.03.42.10
+        by smtp.gmail.com with ESMTPSA id 186-v6sm14880824itf.11.2018.11.05.03.42.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 03:42:11 -0800 (PST)
+        Mon, 05 Nov 2018 03:42:13 -0800 (PST)
 From:   Hans Holmberg <hans@owltronix.com>
 X-Google-Original-From: Hans Holmberg <hans.ml.holmberg@cnexlabs.com>
 To:     Matias Bjorling <mb@lightnvm.io>
@@ -65,9 +65,9 @@ Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Hans Holmberg <hans.ml.holmberg@owltronix.com>,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 6/7] lightnvm: pblk: fix pblk_lines_init error handling path
-Date:   Mon,  5 Nov 2018 12:41:12 +0100
-Message-Id: <20181105114113.30932-7-hans.ml.holmberg@cnexlabs.com>
+Subject: [PATCH 7/7] lightnvm: pblk: remove dead code in pblk_recov_l2p
+Date:   Mon,  5 Nov 2018 12:41:13 +0100
+Message-Id: <20181105114113.30932-8-hans.ml.holmberg@cnexlabs.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
 References: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
@@ -80,29 +80,26 @@ From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-The chunk metadata is allocated with vmalloc, so we need to use
-vfree to free it.
-
-Fixes: 090ee26fd512 ("lightnvm: use internal allocation for chunk log page")
+Remove the call to pblk_line_replace_data as it returns
+directly as we have not set l_mg->data_next yet.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/lightnvm/pblk-recovery.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 33c1e83327c3..ae9686b5d521 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -1053,7 +1053,7 @@ static int pblk_lines_init(struct pblk *pblk)
- 		pblk_line_meta_free(l_mg, &pblk->lines[i]);
- 	kfree(pblk->lines);
- fail_free_chunk_meta:
--	kfree(chunk_meta);
-+	vfree(chunk_meta);
- fail_free_luns:
- 	kfree(pblk->luns);
- fail_free_meta:
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 0fbd30e0a587..416d9840544b 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -805,7 +805,6 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+ 							&l_mg->meta_bitmap));
+ 		spin_unlock(&l_mg->free_lock);
+-		pblk_line_replace_data(pblk);
+ 	} else {
+ 		spin_lock(&l_mg->free_lock);
+ 		/* Allocate next line for preparation */
 -- 
 2.17.1
 
