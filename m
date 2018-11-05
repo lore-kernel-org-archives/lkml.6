@@ -2,201 +2,97 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE3DC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D22C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589602085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589602085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D84882085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:48:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84882085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbeKFBIl convert rfc822-to-8bit (ORCPT
+        id S1730387AbeKFBJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 20:08:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729657AbeKFBIk (ORCPT
+        Mon, 5 Nov 2018 20:09:16 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49845 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730166AbeKFBJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 20:08:40 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5FkMKR139987
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 10:48:21 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2njrqh09hj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 10:48:20 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 5 Nov 2018 15:48:19 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 15:48:16 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5FmFpw6881734
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 15:48:15 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15B9DAE045;
-        Mon,  5 Nov 2018 15:48:15 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16494AE057;
-        Mon,  5 Nov 2018 15:48:14 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.145.7.178])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Nov 2018 15:48:13 +0000 (GMT)
-Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
-To:     Jason Wang <jasowang@redhat.com>,
-        Vitaly Mayatskikh <v.mayatskih@gmail.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20181102182123.29420-1-v.mayatskih@gmail.com>
- <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Mon, 5 Nov 2018 16:48:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-In-Reply-To: <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18110515-0008-0000-0000-0000028B9E41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110515-0009-0000-0000-000021F5D37A
-Message-Id: <c042686f-db95-514d-8bd8-92b72e4e087a@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        Mon, 5 Nov 2018 20:09:16 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5Fmo6U392438
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 5 Nov 2018 07:48:50 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5FmolO392435;
+        Mon, 5 Nov 2018 07:48:50 -0800
+Date:   Mon, 5 Nov 2018 07:48:50 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yi Wang <tipbot@zytor.com>
+Message-ID: <tip-b42967dcac1d4f5b059ec25568136462bcb051fe@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        wang.yi59@zte.com.cn, mingo@kernel.org, hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, wang.yi59@zte.com.cn,
+          tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <1540797451-2792-1-git-send-email-wang.yi59@zte.com.cn>
+References: <1540797451-2792-1-git-send-email-wang.yi59@zte.com.cn>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/hyper-v: Fix indentation in
+ hv_do_fast_hypercall16()
+Git-Commit-ID: b42967dcac1d4f5b059ec25568136462bcb051fe
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=942 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050144
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  b42967dcac1d4f5b059ec25568136462bcb051fe
+Gitweb:     https://git.kernel.org/tip/b42967dcac1d4f5b059ec25568136462bcb051fe
+Author:     Yi Wang <wang.yi59@zte.com.cn>
+AuthorDate: Mon, 29 Oct 2018 15:17:31 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 5 Nov 2018 16:45:24 +0100
 
+x86/hyper-v: Fix indentation in hv_do_fast_hypercall16()
 
-On 11/05/2018 04:00 AM, Jason Wang wrote:
-> 
-> On 2018/11/3 上午2:21, Vitaly Mayatskikh wrote:
->> vhost_blk is a host-side kernel mode accelerator for virtio-blk. The
->> driver allows VM to reach a near bare-metal disk performance. See IOPS
->> numbers below (fio --rw=randread --bs=4k).
->>
->> This implementation uses kiocb interface. It is slightly slower than
->> going directly through bio, but is simpler and also works with disk
->> images placed on a file system.
->>
->> # fio num-jobs
->> # A: bare metal over block
->> # B: bare metal over file
->> # C: virtio-blk over block
->> # D: virtio-blk over file
->> # E: vhost-blk bio over block
->> # F: vhost-blk kiocb over block
->> # G: vhost-blk kiocb over file
->> #
->> #  A     B     C    D    E     F     G
->>
->> 1  171k  151k  148k 151k 195k  187k  175k
->> 2  328k  302k  249k 241k 349k  334k  296k
->> 3  479k  437k  179k 174k 501k  464k  404k
->> 4  622k  568k  143k 183k 620k  580k  492k
->> 5  755k  697k  136k 128k 737k  693k  579k
->> 6  887k  808k  131k 120k 830k  782k  640k
->> 7  1004k 926k  126k 131k 926k  863k  693k
->> 8  1099k 1015k 117k 115k 1001k 931k  712k
->> 9  1194k 1119k 115k 111k 1055k 991k  711k
->> 10 1278k 1207k 109k 114k 1130k 1046k 695k
->> 11 1345k 1280k 110k 108k 1119k 1091k 663k
->> 12 1411k 1356k 104k 106k 1201k 1142k 629k
->> 13 1466k 1423k 106k 106k 1260k 1170k 607k
->> 14 1517k 1486k 103k 106k 1296k 1179k 589k
->> 15 1552k 1543k 102k 102k 1322k 1191k 571k
->> 16 1480k 1506k 101k 102k 1346k 1202k 566k
->>
->> Vitaly Mayatskikh (1):
->>    Add vhost_blk driver
->>
->>   drivers/vhost/Kconfig  |  13 ++
->>   drivers/vhost/Makefile |   3 +
->>   drivers/vhost/blk.c    | 510 +++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 526 insertions(+)
->>   create mode 100644 drivers/vhost/blk.c
->>
-> 
-> Hi:
-> 
-> Thanks for the patches.
-> 
-> This is not the first attempt for having vhost-blk:
-> 
-> - Badari's version: https://lwn.net/Articles/379864/
-> 
-> - Asias' version: https://lwn.net/Articles/519880/
-> 
-> It's better to describe the differences (kiocb vs bio? performance?). E.g if my memory is correct, Asias said it doesn't give much improvement compared with userspace qemu.
-> 
-> And what's more important, I believe we tend to use virtio-scsi nowdays. So what's the advantages of vhost-blk over vhost-scsi?
+Remove the surplus TAB in hv_do_fast_hypercall16().
 
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: kys@microsoft.com
+Cc: haiyangz@microsoft.com
+Cc: sthemmin@microsoft.com
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: devel@linuxdriverproject.org
+Cc: zhong.weidong@zte.com.cn
+Link: https://lkml.kernel.org/r/1540797451-2792-1-git-send-email-wang.yi59@zte.com.cn
 
-For the record, we still do use virtio-blk a lot. As we see new things like discard/write zero 
-support it seems that others do as well.
+---
+ arch/x86/include/asm/mshyperv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 0d6271cce198..1d0a7778e163 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -232,7 +232,7 @@ static inline u64 hv_do_fast_hypercall16(u16 code, u64 input1, u64 input2)
+ 				      : "cc");
+ 	}
+ #endif
+-		return hv_status;
++	return hv_status;
+ }
+ 
+ /*
