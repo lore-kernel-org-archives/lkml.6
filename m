@@ -2,108 +2,110 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFF9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0D0C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6840220854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:07:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YLpTwMHH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YLpTwMHH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6840220854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id C77D220854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77D220854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeKESZ4 (ORCPT
+        id S1727395AbeKES0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:25:56 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57902 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeKESZ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:25:56 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B3DCC601DA; Mon,  5 Nov 2018 09:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541408834;
-        bh=DC79dbbQm2wnZq9Nl8afw+KfYrwJBh3H+bpIx1O7JjQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=YLpTwMHHwYEBwO6hBEElpFJjBy/SZ3lne1MbbzrjXg0qG2sAaTg1OyL10IaX/0Xl+
-         AAvDc6Y5hP19sW2RuHgv8s49rAPEuBnxSe8l1peMhWDeH7P+z3MaZkixQrwoPzy9Z4
-         Dp7QxXZZmqWnOFK+u5nEpy5Mn7WcW5FNnmzdL58U=
-Received: from x230.qca.qualcomm.com (37-33-75-124.bb.dnainternet.fi [37.33.75.124])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 82800601DA;
-        Mon,  5 Nov 2018 09:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541408834;
-        bh=DC79dbbQm2wnZq9Nl8afw+KfYrwJBh3H+bpIx1O7JjQ=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=YLpTwMHHwYEBwO6hBEElpFJjBy/SZ3lne1MbbzrjXg0qG2sAaTg1OyL10IaX/0Xl+
-         AAvDc6Y5hP19sW2RuHgv8s49rAPEuBnxSe8l1peMhWDeH7P+z3MaZkixQrwoPzy9Z4
-         Dp7QxXZZmqWnOFK+u5nEpy5Mn7WcW5FNnmzdL58U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 82800601DA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
-Subject: Re: [PATCH 3/5] brcmfmac: Drop unused cordic defines and macros
-References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
-        <7f3dbe604102f7d765149fffef8a4e6b9fa15552.1541238842.git-series.plaes@plaes.org>
-Date:   Mon, 05 Nov 2018 11:07:09 +0200
-In-Reply-To: <7f3dbe604102f7d765149fffef8a4e6b9fa15552.1541238842.git-series.plaes@plaes.org>
-        (Priit Laes's message of "Sat, 3 Nov 2018 11:59:42 +0200")
-Message-ID: <8736sfhozm.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 5 Nov 2018 13:26:25 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57624 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbeKES0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:26:25 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 282E7208B1; Mon,  5 Nov 2018 10:07:42 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EA31720884;
+        Mon,  5 Nov 2018 10:07:31 +0100 (CET)
+Date:   Mon, 5 Nov 2018 10:07:31 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Lothar Felten <lothar.felten@gmail.com>
+Cc:     linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jernej.skrabec@siol.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        wens@csie.org
+Subject: Re: [PATCH v3] ARM: dtsi: sun8i-r40: add mali node
+Message-ID: <20181105090731.vkcdwde5zmkxjzmc@flea>
+References: <20181101085710.15774-1-lothar.felten@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hmehpeleewvssyd5"
+Content-Disposition: inline
+In-Reply-To: <20181101085710.15774-1-lothar.felten@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Priit Laes <plaes@plaes.org> writes:
 
-> Now that we use library macros, we can drop internal copies
->
-> Signed-off-by: Priit Laes <plaes@plaes.org>
+--hmehpeleewvssyd5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,x
+
+On Thu, Nov 01, 2018 at 09:57:10AM +0100, Lothar Felten wrote:
+> This patch adds a node for the mali 400 GPU of the R40/V40 SoC
+>=20
+> Signed-off-by: Lothar Felten <lothar.felten@gmail.com>
 > ---
->  drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h | 7 +-------
+> Changes v2->v3:
+> - remove mali clock rates
+> - drop hdmi-phy sun50i-a64 compatibility =20
+> - patch version, change log added
+>=20
+> Changes v1->v2:
+> - commit message uppercase ARM prefix
+> - wrong patch submitted by mistake
+> ---
+>=20
+>  arch/arm/boot/dts/sun8i-r40.dtsi | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r=
+40.dtsi
+> index 6f4c9ca5a3ee..136c248cc7d1 100644
+> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> @@ -542,6 +542,28 @@
+> =20
+>  		};
+> =20
+> +		mali: gpu@1c40000 {
+> +			compatible =3D "allwinner,sun7i-a20-mali", "arm,mali-400";
 
-Also here this is about brcmsmac.
+You should have an r40 compatible here. You can have a look at the
+A23-A33 DTSI compatible for an example if you want.
 
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h
-> @@ -220,13 +220,6 @@ enum phy_cal_mode {
->  #define BB_MULT_MASK		0x0000ffff
->  #define BB_MULT_VALID_MASK	0x80000000
->  
-> -#define CORDIC_AG	39797
-> -#define	CORDIC_NI	18
-> -#define	FIXED(X)	((s32)((X) << 16))
-> -
-> -#define	FLOAT(X) \
-> -	(((X) >= 0) ? ((((X) >> 15) + 1) >> 1) : -((((-(X)) >> 15) + 1) >> 1))
-> -
+Thanks!
+Maxime
 
-Ah, now I see the benefit from patch 2. IMHO you could just fold patch 3
-into patch 2, no need to split them.
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-Kalle Valo
+--hmehpeleewvssyd5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AIUwAKCRDj7w1vZxhR
+xYZBAQDwqi7FxeVxHfJkU5LXXIvrmcdULrYcrOAveJR3DGvjwwEAngeAhZgPANMb
+RXwoBpMoM/q0aSYqcEwNv8IT2K1VeQA=
+=Jepv
+-----END PGP SIGNATURE-----
+
+--hmehpeleewvssyd5--
