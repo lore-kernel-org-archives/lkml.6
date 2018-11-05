@@ -2,122 +2,111 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5312DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76C9C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6B320866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:35:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="RAGpRr1l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6B320866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	by mail.kernel.org (Postfix) with ESMTP id 9FD7D20866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD7D20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387723AbeKFCzm (ORCPT
+        id S2387706AbeKFC4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:55:42 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:34989 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387618AbeKFCzm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:55:42 -0500
-Received: by mail-yb1-f195.google.com with SMTP id z2-v6so4146478ybj.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:34:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mDXw+9xXlfqt5xe1WPGy1QP9SO/lSuBDNL10hBwuasQ=;
-        b=RAGpRr1lcFvwJ/qfGsy4QFUl78/kJTfNIKS3PMhbu5C+efKARxD12kpVSQoAQhjAfH
-         UaTo2XT90jJ3MUzETc29yrMDmfkARZylVk90d2c9mvwDzYGHkbm9gVx2wZGXBFGYV7J2
-         S9w0ewF4PYOiGL1OVsyoO2JHCX1Qnx0Nnxh0v8vXvBOW4Z21/LSsX9Dc+5CUGCiEuTX6
-         o8Yx88kjQ/cekpfTb/CkvYFq0roy3MG9Bhqkgn2kns3naTol94xLJkHxQhl/4oCzFgVo
-         5zO9FkXWjUTpEstbkdoN/l5RVe5UviMDFoxUYTNapqNogNdMsFnLeYwhLW/O075PhBL5
-         c1/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mDXw+9xXlfqt5xe1WPGy1QP9SO/lSuBDNL10hBwuasQ=;
-        b=O5qzljuoqq+Y/w1i9VWaaeYIKXTvVOhfRoEt9Ri889S0BkvXk7g4EWt+oxjc75KJVs
-         hYQX74Ojdh8QIaxI0dqa9xaDvGpEtCxl2q3Y1p6WT1GdFJHN9nzq5en3jR0SjOuc1bW0
-         IalOSgO6haw+H12CawgTEHF7f8ou14Y3wJrTz2ZgAmwtcLOd4sdkqL4hGHzrgLA/AGje
-         Zi9GhJ5laVZa2Kf1r39WA9w1W3UaVwpnzHXzHHQe4pM+3PAXuDdSCKA+rXScOSw7dmDi
-         A17jMOKG0A2Gu/qz6Q1BVivQRbt1vVcjbYcmW011MBsZjqh4b1V2VocTh6Ec1fs+PwuE
-         5deQ==
-X-Gm-Message-State: AGRZ1gLjuxlQtYJYQ281AYeV6XohDmOYoZo8WyvQds6hYV8T/WaWbSle
-        LG9zbYyyNQEMeHhb9lVw49HCfA==
-X-Google-Smtp-Source: AJdET5d5ltEjJaUhWSoyLbBR89AqWWMObXbEWi6MUHzP9qWC/w7RkUnIHD3huwhDegYDxmbF5542mQ==
-X-Received: by 2002:a25:27ca:: with SMTP id n193-v6mr22273593ybn.494.1541439298137;
-        Mon, 05 Nov 2018 09:34:58 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id a189-v6sm11103840ywf.49.2018.11.05.09.34.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 09:34:57 -0800 (PST)
-Date:   Mon, 5 Nov 2018 12:34:56 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: msm/dsi: Add ref clock for 10nm PHY
-Message-ID: <20181105173456.GK154160@art_vandelay>
-References: <20181102214534.184593-1-mka@chromium.org>
+        Mon, 5 Nov 2018 21:56:52 -0500
+Received: from mga14.intel.com ([192.55.52.115]:46489 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387515AbeKFC4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:56:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:36:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="271544497"
+Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 09:35:58 -0800
+Date:   Mon, 5 Nov 2018 19:35:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        suresh.b.siddha@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
+Message-ID: <20181105173557.GF4502@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
+ <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102214534.184593-1-mka@chromium.org>
+In-Reply-To: <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 02:45:33PM -0700, Matthias Kaehlcke wrote:
-> Allow the 10nm PHY driver to get the ref clock from the DT.
+On Sat, Nov 03, 2018 at 03:22:34PM +0200, Andy Shevchenko wrote:
+> On Sat, Nov 3, 2018 at 1:17 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> >
+> > Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
+> > structures necessary to track EPC pages so that they can be allocated,
+> > freed and managed.  As a system may have multiple EPC sections, invoke
+> > CPUID on SGX sub-leafs until an invalid leaf is encountered.
+> >
+> > On NUMA systems, a node can have at most one bank. A bank can be at
+> > most part of two nodes.  SGX supports both nodes with a single memory
+> > controller and also sub-cluster nodes with severals memory controllers
+> > on a single die.
+> >
+> > For simplicity, support a maximum of eight EPC sections.  Current
+> > client hardware supports only a single section, while upcoming server
+> > hardware will support at most eight sections.  Bounding the number of
+> > sections also allows the section ID to be embedded along with a page's
+> > offset in a single unsigned long, enabling easy retrieval of both the
+> > VA and PA for a given page.
 > 
-
-Might be nice to state that there are no current users of the 10nm phy in your
-commit message.
-
-Sean
-
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  Documentation/devicetree/bindings/display/msm/dsi.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> > +       iounmap(section->va);
 > 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/Documentation/devicetree/bindings/display/msm/dsi.txt
-> index dfc743219bd88..d0d2046ceff69 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
-> +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
-> @@ -105,6 +105,10 @@ Required properties:
->  - power-domains: Should be <&mmcc MDSS_GDSC>.
->  - clocks: Phandles to device clocks. See [1] for details on clock bindings.
->  - clock-names: the following clocks are required:
-> +  For 10nm PHY:
-> +  * "iface"
-> +  * "ref"
-> +  For other PHYs:
->    * "iface"
->    For 28nm HPM/LP, 28nm 8960 PHYs:
->  - vddio-supply: phandle to vdd-io regulator device node
-> -- 
-> 2.19.1.930.g4563a0d9d0-goog
+> > +       section->va = ioremap_cache(addr, size);
+> > +       if (!section->va)
+> > +               return -ENOMEM;
 > 
+> I forgot if it's a place in code on which we discussed ioremap() vs.
+> memremap() call.
+> And I forgot why the conclusion is to leave ioremap().
+> 
+> Sorry, if I'm mistaken.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Thanks for pointing this out. It very well might I have either
+
+1. forgotten to do the switch.
+2. had some open about it that I forgot to ask.
+
+Anyway, I'll check this and at minimum document the reason to the
+change log if there is one to keep the ioremap().
+
+/Jarkko
