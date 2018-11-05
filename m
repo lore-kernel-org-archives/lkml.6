@@ -2,133 +2,131 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42342C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BCDC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11EC62085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:06:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11EC62085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1769620827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:06:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HkyidLzr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1769620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbeKFA00 (ORCPT
+        id S1730139AbeKFA0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:26:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58938 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729536AbeKFA00 (ORCPT
+        Mon, 5 Nov 2018 19:26:42 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36853 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729438AbeKFA0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:26:26 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5F69ag002377
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 10:06:17 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2njpy841ce-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 10:06:13 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zaslonko@linux.ibm.com>;
-        Mon, 5 Nov 2018 15:04:06 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 15:04:02 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5F41G37012834
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 15:04:01 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 951C1AE057;
-        Mon,  5 Nov 2018 15:04:01 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57EAEAE059;
-        Mon,  5 Nov 2018 15:04:01 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  5 Nov 2018 15:04:01 +0000 (GMT)
-From:   Mikhail Zaslonko <zaslonko@linux.ibm.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com, zaslonko@linux.ibm.com
-Subject: [PATCH v2 0/1] memory_hotplug: fix the panic when memory end is not
-Date:   Mon,  5 Nov 2018 16:04:00 +0100
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18110515-0012-0000-0000-000002C3A4A8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110515-0013-0000-0000-000020F7E3E2
-Message-Id: <20181105150401.97287-1-zaslonko@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050139
+        Mon, 5 Nov 2018 19:26:42 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a8-v6so8374819wmf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:06:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NUh0P/wi1Q78fChV9vZmUMm4I5+PQWgEGme3GofeAnY=;
+        b=HkyidLzrQhrb+liEgQr/0qkiK8/cu2lwVE66slYKe7qSUkUIvey/Fn2Qyu3c+N60g/
+         BsixySThrxygisuJIjeFL7t6ANQ6BkmvCqVA8rVmrPvkIHE+vrxklqMoO2julJNRkBe9
+         PdbqscpxUVaqzHjAZ1q8N8qWrttJO+g2e6w0E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NUh0P/wi1Q78fChV9vZmUMm4I5+PQWgEGme3GofeAnY=;
+        b=DBnq/6Y8Nx7Zs+zx1E4Ojrt1gZdZkGnYWT7QxsdnHv5sIZGK9w4/yNy/N/0NuGIc8X
+         tG+9SqZwuRALwz/VgzHnFPScTIVrP5PITN1AhP2pSRVF5WQzH/S3oZkeMBEao335TeKE
+         rYXCNZ7i8V1NupVBNOwCw4ZXAJ0aST4+Y5WlVdyFjx9OIa1Qn6hg64PF60uCRIf2+Qwl
+         dj78GzGVHpGk9FFtelNDik245TnFfi3Hv+Be60ygmeK9/jklLGW1Yi/AmIjRZWDNGLh5
+         c+NI5KBQDPJ3VgTHCvE601okPetNG9l5RVikgY68IquiaJJd3GJPJ+FO5wbGHSCbG//B
+         WA7Q==
+X-Gm-Message-State: AGRZ1gKNc0N6AE8ni8mwY47JNId9kbtTWjPTS1fmgfUrVzy4A11P7AXu
+        eYaALLI4fdisT6J0Ar+3IKv65Q==
+X-Google-Smtp-Source: AJdET5eOkPiVMbEEJUeeF0QzT6ZCYf+G+5MeI9M5bdbH5ynrWx822jAVzHwHdA8uoU5xdYNonCsGSw==
+X-Received: by 2002:a1c:a757:: with SMTP id q84-v6mr4951657wme.61.1541430392790;
+        Mon, 05 Nov 2018 07:06:32 -0800 (PST)
+Received: from [192.168.0.40] (119.151.136.77.rev.sfr.net. [77.136.151.119])
+        by smtp.googlemail.com with ESMTPSA id w18-v6sm10901096wrn.66.2018.11.05.07.06.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 07:06:31 -0800 (PST)
+Subject: Re: [PATCH 4/5] thermal: st: st_thermal: simplify getting
+ .driver_data
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org
+References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
+ <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <0c7d3c84-c073-087e-eafb-c93bb5d43ea7@linaro.org>
+Date:   Mon, 5 Nov 2018 16:06:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch refers to the older thread:
-https://marc.info/?t=153658306400001&r=1&w=2
+On 21/10/2018 22:00, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I have tried to take the approaches suggested in the discussion like
-simply ignoring unaligned memory to section memory much earlier or
-initializing struct pages beyond the "end" but both had issues.
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-First I tried to ignore unaligned memory early by adjusting memory_end
-value. But the thing is that kernel mem parameter parsing and memory_end
-calculation take place in the architecture code and adjusting it afterwards
-in common code might be too late in my view. Also with this approach we
-might lose the memory up to the entire section(256Mb on s390) just because
-of unfortunate alignment.
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/thermal/st/st_thermal.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
+> index be637e6b01d2..b2bbdf6eb02b 100644
+> --- a/drivers/thermal/st/st_thermal.c
+> +++ b/drivers/thermal/st/st_thermal.c
+> @@ -277,8 +277,7 @@ EXPORT_SYMBOL_GPL(st_thermal_unregister);
+>  #ifdef CONFIG_PM_SLEEP
+>  static int st_thermal_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
+> +	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+>  
+>  	return st_thermal_sensor_off(sensor);
+>  }
+> @@ -286,8 +285,7 @@ static int st_thermal_suspend(struct device *dev)
+>  static int st_thermal_resume(struct device *dev)
+>  {
+>  	int ret;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
+> +	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+>  
+>  	ret = st_thermal_sensor_on(sensor);
+>  	if (ret)
+> 
 
-Another approach was to fix memmap_init() and initialize struct pages
-beyond the end. Since struct pages are allocated section-wise we can try to
-round the size parameter passed to the memmap_init() function up to the
-section boundary thus forcing the mapping initialization for the entire
-section. But then it leads to another VM_BUG_ON panic due to
-zone_spans_pfn() sanity check triggered for the first page of each page
-block from set_pageblock_migratetype() function:
- page dumped because: VM_BUG_ON_PAGE(!zone_spans_pfn(page_zone(page), pfn))
-      Call Trace:
-      ([<00000000003013f8>] set_pfnblock_flags_mask+0xe8/0x140)
-       [<00000000003014aa>] set_pageblock_migratetype+0x5a/0x70
-       [<0000000000bef706>] memmap_init_zone+0x25e/0x2e0
-       [<00000000010fc3d8>] free_area_init_node+0x530/0x558
-       [<00000000010fcf02>] free_area_init_nodes+0x81a/0x8f0
-       [<00000000010e7fdc>] paging_init+0x124/0x130
-       [<00000000010e4dfa>] setup_arch+0xbf2/0xcc8
-       [<00000000010de9e6>] start_kernel+0x7e/0x588
-       [<000000000010007c>] startup_continue+0x7c/0x300
-      Last Breaking-Event-Address:
-       [<00000000003013f8>] set_pfnblock_flags_mask+0xe8/0x1401
-We might ignore this check for the struct pages beyond the "end" but I'm not
-sure about further implications.
-For now I suggest to stay with my original proposal fixing specific
-functions for memory hotplug sysfs handlers.
-
-Changes v1 -> v2:
-* Expanded commit message to show both failing scenarious.
-* Use 'pfn + i' instead of 'pfn' for zone_spans_pfn() check within
-test_pages_in_a_zone() function thus taking CONFIG_HOLES_IN_ZONE into
-consideration.
-
-Mikhail Zaslonko (1):
-  memory_hotplug: fix the panic when memory end is not on the section
-    boundary
-
- mm/memory_hotplug.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
 
 -- 
-2.16.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
