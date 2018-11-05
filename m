@@ -2,73 +2,124 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBECC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBDAECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830552086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:25:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1633B2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZKga0Si"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830552086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rykwNpJ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1633B2085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729895AbeKEXpG (ORCPT
+        id S1729998AbeKEXqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:45:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbeKEXpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:45:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E32E82085A;
-        Mon,  5 Nov 2018 14:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541427908;
-        bh=xnaCTcTd6MKr6tKXiqbLUdjiiC8sQ7sbf2w727DuFpQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MZKga0SinenTpMknKbfo3RffubS6AO6MliLVROiUnM/di4ybVNKK+FrCA/0ua7p0f
-         greSbyalWNAH40/lkngKWVN26k3sszeGNzJj4BxH5/OuzDoTzYmw2CiBS7l/llMpps
-         WFVHD/Cn8UcMwuHF2gNu1jKzJLyGxLopBDcqkX+o=
-Date:   Mon, 5 Nov 2018 15:25:06 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        natechancellor@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: fix some typo
-Message-ID: <20181105142506.GB4352@kroah.com>
-References: <20181102125332.24421-1-tiny.windzz@gmail.com>
+        Mon, 5 Nov 2018 18:46:13 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:38728 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeKEXqM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:46:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bDIKyuSp9LLH9BqGVqhJP/hbXdOmufd3UQW+85NbV+8=; b=rykwNpJ5nCzznn4Jucrx26gsq
+        +JH4MPOXMJ+pyWb4JU6Gj3AHUuigkLWXl9uB/Dn7tVxRF87Ptd16aKHV8RQW0nrfm1DqdeIboPOpJ
+        w2ytLOtAu3dVg33KI46V7z703S+T8XnZkGmRqV7gYgNLAL7GqHnE5WapNvgfRsWGdMSJ3gMnO0cyk
+        gZVOd/rhM4BbpGP6BT2UJhVvVWmX/HGnTnK8eZWbA8bXiFbqStjSfBDyJ0iWJjwae4/JjrmnjZYSd
+        F2LwaakSwVKD/wKt8d3+feCrExhqyR6midZcsGLi3jSKyovhcXMJjIGoqUavssAC/YMHmpKsUr2NC
+        QLv2vSwLQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJfoG-0006kE-Li; Mon, 05 Nov 2018 14:24:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3223A2029F9FF; Mon,  5 Nov 2018 15:24:53 +0100 (CET)
+Date:   Mon, 5 Nov 2018 15:24:53 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ralf@linux-mips.org" <ralf@linux-mips.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "paul.burton@mips.com" <paul.burton@mips.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "jhogan@kernel.org" <jhogan@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, dvyukov@google.com,
+        willy@infradead.org
+Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
+ where needed
+Message-ID: <20181105142453.GA22449@hirez.programming.kicks-ass.net>
+References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
+ <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
+ <20181031220253.GA15505@roeck-us.net>
+ <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
+ <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
+ <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
+ <20181101145926.GE3178@hirez.programming.kicks-ass.net>
+ <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
+ <20181101163212.GF3159@hirez.programming.kicks-ass.net>
+ <5a846924-e642-d9d1-4e0e-810bd4d01c26@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181102125332.24421-1-tiny.windzz@gmail.com>
+In-Reply-To: <5a846924-e642-d9d1-4e0e-810bd4d01c26@virtuozzo.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 08:53:32AM -0400, Yangtao Li wrote:
-> ture->true
+On Fri, Nov 02, 2018 at 07:19:15PM +0300, Andrey Ryabinin wrote:
+> UBSAN warns about signed overflows despite -fno-strict-overflow if gcc version is < 8.
+> I have learned recently that UBSAN in GCC 8 ignores signed overflows if -fno-strict-overflow of fwrapv is used.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
-> Change in v2:
-> -add changelog
-> ---
->  drivers/staging/rtl8712/rtl871x_cmd.h       | 2 +-
->  drivers/staging/rtl8723bs/include/rtw_cmd.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> $ cat signed_overflow.c 
+> #include <stdio.h>
+> 
+> __attribute__((noinline))
+> int foo(int a, int b)
+> {
+>         return a+b;
 
-One patch per driver please.
+ s/+/<</
 
-thanks,
+> }
+> 
+> int main(void)
+> {
+>         int a = 0x7fffffff;
+>         int b = 2;
+>         printf("%d\n", foo(a,b));
+>         return 0;
+> }
 
-greg k-h
+It also seem to affect 'shift':
+
+peterz@hirez:~/tmp$ gcc -fsanitize=signed-integer-overflow,shift overflow.c ; ./a.out
+overflow.c:6:11: runtime error: left shift of 2147483647 by 2 places cannot be represented in type 'int'
+-4
+peterz@hirez:~/tmp$ gcc -fsanitize=signed-integer-overflow,shift -fwrapv overflow.c ; ./a.out
+-4
