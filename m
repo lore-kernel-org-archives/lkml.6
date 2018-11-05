@@ -2,131 +2,134 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8432C32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12530C32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F45F2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:05:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F45F2081B
+	by mail.kernel.org (Postfix) with ESMTP id C8B3C2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 02:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B3C2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeKELWY (ORCPT
+        id S1727391AbeKELWq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 06:22:24 -0500
-Received: from mga09.intel.com ([134.134.136.24]:31647 "EHLO mga09.intel.com"
+        Mon, 5 Nov 2018 06:22:46 -0500
+Received: from mga01.intel.com ([192.55.52.88]:7587 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbeKELWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 06:22:23 -0500
+        id S1725966AbeKELWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 06:22:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 18:05:10 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 18:05:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,466,1534834800"; 
-   d="scan'208";a="271357213"
-Received: from unknown (HELO localhost.localdomain) ([10.10.37.145])
-  by orsmga005.jf.intel.com with ESMTP; 04 Nov 2018 18:05:09 -0800
-Message-ID: <1541384613.28670.5.camel@intel.com>
-Subject: Re: [PATCH] misc: mic: fix a DMA pool free failure
-From:   Sudeep Dutt <sudeep.dutt@intel.com>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Sudeep Dutt <sudeep.dutt@intel.com>, Kangjie Lu <kjlu@umn.edu>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Sun, 04 Nov 2018 18:23:33 -0800
-In-Reply-To: <1539891966-8017-1-git-send-email-wang6495@umn.edu>
-References: <1539891966-8017-1-git-send-email-wang6495@umn.edu>
+   d="scan'208";a="277077943"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga005.fm.intel.com with ESMTP; 04 Nov 2018 18:05:31 -0800
+Received: from fmsmsx116.amr.corp.intel.com (10.18.116.20) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 4 Nov 2018 18:05:31 -0800
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ fmsmsx116.amr.corp.intel.com (10.18.116.20) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 4 Nov 2018 18:05:31 -0800
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.102]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.117]) with mapi id 14.03.0415.000;
+ Mon, 5 Nov 2018 10:05:29 +0800
+From:   "Kang, Luwei" <luwei.kang@intel.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "mattst88@gmail.com" <mattst88@gmail.com>,
+        "Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "marcorr@google.com" <marcorr@google.com>,
+        "ubizjak@gmail.com" <ubizjak@gmail.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "luwei.k.kang@gmail.com" <luwei.k.kang@gmail.com>
+Subject: RE: [Resend PATCH v13 08/12] KVM: x86: Add Intel PT context switch
+ for each vcpu
+Thread-Topic: [Resend PATCH v13 08/12] KVM: x86: Add Intel PT context switch
+ for each vcpu
+Thread-Index: AdR0rAQHUo9emJqwT66yVxiBuC3ogg==
+Date:   Mon, 5 Nov 2018 02:05:28 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E172BDF8D0@SHSMSX101.ccr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWQ1YThmYWYtN2E4OS00NDRhLWEyMDMtZGRkY2EyMTM2NzY3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVGJESXJqOGlRWDBQQ1JCb3VHR0x2cG9tcURZN2laWTF4SEw5TlU5emhFdG1TTTgrbGRjWnVRYlUrNnZRRDZTRiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
 Content-Type: text/plain; charset="us-ascii"
-X-Mailer: Evolution 3.12.11 (3.12.11-15.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-18 at 14:46 -0500, Wenwen Wang wrote:
-> In _scif_prog_signal(), a DMA pool is allocated if the MIC Coprocessor is
-> not X100, i.e., the boolean variable 'x100' is false. This DMA pool will be
-> freed eventually through the callback function scif_prog_signal_cb() with
-> the parameter of 'status', which actually points to the start of DMA pool.
-> Specifically, in scif_prog_signal_cb(), the 'ep' field and the
-> 'src_dma_addr' field of 'status' are used to free the DMA pool by invoking
-> dma_pool_free(). Given that 'status' points to the start address of the DMA
-> pool, both 'status->ep' and 'status->src_dma_addr' are in the DMA pool. And
-> so, the device has the permission to access them. Even worse, a malicious
-> device can modify them. As a result, dma_pool_free() will not succeed.
+> >> If you "have to enable or disable anything" it means you have to
+> >> override the default.  But the default in this patches is "no change
+> >> compared to before the patches", leaving tracing of both host and
+> >> guest entirely to the host, so I don't understand your remark.  What
+> >> workflow is broken?
+> >>
+> >>> There already are controls in perf that enable/disable guest tracing.
+> >>
+> >> You are confusing "tracing guest from the host" and "the guest can
+> >> trace itself".  This patchset is adding support for the latter, and
+> >> that
 > 
-> To avoid the above issue, this patch introduces a new data structure, i.e.,
-> scif_cb_arg, to store the arguments required by the call back function. A
-> variable 'cb_arg' is allocated in _scif_prog_signal() to pass the
-> arguments. 'cb_arg' will be freed after dma_pool_free() in
-> scif_prog_signal_cb().
+> I'm not confusing anything. In the terminology that you're using, the latter breaks the former. This cannot happen.
 > 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  drivers/misc/mic/scif/scif_fence.c | 17 +++++++++++++----
->  drivers/misc/mic/scif/scif_rma.h   | 14 ++++++++++++++
->  2 files changed, 27 insertions(+), 4 deletions(-)
+> >> affects directly whether the tracing CPUID leaf can be added to the
+> >> guest.  Therefore it's not perf that can decide whether to turn it
+> >> on; KVM must know it when /dev/kvm is opened, which is why it is a
+> >> module parameter.
 > 
-> diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
-> index cac3bcc..30f7d9b 100644
-> --- a/drivers/misc/mic/scif/scif_fence.c
-> +++ b/drivers/misc/mic/scif/scif_fence.c
-> @@ -195,10 +195,11 @@ static inline void *scif_get_local_va(off_t off, struct scif_window *window)
->  
->  static void scif_prog_signal_cb(void *arg)
->  {
-> -	struct scif_status *status = arg;
-> +	struct scif_cb_arg *cb_arg = arg;
->  
-> -	dma_pool_free(status->ep->remote_dev->signal_pool, status,
-> -		      status->src_dma_addr);
-> +	dma_pool_free(cb_arg->ep->remote_dev->signal_pool, cb_arg->status,
-> +		      cb_arg->src_dma_addr);
-> +	kfree(cb_arg);
->  }
->  
->  static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
-> @@ -209,6 +210,7 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
->  	bool x100 = !is_dma_copy_aligned(chan->device, 1, 1, 1);
->  	struct dma_async_tx_descriptor *tx;
->  	struct scif_status *status = NULL;
-> +	struct scif_cb_arg *cb_arg = NULL;
->  	dma_addr_t src;
->  	dma_cookie_t cookie;
->  	int err;
-> @@ -257,8 +259,15 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
->  		goto dma_fail;
->  	}
->  	if (!x100) {
-> +		err = -ENOMEM;
+> There is a control in the perf event attribute that enables tracing the guest. If this control is enabled, the kvm needs to stay away from any
+> PT related MSRs. Conversely, if kvm is using PT (or, as you say, "the guest is tracing itself"), the host should not be allowed to ask for tracing
+> the guest at the same time.
 
-Should err be set to -ENOMEM only if the cb_arg allocation fails?
+I think what you mentioned "perf event attribute" is "struct perf_event_attr -> exclude_host/exclude_guest" parameter.
+Parameter "exclude_host" can use for vPMU in pmc_reprogram_counter() to make the counter disabled before VM-exit; Parameter "exclude_guest" can use for PMU in host to make the counter not include the value in Guest;
+For the implementation of vPMU, there have some counters on each logical CPU, and host and guest can using different counter at same time, Not make Guest "stay from" PMU. Is that right? I think this "perf event attribute" not fit for Intel PT.
 
-> +		cb_arg = kmalloc(sizeof(*cb_arg), GFP_KERNEL);
-> +		if (!cb_arg)
-> +			goto dma_fail;
-> +		cb_arg->src_dma_addr = src;
-> +		cb_arg->status = status;
-> +		cb_arg->ep = ep;
->  		tx->callback = scif_prog_signal_cb;
-> -		tx->callback_param = status;
-> +		tx->callback_param = cb_arg;
->  	}
+Intel PT is different, there just have one serials of MSRs in each logical CPU. So this hardware just can be used by host OR guest. In Host-Guest mode, PT feature will be exposed to guest and guest detect this feature certainly can use it like native any way. 
+"If this control is enabled, the kvm needs to stay away from any PT related MSRs."
+If we pay for a ICL virtual machine support Intel PT from Cloud Vendor but can't be used. Cloud vendor say that Host (or other virtual machine) is using this feature so you can't use it. Why? 
 
-cb_arg should be freed if there is a dma_submit_error(..) below in the
-dma_fail path.
+Currently, Intel SDM support three mode of tracing (System-Wide Tracing, Host-Only Tracing and Guest-Only Tracing). below is copy from SDM:
+System-Wide Tracing (35.5.2.1): When a host or VMM configures Intel PT to collect trace packets of the entire system, it can leave the relevant VMX controls clear to allow VMX-specific packets to provide information across VMX transitions. 
+Host-Only Tracing (35.5.2.2): Trace packets in VMX non-root operation are not desired, the VMM can use the VM-entry MSR-load area to load IA32_RTIT_CTL (clearing TraceEn) to disable trace-packet generation in guests, and use the VM-exit MSR-load area to load IA32_RTIT_CTL to set TraceEn.
+Guest-Only Tracing (35.5.2.3): A VMM can configure trace-packet generation while in VMX non-root operation for guests executing normally. 
 
-Wenwen, can you please fix these up and resend the patch?
+In Host mode we need to disable PT before VM-entry (no matter if PT is support/enabled or not in guest) and Load Guest PT status if PT is supported in Guest. The Host-Guest mode in this patch set just combined the Host-Only mode and Guest-Only mode to Host-Guest mode because there don't have conflict in these two mode.
+
+As for Host PT will be disable before VM-entry and Host can't aware this behavior. I think this is use case limitation of different working mode and please EXPECT this happened. PT MUST be disabled before VM-entry and switch to Guest PT status in Host-Guest mode (following the description in SDM). Or please use default System-Wide mode.
 
 Thanks,
-Sudeep Dutt
-
+Luwei Kang
