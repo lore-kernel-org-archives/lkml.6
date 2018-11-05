@@ -2,296 +2,296 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE3BC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAE5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D962085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:22:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D962085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id EBD382085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:22:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCDFwcWp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD382085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbeKFAmi (ORCPT
+        id S1729952AbeKFAmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:42:38 -0500
-Received: from shell.v3.sk ([90.176.6.54]:51371 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729430AbeKFAmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:42:38 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id F127BC5646;
-        Mon,  5 Nov 2018 16:22:22 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id sA5JRgZjwy-4; Mon,  5 Nov 2018 16:22:17 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 08B50C5643;
-        Mon,  5 Nov 2018 16:22:17 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id G2PKqRZcOARU; Mon,  5 Nov 2018 16:22:16 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 3D471C5642;
-        Mon,  5 Nov 2018 16:22:16 +0100 (CET)
-Message-ID: <6fda4cc30820b415aa37e0a6487dfe66e561ec43.camel@v3.sk>
-Subject: Re: [PATCH] [media] ov7670: make "xclk" clock optional
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Mon, 05 Nov 2018 16:22:15 +0100
-In-Reply-To: <20181105142252.GM20885@w540>
-References: <20181004212903.364064-1-lkundrak@v3.sk>
-         <20181105105841.GJ20885@w540>
-         <272b2d009e056f36bfb08206772eb40bcdff00b0.camel@v3.sk>
-         <20181105142252.GM20885@w540>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+        Mon, 5 Nov 2018 19:42:42 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46439 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbeKFAml (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:42:41 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x3-v6so8341691lji.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:22:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u0yyA1W2KMF2mBPnxO39hGAhOsYu28DbBMo8SZUUdTE=;
+        b=nCDFwcWp4w8mbq9XNvPu92p8rrVZcuzg0f2eS0boApTIlBaucJDPsESPaz4xIIxym4
+         RWtbaYmLX5uPygl5MNi4no6ReLt/AWlPTzbicxPrnW26ZMkbQj95wdgmnMAhbhmH8NCc
+         +jAcq4NccakjMAbDW9BkMWzfxsRGC74w2mtIFoa2bHAZheNTnekhhJdWfBl1NFD3Iojr
+         JRAPtus0tE4djMadSo+bx4xgn0A05YA/tlSMcYSUmkjVpS58QATE4AyL9gIWxwPleDWg
+         VYjK7ACYr1ry9iIF1xPMRKK70CF3MUDQt2rHlXqFUNWHgEAbMdhhQFlMlFLtCbEQurxW
+         BhTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u0yyA1W2KMF2mBPnxO39hGAhOsYu28DbBMo8SZUUdTE=;
+        b=YPlA/0uY8rRHuehrZIZ/xiRCoYzoWhQLZkfuQLUwHuO87UgMsTXn/ztQEIG43Q4pVE
+         h7wLFHjC6V2jz01JAs/LTFZLyOB5UaCuHR3javcY+N3bX8YgGMC/vEa1yJAM+FuP4Bhs
+         wt1nuedqJaXcmntHnW2mhAvZHoznbZ9YnYcsG4ZAuvSL/4bZqoM4ge0ddKU6qPivqyYj
+         +rEObvH+SLmbi2L8Bl/GNTBJCfIqNKVbDyCpIBPlWq6gz0x+yrzVzuyXabqDa3nHyUxp
+         DUKtEiyUrAfZda+yFt92oJfbRJz3Tx+QORqaY+mgoKFG7LAksF6DUvmtj/Yvk1qV8Y7f
+         8f8w==
+X-Gm-Message-State: AGRZ1gJmORdWCrUZ7H3OArpGmkPs3mLfSE4iK6AVY8CBYqYDuTCbRJ8k
+        Psef4UgCmqnc6xCRUyNgcr0=
+X-Google-Smtp-Source: AJdET5ee+/ikYEu6osnmvSMwnHbI22WNzeY33dGO5lDnT+FtZTj8X8XIVmblctz07NtwVMZj1OWv0Q==
+X-Received: by 2002:a2e:9c08:: with SMTP id s8-v6mr12333005lji.149.1541431347221;
+        Mon, 05 Nov 2018 07:22:27 -0800 (PST)
+Received: from seldlx21914.corpusers.net ([37.139.156.40])
+        by smtp.gmail.com with ESMTPSA id f15-v6sm2805919lfc.9.2018.11.05.07.22.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 07:22:26 -0800 (PST)
+Date:   Mon, 5 Nov 2018 16:22:25 +0100
+From:   Vitaly Wool <vitalywool@gmail.com>
+To:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleksiy.Avramchenko@sony.com, Guenter Roeck <linux@roeck-us.net>,
+        snild@sony.com
+Subject: [PATCH] z3fold: fix possible reclaim races
+Message-Id: <20181105162225.74e8837d03583a9b707cf559@gmail.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-05 at 15:22 +0100, jacopo mondi wrote:
-> Hi Lubo,
-> 
-> On Mon, Nov 05, 2018 at 02:12:18PM +0100, Lubomir Rintel wrote:
-> > Hello,
-> > 
-> > On Mon, 2018-11-05 at 11:58 +0100, jacopo mondi wrote:
-> > > Hi Lubomir,
-> > >    +Sakari in Cc
-> > > 
-> > > I just noticed this, and the patch is now in v4.20, but let me comment
-> > > anyway on this.
-> > > 
-> > > On Thu, Oct 04, 2018 at 11:29:03PM +0200, Lubomir Rintel wrote:
-> > > > When the "xclk" clock was added, it was made mandatory. This broke the
-> > > > driver on an OLPC plaform which doesn't know such clock. Make it
-> > > > optional.
-> > > > 
-> > > 
-> > > I don't think this is correct. The sensor needs a clock to work.
-> > > 
-> > > With this patch clock_speed which is used to calculate
-> > > the framerate is defaulted to 30MHz, crippling all the calculations if
-> > > that default value doesn't match what is actually installed on the
-> > > board.
-> > 
-> > How come? I kept this:
-> > 
-> > +             info->clock_speed = clk_get_rate(info->clk) / 1000000;
-> 
-> Yes, but only if
-> if (info->clk) { }
-> 
-> if (!info->clk) the 'clock_speed' variable is defaulted to 30 at the
-> beginning of the probe routine. Am I missing something obvious here?
+Reclaim and free can race on an object which is basically fine but
+in order for reclaim to be able to  map "freed" object we need to
+encode object length in the handle. handle_to_chunks() is then
+introduced to extract object length from a handle and use it during
+mapping.
 
-Maybe. Or I am.
+Moreover, to avoid racing on a z3fold "headless" page release, we
+should not try to free that page in z3fold_free() if the reclaim
+bit is set. Also, in the unlikely case of trying to reclaim a page
+being freed, we should not proceed with that page.
 
-I thought you care about the situation where you *have* the clk, and
-thus you shouldn't be caring about the defaults?
+While at it, fix the page accounting in reclaim function.
 
-> > > If this patch breaks the OLPC, then might it be the DTS for said
-> > > device needs to be fixed instead of working around the issue here?
-> > 
-> > No. Device tree is an ABI, and you can't just add mandatory properties.
-> > 
-> 
-> Well, as I read the ov7670 bindings documentation:
-> 
-> Required Properties:
-> - compatible: should be "ovti,ov7670"
-> - clocks: reference to the xclk input clock.
-> - clock-names: should be "xclk".
-> 
-> It was mandatory already since the bindings have been first created:
-> bba582894a ("[media] ov7670: document device tree bindings")
-> 
-> And yes, bindings establishes an ABI we have not to break or make
-> incompatible with DTs created for an older version of the same binding,
-> but the DTs itself is free to change and we need to do so to update
-> it when required (to fix bugs, add new components, enable/disable them
-> etc).
+This patch supersedes "[PATCH] z3fold: fix reclaim lock-ups".
 
-Ah, right, you're correct. No DTS ABI breakage there. I guess it would
-be fine to revert my patch if we provide the xclk on the OLPC instead.
+Signed-off-by: Vitaly Wool <vitaly.vul@sony.com>
+Reviewed-by: Snild Dolkow <snild@sony.com>
 
-> > There's no DTS for OLPC XO-1 either; it's an OpenFirmware machine.
-> > 
-> 
-> I thought OLPC was an ARM machine, that's why I mentioned DTS. Sorry
-> about this.
+---
+ mm/z3fold.c | 101 ++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 62 insertions(+), 39 deletions(-)
 
-Well, you're sort of right here. The XO-1.75 generation is ARM, the XO-
-1 is x86. They both use devicetree provided by the firmware. However,
-they predate FDT (or the definitions of bindings that are used here for
-tht matter) and the trees are unfortunately quite incomplete. The
-sensor is not there.
-
-> A quick read of the wikipedia page for "OpenFirmware" gives me back
-> that it a standardized firmware interface:
-> "Open Firmware allows the system to load platform-independent drivers
-> directly from the PCI card, improving compatibility".
-> 
-> I know nothing on this, and that's not the point, so I'll better stop
-> here and refrain to express how much the "loading platform-independent
-> (BINARY) drivers from the PCI card" scares me :p
-> 
-> > You'd need to update all machines in the wild which is not realistic.
-> 
-> Machines which have received a kernel update which includes the patch
-> that makes the clock for the sensor driver mandatory [1], will have their
-> board files updated by the same kernel update, with the proper clock
-> provider instantiated for that sensor.
-> 
-> That's what I would expect from a kernel update for those devices (or
-> any device in general..)
-> 
-> If this didn't happen, blame OLPC kernel maintainers :p
-> 
-> [1] 0a024d634cee ("[media] ov7670: get xclk"); which went in v4.12
-> 
-> > Alternatively, something else than DT could provide the clock. If this
-> > gets in, then the OLPC would work even without the xclk patch:
-> > https://lore.kernel.org/lkml/20181105073054.24407-12-lkundrak@v3.sk/
-> 
-> That's what I meant, more or less.
-> 
-> If you don't have a DTS you have a board file, isn't it?
-> ( arch/x86/platform/olpc/ maybe? )
-
-The device tree on XO-1 is not constructed from a FDT, it's gotten from
-the OpenFirmware. See arch/x86/platform/olpc/olpc_dt.c
-
-But as I said -- it's hopelessly incomplete and is not going to be of
-much help here. If you're curious, I've recently uploaded /proc/device-
-tree dumps here, since someone else asked:
-
-https://people.freedesktop.org/~lkundrak/olpc/
-
-> The patch you linked here makes the video interface (the marvel-ccic
-> one) provide the clock source for the sensor:
-> 
-> +	clkdev_create(mcam->mclk, "xclk", "%d-%04x",
-> +		i2c_adapter_id(cam->i2c_adapter), ov7670_info.addr);
-> +
-> 
-> While I would expect the board file to do that, as that's where all
-> pieces gets put together, and it knows which clock source has to be
-> fed to the sensor depending on your hardware design. As I don't know
-> much of x86 or openfirmare, feel free to explain me why it is not
-> possible ;)
-
-Well, maybe. I don't think so. The clock is provided by the Cafe chip
-(the bridge chip, also has i2c controller for the sensor control) that
-sits on a PCI, which is discoverable. In theory there could be more of
-them.
-
-The driver is oddly structured for historic reasons. I'm mainly
-interested in not breaking it more than it is. A good devicetree would
-help, but we don't have the luxury.
-
-> Anyway, my whole point is that the sensor needs a clock to work. With
-> your patch if it is not provided it gets defaulted (if I'm not
-> mis-reading the code) to a value that would break frame interval
-> calculations. This is what concerns me and I would prefer the driver
-> to fail probing quite nosily to make sure all its users (dts, board
-> files etc) gets updated.
-
-I still don't get this. It defaults to 30 Hz* as it used to before the
-patch that introduced mandatory xclk, which seems perfectly reasonable.
-Which configurations break?
-
-* you said MHz before, I suppose that was a mistake?
-
-> > (I just got a kbuild failure message, so I'll surely be following up
-> > with a v2.)
-> > 
-> > > Also, the DT bindings should be updated too if we decide this property
-> > > can be omitted. At this point, with a follow-up patch.
-> > 
-> > Yes.
-> > 
-> This would actually be an ABI change (one that would not break
-> retro-compatibility probably, but still...)
-
-That, I think, is an okay thing to do.
-
-
-Thanks
-Lubo
-
-> 
-> Thanks
->    j
-> 
-> > > Thanks
-> > 
-> > Cheers
-> > Lubo
-> > 
-> > >    j
-> > > 
-> > > > Tested on a OLPC XO-1 laptop.
-> > > > 
-> > > > Cc: stable@vger.kernel.org # 4.11+
-> > > > Fixes: 0a024d634cee ("[media] ov7670: get xclk")
-> > > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > > > ---
-> > > >  drivers/media/i2c/ov7670.c | 27 +++++++++++++++++----------
-> > > >  1 file changed, 17 insertions(+), 10 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > > > index 31bf577b0bd3..64d1402882c8 100644
-> > > > --- a/drivers/media/i2c/ov7670.c
-> > > > +++ b/drivers/media/i2c/ov7670.c
-> > > > @@ -1808,17 +1808,24 @@ static int ov7670_probe(struct i2c_client *client,
-> > > >  			info->pclk_hb_disable = true;
-> > > >  	}
-> > > > 
-> > > > -	info->clk = devm_clk_get(&client->dev, "xclk");
-> > > > -	if (IS_ERR(info->clk))
-> > > > -		return PTR_ERR(info->clk);
-> > > > -	ret = clk_prepare_enable(info->clk);
-> > > > -	if (ret)
-> > > > -		return ret;
-> > > > +	info->clk = devm_clk_get(&client->dev, "xclk"); /* optional */
-> > > > +	if (IS_ERR(info->clk)) {
-> > > > +		ret = PTR_ERR(info->clk);
-> > > > +		if (ret == -ENOENT)
-> > > > +			info->clk = NULL;
-> > > > +		else
-> > > > +			return ret;
-> > > > +	}
-> > > > +	if (info->clk) {
-> > > > +		ret = clk_prepare_enable(info->clk);
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > 
-> > > > -	info->clock_speed = clk_get_rate(info->clk) / 1000000;
-> > > > -	if (info->clock_speed < 10 || info->clock_speed > 48) {
-> > > > -		ret = -EINVAL;
-> > > > -		goto clk_disable;
-> > > > +		info->clock_speed = clk_get_rate(info->clk) / 1000000;
-> > > > +		if (info->clock_speed < 10 || info->clock_speed > 48) {
-> > > > +			ret = -EINVAL;
-> > > > +			goto clk_disable;
-> > > > +		}
-> > > >  	}
-> > > > 
-> > > >  	ret = ov7670_init_gpio(client, info);
-> > > > --
-> > > > 2.19.0
-> > > > 
-
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index ff73ef8124bf..5999727ee17c 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -99,6 +99,7 @@ struct z3fold_header {
+ #define NCHUNKS		((PAGE_SIZE - ZHDR_SIZE_ALIGNED) >> CHUNK_SHIFT)
+ 
+ #define BUDDY_MASK	(0x3)
++#define BUDDY_SHIFT	2
+ 
+ /**
+  * struct z3fold_pool - stores metadata for each z3fold pool
+@@ -145,7 +146,7 @@ enum z3fold_page_flags {
+ 	MIDDLE_CHUNK_MAPPED,
+ 	NEEDS_COMPACTING,
+ 	PAGE_STALE,
+-	UNDER_RECLAIM
++	PAGE_CLAIMED, /* by either reclaim or free */
+ };
+ 
+ /*****************
+@@ -174,7 +175,7 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
+ 	clear_bit(MIDDLE_CHUNK_MAPPED, &page->private);
+ 	clear_bit(NEEDS_COMPACTING, &page->private);
+ 	clear_bit(PAGE_STALE, &page->private);
+-	clear_bit(UNDER_RECLAIM, &page->private);
++	clear_bit(PAGE_CLAIMED, &page->private);
+ 
+ 	spin_lock_init(&zhdr->page_lock);
+ 	kref_init(&zhdr->refcount);
+@@ -223,8 +224,11 @@ static unsigned long encode_handle(struct z3fold_header *zhdr, enum buddy bud)
+ 	unsigned long handle;
+ 
+ 	handle = (unsigned long)zhdr;
+-	if (bud != HEADLESS)
+-		handle += (bud + zhdr->first_num) & BUDDY_MASK;
++	if (bud != HEADLESS) {
++		handle |= (bud + zhdr->first_num) & BUDDY_MASK;
++		if (bud == LAST)
++			handle |= (zhdr->last_chunks << BUDDY_SHIFT);
++	}
+ 	return handle;
+ }
+ 
+@@ -234,6 +238,12 @@ static struct z3fold_header *handle_to_z3fold_header(unsigned long handle)
+ 	return (struct z3fold_header *)(handle & PAGE_MASK);
+ }
+ 
++/* only for LAST bud, returns zero otherwise */
++static unsigned short handle_to_chunks(unsigned long handle)
++{
++	return (handle & ~PAGE_MASK) >> BUDDY_SHIFT;
++}
++
+ /*
+  * (handle & BUDDY_MASK) < zhdr->first_num is possible in encode_handle
+  *  but that doesn't matter. because the masking will result in the
+@@ -720,37 +730,39 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 	page = virt_to_page(zhdr);
+ 
+ 	if (test_bit(PAGE_HEADLESS, &page->private)) {
+-		/* HEADLESS page stored */
+-		bud = HEADLESS;
+-	} else {
+-		z3fold_page_lock(zhdr);
+-		bud = handle_to_buddy(handle);
+-
+-		switch (bud) {
+-		case FIRST:
+-			zhdr->first_chunks = 0;
+-			break;
+-		case MIDDLE:
+-			zhdr->middle_chunks = 0;
+-			zhdr->start_middle = 0;
+-			break;
+-		case LAST:
+-			zhdr->last_chunks = 0;
+-			break;
+-		default:
+-			pr_err("%s: unknown bud %d\n", __func__, bud);
+-			WARN_ON(1);
+-			z3fold_page_unlock(zhdr);
+-			return;
++		/* if a headless page is under reclaim, just leave.
++		 * NB: we use test_and_set_bit for a reason: if the bit
++		 * has not been set before, we release this page
++		 * immediately so we don't care about its value any more.
++		 */
++		if (!test_and_set_bit(PAGE_CLAIMED, &page->private)) {
++			spin_lock(&pool->lock);
++			list_del(&page->lru);
++			spin_unlock(&pool->lock);
++			free_z3fold_page(page);
++			atomic64_dec(&pool->pages_nr);
+ 		}
++		return;
+ 	}
+ 
+-	if (bud == HEADLESS) {
+-		spin_lock(&pool->lock);
+-		list_del(&page->lru);
+-		spin_unlock(&pool->lock);
+-		free_z3fold_page(page);
+-		atomic64_dec(&pool->pages_nr);
++	/* Non-headless case */
++	z3fold_page_lock(zhdr);
++	bud = handle_to_buddy(handle);
++
++	switch (bud) {
++	case FIRST:
++		zhdr->first_chunks = 0;
++		break;
++	case MIDDLE:
++		zhdr->middle_chunks = 0;
++		break;
++	case LAST:
++		zhdr->last_chunks = 0;
++		break;
++	default:
++		pr_err("%s: unknown bud %d\n", __func__, bud);
++		WARN_ON(1);
++		z3fold_page_unlock(zhdr);
+ 		return;
+ 	}
+ 
+@@ -758,7 +770,7 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 		atomic64_dec(&pool->pages_nr);
+ 		return;
+ 	}
+-	if (test_bit(UNDER_RECLAIM, &page->private)) {
++	if (test_bit(PAGE_CLAIMED, &page->private)) {
+ 		z3fold_page_unlock(zhdr);
+ 		return;
+ 	}
+@@ -836,20 +848,30 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 		}
+ 		list_for_each_prev(pos, &pool->lru) {
+ 			page = list_entry(pos, struct page, lru);
++
++			/* this bit could have been set by free, in which case
++			 * we pass over to the next page in the pool.
++			 */
++			if (test_and_set_bit(PAGE_CLAIMED, &page->private))
++				continue;
++
++			zhdr = page_address(page);
+ 			if (test_bit(PAGE_HEADLESS, &page->private))
+-				/* candidate found */
+ 				break;
+ 
+-			zhdr = page_address(page);
+-			if (!z3fold_page_trylock(zhdr))
++			if (!z3fold_page_trylock(zhdr)) {
++				zhdr = NULL;
+ 				continue; /* can't evict at this point */
++			}
+ 			kref_get(&zhdr->refcount);
+ 			list_del_init(&zhdr->buddy);
+ 			zhdr->cpu = -1;
+-			set_bit(UNDER_RECLAIM, &page->private);
+ 			break;
+ 		}
+ 
++		if (!zhdr)
++			break;
++
+ 		list_del_init(&page->lru);
+ 		spin_unlock(&pool->lock);
+ 
+@@ -898,6 +920,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 		if (test_bit(PAGE_HEADLESS, &page->private)) {
+ 			if (ret == 0) {
+ 				free_z3fold_page(page);
++				atomic64_dec(&pool->pages_nr);
+ 				return 0;
+ 			}
+ 			spin_lock(&pool->lock);
+@@ -905,7 +928,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 			spin_unlock(&pool->lock);
+ 		} else {
+ 			z3fold_page_lock(zhdr);
+-			clear_bit(UNDER_RECLAIM, &page->private);
++			clear_bit(PAGE_CLAIMED, &page->private);
+ 			if (kref_put(&zhdr->refcount,
+ 					release_z3fold_page_locked)) {
+ 				atomic64_dec(&pool->pages_nr);
+@@ -964,7 +987,7 @@ static void *z3fold_map(struct z3fold_pool *pool, unsigned long handle)
+ 		set_bit(MIDDLE_CHUNK_MAPPED, &page->private);
+ 		break;
+ 	case LAST:
+-		addr += PAGE_SIZE - (zhdr->last_chunks << CHUNK_SHIFT);
++		addr += PAGE_SIZE - (handle_to_chunks(handle) << CHUNK_SHIFT);
+ 		break;
+ 	default:
+ 		pr_err("unknown buddy id %d\n", buddy);
+-- 
+2.17.1
