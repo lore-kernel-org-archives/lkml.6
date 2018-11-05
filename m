@@ -2,149 +2,150 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D6AECDE46
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AA1ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B51A20866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:34:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B51A20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CC2920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:35:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="IrehAtPt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC2920862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeKERxI (ORCPT
+        id S1727443AbeKERxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 12:53:08 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55815 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeKERxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 12:53:08 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0AFA6207B0; Mon,  5 Nov 2018 09:34:34 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C801C206A1;
-        Mon,  5 Nov 2018 09:34:05 +0100 (CET)
-Date:   Mon, 5 Nov 2018 09:34:05 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
- VCC-DSI voltage regulator
-Message-ID: <20181105083405.zhhnulfsyyvlzusf@flea>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-17-jagan@amarulasolutions.com>
- <20181029093142.hgn4q6o7q32voutf@flea>
- <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
+        Mon, 5 Nov 2018 12:53:35 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:29632 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeKERxf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 12:53:35 -0500
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wA58YvDu009317;
+        Mon, 5 Nov 2018 17:34:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wA58YvDu009317
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541406898;
+        bh=ky9IcwVbd4pvge/sURUwm2hea57/L+O9ucQjmbRGS5c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IrehAtPtEuy8PV7gtV/jomcpy74hx1W/3N1RNnABjWRvhnhqOFX+I1fKI2CSvNGvZ
+         41fwWtfxesf4Ysa0saLs6kL9Ap1PtCCHAY4EkLJZkwXsV6pS1YcndMmzPJZSx6i/ZJ
+         84LIXVSmEydfKVOdusu85t/84JjFP7WRBhFubAhutRx+5tVtUFwWTqCoicaA7ThFZb
+         mHXphfN+tlu99NfV5FXa9llf2MdaM4i4GUv1buVolAHsAfb+C4IWdPpVDFaLuuBqg1
+         fPWOOkmn1A4+3m//vX86gIjg2vmCADUkQuBm5V4oXd3o0Cz++TkjtOb1f9LfpttuWm
+         4f+hg5Prj6JyA==
+X-Nifty-SrcIP: [209.85.221.174]
+Received: by mail-vk1-f174.google.com with SMTP id y14so1526643vky.9;
+        Mon, 05 Nov 2018 00:34:58 -0800 (PST)
+X-Gm-Message-State: AGRZ1gL14Vp+C8HUI6vGUoN3Q/KX52q8vT3vj+W/luFp9CvKL9f82eu+
+        LCbgv/wCVxVqW5LAnSzz7oYMyBIvBz1SOzBg3Vw=
+X-Google-Smtp-Source: AJdET5fxw6ATCsM5lgFOyIvfWrOPaco+q3rZzriFjgZj9EFqX1w52yVOSW2hQq2fftML/CLi9caZqZsmyOgMORwtlJI=
+X-Received: by 2002:a1f:6bc8:: with SMTP id k69mr468257vki.84.1541406897136;
+ Mon, 05 Nov 2018 00:34:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2qv36qiifiyzutuf"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20181102114119.23859-1-anders.roxell@linaro.org>
+In-Reply-To: <20181102114119.23859-1-anders.roxell@linaro.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 5 Nov 2018 17:34:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARda14b9_8Yh7vC2PFa_w=yw+qD0YTriAVQ_Aw5PoXkNw@mail.gmail.com>
+Message-ID: <CAK7LNARda14b9_8Yh7vC2PFa_w=yw+qD0YTriAVQ_Aw5PoXkNw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/kconfig/merge_config: don't redefine 'y' to 'm'
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dvhart@infradead.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Anders,
 
---2qv36qiifiyzutuf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Nov 2, 2018 at 8:41 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> In today's merge_config.sh the order of the config fragment files dictates
+> the output of a config option. With this approach we will get different
+> .config files depending on the order of the config fragment files.
+> Adding a switch to add precedence for builtin over modules, this will
+> make the .config file the same
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
 
-On Mon, Oct 29, 2018 at 08:18:05PM +0530, Jagan Teki wrote:
-> On Mon, Oct 29, 2018 at 3:01 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> >
-> > On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
-> > > Some boards have VCC-DSI pin connected to voltage regulator which may
-> > > not be turned on by default.
-> > >
-> > > Add support for such boards by adding voltage regulator handling code=
- to
-> > > MIPI DSI driver.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > > Changes for v3:
-> > > - new patch
-> > > Changes for v2:
-> > > - none
-> > >
-> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
-> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
-> > >  2 files changed, 17 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm=
-/sun4i/sun6i_mipi_dsi.c
-> > > index 42bd7506abaf..bc57343592e0 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, st=
-ruct device *master,
-> > >
-> > >       dsi->drv =3D drv;
-> > >
-> > > +     ret =3D regulator_enable(dsi->regulator);
-> > > +     if (ret) {
-> > > +             dev_err(dev, "Failed to enable regulator\n");
-> > > +             return ret;
-> > > +     }
-> > > +
-> >
-> > The regulator should be enabled only when the device is in use.
->=20
-> True, but there is no device specific quirk needed because who ever
-> not needed simply use dummy regulator
-> [    0.245821] sun6i-mipi-dsi 1ca0000.dsi: 1ca0000.dsi supply vcc-dsi
-> not found, using dummy regulato
-> r
->=20
-> even like HVCC in hdmi driver [1]
->=20
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
-ommit/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c?id=3D633ba1e086e1abbeef1ffd8999=
-11de8cf3987d9f
+I think this patch makes sense.
 
-That's not my point. You should enable the regulator only when the DSI
-bridge is being enabled, not when the driver has probed.
+Just in case, could you please provide me the context of the discussion?
 
-Maxime
+Does the real problem exist in the kernel tree,
+or for local fragment files?
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
---2qv36qiifiyzutuf
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AAfQAKCRDj7w1vZxhR
-xd1oAP0Urbi1rvfK+je57t0m58ZwVyBuK41Gmb4baeB/Wd/hzwEAxxeWPqC2+ZXe
-bXolpYlKicdGlbse9KJDHPX2oAHKpgE=
-=eprQ
------END PGP SIGNATURE-----
 
---2qv36qiifiyzutuf--
+>  scripts/kconfig/merge_config.sh | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+> index da66e7742282..902a60b45614 100755
+> --- a/scripts/kconfig/merge_config.sh
+> +++ b/scripts/kconfig/merge_config.sh
+> @@ -32,6 +32,7 @@ usage() {
+>         echo "  -m    only merge the fragments, do not execute the make command"
+>         echo "  -n    use allnoconfig instead of alldefconfig"
+>         echo "  -r    list redundant entries when merging fragments"
+> +       echo "  -y    make builtin have precedence over modules"
+>         echo "  -O    dir to put generated output files.  Consider setting \$KCONFIG_CONFIG instead."
+>         echo
+>         echo "Used prefix: '$CONFIG_PREFIX'. You can redefine it with \$CONFIG_ environment variable."
+> @@ -40,6 +41,7 @@ usage() {
+>  RUNMAKE=true
+>  ALLTARGET=alldefconfig
+>  WARNREDUN=false
+> +BUILTIN=false
+>  OUTPUT=.
+>  CONFIG_PREFIX=${CONFIG_-CONFIG_}
+>
+> @@ -64,6 +66,11 @@ while true; do
+>                 shift
+>                 continue
+>                 ;;
+> +       "-y")
+> +               BUILTIN=true
+> +               shift
+> +               continue
+> +               ;;
+>         "-O")
+>                 if [ -d $2 ];then
+>                         OUTPUT=$(echo $2 | sed 's/\/*$//')
+> @@ -122,7 +129,13 @@ for MERGE_FILE in $MERGE_LIST ; do
+>                 grep -q -w $CFG $TMP_FILE || continue
+>                 PREV_VAL=$(grep -w $CFG $TMP_FILE)
+>                 NEW_VAL=$(grep -w $CFG $MERGE_FILE)
+> -               if [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
+> +               if test "$BUILTIN" = "true" && echo $PREV_VAL |grep -Eq '^\w+=y' && echo $NEW_VAL |grep -Eq '^\w+=m' ; then
+> +                       echo Value of $CFG is \'y\' and we don\'t want to redefine the fragment $MERGE_FILE:
+> +                       echo Previous  value: $PREV_VAL
+> +                       echo New value:       $NEW_VAL
+> +                       echo Will use previous value.
+> +                       echo
+> +               elif [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
+>                         echo Value of $CFG is redefined by fragment $MERGE_FILE:
+>                         echo Previous  value: $PREV_VAL
+>                         echo New value:       $NEW_VAL
+> --
+> 2.11.0
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
