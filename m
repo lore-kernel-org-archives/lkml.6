@@ -2,130 +2,146 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CCCC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C022BC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4965B20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4965B20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D7D420827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:22:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="fSFPy3SG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7D420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387620AbeKFClb (ORCPT
+        id S1730041AbeKFCnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:41:31 -0500
-Received: from mga11.intel.com ([192.55.52.93]:19164 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387420AbeKFClb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:41:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:20:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="105581251"
-Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
-  by orsmga001.jf.intel.com with ESMTP; 05 Nov 2018 09:20:19 -0800
-Subject: Re: [RFC PATCH] x86/mm/fault: Allow stack access below %rsp
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Mon, 5 Nov 2018 21:43:17 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46135 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729748AbeKFCnR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:43:17 -0500
+Received: by mail-pg1-f195.google.com with SMTP id w7so4503487pgp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=k1INU1pnFYgrBmHlY0ecbAtkdCLQ8Gp82wEYXROI4I0=;
+        b=fSFPy3SG2q503zzs20lVIJnDKUbz1uSNNufMhYSULBvfrvtilyQ4ug5bZN0/b/7pSy
+         EE9trnBOYDFhQMX0G5al41Zjga9qoF3eMm6B22JmVoqULcGGsBIUx5ZRRfzwxY3B8j1a
+         cYh9kwrFkqi3//I0J9QLKGPfIrs3jcRTMt4G7Ov0xUdmNoaeHy7jHL1ZwYYO92qukkp1
+         DEIflX9WO5Jt0ENB6nGrlxaNxwRorGseEcwrvF1UwjWdd7MXwBUMwVqH51is9Xjtc/Ah
+         EFDafAzBJw3pGNxWTc8hgLEHS/0Bv7Y/+p49PrttcOrWbsrtgb2WYSpgMKTLtv8HGzoM
+         Sz4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=k1INU1pnFYgrBmHlY0ecbAtkdCLQ8Gp82wEYXROI4I0=;
+        b=PvkwXy4XKsojR0QLFY9aI8i0umOGXs2WGfIIuX+ydSzf/2397JxO2z3l45hRyVRnsQ
+         JkWmMfT8qZQO/yfpWGNL4KCtiT2/G1dYpYi9DDslMPHMY+DTfD3ccs2cBzRKQGeX9auR
+         XsJnQ5Vixe6mtk8XkdT9iX7v3QeRdWFHoU0q/pLOEJ0vLy8zC+j3QIO7Y7RG4xAz7i7q
+         l38FUHSXrE0UIaTBgYaYRca2Pmm/ivsbCywEio1zTKN/TJPWZFr8m5XBNRaBjYX5uFUT
+         QufgIFUs1twOBgMiJsqHM8Lo6FLE4Q8TGWf5ILfxCWj/X9NxPqe57VXe1Gu/fuMB8RGR
+         zDOw==
+X-Gm-Message-State: AGRZ1gKmisM0DZEcvcNjb4w/aP7MF6YinI26An7X+4xuo++nvUeFGeXq
+        +ec+F/apdKIlRrIhRjkr8Dt/KQ==
+X-Google-Smtp-Source: AJdET5eV+DaMek8LOaOpN81Ye3ww0WNxYV40yN2JFbRjVVbeAL3b2T7q0Fg6F9Uf5XGDyh6oGbWOSQ==
+X-Received: by 2002:a63:f515:: with SMTP id w21mr1838276pgh.220.1541438555760;
+        Mon, 05 Nov 2018 09:22:35 -0800 (PST)
+Received: from ?IPv6:2600:1010:b022:50cc:40e8:641b:7bb4:fb59? ([2600:1010:b022:50cc:40e8:641b:7bb4:fb59])
+        by smtp.gmail.com with ESMTPSA id m17-v6sm12715744pfi.102.2018.11.05.09.22.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 09:22:34 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during early_init
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <20181105140925.GD22467@hirez.programming.kicks-ass.net>
+Date:   Mon, 5 Nov 2018 09:22:32 -0800
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1541187610-5322-1-git-send-email-longman@redhat.com>
- <a3584dd1-c030-cebe-3f3d-eadc0744580a@intel.com>
- <fb715262-df9e-3e77-6964-80ec4a1c7a24@redhat.com>
- <47b1c477-46a7-6b04-7537-378e2910611b@intel.com>
- <CALCETrV0RYZPbZ0vyRehvS=L-yZwLQ06=eov+=GkzFm0GoQQpQ@mail.gmail.com>
- <CALCETrXfvWiGNjyusMeOt-xo61zpmFzahnkwUwMnWjnv_gsNnA@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <08752b15-8771-266f-0155-3b721203e721@intel.com>
-Date:   Mon, 5 Nov 2018 09:20:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CALCETrXfvWiGNjyusMeOt-xo61zpmFzahnkwUwMnWjnv_gsNnA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BB6FC627-C152-4C4C-A6D4-FA7F42F2610D@amacapital.net>
+References: <20181102232946.98461-1-namit@vmware.com> <20181102232946.98461-3-namit@vmware.com> <20181105140925.GD22467@hirez.programming.kicks-ass.net>
+To:     Peter Zijlstra <peterz@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 11/4/18 9:14 PM, Andy Lutomirski wrote:
-> I should add: if this patch is *not* applied, then I think we'll
-> need to replace the sw_error_code check with user_mode(regs) to avoid
-> an info leak if CET is enabled.  Because, with CET, WRUSS will allow
-> a *kernel* mode access (where regs->sp is the kernel stack pointer)
-> with user permissions.
+> On Nov 5, 2018, at 6:09 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+>> On Fri, Nov 02, 2018 at 04:29:41PM -0700, Nadav Amit wrote:
+>> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+>> index aac0c1f7e354..367c1d0c20a3 100644
+>> --- a/arch/x86/kernel/jump_label.c
+>> +++ b/arch/x86/kernel/jump_label.c
+>> @@ -52,7 +52,13 @@ static void __ref __jump_label_transform(struct jump_e=
+ntry *entry,
+>>    jmp.offset =3D jump_entry_target(entry) -
+>>             (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+>>=20
+>> -    if (early_boot_irqs_disabled)
+>> +    /*
+>> +     * As long as we are in early boot, we can use text_poke_early(), wh=
+ich
+>> +     * is more efficient: the memory was still not marked as read-only (=
+it
+>> +     * is only marked after poking_init()). This also prevents us from u=
+sing
+>> +     * text_poke() before poking_init() is called.
+>> +     */
+>> +    if (!early_boot_done)
+>>        poker =3D text_poke_early;
+>>=20
+>>    if (type =3D=3D JUMP_LABEL_JMP) {
+>=20
+> It took me a while to untangle init/maze^H^Hin.c... but I think this
+> is all we need:
+>=20
+> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+> index aac0c1f7e354..ed5fe274a7d8 100644
+> --- a/arch/x86/kernel/jump_label.c
+> +++ b/arch/x86/kernel/jump_label.c
+> @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_en=
+try *entry,
+>    jmp.offset =3D jump_entry_target(entry) -
+>             (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+>=20
+> -    if (early_boot_irqs_disabled)
+> +    /*
+> +     * As long as we're UP and not yet marked RO, we can use
+> +     * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+> +     * SYSTEM_SCHEDULING before going either.
+> +     */
+> +    if (system_state =3D=3D SYSTEM_BOOTING)
+>        poker =3D text_poke_early;
+>=20
+>    if (type =3D=3D JUMP_LABEL_JMP) {
 
-Are you saying that WRUSS, if it faults will set the "user" page fault
-error code bit?  I seem to have some rough recollection about it being
-that way, and the shadow-stack spec does say:
+Can we move this logic into text_poke() and get rid of text_poke_early()?
 
-	paging access control checks will be treated as a user-mode
-	shadow stack store
+FWIW, alternative patching was, at some point, a significant fraction of tot=
+al boot time in some cases. This was probably mostly due to unnecessary sync=
+_core() calls.  Although I think this was reported on a VM, and sync_core() u=
+sed to be *extremely* expensive on a VM, but that=E2=80=99s fixed now, and i=
+t even got backported, I think.
 
-But the SDM says:
-
-	For all instruction fetches and most data accesses, this
-	distinction is determined by the current privilege level (CPL):
-	accesses made while CPL < 3 are supervisor-mode accesses, while
-	accesses made while CPL = 3 are user-mode accesses.
-
-It would certainly be ideal if things affecting the core architecture
-like this were in the SDM itself before we merged them.  It makes things
-like this a lot easier to figure out.
+(Hmm. Maybe we can also make jump label patching work in early boot, too!)=
