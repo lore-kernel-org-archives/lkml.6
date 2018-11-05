@@ -2,129 +2,164 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AF9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E38C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18CB520827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:30:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QUbfcQpk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18CB520827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CA24820827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA24820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbeKEVuL (ORCPT
+        id S1729632AbeKEVxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:50:11 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52305 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbeKEVuK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:50:10 -0500
-Received: by mail-it1-f193.google.com with SMTP id t190-v6so6638697itb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:30:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FUE2AL8GDztjZvNMDN7j4je0OfJeqEWCeDy5fS/DNCM=;
-        b=QUbfcQpkoDHVljBmsAMwbUpfU3C7z/i6Zd2omwy10H0ykTHQG0NgHeibEZXH9rqlQN
-         nRXYxdEeJFniQN7i7YmsWYRlM2mA1S2SN8TqfTTgCjCbQyhm6Clr6fEllsFXw4gDZcam
-         pX/g+mwqhViQiA6f3sOn8ebJDVUew3YucKQYE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FUE2AL8GDztjZvNMDN7j4je0OfJeqEWCeDy5fS/DNCM=;
-        b=T1Og9AKJRAZGozJOy3xGdx/6lkZEPXL+lpFTAiYVJNfEiMX+MO/jNuC+A7CjHtAwjM
-         B//Vv0j5HabkhrwPoKkkTBhQVbXhYcC4oSOdB7g/iMwNApTXdbmmtwwZDaPN6R3yHKSQ
-         CgFpa/CQTuZnlgKOPvSAcjtpr014fVsufY3C6hv6yYPwgnb3hcOestBQwDJFou1RNGQ4
-         VHUetXiXMOor4IBdvRCl1ecz+KAUXsZesSgTGtSnL4xt37g/n2OSgaGp4UkKSlZ8ym2s
-         YbpwNLJgpwfvnwn9WgQ6ke4dHrm483eiwLgUR774b/jg6118xxqDuJH5eXNxuy1CRlVk
-         oDkQ==
-X-Gm-Message-State: AGRZ1gKKUWyzV0LBohq9azzj0AehWPYdE/v6CQTiz5kYB22mR77Rcr2P
-        6YTHjP3bGoV+aY4f3a6rKKtlzTFZ2IDOBDHGCoQ8Hg==
-X-Google-Smtp-Source: AJdET5fzgZUSaV2vPp5/0fOIiAT+MvuGTAhjHsDgg3FyQexHzyafdMWB1YMrljcrVcFALEJQmBOF+GeBfnQrf+35TFw=
-X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr7077619ite.158.1541421038245;
- Mon, 05 Nov 2018 04:30:38 -0800 (PST)
+        Mon, 5 Nov 2018 16:53:24 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14595 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727351AbeKEVxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:53:24 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 59CBBDE8D98B3;
+        Mon,  5 Nov 2018 20:33:48 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 5 Nov 2018 20:33:43 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <Jonathan.Cameron@huawei.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH 1/2] crypto: hisilicon -  Fix NULL dereference for same dst and src
+Date:   Mon, 5 Nov 2018 20:35:14 +0800
+Message-ID: <1541421315-25623-2-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1541421315-25623-1-git-send-email-john.garry@huawei.com>
+References: <1541421315-25623-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 04:30:37 -0800 (PST)
-In-Reply-To: <20181101160759.GB17659@arm.com>
-References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de>
- <20181023175553.gaobskk26koft6s2@linux-8ccs> <20181026172500.g65bl2p7cvey3qsx@linux-8ccs>
- <20181029152834.GA16289@arm.com> <20181030131910.zuqw523rq4pi7apb@linux-8ccs> <20181101160759.GB17659@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 13:30:37 +0100
-Message-ID: <CAKv+Gu-nq+zWur+swiCxsGtMFpm1KtA4KTdkejJQdjuS9Rg10Q@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64/module: use mod->klp_info section header
- information for livepatch modules
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Jessica Yu <jeyu@kernel.org>, Torsten Duwe <duwe@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 November 2018 at 17:07, Will Deacon <will.deacon@arm.com> wrote:
-> Hello, Jessica,
->
-> On Tue, Oct 30, 2018 at 02:19:10PM +0100, Jessica Yu wrote:
->> +++ Will Deacon [29/10/18 15:28 +0000]:
->> >On Fri, Oct 26, 2018 at 07:25:01PM +0200, Jessica Yu wrote:
->> >>diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
->> >>index fef773c94e9d..ac9b97f9ae5e 100644
->> >>--- a/arch/arm64/include/asm/module.h
->> >>+++ b/arch/arm64/include/asm/module.h
->> >>@@ -25,6 +25,7 @@ struct mod_plt_sec {
->> >>    struct elf64_shdr       *plt;
->> >>    int                     plt_num_entries;
->> >>    int                     plt_max_entries;
->> >>+   int                     plt_shndx;
->> >>};
->> >
->> >Does this mean we can drop the plt pointer from this struct altogether, and
->> >simply offset into the section headers when applying the relocations?
->>
->> Hmm, if everyone is OK with dropping the plt pointer from struct
->> mod_plt_sec, then I think we can simplify this patch even further.
->>
->> With the plt shndx saved, we can additionally pass a pointer to
->> sechdrs to module_emit_plt_entry(), and with that just offset into the
->> section headers as you suggest. Since livepatch *already* passes in
->> the correct copy of the section headers (mod->klp_info->sechdrs) to
->> apply_relocate_add(), we wouldn't even need to modify the arm64
->> module_finalize() to change mod->arch.core.plt to point into
->> mod->klp_info->sechdrs anymore and we can drop all the changes to the
->> module loader too.
->>
->> Something like the following maybe?
->
-> This looks pretty good, thanks! My only (minor) objection is that the
-> renaming of plt_sec -> plt_info throughout makes the patch a lot more
-> churny than it needs to be, for questionable gain.
->
-> Anyway, it looks functionally correct and I've tested loading/unloading
-> the "hello world" test module with both PLTs enabled and disabled.
->
-> Acked-by: Will Deacon <will.deacon@arm.com>
->
+When the source and destination addresses for the cipher are the same, we
+will get a NULL dereference from accessing the split destination
+scatterlist memories, as shown:
 
-For the simplified version:
+[   56.565719] tcrypt:
+[   56.565719] testing speed of async ecb(aes) (hisi_sec_aes_ecb) encryption
+[   56.574683] tcrypt: test 0 (128 bit key, 16 byte blocks):
+[   56.587585] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   56.596361] Mem abort info:
+[   56.599151]   ESR = 0x96000006
+[   56.602196]   Exception class = DABT (current EL), IL = 32 bits
+[   56.608105]   SET = 0, FnV = 0
+[   56.611149]   EA = 0, S1PTW = 0
+[   56.614280] Data abort info:
+[   56.617151]   ISV = 0, ISS = 0x00000006
+[   56.620976]   CM = 0, WnR = 0
+[   56.623930] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+[   56.630533] [0000000000000000] pgd=0000041fc7e4d003, pud=0000041fcd9bf003, pmd=0000000000000000
+[   56.639224] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[   56.644782] Modules linked in: tcrypt(+)
+[   56.648695] CPU: 21 PID: 2326 Comm: insmod Tainted: G        W         4.19.0-rc6-00001-g3fabfb8-dirty #716
+[   56.658420] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT17 Nemo 2.0 RC0 10/05/2018
+[   56.667537] pstate: 20000005 (nzCv daif -PAN -UAO)
+[   56.672322] pc : sec_alg_skcipher_crypto+0x318/0x748
+[   56.677274] lr : sec_alg_skcipher_crypto+0x178/0x748
+[   56.682224] sp : ffff0000118e3840
+[   56.685525] x29: ffff0000118e3840 x28: ffff841fbb3f8118
+[   56.690825] x27: 0000000000000000 x26: 0000000000000000
+[   56.696125] x25: ffff841fbb3f8080 x24: ffff841fbadc0018
+[   56.701425] x23: ffff000009119000 x22: ffff841fbb24e280
+[   56.706724] x21: ffff841ff212e780 x20: ffff841ff212e700
+[   56.712023] x19: 0000000000000001 x18: ffffffffffffffff
+[   56.717322] x17: 0000000000000000 x16: 0000000000000000
+[   56.722621] x15: ffff0000091196c8 x14: 72635f7265687069
+[   56.727920] x13: 636b735f676c615f x12: ffff000009119940
+[   56.733219] x11: 0000000000000000 x10: 00000000006080c0
+[   56.738519] x9 : 0000000000000000 x8 : ffff841fbb24e480
+[   56.743818] x7 : ffff841fbb24e500 x6 : ffff841ff00cdcc0
+[   56.749117] x5 : 0000000000000010 x4 : 0000000000000000
+[   56.754416] x3 : ffff841fbb24e380 x2 : ffff841fbb24e480
+[   56.759715] x1 : 0000000000000000 x0 : ffff000008f682c8
+[   56.765016] Process insmod (pid: 2326, stack limit = 0x(____ptrval____))
+[   56.771702] Call trace:
+[   56.774136]  sec_alg_skcipher_crypto+0x318/0x748
+[   56.778740]  sec_alg_skcipher_encrypt+0x10/0x18
+[   56.783259]  test_skcipher_speed+0x2a0/0x700 [tcrypt]
+[   56.788298]  do_test+0x18f8/0x48c8 [tcrypt]
+[   56.792469]  tcrypt_mod_init+0x60/0x1000 [tcrypt]
+[   56.797161]  do_one_initcall+0x5c/0x178
+[   56.800985]  do_init_module+0x58/0x1b4
+[   56.804721]  load_module+0x1da4/0x2150
+[   56.808456]  __se_sys_init_module+0x14c/0x1e8
+[   56.812799]  __arm64_sys_init_module+0x18/0x20
+[   56.817231]  el0_svc_common+0x60/0xe8
+[   56.820880]  el0_svc_handler+0x2c/0x80
+[   56.824615]  el0_svc+0x8/0xc
+[   56.827483] Code: a94c87a3 910b2000 f87b7842 f9004ba2 (b87b7821)
+[   56.833564] ---[ end trace 0f63290590e93d94 ]---
+Segmentation fault
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fix this by only accessing these memories when we have different src and
+dst.
+
+Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/crypto/hisilicon/sec/sec_algs.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
+index f7d6d69..32c6c02 100644
+--- a/drivers/crypto/hisilicon/sec/sec_algs.c
++++ b/drivers/crypto/hisilicon/sec/sec_algs.c
+@@ -732,6 +732,7 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
+ 	int *splits_in_nents;
+ 	int *splits_out_nents = NULL;
+ 	struct sec_request_el *el, *temp;
++	bool split = skreq->src != skreq->dst;
+ 
+ 	mutex_init(&sec_req->lock);
+ 	sec_req->req_base = &skreq->base;
+@@ -750,7 +751,7 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
+ 	if (ret)
+ 		goto err_free_split_sizes;
+ 
+-	if (skreq->src != skreq->dst) {
++	if (split) {
+ 		sec_req->len_out = sg_nents(skreq->dst);
+ 		ret = sec_map_and_split_sg(skreq->dst, split_sizes, steps,
+ 					   &splits_out, &splits_out_nents,
+@@ -785,8 +786,9 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
+ 					       split_sizes[i],
+ 					       skreq->src != skreq->dst,
+ 					       splits_in[i], splits_in_nents[i],
+-					       splits_out[i],
+-					       splits_out_nents[i], info);
++					       split ? splits_out[i] : NULL,
++					       split ? splits_out_nents[i] : 0,
++					       info);
+ 		if (IS_ERR(el)) {
+ 			ret = PTR_ERR(el);
+ 			goto err_free_elements;
+@@ -854,7 +856,7 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
+ 				 crypto_skcipher_ivsize(atfm),
+ 				 DMA_BIDIRECTIONAL);
+ err_unmap_out_sg:
+-	if (skreq->src != skreq->dst)
++	if (split)
+ 		sec_unmap_sg_on_err(skreq->dst, steps, splits_out,
+ 				    splits_out_nents, sec_req->len_out,
+ 				    info->dev);
+-- 
+1.9.1
+
