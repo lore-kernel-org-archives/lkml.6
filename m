@@ -2,228 +2,81 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F63ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E05DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3066B204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3066B204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B52520827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B52520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbeKEQzm (ORCPT
+        id S1729412AbeKEQzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:55:42 -0500
-Received: from mga05.intel.com ([192.55.52.43]:47522 "EHLO mga05.intel.com"
+        Mon, 5 Nov 2018 11:55:16 -0500
+Received: from mga09.intel.com ([134.134.136.24]:52102 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbeKEQzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:55:41 -0500
+        id S1727537AbeKEQzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 11:55:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 23:36:51 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 23:36:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,467,1534834800"; 
-   d="scan'208";a="88618096"
-Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga006.jf.intel.com with ESMTP; 04 Nov 2018 23:36:47 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
-        tiwei.bie@intel.com, Zeng Xin <xin.zeng@intel.com>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v4 0/8] vfio/mdev: IOMMU aware mediated device
-Date:   Mon,  5 Nov 2018 15:34:00 +0800
-Message-Id: <20181105073408.21815-1-baolu.lu@linux.intel.com>
+   d="scan'208";a="105448765"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.130])
+  by orsmga001.jf.intel.com with ESMTP; 04 Nov 2018 23:36:54 -0800
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] perf intel-pt: Add MTC and CYC timestamps to debug log
+Date:   Mon,  5 Nov 2018 09:35:05 +0200
+Message-Id: <20181105073505.8129-3-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181105073505.8129-1-adrian.hunter@intel.com>
+References: <20181105073505.8129-1-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+One cause of decoding errors is un-synchronized side-band data. Timestamps
+are needed to debug such cases. TSC packet timestamps are logged. Log also
+MTC and CYC timestamps.
 
-The Mediate Device is a framework for fine-grained physical device
-sharing across the isolated domains. Currently the mdev framework
-is designed to be independent of the platform IOMMU support. As the
-result, the DMA isolation relies on the mdev parent device in a
-vendor specific way.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-There are several cases where a mediated device could be protected
-and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
-[1] introduces a new translation mode called 'scalable mode', which
-enables PASID-granular translations. The vt-d scalable mode is the
-key ingredient for Scalable I/O Virtualization [2] [3] which allows
-sharing a device in minimal possible granularity (ADI - Assignable
-Device Interface).
-
-A mediated device backed by an ADI could be protected and isolated
-by the IOMMU since 1) the parent device supports tagging an unique
-PASID to all DMA traffic out of the mediated device; and 2) the DMA
-translation unit (IOMMU) supports the PASID granular translation.
-We can apply IOMMU protection and isolation to this kind of devices
-just as what we are doing with an assignable PCI device.
-
-In order to distinguish the IOMMU-capable mediated devices from those
-which still need to rely on parent devices, this patch set adds two
-new members in struct mdev_device.
-
-* iommu_device
-  - This, if set, indicates that the mediated device could
-    be fully isolated and protected by IOMMU via attaching
-    an iommu domain to this device. If empty, it indicates
-    using vendor defined isolation.
-
-* iommu_domain
-  - This is a place holder for an iommu domain. A domain
-    could be store here for later use once it has been
-    attached to the iommu_device of this mdev.
-
-Below helpers are added to set and get above iommu device
-and iommu domain pointers in mdev core implementation.
-
-* mdev_set/get_iommu_device(dev, iommu_device)
-  - Set or get the iommu device which represents this mdev
-    in IOMMU's device scope. Drivers don't need to set the
-    iommu device if it uses vendor defined isolation.
-
-* mdev_set/get_iommu_domain(domain)
-  - A iommu domain which has been attached to the iommu
-    device in order to protect and isolate the mediated
-    device will be kept in the mdev data structure and
-    could be retrieved later.
-
-The mdev parent device driver could opt-in that the mdev could be
-fully isolated and protected by the IOMMU when the mdev is being
-created by invoking mdev_set_iommu_device() in its @create().
-
-In the vfio_iommu_type1_attach_group(), a domain allocated through
-iommu_domain_alloc() will be attached to the mdev iommu device if
-an iommu device has been set. Otherwise, the dummy external domain
-will be used and all the DMA isolation and protection are routed to
-parent driver as the result.
-
-On IOMMU side, a basic requirement is allowing to attach multiple
-domains to a PCI device if the device advertises the capability
-and the IOMMU hardware supports finer granularity translations than
-the normal PCI Source ID based translation.
-
-As the result, a PCI device could work in two modes: normal mode
-and auxiliary mode. In the normal mode, a pci device could be
-isolated in the Source ID granularity; the pci device itself could
-be assigned to a user application by attaching a single domain
-to it. In the auxiliary mode, a pci device could be isolated in
-finer granularity, hence subsets of the device could be assigned
-to different user level application by attaching a different domain
-to each subset.
-
-The device driver is able to switch between above two modes with
-below interfaces:
-
-* iommu_get_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_CAPABILITY)
-  - Represents the ability of supporting multiple domains
-    per device.
-
-* iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_ENABLE)
-  - Enable the multiple domains capability for the device
-    referenced by @dev.
-
-* iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_DISABLE)
-  - Disable the multiple domains capability for the device
-    referenced by @dev.
-
-* iommu_domain_get_attr(domain, DOMAIN_ATTR_AUXD_ID)
-  - Return ID used for finer-granularity DMA translation.
-
-* iommu_attach_device_aux(domain, dev)
-  - Attach a domain to the device in the auxiliary mode.
-
-* iommu_detach_device_aux(domain, dev)
-  - Detach the aux domain from device.
-
-In order for the ease of discussion, sometimes we call "a domain in
-auxiliary mode' or simply 'an auxiliary domain' when a domain is
-attached to a device for finer granularity translations. But we need
-to keep in mind that this doesn't mean there is a differnt domain
-type. A same domain could be bound to a device for Source ID based
-translation, and bound to another device for finer granularity
-translation at the same time.
-
-This patch series extends both IOMMU and vfio components to support
-mdev device passing through when it could be isolated and protected
-by the IOMMU units. The first part of this series (PATCH 1/08~5/08)
-adds the interfaces and implementation of the multiple domains per
-device. The second part (PATCH 6/08~8/08) adds the iommu device
-attribute to each mdev, determines isolation type according to the
-existence of an iommu device when attaching group in vfio type1 iommu
-module, and attaches the domain to iommu aware mediated devices.
-
-This patch series depends on a patch set posted here [4] for discussion
-which added scalable mode support in Intel IOMMU driver.
-
-References:
-[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
-[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
-[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
-[4] https://lkml.org/lkml/2018/11/5/136
-
-Best regards,
-Lu Baolu
-
-Change log:
-  v3->v4:
-  - Use aux domain specific interfaces for domain attach and detach.
-  - Rebase all patches to 4.20-rc1.
-
-  v2->v3:
-  - Remove domain type enum and use a pointer on mdev_device instead.
-  - Add a generic interface for getting/setting per device iommu
-    attributions. And use it for query aux domain capability, enable
-    aux domain and disable aux domain purpose.
-  - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
-  - We discussed the impact of the default domain implementation
-    on reusing iommu_at(de)tach_device() interfaces. We agreed
-    that reusing iommu_at(de)tach_device() interfaces is the right
-    direction and we could tweak the code to remove the impact.
-    https://www.spinics.net/lists/kvm/msg175285.html  
-  - Removed the RFC tag since no objections received.
-  - This patch has been submitted separately.
-    https://www.spinics.net/lists/kvm/msg173936.html
-
-  v1->v2:
-  - Rewrite the patches with the concept of auxiliary domains.
-
-Lu Baolu (8):
-  iommu: Add APIs for multiple domains per device
-  iommu/vt-d: Add multiple domains per device query
-  iommu/vt-d: Enable/disable multiple domains per device
-  iommu/vt-d: Attach/detach domains in auxiliary mode
-  iommu/vt-d: Return ID associated with an auxiliary domain
-  vfio/mdev: Add iommu place holders in mdev_device
-  vfio/type1: Add domain at(de)taching group helpers
-  vfio/type1: Handle different mdev isolation type
-
- drivers/iommu/intel-iommu.c      | 315 ++++++++++++++++++++++++++++---
- drivers/iommu/iommu.c            |  52 +++++
- drivers/vfio/mdev/mdev_core.c    |  36 ++++
- drivers/vfio/mdev/mdev_private.h |   2 +
- drivers/vfio/vfio_iommu_type1.c  | 162 ++++++++++++++--
- include/linux/intel-iommu.h      |  11 ++
- include/linux/iommu.h            |  52 +++++
- include/linux/mdev.h             |  23 +++
- 8 files changed, 618 insertions(+), 35 deletions(-)
-
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index 58f6a9ceb590..4503f3ca45ab 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1474,6 +1474,8 @@ static void intel_pt_calc_mtc_timestamp(struct intel_pt_decoder *decoder)
+ 		decoder->have_calc_cyc_to_tsc = false;
+ 		intel_pt_calc_cyc_to_tsc(decoder, true);
+ 	}
++
++	intel_pt_log_to("Setting timestamp", decoder->timestamp);
+ }
+ 
+ static void intel_pt_calc_cbr(struct intel_pt_decoder *decoder)
+@@ -1514,6 +1516,8 @@ static void intel_pt_calc_cyc_timestamp(struct intel_pt_decoder *decoder)
+ 		decoder->timestamp = timestamp;
+ 
+ 	decoder->timestamp_insn_cnt = 0;
++
++	intel_pt_log_to("Setting timestamp", decoder->timestamp);
+ }
+ 
+ /* Walk PSB+ packets when already in sync. */
 -- 
 2.17.1
 
