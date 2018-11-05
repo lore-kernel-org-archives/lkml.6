@@ -2,99 +2,133 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4322CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE69C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE4220825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E2B20825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:41:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RrnwQV+X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE4220825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIicIM+l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E2B20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbeKEV7q (ORCPT
+        id S1729731AbeKEWBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:59:46 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36176 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbeKEV7q (ORCPT
+        Mon, 5 Nov 2018 17:01:03 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52790 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729184AbeKEWBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:59:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UOpDLTXAtnnzTE/vKm8sfJOjSgQ2KHxQQ3HhKFWQ9J8=; b=RrnwQV+XZueYT88CbnNdx2pTV
-        gQwtzEwI1MMlw9F/eEgwTjVP5FrKui4quOkeLqJ+h21uNkBuwcR6DuAUSO3APVyLfbesYpssMjVXt
-        jHjhF2XjCtnIfSsg6/y4BmqfkE7X/h/5COxYVXpNY0LKlV7X7fpcTgDi9nOnb5EpfKs54h0+wg6iQ
-        w3lE4PpJzPGOxpfhV7iV1Q2GSo7ww/v4oVP5fjFSx7lCJZvvZY9Cj7oifM6t16VOnur0+yug5KQdo
-        ldxADe7FalimceGziEGt5uyM8bB2bg+J8eip2EFd4NNp2VVAv1EcnEg5KNxHiLGItRKCzKKU5TAhn
-        foUemamZQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gJeAe-0005TX-RK; Mon, 05 Nov 2018 12:39:57 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 06EE82029F9FF; Mon,  5 Nov 2018 13:39:54 +0100 (CET)
-Date:   Mon, 5 Nov 2018 13:39:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during
- early_init
-Message-ID: <20181105123953.GA22467@hirez.programming.kicks-ass.net>
-References: <20181102232946.98461-1-namit@vmware.com>
- <20181102232946.98461-3-namit@vmware.com>
+        Mon, 5 Nov 2018 17:01:02 -0500
+Received: by mail-it1-f196.google.com with SMTP id t190-v6so6679320itb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:41:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=pt5KHoWI6l6iI5z9KDB7wQV3P5aeR/3gwZloRf/Y0hU=;
+        b=PIicIM+lkkNpGqUly2nHS/9q9/lXjDCOVxEIRwpxriFqcRlTMlDwCXR1T3zUIg31/B
+         pZXa2wSNC3j9HeP4duc3yFTanRvtEYxI/2Dq2s10v7QSSa+eqk6p35XBztCv/hY5lAfA
+         CE6zeW5gjOysjky49BMP41ryuNtMHHkgjyx9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=pt5KHoWI6l6iI5z9KDB7wQV3P5aeR/3gwZloRf/Y0hU=;
+        b=Lils3fQ6kVuF2NvJWzx527X0B9fRcTUFHdRljyebbnxso6pjN25oMkFpasR3A2IbvC
+         YAqSstUIo9RLB114Rb2psULmBkGNQUvFDF2oXwk13+NLZ7wo3SuFZJ/1VAaMmEYwbotb
+         jJjH04toMeL2QkL2ud8WQOnO7x3Pl2Yjc5IAjilTecSeAPuEhE8mJ37u8cgRIw/Tm8du
+         Uq/JVQhz6RNITlpvVz4w/aJoCu3L297MFs6MRnQt+Qzmr2FWQmHdRpXK9V/UaT9nZBoT
+         npKC0iY5/CtfjuZmKBOE9+rFSH1/RAMhvoiFE7ayhHoHxykDYSSk9pd5Qa29i9rHotpZ
+         frPQ==
+X-Gm-Message-State: AGRZ1gK5Z1Rl+bzrxAHiTHii1RVzdp2okpBe3fGF9LFoHQuZ0Sfb0piY
+        hmOulrbeuBdycDhepNAJ8JXjUoIX66KLZEiPgXqW2w==
+X-Google-Smtp-Source: AJdET5elMqKvGJKfBZZ+JXDLmMF2mgCnkN/ZJ1levLXQi5MLNWRXb7djVdOqxOLVPIKMYwFn7K+bqtoomZyG9rpcUMM=
+X-Received: by 2002:a24:d3c2:: with SMTP id n185-v6mr6750907itg.71.1541421688196;
+ Mon, 05 Nov 2018 04:41:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102232946.98461-3-namit@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 04:41:27 -0800 (PST)
+In-Reply-To: <1540808142-33208-3-git-send-email-julien.thierry@arm.com>
+References: <1540808142-33208-1-git-send-email-julien.thierry@arm.com> <1540808142-33208-3-git-send-email-julien.thierry@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 5 Nov 2018 13:41:27 +0100
+Message-ID: <CAKv+Gu9tERHAibZ+0rE=xAYtKa5M4ZdNudwe3_VpW0ic56FdwA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] efi/fdt: Simplify get_fdt flow
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 04:29:41PM -0700, Nadav Amit wrote:
-> diff --git a/init/main.c b/init/main.c
-> index a664246450d1..b0fa26637496 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -117,6 +117,8 @@ extern void radix_tree_init(void);
->   */
->  bool early_boot_irqs_disabled __read_mostly;
->  
-> +u8 early_boot_done __read_mostly;
+On 29 October 2018 at 11:15, Julien Thierry <julien.thierry@arm.com> wrote:
+> Reorganize get_fdt lookup loop, clearly showing that:
+> - Nothing is done for table entries that do not have fdt_guid
+> - Once an entry with fdt_guid is found, break out of the loop
+>
+> No functional changes.
+>
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Joe Perches <joe@perches.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/firmware/efi/libstub/fdt.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+> index 8b6696e..5b7e2b3 100644
+> --- a/drivers/firmware/efi/libstub/fdt.c
+> +++ b/drivers/firmware/efi/libstub/fdt.c
+> @@ -366,23 +366,24 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
+>  {
+>         efi_guid_t fdt_guid = DEVICE_TREE_GUID;
+>         efi_config_table_t *tables;
+> -       void *fdt;
+>         int i;
+>
+> -       tables = (efi_config_table_t *) sys_table->tables;
+> -       fdt = NULL;
+> +       tables = (efi_config_table_t *)sys_table->tables;
+>
+>         for (i = 0; i < sys_table->nr_tables; i++) {
+> -               if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
+> -                       fdt = (void *) tables[i].table;
+> -                       if (fdt_check_header(fdt) != 0) {
+> -                               pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
+> -                               return NULL;
+> -                       }
+> -                       *fdt_size = fdt_totalsize(fdt);
+> -                       break;
+> +               void *fdt;
 > +
->  enum system_states system_state __read_mostly;
->  EXPORT_SYMBOL(system_state);
-
-Should this not be using system_state ^ ? The site is very close to
-SYSTEM_SCHEDULING, can we use that or should we add another state ?
-
-> @@ -735,6 +737,8 @@ asmlinkage __visible void __init start_kernel(void)
->  		efi_free_boot_services();
->  	}
->  
-> +	early_boot_done = true;
+> +               if (efi_guidcmp(tables[i].guid, fdt_guid) != 0)
+> +                       continue;
 > +
->  	/* Do the rest non-__init'ed, we're now alive */
->  	rest_init();
+> +               fdt = (void *) tables[i].table;
+> +               if (fdt_check_header(fdt) != 0) {
+> +                       pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
+> +                       return NULL;
+>                 }
+> +               *fdt_size = fdt_totalsize(fdt);
+> +               return fdt;
+>         }
+>
+> -       return fdt;
+> +       return NULL;
 >  }
-> -- 
-> 2.17.1
-> 
+> --
+> 1.9.1
+>
+
+Queued in efi/next
+
+Thanks.
