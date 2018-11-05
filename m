@@ -2,98 +2,328 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8142AC46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E04AC0044C
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3976F20819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:17:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2BF82085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:17:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bsT6xS1e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3976F20819
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rxtbR7fu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2BF82085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbeKFFjG (ORCPT
+        id S1730134AbeKFFjE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:39:06 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40554 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730109AbeKFFjF (ORCPT
+        Tue, 6 Nov 2018 00:39:04 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:40128 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeKFFjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:39:05 -0500
-Received: by mail-pl1-f193.google.com with SMTP id q19-v6so1996346pll.7
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 12:17:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+4+xrKqcCnzzEGa97yidlIN9VxNjgsG971WTiE2U09o=;
-        b=bsT6xS1eF+TBKCO6uMQSYsGzUdElb/830fFPpNBbg7AmPDQuG+IQx6RYS/7zNMnhc0
-         6PU61H8Y5I2yOuM/57zJpzo01b6uPnXUWVLkYN7FS4FJvRqJM2l9nxqSxA7beL9/404x
-         HdnenMT/l3Mr9JEeltlEipd4ZQvDUXD4s2LGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+4+xrKqcCnzzEGa97yidlIN9VxNjgsG971WTiE2U09o=;
-        b=YEW0nwTKhZhQ2E7rndeH5eNvdgDydIJ2aNlh/VKjQdX+SRd4v9/5oczD8JQfC6vMWw
-         FNpu4g+uTSFYaGZpJ5bA9jKTVP6ljOxlIZikZD4B29PZbOqGzKF6NBZIjlpxR4RZlQPg
-         wE/fWF5xqgHPF3DsYsArJHAMR8Tljciq5ylbpUMZF4C3ckGfoR0XWOLJGh35QPpl8Y9k
-         JSf83hcojjUZU+qP+2a+cOSsam03CvK1v5RmkUuuhzX4OJE3XeqmU6oRWLqJpniVNmFl
-         4bTFWbympAh+AjbvJZaw7HunNga/De6ywCtuVOj9PK/QT0BdczTONu6+PtX9dTRY6AH4
-         Q27w==
-X-Gm-Message-State: AGRZ1gIiWy+7NFCr+DnQcbXLt2P4RoczTnaLypSN1/w++fVKGNaKEUH/
-        pDoILZTCexohU9tNTnt9v9DuNw==
-X-Google-Smtp-Source: AJdET5c1PIeAtrh2vLETbJ81GooRuIiXoW0KGpxq2iOnvvyo40fNVfYKjcRt1GXMSn4fuvUxLDy7Nw==
-X-Received: by 2002:a17:902:2:: with SMTP id 2-v6mr23958956pla.178.1541449062980;
-        Mon, 05 Nov 2018 12:17:42 -0800 (PST)
-Received: from zsm-linux.mtv.corp.google.com ([2620:15c:202:201:1b7c:8280:c835:b226])
-        by smtp.googlemail.com with ESMTPSA id e2-v6sm45972561pgv.25.2018.11.05.12.17.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 12:17:42 -0800 (PST)
-From:   Zubin Mithra <zsm@chromium.org>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc:     groeck@chromium.org, keescook@chromium.org, zsm@chromium.org
-Subject: [PATCH] x86/pci: Annotate 'pci_root_ops' with __ro_after_init
-Date:   Mon,  5 Nov 2018 12:17:35 -0800
-Message-Id: <20181105201735.72026-1-zsm@chromium.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 6 Nov 2018 00:39:03 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5KDdMA035477;
+        Mon, 5 Nov 2018 20:17:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=lpCkR8dhVEcd2X7A/908EcwMQc7lwt/BZec7c2JZvE0=;
+ b=rxtbR7fuJHoNSmli8HIEbwMF9jLtnQmQdEiNlQlZjYZennp4yw5y0MXJGbJpouVnTkeO
+ 9nnXHuQeoh3CRrkVirgd4N2cOh69W5kXHdNJyh8+Bys4dfrp96dzhS+u1kP1SSE2t9WP
+ I/0EtjiQWAmEnStZh1GduekU2uTsmMVR4d4a9LzmWOCyd8bfi3FP1/E8ZGGpzul0Liy7
+ ThpDAAh+KHVynaEpiLcvXgkCaV+QYhEryj5BkT0JVM+46HevhSnCa/KiTtVilQAQbG/I
+ jjq/jOE3vkSkaKQDWjokafBXC4eI6Q1rmfCMB+jqoMyKk8x8Fzb3+uSUWkuxl9GmFMJf rQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nh4aqh7de-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Nov 2018 20:17:13 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5KHC5l008298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 5 Nov 2018 20:17:12 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA5KHBTg032051;
+        Mon, 5 Nov 2018 20:17:12 GMT
+Received: from ca-dev63.us.oracle.com (/10.211.8.221)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Nov 2018 12:17:11 -0800
+From:   Steve Sistare <steven.sistare@oracle.com>
+To:     mingo@redhat.com, peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        quentin.perret@arm.com, steven.sistare@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/10] steal tasks to improve CPU utilization
+Date:   Mon,  5 Nov 2018 12:07:59 -0800
+Message-Id: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811050180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_X86_INTEL_MID is set pci_root_ops is written to inside
-intel_mid_pci_init(which is marked __init) and not modified after. This
-makes pci_root_ops a suitable candidate for annotating as
-__ro_after_init.
+When a CPU has no more CFS tasks to run, and idle_balance() fails to
+find a task, then attempt to steal a task from an overloaded CPU in the
+same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
+identify candidates.  To minimize search time, steal the first migratable
+task that is found when the bitmap is traversed.  For fairness, search
+for migratable tasks on an overloaded CPU in order of next to run.
 
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
----
- arch/x86/pci/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This simple stealing yields a higher CPU utilization than idle_balance()
+alone, because the search is cheap, so it may be called every time the CPU
+is about to go idle.  idle_balance() does more work because it searches
+widely for the busiest queue, so to limit its CPU consumption, it declines
+to search if the system is too busy.  Simple stealing does not offload the
+globally busiest queue, but it is much better than running nothing at all.
 
-diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
-index d4ec117c1142..204ee80cfa63 100644
---- a/arch/x86/pci/common.c
-+++ b/arch/x86/pci/common.c
-@@ -67,7 +67,7 @@ static int pci_write(struct pci_bus *bus, unsigned int devfn, int where, int siz
- 				  devfn, where, size, value);
- }
- 
--struct pci_ops pci_root_ops = {
-+struct pci_ops pci_root_ops __ro_after_init = {
- 	.read = pci_read,
- 	.write = pci_write,
- };
+The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
+reduce cache contention vs the usual bitmap when many threads concurrently
+set, clear, and visit elements.
+
+Patch 1 defines the sparsemask type and its operations.
+
+Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
+
+Patches 5 and 6 refactor existing code for a cleaner merge of later
+  patches.
+
+Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
+
+Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
+time being because of performance regressions that are not due to stealing
+per-se.  See the patch description for details.
+
+Patch 10 adds schedstats for comparing the new behavior to the old, and
+  provided as a convenience for developers only, not for integration.
+
+The patch series is based on kernel 4.19.0-rc7.  It compiles, boots, and
+runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
+and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
+CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
+CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
+bandwidth control were tested.
+
+Stealing imprroves utilization with only a modest CPU overhead in scheduler
+code.  In the following experiment, hackbench is run with varying numbers
+of groups (40 tasks per group), and the delta in /proc/schedstat is shown
+for each run, averaged per CPU, augmented with these non-standard stats:
+
+  %find - percent of time spent in old and new functions that search for
+    idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
+
+  steal - number of times a task is stolen from another CPU.
+
+X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+hackbench <grps> process 100000
+sched_wakeup_granularity_ns=15000000
+
+  baseline
+  grps  time  %busy  slice   sched   idle     wake %find  steal
+  1    8.084  75.02   0.10  105476  46291    59183  0.31      0
+  2   13.892  85.33   0.10  190225  70958   119264  0.45      0
+  3   19.668  89.04   0.10  263896  87047   176850  0.49      0
+  4   25.279  91.28   0.10  322171  94691   227474  0.51      0
+  8   47.832  94.86   0.09  630636 144141   486322  0.56      0
+
+  new
+  grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
+  1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
+  2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
+  3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
+  4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
+  8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
+
+Elapsed time improves by 8 to 36%, and CPU busy utilization is up
+by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
+The cost is at most 0.4% more find time.
+
+Additional performance results follow.  A negative "speedup" is a
+regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
+is set to 15 msec.  Otherwise, preemptions increase at higher loads and
+distort the comparison between baseline and new.
+
+------------------ 1 Socket Results ------------------
+
+X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   8.008    0.1   5.905    0.2      35.6
+       2  13.814    0.2  11.438    0.1      20.7
+       3  19.488    0.2  16.919    0.1      15.1
+       4  25.059    0.1  22.409    0.1      11.8
+       8  47.478    0.1  44.221    0.1       7.3
+
+X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   4.586    0.8   4.596    0.6      -0.3
+       2   7.693    0.2   5.775    1.3      33.2
+       3  10.442    0.3   8.288    0.3      25.9
+       4  13.087    0.2  11.057    0.1      18.3
+       8  24.145    0.2  22.076    0.3       9.3
+      16  43.779    0.1  41.741    0.2       4.8
+
+KVM 4-cpu
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+tbench, average of 11 runs.
+
+  clients    %speedup
+        1        16.2
+        2        11.7
+        4         9.9
+        8        12.8
+       16        13.7
+
+KVM 2-cpu
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+
+  Benchmark                     %speedup
+  specjbb2015_critical_jops          5.7
+  mysql_sysb1.0.14_mutex_2          40.6
+  mysql_sysb1.0.14_oltp_2            3.9
+
+------------------ 2 Socket Results ------------------
+
+X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   7.945    0.2   7.219    8.7      10.0
+       2   8.444    0.4   6.689    1.5      26.2
+       3  12.100    1.1   9.962    2.0      21.4
+       4  15.001    0.4  13.109    1.1      14.4
+       8  27.960    0.2  26.127    0.3       7.0
+
+X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   5.826    5.4   5.840    5.0      -0.3
+       2   5.041    5.3   6.171   23.4     -18.4
+       3   6.839    2.1   6.324    3.8       8.1
+       4   8.177    0.6   7.318    3.6      11.7
+       8  14.429    0.7  13.966    1.3       3.3
+      16  26.401    0.3  25.149    1.5       4.9
+
+
+X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Oracle database OLTP, logging disabled, NVRAM storage
+
+  Customers   Users   %speedup
+    1200000      40       -1.2
+    2400000      80        2.7
+    3600000     120        8.9
+    4800000     160        4.4
+    6000000     200        3.0
+
+X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
+Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Results from the Oracle "Performance PIT".
+
+  Benchmark                                           %speedup
+
+  mysql_sysb1.0.14_fileio_56_rndrd                        19.6
+  mysql_sysb1.0.14_fileio_56_seqrd                        12.1
+  mysql_sysb1.0.14_fileio_56_rndwr                         0.4
+  mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
+
+  pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
+  pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
+  pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
+  pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
+
+  opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
+  select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
+  select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
+  swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
+
+  lm3_memlat_L2                                            4.8
+  lm3_memlat_L1                                            0.0
+
+  ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
+  ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
+  ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
+  ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
+
+X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+
+  NAS_OMP
+  bench class   ncpu    %improved(Mops)
+  dc    B       72      1.3
+  is    C       72      0.9
+  is    D       72      0.7
+
+  sysbench mysql, average of 24 runs
+          --- base ---     --- new ---
+  nthr   events  %stdev   events  %stdev %speedup
+     1    331.0    0.25    331.0    0.24     -0.1
+     2    661.3    0.22    661.8    0.22      0.0
+     4   1297.0    0.88   1300.5    0.82      0.2
+     8   2420.8    0.04   2420.5    0.04     -0.1
+    16   4826.3    0.07   4825.4    0.05     -0.1
+    32   8815.3    0.27   8830.2    0.18      0.1
+    64  12823.0    0.24  12823.6    0.26      0.0
+
+--------------------------------------------------------------
+
+Changes from v1 to v2:
+  - Remove stray find_time hunk from patch 5
+  - Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT
+  - Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2
+  - Steal iff avg_idle exceeds the cost of stealing
+
+Steve Sistare (10):
+  sched: Provide sparsemask, a reduced contention bitmap
+  sched/topology: Provide hooks to allocate data shared per LLC
+  sched/topology: Provide cfs_overload_cpus bitmap
+  sched/fair: Dynamically update cfs_overload_cpus
+  sched/fair: Hoist idle_stamp up from idle_balance
+  sched/fair: Generalize the detach_task interface
+  sched/fair: Provide can_migrate_task_llc
+  sched/fair: Steal work from an overloaded CPU when CPU goes idle
+  sched/fair: disable stealing if too many NUMA nodes
+  sched/fair: Provide idle search schedstats
+
+ include/linux/sched/topology.h |   1 +
+ include/linux/sparsemask.h     | 260 +++++++++++++++++++++++++++++++
+ kernel/sched/core.c            |  30 +++-
+ kernel/sched/fair.c            | 345 +++++++++++++++++++++++++++++++++++++----
+ kernel/sched/features.h        |   6 +
+ kernel/sched/sched.h           |  13 +-
+ kernel/sched/stats.c           |  11 +-
+ kernel/sched/stats.h           |  13 ++
+ kernel/sched/topology.c        | 117 +++++++++++++-
+ lib/Makefile                   |   2 +-
+ lib/sparsemask.c               | 142 +++++++++++++++++
+ 11 files changed, 905 insertions(+), 35 deletions(-)
+ create mode 100644 include/linux/sparsemask.h
+ create mode 100644 lib/sparsemask.c
+
 -- 
-2.19.1.930.g4563a0d9d0-goog
+1.8.3.1
 
