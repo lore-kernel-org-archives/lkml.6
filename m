@@ -2,109 +2,124 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC7FC32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A427C32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 672EE2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063DC2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:23:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="juK4sSuc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672EE2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4mal7p+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 063DC2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbeKEMek (ORCPT
+        id S1727508AbeKEMkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 07:34:40 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37500 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbeKEMek (ORCPT
+        Mon, 5 Nov 2018 07:40:46 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39587 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeKEMkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 07:34:40 -0500
-Received: by mail-pg1-f193.google.com with SMTP id c10-v6so3538812pgq.4
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 19:17:11 -0800 (PST)
+        Mon, 5 Nov 2018 07:40:46 -0500
+Received: by mail-qk1-f193.google.com with SMTP id e4so12452917qkh.6;
+        Sun, 04 Nov 2018 19:23:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MHt2HL1hPxLUZSU8tjk/yq874I7NV4UEGg3K2dqYbuQ=;
-        b=juK4sSuciGH3p7UyCKmk/sHoO1J/IiWYZbwQfBYDWg/eZVH3viQ6O6QnMJ3R+jKcpG
-         vH4ZqO4q0mrMlhqiDAy1JaLbeC9AISX9kQAjKe/pp7WB/CaqQCgS6PngvtcOYLNWLacp
-         QVEUg2kzbiRD/QSTdF8bSFtvq/AGe16kdLzuU=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZPYWCGJbnd35ASLjxF4+ptBevLzINksqHn68zBUVvIU=;
+        b=a4mal7p+CidlTno1yIKR9tcy90DoMJkCO4DtzBKf83exyL8xqRgKBEZ4NYtukzfPI7
+         6WVJjRPZnnik+usYPzAaobD2h71CoMsbmytFxWronrGY5jZlIUQCz8DhJLw6UcX/QnAJ
+         qIzib8LJmt58rqeIrNxLgYNW3Ab4l0A3sRrN+eHzqS1wG7a3VROweiJdE3NE4chkgzQg
+         DXNPMsLBwzVyNd+vGqyBZ6F0qCSN43ONgdRmDzW3sJVCz0kQHAt8B0wvCWdOnlJBbx+Q
+         fwyQEe80CeIYUIZmlyUvftJ7tD/p+It5O6JK2ii8X5vWVXkknalWLLjkrKD9Cwdc+J/l
+         PQzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MHt2HL1hPxLUZSU8tjk/yq874I7NV4UEGg3K2dqYbuQ=;
-        b=BhBANiJLNn/Lor3haLyVwrqG0WIQkzdbM98I9OdyMKhJLeGTcVvMSdeScXor3Tw/GR
-         nDXPvoqQw4DFNKo49uiWRguASfYuAEOngcKj2Y25zVeNL1LCp9ORuVT5GGo5aUjOyE1y
-         q9hVSyQxWjp6WTtEx5jGOWC9GQFPcBjOMq1XmUYswhLyStOnkd5KOqW+7VeQgg93miKA
-         MdVB+P6ixv5IcWgbNaiXXyecleS7/eqlkwS6xoAhL3MAB4pAhgXnGryArdhVEDk+KRTF
-         iXNnriewR5ikBPh4910Pl04Sf5KQaxbkRhk+ZoOyjSmphHTJMAq6pfXaXY6xLQOUcauR
-         9VIg==
-X-Gm-Message-State: AGRZ1gLLE7EDErGgh/yY05AsJBPxTkEGUklb3NyWMJLRvWHVlL6uZQny
-        kpcN4NFaTkR/R+OdvJFSegwIw4qF8MNudw==
-X-Google-Smtp-Source: AJdET5dlRsdvkPkjUWj6YEWtrhlqOU6vbQaVvURWfABWwImtHKSrnG9Ub3j//hH5sX+bNj/g6ZYjaw==
-X-Received: by 2002:a65:610e:: with SMTP id z14-v6mr18683200pgu.138.1541387831678;
-        Sun, 04 Nov 2018 19:17:11 -0800 (PST)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id f10-v6sm40182773pgp.72.2018.11.04.19.17.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 04 Nov 2018 19:17:10 -0800 (PST)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH RFC 3/3] dt-bindings: sdhci-omap: Add example for using dmaengine
-Date:   Mon,  5 Nov 2018 11:16:50 +0800
-Message-Id: <1541387810-24867-4-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZPYWCGJbnd35ASLjxF4+ptBevLzINksqHn68zBUVvIU=;
+        b=UWx23rVmZj6DSb60gbSoPp5h01XnSflCooEM9bIR8kpYXfnzLAL5SjzWbGDEbQk1KE
+         IDLW65PqpY5PJeP9RgnGktOE8gEuIxSqf42az34nlkyg4eyGsy07D3jn31a1PI8b0+Ka
+         MsOElb6sMni3zWg/rTjujZ+rvBn4J1kf4umr8ARrzvaeWa6pEBgNnlTTjwrNYVj/tXgD
+         mZuQTYBbK34sMyEQhqUtVMuhu6ZWo7etaDInRvD4It3nlndlqEGLw55/jWn4gmHhM/5I
+         7F8k3Y0Ej1xYKL0Q6Cj59o1KbqSmLt+ZFUp7ujqwnJlFjLmEi2mZPcyzXMadukPWhQhm
+         CO/A==
+X-Gm-Message-State: AGRZ1gJuLdBGrHPD7XPBNDGQfV2nRnEb6YBlwqvYwoCxARhGWSJPDDM/
+        LvjGk6kLp+6iVtWFrFYul5OnEaWqagLv22TtHDA=
+X-Google-Smtp-Source: AJdET5fIlGF1GRf1X40K2Skot2D5Y61HTbO3IJWQHotPM9jHUIwGtbM71B0T4RZtCwajLpiB4riQS3iZkHlXDCPotoY=
+X-Received: by 2002:a0c:a802:: with SMTP id w2mr17102381qva.198.1541388196761;
+ Sun, 04 Nov 2018 19:23:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20181102182123.29420-1-v.mayatskih@gmail.com> <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
+In-Reply-To: <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
+From:   Vitaly Mayatskih <v.mayatskih@gmail.com>
+Date:   Sun, 4 Nov 2018 22:23:04 -0500
+Message-ID: <CAGF4SLg6+nt+zV4haXys4Wz2dWPDyx7xHXuA+h01NcQ94j0E1A@mail.gmail.com>
+Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, stefanha@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sdhci-omap can support both external dma controllers via dmaengine
-framework as well as ADMA in which the controller acts as DMA master.
+On Sun, Nov 4, 2018 at 10:00 PM Jason Wang <jasowang@redhat.com> wrote:
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+> > # fio num-jobs
+> > # A: bare metal over block
+> > # B: bare metal over file
+> > # C: virtio-blk over block
+> > # D: virtio-blk over file
+> > # E: vhost-blk bio over block
+> > # F: vhost-blk kiocb over block
+> > # G: vhost-blk kiocb over file
+> > #
+> > #  A     B     C    D    E     F     G
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-index 393848c..c73fd47 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-@@ -12,6 +12,11 @@ Required properties:
- 		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
- 		 "hs200_1_8v",
- - pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
-+- dmas:		List of DMA specifiers with the controller specific format as described
-+		in the generic DMA client binding. A tx and rx specifier is required.
-+- dma-names:	List of DMA request names. These strings correspond 1:1 with the
-+		DMA specifiers listed in dmas. The string naming is to be "rx"
-+		and "tx" for RX and TX DMA requests, respectively.
- 
- Example:
- 	mmc1: mmc@4809c000 {
-@@ -20,4 +25,6 @@ Example:
- 		ti,hwmods = "mmc1";
- 		bus-width = <4>;
- 		vmmc-supply = <&vmmc>; /* phandle to regulator node */
-+		dmas = <&sdma 61 &sdma 62>;
-+		dma-names = "tx", "rx";
- 	};
+> > 16 1480k 1506k 101k 102k 1346k 1202k 566k
+
+> Hi:
+>
+> Thanks for the patches.
+>
+> This is not the first attempt for having vhost-blk:
+>
+> - Badari's version: https://lwn.net/Articles/379864/
+>
+> - Asias' version: https://lwn.net/Articles/519880/
+>
+> It's better to describe the differences (kiocb vs bio? performance?).
+> E.g if my memory is correct, Asias said it doesn't give much improvement
+> compared with userspace qemu.
+>
+> And what's more important, I believe we tend to use virtio-scsi nowdays.
+> So what's the advantages of vhost-blk over vhost-scsi?
+
+Hi,
+
+Yes, I saw both. Frankly, my implementation is not that different,
+because the whole thing has only twice more LOC that vhost/test.c.
+
+I posted my numbers (see in quoted text above the 16 queues case),
+IOPS goes from ~100k to 1.2M and almost reaches the physical
+limitation of the backend.
+
+submit_bio() is a bit faster, but can't be used for disk images placed
+on a file system. I have that submit_bio implementation too.
+
+Storage industry is shifting away from SCSI, which has a scaling
+problem. I can compare vhost-scsi vs vhost-blk if you are curious.
+
+Thanks!
 -- 
-2.7.4
-
+wbr, Vitaly
