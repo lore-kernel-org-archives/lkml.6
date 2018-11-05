@@ -2,220 +2,114 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C92C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE0CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDAC72081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E9602081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=scalemp.com header.i=@scalemp.com header.b="2hrMaia/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAC72081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=scalemp.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oMFg+Niq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lL4wvIvK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9602081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeKERTf (ORCPT
+        id S1727196AbeKERUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 12:19:35 -0500
-Received: from www.scalemp.com ([169.44.78.149]:53303 "EHLO scalemp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725737AbeKERTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 12:19:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=scalemp.com
-        ; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iAmGYZb0MerJ4GQBVG1/hRbftkacv6bG+uzFOFMuFXs=; b=2hrMaia/LOS+J7JtGp7hqnGZII
-        F1oZVBKBrHByacuSPRBF6YkJMXm3N3Z5wji6Q8sc9/BOF+txw31K36lh5Em+xTxpet7cAqsMobyFg
-        p0+nw697sXYVTdTKsA61TLe/Xpl9p7rL+UMsd+sapbOBJZwE73gzIwd554YbEdBSu2NY=;
-Received: from bzq-80-45-146.red.bezeqint.net ([82.80.45.146]:20062 helo=eial.scalemp)
-        by hosting.virtualsmp.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <eial@scalemp.com>)
-        id 1gJZoq-000CJR-CV; Mon, 05 Nov 2018 03:01:08 -0500
-From:   Eial Czerwacki <eial@scalemp.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Eial Czerwacki <eial@scalemp.com>, Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] x86/vsmp: Remove dependency on pv_irq_ops
-Date:   Mon,  5 Nov 2018 10:01:04 +0200
-Message-Id: <1541404864-31603-1-git-send-email-eial@scalemp.com>
-X-Mailer: git-send-email 2.7.4
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hosting.virtualsmp.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - scalemp.com
-X-Get-Message-Sender-Via: hosting.virtualsmp.com: authenticated_id: eial@scalemp.com
-X-Authenticated-Sender: hosting.virtualsmp.com: eial@scalemp.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 5 Nov 2018 12:20:49 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42384 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725737AbeKERUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 12:20:48 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3B64C60214; Mon,  5 Nov 2018 08:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541404942;
+        bh=L7IdAfoeJeS3FTD3IJwwyDi5htDfxgWDwt3LayoyCIk=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=oMFg+Niqw3iw73iBDZ1uychcWu7F0VdJpWZGrsRCJE5S/g2TjSWFPgQfZHw8SnffB
+         QwwnFKNzCfANnVw5mStX6XOj5Ci/I155VKGu2lxPzIx3Gs9PTdauEWwZB4g7VY3vMK
+         Rzhb1s5PTo/D13WOLoA5ab2nRzIsjlwIuVORbZJI=
+Received: from purkki.adurom.net (purkki.adurom.net [80.68.90.206])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8232A60214;
+        Mon,  5 Nov 2018 08:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541404941;
+        bh=L7IdAfoeJeS3FTD3IJwwyDi5htDfxgWDwt3LayoyCIk=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=lL4wvIvKo8QUpggNIH1qmYJFjOnKmgB9pYgh9fUySX/IgxkqYMRIy0pJqol4gWjZq
+         wLAt6OXSt5QaOWxrIkOnc1OqYUSyuv11gd9OwCiD+tMc84oybXJ5dHD5125ugIiFou
+         +bU3KOh6sXYD6ZZ8/it/HcFa8GOniY38aBseWeWo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8232A60214
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+Subject: Re: [PATCH 0/5] Use common cordic algorithm for b43
+References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
+Date:   Mon, 05 Nov 2018 10:02:17 +0200
+In-Reply-To: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
+        (Priit Laes's message of "Sat, 3 Nov 2018 11:59:39 +0200")
+Message-ID: <87muqoar5i.fsf@purkki.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vsmp dependency on pv_irq_ops removed some years ago, so now let's clean it up from vsmp_64.c.
+Priit Laes <plaes@plaes.org> writes:
 
-In short, "cap & ctl & (1 << 4)" was always returning 0, as such we can
-remove all the PARAVIRT/PARAVIRT_XXL code handling that.
+> b43 wireless driver included internal implementation of cordic
+> algorithm which has now been removed in favor of library
+> implementation.
+>
+> During the process, brcmfmac was driver was also cleaned.
+>
+> Please note that this series is only compile-tested, as I
+> do not have access to the hardware.
+>
+> Priit Laes (5):
+>   lib: cordic: Move cordic macros and defines to header file
+>   brcmfmac: Use common CORDIC_FLOAT macro from lib
+>   brcmfmac: Drop unused cordic defines and macros
+>   b43: Use common cordic algorithm from kernel lib
+>   b43: Drop internal cordic algorithm implementation
+>
+>  drivers/net/wireless/broadcom/b43/Kconfig                      |  1 +-
+>  drivers/net/wireless/broadcom/b43/phy_common.c                 | 47 +-------
+>  drivers/net/wireless/broadcom/b43/phy_common.h                 |  9 +-
+>  drivers/net/wireless/broadcom/b43/phy_lp.c                     | 13 +-
+>  drivers/net/wireless/broadcom/b43/phy_n.c                      | 13 +-
+>  drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h |  7 +-
+>  drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c |  4 +-
+>  drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c   |  4 +-
+>  include/linux/cordic.h                                         |  9 +-
+>  lib/cordic.c                                                   | 23 +---
+>  10 files changed, 35 insertions(+), 95 deletions(-)
 
-However, the rest of the code depends on CONFIG_PCI, so fix it accordingly.
-in addition, rename set_vsmp_pv_ops to set_vsmp_ctl.
+I don't see patch 1 in linux-wireless patchwork:
 
-Signed-off-by: Eial Czerwacki <eial@scalemp.com>
-Acked-by: Shai Fultheim <shai@scalemp.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/Kconfig          |  1 -
- arch/x86/kernel/vsmp_64.c | 84 ++++-------------------------------------------
- 2 files changed, 7 insertions(+), 78 deletions(-)
+https://patchwork.kernel.org/project/linux-wireless/list/?series=38033&state=*
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ba7e346..9d734f3 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -525,7 +525,6 @@ config X86_VSMP
- 	bool "ScaleMP vSMP"
- 	select HYPERVISOR_GUEST
- 	select PARAVIRT
--	select PARAVIRT_XXL
- 	depends on X86_64 && PCI
- 	depends on X86_EXTENDED_PLATFORM
- 	depends on SMP
-diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
-index 1eae5af..4862576 100644
---- a/arch/x86/kernel/vsmp_64.c
-+++ b/arch/x86/kernel/vsmp_64.c
-@@ -26,65 +26,8 @@
- 
- #define TOPOLOGY_REGISTER_OFFSET 0x10
- 
--#if defined CONFIG_PCI && defined CONFIG_PARAVIRT_XXL
--/*
-- * Interrupt control on vSMPowered systems:
-- * ~AC is a shadow of IF.  If IF is 'on' AC should be 'off'
-- * and vice versa.
-- */
--
--asmlinkage __visible unsigned long vsmp_save_fl(void)
--{
--	unsigned long flags = native_save_fl();
--
--	if (!(flags & X86_EFLAGS_IF) || (flags & X86_EFLAGS_AC))
--		flags &= ~X86_EFLAGS_IF;
--	return flags;
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_save_fl);
--
--__visible void vsmp_restore_fl(unsigned long flags)
--{
--	if (flags & X86_EFLAGS_IF)
--		flags &= ~X86_EFLAGS_AC;
--	else
--		flags |= X86_EFLAGS_AC;
--	native_restore_fl(flags);
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_restore_fl);
--
--asmlinkage __visible void vsmp_irq_disable(void)
--{
--	unsigned long flags = native_save_fl();
--
--	native_restore_fl((flags & ~X86_EFLAGS_IF) | X86_EFLAGS_AC);
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_disable);
--
--asmlinkage __visible void vsmp_irq_enable(void)
--{
--	unsigned long flags = native_save_fl();
--
--	native_restore_fl((flags | X86_EFLAGS_IF) & (~X86_EFLAGS_AC));
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
--
--static unsigned __init vsmp_patch(u8 type, void *ibuf,
--				  unsigned long addr, unsigned len)
--{
--	switch (type) {
--	case PARAVIRT_PATCH(irq.irq_enable):
--	case PARAVIRT_PATCH(irq.irq_disable):
--	case PARAVIRT_PATCH(irq.save_fl):
--	case PARAVIRT_PATCH(irq.restore_fl):
--		return paravirt_patch_default(type, ibuf, addr, len);
--	default:
--		return native_patch(type, ibuf, addr, len);
--	}
--
--}
--
--static void __init set_vsmp_pv_ops(void)
-+#if defined CONFIG_PCI
-+static void __init set_vsmp_ctl(void)
- {
- 	void __iomem *address;
- 	unsigned int cap, ctl, cfg;
-@@ -109,28 +52,12 @@ static void __init set_vsmp_pv_ops(void)
- 	}
- #endif
- 
--	if (cap & ctl & (1 << 4)) {
--		/* Setup irq ops and turn on vSMP  IRQ fastpath handling */
--		pv_ops.irq.irq_disable = PV_CALLEE_SAVE(vsmp_irq_disable);
--		pv_ops.irq.irq_enable = PV_CALLEE_SAVE(vsmp_irq_enable);
--		pv_ops.irq.save_fl = PV_CALLEE_SAVE(vsmp_save_fl);
--		pv_ops.irq.restore_fl = PV_CALLEE_SAVE(vsmp_restore_fl);
--		pv_ops.init.patch = vsmp_patch;
--		ctl &= ~(1 << 4);
--	}
- 	writel(ctl, address + 4);
- 	ctl = readl(address + 4);
- 	pr_info("vSMP CTL: control set to:0x%08x\n", ctl);
- 
- 	early_iounmap(address, 8);
- }
--#else
--static void __init set_vsmp_pv_ops(void)
--{
--}
--#endif
--
--#ifdef CONFIG_PCI
- static int is_vsmp = -1;
- 
- static void __init detect_vsmp_box(void)
-@@ -164,11 +91,14 @@ static int is_vsmp_box(void)
- {
- 	return 0;
- }
-+static void __init set_vsmp_ctl(void)
-+{
-+}
- #endif
- 
- static void __init vsmp_cap_cpus(void)
- {
--#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP)
-+#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
- 	void __iomem *address;
- 	unsigned int cfg, topology, node_shift, maxcpus;
- 
-@@ -221,6 +151,6 @@ void __init vsmp_init(void)
- 
- 	vsmp_cap_cpus();
- 
--	set_vsmp_pv_ops();
-+	set_vsmp_ctl();
- 	return;
- }
+Via which tree are you planning to push these? These could potentially
+go via my wireless-drivers-next tree (if review goes ok) but I need to
+have all five patches in patchwork.
+
+Also I don't see MAINTAINERS entry for cordic.[c|h], that would be good
+to have as well.
+
 -- 
-2.7.4
-
+Kalle Valo
