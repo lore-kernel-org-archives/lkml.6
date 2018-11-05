@@ -2,103 +2,109 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E0DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCCDC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30BA12081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:49:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BA12081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4187220827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:51:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4187220827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387780AbeKFGLF (ORCPT
+        id S1730303AbeKFGMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:11:05 -0500
-Received: from mga09.intel.com ([134.134.136.24]:47122 "EHLO mga09.intel.com"
+        Tue, 6 Nov 2018 01:12:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45826 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbeKFGLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:11:05 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 12:49:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
-   d="scan'208";a="277323400"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Nov 2018 12:49:34 -0800
-Date:   Mon, 5 Nov 2018 12:49:34 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Oded Gabbay <oded.gabbay@amd.com>
-Subject: Re: [PATCH] mm/mmu_notifier: rename mmu_notifier_synchronize() to
- <...>_barrier()
-Message-ID: <20181105204934.GA27247@linux.intel.com>
-References: <20181105192955.26305-1-sean.j.christopherson@intel.com>
- <20181105121833.200d5b53300a7ef4df7d349d@linux-foundation.org>
+        id S1726902AbeKFGMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 01:12:54 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 119D62D7F5;
+        Mon,  5 Nov 2018 20:51:23 +0000 (UTC)
+Received: from krava (ovpn-204-79.brq.redhat.com [10.40.204.79])
+        by smtp.corp.redhat.com (Postfix) with SMTP id EBCD55D73F;
+        Mon,  5 Nov 2018 20:51:20 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 21:51:19 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>, namhyung@kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho <acme@kernel.org>
+Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
+ unwinding - wrong stack pointer register value?]
+Message-ID: <20181105205119.GC25674@krava>
+References: <2335309.gnWok9HYb4@agathebauer>
+ <13521319.OzbRBoFVZM@agathebauer>
+ <20181102112635.GD5458@krava>
+ <3227038.olIWmsCzzY@agathebauer>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105121833.200d5b53300a7ef4df7d349d@linux-foundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <3227038.olIWmsCzzY@agathebauer>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 05 Nov 2018 20:51:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 12:18:33PM -0800, Andrew Morton wrote:
-> On Mon,  5 Nov 2018 11:29:55 -0800 Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> 
-> > ...and update its comment to explicitly reference its association with
-> > mmu_notifier_call_srcu().
+On Fri, Nov 02, 2018 at 06:56:50PM +0100, Milian Wolff wrote:
+
+SNIP
+
+> > > 
+> > > Note how precise levels 0 and 1 do not produce any samples where unwinding
+> > > fails. But precise level 2 produces some, and precise level 3 increases
+> > > the
+> > > amount (by ca. ~2x).
+> > > 
+> > > I can reproduce this pattern on two separate Intel CPUs and kernel
+> > > versions
+> > > currently:
+> > > 
+> > > Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz with 4.18.16-arch1-1-ARCH
+> > > Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz with 4.14.78-1-lts
+> > > 
+> > > Could someone else try this? What about AMD and IBS - is it also affected?
+> > > What about newer/different Intel CPUs?
 > > 
-> > Contrary to its name, mmu_notifier_synchronize() does not synchronize
-> > the notifier's SRCU instance, but rather waits for RCU callbacks to
-> > finished, i.e. it invokes rcu_barrier().  The RCU documentation is
-> > quite clear on this matter, explicitly calling out that rcu_barrier()
-> > does not imply synchronize_rcu().  The misnomer could lean an unwary
-> > developer to incorrectly assume that mmu_notifier_synchronize() can
-> > be used in conjunction with mmu_notifier_unregister_no_release() to
-> > implement a variation of mmu_notifier_unregister() that synchronizes
-> > SRCU without invoking ->release.  A Documentation-allergic and hasty
-> > developer could be further confused by the fact that rcu_barrier() is
-> > indeed a pass-through to synchronize_rcu()... in tiny SRCU.
+> > I tried on intel and can't actualy see that.. how do the failed samples
+> > look like? like is there the stack dump attached, what's in the regs?
+> > 
+> > could you please paste the 'perf report -D' output for some of the
+> > failed samples?
 > 
-> Fair enough.
-> 
-> > --- a/mm/mmu_notifier.c
-> > +++ b/mm/mmu_notifier.c
-> > @@ -35,12 +35,12 @@ void mmu_notifier_call_srcu(struct rcu_head *rcu,
-> >  }
-> >  EXPORT_SYMBOL_GPL(mmu_notifier_call_srcu);
-> >  
-> > -void mmu_notifier_synchronize(void)
-> > +void mmu_notifier_barrier(void)
-> >  {
-> > -	/* Wait for any running method to finish. */
-> > +	/* Wait for any running RCU callbacks (see above) to finish. */
-> >  	srcu_barrier(&srcu);
-> >  }
-> > -EXPORT_SYMBOL_GPL(mmu_notifier_synchronize);
-> > +EXPORT_SYMBOL_GPL(mmu_notifier_barrier);
-> >  
-> >  /*
-> >   * This function can't run concurrently against mmu_notifier_register
-> 
-> But as it has no callers, why retain it?
+> See here for one case: https://paste.kde.org/prryvdilq
 
-I was hesitant to remove it altogether since it was explicitly added to
-complement mmu_notifier_call_srcu()[1] even though the initial user of
-mmu_notifier_call_srcu() didn't use mmu_notifier_synchronize()[2].  I
-assume there was a good reason for adding the barrier function, but
-maybe that's a bad assumption.
+we should really print some helpfull debug output
+for this.. like to show some markers where the stack
+data starts
 
-[1] b972216e27d1 ("mmu_notifier: add call_srcu and sync function for listener to delay call and sync")
-[2] https://lore.kernel.org/patchwork/patch/515318/
+> 
+> What Intel CPU did you use? What microcode version? Which kernel version?
+> 
+> Generally, isn't what I'm seeing actually a neccessary evil of the ustack 
+> based unwinding in perf? I mean, the general procedure is as follows if I'm 
+> not mistaken:
+> 
+> - PMU triggers interrupt and PEBS stores RIP etc.
+> - code continous to execute, possibly changing the stack
+
+I dont think the code continues to execute.. the stack is ok
+
+the problem I saw in past is that the copy from user is not
+100% and sometimes you might not get full stack data you
+asked for
+
+have you tried with libdw unwinder? if one of the unwinder
+shows more callchains, we need to fix the other one ;-)
+
+jirka
