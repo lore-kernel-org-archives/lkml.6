@@ -2,133 +2,123 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 900C3C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D42C6C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1722085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885122085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="idrwkyPz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1722085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikeSzi5r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885122085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbeKFA1c (ORCPT
+        id S1730163AbeKFA2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:27:32 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51710 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729585AbeKFA1c (ORCPT
+        Mon, 5 Nov 2018 19:28:01 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41892 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729588AbeKFA2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:27:32 -0500
-Received: by mail-wm1-f68.google.com with SMTP id w7-v6so8688350wmc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:07:22 -0800 (PST)
+        Mon, 5 Nov 2018 19:28:00 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 189so15167931qkj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:07:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y/02XrycPs554AGD+omIrqDk+d5kh24rPmt72xB31Z4=;
-        b=idrwkyPzuQDOPXIrdD0nrhyeCOEOoPhDK8sSm4e8NfPHIhvmHe3j+McbOsQ/BXOySF
-         E3Kmv2WhBcODXyuk4O3dwUORt4eJjcMx90tQbtgPGiJoBefip5ErF6fN59SyBAuX2qNk
-         3kSKUNlTyzi2MNePsumh2ez/xVHdLT66fL+xg=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=DGmP/b5AgRKjZwNNB4ptvN/30E8ClAvHRtBMdegDU1o=;
+        b=ikeSzi5rMRPpigv0KKG7WoGyR4xygsr+u4tPxbfztzWcLJF/anJwRzCW4R02cxkaVe
+         qlxVF9KmpUaPTH3AOpyi/OZ+UJqwnDS3r3nHO/cAJto1JWlIAwX5t9uEtMjXycC/nhAC
+         CP8F1JSzJVPfR5v5dT8E9Ffv4sBTdc05hORW6ALlzOSdSsk3cOI8KtBn0E2Xq2V7ajPB
+         VE49BDbuj4KQLRXYCRxP9HTTZkrsZr9Q2ZAQziP1AVw9vxw1jl/bzQ99r/dFPzr4FGQj
+         nBAFj/Syff7529cpgbTEx899QTJOqfAMxoyRRFY7zR5L6xDrprmYzry808F7PVqA9zNx
+         VBvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y/02XrycPs554AGD+omIrqDk+d5kh24rPmt72xB31Z4=;
-        b=CGcOFaGi5fMFzcfVNBahoGI1fNZtPzanD2w9+V3v/JCDHqG3+5TxQmNpJ9YcoMUZ6c
-         e/vp5/KF3sd9CEJuwJEII3SYdAsxvkFtwAKKb08ojXuYSCnoKaVsWcwF4wEhfg2E5BqH
-         AO0lZIpTlXQiKaEx87/unjpMJfnfGAY81h/ySgGk3H/WHF5TIy9O4TqcQ88RaIvJCIDT
-         fLs2+uwHMs9enMC6jt9yY0BnmVMKhpiNBEzoWrjThV8SvqERs7za2bXc+ZajuJO3zvJN
-         LpqwXgbuLgABhhI2JYDwRPyHRFRnIe4/SArGrXdWIep1vXT/dTI0/27wLwP0ocsuF7lz
-         ND1A==
-X-Gm-Message-State: AGRZ1gJiLfBshhWsgYSrsqmsYkHdW4ezLfLOlM28AOeOjYQE+88Iaewj
-        6yz+BhiU7FqxTo1J9M+z7HuYLg==
-X-Google-Smtp-Source: AJdET5c/ar5VLtxIZXhOh0kgu7UnMsaH4dnhuHKVFcNUoA62NY7Hdp/rjhoeOqHIdX4jU7SQSH+Gow==
-X-Received: by 2002:a1c:3288:: with SMTP id y130-v6mr6498311wmy.11.1541430441952;
-        Mon, 05 Nov 2018 07:07:21 -0800 (PST)
-Received: from [192.168.0.40] (119.151.136.77.rev.sfr.net. [77.136.151.119])
-        by smtp.googlemail.com with ESMTPSA id 137-v6sm8117890wmo.43.2018.11.05.07.07.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 07:07:21 -0800 (PST)
-Subject: Re: [PATCH 5/5] thermal: zx2967_thermal: simplify getting
- .driver_data
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, Jun Nie <jun.nie@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
- <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <1de46d0b-a241-8ee6-7bf3-eb8ae4c22251@linaro.org>
-Date:   Mon, 5 Nov 2018 16:07:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=DGmP/b5AgRKjZwNNB4ptvN/30E8ClAvHRtBMdegDU1o=;
+        b=G3Bawm3Gm/fulHeN0gMMS4lFO5FY17rOgiD+76bLf0BC0/NvVuWvwn3WJWswX1Gk1v
+         msrkGnypRH4iQKXCuK47C8uBM7cwk7zQwtbcbttOkmKPmEZ87idzy9xiMclK5zNuHKPS
+         6m8iSgiMZtE4hTA/X5LSWgrK+ESoMwZe4KFKEwSkY9KdiLKqPNzotLsKeyZC4mCBoKCB
+         Smg3MkLK4dP+vWWWX1eM9Ih5ZqhWbKMR4eISL4EqYROTE3WI+tDj5hKhCruoLe5sJgXD
+         Xj3cXOGgRppQF9LHCrfhYot3g34ss8SwS66cclPXJeETDgflkXfZppdKxnSoG9klIau/
+         AZcQ==
+X-Gm-Message-State: AGRZ1gLFWX9kYIQCgSwKWes/GYMG3n6sEpEZ6h8W+BzhcWgT8PA3Nn7y
+        J3mxkYRMwGuUvgEFKV/yMToOxHwDoia3R9w7Od4mWg==
+X-Google-Smtp-Source: AJdET5efc+JIajQGpA0dpglzGhnzrbydIGPisDvsuIeg0O+XiaKqeOELNb+C6zRRZom0PNY+JkZNDAimUD/nApRTu1M=
+X-Received: by 2002:aed:2ba7:: with SMTP id e36mr18968483qtd.319.1541430471335;
+ Mon, 05 Nov 2018 07:07:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181021200053.2194-6-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 07:07:50 -0800 (PST)
+In-Reply-To: <20181105133545.GF10650@smile.fi.intel.com>
+References: <20181102112456.780127-1-arnd@arndb.de> <943d10e2-299c-4393-f2f5-4ac8bbe400c3@linux.intel.com>
+ <CAK8P3a1FCVTuB+ydE6syMHYPWnUW0WTCFDuyMmm35VNnpTTGBw@mail.gmail.com>
+ <adc83eaa-b7c0-2c76-a434-f1d5872337f6@linux.intel.com> <20181105133545.GF10650@smile.fi.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 5 Nov 2018 16:07:50 +0100
+X-Google-Sender-Auth: OR0KJIkYv2wczeZkTQ7VPwdaA9U
+Message-ID: <CAK8P3a0kdUtK_UuSJEPiWPxhdDULmW6RYEzu-Ug7f8VBoeWVog@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: skl: always select SND_SOC_HDAC_HDA
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rakesh Ughreja <rakesh.a.ughreja@intel.com>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Naveen Manohar <naveen.m@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/10/2018 22:00, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 11/5/18, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> On Sun, Nov 04, 2018 at 10:45:17AM -0600, Pierre-Louis Bossart wrote:
+>
+>> So yes indeed we have to add a select HDAC_HDA statement under the
+>> SKYLAKE
+>> config - i just don't know of any other means to say "don't build
+>> HDAC_HDA
+>> as a module when SKYLAKE is buit-in"
+>
+> We have this ("strange") lines over the drivers:
+>
+> config BAR
+> depends on FOO || FOO=n
+>
+> which guarantees that FOO will be not module when BAR is built-in.
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+That's what I normally use, but I could not figure this one out.
+One problem is that SND_SOC_ALL_CODECS selects
+SND_SOC_HDAC_HDA, and SND_SOC_ALL_CODECS itself
+may be =m, causing the failure for
+SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=y.
 
-> ---
-> 
-> Build tested only. buildbot is happy.
-> 
->  drivers/thermal/zx2967_thermal.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/thermal/zx2967_thermal.c b/drivers/thermal/zx2967_thermal.c
-> index 6acce0bce7c0..145ebf371598 100644
-> --- a/drivers/thermal/zx2967_thermal.c
-> +++ b/drivers/thermal/zx2967_thermal.c
-> @@ -207,8 +207,7 @@ MODULE_DEVICE_TABLE(of, zx2967_thermal_id_table);
->  #ifdef CONFIG_PM_SLEEP
->  static int zx2967_thermal_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct zx2967_thermal_priv *priv = platform_get_drvdata(pdev);
-> +	struct zx2967_thermal_priv *priv = dev_get_drvdata(dev);
->  
->  	if (priv && priv->clk_topcrm)
->  		clk_disable_unprepare(priv->clk_topcrm);
-> @@ -221,8 +220,7 @@ static int zx2967_thermal_suspend(struct device *dev)
->  
->  static int zx2967_thermal_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct zx2967_thermal_priv *priv = platform_get_drvdata(pdev);
-> +	struct zx2967_thermal_priv *priv = dev_get_drvdata(dev);
->  	int error;
->  
->  	error = clk_prepare_enable(priv->clk_topcrm);
-> 
+It might work with a separate dummy symbol:
 
+config SND_SOC_HDAC_HDA_FORCE
+         tristate
+         depends on SND_SOC_ALL_CODECS != n
+         default SND_SOC_INTEL_SKYLAKE
+         select SND_SOC_HDAC_HDA
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+This would make SND_SOC_HDAC_HDA built-in even
+with SND_SOC_ALL_CODECS=m and
+SND_SOC_INTEL_SKL_HDA_DSP_GENERIC_MACH=n
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+It seems a bit ugly, and would need some testing.
 
+       Arnd
