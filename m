@@ -2,160 +2,62 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2F6C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C4DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 566942085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:23:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 566942085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CF932085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:24:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfegJ2h2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF932085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387417AbeKEXnJ (ORCPT
+        id S1729365AbeKEXoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:43:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59654 "EHLO mx1.redhat.com"
+        Mon, 5 Nov 2018 18:44:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbeKEXnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:43:09 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726173AbeKEXoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:44:44 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC3774A6F3;
-        Mon,  5 Nov 2018 14:23:11 +0000 (UTC)
-Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3592C1974F;
-        Mon,  5 Nov 2018 14:23:10 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 22:23:08 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH] mm, memory_hotplug: teach has_unmovable_pages about of
- LRU migrateable pages
-Message-ID: <20181105142308.GJ27491@MiWiFi-R3L-srv>
-References: <20181101091055.GA15166@MiWiFi-R3L-srv>
- <20181102155528.20358-1-mhocko@kernel.org>
- <20181105002009.GF27491@MiWiFi-R3L-srv>
- <20181105091407.GB4361@dhcp22.suse.cz>
- <20181105092851.GD4361@dhcp22.suse.cz>
- <20181105102520.GB22011@MiWiFi-R3L-srv>
- <20181105123837.GH4361@dhcp22.suse.cz>
+        by mail.kernel.org (Postfix) with ESMTPSA id 51D632085A;
+        Mon,  5 Nov 2018 14:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541427886;
+        bh=7taWxtC/V9svKJ3Xv0JYOrYa8Yv0LR+9HTJQToUa0mU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tfegJ2h2A5jbWyCaGxKhNHN4uo6d/MXh1rZHFt7XSIkGplbfSlIwjOyPPM1Az7C9D
+         JwCNgpB+fZ/sV0g2SRH5Ay8vdq3PSNpPR6kWoip8XbVOWE0Q8kG4QxPLiSs8TLpEo/
+         UlkMkUazThbDP1gUnxWuKFlvYqcHN4ZYZa9avrEw=
+Date:   Mon, 5 Nov 2018 15:24:44 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     forest@alittletooquiet.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: vt6655: fix small typo
+Message-ID: <20181105142444.GA4352@kroah.com>
+References: <20181101155251.23330-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105123837.GH4361@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 05 Nov 2018 14:23:12 +0000 (UTC)
+In-Reply-To: <20181101155251.23330-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/05/18 at 01:38pm, Michal Hocko wrote:
-> On Mon 05-11-18 18:25:20, Baoquan He wrote:
-> > Hi Michal,
-> > 
-> > On 11/05/18 at 10:28am, Michal Hocko wrote:
-> > > 
-> > > Or something like this. Ugly as hell, no question about that. I also
-> > > have to think about this some more to convince myself this will not
-> > > result in an endless loop under some situations.
-> > 
-> > It failed. Paste the log and patch diff here, please help check if I made
-> > any mistake on manual code change. The log is at bottom.
-> 
-> The retry patch is obviously still racy, it just makes the race window
-> slightly smaller and I hoped it would catch most of those races but this
-> is obviously not the case.
-> 
-> I was thinking about your MIGRATE_MOVABLE check some more and I still do
-> not like it much, we just change migrate type at many places and I have
-> hard time to actually see this is always safe wrt. to what we need here.
-> 
-> We should be able to restore the zone type check though. The
-> primary problem fixed by 15c30bc09085 ("mm, memory_hotplug: make
-> has_unmovable_pages more robust") was that early allocations made it to
-> the zone_movable range. If we add the check _after_ the PageReserved()
-> check then we should be able to rule all bootmem allocation out.
-> 
-> So what about the following (on top of the previous patch which makes
-> sense on its own I believe).
-
-Yes, I think this looks very reasonable and should be robust.
-
-Have tested it, hot removing 4 hotpluggable nodes continusously
-succeeds, and then hot adding them back, still works well.
-
-So please feel free to add my Tested-by or Acked-by.
-
-Tested-by: Baoquan He <bhe@redhat.com>
-or
-Acked-by: Baoquan He <bhe@redhat.com>
-
-Thanks, Michal.
-> 
-> 
-> From d7ffd1342529c892f1de8999c3a5609211599c9d Mon Sep 17 00:00:00 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Mon, 5 Nov 2018 13:28:51 +0100
-> Subject: [PATCH] mm, memory_hotplug: check zone_movable in has_unmovable_pages
-> 
-> Page state checks are racy. Under a heavy memory workload (e.g. stress
-> -m 200 -t 2h) it is quite easy to hit a race window when the page is
-> allocated but its state is not fully populated yet. A debugging patch to
-> dump the struct page state shows
-> : [  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
-> : [  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
-> : [  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-> 
-> Note that the state has been checked for both PageLRU and PageSwapBacked
-> already. Closing this race completely would require some sort of retry
-> logic. This can be tricky and error prone (think of potential endless
-> or long taking loops).
-> 
-> Workaround this problem for movable zones at least. Such a zone should
-> only contain movable pages. 15c30bc09085 ("mm, memory_hotplug: make
-> has_unmovable_pages more robust") has told us that this is not strictly
-> true though. Bootmem pages should be marked reserved though so we can
-> move the original check after the PageReserved check. Pages from other
-> zones are still prone to races but we even do not pretend that memory
-> hotremove works for those so pre-mature failure doesn't hurt that much.
-> 
-> Reported-by: Baoquan He <bhe@redhat.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+On Thu, Nov 01, 2018 at 11:52:51AM -0400, Yangtao Li wrote:
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  mm/page_alloc.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 48ceda313332..5b64c5bc6ea0 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7788,6 +7788,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
->  		if (PageReserved(page))
->  			goto unmovable;
->  
-> +		/*
-> +		 * If the zone is movable and we have ruled out all reserved
-> +		 * pages then it should be reasonably safe to assume the rest
-> +		 * is movable.
-> +		 */
-> +		if (zone_idx(zone) == ZONE_MOVABLE)
-> +			continue;
-> +
->  		/*
->  		 * Hugepages are not in LRU lists, but they're movable.
->  		 * We need not scan over tail pages bacause we don't
-> -- 
-> 2.19.1
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+>  drivers/staging/vt6655/baseband.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+I can not accept patches without any changelog text :(
