@@ -2,196 +2,74 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2364C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C7FECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BDAC204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 778EB204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:06:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbvS1Js0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BDAC204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pJhcH+gD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778EB204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbeKEQW7 (ORCPT
+        id S1729518AbeKEQYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:22:59 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41518 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729000AbeKEQW7 (ORCPT
+        Mon, 5 Nov 2018 11:24:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43298 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729000AbeKEQYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:22:59 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x12-v6so8171044wrw.8
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 23:04:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wTJJuCIh981c/podzqokFm77abQxsRUvn3nOyTQ9lic=;
-        b=JbvS1Js0bQAVhZ3NPshUyGy5EeQsED/mgXOZeLb6/+5mlYx+IYAw/pCqZwSMSCpPR4
-         h1051htvcNuQqsR7xwwQLiT+GAjzs4yMfb85ff7cW1Vubo1yShlEQ9aX9LrIXPNijK/d
-         BhSSCBgGcNknMqGe4YX4eGUQ9VzWLelA0O20K7QN2GbBrsOKq8BlHiVYWiKdU8Xi8CFL
-         IRQhxJ6kWfPKIDiO6KBBu24zuOaWOhmXkzUThdawUr2O56IqMoTfLGKDma0B0Ss2+Rg2
-         gOekolpSph2qAWxWU8RAHjaL3SuLatOTYAlu9qXlEjFq+l1pXHNg20U/9ksvyx+LMXgD
-         OFpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wTJJuCIh981c/podzqokFm77abQxsRUvn3nOyTQ9lic=;
-        b=Tbv1tSB6KiL34XN0E4YRrplD9aMVZsCnN+UqQHLySuX27YEqmH1phzpNkktXS9P3Lz
-         QRz7Lu+kdpieatovHL4UoJU9XTX9VZjjtATodPiFtd75YKCiADbST5sxPNnEUzYQ2VjN
-         NXAzjoEFpiarZ02KDdkD0zn1nd2xtqRUbuuYUr9+cgprMpIwhf9Al8LkNbOt3i1azF7I
-         e+ACYypkRKTkDGDk92ApNCk+3t6ZnvOuQTX9K9hkd9z5Tu8gcSn0XF46tU2fIdPLcYtj
-         3O/4/g0LVNTg7vpM5aoLOruS7yl03WHxNlhonNFyY5mAVFXbfIcIbJfb2XEwiD37CWu9
-         kJwg==
-X-Gm-Message-State: AGRZ1gJsV5caWoL8NgdnMLlIsVF3IDgBXdFp4ZfMHLzITCjE4fmjZ3eN
-        /B0Plx0ubRPBUGQ4Lyk62nwQmCtH1MihkZvWV2Q=
-X-Google-Smtp-Source: AJdET5f/PXcCz0OeMLtIYK45nuyk38c2Mn/AYkyLVrI18sYP44MaBz2jwWftm1dzbLVq+JRxBtEgHVsVmTGFVe5oLV4=
-X-Received: by 2002:adf:aa05:: with SMTP id p5-v6mr19549114wrd.56.1541401484893;
- Sun, 04 Nov 2018 23:04:44 -0800 (PST)
+        Mon, 5 Nov 2018 11:24:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=rDlJU+avhBOOkAlmmbw6yFBIrMoK91VCCurFwfqfiPM=; b=pJhcH+gDkouRh20G82UFsRqTXf
+        WobjTX8Qpj8VzhTdskRFkj4jSILYitBJE31qLdilKxhF0orYLw6nWIzUWW4bqm1A5o9sCNapazKQj
+        PDWtrG69fB/AYPeUEeTvKGz4pIVjWCMaA0oEhq+E4OWw5LH6noPJyL8FGmqAugfdVl9Qongik7xrw
+        bGkdhwv/QThwdZvxbvJlM5F4zzgqNtpQhgOXvQtdX35IQS6D5AU7oMMkq8Rns0s2bvcziMI6d4tlQ
+        LP1oHCFOlz9SUyug1DzUvwk0OHnXVBrfbyb1fnzHDuzfSz3QyJovNmQ4/IWAOI+AQAfenRE3Jbn9v
+        wVfoggpA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJYxM-0003CI-2o; Mon, 05 Nov 2018 07:05:52 +0000
+Date:   Sun, 4 Nov 2018 23:05:51 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vincent Chen <vincentc@andestech.com>
+Cc:     palmer@sifive.com, aou@eecs.berkeley.edu, zong@andestech.com,
+        arnd@arndb.de, alankao@andestech.com, greentime@andestech.com,
+        linux-kernel@vger.kernel.org, kito@andestech.com,
+        linux-riscv@lists.infradead.org, deanbo422@gmail.com
+Subject: Re: [RFC 0/2] RISC-V: A proposal to add vendor-specific code
+Message-ID: <20181105070551.GA7274@infradead.org>
+References: <CAAhSdy0Y_jdc=2Lf8epof_+7HigCfhDxMNe8EF0fHfncqhs-zA@mail.gmail.com>
+ <mhng-01f0ac6a-c2fd-41be-9d53-44d1c139d453@palmer-si-x1c4>
+ <20181101174857.du2zu4vnrhpu5asf@excalibur.cnev.de>
+ <20181105065807.GA1286@andestech.com>
 MIME-Version: 1.0
-References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com> <1526555193-7242-11-git-send-email-ldufour@linux.vnet.ibm.com>
-In-Reply-To: <1526555193-7242-11-git-send-email-ldufour@linux.vnet.ibm.com>
-From:   vinayak menon <vinayakm.list@gmail.com>
-Date:   Mon, 5 Nov 2018 12:34:33 +0530
-Message-ID: <CAOaiJ-nJ_=+diXz8ji42Rro3Mj16C1=NpenRuY3-mjs_GhR4mA@mail.gmail.com>
-Subject: Re: [PATCH v11 10/26] mm: protect VMA modifications using VMA
- sequence count
-To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kirill@shutemov.name,
-        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, hpa@zytor.com,
-        Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        sergey.senozhatsky.work@gmail.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        kemi.wang@intel.com, Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        Minchan Kim <minchan@kernel.org>, punitagrawal@gmail.com,
-        yang.shi@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, haren@linux.vnet.ibm.com, npiggin@gmail.com,
-        Balbir Singh <bsingharora@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        Vinayak Menon <vinmenon@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181105065807.GA1286@andestech.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Mon, Nov 05, 2018 at 02:58:07PM +0800, Vincent Chen wrote:
+> Many thanks for kinds of comments. I quickly synthesize the comments and
+> list them as below.
+> 1. The kernel image shall include all vendor-specific code.
 
-On Thu, May 17, 2018 at 4:37 PM Laurent Dufour
-<ldufour@linux.vnet.ibm.com> wrote:
->
-> The VMA sequence count has been introduced to allow fast detection of
-> VMA modification when running a page fault handler without holding
-> the mmap_sem.
->
-> This patch provides protection against the VMA modification done in :
->         - madvise()
->         - mpol_rebind_policy()
->         - vma_replace_policy()
->         - change_prot_numa()
->         - mlock(), munlock()
->         - mprotect()
->         - mmap_region()
->         - collapse_huge_page()
->         - userfaultd registering services
->
-> In addition, VMA fields which will be read during the speculative fault
-> path needs to be written using WRITE_ONCE to prevent write to be split
-> and intermediate values to be pushed to other CPUs.
->
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  fs/proc/task_mmu.c |  5 ++++-
->  fs/userfaultfd.c   | 17 +++++++++++++----
->  mm/khugepaged.c    |  3 +++
->  mm/madvise.c       |  6 +++++-
->  mm/mempolicy.c     | 51 ++++++++++++++++++++++++++++++++++-----------------
->  mm/mlock.c         | 13 ++++++++-----
->  mm/mmap.c          | 22 +++++++++++++---------
->  mm/mprotect.c      |  4 +++-
->  mm/swap_state.c    |  8 ++++++--
->  9 files changed, 89 insertions(+), 40 deletions(-)
->
->  struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
->                                 struct vm_fault *vmf)
-> @@ -665,9 +669,9 @@ static inline void swap_ra_clamp_pfn(struct vm_area_struct *vma,
->                                      unsigned long *start,
->                                      unsigned long *end)
->  {
-> -       *start = max3(lpfn, PFN_DOWN(vma->vm_start),
-> +       *start = max3(lpfn, PFN_DOWN(READ_ONCE(vma->vm_start)),
->                       PFN_DOWN(faddr & PMD_MASK));
-> -       *end = min3(rpfn, PFN_DOWN(vma->vm_end),
-> +       *end = min3(rpfn, PFN_DOWN(READ_ONCE(vma->vm_end)),
->                     PFN_DOWN((faddr & PMD_MASK) + PMD_SIZE));
->  }
->
-> --
-> 2.7.4
->
+I fundamentally disagree with this… and think it should be the contrary.
 
-I have got a crash on 4.14 kernel with speculative page faults enabled
-and here is my analysis of the problem.
-The issue was reported only once.
-
-[23409.303395]  el1_da+0x24/0x84
-[23409.303400]  __radix_tree_lookup+0x8/0x90
-[23409.303407]  find_get_entry+0x64/0x14c
-[23409.303410]  pagecache_get_page+0x5c/0x27c
-[23409.303416]  __read_swap_cache_async+0x80/0x260
-[23409.303420]  swap_vma_readahead+0x264/0x37c
-[23409.303423]  swapin_readahead+0x5c/0x6c
-[23409.303428]  do_swap_page+0x128/0x6e4
-[23409.303431]  handle_pte_fault+0x230/0xca4
-[23409.303435]  __handle_speculative_fault+0x57c/0x7c8
-[23409.303438]  do_page_fault+0x228/0x3e8
-[23409.303442]  do_translation_fault+0x50/0x6c
-[23409.303445]  do_mem_abort+0x5c/0xe0
-[23409.303447]  el0_da+0x20/0x24
-
-Process A accesses address ADDR (part of VMA A) and that results in a
-translation fault.
-Kernel enters __handle_speculative_fault to fix the fault.
-Process A enters do_swap_page->swapin_readahead->swap_vma_readahead
-from speculative path.
-During this time, another process B which shares the same mm, does a
-mprotect from another CPU which follows
-mprotect_fixup->__split_vma, and it splits VMA A into VMAs A and B.
-After the split, ADDR falls into VMA B, but process A is still using
-VMA A.
-Now ADDR is greater than VMA_A->vm_start and VMA_A->vm_end.
-swap_vma_readahead->swap_ra_info uses start and end of vma to
-calculate ptes and nr_pte, which goes wrong due to this and finally
-resulting in wrong "entry" passed to
-swap_vma_readahead->__read_swap_cache_async, and in turn causing
-invalid swapper_space
-being passed to __read_swap_cache_async->find_get_page, causing an abort.
-
-The fix I have tried is to cache vm_start and vm_end also in vmf and
-use it in swap_ra_clamp_pfn. Let me know your thoughts on this. I can
-send
-the patch I am a using if you feel that is the right thing to do.
-
-Thanks,
-Vinayak
+1. The kernel shall support no vendor specific instructions whatsoever,
+period.
