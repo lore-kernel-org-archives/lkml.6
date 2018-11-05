@@ -6,88 +6,142 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7B1C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882FCC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15F7020819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:35:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F7020819
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BAC320819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:35:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BAC320819
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbeKEXzz (ORCPT
+        id S1729786AbeKEXz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:55:55 -0500
-Received: from mga01.intel.com ([192.55.52.88]:55645 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbeKEXzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:55:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:35:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="101634418"
-Received: from fhoeg-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.66])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Nov 2018 06:35:48 -0800
-Date:   Mon, 5 Nov 2018 16:35:46 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        Mon, 5 Nov 2018 18:55:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55552 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726173AbeKEXz5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:55:57 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5EYJJ9066044
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 09:35:56 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njn7000p5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:35:56 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <sathnaga@linux.vnet.ibm.com>;
+        Mon, 5 Nov 2018 14:35:53 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 14:35:50 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5EZnQh8192354
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 14:35:49 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CA9242042;
+        Mon,  5 Nov 2018 14:35:49 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD20C4204B;
+        Mon,  5 Nov 2018 14:35:47 +0000 (GMT)
+Received: from MiWiFi-R3L-srv (unknown [9.122.211.233])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  5 Nov 2018 14:35:47 +0000 (GMT)
+Date:   Mon, 5 Nov 2018 20:05:41 +0530
+From:   Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, axboe@kernel.dk,
+        satheera@in.ibm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 11/23] x86/sgx: Add definitions for SGX's CPUID leaf
- and variable sub-leafs
-Message-ID: <20181105143415.GA2798@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-12-jarkko.sakkinen@linux.intel.com>
- <CAHp75VcgFstv5EjY2DzsLGAimxf3Z2g-Mych1zW40txS9b7Bmg@mail.gmail.com>
+Subject: Re: System not booting since dm changes? (was Linux 4.20-rc1)
+Reply-To: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+References: <CAHk-=whDiwASMgw8Q7TNA2MJhf3s=ouK4+_3ioqmobs-yagnkQ@mail.gmail.com>
+ <87tvkvddnk.fsf@concordia.ellerman.id.au>
+ <20181105135157.GA11485@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VcgFstv5EjY2DzsLGAimxf3Z2g-Mych1zW40txS9b7Bmg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181105135157.GA11485@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18110514-0012-0000-0000-000002C3A00A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110514-0013-0000-0000-000020F7DF23
+Message-Id: <20181105143541.GA29120@MiWiFi-R3L-srv>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 03, 2018 at 03:11:39PM +0200, Andy Shevchenko wrote:
-> On Sat, Nov 3, 2018 at 1:16 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
+On Mon, Nov 05, 2018 at 08:51:57AM -0500, Mike Snitzer wrote:
+> On Mon, Nov 05 2018 at  5:25am -0500,
+> Michael Ellerman <mpe@ellerman.id.au> wrote:
+> 
+> > Linus Torvalds <torvalds@linux-foundation.org> writes:
+> > ...
+> > > Mike Snitzer (1):
+> > >     device mapper updates
+> > 
+> > Hi Mike,
+> > 
+> > Replying here because I can't find the device-mapper pull or the patch
+> > in question on LKML. I guess I should be subscribed to dm-devel.
+> > 
+> > We have a box that doesn't boot any more, bisect points at one of:
+> > 
+> >   cef6f55a9fb4 Mike Snitzer       dm table: require that request-based DM be layered on blk-mq devices 
+> >   953923c09fe8 Mike Snitzer       dm: rename DM_TYPE_MQ_REQUEST_BASED to DM_TYPE_REQUEST_BASED 
+> >   6a23e05c2fe3 Jens Axboe         dm: remove legacy request-based IO path 
+> > 
+> > 
+> > It's a Power8 system running Rawhide, it does have multipath, but I'm
+> > told it was setup by the Fedora installer, ie. nothing fancy.
+> > 
+> > The symptom is the system can't find its root filesystem and drops into
+> > the initramfs shell. The dmesg includes a bunch of errors like below:
+> > 
+> >   [   43.263460] localhost multipathd[1344]: sdb: fail to get serial
+> >   [   43.268762] localhost multipathd[1344]: mpatha: failed in domap for addition of new path sdb
+> >   [   43.268762] localhost multipathd[1344]: uevent trigger error
+> >   [   43.282065] localhost kernel: device-mapper: table: table load rejected: not all devices are blk-mq request-stackable
+> ...
 > >
-> > SGX defines its own CPUID leaf, 0x12, along with a variable number of
-> > sub-leafs.  Sub-leafs 0 and 1 are always available if SGX is supported
-> > and enumerate various SGX features, e.g. instruction sets and enclave
-> > capabilities.  Sub-leafs 2+ are variable, both in their existence and
-> > in what they enumerate.  Bits 3:0 of EAX report the sub-leaf type,
-> > with the remaining bits in EAX, EBX, ECX and EDX being type-specific.
-> > Currently, the only known sub-leaf type enumerates an EPC section.  An
-> > EPC section is simply a range of EPC memory available to software.
-> > The "list" of varaible SGX sub-leafs is NULL-terminated, i.e. software
-> > is expected to query CPUID until an invalid sub-leaf is encountered.
+> > Any ideas what's going wrong here?
 > 
-> > +       SGX_CPUID_SUB_LEAF_TYPE_MASK    = 0xF,
+> "table load rejected: not all devices are blk-mq request-stackable"
+> speaks to the fact that you aren't using blk-mq for scsi (aka scsi-mq).
 > 
-> GENMASK() if it suits here?
-> 
-> P.S. Btw, BIT() and GENMASK() macros are now in a separate header,
-> i.e. linux/bits.h, perhaps you might need to revisit code to include
-> it explicitly
+> You need to use scsi_mod.use_blk_mq=Y on the kernel commandline (or set
+> CONFIG_SCSI_MQ_DEFAULT in your kernel config)
 
-Agreed. I would also think that is should be renamed simply as
-SGX_CPUID_SUBLEAF_MASK.
+Thanks Mike!, above solution worked and the system booted fine now:-)
 
-/Jarkko
+# uname -r
+4.20.0-rc1+
+# cat /proc/cmdline 
+root=/dev/mapper/fedora_ltc--test--ci2-root ro rd.lvm.lv=fedora_ltc-test-ci2/root rd.lvm.lv=fedora_ltc-test-ci2/swap scsi_mod.use_blk_mq=Y
+
+CONFIG_SCSI_MQ_DEFAULT kernel was not set in my kernel config, will set in future runs.
+
+Thanks Michael!
+
+Regards,
+-Satheesh.
+
+> 
+> Mike
+> 
+
