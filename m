@@ -2,108 +2,104 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93CAC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABB6C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A1A2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:11:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fSnZwkKN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A1A2085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id A971C20827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:12:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A971C20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388190AbeKFHdP (ORCPT
+        id S2388157AbeKFHeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:33:15 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40539 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388169AbeKFHdO (ORCPT
+        Tue, 6 Nov 2018 02:34:17 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:43281 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387813AbeKFHeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:33:14 -0500
-Received: by mail-yw1-f66.google.com with SMTP id l66-v6so3939323ywl.7
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 14:11:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=PVkQJ7bRZnyVIMQEUBvriExwRvWhaBGDBiRP1kIbRWU=;
-        b=fSnZwkKNFo5dWDeg60b9aQFuAIeVSnErnxzpikk2EdhuaOHWAlMExlIY/4opcwmXr7
-         0Ae2MlAXJGsnM5Q64yDcR+JoaZPAIJeUhclgPApHPgHdg/Eogc6r4Wq16UbhaIAJ2/ks
-         /n60S2rG8r5IMgEjfOnTOC5+HEIngTZNRQGxQ=
+        Tue, 6 Nov 2018 02:34:17 -0500
+Received: by mail-vs1-f68.google.com with SMTP id k14so6113471vsm.10;
+        Mon, 05 Nov 2018 14:12:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=PVkQJ7bRZnyVIMQEUBvriExwRvWhaBGDBiRP1kIbRWU=;
-        b=UGJ/sQedwnZeXi5bcMbbonU2IOy/g3gMzs9z2b2LpTINt/8pwQrXrx5cMjwPpoMeeu
-         ODwgaOGrbJeWP5zMwxaD7mrDJIZpmhzaZLveydwKeWXemwRilpkErHZOkWfn5GnP/gHz
-         jfGntfJ2q54p0vrmJLOI+kihHN4e2IEoZ55XKmCaroelcZXqWTJ4880f3XW1ncnQRHsx
-         LfvQpwr/LfpE5hsTsb0ihDaipGI40qkRtl8zwFA3k6cADaP8NL1Q+u2gWNGvZyKfsT/7
-         00zKJtpCOFQZQbn2JKGYL8AnBWM4hVIdqV290r0NIPuABZs/dTg9FzXo4Y0TpJSV+wW5
-         qBHw==
-X-Gm-Message-State: AGRZ1gKLjPQV+pSa9GeB8uaTVanMQBiYAL0rnoOBX+6W8J1VQwRJVrtZ
-        RtanXUS75EbXQBfLjt5EI8vl8g==
-X-Google-Smtp-Source: AJdET5f13bXhP2KjuZ14j5OQiTPQAeGxBVJKrH6QXhXOnQY8h/fs5z6Jpo4LaF2w9twNRyEcNUsdRg==
-X-Received: by 2002:a81:3b55:: with SMTP id i82-v6mr6527426ywa.397.1541455882433;
-        Mon, 05 Nov 2018 14:11:22 -0800 (PST)
-Received: from [10.177.251.60] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id u134-v6sm6479480ywf.86.2018.11.05.14.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 14:11:21 -0800 (PST)
-Subject: Re: [PATCH v2 3/3] b43: Use cordic algorithm from kernel library
-To:     =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
-        Priit Laes <plaes@plaes.org>
-References: <cover.9ec98292c595a111ae78f31383ff8618c9cb04da.1541446422.git-series.plaes@plaes.org>
- <77709642dacd9d855618bd9c2f3a56a88e881eaa.1541446422.git-series.plaes@plaes.org>
- <20181105223909.61860cdd@wiggum>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>, b43-dev@lists.infradead.org
-From:   Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <1b536f41-6bda-712b-cd57-0034f924992a@broadcom.com>
-Date:   Mon, 5 Nov 2018 23:11:17 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gh3AuZIfe0zXP71uemtOcyqyiQLDcUXZMs2NYEEDjIM=;
+        b=uV1BdT7rx/LW+4tIrGuWhBuEG9rusThwLpX6xlJ4LMCBxzgJ6MpGu/cnF4Pcs0KmTr
+         ZzI+kGo5OnxCkfsYFqQn+K3N8yRul8SlzDA9bmozY4NYhy2GGIG5Lf7jelONPMCgZTja
+         wCOhur6FaNdBbkUHWNEDf9LxW5JbqlDTasS0vlG5haPArOK1jeFG/FQAk9hGzQjKIwDG
+         +ui8HEgTb3GTOta1St1pBvPXVXqtDm/ydr4NH3pLcPjt0/teSvQAQ6kQ2jsQ8Q7JNnar
+         6t3Tokw/p1LBpSLghU6r7DlezX3N7Y92DpGD2jfo0A5MK8lqgyXshjmXEsBlsBl9tMYQ
+         ituQ==
+X-Gm-Message-State: AGRZ1gICFpKOPRhm319APxcIgg/5I67XNLEnr/FXcs8Dm5cXnKB/XL8k
+        1tyYjJb1YGbI+KrMtWbuerBr9cX1l8V0BInjR3krltB5
+X-Google-Smtp-Source: AJdET5f+xAXErfXdCjdJzGwNDibs9jRKoNN7jq+MjcXmj6ln4GNZzALe1+vMHmvZkIItOu0bQ48LR4YxaXnuOKOEU+E=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr9242706vsj.11.1541455944606;
+ Mon, 05 Nov 2018 14:12:24 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181105223909.61860cdd@wiggum>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20181105220559.27458-1-geert@linux-m68k.org>
+In-Reply-To: <20181105220559.27458-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 5 Nov 2018 23:12:12 +0100
+Message-ID: <CAMuHMdWGpjvwunNWgFujPO9_j+=QiNsi346s4-xBF1g4DT5xZw@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.20-rc1
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     linux-s390 <linux-s390@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/2018 10:39 PM, Michael Büsch wrote:
-> On Mon,  5 Nov 2018 21:37:18 +0200
-> Priit Laes <plaes@plaes.org> wrote:
+On Mon, Nov 5, 2018 at 11:07 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v4.20-rc1[1] compared to v4.19[2].
 >
->> Kernel library has a common cordic algorithm which is identical
->> to internally implementatd one, so use it and drop the duplicate
->> implementation.
->>
->> Signed-off-by: Priit Laes <plaes@plaes.org>
+> Summarized:
+>   - build errors: +3/-0
+>   - build warnings: +449/-2712
+>
+> Happy fixing! ;-)
+>
+> Thanks to the linux-next team for providing the build service.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/651022382c7f8da46cb4872a545ee1da6d097d2a/ (all 240 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d/ (all 240 configs)
 >
 >
-> This looks nice.
-> But what is the testing status of this?
-> Has this been tested on actual b43-LP hardware?
+> *** ERRORS ***
 >
-> Is the replacement algorithm exactly the same, or are there slight
-> differences (e.g. in corner cases)?
+> 3 error regressions:
+>   + /kisskb/src/arch/s390/kernel/nospec-branch.c: error: macro "memcpy" passed 6 arguments, but takes just 3:  => 130:61
 
-Hi Michael,
+s390-all{mod,yes}config
 
-I recall doing a comparison between the algorithms and thought I put 
-that in the original commit message. However, it is not there. It is not 
-exactly the same as in b43 so there are difference for certain angles, 
-most results are the same however. This implementation is slightly more 
-accurate on the full scale.
+>   + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]:  => 8799:3
 
+sh4-all{mod,yes}config
 
+Looks like d9b84a15892c0233 ("ALSA: hda: Fix implicit definition of
+pci_iomap() on SH")
+is not sufficient?
+
+>   + {standard input}: Error: Unrecognized opcode: `slbfee.':  => 89, 37
+
+powerpc-all{mod,yes}config
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
