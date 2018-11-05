@@ -2,87 +2,788 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B38EC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF05ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5227920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:02:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9000920868
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:03:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W0mTXqQt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W0mTXqQt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5227920862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t30UnQIx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9000920868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeKESVP (ORCPT
+        id S1728958AbeKESVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:21:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50728 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbeKESVP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:21:15 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E193D6044B; Mon,  5 Nov 2018 09:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541408554;
-        bh=y3Fkx/UYzJ5v7+iCc7BmW9gdprFvsXnZJg8ckuLlL6c=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=W0mTXqQtHNzbPKJPL36axOAbH9c4ahoFtvIejiEyC7u/NWxkujrBzZx6zpZUuu/tH
-         5f2b8GoWnjl6sNgJgnavAFOOudY036o4LlMJ2BfI0KqJsOT9yO4hSVdYKBcWQjiyxU
-         zeCsooJOO894p6YfXgOJ5LEjitAByFDFZuaLXaPQ=
-Received: from x230.qca.qualcomm.com (37-33-75-124.bb.dnainternet.fi [37.33.75.124])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 5 Nov 2018 13:21:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbeKESVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:21:41 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 600336044B;
-        Mon,  5 Nov 2018 09:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541408554;
-        bh=y3Fkx/UYzJ5v7+iCc7BmW9gdprFvsXnZJg8ckuLlL6c=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=W0mTXqQtHNzbPKJPL36axOAbH9c4ahoFtvIejiEyC7u/NWxkujrBzZx6zpZUuu/tH
-         5f2b8GoWnjl6sNgJgnavAFOOudY036o4LlMJ2BfI0KqJsOT9yO4hSVdYKBcWQjiyxU
-         zeCsooJOO894p6YfXgOJ5LEjitAByFDFZuaLXaPQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 600336044B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc:     Priit Laes <plaes@plaes.org>, linux-wireless@vger.kernel.org,
-        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com
-Subject: Re: [PATCH 0/5] Use common cordic algorithm for b43
-References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
-        <87muqoar5i.fsf@purkki.adurom.net>
-        <870a5f59-1031-c62d-0ee8-742bd0f16d8a@broadcom.com>
-Date:   Mon, 05 Nov 2018 11:02:29 +0200
-In-Reply-To: <870a5f59-1031-c62d-0ee8-742bd0f16d8a@broadcom.com> (Arend van
-        Spriel's message of "Mon, 5 Nov 2018 09:17:40 +0100")
-Message-ID: <87bm73hp7e.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 743162082A;
+        Mon,  5 Nov 2018 09:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541408579;
+        bh=I7KxR4R9pKFe8P4Foq+NZaYCWLy107ulQ1wdMHhCAh4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=t30UnQIxKH/2eUknYdd46zZPvPDtf8RGhK1sLB//bYEN4XM26uFsWYcqEcr/4u1Sb
+         46TRyZciR2QNHDZIzuZ92WyKItVpcXmdH3cAcnTYKylUFOFpaoEu7WcUHTWzFK/mkN
+         Ws3iGMLI8sU5Kr2mvsQ6lPov0WBvkHZXA0aXZaWA=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: [PATCH v2 06/12] tracing/kprobes: Use dyn_event framework for kprobe events
+Date:   Mon,  5 Nov 2018 18:02:36 +0900
+Message-Id: <154140855646.17322.6619219995865980392.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <154140838606.17322.15294184388075458777.stgit@devbox>
+References: <154140838606.17322.15294184388075458777.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arend van Spriel <arend.vanspriel@broadcom.com> writes:
+Use dyn_event framework for kprobe events. This shows
+kprobe events on "tracing/dynamic_events" file.
 
-> On 11/5/2018 9:02 AM, Kalle Valo wrote:
->> Also I don't see MAINTAINERS entry for cordic.[c|h], that would be good
->> to have as well.
->
-> We added the cordic library functions during brcm80211 staging
-> cleanup. We can add it to MAINTAINERS file.
+User can also define new events via tracing/dynamic_events.
 
-Great, thanks.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Changes in v2:
+  - Use dyn_events_release_all() for clearing events.
+  - Use nolock event_call register/unregister and lock event_mutex
+    before dyn_event_mutex to avoid lock dependency error.
+  - Check probe cleanup result in self-check.
+  - Rewrite trace_kprobe_create not to destroy arguments.
+  - Add match operation and new APIs for deleting event.
+  - Return -ECANCEL if given definition is not for kprobes.
+  - Remove unused for_each_trace_kprobe_safe.
+---
+ Documentation/trace/kprobetrace.rst |    3 
+ kernel/trace/Kconfig                |    1 
+ kernel/trace/trace_kprobe.c         |  319 +++++++++++++++++++----------------
+ kernel/trace/trace_probe.c          |   27 +++
+ kernel/trace/trace_probe.h          |    2 
+ 5 files changed, 207 insertions(+), 145 deletions(-)
 
--- 
-Kalle Valo
+diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
+index 47e765c2f2c3..235ce2ab131a 100644
+--- a/Documentation/trace/kprobetrace.rst
++++ b/Documentation/trace/kprobetrace.rst
+@@ -20,6 +20,9 @@ current_tracer. Instead of that, add probe points via
+ /sys/kernel/debug/tracing/kprobe_events, and enable it via
+ /sys/kernel/debug/tracing/events/kprobes/<EVENT>/enable.
+ 
++You can also use /sys/kernel/debug/tracing/dynamic_events instead of
++kprobe_events. That interface will provide unified access to other
++dynamic events too.
+ 
+ Synopsis of kprobe_events
+ -------------------------
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index bf2e8a5a91f1..c0f6b0105609 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -461,6 +461,7 @@ config KPROBE_EVENTS
+ 	bool "Enable kprobes-based dynamic events"
+ 	select TRACING
+ 	select PROBE_EVENTS
++	select DYNAMIC_EVENTS
+ 	default y
+ 	help
+ 	  This allows the user to add tracing events (similar to tracepoints)
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index d313bcc259dc..bdf8c2ad5152 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -12,6 +12,7 @@
+ #include <linux/rculist.h>
+ #include <linux/error-injection.h>
+ 
++#include "trace_dynevent.h"
+ #include "trace_kprobe_selftest.h"
+ #include "trace_probe.h"
+ #include "trace_probe_tmpl.h"
+@@ -19,17 +20,51 @@
+ #define KPROBE_EVENT_SYSTEM "kprobes"
+ #define KRETPROBE_MAXACTIVE_MAX 4096
+ 
++static int trace_kprobe_create(int argc, const char **argv);
++static int trace_kprobe_show(struct seq_file *m, struct dyn_event *ev);
++static int trace_kprobe_release(struct dyn_event *ev);
++static bool trace_kprobe_is_busy(struct dyn_event *ev);
++static bool trace_kprobe_match(const char *system, const char *event,
++			       struct dyn_event *ev);
++
++static struct dyn_event_operations trace_kprobe_ops = {
++	.create = trace_kprobe_create,
++	.show = trace_kprobe_show,
++	.is_busy = trace_kprobe_is_busy,
++	.free = trace_kprobe_release,
++	.match = trace_kprobe_match,
++};
++
+ /**
+  * Kprobe event core functions
+  */
+ struct trace_kprobe {
+-	struct list_head	list;
++	struct dyn_event	devent;
+ 	struct kretprobe	rp;	/* Use rp.kp for kprobe use */
+ 	unsigned long __percpu *nhit;
+ 	const char		*symbol;	/* symbol name */
+ 	struct trace_probe	tp;
+ };
+ 
++static bool is_trace_kprobe(struct dyn_event *ev)
++{
++	return ev->ops == &trace_kprobe_ops;
++}
++
++static struct trace_kprobe *to_trace_kprobe(struct dyn_event *ev)
++{
++	return container_of(ev, struct trace_kprobe, devent);
++}
++
++/**
++ * for_each_trace_kprobe - iterate over the trace_kprobe list
++ * @pos:	the struct trace_kprobe * for each entry
++ * @dpos:	the struct dyn_event * to use as a loop cursor
++ */
++#define for_each_trace_kprobe(pos, dpos)	\
++	for_each_dyn_event(dpos)		\
++		if (is_trace_kprobe(dpos) && (pos = to_trace_kprobe(dpos)))
++
+ #define SIZEOF_TRACE_KPROBE(n)				\
+ 	(offsetof(struct trace_kprobe, tp.args) +	\
+ 	(sizeof(struct probe_arg) * (n)))
+@@ -81,6 +116,22 @@ static nokprobe_inline bool trace_kprobe_module_exist(struct trace_kprobe *tk)
+ 	return ret;
+ }
+ 
++static bool trace_kprobe_is_busy(struct dyn_event *ev)
++{
++	struct trace_kprobe *tk = to_trace_kprobe(ev);
++
++	return trace_probe_is_enabled(&tk->tp);
++}
++
++static bool trace_kprobe_match(const char *system, const char *event,
++			       struct dyn_event *ev)
++{
++	struct trace_kprobe *tk = to_trace_kprobe(ev);
++
++	return strcmp(trace_event_name(&tk->tp.call), event) == 0 &&
++	    (!system || strcmp(tk->tp.call.class->system, system) == 0);
++}
++
+ static nokprobe_inline unsigned long trace_kprobe_nhit(struct trace_kprobe *tk)
+ {
+ 	unsigned long nhit = 0;
+@@ -128,9 +179,6 @@ bool trace_kprobe_error_injectable(struct trace_event_call *call)
+ static int register_kprobe_event(struct trace_kprobe *tk);
+ static int unregister_kprobe_event(struct trace_kprobe *tk);
+ 
+-static DEFINE_MUTEX(probe_lock);
+-static LIST_HEAD(probe_list);
+-
+ static int kprobe_dispatcher(struct kprobe *kp, struct pt_regs *regs);
+ static int kretprobe_dispatcher(struct kretprobe_instance *ri,
+ 				struct pt_regs *regs);
+@@ -192,7 +240,7 @@ static struct trace_kprobe *alloc_trace_kprobe(const char *group,
+ 	if (!tk->tp.class.system)
+ 		goto error;
+ 
+-	INIT_LIST_HEAD(&tk->list);
++	dyn_event_init(&tk->devent, &trace_kprobe_ops);
+ 	INIT_LIST_HEAD(&tk->tp.files);
+ 	return tk;
+ error:
+@@ -207,6 +255,9 @@ static void free_trace_kprobe(struct trace_kprobe *tk)
+ {
+ 	int i;
+ 
++	if (!tk)
++		return;
++
+ 	for (i = 0; i < tk->tp.nr_args; i++)
+ 		traceprobe_free_probe_arg(&tk->tp.args[i]);
+ 
+@@ -220,9 +271,10 @@ static void free_trace_kprobe(struct trace_kprobe *tk)
+ static struct trace_kprobe *find_trace_kprobe(const char *event,
+ 					      const char *group)
+ {
++	struct dyn_event *pos;
+ 	struct trace_kprobe *tk;
+ 
+-	list_for_each_entry(tk, &probe_list, list)
++	for_each_trace_kprobe(tk, pos)
+ 		if (strcmp(trace_event_name(&tk->tp.call), event) == 0 &&
+ 		    strcmp(tk->tp.call.class->system, group) == 0)
+ 			return tk;
+@@ -321,7 +373,7 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ 	 * created with perf_event_open. We don't need to wait for these
+ 	 * trace_kprobes
+ 	 */
+-	if (list_empty(&tk->list))
++	if (list_empty(&tk->devent.list))
+ 		wait = 0;
+  out:
+ 	if (wait) {
+@@ -419,7 +471,7 @@ static void __unregister_trace_kprobe(struct trace_kprobe *tk)
+ 	}
+ }
+ 
+-/* Unregister a trace_probe and probe_event: call with locking probe_lock */
++/* Unregister a trace_probe and probe_event */
+ static int unregister_trace_kprobe(struct trace_kprobe *tk)
+ {
+ 	/* Enabled event can not be unregistered */
+@@ -431,7 +483,7 @@ static int unregister_trace_kprobe(struct trace_kprobe *tk)
+ 		return -EBUSY;
+ 
+ 	__unregister_trace_kprobe(tk);
+-	list_del(&tk->list);
++	dyn_event_remove(&tk->devent);
+ 
+ 	return 0;
+ }
+@@ -442,7 +494,7 @@ static int register_trace_kprobe(struct trace_kprobe *tk)
+ 	struct trace_kprobe *old_tk;
+ 	int ret;
+ 
+-	mutex_lock(&probe_lock);
++	mutex_lock(&event_mutex);
+ 
+ 	/* Delete old (same name) event if exist */
+ 	old_tk = find_trace_kprobe(trace_event_name(&tk->tp.call),
+@@ -471,10 +523,10 @@ static int register_trace_kprobe(struct trace_kprobe *tk)
+ 	if (ret < 0)
+ 		unregister_kprobe_event(tk);
+ 	else
+-		list_add_tail(&tk->list, &probe_list);
++		dyn_event_add(&tk->devent);
+ 
+ end:
+-	mutex_unlock(&probe_lock);
++	mutex_unlock(&event_mutex);
+ 	return ret;
+ }
+ 
+@@ -483,6 +535,7 @@ static int trace_kprobe_module_callback(struct notifier_block *nb,
+ 				       unsigned long val, void *data)
+ {
+ 	struct module *mod = data;
++	struct dyn_event *pos;
+ 	struct trace_kprobe *tk;
+ 	int ret;
+ 
+@@ -490,8 +543,8 @@ static int trace_kprobe_module_callback(struct notifier_block *nb,
+ 		return NOTIFY_DONE;
+ 
+ 	/* Update probes on coming module */
+-	mutex_lock(&probe_lock);
+-	list_for_each_entry(tk, &probe_list, list) {
++	mutex_lock(&event_mutex);
++	for_each_trace_kprobe(tk, pos) {
+ 		if (trace_kprobe_within_module(tk, mod)) {
+ 			/* Don't need to check busy - this should have gone. */
+ 			__unregister_trace_kprobe(tk);
+@@ -502,7 +555,7 @@ static int trace_kprobe_module_callback(struct notifier_block *nb,
+ 					mod->name, ret);
+ 		}
+ 	}
+-	mutex_unlock(&probe_lock);
++	mutex_unlock(&event_mutex);
+ 
+ 	return NOTIFY_DONE;
+ }
+@@ -520,7 +573,7 @@ static inline void sanitize_event_name(char *name)
+ 			*name = '_';
+ }
+ 
+-static int create_trace_kprobe(int argc, char **argv)
++static int trace_kprobe_create(int argc, const char *argv[])
+ {
+ 	/*
+ 	 * Argument syntax:
+@@ -544,9 +597,10 @@ static int create_trace_kprobe(int argc, char **argv)
+ 	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
+ 	 */
+ 	struct trace_kprobe *tk;
+-	int i, ret = 0;
+-	bool is_return = false, is_delete = false;
+-	char *symbol = NULL, *event = NULL, *group = NULL;
++	int i, len, ret = 0;
++	bool is_return = false;
++	char *symbol = NULL, *tmp = NULL;
++	const char *event = NULL, *group = KPROBE_EVENT_SYSTEM;
+ 	int maxactive = 0;
+ 	long offset = 0;
+ 	void *addr = NULL;
+@@ -554,26 +608,26 @@ static int create_trace_kprobe(int argc, char **argv)
+ 	unsigned int flags = TPARG_FL_KERNEL;
+ 
+ 	/* argc must be >= 1 */
+-	if (argv[0][0] == 'p')
+-		is_return = false;
+-	else if (argv[0][0] == 'r') {
++	if (argv[0][0] == 'r') {
+ 		is_return = true;
+ 		flags |= TPARG_FL_RETURN;
+-	} else if (argv[0][0] == '-')
+-		is_delete = true;
+-	else {
+-		pr_info("Probe definition must be started with 'p', 'r' or"
+-			" '-'.\n");
+-		return -EINVAL;
+-	}
++	} else if (argv[0][0] != 'p' || argc < 2)
++		return -ECANCELED;
+ 
+ 	event = strchr(&argv[0][1], ':');
+-	if (event) {
+-		event[0] = '\0';
++	if (event)
+ 		event++;
+-	}
++
+ 	if (is_return && isdigit(argv[0][1])) {
+-		ret = kstrtouint(&argv[0][1], 0, &maxactive);
++		if (event)
++			len = event - &argv[0][1] - 1;
++		else
++			len = strlen(&argv[0][1]);
++		if (len > MAX_EVENT_NAME_LEN - 1)
++			return -E2BIG;
++		memcpy(buf, &argv[0][1], len);
++		buf[len] = '\0';
++		ret = kstrtouint(buf, 0, &maxactive);
+ 		if (ret) {
+ 			pr_info("Failed to parse maxactive.\n");
+ 			return ret;
+@@ -588,74 +642,37 @@ static int create_trace_kprobe(int argc, char **argv)
+ 		}
+ 	}
+ 
+-	if (event) {
+-		char *slash;
+-
+-		slash = strchr(event, '/');
+-		if (slash) {
+-			group = event;
+-			event = slash + 1;
+-			slash[0] = '\0';
+-			if (strlen(group) == 0) {
+-				pr_info("Group name is not specified\n");
+-				return -EINVAL;
+-			}
+-		}
+-		if (strlen(event) == 0) {
+-			pr_info("Event name is not specified\n");
+-			return -EINVAL;
+-		}
+-	}
+-	if (!group)
+-		group = KPROBE_EVENT_SYSTEM;
+-
+-	if (is_delete) {
+-		if (!event) {
+-			pr_info("Delete command needs an event name.\n");
+-			return -EINVAL;
+-		}
+-		mutex_lock(&probe_lock);
+-		tk = find_trace_kprobe(event, group);
+-		if (!tk) {
+-			mutex_unlock(&probe_lock);
+-			pr_info("Event %s/%s doesn't exist.\n", group, event);
+-			return -ENOENT;
+-		}
+-		/* delete an event */
+-		ret = unregister_trace_kprobe(tk);
+-		if (ret == 0)
+-			free_trace_kprobe(tk);
+-		mutex_unlock(&probe_lock);
+-		return ret;
+-	}
+-
+-	if (argc < 2) {
+-		pr_info("Probe point is not specified.\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* try to parse an address. if that fails, try to read the
+ 	 * input as a symbol. */
+ 	if (kstrtoul(argv[1], 0, (unsigned long *)&addr)) {
++		/* Check whether uprobe event specified */
++		if (strchr(argv[1], '/') && strchr(argv[1], ':'))
++			return -ECANCELED;
+ 		/* a symbol specified */
+-		symbol = argv[1];
++		symbol = kstrdup(argv[1], GFP_KERNEL);
++		if (!symbol)
++			return -ENOMEM;
+ 		/* TODO: support .init module functions */
+ 		ret = traceprobe_split_symbol_offset(symbol, &offset);
+ 		if (ret || offset < 0 || offset > UINT_MAX) {
+ 			pr_info("Failed to parse either an address or a symbol.\n");
+-			return ret;
++			goto out;
+ 		}
+ 		if (kprobe_on_func_entry(NULL, symbol, offset))
+ 			flags |= TPARG_FL_FENTRY;
+ 		if (offset && is_return && !(flags & TPARG_FL_FENTRY)) {
+ 			pr_info("Given offset is not valid for return probe.\n");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out;
+ 		}
+ 	}
+ 	argc -= 2; argv += 2;
+ 
+-	/* setup a probe */
+-	if (!event) {
++	if (event) {
++		ret = traceprobe_parse_event_name(&event, &group, buf);
++		if (ret)
++			goto out;
++	} else {
+ 		/* Make a new event name */
+ 		if (symbol)
+ 			snprintf(buf, MAX_EVENT_NAME_LEN, "%c_%s_%ld",
+@@ -666,17 +683,27 @@ static int create_trace_kprobe(int argc, char **argv)
+ 		sanitize_event_name(buf);
+ 		event = buf;
+ 	}
++
++	/* setup a probe */
+ 	tk = alloc_trace_kprobe(group, event, addr, symbol, offset, maxactive,
+ 			       argc, is_return);
+ 	if (IS_ERR(tk)) {
+ 		pr_info("Failed to allocate trace_probe.(%d)\n",
+ 			(int)PTR_ERR(tk));
+-		return PTR_ERR(tk);
++		ret = PTR_ERR(tk);
++		goto out;
+ 	}
+ 
+ 	/* parse arguments */
+ 	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
+-		ret = traceprobe_parse_probe_arg(&tk->tp, i, argv[i], flags);
++		tmp = kstrdup(argv[i], GFP_KERNEL);
++		if (!tmp) {
++			ret = -ENOMEM;
++			goto error;
++		}
++
++		ret = traceprobe_parse_probe_arg(&tk->tp, i, tmp, flags);
++		kfree(tmp);
+ 		if (ret)
+ 			goto error;
+ 	}
+@@ -684,60 +711,39 @@ static int create_trace_kprobe(int argc, char **argv)
+ 	ret = register_trace_kprobe(tk);
+ 	if (ret)
+ 		goto error;
+-	return 0;
++out:
++	kfree(symbol);
++	return ret;
+ 
+ error:
+ 	free_trace_kprobe(tk);
+-	return ret;
++	goto out;
+ }
+ 
+-static int release_all_trace_kprobes(void)
++static int create_or_delete_trace_kprobe(int argc, char **argv)
+ {
+-	struct trace_kprobe *tk;
+-	int ret = 0;
+-
+-	mutex_lock(&probe_lock);
+-	/* Ensure no probe is in use. */
+-	list_for_each_entry(tk, &probe_list, list)
+-		if (trace_probe_is_enabled(&tk->tp)) {
+-			ret = -EBUSY;
+-			goto end;
+-		}
+-	/* TODO: Use batch unregistration */
+-	while (!list_empty(&probe_list)) {
+-		tk = list_entry(probe_list.next, struct trace_kprobe, list);
+-		ret = unregister_trace_kprobe(tk);
+-		if (ret)
+-			goto end;
+-		free_trace_kprobe(tk);
+-	}
+-
+-end:
+-	mutex_unlock(&probe_lock);
++	int ret;
+ 
+-	return ret;
+-}
++	if (argv[0][0] == '-')
++		return dyn_event_release(argc, argv, &trace_kprobe_ops);
+ 
+-/* Probes listing interfaces */
+-static void *probes_seq_start(struct seq_file *m, loff_t *pos)
+-{
+-	mutex_lock(&probe_lock);
+-	return seq_list_start(&probe_list, *pos);
++	ret = trace_kprobe_create(argc, (const char **)argv);
++	return ret == -ECANCELED ? -EINVAL : ret;
+ }
+ 
+-static void *probes_seq_next(struct seq_file *m, void *v, loff_t *pos)
++static int trace_kprobe_release(struct dyn_event *ev)
+ {
+-	return seq_list_next(v, &probe_list, pos);
+-}
++	struct trace_kprobe *tk = to_trace_kprobe(ev);
++	int ret = unregister_trace_kprobe(tk);
+ 
+-static void probes_seq_stop(struct seq_file *m, void *v)
+-{
+-	mutex_unlock(&probe_lock);
++	if (!ret)
++		free_trace_kprobe(tk);
++	return ret;
+ }
+ 
+-static int probes_seq_show(struct seq_file *m, void *v)
++static int trace_kprobe_show(struct seq_file *m, struct dyn_event *ev)
+ {
+-	struct trace_kprobe *tk = v;
++	struct trace_kprobe *tk = to_trace_kprobe(ev);
+ 	int i;
+ 
+ 	seq_putc(m, trace_kprobe_is_return(tk) ? 'r' : 'p');
+@@ -759,10 +765,20 @@ static int probes_seq_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
++static int probes_seq_show(struct seq_file *m, void *v)
++{
++	struct dyn_event *ev = v;
++
++	if (!is_trace_kprobe(ev))
++		return 0;
++
++	return trace_kprobe_show(m, ev);
++}
++
+ static const struct seq_operations probes_seq_op = {
+-	.start  = probes_seq_start,
+-	.next   = probes_seq_next,
+-	.stop   = probes_seq_stop,
++	.start  = dyn_event_seq_start,
++	.next   = dyn_event_seq_next,
++	.stop   = dyn_event_seq_stop,
+ 	.show   = probes_seq_show
+ };
+ 
+@@ -771,7 +787,7 @@ static int probes_open(struct inode *inode, struct file *file)
+ 	int ret;
+ 
+ 	if ((file->f_mode & FMODE_WRITE) && (file->f_flags & O_TRUNC)) {
+-		ret = release_all_trace_kprobes();
++		ret = dyn_events_release_all(&trace_kprobe_ops);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+@@ -783,7 +799,7 @@ static ssize_t probes_write(struct file *file, const char __user *buffer,
+ 			    size_t count, loff_t *ppos)
+ {
+ 	return trace_parse_run_command(file, buffer, count, ppos,
+-				       create_trace_kprobe);
++				       create_or_delete_trace_kprobe);
+ }
+ 
+ static const struct file_operations kprobe_events_ops = {
+@@ -798,8 +814,13 @@ static const struct file_operations kprobe_events_ops = {
+ /* Probes profiling interfaces */
+ static int probes_profile_seq_show(struct seq_file *m, void *v)
+ {
+-	struct trace_kprobe *tk = v;
++	struct dyn_event *ev = v;
++	struct trace_kprobe *tk;
+ 
++	if (!is_trace_kprobe(ev))
++		return 0;
++
++	tk = to_trace_kprobe(ev);
+ 	seq_printf(m, "  %-44s %15lu %15lu\n",
+ 		   trace_event_name(&tk->tp.call),
+ 		   trace_kprobe_nhit(tk),
+@@ -809,9 +830,9 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
+ }
+ 
+ static const struct seq_operations profile_seq_op = {
+-	.start  = probes_seq_start,
+-	.next   = probes_seq_next,
+-	.stop   = probes_seq_stop,
++	.start  = dyn_event_seq_start,
++	.next   = dyn_event_seq_next,
++	.stop   = dyn_event_seq_stop,
+ 	.show   = probes_profile_seq_show
+ };
+ 
+@@ -1332,7 +1353,7 @@ static int register_kprobe_event(struct trace_kprobe *tk)
+ 		kfree(call->print_fmt);
+ 		return -ENODEV;
+ 	}
+-	ret = trace_add_event_call(call);
++	ret = trace_add_event_call_nolock(call);
+ 	if (ret) {
+ 		pr_info("Failed to register kprobe event: %s\n",
+ 			trace_event_name(call));
+@@ -1347,7 +1368,7 @@ static int unregister_kprobe_event(struct trace_kprobe *tk)
+ 	int ret;
+ 
+ 	/* tp->event is unregistered in trace_remove_event_call() */
+-	ret = trace_remove_event_call(&tk->tp.call);
++	ret = trace_remove_event_call_nolock(&tk->tp.call);
+ 	if (!ret)
+ 		kfree(tk->tp.call.print_fmt);
+ 	return ret;
+@@ -1364,7 +1385,7 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+ 	char *event;
+ 
+ 	/*
+-	 * local trace_kprobes are not added to probe_list, so they are never
++	 * local trace_kprobes are not added to dyn_event, so they are never
+ 	 * searched in find_trace_kprobe(). Therefore, there is no concern of
+ 	 * duplicated name here.
+ 	 */
+@@ -1422,6 +1443,11 @@ static __init int init_kprobe_trace(void)
+ {
+ 	struct dentry *d_tracer;
+ 	struct dentry *entry;
++	int ret;
++
++	ret = dyn_event_register(&trace_kprobe_ops);
++	if (ret)
++		return ret;
+ 
+ 	if (register_module_notifier(&trace_kprobe_module_nb))
+ 		return -EINVAL;
+@@ -1479,9 +1505,8 @@ static __init int kprobe_trace_self_tests_init(void)
+ 
+ 	pr_info("Testing kprobe tracing: ");
+ 
+-	ret = trace_run_command("p:testprobe kprobe_trace_selftest_target "
+-				"$stack $stack0 +0($stack)",
+-				create_trace_kprobe);
++	ret = trace_run_command("p:testprobe kprobe_trace_selftest_target $stack $stack0 +0($stack)",
++				create_or_delete_trace_kprobe);
+ 	if (WARN_ON_ONCE(ret)) {
+ 		pr_warn("error on probing function entry.\n");
+ 		warn++;
+@@ -1501,8 +1526,8 @@ static __init int kprobe_trace_self_tests_init(void)
+ 		}
+ 	}
+ 
+-	ret = trace_run_command("r:testprobe2 kprobe_trace_selftest_target "
+-				"$retval", create_trace_kprobe);
++	ret = trace_run_command("r:testprobe2 kprobe_trace_selftest_target $retval",
++				create_or_delete_trace_kprobe);
+ 	if (WARN_ON_ONCE(ret)) {
+ 		pr_warn("error on probing function return.\n");
+ 		warn++;
+@@ -1572,20 +1597,24 @@ static __init int kprobe_trace_self_tests_init(void)
+ 			disable_trace_kprobe(tk, file);
+ 	}
+ 
+-	ret = trace_run_command("-:testprobe", create_trace_kprobe);
++	ret = trace_run_command("-:testprobe", create_or_delete_trace_kprobe);
+ 	if (WARN_ON_ONCE(ret)) {
+ 		pr_warn("error on deleting a probe.\n");
+ 		warn++;
+ 	}
+ 
+-	ret = trace_run_command("-:testprobe2", create_trace_kprobe);
++	ret = trace_run_command("-:testprobe2", create_or_delete_trace_kprobe);
+ 	if (WARN_ON_ONCE(ret)) {
+ 		pr_warn("error on deleting a probe.\n");
+ 		warn++;
+ 	}
+ 
+ end:
+-	release_all_trace_kprobes();
++	ret = dyn_events_release_all(&trace_kprobe_ops);
++	if (WARN_ON_ONCE(ret)) {
++		pr_warn("error on cleaning up probes.\n");
++		warn++;
++	}
+ 	/*
+ 	 * Wait for the optimizer work to finish. Otherwise it might fiddle
+ 	 * with probes in already freed __init text.
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 449150c6a87f..ff86417c0149 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -154,6 +154,33 @@ int traceprobe_split_symbol_offset(char *symbol, long *offset)
+ 	return 0;
+ }
+ 
++/* @buf must has MAX_EVENT_NAME_LEN size */
++int traceprobe_parse_event_name(const char **pevent, const char **pgroup,
++				char *buf)
++{
++	const char *slash, *event = *pevent;
++
++	slash = strchr(event, '/');
++	if (slash) {
++		if (slash == event) {
++			pr_info("Group name is not specified\n");
++			return -EINVAL;
++		}
++		if (slash - event + 1 > MAX_EVENT_NAME_LEN) {
++			pr_info("Group name is too long\n");
++			return -E2BIG;
++		}
++		strlcpy(buf, event, slash - event + 1);
++		*pgroup = buf;
++		*pevent = slash + 1;
++	}
++	if (strlen(event) == 0) {
++		pr_info("Event name is not specified\n");
++		return -EINVAL;
++	}
++	return 0;
++}
++
+ #define PARAM_MAX_STACK (THREAD_SIZE / sizeof(unsigned long))
+ 
+ static int parse_probe_vars(char *arg, const struct fetch_type *t,
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index feeec261b356..8a63f8bc01bc 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -279,6 +279,8 @@ extern int traceprobe_update_arg(struct probe_arg *arg);
+ extern void traceprobe_free_probe_arg(struct probe_arg *arg);
+ 
+ extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
++extern int traceprobe_parse_event_name(const char **pevent,
++				       const char **pgroup, char *buf);
+ 
+ extern int traceprobe_set_print_fmt(struct trace_probe *tp, bool is_return);
+ 
+
