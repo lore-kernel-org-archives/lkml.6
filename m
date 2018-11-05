@@ -2,197 +2,206 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FA2C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D07ECDE46
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B5020862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:50:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sZL/5KSr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B5020862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DBE420866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:51:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBE420866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeKESIv (ORCPT
+        id S1727127AbeKESJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:08:51 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40528 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeKESIu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:08:50 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x2-v6so7878pfm.7;
-        Mon, 05 Nov 2018 00:50:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RwBEMOKOuHN5wEinLokxK+u2mLgDIRVcnZMuwO4S6is=;
-        b=sZL/5KSrAee3zSajmSMMcHphz3bGhsiCGSvSO/gXZHI2Lv395oTezIop4WY+SXK6W0
-         iFvTrbMBvx/E0azGI+jTc8SITu8zNo8X8srvfnXZCkj1iYWYzlRuURlV4O3hYqVza9yb
-         UctfTGDMHp7n3tL2kf220sgPuiCqQeMhEQMag4Ksz8xmnUAPnTWSZ2IQAXbmpdsmJbQg
-         2cDSms95CFuK1L8p5SAV7yLScFHhI5LGVmNUjm4N80KitV2XTD+yiQCD4oDSNSj+h2Cb
-         0IEJx7eEeu7s7JxYHOUlMC0V6K17lsMZAMSgnrPDD4aYBOwVa2jmCeLZKyFQGdI97w8R
-         UCMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RwBEMOKOuHN5wEinLokxK+u2mLgDIRVcnZMuwO4S6is=;
-        b=mHQ41EPIs+cXFWDLNSChp5fuq4QJfACQU0iuC/oxFtChGprMIgQyiur5XtN42R7CxJ
-         dolApmfBW7oHtqXS1tZsrzrzHptWhZThRzOcV5bZXLD6VpTjgV/5zEK0OkI0owJJHi4s
-         8k+1dlIqZc/lXoNewJG52i1wVLV71wGNb4ICODKGTo68tTQWm8uH0u6h59w3Cu0uYAz+
-         41umAKUES5MZKXknSSOzCypC8XDMWr3lt0drDiMVsR4ztHa4js6DQEpkeq8Dvz5oF78o
-         EpeF6TVtSbxIvWRfmvC/LmEOWZlBN2mk9w7fzZW7V34kLjkKxeHXAhq5nZHxdI9S/bA6
-         dP9g==
-X-Gm-Message-State: AGRZ1gLSJL2+c+tmcr8CNG3dUWV/T2Gu3dnyHp5Fl5dcgwAdrTPTA3AJ
-        oci0NeCZPDWPvrReWGUh17o=
-X-Google-Smtp-Source: AJdET5cNWhqLLO1OsUxRDcNs+Awj6gpzEb/izbRb8SIGyuWGbQ5am5KMczy9ydjaIPlDlxFe8vpoNA==
-X-Received: by 2002:a62:a218:: with SMTP id m24-v6mr20691523pff.99.1541407813403;
-        Mon, 05 Nov 2018 00:50:13 -0800 (PST)
-Received: from localhost.localdomain ([2605:e000:180c:c593:a139:e092:8805:6ff6])
-        by smtp.gmail.com with ESMTPSA id w66-v6sm48662672pfb.51.2018.11.05.00.50.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 00:50:12 -0800 (PST)
-From:   Ivan Roman <mr.ivanroman@gmail.com>
-To:     johan@kernel.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ivan Roman <mr.ivanroman@gmail.com>
-Subject: [PATCH] USB: serial: io_ti: Replaced simple_strtoul with kstrtoul + Formatting issues
-Date:   Mon,  5 Nov 2018 00:50:09 -0800
-Message-Id: <20181105085009.25512-1-mr.ivanroman@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 5 Nov 2018 13:09:57 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:47836 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbeKESJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:09:57 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C04BD1A012F;
+        Mon,  5 Nov 2018 09:51:18 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A8C11A009E;
+        Mon,  5 Nov 2018 09:51:08 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E9C2B402DF;
+        Mon,  5 Nov 2018 16:50:55 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
+        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Bao Xiaowei <xiaowei.bao@nxp.com>
+Subject: [PATCHv2 1/6] arm64: dts: Add the status property disable PCIe
+Date:   Mon,  5 Nov 2018 16:46:48 +0800
+Message-Id: <20181105084653.26597-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced simple_strtoul with kstrtoul since simple_strtoul is obsolete. 
-Also fixed several formatting issues.
+From: Bao Xiaowei <xiaowei.bao@nxp.com>
 
-Signed-off-by: Ivan Roman <mr.ivanroman@gmail.com>
+Add the status property disable the PCIe, the property will be enable
+by bootloader.
+
+Signed-off-by: Bao Xiaowei <xiaowei.bao@nxp.com>
 ---
- drivers/usb/serial/io_ti.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+v2:
+ - no change
 
-diff --git a/drivers/usb/serial/io_ti.c b/drivers/usb/serial/io_ti.c
-index c327d4cf7928..5c61fb479354 100644
---- a/drivers/usb/serial/io_ti.c
-+++ b/drivers/usb/serial/io_ti.c
-@@ -341,9 +341,8 @@ static int read_download_mem(struct usb_device *dev, int start_address,
- 		else
- 			read_length = (__u8)length;
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi |    1 +
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |    3 +++
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |    3 +++
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |    3 +++
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi |    4 ++++
+ 5 files changed, 14 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index 5da732f..21f2b3b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -496,6 +496,7 @@
+ 					<0000 0 0 2 &gic 0 111 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 112 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 113 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 	};
  
--		if (read_length > 1) {
-+		if (read_length > 1)
- 			dev_dbg(&dev->dev, "%s - @ %x for %d\n", __func__, start_address, read_length);
--		}
- 		/*
- 		 * NOTE: Must use swab as wIndex is sent in little-endian
- 		 *       byte order regardless of host byte order.
-@@ -820,7 +819,7 @@ static int build_i2c_fw_hdr(u8 *header, const struct firmware *fw)
- 	 * Allocate a 15.5k buffer + 2 bytes for version number (Firmware
- 	 * Record)
- 	 */
--	buffer_size = (((1024 * 16) - 512 ) +
-+	buffer_size = (((1024 * 16) - 512) +
- 			sizeof(struct ti_i2c_firmware_rec));
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 3fed504..760d510 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -683,6 +683,7 @@
+ 					<0000 0 0 2 &gic 0 111 0x4>,
+ 					<0000 0 0 3 &gic 0 112 0x4>,
+ 					<0000 0 0 4 &gic 0 113 0x4>;
++			status = "disabled";
+ 		};
  
- 	buffer = kmalloc(buffer_size, GFP_KERNEL);
-@@ -843,7 +842,7 @@ static int build_i2c_fw_hdr(u8 *header, const struct firmware *fw)
- 		&fw->data[4 + sizeof(struct ti_i2c_image_header)],
- 		le16_to_cpu(img_header->Length));
+ 		pcie@3500000 {
+@@ -708,6 +709,7 @@
+ 					<0000 0 0 2 &gic 0 121 0x4>,
+ 					<0000 0 0 3 &gic 0 122 0x4>,
+ 					<0000 0 0 4 &gic 0 123 0x4>;
++			status = "disabled";
+ 		};
  
--	for (i=0; i < buffer_size; i++) {
-+	for (i = 0; i < buffer_size; i++) {
- 		cs = (__u8)(cs + buffer[i]);
- 	}
+ 		pcie@3600000 {
+@@ -733,6 +735,7 @@
+ 					<0000 0 0 2 &gic 0 155 0x4>,
+ 					<0000 0 0 3 &gic 0 156 0x4>,
+ 					<0000 0 0 4 &gic 0 157 0x4>;
++			status = "disabled";
+ 		};
+ 	};
  
-@@ -851,7 +850,7 @@ static int build_i2c_fw_hdr(u8 *header, const struct firmware *fw)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 51cbd50..64d334c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -652,6 +652,7 @@
+ 					<0000 0 0 2 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
- 	/* Build new header */
- 	i2c_header =  (struct ti_i2c_desc *)header;
--	firmware_rec =  (struct ti_i2c_firmware_rec*)i2c_header->Data;
-+	firmware_rec =  (struct ti_i2c_firmware_rec *)i2c_header->Data;
+ 		pcie@3500000 {
+@@ -677,6 +678,7 @@
+ 					<0000 0 0 2 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
- 	i2c_header->Type	= I2C_DESC_TYPE_FIRMWARE_BLANK;
- 	i2c_header->Size	= cpu_to_le16(buffer_size);
-@@ -2147,9 +2146,8 @@ static void edge_throttle(struct tty_struct *tty)
- 	if (I_IXOFF(tty)) {
- 		unsigned char stop_char = STOP_CHAR(tty);
- 		status = edge_write(tty, port, &stop_char, 1);
--		if (status <= 0) {
-+		if (status <= 0)
- 			dev_err(&port->dev, "%s - failed to write stop character, %d\n", __func__, status);
--		}
- 	}
+ 		pcie@3600000 {
+@@ -702,6 +704,7 @@
+ 					<0000 0 0 2 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
- 	/*
-@@ -2174,9 +2172,8 @@ static void edge_unthrottle(struct tty_struct *tty)
- 	if (I_IXOFF(tty)) {
- 		unsigned char start_char = START_CHAR(tty);
- 		status = edge_write(tty, port, &start_char, 1);
--		if (status <= 0) {
-+		if (status <= 0)
- 			dev_err(&port->dev, "%s - failed to write start character, %d\n", __func__, status);
--		}
- 	}
- 	/*
- 	 * if we are implementing RTS/CTS, restart reads
-@@ -2231,11 +2228,11 @@ static void change_port_settings(struct tty_struct *tty,
- 	struct device *dev = &edge_port->port->dev;
- 	struct ump_uart_config *config;
- 	int baud;
--	unsigned cflag;
-+	unsigned int cflag;
- 	int status;
- 	int port_number = edge_port->port->port_number;
+ 	};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index a07f612..9deb9cb 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -533,6 +533,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 110 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 0 0 111 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 0 0 112 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
--	config = kmalloc (sizeof (*config), GFP_KERNEL);
-+	config = kmalloc(sizeof (*config), GFP_KERNEL);
- 	if (!config) {
- 		tty->termios = *old_termios;
- 		return;
-@@ -2423,12 +2420,12 @@ static int edge_tiocmget(struct tty_struct *tty)
+ 		pcie@3500000 {
+@@ -557,6 +558,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 115 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 0 0 116 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 0 0 117 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
- 	msr = edge_port->shadow_msr;
- 	mcr = edge_port->shadow_mcr;
--	result = ((mcr & MCR_DTR)	? TIOCM_DTR: 0)	  /* 0x002 */
--		  | ((mcr & MCR_RTS)	? TIOCM_RTS: 0)   /* 0x004 */
--		  | ((msr & EDGEPORT_MSR_CTS)	? TIOCM_CTS: 0)   /* 0x020 */
--		  | ((msr & EDGEPORT_MSR_CD)	? TIOCM_CAR: 0)   /* 0x040 */
--		  | ((msr & EDGEPORT_MSR_RI)	? TIOCM_RI:  0)   /* 0x080 */
--		  | ((msr & EDGEPORT_MSR_DSR)	? TIOCM_DSR: 0);  /* 0x100 */
-+	result = ((mcr & MCR_DTR)	? TIOCM_DTR : 0)	  /* 0x002 */
-+		  | ((mcr & MCR_RTS)	? TIOCM_RTS : 0)   /* 0x004 */
-+		  | ((msr & EDGEPORT_MSR_CTS)	? TIOCM_CTS : 0)   /* 0x020 */
-+		  | ((msr & EDGEPORT_MSR_CD)	? TIOCM_CAR : 0)   /* 0x040 */
-+		  | ((msr & EDGEPORT_MSR_RI)	? TIOCM_RI :  0)   /* 0x080 */
-+		  | ((msr & EDGEPORT_MSR_DSR)	? TIOCM_DSR : 0);  /* 0x100 */
+ 		pcie@3600000 {
+@@ -581,6 +583,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 120 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 0 0 121 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 0 0 122 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
+ 		cluster1_core0_watchdog: wdt@c000000 {
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+index d188774..5732e3b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -648,6 +648,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 110 4>,
+ 					<0000 0 0 3 &gic 0 0 0 111 4>,
+ 					<0000 0 0 4 &gic 0 0 0 112 4>;
++			status = "disabled";
+ 		};
  
- 	dev_dbg(&port->dev, "%s -- %x\n", __func__, result);
-@@ -2442,7 +2439,7 @@ static int get_serial_info(struct tty_struct *tty,
- {
- 	struct usb_serial_port *port = tty->driver_data;
- 	struct edgeport_port *edge_port = usb_get_serial_port_data(port);
--	unsigned cwait;
-+	unsigned int cwait;
+ 		pcie2: pcie@3500000 {
+@@ -669,6 +670,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 115 4>,
+ 					<0000 0 0 3 &gic 0 0 0 116 4>,
+ 					<0000 0 0 4 &gic 0 0 0 117 4>;
++			status = "disabled";
+ 		};
  
- 	cwait = edge_port->port->port.closing_wait;
- 	if (cwait != ASYNC_CLOSING_WAIT_NONE)
-@@ -2656,7 +2653,7 @@ static ssize_t uart_mode_store(struct device *dev,
- {
- 	struct usb_serial_port *port = to_usb_serial_port(dev);
- 	struct edgeport_port *edge_port = usb_get_serial_port_data(port);
--	unsigned int v = simple_strtoul(valbuf, NULL, 0);
-+	unsigned int v = kstrtoul(valbuf, NULL, 0);
+ 		pcie3: pcie@3600000 {
+@@ -690,6 +692,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 120 4>,
+ 					<0000 0 0 3 &gic 0 0 0 121 4>,
+ 					<0000 0 0 4 &gic 0 0 0 122 4>;
++			status = "disabled";
+ 		};
  
- 	dev_dbg(dev, "%s: setting uart_mode = %d\n", __func__, v);
+ 		pcie4: pcie@3700000 {
+@@ -711,6 +714,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 125 4>,
+ 					<0000 0 0 3 &gic 0 0 0 126 4>,
+ 					<0000 0 0 4 &gic 0 0 0 127 4>;
++			status = "disabled";
+ 		};
  
+ 		sata0: sata@3200000 {
 -- 
-2.17.1
+1.7.1
 
