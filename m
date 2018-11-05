@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEF7C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BC8C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D2E320825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2E320825
+	by mail.kernel.org (Postfix) with ESMTP id C74A920825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74A920825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbeKEVPK (ORCPT
+        id S1729359AbeKEVPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:15:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:41788 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729165AbeKEVPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:15:10 -0500
+        Mon, 5 Nov 2018 16:15:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41794 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729165AbeKEVPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:15:11 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BBF11650;
-        Mon,  5 Nov 2018 03:55:48 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BB38165C;
+        Mon,  5 Nov 2018 03:55:49 -0800 (PST)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 85DCF3F5BD;
-        Mon,  5 Nov 2018 03:55:46 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 46E8C3F5BD;
+        Mon,  5 Nov 2018 03:55:48 -0800 (PST)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, vladimir.murzin@arm.com,
         will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Christopher Covington <cov@codeaurora.org>
-Subject: [PATCH 3/7] arm64: capabilities: Merge duplicate entries for Qualcomm erratum 1003
-Date:   Mon,  5 Nov 2018 11:55:13 +0000
-Message-Id: <1541418917-14219-4-git-send-email-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 4/7] arm64: capabilities: Speed up capability lookup
+Date:   Mon,  5 Nov 2018 11:55:14 +0000
+Message-Id: <1541418917-14219-5-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
 References: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
@@ -45,61 +44,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicate entries for Qualcomm erratum 1003. Since the entries
-are not purely based on generic MIDR checks, use the multi_cap_entry
-type to merge the entries.
+We maintain two separate tables of capabilities, errata and features,
+which decide the system capabilities. We iterate over each of these
+tables for various operations (e.g, detection, verification etc.).
+We do not have a way to map a system "capability" to its entry,
+(i.e, cap -> struct arm64_cpu_capabilities) which is needed for
+this_cpu_has_cap(). So we iterate over the table one by one to
+find the entry and then do the operation. Also, this prevents
+us from optimizing the way we "enable" the capabilities on the
+CPUs, where we now issue a stop_machine() for each available
+capability.
 
-Cc: Christopher Covington <cov@codeaurora.org>
-Cc: Will Deacon <will.deacon@arm.com>
+One solution is to merge the two tables into a single table,
+sorted by the capability. But this is has the following
+disadvantages:
+  - We loose the "classification" of an errata vs. feature
+  - It is quite easy to make a mistake when adding an entry,
+    unless we sort the table at runtime.
+
+So we maintain a list of pointers to the capability entry, sorted
+by the "cap number" in a separate array, initialized at boot time.
+The only restriction is that we can have one "entry" per capability.
+While at it, remove the duplicate declaration of arm64_errata table.
+
+Cc: Vladimir Murzin <vladimir.murzin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/kernel/cpu_errata.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ arch/arm64/kernel/cpufeature.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 7242e4c..64525b2 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -592,6 +592,19 @@ static const struct midr_range cavium_erratum_30115_cpus[] = {
- };
- #endif
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index af50064..7e9ebbe 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -52,6 +52,7 @@ unsigned int compat_elf_hwcap2 __read_mostly;
  
-+#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
-+static const struct arm64_cpu_capabilities qcom_erratum_1003_list[] = {
-+	{
-+		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
-+	},
-+	{
-+		.midr_range.model = MIDR_QCOM_KRYO,
-+		.matches = is_kryo_midr,
-+	},
-+	{},
-+};
-+#endif
+ DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+ EXPORT_SYMBOL(cpu_hwcaps);
++static struct arm64_cpu_capabilities const __ro_after_init *cpu_hwcaps_ptrs[ARM64_NCAPS];
+ 
+ /*
+  * Flag to indicate if we have computed the system wide
+@@ -518,6 +519,25 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
+ }
+ 
+ extern const struct arm64_cpu_capabilities arm64_errata[];
++static const struct arm64_cpu_capabilities arm64_features[];
 +
- const struct arm64_cpu_capabilities arm64_errata[] = {
- #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
- 	defined(CONFIG_ARM64_ERRATUM_827319) || \
-@@ -676,16 +689,10 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 	},
- #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
- 	{
--		.desc = "Qualcomm Technologies Falkor erratum 1003",
-+		.desc = "Qualcomm Technologies Falkor/Kryo erratum 1003",
- 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
--		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
--	},
--	{
--		.desc = "Qualcomm Technologies Kryo erratum 1003",
--		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
--		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
--		.midr_range.model = MIDR_QCOM_KRYO,
--		.matches = is_kryo_midr,
-+		.matches = multi_entry_cap_matches,
-+		.match_list = qcom_erratum_1003_list,
- 	},
- #endif
- #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
++static void __init
++init_cpu_hwcaps_indirect_list_from_array(const struct arm64_cpu_capabilities *caps)
++{
++	for (; caps->matches; caps++) {
++		if (WARN_ON(caps->capability > ARM64_NCAPS ||
++			    cpu_hwcaps_ptrs[caps->capability]))
++			continue;
++		cpu_hwcaps_ptrs[caps->capability] = caps;
++	}
++}
++
++static void __init init_cpu_hwcaps_indirect_list(void)
++{
++	init_cpu_hwcaps_indirect_list_from_array(arm64_features);
++	init_cpu_hwcaps_indirect_list_from_array(arm64_errata);
++}
++
+ static void __init setup_boot_cpu_capabilities(void);
+ 
+ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+@@ -564,6 +584,12 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+ 	}
+ 
+ 	/*
++	 * Initialize the indirect array of CPU hwcaps capabilities pointers
++	 * before we handle the boot CPU below.
++	 */
++	init_cpu_hwcaps_indirect_list();
++
++	/*
+ 	 * Detect and enable early CPU capabilities based on the boot CPU,
+ 	 * after we have initialised the CPU feature infrastructure.
+ 	 */
+@@ -1750,8 +1776,6 @@ static void __init mark_const_caps_ready(void)
+ 	static_branch_enable(&arm64_const_caps_ready);
+ }
+ 
+-extern const struct arm64_cpu_capabilities arm64_errata[];
+-
+ bool this_cpu_has_cap(unsigned int cap)
+ {
+ 	return (__this_cpu_has_cap(arm64_features, cap) ||
 -- 
 2.7.4
 
