@@ -2,57 +2,56 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4B9ECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEDDC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A9F20866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5407020819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qleIjIaY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6A9F20866
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0QHz6k1R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5407020819
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbeKFCR0 (ORCPT
+        id S2387717AbeKFCR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:17:26 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38752 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387603AbeKFCRX (ORCPT
+        Mon, 5 Nov 2018 21:17:28 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:43550 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387677AbeKFCR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:23 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5GsADv097225;
-        Mon, 5 Nov 2018 16:56:23 GMT
+        Mon, 5 Nov 2018 21:17:26 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs5sA052327;
+        Mon, 5 Nov 2018 16:56:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=W/3M3WgNkyPY7/D1fTX9bMKrquODyVvPod8Snk5MTFI=;
- b=qleIjIaYJDexWrd2rkhbiQVJrDE7fdLiJs5O9JaxGpJ1v+bzuJu5C6YgyaHn1KnTaX35
- bwg0Zw+scNeWJC2Q2LA8tLzwOYwoWPjS7+Z36OEWqdsr0xd6BJ5CpqLNuusLaorsTmFU
- 1oInGkb/CSCy/rqjH/GRsKSCnstAQlQiMHWaPbGas0m77RdN6TS7lePa8Sn/bYowqmuk
- 6HqP7REWoucTlRd1X0rd7eH2n5cnxFPy6vin82CMBSiLhbOZVz2LnywpTFMa6C0Rr0Gi
- G1579hYh9MYMwuYWFfV8m5h2mrK0i8oiis619swGfHr7SspVZa6VbpkDV8V49Cv0dljf mQ== 
+ bh=UTB2Sr3dL/IqP1KEApaT4aDh/kChWZlvDCupI65rZ48=;
+ b=0QHz6k1R+f97qO32+2IlnJ35k/qUdjYjcuv1TKJ4wUIXfkE6+JNJj0qrM0nghND3+w+O
+ cAjLW1fqp98CLgSQLbB6wBLogI18brwjKrrfhq11qDMjTejr785PdYVoH1VxZ2Z/Z0Ze
+ IydMcrlOPWbdmdONU9w42O4UZXjZbXyGe439Fz1ate0YvQ/+SB7ln/O45xJFihP1AfNJ
+ gpG1cyhtQippKedqJxaNV46cYx78VZ6QmEvxrTeeunagc78IXJs7JRQgsruiD7iRwojV
+ 3sUN/yabo7coxLf76IbIeC66BuznidvengcvZ1/T2h08L3xA3Af1c93X59WstgN/g6Ru bg== 
 Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nh33tr6be-1
+        by userp2120.oracle.com with ESMTP id 2nh4aqg2e6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 16:56:23 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuHRq022308
+        Mon, 05 Nov 2018 16:56:28 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuRaO022744
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 16:56:17 GMT
+        Mon, 5 Nov 2018 16:56:27 GMT
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuGGF008403;
-        Mon, 5 Nov 2018 16:56:16 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuRg4018838;
+        Mon, 5 Nov 2018 16:56:27 GMT
 Received: from localhost.localdomain (/73.60.114.248)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 08:56:15 -0800
+        with ESMTP ; Mon, 05 Nov 2018 08:56:26 -0800
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
 To:     linux-mm@kvack.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -64,9 +63,9 @@ Cc:     aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
         Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
         rdunlap@infradead.org, steven.sistare@oracle.com,
         tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz
-Subject: [RFC PATCH v4 06/13] vfio: parallelize vfio_pin_map_dma
-Date:   Mon,  5 Nov 2018 11:55:51 -0500
-Message-Id: <20181105165558.11698-7-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v4 12/13] mm: parallelize clear_gigantic_page
+Date:   Mon,  5 Nov 2018 11:55:57 -0500
+Message-Id: <20181105165558.11698-13-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
@@ -82,262 +81,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When starting a large-memory kvm guest, it takes an excessively long
-time to start the boot process because qemu must pin all guest pages to
-accommodate DMA when VFIO is in use.  Currently just one CPU is
-responsible for the page pinning, which usually boils down to page
-clearing time-wise, so the ways to optimize this are buying a faster
-CPU ;-) or using more of the CPUs you already have.
+Parallelize clear_gigantic_page, which zeroes any page size larger than
+8M (e.g. 1G on x86).
 
-Parallelize with ktask.  Refactor so workqueue workers pin with the mm
-of the calling thread, and to enable an undo callback for ktask to
-handle errors during page pinning.
+Performance results (the default number of threads is 4; higher thread
+counts shown for context only):
 
-Performance results appear later in the series.
+Machine:  Intel(R) Xeon(R) CPU E7-8895 v3 @ 2.60GHz, 288 CPUs, 1T memory
+Test:     Clear a range of gigantic pages (triggered via fallocate)
+
+nthread   speedup   size (GiB)   min time (s)   stdev
+      1                    100          41.13    0.03
+      2     2.03x          100          20.26    0.14
+      4     4.28x          100           9.62    0.09
+      8     8.39x          100           4.90    0.05
+     16    10.44x          100           3.94    0.03
+
+      1                    200          89.68    0.35
+      2     2.21x          200          40.64    0.18
+      4     4.64x          200          19.33    0.32
+      8     8.99x          200           9.98    0.04
+     16    11.27x          200           7.96    0.04
+
+      1                    400         188.20    1.57
+      2     2.30x          400          81.84    0.09
+      4     4.63x          400          40.62    0.26
+      8     8.92x          400          21.09    0.50
+     16    11.78x          400          15.97    0.25
+
+      1                    800         434.91    1.81
+      2     2.54x          800         170.97    1.46
+      4     4.98x          800          87.38    1.91
+      8    10.15x          800          42.86    2.59
+     16    12.99x          800          33.48    0.83
+
+The speedups are mostly due to the fact that more threads can use more
+memory bandwidth.  The loop we're stressing on the x86 chip in this test
+is clear_page_erms, which tops out at a bandwidth of 2550 MiB/s with one
+thread.  We get the same bandwidth per thread for 2, 4, or 8 threads,
+but at 16 threads the per-thread bandwidth drops to 1420 MiB/s.
+
+However, the performance also improves over a single thread because of
+the ktask threads' NUMA awareness (ktask migrates worker threads to the
+node local to the work being done).  This becomes a bigger factor as the
+amount of pages to zero grows to include memory from multiple nodes, so
+that speedups increase as the size increases.
 
 Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 106 +++++++++++++++++++++++---------
- 1 file changed, 76 insertions(+), 30 deletions(-)
+ mm/memory.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index d9fd3188615d..e7cfbf0c8071 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -41,6 +41,7 @@
- #include <linux/notifier.h>
- #include <linux/dma-iommu.h>
- #include <linux/irqdomain.h>
+diff --git a/mm/memory.c b/mm/memory.c
+index 15c417e8e31d..445d06537905 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -69,6 +69,7 @@
+ #include <linux/userfaultfd_k.h>
+ #include <linux/dax.h>
+ #include <linux/oom.h>
 +#include <linux/ktask.h>
  
- #define DRIVER_VERSION  "0.2"
- #define DRIVER_AUTHOR   "Alex Williamson <alex.williamson@redhat.com>"
-@@ -395,7 +396,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
-  */
- static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 				  long npage, unsigned long *pfn_base,
--				  unsigned long limit)
-+				  unsigned long limit, struct mm_struct *mm)
- {
- 	unsigned long pfn = 0;
- 	long ret, pinned = 0, lock_acct = 0;
-@@ -403,10 +404,10 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
- 
- 	/* This code path is only user initiated */
--	if (!current->mm)
-+	if (!mm)
- 		return -ENODEV;
- 
--	ret = vaddr_get_pfn(current->mm, vaddr, dma->prot, pfn_base);
-+	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base);
- 	if (ret)
- 		return ret;
- 
-@@ -418,7 +419,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	 * pages are already counted against the user.
- 	 */
- 	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
--		if (!dma->lock_cap && current->mm->locked_vm + 1 > limit) {
-+		if (!dma->lock_cap && mm->locked_vm + 1 > limit) {
- 			put_pfn(*pfn_base, dma->prot);
- 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
- 					limit << PAGE_SHIFT);
-@@ -433,7 +434,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	/* Lock all the consecutive pages from pfn_base */
- 	for (vaddr += PAGE_SIZE, iova += PAGE_SIZE; pinned < npage;
- 	     pinned++, vaddr += PAGE_SIZE, iova += PAGE_SIZE) {
--		ret = vaddr_get_pfn(current->mm, vaddr, dma->prot, &pfn);
-+		ret = vaddr_get_pfn(mm, vaddr, dma->prot, &pfn);
- 		if (ret)
- 			break;
- 
-@@ -445,7 +446,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 
- 		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
- 			if (!dma->lock_cap &&
--			    current->mm->locked_vm + lock_acct + 1 > limit) {
-+			    mm->locked_vm + lock_acct + 1 > limit) {
- 				put_pfn(pfn, dma->prot);
- 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
- 					__func__, limit << PAGE_SHIFT);
-@@ -752,15 +753,15 @@ static size_t unmap_unpin_slow(struct vfio_domain *domain,
- }
- 
- static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
-+			     dma_addr_t iova, dma_addr_t end,
- 			     bool do_accounting)
- {
--	dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
- 	struct vfio_domain *domain, *d;
- 	LIST_HEAD(unmapped_region_list);
- 	int unmapped_region_cnt = 0;
- 	long unlocked = 0;
- 
--	if (!dma->size)
-+	if (iova == end)
- 		return 0;
- 
- 	if (!IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu))
-@@ -777,7 +778,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 				      struct vfio_domain, next);
- 
- 	list_for_each_entry_continue(d, &iommu->domain_list, next) {
--		iommu_unmap(d->domain, dma->iova, dma->size);
-+		iommu_unmap(d->domain, iova, end - iova);
- 		cond_resched();
+ #include <asm/io.h>
+ #include <asm/mmu_context.h>
+@@ -4415,19 +4416,28 @@ static inline void process_huge_page(
  	}
- 
-@@ -818,8 +819,6 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 		}
- 	}
- 
--	dma->iommu_mapped = false;
--
- 	if (unmapped_region_cnt)
- 		unlocked += vfio_sync_unpin(dma, domain, &unmapped_region_list);
- 
-@@ -830,14 +829,21 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 	return unlocked;
  }
  
--static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
-+static void vfio_remove_dma_finish(struct vfio_iommu *iommu,
-+				   struct vfio_dma *dma)
- {
--	vfio_unmap_unpin(iommu, dma, true);
-+	dma->iommu_mapped = false;
- 	vfio_unlink_dma(iommu, dma);
- 	put_task_struct(dma->task);
- 	kfree(dma);
- }
- 
-+static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
-+{
-+	vfio_unmap_unpin(iommu, dma, dma->iova, dma->iova + dma->size, true);
-+	vfio_remove_dma_finish(iommu, dma);
-+}
-+
- static unsigned long vfio_pgsize_bitmap(struct vfio_iommu *iommu)
- {
- 	struct vfio_domain *domain;
-@@ -1031,20 +1037,29 @@ static int vfio_iommu_map(struct vfio_iommu *iommu, dma_addr_t iova,
- 	return ret;
- }
- 
--static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
--			    size_t map_size)
-+struct vfio_pin_args {
-+	struct vfio_iommu *iommu;
-+	struct vfio_dma *dma;
-+	unsigned long limit;
-+	struct mm_struct *mm;
+-static void clear_gigantic_page(struct page *page,
+-				unsigned long addr,
+-				unsigned int pages_per_huge_page)
++struct cgp_args {
++	struct page	*base_page;
++	unsigned long	addr;
 +};
 +
-+static int vfio_pin_map_dma_chunk(unsigned long start_vaddr,
-+				  unsigned long end_vaddr,
-+				  struct vfio_pin_args *args)
++static int clear_gigantic_page_chunk(unsigned long start, unsigned long end,
++				     struct cgp_args *args)
  {
--	dma_addr_t iova = dma->iova;
--	unsigned long vaddr = dma->vaddr;
--	size_t size = map_size;
-+	struct vfio_dma *dma = args->dma;
-+	dma_addr_t iova = dma->iova + (start_vaddr - dma->vaddr);
-+	unsigned long unmapped_size = end_vaddr - start_vaddr;
-+	unsigned long pfn, mapped_size = 0;
- 	long npage;
--	unsigned long pfn, limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 	int ret = 0;
+-	int i;
+-	struct page *p = page;
++	struct page *base_page = args->base_page;
++	struct page *p = base_page;
++	unsigned long addr = args->addr;
++	unsigned long i;
  
--	while (size) {
-+	while (unmapped_size) {
- 		/* Pin a contiguous chunk of memory */
--		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
--					      size >> PAGE_SHIFT, &pfn, limit);
-+		npage = vfio_pin_pages_remote(dma, start_vaddr + mapped_size,
-+					      unmapped_size >> PAGE_SHIFT,
-+					      &pfn, args->limit, args->mm);
- 		if (npage <= 0) {
- 			WARN_ON(!npage);
- 			ret = (int)npage;
-@@ -1052,22 +1067,50 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 		}
+ 	might_sleep();
+-	for (i = 0; i < pages_per_huge_page;
+-	     i++, p = mem_map_next(p, page, i)) {
++	for (i = start; i < end; ++i) {
+ 		cond_resched();
+ 		clear_user_highpage(p, addr + i * PAGE_SIZE);
++
++		p = mem_map_next(p, base_page, i);
+ 	}
++
++	return KTASK_RETURN_SUCCESS;
+ }
  
- 		/* Map it! */
--		ret = vfio_iommu_map(iommu, iova + dma->size, pfn, npage,
--				     dma->prot);
-+		ret = vfio_iommu_map(args->iommu, iova + mapped_size, pfn,
-+				     npage, dma->prot);
- 		if (ret) {
--			vfio_unpin_pages_remote(dma, iova + dma->size, pfn,
-+			vfio_unpin_pages_remote(dma, iova + mapped_size, pfn,
- 						npage, true);
- 			break;
- 		}
+ static void clear_subpage(unsigned long addr, int idx, void *arg)
+@@ -4444,7 +4454,13 @@ void clear_huge_page(struct page *page,
+ 		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
  
--		size -= npage << PAGE_SHIFT;
--		dma->size += npage << PAGE_SHIFT;
-+		unmapped_size -= npage << PAGE_SHIFT;
-+		mapped_size   += npage << PAGE_SHIFT;
+ 	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
+-		clear_gigantic_page(page, addr, pages_per_huge_page);
++		struct cgp_args args = {page, addr};
++		struct ktask_node node = {0, pages_per_huge_page,
++					  page_to_nid(page)};
++		DEFINE_KTASK_CTL(ctl, clear_gigantic_page_chunk, &args,
++				 KTASK_MEM_CHUNK);
++
++		ktask_run_numa(&node, 1, &ctl);
+ 		return;
  	}
  
-+	return (ret == 0) ? KTASK_RETURN_SUCCESS : ret;
-+}
-+
-+static void vfio_pin_map_dma_undo(unsigned long start_vaddr,
-+				  unsigned long end_vaddr,
-+				  struct vfio_pin_args *args)
-+{
-+	struct vfio_dma *dma = args->dma;
-+	dma_addr_t iova = dma->iova + (start_vaddr - dma->vaddr);
-+	dma_addr_t end  = dma->iova + (end_vaddr   - dma->vaddr);
-+
-+	vfio_unmap_unpin(args->iommu, args->dma, iova, end, true);
-+}
-+
-+static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
-+			    size_t map_size)
-+{
-+	unsigned long limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
-+	int ret = 0;
-+	struct vfio_pin_args args = { iommu, dma, limit, current->mm };
-+	/* Stay on PMD boundary in case THP is being used. */
-+	DEFINE_KTASK_CTL(ctl, vfio_pin_map_dma_chunk, &args, PMD_SIZE);
-+
-+	ktask_ctl_set_undo_func(&ctl, vfio_pin_map_dma_undo);
-+	ret = ktask_run((void *)dma->vaddr, map_size, &ctl);
-+
- 	dma->iommu_mapped = true;
- 
- 	if (ret)
--		vfio_remove_dma(iommu, dma);
-+		vfio_remove_dma_finish(iommu, dma);
-+	else
-+		dma->size += map_size;
- 
- 	return ret;
- }
-@@ -1229,7 +1272,8 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 
- 				npage = vfio_pin_pages_remote(dma, vaddr,
- 							      n >> PAGE_SHIFT,
--							      &pfn, limit);
-+							      &pfn, limit,
-+							      current->mm);
- 				if (npage <= 0) {
- 					WARN_ON(!npage);
- 					ret = (int)npage;
-@@ -1497,7 +1541,9 @@ static void vfio_iommu_unmap_unpin_reaccount(struct vfio_iommu *iommu)
- 		long locked = 0, unlocked = 0;
- 
- 		dma = rb_entry(n, struct vfio_dma, node);
--		unlocked += vfio_unmap_unpin(iommu, dma, false);
-+		unlocked += vfio_unmap_unpin(iommu, dma, dma->iova,
-+					     dma->iova + dma->size, false);
-+		dma->iommu_mapped = false;
- 		p = rb_first(&dma->pfn_list);
- 		for (; p; p = rb_next(p)) {
- 			struct vfio_pfn *vpfn = rb_entry(p, struct vfio_pfn,
 -- 
 2.19.1
 
