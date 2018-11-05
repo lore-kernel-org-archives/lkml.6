@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3374FC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF04C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DE920825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:03:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A4120854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:03:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="PfAzt8/t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DE920825
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="PCbhJHr/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A4120854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbeKEVXP (ORCPT
+        id S1729615AbeKEVXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:23:15 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48334 "EHLO
+        Mon, 5 Nov 2018 16:23:20 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48454 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbeKEVXO (ORCPT
+        with ESMTP id S1729244AbeKEVXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:23:14 -0500
+        Mon, 5 Nov 2018 16:23:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=nXSRv8x5bNPPK9GWrikJWsKHaKaxYbqnOozf/4jj5I8=; b=PfAzt8/tkCNq
-        ySe/mHnAmMVfXdQytRjd5HvmOqgenZqyD9nlEIRUuNL5WoMTT8MtdyoOcB73j0k23rJ+CLz4YRiVk
-        vgiUNmGMz6GcwbxXzir6ZP43r5EwDs1ZOGuuwMlekNjluaSRRqRXVMEQN3Am3DInW1przdJSLx7ML
-        JRbEU=;
+        List-Archive; bh=reVoXo/fPEg6BI7U8iCPvatujlfIkXk04CjbX8uRfas=; b=PCbhJHr/hwXw
+        6iE1duKf6GJEAQdoftwndOgL+sNFNfzWmf8RwFf4EHm35GCKwBZDqAUw8gHDuLOj3JPU71F2j2qnW
+        GARnDspPSxvndut/GRgqfmEgiCdT1Gajp+upgGEDkHpBHSpaLorLeG5ooNh1cDVZjEfLdSjI5dTEN
+        A3ooA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJdbf-0008Km-9z; Mon, 05 Nov 2018 12:03:47 +0000
+        id 1gJdbj-0008Kt-G9; Mon, 05 Nov 2018 12:03:51 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0C2521124D98; Mon,  5 Nov 2018 12:03:47 +0000 (GMT)
+        id 3803A1124D98; Mon,  5 Nov 2018 12:03:51 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Alok Chauhan <alokc@codeaurora.org>
 Cc:     Mark Brown <broonie@kernel.org>, swboyd@chromium.org,
         dianders@chromium.org, Mark Brown <broonie@kernel.org>,
         linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-geni-qcom: Simplify probe function" to the spi tree
-In-Reply-To:  <1540485629-5970-3-git-send-email-alokc@codeaurora.org>
-Message-Id: <20181105120347.0C2521124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:03:47 +0000 (GMT)
+Subject: Applied "spi: spi-geni-qcom: fix nitpicks" to the spi tree
+In-Reply-To:  <1540485629-5970-2-git-send-email-alokc@codeaurora.org>
+Message-Id: <20181105120351.3803A1124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:03:51 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-geni-qcom: Simplify probe function
+   spi: spi-geni-qcom: fix nitpicks
 
 has been applied to the spi tree at
 
@@ -83,112 +83,88 @@ to this mail.
 Thanks,
 Mark
 
-From 6a34e285de9afc4441ee81ce76865acd30ed9263 Mon Sep 17 00:00:00 2001
+From 0dccff3ce73aa6e9b1b4b0ddb3831c1d7fde9507 Mon Sep 17 00:00:00 2001
 From: Alok Chauhan <alokc@codeaurora.org>
-Date: Thu, 25 Oct 2018 22:10:29 +0530
-Subject: [PATCH] spi: spi-geni-qcom: Simplify probe function
+Date: Thu, 25 Oct 2018 22:10:28 +0530
+Subject: [PATCH] spi: spi-geni-qcom: fix nitpicks
 
-Re-arrange existing APIs in probe function to
-avoid using goto and remove redundant variables.
+fixed the nitpicks.
 
 Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-geni-qcom.c | 49 ++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ drivers/spi/spi-geni-qcom.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-index d1830fbf2fc6..fdb7cb88fb56 100644
+index 6432ecc4e2ca..d1830fbf2fc6 100644
 --- a/drivers/spi/spi-geni-qcom.c
 +++ b/drivers/spi/spi-geni-qcom.c
-@@ -535,11 +535,30 @@ static irqreturn_t geni_spi_isr(int irq, void *data)
+@@ -64,15 +64,13 @@
+ #define TIMESTAMP_AFTER		BIT(3)
+ #define POST_CMD_DELAY		BIT(4)
+ 
+-/* SPI M_COMMAND OPCODE */
+-enum spi_mcmd_code {
++enum spi_m_cmd_opcode {
+ 	CMD_NONE,
+ 	CMD_XFER,
+ 	CMD_CS,
+ 	CMD_CANCEL,
+ };
+ 
+-
+ struct spi_geni_master {
+ 	struct geni_se se;
+ 	struct device *dev;
+@@ -87,7 +85,7 @@ struct spi_geni_master {
+ 	struct completion xfer_done;
+ 	unsigned int oversampling;
+ 	spinlock_t lock;
+-	unsigned int cur_mcmd;
++	enum spi_m_cmd_opcode cur_mcmd;
+ 	int irq;
+ };
+ 
+@@ -129,7 +127,7 @@ static void spi_geni_set_cs(struct spi_device *slv, bool set_flag)
+ 	struct spi_geni_master *mas = spi_master_get_devdata(slv->master);
+ 	struct spi_master *spi = dev_get_drvdata(mas->dev);
+ 	struct geni_se *se = &mas->se;
+-	unsigned long timeout;
++	unsigned long time_left;
+ 
+ 	reinit_completion(&mas->xfer_done);
+ 	pm_runtime_get_sync(mas->dev);
+@@ -142,8 +140,8 @@ static void spi_geni_set_cs(struct spi_device *slv, bool set_flag)
+ 	else
+ 		geni_se_setup_m_cmd(se, SPI_CS_DEASSERT, 0);
+ 
+-	timeout = wait_for_completion_timeout(&mas->xfer_done, HZ);
+-	if (!timeout)
++	time_left = wait_for_completion_timeout(&mas->xfer_done, HZ);
++	if (!time_left)
+ 		handle_fifo_timeout(spi, NULL);
+ 
+ 	pm_runtime_put(mas->dev);
+@@ -485,7 +483,6 @@ static irqreturn_t geni_spi_isr(int irq, void *data)
+ 	struct geni_se *se = &mas->se;
+ 	u32 m_irq;
+ 	unsigned long flags;
+-	irqreturn_t ret = IRQ_HANDLED;
+ 
+ 	if (mas->cur_mcmd == CMD_NONE)
+ 		return IRQ_NONE;
+@@ -533,7 +530,7 @@ static irqreturn_t geni_spi_isr(int irq, void *data)
+ 
+ 	writel(m_irq, se->base + SE_GENI_M_IRQ_CLEAR);
+ 	spin_unlock_irqrestore(&mas->lock, flags);
+-	return ret;
++	return IRQ_HANDLED;
+ }
  
  static int spi_geni_probe(struct platform_device *pdev)
- {
--	int ret;
-+	int ret, irq;
- 	struct spi_master *spi;
- 	struct spi_geni_master *mas;
- 	struct resource *res;
--	struct geni_se *se;
-+	void __iomem *base;
-+	struct clk *clk;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "Err getting IRQ %d\n", irq);
-+		return irq;
-+	}
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	clk = devm_clk_get(&pdev->dev, "se");
-+	if (IS_ERR(clk)) {
-+		dev_err(&pdev->dev, "Err getting SE Core clk %ld\n",
-+						PTR_ERR(clk));
-+		return PTR_ERR(clk);
-+	}
- 
- 	spi = spi_alloc_master(&pdev->dev, sizeof(*mas));
- 	if (!spi)
-@@ -547,27 +566,15 @@ static int spi_geni_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, spi);
- 	mas = spi_master_get_devdata(spi);
-+	mas->irq = irq;
- 	mas->dev = &pdev->dev;
- 	mas->se.dev = &pdev->dev;
- 	mas->se.wrapper = dev_get_drvdata(pdev->dev.parent);
--	se = &mas->se;
-+	mas->se.base = base;
-+	mas->se.clk = clk;
- 
- 	spi->bus_num = -1;
- 	spi->dev.of_node = pdev->dev.of_node;
--	mas->se.clk = devm_clk_get(&pdev->dev, "se");
--	if (IS_ERR(mas->se.clk)) {
--		ret = PTR_ERR(mas->se.clk);
--		dev_err(&pdev->dev, "Err getting SE Core clk %d\n", ret);
--		goto spi_geni_probe_err;
--	}
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	se->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(se->base)) {
--		ret = PTR_ERR(se->base);
--		goto spi_geni_probe_err;
--	}
--
- 	spi->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP | SPI_CS_HIGH;
- 	spi->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
- 	spi->num_chipselect = 4;
-@@ -586,13 +593,6 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto spi_geni_probe_runtime_disable;
- 
--	mas->irq = platform_get_irq(pdev, 0);
--	if (mas->irq < 0) {
--		ret = mas->irq;
--		dev_err(&pdev->dev, "Err getting IRQ %d\n", ret);
--		goto spi_geni_probe_runtime_disable;
--	}
--
- 	ret = request_irq(mas->irq, geni_spi_isr,
- 			IRQF_TRIGGER_HIGH, "spi_geni", spi);
- 	if (ret)
-@@ -607,7 +607,6 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	free_irq(mas->irq, spi);
- spi_geni_probe_runtime_disable:
- 	pm_runtime_disable(&pdev->dev);
--spi_geni_probe_err:
- 	spi_master_put(spi);
- 	return ret;
- }
 -- 
 2.19.0.rc2
 
