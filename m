@@ -2,285 +2,94 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A82AC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C58C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208FD2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:23:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208FD2085A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 322CE20869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:24:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322CE20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbeKEUnE (ORCPT
+        id S1729462AbeKEUnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:43:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51125 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbeKEUnE (ORCPT
+        Mon, 5 Nov 2018 15:43:20 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:60002 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728899AbeKEUnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:43:04 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5BNcId309856
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 5 Nov 2018 03:23:38 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5BNcOT309853;
-        Mon, 5 Nov 2018 03:23:38 -0800
-Date:   Mon, 5 Nov 2018 03:23:38 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jens Axboe <tipbot@zytor.com>
-Message-ID: <tip-6da4b3ab9a6e9b1b5f90322ab3fa3a7dd18edb19@git.kernel.org>
-Cc:     hare@suse.com, ming.lei@redhat.com, linux-kernel@vger.kernel.org,
-        axboe@kernel.dk, mingo@kernel.org, tglx@linutronix.de,
-        keith.busch@intel.com, sagi@grimberg.me, hpa@zytor.com
-Reply-To: hare@suse.com, ming.lei@redhat.com, linux-kernel@vger.kernel.org,
-          axboe@kernel.dk, tglx@linutronix.de, mingo@kernel.org,
-          keith.busch@intel.com, sagi@grimberg.me, hpa@zytor.com
-In-Reply-To: <20181102145951.31979-5-ming.lei@redhat.com>
-References: <20181102145951.31979-5-ming.lei@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/affinity: Add support for allocating
- interrupt sets
-Git-Commit-ID: 6da4b3ab9a6e9b1b5f90322ab3fa3a7dd18edb19
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 5 Nov 2018 15:43:19 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by dkim.mimecast.com with ESMTP id
+ uk-mta-170-Dftf6rR-OnOg5abpB7upeg-1; Mon, 05 Nov 2018 11:24:03 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 5 Nov 2018 11:24:07 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 5 Nov 2018 11:24:07 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     Tariq Toukan <tariqt@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Ilya Lesokhin <ilyal@mellanox.com>,
+        Moshe Shemesh <moshe@mellanox.com>,
+        Kamal Heib <kamalh@mellanox.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] net/mlx5e: fix high stack usage
+Thread-Topic: [PATCH] net/mlx5e: fix high stack usage
+Thread-Index: AQHUcsFsWmNXkRFIKUCZH9kBrP0aw6VBDQVA
+Date:   Mon, 5 Nov 2018 11:24:06 +0000
+Message-ID: <ee55a08ca81149a598aef8c47367f856@AcuMS.aculab.com>
+References: <20181102153316.1492515-1-arnd@arndb.de>
+In-Reply-To: <20181102153316.1492515-1-arnd@arndb.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MC-Unique: Dftf6rR-OnOg5abpB7upeg-1
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6da4b3ab9a6e9b1b5f90322ab3fa3a7dd18edb19
-Gitweb:     https://git.kernel.org/tip/6da4b3ab9a6e9b1b5f90322ab3fa3a7dd18edb19
-Author:     Jens Axboe <axboe@kernel.dk>
-AuthorDate: Fri, 2 Nov 2018 22:59:51 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 5 Nov 2018 12:16:27 +0100
+RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAwMiBOb3ZlbWJlciAyMDE4IDE1OjMzDQo+IA0K
+PiBBIHBhdGNoIHRoYXQgbG9va3MgaGFybWxlc3MgY2F1c2VzIHRoZSBzdGFjayB1c2FnZSBvZiB0
+aGUgbWx4NWVfZ3JwX3N3X3VwZGF0ZV9zdGF0cygpDQo+IGZ1bmN0aW9uIHRvIGRyYXN0aWNhbGx5
+IGluY3JlYXNlIHdpdGggeDg2IGdjYy00LjkgYW5kIGhpZ2hlciAodGVzdGVkIHVwIHRvIDguMSk6
+DQo+IA0KPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fc3RhdHMu
+YzogSW4gZnVuY3Rpb24g4oCYbWx4NWVfZ3JwX3N3X3VwZGF0ZV9zdGF0c+KAmToNCj4gZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX3N0YXRzLmM6MjE2OjE6IHdhcm5p
+bmc6IHRoZSBmcmFtZSBzaXplIG9mIDEyNzYgYnl0ZXMgaXMNCj4gbGFyZ2VyIHRoYW4gNTAwIGJ5
+dGVzIFstV2ZyYW1lLWxhcmdlci10aGFuPV0NCj4gDQo+IEJ5IHNwbGl0dGluZyBvdXQgdGhlIGxv
+b3AgYm9keSBpbnRvIGEgbm9uLWlubGluZWQgZnVuY3Rpb24sIHRoZSBzdGFjayBzaXplIGdvZXMN
+Cj4gYmFjayBkb3duIHRvIHVuZGVyIDUwMCBieXRlcy4NCg0KSSdkIGxvb2sgYXQgdGhlIGdlbmVy
+YXRlZCBjb2RlIGZvciB0aGUgZnVuY3Rpb24uDQpJdCBtaWdodCBiZSB0cnVseSBob3JyaWQuDQoN
+Ckkgc3VzcGVjdCB0aGF0IGdjYyBhbGxvY2F0ZXMgJ3ZpcnR1YWwgcmVnaXN0ZXJzJyBmb3IgYWxs
+IHRoZQ0Kcy0+dHhfLi4uIG1lbWJlcnMgYW5kIHRoZW4gd3JpdGVzIHRoZW0gdG8gJ3MnIG91dHNp
+ZGUgdGhlIGxvb3AuDQpVbmZvcnR1bmF0ZWx5IHRoZXJlIGFyZW4ndCBlbm91Z2ggcmVhbCByZWdp
+c3RlcnMgc28gYWxsIHRoZQ0KdmlydHVhbCBvbmVzIGdldCBzcGlsbGVkIHRvIHN0YWNrLg0KDQpJ
+J3ZlIHNlZW4gaXQgZG8gc29tZXRoaW5nIHNpbWlsYXIgKGV4dHJhIHNwaWxscyB0byBzdGFjaykg
+aW4gdGhlDQppeGdiZSBieXRlIGFuZCBwYWNrZXQgY291bnRpbmcuDQoNCkkgdGhpbmsgaXQgaXMg
+cmVhbGx5IGEgZ2NjIGJ1Zy4NCg0KLi4uDQo+ICsJZm9yIChqID0gMDsgaiA8IHByaXYtPm1heF9v
+cGVuZWRfdGM7IGorKykgew0KPiArCQlzdHJ1Y3QgbWx4NWVfc3Ffc3RhdHMgKnNxX3N0YXRzID0g
+JmNoYW5uZWxfc3RhdHMtPnNxW2pdOw0KDQpUcnkgYWRkaW5nIGJhcnJpZXIoKSBoZXJlLg0KDQo+
+ICsNCj4gKwkJcy0+dHhfcGFja2V0cwkJKz0gc3Ffc3RhdHMtPnBhY2tldHM7DQoNCglEYXZpZA0K
+DQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFy
+bSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAo
+V2FsZXMpDQo=
 
-genirq/affinity: Add support for allocating interrupt sets
-
-A driver may have a need to allocate multiple sets of MSI/MSI-X interrupts,
-and have them appropriately affinitized.
-
-Add support for defining a number of sets in the irq_affinity structure, of
-varying sizes, and get each set affinitized correctly across the machine.
-
-[ tglx: Minor changelog tweaks ]
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-block@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181102145951.31979-5-ming.lei@redhat.com
-
----
- drivers/pci/msi.c         | 14 +++++++++
- include/linux/interrupt.h |  4 +++
- kernel/irq/affinity.c     | 77 +++++++++++++++++++++++++++++++++--------------
- 3 files changed, 72 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index af24ed50a245..265ed3e4c920 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1036,6 +1036,13 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	/*
-+	 * If the caller is passing in sets, we can't support a range of
-+	 * vectors. The caller needs to handle that.
-+	 */
-+	if (affd && affd->nr_sets && minvec != maxvec)
-+		return -EINVAL;
-+
- 	if (WARN_ON_ONCE(dev->msi_enabled))
- 		return -EINVAL;
- 
-@@ -1087,6 +1094,13 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	/*
-+	 * If the caller is passing in sets, we can't support a range of
-+	 * supported vectors. The caller needs to handle that.
-+	 */
-+	if (affd && affd->nr_sets && minvec != maxvec)
-+		return -EINVAL;
-+
- 	if (WARN_ON_ONCE(dev->msix_enabled))
- 		return -EINVAL;
- 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 1d6711c28271..ca397ff40836 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -247,10 +247,14 @@ struct irq_affinity_notify {
-  *			the MSI(-X) vector space
-  * @post_vectors:	Don't apply affinity to @post_vectors at end of
-  *			the MSI(-X) vector space
-+ * @nr_sets:		Length of passed in *sets array
-+ * @sets:		Number of affinitized sets
-  */
- struct irq_affinity {
- 	int	pre_vectors;
- 	int	post_vectors;
-+	int	nr_sets;
-+	int	*sets;
- };
- 
- #if defined(CONFIG_SMP)
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index e028b773e38a..08c904eb7279 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -171,28 +171,29 @@ out:
-  *	2) spread other possible CPUs on these vectors
-  */
- static int irq_build_affinity_masks(const struct irq_affinity *affd,
--				    int startvec, int numvecs,
-+				    int startvec, int numvecs, int firstvec,
- 				    cpumask_var_t *node_to_cpumask,
- 				    struct cpumask *masks)
- {
--	int curvec = startvec, usedvecs = -1;
-+	int curvec = startvec, nr_present, nr_others;
-+	int ret = -ENOMEM;
- 	cpumask_var_t nmsk, npresmsk;
- 
- 	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
--			return usedvecs;
-+			return ret;
- 
- 	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
- 			goto fail;
- 
-+	ret = 0;
- 	/* Stabilize the cpumasks */
- 	get_online_cpus();
- 	build_node_to_cpumask(node_to_cpumask);
- 
- 	/* Spread on present CPUs starting from affd->pre_vectors */
--	usedvecs = __irq_build_affinity_masks(affd, curvec, numvecs,
--					      affd->pre_vectors,
--					      node_to_cpumask,
--					      cpu_present_mask, nmsk, masks);
-+	nr_present = __irq_build_affinity_masks(affd, curvec, numvecs,
-+						firstvec, node_to_cpumask,
-+						cpu_present_mask, nmsk, masks);
- 
- 	/*
- 	 * Spread on non present CPUs starting from the next vector to be
-@@ -200,23 +201,24 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	 * vector space, assign the non present CPUs to the already spread
- 	 * out vectors.
- 	 */
--	if (usedvecs >= numvecs)
--		curvec = affd->pre_vectors;
-+	if (nr_present >= numvecs)
-+		curvec = firstvec;
- 	else
--		curvec = affd->pre_vectors + usedvecs;
-+		curvec = firstvec + nr_present;
- 	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
--	usedvecs += __irq_build_affinity_masks(affd, curvec, numvecs,
--					       affd->pre_vectors,
--					       node_to_cpumask, npresmsk,
--					       nmsk, masks);
-+	nr_others = __irq_build_affinity_masks(affd, curvec, numvecs,
-+					       firstvec, node_to_cpumask,
-+					       npresmsk, nmsk, masks);
- 	put_online_cpus();
- 
-+	if (nr_present < numvecs)
-+			WARN_ON(nr_present + nr_others < numvecs);
-+
- 	free_cpumask_var(npresmsk);
- 
-  fail:
- 	free_cpumask_var(nmsk);
--
--	return usedvecs;
-+	return ret;
- }
- 
- /**
-@@ -233,6 +235,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	int curvec, usedvecs;
- 	cpumask_var_t *node_to_cpumask;
- 	struct cpumask *masks = NULL;
-+	int i, nr_sets;
- 
- 	/*
- 	 * If there aren't any vectors left after applying the pre/post
-@@ -253,8 +256,28 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
- 		cpumask_copy(masks + curvec, irq_default_affinity);
- 
--	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
--					    node_to_cpumask, masks);
-+	/*
-+	 * Spread on present CPUs starting from affd->pre_vectors. If we
-+	 * have multiple sets, build each sets affinity mask separately.
-+	 */
-+	nr_sets = affd->nr_sets;
-+	if (!nr_sets)
-+		nr_sets = 1;
-+
-+	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
-+		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-+		int ret;
-+
-+		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
-+						curvec, node_to_cpumask, masks);
-+		if (ret) {
-+				kfree(masks);
-+				masks = NULL;
-+				goto outnodemsk;
-+		}
-+		curvec += this_vecs;
-+		usedvecs += this_vecs;
-+	}
- 
- 	/* Fill out vectors at the end that don't need affinity */
- 	if (usedvecs >= affvecs)
-@@ -279,13 +302,21 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
- {
- 	int resv = affd->pre_vectors + affd->post_vectors;
- 	int vecs = maxvec - resv;
--	int ret;
-+	int set_vecs;
- 
- 	if (resv > minvec)
- 		return 0;
- 
--	get_online_cpus();
--	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
--	put_online_cpus();
--	return ret;
-+	if (affd->nr_sets) {
-+		int i;
-+
-+		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
-+			set_vecs += affd->sets[i];
-+	} else {
-+		get_online_cpus();
-+		set_vecs = cpumask_weight(cpu_possible_mask);
-+		put_online_cpus();
-+	}
-+
-+	return resv + min(set_vecs, vecs);
- }
