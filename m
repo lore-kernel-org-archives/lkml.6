@@ -2,168 +2,116 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D7FC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E0FC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72D2620862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:48:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4iudnDB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D2620862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3B2FD20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:48:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2FD20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbeKEWHe (ORCPT
+        id S1729767AbeKEWI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:07:34 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54980 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeKEWHe (ORCPT
+        Mon, 5 Nov 2018 17:08:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42004 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729674AbeKEWI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:07:34 -0500
-Received: by mail-it1-f196.google.com with SMTP id d6so12435596itl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:47:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Nw0LFhAmj1A2SrLhkOFAVFIsfZ+p2NW1VDzJbHVe+MM=;
-        b=h4iudnDBjbDhke0fht4GIO1Gh1wmE8/p3xSL7d4X3gaOK8Yf+I7n3RdCzyt6TMKyOs
-         lbAzRdogbKJsfKgNDFcTDCLKOYbTSB4QSxcWZ5sWC+ZayXeuNEWYSLcbKRvqpKZIyOF6
-         V5StPtDQgX4GC4GzEohdhsptwxscVhe4bpY/c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Nw0LFhAmj1A2SrLhkOFAVFIsfZ+p2NW1VDzJbHVe+MM=;
-        b=CS7LCloDNFMWQlR0SdGEFfZV98xvL0+1BrY0WbUe2JLC5nfn74TkHGH4L83Ka9CV3F
-         yeyiebgbq9nRSbJvzJK8OOwxZwtx261aeqwmwukB+o3mt0OiAW/onF0T5oBKH4+qLygJ
-         CHZHuE6LgKsgdXyhi82YZLk9ec6OPzOA1hHoE1XNoE534+wNrZ+2Bi7viFTvJ/pxAHxm
-         Nr7QhDMTvrCck8LHhOryucXxaRaKpzjSTAtXnKHpO2dPjB17wieeGbdagSx4hasW4NH8
-         PPlcZJfOyTaDL0gyyY5bXy0Iu9Td9+REPnLpnS9KkChyfukJbNCdyBQMJaV8LonNwtmZ
-         89VA==
-X-Gm-Message-State: AGRZ1gKmX31lkI4ltFa6u0uQ33xUz0jdv1kSeMboistN9+72iXoCzQ4M
-        QN01l25yccSR1pVPrQWrxxbjICr03/YRZUNXEPJFuw==
-X-Google-Smtp-Source: AJdET5diy9iQo+EXbgwBoZirHVSuNCt78i9k7ylFG8mhjza7Xuvk8zFjIUXr1tU/BM6Irbdz5F/YCOxPLTvpOXX79Bc=
-X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr7128838ite.158.1541422077880;
- Mon, 05 Nov 2018 04:47:57 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 04:47:57 -0800 (PST)
-In-Reply-To: <20181104201019.26142-1-sai.praneeth.prakhya@intel.com>
-References: <20181104201019.26142-1-sai.praneeth.prakhya@intel.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 13:47:57 +0100
-Message-ID: <CAKv+Gu_2cPZ5HKo2oDeYsLGAXgnENzWskZOcT_Z509Shbct+2Q@mail.gmail.com>
-Subject: Re: [PATCH V3 0/3] Unmap EFI boot services code/data regions after boot.
-To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
+        Mon, 5 Nov 2018 17:08:28 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5CkMjK051043
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 07:48:52 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njk9vqynj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 07:48:52 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 5 Nov 2018 12:48:49 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 12:48:46 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Cmjiq5439964
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 12:48:45 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2D8BAE055;
+        Mon,  5 Nov 2018 12:48:45 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0E08AE045;
+        Mon,  5 Nov 2018 12:48:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.137])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Nov 2018 12:48:44 +0000 (GMT)
+Subject: Re: [PATCH v2 0/2] crypto: streebog - add Streebog hash function
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date:   Mon, 05 Nov 2018 07:48:33 -0500
+In-Reply-To: <20181103055145.ndvxd7nbnoqtwrk5@sole.flsd.net>
+References: <20181010121254.12220-1-vt@altlinux.org>
+         <20181012061659.mextetc3v7urqkzx@gondor.apana.org.au>
+         <20181012064105.bchujbwoaszrcu3l@sole.flsd.net>
+         <20181017060851.r5mxvpq3l2ycvpio@gondor.apana.org.au>
+         <20181103055145.ndvxd7nbnoqtwrk5@sole.flsd.net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110512-0012-0000-0000-000002C39034
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110512-0013-0000-0000-000020F7CEBD
+Message-Id: <1541422113.21115.44.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 November 2018 at 21:10, Sai Praneeth Prakhya
-<sai.praneeth.prakhya@intel.com> wrote:
-> CC'ing x86 folks because this patch set touches x86/mm which I am no expert of.
->
-> Ideally, after kernel assumes control of the platform, firmware shouldn't access
-> EFI boot services code/data regions. But, it's noticed that this is not so true
-> in many x86 platforms. Hence, during boot, kernel reserves EFI boot services
-> code/data regions [1] and maps [2] them to efi_pgd so that call to
-> set_virtual_address_map() doesn't fail. After returning from
-> set_virtual_address_map(), kernel frees the reserved regions [3] but they still
-> remain mapped.
->
-> This means that any code that's running in efi_pgd address space (e.g: any EFI
-> runtime service) would still be able to access EFI boot services code/data
-> regions but the contents of these regions would have long been over written by
-> someone else as they are freed by efi_free_boot_services(). So, it's important
-> to unmap these regions. After unmapping EFI boot services code/data regions, any
-> illegal access by buggy firmware to these regions would result in page fault
-> which will be handled by efi specific fault handler.
->
-> Unmapping EFI boot services code/data regions will result in clearing
-> PAGE_PRESENT bit and it shouldn't bother L1TF cases because it's already handled
-> by protnone_mask() at arch/x86/include/asm/pgtable-invert.h.
->
-> [1] Please see efi_reserve_boot_services()
-> [2] Please see efi_map_region() -> __map_region() -> kernel_map_pages_in_pgd()
-> [3] Please see efi_free_boot_services()
->
-> Testing the patch set:
-> ----------------------
-> 1. Download buggy firmware (which accesses boot regions even after kernel has
-> booted) from here [1].
-> 2. Without the patch set, you shouldn't see any kernel warning/error messages
-> (i.e. kernel allows accesses to EFI boot services code/data regions even after
-> call to set_virtual_address_map()).
-> 3. With the patch set, you should see a kernel warning about buggy firmware,
-> efi_rts_wq beeing freezed and disabling runtime services forever.
->
-> Please note that this patch will change kernel's existing behavior for some EFI
-> runtime services but I think it's OK because kernel should have never allowed
-> those accesses in the first place.
->
-> Also please note that this patch set needs lot of real time trashing as I just
-> tested it out with OVMF.
->
-> Note:
-> -----
-> Patch set based on "next" branch in efi tree.
->
-> Changes from V2 -> V3:
-> ----------------------
-> 1. Expliclty set pfn to 0 in kernel_unmap_pages_in_pgd().
-> 2. Add __init modifier to kernel_<map/unmap>_pages_in_pgd().
-> 3. Warn if kernel_<map/unmap>_pages_in_pgd() are called after smp_init().
-> 4. Split efi_unmap_pages() into a separate patch.
->
-> Changes from V1 -> V2:
-> ----------------------
-> 1. Rewrite the cpa initializer in a more readable fashion.
-> 2. Don't use cpa->pfn while unmapping, as it's not useful.
-> 3. Unmap regions before freeing them up.
-> 4. Fix spelling nits.
->
-> Sai Praneeth (3):
->   x86/mm/pageattr: Introduce helper function to unmap EFI boot services
->   x86/efi: Unmap EFI boot services code/data regions from efi_pgd
->   x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
->
->  arch/x86/include/asm/efi.h           |  2 ++
->  arch/x86/include/asm/pgtable_types.h |  8 ++++++--
->  arch/x86/mm/pageattr.c               | 40 ++++++++++++++++++++++++++++++++++--
->  arch/x86/platform/efi/efi.c          |  2 ++
->  arch/x86/platform/efi/quirks.c       | 25 ++++++++++++++++++++++
->  include/linux/efi.h                  |  3 ---
->  init/main.c                          |  4 ----
->  7 files changed, 73 insertions(+), 11 deletions(-)
->
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->
+On Sat, 2018-11-03 at 08:51 +0300, Vitaly Chikunov wrote:
+> Herbert,
+> 
+> On Wed, Oct 17, 2018 at 02:08:51PM +0800, Herbert Xu wrote:
+> > On Fri, Oct 12, 2018 at 09:41:05AM +0300, Vitaly Chikunov wrote:
+> > >
+> > > It is the first part of attempts to add to the Integrity subsystem
+> > > ability of verifying file and module signatures by Russian GOST
+> > > algorithms.
+> > 
+> > It would be better if these patches are posted together.  That
+> > way we don't end up with a situation where the algorithm goes into
+> > the kernel but the ultimate user is rejected.
+> 
+> IMA does not need any particular patching inside of their subtree to
+> support new hash, because it is using any hash registered in Hash Info
+> which is still under crypto subtree. I added appropriate patch into v3
+> which is already posted a week ago, and tested it to work correctly with
+> ima_appraise=fix.
 
-Thanks Sai.
+That's true, but the target subsystem should be made aware of the new
+usage.
 
-I have queued these up in efi/next for now, but I'd still like a fresh
-ack from the x86 maintainers.
+Thanks, Herbert.
+
+Mimi
+
