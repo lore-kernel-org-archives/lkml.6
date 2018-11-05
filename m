@@ -2,122 +2,88 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06074C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8552C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2A012081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:37:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2A012081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AB9282081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:37:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WY7Y31zV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9282081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbeKFF61 (ORCPT
+        id S1730201AbeKFF7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:58:27 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44019 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeKFF60 (ORCPT
+        Tue, 6 Nov 2018 00:59:01 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42961 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeKFF7B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:58:26 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k9so9303434otl.10;
-        Mon, 05 Nov 2018 12:36:59 -0800 (PST)
+        Tue, 6 Nov 2018 00:59:01 -0500
+Received: by mail-yw1-f65.google.com with SMTP id l2-v6so4228809ywb.9;
+        Mon, 05 Nov 2018 12:37:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=U6ZPxgSO/lmQjvA9dVKLUdxgPZdvtVGQaQ8rKIlyWpI=;
+        b=WY7Y31zVEOJYfGRpNmhj+XuH8egiUJfoNlXZIObTJ8pvbaFvDICNr2oHdpgr4dnkCT
+         NgYPo9Z0MaVwTZTvd0o46Ep5tbCEL8MuS+QhUMWCVqW468sZGYVPJmbiFG2fRRgbRXC/
+         w4YvhTlcD+y7zL5Kj3kAjYKUa1NFy7hJ2cKs66mVzzy0rDC8aHtgV5j5xmI+b7LTcem/
+         L4SsAFwKqWq5oRHhl4uyJ95Oh52bpHARUBG1zKB4uDa/YxkIQ16+ZiXI1iLdcq9y2GcX
+         oemoVxaieR2J4TLMAzZEIidEAzWh50yPmPMoFFSmE3rYVo3T8KOBxeuoBYhgQJHQo266
+         or6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x1cXK7d3XogSrQZz3j0da95VPDbe5OzopYvsUml50B4=;
-        b=PeitcmsELb/0OIJ6R+DLLNrNYU9GzUnbLPA7CDq0j16jYSXZ6DFQxDBnEpij/uRS/j
-         XcGNfA7Ogg6LHjhqkN3U720h/g7vORJHFdyvnWdtBv9Ymv5LFSgFowskdYnnC6gV3pWD
-         3wtf1ubhnsZVQH545UWoFxBeMo1gfc1bj3jSgoqhlGeYgZ4mhhrYDi1tEFDKg92t/0CC
-         P2yiz+dhVCMIoWb9/9W5RNrststIcw2p+KC8uIR9w1cUej09yWJx1NqYwrVSmWq8ulxp
-         P2E8cDQO6kNrY+/TkdoY3EDJv1gbJccEAdzTs9xxyEuN7ZLlioPh5kxZOM3L9Kvf2OmI
-         gVpA==
-X-Gm-Message-State: AGRZ1gKO63KPDVyjkR7zyR0lvnhYxIYSxFVkGAqyLyt0CaIJnGnArnvh
-        JcJBeMYiB++BF7Mq3gGRaQ==
-X-Google-Smtp-Source: AJdET5eT9f6xW9J7vZyuXxqe0VJ5JmHrKXTBt2NSZBHmBh8zFm997ZS+RE1+VnXaASKC1UnDVoAnQw==
-X-Received: by 2002:a9d:4c88:: with SMTP id m8mr2571260otf.360.1541450219035;
-        Mon, 05 Nov 2018 12:36:59 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l4sm8671259oth.5.2018.11.05.12.36.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 12:36:58 -0800 (PST)
-Date:   Mon, 5 Nov 2018 14:36:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Doug Anderson <dianders@google.com>
-Cc:     vbadigan@codeaurora.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 1/2] dt-bindings: mmc: sdhci-msm: Add new compatible
- string for SDM845 SOC
-Message-ID: <20181105203657.GA32282@bogus>
-References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
- <1541073999-11752-2-git-send-email-vbadigan@codeaurora.org>
- <CAD=FV=V9AdCgOSonb0tu==DgKRKeZxto+aGwxmdbHAqrmfMrDQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=V9AdCgOSonb0tu==DgKRKeZxto+aGwxmdbHAqrmfMrDQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=U6ZPxgSO/lmQjvA9dVKLUdxgPZdvtVGQaQ8rKIlyWpI=;
+        b=L+BxBblvRZguyYAGQ6PowVh8RoGkDZS1R+iDAL8F237dDE4sUtO2gR1fJm7VVfG4ee
+         u0ZKb4dgRXV9b5XtSSoN1U6+4qCwaiWFwv6AXTFtL8/XUoG5jv2TSy1AieSTBmYFu/jN
+         sknjNmcDq6K8pa/UpRT3rHxy31ra3WItiMWiN5N4t77P11YTgTDrG1XtHZzkhZoti4cD
+         OdC7vhJYsAjoiTVUzeqSBGuNAlLC4E215yB6VjNz0zwz9nVALZjDDW5d8swekErAVZir
+         dQLCb7CglSuybSMzDi8JkkU8Rlr1TtPJktBipLhyddP5PSeVw8w5KmZKtely97CvAisO
+         CosA==
+X-Gm-Message-State: AGRZ1gJDMqx8i2xc/Mgophxq8gUpGOFGsh27HohE5mNRt5HMNWV61ilY
+        j7ScacPNYxtRVhDAUuHrJeQ=
+X-Google-Smtp-Source: AJdET5cGGX77FJ3u7fLVRfJD4VCVreNFL156NebsRzbWWqFuz4IsYSIHym7EDCQOlHpJQvpDxmHi0g==
+X-Received: by 2002:a0d:e8c7:: with SMTP id r190-v6mr21301125ywe.90.1541450252034;
+        Mon, 05 Nov 2018 12:37:32 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id w188-v6sm10130715ywf.59.2018.11.05.12.37.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 12:37:31 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     bcm-kernel-feedback-list@broadcom.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/1] bus: brcmstb_gisb: simplify getting .driver_data
+Date:   Mon,  5 Nov 2018 12:37:23 -0800
+Message-Id: <20181105203723.7031-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181021195958.1412-2-wsa+renesas@sang-engineering.com>
+References: <20181021195958.1412-1-wsa+renesas@sang-engineering.com> <20181021195958.1412-2-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 01:29:54PM -0700, Doug Anderson wrote:
-> Hi,
+On Sun, 21 Oct 2018 21:59:58 +0200, Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
 > 
-> On Thu, Nov 1, 2018 at 5:07 AM Veerabhadrarao Badiganti
-> <vbadigan@codeaurora.org> wrote:
-> >
-> > For SDM845 SOC, new compatible string  "qcom,sdm845-sdhci" is added.
-> >
-> > Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> > ---
-> >  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> > index 502b3b8..f2ffbeb 100644
-> > --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> > @@ -7,6 +7,7 @@ Required properties:
-> >  - compatible: Should contain:
-> >                 "qcom,sdhci-msm-v4" for sdcc versions less than 5.0
-> >                 "qcom,sdhci-msm-v5" for sdcc versions >= 5.0
-> > +               "qcom,sdm845-sdhci" for sdm845 SOC
-> 
-> It's up to Rob of course, but IMO it seems a nicer way forward to
-> include both the SoC-specific string and the "version" string in all
-> cases.  I'd write this for the full text:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 
-Fine by me if you update all the dts files.
-
-> 
->  - compatible: Should contain a SoC-specific string and a IP version string:
->       version strings:
->            "qcom,sdhci-msm-v4" for sdcc versions less than 5.0
->            "qcom,sdhci-msm-v5" for sdcc version 5.0
->       full compatible strings with SoC and version:
->            "qcom,apq8084", "qcom,sdhci-msm-v4"
->            "qcom,msm8974", "qcom,sdhci-msm-v4"
->            "qcom,msm8916", "qcom,sdhci-msm-v4"
->            "qcom,msm8992", "qcom,sdhci-msm-v4"
->            "qcom,msm8996", "qcom,sdhci-msm-v4"
-
-I assume you meant to append '-sdhci' here?
-
->            "qcom,sdm845-sdhci", "qcom,sdhci-msm-v5"
-> 
->    NOTE that some old device tree files may be floating around that only
->    have the string "qcom,sdhci-msm-v4" without the SoC compatible string
->    but doing that should be considered a deprecated practice.
-> 
-> -Doug
+Applied to drivers/next, thanks!
+--
+Florian
