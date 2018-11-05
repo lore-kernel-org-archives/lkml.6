@@ -2,113 +2,163 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A85AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B376C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA1B2081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA1B2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id F16CD2081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:55:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16CD2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730013AbeKFCOi (ORCPT
+        id S2387547AbeKFCQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:14:38 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:43600 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729681AbeKFCOi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:14:38 -0500
-Received: from mr1.cc.vt.edu (smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id wA5Gs4WL001192
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 11:54:04 -0500
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id wA5Grx4m017929
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 11:54:04 -0500
-Received: by mail-qk1-f200.google.com with SMTP id c84so22774301qkb.13
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:54:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=1wziqTN7Fdza7mxD6Ka5sSVZsQe1xBnHGG3bPBOWNKw=;
-        b=qpdrQdMun9ztdiEQu7mswDI8flXDIABGypFO3/ThFNbXjVe73MFkl935FLoVHzNzkq
-         lVb1t7uiy8pUFiDvGm/vL9U+JLzC8BToYK1bNFuXc9q4xkStp6kxeWf2jnjDC8XwkQTt
-         5rh6yOkerBK8uL/f5xNDoH/y80j6pxX7jZJdC1BQVoXNO2EDGqBXOZkGfq0r3nvw9cIJ
-         4Ept/lImOFdhT+t9VbVYOmzcaTCs/Z31V6BXY89C0IbEesn9HcTx8S7ng+aylCg8pgjX
-         2/5HoFs2zS8J7npFcNO8wTS2rUu0Y5HKszlPw0BvTcPU7yk4T43Wckq5ASG8mRUieWmr
-         FrXA==
-X-Gm-Message-State: AGRZ1gIFStDHoXx2SlXLxukenf8grU8feAi62AdLGLVduouVBVj+fO5Q
-        /EEleNlbKbHOAdCVmlPLazxq3qaq2HY5dweOQUC8DN0fExir2nqA2Eqdmu0GKH6a9RcJDlmhKJ2
-        RY/i8Xs4/tHRpP3kyk3eLUma0lbXPOmyAAfs=
-X-Received: by 2002:a37:8f02:: with SMTP id r2mr21677927qkd.246.1541436839576;
-        Mon, 05 Nov 2018 08:53:59 -0800 (PST)
-X-Google-Smtp-Source: AJdET5eKTL1E1IsaVSqLtz70svXn+78e3/jPnMlvKVSvBXq6pCTkZlYy6V761tMZkkjCMzFfK+lZYA==
-X-Received: by 2002:a37:8f02:: with SMTP id r2mr21677879qkd.246.1541436838992;
-        Mon, 05 Nov 2018 08:53:58 -0800 (PST)
-Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm29387972qth.74.2018.11.05.08.53.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 08:53:57 -0800 (PST)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
-Cc:     Adam Borowski <kilobyte@angband.pl>,
-        Pintu Agarwal <pintu.ping@gmail.com>, linux-mm@kvack.org,
-        open list <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org
-Subject: Re: Creating compressed backing_store as swapfile
-In-Reply-To: <6a1f57b6-503c-48a2-689b-3c321cd6d29f@gmail.com>
-References: <CAOuPNLjuM5qq3go9ZFZcK0G5pQxTQb0DY36xu+8SL4vC4zJntw@mail.gmail.com> <20181105155815.i654i5ctmfpqhggj@angband.pl> <79d0c96a-a0a2-63ec-db91-42fd349d50c1@gmail.com> <42594.1541434463@turing-police.cc.vt.edu>
- <6a1f57b6-503c-48a2-689b-3c321cd6d29f@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1541436836_4003P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+        Mon, 5 Nov 2018 21:16:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387420AbeKFCQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:16:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 598C0B088;
+        Mon,  5 Nov 2018 16:55:25 +0000 (UTC)
+Subject: Re: [PATCH 2] mm/kvmalloc: do not call kmalloc for size >
+ KMALLOC_MAX_SIZE
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+References: <154106356066.887821.4649178319705436373.stgit@buzz>
+ <154106695670.898059.5301435081426064314.stgit@buzz>
+ <80074d2a-2f8d-a9db-892b-105c0ad7cd47@suse.cz>
+ <d033db53-129d-c031-db78-ba7f9fed5bf4@yandex-team.ru>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <af5a1d05-7ee2-b339-1c50-73ae9d66d955@suse.cz>
+Date:   Mon, 5 Nov 2018 17:52:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <d033db53-129d-c031-db78-ba7f9fed5bf4@yandex-team.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 05 Nov 2018 11:53:56 -0500
-Message-ID: <83467.1541436836@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1541436836_4003P
-Content-Type: text/plain; charset=us-ascii
+On 11/5/18 5:19 PM, Konstantin Khlebnikov wrote:
+> 
+> 
+> On 05.11.2018 16:03, Vlastimil Babka wrote:
+>> On 11/1/18 11:09 AM, Konstantin Khlebnikov wrote:
+>>> Allocations over KMALLOC_MAX_SIZE could be served only by vmalloc.
+>>>
+>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>>
+>> Makes sense regardless of warnings stuff.
+>>
+>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>>
+>> But it must be moved below the GFP_KERNEL check!
+> 
+> But kmalloc cannot handle it regardless of GFP.
 
-On Mon, 05 Nov 2018 11:28:49 -0500, "Austin S. Hemmelgarn" said:
+Sure, but that's less problematic than skipping to vmalloc() for
+!GFP_KERNEL. Especially for large sizes where it's likely that page
+tables might get allocated (with GFP_KERNEL).
 
-> Also, it's probably worth noting that BTRFS doesn't need to decompress
-> the entire file to read or write blocks in the middle, it splits the
-> file into 128k blocks and compresses each of those independent of the
-> others, so it can just decompress the 128k block that holds the actual
-> block that's needed.
+> Ok maybe write something like this
+> 
+> if (size > KMALLOC_MAX_SIZE) {
+> 	if (WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL)
+> 		return NULL;
+> 	goto do_vmalloc;
+> }
 
-Presumably it does something sane with block allocation for the now-compressed
-128K that's presumably much smaller.  Also, that limits the damage from writing to
-the middle of a compression unit....
+Probably should check also for __GFP_NOWARN.
 
-That *does* however increase the memory requirement - you can OOM or
-deadlock if your read/write from the swap needs an additional 128K for the
-compression buffer at an inconvenient time...
+> or fix that uncertainty right in vmalloc
+> 
+> For now comment in vmalloc declares
+> 
+>   *	Any use of gfp flags outside of GFP_KERNEL should be consulted
+>   *	with mm people.
 
+Dunno, what does Michal think?
 
---==_Exmh_1541436836_4003P
-Content-Type: application/pgp-signature
+> =)
+> 
+>>
+>>> ---
+>>>   mm/util.c |    4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/mm/util.c b/mm/util.c
+>>> index 8bf08b5b5760..f5f04fa22814 100644
+>>> --- a/mm/util.c
+>>> +++ b/mm/util.c
+>>> @@ -392,6 +392,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>>>   	gfp_t kmalloc_flags = flags;
+>>>   	void *ret;
+>>>   
+>>> +	if (size > KMALLOC_MAX_SIZE)
+>>> +		goto fallback;
+>>> +
+>>>   	/*
+>>>   	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+>>>   	 * so the given set of flags has to be compatible.
+>>> @@ -422,6 +425,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>>>   	if (ret || size <= PAGE_SIZE)
+>>>   		return ret;
+>>>   
+>>> +fallback:
+>>>   	return __vmalloc_node_flags_caller(size, node, flags,
+>>>   			__builtin_return_address(0));
+>>>   }
+>>>
+>>
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBW+B1pI0DS38y7CIcAQIaSwgAlaWBTJLuKtJT7ru/WLIqVahEPpFO8vgl
-0Wd9hwwQSj1a4HtpAkeRTo3/24JBDnIg315A8Q+YW0/zF9MP2cecGTCDT4tmJUR1
-NhN2hoAnKvLleU5ZebPygptkEkiQdbs7G92ok/Zi32lPUwWVt1ZdQG3HVYHWtNxJ
-ret95nyOWAgBJFJmb+I9kiO8O3RewbnfPjLRiUA1d1iaaK6Zilur44fG6K5KN5Yv
-jxN/ee4UM+w/u3cTEpVyAdFqAVq8phDKn1Pa53LSa6TtHXoUOI3ir/k2owUxfzE6
-pO+Len2d4Y2U1VcrfyB5yaLyd5gFGoe82qwsgregzqCbaygKQ4UgPg==
-=OHwC
------END PGP SIGNATURE-----
-
---==_Exmh_1541436836_4003P--
