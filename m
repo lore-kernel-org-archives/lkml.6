@@ -2,247 +2,242 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBB0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FBFECDE46
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CD0C2082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:46:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HL2yqyRO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CD0C2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id CFEC62089F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:47:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFEC62089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbeKETFd (ORCPT
+        id S1728829AbeKETGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:05:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37463 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbeKETFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:05:33 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p2-v6so7311585wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 01:46:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=W+jU3ISQdjTakmeCbYjMZy9WEccEjRzxGZFCCng+FrM=;
-        b=HL2yqyROLgAi8GWc4bdvjyXr67fLc6gwr6WCISMjDvWL5gZG6KFUVIAlfGabWJb9MK
-         RT41MZC8YSu4oPbaQGBg5ZUE7Mzsw35pbO0d8kTvUHrxFdhw9xpfMelp8E/WzU6sY0mP
-         l5rORIw80VEUd8QqEjehmrv0VZ+gEwAcLpcxQRvRform6+rEyisOFTXxhR9XQTAzKrLk
-         KSOSkGHY3bSm1nEKViyEjaZR8ITsBJXhK6MvPOE6c5HBBQGesX0evbdbcbmeaYjN48TL
-         IdHNhHkE+cF3IQwadtzzhXWbfF/nTC8Znm9Wkb7ArycqOLWXniyBFeK1BA63tRSM+PNt
-         DY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=W+jU3ISQdjTakmeCbYjMZy9WEccEjRzxGZFCCng+FrM=;
-        b=To4SUAo4JakBGiIMn6nyR1v6MeTx8HH0O3TKdXvkqBl1vy4x9IMX7mvbD9wZEakrR2
-         QTGjFLLbLx709mdx2BzLB0Y0/90kOOrwm94/6VcwQxqnEzUbg0MqBfdpgi7XvwSF8j3U
-         sJk6Euum9BekNvSr0pnh3X61nLMvm8jQU8stdnzG+BJW+ibz5rqY5COk3g0peeptHYVA
-         N45wVROpTlj9oph08JmSuu4AZUtTy5USPw+CtOFTgbFVdFDF2jGD++fYXYKvQeuADMmv
-         o7tkgvfqKG38BX1sjsOU8wRcodq3fPGeRSSR+CQ7U5IGv1moDfpM6mRtiB3+vux4QB9z
-         K3MQ==
-X-Gm-Message-State: AGRZ1gLJvWSEfH5o3tMGn50mE33qgtxDwPLZBVxxbd2P8OkNy3k4/Pmt
-        Ao5sr133PVMzRjkGLY0G8usoOA==
-X-Google-Smtp-Source: AJdET5e20DVRXOakNh7GhbuvsqONCkmnVh5y/BcPK59TkD2mCE3WS+ZUzVdlMu/TJkrHmRUjrE3FKg==
-X-Received: by 2002:a1c:3e84:: with SMTP id l126-v6mr5396890wma.91.1541411198397;
-        Mon, 05 Nov 2018 01:46:38 -0800 (PST)
-Received: from boomer.baylibre.com (uluru.liltaz.com. [163.172.81.188])
-        by smtp.gmail.com with ESMTPSA id s206-v6sm4117053wms.29.2018.11.05.01.46.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 01:46:37 -0800 (PST)
-Message-ID: <bba47660e7d48c391caad8214570e81527624662.camel@baylibre.com>
-Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
-From:   jbrunet@baylibre.com
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, yixun.lan@amlogic.com,
-        khilman@baylibre.com, carlo@caione.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh@kernel.org, miquel.raynal@bootlin.com,
-        boris.brezillon@bootlin.com, liang.yang@amlogic.com,
-        jian.hu@amlogic.com, qiufang.dai@amlogic.com,
-        hanjie.lin@amlogic.com, victor.wan@amlogic.com,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Mon, 05 Nov 2018 10:46:36 +0100
-In-Reply-To: <66c2915a-4ecd-8a6e-6493-4318ae7bb620@amlogic.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
-         <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
-         <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
-         <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
-         <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
-         <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com>
-         <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
-         <66c2915a-4ecd-8a6e-6493-4318ae7bb620@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-Mime-Version: 1.0
+        Mon, 5 Nov 2018 14:06:23 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32712 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726086AbeKETGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:06:23 -0500
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 2D75DED5F41F6;
+        Mon,  5 Nov 2018 09:47:28 +0000 (GMT)
+Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 5 Nov
+ 2018 09:47:19 +0000
+Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+To:     Mimi Zohar <zohar@linux.ibm.com>, <jarkko.sakkinen@linux.intel.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+ <20181030154711.2782-5-roberto.sassu@huawei.com>
+ <1541088173.4035.26.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
+Date:   Mon, 5 Nov 2018 10:47:19 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1541088173.4035.26.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.142]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-04 at 02:01 +0800, Jianxin Pan wrote:
-> Hi Jerome,
-> 
-> Thanks for the review, we really appreciate your time.
-> 
-> I'm very sorry maybe I don't catch all your meaning very well. 
-> 
-> Please see my comments below.
-> 
-> On 2018/10/29 3:16, Jerome Brunet wrote:
-> > On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
-> > > Hi Jerome,
-> > > 
-> > > On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com>
-> > > wrote:
-> > > [snip]
-> > > > > > > +static void clk_regmap_div_init(struct clk_hw *hw)
-> > > > > > > +{
-> > > > > > > + struct clk_regmap *clk = to_clk_regmap(hw);
-> > > > > > > + struct clk_regmap_div_data *div =
-> > > > > > > clk_get_regmap_div_data(clk);
-> > > > > > > + unsigned int val;
-> > > > > > > + int ret;
-> > > > > > > +
-> > > > > > > + ret = regmap_read(clk->map, div->offset, &val);
-> > > > > > > + if (ret)
-> > > > > > > +         return;
-> > > > > > > 
-> > > > > > > + val &= (clk_div_mask(div->width) << div->shift);
-> > > > > > > + if (!val)
-> > > > > > > +         regmap_update_bits(clk->map, div->offset,
-> > > > > > > +                            clk_div_mask(div->width) << div-
-> > > > > > > >shift,
-> > > > > > > +                            clk_div_mask(div->width));
-> > > > > > 
-> > > > > > This is wrong for several reasons:
-> > > > > > * You should hard code the initial value in the driver.
-> > > > > > * If shift is not 0, I doubt this will give the expected result.
-> > > > > 
-> > > > > The value 0x00 of divider means nand clock off then read/write nand
-> > > > > register is forbidden.
-> > > > 
-> > > > That is not entirely true, you can access the clock register or you'd
-> > > > be in a
-> > > > chicken and egg situation.
-> > > > 
-> > > > > Should we set the initial value in nand driver, or in sub emmc clk
-> > > > > driver?
-> > > > 
-> > > > In the nand driver, which is the consumer of the clock. see my
-> > > > previous comments
-> > > > about it.
-> > > 
-> > > an old version of this series had the code still in the NAND driver
-> > > (by writing to the registers directly instead of using the clk API).
-> > > this looks pretty much like a "sclk-div" to me (as I commented in v3
-> > > of this series: [0]):
-> > > - value 0 means disabled
-> > > - positive divider values
-> > > - (probably no duty control, but that's optional as far as I
-> > > understand sclk-div)
-> > > - uses max divider value when enabling the clock
-> > > 
-> > > if switching to sclk-div works then we can get rid of some duplicate
-> > > code
-> > 
-> > It is possible:
-> > There is a couple of things to note though:
-> > 
-> > * sclk does not 'uses max divider value when enabling the clock': Since
-> > this
-> > divider can gate, it needs to save the divider value when disabling, since
-> > the
-> > divider value is no longer stored in the register,
-> > On init, this cached value is  saved as it is. If the divider is initially
-> > disabled, we have to set the cached value to something that makes sense,
-> > in case
-> > the clock is enabled without a prior call to clk_set_rate().
-> > > So in sclk, the clock setting is not changed nor hard coded in init, and
-> > > this is
-> > a very important difference.
-> > 
-> I think It's ok for the latest sub mmc clock and nand driver now:
-> 1. in mmc_clkc_register_clk_with_parent("div", ...) from mmc_clkc_probe():
->    cached_div is set to div_max durning clk register，but is not set to div
-> hw register.
-> 
-> 2. In meson nand driver v6: 	
-> https://lore.kernel.org/lkml/1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com
-> 1) In meson_nfc_clk_init() from probe:   get clock handle, then
-> prepare_enable and set default rate.
->    nfc->device_clk = devm_clk_get(nfc->dev, "device");
->    ret = clk_prepare_enable(nfc->device_clk);			//Here div hw
-> register changed from 0 -> cached_div.
->    default_clk_rate = clk_round_rate(nfc->device_clk, 24000000);
->    ret = clk_set_rate(nfc->device_clk, default_clk_rate);	//Then
-> register and cached_div are both updated to the default 24M.
-> 2) In meson_nfc_select_chip(), set the actual frequency
->   ret = clk_set_rate(nfc->device_clk, meson_chip->clk_rate);	//Here
-> register and cached_div are changed again.
-> 3) if clk_disable() is called, set div hw register to zero, and
-> cached_div  keep unchagned.
->    if clk_disable() is called again,  cached_div is restored to div hw
-> register.
+On 11/1/2018 5:02 PM, Mimi Zohar wrote:
+> On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
 
-You don't need to do all this in your NAND driver: enable - round - set_rate -
-disable is a waste of time. 
+[...]
 
-Directly calling set_rate(24000000), with the clock still off, will have the
-same result. Then if your HW needs this clock to be ON to access registers
-(like you told us) you should probably turn it on.
-
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index 633e16f42107..8662e8587dce 100644
+>> --- a/drivers/char/tpm/tpm.h
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -237,7 +237,7 @@ struct tpm_chip {
+>>   	const struct attribute_group *groups[3];
+>>   	unsigned int groups_cnt;
+>>   
+>> -	u16 active_banks[7];
+>> +	struct tpm_bank_info active_banks[7];
 > 
-> When enabling the clock, divider register does not need to be div_max.  
-> Any value is OK except ZERO, the cached_div from init or set_rate is ok
-> >  
-> > * Even if sclk zero value means gated, it is still a zero based divider,
-> > while
-> > eMMC/Nand divider is one based. It this controller was to sclk, then
-> > something
-> > needs to be done for this.
-> Could I add another patch to this patchset for sclk to support
-> CLK_DIVIDER_ONE_BASED ?
+> Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+> PCR banks") defined active_banks[7].  Subsequently, commit
+> 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
+> log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
+> correct value, but the number of active_banks should not be hard coded
+> here.
 
-Yes, you should otherwise the calculation are just wrong for your clock.
-
-> > * Since sclk caches a value in its data, and there can multiple instance
-> > of eMMC
-> > /NAND clock controller, some care must be taken when registering the data.
-> OK, I will fix it and alloc mmc_clkc_div_data danymicly durning probe.
-> Thank you. 
-> > Both the generic divider and sclk could work here ... it's up to you
-> > Jianxin.
-> > 
-> == Why use meson_sclk_div_ops instead of clk_regmap_divider_ops?
-> The default divider hw register vaule is 0 when system power on.
-> Then there is a WARNING in divider_recalc_rate() durning clk_hw_register():
-> [    0.918238] ffe05000.clock-controller#div: Zero divisor and
-> CLK_DIVIDER_ALLOW_ZERO not set
-> [    0.925581] WARNING: CPU: 3 PID: 1 at drivers/clk/clk-divider.c:127
-> divider_recalc_rate+0x88/0x90
-> Then I still need to hard code the initual value to nand driver without
-> CLK_DIVIDER_ALLOW_ZERO flags.
-> > > 
-> > > Regards
-> > > Martin
-> > > 
-> > > 
-> > > [0] https://patchwork.kernel.org/patch/10607157/#22238243
-> > 
-> > .
-> > 
-> 
-> 
+Jarkko, should I change the value of TPM2_PCR_ACTIVE_BANKS, or set the
+size of the active_banks array to TPM2_PCR_ACTIVE_BANKS?
 
 
+>>   #ifdef CONFIG_ACPI
+>>   	acpi_handle acpi_dev_handle;
+>>   	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+>> @@ -565,7 +565,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+>>   }
+>>   
+>>   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>> -		  struct tpm_digest *digest_struct);
+>> +		  struct tpm_digest *digest_struct, u16 *digest_size_ptr);
+>>   int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>>   		    struct tpm_digest *digests);
+>>   int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>> index 8babd826ad27..8e821e7b4674 100644
+>> --- a/drivers/char/tpm/tpm2-cmd.c
+>> +++ b/drivers/char/tpm/tpm2-cmd.c
+>> @@ -180,11 +180,12 @@ struct tpm2_pcr_read_out {
+>>    * @chip:	TPM chip to use.
+>>    * @pcr_idx:	index of the PCR to read.
+>>    * @digest_struct:	pcr bank and buffer current PCR value is written to.
+>> + * @digest_size_ptr:	pointer to variable that stores the digest size.
+>>    *
+>>    * Return: Same as with tpm_transmit_cmd.
+>>    */
+>>   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>> -		  struct tpm_digest *digest_struct)
+>> +		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
+>>   {
+>>   	int rc;
+>>   	struct tpm_buf buf;
+>> @@ -219,6 +220,9 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>>   		goto out;
+>>   	}
+>>   
+>> +	if (digest_size_ptr)
+>> +		*digest_size_ptr = digest_size;
+>> +
+>>   	memcpy(digest_struct->digest, out->digest, digest_size);
+>>   out:
+>>   	tpm_buf_destroy(&buf);
+>> @@ -249,7 +253,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>>   	struct tpm2_null_auth_area auth_area;
+>>   	int rc;
+>>   	int i;
+>> -	int j;
+>>   
+>>   	if (count > ARRAY_SIZE(chip->active_banks))
+>>   		return -EINVAL;
+>> @@ -271,14 +274,9 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>>   	tpm_buf_append_u32(&buf, count);
+>>   
+>>   	for (i = 0; i < count; i++) {
+>> -		for (j = 0; j < ARRAY_SIZE(tpm2_hash_map); j++) {
+>> -			if (digests[i].alg_id != tpm2_hash_map[j].tpm_id)
+>> -				continue;
+>> -			tpm_buf_append_u16(&buf, digests[i].alg_id);
+>> -			tpm_buf_append(&buf, (const unsigned char
+>> -					      *)&digests[i].digest,
+>> -			       hash_digest_size[tpm2_hash_map[j].crypto_id]);
+>> -		}
+>> +		tpm_buf_append_u16(&buf, digests[i].alg_id);
+>> +		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
+>> +			       chip->active_banks[i].digest_size);
+>>   	}
+>>   
+> 
+> These tpm2_pcr_extend changes don't belong here in this patch.  Please
+> move them to 1/5.
+
+Also in this case, alg_id and digest_size are defined in patch 4/5.
+
+
+>>   	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
+>> @@ -855,6 +853,26 @@ int tpm2_probe(struct tpm_chip *chip)
+>>   }
+>>   EXPORT_SYMBOL_GPL(tpm2_probe);
+>>   
+>> +static int tpm2_init_bank_info(struct tpm_chip *chip,
+>> +			       struct tpm_bank_info *bank)
+>> +{
+>> +	struct tpm_digest digest = {.alg_id = bank->alg_id};
+>> +	int i;
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+>> +		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
+>> +
+>> +		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
+>> +			continue;
+>> +
+>> +		bank->digest_size = hash_digest_size[crypto_algo];
+>> +		bank->crypto_id = crypto_algo;
+>> +		return 0;
+>> +	}
+>> +
+>> +	return tpm2_pcr_read(chip, 0, &digest, &bank->digest_size);
+>> +}
+>> +
+>>   struct tpm2_pcr_selection {
+>>   	__be16  hash_alg;
+>>   	u8  size_of_select;
+>> @@ -909,7 +927,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   		}
+>>   
+>>   		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
+>> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
+>> +		chip->active_banks[i].alg_id =
+>> +			be16_to_cpu(pcr_selection.hash_alg);
+>> +		rc =  tpm2_init_bank_info(chip, &chip->active_banks[i]);
+> 
+> Please fix the formatting in the above 2 lines.
+> 
+> There's been discussion in the past on removing scripts/Lindent from
+> the coding-style documentation, but that hasn't happened quite yet. I
+> do think section 3 "New drivers" in Documentation/hwmon/submitting-
+> patches has a good balance.
+> 
+> * Running your patch or driver file(s) through checkpatch does not mean its
+>    formatting is clean. If unsure about formatting in your new driver, run it
+>    through Lindent. Lindent is not perfect, and you may have to do some minor
+>    cleanup, but it is a good start.
+
+Ok.
+
+Thanks
+
+Roberto
+
+
+> thanks!
+> 
+> Mimi
+> 
+>> +		if (rc)
+>> +			break;
+>> +
+>>   		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
+>>   			sizeof(pcr_selection.size_of_select) +
+>>   			pcr_selection.size_of_select;
+>> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+>> index 4f00daf44dd2..3f91124837cf 100644
+>> --- a/include/linux/tpm.h
+>> +++ b/include/linux/tpm.h
+>> @@ -46,6 +46,12 @@ struct tpm_digest {
+>>   	u8 digest[SHA512_DIGEST_SIZE];
+>>   } __packed;
+>>   
+>> +struct tpm_bank_info {
+>> +	u16 alg_id;
+>> +	u16 digest_size;
+>> +	u16 crypto_id;
+>> +};
+>> +
+>>   enum TPM_OPS_FLAGS {
+>>   	TPM_OPS_AUTO_STARTUP = BIT(0),
+>>   };
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
