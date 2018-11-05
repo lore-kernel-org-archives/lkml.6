@@ -2,429 +2,87 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE911C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38494C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB9D20819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tS1J+sT/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB9D20819
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0542920882
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:18:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0542920882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730313AbeKFFjn (ORCPT
+        id S1730327AbeKFFj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:39:43 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:40144 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbeKFFjE (ORCPT
+        Tue, 6 Nov 2018 00:39:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34272 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeKFFj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:39:04 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5KEFjh036145;
-        Mon, 5 Nov 2018 20:17:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=lPnhJF5uw92KuA6lHgEy2req1b4O10CR+8xvVWmsWuY=;
- b=tS1J+sT/8gTHtSW3spnriuBRfGCz1L+/iMV4vtZQdq87nOzQiATkru5uKNt7OrekmN8s
- hjU7aN5X1s/zXg0va9z842omaE81wfnISxMmJbMX5eeZN2Bh5FynLUdukYZ0Swd2CgN8
- Fgt/MBUbyUkYrf+EtNzYiKaFi41VtBUa0aSiROEgCmjuCPDBQmMB8L6Wkdv69mfynbZL
- npfZnvLM/5m8RH7LYiW1/Y/UrULw7stGTtq+JQXn7YvI9PTK5lRas0uaglxX950Q0qE3
- JR2Wd2M5cHPZUW7KuP+8f8p7L6IciXd0btkpTYURicabMcKYnP2f8kI2VZIBHa5TkvoL pQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2nh4aqh7e3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 20:17:21 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5KHKHl015641
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 20:17:20 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5KHJe4025082;
-        Mon, 5 Nov 2018 20:17:19 GMT
-Received: from ca-dev63.us.oracle.com (/10.211.8.221)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 12:17:19 -0800
-From:   Steve Sistare <steven.sistare@oracle.com>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        quentin.perret@arm.com, steven.sistare@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/10] sched/fair: Provide idle search schedstats
-Date:   Mon,  5 Nov 2018 12:08:09 -0800
-Message-Id: <1541448489-19692-11-git-send-email-steven.sistare@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
-References: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811050180
+        Tue, 6 Nov 2018 00:39:57 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAB46B5D;
+        Mon,  5 Nov 2018 20:18:34 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 12:18:33 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Oded Gabbay <oded.gabbay@amd.com>
+Subject: Re: [PATCH] mm/mmu_notifier: rename mmu_notifier_synchronize() to
+ <...>_barrier()
+Message-Id: <20181105121833.200d5b53300a7ef4df7d349d@linux-foundation.org>
+In-Reply-To: <20181105192955.26305-1-sean.j.christopherson@intel.com>
+References: <20181105192955.26305-1-sean.j.christopherson@intel.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add schedstats to measure the effectiveness of searching for idle CPUs
-and stealing tasks.  This is a temporary patch intended for use during
-development only.  SCHEDSTAT_VERSION is bumped to 16, and the following
-fields are added to the per-CPU statistics of /proc/schedstat:
+On Mon,  5 Nov 2018 11:29:55 -0800 Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-field 10: # of times select_idle_sibling "easily" found an idle CPU --
-          prev or target is idle.
-field 11: # of times select_idle_sibling searched and found an idle cpu.
-field 12: # of times select_idle_sibling searched and found an idle core.
-field 13: # of times select_idle_sibling failed to find anything idle.
-field 14: time in nanoseconds spent in functions that search for idle
-          CPUs and search for tasks to steal.
-field 15: # of times an idle CPU steals a task from another CPU.
-field 16: # of times try_steal finds overloaded CPUs but no task is
-           migratable.
+> ...and update its comment to explicitly reference its association with
+> mmu_notifier_call_srcu().
+> 
+> Contrary to its name, mmu_notifier_synchronize() does not synchronize
+> the notifier's SRCU instance, but rather waits for RCU callbacks to
+> finished, i.e. it invokes rcu_barrier().  The RCU documentation is
+> quite clear on this matter, explicitly calling out that rcu_barrier()
+> does not imply synchronize_rcu().  The misnomer could lean an unwary
+> developer to incorrectly assume that mmu_notifier_synchronize() can
+> be used in conjunction with mmu_notifier_unregister_no_release() to
+> implement a variation of mmu_notifier_unregister() that synchronizes
+> SRCU without invoking ->release.  A Documentation-allergic and hasty
+> developer could be further confused by the fact that rcu_barrier() is
+> indeed a pass-through to synchronize_rcu()... in tiny SRCU.
 
-Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
----
- kernel/sched/core.c  | 30 +++++++++++++++++++++++++++--
- kernel/sched/fair.c  | 54 ++++++++++++++++++++++++++++++++++++++++++++++------
- kernel/sched/sched.h |  9 +++++++++
- kernel/sched/stats.c | 11 ++++++++++-
- kernel/sched/stats.h | 13 +++++++++++++
- 5 files changed, 108 insertions(+), 9 deletions(-)
+Fair enough.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ad97f3b..b61d15d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2214,17 +2214,43 @@ int sysctl_numa_balancing(struct ctl_table *table, int write,
- DEFINE_STATIC_KEY_FALSE(sched_schedstats);
- static bool __initdata __sched_schedstats = false;
- 
-+unsigned long schedstat_skid;
-+
-+static void compute_skid(void)
-+{
-+	int i, n = 0;
-+	s64 t, skid = 0;
-+
-+	for (i = 0; i < 100; i++) {
-+		t = local_clock();
-+		t = local_clock() - t;
-+		if (t > 0 && t < 1000) {	/* only use sane samples */
-+			skid += t;
-+			n++;
-+		}
-+	}
-+
-+	if (n > 0)
-+		schedstat_skid = skid / n;
-+	else
-+		schedstat_skid = 0;
-+	pr_info("schedstat_skid = %lu\n", schedstat_skid);
-+}
-+
- static void set_schedstats(bool enabled)
- {
--	if (enabled)
-+	if (enabled) {
-+		compute_skid();
- 		static_branch_enable(&sched_schedstats);
--	else
-+	} else {
- 		static_branch_disable(&sched_schedstats);
-+	}
- }
- 
- void force_schedstat_enabled(void)
- {
- 	if (!schedstat_enabled()) {
-+		compute_skid();
- 		pr_info("kernel profiling enabled schedstats, disable via kernel.sched_schedstats.\n");
- 		static_branch_enable(&sched_schedstats);
- 	}
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 56dce30..21ffe34 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3739,29 +3739,35 @@ static inline bool steal_enabled(void)
- static void overload_clear(struct rq *rq)
- {
- 	struct sparsemask *overload_cpus;
-+	unsigned long time;
- 
- 	if (!steal_enabled())
- 		return;
- 
-+	time = schedstat_start_time();
- 	rcu_read_lock();
- 	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
- 	if (overload_cpus)
- 		sparsemask_clear_elem(rq->cpu, overload_cpus);
- 	rcu_read_unlock();
-+	schedstat_end_time(rq->find_time, time);
- }
- 
- static void overload_set(struct rq *rq)
- {
- 	struct sparsemask *overload_cpus;
-+	unsigned long time;
- 
- 	if (!steal_enabled())
- 		return;
- 
-+	time = schedstat_start_time();
- 	rcu_read_lock();
- 	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
- 	if (overload_cpus)
- 		sparsemask_set_elem(rq->cpu, overload_cpus);
- 	rcu_read_unlock();
-+	schedstat_end_time(rq->find_time, time);
- }
- 
- static int try_steal(struct rq *this_rq, struct rq_flags *rf);
-@@ -6165,6 +6171,16 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 	return cpu;
- }
- 
-+#define SET_STAT(STAT)							\
-+	do {								\
-+		if (schedstat_enabled()) {				\
-+			struct rq *rq = this_rq();			\
-+									\
-+			if (rq)						\
-+				__schedstat_inc(rq->STAT);		\
-+		}							\
-+	} while (0)
-+
- /*
-  * Try and locate an idle core/thread in the LLC cache domain.
-  */
-@@ -6173,14 +6189,18 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	struct sched_domain *sd;
- 	int i, recent_used_cpu;
- 
--	if (available_idle_cpu(target))
-+	if (available_idle_cpu(target)) {
-+		SET_STAT(found_idle_cpu_easy);
- 		return target;
-+	}
- 
- 	/*
- 	 * If the previous CPU is cache affine and idle, don't be stupid:
- 	 */
--	if (prev != target && cpus_share_cache(prev, target) && available_idle_cpu(prev))
-+	if (prev != target && cpus_share_cache(prev, target) && available_idle_cpu(prev)) {
-+		SET_STAT(found_idle_cpu_easy);
- 		return prev;
-+	}
- 
- 	/* Check a recently used CPU as a potential idle candidate: */
- 	recent_used_cpu = p->recent_used_cpu;
-@@ -6193,26 +6213,36 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 		 * Replace recent_used_cpu with prev as it is a potential
- 		 * candidate for the next wake:
- 		 */
-+		SET_STAT(found_idle_cpu_easy);
- 		p->recent_used_cpu = prev;
- 		return recent_used_cpu;
- 	}
- 
- 	sd = rcu_dereference(per_cpu(sd_llc, target));
--	if (!sd)
-+	if (!sd) {
-+		SET_STAT(nofound_idle_cpu);
- 		return target;
-+	}
- 
- 	i = select_idle_core(p, sd, target);
--	if ((unsigned)i < nr_cpumask_bits)
-+	if ((unsigned)i < nr_cpumask_bits) {
-+		SET_STAT(found_idle_core);
- 		return i;
-+	}
- 
- 	i = select_idle_cpu(p, sd, target);
--	if ((unsigned)i < nr_cpumask_bits)
-+	if ((unsigned)i < nr_cpumask_bits) {
-+		SET_STAT(found_idle_cpu);
- 		return i;
-+	}
- 
- 	i = select_idle_smt(p, sd, target);
--	if ((unsigned)i < nr_cpumask_bits)
-+	if ((unsigned)i < nr_cpumask_bits) {
-+		SET_STAT(found_idle_cpu);
- 		return i;
-+	}
- 
-+	SET_STAT(nofound_idle_cpu);
- 	return target;
- }
- 
-@@ -6363,6 +6393,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- static int
- select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
- {
-+	unsigned long time = schedstat_start_time();
- 	struct sched_domain *tmp, *sd = NULL;
- 	int cpu = smp_processor_id();
- 	int new_cpu = prev_cpu;
-@@ -6411,6 +6442,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- 			current->recent_used_cpu = cpu;
- 	}
- 	rcu_read_unlock();
-+	schedstat_end_time(cpu_rq(cpu)->find_time, time);
- 
- 	return new_cpu;
- }
-@@ -6657,6 +6689,7 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 	struct sched_entity *se;
- 	struct task_struct *p;
- 	int new_tasks;
-+	unsigned long time;
- 
- again:
- 	if (!cfs_rq->nr_running)
-@@ -6767,6 +6800,8 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 	return p;
- 
- idle:
-+	time = schedstat_start_time();
-+
- 	/*
- 	 * We must set idle_stamp _before_ calling try_steal() or
- 	 * idle_balance(), such that we measure the duration as idle time.
-@@ -6780,6 +6815,8 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 	if (new_tasks)
- 		IF_SMP(rq->idle_stamp = 0;)
- 
-+	schedstat_end_time(rq->find_time, time);
-+
- 	/*
- 	 * Because try_steal() and idle_balance() release (and re-acquire)
- 	 * rq->lock, it is possible for any higher priority task to appear.
-@@ -9770,6 +9807,7 @@ static int steal_from(struct rq *dst_rq, struct rq_flags *dst_rf, bool *locked,
- 		update_rq_clock(dst_rq);
- 		attach_task(dst_rq, p);
- 		stolen = 1;
-+		schedstat_inc(dst_rq->steal);
- 	}
- 	local_irq_restore(rf.flags);
- 
-@@ -9794,6 +9832,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 	int dst_cpu = dst_rq->cpu;
- 	bool locked = true;
- 	int stolen = 0;
-+	bool any_overload = false;
- 	struct sparsemask *overload_cpus;
- 
- 	if (!steal_enabled())
-@@ -9836,6 +9875,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 			stolen = 1;
- 			goto out;
- 		}
-+		any_overload = true;
- 	}
- 
- out:
-@@ -9847,6 +9887,8 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 	stolen |= (dst_rq->cfs.h_nr_running > 0);
- 	if (dst_rq->nr_running != dst_rq->cfs.h_nr_running)
- 		stolen = -1;
-+	if (!stolen && any_overload)
-+		schedstat_inc(dst_rq->steal_fail);
- 	return stolen;
- }
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 5f181e9..9f58e17 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -907,6 +907,15 @@ struct rq {
- 	/* try_to_wake_up() stats */
- 	unsigned int		ttwu_count;
- 	unsigned int		ttwu_local;
-+
-+	/* Idle search stats */
-+	unsigned int		found_idle_core;
-+	unsigned int		found_idle_cpu;
-+	unsigned int		found_idle_cpu_easy;
-+	unsigned int		nofound_idle_cpu;
-+	unsigned long		find_time;
-+	unsigned int		steal;
-+	unsigned int		steal_fail;
- #endif
- 
- #ifdef CONFIG_SMP
-diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
-index 750fb3c..00b3de5 100644
---- a/kernel/sched/stats.c
-+++ b/kernel/sched/stats.c
-@@ -10,7 +10,7 @@
-  * Bump this up when changing the output format or the meaning of an existing
-  * format, so that tools can adapt (or abort)
-  */
--#define SCHEDSTAT_VERSION 15
-+#define SCHEDSTAT_VERSION 16
- 
- static int show_schedstat(struct seq_file *seq, void *v)
- {
-@@ -37,6 +37,15 @@ static int show_schedstat(struct seq_file *seq, void *v)
- 		    rq->rq_cpu_time,
- 		    rq->rq_sched_info.run_delay, rq->rq_sched_info.pcount);
- 
-+		seq_printf(seq, " %u %u %u %u %lu %u %u",
-+			   rq->found_idle_cpu_easy,
-+			   rq->found_idle_cpu,
-+			   rq->found_idle_core,
-+			   rq->nofound_idle_cpu,
-+			   rq->find_time,
-+			   rq->steal,
-+			   rq->steal_fail);
-+
- 		seq_printf(seq, "\n");
- 
- #ifdef CONFIG_SMP
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 8aea199..50c3cf8 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -39,6 +39,17 @@
- #define   schedstat_set(var, val)	do { if (schedstat_enabled()) { var = (val); } } while (0)
- #define   schedstat_val(var)		(var)
- #define   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
-+#define   schedstat_start_time()	schedstat_val_or_zero(local_clock())
-+#define   schedstat_end_time(stat, time)			\
-+	do {							\
-+		unsigned long endtime;				\
-+								\
-+		if (schedstat_enabled() && (time)) {		\
-+			endtime = local_clock() - (time) - schedstat_skid; \
-+			schedstat_add((stat), endtime);		\
-+		}						\
-+	} while (0)
-+extern unsigned long schedstat_skid;
- 
- #else /* !CONFIG_SCHEDSTATS: */
- static inline void rq_sched_info_arrive  (struct rq *rq, unsigned long long delta) { }
-@@ -53,6 +64,8 @@ static inline void rq_sched_info_depart  (struct rq *rq, unsigned long long delt
- # define   schedstat_set(var, val)	do { } while (0)
- # define   schedstat_val(var)		0
- # define   schedstat_val_or_zero(var)	0
-+# define   schedstat_start_time()	0
-+# define   schedstat_end_time(stat, t)	do { } while (0)
- #endif /* CONFIG_SCHEDSTATS */
- 
- #ifdef CONFIG_SCHED_INFO
--- 
-1.8.3.1
+> --- a/mm/mmu_notifier.c
+> +++ b/mm/mmu_notifier.c
+> @@ -35,12 +35,12 @@ void mmu_notifier_call_srcu(struct rcu_head *rcu,
+>  }
+>  EXPORT_SYMBOL_GPL(mmu_notifier_call_srcu);
+>  
+> -void mmu_notifier_synchronize(void)
+> +void mmu_notifier_barrier(void)
+>  {
+> -	/* Wait for any running method to finish. */
+> +	/* Wait for any running RCU callbacks (see above) to finish. */
+>  	srcu_barrier(&srcu);
+>  }
+> -EXPORT_SYMBOL_GPL(mmu_notifier_synchronize);
+> +EXPORT_SYMBOL_GPL(mmu_notifier_barrier);
+>  
+>  /*
+>   * This function can't run concurrently against mmu_notifier_register
 
+But as it has no callers, why retain it?
