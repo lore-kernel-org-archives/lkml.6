@@ -2,117 +2,152 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29EDC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FF8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E53A2084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E53A2084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F6B02084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:04:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6B02084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388155AbeKFHZO (ORCPT
+        id S2388089AbeKFH0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:25:14 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33533 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387441AbeKFHZO (ORCPT
+        Tue, 6 Nov 2018 02:26:41 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387441AbeKFH0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:25:14 -0500
-Received: by mail-ot1-f68.google.com with SMTP id q1so9602137otk.0;
-        Mon, 05 Nov 2018 14:03:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W5jYvTO3HGNDVrTqUtFhpYyIdeUPYSvIAUgFmRyERN4=;
-        b=S0pRHgvlhH5nTRgeGkC5ZPay6fNrA7wGyJ6WXfdMx1j6TflTJypwD9e7AlmDLqEN1Z
-         YXYe3iqAVDM2BYOZZHV0ju+gZbcXmNVg9ot0WNRMfsDa2UvxXrZlbVrloMg4TiLO5oQ+
-         OCgQAEzuFSOqhXfnZbXzPFOiBX+kEBNQ2xUOd667hnfkkMSla7tOl9Tq/0P1TQ6mMB0d
-         qoZTdeY3Md/Dbe+Qa1fs/K4RE2egnqwNQjA15/eNEB81QZYt+BvT8qf01pXpHaCq+Tu3
-         4BP9CUAR8iYN+YyqhkP+4/9Uf9BMqH2qYL10emJajT3QMui+QcoTwy5c5hT4BXlfJymy
-         ZFNw==
-X-Gm-Message-State: AGRZ1gKcRyXV7vvA7dPuro9qxFO4kx0dT9Kl+xRvmxds4rlwIAAk/nou
-        JSJ68hJEOrqiGNfroWFmKA==
-X-Google-Smtp-Source: AJdET5fn4xMVFU2tVsKohaOAedKOjGw6RWvtlXE+uFxfP2MrdCfNK6KTsYookAsdrS40cxDicNjowA==
-X-Received: by 2002:a9d:4333:: with SMTP id s48mr13929794ote.347.1541455404388;
-        Mon, 05 Nov 2018 14:03:24 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u12sm14221973otf.61.2018.11.05.14.03.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 14:03:23 -0800 (PST)
-Date:   Mon, 5 Nov 2018 16:03:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Tue, 6 Nov 2018 02:26:41 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5LxEu5158942
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 17:04:51 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2njvsv419c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 17:04:50 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Mon, 5 Nov 2018 22:04:50 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 22:04:47 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5M4ksV42598562
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 22:04:46 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84E05124054;
+        Mon,  5 Nov 2018 22:04:46 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C774124052;
+        Mon,  5 Nov 2018 22:04:46 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  5 Nov 2018 22:04:46 +0000 (GMT)
+Subject: Re: [PATCH v3 05/16] tpm: print tpm2_commit_space() error inside
+ tpm2_commit_space()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/1] drm/panel: Add support for Olimex LCD-OLinuXino
- panel
-Message-ID: <20181105220322.GA10583@bogus>
-References: <1531383729-13932-1-git-send-email-stefan@olimex.com>
- <20180716150836.GA16895@rob-hp-laptop>
- <e677488e-34e0-512c-db13-15ccf78c5ea0@olimex.com>
+References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-6-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Mon, 5 Nov 2018 17:04:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e677488e-34e0-512c-db13-15ccf78c5ea0@olimex.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181105014552.20262-6-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18110522-0064-0000-0000-0000036EEE00
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009973; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01111983; UDB=6.00576306; IPR=6.00892074;
+ MB=3.00024008; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 22:04:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110522-0065-0000-0000-00003B3C91D7
+Message-Id: <3a9f9abe-525a-9101-3c25-7bd50029f305@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050194
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 04:34:42PM +0200, Stefan Mavrodiev wrote:
-> On 7/16/18 6:08 PM, Rob Herring wrote:
-> > On Thu, Jul 12, 2018 at 11:21:53AM +0300, Stefan Mavrodiev wrote:
-> > > This patch adds Olimex Ltd. LCD-OLinuXino bridge panel driver. The
-> > > panel is used with different LCDs (currently from 480x272 to 1280x800).
-> > > Small EEPROM chip is used for identification, which holds some
-> > > factory data and timing requirements.
-> > > 
-> > > Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> > > ---
-> > > Changes for v3:
-> > >    - Change module license from "GPL v2" to "GPL"
-> > >    - Make use of backlight_enable()/backlight_disable() helpers
-> > >    - Rework backlight device request
-> > >    - Remove drm_panel_detach()
-> > >    - Use module_i2c_driver() for initialization
-> > >    - Make the first mode preferred
-> > >    - If num_modes value is invalid, overwrite it with 4, which is the maximum
-> > >    - Some variable types optimizations
-> > > 
-> > > Changes for v2:
-> > >    - Changed lcd_olinuxino_funcs to static const
-> > > 
-> > >   .../display/panel/olimex,lcd-olinuxino.txt         |  42 +++
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > 
-> > >   MAINTAINERS                                        |   6 +
-> > >   drivers/gpu/drm/panel/Kconfig                      |  10 +
-> > >   drivers/gpu/drm/panel/Makefile                     |   1 +
-> > >   drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 331 +++++++++++++++++++++
-> > >   5 files changed, 390 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
-> > >   create mode 100644 drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> 
-> I would like to ask if there will be any progress on this patch?
+On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
+> The error logging for tpm2_commit_space() is in a wrong place. This
+> commit moves it inside that function.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>   drivers/char/tpm/tpm2-space.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index d53c882268ff..3d5f9577e5de 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+>   	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+>   	if (rc) {
+>   		tpm2_flush_space(chip);
+> -		return rc;
+> +		goto out;
+>   	}
+>
+>   	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+>   	if (rc) {
+>   		tpm2_flush_space(chip);
+> -		return rc;
+> +		goto out;
+>   	}
+>
+>   	rc = tpm2_save_space(chip);
+>   	if (rc) {
+>   		tpm2_flush_space(chip);
+> -		return rc;
+> +		goto out;
+>   	}
+>
+>   	*bufsiz = be32_to_cpu(header->length);
+> @@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+>   	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
+>
+>   	return 0;
+> +out:
+> +	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
+> +	return rc;
+>   }
 
-Thierry needs to pick this one up. At this point you need to re-send. No 
-one is going to look at patches 4 months old.
 
-Rob
+This is in tpm-interface.c:
+
+     rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+     if (rc)
+         dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+
+I suppose you will remove if(rc) ... ?
+
