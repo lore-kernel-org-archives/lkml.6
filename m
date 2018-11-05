@@ -2,92 +2,189 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64065C46465
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA052C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 276D02084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:02:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UE73fprh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 276D02084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C8D02084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8D02084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388128AbeKFHY2 (ORCPT
+        id S2388143AbeKFHYt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:24:28 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46391 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387580AbeKFHY2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:24:28 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so4823681pgp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 14:02:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=OZxo+gm2aB0BOXCTrFO73DgYTbgCEUapMma32xYFIec=;
-        b=UE73fprhlHvnloJPFU9DYczSaJFeBh7y3morvwmatxQ6K+wF4iz6CAFkSihGSlQ3Xy
-         h+My48pyDLjsnG3qK2amm7jKEJITqoG2CIq6vdt4Fil1kEhJ6/gHt/km0WLQXuE0VPy0
-         meuWlK+47i4qUH86KU2Wfc7kt6pvjOJtfOxh8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=OZxo+gm2aB0BOXCTrFO73DgYTbgCEUapMma32xYFIec=;
-        b=flZxFXIjpzO/Nr2NXEXy1w+CnPsMk3OSQziNbeoe6w8ueVvhtKrtByUVoGS1AoQZan
-         XWB7wmQvi5iNhrC8/Sl6eUrVryYiGFn0QBLhjeGiBV+d2QNHHFHySeESGqhgg4+ChvFZ
-         rY0PVRCp2MXp4u/TaiPoJK/buAVDGRBRtWDAwfNwzmWEd4Zc3vKtz+I9rkUH6l1DoQYn
-         j/Ub54S4dgm9xMPJTUG3liLk4Gg9JYQHMu6olOLaJu1JUMLzzccTy9VZh3UYRDp0ml/k
-         UJ1cAjqR9LSiub1c6yz767l3dQd/G/2dvJTPHJFyPzWe2jqFiAkl8syTcZ2MVHbBlgd0
-         nT/g==
-X-Gm-Message-State: AGRZ1gJ8V3w5+yYcr3m0ha/sDr4DPDRY7KaOplhqM/IEGgf7gSbLEcsI
-        yWpO8szp/chj3XSl3JEQXtIKaQ==
-X-Google-Smtp-Source: AJdET5fm8FH8THubvGVnksxcOPeZfcMmC/rUMVhoaG2TW3GCcMaTWSmqWklPXB2MK+3orNgnIw1/DA==
-X-Received: by 2002:a63:81c7:: with SMTP id t190mr19113673pgd.393.1541455359260;
-        Mon, 05 Nov 2018 14:02:39 -0800 (PST)
-Received: from [10.177.251.60] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id q1sm25712165pgs.14.2018.11.05.14.02.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 14:02:38 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] lib: cordic: Move cordic macros and defines to
- header file
-To:     Priit Laes <plaes@plaes.org>, linux-kernel@vger.kernel.org
-References: <cover.9ec98292c595a111ae78f31383ff8618c9cb04da.1541446422.git-series.plaes@plaes.org>
- <3be396e01b33905e9ac5c80e7038b7aacf72eaf8.1541446422.git-series.plaes@plaes.org>
-Cc:     linux-wireless <linux-wireless@vger.kernel.org>
-From:   Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <8eb0e232-d14b-60d9-e3c8-008c46659a30@broadcom.com>
-Date:   Mon, 5 Nov 2018 23:02:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 6 Nov 2018 02:24:49 -0500
+Received: from mga17.intel.com ([192.55.52.151]:18238 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387992AbeKFHYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 02:24:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 14:03:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
+   d="scan'208";a="106142928"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2018 14:02:59 -0800
+Subject: Re: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote
+ CPUs
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
+ <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
+ <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ea646842-bd32-3615-bf38-27b568a2d81e@linux.intel.com>
+Date:   Mon, 5 Nov 2018 14:02:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-In-Reply-To: <3be396e01b33905e9ac5c80e7038b7aacf72eaf8.1541446422.git-series.plaes@plaes.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/2018 8:37 PM, Priit Laes wrote:
-> Also append CORDIC_ prefix to nonprefixed macros.
 
-Bit annoying that you made me look at LKML for this patch. Can you just 
-post the entire series to linux-wireless so Kalle can take it all 
-through his tree. Also the commit message is a bit thin. Please explain 
-why these are moved to the header file.
+Thomas,
 
-Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  include/linux/cordic.h |  9 +++++++++
->  lib/cordic.c           | 23 +++++++----------------
->  2 files changed, 16 insertions(+), 16 deletions(-)
+>> +	if (tifp & _TIF_UPDATE_SPEC_CTRL)
+>> +		clear_tsk_thread_flag(prev_p, TIF_UPDATE_SPEC_CTRL);
+>> +
+>> +	if (tifn & _TIF_UPDATE_SPEC_CTRL) {
+>> +		clear_tsk_thread_flag(next_p, TIF_UPDATE_SPEC_CTRL);
+>> +		tifn &= ~_TIF_UPDATE_SPEC_CTRL;
+>> +	}
+> 
+> I'm really unhappy about adding yet more conditionals into this code
+> path. We really need to find some better solution for that.
+> 
+> There are basically two options:
+> 
+>  1) Restrict the PRCTL control so it is only possible to modify it at the
+>     point where the application is still single threaded.
+> 
+>  2) Add _TIF_UPDATE_SPEC_CTRL to the SYSCALL_EXIT_WORK_FLAGS and handle it
+>     in the slow work path.
+> 
+>     The KVM side can be handled in x86_virt_spec_ctrl().
+> 
 
+How about sending an IPI if a remote CPU needs to have its SPEC_CTRL MSR
+updated?
+
+Something like the following to replace this patch?
+
+Tim
+
+---
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index b8103991..7505925 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -772,9 +772,15 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
+ 	return 0;
+ }
+ 
++static void spec_ctrl_update_func(void *info)
++{
++	speculation_ctrl_update(task_thread_info(current)->flags);
++}
++
+ static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
+ {
+ 	bool update = false;
++	int cpu;
+ 
+ 	if (!static_branch_unlikely(&spectre_v2_app_lite))
+ 		return;
+@@ -789,6 +795,12 @@ static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
+ 
+ 	if (tsk == current)
+ 		speculation_ctrl_update_current();
++	else {
++		cpu = task_cpu(tsk);
++		if (cpu != smp_processor_id())
++			smp_call_function_single(cpu, spec_ctrl_update_func,
++						 NULL, false); 
++	}
+ }
+ 
+ void arch_set_security(struct task_struct *tsk, unsigned int value)
