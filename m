@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 513FEC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D706C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1943E20866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:46:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F5E2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:46:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvaFqkK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1943E20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQjQNWyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F5E2085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387613AbeKFBG7 (ORCPT
+        id S2387630AbeKFBHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 20:06:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52478 "EHLO mail.kernel.org"
+        Mon, 5 Nov 2018 20:07:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387573AbeKFBG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 20:06:59 -0500
+        id S2387573AbeKFBHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 20:07:02 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29F9B2085A;
-        Mon,  5 Nov 2018 15:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 459E620862;
+        Mon,  5 Nov 2018 15:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541432800;
-        bh=twwpsZ24KUgotwaZY93u7ZIi9yytAiwEFVWTyFE8N1k=;
+        s=default; t=1541432803;
+        bh=a143pdS4tIBJr4bly2vl5U/d7jRqA/gvLriVw8cq5Zc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XvaFqkK6/Kh/Q5eoUP8hFAtLBHrsnF0XpojrQ1oxz7W/Ell9RXhRjFM6QxzZmRdkc
-         INhwcBDuR6GwzuzFN3u40twKHsaM/Ia1sLHiW2nutdmb4V6kwxZB8BfHtCiE+tWoV8
-         3XY1bpEZ1hiwC2VhEyqkLhhSG75i+oKymudANG1E=
+        b=VQjQNWytt6OlLZRzwxy3kenuG/QXuk75zhxXjJnwHtJdcN3IXRf857Ku3D7adF+49
+         O6efISvW69H/yR0mXxPbV64+EjFVqiRG+bZHhll4aW8Dx+UmaqgM4M40A0M5Epx0DS
+         bk1ldPa02OooNtJBUQuXdMI1LMu2VJXu1evP2aw8=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
@@ -44,9 +44,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v2 09/17] arm64: dts: qcom: qcs404: add spmi node
-Date:   Mon,  5 Nov 2018 21:15:21 +0530
-Message-Id: <20181105154529.7614-10-vkoul@kernel.org>
+Subject: [PATCH v2 10/17] arm64: dts: qcom: pms405: add rtc node
+Date:   Mon,  5 Nov 2018 21:15:22 +0530
+Message-Id: <20181105154529.7614-11-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181105154529.7614-1-vkoul@kernel.org>
 References: <20181105154529.7614-1-vkoul@kernel.org>
@@ -55,55 +55,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PMS405 is used in QCS405-EVB so include that with SPMI nodes
+RTC is found on PMIC PMS405 and is same as other PMIC used, so add the
+rtc node with compatible as qcom,pm8941-rtc
 
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404-evb.dts |  1 +
- arch/arm64/boot/dts/qcom/qcs404.dtsi    | 18 ++++++++++++++++++
- 2 files changed, 19 insertions(+)
+ arch/arm64/boot/dts/qcom/pms405.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dts b/arch/arm64/boot/dts/qcom/qcs404-evb.dts
-index b79969153fba..10ad05ba5ca9 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dts
-@@ -6,6 +6,7 @@
- /dts-v1/;
+diff --git a/arch/arm64/boot/dts/qcom/pms405.dtsi b/arch/arm64/boot/dts/qcom/pms405.dtsi
+index 8a585180f102..cdb4547c998b 100644
+--- a/arch/arm64/boot/dts/qcom/pms405.dtsi
++++ b/arch/arm64/boot/dts/qcom/pms405.dtsi
+@@ -11,5 +11,11 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- #include "qcs404.dtsi"
-+#include "pms405.dtsi"
- 
- / {
- 	model = "Qualcomm Technologies, Inc. QCS404 EVB 1000";
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 970ca9a62530..4d47d5e11a5a 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -242,6 +242,24 @@
- 			};
- 		};
- 
-+		spmi_bus: spmi@200f000 {
-+			compatible = "qcom,spmi-pmic-arb";
-+			reg = <0x200f000 0x001000>,
-+			      <0x2400000 0x800000>,
-+			      <0x2c00000 0x800000>,
-+			      <0x3800000 0x200000>,
-+			      <0x200a000 0x002100>;
-+			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
-+			interrupt-names = "periph_irq";
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-+			qcom,ee = <0>;
-+			qcom,channel = <0>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+			interrupt-controller;
-+			#interrupt-cells = <4>;
++		rtc@6000 {
++			compatible = "qcom,pm8941-rtc";
++			reg = <0x6000>;
++			reg-names = "rtc", "alarm";
++			interrupts = <0x0 0x61 0x1 IRQ_TYPE_NONE>;
 +		};
-+
- 		blsp1_uart2: serial@78b1000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0x78b1000 0x200>;
+ 	};
+ };
 -- 
 2.14.4
 
