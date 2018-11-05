@@ -2,99 +2,91 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FDBC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92290C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B94C720825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:11:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94C720825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F2E620869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:12:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IADJ+1gu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XEt2yWnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F2E620869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbeKEUbC (ORCPT
+        id S1729314AbeKEUbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:31:02 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:55084 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbeKEUbB (ORCPT
+        Mon, 5 Nov 2018 15:31:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34682 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbeKEUbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:31:01 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA5BBg6e123216;
-        Mon, 5 Nov 2018 05:11:42 -0600
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA5BBgjY006644
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 05:11:42 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 5 Nov
- 2018 05:11:42 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 5 Nov 2018 05:11:42 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA5BBdOG024983;
-        Mon, 5 Nov 2018 05:11:39 -0600
-Subject: Re: [PATCH 1/6] phy: Add max_bitrate attribute &
- phy_get_max_bitrate()
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>
-CC:     <wg@grandegger.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <kishon@ti.com>
-References: <20181102192616.28291-1-faiz_abbas@ti.com>
- <20181102192616.28291-2-faiz_abbas@ti.com>
- <5e1a0b67-510a-5512-d477-0b363e4733fe@pengutronix.de>
- <d75c9e3c-e12b-e0b8-832c-ad117dcbe990@ti.com>
- <0c0885c4-f5ae-a29c-7176-f67fe546cfd8@pengutronix.de>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <5685cb49-a6bf-3696-f984-020847633e5e@ti.com>
-Date:   Mon, 5 Nov 2018 16:44:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <0c0885c4-f5ae-a29c-7176-f67fe546cfd8@pengutronix.de>
+        Mon, 5 Nov 2018 15:31:44 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 289C260AD8; Mon,  5 Nov 2018 11:12:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541416353;
+        bh=nagwEuImJjA11ZEolLPlBP9kifGUh8PIxeGs/4Obtek=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=IADJ+1guu0vcPaVMNoWVWvKYxr/VrtJShT1eVhk9vX/jZUx0rBwgFJ+LNkpSRXiZA
+         Hw3FOnfZEw62QS7QYctADrWpvxIsjJMXhwbAK7+BQcXUXB8yyW10d0E81bGz4jAXM5
+         AtPPkO+ZKop9q2h5K3WBcDnyEcDOLK4kPVvb3V/M=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B72496044B;
+        Mon,  5 Nov 2018 11:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541416352;
+        bh=nagwEuImJjA11ZEolLPlBP9kifGUh8PIxeGs/4Obtek=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=XEt2yWnZco3Mo2NXxqU3H1fM2wbKptPoGmb/kfQxeXSU6Nsqjy173RVLdU2Z0OnOV
+         OtsbTEOEoyPUqbzL3G31lWEmIuaqkWsQa2rvXw8ql7xEE50p93DpfVIf00z4vaUmob
+         TJGN+/8xhKH2kwg4r1OTaKMLjkY8fGxYu/brO60I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B72496044B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Subject: Re: [PATCH][ath10k-next] ath10k: fix some spelling mistakes
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181018215104.10444-1-colin.king@canonical.com>
+References: <20181018215104.10444-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181105111233.289C260AD8@smtp.codeaurora.org>
+Date:   Mon,  5 Nov 2018 11:12:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Colin King <colin.king@canonical.com> wrote:
 
-On Monday 05 November 2018 03:07 PM, Marc Kleine-Budde wrote:
-> On 11/05/2018 07:27 AM, Faiz Abbas wrote:
->> I remove the transceiver child node binding documentation in patch 5/6.
->>
->> The existing implementation is pretty limiting as it just has a child
->> node with no associated device. What if a transceiver requires its own
->> configurations before it can start sending/receiving messages (for
->> example, my usecase requires it to pull the standby line low)?
->>
->> I think that can be solved by implementing the transceiver as a phy and
->> exposing a generic get_max_bitrate API. That way, the transceiver device
->> can do all its startup configuration in the phy probe function.
->>
->> In any case, do suggest if you have a better idea on how to implement
->> pull gpio low requirement.
+> Trivial fix to some spelling mistakes in ath10k_err and ath10k_dbg
+> messages:
+> "capablity" -> "capability"
+> "registed" -> "registered"
 > 
-> As long as we don't have any proper transceiver/phy driver, that does
-> more than swtich on/off a GPIO, please add a "xceiver" regulator to your
-> driver. Look for:
-> 
->> devm_regulator_get(&pdev->dev, "xceiver");
-> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-The transceiver is not specific to m_can. The pull down would be
-required even if it were connected to some other controller.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Thanks,
-Faiz
+eb9bd8b963d6 ath10k: fix some spelling mistakes
+
+-- 
+https://patchwork.kernel.org/patch/10648317/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
