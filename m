@@ -2,137 +2,159 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBFCC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0A5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5DB20831
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5DB20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D14C204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D14C204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbeKEOtU (ORCPT
+        id S1729175AbeKEOwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 09:49:20 -0500
-Received: from relay.sw.ru ([185.231.240.75]:38356 "EHLO relay.sw.ru"
+        Mon, 5 Nov 2018 09:52:14 -0500
+Received: from mga12.intel.com ([192.55.52.136]:13964 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728918AbeKEOtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 09:49:19 -0500
-Received: from [172.16.24.21]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1gJXTt-0006iz-Fv; Mon, 05 Nov 2018 08:31:21 +0300
-Subject: Re: [LKP] [ext4 resize] 1ee5ee5ec3: WARNING:at_fs/buffer.c:#__brelse
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org, lkp@01.org
-References: <20181105051011.GR24195@shao2-debian>
-From:   Vasily Averin <vvs@virtuozzo.com>
-Message-ID: <1cd8dca2-a677-42ef-a558-c8a9b8e084da@virtuozzo.com>
-Date:   Mon, 5 Nov 2018 08:31:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181105051011.GR24195@shao2-debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728921AbeKEOwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 09:52:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 21:34:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,466,1534834800"; 
+   d="scan'208";a="105288926"
+Received: from allen-box.sh.intel.com ([10.239.161.122])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Nov 2018 21:34:19 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
+        yi.y.sun@intel.com, peterx@redhat.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v4 00/12] iommu/vt-d: Add scalable mode support
+Date:   Mon,  5 Nov 2018 13:31:39 +0800
+Message-Id: <20181105053151.7173-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18 8:10 AM, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 1ee5ee5ec39e53af9bcd215f4d127b21d579f700 ("[PATCH 3/7] ext4 resize: missing brelse() in case success in add_new_gdb()")
-yes, you're right, this patch was wrong and it was dropped in v2 version of patch set.
+Hi,
 
-> url: https://github.com/0day-ci/linux/commits/Vasily-Averin/ext4-resize-long-lived-errors/20181029-235050
-> base: https://git.kernel.org/cgit/linux/kernel/git/tytso/ext4.git dev
-> 
-> in testcase: xfstests
-> with following parameters:
-> 
-> 	disk: 4HDD
-> 	fs: ext4
-> 	test: ext4-run
-> 
-> test-description: xfstests is a regression test suite for xfs and other files ystems.
-> test-url: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-> 
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu IvyBridge -smp 2 -m 2G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +----------------------------------+------------+------------+
-> |                                  | 36943dd65f | 1ee5ee5ec3 |
-> +----------------------------------+------------+------------+
-> | boot_successes                   | 8          | 6          |
-> | boot_failures                    | 16         | 23         |
-> | BUG:kernel_hang_in_test_stage    | 16         | 23         |
-> | WARNING:at_fs/buffer.c:#__brelse | 0          | 13         |
-> | RIP:__brelse                     | 0          | 13         |
-> | RIP:_raw_spin_unlock_irqrestore  | 0          | 9          |
-> | RIP:native_safe_halt             | 0          | 12         |
-> | RIP:___bpf_prog_run              | 0          | 2          |
-> | RIP:do_syscall_64                | 0          | 2          |
-> +----------------------------------+------------+------------+
-> 
-> 
-> 
-> [ 3803.071979] WARNING: CPU: 1 PID: 22511 at fs/buffer.c:1143 __brelse+0x1d/0x20
-> [ 3803.074213] Modules linked in: loop dm_mod sr_mod cdrom sg ata_generic pata_acpi crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel ppdev pcbc aesni_intel crypto_simd cryptd glue_helper snd_pcm snd_timer snd soundcore ata_piix pcspkr serio_raw libata i2c_piix4 floppy parport_pc parport ip_tables
-> [ 3803.080055] CPU: 1 PID: 22511 Comm: resize2fs Not tainted 4.19.0-rc6-00024-g1ee5ee5 #1
-> [ 3803.082218] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [ 3803.084455] RIP: 0010:__brelse+0x1d/0x20
-> [ 3803.085596] Code: 00 00 e8 56 ff ff ff 31 c0 c3 0f 1f 00 0f 1f 44 00 00 8b 47 60 85 c0 74 05 f0 ff 4f 60 c3 48 c7 c7 b0 0d 2f 82 e8 63 d1 dc ff <0f> 0b c3 0f 1f 44 00 00 55 53 65 ff 05 d2 54 d5 7e 48 c7 c3 00 fe
-> [ 3803.089725] RSP: 0018:ffffc90000bb3c90 EFLAGS: 00010282
-> [ 3803.091018] RAX: 0000000000000000 RBX: ffff88007b7c2e00 RCX: 0000000000000000
-> [ 3803.092572] RDX: ffff880060b1ef40 RSI: ffff880060b16898 RDI: ffff880060b16898
-> [ 3803.094134] RBP: ffff880013a9b000 R08: 0000000000000000 R09: 00000000000004b8
-> [ 3803.095788] R10: ffff88007e8cde10 R11: ffffffff82f8afcd R12: ffff880013a9b388
-> [ 3803.097383] R13: 00000000fffffffb R14: 0000000000000000 R15: ffff88007b7c2e00
-> [ 3803.098937] FS:  00007f66516b6780(0000) GS:ffff880060b00000(0000) knlGS:0000000000000000
-> [ 3803.101114] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 3803.102470] CR2: 000055c94d9c5e18 CR3: 0000000017b24000 CR4: 00000000001406e0
-> [ 3803.104035] Call Trace:
-> [ 3803.104941]  __jbd2_journal_remove_checkpoint+0x50/0x170
-> [ 3803.106277]  jbd2_log_do_checkpoint+0x45d/0x4e0
-> [ 3803.107448]  ? jbd2_journal_flush+0x90/0x1b0
-> [ 3803.108707]  jbd2_journal_flush+0x90/0x1b0
-> [ 3803.109851]  ext4_ioctl+0x101d/0x1540
-> [ 3803.110914]  ? do_filp_open+0xaf/0x110
-> [ 3803.111970]  do_vfs_ioctl+0xa5/0x6e0
-> [ 3803.113012]  ksys_ioctl+0x70/0x80
-> [ 3803.114010]  __x64_sys_ioctl+0x16/0x20
-> [ 3803.115083]  do_syscall_64+0x5b/0x180
-> [ 3803.116144]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [ 3803.117391] RIP: 0033:0x7f665093fdd7
-> [ 3803.118425] Code: 00 00 00 48 8b 05 c1 80 2b 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 91 80 2b 00 f7 d8 64 89 01 48
-> [ 3803.122509] RSP: 002b:00007fffee31c5c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> [ 3803.124572] RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f665093fdd7
-> [ 3803.126131] RDX: 00007fffee31c710 RSI: 0000000040086610 RDI: 0000000000000005
-> [ 3803.127660] RBP: 000055c94d9ba0e0 R08: 0000000000000001 R09: 0000000000000029
-> [ 3803.129197] R10: 0000000000000075 R11: 0000000000000246 R12: 000055c94d9ba080
-> [ 3803.130731] R13: 0000000000000000 R14: 000055c94d9bd580 R15: 00007fffee31c710
-> [ 3803.132266] ---[ end trace 372e51e2ec3d21dc ]---
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
-> 
-> 
-> 
-> Thanks,
-> Rong Chen
-> 
+Intel vt-d rev3.0 [1] introduces a new translation mode called
+'scalable mode', which enables PASID-granular translations for
+first level, second level, nested and pass-through modes. The
+vt-d scalable mode is the key ingredient to enable Scalable I/O
+Virtualization (Scalable IOV) [2] [3], which allows sharing a
+device in minimal possible granularity (ADI - Assignable Device
+Interface). It also includes all the capabilities required to
+enable Shared Virtual Addressing (SVA). As a result, previous
+Extended Context (ECS) mode is deprecated (no production ever
+implements ECS).
+
+Each scalable mode pasid table entry is 64 bytes in length, with
+fields point to the first level page table and the second level
+page table. The PGTT (Pasid Granular Translation Type) field is
+used by hardware to determine the translation type.
+
+
+          A Scalable Mode            .-------------.
+           PASID Entry             .-|             |
+       .------------------.      .-| | 1st Level   |
+      7|                  |      | | | Page Table  |
+       .------------------.      | | |             |
+      6|                  |      | | |             |
+       '------------------'      | | '-------------'
+      5|                  |      | '-------------'
+       '------------------'      '-------------'
+      4|                  |    ^
+       '------------------'   /
+      3|                  |  /       .-------------.
+       .----.-------.-----. /      .-|             |
+      2|    | FLPTR |     |/     .-| | 2nd Level   |
+       .----'-------'-----.      | | | Page Table  |
+      1|                  |      | | |             |
+       .-.-------..------..      | | |             |
+      0| | SLPTR || PGTT ||----> | | '-------------'
+       '-'-------''------''      | '-------------'
+       6             |    0      '-------------'
+       3             v
+             .------------------------------------.
+             | PASID Granular Translation Type    |
+             |                                    |
+             | 001b: 1st level translation only   |
+             | 101b: 2nd level translation only   |
+             | 011b: Nested translation           |
+             | 100b: Pass through                 |
+             '------------------------------------'
+
+This patch series adds the scalable mode support in the Intel
+IOMMU driver. It will make all the Intel IOMMU features work
+in scalable mode. The changes are all constrained within the
+Intel IOMMU driver, as it's purely internal format change.
+
+References:
+[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+
+Change log:
+v3->v4:
+  - Rebase all patches to 4.20-rc1.
+  - Use the right PASID directory table size.
+  - Add a function for pass through translation setting up.
+  - Refine the parameters passed to first level translation
+    mode interface.
+
+v2->v3:
+  - Rebase all patches on top of vt-d branch of iommu repo.
+  - Set the pasid directory table size to 1 page for devices
+    which have no pasid support.
+  - Fix various comments received during v2 review period.
+    All were code style related.
+
+v1->v2:
+  - Rebase all patches on top of v4.19-rc1;
+  - Add 256-bit invalidation descriptor support;
+  - Reserve a domain id for first level and pass-through
+    usage to make hardware cache entries more efficiently;
+  - Various code refinements.
+
+Lu Baolu (12):
+  iommu/vt-d: Enumerate the scalable mode capability
+  iommu/vt-d: Manage scalalble mode PASID tables
+  iommu/vt-d: Move page table helpers into header
+  iommu/vt-d: Add 256-bit invalidation descriptor support
+  iommu/vt-d: Reserve a domain id for FL and PT modes
+  iommu/vt-d: Add second level page table interface
+  iommu/vt-d: Setup pasid entry for RID2PASID support
+  iommu/vt-d: Pass pasid table to context mapping
+  iommu/vt-d: Setup context and enable RID2PASID support
+  iommu/vt-d: Add first level page table interface
+  iommu/vt-d: Shared virtual address in scalable mode
+  iommu/vt-d: Remove deferred invalidation
+
+ .../admin-guide/kernel-parameters.txt         |  12 +-
+ drivers/iommu/dmar.c                          |  83 ++--
+ drivers/iommu/intel-iommu.c                   | 309 ++++++------
+ drivers/iommu/intel-pasid.c                   | 447 +++++++++++++++++-
+ drivers/iommu/intel-pasid.h                   |  40 +-
+ drivers/iommu/intel-svm.c                     | 168 +++----
+ drivers/iommu/intel_irq_remapping.c           |   6 +-
+ include/linux/dma_remapping.h                 |   9 +-
+ include/linux/intel-iommu.h                   |  66 ++-
+ 9 files changed, 805 insertions(+), 335 deletions(-)
+
+-- 
+2.17.1
+
