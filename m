@@ -2,141 +2,267 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09D0C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2BAC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869CA2084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MsyuiUe/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 869CA2084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 42B902085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B902085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387718AbeKFGdY (ORCPT
+        id S2387789AbeKFGd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:33:24 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:38195 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbeKFGdU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:33:20 -0500
-Received: by mail-ua1-f68.google.com with SMTP id g10so3746051uak.5
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 13:11:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bq9rklDlPyykU9VuuBXq87FoiCOx1DH+DDQO0viI5E4=;
-        b=MsyuiUe/4P8x1Vi5xYtymi2UZG305A+iodClMZIY95lyo/Pow7pEXmaBt21Uj1k1Uh
-         5jburPDpff5I+jgaQIbBwWxdVIfkBxHVBze2qnHp4pf4oOHz4cEToChvt4Ns5zu9pkww
-         6xajs4CDmF0nnfhXog+QZG1/zU0Yzibm3b60cOCHrDOAGAzNVREVDYDQ8acTKQpSefwb
-         VfW8ADd6dwk5G7zHzMTQDXdhB/5FaBx6nzLnIf7ZsVI/e6l8ABlZg63z6T+VEEYyGV/g
-         e0dL0xtCxdGn8wXYjcU/jOpDrva38DrycTFKL8x/8mktos8pBrMUBolDItEpD9kPjoXR
-         2RMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bq9rklDlPyykU9VuuBXq87FoiCOx1DH+DDQO0viI5E4=;
-        b=omFI0WhT7ReyuzkWdgV/whivoFHTay8lv9lVkDY6hRa8tKxMzE9Yh5UnyLXijxfqAG
-         d/lRDOTa1iweLphX56A5rJFxjaK+gp+V4efybRO+ip7iYaZwMLNtUi4/oUhITdsILiCd
-         kKk+T37I0s1rmIDaaGEia+jxYnM4J5FZje4SWf2GSiyumsTT61zEVC5t7uVl4TG3x4Vm
-         v/cVzdL+KgxA7hm5rrEeAg2hy0uuM0mR1NW9/bcSyMRUESbIknj8O3liQVkxwO0/esWU
-         nG2RB3ZS3fF6vs/p6PhQGfyTliI78+bTzu3wbSG4LJyulIqN24ClZHZxWnIsujHfKQzb
-         ZAEQ==
-X-Gm-Message-State: AGRZ1gJg6iitRXzA3CHuYVnXug8EszAk27+AH+Rd8N1tmgv8+wAVZZ5n
-        m+9BsYGKwy5XPawkfeQe5/UaVNejWcqEav7PnISltA==
-X-Google-Smtp-Source: AJdET5cF5G1rE36zSDDsVA7EokA5rFoj7sNiT+sQ5Io8UtjOHQxwyJvlavZaMEVMCWQ6lVFciDqtjQJcnC3ppc4/25s=
-X-Received: by 2002:a9f:3743:: with SMTP id a3mr394764uae.86.1541452303305;
- Mon, 05 Nov 2018 13:11:43 -0800 (PST)
+        Tue, 6 Nov 2018 01:33:26 -0500
+Received: from mga06.intel.com ([134.134.136.31]:33144 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387722AbeKFGd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 01:33:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 13:11:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
+   d="scan'208";a="247210413"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga004.jf.intel.com with ESMTP; 05 Nov 2018 13:11:49 -0800
+Subject: [driver-core PATCH v5 2/9] async: Add support for queueing on
+ specific NUMA node
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org,
+        alexander.h.duyck@linux.intel.com
+Date:   Mon, 05 Nov 2018 13:11:49 -0800
+Message-ID: <154145230954.29224.13087735653265580553.stgit@ahduyck-desk1.jf.intel.com>
+In-Reply-To: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
+References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
- <1541073999-11752-2-git-send-email-vbadigan@codeaurora.org>
- <CAD=FV=V9AdCgOSonb0tu==DgKRKeZxto+aGwxmdbHAqrmfMrDQ@mail.gmail.com> <20181105203657.GA32282@bogus>
-In-Reply-To: <20181105203657.GA32282@bogus>
-From:   Doug Anderson <dianders@google.com>
-Date:   Mon, 5 Nov 2018 13:11:31 -0800
-Message-ID: <CAD=FV=VitZ4dyYGxinQ=nsrfM+U7duGbxeN3bdbRxfx-2AWxyQ@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] dt-bindings: mmc: sdhci-msm: Add new compatible
- string for SDM845 SOC
-To:     Rob Herring <robh@kernel.org>
-Cc:     vbadigan@codeaurora.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch introduces four new variants of the async_schedule_ functions
+that allow scheduling on a specific NUMA node.
 
-On Mon, Nov 5, 2018 at 12:37 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Nov 01, 2018 at 01:29:54PM -0700, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Thu, Nov 1, 2018 at 5:07 AM Veerabhadrarao Badiganti
-> > <vbadigan@codeaurora.org> wrote:
-> > >
-> > > For SDM845 SOC, new compatible string  "qcom,sdm845-sdhci" is added.
-> > >
-> > > Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> > > index 502b3b8..f2ffbeb 100644
-> > > --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> > > +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> > > @@ -7,6 +7,7 @@ Required properties:
-> > >  - compatible: Should contain:
-> > >                 "qcom,sdhci-msm-v4" for sdcc versions less than 5.0
-> > >                 "qcom,sdhci-msm-v5" for sdcc versions >= 5.0
-> > > +               "qcom,sdm845-sdhci" for sdm845 SOC
-> >
-> > It's up to Rob of course, but IMO it seems a nicer way forward to
-> > include both the SoC-specific string and the "version" string in all
-> > cases.  I'd write this for the full text:
->
-> Fine by me if you update all the dts files.
+The first two functions are async_schedule_near and
+async_schedule_near_domain which end up mapping to async_schedule and
+async_schedule_domain but provide NUMA node specific functionality. They
+replace the original functions which were moved to inline function
+definitions that call the new functions while passing NUMA_NO_NODE.
 
-Done and done.
+The second two functions are async_schedule_dev and
+async_schedule_dev_domain which provide NUMA specific functionality when
+passing a device as the data member and that device has a NUMA node other
+than NUMA_NO_NODE.
 
-https://lkml.kernel.org/r/20181105210921.253707-1-dianders@chromium.org
-https://lkml.kernel.org/r/20181105210921.253707-2-dianders@chromium.org
+The main motivation behind this is to address the need to be able to
+schedule device specific init work on specific NUMA nodes in order to
+improve performance of memory initialization.
 
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ include/linux/async.h |   84 +++++++++++++++++++++++++++++++++++++++++++++++--
+ kernel/async.c        |   53 +++++++++++++++++--------------
+ 2 files changed, 110 insertions(+), 27 deletions(-)
 
-> >  - compatible: Should contain a SoC-specific string and a IP version string:
-> >       version strings:
-> >            "qcom,sdhci-msm-v4" for sdcc versions less than 5.0
-> >            "qcom,sdhci-msm-v5" for sdcc version 5.0
-> >       full compatible strings with SoC and version:
-> >            "qcom,apq8084", "qcom,sdhci-msm-v4"
-> >            "qcom,msm8974", "qcom,sdhci-msm-v4"
-> >            "qcom,msm8916", "qcom,sdhci-msm-v4"
-> >            "qcom,msm8992", "qcom,sdhci-msm-v4"
-> >            "qcom,msm8996", "qcom,sdhci-msm-v4"
->
-> I assume you meant to append '-sdhci' here?
+diff --git a/include/linux/async.h b/include/linux/async.h
+index 6b0226bdaadc..98a94e6e367d 100644
+--- a/include/linux/async.h
++++ b/include/linux/async.h
+@@ -14,6 +14,8 @@
+ 
+ #include <linux/types.h>
+ #include <linux/list.h>
++#include <linux/numa.h>
++#include <linux/device.h>
+ 
+ typedef u64 async_cookie_t;
+ typedef void (*async_func_t) (void *data, async_cookie_t cookie);
+@@ -37,9 +39,85 @@ struct async_domain {
+ 	struct async_domain _name = { .pending = LIST_HEAD_INIT(_name.pending), \
+ 				      .registered = 0 }
+ 
+-extern async_cookie_t async_schedule(async_func_t func, void *data);
+-extern async_cookie_t async_schedule_domain(async_func_t func, void *data,
+-					    struct async_domain *domain);
++async_cookie_t async_schedule_node(async_func_t func, void *data,
++				   int node);
++async_cookie_t async_schedule_node_domain(async_func_t func, void *data,
++					  int node,
++					  struct async_domain *domain);
++
++/**
++ * async_schedule - schedule a function for asynchronous execution
++ * @func: function to execute asynchronously
++ * @data: data pointer to pass to the function
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t async_schedule(async_func_t func, void *data)
++{
++	return async_schedule_node(func, data, NUMA_NO_NODE);
++}
++
++/**
++ * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
++ * @func: function to execute asynchronously
++ * @data: data pointer to pass to the function
++ * @domain: the domain
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @domain may be used in the async_synchronize_*_domain() functions to
++ * wait within a certain synchronization domain rather than globally.  A
++ * synchronization domain is specified via @domain.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t
++async_schedule_domain(async_func_t func, void *data,
++		      struct async_domain *domain)
++{
++	return async_schedule_node_domain(func, data, NUMA_NO_NODE, domain);
++}
++
++/**
++ * async_schedule_dev - A device specific version of async_schedule
++ * @func: function to execute asynchronously
++ * @dev: device argument to be passed to function
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @dev is used as both the argument for the function and to provide NUMA
++ * context for where to run the function. By doing this we can try to
++ * provide for the best possible outcome by operating on the device on the
++ * CPUs closest to the device.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t
++async_schedule_dev(async_func_t func, struct device *dev)
++{
++	return async_schedule_node(func, dev, dev_to_node(dev));
++}
++
++/**
++ * async_schedule_dev_domain - A device specific version of async_schedule_domain
++ * @func: function to execute asynchronously
++ * @dev: device argument to be passed to function
++ * @domain: the domain
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @dev is used as both the argument for the function and to provide NUMA
++ * context for where to run the function. By doing this we can try to
++ * provide for the best possible outcome by operating on the device on the
++ * CPUs closest to the device.
++ * @domain may be used in the async_synchronize_*_domain() functions to
++ * wait within a certain synchronization domain rather than globally.  A
++ * synchronization domain is specified via @domain.
++ * Note: This function may be called from atomic or non-atomic contexts.
++ */
++static inline async_cookie_t
++async_schedule_dev_domain(async_func_t func, struct device *dev,
++			  struct async_domain *domain)
++{
++	return async_schedule_node_domain(func, dev, dev_to_node(dev), domain);
++}
++
+ void async_unregister_domain(struct async_domain *domain);
+ extern void async_synchronize_full(void);
+ extern void async_synchronize_full_domain(struct async_domain *domain);
+diff --git a/kernel/async.c b/kernel/async.c
+index a893d6170944..23cf67b4b4f8 100644
+--- a/kernel/async.c
++++ b/kernel/async.c
+@@ -149,7 +149,25 @@ static void async_run_entry_fn(struct work_struct *work)
+ 	wake_up(&async_done);
+ }
+ 
+-static async_cookie_t __async_schedule(async_func_t func, void *data, struct async_domain *domain)
++/**
++ * async_schedule_node_domain - NUMA specific version of async_schedule_domain
++ * @func: function to execute asynchronously
++ * @data: data pointer to pass to the function
++ * @node: NUMA node that we want to schedule this on or close to
++ * @domain: the domain
++ *
++ * Returns an async_cookie_t that may be used for checkpointing later.
++ * @domain may be used in the async_synchronize_*_domain() functions to
++ * wait within a certain synchronization domain rather than globally.  A
++ * synchronization domain is specified via @domain.  Note: This function
++ * may be called from atomic or non-atomic contexts.
++ *
++ * The node requested will be honored on a best effort basis. If the node
++ * has no CPUs associated with it then the work is distributed among all
++ * available CPUs.
++ */
++async_cookie_t async_schedule_node_domain(async_func_t func, void *data,
++					  int node, struct async_domain *domain)
+ {
+ 	struct async_entry *entry;
+ 	unsigned long flags;
+@@ -195,43 +213,30 @@ static async_cookie_t __async_schedule(async_func_t func, void *data, struct asy
+ 	current->flags |= PF_USED_ASYNC;
+ 
+ 	/* schedule for execution */
+-	queue_work(system_unbound_wq, &entry->work);
++	queue_work_node(node, system_unbound_wq, &entry->work);
+ 
+ 	return newcookie;
+ }
++EXPORT_SYMBOL_GPL(async_schedule_node_domain);
+ 
+ /**
+- * async_schedule - schedule a function for asynchronous execution
++ * async_schedule_node - NUMA specific version of async_schedule
+  * @func: function to execute asynchronously
+  * @data: data pointer to pass to the function
++ * @node: NUMA node that we want to schedule this on or close to
+  *
+  * Returns an async_cookie_t that may be used for checkpointing later.
+  * Note: This function may be called from atomic or non-atomic contexts.
+- */
+-async_cookie_t async_schedule(async_func_t func, void *data)
+-{
+-	return __async_schedule(func, data, &async_dfl_domain);
+-}
+-EXPORT_SYMBOL_GPL(async_schedule);
+-
+-/**
+- * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
+- * @func: function to execute asynchronously
+- * @data: data pointer to pass to the function
+- * @domain: the domain
+  *
+- * Returns an async_cookie_t that may be used for checkpointing later.
+- * @domain may be used in the async_synchronize_*_domain() functions to
+- * wait within a certain synchronization domain rather than globally.  A
+- * synchronization domain is specified via @domain.  Note: This function
+- * may be called from atomic or non-atomic contexts.
++ * The node requested will be honored on a best effort basis. If the node
++ * has no CPUs associated with it then the work is distributed among all
++ * available CPUs.
+  */
+-async_cookie_t async_schedule_domain(async_func_t func, void *data,
+-				     struct async_domain *domain)
++async_cookie_t async_schedule_node(async_func_t func, void *data, int node)
+ {
+-	return __async_schedule(func, data, domain);
++	return async_schedule_node_domain(func, data, node, &async_dfl_domain);
+ }
+-EXPORT_SYMBOL_GPL(async_schedule_domain);
++EXPORT_SYMBOL_GPL(async_schedule_node);
+ 
+ /**
+  * async_synchronize_full - synchronize all asynchronous function calls
 
-Oops, yes!
-
-           "qcom,apq8084-sdhci", "qcom,sdhci-msm-v4"
-           "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4"
-           "qcom,msm8916-sdhci", "qcom,sdhci-msm-v4"
-           "qcom,msm8992-sdhci", "qcom,sdhci-msm-v4"
-           "qcom,msm8996-sdhci", "qcom,sdhci-msm-v4"
-
--Doug
