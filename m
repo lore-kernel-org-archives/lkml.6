@@ -2,91 +2,100 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B9AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D65DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7761D20700
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:23:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7761D20700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id AFAB02085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAB02085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730050AbeKFDoN (ORCPT
+        id S1729449AbeKFDtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:44:13 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:55708 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729559AbeKFDoN (ORCPT
+        Mon, 5 Nov 2018 22:49:10 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:55928 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725901AbeKFDtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:44:13 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id D0FC672CC68;
-        Mon,  5 Nov 2018 21:23:15 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id B81624A4A29;
-        Mon,  5 Nov 2018 21:23:15 +0300 (MSK)
-Date:   Mon, 5 Nov 2018 21:23:14 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] crypto: streebog - add Streebog hash function
-Message-ID: <20181105182314.c7xdsolvxr2iyd5n@sole.flsd.net>
-Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181024032356.3388-1-vt@altlinux.org>
- <20181024032356.3388-2-vt@altlinux.org>
- <CAKv+Gu9LSUNwW_3E3QtxV123u=mU-B+p6FFRAkWq8_e9Jsgb2w@mail.gmail.com>
+        Mon, 5 Nov 2018 22:49:10 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TCLNb8u_1541442487;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TCLNb8u_1541442487)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 06 Nov 2018 02:28:11 +0800
+Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1%
+ regression
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        rong.a.chen@intel.com, vbabka@suse.cz,
+        kirill.shutemov@linux.intel.com, mhocko@kernel.org,
+        willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Colin King <colin.king@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkp@01.org
+References: <20181105050813.GP24195@shao2-debian>
+ <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <4feae9c4-432d-a362-58e4-11e0cb10b24d@linux.alibaba.com>
+Date:   Mon, 5 Nov 2018 10:28:02 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9LSUNwW_3E3QtxV123u=mU-B+p6FFRAkWq8_e9Jsgb2w@mail.gmail.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
+In-Reply-To: <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ard,
 
-On Mon, Nov 05, 2018 at 02:22:21PM +0100, Ard Biesheuvel wrote:
-> 
-> > +static const struct streebog_uint512 buffer512 = { {
-> > +       cpu_to_le64(0x200ULL),
-> 
-> Can we keep the memory representation in native endianness, and only
-> swab the in/output [where needed]?
 
-I hope you do not insist on that?
+On 11/5/18 9:50 AM, Linus Torvalds wrote:
+> On Sun, Nov 4, 2018 at 9:08 PM kernel test robot <rong.a.chen@intel.com> wrote:
+>> FYI, we noticed a -64.1% regression of will-it-scale.per_thread_ops
+>> due to commit 9bc8039e715d ("mm: brk: downgrade mmap_sem to read when
+>> shrinking")
+> Ugh. That looks pretty bad.
+>
+>> in testcase: will-it-scale
+>> on test machine: 8 threads Ivy Bridge with 16G memory
+>> with following parameters:
+>>
+>>          nr_task: 100%
+>>          mode: thread
+>>          test: brk1
+>>          ucode: 0x20
+>>          cpufreq_governor: performance
+> The reason seems to be way more scheduler time due to lots more
+> context switches:
+>
+>>    34925294 ± 18%    +270.3%  1.293e+08 ±  4%  will-it-scale.time.voluntary_context_switches
+> Yang Shi, would you mind taking a look at what's going on?
 
-The code is using same primitives to add/xor/permute with data from
-these arrays (buffer512[] and C[], those which use cpu_to_le64), and
-from generic data buffers. Having these arrays in native endianness will
-cause complexities - code split and duplications. For example, XLPS
-permutation will require two versions, with one accessing (y) as is and
-another as cpu_to_le64(y).
+No problem.
 
-The code is based on canonical implementation by RFC 6986 ("GOST R
-34.11-2012: Hash Function") author, and I don't want it do deviate that
-much from the original, which would complicate algorithm reviews.
+Actually, the commit is mainly for optimizing the long stall time caused 
+by holding mmap_sem by write when unmapping or shrinking large mapping. 
+It downgrades write mmap_sem to read when zapping pages. So, it looks 
+the downgrade incurs more context switches. This is kind of expected.
+
+However, the test looks just shrink the mapping with one normal 4K page 
+size. It sounds the overhead of context switches outpace the gain in 
+this case at the first glance.
+
+Since the optimization makes more sense to large mapping, how about 
+restore the mapping size limit, e.g. just downgrade mmap_sem for >= 1g 
+(PUD_SIZE) mapping?
 
 Thanks,
+Yang
+
+>
+>                Linus
 
