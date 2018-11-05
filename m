@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F7BECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E58ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADFEC2081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADFEC2081D
+	by mail.kernel.org (Postfix) with ESMTP id 979BB2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 07:31:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 979BB2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbeKEQtz (ORCPT
+        id S1729582AbeKEQt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 11:49:55 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49570 "EHLO shell.v3.sk"
+        Mon, 5 Nov 2018 11:49:57 -0500
+Received: from shell.v3.sk ([90.176.6.54]:49582 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727615AbeKEQtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 11:49:55 -0500
+        id S1729512AbeKEQt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 11:49:56 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 63DC9C559D;
-        Mon,  5 Nov 2018 08:31:34 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 61247C5591;
+        Mon,  5 Nov 2018 08:31:35 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id URtJfb3n-9gd; Mon,  5 Nov 2018 08:31:17 +0100 (CET)
+        with ESMTP id ypUNBAhq0QZs; Mon,  5 Nov 2018 08:31:18 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3CB29C5598;
-        Mon,  5 Nov 2018 08:31:09 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 6F12EC5589;
+        Mon,  5 Nov 2018 08:31:10 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id bka1uA2rkli2; Mon,  5 Nov 2018 08:31:05 +0100 (CET)
+        with ESMTP id hrdHSs0s7hWD; Mon,  5 Nov 2018 08:31:05 +0100 (CET)
 Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 9C9E3C5584;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 04212C558D;
         Mon,  5 Nov 2018 08:31:04 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>,
         James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH 06/11] [media] marvell-ccic: drop ctlr_reset()
-Date:   Mon,  5 Nov 2018 08:30:49 +0100
-Message-Id: <20181105073054.24407-7-lkundrak@v3.sk>
+Subject: [PATCH 07/11] [media] marvell-ccic: drop unused stuff
+Date:   Mon,  5 Nov 2018 08:30:50 +0100
+Message-Id: <20181105073054.24407-8-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105073054.24407-1-lkundrak@v3.sk>
 References: <20181105073054.24407-1-lkundrak@v3.sk>
@@ -59,92 +59,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This accesses the clock registers directly and thus is not too
-devicetree friendly. If it's actually needed it needs to be done
-differently.
+Remove structure members and headers that are not actually used. Saves
+us from some noise in subsequent cleanup commits.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- .../media/platform/marvell-ccic/mcam-core.c   |  6 -----
- .../media/platform/marvell-ccic/mcam-core.h   |  1 -
- .../media/platform/marvell-ccic/mmp-driver.c  | 23 -------------------
- 3 files changed, 30 deletions(-)
+ drivers/media/platform/marvell-ccic/mcam-core.c  | 1 -
+ drivers/media/platform/marvell-ccic/mcam-core.h  | 3 ---
+ drivers/media/platform/marvell-ccic/mmp-driver.c | 3 ---
+ include/linux/platform_data/media/mmp-camera.h   | 1 -
+ 4 files changed, 8 deletions(-)
 
 diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/me=
 dia/platform/marvell-ccic/mcam-core.c
-index d24e5b7a3bc5..1b879035948c 100644
+index 1b879035948c..0113b8d37d03 100644
 --- a/drivers/media/platform/marvell-ccic/mcam-core.c
 +++ b/drivers/media/platform/marvell-ccic/mcam-core.c
-@@ -1154,12 +1154,6 @@ static void mcam_vb_stop_streaming(struct vb2_queu=
-e *vq)
- 	if (cam->state !=3D S_STREAMING)
- 		return;
- 	mcam_ctlr_stop_dma(cam);
--	/*
--	 * Reset the CCIC PHY after stopping streaming,
--	 * otherwise, the CCIC may be unstable.
--	 */
--	if (cam->ctlr_reset)
--		cam->ctlr_reset(cam);
- 	/*
- 	 * VB2 reclaims the buffers, so we need to forget
- 	 * about them.
+@@ -1776,7 +1776,6 @@ int mccic_register(struct mcam_camera *cam)
+ 	 */
+ 	sensor_cfg.clock_speed =3D cam->clock_speed;
+ 	sensor_cfg.use_smbus =3D cam->use_smbus;
+-	cam->sensor_addr =3D ov7670_info.addr;
+ 	cam->sensor =3D v4l2_i2c_new_subdev_board(&cam->v4l2_dev,
+ 			cam->i2c_adapter, &ov7670_info, NULL);
+ 	if (cam->sensor =3D=3D NULL) {
 diff --git a/drivers/media/platform/marvell-ccic/mcam-core.h b/drivers/me=
 dia/platform/marvell-ccic/mcam-core.h
-index ad8955f9f0a1..f93f23faf364 100644
+index f93f23faf364..b828b1bb59d3 100644
 --- a/drivers/media/platform/marvell-ccic/mcam-core.h
 +++ b/drivers/media/platform/marvell-ccic/mcam-core.h
-@@ -137,7 +137,6 @@ struct mcam_camera {
- 	int (*plat_power_up) (struct mcam_camera *cam);
- 	void (*plat_power_down) (struct mcam_camera *cam);
- 	void (*calc_dphy) (struct mcam_camera *cam);
--	void (*ctlr_reset) (struct mcam_camera *cam);
+@@ -112,11 +112,9 @@ struct mcam_camera {
+ 	short int use_smbus;	/* SMBUS or straight I2c? */
+ 	enum mcam_buffer_mode buffer_mode;
 =20
- 	/*
- 	 * Everything below here is private to the mcam core and
+-	int mclk_min;	/* The minimal value of mclk */
+ 	int mclk_src;	/* which clock source the mclk derives from */
+ 	int mclk_div;	/* Clock Divider Value for MCLK */
+=20
+-	int ccic_id;
+ 	enum v4l2_mbus_type bus_type;
+ 	/* MIPI support */
+ 	/* The dphy config value, allocated in board file
+@@ -153,7 +151,6 @@ struct mcam_camera {
+ 	 */
+ 	struct video_device vdev;
+ 	struct v4l2_subdev *sensor;
+-	unsigned short sensor_addr;
+=20
+ 	/* Videobuf2 stuff */
+ 	struct vb2_queue vb_queue;
 diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/m=
 edia/platform/marvell-ccic/mmp-driver.c
-index 70a2833db0d1..92a79ad8a12c 100644
+index 92a79ad8a12c..9e988e527b0d 100644
 --- a/drivers/media/platform/marvell-ccic/mmp-driver.c
 +++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
-@@ -183,28 +183,6 @@ static void mmpcam_power_down(struct mcam_camera *mc=
-am)
- 	mcam_clk_disable(mcam);
- }
-=20
--static void mcam_ctlr_reset(struct mcam_camera *mcam)
--{
--	unsigned long val;
--	struct mmp_camera *cam =3D mcam_to_cam(mcam);
--
--	if (mcam->ccic_id) {
--		/*
--		 * Using CCIC2
--		 */
--		val =3D ioread32(cam->power_regs + REG_CCIC2_CRCR);
--		iowrite32(val & ~0x2, cam->power_regs + REG_CCIC2_CRCR);
--		iowrite32(val | 0x2, cam->power_regs + REG_CCIC2_CRCR);
--	} else {
--		/*
--		 * Using CCIC1
--		 */
--		val =3D ioread32(cam->power_regs + REG_CCIC_CRCR);
--		iowrite32(val & ~0x2, cam->power_regs + REG_CCIC_CRCR);
--		iowrite32(val | 0x2, cam->power_regs + REG_CCIC_CRCR);
--	}
--}
--
- /*
-  * calc the dphy register values
-  * There are three dphy registers being used.
-@@ -352,7 +330,6 @@ static int mmpcam_probe(struct platform_device *pdev)
- 	mcam =3D &cam->mcam;
- 	mcam->plat_power_up =3D mmpcam_power_up;
- 	mcam->plat_power_down =3D mmpcam_power_down;
--	mcam->ctlr_reset =3D mcam_ctlr_reset;
+@@ -12,7 +12,6 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
+-#include <linux/platform_data/i2c-gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+@@ -333,8 +332,6 @@ static int mmpcam_probe(struct platform_device *pdev)
  	mcam->calc_dphy =3D mmpcam_calc_dphy;
  	mcam->dev =3D &pdev->dev;
  	mcam->use_smbus =3D 0;
+-	mcam->ccic_id =3D pdev->id;
+-	mcam->mclk_min =3D pdata->mclk_min;
+ 	mcam->mclk_src =3D pdata->mclk_src;
+ 	mcam->mclk_div =3D pdata->mclk_div;
+ 	mcam->bus_type =3D pdata->bus_type;
+diff --git a/include/linux/platform_data/media/mmp-camera.h b/include/lin=
+ux/platform_data/media/mmp-camera.h
+index d2d3a443eedf..4c3a80a45883 100644
+--- a/include/linux/platform_data/media/mmp-camera.h
++++ b/include/linux/platform_data/media/mmp-camera.h
+@@ -16,7 +16,6 @@ struct mmp_camera_platform_data {
+ 	int sensor_power_gpio;
+ 	int sensor_reset_gpio;
+ 	enum v4l2_mbus_type bus_type;
+-	int mclk_min;	/* The minimal value of MCLK */
+ 	int mclk_src;	/* which clock source the MCLK derives from */
+ 	int mclk_div;	/* Clock Divider Value for MCLK */
+ 	/*
 --=20
 2.19.1
 
