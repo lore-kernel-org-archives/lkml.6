@@ -2,105 +2,117 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A091C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09923C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360382081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:38:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360382081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C07BC2081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:39:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtvMdPeS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07BC2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbeKFGAI (ORCPT
+        id S1730300AbeKFGAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:00:08 -0500
-Received: from mga17.intel.com ([192.55.52.151]:11818 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeKFGAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:00:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 12:38:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
-   d="scan'208";a="105631566"
-Received: from rdvivi-vienna.jf.intel.com (HELO intel.com) ([10.7.196.65])
-  by orsmga001.jf.intel.com with ESMTP; 05 Nov 2018 12:38:40 -0800
-Date:   Mon, 5 Nov 2018 12:38:40 -0800
-From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH v3 4/5] drm/i915: Clarify flow for disabling
- IRQs on storms
-Message-ID: <20181105203840.GC4208@intel.com>
-References: <20181103001909.23645-1-lyude@redhat.com>
- <20181103001909.23645-5-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181103001909.23645-5-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 6 Nov 2018 01:00:41 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43007 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbeKFGAl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 01:00:41 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y15-v6so11018522wru.9;
+        Mon, 05 Nov 2018 12:39:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8lkbYhVhnvwWz+RGh4ckcfkr/nd+SKhMEzNas34N1tM=;
+        b=PtvMdPeSwfRLoEyySe5xziSQwVWcJQ3mgyrVwiIQWFzoQfvUE+qX2O5wHTLSqth6o3
+         DFOD4RgWTd0RWFjJ5liJpX6cbHM4NEWuL40+SzWA1ptWwW035mO65SIQ+kVyUfiOXDQ4
+         r42aHCWD/yS5es698gNn5FsF05Re5aldmtmE1UGxOLtDHKeGb7taTAVNwCBdJ+PFhQlF
+         8MR5LHdlLV/SyqHeh1eb4aZI23Buyj5JJb46OxwnW3lzLjZnnDFwMIEdfkzEFpd6f+ap
+         CcTv8TxpQE6xM1P4QqPq0NGHxvU6maxrrPePDoXyz6d/Y2Q2bNQwAS0XH3zHLHgLSjb3
+         7nEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8lkbYhVhnvwWz+RGh4ckcfkr/nd+SKhMEzNas34N1tM=;
+        b=bHdq2aj+hbTefO5rsgg+Ou+rCj4jskt3rVVubTibYeTGtuki41/X/DW/L1rWfe1hN0
+         VArVqGdFc7aFjRETJj987r8iaPd+P8V5YEC9XCfFIgwT53UgWzp4GWvFyjtLvMb5l8gi
+         ZCMgDxNt4Vu9BxE1hDRPH47ZzCoaM9B+RIIwGz08yfRjkzSE7ahF0bCopKvLRQomFXji
+         2aa94Id1iPsxwPuaOICrsZMouvp41niLT2iiPDgfSccVqOT1qSXgAFmsT01i8C+JBbRp
+         cjkT31oCxNFhtfWAE67XGhUtve66eNmGrsaiMOCC1pr7AD2rcEdXzIhp+m5c6B5n5JBN
+         nrxQ==
+X-Gm-Message-State: AGRZ1gKcWlV0djyzRjgwfZynsKGZyIAM+M1+ScdaDob38Qdri5wQhytC
+        uQQgFv/3zjcyx5NujbR/pQ0=
+X-Google-Smtp-Source: AJdET5e3pWtuuqBBsoELVtBRsPtgwUEjkq3BLv+aS+aFMfFGVfDFWT+01AAPmlvS/SwueD2tOE5QSw==
+X-Received: by 2002:adf:91c3:: with SMTP id 61-v6mr21345180wri.97.1541450352105;
+        Mon, 05 Nov 2018 12:39:12 -0800 (PST)
+Received: from ubuntu.home ([2a02:8071:6a3:700:456c:50ae:6b7:768d])
+        by smtp.gmail.com with ESMTPSA id z17-v6sm14289792wrm.65.2018.11.05.12.39.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 12:39:11 -0800 (PST)
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marex@denx.de>,
+        Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Subject: [PATCH] ARM: dts: socfpga: use tabs for indentation
+Date:   Mon,  5 Nov 2018 21:39:00 +0100
+Message-Id: <20181105203900.23788-1-simon.k.r.goldschmidt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 08:19:07PM -0400, Lyude Paul wrote:
-> This is rather confusing to look at as-is:
-> dev_priv->display.hpd_irq_setup(dev_priv); in intel_hpd_irq_handler()
-> handles disabling the actual HPD IRQ, while
-> intel_hpd_irq_storm_disable() handles moving the HPD pin state over from
-> MARK_DISABLED to DISABLED along with enabling polling for it.
+In two of the gen5 socfpga devicetree files, there are some lines
+indented using spaces instead of tabs.
 
-what about also changing the name of the function?
+Fix this by correctly indenting them with tabs.
 
-> 
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/gpu/drm/i915/intel_hotplug.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-> index c11d73de16f2..e5e3eeb7e482 100644
-> --- a/drivers/gpu/drm/i915/intel_hotplug.c
-> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
-> @@ -351,7 +351,7 @@ static void i915_hotplug_work_func(struct work_struct *work)
->  	hpd_event_bits = dev_priv->hotplug.event_bits;
->  	dev_priv->hotplug.event_bits = 0;
->  
-> -	/* Disable hotplug on connectors that hit an irq storm. */
-> +	/* Enable polling for connectors which had HPD IRQ storms */
->  	intel_hpd_irq_storm_disable(dev_priv);
+Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+---
+ arch/arm/boot/dts/socfpga.dtsi               | 2 +-
+ arch/arm/boot/dts/socfpga_cyclone5_sodia.dts | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-This now gets confusing to my brain...
-comment says "enable" function name is "disable".
+diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+index 2458d6707dc5..0a028254b14e 100644
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -759,7 +759,7 @@
+ 
+ 		qspi: spi@ff705000 {
+ 			compatible = "cdns,qspi-nor";
+-                        #address-cells = <1>;
++			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0xff705000 0x1000>,
+ 			      <0xffa00000 0x1000>;
+diff --git a/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts b/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts
+index e54b5f2af74f..99a71757cdf4 100644
+--- a/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts
++++ b/arch/arm/boot/dts/socfpga_cyclone5_sodia.dts
+@@ -111,9 +111,9 @@
+ };
+ 
+ &qspi {
+-        status = "okay";
++	status = "okay";
+ 
+-        flash0: n25q512a@0 {
++	flash0: n25q512a@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "n25q512a";
+-- 
+2.17.1
 
->
->  	spin_unlock_irq(&dev_priv->irq_lock);
-> @@ -458,6 +458,10 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
->  		}
->  	}
->  
-> +	/*
-> +	 * Disable any IRQs that storms were detected on. Polling enablement
-> +	 * happens later in our hotplug work.
-> +	 */
->  	if (storm_detected && dev_priv->display_irqs_enabled)
->  		dev_priv->display.hpd_irq_setup(dev_priv);
->  	spin_unlock(&dev_priv->irq_lock);
-> -- 
-> 2.19.1
-> 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
