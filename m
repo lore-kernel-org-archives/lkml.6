@@ -2,80 +2,97 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA85FC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8CFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 649AA20827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53A3220827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:17:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ckoeu4bT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649AA20827
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebZooK1d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A3220827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbeKFAgr (ORCPT
+        id S1730051AbeKFAht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:36:47 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40145 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729588AbeKFAgq (ORCPT
+        Mon, 5 Nov 2018 19:37:49 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43245 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbeKFAht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:36:46 -0500
-Received: by mail-it1-f196.google.com with SMTP id e11so9767388itl.5;
-        Mon, 05 Nov 2018 07:16:36 -0800 (PST)
+        Mon, 5 Nov 2018 19:37:49 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g7-v6so2308776pfo.10;
+        Mon, 05 Nov 2018 07:17:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=OVmYzF4xGVs1SNa1+aLzQ8D2WwXIs64fH5X1YARyfE0=;
-        b=Ckoeu4bTFIvNqHBjLALJBA0ee2C2iQzeuGNm1SjmBmxZGXBuUKyV2kFSZEJKmb40V8
-         n29s5mttgS6NVxa/4zq6yJUPfjmHzNAP1Tk9+FZzhkvRKCBkioK899OrFZ1+FBN3G8it
-         I//uel03ULcvqxb2vIZbfgXxqgSpSD4XLBumGIMPVi07CuaISlw7//Z/a5cMpCOG/+Mk
-         mRFo/jJlhreHcp0v/P/nSKXqFmc1dvOIgLN87Ek4nfU+Q7uyPI/gdT7LDXy693HzC5h0
-         VNrBIz2/jqdYQo7Q8U/lMwygjKsWntccMWzLSdFJcCE4Fn0b/3Tg7lTnXOXAbCUTTGlG
-         BH8g==
+        h=from:to:cc:subject:date:message-id;
+        bh=XwpSaIuwiV66MBfVn/EfWwqxExuH378JZR7QWjpxJ+M=;
+        b=ebZooK1dIaSQB72s/cyXDyOWpioKOFVgAqS+DQx43kOXZBKzTW3DShO1t9XtxYh8f8
+         fGSoF73zLbCg9fE/pLau8PNFm1MYOLPwvvc/otiSmAIdtVxMqsTuD1R3iALZY4dEWosX
+         P714VJra4mZ38K5uE1W7tmm+j4vqBR7rJkmlwUfOkUgeLM/s1Z9sDHernaGlOyKz7Jbs
+         sDUaVQlaeBtu1di477M44XeONWs2aLfx834ldqJUM/LBt5ZvQ+thYY9oaPzNBEXvVii2
+         zGONY6HYGljOMXKDIpdwzi77sGuEhPbHbrT8kc1N6CztUPT/zXKSIM+libCVfK+K3FvF
+         YOTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=OVmYzF4xGVs1SNa1+aLzQ8D2WwXIs64fH5X1YARyfE0=;
-        b=nn7eS6or04A27imwq2znowEvajKG7nfVpcjSw76HOg6JiNpohaht4dhUHNM9j6ha1U
-         dInMiMUuiKm41LGaybTdpa8qXIqHfUeY2QhJvPO5zaofi5sPABgRErsA6ngGMt9xyWU8
-         1PrQb7wh6yz9+64JofjNwcryWrU8MNC4c9yJqU7QD90ummnATon4uIfm3eOhmWpo99FG
-         DPJXRV04ujjUKmoSxm/LgX0VWd/vPh2ef/mfF57oHgX4Wwml2Froo/upky1m9BxMXdDz
-         IVqo/gx0d1j2jHfUXwysMFF18a1FEwRzZ0z0ACe45DjCINxwo/E7HK583EE6zKdPHu2X
-         Nhcg==
-X-Gm-Message-State: AGRZ1gLMMwLaRz9fgwF2warhdrn8wbgk6LAXm6yIq+OPag6+oPLX19i1
-        mOpKc9pApFi+bR/W72fUeeWFXwPbYTmTtevv6Eiq9uAkfpg=
-X-Google-Smtp-Source: AJdET5crka0mR1RHtHwudq3w4xROBy/7vwWHBsxBIhN0YCu+vUlDGOpQGCxzUx6blfOIHHfrGTyVTYtj72q8x9akOto=
-X-Received: by 2002:a02:a1cb:: with SMTP id o11-v6mr17990357jah.82.1541430995725;
- Mon, 05 Nov 2018 07:16:35 -0800 (PST)
-MIME-Version: 1.0
-From:   Gregory Shapiro <shapiro.gregory@gmail.com>
-Date:   Mon, 5 Nov 2018 17:16:21 +0200
-Message-ID: <CAAGb-1fPZsJRqa4C3zDiatqE2sPAV8m-pGBoG+z=3nAd+Koj-A@mail.gmail.com>
-Subject: Re: BUG: aio/direct-io data corruption in 4.7
-To:     hch@infradead.org, jnicklin@blockbridge.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregory.shapiro@kaminario.com,
-        Gregory Shapiro <shapiro.gregory@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XwpSaIuwiV66MBfVn/EfWwqxExuH378JZR7QWjpxJ+M=;
+        b=ikPStix5j922ymFYHJ+BXbUm42Kt/yVA3YOVWkWR1F2zxWwxiDk+ZXYs50V75zVJhT
+         OIvy0yGUObViNmkMY4VZELlGRZ5Tepjl7S8TeBUlUupSDjcqbDbMpLrT3iI0T2hIFVoO
+         y5d2mLD9aFamGwzyrjKB4oF590jbbgKNn3q4CEIFftxoM5Q+KWPwvd39m/txJ0Sr8fF4
+         LFXPnnB3xy4pxlPN9n+EQfHSqE+MxncL/DQmjb4fGp8pfwfShGasDPGU9GB6znPC2cSu
+         QbrfnAD3Ia4Yxhmukbj4gpYSIk9MC/IAyJ8fmyUMjZtaIDLq5fPKmJ0CdPwqypnfvDbu
+         JwCQ==
+X-Gm-Message-State: AGRZ1gKh4RatpZ4EbQhurH2ZZ22skoGqgxTW6LyOA5DMjbyNA88cvB8F
+        RBz1+HpvUvOrmX3ZOI3yJ/M=
+X-Google-Smtp-Source: AJdET5c8vWW+RjwWqx9d5O63JrBU+wFx0lpX9gNCJQCT8PNqh2a3hP20HCx5CFBLHEPtfTPFXfkptA==
+X-Received: by 2002:a65:6447:: with SMTP id s7mr20300828pgv.226.1541431058105;
+        Mon, 05 Nov 2018 07:17:38 -0800 (PST)
+Received: from localhost.localdomain ([207.246.110.149])
+        by smtp.gmail.com with ESMTPSA id 5-v6sm81736726pgt.83.2018.11.05.07.17.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 07:17:37 -0800 (PST)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     yamada.masahiro@socionext.com
+Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH] init/Kconfig: make CC_OPTIMIZE_FOR_DEBUGGING visible only for GCC
+Date:   Mon,  5 Nov 2018 23:17:19 +0800
+Message-Id: <20181105151719.4552-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, my name is Gregory Shapiro and I am a newbie on this list.
-I recently encountered data corruption as I got a kernel to
-acknowledge write ("io_getevents" system call with a correct number of
-bytes) but undergoing write to disk failed.
-After investigating the problem I found it is identical to issue found
-in direct-io.c mentioned the bellow thread.
-https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/
-Is there a reason proposed patch didn't apply to the kernel?
-When can I expect it to be applied?
-Thanks,
- Gregory
+Currently CC_OPTIMIZE_FOR_DEBUGGING is only able to build with GCC.
+For clang, -Og optimization level could break kernel build. So make
+CC_OPTIMIZE_FOR_DEBUGGING visible only for GCC.
+
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+---
+ init/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 0fb9c0b5f1a1..d5fb0ee1400a 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1107,6 +1107,7 @@ config CC_OPTIMIZE_FOR_SIZE
+ 
+ config CC_OPTIMIZE_FOR_DEBUGGING
+ 	bool "Optimize for better debugging experience (-Og)"
++	depends on CC_IS_GCC
+ 	depends on $(cc-option,-Og)
+ 	select NO_AUTO_INLINE
+ 	help
+-- 
+2.17.1
+
