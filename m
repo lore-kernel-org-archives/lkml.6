@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D44C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB1DC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A2DE20827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2141520827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="nwX8goWL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2DE20827
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="LoPTsKQs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2141520827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbeKEVqW (ORCPT
+        id S1729737AbeKEVqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:46:22 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36553 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729656AbeKEVqV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Nov 2018 16:46:21 -0500
-Received: by mail-ed1-f67.google.com with SMTP id x2-v6so7326018eds.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:26:51 -0800 (PST)
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46256 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbeKEVqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 16:46:20 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f8-v6so7263951edt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:26:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YuGGm/kvIUR64EfEJF8Xc35VgZELoo5NN5dE/gXYmfQ=;
-        b=nwX8goWLq3/PU7hl5yIl5XCHNBeAuz+lAhtBRv3n/duhlL1+pQF+6w4xp1o1bstrSr
-         iFQs5y6LnShfnER9RY0T3SHr0aq2r6/exFAvhP/oTwQ74hN4mAg9ZEE2rfufoIUnfWA/
-         chNDlQVKoWqmQERj/b3Q8dTOSD7YYAm/FSqMTzH7XTEDDFPWqqG5Ls1KxXTERq3jDxZb
-         kNhOSu6nDojy5kY61oNDFdzZRFmVGNsAqsZFFOaimaTCoyHrRh3xDC0l7pOpUuNucImK
-         q10tR9ybWG4Gik/F0uaJp8cy8UMLveIu1LtodB0bE/Zz1h4pLzELOk87oxDuKkSZMnJV
-         po+g==
+        bh=teEQfAz1c6m6rCPJfgLRxoSrnS8LNHIA5afev5lUxns=;
+        b=LoPTsKQsAP+zS++JqKVLPkejyAxyOr3CzGAE/hrzpPdH1tTdfOqoJcqbNjTZBQ+r0j
+         GX//652zX5wqDxlmpWgHMjdWU85TefPhXh2GZk9Mp02KjeauLpFlB0sEoItdBOoWtqFZ
+         S+qPTV+b5EXDO2beVm6i74xjlF5zoZ15L6gbUN089hkzh416cyrukDoa4XLHpmn8FpRE
+         HwHwj2muGaOBqPOEt58jPyHHuNTyDZdvde06t3l9oXagdapjDBdtB9AcwNRTgpZGpOMo
+         ExRof+I0gQSQseiuLI6i3qoE5Q/TW9zhAO4NUaUs2Z8MrVR4tkSjqDLhqAzMhjoSZSiS
+         mdwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YuGGm/kvIUR64EfEJF8Xc35VgZELoo5NN5dE/gXYmfQ=;
-        b=slodq5I3prWp+2kt7j7rxiXnwcmknskkLGqVG0R3hUWqB0yHZ77u+YwRTC54HPjN46
-         1dPkTRG++XPGC3+Fgkqyf7pt3J1VQd9epxOlvXlfFOh3benzq6n04+9Zbu4GUvBofWk8
-         k6DcTUZp90bIgIOHJpXVc30p2RZo0ybjWMAJEt4Bz9M3QUoTEHOOCsiW3kaz8956Ul+n
-         JiINSdjL7S51dAjnyQafAGbaWgyt7ecaAYEJBrVXbmfxWPbPZ3jBf6RO3eVzNzLn7OwS
-         +XLL3S2jffIEOxnj85XkozHgfe6Mjx7ijZ/74NfFOesMOPEjxDDbhdUmMjgKa1M7RPYG
-         uj6w==
-X-Gm-Message-State: AGRZ1gJNbs9LDofcxQ1gut3UZT8gGqFTAvYV/xX0zUSM10XffOxuTmK8
-        zImSu2/9dNX78oeEYozM9ksqhg==
-X-Google-Smtp-Source: AJdET5da6wVH3UMraaSgSs5yZ++UmAaFYT79I5Gg1ALa7WyijnT/p9bIB9eMESz3iVNyu23gdbMyIQ==
-X-Received: by 2002:a05:6402:170a:: with SMTP id y10mr18358000edu.45.1541420810433;
-        Mon, 05 Nov 2018 04:26:50 -0800 (PST)
+        bh=teEQfAz1c6m6rCPJfgLRxoSrnS8LNHIA5afev5lUxns=;
+        b=KMVVRZMAy/T9mBFHE+fop9NqMJxn90vE+fHcR4FNPjwnJUCtJDZbG3G5Xwaezq4Ino
+         oGRwqwyOeFQHljT6AOVAgCczwYi6aeHqUary/HhXQfMobWN5DKB4Gltw2ZFbkCtlo4oD
+         We3b/gYL6FMJi9LO2aRyuyjmQ6IuH0qt+gwz4KD/xnWx2NiioZemvvgzs5vsNrn+fL45
+         PjIi/ZDbmhSk7hQpPktLi5mR43/8CaTe4Pxr3oB7Yt5D3uQ4udGiQvayL4VTzw6Wxffu
+         hi8WzyX+lrjD10dWAzTlzOKtZrdVkpFwck0cJyPQ2uw3PjJXhFJUsqnhbXa2Hd7l3BI2
+         gSOw==
+X-Gm-Message-State: AGRZ1gIvjBERSg7HMZcFoE2C8aOHeif78DL0+0tBaNTGPkS0NCtDAvLE
+        2JWDXQU8dEtlk0MwCPnGGVttOw==
+X-Google-Smtp-Source: AJdET5eJP26S1glPFZkJfBv29jmXa6CW4Svf0mHNjgIHDIOihzQb9pdgyWV3WjD9EaRA5p+7oFMqbA==
+X-Received: by 2002:a17:906:6411:: with SMTP id d17-v6mr13317366ejm.73.1541420808384;
+        Mon, 05 Nov 2018 04:26:48 -0800 (PST)
 Received: from ch-lap-hans.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm7046056ejw.46.2018.11.05.04.26.49
+        by smtp.gmail.com with ESMTPSA id 9-v6sm7046056ejw.46.2018.11.05.04.26.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 04:26:49 -0800 (PST)
+        Mon, 05 Nov 2018 04:26:47 -0800 (PST)
 From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To:     Matias Bjorling <mb@lightnvm.io>
 Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH v2 7/7] lightnvm: pblk: remove dead code in pblk_recov_l2p
-Date:   Mon,  5 Nov 2018 13:26:10 +0100
-Message-Id: <20181105122610.1555-8-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH v2 5/7] lightnvm: pblk: remove unused macro
+Date:   Mon,  5 Nov 2018 13:26:08 +0100
+Message-Id: <20181105122610.1555-6-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181105122610.1555-1-hans.ml.holmberg@owltronix.com>
 References: <20181105122610.1555-1-hans.ml.holmberg@owltronix.com>
@@ -76,26 +76,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Remove the call to pblk_line_replace_data as it returns
-directly as we have not set l_mg->data_next yet.
+ADDR_POOL_SIZE is not used anymore, so remove the define.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-recovery.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/lightnvm/pblk-init.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 0fbd30e0a587..416d9840544b 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -805,7 +805,6 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
- 							&l_mg->meta_bitmap));
- 		spin_unlock(&l_mg->free_lock);
--		pblk_line_replace_data(pblk);
- 	} else {
- 		spin_lock(&l_mg->free_lock);
- 		/* Allocate next line for preparation */
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 8b89bb26b0f1..33c1e83327c3 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -207,9 +207,6 @@ static int pblk_rwb_init(struct pblk *pblk)
+ 	return pblk_rb_init(&pblk->rwb, buffer_size, threshold, geo->csecs);
+ }
+ 
+-/* Minimum pages needed within a lun */
+-#define ADDR_POOL_SIZE 64
+-
+ static int pblk_set_addrf_12(struct pblk *pblk, struct nvm_geo *geo,
+ 			     struct nvm_addrf_12 *dst)
+ {
 -- 
 2.17.1
 
