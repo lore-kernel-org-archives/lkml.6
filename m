@@ -2,233 +2,191 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF34C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB09C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C282085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C282085A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 2034F2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:35:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="hsjTCQTG";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="QtvCrp5O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2034F2085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeKEUsw (ORCPT
+        id S1727414AbeKEUym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:48:52 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:58817 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbeKEUsv (ORCPT
+        Mon, 5 Nov 2018 15:54:42 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:42178 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726319AbeKEUym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:48:51 -0500
-Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 5 Nov 2018
- 19:29:30 +0800
-Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
-To:     <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>, <yixun.lan@amlogic.com>,
-        <khilman@baylibre.com>, <carlo@caione.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <miquel.raynal@bootlin.com>, <boris.brezillon@bootlin.com>,
-        <liang.yang@amlogic.com>, <jian.hu@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <hanjie.lin@amlogic.com>,
-        <victor.wan@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
+        Mon, 5 Nov 2018 15:54:42 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wA5BWwlT018364;
+        Mon, 5 Nov 2018 03:34:37 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=LJUlQDmWNIxRBVNCRBKxbAWIwNf5yPI5Uf5FU42sux0=;
+ b=hsjTCQTGuuKe2uZgfmM6Tl7ZtB+iNH0c9ENa9hfTT0No5CPkbbP3AFSUo76OFGXL9u4t
+ X9jX1Szq4m0ajiQhtQkbmqIsNpE5OWwzfYyFw3qeNAatsnM5VkLm/mLB5ysOw3eZ9TQ6
+ YjhAF1xdtzt2RMuHDuP7iXRl8VdHMedmcf31rAtaJo2OV8MNWt6Wr9L2TZxJyCJuydx5
+ LtAD9A3vw1QQZGdsLbldVQwgxjS6XkVq/AiCkDI93aCK+8BPDm+tbFH5ZavnxZ6nim0W
+ 6oKs4BoxRkt7IUf4eo1LRsrSvMcZz4qVJNXsTe+fh/A3IFcA8mFDji0GswsO/SmPwrt8 bw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=dkos@cadence.com
+Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp0114.outbound.protection.outlook.com [216.32.180.114])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2nh87rrgyj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 05 Nov 2018 03:34:37 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LJUlQDmWNIxRBVNCRBKxbAWIwNf5yPI5Uf5FU42sux0=;
+ b=QtvCrp5OO+kG6IRaTppyuUAhE7YwarIrpVqVspthHO4Gko9OdS1OfwW41GsSNi2c3LVhwZ90CyWtanLGPrWH//2nTJ3ek8YTO9G3NrKeSfTEDcxhsrHjAp3uSQL7jHI8DiyXUCfs3ly/eA9fN+DCGEiHi5LCA3/63zB1ajf+mW8=
+Received: from CY1PR0701MB1664.namprd07.prod.outlook.com (10.163.20.22) by
+ CY1PR0701MB1710.namprd07.prod.outlook.com (10.163.21.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Mon, 5 Nov 2018 11:34:31 +0000
+Received: from CY1PR0701MB1664.namprd07.prod.outlook.com
+ ([fe80::59a0:1638:ccd6:ad87]) by CY1PR0701MB1664.namprd07.prod.outlook.com
+ ([fe80::59a0:1638:ccd6:ad87%2]) with mapi id 15.20.1294.028; Mon, 5 Nov 2018
+ 11:34:31 +0000
+From:   Damian Kos <dkos@cadence.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>
+CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        =?utf-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Piotr Sroka <piotrs@cadence.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
- <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
- <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
- <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
- <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com>
- <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
- <66c2915a-4ecd-8a6e-6493-4318ae7bb620@amlogic.com>
- <bba47660e7d48c391caad8214570e81527624662.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <13751c27-038b-5266-ea0d-a0d3dc7cddf7@amlogic.com>
-Date:   Mon, 5 Nov 2018 19:29:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <bba47660e7d48c391caad8214570e81527624662.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        "quentin.schulz@bootlin.com" <quentin.schulz@bootlin.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>
+Subject: RE: [PATCH v6 0/6] drm: add support for Cadence MHDP DPI/DP bridge.
+Thread-Topic: [PATCH v6 0/6] drm: add support for Cadence MHDP DPI/DP bridge.
+Thread-Index: AQHUX0/e2PllWSvZiEqVG0HuQ+ejRqVBF/BwgAAOeICAAACgAIAACmmAgAAG2/A=
+Date:   Mon, 5 Nov 2018 11:34:31 +0000
+Message-ID: <CY1PR0701MB16643016AC6D9D3901CA6786CDCA0@CY1PR0701MB1664.namprd07.prod.outlook.com>
+References: <1539034953-11274-1-git-send-email-dkos@cadence.com>
+        <CY1PR0701MB166434BBB71DB76593E0F513CDCA0@CY1PR0701MB1664.namprd07.prod.outlook.com>
+        <3056496.a8qoricJmv@avalon>
+        <CGME20181105103448epcas1p29a9889a9a19fc56629dcc7e24785556c@epcas1p2.samsung.com>
+        <CY1PR0701MB16644A2C7EF670F5AC732BF8CDCA0@CY1PR0701MB1664.namprd07.prod.outlook.com>
+ <d6db03aa-6f61-f902-85f6-2245547186bc@samsung.com>
+In-Reply-To: <d6db03aa-6f61-f902-85f6-2245547186bc@samsung.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.18.29.185]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcZGtvc1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLWM0MGIwMDFhLWUwZWUtMTFlOC04NzJkLWE0NGNjOGNjMTI3Y1xhbWUtdGVzdFxjNDBiMDAxYy1lMGVlLTExZTgtODcyZC1hNDRjYzhjYzEyN2Nib2R5LnR4dCIgc3o9IjI4ODIiIHQ9IjEzMTg1ODkxMjc0MTAwNzIzNyIgaD0iSDNvb0Z0WlN2T3RjeFJNN0tkYzNuajdyUWQ4PSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR0701MB1710;20:BCmrCsMw5R5BlvwienXvxXAXxyQyJXw5WCfzTOUugHSitjkD54YGMQcvNazdKBIzQbQI+RyLRzt3iWKR5qI1rLmz0G93yDs9CeakjFGzUZItYZhdhc27mBj6ZQ6kcEyM5uYRiVQYlloA2UJc1+togPvKXyg4yDCri/xEv23Ml8A6f04edyhL6vZtclskjv7aeBBKIQqymakoxMJ/CiZnM4GidSmxNPPTiDvguFmIKWRAz1llr+inWMXK8XC9eejQ
+x-ms-office365-filtering-correlation-id: 1975f140-2f05-4599-b5ce-08d64312a756
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:CY1PR0701MB1710;
+x-ms-traffictypediagnostic: CY1PR0701MB1710:
+x-microsoft-antispam-prvs: <CY1PR0701MB1710CC1295837F306D117540CDCA0@CY1PR0701MB1710.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(217544274631240)(9452136761055)(258649278758335)(31051911155226)(7411616537696)(72806322054110)(180628864354917)(228905959029699)(58145275503218);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:CY1PR0701MB1710;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0701MB1710;
+x-forefront-prvs: 08476BC6EF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(136003)(39860400002)(376002)(346002)(366004)(199004)(189003)(13464003)(36092001)(93886005)(2900100001)(99286004)(76176011)(33656002)(4326008)(446003)(11346002)(486006)(316002)(476003)(7696005)(66574009)(53936002)(71190400001)(71200400001)(9686003)(86362001)(305945005)(55016002)(6246003)(25786009)(54906003)(6436002)(74316002)(7736002)(6116002)(3846002)(7416002)(66066001)(105586002)(106356001)(97736004)(6916009)(478600001)(26005)(6506007)(53546011)(102836004)(68736007)(229853002)(5660300001)(2906002)(14454004)(8936002)(256004)(81156014)(8676002)(186003)(81166006)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0701MB1710;H:CY1PR0701MB1664.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: CJuC85EGep7+SYfqtaZ+k3Wy5I282PED5dmxQwtOn9ckCDnszMCIg8NW5np80Zi1/N3YR5lpj8MIVP9LdxshJgF3Hx4n16ehppc4WhC6Dt+M2xlmwOdm2gQjG8FQdL0QcakAHyL1jKMVwND+N04iIsBbbqvXkQdDsIyCVJExJbjjWt7Xq2w+wfHTOaHQOxRQAKHwyVl18gd5CKEu6qnZX1AJqCV/qYBQqBbeJdnU7rEg6N1ODkEf4IBd9wZXcAFKlfZ6EkyOzpOEBQXR0aRafcY6YPTwJdtI+tLdE4A6MzVE0Sap1F9W5aVemfpPaHQSGHbBXwqgYqawO6jqWlHs+AUq9gEp7zECKRSdGYRwJTo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1975f140-2f05-4599-b5ce-08d64312a756
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2018 11:34:31.4112
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0701MB1710
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
+ a:mx-sanjose5.Cadence.COM include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/5 17:46, jbrunet@baylibre.com wrote:
-> On Sun, 2018-11-04 at 02:01 +0800, Jianxin Pan wrote:
->> Hi Jerome,
->>
->> Thanks for the review, we really appreciate your time.
->>
->> I'm very sorry maybe I don't catch all your meaning very well. 
->>
->> Please see my comments below.
->>
->> On 2018/10/29 3:16, Jerome Brunet wrote:
->>> On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
->>>> Hi Jerome,
->>>>
->>>> On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com>
->>>> wrote:
->>>> [snip]
->>>>>>>> +static void clk_regmap_div_init(struct clk_hw *hw)
->>>>>>>> +{
->>>>>>>> + struct clk_regmap *clk = to_clk_regmap(hw);
->>>>>>>> + struct clk_regmap_div_data *div =
->>>>>>>> clk_get_regmap_div_data(clk);
->>>>>>>> + unsigned int val;
->>>>>>>> + int ret;
->>>>>>>> +
->>>>>>>> + ret = regmap_read(clk->map, div->offset, &val);
->>>>>>>> + if (ret)
->>>>>>>> +         return;
->>>>>>>>
->>>>>>>> + val &= (clk_div_mask(div->width) << div->shift);
->>>>>>>> + if (!val)
->>>>>>>> +         regmap_update_bits(clk->map, div->offset,
->>>>>>>> +                            clk_div_mask(div->width) << div-
->>>>>>>>> shift,
->>>>>>>> +                            clk_div_mask(div->width));
->>>>>>>
->>>>>>> This is wrong for several reasons:
->>>>>>> * You should hard code the initial value in the driver.
->>>>>>> * If shift is not 0, I doubt this will give the expected result.
->>>>>>
->>>>>> The value 0x00 of divider means nand clock off then read/write nand
->>>>>> register is forbidden.
->>>>>
->>>>> That is not entirely true, you can access the clock register or you'd
->>>>> be in a
->>>>> chicken and egg situation.
->>>>>
->>>>>> Should we set the initial value in nand driver, or in sub emmc clk
->>>>>> driver?
->>>>>
->>>>> In the nand driver, which is the consumer of the clock. see my
->>>>> previous comments
->>>>> about it.
->>>>
->>>> an old version of this series had the code still in the NAND driver
->>>> (by writing to the registers directly instead of using the clk API).
->>>> this looks pretty much like a "sclk-div" to me (as I commented in v3
->>>> of this series: [0]):
->>>> - value 0 means disabled
->>>> - positive divider values
->>>> - (probably no duty control, but that's optional as far as I
->>>> understand sclk-div)
->>>> - uses max divider value when enabling the clock
->>>>
->>>> if switching to sclk-div works then we can get rid of some duplicate
->>>> code
->>>
->>> It is possible:
->>> There is a couple of things to note though:
->>>
->>> * sclk does not 'uses max divider value when enabling the clock': Since
->>> this
->>> divider can gate, it needs to save the divider value when disabling, since
->>> the
->>> divider value is no longer stored in the register,
->>> On init, this cached value is  saved as it is. If the divider is initially
->>> disabled, we have to set the cached value to something that makes sense,
->>> in case
->>> the clock is enabled without a prior call to clk_set_rate().
->>>> So in sclk, the clock setting is not changed nor hard coded in init, and
->>>> this is
->>> a very important difference.
->>>
->> I think It's ok for the latest sub mmc clock and nand driver now:
->> 1. in mmc_clkc_register_clk_with_parent("div", ...) from mmc_clkc_probe():
->>    cached_div is set to div_max durning clk register，but is not set to div
->> hw register.
->>
->> 2. In meson nand driver v6: 	
->> https://lore.kernel.org/lkml/1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com
->> 1) In meson_nfc_clk_init() from probe:   get clock handle, then
->> prepare_enable and set default rate.
->>    nfc->device_clk = devm_clk_get(nfc->dev, "device");
->>    ret = clk_prepare_enable(nfc->device_clk);			//Here div hw
->> register changed from 0 -> cached_div.
->>    default_clk_rate = clk_round_rate(nfc->device_clk, 24000000);
->>    ret = clk_set_rate(nfc->device_clk, default_clk_rate);	//Then
->> register and cached_div are both updated to the default 24M.
->> 2) In meson_nfc_select_chip(), set the actual frequency
->>   ret = clk_set_rate(nfc->device_clk, meson_chip->clk_rate);	//Here
->> register and cached_div are changed again.
->> 3) if clk_disable() is called, set div hw register to zero, and
->> cached_div  keep unchagned.
->>    if clk_disable() is called again,  cached_div is restored to div hw
->> register.
-> 
-> You don't need to do all this in your NAND driver: enable - round - set_rate -
-> disable is a waste of time. 
-> 
-> Directly calling set_rate(24000000), with the clock still off, will have the
-> same result. Then if your HW needs this clock to be ON to access registers
-> (like you told us) you should probably turn it on.
-I'm sorry I didn't describe it very clearly in last mail. 
-The steps in nand v6 probe are: enable -> round(24M) -> set_rate(24M)， then this clock is always on.
-And it's disabled only in the nand remove() callback. 
-I will remove round(24M) in next version .
-Thank you.
-> 
->>
->> When enabling the clock, divider register does not need to be div_max.  
->> Any value is OK except ZERO, the cached_div from init or set_rate is ok
->>>  
->>> * Even if sclk zero value means gated, it is still a zero based divider,
->>> while
->>> eMMC/Nand divider is one based. It this controller was to sclk, then
->>> something
->>> needs to be done for this.
->> Could I add another patch to this patchset for sclk to support
->> CLK_DIVIDER_ONE_BASED ?
-> 
-> Yes, you should otherwise the calculation are just wrong for your clock.
-OK. Thank you.
-> 
->>> * Since sclk caches a value in its data, and there can multiple instance
->>> of eMMC
->>> /NAND clock controller, some care must be taken when registering the data.
->> OK, I will fix it and alloc mmc_clkc_div_data danymicly durning probe.
->> Thank you. 
->>> Both the generic divider and sclk could work here ... it's up to you
->>> Jianxin.
->>>
->> == Why use meson_sclk_div_ops instead of clk_regmap_divider_ops?
->> The default divider hw register vaule is 0 when system power on.
->> Then there is a WARNING in divider_recalc_rate() durning clk_hw_register():
->> [    0.918238] ffe05000.clock-controller#div: Zero divisor and
->> CLK_DIVIDER_ALLOW_ZERO not set
->> [    0.925581] WARNING: CPU: 3 PID: 1 at drivers/clk/clk-divider.c:127
->> divider_recalc_rate+0x88/0x90
->> Then I still need to hard code the initual value to nand driver without
->> CLK_DIVIDER_ALLOW_ZERO flags.
->>>>
->>>> Regards
->>>> Martin
->>>>
->>>>
->>>> [0] https://patchwork.kernel.org/patch/10607157/#22238243
->>>
->>> .
->>>
->>
->>
-> 
-> 
-> .
-> 
-
+SGkgQW5kcnplaiwNCg0KVGhhbmtzIQ0KDQpEYW1pYW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdl
+LS0tLS0NCkZyb206IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+IA0KU2VudDog
+TW9uZGF5LCBOb3ZlbWJlciA1LCAyMDE4IDEyOjEwDQpUbzogRGFtaWFuIEtvcyA8ZGtvc0BjYWRl
+bmNlLmNvbT47IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJk
+LmNvbT4NCkNjOiBEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGludXguaWU+OyBSb2IgSGVycmluZyA8
+cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47
+IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9yYS5vcmc+OyBHdXN0YXZvIFBhZG92YW4g
+PGd1c3Rhdm9AcGFkb3Zhbi5vcmc+OyBNYWFydGVuIExhbmtob3JzdCA8bWFhcnRlbi5sYW5raG9y
+c3RAbGludXguaW50ZWwuY29tPjsgU2VhbiBQYXVsIDxzZWFuQHBvb3JseS5ydW4+OyBTYW5keSBI
+dWFuZyA8aGpjQHJvY2stY2hpcHMuY29tPjsgSGVpa28gU3TDvGJuZXIgPGhlaWtvQHNudGVjaC5k
+ZT47IFF1ZW50aW4gU2NodWx6IDxxdWVudGluLnNjaHVsekBmcmVlLWVsZWN0cm9ucy5jb20+OyBQ
+aW90ciBTcm9rYSA8cGlvdHJzQGNhZGVuY2UuY29tPjsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtcm9j
+a2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZzsgUmFmYWwgQ2llcGllbGEgPHJhZmFsY0BjYWRlbmNl
+LmNvbT47IHF1ZW50aW4uc2NodWx6QGJvb3RsaW4uY29tOyBqYmVyZ3NhZ2VsQHRpLmNvbQ0KU3Vi
+amVjdDogUmU6IFtQQVRDSCB2NiAwLzZdIGRybTogYWRkIHN1cHBvcnQgZm9yIENhZGVuY2UgTUhE
+UCBEUEkvRFAgYnJpZGdlLg0KDQpFWFRFUk5BTCBNQUlMDQoNCg0KT24gMDUuMTEuMjAxOCAxMToz
+MywgRGFtaWFuIEtvcyB3cm90ZToNCj4gSGkgTGF1cmVudCwNCj4NCj4gVW5kZXJzdG9vZC4gVGhh
+bmtzLg0KDQoNCkkgd2lsbCBsb29rIGF0IGl0IHRvZGF5IG9yIHRvbW9ycm93Lg0KDQoNClJlZ2Fy
+ZHMNCg0KQW5kcnplag0KDQoNCj4NCj4gRGFtaWFuDQo+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
+ZS0tLS0tDQo+IEZyb206IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNv
+bmJvYXJkLmNvbT4NCj4gU2VudDogTW9uZGF5LCBOb3ZlbWJlciA1LCAyMDE4IDExOjMwDQo+IFRv
+OiBEYW1pYW4gS29zIDxka29zQGNhZGVuY2UuY29tPg0KPiBDYzogRGF2aWQgQWlybGllIDxhaXJs
+aWVkQGxpbnV4LmllPjsgUm9iIEhlcnJpbmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IA0KPiBNYXJr
+IFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgQXJjaGl0IFRhbmVqYSANCj4gPGFyY2hp
+dHRAY29kZWF1cm9yYS5vcmc+OyBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPjsg
+R3VzdGF2byANCj4gUGFkb3ZhbiA8Z3VzdGF2b0BwYWRvdmFuLm9yZz47IE1hYXJ0ZW4gTGFua2hv
+cnN0IA0KPiA8bWFhcnRlbi5sYW5raG9yc3RAbGludXguaW50ZWwuY29tPjsgU2VhbiBQYXVsIDxz
+ZWFuQHBvb3JseS5ydW4+OyANCj4gU2FuZHkgSHVhbmcgPGhqY0Byb2NrLWNoaXBzLmNvbT47IEhl
+aWtvIFN0w7xibmVyIDxoZWlrb0BzbnRlY2guZGU+OyANCj4gUXVlbnRpbiBTY2h1bHogPHF1ZW50
+aW4uc2NodWx6QGZyZWUtZWxlY3Ryb25zLmNvbT47IFBpb3RyIFNyb2thIA0KPiA8cGlvdHJzQGNh
+ZGVuY2UuY29tPjsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgDQo+IGRldmljZXRy
+ZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyANCj4gbGlu
+dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyANCj4gbGludXgtcm9ja2NoaXBAbGlz
+dHMuaW5mcmFkZWFkLm9yZzsgUmFmYWwgQ2llcGllbGEgDQo+IDxyYWZhbGNAY2FkZW5jZS5jb20+
+OyBxdWVudGluLnNjaHVsekBib290bGluLmNvbTsgamJlcmdzYWdlbEB0aS5jb20NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSCB2NiAwLzZdIGRybTogYWRkIHN1cHBvcnQgZm9yIENhZGVuY2UgTUhEUCBE
+UEkvRFAgYnJpZGdlLg0KPg0KPiBFWFRFUk5BTCBNQUlMDQo+DQo+DQo+IEhpIERhbWlhbiwNCj4N
+Cj4gT24gTW9uZGF5LCA1IE5vdmVtYmVyIDIwMTggMTE6NDQ6NTMgRUVUIERhbWlhbiBLb3Mgd3Jv
+dGU6DQo+PiBIaSBHdXlzLA0KPj4NCj4+IEknbSB3b25kZXJpbmcgaWYgdGhpcyB0aW1lIHBhdGNo
+IGlzIHNvIGdvb2QgdGhhdCB0aGVyZSdyZSBubyBjaGFuZ2UgDQo+PiByZXF1ZXN0cywgb3IgaXMg
+aXQgc28gYmFkIHRoYXQgaXQgd2FzIHJlamVjdGVkIHdpdGhvdXQgYSBjb21tZW50IDogKSANCj4+
+IFBsZWFzZSBsZXQgbWUga25vdyBpZiB0aGlzIHBhdGNoIGlzIGJlaW5nIGluIHJldmlldyBvciB3
+YXMgcmVqZWN0ZWQgDQo+PiBhbmQsIGlmIHNvLCB3aGF0IG5lZWRzIHRvIGJlIGNoYW5nZWQuDQo+
+IEkgdW5mb3J0dW5hdGVseSBkb24ndCBoYXZlIHRpbWUgdG8gcmV2aWV3IHlvdXIgc2VyaWVzIGZv
+ciB0aGUgdGltZSBiZWluZy4gDQo+IEhvcGVmdWxseSBzb21lb25lIGVsc2Ugd2lsbCBoYXZlIGEg
+YmV0dGVyIHJldmlldyBiYW5kd2lkdGggOi0pIFNvcnJ5IGFib3V0IHRoYXQuDQo+DQo+IC0tDQo+
+IFJlZ2FyZHMsDQo+DQo+IExhdXJlbnQgUGluY2hhcnQNCj4NCj4NCj4NCj4NCj4NCg0K
