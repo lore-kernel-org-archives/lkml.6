@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EAAECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC954C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF43D2086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DCF720825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="k0tvQuh9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF43D2086A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kzXnbFhq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DCF720825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbeKEVZa (ORCPT
+        id S1729629AbeKEVZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:25:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52144 "EHLO
+        Mon, 5 Nov 2018 16:25:44 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52572 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbeKEVZ3 (ORCPT
+        with ESMTP id S1729470AbeKEVZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:25:29 -0500
+        Mon, 5 Nov 2018 16:25:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=CgA97y0EmNeCMJg6d8XKxlF1P2W0FCh6ryIOW7cY0RE=; b=k0tvQuh9ojYB
-        4/NpX7/93C879F0o4KS01wtE/GzS/9LraZn68WcqvJWcW0zyksGV2cuwe4Espb/0WA03oXJGPDRZ7
-        hoDkyt4kI1ag17lyrFnH1rXVRAx2EFUfkxpb5f9PvhzaCxAXeW5MybvN4S4kgQdQ5FX1iHLt2P0gT
-        sMgXk=;
+        List-Archive; bh=mMV5HJ7bPeSEu0ToPx2GrUSSKBKaKDTOHbA2qR4uvoA=; b=kzXnbFhqvRpv
+        a/BO4C5LKwQcKX85tXE8ckfFVmwHw1nHlHtBP8ZQUEOWsEb+xub7SRJeVQi37NG7c+0zIULpSVDD9
+        0bXA4aOq+/XXqd4VwRQcPnuWcm8DUYBTiqpZKsuMSihkRzcE1BXJmAspwkXYj1zO5hjvVb6kjFkQM
+        rb824=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJddk-0008M1-4N; Mon, 05 Nov 2018 12:05:56 +0000
+        id 1gJdds-0008ML-Te; Mon, 05 Nov 2018 12:06:04 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D73F21124D98; Mon,  5 Nov 2018 12:05:55 +0000 (GMT)
+        id 996891124D98; Mon,  5 Nov 2018 12:06:04 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Leilk Liu <leilk.liu@mediatek.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: mediatek: Add bindings for mediatek MT8183 soc platform" to the spi tree
-In-Reply-To:  <1541052139-8845-2-git-send-email-leilk.liu@mediatek.com>
-Message-Id: <20181105120555.D73F21124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:05:55 +0000 (GMT)
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, Addy Ke <addy.ke@rock-chips.com>,
+        Mark Brown <broonie@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: rockchip: support lsb-first mode" to the spi tree
+In-Reply-To:  <20181031105711.19575-15-esmil@mailme.dk>
+Message-Id: <20181105120604.996891124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:06:04 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: mediatek: Add bindings for mediatek MT8183 soc platform
+   spi: rockchip: support lsb-first mode
 
 has been applied to the spi tree at
 
@@ -86,31 +86,42 @@ to this mail.
 Thanks,
 Mark
 
-From f611dfdb8544b5ac4228f4e3cb3b06ce15b9c74b Mon Sep 17 00:00:00 2001
-From: Leilk Liu <leilk.liu@mediatek.com>
-Date: Thu, 1 Nov 2018 14:02:18 +0800
-Subject: [PATCH] spi: mediatek: Add bindings for mediatek MT8183 soc platform
+From 04290192f7ebe892828f69ac57c4684e25da378d Mon Sep 17 00:00:00 2001
+From: Emil Renner Berthing <kernel@esmil.dk>
+Date: Wed, 31 Oct 2018 11:57:11 +0100
+Subject: [PATCH] spi: rockchip: support lsb-first mode
 
-This patch adds a DT binding documentation for the MT8183 soc.
+Add missing support for lsb-first mode.
 
-Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/spi/spi-mt65xx.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-rockchip.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-index 236dcb0faf37..7940940b43e6 100644
---- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-@@ -8,6 +8,7 @@ Required properties:
-     - mediatek,mt7622-spi: for mt7622 platforms
-     - mediatek,mt8135-spi: for mt8135 platforms
-     - mediatek,mt8173-spi: for mt8173 platforms
-+    - mediatek,mt8183-spi: for mt8183 platforms
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index 9e47e81553a1..3912526ead66 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -476,6 +476,8 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
  
- - #address-cells: should be 1.
+ 	cr0 |= rs->rsd << CR0_RSD_OFFSET;
+ 	cr0 |= (spi->mode & 0x3U) << CR0_SCPH_OFFSET;
++	if (spi->mode & SPI_LSB_FIRST)
++		cr0 |= CR0_FBM_LSB << CR0_FBM_OFFSET;
  
+ 	if (xfer->rx_buf && xfer->tx_buf)
+ 		cr0 |= CR0_XFM_TR << CR0_XFM_OFFSET;
+@@ -681,7 +683,7 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 
+ 	master->auto_runtime_pm = true;
+ 	master->bus_num = pdev->id;
+-	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
++	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP | SPI_LSB_FIRST;
+ 	master->num_chipselect = ROCKCHIP_SPI_MAX_CS_NUM;
+ 	master->dev.of_node = pdev->dev.of_node;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(16) | SPI_BPW_MASK(8) | SPI_BPW_MASK(4);
 -- 
 2.19.0.rc2
 
