@@ -2,114 +2,97 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6DCECDE47
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC2CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D056720819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 05:58:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D056720819
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F6FB204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:07:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6FB204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbeKEPP4 (ORCPT
+        id S1729120AbeKEPZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 10:15:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37186 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727136AbeKEPP4 (ORCPT
+        Mon, 5 Nov 2018 10:25:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40035 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbeKEPZ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 10:15:56 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA55rbo3135368
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 00:57:57 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2njen1atue-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 00:57:57 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sbobroff@linux.ibm.com>;
-        Mon, 5 Nov 2018 05:57:55 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 05:57:52 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA55vpKD49283132
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 05:57:51 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5893342045;
-        Mon,  5 Nov 2018 05:57:51 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 046BF42042;
-        Mon,  5 Nov 2018 05:57:51 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Nov 2018 05:57:50 +0000 (GMT)
-Received: from tungsten.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 84448A00D2;
-        Mon,  5 Nov 2018 16:57:48 +1100 (AEDT)
-From:   Sam Bobroff <sbobroff@linux.ibm.com>
-To:     airlied@redhat.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Two AST driver fixes
-Date:   Mon,  5 Nov 2018 16:57:46 +1100
-X-Mailer: git-send-email 2.19.0.2.gcad72f5712
+        Mon, 5 Nov 2018 10:25:27 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA566prn217386
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 4 Nov 2018 22:06:51 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA566om0217383;
+        Sun, 4 Nov 2018 22:06:50 -0800
+Date:   Sun, 4 Nov 2018 22:06:50 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yi Wang <tipbot@zytor.com>
+Message-ID: <tip-e1ff516a56ad56c476b47795d3811eef79d25fbe@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com,
+        xu.xi8@zte.com.cn, tglx@linutronix.de, wang.yi59@zte.com.cn
+Reply-To: tglx@linutronix.de, wang.yi59@zte.com.cn, xu.xi8@zte.com.cn,
+          hpa@zytor.com, torvalds@linux-foundation.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org
+In-Reply-To: <1541379013-11352-1-git-send-email-wang.yi59@zte.com.cn>
+References: <1541379013-11352-1-git-send-email-wang.yi59@zte.com.cn>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] sched/fair: Fix a comment in task_numa_fault()
+Git-Commit-ID: e1ff516a56ad56c476b47795d3811eef79d25fbe
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18110505-0008-0000-0000-0000028B4E2F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110505-0009-0000-0000-000021F580A8
-Message-Id: <cover.1541397462.git.sbobroff@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=785 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050053
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Commit-ID:  e1ff516a56ad56c476b47795d3811eef79d25fbe
+Gitweb:     https://git.kernel.org/tip/e1ff516a56ad56c476b47795d3811eef79d25fbe
+Author:     Yi Wang <wang.yi59@zte.com.cn>
+AuthorDate: Mon, 5 Nov 2018 08:50:13 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 5 Nov 2018 07:03:59 +0100
 
-Here are two (attempted) fixes for the AST DRM driver. The issues they fix are
-both seen when the ast driver is unloaded (tested on Power9, although it looks
-like the second one is architecture independent).
+sched/fair: Fix a comment in task_numa_fault()
 
-I'm fairly confident about the first fix, as it looks pretty straight forward.
+Duplicated 'case it'.
 
-I'm not sure if the second patch uses the right approach, so I'd appreciate some
-feedback. I've had a good look around, and it does seem to fix the problem but
-I don't know this area at all.
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Reviewed-by: Xi Xu <xu.xi8@zte.com.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: zhong.weidong@zte.com.cn
+Link: http://lkml.kernel.org/r/1541379013-11352-1-git-send-email-wang.yi59@zte.com.cn
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Note that while it does seem odd to take a reference just before calling
-drm_framebuffer_remove(), that seems to be be necessary because
-drm_framebuffer_remove() is expecting the framebuffer to be dynamically
-allocated (but the AST driver directly contains it) (I saw some references to
-this being legacy behaviour).
-
-Cheers,
-Sam.
-
-Sam Bobroff (2):
-  drm/ast: Fix incorrect free on ioregs
-  drm/ast: Fix connector leak during driver unload
-
- drivers/gpu/drm/ast/ast_fb.c   | 4 ++++
- drivers/gpu/drm/ast/ast_main.c | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
--- 
-2.19.0.2.gcad72f5712
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ee271bb661cc..3648d0300fdf 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2400,8 +2400,8 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
+ 		local = 1;
+ 
+ 	/*
+-	 * Retry task to preferred node migration periodically, in case it
+-	 * case it previously failed, or the scheduler moved us.
++	 * Retry to migrate task to preferred node periodically, in case it
++	 * previously failed, or the scheduler moved us.
+ 	 */
+ 	if (time_after(jiffies, p->numa_migrate_retry)) {
+ 		task_numa_placement(p);
