@@ -2,147 +2,115 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E87DC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E331C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4742120685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4742120685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 22EE120827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcRa1JFQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22EE120827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730085AbeKEX5f (ORCPT
+        id S2387406AbeKEX5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:57:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:57668 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729089AbeKEX5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:57:35 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:37:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="86796944"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga007.jf.intel.com with ESMTP; 05 Nov 2018 06:37:32 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gJg0R-0005mo-NB; Mon, 05 Nov 2018 16:37:31 +0200
-Date:   Mon, 5 Nov 2018 16:37:31 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 1/4] device property: Introduce fwnode_name()
-Message-ID: <20181105143731.GK10650@smile.fi.intel.com>
-References: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
- <20181105091727.25544-2-heikki.krogerus@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181105091727.25544-2-heikki.krogerus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 5 Nov 2018 18:57:39 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37370 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbeKEX5j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:57:39 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p6-v6so4551371pll.4
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 06:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=z1zzkMTBEehskq2DPI3ZOQHaUdaoniARDpLAtPnVMgI=;
+        b=bcRa1JFQfrDvxrCBswxmSbgeYFdHnqGGnLHq2506hoD518rVvfi+ArtX1yOrjsbBOr
+         cKS4HHPs61TUaDKK7hcxEbfjeW/bO0GYRZtTTL7CEE2ZT48mdh81NSlaXTehVuVKrH2A
+         aUC+SXnaJ5EQzeuG1htRreOwDDxM34/VaDgYrdpDhyXx/UAS9W2mUgvbPXrY/qlwRSXe
+         Jf8QX+yZM3Iif5ZajdGd4heLQI/thOmMxfwWQ6U/BOTuLA9foA4fLBbBN6UOsGQ4lvfM
+         HDmZf40WMracLCha0dmE/WtRdwKj8E7JkPiYKf3c6xT4jBbfIjUw/GXYFCYFa44UhT5G
+         F9WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=z1zzkMTBEehskq2DPI3ZOQHaUdaoniARDpLAtPnVMgI=;
+        b=WQFU0Zb3EvZOZwUBBGzX/ecSWCeKSkylz3vX9GK2ybuoG9ZLAPtehw+3H83n9J5goZ
+         0QUYhKSgZxq9MLQ1pJGbbJ0T7+KrJPfcumgAi8HUFjVa2d8DeKe9X4eBrT2e0FYxR5mA
+         /I0FtXQEyNQ/wnkqWrYSrWZhx1epw9J74UQVD8IAI0zFaTq77Hfpj1qUHAPGlZIeFk+d
+         3KtzmMqW+b+GvjkA7e8XRCJeopFJ5ObvDkpNBX7qS+6gYqJ0l+chP89D2ixkcljanIqD
+         kht35lp7/JNuDDtfiSxIuKrp1ZCLdybD9i56XiaBqp2FWtAZYKAKLcmoAb7b2XclnP8N
+         hXQA==
+X-Gm-Message-State: AGRZ1gKckHJ7yWdpsth2X/2E3QveFzwVgPhOdyS1jlHmoZVaLpvu+82V
+        FbSaN2aOHeQq0y9/d0q80Y4=
+X-Google-Smtp-Source: AJdET5eTxjVAXMLDVPHzELPZyCSMhaRrkGRajUG1ti+DRfkoiQVOCYE9rTqsYzy/8E/MQUnwlQ24GA==
+X-Received: by 2002:a17:902:b183:: with SMTP id s3-v6mr21194163plr.70.1541428658045;
+        Mon, 05 Nov 2018 06:37:38 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id o27-v6sm57166297pfk.85.2018.11.05.06.37.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 06:37:37 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        fabio.estevam@nxp.com, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] ASoC: fsl_ssi: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Mon,  5 Nov 2018 09:37:30 -0500
+Message-Id: <20181105143730.6071-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 12:17:24PM +0300, Heikki Krogerus wrote:
-> This helper returns the name of the node. The name is
-> primarily expected to be returned from a new fwnode
-> operation meant for this purpose, but when no name is
-> returned, the helper will also attempt to read a device
-> property "name".
-> 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->  drivers/base/property.c  | 18 ++++++++++++++++++
->  include/linux/fwnode.h   |  1 +
->  include/linux/property.h |  2 ++
->  3 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index 240ab5230ff6..1e4eb7ab2b84 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -1156,6 +1156,24 @@ void fwnode_handle_put(struct fwnode_handle *fwnode)
->  }
->  EXPORT_SYMBOL_GPL(fwnode_handle_put);
->  
-> +/**
-> + * fwnode_name - Get the name of a device node
-> + * @fwnode: Pointer to the device node.
-> + *
-> + * Returns the node name of @fwnode. If @fwnode does not have a "unit name",
-> + * this code will also attempt to read a string property named "name".
-> + */
-> +const char *fwnode_name(const struct fwnode_handle *fwnode)
-> +{
-> +	const char *name = fwnode_call_ptr_op(fwnode, name);
-> +
-> +	if (!name)
-> +		fwnode_call_int_op(fwnode, property_read_string_array,
-> +				   "name", &name, 1);
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Is it going to be extended in the future?
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ sound/soc/fsl/fsl_ssi_dbg.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-Otherwise I would rather go with (few more LOCs, yes)
-
-	const char *name;
-
-	name = fwnode_call_ptr_op(fwnode, name);
-	if (name)
-		return name;
-
-	fwnode_call_int_op(fwnode, property_read_string_array, "name", &name, 1);
-	return name;
-
-> +	return name;
-> +}
-> +EXPORT_SYMBOL_GPL(fwnode_name);
-> +
->  /**
->   * fwnode_device_is_available - check if a device is available for use
->   * @fwnode: Pointer to the fwnode of the device.
-> diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
-> index faebf0ca0686..2e445fed4df4 100644
-> --- a/include/linux/fwnode.h
-> +++ b/include/linux/fwnode.h
-> @@ -72,6 +72,7 @@ struct fwnode_reference_args {
->  struct fwnode_operations {
->  	struct fwnode_handle *(*get)(struct fwnode_handle *fwnode);
->  	void (*put)(struct fwnode_handle *fwnode);
-> +	const char *(*name)(const struct fwnode_handle *fwnode);
->  	bool (*device_is_available)(const struct fwnode_handle *fwnode);
->  	const void *(*device_get_match_data)(const struct fwnode_handle *fwnode,
->  					     const struct device *dev);
-> diff --git a/include/linux/property.h b/include/linux/property.h
-> index ac8a1ebc4c1b..44781d37dd96 100644
-> --- a/include/linux/property.h
-> +++ b/include/linux/property.h
-> @@ -109,6 +109,8 @@ struct fwnode_handle *device_get_named_child_node(struct device *dev,
->  struct fwnode_handle *fwnode_handle_get(struct fwnode_handle *fwnode);
->  void fwnode_handle_put(struct fwnode_handle *fwnode);
->  
-> +const char *fwnode_name(const struct fwnode_handle *fwnode);
-> +
->  int fwnode_irq_get(struct fwnode_handle *fwnode, unsigned int index);
->  
->  unsigned int device_get_child_node_count(struct device *dev);
-> -- 
-> 2.19.1
-> 
-
+diff --git a/sound/soc/fsl/fsl_ssi_dbg.c b/sound/soc/fsl/fsl_ssi_dbg.c
+index 1255dfe19eef..6f6294149476 100644
+--- a/sound/soc/fsl/fsl_ssi_dbg.c
++++ b/sound/soc/fsl/fsl_ssi_dbg.c
+@@ -124,17 +124,7 @@ static int fsl_ssi_stats_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int fsl_ssi_stats_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, fsl_ssi_stats_show, inode->i_private);
+-}
+-
+-static const struct file_operations fsl_ssi_stats_ops = {
+-	.open = fsl_ssi_stats_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(fsl_ssi_stats);
+ 
+ int fsl_ssi_debugfs_create(struct fsl_ssi_dbg *ssi_dbg, struct device *dev)
+ {
+@@ -144,7 +134,7 @@ int fsl_ssi_debugfs_create(struct fsl_ssi_dbg *ssi_dbg, struct device *dev)
+ 
+ 	ssi_dbg->dbg_stats = debugfs_create_file("stats", 0444,
+ 						 ssi_dbg->dbg_dir, ssi_dbg,
+-						 &fsl_ssi_stats_ops);
++						 &fsl_ssi_stats_fops);
+ 	if (!ssi_dbg->dbg_stats) {
+ 		debugfs_remove(ssi_dbg->dbg_dir);
+ 		return -ENOMEM;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.0
 
