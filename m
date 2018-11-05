@@ -2,104 +2,97 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0DBC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB305C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFD302087A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:42:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OgXsWJ3W";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XVNNqV7A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD302087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F5B82082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:43:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F5B82082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbeKETBU (ORCPT
+        id S1727409AbeKETCf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:01:20 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50718 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeKETBU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:01:20 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E9E2A60B7F; Mon,  5 Nov 2018 09:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541410948;
-        bh=ZuW+AaqfCLSRA9Kf5pYu6vAZLi5tpItZrhXkNqTYJ60=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OgXsWJ3We4v8zF1L97ZLIi+asYLUDSapbX74yRJWRbEKNj4kHaWE3nfq6AomRoXa4
-         fT0j6oZ2w2JL7ma6j1aNwO5niLNKQVXiOjnx/obXeWnDBX/wBX4THM1yzwV9txPsxv
-         L6eucLxVBmxzEUitKwki9S5ne/etaXK206g74M6A=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 502416074C;
-        Mon,  5 Nov 2018 09:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541410947;
-        bh=ZuW+AaqfCLSRA9Kf5pYu6vAZLi5tpItZrhXkNqTYJ60=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XVNNqV7Ac/zE+BjjGFQXU8duKHFpHehzIBd4lLcQ3yaRtkIMyst6nrp6EMk1Z5MBc
-         mWThZIdbPhqy7Bpjo7z0MfIy8raKGqoljE9GyLgZ6dcq8tKbUsFEPSKuABBnGoX06k
-         sjgyxAEDkdLtlAb7Kb398BvbOq2sXLTDXy5c1dJw=
+        Mon, 5 Nov 2018 14:02:35 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59518 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbeKETCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:02:34 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 45705207B0; Mon,  5 Nov 2018 10:43:41 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 161B3206A1;
+        Mon,  5 Nov 2018 10:43:41 +0100 (CET)
+Date:   Mon, 5 Nov 2018 10:43:41 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/28] Allwinner H6 DE3 and HDMI support
+Message-ID: <20181105094341.qedt7jvnxooiojki@flea>
+References: <20181104182705.18047-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 05 Nov 2018 15:12:27 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        dan.j.williams@intel.com, iamjoonsoo.kim@lge.com,
-        gregkh@linuxfoundation.org, osalvador@suse.de, malat@debian.org,
-        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
-        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
-        vinmenon@codeaurora.org, getarunks@gmail.com
-Subject: Re: [PATCH v5 1/2] memory_hotplug: Free pages as higher order
-In-Reply-To: <c6289fada694462ed708174f9a1f3b6c@codeaurora.org>
-References: <1538727006-5727-1-git-send-email-arunks@codeaurora.org>
- <72215e75-6c7e-0aef-c06e-e3aba47cf806@suse.cz>
- <efb65160af41d0e18cb2dcb30c2fb86a@codeaurora.org>
- <20181010173334.GL5873@dhcp22.suse.cz>
- <a2d576a5fc82cdf54fc89409686e58f5@codeaurora.org>
- <20181011075503.GQ5873@dhcp22.suse.cz>
- <20181018191825.fcad6e28f32a3686f201acdf@linux-foundation.org>
- <20181019080755.GK18839@dhcp22.suse.cz>
- <c6289fada694462ed708174f9a1f3b6c@codeaurora.org>
-Message-ID: <beaa1acf7423da7ee0f9bbc4cee2d14a@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="46or3tqg6zho2rip"
+Content-Disposition: inline
+In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-22 16:03, Arun KS wrote:
-> On 2018-10-19 13:37, Michal Hocko wrote:
->> On Thu 18-10-18 19:18:25, Andrew Morton wrote:
->> [...]
->>> So this patch needs more work, yes?
->> 
->> Yes, I've talked to Arun (he is offline until next week) offlist and 
->> he
->> will play with this some more.
-> 
-> Converted totalhigh_pages, totalram_pages and zone->managed_page to
-> atomic and tested hot add. Latency is not effected with this change.
-> Will send out a separate patch on top of this one.
-Hello Andrew/Michal,
 
-Will this be going in subsequent -rcs?
+--46or3tqg6zho2rip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Arun
+On Sun, Nov 04, 2018 at 07:26:37PM +0100, Jernej Skrabec wrote:
+> This series adds support for Display Engine 3.0 and HDMI 2.0a, which
+> can be found on H6 SoC.
+>=20
+> Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
+> displaying and processing 10-bit and AFBC formats, which are not yet
+> supported by this series.
+>=20
+> H6 is also the first SoC which supports IOMMU, but support for it is
+> not yet added.
+>=20
+> This series is based on linux-next at next-20181102.
+>=20
+> I suggest all patches go through allwinner tree, except DRM patches,
+> which should go through drm-misc tree.
 
+Applied all patches up to the 26. The two last one however should not
+use the clk bindings define you added in the first clk patches, since
+clk and dt patches are going through different tree.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--46or3tqg6zho2rip
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AQzQAKCRDj7w1vZxhR
+xVIMAP4qGI+8fBa+vQxXwJp/m/0eAS+8LQd22DCU9THY6PWzggEAtx48VjehKIZJ
+QEmvOcA8rTqxZSzuAnclZTVr676CdQQ=
+=9xxI
+-----END PGP SIGNATURE-----
+
+--46or3tqg6zho2rip--
