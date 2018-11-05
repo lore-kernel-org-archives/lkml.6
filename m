@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEDDC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27147ECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5407020819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB85D2081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0QHz6k1R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5407020819
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KAhi1q2w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB85D2081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbeKFCR2 (ORCPT
+        id S2387734AbeKFCRa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:17:28 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:43550 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387677AbeKFCR0 (ORCPT
+        Mon, 5 Nov 2018 21:17:30 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38834 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387677AbeKFCR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:26 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs5sA052327;
-        Mon, 5 Nov 2018 16:56:28 GMT
+        Mon, 5 Nov 2018 21:17:29 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs0qK097046;
+        Mon, 5 Nov 2018 16:56:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=UTB2Sr3dL/IqP1KEApaT4aDh/kChWZlvDCupI65rZ48=;
- b=0QHz6k1R+f97qO32+2IlnJ35k/qUdjYjcuv1TKJ4wUIXfkE6+JNJj0qrM0nghND3+w+O
- cAjLW1fqp98CLgSQLbB6wBLogI18brwjKrrfhq11qDMjTejr785PdYVoH1VxZ2Z/Z0Ze
- IydMcrlOPWbdmdONU9w42O4UZXjZbXyGe439Fz1ate0YvQ/+SB7ln/O45xJFihP1AfNJ
- gpG1cyhtQippKedqJxaNV46cYx78VZ6QmEvxrTeeunagc78IXJs7JRQgsruiD7iRwojV
- 3sUN/yabo7coxLf76IbIeC66BuznidvengcvZ1/T2h08L3xA3Af1c93X59WstgN/g6Ru bg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2nh4aqg2e6-1
+ bh=a2OiRCY8BwYFe4eDIMRKDWwH3Sf4ADRCu0KAZGhXWg0=;
+ b=KAhi1q2wPZLA+lEK3/3KyAFRrNkzLqmyxyDpGjQBIRkQwSlyk2/8oO9cw6hBVtplTD0Y
+ Fr8lywyV+UoD7H5NFj17FJ42jAJbGq2lg05a59C8u/REeu+F4N7MwoFCUpeubJBVUKYX
+ 4N7PDIBXJBmuJNPIuWdfFC39Cj+QCYHBlaGg/AFPGU+mJgSMkbb/ll62cYJUFdZ5JoYJ
+ Ui41GCe9B+4kFzh7uMqR7qSdRd4dxCpKg+h9km1Z3MJ1Mdzmd1KfAzxCf3ax3bMAWOYy
+ IkW/pkXENgdYH1+GwlT+AYH1b0Tq+o1epsWlUIMJJdcANSEpQiigwKPy+wUK55U6482m Ag== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2nh33tr6bp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 16:56:28 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuRaO022744
+        Mon, 05 Nov 2018 16:56:24 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuOXj025118
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 16:56:27 GMT
+        Mon, 5 Nov 2018 16:56:24 GMT
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuRg4018838;
-        Mon, 5 Nov 2018 16:56:27 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuNaR008457;
+        Mon, 5 Nov 2018 16:56:23 GMT
 Received: from localhost.localdomain (/73.60.114.248)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 08:56:26 -0800
+        with ESMTP ; Mon, 05 Nov 2018 08:56:23 -0800
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
 To:     linux-mm@kvack.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -63,9 +63,9 @@ Cc:     aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
         Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
         rdunlap@infradead.org, steven.sistare@oracle.com,
         tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz
-Subject: [RFC PATCH v4 12/13] mm: parallelize clear_gigantic_page
-Date:   Mon,  5 Nov 2018 11:55:57 -0500
-Message-Id: <20181105165558.11698-13-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v4 10/13] mm: enlarge type of offset argument in mem_map_offset and mem_map_next
+Date:   Mon,  5 Nov 2018 11:55:55 -0500
+Message-Id: <20181105165558.11698-11-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
@@ -73,7 +73,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=778
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1811050153
 Sender: linux-kernel-owner@vger.kernel.org
@@ -81,120 +81,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parallelize clear_gigantic_page, which zeroes any page size larger than
-8M (e.g. 1G on x86).
+Changes the type of 'offset' from int to unsigned long in both
+mem_map_offset and mem_map_next.
 
-Performance results (the default number of threads is 4; higher thread
-counts shown for context only):
+This facilitates ktask's use of mem_map_next with its unsigned long
+types to avoid silent truncation when these unsigned longs are passed as
+ints.
 
-Machine:  Intel(R) Xeon(R) CPU E7-8895 v3 @ 2.60GHz, 288 CPUs, 1T memory
-Test:     Clear a range of gigantic pages (triggered via fallocate)
-
-nthread   speedup   size (GiB)   min time (s)   stdev
-      1                    100          41.13    0.03
-      2     2.03x          100          20.26    0.14
-      4     4.28x          100           9.62    0.09
-      8     8.39x          100           4.90    0.05
-     16    10.44x          100           3.94    0.03
-
-      1                    200          89.68    0.35
-      2     2.21x          200          40.64    0.18
-      4     4.64x          200          19.33    0.32
-      8     8.99x          200           9.98    0.04
-     16    11.27x          200           7.96    0.04
-
-      1                    400         188.20    1.57
-      2     2.30x          400          81.84    0.09
-      4     4.63x          400          40.62    0.26
-      8     8.92x          400          21.09    0.50
-     16    11.78x          400          15.97    0.25
-
-      1                    800         434.91    1.81
-      2     2.54x          800         170.97    1.46
-      4     4.98x          800          87.38    1.91
-      8    10.15x          800          42.86    2.59
-     16    12.99x          800          33.48    0.83
-
-The speedups are mostly due to the fact that more threads can use more
-memory bandwidth.  The loop we're stressing on the x86 chip in this test
-is clear_page_erms, which tops out at a bandwidth of 2550 MiB/s with one
-thread.  We get the same bandwidth per thread for 2, 4, or 8 threads,
-but at 16 threads the per-thread bandwidth drops to 1420 MiB/s.
-
-However, the performance also improves over a single thread because of
-the ktask threads' NUMA awareness (ktask migrates worker threads to the
-node local to the work being done).  This becomes a bigger factor as the
-amount of pages to zero grows to include memory from multiple nodes, so
-that speedups increase as the size increases.
+It also fixes the preexisting truncation of 'offset' from unsigned long
+to int by the sole caller of mem_map_offset, follow_hugetlb_page.
 
 Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/memory.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ mm/internal.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 15c417e8e31d..445d06537905 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -69,6 +69,7 @@
- #include <linux/userfaultfd_k.h>
- #include <linux/dax.h>
- #include <linux/oom.h>
-+#include <linux/ktask.h>
- 
- #include <asm/io.h>
- #include <asm/mmu_context.h>
-@@ -4415,19 +4416,28 @@ static inline void process_huge_page(
- 	}
- }
- 
--static void clear_gigantic_page(struct page *page,
--				unsigned long addr,
--				unsigned int pages_per_huge_page)
-+struct cgp_args {
-+	struct page	*base_page;
-+	unsigned long	addr;
-+};
-+
-+static int clear_gigantic_page_chunk(unsigned long start, unsigned long end,
-+				     struct cgp_args *args)
+diff --git a/mm/internal.h b/mm/internal.h
+index 3b1ec1412fd2..cc90de4d4e01 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -367,7 +367,8 @@ static inline void mlock_migrate_page(struct page *new, struct page *old) { }
+  * the maximally aligned gigantic page 'base'.  Handle any discontiguity
+  * in the mem_map at MAX_ORDER_NR_PAGES boundaries.
+  */
+-static inline struct page *mem_map_offset(struct page *base, int offset)
++static inline struct page *mem_map_offset(struct page *base,
++					  unsigned long offset)
  {
--	int i;
--	struct page *p = page;
-+	struct page *base_page = args->base_page;
-+	struct page *p = base_page;
-+	unsigned long addr = args->addr;
-+	unsigned long i;
- 
- 	might_sleep();
--	for (i = 0; i < pages_per_huge_page;
--	     i++, p = mem_map_next(p, page, i)) {
-+	for (i = start; i < end; ++i) {
- 		cond_resched();
- 		clear_user_highpage(p, addr + i * PAGE_SIZE);
-+
-+		p = mem_map_next(p, base_page, i);
- 	}
-+
-+	return KTASK_RETURN_SUCCESS;
- }
- 
- static void clear_subpage(unsigned long addr, int idx, void *arg)
-@@ -4444,7 +4454,13 @@ void clear_huge_page(struct page *page,
- 		~(((unsigned long)pages_per_huge_page << PAGE_SHIFT) - 1);
- 
- 	if (unlikely(pages_per_huge_page > MAX_ORDER_NR_PAGES)) {
--		clear_gigantic_page(page, addr, pages_per_huge_page);
-+		struct cgp_args args = {page, addr};
-+		struct ktask_node node = {0, pages_per_huge_page,
-+					  page_to_nid(page)};
-+		DEFINE_KTASK_CTL(ctl, clear_gigantic_page_chunk, &args,
-+				 KTASK_MEM_CHUNK);
-+
-+		ktask_run_numa(&node, 1, &ctl);
- 		return;
- 	}
- 
+ 	if (unlikely(offset >= MAX_ORDER_NR_PAGES))
+ 		return nth_page(base, offset);
+@@ -378,8 +379,8 @@ static inline struct page *mem_map_offset(struct page *base, int offset)
+  * Iterator over all subpages within the maximally aligned gigantic
+  * page 'base'.  Handle any discontiguity in the mem_map.
+  */
+-static inline struct page *mem_map_next(struct page *iter,
+-						struct page *base, int offset)
++static inline struct page *mem_map_next(struct page *iter, struct page *base,
++					unsigned long offset)
+ {
+ 	if (unlikely((offset & (MAX_ORDER_NR_PAGES - 1)) == 0)) {
+ 		unsigned long pfn = page_to_pfn(base) + offset;
 -- 
 2.19.1
 
