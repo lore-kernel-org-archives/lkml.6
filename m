@@ -2,70 +2,70 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B1DC0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B31C46475
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EDF120866
+	by mail.kernel.org (Postfix) with ESMTP id 986B02086A
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:51:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OTvdfAaN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EDF120866
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="swI/u1Ex"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986B02086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbeKEWLK (ORCPT
+        id S1729897AbeKEWLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 5 Nov 2018 17:11:10 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36056 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729829AbeKEWLI (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41739 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729773AbeKEWLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:11:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z13-v6so7004820wrs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:51:30 -0800 (PST)
+        Mon, 5 Nov 2018 17:11:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x12-v6so9374787wrw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:51:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YsnslnO6vcuRwWLyAWdtQKAevJ9ehflxNI0mn9dX8PU=;
-        b=OTvdfAaNOc0oHctj3ZKlWXRvIYM+PdAQW4RrbldQ+hPSxV+fDn1XHYH93OJO+847k7
-         IjwA3HzoAW3b7fnoXc9ziAUyWAekQdl4FH+8S6IiEG0Nm6+5qhRN7za11HxjqF53ZvMg
-         CUhvzUvN61QudHxBEwZ+plZoPOJDx0sETAjtzt5jSHiaRmJbCQUBp2iW46+JqEZgQZ9U
-         41TbdVBWKQ371O1Rs54d0uU4DtabBXe2uUWFXgwgNpltPH01CCtXj14M4nA6qPxHSSU7
-         lzbJtzfLiPH+t4mS9jK3EZQQxtz3GsupceBtzFVXk2SegV//fc42/Ic1E5/jjYVxRhl6
-         45Uw==
+        bh=fONjwXTnusmtiCB9PTBcsiWDtk+UWYsj3Fl35F3Izls=;
+        b=swI/u1Ex1f2yhtEgkj9++Q/b3F3UPbmu/x9nMV8U6iJuE+B7XrTdA3x/DgaJJnrbQU
+         Iqrzp/tO/KI2Ta1NCbdFpzD7qvAqMRPOx2bLHBbM7+5Hdr/EwcoY8mw/zrmmz+qv4TiC
+         /m12zs3kazRZw9ntJWjMAQxbtNFu965+64KzVffY/pwd7Fp+G6HIIaD1qV01yGQ+hTto
+         vsRP/o5V9K0vojvEx0i3Cr7zdLgbQtRroY9xXi/qo9vSWwhlBGbY4RMyDN05QSW3Qn6i
+         CEZ9cFgofWpQksSpdKzjpfNXzNpB2KuWjWFSKQZU46KgDec+U3RGSMdTThQuGYtSMDA5
+         ANBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YsnslnO6vcuRwWLyAWdtQKAevJ9ehflxNI0mn9dX8PU=;
-        b=Ye+aqSs/FmeIvaMuESgM4Ld2NoDClZHM4d4nP9BrS5q6z0fwks8tLU5Fp+La5TegYI
-         poa3BIbkKsgrnQZfeFSzu63hdy6AOCHVySPbZLmp4V3DTrDalEZBxAs4B4wk1M0GoqC+
-         hJWPHYFIf0O/N3ets8gtTCFTRhZm+Vjaqw6wm7oQuBJjfTgOwmK+nmPcBrK63aCVIOYU
-         lY++9T7wIzSA5sFEtbNjymw9k5dThtcCrf/JgoFMm39W+bP0I66VY5SKjQsjWiKXAm+T
-         GpdROubf6DreDi90bZpxeqWkns4j2CBOlMUgObmfZrKsUaoQuY+Iv2GjRZ+KZNbMcguA
-         clRQ==
-X-Gm-Message-State: AGRZ1gKjU+/BEYmjBxyqrrauFA1aN4H5eqRxwNxuB9qNsXQ+AcnyFW7o
-        4xdZzp1wf3MeEm3acjQ30JaduOGA0NQ=
-X-Google-Smtp-Source: AJdET5dYHqXsMevGCJrHFKnaMFfpYLJyIVU9LK5/cVr0b/f/lMhNfKdLbKsGvuwQOFOmUOOX7ls4LQ==
-X-Received: by 2002:adf:a31c:: with SMTP id c28-v6mr19698662wrb.195.1541422289791;
-        Mon, 05 Nov 2018 04:51:29 -0800 (PST)
+        bh=fONjwXTnusmtiCB9PTBcsiWDtk+UWYsj3Fl35F3Izls=;
+        b=FwBnBHDNxa4ueyNZQxIiUbneZVixjA0zjfGwdp2pt019G3b3+GO8s9aMXXP34KDKXR
+         szIb5pXy2wWugO+sKbQ1MqRgpvdnPDr5IyKS3calYTJH2J8QwSxsej5N1G/7ZXK5pIFj
+         9L6zy/aeznuRwJe3Oas1GcI+Ga7zby93HXQRSK6NV1NeZA1C7gbtpjxom6f0BlJMCenr
+         ck2heTyBdc3Gfv5Kopx0BYZiNHz0x/B/g8Zgo1au2oqzzJvpDXrxMXJRlL1Z6XsgqWLP
+         e9QWtN3/sBcf5WQktpU70vIeiGzmKT8kZ0E3rSj0CljMuOi4Z/D8SUhNnwWINUeaDpSQ
+         nvjA==
+X-Gm-Message-State: AGRZ1gKfxNLvXzl7TfjGUCs0OGY9uhgEn2EYtzC8HmliKyxM4892Y/uW
+        BxKKP493Q1IQ++ZaKQyca6enc1Blh1c=
+X-Google-Smtp-Source: AJdET5cjAZNU0b5ZVtYmrPAYuglb+5o/mIUGFrYH0BhVsbJVJzE7ItJyN1JQkVbYY83IzjpiPtGDSg==
+X-Received: by 2002:a5d:660c:: with SMTP id n12-v6mr7957725wru.19.1541422287137;
+        Mon, 05 Nov 2018 04:51:27 -0800 (PST)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id l4-v6sm56114579wrb.92.2018.11.05.04.51.28
+        by smtp.googlemail.com with ESMTPSA id l4-v6sm56114579wrb.92.2018.11.05.04.51.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 05 Nov 2018 04:51:29 -0800 (PST)
+        Mon, 05 Nov 2018 04:51:26 -0800 (PST)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     davem@davemloft.net, ebiggers@kernel.org,
         herbert@gondor.apana.org.au
 Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 5/5] crypto: crypto_user_stat: fix use_after_free of struct xxx_request
-Date:   Mon,  5 Nov 2018 12:51:14 +0000
-Message-Id: <1541422274-40060-6-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH 2/5] crypto: crypto_user_stat: convert all stats from u32 to u64
+Date:   Mon,  5 Nov 2018 12:51:11 +0000
+Message-Id: <1541422274-40060-3-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541422274-40060-1-git-send-email-clabbe@baylibre.com>
 References: <1541422274-40060-1-git-send-email-clabbe@baylibre.com>
@@ -74,634 +74,683 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All crypto_stats functions use the struct xxx_request for feeding stats,
-but in some case this structure could already be freed.
+All the 32-bit fields need to be 64-bit.  In some cases, UINT32_MAX crypto
+operations can be done in seconds.
 
-For fixing this, the needed parameters (len and alg) will be stored
-before the request being executed.
-Fixes: cac5818c25d0 ("crypto: user - Implement a generic crypto statistics")
-Reported-by: syzbot <syzbot+6939a606a5305e9e9799@syzkaller.appspotmail.com>
-
+Reported-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- crypto/ahash.c             | 14 ++++++++--
- include/crypto/acompress.h | 30 ++++++++++----------
- include/crypto/aead.h      | 30 ++++++++++----------
- include/crypto/akcipher.h  | 56 ++++++++++++++++++--------------------
- include/crypto/hash.h      | 25 +++++++++--------
- include/crypto/kpp.h       | 22 +++++++--------
- include/crypto/skcipher.h  | 16 +++++++----
- include/linux/crypto.h     | 34 +++++++++++------------
- 8 files changed, 118 insertions(+), 109 deletions(-)
+ crypto/algapi.c                 |  10 +--
+ crypto/crypto_user_stat.c       | 114 +++++++++++++++-----------------
+ include/crypto/acompress.h      |   8 +--
+ include/crypto/aead.h           |   8 +--
+ include/crypto/akcipher.h       |  16 ++---
+ include/crypto/hash.h           |   6 +-
+ include/crypto/kpp.h            |  12 ++--
+ include/crypto/rng.h            |   8 +--
+ include/crypto/skcipher.h       |   8 +--
+ include/linux/crypto.h          |  46 ++++++-------
+ include/uapi/linux/cryptouser.h |  38 +++++------
+ 11 files changed, 133 insertions(+), 141 deletions(-)
 
-diff --git a/crypto/ahash.c b/crypto/ahash.c
-index 3a348fbcf8f9..3f4c44c1e80f 100644
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -364,20 +364,26 @@ static int crypto_ahash_op(struct ahash_request *req,
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index f5396c88e8cd..42fe316f80ee 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -259,13 +259,13 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+ 	list_add(&larval->alg.cra_list, &crypto_alg_list);
  
- int crypto_ahash_final(struct ahash_request *req)
+ #ifdef CONFIG_CRYPTO_STATS
+-	atomic_set(&alg->encrypt_cnt, 0);
+-	atomic_set(&alg->decrypt_cnt, 0);
++	atomic64_set(&alg->encrypt_cnt, 0);
++	atomic64_set(&alg->decrypt_cnt, 0);
+ 	atomic64_set(&alg->encrypt_tlen, 0);
+ 	atomic64_set(&alg->decrypt_tlen, 0);
+-	atomic_set(&alg->verify_cnt, 0);
+-	atomic_set(&alg->cipher_err_cnt, 0);
+-	atomic_set(&alg->sign_cnt, 0);
++	atomic64_set(&alg->verify_cnt, 0);
++	atomic64_set(&alg->cipher_err_cnt, 0);
++	atomic64_set(&alg->sign_cnt, 0);
+ #endif
+ 
+ out:
+diff --git a/crypto/crypto_user_stat.c b/crypto/crypto_user_stat.c
+index a6fb2e6f618d..352569f378a0 100644
+--- a/crypto/crypto_user_stat.c
++++ b/crypto/crypto_user_stat.c
+@@ -35,22 +35,21 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
  {
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int nbytes = req->nbytes;
- 	int ret;
+ 	struct crypto_stat raead;
+ 	u64 v64;
+-	u32 v32;
  
- 	ret = crypto_ahash_op(req, crypto_ahash_reqtfm(req)->final);
--	crypto_stat_ahash_final(req, ret);
-+	crypto_stat_ahash_final(nbytes, ret, alg);
- 	return ret;
+ 	memset(&raead, 0, sizeof(raead));
+ 
+ 	strscpy(raead.type, "aead", sizeof(raead.type));
+ 
+-	v32 = atomic_read(&alg->encrypt_cnt);
+-	raead.stat_encrypt_cnt = v32;
++	v64 = atomic64_read(&alg->encrypt_cnt);
++	raead.stat_encrypt_cnt = v64;
+ 	v64 = atomic64_read(&alg->encrypt_tlen);
+ 	raead.stat_encrypt_tlen = v64;
+-	v32 = atomic_read(&alg->decrypt_cnt);
+-	raead.stat_decrypt_cnt = v32;
++	v64 = atomic64_read(&alg->decrypt_cnt);
++	raead.stat_decrypt_cnt = v64;
+ 	v64 = atomic64_read(&alg->decrypt_tlen);
+ 	raead.stat_decrypt_tlen = v64;
+-	v32 = atomic_read(&alg->aead_err_cnt);
+-	raead.stat_aead_err_cnt = v32;
++	v64 = atomic64_read(&alg->aead_err_cnt);
++	raead.stat_aead_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_AEAD, sizeof(raead), &raead);
  }
- EXPORT_SYMBOL_GPL(crypto_ahash_final);
- 
- int crypto_ahash_finup(struct ahash_request *req)
+@@ -59,22 +58,21 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
  {
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int nbytes = req->nbytes;
- 	int ret;
+ 	struct crypto_stat rcipher;
+ 	u64 v64;
+-	u32 v32;
  
- 	ret = crypto_ahash_op(req, crypto_ahash_reqtfm(req)->finup);
--	crypto_stat_ahash_final(req, ret);
-+	crypto_stat_ahash_final(nbytes, ret, alg);
- 	return ret;
+ 	memset(&rcipher, 0, sizeof(rcipher));
+ 
+ 	strscpy(rcipher.type, "cipher", sizeof(rcipher.type));
+ 
+-	v32 = atomic_read(&alg->encrypt_cnt);
+-	rcipher.stat_encrypt_cnt = v32;
++	v64 = atomic64_read(&alg->encrypt_cnt);
++	rcipher.stat_encrypt_cnt = v64;
+ 	v64 = atomic64_read(&alg->encrypt_tlen);
+ 	rcipher.stat_encrypt_tlen = v64;
+-	v32 = atomic_read(&alg->decrypt_cnt);
+-	rcipher.stat_decrypt_cnt = v32;
++	v64 = atomic64_read(&alg->decrypt_cnt);
++	rcipher.stat_decrypt_cnt = v64;
+ 	v64 = atomic64_read(&alg->decrypt_tlen);
+ 	rcipher.stat_decrypt_tlen = v64;
+-	v32 = atomic_read(&alg->cipher_err_cnt);
+-	rcipher.stat_cipher_err_cnt = v32;
++	v64 = atomic64_read(&alg->cipher_err_cnt);
++	rcipher.stat_cipher_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_CIPHER, sizeof(rcipher), &rcipher);
  }
- EXPORT_SYMBOL_GPL(crypto_ahash_finup);
-@@ -385,13 +391,15 @@ EXPORT_SYMBOL_GPL(crypto_ahash_finup);
- int crypto_ahash_digest(struct ahash_request *req)
+@@ -83,21 +81,20 @@ static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
  {
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int nbytes = req->nbytes;
- 	int ret;
+ 	struct crypto_stat rcomp;
+ 	u64 v64;
+-	u32 v32;
  
- 	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		ret = -ENOKEY;
- 	else
- 		ret = crypto_ahash_op(req, tfm->digest);
--	crypto_stat_ahash_final(req, ret);
-+	crypto_stat_ahash_final(nbytes, ret, alg);
- 	return ret;
+ 	memset(&rcomp, 0, sizeof(rcomp));
+ 
+ 	strscpy(rcomp.type, "compression", sizeof(rcomp.type));
+-	v32 = atomic_read(&alg->compress_cnt);
+-	rcomp.stat_compress_cnt = v32;
++	v64 = atomic64_read(&alg->compress_cnt);
++	rcomp.stat_compress_cnt = v64;
+ 	v64 = atomic64_read(&alg->compress_tlen);
+ 	rcomp.stat_compress_tlen = v64;
+-	v32 = atomic_read(&alg->decompress_cnt);
+-	rcomp.stat_decompress_cnt = v32;
++	v64 = atomic64_read(&alg->decompress_cnt);
++	rcomp.stat_decompress_cnt = v64;
+ 	v64 = atomic64_read(&alg->decompress_tlen);
+ 	rcomp.stat_decompress_tlen = v64;
+-	v32 = atomic_read(&alg->cipher_err_cnt);
+-	rcomp.stat_compress_err_cnt = v32;
++	v64 = atomic64_read(&alg->cipher_err_cnt);
++	rcomp.stat_compress_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_COMPRESS, sizeof(rcomp), &rcomp);
  }
- EXPORT_SYMBOL_GPL(crypto_ahash_digest);
+@@ -106,21 +103,20 @@ static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_stat racomp;
+ 	u64 v64;
+-	u32 v32;
+ 
+ 	memset(&racomp, 0, sizeof(racomp));
+ 
+ 	strscpy(racomp.type, "acomp", sizeof(racomp.type));
+-	v32 = atomic_read(&alg->compress_cnt);
+-	racomp.stat_compress_cnt = v32;
++	v64 = atomic64_read(&alg->compress_cnt);
++	racomp.stat_compress_cnt = v64;
+ 	v64 = atomic64_read(&alg->compress_tlen);
+ 	racomp.stat_compress_tlen = v64;
+-	v32 = atomic_read(&alg->decompress_cnt);
+-	racomp.stat_decompress_cnt = v32;
++	v64 = atomic64_read(&alg->decompress_cnt);
++	racomp.stat_decompress_cnt = v64;
+ 	v64 = atomic64_read(&alg->decompress_tlen);
+ 	racomp.stat_decompress_tlen = v64;
+-	v32 = atomic_read(&alg->cipher_err_cnt);
+-	racomp.stat_compress_err_cnt = v32;
++	v64 = atomic64_read(&alg->cipher_err_cnt);
++	racomp.stat_compress_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_ACOMP, sizeof(racomp), &racomp);
+ }
+@@ -129,25 +125,24 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_stat rakcipher;
+ 	u64 v64;
+-	u32 v32;
+ 
+ 	memset(&rakcipher, 0, sizeof(rakcipher));
+ 
+ 	strscpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
+-	v32 = atomic_read(&alg->encrypt_cnt);
+-	rakcipher.stat_encrypt_cnt = v32;
++	v64 = atomic64_read(&alg->encrypt_cnt);
++	rakcipher.stat_encrypt_cnt = v64;
+ 	v64 = atomic64_read(&alg->encrypt_tlen);
+ 	rakcipher.stat_encrypt_tlen = v64;
+-	v32 = atomic_read(&alg->decrypt_cnt);
+-	rakcipher.stat_decrypt_cnt = v32;
++	v64 = atomic64_read(&alg->decrypt_cnt);
++	rakcipher.stat_decrypt_cnt = v64;
+ 	v64 = atomic64_read(&alg->decrypt_tlen);
+ 	rakcipher.stat_decrypt_tlen = v64;
+-	v32 = atomic_read(&alg->sign_cnt);
+-	rakcipher.stat_sign_cnt = v32;
+-	v32 = atomic_read(&alg->verify_cnt);
+-	rakcipher.stat_verify_cnt = v32;
+-	v32 = atomic_read(&alg->akcipher_err_cnt);
+-	rakcipher.stat_akcipher_err_cnt = v32;
++	v64 = atomic64_read(&alg->sign_cnt);
++	rakcipher.stat_sign_cnt = v64;
++	v64 = atomic64_read(&alg->verify_cnt);
++	rakcipher.stat_verify_cnt = v64;
++	v64 = atomic64_read(&alg->akcipher_err_cnt);
++	rakcipher.stat_akcipher_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_AKCIPHER,
+ 		       sizeof(rakcipher), &rakcipher);
+@@ -156,19 +151,19 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
+ static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_stat rkpp;
+-	u32 v;
++	u64 v;
+ 
+ 	memset(&rkpp, 0, sizeof(rkpp));
+ 
+ 	strscpy(rkpp.type, "kpp", sizeof(rkpp.type));
+ 
+-	v = atomic_read(&alg->setsecret_cnt);
++	v = atomic64_read(&alg->setsecret_cnt);
+ 	rkpp.stat_setsecret_cnt = v;
+-	v = atomic_read(&alg->generate_public_key_cnt);
++	v = atomic64_read(&alg->generate_public_key_cnt);
+ 	rkpp.stat_generate_public_key_cnt = v;
+-	v = atomic_read(&alg->compute_shared_secret_cnt);
++	v = atomic64_read(&alg->compute_shared_secret_cnt);
+ 	rkpp.stat_compute_shared_secret_cnt = v;
+-	v = atomic_read(&alg->kpp_err_cnt);
++	v = atomic64_read(&alg->kpp_err_cnt);
+ 	rkpp.stat_kpp_err_cnt = v;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_KPP, sizeof(rkpp), &rkpp);
+@@ -178,18 +173,17 @@ static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_stat rhash;
+ 	u64 v64;
+-	u32 v32;
+ 
+ 	memset(&rhash, 0, sizeof(rhash));
+ 
+ 	strscpy(rhash.type, "ahash", sizeof(rhash.type));
+ 
+-	v32 = atomic_read(&alg->hash_cnt);
+-	rhash.stat_hash_cnt = v32;
++	v64 = atomic64_read(&alg->hash_cnt);
++	rhash.stat_hash_cnt = v64;
+ 	v64 = atomic64_read(&alg->hash_tlen);
+ 	rhash.stat_hash_tlen = v64;
+-	v32 = atomic_read(&alg->hash_err_cnt);
+-	rhash.stat_hash_err_cnt = v32;
++	v64 = atomic64_read(&alg->hash_err_cnt);
++	rhash.stat_hash_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_HASH, sizeof(rhash), &rhash);
+ }
+@@ -198,18 +192,17 @@ static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_stat rhash;
+ 	u64 v64;
+-	u32 v32;
+ 
+ 	memset(&rhash, 0, sizeof(rhash));
+ 
+ 	strscpy(rhash.type, "shash", sizeof(rhash.type));
+ 
+-	v32 = atomic_read(&alg->hash_cnt);
+-	rhash.stat_hash_cnt = v32;
++	v64 = atomic64_read(&alg->hash_cnt);
++	rhash.stat_hash_cnt = v64;
+ 	v64 = atomic64_read(&alg->hash_tlen);
+ 	rhash.stat_hash_tlen = v64;
+-	v32 = atomic_read(&alg->hash_err_cnt);
+-	rhash.stat_hash_err_cnt = v32;
++	v64 = atomic64_read(&alg->hash_err_cnt);
++	rhash.stat_hash_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_HASH, sizeof(rhash), &rhash);
+ }
+@@ -218,20 +211,19 @@ static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_stat rrng;
+ 	u64 v64;
+-	u32 v32;
+ 
+ 	memset(&rrng, 0, sizeof(rrng));
+ 
+ 	strscpy(rrng.type, "rng", sizeof(rrng.type));
+ 
+-	v32 = atomic_read(&alg->generate_cnt);
+-	rrng.stat_generate_cnt = v32;
++	v64 = atomic64_read(&alg->generate_cnt);
++	rrng.stat_generate_cnt = v64;
+ 	v64 = atomic64_read(&alg->generate_tlen);
+ 	rrng.stat_generate_tlen = v64;
+-	v32 = atomic_read(&alg->seed_cnt);
+-	rrng.stat_seed_cnt = v32;
+-	v32 = atomic_read(&alg->hash_err_cnt);
+-	rrng.stat_rng_err_cnt = v32;
++	v64 = atomic64_read(&alg->seed_cnt);
++	rrng.stat_seed_cnt = v64;
++	v64 = atomic64_read(&alg->hash_err_cnt);
++	rrng.stat_rng_err_cnt = v64;
+ 
+ 	return nla_put(skb, CRYPTOCFGA_STAT_RNG, sizeof(rrng), &rrng);
+ }
 diff --git a/include/crypto/acompress.h b/include/crypto/acompress.h
-index f79918196811..396407cc34c7 100644
+index 22e6f412c595..f79918196811 100644
 --- a/include/crypto/acompress.h
 +++ b/include/crypto/acompress.h
-@@ -234,30 +234,28 @@ static inline void acomp_request_set_params(struct acomp_req *req,
- 		req->flags |= CRYPTO_ACOMP_ALLOC_OUTPUT;
- }
+@@ -240,9 +240,9 @@ static inline void crypto_stat_compress(struct acomp_req *req, int ret)
+ 	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
  
--static inline void crypto_stat_compress(struct acomp_req *req, int ret)
-+static inline void crypto_stat_compress(unsigned int slen, int ret,
-+					struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->compress_err_cnt);
-+		atomic64_inc(&alg->compress_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->compress_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->compress_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->compress_cnt);
--		atomic64_add(req->slen, &tfm->base.__crt_alg->compress_tlen);
-+		atomic64_inc(&alg->compress_cnt);
-+		atomic64_add(slen, &alg->compress_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->compress_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->compress_cnt);
+ 		atomic64_add(req->slen, &tfm->base.__crt_alg->compress_tlen);
  	}
  #endif
- }
+@@ -254,9 +254,9 @@ static inline void crypto_stat_decompress(struct acomp_req *req, int ret)
+ 	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
  
--static inline void crypto_stat_decompress(struct acomp_req *req, int ret)
-+static inline void crypto_stat_decompress(unsigned int slen, int ret,
-+					  struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->compress_err_cnt);
-+		atomic64_inc(&alg->compress_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->compress_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->compress_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->decompress_cnt);
--		atomic64_add(req->slen, &tfm->base.__crt_alg->decompress_tlen);
-+		atomic64_inc(&alg->decompress_cnt);
-+		atomic64_add(slen, &alg->decompress_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->decompress_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->decompress_cnt);
+ 		atomic64_add(req->slen, &tfm->base.__crt_alg->decompress_tlen);
  	}
  #endif
- }
-@@ -274,10 +272,12 @@ static inline void crypto_stat_decompress(struct acomp_req *req, int ret)
- static inline int crypto_acomp_compress(struct acomp_req *req)
- {
- 	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int slen = req->slen;
- 	int ret;
- 
- 	ret = tfm->compress(req);
--	crypto_stat_compress(req, ret);
-+	crypto_stat_compress(slen, ret, alg);
- 	return ret;
- }
- 
-@@ -293,10 +293,12 @@ static inline int crypto_acomp_compress(struct acomp_req *req)
- static inline int crypto_acomp_decompress(struct acomp_req *req)
- {
- 	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int slen = req->slen;
- 	int ret;
- 
- 	ret = tfm->decompress(req);
--	crypto_stat_decompress(req, ret);
-+	crypto_stat_decompress(slen, ret, alg);
- 	return ret;
- }
- 
 diff --git a/include/crypto/aead.h b/include/crypto/aead.h
-index 99afd78c665d..c959cd39049d 100644
+index 0d765d7bfb82..99afd78c665d 100644
 --- a/include/crypto/aead.h
 +++ b/include/crypto/aead.h
-@@ -306,30 +306,28 @@ static inline struct crypto_aead *crypto_aead_reqtfm(struct aead_request *req)
- 	return __crypto_aead_cast(req->base.tfm);
- }
+@@ -312,9 +312,9 @@ static inline void crypto_stat_aead_encrypt(struct aead_request *req, int ret)
+ 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
  
--static inline void crypto_stat_aead_encrypt(struct aead_request *req, int ret)
-+static inline void crypto_stat_aead_encrypt(unsigned int cryptlen,
-+					    struct crypto_alg *alg, int ret)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->aead_err_cnt);
-+		atomic64_inc(&alg->aead_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->aead_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->aead_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->encrypt_cnt);
--		atomic64_add(req->cryptlen, &tfm->base.__crt_alg->encrypt_tlen);
-+		atomic64_inc(&alg->encrypt_cnt);
-+		atomic64_add(cryptlen, &alg->encrypt_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->encrypt_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->encrypt_cnt);
+ 		atomic64_add(req->cryptlen, &tfm->base.__crt_alg->encrypt_tlen);
  	}
  #endif
- }
+@@ -326,9 +326,9 @@ static inline void crypto_stat_aead_decrypt(struct aead_request *req, int ret)
+ 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
  
--static inline void crypto_stat_aead_decrypt(struct aead_request *req, int ret)
-+static inline void crypto_stat_aead_decrypt(unsigned int cryptlen,
-+					    struct crypto_alg *alg, int ret)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->aead_err_cnt);
-+		atomic64_inc(&alg->aead_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->aead_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->aead_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->decrypt_cnt);
--		atomic64_add(req->cryptlen, &tfm->base.__crt_alg->decrypt_tlen);
-+		atomic64_inc(&alg->decrypt_cnt);
-+		atomic64_add(cryptlen, &alg->decrypt_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->decrypt_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->decrypt_cnt);
+ 		atomic64_add(req->cryptlen, &tfm->base.__crt_alg->decrypt_tlen);
  	}
  #endif
- }
-@@ -356,13 +354,15 @@ static inline void crypto_stat_aead_decrypt(struct aead_request *req, int ret)
- static inline int crypto_aead_encrypt(struct aead_request *req)
- {
- 	struct crypto_aead *aead = crypto_aead_reqtfm(req);
-+	struct crypto_alg *alg = aead->base.__crt_alg;
-+	unsigned int cryptlen = req->cryptlen;
- 	int ret;
- 
- 	if (crypto_aead_get_flags(aead) & CRYPTO_TFM_NEED_KEY)
- 		ret = -ENOKEY;
- 	else
- 		ret = crypto_aead_alg(aead)->encrypt(req);
--	crypto_stat_aead_encrypt(req, ret);
-+	crypto_stat_aead_encrypt(cryptlen, alg, ret);
- 	return ret;
- }
- 
-@@ -391,6 +391,8 @@ static inline int crypto_aead_encrypt(struct aead_request *req)
- static inline int crypto_aead_decrypt(struct aead_request *req)
- {
- 	struct crypto_aead *aead = crypto_aead_reqtfm(req);
-+	struct crypto_alg *alg = aead->base.__crt_alg;
-+	unsigned int cryptlen = req->cryptlen;
- 	int ret;
- 
- 	if (crypto_aead_get_flags(aead) & CRYPTO_TFM_NEED_KEY)
-@@ -399,7 +401,7 @@ static inline int crypto_aead_decrypt(struct aead_request *req)
- 		ret = -EINVAL;
- 	else
- 		ret = crypto_aead_alg(aead)->decrypt(req);
--	crypto_stat_aead_decrypt(req, ret);
-+	crypto_stat_aead_decrypt(cryptlen, alg, ret);
- 	return ret;
- }
- 
 diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
-index 97056fd5e718..f20cdb775674 100644
+index ee072a82d39d..97056fd5e718 100644
 --- a/include/crypto/akcipher.h
 +++ b/include/crypto/akcipher.h
-@@ -271,59 +271,49 @@ static inline unsigned int crypto_akcipher_maxsize(struct crypto_akcipher *tfm)
- 	return alg->max_size(tfm);
- }
+@@ -278,9 +278,9 @@ static inline void crypto_stat_akcipher_encrypt(struct akcipher_request *req,
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
  
--static inline void crypto_stat_akcipher_encrypt(struct akcipher_request *req,
--						int ret)
-+static inline void crypto_stat_akcipher_encrypt(unsigned int src_len, int ret,
-+						struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
-+		atomic64_inc(&alg->akcipher_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->encrypt_cnt);
--		atomic64_add(req->src_len, &tfm->base.__crt_alg->encrypt_tlen);
-+		atomic64_inc(&alg->encrypt_cnt);
-+		atomic64_add(src_len, &alg->encrypt_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->encrypt_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->encrypt_cnt);
+ 		atomic64_add(req->src_len, &tfm->base.__crt_alg->encrypt_tlen);
  	}
  #endif
- }
+@@ -293,9 +293,9 @@ static inline void crypto_stat_akcipher_decrypt(struct akcipher_request *req,
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
  
--static inline void crypto_stat_akcipher_decrypt(struct akcipher_request *req,
--						int ret)
-+static inline void crypto_stat_akcipher_decrypt(unsigned int src_len, int ret,
-+						struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
-+		atomic64_inc(&alg->akcipher_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->decrypt_cnt);
--		atomic64_add(req->src_len, &tfm->base.__crt_alg->decrypt_tlen);
-+		atomic64_inc(&alg->decrypt_cnt);
-+		atomic64_add(src_len, &alg->decrypt_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->decrypt_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->decrypt_cnt);
+ 		atomic64_add(req->src_len, &tfm->base.__crt_alg->decrypt_tlen);
  	}
  #endif
- }
+@@ -308,9 +308,9 @@ static inline void crypto_stat_akcipher_sign(struct akcipher_request *req,
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
  
--static inline void crypto_stat_akcipher_sign(struct akcipher_request *req,
--					     int ret)
-+static inline void crypto_stat_akcipher_sign(int ret, struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
--		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
-+		atomic64_inc(&alg->akcipher_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
  	else
--		atomic64_inc(&tfm->base.__crt_alg->sign_cnt);
-+		atomic64_inc(&alg->sign_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->sign_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->sign_cnt);
  #endif
  }
  
--static inline void crypto_stat_akcipher_verify(struct akcipher_request *req,
--					       int ret)
-+static inline void crypto_stat_akcipher_verify(int ret, struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
--
+@@ -321,9 +321,9 @@ static inline void crypto_stat_akcipher_verify(struct akcipher_request *req,
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+ 
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
--		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
-+		atomic64_inc(&alg->akcipher_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
  	else
--		atomic64_inc(&tfm->base.__crt_alg->verify_cnt);
-+		atomic64_inc(&alg->verify_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->verify_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->verify_cnt);
  #endif
- }
- 
-@@ -341,10 +331,12 @@ static inline int crypto_akcipher_encrypt(struct akcipher_request *req)
- {
- 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
- 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
-+	unsigned int src_len = req->src_len;
- 	int ret;
- 
- 	ret = alg->encrypt(req);
--	crypto_stat_akcipher_encrypt(req, ret);
-+	crypto_stat_akcipher_encrypt(src_len, ret, calg);
- 	return ret;
- }
- 
-@@ -362,10 +354,12 @@ static inline int crypto_akcipher_decrypt(struct akcipher_request *req)
- {
- 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
- 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
-+	unsigned int src_len = req->src_len;
- 	int ret;
- 
- 	ret = alg->decrypt(req);
--	crypto_stat_akcipher_decrypt(req, ret);
-+	crypto_stat_akcipher_decrypt(src_len, ret, calg);
- 	return ret;
- }
- 
-@@ -383,10 +377,11 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
- {
- 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
- 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
- 	int ret;
- 
- 	ret = alg->sign(req);
--	crypto_stat_akcipher_sign(req, ret);
-+	crypto_stat_akcipher_sign(ret, calg);
- 	return ret;
- }
- 
-@@ -404,10 +399,11 @@ static inline int crypto_akcipher_verify(struct akcipher_request *req)
- {
- 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
- 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
- 	int ret;
- 
- 	ret = alg->verify(req);
--	crypto_stat_akcipher_verify(req, ret);
-+	crypto_stat_akcipher_verify(ret, calg);
- 	return ret;
  }
  
 diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-index 52920bed05ba..83fe47f34db1 100644
+index bc7796600338..52920bed05ba 100644
 --- a/include/crypto/hash.h
 +++ b/include/crypto/hash.h
-@@ -412,28 +412,26 @@ static inline void *ahash_request_ctx(struct ahash_request *req)
- int crypto_ahash_setkey(struct crypto_ahash *tfm, const u8 *key,
- 			unsigned int keylen);
+@@ -418,7 +418,7 @@ static inline void crypto_stat_ahash_update(struct ahash_request *req, int ret)
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
  
--static inline void crypto_stat_ahash_update(struct ahash_request *req, int ret)
-+static inline void crypto_stat_ahash_update(unsigned int nbytes, int ret,
-+					    struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
--		atomic64_inc(&tfm->base.__crt_alg->hash_err_cnt);
-+		atomic64_inc(&alg->hash_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->hash_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->hash_err_cnt);
  	else
--		atomic64_add(req->nbytes, &tfm->base.__crt_alg->hash_tlen);
-+		atomic64_add(nbytes, &alg->hash_tlen);
+ 		atomic64_add(req->nbytes, &tfm->base.__crt_alg->hash_tlen);
  #endif
- }
+@@ -430,9 +430,9 @@ static inline void crypto_stat_ahash_final(struct ahash_request *req, int ret)
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
  
--static inline void crypto_stat_ahash_final(struct ahash_request *req, int ret)
-+static inline void crypto_stat_ahash_final(unsigned int nbytes, int ret,
-+					   struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&tfm->base.__crt_alg->hash_err_cnt);
-+		atomic64_inc(&alg->hash_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->hash_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->hash_err_cnt);
  	} else {
--		atomic64_inc(&tfm->base.__crt_alg->hash_cnt);
--		atomic64_add(req->nbytes, &tfm->base.__crt_alg->hash_tlen);
-+		atomic64_inc(&alg->hash_cnt);
-+		atomic64_add(nbytes, &alg->hash_tlen);
+-		atomic_inc(&tfm->base.__crt_alg->hash_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->hash_cnt);
+ 		atomic64_add(req->nbytes, &tfm->base.__crt_alg->hash_tlen);
  	}
  #endif
- }
-@@ -552,10 +550,13 @@ static inline int crypto_ahash_init(struct ahash_request *req)
-  */
- static inline int crypto_ahash_update(struct ahash_request *req)
- {
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int nbytes = req->nbytes;
- 	int ret;
- 
- 	ret = crypto_ahash_reqtfm(req)->update(req);
--	crypto_stat_ahash_update(req, ret);
-+	crypto_stat_ahash_update(nbytes, ret, alg);
- 	return ret;
- }
- 
 diff --git a/include/crypto/kpp.h b/include/crypto/kpp.h
-index bd5103a80919..525689505b49 100644
+index f517ba6d3a27..bd5103a80919 100644
 --- a/include/crypto/kpp.h
 +++ b/include/crypto/kpp.h
-@@ -278,29 +278,25 @@ static inline void crypto_stat_kpp_set_secret(struct crypto_kpp *tfm, int ret)
- #endif
- }
- 
--static inline void crypto_stat_kpp_generate_public_key(struct kpp_request *req,
-+static inline void crypto_stat_kpp_generate_public_key(struct crypto_alg *alg,
- 						       int ret)
+@@ -272,9 +272,9 @@ static inline void crypto_stat_kpp_set_secret(struct crypto_kpp *tfm, int ret)
  {
  #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
--
  	if (ret)
--		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
-+		atomic64_inc(&alg->kpp_err_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->kpp_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
  	else
--		atomic64_inc(&tfm->base.__crt_alg->generate_public_key_cnt);
-+		atomic64_inc(&alg->generate_public_key_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->setsecret_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->setsecret_cnt);
  #endif
  }
  
--static inline void crypto_stat_kpp_compute_shared_secret(struct kpp_request *req,
-+static inline void crypto_stat_kpp_compute_shared_secret(struct crypto_alg *alg,
- 							 int ret)
+@@ -285,9 +285,9 @@ static inline void crypto_stat_kpp_generate_public_key(struct kpp_request *req,
+ 	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
+ 
+ 	if (ret)
+-		atomic_inc(&tfm->base.__crt_alg->kpp_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
+ 	else
+-		atomic_inc(&tfm->base.__crt_alg->generate_public_key_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->generate_public_key_cnt);
+ #endif
+ }
+ 
+@@ -298,9 +298,9 @@ static inline void crypto_stat_kpp_compute_shared_secret(struct kpp_request *req
+ 	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
+ 
+ 	if (ret)
+-		atomic_inc(&tfm->base.__crt_alg->kpp_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
+ 	else
+-		atomic_inc(&tfm->base.__crt_alg->compute_shared_secret_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->compute_shared_secret_cnt);
+ #endif
+ }
+ 
+diff --git a/include/crypto/rng.h b/include/crypto/rng.h
+index 0d781fa77161..bdcaac34e9d7 100644
+--- a/include/crypto/rng.h
++++ b/include/crypto/rng.h
+@@ -126,9 +126,9 @@ static inline void crypto_stat_rng_seed(struct crypto_rng *tfm, int ret)
  {
  #ifdef CONFIG_CRYPTO_STATS
--	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
--
- 	if (ret)
--		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
-+		atomic64_inc(&alg->kpp_err_cnt);
+ 	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
+-		atomic_inc(&tfm->base.__crt_alg->rng_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->rng_err_cnt);
  	else
--		atomic64_inc(&tfm->base.__crt_alg->compute_shared_secret_cnt);
-+		atomic64_inc(&alg->compute_shared_secret_cnt);
+-		atomic_inc(&tfm->base.__crt_alg->seed_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->seed_cnt);
  #endif
  }
  
-@@ -347,10 +343,11 @@ static inline int crypto_kpp_generate_public_key(struct kpp_request *req)
+@@ -137,9 +137,9 @@ static inline void crypto_stat_rng_generate(struct crypto_rng *tfm,
  {
- 	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
- 	struct kpp_alg *alg = crypto_kpp_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
- 	int ret;
- 
- 	ret = alg->generate_public_key(req);
--	crypto_stat_kpp_generate_public_key(req, ret);
-+	crypto_stat_kpp_generate_public_key(calg, ret);
- 	return ret;
- }
- 
-@@ -368,10 +365,11 @@ static inline int crypto_kpp_compute_shared_secret(struct kpp_request *req)
- {
- 	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
- 	struct kpp_alg *alg = crypto_kpp_alg(tfm);
-+	struct crypto_alg *calg = tfm->base.__crt_alg;
- 	int ret;
- 
- 	ret = alg->compute_shared_secret(req);
--	crypto_stat_kpp_compute_shared_secret(req, ret);
-+	crypto_stat_kpp_compute_shared_secret(calg, ret);
- 	return ret;
- }
- 
+ #ifdef CONFIG_CRYPTO_STATS
+ 	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic_inc(&tfm->base.__crt_alg->rng_err_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->rng_err_cnt);
+ 	} else {
+-		atomic_inc(&tfm->base.__crt_alg->generate_cnt);
++		atomic64_inc(&tfm->base.__crt_alg->generate_cnt);
+ 		atomic64_add(dlen, &tfm->base.__crt_alg->generate_tlen);
+ 	}
+ #endif
 diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-index dff54731ddf4..a68b227de96c 100644
+index 925f547cdcfa..dff54731ddf4 100644
 --- a/include/crypto/skcipher.h
 +++ b/include/crypto/skcipher.h
-@@ -486,7 +486,7 @@ static inline struct crypto_sync_skcipher *crypto_sync_skcipher_reqtfm(
- 	return container_of(tfm, struct crypto_sync_skcipher, base);
- }
- 
--static inline void crypto_stat_skcipher_encrypt(struct skcipher_request *req,
-+static inline void crypto_stat_skcipher_encrypt(unsigned int cryptlen,
- 						int ret, struct crypto_alg *alg)
+@@ -491,9 +491,9 @@ static inline void crypto_stat_skcipher_encrypt(struct skcipher_request *req,
  {
  #ifdef CONFIG_CRYPTO_STATS
-@@ -494,12 +494,12 @@ static inline void crypto_stat_skcipher_encrypt(struct skcipher_request *req,
- 		atomic64_inc(&alg->cipher_err_cnt);
+ 	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic_inc(&alg->cipher_err_cnt);
++		atomic64_inc(&alg->cipher_err_cnt);
  	} else {
- 		atomic64_inc(&alg->encrypt_cnt);
--		atomic64_add(req->cryptlen, &alg->encrypt_tlen);
-+		atomic64_add(cryptlen, &alg->encrypt_tlen);
+-		atomic_inc(&alg->encrypt_cnt);
++		atomic64_inc(&alg->encrypt_cnt);
+ 		atomic64_add(req->cryptlen, &alg->encrypt_tlen);
  	}
  #endif
- }
- 
--static inline void crypto_stat_skcipher_decrypt(struct skcipher_request *req,
-+static inline void crypto_stat_skcipher_decrypt(unsigned int cryptlen,
- 						int ret, struct crypto_alg *alg)
+@@ -504,9 +504,9 @@ static inline void crypto_stat_skcipher_decrypt(struct skcipher_request *req,
  {
  #ifdef CONFIG_CRYPTO_STATS
-@@ -507,7 +507,7 @@ static inline void crypto_stat_skcipher_decrypt(struct skcipher_request *req,
- 		atomic64_inc(&alg->cipher_err_cnt);
+ 	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic_inc(&alg->cipher_err_cnt);
++		atomic64_inc(&alg->cipher_err_cnt);
  	} else {
- 		atomic64_inc(&alg->decrypt_cnt);
--		atomic64_add(req->cryptlen, &alg->decrypt_tlen);
-+		atomic64_add(cryptlen, &alg->decrypt_tlen);
+-		atomic_inc(&alg->decrypt_cnt);
++		atomic64_inc(&alg->decrypt_cnt);
+ 		atomic64_add(req->cryptlen, &alg->decrypt_tlen);
  	}
  #endif
- }
-@@ -526,13 +526,15 @@ static inline void crypto_stat_skcipher_decrypt(struct skcipher_request *req,
- static inline int crypto_skcipher_encrypt(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int cryptlen = req->cryptlen;
- 	int ret;
- 
- 	if (crypto_skcipher_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		ret = -ENOKEY;
- 	else
- 		ret = tfm->encrypt(req);
--	crypto_stat_skcipher_encrypt(req, ret, tfm->base.__crt_alg);
-+	crypto_stat_skcipher_encrypt(cryptlen, ret, alg);
- 	return ret;
- }
- 
-@@ -550,13 +552,15 @@ static inline int crypto_skcipher_encrypt(struct skcipher_request *req)
- static inline int crypto_skcipher_decrypt(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_alg *alg = tfm->base.__crt_alg;
-+	unsigned int cryptlen = req->cryptlen;
- 	int ret;
- 
- 	if (crypto_skcipher_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		ret = -ENOKEY;
- 	else
- 		ret = tfm->decrypt(req);
--	crypto_stat_skcipher_decrypt(req, ret, tfm->base.__crt_alg);
-+	crypto_stat_skcipher_decrypt(cryptlen, ret, alg);
- 	return ret;
- }
- 
 diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-index 7d913330402e..b9ab028ce862 100644
+index 35de61d99cd5..7d913330402e 100644
 --- a/include/linux/crypto.h
 +++ b/include/linux/crypto.h
-@@ -975,34 +975,28 @@ static inline struct crypto_ablkcipher *crypto_ablkcipher_reqtfm(
- 	return __crypto_ablkcipher_cast(req->base.tfm);
- }
+@@ -517,11 +517,11 @@ struct crypto_alg {
  
--static inline void crypto_stat_ablkcipher_encrypt(struct ablkcipher_request *req,
--						  int ret)
-+static inline void crypto_stat_ablkcipher_encrypt(unsigned int nbytes, int ret,
-+						  struct crypto_alg *alg)
- {
  #ifdef CONFIG_CRYPTO_STATS
--	struct ablkcipher_tfm *crt =
--		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
--
+ 	union {
+-		atomic_t encrypt_cnt;
+-		atomic_t compress_cnt;
+-		atomic_t generate_cnt;
+-		atomic_t hash_cnt;
+-		atomic_t setsecret_cnt;
++		atomic64_t encrypt_cnt;
++		atomic64_t compress_cnt;
++		atomic64_t generate_cnt;
++		atomic64_t hash_cnt;
++		atomic64_t setsecret_cnt;
+ 	};
+ 	union {
+ 		atomic64_t encrypt_tlen;
+@@ -530,29 +530,29 @@ struct crypto_alg {
+ 		atomic64_t hash_tlen;
+ 	};
+ 	union {
+-		atomic_t akcipher_err_cnt;
+-		atomic_t cipher_err_cnt;
+-		atomic_t compress_err_cnt;
+-		atomic_t aead_err_cnt;
+-		atomic_t hash_err_cnt;
+-		atomic_t rng_err_cnt;
+-		atomic_t kpp_err_cnt;
++		atomic64_t akcipher_err_cnt;
++		atomic64_t cipher_err_cnt;
++		atomic64_t compress_err_cnt;
++		atomic64_t aead_err_cnt;
++		atomic64_t hash_err_cnt;
++		atomic64_t rng_err_cnt;
++		atomic64_t kpp_err_cnt;
+ 	};
+ 	union {
+-		atomic_t decrypt_cnt;
+-		atomic_t decompress_cnt;
+-		atomic_t seed_cnt;
+-		atomic_t generate_public_key_cnt;
++		atomic64_t decrypt_cnt;
++		atomic64_t decompress_cnt;
++		atomic64_t seed_cnt;
++		atomic64_t generate_public_key_cnt;
+ 	};
+ 	union {
+ 		atomic64_t decrypt_tlen;
+ 		atomic64_t decompress_tlen;
+ 	};
+ 	union {
+-		atomic_t verify_cnt;
+-		atomic_t compute_shared_secret_cnt;
++		atomic64_t verify_cnt;
++		atomic64_t compute_shared_secret_cnt;
+ 	};
+-	atomic_t sign_cnt;
++	atomic64_t sign_cnt;
+ #endif
+ 
+ } CRYPTO_MINALIGN_ATTR;
+@@ -983,9 +983,9 @@ static inline void crypto_stat_ablkcipher_encrypt(struct ablkcipher_request *req
+ 		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
+ 
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
-+		atomic64_inc(&alg->cipher_err_cnt);
+-		atomic_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
++		atomic64_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
  	} else {
--		atomic64_inc(&crt->base->base.__crt_alg->encrypt_cnt);
--		atomic64_add(req->nbytes, &crt->base->base.__crt_alg->encrypt_tlen);
-+		atomic64_inc(&alg->encrypt_cnt);
-+		atomic64_add(nbytes, &alg->encrypt_tlen);
+-		atomic_inc(&crt->base->base.__crt_alg->encrypt_cnt);
++		atomic64_inc(&crt->base->base.__crt_alg->encrypt_cnt);
+ 		atomic64_add(req->nbytes, &crt->base->base.__crt_alg->encrypt_tlen);
  	}
  #endif
- }
+@@ -999,9 +999,9 @@ static inline void crypto_stat_ablkcipher_decrypt(struct ablkcipher_request *req
+ 		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
  
--static inline void crypto_stat_ablkcipher_decrypt(struct ablkcipher_request *req,
--						  int ret)
-+static inline void crypto_stat_ablkcipher_decrypt(unsigned int nbytes, int ret,
-+						  struct crypto_alg *alg)
- {
- #ifdef CONFIG_CRYPTO_STATS
--	struct ablkcipher_tfm *crt =
--		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
--
  	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
--		atomic64_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
-+		atomic64_inc(&alg->cipher_err_cnt);
+-		atomic_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
++		atomic64_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
  	} else {
--		atomic64_inc(&crt->base->base.__crt_alg->decrypt_cnt);
--		atomic64_add(req->nbytes, &crt->base->base.__crt_alg->decrypt_tlen);
-+		atomic64_inc(&alg->decrypt_cnt);
-+		atomic64_add(nbytes, &alg->decrypt_tlen);
+-		atomic_inc(&crt->base->base.__crt_alg->decrypt_cnt);
++		atomic64_inc(&crt->base->base.__crt_alg->decrypt_cnt);
+ 		atomic64_add(req->nbytes, &crt->base->base.__crt_alg->decrypt_tlen);
  	}
  #endif
- }
-@@ -1022,10 +1016,12 @@ static inline int crypto_ablkcipher_encrypt(struct ablkcipher_request *req)
- {
- 	struct ablkcipher_tfm *crt =
- 		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
-+	struct crypto_alg *alg = crt->base->base.__crt_alg;
-+	unsigned int nbytes = req->nbytes;
- 	int ret;
+diff --git a/include/uapi/linux/cryptouser.h b/include/uapi/linux/cryptouser.h
+index 6dafbc3e4414..9f8187077ce4 100644
+--- a/include/uapi/linux/cryptouser.h
++++ b/include/uapi/linux/cryptouser.h
+@@ -79,11 +79,11 @@ struct crypto_user_alg {
+ struct crypto_stat {
+ 	char type[CRYPTO_MAX_NAME];
+ 	union {
+-		__u32 stat_encrypt_cnt;
+-		__u32 stat_compress_cnt;
+-		__u32 stat_generate_cnt;
+-		__u32 stat_hash_cnt;
+-		__u32 stat_setsecret_cnt;
++		__u64 stat_encrypt_cnt;
++		__u64 stat_compress_cnt;
++		__u64 stat_generate_cnt;
++		__u64 stat_hash_cnt;
++		__u64 stat_setsecret_cnt;
+ 	};
+ 	union {
+ 		__u64 stat_encrypt_tlen;
+@@ -92,29 +92,29 @@ struct crypto_stat {
+ 		__u64 stat_hash_tlen;
+ 	};
+ 	union {
+-		__u32 stat_akcipher_err_cnt;
+-		__u32 stat_cipher_err_cnt;
+-		__u32 stat_compress_err_cnt;
+-		__u32 stat_aead_err_cnt;
+-		__u32 stat_hash_err_cnt;
+-		__u32 stat_rng_err_cnt;
+-		__u32 stat_kpp_err_cnt;
++		__u64 stat_akcipher_err_cnt;
++		__u64 stat_cipher_err_cnt;
++		__u64 stat_compress_err_cnt;
++		__u64 stat_aead_err_cnt;
++		__u64 stat_hash_err_cnt;
++		__u64 stat_rng_err_cnt;
++		__u64 stat_kpp_err_cnt;
+ 	};
+ 	union {
+-		__u32 stat_decrypt_cnt;
+-		__u32 stat_decompress_cnt;
+-		__u32 stat_seed_cnt;
+-		__u32 stat_generate_public_key_cnt;
++		__u64 stat_decrypt_cnt;
++		__u64 stat_decompress_cnt;
++		__u64 stat_seed_cnt;
++		__u64 stat_generate_public_key_cnt;
+ 	};
+ 	union {
+ 		__u64 stat_decrypt_tlen;
+ 		__u64 stat_decompress_tlen;
+ 	};
+ 	union {
+-		__u32 stat_verify_cnt;
+-		__u32 stat_compute_shared_secret_cnt;
++		__u64 stat_verify_cnt;
++		__u64 stat_compute_shared_secret_cnt;
+ 	};
+-	__u32 stat_sign_cnt;
++	__u64 stat_sign_cnt;
+ };
  
- 	ret = crt->encrypt(req);
--	crypto_stat_ablkcipher_encrypt(req, ret);
-+	crypto_stat_ablkcipher_encrypt(nbytes, ret, alg);
- 	return ret;
- }
- 
-@@ -1044,10 +1040,12 @@ static inline int crypto_ablkcipher_decrypt(struct ablkcipher_request *req)
- {
- 	struct ablkcipher_tfm *crt =
- 		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
-+	struct crypto_alg *alg = crt->base->base.__crt_alg;
-+	unsigned int nbytes = req->nbytes;
- 	int ret;
- 
- 	ret = crt->decrypt(req);
--	crypto_stat_ablkcipher_decrypt(req, ret);
-+	crypto_stat_ablkcipher_decrypt(nbytes, ret, alg);
- 	return ret;
- }
- 
+ struct crypto_report_larval {
 -- 
 2.18.1
 
