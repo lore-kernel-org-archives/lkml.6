@@ -2,122 +2,97 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA73C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D353CC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA772085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82F662085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:24:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hDlApqZs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA772085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ONkUsKip"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82F662085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbeKEUns (ORCPT
+        id S1729627AbeKEUnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:43:48 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12382 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbeKEUnr (ORCPT
+        Mon, 5 Nov 2018 15:43:53 -0500
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:33732 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727563AbeKEUnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:43:47 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5be028780000>; Mon, 05 Nov 2018 03:24:41 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 05 Nov 2018 03:24:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 05 Nov 2018 03:24:32 -0800
-Received: from [10.26.11.240] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 5 Nov
- 2018 11:24:31 +0000
-Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>, <stable@vger.kernel.org>
-References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <4f636dde-674a-1793-7798-c475065615a1@nvidia.com>
-Date:   Mon, 5 Nov 2018 11:24:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 15:43:52 -0500
+Received: by mail-oi1-f173.google.com with SMTP id c25-v6so7132705oiy.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:24:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=itghpjIfmiE5/KM5eenSeE+/NVGanYuSF9iEq8vTcew=;
+        b=ONkUsKipqH3BpHvDk1jDbYNOpbfBrwOSagDvLCoTgIMo+a80c+fxWgRKDyL2OQa0uV
+         YxW6oUDQu7Xl1oACGgr6lRqYmMNsGJ/O73MdSdEok66eHnLeFE+0A798uulwS9DuUck9
+         wtpsypr+EVBMV5Wg0VI8/sDVUHyS0Nz0EN1tM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=itghpjIfmiE5/KM5eenSeE+/NVGanYuSF9iEq8vTcew=;
+        b=Dbx/AHSNB1uJuVmyCKiEvTiDyySpELmyUW/OtTTE4ApHYizOEwgg2ckwbnCLTFRjIV
+         I4DOIibnLyS9N1QAF+CJ2pWD56i64N6OTxfRyF5q2JqD0fUi/E/JZipL2x4xknYG5wUD
+         PyJWtF2x0xf8lyyMTWP5oyu4C5ICqy51BqdixEpSvtcP/2azt9D6l7Z1cRqvC+GHZk0a
+         HU4M1+9xzsGg9aOws45lGBb14Sf1gGZC1wiliLct+9tVttMfMIt99PSDiZzr+BY3c/MN
+         3fA29y042avQp60dlcwAei7cQwwzoX31pkGUlfX3+0Htg8Ut47qC7PFckJ5E6OWTLsDY
+         Ybog==
+X-Gm-Message-State: AGRZ1gLuO7nyimGuN2UYLByg4ZG0IzriEIuS66q2CEuocWdWHOqw/SQo
+        XWhP8ZimT4ltfWrtl6h+5ys9pNoNA5udMe1HKX5k
+X-Google-Smtp-Source: AJdET5df5WR6oikiyUn5iTHchVNmtdfxwXWuG8MHzNL4wgP/eiUl34UrGST/Qu/YcBuEyXTmVZHWmCJlv3SAMfXYaCI=
+X-Received: by 2002:aca:5f45:: with SMTP id t66-v6mr59876oib.20.1541417077519;
+ Mon, 05 Nov 2018 03:24:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1541417081; bh=Tc+9oZJ/by89gKxVGsJAa60VltBsE9XWTu+J/pKSPP4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=hDlApqZslu5lVrM04PNBbRmsUUKkNXlBSCTeEebIDhEqGQbBezEz5AVuYrBAm0Ddu
-         Z791f9PWqSgvDjUWqk0K07N9vFXVE9ZMO6oU921x1fh8eHBfiEjN5KZMMahqvDvWnj
-         aYfDXG2pyJ4PjD0b5rXAjHYPnXSev5Dh/BoINQJLaX/p5ICWTpO7gOfK3+bBSVZrwd
-         IdxiyQGWukjANcq1q06uRWSFPLyHchnc8UcKu//qZQUlLlODz5/yTjrFghUbwqdvqR
-         rInLag0PY1J+FUWKZy0WLlVFaeBE1KuPDmmuoLqeU0t3NM6PZD2Lw8GSWag3733MD+
-         LKOputUcDRQ5Q==
+References: <20181031081945.207709-1-vovoy@chromium.org> <039b2768-39ff-6196-9615-1f0302ee3e0e@intel.com>
+ <CAEHM+4q7V3d+EiHR6+TKoJC=6Ga0eCLWik0oJgDRQCpWps=wMA@mail.gmail.com>
+ <80347465-38fd-54d3-facf-bcd6bf38228a@intel.com> <CAEHM+4rsV9G_cahOyyH8njOYyZc5C9b0a6CV4AH_Y7EubXBLAQ@mail.gmail.com>
+ <b114017f-edeb-2055-1313-0d7821d633ae@intel.com>
+In-Reply-To: <b114017f-edeb-2055-1313-0d7821d633ae@intel.com>
+From:   Kuo-Hsin Yang <vovoy@chromium.org>
+Date:   Mon, 5 Nov 2018 19:24:26 +0800
+Message-ID: <CAEHM+4oR7tRv5qwKxKjRCQVHF75MnPmb3PdXtU7Ve0hj+G+tjg@mail.gmail.com>
+Subject: Re: [PATCH v3] mm, drm/i915: mark pinned shmemfs pages as unevictable
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Michal Hocko <mhocko@suse.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Fri, Nov 2, 2018 at 10:05 PM Dave Hansen <dave.hansen@intel.com> wrote:
+> On 11/2/18 6:22 AM, Vovo Yang wrote:
+> > Chris helped to answer this question:
+> > Though it includes a few non-shmemfs objects, see
+> > debugfs/dri/0/i915_gem_objects and the "bound objects".
+> >
+> > Example i915_gem_object output:
+> >   591 objects, 95449088 bytes
+> >   55 unbound objects, 1880064 bytes
+> >   533 bound objects, 93040640 bytes
+>
+> Do those non-shmemfs objects show up on the unevictable list?  How far
+> can the amount of memory on the unevictable list and the amount
+> displayed in this "bound objects" value diverge?
 
-On 19/10/2018 14:22, Jon Hunter wrote:
-> From: Jonathan Hunter <jonathanh@nvidia.com>
-> 
-> The tps6586x driver creates an irqchip that is used by its various child
-> devices for managing interrupts. The tps6586x-rtc device is one of its
-> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-> a wake-up device from suspend, the following is seen:
-> 
->  PM: Syncing filesystems ... done.
->  Freezing user space processes ... (elapsed 0.001 seconds) done.
->  OOM killer disabled.
->  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->  Disabling non-boot CPUs ...Hi 
->  Entering suspend state LP1
->  Enabling non-boot CPUs ...
->  CPU1 is up
->  tps6586x 3-0034: failed to read interrupt status
->  tps6586x 3-0034: failed to read interrupt status
-> 
-> The reason why the tps6586x interrupt status cannot be read is because
-> the tps6586x interrupt is not masked during suspend and when the
-> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-> seen before the i2c controller has been resumed in order to read the
-> tps6586x interrupt status.
-> 
-> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-> suspend, which gets propagated to the parent tps6586x interrupt.
-> However, the tps6586x-rtc driver cannot disable it's interrupt during
-> suspend otherwise we would never be woken up and so the tps6586x must
-> disable it's interrupt instead.
-> 
-> Prevent the tps6586x interrupt handler from executing on exiting suspend
-> before the i2c controller has been resumed by disabling the tps6586x
-> interrupt on entering suspend and re-enabling it on resuming from
-> suspend.
-> 
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+Those non-shmemfs objects would not show up on the unevictable list.
 
-Thierry and Dmitry have acked/reviewed this, let me know if you have any
-comments.
-
-Cheers
-Jon
-
--- 
-nvpublic
+On typical use case, The size of gtt bounded objects (in unevictable
+list) is very close to the bound size in i915_gem_objects. E.g. on my
+laptop: i915_gem_object shows 110075904 bytes bounded objects, and
+there are 109760512 bytes gtt bounded objects, the difference is about
+0.3%.
