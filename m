@@ -2,151 +2,101 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7231FC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98D8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3065E20819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D58220819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:08:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=labo.rs header.i=@labo.rs header.b="l73QHTek";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="w/Dhv90x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3065E20819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=labo.rs
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EemBpve+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EemBpve+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D58220819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbeKEW03 (ORCPT
+        id S1729471AbeKEW22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:26:29 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:49439 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728870AbeKEW02 (ORCPT
+        Mon, 5 Nov 2018 17:28:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728094AbeKEW21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:26:28 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 0C5EF1687;
-        Mon,  5 Nov 2018 08:06:46 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 05 Nov 2018 08:06:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=labo.rs; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=U
-        9nzanSJIND/JqNgyWFIVTnyXOclV1oxoHVOwJ3pC4U=; b=l73QHTek7436sVWQH
-        g6y6em4yfU/57xoOujj4/Iaf0RVAt9zPq5NK8VAMff9XO2jCg8rciZVIKuKIuAjm
-        5I/hPcP2vvsnJ/ZzwjiVqorwDzFerOYlU4vSVxT9Ft8shMbP27r0CA8jYe7rAiHQ
-        SnIJib7CUCZFU5GpwuC4bN+YNfERteTbjkqaz4d3bFwbM8K1bfhIycCaqs8RIo3j
-        TpKMlZo3noIk2Xx5sXjJq+RKVSWm0pEXKf1VYpmoe8wjPd4fsx2Y38QsGDSTNuNP
-        UnCokCOYemdndUtQCnbATyZew8OxtzRHYbQbs0FmiBi3MhYmIsYVPhskRRbmgaIF
-        RVHZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=U9nzanSJIND/JqNgyWFIVTnyXOclV1oxoHVOwJ3pC
-        4U=; b=w/Dhv90xxuJk0FtipXh8B5lwBfoEaDg2qDhQfUM7xD4HoxlNUvyBcd98e
-        R/1oSDYGyM8RCefo8JvFtu0i9KbI9MFQn7AvJaAJiyrbHNYpYjBzuLO2Kyup2jMH
-        XDxMYiKDqaEXiGue0hFqB/C01zbCvFz6CtRJtUe74Uua2UCmQ1+5V+a/zTLo7mpI
-        KS91CY3Wv7oNwWJ2diiUnULd+rSai/QIzqDj35+sN9cTpupzmq1Ang4HvgItUreE
-        TtaONjZSGWGHViCSW5zxROsDlu6jy9l6gEL/io9Jrd10gCyC4fuvLv0wiwg87lxe
-        twGGdAALbT8wHEutpqSd8FHftqFPA==
-X-ME-Sender: <xms:ZUDgW4rwmizjZc01OlX1gNsr92JVPaUsSaZfqb0LKj919PGgg1xI6w>
-X-ME-Proxy: <xmx:ZUDgW9By6NA5PaBxXtV-nxs1Wd_JrLcoojpxMpRa0Rib6r_ikphhKQ>
-    <xmx:ZUDgW5g9N6KP94INfOvvT87El0m0x2fZHrVlTg-lCY8rZwDCCBY3JA>
-    <xmx:ZUDgWxcC0fbsOTpFGcORRYZjOp51RFTarAr1SAhzi1TVyLgEjaxnsg>
-    <xmx:ZUDgW0hO3C_OPQCMdUa9IMfkCC5u42qHMh2mLNSL9ofjNwNQTf3zWw>
-    <xmx:ZUDgW6Q6FmIxFAo5-z8NGTakR_0XnhYnR5lXrfBtQ2W30owlx-PlaA>
-    <xmx:ZkDgW1RIq4IOTBQeCHAnVgwhNfTKMQGXB1dwGo0c6ymSHnsbXDlxqA>
-Received: from [0.0.0.0] (lada.labath.rs [185.194.239.81])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2A649E490F;
-        Mon,  5 Nov 2018 08:06:43 -0500 (EST)
-Subject: Re: [PATCH net-next v6 23/23] net: WireGuard secure network tunnel
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Dave Taht <dave.taht@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180925145622.29959-1-Jason@zx2c4.com>
- <20180925145622.29959-24-Jason@zx2c4.com>
- <7830522a-968e-0880-beb7-44904466cf14@labo.rs>
- <CAHmME9oQJ9y51Pv7U=+=5uDA_tb+U1zWZdsLcyNMhdcFZmjM8Q@mail.gmail.com>
-From:   =?UTF-8?Q?Ivan_Lab=c3=a1th?= <labokml@labo.rs>
-Message-ID: <e4b500e9-f24a-43c5-c2df-834dafc3aae5@labo.rs>
-Date:   Mon, 5 Nov 2018 14:06:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAHmME9oQJ9y51Pv7U=+=5uDA_tb+U1zWZdsLcyNMhdcFZmjM8Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 5 Nov 2018 17:28:27 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D5B8D60C5F; Mon,  5 Nov 2018 13:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541423326;
+        bh=XSyyoNBPsFpp5HZzch6yJ8aPqY6NppEVfGx2m1C6tY4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EemBpve+w9y7tJx39LpUYc1QVaGpv/iU7N9sc8bZnKUGY228Zu0WG97e76QRM6XHX
+         8so6IazD/JxVRo+IKHhllnvFmcpPRPwtrVp1rkN4fBdyf4GZmCYcK+NqV9MtKiXS01
+         OS0cRUzzgXyBYPhN0OUJ/YMfEL5HyL7W0rFee4nk=
+Received: from svishnoi-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: govinds@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9137A6053D;
+        Mon,  5 Nov 2018 13:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541423326;
+        bh=XSyyoNBPsFpp5HZzch6yJ8aPqY6NppEVfGx2m1C6tY4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EemBpve+w9y7tJx39LpUYc1QVaGpv/iU7N9sc8bZnKUGY228Zu0WG97e76QRM6XHX
+         8so6IazD/JxVRo+IKHhllnvFmcpPRPwtrVp1rkN4fBdyf4GZmCYcK+NqV9MtKiXS01
+         OS0cRUzzgXyBYPhN0OUJ/YMfEL5HyL7W0rFee4nk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9137A6053D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
+From:   Govind Singh <govinds@codeaurora.org>
+To:     briannorris@chromium.org, andy.gross@linaro.org,
+        ath10k@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-wireless@vger.kernel.org, robh+dt@kernel.org,
+        sboyd@kernel.org, dianders@chromium.org,
+        linux-kernel@vger.kernel.org
+Cc:     Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v4 0/3] Enable ath10k wcn3990 wifi driver support on sdm845 
+Date:   Mon,  5 Nov 2018 18:38:35 +0530
+Message-Id: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26. 9. 2018 18:04, Jason A. Donenfeld wrote:
-> Hi Ivan,
-> 
-> On Wed, Sep 26, 2018 at 6:00 PM Ivan Labáth <labokml@labo.rs> wrote:
->>
->> On 25.09.2018 16:56, Jason A. Donenfeld wrote:
->>> Extensive documentation and description of the protocol and
->>> considerations, along with formal proofs of the cryptography, are> available at:
->>>
->>>   * https://www.wireguard.com/
->>>   * https://www.wireguard.com/papers/wireguard.pdf
->> []
->>> +enum { HANDSHAKE_DSCP = 0x88 /* AF41, plus 00 ECN */ };
->> []
->>> +     if (skb->protocol == htons(ETH_P_IP)) {
->>> +             len = ntohs(ip_hdr(skb)->tot_len);
->>> +             if (unlikely(len < sizeof(struct iphdr)))
->>> +                     goto dishonest_packet_size;
->>> +             if (INET_ECN_is_ce(PACKET_CB(skb)->ds))
->>> +                     IP_ECN_set_ce(ip_hdr(skb));
->>> +     } else if (skb->protocol == htons(ETH_P_IPV6)) {
->>> +             len = ntohs(ipv6_hdr(skb)->payload_len) +
->>> +                   sizeof(struct ipv6hdr);
->>> +             if (INET_ECN_is_ce(PACKET_CB(skb)->ds))
->>> +                     IP6_ECN_set_ce(skb, ipv6_hdr(skb));
->>> +     } else
->> []
->>> +     skb_queue_walk (&packets, skb) {
->>> +             /* 0 for no outer TOS: no leak. TODO: should we use flowi->tos
->>> +              * as outer? */
->>> +             PACKET_CB(skb)->ds = ip_tunnel_ecn_encap(0, ip_hdr(skb), skb);
->>> +             PACKET_CB(skb)->nonce =
->>> +                             atomic64_inc_return(&key->counter.counter) - 1;
->>> +             if (unlikely(PACKET_CB(skb)->nonce >= REJECT_AFTER_MESSAGES))
->>> +                     goto out_invalid;
->>> +     }
->> Hi,
->>
->> is there documentation and/or rationale for ecn handling?
->> Quick search for ecn and dscp didn't reveal any.
-> 
-> ECN support was developed with Dave Taht so that it does the right
-> thing with CAKE and such. He's CC'd, so that he can fill in details,
-> and sure, we can write these up. As well, I can add the rationale for
-> the handshake-packet-specific DSCP value to the paper in the next few
-> days; thanks for pointing out these documentation oversights.
-> 
-> Jason
-> 
+This series enables ath10k wifi driver support for WCN3990 target
+on sdm845 SOC. This series also updates the missing dt binding documentation
+and adds optional iommu property.
 
-Any news on this?
+Changes since v3:
+    Moved interrupt/reg/reg-name to required property.
+    Removed unused clocks.
+    Corrected interrupt no's.
 
-To be clear, question is not about an insignificant documentation
-oversight. It is about copying bits from inner packets to outer packets
-of a secure* tunnel and documenting it AFAICT nowhere, while claiming
-extensive documentation.
+Changes since v2:
+    dropped [v2,4/4] dts: arm64/sdm845: Enable iommu for WCN3990 wifi module
+    device node patch from the series as dependent patch is not yet merged.
+    Enabled status flag from sdm845-mtp.dts.
 
-* it really should be specified what secure tunnel means, as it has many
-plausible interpretations and wireguard surely does not fulfill all of them.
+Changes since v1:
+    Listed no of interrupts/clocks for each set of compatible.
+    Added missing 'wifi' label to sdm845.dtsi.
 
-Ivan
+Govind Singh (3):
+  dt: bindings: add missing dt properties for WCN3990 wifi node
+  dts: arm64/sdm845: Add WCN3990 WLAN module device node
+  dt: bindings: add bindings for wifi iommu node
+
+ .../bindings/net/wireless/qcom,ath10k.txt          | 62 ++++++++++++++--------
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts            |  8 +++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               | 26 +++++++++
+ 3 files changed, 74 insertions(+), 22 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
