@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F697C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A48C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 289902085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67ED32084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bydYF52t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289902085A
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jelXfYer"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67ED32084F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbeKFGbV (ORCPT
+        id S2387591AbeKFGbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:31:21 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44427 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729559AbeKFGbV (ORCPT
+        Tue, 6 Nov 2018 01:31:23 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39997 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730194AbeKFGbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:31:21 -0500
-Received: by mail-pl1-f193.google.com with SMTP id s5-v6so5039624plq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 13:09:46 -0800 (PST)
+        Tue, 6 Nov 2018 01:31:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so2905554pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 13:09:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZR3dSpwHeHS8JNLbewKBD8mo1RLBu0PiM26k3ABT1to=;
-        b=bydYF52tEvWY8DDZ6mhpcKU63fegOm1orauRUs3GhtGTxHQQ7FP9sqhFkOCkWeIX/o
-         RpF65818iQkPLSI4y841EgK5YxCulRrihFhgjja1XRg9Qu81jFPYCgbW42mIF09wcfyN
-         6bKLPclYQOc9/91aiRoxJQiDEOoA9hcLvYYgs=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=96QNBMGBYUONd7YA4Rof9glJ141QHgV69o0Smunt7gs=;
+        b=jelXfYer3sJh278jBs6rL7O85F/RO6ZGvxms4tzTz+AiY+h3J01ACasZQJdLlx079Z
+         EXb9/XVLCzwqLhNu3lLe56BFEPRTCmTMcAPtmHrcBuLgoajeGsV3tQO6LDHbdRUnTb3w
+         vzj9avL5tQBxvjvY+3u9Bob0aQeBm7IV3XayI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZR3dSpwHeHS8JNLbewKBD8mo1RLBu0PiM26k3ABT1to=;
-        b=dhESVRJz7/JXuZm712nifui+0kGyRelCdX7HzKj7v+XHKFwSjs0FO6v68cveYZwHe4
-         MOiGtgJ8x4T6AR8nIwyqMweDZ0pT3ZxTBZ03ANSMZcrvTnG3pOFdzqJju79Ygbm4KV0q
-         LQO01nNRlhdxviYshX332FdwfILHUeJVsAGmPEFrKJqzwKalLHViwU8azJ+ql/0FX8UQ
-         +31lrE1GTW7gTjwGOjHXy67avSq9uX+QTJqPDEVdQGAASsf3d4KCt5TON14wtdCJ/Lki
-         stxezmZ/GGegrlD2Mi9N0ZLQ0T40ARERJnpAGnvj5dl7Y4JqJhlt3z4YPFNCRePNRjGK
-         e+UA==
-X-Gm-Message-State: AGRZ1gK0Bg8NxpYAsvmqEfHFHiHsjyL5ryMSAvf7pNKUFq/975aIMEtz
-        a4Ky6UVVkdIC86dqF/Di70KJgQ==
-X-Google-Smtp-Source: AJdET5fKQ3HCIi5v6GOsjX4+UDMBFjLz4X+OpLlpId30Lkk2XSVq3vXsosiahzWutfEfWp6PHYQ5qA==
-X-Received: by 2002:a17:902:7282:: with SMTP id d2-v6mr22824433pll.272.1541452185891;
-        Mon, 05 Nov 2018 13:09:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=96QNBMGBYUONd7YA4Rof9glJ141QHgV69o0Smunt7gs=;
+        b=kCrBnQQv1o9NLwWg4ssFy1Hbt95mr7pdFtkcXIz2CFavPX4C5C4HmzSnBjBZgFWIhJ
+         nds2nvrQuSW1FYZJuRseFMXLc4vnOeBnrUxJFt6BBv/jyr7rWqPFvnaitL6lF9uN/lLB
+         TPmp6Z6G+eG7mBh+PJ2+pImHWg0OtgSjvgfkaAqZLqmUssOlOlZIkGrQt/N3lvufW/Ix
+         LKgMYhnB1gqwt9PQXFsCHHq+NBe5BimSwWh3X16sc7xTlEvbcpkPBaYNcl3rTnKigsiO
+         RU51O4LwQUlQ7UidDn6Kl7RK7BkwKf7As4JmE8cxC397e3ytfWutDCnHeii78RJwVme6
+         rg2Q==
+X-Gm-Message-State: AGRZ1gIuL0fYsuVdv1S/h35J7n4V91gRbE96+AblTGbNTkBBio6SWS6j
+        zEVmELJsIg7DBDhzZcGtlmiikA==
+X-Google-Smtp-Source: AJdET5cW19JlrUoLsd3vbq9EsGgmxlKi366eoHtuMrDisOUZ+pffILyV1UVubaOJAOm596PifMfqeQ==
+X-Received: by 2002:a62:5982:: with SMTP id k2-v6mr23073870pfj.180.1541452186991;
+        Mon, 05 Nov 2018 13:09:46 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id l26-v6sm79437452pfg.161.2018.11.05.13.09.44
+        by smtp.gmail.com with ESMTPSA id l26-v6sm79437452pfg.161.2018.11.05.13.09.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 13:09:45 -0800 (PST)
+        Mon, 05 Nov 2018 13:09:46 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -63,10 +63,12 @@ Cc:     Douglas Anderson <dianders@chromium.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH 1/2] ARM: dts: qcom: Add SoC-specific string for sdhci-msm-v4 nodes
-Date:   Mon,  5 Nov 2018 13:09:20 -0800
-Message-Id: <20181105210921.253707-1-dianders@chromium.org>
+Subject: [PATCH 2/2] arm64: dts: qcom: Add SoC-specific string for sdhci-msm-v4 nodes
+Date:   Mon,  5 Nov 2018 13:09:21 -0800
+Message-Id: <20181105210921.253707-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+In-Reply-To: <20181105210921.253707-1-dianders@chromium.org>
+References: <20181105210921.253707-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,63 +84,59 @@ compatible string for Qualcomm's SDHCI nodes.  Let's add it.
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- arch/arm/boot/dts/qcom-apq8084.dtsi | 4 ++--
- arch/arm/boot/dts/qcom-msm8974.dtsi | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 4 ++--
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
-index 0e1e98707e3f..899f28533ed7 100644
---- a/arch/arm/boot/dts/qcom-apq8084.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
-@@ -412,7 +412,7 @@
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index d302d8d639a1..0a7335526063 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -587,7 +587,7 @@
+                 };
+ 
+ 		sdhc_1: sdhci@7824000 {
+-			compatible = "qcom,sdhci-msm-v4";
++			compatible = "qcom,msm8916-sdhci", "qcom,sdhci-msm-v4";
+ 			reg = <0x07824900 0x11c>, <0x07824000 0x800>;
+ 			reg-names = "hc_mem", "core_mem";
+ 
+@@ -604,7 +604,7 @@
  		};
  
- 		sdhci@f9824900 {
+ 		sdhc_2: sdhci@7864000 {
 -			compatible = "qcom,sdhci-msm-v4";
-+			compatible = "qcom,apq8084-sdhci", "qcom,sdhci-msm-v4";
- 			reg = <0xf9824900 0x11c>, <0xf9824000 0x800>;
++			compatible = "qcom,msm8916-sdhci", "qcom,sdhci-msm-v4";
+ 			reg = <0x07864900 0x11c>, <0x07864000 0x800>;
  			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 123 0>, <0 138 0>;
-@@ -425,7 +425,7 @@
+ 
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index cf5cacdd624d..09d0234cfd99 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -203,7 +203,7 @@
  		};
  
- 		sdhci@f98a4900 {
+ 		sdhci1: mmc@f9824900 {
 -			compatible = "qcom,sdhci-msm-v4";
-+			compatible = "qcom,apq8084-sdhci", "qcom,sdhci-msm-v4";
- 			reg = <0xf98a4900 0x11c>, <0xf98a4000 0x800>;
++			compatible = "qcom,msm8992-sdhci", "qcom,sdhci-msm-v4";
+ 			reg = <0xf9824900 0x1a0>, <0xf9824000 0x800>;
  			reg-names = "hc_mem", "core_mem";
- 			interrupts = <0 125 0>, <0 221 0>;
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index aba159d5a95a..891990c0d0b4 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -602,7 +602,7 @@
- 		};
  
- 		sdhci@f9824900 {
--			compatible = "qcom,sdhci-msm-v4";
-+			compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
- 			reg = <0xf9824900 0x11c>, <0xf9824000 0x800>;
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-@@ -616,7 +616,7 @@
- 		};
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index b29fe80d7288..5e19f87df020 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -535,7 +535,7 @@
  
- 		sdhci@f9864900 {
--			compatible = "qcom,sdhci-msm-v4";
-+			compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
- 			reg = <0xf9864900 0x11c>, <0xf9864000 0x800>;
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
-@@ -630,7 +630,7 @@
- 		};
+ 		sdhc2: sdhci@74a4900 {
+ 			 status = "disabled";
+-			 compatible = "qcom,sdhci-msm-v4";
++			 compatible = "qcom,msm8996-sdhci", "qcom,sdhci-msm-v4";
+ 			 reg = <0x74a4900 0x314>, <0x74a4000 0x800>;
+ 			 reg-names = "hc_mem", "core_mem";
  
- 		sdhci@f98a4900 {
--			compatible = "qcom,sdhci-msm-v4";
-+			compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
- 			reg = <0xf98a4900 0x11c>, <0xf98a4000 0x800>;
- 			reg-names = "hc_mem", "core_mem";
- 			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
