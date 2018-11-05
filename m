@@ -3,66 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90506C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A65BC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F04E20685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F04E20685
+	by mail.kernel.org (Postfix) with ESMTP id 0AFBE20685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:38:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFBE20685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbeKEX6A (ORCPT
+        id S2387423AbeKEX6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:58:00 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47376 "EHLO mga17.intel.com"
+        Mon, 5 Nov 2018 18:58:22 -0500
+Received: from mga01.intel.com ([192.55.52.88]:55795 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeKEX6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:58:00 -0500
+        id S1726255AbeKEX6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:58:22 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:37:59 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:38:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="105405589"
-Received: from fhoeg-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.66])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Nov 2018 06:37:50 -0800
-Date:   Mon, 5 Nov 2018 16:37:49 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        davidwang@zhaoxin.com,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        qianyue.zj@alibaba-inc.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 14/23] x86/cpu/intel: Clear SGX_LC capability if not
- enabled in FEATURE_CONTROL
-Message-ID: <20181105143749.GB2798@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-15-jarkko.sakkinen@linux.intel.com>
- <CAHp75VctUJRTecG4rVHXm0uO18ZndMgqJgtNyG25HtSzJF5uzg@mail.gmail.com>
+   d="scan'208";a="106035800"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2018 06:38:19 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gJg1C-0005n5-5g; Mon, 05 Nov 2018 16:38:18 +0200
+Date:   Mon, 5 Nov 2018 16:38:18 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 0/4] device property: Add fwnode_name() helper
+Message-ID: <20181105143818.GL10650@smile.fi.intel.com>
+References: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VctUJRTecG4rVHXm0uO18ZndMgqJgtNyG25HtSzJF5uzg@mail.gmail.com>
+In-Reply-To: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -70,21 +55,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 03, 2018 at 03:15:15PM +0200, Andy Shevchenko wrote:
-> > @@ -618,6 +618,8 @@ static void detect_sgx(struct cpuinfo_x86 *c)
-> >                 setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> >                 setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> >         }
-> > +       if (unsupported || !(fc & FEATURE_CONTROL_SGX_LE_WR))
-> > +               setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> >  }
+On Mon, Nov 05, 2018 at 12:17:23PM +0300, Heikki Krogerus wrote:
+> Hi,
 > 
-> A-ha, I see how you use this variable here (though it's still possible
-> to get rid of it, choose what is better for readability /
-> maintenance).
+> I prepared fwnode_name() for something I'm working on, but then I
+> realized that it makes it possible to also implement a generic
+> fwnode_get_named_child_node(). So in practice I'm proposing that we
+> replace get_named_child_node fwnode op with that new "name" fwnode op
+> in this series.
+> 
 
-I would propose to squash this one to the earlier commit and refactor
-it in a way that I proposed. Having this part as a separate commit in
-my opinion is a bit confusing.
+All LGTM, though consider one minor comment in patch 1.
 
-/Jarkko
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> thanks,
+> 
+> Heikki Krogerus (4):
+>   device property: Introduce fwnode_name()
+>   ACPI: property: Introduce acpi_fwnode_name()
+>   of/property: Introduce of_fwnode_name()
+>   device property: Drop get_named_child_node callback
+> 
+>  drivers/acpi/property.c  | 26 +++++++-------------------
+>  drivers/base/property.c  | 28 +++++++++++++++++++++++++++-
+>  drivers/of/property.c    | 21 ++++++---------------
+>  include/linux/fwnode.h   |  4 +---
+>  include/linux/property.h |  2 ++
+>  5 files changed, 43 insertions(+), 38 deletions(-)
+> 
+> -- 
+> 2.19.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
