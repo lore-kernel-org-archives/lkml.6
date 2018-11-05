@@ -2,113 +2,106 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361AFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C878C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D64B2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:35:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D64B2085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 35B0D20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:35:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aJ6BOD5b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B0D20819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387877AbeKFD4f (ORCPT
+        id S2387898AbeKFD4t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 22:56:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46358 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387702AbeKFD4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 22:56:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 65E72B0D2;
-        Mon,  5 Nov 2018 18:35:36 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 19:35:33 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Pavel.Tatashin@microsoft.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com
-Subject: Re: [PATCH v2 0/1] memory_hotplug: fix the panic when memory end is
- not
-Message-ID: <20181105183533.GQ4361@dhcp22.suse.cz>
-References: <20181105150401.97287-1-zaslonko@linux.ibm.com>
+        Mon, 5 Nov 2018 22:56:49 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41837 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387702AbeKFD4t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 22:56:49 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z80-v6so8994730ljb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 10:35:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+6Oj6LMobWv0rkTof5rn6OOvXppEv/CSmsab7vzk7/0=;
+        b=aJ6BOD5bAFpSuDwGt4t0l4mmxy+pJ/6vgu2RA7wyR3ictd7NuKn9euJ8h4AmX61deW
+         4NPL0rRYfAaiVmhfhNSY+12YRRZcCalNo8+b3ts6EpwppZC7hJo6deOInasyftrmABMb
+         CvtdKZHtowF+trV+FA1/R6R5ew3j0OqazcNAQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+6Oj6LMobWv0rkTof5rn6OOvXppEv/CSmsab7vzk7/0=;
+        b=pbsWtklm4yzYBs/x1nFTVc5+iR/0ywSEaKtqwAwpg+u7zTQvLXvSGvFJ3uoWBIYLHU
+         m3ZrdoBMGatwAPfDb7bj1QkksSYZM1n113AGgqXKEIG5aSwMieJ0TnK2MsQezeKxqAdg
+         uy6YNIenH9YD7+Pk4Ll/3RTZ/XSxHZApyaIUKFOiwvGHqg3MRrGMiIC65GA+RE/H/4Ep
+         bfZ9Xc29wS2/qQFCzdz/s45F3mCMGMHWdoEDuwq0PSje8gBeiA11Nh3nciTZi4qG1Gi4
+         hXolhN7aSrPKMcRiaxjHt2lzvvdcFIahW7Y5DgNaWyJC6rgiPq9pybmuPoBUULjPOW3I
+         Tu8Q==
+X-Gm-Message-State: AGRZ1gIqHFz3RyyYWXhYr5fkY2M2A6zNG8sRG2j6e2didnSfENou0EqF
+        ZtEj+lg+yuTNj4dUccdmT/ay/MX3W2mWRw==
+X-Google-Smtp-Source: AJdET5eK7IteExI2d/Up4tAH8P3JgyF2nzSNuy5y/AOKsCsOXVyLumHtLUnGYhQc/AngEr2vFwkjKg==
+X-Received: by 2002:a2e:9a56:: with SMTP id k22-v6mr11380664ljj.17.1541442949984;
+        Mon, 05 Nov 2018 10:35:49 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id b5-v6sm1899487lfi.40.2018.11.05.10.35.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 10:35:49 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id u6-v6so9033626ljd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 10:35:48 -0800 (PST)
+X-Received: by 2002:a2e:3e06:: with SMTP id l6-v6mr11443510lja.148.1541442947860;
+ Mon, 05 Nov 2018 10:35:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181105150401.97287-1-zaslonko@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181105050813.GP24195@shao2-debian> <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
+ <4feae9c4-432d-a362-58e4-11e0cb10b24d@linux.alibaba.com>
+In-Reply-To: <4feae9c4-432d-a362-58e4-11e0cb10b24d@linux.alibaba.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 5 Nov 2018 10:35:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whr2Aio3R49TVWqW3es6heyxXDuxGHcv8Bcc=_kw4vDeQ@mail.gmail.com>
+Message-ID: <CAHk-=whr2Aio3R49TVWqW3es6heyxXDuxGHcv8Bcc=_kw4vDeQ@mail.gmail.com>
+Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1% regression
+To:     yang.shi@linux.alibaba.com
+Cc:     rong.a.chen@intel.com, vbabka@suse.cz,
+        kirill.shutemov@linux.intel.com, mhocko@kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        ldufour@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin King <colin.king@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkp@01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 05-11-18 16:04:00, Mikhail Zaslonko wrote:
-[...]
-> Another approach was to fix memmap_init() and initialize struct pages
-> beyond the end.
+On Mon, Nov 5, 2018 at 10:28 AM Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>
+> Actually, the commit is mainly for optimizing the long stall time caused
+> by holding mmap_sem by write when unmapping or shrinking large mapping.
+> It downgrades write mmap_sem to read when zapping pages. So, it looks
+> the downgrade incurs more context switches. This is kind of expected.
+>
+> However, the test looks just shrink the mapping with one normal 4K page
+> size. It sounds the overhead of context switches outpace the gain in
+> this case at the first glance.
 
-Yes I still do not want to give up at least this option. We do have
-struct pages for the full section. Leaving som of them uninitialized is
-just asking for problems. And adding special cases to some hotplug paths
-just makes the code harder to follow and maintain.
+I'm not seeing why there should be a context switch in the first place.
 
-So
+Even if you have lots of concurrent brk() users, they should all block
+exactly the same way as before (a write lock blocks against a write
+lock, but it *also* blocks against a downgraded read lock).
 
-> Since struct pages are allocated section-wise we can try to
-> round the size parameter passed to the memmap_init() function up to the
-> section boundary thus forcing the mapping initialization for the entire
-> section. But then it leads to another VM_BUG_ON panic due to
-> zone_spans_pfn() sanity check triggered for the first page of each page
-> block from set_pageblock_migratetype() function:
->  page dumped because: VM_BUG_ON_PAGE(!zone_spans_pfn(page_zone(page), pfn))
->       Call Trace:
->       ([<00000000003013f8>] set_pfnblock_flags_mask+0xe8/0x140)
->        [<00000000003014aa>] set_pageblock_migratetype+0x5a/0x70
->        [<0000000000bef706>] memmap_init_zone+0x25e/0x2e0
->        [<00000000010fc3d8>] free_area_init_node+0x530/0x558
->        [<00000000010fcf02>] free_area_init_nodes+0x81a/0x8f0
->        [<00000000010e7fdc>] paging_init+0x124/0x130
->        [<00000000010e4dfa>] setup_arch+0xbf2/0xcc8
->        [<00000000010de9e6>] start_kernel+0x7e/0x588
->        [<000000000010007c>] startup_continue+0x7c/0x300
->       Last Breaking-Event-Address:
->        [<00000000003013f8>] set_pfnblock_flags_mask+0xe8/0x1401
-> We might ignore this check for the struct pages beyond the "end" but I'm not
-> sure about further implications.
+So no, I don't want just some limit to hide this problem for that
+particular test. There's something else going on.
 
-find out all these implictions or do something like below (untested)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a919ba5cb3c8..a3f9ad8e40ee 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5544,6 +5544,21 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 			cond_resched();
- 		}
- 	}
-+
-+#ifdef CONFIG_SPARSEMEM
-+	/*
-+	 * If we do not have a zone which doesn't span the rest of the
-+	 * section then we should at least initialize those pages. We
-+	 * could blow up on a poisoned page in some paths which depend
-+	 * on full pageblocks being allocated (e.g. memory hotplug).
-+	 */
-+	while (end_pfn % PAGES_PER_SECTION) {
-+		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
-+		end_pfn++
-+	}
-+
-+#endif
-+
- }
- 
- #ifdef CONFIG_ZONE_DEVICE
--- 
-Michal Hocko
-SUSE Labs
+                 Linus
