@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577BBC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FB6C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA9A72081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36DF72081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2qCbR5C3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9A72081D
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mN54KvD5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DF72081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387673AbeKFCRZ (ORCPT
+        id S2387897AbeKFCU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:17:25 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38754 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387598AbeKFCRY (ORCPT
+        Mon, 5 Nov 2018 21:20:27 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:43434 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730068AbeKFCRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:24 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs1eX097148;
-        Mon, 5 Nov 2018 16:56:19 GMT
+        Mon, 5 Nov 2018 21:17:21 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs0Tw052185;
+        Mon, 5 Nov 2018 16:56:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=kTwyB7gUqH7ZPYa5YenpKewBt6cK4ioVbtrtT8tR8jw=;
- b=2qCbR5C3zZAqth0hgukqdlybcV4uHhL5fs1YXUBigjThoXJj6vgpqR/0m6GGO1TvcjUO
- GKEA2ixpVWQNoigKTcwSGoaVMvCtkkXYNzBXrlIfd8itxzOhfXQLkXswQXI6/2VnsuWv
- Jz7vdnLJMcMqu7h2zCsaiSNo7C+J5Ihn0Ttn3aIPNsvQBr5GebXjUrjemEbEgbxHgI6M
- qdex2jnmyZCoZ2ZY+WLq0y/n2abwOCE76N83Ww4e6k0uyMumWH8taJitb/NgdpmYWGjI
- ZKwU6nWWsP0KzteRuU69AVpdGlTPqYWIYMsFD/7qvy0a+50JdFlFpQSE3uK/W+0ob06L CA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2nh33tr6ay-1
+ bh=ocotEYS5gwBRk6gU87/nqGF4VbCejB5eUqqLuMjIfMQ=;
+ b=mN54KvD5juUsCho+IUsHz9pdJiCENCu2Zk68E3tt4J+ZeqbK+u8lhaGnR6ede6YIV8Zi
+ G0cJxC6Hstx3BlUz8Tv2uPx3bhRvWsGAXx9kbwg8Ly8VAVJlRrsl5c9iryriKxkNZdLB
+ 77woyrxNGrg2hihBo1BHyHVoMpZzRMYwRqNLTV56De9PZFqzHVyjhuejpkJXBbSHW6Pe
+ Ctie/HE8JUJ4+mwTFYPCAPSXCpILnHber5mldAbJ5QcWes73oNe55l7E7j/3l8EDceln
+ qT51C5PTnfliZqYGCd7Ow1YgJLGX+/sSMn9Xw/XrlqskUtf5cqAZvluvCa0F7Y8TmInw ow== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2nh4aqg2cx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 16:56:18 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuILC004739
+        Mon, 05 Nov 2018 16:56:16 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuFfJ022245
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 16:56:18 GMT
+        Mon, 5 Nov 2018 16:56:15 GMT
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuHKW017779;
-        Mon, 5 Nov 2018 16:56:17 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuEud010809;
+        Mon, 5 Nov 2018 16:56:14 GMT
 Received: from localhost.localdomain (/73.60.114.248)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 08:56:17 -0800
+        with ESMTP ; Mon, 05 Nov 2018 08:56:13 -0800
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
 To:     linux-mm@kvack.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -63,16 +63,16 @@ Cc:     aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
         Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
         rdunlap@infradead.org, steven.sistare@oracle.com,
         tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz
-Subject: [RFC PATCH v4 07/13] mm: change locked_vm's type from unsigned long to atomic_long_t
-Date:   Mon,  5 Nov 2018 11:55:52 -0500
-Message-Id: <20181105165558.11698-8-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v4 05/13] workqueue, ktask: renice helper threads to prevent starvation
+Date:   Mon,  5 Nov 2018 11:55:50 -0500
+Message-Id: <20181105165558.11698-6-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1811050153
@@ -81,457 +81,550 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, mmap_sem must be held as writer to modify the locked_vm field
-in mm_struct.
+With ktask helper threads running at MAX_NICE, it's possible for one or
+more of them to begin chunks of the task and then have their CPU time
+constrained by higher priority threads.  The main ktask thread, running
+at normal priority, may finish all available chunks of the task and then
+wait on the MAX_NICE helpers to finish the last in-progress chunks, for
+longer than it would have if no helpers were used.
 
-This creates a bottleneck when multithreading VFIO page pinning because
-each thread holds the mmap_sem as reader for the majority of the pinning
-time but also takes mmap_sem as writer regularly, for short times, when
-modifying locked_vm.
+Avoid this by having the main thread assign its priority to each
+unfinished helper one at a time so that on a heavily loaded system,
+exactly one thread in a given ktask call is running at the main thread's
+priority.  At least one thread to ensure forward progress, and at most
+one thread to limit excessive multithreading.
 
-The problem gets worse when other workloads compete for CPU with ktask
-threads doing page pinning because the other workloads force ktask
-threads that hold mmap_sem as writer off the CPU, blocking ktask threads
-trying to get mmap_sem as reader for an excessively long time (the
-mmap_sem reader wait time grows linearly with the thread count).
+Since the workqueue interface, on which ktask is built, does not provide
+access to worker threads, ktask can't adjust their priorities directly,
+so add a new interface to allow a previously-queued work item to run at
+a different priority than the one controlled by the corresponding
+workqueue's 'nice' attribute.  The worker assigned to the work item will
+run the work at the given priority, temporarily overriding the worker's
+priority.
 
-Requiring mmap_sem for locked_vm also abuses mmap_sem by making it
-protect data that could be synchronized separately.
+The interface is flush_work_at_nice, which ensures the given work item's
+assigned worker runs at the specified nice level and waits for the work
+item to finish.
 
-So, decouple locked_vm from mmap_sem by making locked_vm an
-atomic_long_t.  locked_vm's old type was unsigned long and changing it
-to a signed type makes it lose half its capacity, but that's only a
-concern for 32-bit systems and LONG_MAX * PAGE_SIZE is 8T on x86 in that
-case, so there's headroom.
+An alternative choice would have been to simply requeue the work item to
+a pool with workers of the new priority, but this doesn't seem feasible
+because a worker may have already started executing the work and there's
+currently no way to interrupt it midway through.  The proposed interface
+solves this issue because a worker's priority can be adjusted while it's
+executing the work.
 
-Now that mmap_sem is not taken as writer here, ktask threads holding
-mmap_sem as reader can run more often.  Performance results appear later
-in the series.
+TODO:  flush_work_at_nice is a proof-of-concept only, and it may be
+desired to have the interface set the work's nice without also waiting
+for it to finish.  It's implemented in the flush path for this RFC
+because it was fairly simple to write ;-)
 
-On powerpc, this was cross-compiled-tested only.
+I ran tests similar to the ones in the last patch with a couple of
+differences:
+ - The non-ktask workload uses 8 CPUs instead of 7 to compete with the
+   main ktask thread as well as the ktask helpers, so that when the main
+   thread finishes, its CPU is completely occupied by the non-ktask
+   workload, meaning MAX_NICE helpers can't run as often.
+ - The non-ktask workload starts before the ktask workload, rather
+   than after, to maximize the chance that it starves helpers.
 
-[XXX Can send separately.]
+Runtimes in seconds.
+
+Case 1: Synthetic, worst-case CPU contention
+
+  ktask_test - a tight loop doing integer multiplication to max out on CPU;
+               used for testing only, does not appear in this series
+  stress-ng  - cpu stressor ("-c --cpu-method ackerman --cpu-ops 1200");
+
+             8_ktask_thrs           8_ktask_thrs
+               w/o_renice  (stdev)   with_renice  (stdev)  1_ktask_thr  (stdev)
+             ------------------------------------------------------------------
+  ktask_test        41.98  ( 0.22)         25.15  ( 2.98)        30.40  ( 0.61)
+  stress-ng         44.79  ( 1.11)         46.37  ( 0.69)        53.29  ( 1.91)
+
+Without renicing, ktask_test finishes just after stress-ng does because
+stress-ng needs to free up CPUs for the helpers to finish (ktask_test
+shows a shorter runtime than stress-ng because ktask_test was started
+later).  Renicing lets ktask_test finish 40% sooner, and running the
+same amount of work in ktask_test with 1 thread instead of 8 finishes in
+a comparable amount of time, though longer than "with_renice" because
+MAX_NICE threads still get some CPU time, and the effect over 8 threads
+adds up.
+
+stress-ng's total runtime gets a little longer going from no renicing to
+renicing, as expected, because each reniced ktask thread takes more CPU
+time than before when the helpers were starved.
+
+Running with one ktask thread, stress-ng's reported walltime goes up
+because that single thread interferes with fewer stress-ng threads,
+but with more impact, causing a greater spread in the time it takes for
+individual stress-ng threads to finish.  Averages of the per-thread
+stress-ng times from "with_renice" to "1_ktask_thr" come out roughly
+the same, though, 43.81 and 43.89 respectively.  So the total runtime of
+stress-ng across all threads is unaffected, but the time stress-ng takes
+to finish running its threads completely actually improves by spreading
+the ktask_test work over more threads.
+
+Case 2: Real-world CPU contention
+
+  ktask_vfio - VFIO page pin a 32G kvm guest
+  usemem     - faults in 86G of anonymous THP per thread, PAGE_SIZE stride;
+               used to mimic the page clearing that dominates in ktask_vfio
+               so that usemem competes for the same system resources
+
+             8_ktask_thrs           8_ktask_thrs
+               w/o_renice  (stdev)   with_renice  (stdev)  1_ktask_thr  (stdev)
+             ------------------------------------------------------------------
+  ktask_vfio        18.59  ( 0.19)         14.62  ( 2.03)        16.24  ( 0.90)
+      usemem        47.54  ( 0.89)         48.18  ( 0.77)        49.70  ( 1.20)
+
+These results are similar to case 1's, though the differences between
+times are not quite as pronounced because ktask_vfio ran shorter
+compared to usemem.
 
 Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- arch/powerpc/kvm/book3s_64_vio.c    | 15 ++++++++-------
- arch/powerpc/mm/mmu_context_iommu.c | 16 ++++++++--------
- drivers/fpga/dfl-afu-dma-region.c   | 16 +++++++++-------
- drivers/vfio/vfio_iommu_spapr_tce.c | 14 +++++++-------
- drivers/vfio/vfio_iommu_type1.c     | 11 ++++++-----
- fs/proc/task_mmu.c                  |  2 +-
- include/linux/mm_types.h            |  2 +-
- kernel/fork.c                       |  2 +-
- mm/debug.c                          |  3 ++-
- mm/mlock.c                          |  4 ++--
- mm/mmap.c                           | 18 +++++++++---------
- mm/mremap.c                         |  6 +++---
- 12 files changed, 57 insertions(+), 52 deletions(-)
+ include/linux/workqueue.h |   5 ++
+ kernel/ktask.c            |  81 ++++++++++++++++++-----------
+ kernel/workqueue.c        | 106 +++++++++++++++++++++++++++++++++++---
+ 3 files changed, 156 insertions(+), 36 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
-index 62a8d03ba7e9..b5637de6dde5 100644
---- a/arch/powerpc/kvm/book3s_64_vio.c
-+++ b/arch/powerpc/kvm/book3s_64_vio.c
-@@ -58,33 +58,34 @@ static unsigned long kvmppc_stt_pages(unsigned long tce_pages)
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 60d673e15632..d2976547c9c3 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -95,6 +95,10 @@ enum {
+ 	WORK_BUSY_PENDING	= 1 << 0,
+ 	WORK_BUSY_RUNNING	= 1 << 1,
  
- static long kvmppc_account_memlimit(unsigned long stt_pages, bool inc)
- {
--	long ret = 0;
-+	long locked_vm, ret = 0;
++	/* flags for flush_work and similar functions */
++	WORK_FLUSH_FROM_CANCEL  = 1 << 0,
++	WORK_FLUSH_AT_NICE      = 1 << 1,
++
+ 	/* maximum string length for set_worker_desc() */
+ 	WORKER_DESC_LEN		= 24,
+ };
+@@ -477,6 +481,7 @@ extern int schedule_on_each_cpu(work_func_t func);
+ int execute_in_process_context(work_func_t fn, struct execute_work *);
  
- 	if (!current || !current->mm)
- 		return ret; /* process exited */
+ extern bool flush_work(struct work_struct *work);
++extern bool flush_work_at_nice(struct work_struct *work, long nice);
+ extern bool cancel_work_sync(struct work_struct *work);
  
- 	down_write(&current->mm->mmap_sem);
+ extern bool flush_delayed_work(struct delayed_work *dwork);
+diff --git a/kernel/ktask.c b/kernel/ktask.c
+index 72293a0f50c3..9d2727ce430c 100644
+--- a/kernel/ktask.c
++++ b/kernel/ktask.c
+@@ -16,7 +16,6 @@
  
-+	locked_vm = atomic_long_read(&current->mm->locked_vm);
- 	if (inc) {
- 		unsigned long locked, lock_limit;
+ #include <linux/cpu.h>
+ #include <linux/cpumask.h>
+-#include <linux/completion.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+@@ -24,6 +23,7 @@
+ #include <linux/mutex.h>
+ #include <linux/printk.h>
+ #include <linux/random.h>
++#include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
+@@ -41,6 +41,11 @@ static size_t *ktask_rlim_node_max;
+ #define	KTASK_CPUFRAC_NUMER	4
+ #define	KTASK_CPUFRAC_DENOM	5
  
--		locked = current->mm->locked_vm + stt_pages;
-+		locked = locked_vm + stt_pages;
- 		lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
- 			ret = -ENOMEM;
- 		else
--			current->mm->locked_vm += stt_pages;
-+			atomic_long_add(stt_pages, &current->mm->locked_vm);
- 	} else {
--		if (WARN_ON_ONCE(stt_pages > current->mm->locked_vm))
--			stt_pages = current->mm->locked_vm;
-+		if (WARN_ON_ONCE(stt_pages > locked_vm))
-+			stt_pages = locked_vm;
++enum ktask_work_flags {
++	KTASK_WORK_FINISHED	= 1,
++	KTASK_WORK_UNDO		= 2,
++};
++
+ /* Used to pass ktask data to the workqueue API. */
+ struct ktask_work {
+ 	struct work_struct	kw_work;
+@@ -53,6 +58,7 @@ struct ktask_work {
+ 	void			*kw_error_end;
+ 	/* ktask_free_works, kn_failed_works linkage */
+ 	struct list_head	kw_list;
++	enum ktask_work_flags	kw_flags;
+ };
  
--		current->mm->locked_vm -= stt_pages;
-+		atomic_long_sub(stt_pages, &current->mm->locked_vm);
- 	}
+ static LIST_HEAD(ktask_free_works);
+@@ -68,10 +74,7 @@ struct ktask_task {
+ 	struct ktask_node	*kt_nodes;
+ 	size_t			kt_nr_nodes;
+ 	size_t			kt_nr_nodes_left;
+-	size_t			kt_nworks;
+-	size_t			kt_nworks_fini;
+ 	int			kt_error; /* first error from thread_func */
+-	struct completion	kt_ktask_done;
+ };
  
- 	pr_debug("[%d] RLIMIT_MEMLOCK KVM %c%ld %ld/%ld%s\n", current->pid,
- 			inc ? '+' : '-',
- 			stt_pages << PAGE_SHIFT,
--			current->mm->locked_vm << PAGE_SHIFT,
-+			atomic_long_read(&current->mm->locked_vm) << PAGE_SHIFT,
- 			rlimit(RLIMIT_MEMLOCK),
- 			ret ? " - exceeded" : "");
+ /*
+@@ -97,6 +100,7 @@ static void ktask_init_work(struct ktask_work *kw, struct ktask_task *kt,
+ 	kw->kw_task = kt;
+ 	kw->kw_ktask_node_i = ktask_node_i;
+ 	kw->kw_queue_nid = queue_nid;
++	kw->kw_flags = 0;
+ }
  
-diff --git a/arch/powerpc/mm/mmu_context_iommu.c b/arch/powerpc/mm/mmu_context_iommu.c
-index 56c2234cc6ae..a8f66975bf53 100644
---- a/arch/powerpc/mm/mmu_context_iommu.c
-+++ b/arch/powerpc/mm/mmu_context_iommu.c
-@@ -41,31 +41,31 @@ struct mm_iommu_table_group_mem_t {
- static long mm_iommu_adjust_locked_vm(struct mm_struct *mm,
- 		unsigned long npages, bool incr)
- {
--	long ret = 0, locked, lock_limit;
-+	long ret = 0, locked, lock_limit, locked_vm;
+ static void ktask_queue_work(struct ktask_work *kw)
+@@ -171,7 +175,6 @@ static void ktask_thread(struct work_struct *work)
+ 	struct ktask_task  *kt = kw->kw_task;
+ 	struct ktask_ctl   *kc = &kt->kt_ctl;
+ 	struct ktask_node  *kn = &kt->kt_nodes[kw->kw_ktask_node_i];
+-	bool               done;
  
- 	if (!npages)
- 		return 0;
+ 	mutex_lock(&kt->kt_mutex);
  
- 	down_write(&mm->mmap_sem);
+@@ -239,6 +242,7 @@ static void ktask_thread(struct work_struct *work)
+ 			 * about where this thread failed for ktask_undo.
+ 			 */
+ 			if (kc->kc_undo_func) {
++				kw->kw_flags |= KTASK_WORK_UNDO;
+ 				list_move(&kw->kw_list, &kn->kn_failed_works);
+ 				kw->kw_error_start = position;
+ 				kw->kw_error_offset = position_offset;
+@@ -250,13 +254,8 @@ static void ktask_thread(struct work_struct *work)
+ 	WARN_ON(kt->kt_nr_nodes_left > 0 &&
+ 		kt->kt_error == KTASK_RETURN_SUCCESS);
+ 
+-	++kt->kt_nworks_fini;
+-	WARN_ON(kt->kt_nworks_fini > kt->kt_nworks);
+-	done = (kt->kt_nworks_fini == kt->kt_nworks);
++	kw->kw_flags |= KTASK_WORK_FINISHED;
+ 	mutex_unlock(&kt->kt_mutex);
 -
-+	locked_vm = atomic_long_read(&mm->locked_vm);
- 	if (incr) {
--		locked = mm->locked_vm + npages;
-+		locked = locked_vm + npages;
- 		lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
- 			ret = -ENOMEM;
- 		else
--			mm->locked_vm += npages;
-+			atomic_long_add(npages, &mm->locked_vm);
- 	} else {
--		if (WARN_ON_ONCE(npages > mm->locked_vm))
--			npages = mm->locked_vm;
--		mm->locked_vm -= npages;
-+		if (WARN_ON_ONCE(npages > locked_vm))
-+			npages = locked_vm;
-+		atomic_long_sub(npages, &mm->locked_vm);
- 	}
+-	if (done)
+-		complete(&kt->kt_ktask_done);
+ }
  
- 	pr_debug("[%d] RLIMIT_MEMLOCK HASH64 %c%ld %ld/%ld\n",
- 			current ? current->pid : 0,
- 			incr ? '+' : '-',
- 			npages << PAGE_SHIFT,
--			mm->locked_vm << PAGE_SHIFT,
-+			atomic_long_read(&mm->locked_vm) << PAGE_SHIFT,
- 			rlimit(RLIMIT_MEMLOCK));
- 	up_write(&mm->mmap_sem);
- 
-diff --git a/drivers/fpga/dfl-afu-dma-region.c b/drivers/fpga/dfl-afu-dma-region.c
-index 025aba3ea76c..1a7939c511a0 100644
---- a/drivers/fpga/dfl-afu-dma-region.c
-+++ b/drivers/fpga/dfl-afu-dma-region.c
-@@ -45,6 +45,7 @@ void afu_dma_region_init(struct dfl_feature_platform_data *pdata)
- static int afu_dma_adjust_locked_vm(struct device *dev, long npages, bool incr)
+ /*
+@@ -294,7 +293,7 @@ static size_t ktask_chunk_size(size_t task_size, size_t min_chunk_size,
+  */
+ static size_t ktask_init_works(struct ktask_node *nodes, size_t nr_nodes,
+ 			       struct ktask_task *kt,
+-			       struct list_head *works_list)
++			       struct list_head *unfinished_works)
  {
- 	unsigned long locked, lock_limit;
-+	long locked_vm;
- 	int ret = 0;
+ 	size_t i, nr_works, nr_works_check;
+ 	size_t min_chunk_size = kt->kt_ctl.kc_min_chunk_size;
+@@ -342,7 +341,7 @@ static size_t ktask_init_works(struct ktask_node *nodes, size_t nr_nodes,
+ 		WARN_ON(list_empty(&ktask_free_works));
+ 		kw = list_first_entry(&ktask_free_works, struct ktask_work,
+ 				      kw_list);
+-		list_move_tail(&kw->kw_list, works_list);
++		list_move_tail(&kw->kw_list, unfinished_works);
+ 		ktask_init_work(kw, kt, ktask_node_i, queue_nid);
  
- 	/* the task is exiting. */
-@@ -53,24 +54,25 @@ static int afu_dma_adjust_locked_vm(struct device *dev, long npages, bool incr)
+ 		++ktask_rlim_cur;
+@@ -355,14 +354,14 @@ static size_t ktask_init_works(struct ktask_node *nodes, size_t nr_nodes,
  
- 	down_write(&current->mm->mmap_sem);
+ static void ktask_fini_works(struct ktask_task *kt,
+ 			     struct ktask_work *stack_work,
+-			     struct list_head *works_list)
++			     struct list_head *finished_works)
+ {
+ 	struct ktask_work *work, *next;
  
-+	locked_vm = atomic_long_read(&current->mm->locked_vm);
- 	if (incr) {
--		locked = current->mm->locked_vm + npages;
-+		locked = locked_vm + npages;
- 		lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+ 	spin_lock(&ktask_rlim_lock);
  
- 		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
- 			ret = -ENOMEM;
- 		else
--			current->mm->locked_vm += npages;
-+			atomic_long_add(npages, &current->mm->locked_vm);
+ 	/* Put the works back on the free list, adjusting rlimits. */
+-	list_for_each_entry_safe(work, next, works_list, kw_list) {
++	list_for_each_entry_safe(work, next, finished_works, kw_list) {
+ 		if (work == stack_work) {
+ 			/* On this thread's stack, so not subject to rlimits. */
+ 			list_del(&work->kw_list);
+@@ -393,7 +392,7 @@ static int ktask_error_cmp(void *unused, struct list_head *a,
+ }
+ 
+ static void ktask_undo(struct ktask_node *nodes, size_t nr_nodes,
+-		       struct ktask_ctl *ctl, struct list_head *works_list)
++		       struct ktask_ctl *ctl, struct list_head *finished_works)
+ {
+ 	size_t i;
+ 
+@@ -424,7 +423,8 @@ static void ktask_undo(struct ktask_node *nodes, size_t nr_nodes,
+ 
+ 			if (failed_work) {
+ 				undo_pos = failed_work->kw_error_end;
+-				list_move(&failed_work->kw_list, works_list);
++				list_move(&failed_work->kw_list,
++					  finished_works);
+ 			} else {
+ 				undo_pos = undo_end;
+ 			}
+@@ -433,20 +433,46 @@ static void ktask_undo(struct ktask_node *nodes, size_t nr_nodes,
+ 	}
+ }
+ 
++static void ktask_wait_for_completion(struct ktask_task *kt,
++				      struct list_head *unfinished_works,
++				      struct list_head *finished_works)
++{
++	struct ktask_work *work;
++
++	mutex_lock(&kt->kt_mutex);
++	while (!list_empty(unfinished_works)) {
++		work = list_first_entry(unfinished_works, struct ktask_work,
++					kw_list);
++		if (!(work->kw_flags & KTASK_WORK_FINISHED)) {
++			mutex_unlock(&kt->kt_mutex);
++			flush_work_at_nice(&work->kw_work, task_nice(current));
++			mutex_lock(&kt->kt_mutex);
++			WARN_ON_ONCE(!(work->kw_flags & KTASK_WORK_FINISHED));
++		}
++		/*
++		 * Leave works used in ktask_undo on kn->kn_failed_works.
++		 * ktask_undo will move them to finished_works.
++		 */
++		if (!(work->kw_flags & KTASK_WORK_UNDO))
++			list_move(&work->kw_list, finished_works);
++	}
++	mutex_unlock(&kt->kt_mutex);
++}
++
+ int ktask_run_numa(struct ktask_node *nodes, size_t nr_nodes,
+ 		   struct ktask_ctl *ctl)
+ {
+-	size_t i;
++	size_t i, nr_works;
+ 	struct ktask_work kw;
+ 	struct ktask_work *work;
+-	LIST_HEAD(works_list);
++	LIST_HEAD(unfinished_works);
++	LIST_HEAD(finished_works);
+ 	struct ktask_task kt = {
+ 		.kt_ctl             = *ctl,
+ 		.kt_total_size      = 0,
+ 		.kt_nodes           = nodes,
+ 		.kt_nr_nodes        = nr_nodes,
+ 		.kt_nr_nodes_left   = nr_nodes,
+-		.kt_nworks_fini     = 0,
+ 		.kt_error           = KTASK_RETURN_SUCCESS,
+ 	};
+ 
+@@ -465,14 +491,12 @@ int ktask_run_numa(struct ktask_node *nodes, size_t nr_nodes,
+ 		return KTASK_RETURN_SUCCESS;
+ 
+ 	mutex_init(&kt.kt_mutex);
+-	init_completion(&kt.kt_ktask_done);
+ 
+-	kt.kt_nworks = ktask_init_works(nodes, nr_nodes, &kt, &works_list);
++	nr_works = ktask_init_works(nodes, nr_nodes, &kt, &unfinished_works);
+ 	kt.kt_chunk_size = ktask_chunk_size(kt.kt_total_size,
+-					    ctl->kc_min_chunk_size,
+-					    kt.kt_nworks);
++					    ctl->kc_min_chunk_size, nr_works);
+ 
+-	list_for_each_entry(work, &works_list, kw_list)
++	list_for_each_entry(work, &unfinished_works, kw_list)
+ 		ktask_queue_work(work);
+ 
+ 	/* Use the current thread, which saves starting a workqueue worker. */
+@@ -480,13 +504,12 @@ int ktask_run_numa(struct ktask_node *nodes, size_t nr_nodes,
+ 	INIT_LIST_HEAD(&kw.kw_list);
+ 	ktask_thread(&kw.kw_work);
+ 
+-	/* Wait for all the jobs to finish. */
+-	wait_for_completion(&kt.kt_ktask_done);
++	ktask_wait_for_completion(&kt, &unfinished_works, &finished_works);
+ 
+ 	if (kt.kt_error && ctl->kc_undo_func)
+-		ktask_undo(nodes, nr_nodes, ctl, &works_list);
++		ktask_undo(nodes, nr_nodes, ctl, &finished_works);
+ 
+-	ktask_fini_works(&kt, &kw, &works_list);
++	ktask_fini_works(&kt, &kw, &finished_works);
+ 	mutex_destroy(&kt.kt_mutex);
+ 
+ 	return kt.kt_error;
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 0280deac392e..9fbae3fc9cca 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -79,6 +79,7 @@ enum {
+ 	WORKER_CPU_INTENSIVE	= 1 << 6,	/* cpu intensive */
+ 	WORKER_UNBOUND		= 1 << 7,	/* worker is unbound */
+ 	WORKER_REBOUND		= 1 << 8,	/* worker was rebound */
++	WORKER_NICED		= 1 << 9,	/* worker's nice was adjusted */
+ 
+ 	WORKER_NOT_RUNNING	= WORKER_PREP | WORKER_CPU_INTENSIVE |
+ 				  WORKER_UNBOUND | WORKER_REBOUND,
+@@ -2184,6 +2185,18 @@ __acquires(&pool->lock)
+ 	if (unlikely(cpu_intensive))
+ 		worker_clr_flags(worker, WORKER_CPU_INTENSIVE);
+ 
++	/*
++	 * worker's nice level was adjusted (see flush_work_at_nice).  Use the
++	 * work's color to distinguish between the work that sets the nice
++	 * level (== NO_COLOR) and the work for which the adjustment was made
++	 * (!= NO_COLOR) to avoid prematurely restoring the nice level.
++	 */
++	if (unlikely(worker->flags & WORKER_NICED &&
++		     work_color != WORK_NO_COLOR)) {
++		set_user_nice(worker->task, worker->pool->attrs->nice);
++		worker_clr_flags(worker, WORKER_NICED);
++	}
++
+ 	/* we're done with it, release */
+ 	hash_del(&worker->hentry);
+ 	worker->current_work = NULL;
+@@ -2846,8 +2859,53 @@ void drain_workqueue(struct workqueue_struct *wq)
+ }
+ EXPORT_SYMBOL_GPL(drain_workqueue);
+ 
++struct nice_work {
++	struct work_struct work;
++	long nice;
++};
++
++static void nice_work_func(struct work_struct *work)
++{
++	struct nice_work *nw = container_of(work, struct nice_work, work);
++	struct worker *worker = current_wq_worker();
++
++	if (WARN_ON_ONCE(!worker))
++		return;
++
++	set_user_nice(current, nw->nice);
++	worker->flags |= WORKER_NICED;
++}
++
++/**
++ * insert_nice_work - insert a nice_work into a pwq
++ * @pwq: pwq to insert nice_work into
++ * @nice_work: nice_work to insert
++ * @target: target work to attach @nice_work to
++ *
++ * @nice_work is linked to @target such that @target starts executing only
++ * after @nice_work finishes execution.
++ *
++ * @nice_work's only job is to ensure @target's assigned worker runs at the
++ * nice level contained in @nice_work.
++ *
++ * CONTEXT:
++ * spin_lock_irq(pool->lock).
++ */
++static void insert_nice_work(struct pool_workqueue *pwq,
++			     struct nice_work *nice_work,
++			     struct work_struct *target)
++{
++	/* see comment above similar code in insert_wq_barrier */
++	INIT_WORK_ONSTACK(&nice_work->work, nice_work_func);
++	__set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(&nice_work->work));
++
++	debug_work_activate(&nice_work->work);
++	insert_work(pwq, &nice_work->work, &target->entry,
++		    work_color_to_flags(WORK_NO_COLOR) | WORK_STRUCT_LINKED);
++}
++
+ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
+-			     bool from_cancel)
++			     struct nice_work *nice_work, int flags)
+ {
+ 	struct worker *worker = NULL;
+ 	struct worker_pool *pool;
+@@ -2868,11 +2926,19 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
+ 	if (pwq) {
+ 		if (unlikely(pwq->pool != pool))
+ 			goto already_gone;
++
++		/* not yet started, insert linked work before work */
++		if (unlikely(flags & WORK_FLUSH_AT_NICE))
++			insert_nice_work(pwq, nice_work, work);
  	} else {
--		if (WARN_ON_ONCE(npages > current->mm->locked_vm))
--			npages = current->mm->locked_vm;
--		current->mm->locked_vm -= npages;
-+		if (WARN_ON_ONCE(npages > locked_vm))
-+			npages = locked_vm;
-+		atomic_long_sub(npages, &current->mm->locked_vm);
+ 		worker = find_worker_executing_work(pool, work);
+ 		if (!worker)
+ 			goto already_gone;
+ 		pwq = worker->current_pwq;
++		if (unlikely(flags & WORK_FLUSH_AT_NICE)) {
++			set_user_nice(worker->task, nice_work->nice);
++			worker->flags |= WORKER_NICED;
++		}
  	}
  
- 	dev_dbg(dev, "[%d] RLIMIT_MEMLOCK %c%ld %ld/%ld%s\n", current->pid,
- 		incr ? '+' : '-', npages << PAGE_SHIFT,
--		current->mm->locked_vm << PAGE_SHIFT, rlimit(RLIMIT_MEMLOCK),
--		ret ? "- exceeded" : "");
-+		atomic_long_read(&current->mm->locked_vm) << PAGE_SHIFT,
-+		rlimit(RLIMIT_MEMLOCK), ret ? "- exceeded" : "");
- 
- 	up_write(&current->mm->mmap_sem);
- 
-diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
-index b30926e11d87..c834bc2d1e6b 100644
---- a/drivers/vfio/vfio_iommu_spapr_tce.c
-+++ b/drivers/vfio/vfio_iommu_spapr_tce.c
-@@ -45,16 +45,16 @@ static long try_increment_locked_vm(struct mm_struct *mm, long npages)
- 		return 0;
- 
- 	down_write(&mm->mmap_sem);
--	locked = mm->locked_vm + npages;
-+	locked = atomic_long_read(&mm->locked_vm) + npages;
- 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 	if (locked > lock_limit && !capable(CAP_IPC_LOCK))
- 		ret = -ENOMEM;
- 	else
--		mm->locked_vm += npages;
-+		atomic_long_add(npages, &mm->locked_vm);
- 
- 	pr_debug("[%d] RLIMIT_MEMLOCK +%ld %ld/%ld%s\n", current->pid,
- 			npages << PAGE_SHIFT,
--			mm->locked_vm << PAGE_SHIFT,
-+			atomic_long_read(&mm->locked_vm) << PAGE_SHIFT,
- 			rlimit(RLIMIT_MEMLOCK),
- 			ret ? " - exceeded" : "");
- 
-@@ -69,12 +69,12 @@ static void decrement_locked_vm(struct mm_struct *mm, long npages)
- 		return;
- 
- 	down_write(&mm->mmap_sem);
--	if (WARN_ON_ONCE(npages > mm->locked_vm))
--		npages = mm->locked_vm;
--	mm->locked_vm -= npages;
-+	if (WARN_ON_ONCE(npages > atomic_long_read(&mm->locked_vm)))
-+		npages = atomic_long_read(&mm->locked_vm);
-+	atomic_long_sub(npages, &mm->locked_vm);
- 	pr_debug("[%d] RLIMIT_MEMLOCK -%ld %ld/%ld\n", current->pid,
- 			npages << PAGE_SHIFT,
--			mm->locked_vm << PAGE_SHIFT,
-+			atomic_long_read(&mm->locked_vm) << PAGE_SHIFT,
- 			rlimit(RLIMIT_MEMLOCK));
- 	up_write(&mm->mmap_sem);
- }
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index e7cfbf0c8071..f307dc9d5e19 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -276,13 +276,13 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
- 				limit = task_rlimit(dma->task,
- 						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 
--				if (mm->locked_vm + npage > limit)
-+				if (atomic_long_read(&mm->locked_vm) + npage > limit)
- 					ret = -ENOMEM;
- 			}
- 		}
- 
- 		if (!ret)
--			mm->locked_vm += npage;
-+			atomic_long_add(npage, &mm->locked_vm);
- 
- 		up_write(&mm->mmap_sem);
- 	}
-@@ -419,7 +419,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	 * pages are already counted against the user.
+ 	check_flush_dependency(pwq->wq, work);
+@@ -2889,7 +2955,7 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
+ 	 * workqueues the deadlock happens when the rescuer stalls, blocking
+ 	 * forward progress.
  	 */
- 	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
--		if (!dma->lock_cap && mm->locked_vm + 1 > limit) {
-+		if (!dma->lock_cap &&
-+		    atomic_long_read(&mm->locked_vm) + 1 > limit) {
- 			put_pfn(*pfn_base, dma->prot);
- 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
- 					limit << PAGE_SHIFT);
-@@ -445,8 +446,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 		}
- 
- 		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
--			if (!dma->lock_cap &&
--			    mm->locked_vm + lock_acct + 1 > limit) {
-+			if (!dma->lock_cap && atomic_long_read(&mm->locked_vm) +
-+			    lock_acct + 1 > limit) {
- 				put_pfn(pfn, dma->prot);
- 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
- 					__func__, limit << PAGE_SHIFT);
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 39e96a21366e..f0468bfe022e 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -58,7 +58,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
- 	swap = get_mm_counter(mm, MM_SWAPENTS);
- 	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
- 	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
--	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
-+	SEQ_PUT_DEC(" kB\nVmLck:\t", atomic_long_read(&mm->locked_vm));
- 	SEQ_PUT_DEC(" kB\nVmPin:\t", mm->pinned_vm);
- 	SEQ_PUT_DEC(" kB\nVmHWM:\t", hiwater_rss);
- 	SEQ_PUT_DEC(" kB\nVmRSS:\t", total_rss);
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f6292a53..ee02933d10e5 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -399,7 +399,7 @@ struct mm_struct {
- 		unsigned long hiwater_vm;  /* High-water virtual memory usage */
- 
- 		unsigned long total_vm;	   /* Total pages mapped */
--		unsigned long locked_vm;   /* Pages that have PG_mlocked set */
-+		atomic_long_t locked_vm;   /* Pages that have PG_mlocked set */
- 		unsigned long pinned_vm;   /* Refcount permanently increased */
- 		unsigned long data_vm;	   /* VM_WRITE & ~VM_SHARED & ~VM_STACK */
- 		unsigned long exec_vm;	   /* VM_EXEC & ~VM_WRITE & ~VM_STACK */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2f78d32eaa0f..e0d4d5b8f151 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -978,7 +978,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	mm->core_state = NULL;
- 	mm_pgtables_bytes_init(mm);
- 	mm->map_count = 0;
--	mm->locked_vm = 0;
-+	atomic_long_set(&mm->locked_vm, 0);
- 	mm->pinned_vm = 0;
- 	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
- 	spin_lock_init(&mm->page_table_lock);
-diff --git a/mm/debug.c b/mm/debug.c
-index cdacba12e09a..3d8db069176f 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -152,7 +152,8 @@ void dump_mm(const struct mm_struct *mm)
- 		atomic_read(&mm->mm_count),
- 		mm_pgtables_bytes(mm),
- 		mm->map_count,
--		mm->hiwater_rss, mm->hiwater_vm, mm->total_vm, mm->locked_vm,
-+		mm->hiwater_rss, mm->hiwater_vm, mm->total_vm,
-+		atomic_long_read(&mm->locked_vm),
- 		mm->pinned_vm, mm->data_vm, mm->exec_vm, mm->stack_vm,
- 		mm->start_code, mm->end_code, mm->start_data, mm->end_data,
- 		mm->start_brk, mm->brk, mm->start_stack,
-diff --git a/mm/mlock.c b/mm/mlock.c
-index 41cc47e28ad6..b213ad97585c 100644
---- a/mm/mlock.c
-+++ b/mm/mlock.c
-@@ -562,7 +562,7 @@ static int mlock_fixup(struct vm_area_struct *vma, struct vm_area_struct **prev,
- 		nr_pages = -nr_pages;
- 	else if (old_flags & VM_LOCKED)
- 		nr_pages = 0;
--	mm->locked_vm += nr_pages;
-+	atomic_long_add(nr_pages, &mm->locked_vm);
- 
- 	/*
- 	 * vm_flags is protected by the mmap_sem held in write mode.
-@@ -687,7 +687,7 @@ static __must_check int do_mlock(unsigned long start, size_t len, vm_flags_t fla
- 	if (down_write_killable(&current->mm->mmap_sem))
- 		return -EINTR;
- 
--	locked += current->mm->locked_vm;
-+	locked += atomic_long_read(&current->mm->locked_vm);
- 	if ((locked > lock_limit) && (!capable(CAP_IPC_LOCK))) {
- 		/*
- 		 * It is possible that the regions requested intersect with
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 6c04292e16a7..5c4b39b99fb4 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1339,7 +1339,7 @@ static inline int mlock_future_check(struct mm_struct *mm,
- 	/*  mlock MCL_FUTURE? */
- 	if (flags & VM_LOCKED) {
- 		locked = len >> PAGE_SHIFT;
--		locked += mm->locked_vm;
-+		locked += atomic_long_read(&mm->locked_vm);
- 		lock_limit = rlimit(RLIMIT_MEMLOCK);
- 		lock_limit >>= PAGE_SHIFT;
- 		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
-@@ -1825,7 +1825,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 					vma == get_gate_vma(current->mm))
- 			vma->vm_flags &= VM_LOCKED_CLEAR_MASK;
- 		else
--			mm->locked_vm += (len >> PAGE_SHIFT);
-+			atomic_long_add(len >> PAGE_SHIFT, &mm->locked_vm);
- 	}
- 
- 	if (file)
-@@ -2291,7 +2291,7 @@ static int acct_stack_growth(struct vm_area_struct *vma,
- 	if (vma->vm_flags & VM_LOCKED) {
- 		unsigned long locked;
- 		unsigned long limit;
--		locked = mm->locked_vm + grow;
-+		locked = atomic_long_read(&mm->locked_vm) + grow;
- 		limit = rlimit(RLIMIT_MEMLOCK);
- 		limit >>= PAGE_SHIFT;
- 		if (locked > limit && !capable(CAP_IPC_LOCK))
-@@ -2385,7 +2385,7 @@ int expand_upwards(struct vm_area_struct *vma, unsigned long address)
- 				 */
- 				spin_lock(&mm->page_table_lock);
- 				if (vma->vm_flags & VM_LOCKED)
--					mm->locked_vm += grow;
-+					atomic_long_add(grow, &mm->locked_vm);
- 				vm_stat_account(mm, vma->vm_flags, grow);
- 				anon_vma_interval_tree_pre_update_vma(vma);
- 				vma->vm_end = address;
-@@ -2466,7 +2466,7 @@ int expand_downwards(struct vm_area_struct *vma,
- 				 */
- 				spin_lock(&mm->page_table_lock);
- 				if (vma->vm_flags & VM_LOCKED)
--					mm->locked_vm += grow;
-+					atomic_long_add(grow, &mm->locked_vm);
- 				vm_stat_account(mm, vma->vm_flags, grow);
- 				anon_vma_interval_tree_pre_update_vma(vma);
- 				vma->vm_start = address;
-@@ -2787,11 +2787,11 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	/*
- 	 * unlock any mlock()ed ranges before detaching vmas
- 	 */
--	if (mm->locked_vm) {
-+	if (atomic_long_read(&mm->locked_vm)) {
- 		struct vm_area_struct *tmp = vma;
- 		while (tmp && tmp->vm_start < end) {
- 			if (tmp->vm_flags & VM_LOCKED) {
--				mm->locked_vm -= vma_pages(tmp);
-+				atomic_long_sub(vma_pages(tmp), &mm->locked_vm);
- 				munlock_vma_pages_all(tmp);
- 			}
- 
-@@ -3050,7 +3050,7 @@ static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long fla
- 	mm->total_vm += len >> PAGE_SHIFT;
- 	mm->data_vm += len >> PAGE_SHIFT;
- 	if (flags & VM_LOCKED)
--		mm->locked_vm += (len >> PAGE_SHIFT);
-+		atomic_long_add(len >> PAGE_SHIFT, &mm->locked_vm);
- 	vma->vm_flags |= VM_SOFTDIRTY;
- 	return 0;
+-	if (!from_cancel &&
++	if (!(flags & WORK_FLUSH_FROM_CANCEL) &&
+ 	    (pwq->wq->saved_max_active == 1 || pwq->wq->rescuer)) {
+ 		lock_map_acquire(&pwq->wq->lockdep_map);
+ 		lock_map_release(&pwq->wq->lockdep_map);
+@@ -2901,19 +2967,23 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
+ 	return false;
  }
-@@ -3122,7 +3122,7 @@ void exit_mmap(struct mm_struct *mm)
- 		up_write(&mm->mmap_sem);
+ 
+-static bool __flush_work(struct work_struct *work, bool from_cancel)
++static bool __flush_work(struct work_struct *work, int flags, long nice)
+ {
+ 	struct wq_barrier barr;
++	struct nice_work nice_work;
+ 
+ 	if (WARN_ON(!wq_online))
+ 		return false;
+ 
+-	if (!from_cancel) {
++	if (!(flags & WORK_FLUSH_FROM_CANCEL)) {
+ 		lock_map_acquire(&work->lockdep_map);
+ 		lock_map_release(&work->lockdep_map);
  	}
  
--	if (mm->locked_vm) {
-+	if (atomic_long_read(&mm->locked_vm)) {
- 		vma = mm->mmap;
- 		while (vma) {
- 			if (vma->vm_flags & VM_LOCKED)
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 7f9f9180e401..abcc58690f17 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -360,7 +360,7 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 	}
+-	if (start_flush_work(work, &barr, from_cancel)) {
++	if (unlikely(flags & WORK_FLUSH_AT_NICE))
++		nice_work.nice = nice;
++
++	if (start_flush_work(work, &barr, &nice_work, flags)) {
+ 		wait_for_completion(&barr.done);
+ 		destroy_work_on_stack(&barr.work);
+ 		return true;
+@@ -2935,10 +3005,32 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
+  */
+ bool flush_work(struct work_struct *work)
+ {
+-	return __flush_work(work, false);
++	return __flush_work(work, 0, 0);
+ }
+ EXPORT_SYMBOL_GPL(flush_work);
  
- 	if (vm_flags & VM_LOCKED) {
--		mm->locked_vm += new_len >> PAGE_SHIFT;
-+		atomic_long_add(new_len >> PAGE_SHIFT, &mm->locked_vm);
- 		*locked = true;
- 	}
++/**
++ * flush_work_at_nice - set a work's nice level and wait for it to finish
++ * @work: the target work
++ * @nice: nice level @work's assigned worker should run at
++ *
++ * Makes @work's assigned worker run at @nice for the duration of @work.
++ * Waits until @work has finished execution.  @work is guaranteed to be idle
++ * on return if it hasn't been requeued since flush started.
++ *
++ * Avoids priority inversion where a high priority task queues @work on a
++ * workqueue with low priority workers and may wait indefinitely for @work's
++ * completion.  That task can will its priority to @work.
++ *
++ * Return:
++ * %true if flush_work_at_nice() waited for the work to finish execution,
++ * %false if it was already idle.
++ */
++bool flush_work_at_nice(struct work_struct *work, long nice)
++{
++	return __flush_work(work, WORK_FLUSH_AT_NICE, nice);
++}
++
+ struct cwt_wait {
+ 	wait_queue_entry_t		wait;
+ 	struct work_struct	*work;
+@@ -3001,7 +3093,7 @@ static bool __cancel_work_timer(struct work_struct *work, bool is_dwork)
+ 	 * isn't executing.
+ 	 */
+ 	if (wq_online)
+-		__flush_work(work, true);
++		__flush_work(work, WORK_FLUSH_FROM_CANCEL, 0);
  
-@@ -411,7 +411,7 @@ static struct vm_area_struct *vma_to_resize(unsigned long addr,
+ 	clear_work_data(work);
  
- 	if (vma->vm_flags & VM_LOCKED) {
- 		unsigned long locked, lock_limit;
--		locked = mm->locked_vm << PAGE_SHIFT;
-+		locked = atomic_long_read(&mm->locked_vm) << PAGE_SHIFT;
- 		lock_limit = rlimit(RLIMIT_MEMLOCK);
- 		locked += new_len - old_len;
- 		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
-@@ -600,7 +600,7 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 
- 			vm_stat_account(mm, vma->vm_flags, pages);
- 			if (vma->vm_flags & VM_LOCKED) {
--				mm->locked_vm += pages;
-+				atomic_long_add(pages, &mm->locked_vm);
- 				locked = true;
- 				new_addr = addr;
- 			}
 -- 
 2.19.1
 
