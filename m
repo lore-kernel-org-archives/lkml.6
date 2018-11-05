@@ -2,93 +2,140 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FC0C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C332BC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F1F620819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:36:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1F620819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 87F9220819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:37:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F9220819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbeKEX4e (ORCPT
+        id S1730059AbeKEX5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:56:34 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:49158 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbeKEX4e (ORCPT
+        Mon, 5 Nov 2018 18:57:17 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60145 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKEX5R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:56:34 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id B877572CC68;
-        Mon,  5 Nov 2018 17:36:31 +0300 (MSK)
-Received: from sole.flsd.net (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 43D494A4A29;
-        Mon,  5 Nov 2018 17:36:31 +0300 (MSK)
-Date:   Mon, 5 Nov 2018 17:36:31 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] crypto: streebog - add Streebog hash function
-Message-ID: <20181105143630.3m5z2kmbtesaqcgc@sole.flsd.net>
-Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181024032356.3388-1-vt@altlinux.org>
- <20181024032356.3388-2-vt@altlinux.org>
- <CAKv+Gu9LSUNwW_3E3QtxV123u=mU-B+p6FFRAkWq8_e9Jsgb2w@mail.gmail.com>
+        Mon, 5 Nov 2018 18:57:17 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5Earep368360
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 5 Nov 2018 06:36:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5EarhN368357;
+        Mon, 5 Nov 2018 06:36:53 -0800
+Date:   Mon, 5 Nov 2018 06:36:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Nathan Chancellor <tipbot@zytor.com>
+Message-ID: <tip-f87419e1c9b5d38ea8a81b31e90aefa1be3fde5d@git.kernel.org>
+Cc:     natechancellor@gmail.com, yamada.masahiro@socionext.com,
+        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
+        ndesaulniers@google.com, keescook@chromium.org, namit@vmware.com,
+        linux-kernel@vger.kernel.org
+Reply-To: yamada.masahiro@socionext.com, natechancellor@gmail.com,
+          hpa@zytor.com, tglx@linutronix.de, bp@alien8.de,
+          mingo@kernel.org, ndesaulniers@google.com, keescook@chromium.org,
+          namit@vmware.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20181023231125.27976-1-natechancellor@gmail.com>
+References: <20181023231125.27976-1-natechancellor@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/build: Remove -pipe from KBUILD_CFLAGS
+Git-Commit-ID: f87419e1c9b5d38ea8a81b31e90aefa1be3fde5d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9LSUNwW_3E3QtxV123u=mU-B+p6FFRAkWq8_e9Jsgb2w@mail.gmail.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ard,
+Commit-ID:  f87419e1c9b5d38ea8a81b31e90aefa1be3fde5d
+Gitweb:     https://git.kernel.org/tip/f87419e1c9b5d38ea8a81b31e90aefa1be3fde5d
+Author:     Nathan Chancellor <natechancellor@gmail.com>
+AuthorDate: Tue, 23 Oct 2018 16:11:25 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 5 Nov 2018 15:32:40 +0100
 
-I will address your suggestions in v4. And below is my comments for a
-few of them.
+x86/build: Remove -pipe from KBUILD_CFLAGS
 
-On Mon, Nov 05, 2018 at 02:22:21PM +0100, Ard Biesheuvel wrote:
-> > +static const struct streebog_uint512 buffer512 = { {
-> > +       cpu_to_le64(0x200ULL),
-> 
-> Can we keep the memory representation in native endianness, and only
-> swab the in/output [where needed]?
+Commit 77b0bf55bc67 ("kbuild/Makefile: Prepare for using macros in
+inline assembly code to work around asm() related GCC inlining bugs")
+added -Wa,- to KBUILD_CFLAGS, which breaks compiling with Clang (hangs
+indefinitely at compiling init/main.o). This happens because while Clang
+accepts -pipe (and has it documented in its list of supported flags), it
+silently ignores it after this 2010 commit (thanks to Nick Desaulniers
+for tracking this down), meaning that gas just infinitely waits for
+stdin and never receives it.
 
-Yes. This will slightly affect performance on big-endian architectures,
-but, probably this is not a concern.
+https://github.com/llvm-mirror/clang/commit/c19a12dc3d441bec62eed55e312b76c12d6d9022
 
-> Also, did you test this code on a big-endian system?
+Initially, I had suggested just add -Wa,- to KBUILD_CFLAGS when GCC was
+being used but that was before realizing it is because Clang doesn't do
+anything with -pipe. H. Peter Anvin suggested checking to see if -pipe
+gives us any gains out of GCC. Turns out it might actually be hurting:
 
-Yes, on s390x on qemu.
+With -pipe:
 
-> > +               .cra_name        =      "sb256",
-> 
-> Please use the full name 'streebog256' (and 512 below)
+real    3m40.813s
+real    3m44.449s
+real    3m39.648s
 
-First, I thought of shortening name like Whirlpool do with wp256, but
-now I rethought this and agree.
+Without -pipe:
 
-Thanks!
+real    3m38.492s
+real    3m38.335s
+real    3m38.975s
 
+The issue of -Wa,- being passed along to gas without -pipe being
+supported should still probably be fixed on the LLVM side (open issue:
+https://bugs.llvm.org/show_bug.cgi?id=39410) but this is not as much of
+a workaround anymore since it helps both GCC and Clang.
+
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nadav Amit <namit@vmware.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/213
+Link: https://lkml.kernel.org/r/20181023231125.27976-1-natechancellor@gmail.com
+---
+ arch/x86/Makefile | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 5b562e464009..88398fdf8129 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -213,8 +213,6 @@ ifdef CONFIG_X86_64
+ KBUILD_LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
+ endif
+ 
+-# Speed up the build
+-KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+ KBUILD_CFLAGS += -Wno-sign-compare
+ #
+@@ -239,7 +237,7 @@ archheaders:
+ archmacros:
+ 	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
+ 
+-ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s -Wa,-
++ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
+ export ASM_MACRO_FLAGS
+ KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
+ 
