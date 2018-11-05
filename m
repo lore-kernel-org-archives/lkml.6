@@ -2,174 +2,176 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B62C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10326C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B5220827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B5220827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BD1A520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:11:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="WILf4Lmf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1A520862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730116AbeKFCbw (ORCPT
+        id S1730147AbeKFCcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:31:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60850 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729733AbeKFCbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:31:52 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43E0CC058CA8;
-        Mon,  5 Nov 2018 17:11:14 +0000 (UTC)
-Received: from slurm.brq.redhat.com (dhcp-27-164.brq.redhat.com [10.34.27.164])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29C945DD72;
-        Mon,  5 Nov 2018 17:11:06 +0000 (UTC)
-From:   Daniel Vacek <neelx@redhat.com>
-To:     x86@kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Daniel Vacek <neelx@redhat.com>
-Subject: [PATCH v2] x86/tsc: make calibration refinement more robust
-Date:   Mon,  5 Nov 2018 18:10:40 +0100
-Message-Id: <1541437840-29293-1-git-send-email-neelx@redhat.com>
-In-Reply-To: <1541085133-32534-1-git-send-email-neelx@redhat.com>
-References: <1541085133-32534-1-git-send-email-neelx@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 05 Nov 2018 17:11:14 +0000 (UTC)
+        Mon, 5 Nov 2018 21:32:33 -0500
+Received: from sonic310-21.consmr.mail.gq1.yahoo.com ([98.137.69.147]:40009
+        "EHLO sonic310-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729733AbeKFCcd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:32:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1541437914; bh=M7IS0j1Q8QuVUGnbOGJMHaLTmRTKpPVAeyUIMzSZ4wE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=WILf4LmfSqTakzVTiQbh2pL7PxfjnnF+pmNdhaoND6pBUf6eWbSU/8WLwvPUNalGAZWyF9w5MlqqJqDrAaqBTINHejyeJz46feN1g9Vvb7Z5k/BBy+d1Dz/FX1hsgIPQh1MnHXjIKsbSDJz0Dy0zvaD68xmzZIlIAE7ZSam23qKvAL2QTEISxQRyQdxlwEjIC+YTk5yXQ12j1nJqBGat8Qqfj6D7/53IHNGr0T6uvQj9FaVhHm68uP1oNucU5/3B1YnDXNGZICM4kqzJfC+TzVSrpLUULiT83lGIL7pM0tiaqAZRdaOCvFfJX4Dr9Uz7qeE7IBZFvng3nA84XF0HZA==
+X-YMail-OSG: ywZl_uMVM1nq.zUX.xszdW_cGzzHRp3Afd9Dh1PNDo7JBim2DnvNYE4K214e8vc
+ Yd0KTCfqjEVwl_KWtti.TYxLbaofgR8EvEbZewlbrFQHD3YtTc8pTAFYQgRGaD.80nx3rlv1yJWP
+ i9CfEfe.2t1cOMQrgyEztDME5ApkNAgdAMbPSX4768adW42m8Q2u8kVJOmjiMIcudzPINAKrtwZ3
+ HrTzG8EOHBR8lINogI89gciYrHSRtwDBXQRKK661MHZpYmAMv0cHjvHW_JN9IUuAoWqvecH3aQi_
+ RssFO54KJnoQJyrBOkHnQYkqBBhhBmEW_BomKmxmB_jdLCVPCMc2RncHbY6Btu_moywm_GnEOYp0
+ 2LTZd1DcHp4_UQ4L1poJ_Wf1fpdz9LCAJvFiGKBm.dpPdRbK.C3fO_x9UajFfFr9ap8Sd4PIWtE7
+ jflcerD0CpMMkfmJKHLn5aepYwRYvks.uHWVK3ThYmwEbVKg1SjNyknvgN0PBkqO9bxhn7F2_p.G
+ yNzmA6hT.X_T8We2L6.QScZFmV7HW48CddgUiB61kTyh4rwX9zKevkr_lF9wX6ChFaW8Eyx.i8Dj
+ uPz81CLgpQnaXtpfbGGx9VSTjI7IElHHPGv7hVFrDLRzXS_7zKsgqosNLF3hTiOeNsc1A4rK_oc9
+ BfDZbuFJkg2P.sS3TymoZy2ivcH3SKBfkE7jBV.SXnV7.9Z5faN0AHaglfVp4rVwrZQYWTA0R7gQ
+ Pq7VV6EhKK_HE0ii9hjVAjTjxZTjhPKT7He8d3g77ICs55NV.lhIEgf5i8Ml3QKaBTCZFiOHrw.p
+ 647uEj6CLsUCLBVlqUVb4dZAXzszUIglcuPJWVmW9.iHC.wKqDK6gcOHy6WZM4dqUafEillCZHFY
+ np9x0fin4A_YG8gsk5Z7yCqBUQ7V1fz.BG1MxaLRyLgwDwxmAz8kPhyNYyRIQnQA3g2KCgw7XYW7
+ LGjoIHOIZavnV9aiZMzqhr85mjMUNIVuIJirfJEpElAfy6bPfBf2gyvz2AysYJ0EbPZzJXE34X_3
+ .6g3L8lZrnJ.PnQZ7CzjwXyTF0KSdqh.jUTB0DwLvRh4-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Mon, 5 Nov 2018 17:11:54 +0000
+Received: from 60.177.33.247 (EHLO [192.168.199.149]) ([60.177.33.247])
+          by smtp432.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3a3443c36cf107c1ec063a51e3d2ba26;
+          Mon, 05 Nov 2018 17:11:52 +0000 (UTC)
+Subject: Re: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Miao Xie <miaoxie@huawei.com>, Chao Yu <chao@kernel.org>
+References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
+ <20181030060441.16107-1-gaoxiang25@huawei.com>
+ <3455f753-8f7c-91a8-c926-e06f5ed2d1bb@huawei.com>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <f30835ca-f6e8-1e31-3364-cb1d958d76bf@aol.com>
+Date:   Tue, 6 Nov 2018 01:11:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <3455f753-8f7c-91a8-c926-e06f5ed2d1bb@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The threshold in tsc_read_refs() is constant which may favor slower CPUs
-but may not be optimal for simple reading of reference on faster ones.
-Hence make it proportional to tsc_khz when available to compensate for
-this. The threshold guards against any disturbance like IRQs, NMIs, SMIs
-or CPU stealing by host on guest systems so rename it accordingly and
-fix comments as well.
+Hi all,
 
-Also on some systems there is noticeable DMI bus contention at some point
-during boot keeping the readout failing (observed with about one in ~300
-boots when testing). In that case retry also the second readout instead of
-simply bailing out unrefined. Usually the next second the readout returns
-fast just fine without any issues.
+ping... is there someone interested in this patch?
 
-v2: keep using the constant early when the tsc_khz is not available yet
-    as suggested by tglx
+It seems bit_spinlock performs much better by using
+smp_cond_load_relaxed than just do busy-loop in arm64...
 
-Signed-off-by: Daniel Vacek <neelx@redhat.com>
----
- arch/x86/kernel/tsc.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+Thanks,
+Gao Xiang
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index e9f777bfed40..3fae23834069 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -297,15 +297,16 @@ static int __init tsc_setup(char *str)
- 
- __setup("tsc=", tsc_setup);
- 
--#define MAX_RETRIES     5
--#define SMI_TRESHOLD    50000
-+#define MAX_RETRIES		5
-+#define TSC_DEFAULT_THRESHOLD	0x20000
- 
- /*
-- * Read TSC and the reference counters. Take care of SMI disturbance
-+ * Read TSC and the reference counters. Take care of any disturbances
-  */
- static u64 tsc_read_refs(u64 *p, int hpet)
- {
- 	u64 t1, t2;
-+	u64 thresh = tsc_khz ? tsc_khz >> 5 : TSC_DEFAULT_THRESHOLD;
- 	int i;
- 
- 	for (i = 0; i < MAX_RETRIES; i++) {
-@@ -315,7 +316,7 @@ static u64 tsc_read_refs(u64 *p, int hpet)
- 		else
- 			*p = acpi_pm_read_early();
- 		t2 = get_cycles();
--		if ((t2 - t1) < SMI_TRESHOLD)
-+		if ((t2 - t1) < thresh)
- 			return t2;
- 	}
- 	return ULLONG_MAX;
-@@ -703,15 +704,15 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
- 	 * zero. In each wait loop iteration we read the TSC and check
- 	 * the delta to the previous read. We keep track of the min
- 	 * and max values of that delta. The delta is mostly defined
--	 * by the IO time of the PIT access, so we can detect when a
--	 * SMI/SMM disturbance happened between the two reads. If the
-+	 * by the IO time of the PIT access, so we can detect when
-+	 * any disturbance happened between the two reads. If the
- 	 * maximum time is significantly larger than the minimum time,
- 	 * then we discard the result and have another try.
- 	 *
- 	 * 2) Reference counter. If available we use the HPET or the
- 	 * PMTIMER as a reference to check the sanity of that value.
- 	 * We use separate TSC readouts and check inside of the
--	 * reference read for a SMI/SMM disturbance. We dicard
-+	 * reference read for any possible disturbance. We dicard
- 	 * disturbed values here as well. We do that around the PIT
- 	 * calibration delay loop as we have to wait for a certain
- 	 * amount of time anyway.
-@@ -744,7 +745,7 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
- 		if (ref1 == ref2)
- 			continue;
- 
--		/* Check, whether the sampling was disturbed by an SMI */
-+		/* Check, whether the sampling was disturbed */
- 		if (tsc1 == ULLONG_MAX || tsc2 == ULLONG_MAX)
- 			continue;
- 
-@@ -1268,7 +1269,7 @@ struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
-  */
- static void tsc_refine_calibration_work(struct work_struct *work)
- {
--	static u64 tsc_start = -1, ref_start;
-+	static u64 tsc_start = ULLONG_MAX, ref_start;
- 	static int hpet;
- 	u64 tsc_stop, ref_stop, delta;
- 	unsigned long freq;
-@@ -1283,14 +1284,15 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 	 * delayed the first time we expire. So set the workqueue
- 	 * again once we know timers are working.
- 	 */
--	if (tsc_start == -1) {
-+	if (tsc_start == ULLONG_MAX) {
-+restart:
- 		/*
- 		 * Only set hpet once, to avoid mixing hardware
- 		 * if the hpet becomes enabled later.
- 		 */
- 		hpet = is_hpet_enabled();
--		schedule_delayed_work(&tsc_irqwork, HZ);
- 		tsc_start = tsc_read_refs(&ref_start, hpet);
-+		schedule_delayed_work(&tsc_irqwork, HZ);
- 		return;
- 	}
- 
-@@ -1300,9 +1302,9 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 	if (ref_start == ref_stop)
- 		goto out;
- 
--	/* Check, whether the sampling was disturbed by an SMI */
--	if (tsc_start == ULLONG_MAX || tsc_stop == ULLONG_MAX)
--		goto out;
-+	/* Check, whether the sampling was disturbed */
-+	if (tsc_stop == ULLONG_MAX)
-+		goto restart;
- 
- 	delta = tsc_stop - tsc_start;
- 	delta *= 1000000LL;
--- 
-2.19.1
-
+On 2018/10/30 13:52, Gao Xiang wrote:
+> Hi,
+> 
+> On 2018/10/30 14:04, Gao Xiang wrote:
+>> It is better to use wrapped smp_cond_load_relaxed
+>> instead of open-coded busy waiting for bit_spinlock.
+>>
+>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>> ---
+>>
+>> change log v2:
+>>  - fix the incorrect expression !(VAL >> (bitnum & (BITS_PER_LONG-1)))
+>>  - the test result is described in the following reply.
+>>
+>> Thanks,
+>> Gao Xiang
+> 
+> 
+> Simple test script:
+> #include <linux/kthread.h>
+> #include <linux/bit_spinlock.h>
+> #include <linux/module.h>
+> 
+> unsigned long global_lock;
+> 
+> int test_thread(void *data)
+> {
+> 	unsigned long thread_id = (unsigned long)data;
+> 	int i;
+> 	u64 start = ktime_get_ns();
+> 
+> 	for (i = 0; i < 500000; ++i) {
+> 		bit_spin_lock(0, &global_lock);
+> 		__asm__("yield");
+> 		bit_spin_unlock(0, &global_lock);
+> 	}
+> 	pr_err("Thread id: %lu time: %llu\n", thread_id, ktime_get_ns() - start);
+> 
+> 	do_exit(0);
+> }
+> 
+> 
+> static int __init bitspinlock_test_module_init(void)
+> {
+> 	int i;
+> 
+> 	for (i = 0; i < 8; ++i) {
+> 		if (IS_ERR(kthread_run(test_thread, (void *)(unsigned long)i, "thread-%d", i)))
+> 			pr_err("fail to create thread %d\n", i);
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> static void __exit bitspinlock_test_module_exit(void)
+> {
+> }
+> 
+> module_init(bitspinlock_test_module_init);
+> module_exit(bitspinlock_test_module_exit);
+> MODULE_LICENSE("GPL");
+> 
+> 
+> ...and tested in the following ARM server environment:
+> 
+> Processor: HI1616 (https://en.wikichip.org/wiki/hisilicon/hi16xx/hi1616)
+> Board: HiSilicon D05 Development Board (http://open-estuary.org/d05/)
+> Memory: 512GB
+> Host OS: Ubuntu 18.04.1 LTS (Ubuntu 4.15.0-29.31-generic 4.15.18)
+> QEMU KVM OS: Linux 4.19 + buildroot
+> QEMU KVM cmdline: qemu-system-aarch64 -enable-kvm -cpu host -smp 4 -m 256M -kernel Image -M virt,kernel_irqchip=on -nographic -hda rootfs.ext2 -append 'root=/dev/vda console=ttyAMA0 earlycon=pl011,0x9000000' -serial mon:stdio -net none
+> 
+> Without this patch:
+>   Thread 0   Thread 1   Thread 2   Thread 3   Thread 4   Thread 5   Thread 6   Thread 7
+> 1 1283709480 1271869280  454742480 1173673820 1145643640 1118846920  774616920 1144146140
+> 2  643580180  625143860  576841700  322982340  649987880  585749000  529178880  373374780
+> 3  672307220  847315000  880801860 1039502040  667086380 1033939940 1035381120 1046898300
+> 4  568635580  440547020  737000380  910040880  804543740  712314280  868896880  867049000
+> 5  749107320  726397720  776134480  611970100  756721040  753449440  711691300  609343300
+> 
+> With this patch:
+>   Thread 0   Thread 1   Thread 2   Thread 3   Thread 4   Thread 5   Thread 6   Thread 7
+> 1  170327620  196322160  169434180   74723860  178145600  178873460  143843260   70998780
+> 2  166415220  129649200  166161240  175241520  155474460  112811860  157003140  150087420
+> 3  511420780  117655640  598641860  596213720  462888760  430838600  554346300  428035120 
+> 4  174520240  156311800  120274280   87465380  172781400  136118620  163728340   63026360
+> 5  153677940  202786860  183626500  140721300  150311360  161266840  168154340  107247460
+> 
+> Thanks,
+> Gao Xiang
+> 
