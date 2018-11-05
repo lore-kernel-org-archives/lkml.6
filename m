@@ -2,97 +2,296 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8CFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE3BC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A3220827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:17:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebZooK1d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A3220827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 07D962085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 15:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D962085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbeKFAht (ORCPT
+        id S1729848AbeKFAmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:37:49 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43245 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729430AbeKFAht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:37:49 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g7-v6so2308776pfo.10;
-        Mon, 05 Nov 2018 07:17:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=XwpSaIuwiV66MBfVn/EfWwqxExuH378JZR7QWjpxJ+M=;
-        b=ebZooK1dIaSQB72s/cyXDyOWpioKOFVgAqS+DQx43kOXZBKzTW3DShO1t9XtxYh8f8
-         fGSoF73zLbCg9fE/pLau8PNFm1MYOLPwvvc/otiSmAIdtVxMqsTuD1R3iALZY4dEWosX
-         P714VJra4mZ38K5uE1W7tmm+j4vqBR7rJkmlwUfOkUgeLM/s1Z9sDHernaGlOyKz7Jbs
-         sDUaVQlaeBtu1di477M44XeONWs2aLfx834ldqJUM/LBt5ZvQ+thYY9oaPzNBEXvVii2
-         zGONY6HYGljOMXKDIpdwzi77sGuEhPbHbrT8kc1N6CztUPT/zXKSIM+libCVfK+K3FvF
-         YOTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XwpSaIuwiV66MBfVn/EfWwqxExuH378JZR7QWjpxJ+M=;
-        b=ikPStix5j922ymFYHJ+BXbUm42Kt/yVA3YOVWkWR1F2zxWwxiDk+ZXYs50V75zVJhT
-         OIvy0yGUObViNmkMY4VZELlGRZ5Tepjl7S8TeBUlUupSDjcqbDbMpLrT3iI0T2hIFVoO
-         y5d2mLD9aFamGwzyrjKB4oF590jbbgKNn3q4CEIFftxoM5Q+KWPwvd39m/txJ0Sr8fF4
-         LFXPnnB3xy4pxlPN9n+EQfHSqE+MxncL/DQmjb4fGp8pfwfShGasDPGU9GB6znPC2cSu
-         QbrfnAD3Ia4Yxhmukbj4gpYSIk9MC/IAyJ8fmyUMjZtaIDLq5fPKmJ0CdPwqypnfvDbu
-         JwCQ==
-X-Gm-Message-State: AGRZ1gKh4RatpZ4EbQhurH2ZZ22skoGqgxTW6LyOA5DMjbyNA88cvB8F
-        RBz1+HpvUvOrmX3ZOI3yJ/M=
-X-Google-Smtp-Source: AJdET5c8vWW+RjwWqx9d5O63JrBU+wFx0lpX9gNCJQCT8PNqh2a3hP20HCx5CFBLHEPtfTPFXfkptA==
-X-Received: by 2002:a65:6447:: with SMTP id s7mr20300828pgv.226.1541431058105;
-        Mon, 05 Nov 2018 07:17:38 -0800 (PST)
-Received: from localhost.localdomain ([207.246.110.149])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm81736726pgt.83.2018.11.05.07.17.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 07:17:37 -0800 (PST)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     yamada.masahiro@socionext.com
-Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH] init/Kconfig: make CC_OPTIMIZE_FOR_DEBUGGING visible only for GCC
-Date:   Mon,  5 Nov 2018 23:17:19 +0800
-Message-Id: <20181105151719.4552-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 5 Nov 2018 19:42:38 -0500
+Received: from shell.v3.sk ([90.176.6.54]:51371 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729430AbeKFAmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:42:38 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id F127BC5646;
+        Mon,  5 Nov 2018 16:22:22 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id sA5JRgZjwy-4; Mon,  5 Nov 2018 16:22:17 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 08B50C5643;
+        Mon,  5 Nov 2018 16:22:17 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id G2PKqRZcOARU; Mon,  5 Nov 2018 16:22:16 +0100 (CET)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3D471C5642;
+        Mon,  5 Nov 2018 16:22:16 +0100 (CET)
+Message-ID: <6fda4cc30820b415aa37e0a6487dfe66e561ec43.camel@v3.sk>
+Subject: Re: [PATCH] [media] ov7670: make "xclk" clock optional
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     jacopo mondi <jacopo@jmondi.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Mon, 05 Nov 2018 16:22:15 +0100
+In-Reply-To: <20181105142252.GM20885@w540>
+References: <20181004212903.364064-1-lkundrak@v3.sk>
+         <20181105105841.GJ20885@w540>
+         <272b2d009e056f36bfb08206772eb40bcdff00b0.camel@v3.sk>
+         <20181105142252.GM20885@w540>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently CC_OPTIMIZE_FOR_DEBUGGING is only able to build with GCC.
-For clang, -Og optimization level could break kernel build. So make
-CC_OPTIMIZE_FOR_DEBUGGING visible only for GCC.
+On Mon, 2018-11-05 at 15:22 +0100, jacopo mondi wrote:
+> Hi Lubo,
+> 
+> On Mon, Nov 05, 2018 at 02:12:18PM +0100, Lubomir Rintel wrote:
+> > Hello,
+> > 
+> > On Mon, 2018-11-05 at 11:58 +0100, jacopo mondi wrote:
+> > > Hi Lubomir,
+> > >    +Sakari in Cc
+> > > 
+> > > I just noticed this, and the patch is now in v4.20, but let me comment
+> > > anyway on this.
+> > > 
+> > > On Thu, Oct 04, 2018 at 11:29:03PM +0200, Lubomir Rintel wrote:
+> > > > When the "xclk" clock was added, it was made mandatory. This broke the
+> > > > driver on an OLPC plaform which doesn't know such clock. Make it
+> > > > optional.
+> > > > 
+> > > 
+> > > I don't think this is correct. The sensor needs a clock to work.
+> > > 
+> > > With this patch clock_speed which is used to calculate
+> > > the framerate is defaulted to 30MHz, crippling all the calculations if
+> > > that default value doesn't match what is actually installed on the
+> > > board.
+> > 
+> > How come? I kept this:
+> > 
+> > +             info->clock_speed = clk_get_rate(info->clk) / 1000000;
+> 
+> Yes, but only if
+> if (info->clk) { }
+> 
+> if (!info->clk) the 'clock_speed' variable is defaulted to 30 at the
+> beginning of the probe routine. Am I missing something obvious here?
 
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- init/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Maybe. Or I am.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 0fb9c0b5f1a1..d5fb0ee1400a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1107,6 +1107,7 @@ config CC_OPTIMIZE_FOR_SIZE
- 
- config CC_OPTIMIZE_FOR_DEBUGGING
- 	bool "Optimize for better debugging experience (-Og)"
-+	depends on CC_IS_GCC
- 	depends on $(cc-option,-Og)
- 	select NO_AUTO_INLINE
- 	help
--- 
-2.17.1
+I thought you care about the situation where you *have* the clk, and
+thus you shouldn't be caring about the defaults?
+
+> > > If this patch breaks the OLPC, then might it be the DTS for said
+> > > device needs to be fixed instead of working around the issue here?
+> > 
+> > No. Device tree is an ABI, and you can't just add mandatory properties.
+> > 
+> 
+> Well, as I read the ov7670 bindings documentation:
+> 
+> Required Properties:
+> - compatible: should be "ovti,ov7670"
+> - clocks: reference to the xclk input clock.
+> - clock-names: should be "xclk".
+> 
+> It was mandatory already since the bindings have been first created:
+> bba582894a ("[media] ov7670: document device tree bindings")
+> 
+> And yes, bindings establishes an ABI we have not to break or make
+> incompatible with DTs created for an older version of the same binding,
+> but the DTs itself is free to change and we need to do so to update
+> it when required (to fix bugs, add new components, enable/disable them
+> etc).
+
+Ah, right, you're correct. No DTS ABI breakage there. I guess it would
+be fine to revert my patch if we provide the xclk on the OLPC instead.
+
+> > There's no DTS for OLPC XO-1 either; it's an OpenFirmware machine.
+> > 
+> 
+> I thought OLPC was an ARM machine, that's why I mentioned DTS. Sorry
+> about this.
+
+Well, you're sort of right here. The XO-1.75 generation is ARM, the XO-
+1 is x86. They both use devicetree provided by the firmware. However,
+they predate FDT (or the definitions of bindings that are used here for
+tht matter) and the trees are unfortunately quite incomplete. The
+sensor is not there.
+
+> A quick read of the wikipedia page for "OpenFirmware" gives me back
+> that it a standardized firmware interface:
+> "Open Firmware allows the system to load platform-independent drivers
+> directly from the PCI card, improving compatibility".
+> 
+> I know nothing on this, and that's not the point, so I'll better stop
+> here and refrain to express how much the "loading platform-independent
+> (BINARY) drivers from the PCI card" scares me :p
+> 
+> > You'd need to update all machines in the wild which is not realistic.
+> 
+> Machines which have received a kernel update which includes the patch
+> that makes the clock for the sensor driver mandatory [1], will have their
+> board files updated by the same kernel update, with the proper clock
+> provider instantiated for that sensor.
+> 
+> That's what I would expect from a kernel update for those devices (or
+> any device in general..)
+> 
+> If this didn't happen, blame OLPC kernel maintainers :p
+> 
+> [1] 0a024d634cee ("[media] ov7670: get xclk"); which went in v4.12
+> 
+> > Alternatively, something else than DT could provide the clock. If this
+> > gets in, then the OLPC would work even without the xclk patch:
+> > https://lore.kernel.org/lkml/20181105073054.24407-12-lkundrak@v3.sk/
+> 
+> That's what I meant, more or less.
+> 
+> If you don't have a DTS you have a board file, isn't it?
+> ( arch/x86/platform/olpc/ maybe? )
+
+The device tree on XO-1 is not constructed from a FDT, it's gotten from
+the OpenFirmware. See arch/x86/platform/olpc/olpc_dt.c
+
+But as I said -- it's hopelessly incomplete and is not going to be of
+much help here. If you're curious, I've recently uploaded /proc/device-
+tree dumps here, since someone else asked:
+
+https://people.freedesktop.org/~lkundrak/olpc/
+
+> The patch you linked here makes the video interface (the marvel-ccic
+> one) provide the clock source for the sensor:
+> 
+> +	clkdev_create(mcam->mclk, "xclk", "%d-%04x",
+> +		i2c_adapter_id(cam->i2c_adapter), ov7670_info.addr);
+> +
+> 
+> While I would expect the board file to do that, as that's where all
+> pieces gets put together, and it knows which clock source has to be
+> fed to the sensor depending on your hardware design. As I don't know
+> much of x86 or openfirmare, feel free to explain me why it is not
+> possible ;)
+
+Well, maybe. I don't think so. The clock is provided by the Cafe chip
+(the bridge chip, also has i2c controller for the sensor control) that
+sits on a PCI, which is discoverable. In theory there could be more of
+them.
+
+The driver is oddly structured for historic reasons. I'm mainly
+interested in not breaking it more than it is. A good devicetree would
+help, but we don't have the luxury.
+
+> Anyway, my whole point is that the sensor needs a clock to work. With
+> your patch if it is not provided it gets defaulted (if I'm not
+> mis-reading the code) to a value that would break frame interval
+> calculations. This is what concerns me and I would prefer the driver
+> to fail probing quite nosily to make sure all its users (dts, board
+> files etc) gets updated.
+
+I still don't get this. It defaults to 30 Hz* as it used to before the
+patch that introduced mandatory xclk, which seems perfectly reasonable.
+Which configurations break?
+
+* you said MHz before, I suppose that was a mistake?
+
+> > (I just got a kbuild failure message, so I'll surely be following up
+> > with a v2.)
+> > 
+> > > Also, the DT bindings should be updated too if we decide this property
+> > > can be omitted. At this point, with a follow-up patch.
+> > 
+> > Yes.
+> > 
+> This would actually be an ABI change (one that would not break
+> retro-compatibility probably, but still...)
+
+That, I think, is an okay thing to do.
+
+
+Thanks
+Lubo
+
+> 
+> Thanks
+>    j
+> 
+> > > Thanks
+> > 
+> > Cheers
+> > Lubo
+> > 
+> > >    j
+> > > 
+> > > > Tested on a OLPC XO-1 laptop.
+> > > > 
+> > > > Cc: stable@vger.kernel.org # 4.11+
+> > > > Fixes: 0a024d634cee ("[media] ov7670: get xclk")
+> > > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > > ---
+> > > >  drivers/media/i2c/ov7670.c | 27 +++++++++++++++++----------
+> > > >  1 file changed, 17 insertions(+), 10 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> > > > index 31bf577b0bd3..64d1402882c8 100644
+> > > > --- a/drivers/media/i2c/ov7670.c
+> > > > +++ b/drivers/media/i2c/ov7670.c
+> > > > @@ -1808,17 +1808,24 @@ static int ov7670_probe(struct i2c_client *client,
+> > > >  			info->pclk_hb_disable = true;
+> > > >  	}
+> > > > 
+> > > > -	info->clk = devm_clk_get(&client->dev, "xclk");
+> > > > -	if (IS_ERR(info->clk))
+> > > > -		return PTR_ERR(info->clk);
+> > > > -	ret = clk_prepare_enable(info->clk);
+> > > > -	if (ret)
+> > > > -		return ret;
+> > > > +	info->clk = devm_clk_get(&client->dev, "xclk"); /* optional */
+> > > > +	if (IS_ERR(info->clk)) {
+> > > > +		ret = PTR_ERR(info->clk);
+> > > > +		if (ret == -ENOENT)
+> > > > +			info->clk = NULL;
+> > > > +		else
+> > > > +			return ret;
+> > > > +	}
+> > > > +	if (info->clk) {
+> > > > +		ret = clk_prepare_enable(info->clk);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > 
+> > > > -	info->clock_speed = clk_get_rate(info->clk) / 1000000;
+> > > > -	if (info->clock_speed < 10 || info->clock_speed > 48) {
+> > > > -		ret = -EINVAL;
+> > > > -		goto clk_disable;
+> > > > +		info->clock_speed = clk_get_rate(info->clk) / 1000000;
+> > > > +		if (info->clock_speed < 10 || info->clock_speed > 48) {
+> > > > +			ret = -EINVAL;
+> > > > +			goto clk_disable;
+> > > > +		}
+> > > >  	}
+> > > > 
+> > > >  	ret = ov7670_init_gpio(client, info);
+> > > > --
+> > > > 2.19.0
+> > > > 
 
