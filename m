@@ -2,135 +2,78 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE2CC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF58C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD7C2081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:01:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD7C2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D7DF22081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DF22081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387692AbeKFCWZ (ORCPT
+        id S2387737AbeKFCXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:22:25 -0500
-Received: from mga06.intel.com ([134.134.136.31]:13575 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387458AbeKFCWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:22:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:01:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="93821049"
-Received: from patelp1x-mobl3.amr.corp.intel.com (HELO [10.252.130.246]) ([10.252.130.246])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Nov 2018 09:01:39 -0800
-Subject: Re: [alsa-devel] [PATCH] fix the kernel panic due to wrong use the
- dev memory API
-To:     "He, Bo" <bo.he@intel.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "liam.r.girdwood@linux.intel.com" <liam.r.girdwood@linux.intel.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "Singh, Guneshwor O" <guneshwor.o.singh@intel.com>,
-        "Periyasamy, SriramX" <sriramx.periyasamy@intel.com>,
-        "Kale, Sanyog R" <sanyog.r.kale@intel.com>,
-        "Kesapragada, Pardha Saradhi" <pardha.saradhi.kesapragada@intel.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "guruprasadx.pawse@intel.com" <guruprasadx.pawse@intel.com>,
-        "Ughreja, Rakesh A" <rakesh.a.ughreja@intel.com>,
-        "Prakash, Divya1" <divya1.prakash@intel.com>,
-        "Diwakar, Praveen" <praveen.diwakar@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>
-References: <CD6925E8781EFD4D8E11882D20FC406D529FE3B6@SHSMSX104.ccr.corp.intel.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <f2e3ffeb-12bd-d60e-e96a-8fa00a17844f@linux.intel.com>
-Date:   Mon, 5 Nov 2018 11:01:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 5 Nov 2018 21:23:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50631 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387619AbeKFCXM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 21:23:12 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7] helo=dude.pengutronix.de.)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gJiGn-0006ss-FO; Mon, 05 Nov 2018 18:02:33 +0100
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patchwork-lst@pengutronix.de, kernel@pengutronix.de
+Subject: [PATCH 2/2] dmaengine: imx-sdma: don't print warning when firmware is absent
+Date:   Mon,  5 Nov 2018 18:02:32 +0100
+Message-Id: <20181105170232.28777-2-l.stach@pengutronix.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181105170232.28777-1-l.stach@pengutronix.de>
+References: <20181105170232.28777-1-l.stach@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D529FE3B6@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The SDMA firmware is optional and a usable fallback to the internal
+ROM firmware is present in the driver. There is already a message
+printed informing the user that the internal firmware is used, so
+there is no need to print a scary warning for what is normal behavior
+on most systems.
 
-On 11/5/18 2:29 AM, He, Bo wrote:
-> skl->dais is allocated with devm_kcalloc, can't free with
-> the krealloc. Memory allocated with devm API is automatically freed
-> on driver detach, Like all other devres resources.
->
-> Refer to drivers/base/devres.c devm_kmalloc for more details.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/dma/imx-sdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What code are you looking at?
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index b4ec2d20e661..c2e7819cecb8 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -1784,7 +1784,7 @@ static int sdma_get_firmware(struct sdma_engine *sdma,
+ {
+ 	int ret;
+ 
+-	ret = request_firmware_nowait(THIS_MODULE,
++	ret = request_firmware_nowait_nowarn(THIS_MODULE,
+ 			FW_ACTION_HOTPLUG, fw_name, sdma->dev,
+ 			GFP_KERNEL, sdma, sdma_load_firmware);
+ 
+-- 
+2.19.1
 
-I see this in the Mark's tree
-
-int skl_platform_register(struct device *dev)
-{
-     int ret;
-     struct snd_soc_dai_driver *dais;
-     int num_dais = ARRAY_SIZE(skl_platform_dai);
-     struct hdac_bus *bus = dev_get_drvdata(dev);
-     struct skl *skl = bus_to_skl(bus);
-
-     INIT_LIST_HEAD(&skl->ppl_list);
-     INIT_LIST_HEAD(&skl->bind_list);
-
-     skl->dais = kmemdup(skl_platform_dai, sizeof(skl_platform_dai),
-                 GFP_KERNEL);
-     if (!skl->dais) {
-         ret = -ENOMEM;
-         goto err;
-     }
-
-     if (!skl->use_tplg_pcm) {
-         dais = krealloc(skl->dais, sizeof(skl_fe_dai) +
-                 sizeof(skl_platform_dai), GFP_KERNEL);
-
-
-No trace of devm as you mention it? I checked the Chrome tree as well 
-and it's not there.
-
-What am I missing?
-
-
->
-> Signed-off-by: he, bo <bo.he@intel.com>
-> ---
->   sound/soc/intel/skylake/skl-pcm.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-> index 823e391..928d314 100644
-> --- a/sound/soc/intel/skylake/skl-pcm.c
-> +++ b/sound/soc/intel/skylake/skl-pcm.c
-> @@ -1438,7 +1438,8 @@ int skl_platform_register(struct device *dev)
->   	}
->   
->   	if (!skl->use_tplg_pcm) {
-> -		dais = krealloc(skl->dais, sizeof(skl_fe_dai) +
-> +		devm_kfree(dev, skl->dais);
-> +		dais = devm_kcalloc(dev, skl->dais, sizeof(skl_fe_dai) +
->   				sizeof(skl_platform_dai), GFP_KERNEL);
->   		if (!dais) {
->   			ret = -ENOMEM;
-> @@ -1472,7 +1473,5 @@ int skl_platform_unregister(struct device *dev)
->   		}
->   	}
->   
-> -	kfree(skl->dais);
-> -
->   	return 0;
->   }
