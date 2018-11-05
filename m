@@ -2,133 +2,232 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE69C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94686ECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E2B20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:41:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIicIM+l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E2B20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 54AC520854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54AC520854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbeKEWBD (ORCPT
+        id S1729757AbeKEWCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:01:03 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52790 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729184AbeKEWBC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:01:02 -0500
-Received: by mail-it1-f196.google.com with SMTP id t190-v6so6679320itb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 04:41:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pt5KHoWI6l6iI5z9KDB7wQV3P5aeR/3gwZloRf/Y0hU=;
-        b=PIicIM+lkkNpGqUly2nHS/9q9/lXjDCOVxEIRwpxriFqcRlTMlDwCXR1T3zUIg31/B
-         pZXa2wSNC3j9HeP4duc3yFTanRvtEYxI/2Dq2s10v7QSSa+eqk6p35XBztCv/hY5lAfA
-         CE6zeW5gjOysjky49BMP41ryuNtMHHkgjyx9k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=pt5KHoWI6l6iI5z9KDB7wQV3P5aeR/3gwZloRf/Y0hU=;
-        b=Lils3fQ6kVuF2NvJWzx527X0B9fRcTUFHdRljyebbnxso6pjN25oMkFpasR3A2IbvC
-         YAqSstUIo9RLB114Rb2psULmBkGNQUvFDF2oXwk13+NLZ7wo3SuFZJ/1VAaMmEYwbotb
-         jJjH04toMeL2QkL2ud8WQOnO7x3Pl2Yjc5IAjilTecSeAPuEhE8mJ37u8cgRIw/Tm8du
-         Uq/JVQhz6RNITlpvVz4w/aJoCu3L297MFs6MRnQt+Qzmr2FWQmHdRpXK9V/UaT9nZBoT
-         npKC0iY5/CtfjuZmKBOE9+rFSH1/RAMhvoiFE7ayhHoHxykDYSSk9pd5Qa29i9rHotpZ
-         frPQ==
-X-Gm-Message-State: AGRZ1gK5Z1Rl+bzrxAHiTHii1RVzdp2okpBe3fGF9LFoHQuZ0Sfb0piY
-        hmOulrbeuBdycDhepNAJ8JXjUoIX66KLZEiPgXqW2w==
-X-Google-Smtp-Source: AJdET5elMqKvGJKfBZZ+JXDLmMF2mgCnkN/ZJ1levLXQi5MLNWRXb7djVdOqxOLVPIKMYwFn7K+bqtoomZyG9rpcUMM=
-X-Received: by 2002:a24:d3c2:: with SMTP id n185-v6mr6750907itg.71.1541421688196;
- Mon, 05 Nov 2018 04:41:28 -0800 (PST)
+        Mon, 5 Nov 2018 17:02:20 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38904 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728798AbeKEWCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:02:19 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0C21E20790; Mon,  5 Nov 2018 13:42:43 +0100 (CET)
+Received: from localhost (unknown [185.94.189.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C09B8206FF;
+        Mon,  5 Nov 2018 13:42:42 +0100 (CET)
+Date:   Mon, 5 Nov 2018 13:42:42 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for
+ PLL_MIPI
+Message-ID: <20181105124242.f3oyvee4hoexbijz@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-13-jagan@amarulasolutions.com>
+ <20181024181334.lul7ta7ijluwfb7v@flea>
+ <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com>
+ <20181029090856.yyjnvaruyasgnzyz@flea>
+ <CAMty3ZBcTsoJsCZa=sM9vjWgHjCjEjY2cDordTQcNySQpzyR=Q@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 04:41:27 -0800 (PST)
-In-Reply-To: <1540808142-33208-3-git-send-email-julien.thierry@arm.com>
-References: <1540808142-33208-1-git-send-email-julien.thierry@arm.com> <1540808142-33208-3-git-send-email-julien.thierry@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 13:41:27 +0100
-Message-ID: <CAKv+Gu9tERHAibZ+0rE=xAYtKa5M4ZdNudwe3_VpW0ic56FdwA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] efi/fdt: Simplify get_fdt flow
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6i5pemjbntmetmni"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBcTsoJsCZa=sM9vjWgHjCjEjY2cDordTQcNySQpzyR=Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 October 2018 at 11:15, Julien Thierry <julien.thierry@arm.com> wrote:
-> Reorganize get_fdt lookup loop, clearly showing that:
-> - Nothing is done for table entries that do not have fdt_guid
-> - Once an entry with fdt_guid is found, break out of the loop
->
-> No functional changes.
->
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Suggested-by: Joe Perches <joe@perches.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  drivers/firmware/efi/libstub/fdt.c | 25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
-> index 8b6696e..5b7e2b3 100644
-> --- a/drivers/firmware/efi/libstub/fdt.c
-> +++ b/drivers/firmware/efi/libstub/fdt.c
-> @@ -366,23 +366,24 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
->  {
->         efi_guid_t fdt_guid = DEVICE_TREE_GUID;
->         efi_config_table_t *tables;
-> -       void *fdt;
->         int i;
->
-> -       tables = (efi_config_table_t *) sys_table->tables;
-> -       fdt = NULL;
-> +       tables = (efi_config_table_t *)sys_table->tables;
->
->         for (i = 0; i < sys_table->nr_tables; i++) {
-> -               if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
-> -                       fdt = (void *) tables[i].table;
-> -                       if (fdt_check_header(fdt) != 0) {
-> -                               pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
-> -                               return NULL;
-> -                       }
-> -                       *fdt_size = fdt_totalsize(fdt);
-> -                       break;
-> +               void *fdt;
-> +
-> +               if (efi_guidcmp(tables[i].guid, fdt_guid) != 0)
-> +                       continue;
-> +
-> +               fdt = (void *) tables[i].table;
-> +               if (fdt_check_header(fdt) != 0) {
-> +                       pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
-> +                       return NULL;
->                 }
-> +               *fdt_size = fdt_totalsize(fdt);
-> +               return fdt;
->         }
->
-> -       return fdt;
-> +       return NULL;
->  }
-> --
-> 1.9.1
->
 
-Queued in efi/next
+--6i5pemjbntmetmni
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Mon, Oct 29, 2018 at 08:38:14PM +0530, Jagan Teki wrote:
+> On Mon, Oct 29, 2018 at 2:39 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > On Thu, Oct 25, 2018 at 09:21:31PM +0530, Jagan Teki wrote:
+> > > On Wed, Oct 24, 2018 at 11:43 PM Maxime Ripard
+> > > <maxime.ripard@bootlin.com> wrote:
+> > > >
+> > > > On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
+> > > > > A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
+> > > > > using minimum 500MHz can't release the clock and which
+> > > > > is not working.
+> > > > >
+> > > > > So use working minimum rate as 300MHz which is tested on
+> > > > > Bananapi DSI panel.
+> > > >
+> > > > I'm not quite sure what you mean by that. What do you mean by "500M=
+Hz
+> > > > can't release the clock"? Why would 300MHz work better then? Should=
+ be
+> > > > avoid reaching 500MHz if it's a frequency in the valid range?
+> > >
+> > > PLL_MIPI can't be work with existing nkm where rate set to 270MHz
+> > > (from PLL_VIDEO)
+> > > /*** round rate call in ccu_nkm.c */
+> > > [    2.408356] round: rate =3D 118800000
+> > > [    2.408359] round: parent_rate =3D 158740688
+> > > [    2.408417] round: rate =3D 148500000
+> > > [    2.408420] round: parent_rate =3D 158740688
+> > > [    2.408439] round: rate =3D 178200000
+> > > [    2.408441] round: parent_rate =3D 158740688
+> > > [    2.408460] round: rate =3D 205615384
+> > > [    2.408462] round: parent_rate =3D 158740688
+> > > [    2.408481] round: rate =3D 237600000
+> > > [    2.408483] round: parent_rate =3D 158740688
+> > > [    2.408502] round: rate =3D 270000000
+> > > [    2.408504] round: parent_rate =3D 158740688
+> > > [    2.408523] round: rate =3D 118800000
+> > > [    2.408525] round: parent_rate =3D 158740560
+> > > [    2.408544] round: rate =3D 148500000
+> > > [    2.408546] round: parent_rate =3D 158740560
+> > > [    2.408565] round: rate =3D 178200000
+> > > [    2.408567] round: parent_rate =3D 158740560
+> > > [    2.408586] round: rate =3D 205615384
+> > > [    2.408588] round: parent_rate =3D 158740560
+> > > [    2.408607] round: rate =3D 237600000
+> > > [    2.408609] round: parent_rate =3D 158740560
+> > > [    2.408627] round: rate =3D 270000000
+> > > [    2.408630] round: parent_rate =3D 158740560
+> > > [    2.408648] round: rate =3D 270000000
+> > > [    2.408651] round: parent_rate =3D 158740640
+> > > [    2.408670] round: rate =3D 270000000
+> > > [    2.408672] round: parent_rate =3D 158740704
+> > >
+> > > /** set rate call in ccu_nkm **/
+> > > [    2.408685] set: rate =3D 270000000
+> > > [    2.408688] set: parent_rate =3D 297000000
+> > >
+> > > By using min and max rate as per A64 manual page 94 range of PLL can
+> > > be 500MHz~1.4GHz getting 1,2,1 nkm dividers which can't be work.
+> > > [    2.423589] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, =
+rate =3D 55000000
+> > > [    2.423643] ideal =3D 220000000, rounded =3D 0
+> > > [    2.423647] ideal =3D 275000000, rounded =3D 0
+> > > [    2.423651] ideal =3D 330000000, rounded =3D 0
+> > > [    2.423692] ideal =3D 385000000, rounded =3D 384000000
+> > > [    2.423732] ideal =3D 440000000, rounded =3D 440000000
+> > > [    2.423736] sun4i_dclk_round_rate: div =3D 8 rate =3D 55000000
+> > > [    2.423740] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, =
+rate =3D 55000000
+> > > [    2.423744] ideal =3D 220000000, rounded =3D 0
+> > > [    2.423748] ideal =3D 275000000, rounded =3D 0
+> > > [    2.423751] ideal =3D 330000000, rounded =3D 0
+> > > [    2.423791] ideal =3D 385000000, rounded =3D 384000000
+> > > [    2.423831] ideal =3D 440000000, rounded =3D 440000000
+> > > [    2.423834] sun4i_dclk_round_rate: div =3D 8 rate =3D 55000000
+> > > [    2.423957] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 440000000
+> > > [    2.423961] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 440000000
+> > > [    2.424378] ccu_nkm_set_rate: rate =3D 440000000, parent_rate =3D =
+220000000
+> > > [    2.424381] ccu_nkm_set_rate: _nkm.n =3D 1
+> > > [    2.424383] ccu_nkm_set_rate: _nkm.k =3D 2
+> > > [    2.424385] ccu_nkm_set_rate: _nkm.m =3D 1
+> > > [    2.424725] sun4i_dclk_set_rate div 8
+> > > [    2.424732] sun4i_dclk_recalc_rate: val =3D 8, rate =3D 55000000
+> > > [    2.561271] usb 3-1: new high-speed USB device number 2 using ehci=
+-platform
+> > > [    2.718486] hub 3-1:1.0: USB hub found
+> > > [    2.718606] hub 3-1:1.0: 4 ports detected
+> > > [    3.437263] ------------[ cut here ]------------
+> > > [    3.437270] [CRTC:36:crtc-0] vblank wait timed out
+> > >
+> > > So, lowering the min rate by 300MHz seems working with bounded nkm
+> > > dividers 5, 2, 9. Tested on two different panels.
+> > >
+> > > [    2.415773] [drm] No driver support for vblank timestamp query.
+> > > [    2.424116] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, =
+rate =3D 55000000
+> > > [    2.424172] ideal =3D 220000000, rounded =3D 0
+> > > [    2.424176] ideal =3D 275000000, rounded =3D 0
+> > > [    2.424194] ccu_nkm_round_rate: rate =3D 330000000
+> > > [    2.424197] ideal =3D 330000000, rounded =3D 330000000
+> > > [    2.424201] sun4i_dclk_round_rate: div =3D 6 rate =3D 55000000
+> > > [    2.424205] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, =
+rate =3D 55000000
+> > > [    2.424209] ideal =3D 220000000, rounded =3D 0
+> > > [    2.424213] ideal =3D 275000000, rounded =3D 0
+> > > [    2.424230] ccu_nkm_round_rate: rate =3D 330000000
+> > > [    2.424233] ideal =3D 330000000, rounded =3D 330000000
+> > > [    2.424236] sun4i_dclk_round_rate: div =3D 6 rate =3D 55000000
+> > > [    2.424253] ccu_nkm_round_rate: rate =3D 330000000
+> > > [    2.424270] ccu_nkm_round_rate: rate =3D 330000000
+> > > [    2.424278] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 330000000
+> > > [    2.424281] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 330000000
+> > > [    2.424306] ccu_nkm_set_rate: rate =3D 330000000, parent_rate =3D =
+297000000
+> > > [    2.424309] ccu_nkm_set_rate: _nkm.n =3D 5
+> > > [    2.424311] ccu_nkm_set_rate: _nkm.k =3D 2
+> > > [    2.424313] ccu_nkm_set_rate: _nkm.m =3D 9
+> > > [    2.424661] sun4i_dclk_set_rate div 6
+> > > [    2.424668] sun4i_dclk_recalc_rate: val =3D 6, rate =3D 55000000
+> > >
+> > > Note: BPI-M64-bsp is setting the rate directly to 180MHz with 297MHz
+> > > parent with resulting dividers as 1, 2, 5. ans we can't produce this
+> > > 180MHz rate with dclk_round_rate and ccu_nkm.
+> >
+> > I'm still not quite sure what you mean by "500MHz can't release the
+> > clock".
+> >
+> > From what you're saying, this seems to be related to the boundaries of
+> > the dividers rather than the rate itself.
+>=20
+> Yes, with 500MHz rate the boundaries of the dividers never release
+> hence it hangs during set_rate and finally after sometime it trigger
+> vblank timeout. can't release here means the same, may be I would
+> confused, sorry for that.
+
+I'm sorry, but I still don't get what you mean by release here.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--6i5pemjbntmetmni
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+A6wgAKCRDj7w1vZxhR
+xctnAP9jHz1Mc2nViNq84KUEUbGOgPAxywj2UKb0Xiyimw5m1gEAyhtIf5VVLddf
+/APmFMXvud1+zbC+kGmnrH4+pCe25gU=
+=B27C
+-----END PGP SIGNATURE-----
+
+--6i5pemjbntmetmni--
