@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1520DC46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE69C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B14C420866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1D82081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:59:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T8iqLWIc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B14C420866
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U8hcULPw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1D82081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387765AbeKFCTf (ORCPT
+        id S2388002AbeKFCT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:19:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:43556 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387603AbeKFCR1 (ORCPT
+        Mon, 5 Nov 2018 21:19:59 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38800 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387643AbeKFCRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:27 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5GsYIi052564;
-        Mon, 5 Nov 2018 16:56:23 GMT
+        Mon, 5 Nov 2018 21:17:25 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs5AK097190;
+        Mon, 5 Nov 2018 16:56:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=jxkC7rLLT5JE0Jtpp5a2UGIfbNY+hhiWsmmEye+YCsw=;
- b=T8iqLWIcT6mSMpnkQPq7gWEjNj1BYI7X7FJ73FI5DSg73jz2tZmbQk8hmJQpb4VJs0Yo
- C8HEbEo1PNSlzf6akxFswkhc7suHjR+pUMdR3ycD9+4ChKwCi+YMPAKzVtvYxzF6E54T
- ormXD6ufwf5U5YAV39XORznSYUVfH2hGcGdogyEGasAoqQAighyMFXGs//6idJzAYKdL
- 3uHzOm6ntgeXU0zyzLGaFTyDbqpIduJp6qfRJT2eBhZcgAwH1ftyiF1b6GiBZ28m4LKh
- ITXmyL2q/0Xn6jRqYvByMIvI5LUzUeOeUelO5/YqiphEpWaGlua6ysZLjICtUcp0uG/O fw== 
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=gmXHeNTucBAhP5oOOIcBjLrTNKwY0b2G6CBWPMLTzgY=;
+ b=U8hcULPwR1YXjpnkRNNkZpVOXWU/iuEeoayHLOibvlpvwD2FGOJnGTMgEgA5eTw1DbsH
+ 1S6pGD1I2f50NUSo032DTf3iDHCtq116VySLP+wgy5MjHt5+noiydGbdMavzGqq6MQHe
+ khYC4oYTcWvlJkb2d4WE2BEx3tnHsdBwDVlN8a6vju9tG7lNuSZ9TLqPe//nwRkAwKaM
+ mSqOzUl3Pi7Jzo+qMFqcxrVvI35mTOfRCXOLSizTZjsh7r4Aqbk8nKZmfp/xcRAwDglj
+ 8GZuCo4rFzXVnqeINsOea8+2fWI6VY1o3TW3Qr5bMe6CM8addCfcPxvy/ONPJaUuLqLc 2A== 
 Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2nh4aqg2ds-1
+        by userp2130.oracle.com with ESMTP id 2nh33tr6bv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 16:56:23 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuMfm004956
+        Mon, 05 Nov 2018 16:56:26 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuPw2005090
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 16:56:22 GMT
+        Mon, 5 Nov 2018 16:56:25 GMT
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuLRt008448;
-        Mon, 5 Nov 2018 16:56:21 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuP8O018749;
+        Mon, 5 Nov 2018 16:56:25 GMT
 Received: from localhost.localdomain (/73.60.114.248)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 08:56:21 -0800
+        with ESMTP ; Mon, 05 Nov 2018 08:56:25 -0800
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
 To:     linux-mm@kvack.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -63,17 +63,16 @@ Cc:     aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
         Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
         rdunlap@infradead.org, steven.sistare@oracle.com,
         tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz
-Subject: [RFC PATCH v4 09/13] vfio: relieve mmap_sem reader cacheline bouncing by holding it longer
-Date:   Mon,  5 Nov 2018 11:55:54 -0500
-Message-Id: <20181105165558.11698-10-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v4 11/13] mm: parallelize deferred struct page initialization within each node
+Date:   Mon,  5 Nov 2018 11:55:56 -0500
+Message-Id: <20181105165558.11698-12-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1811050153
@@ -82,189 +81,247 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Profiling shows significant time being spent on atomic ops in mmap_sem
-reader acquisition.  mmap_sem is taken and dropped for every single base
-page during pinning, so this is not surprising.
+Deferred struct page initialization currently runs one thread per node,
+but this is a bottleneck during boot on big machines, so use ktask
+within each pgdatinit thread to parallelize the struct page
+initialization, allowing the system to take better advantage of its
+memory bandwidth.
 
-Reduce the number of times mmap_sem is taken by holding for longer,
-which relieves atomic cacheline bouncing.
+Because the system is not fully up yet and most CPUs are idle, use more
+than the default maximum number of ktask threads.  The kernel doesn't
+know the memory bandwidth of a given system to get the most efficient
+number of threads, so there's some guesswork involved.  In testing, a
+reasonable value turned out to be about a quarter of the CPUs on the
+node.
 
-Results for all VFIO page pinning patches
------------------------------------------
+__free_pages_core used to increase the zone's managed page count by the
+number of pages being freed.  To accommodate multiple threads, however,
+account the number of freed pages with an atomic shared across the ktask
+threads and bump the managed page count with it after ktask is finished.
 
-The test measures the time from qemu invocation to the start of guest
-boot.  The guest uses kvm with 320G memory backed with THP.  320G fits
-in a node on the test machine used here, so there was no thrashing in
-reclaim because of __GFP_THISNODE in THP allocations[1].
+Test:    Boot the machine with deferred struct page init three times
 
-CPU:              2 nodes * 24 cores/node * 2 threads/core = 96 CPUs
-                  Intel(R) Xeon(R) Platinum 8160 CPU @ 2.10GHz
-memory:           754G split evenly between nodes
-scaling_governor: performance
+Machine: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz, 88 CPUs, 503G memory,
+         2 sockets
 
-     patch 6                  patch 8                   patch 9 (this one)
-     -----------------------  ------------------------  ------------------------
-thr  speedup     average sec  speedup      average sec  speedup      average sec
-  1            65.0 (± 0.6%)             65.2 (± 0.5%)             65.5 (± 0.4%)
-  2     1.5x   42.8 (± 5.8%)     1.8x    36.0 (± 0.9%)     1.9x    34.4 (± 0.3%)
-  3     1.9x   35.0 (±11.3%)     2.5x    26.4 (± 4.2%)     2.8x    23.7 (± 0.2%)
-  4     2.3x   28.5 (± 1.3%)     3.1x    21.2 (± 2.8%)     3.6x    18.3 (± 0.3%)
-  5     2.5x   26.2 (± 1.5%)     3.6x    17.9 (± 0.9%)     4.3x    15.1 (± 0.3%)
-  6     2.7x   24.5 (± 1.8%)     4.0x    16.5 (± 3.0%)     5.1x    12.9 (± 0.1%)
-  7     2.8x   23.5 (± 4.9%)     4.2x    15.4 (± 2.7%)     5.7x    11.5 (± 0.6%)
-  8     2.8x   22.8 (± 1.8%)     4.2x    15.5 (± 4.7%)     6.4x    10.3 (± 0.8%)
- 12     3.2x   20.2 (± 1.4%)     4.4x    14.7 (± 2.9%)     8.6x     7.6 (± 0.6%)
- 16     3.3x   20.0 (± 0.7%)     4.3x    15.4 (± 1.3%)    10.2x     6.4 (± 0.6%)
+kernel                   speedup   max time per   stdev
+                                   node (ms)
 
-At patch 6, lock_stat showed long reader wait time on mmap_sem writers,
-leading to patch 8.
+baseline (4.15-rc2)                        5860     8.6
+ktask                      9.56x            613    12.4
 
-At patch 8, profiling revealed the issue with mmap_sem described above.
+---
 
-Across all three patches, performance consistently improves as the
-thread count increases.  The one exception is the antiscaling with
-nthr=16 in patch 8: those mmap_sem atomics are really bouncing around
-the machine.
+Machine: Intel(R) Xeon(R) CPU E7-8895 v3 @ 2.60GHz, 288 CPUs, 1T memory
+         8 sockets
 
-The performance with patch 9 looks pretty good overall.  I'm working on
-finding the next bottleneck, and this is where it stopped:  When
-nthr=16, the obvious issue profiling showed was contention on the split
-PMD page table lock when pages are faulted in during the pinning (>2% of
-the time).
-
-A split PMD lock protects a PUD_SIZE-ed amount of page table mappings
-(1G on x86), so if threads were operating on smaller chunks and
-contending in the same PUD_SIZE range, this could be the source of
-contention.  However, when nthr=16, threads operate on 5G chunks (320G /
-16 threads / (1<<KTASK_LOAD_BAL_SHIFT)), so this wasn't the cause, and
-aligning the chunks on PUD_SIZE boundaries didn't help either.
-
-The time is short (6.4 seconds), so the next theory was threads
-finishing at different times, but probes showed the threads all returned
-within less than a millisecond of each other.
-
-Kernel probes turned up a few smaller VFIO page pin calls besides the
-heavy 320G call.  The chunk size given (PMD_SIZE) could affect thread
-count and chunk size for these, so chunk size was increased from 2M to
-1G.  This caused the split PMD contention to disappear, but with little
-change in the runtime.  More digging required.
-
-[1] lkml.kernel.org/r/20180925120326.24392-1-mhocko@kernel.org
+kernel                   speedup   max time per   stdev
+                                   node (ms)
+baseline (4.15-rc2)                        1261     1.9
+ktask                      3.88x            325     5.0
 
 Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Suggested-by: Pavel Tatashin <Pavel.Tatashin@microsoft.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ mm/page_alloc.c | 91 ++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 78 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 9e52a24eb45b..0d6ec0369de5 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -331,7 +331,7 @@ static int put_pfn(unsigned long pfn, int prot)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index ae31839874b8..fe7b681567ba 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -66,6 +66,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/nmi.h>
+ #include <linux/psi.h>
++#include <linux/ktask.h>
+ 
+ #include <asm/sections.h>
+ #include <asm/tlbflush.h>
+@@ -1275,7 +1276,6 @@ void __free_pages_core(struct page *page, unsigned int order)
+ 		set_page_count(p, 0);
+ 	}
+ 
+-	page_zone(page)->managed_pages += nr_pages;
+ 	set_page_refcounted(page);
+ 	__free_pages(page, order);
+ }
+@@ -1340,6 +1340,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
+ 	if (early_page_uninitialised(pfn))
+ 		return;
+ 	__free_pages_core(page, order);
++	page_zone(page)->managed_pages += 1UL << order;
  }
  
- static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
--			 int prot, unsigned long *pfn)
-+			 int prot, unsigned long *pfn, bool handle_mmap_sem)
+ /*
+@@ -1477,23 +1478,31 @@ deferred_pfn_valid(int nid, unsigned long pfn,
+ 	return true;
+ }
+ 
++struct deferred_args {
++	int nid;
++	int zid;
++	atomic64_t nr_pages;
++};
++
+ /*
+  * Free pages to buddy allocator. Try to free aligned pages in
+  * pageblock_nr_pages sizes.
+  */
+-static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
+-				       unsigned long end_pfn)
++static int __init deferred_free_pages(int nid, int zid, unsigned long pfn,
++				      unsigned long end_pfn)
  {
- 	struct page *page[1];
- 	struct vm_area_struct *vma;
-@@ -342,7 +342,8 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 	if (prot & IOMMU_WRITE)
- 		flags |= FOLL_WRITE;
+ 	struct mminit_pfnnid_cache nid_init_state = { };
+ 	unsigned long nr_pgmask = pageblock_nr_pages - 1;
+-	unsigned long nr_free = 0;
++	unsigned long nr_free = 0, nr_pages = 0;
  
--	down_read(&mm->mmap_sem);
-+	if (handle_mmap_sem)
-+		down_read(&mm->mmap_sem);
- 	if (mm == current->mm) {
- 		ret = get_user_pages_longterm(vaddr, 1, flags, page, vmas);
- 	} else {
-@@ -360,14 +361,16 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 			put_page(page[0]);
- 		}
+ 	for (; pfn < end_pfn; pfn++) {
+ 		if (!deferred_pfn_valid(nid, pfn, &nid_init_state)) {
+ 			deferred_free_range(pfn - nr_free, nr_free);
++			nr_pages += nr_free;
+ 			nr_free = 0;
+ 		} else if (!(pfn & nr_pgmask)) {
+ 			deferred_free_range(pfn - nr_free, nr_free);
++			nr_pages += nr_free;
+ 			nr_free = 1;
+ 			touch_nmi_watchdog();
+ 		} else {
+@@ -1502,16 +1511,27 @@ static void __init deferred_free_pages(int nid, int zid, unsigned long pfn,
  	}
--	up_read(&mm->mmap_sem);
-+	if (handle_mmap_sem)
-+		up_read(&mm->mmap_sem);
+ 	/* Free the last block of pages to allocator */
+ 	deferred_free_range(pfn - nr_free, nr_free);
++	nr_pages += nr_free;
++
++	return nr_pages;
++}
++
++static int __init deferred_free_chunk(unsigned long pfn, unsigned long end_pfn,
++				      struct deferred_args *args)
++{
++	unsigned long nr_pages = deferred_free_pages(args->nid, args->zid, pfn,
++						     end_pfn);
++	atomic64_add(nr_pages, &args->nr_pages);
++	return KTASK_RETURN_SUCCESS;
+ }
  
- 	if (ret == 1) {
- 		*pfn = page_to_pfn(page[0]);
+ /*
+  * Initialize struct pages.  We minimize pfn page lookups and scheduler checks
+  * by performing it only once every pageblock_nr_pages.
+- * Return number of pages initialized.
++ * Return number of pages initialized in deferred_args.
+  */
+-static unsigned long  __init deferred_init_pages(int nid, int zid,
+-						 unsigned long pfn,
+-						 unsigned long end_pfn)
++static int __init deferred_init_pages(int nid, int zid, unsigned long pfn,
++				      unsigned long end_pfn)
+ {
+ 	struct mminit_pfnnid_cache nid_init_state = { };
+ 	unsigned long nr_pgmask = pageblock_nr_pages - 1;
+@@ -1531,7 +1551,17 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
+ 		__init_single_page(page, pfn, zid, nid);
+ 		nr_pages++;
+ 	}
+-	return (nr_pages);
++
++	return nr_pages;
++}
++
++static int __init deferred_init_chunk(unsigned long pfn, unsigned long end_pfn,
++				      struct deferred_args *args)
++{
++	unsigned long nr_pages = deferred_init_pages(args->nid, args->zid, pfn,
++						     end_pfn);
++	atomic64_add(nr_pages, &args->nr_pages);
++	return KTASK_RETURN_SUCCESS;
+ }
+ 
+ /* Initialise remaining memory on a node */
+@@ -1540,13 +1570,15 @@ static int __init deferred_init_memmap(void *data)
+ 	pg_data_t *pgdat = data;
+ 	int nid = pgdat->node_id;
+ 	unsigned long start = jiffies;
+-	unsigned long nr_pages = 0;
++	unsigned long nr_init = 0, nr_free = 0;
+ 	unsigned long spfn, epfn, first_init_pfn, flags;
+ 	phys_addr_t spa, epa;
+ 	int zid;
+ 	struct zone *zone;
+ 	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
+ 	u64 i;
++	unsigned long nr_node_cpus;
++	struct ktask_node kn;
+ 
+ 	/* Bind memory initialisation thread to a local node if possible */
+ 	if (!cpumask_empty(cpumask))
+@@ -1560,6 +1592,14 @@ static int __init deferred_init_memmap(void *data)
  		return 0;
  	}
  
--	down_read(&mm->mmap_sem);
-+	if (handle_mmap_sem)
-+		down_read(&mm->mmap_sem);
- 
- 	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
- 
-@@ -377,7 +380,8 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 			ret = 0;
++	/*
++	 * We'd like to know the memory bandwidth of the chip to calculate the
++	 * most efficient number of threads to start, but we can't.  In
++	 * testing, a good value for a variety of systems was a quarter of the
++	 * CPUs on the node.
++	 */
++	nr_node_cpus = DIV_ROUND_UP(cpumask_weight(cpumask), 4);
++
+ 	/* Sanity check boundaries */
+ 	BUG_ON(pgdat->first_deferred_pfn < pgdat->node_start_pfn);
+ 	BUG_ON(pgdat->first_deferred_pfn > pgdat_end_pfn(pgdat));
+@@ -1580,21 +1620,46 @@ static int __init deferred_init_memmap(void *data)
+ 	 * page in __free_one_page()).
+ 	 */
+ 	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
++		struct deferred_args args = { nid, zid, ATOMIC64_INIT(0) };
++		DEFINE_KTASK_CTL(ctl, deferred_init_chunk, &args,
++				 KTASK_PTE_MINCHUNK);
++		ktask_ctl_set_max_threads(&ctl, nr_node_cpus);
++
+ 		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
+ 		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
+-		nr_pages += deferred_init_pages(nid, zid, spfn, epfn);
++
++		kn.kn_start	= (void *)spfn;
++		kn.kn_task_size	= (spfn < epfn) ? epfn - spfn : 0;
++		kn.kn_nid	= nid;
++		(void) ktask_run_numa(&kn, 1, &ctl);
++
++		nr_init += atomic64_read(&args.nr_pages);
  	}
- 
--	up_read(&mm->mmap_sem);
-+	if (handle_mmap_sem)
-+		up_read(&mm->mmap_sem);
- 	return ret;
- }
- 
-@@ -399,9 +403,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	if (!mm)
- 		return -ENODEV;
- 
--	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base);
--	if (ret)
-+	down_read(&mm->mmap_sem);
-+	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base, false);
-+	if (ret) {
-+		up_read(&mm->mmap_sem);
- 		return ret;
-+	}
- 
- 	pinned++;
- 	rsvd = is_invalid_reserved_pfn(*pfn_base);
-@@ -416,6 +423,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 			put_pfn(*pfn_base, dma->prot);
- 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
- 					limit << PAGE_SHIFT);
-+			up_read(&mm->mmap_sem);
- 			return -ENOMEM;
- 		}
- 		lock_acct++;
-@@ -427,7 +435,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	/* Lock all the consecutive pages from pfn_base */
- 	for (vaddr += PAGE_SIZE, iova += PAGE_SIZE; pinned < npage;
- 	     pinned++, vaddr += PAGE_SIZE, iova += PAGE_SIZE) {
--		ret = vaddr_get_pfn(mm, vaddr, dma->prot, &pfn);
-+		ret = vaddr_get_pfn(mm, vaddr, dma->prot, &pfn, false);
- 		if (ret)
- 			break;
- 
-@@ -444,6 +452,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
- 					__func__, limit << PAGE_SHIFT);
- 				ret = -ENOMEM;
-+				up_read(&mm->mmap_sem);
- 				goto unpin_out;
- 			}
- 			lock_acct++;
-@@ -451,6 +460,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &spa, &epa, NULL) {
++		struct deferred_args args = { nid, zid, ATOMIC64_INIT(0) };
++		DEFINE_KTASK_CTL(ctl, deferred_free_chunk, &args,
++				 KTASK_PTE_MINCHUNK);
++		ktask_ctl_set_max_threads(&ctl, nr_node_cpus);
++
+ 		spfn = max_t(unsigned long, first_init_pfn, PFN_UP(spa));
+ 		epfn = min_t(unsigned long, zone_end_pfn(zone), PFN_DOWN(epa));
+-		deferred_free_pages(nid, zid, spfn, epfn);
++
++		kn.kn_start	= (void *)spfn;
++		kn.kn_task_size	= (spfn < epfn) ? epfn - spfn : 0;
++		kn.kn_nid	= nid;
++		(void) ktask_run_numa(&kn, 1, &ctl);
++
++		nr_free += atomic64_read(&args.nr_pages);
  	}
+ 	pgdat_resize_unlock(pgdat, &flags);
  
- out:
-+	up_read(&mm->mmap_sem);
- 	ret = vfio_lock_acct(dma, lock_acct, false);
+ 	/* Sanity check that the next zone really is unpopulated */
+ 	WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
++	VM_BUG_ON(nr_init != nr_free);
++
++	zone->managed_pages += nr_free;
  
- unpin_out:
-@@ -497,7 +507,7 @@ static int vfio_pin_page_external(struct vfio_dma *dma, unsigned long vaddr,
- 	if (!mm)
- 		return -ENODEV;
+-	pr_info("node %d initialised, %lu pages in %ums\n", nid, nr_pages,
++	pr_info("node %d initialised, %lu pages in %ums\n", nid, nr_free,
+ 					jiffies_to_msecs(jiffies - start));
  
--	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base);
-+	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base, true);
- 	if (!ret && do_accounting && !is_invalid_reserved_pfn(*pfn_base)) {
- 		ret = vfio_lock_acct(dma, 1, true);
- 		if (ret) {
+ 	pgdat_init_report_one_done();
 -- 
 2.19.1
 
