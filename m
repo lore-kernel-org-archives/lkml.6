@@ -4,66 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A789CC46465
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F662C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E7532085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 626702085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 23:21:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/Cckkp6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E7532085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XX8n7rGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626702085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeKFImO (ORCPT
+        id S1727193AbeKFInn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 03:42:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
+        Tue, 6 Nov 2018 03:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725751AbeKFImO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 03:42:14 -0500
+        id S1725751AbeKFInn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 03:43:43 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E582F20825;
-        Mon,  5 Nov 2018 23:20:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C6A92085A;
+        Mon,  5 Nov 2018 23:21:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541460003;
-        bh=kCVPgts7SJzG8s+kv8odv6oi3jr+XF73N3w0KV6qAek=;
+        s=default; t=1541460095;
+        bh=tro0WHJ9IHInCnIlK0dkB2qpINcjgvD+wN9XRZpxQFc=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=B/Cckkp6WOXP1g577l8Y5SdIAZw0oWMkyL45EE8d1fMOzSWUV2ifaNQTvTA17hiOf
-         li/fkuuqCAIUzN/9P+k/AGkNCcvOMMGzJ2hIGqDUzvJjAVlKihiuFuknHKZYPLYPWp
-         lQjyq86CFJ1Gmi4URL3lSmavMbCAaWPCdQMPKaXw=
+        b=XX8n7rGfUplvcgGtcvA9/fQfYPSK2SmbdEjjlLL3xT/PIJs/SwsuMYhkITBRQS+oM
+         aExh+tvFx14ZC1dzeCZfxn5hZyBY2S8b98KWGANFIrkQVa3YiQ4alaQYWuv4/fQ9Bl
+         8jYch9sl/PNKJydWzXEnFy1vAtus7uYB4H9NBOcA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Yuantian Tang <andy.tang@nxp.com>, oss@buserror.net
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181031065736.32719-2-andy.tang@nxp.com>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Yuantian Tang <andy.tang@nxp.com>
-References: <20181031065736.32719-1-andy.tang@nxp.com>
- <20181031065736.32719-2-andy.tang@nxp.com>
-Message-ID: <154146000223.88331.842879133964597851@swboyd.mtv.corp.google.com>
+In-Reply-To: <1541414117-27864-1-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1541414117-27864-1-git-send-email-tdas@codeaurora.org>
+Message-ID: <154146009460.88331.6359450184767946173@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2 v3] clk: qoriq: add more compatibles strings
-Date:   Mon, 05 Nov 2018 15:20:02 -0800
+Subject: Re: [PATCH] arm64: dts: sdm845: Add videocc node
+Date:   Mon, 05 Nov 2018 15:21:34 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Yuantian Tang (2018-10-30 23:57:36)
-> Add more SoC compatible strings to support more chips.
+Quoting Taniya Das (2018-11-05 02:35:17)
+> This adds the video clock controller node to sdm845 based on the examples
+> in the bindings.
 > =
 
-> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Did you mean to send "To:" Andy? Clk tree doesn't take these sorts of
+dts patches.
 
