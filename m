@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D41ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E36ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E072082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A9202082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+Yf8mAQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E072082A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B3ljs4mc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A9202082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbeKEMec (ORCPT
+        id S1729173AbeKEMeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 07:34:32 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35094 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeKEMeb (ORCPT
+        Mon, 5 Nov 2018 07:34:36 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44849 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbeKEMeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 07:34:31 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 32-v6so3546761pgu.2
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 19:17:03 -0800 (PST)
+        Mon, 5 Nov 2018 07:34:36 -0500
+Received: by mail-pl1-f194.google.com with SMTP id s5-v6so3699933plq.11
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 19:17:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/RyO1nhh4B8uT0hCEIyo5VG0Vz6UKIjRdhaBpX6QFyI=;
-        b=i+Yf8mAQp2Xn6tGSU0Dgbwzd8052cMRAew3IUR/N8ygKcBHARtUgIoeIluN/kjWIP/
-         mKLr5tVZsVqKQ5bQcAjdcGtdXvJFXebRP6Potr1RQ2SpNEbBTfuy+tyWjhwBaKPIEf1N
-         fyfcXuwtjUu1gSdxwmAFGsHDSCrBi2BmyOie4=
+        bh=yzwsoUSsA6n9GhAeRE9xmA2fjMci+vdbes/fUzU0UCs=;
+        b=B3ljs4mch/YbPLxq6teeIIcfZpElrfsxLw96UNC8Yrr6yFsKCFzHANFw3fbsTCePIL
+         b+KJCbQP5bUz2g2FCwCZH4NEHBujljf+5K4QpWA2ZHbCkBlm5YOisk/aS18LTOBveBjx
+         f2sKFWhhmk/Xak51D5W4rG43ao222Mi59km9k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/RyO1nhh4B8uT0hCEIyo5VG0Vz6UKIjRdhaBpX6QFyI=;
-        b=gecjO8lzgXL/nAGfmSxwf5XiBrf5bHqH7lVCRPOJslfOc7wYNmYdj0pK9QsvlDPNuW
-         n/h9STjdJ03PZvoIPqHIkdLHljlGtYwbBgFo62Z+w4vhjllNZ1OCxo9mclWcDXXw4wr7
-         tVA6MYHMaercb9DB9MygnleDagN3uDWRItY06Qal1lnArVIXMCCn2XW4tAmp7a72pYo0
-         PFAg1P6BPXszDlb6f/ddTN4QLwqNy6yTGu1OCW0Y53lmaiOggQA33ACtQYAFpDniW8dm
-         ie3yYOk3DUaY6BdTQ00wFQJk2F3uZ4gTFHQhriYX4/ZwR6zr1e8kIxkIAHQJO2VsXjgl
-         JRYg==
-X-Gm-Message-State: AGRZ1gKOE4GfAa6g6htm4xzSFrjtIWDLVaC+khZ9wfQX+x54l15TiFFK
-        fJGfEo9clWguvZU7JWnFfwWLqw==
-X-Google-Smtp-Source: AJdET5funqarLHOIHMzHLyixrZ8NcKPngSawdEoLO6bicAsulzwH6fLj0UCVofuctur4AszjY6sr1w==
-X-Received: by 2002:a63:2109:: with SMTP id h9mr18724326pgh.277.1541387823026;
-        Sun, 04 Nov 2018 19:17:03 -0800 (PST)
+        bh=yzwsoUSsA6n9GhAeRE9xmA2fjMci+vdbes/fUzU0UCs=;
+        b=fEcPe9CSYw1UC+umrgoTsUweadpBOXnSRpTc6/oyGNAt/9glZBY2/ZSNAx3AvRUETQ
+         e6f63h4z12nW2jXPbnU/yzUxV6ZK3czLKvvJTFsubu1vybXXuzlRzDptBucmsor92YFO
+         N7RdHnfEeLg4YnPkAw//+d0/HNnTc9zjtPpTWYhXjncAu3PLM4QVJ4pZS3fS81+UkaK3
+         CU7vuX859x6kFfRUfbldVL/FZiVlngw/M6bgYcgXXopVOETqTIWzNQrtxaJr586Dhkyg
+         c+cqED8Cugw3IiXzx+Y6gVWIPigckBq88Bgxx60D2C5IVUXgX2wi4YOG4v+dzCq97qus
+         msiQ==
+X-Gm-Message-State: AGRZ1gLgqm/nZzIwonbNnFXRBQEko8/P2JNC3LUOuVSKyFvZ6XQIu7Qz
+        X5sXqVkI+dIbMefBILpuRztJEg==
+X-Google-Smtp-Source: AJdET5cCA6lFFFVVmeBKuzXK1pCh33eOYofvuGw1nvLRkCowWy+vaMHTge+68zOWD2uvl0vqA4El3w==
+X-Received: by 2002:a17:902:8d94:: with SMTP id v20-v6mr20757455plo.109.1541387827813;
+        Sun, 04 Nov 2018 19:17:07 -0800 (PST)
 Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id f10-v6sm40182773pgp.72.2018.11.04.19.16.59
+        by smtp.gmail.com with ESMTPSA id f10-v6sm40182773pgp.72.2018.11.04.19.17.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 04 Nov 2018 19:17:02 -0800 (PST)
+        Sun, 04 Nov 2018 19:17:06 -0800 (PST)
 From:   Chunyan Zhang <zhang.chunyan@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -63,9 +63,9 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Sekhar Nori <nsekhar@ti.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH RFC 1/3] mmc: sdhci: add support for using external DMA devices
-Date:   Mon,  5 Nov 2018 11:16:48 +0800
-Message-Id: <1541387810-24867-2-git-send-email-zhang.chunyan@linaro.org>
+Subject: [PATCH RFC 2/3] mmc: sdhci-omap: Add using external dma
+Date:   Mon,  5 Nov 2018 11:16:49 +0800
+Message-Id: <1541387810-24867-3-git-send-email-zhang.chunyan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
 References: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
@@ -74,269 +74,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some standard SD host controller can support both external dma
-controllers as well as ADMA in which the controller acts as
-DMA master.
-
-Currently the generic SDHCI code supports ADMA/SDMA integrated into
-the host controller but does not have any support for external DMA
-controllers implemented using dmaengine meaning that custom code is
-needed for any systems that use a generic DMA controller with SDHCI.
+sdhci-omap can support both external dma controllers via dmaengine
+framework as well as ADMA in which the controller acts as DMA master.
 
 Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- drivers/mmc/host/Kconfig |  13 +++++
- drivers/mmc/host/sdhci.c | 137 ++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci.h |  12 +++++
- 3 files changed, 161 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-omap.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 1b58739..c4745d8 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -977,3 +977,16 @@ config MMC_SDHCI_OMAP
- 	  If you have a controller with this interface, say Y or M here.
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index 88347ce..0a8162c 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -896,6 +896,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 	struct sdhci_omap_data *data;
+ 	const struct soc_device_attribute *soc;
++	struct resource *regs;
  
- 	  If unsure, say N.
-+
-+config MMC_SDHCI_EXTDMA
-+        bool "Support external DMA in standard SD host controller"
-+	depends on MMC_SDHCI
-+	depends on DMA_ENGINE
-+	help
-+	  This is an option for using external DMA device via dmaengine
-+	  framework.
-+
-+	  If you have a controller which supports using external DMA device
-+	  for data transfer, can say Y.
-+
-+	  If unsure, say N.
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 99bdae5..ffb1d2b 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/delay.h>
-+#include <linux/dmaengine.h>
- #include <linux/ktime.h>
- #include <linux/highmem.h>
- #include <linux/io.h>
-@@ -1309,6 +1310,128 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
- 		del_timer(&host->timer);
- }
- 
-+#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTDMA)
-+static int sdhci_extdma_init_chan(struct sdhci_host *host)
-+{
-+	int ret = 0;
-+	struct mmc_host *mmc = host->mmc;
-+	struct sdhci_extdma *dma = &host->extdma;
-+
-+	dma->tx_chan = dma_request_chan(mmc->parent, "tx");
-+	if (IS_ERR(dma->tx_chan)) {
-+		ret = PTR_ERR(dma->tx_chan);
-+		dma->tx_chan = NULL;
-+		pr_warn("Failed to request TX DMA channel.\n");
-+		return ret;
-+	}
-+
-+	dma->rx_chan = dma_request_chan(mmc->parent, "rx");
-+	if (IS_ERR(dma->rx_chan)) {
-+		ret = PTR_ERR(dma->rx_chan);
-+		if (ret == -EPROBE_DEFER && dma->tx_chan)
-+			dma_release_channel(dma->tx_chan);
-+
-+		dma->rx_chan = NULL;
-+		pr_warn("Failed to request RX DMA channel.\n");
-+	}
-+
-+	return ret;
-+}
-+
-+static inline struct dma_chan *
-+sdhci_extdma_get_chan(struct sdhci_extdma *dma, struct mmc_data *data)
-+{
-+	return data->flags & MMC_DATA_WRITE ? dma->tx_chan : dma->rx_chan;
-+}
-+
-+static int sdhci_extdma_setup(struct sdhci_host *host, struct mmc_command *cmd)
-+{
-+	int ret = 0, i;
-+	struct dma_async_tx_descriptor *desc;
-+	struct mmc_data *data = cmd->data;
-+	struct dma_chan *chan;
-+	struct dma_slave_config cfg;
-+
-+	if (!host->mapbase)
-+		return -EINVAL;
-+
-+	cfg.src_addr = host->mapbase + SDHCI_BUFFER;
-+	cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
-+	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	cfg.src_maxburst = data->blksz / 4;
-+	cfg.dst_maxburst = data->blksz / 4;
-+
-+	/* Sanity check: all the SG entries must be aligned by block size. */
-+	for (i = 0; i < data->sg_len; i++) {
-+		if ((data->sg + i)->length % data->blksz)
-+			return -EINVAL;
-+	}
-+
-+	chan = sdhci_extdma_get_chan(&host->extdma, data);
-+
-+	ret = dmaengine_slave_config(chan, &cfg);
-+	if (ret)
-+		return ret;
-+
-+	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
-+				       mmc_get_dma_dir(data),
-+				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	desc->callback = NULL;
-+	desc->callback_param = NULL;
-+
-+	dmaengine_submit(desc);
-+
-+	return 0;
-+}
-+
-+static void sdhci_extdma_prepare_data(struct sdhci_host *host,
-+				      struct mmc_command *cmd)
-+{
-+	host->flags |= SDHCI_REQ_USE_DMA;
-+	sdhci_prepare_data(host, cmd);
-+
-+	if (sdhci_extdma_setup(host, cmd))
-+		dev_err(mmc_dev(host->mmc), "MMC start dma failure\n");
-+}
-+
-+static void sdhci_extdma_pre_transfer(struct sdhci_host *host,
-+				      struct mmc_command *cmd)
-+{
-+	struct dma_chan *chan = sdhci_extdma_get_chan(&host->extdma, cmd->data);
-+
-+	if (cmd->opcode != MMC_SET_BLOCK_COUNT) {
-+		sdhci_set_timeout(host, cmd);
-+		dma_async_issue_pending(chan);
-+	}
-+}
-+#else
-+static int sdhci_extdma_init_chan(struct sdhci_host *host)
-+{
-+	return 0;
-+}
-+
-+static void sdhci_extdma_prepare_data(struct sdhci_host *host,
-+				      struct mmc_command *cmd)
-+{
-+	/* If SDHCI_EXTDMA not supported, PIO will be used */
-+	sdhci_prepare_data(host, cmd);
-+}
-+
-+static void sdhci_extdma_pre_transfer(struct sdhci_host *host,
-+				      struct mmc_command *cmd)
-+{}
-+#endif
-+
-+void sdhci_switch_extdma(struct sdhci_host *host, bool en)
-+{
-+	host->use_extdma = en;
-+}
-+EXPORT_SYMBOL_GPL(sdhci_switch_extdma);
-+
- void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
- {
- 	int flags;
-@@ -1355,7 +1478,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
- 		host->data_cmd = cmd;
+ 	match = of_match_device(omap_sdhci_match, dev);
+ 	if (!match)
+@@ -908,6 +909,10 @@ static int sdhci_omap_probe(struct platform_device *pdev)
  	}
+ 	offset = data->offset;
  
--	sdhci_prepare_data(host, cmd);
-+	if (host->use_extdma)
-+		sdhci_extdma_prepare_data(host, cmd);
-+	else
-+		sdhci_prepare_data(host, cmd);
- 
- 	sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
- 
-@@ -1397,6 +1523,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
- 		timeout += 10 * HZ;
- 	sdhci_mod_timer(host, cmd->mrq, timeout);
- 
-+	if (host->use_extdma)
-+		sdhci_extdma_pre_transfer(host, cmd);
++	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!regs)
++		return -ENXIO;
 +
- 	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
- }
- EXPORT_SYMBOL_GPL(sdhci_send_command);
-@@ -4133,6 +4262,12 @@ int sdhci_setup_host(struct sdhci_host *host)
- 			return ret;
- 	}
+ 	host = sdhci_pltfm_init(pdev, &sdhci_omap_pdata,
+ 				sizeof(*omap_host));
+ 	if (IS_ERR(host)) {
+@@ -924,6 +929,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 	omap_host->timing = MMC_TIMING_LEGACY;
+ 	omap_host->flags = data->flags;
+ 	host->ioaddr += offset;
++	host->mapbase = regs->start;
  
-+	if (host->use_extdma) {
-+		ret = sdhci_extdma_init_chan(host);
-+		if (ret)
-+			goto unreg;
-+	}
-+
- 	return 0;
+ 	mmc = host->mmc;
+ 	sdhci_get_of_property(pdev);
+@@ -991,6 +997,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
+ 	host->mmc_host_ops.enable_sdio_irq = sdhci_omap_enable_sdio_irq;
  
- unreg:
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index b001cf4..2d4a3ba 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -361,6 +361,12 @@ enum sdhci_cookie {
- 	COOKIE_MAPPED,		/* mapped by sdhci_prepare_data() */
- };
- 
-+struct sdhci_extdma {
-+	struct sdhci_host	*host;
-+	struct dma_chan		*rx_chan;
-+	struct dma_chan		*tx_chan;
-+};
-+
- struct sdhci_host {
- 	/* Data set by hardware interface driver */
- 	const char *hw_name;	/* Hardware bus name */
-@@ -475,6 +481,7 @@ struct sdhci_host {
- 
- 	int irq;		/* Device IRQ */
- 	void __iomem *ioaddr;	/* Mapped address */
-+	phys_addr_t mapbase;	/* physical address base */
- 	char *bounce_buffer;	/* For packing SDMA reads/writes */
- 	dma_addr_t bounce_addr;
- 	unsigned int bounce_buffer_size;
-@@ -524,6 +531,7 @@ struct sdhci_host {
- 	bool pending_reset;	/* Cmd/data reset is pending */
- 	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
- 	bool v4_mode;		/* Host Version 4 Enable */
-+	bool use_extdma;
- 
- 	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
- 	struct mmc_command *cmd;	/* Current command */
-@@ -551,6 +559,9 @@ struct sdhci_host {
- 
- 	struct timer_list timer;	/* Timer for timeouts */
- 	struct timer_list data_timer;	/* Timer for data timeouts */
-+#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTDMA)
-+	struct sdhci_extdma	extdma;	/* support external DMA */
-+#endif
- 
- 	u32 caps;		/* CAPABILITY_0 */
- 	u32 caps1;		/* CAPABILITY_1 */
-@@ -785,5 +796,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
- void sdhci_end_tuning(struct sdhci_host *host);
- void sdhci_reset_tuning(struct sdhci_host *host);
- void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
-+void sdhci_switch_extdma(struct sdhci_host *host, bool en);
- 
- #endif /* __SDHCI_HW_H */
++	sdhci_switch_extdma(host, true);
+ 	ret = sdhci_setup_host(host);
+ 	if (ret)
+ 		goto err_put_sync;
 -- 
 2.7.4
 
