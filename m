@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36005ECDE46
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D6AECDE46
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B411204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B411204FD
+	by mail.kernel.org (Postfix) with ESMTP id 6B51A20866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B51A20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeKERvx (ORCPT
+        id S1727374AbeKERxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 12:51:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55732 "EHLO mail.bootlin.com"
+        Mon, 5 Nov 2018 12:53:08 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55815 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeKERvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 12:51:52 -0500
+        id S1726086AbeKERxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 12:53:08 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 26E5B207B0; Mon,  5 Nov 2018 09:33:17 +0100 (CET)
+        id 0AFA6207B0; Mon,  5 Nov 2018 09:34:34 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E1087206A1;
-        Mon,  5 Nov 2018 09:33:06 +0100 (CET)
-Date:   Mon, 5 Nov 2018 09:33:07 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id C801C206A1;
+        Mon,  5 Nov 2018 09:34:05 +0100 (CET)
+Date:   Mon, 5 Nov 2018 09:34:05 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -47,18 +47,18 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         devicetree <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 14/25] drm/sun4i: sun6i_mipi_dsi: Increase hfp packet
- overhead
-Message-ID: <20181105083307.ambogsg4fopjfrda@flea>
+Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
+ VCC-DSI voltage regulator
+Message-ID: <20181105083405.zhhnulfsyyvlzusf@flea>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-15-jagan@amarulasolutions.com>
- <20181029092754.2tl7i5k5qpbn4557@flea>
- <CAMty3ZC6B-o1Oij_FLpotjN_900kF6OikK323y=bQ9VPzSPDgg@mail.gmail.com>
+ <20181026144344.27778-17-jagan@amarulasolutions.com>
+ <20181029093142.hgn4q6o7q32voutf@flea>
+ <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iazds3sud6k36fef"
+        protocol="application/pgp-signature"; boundary="2qv36qiifiyzutuf"
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZC6B-o1Oij_FLpotjN_900kF6OikK323y=bQ9VPzSPDgg@mail.gmail.com>
+In-Reply-To: <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -66,43 +66,22 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---iazds3sud6k36fef
+--2qv36qiifiyzutuf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 29, 2018 at 07:57:56PM +0530, Jagan Teki wrote:
-> On Mon, Oct 29, 2018 at 2:58 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+On Mon, Oct 29, 2018 at 08:18:05PM +0530, Jagan Teki wrote:
+> On Mon, Oct 29, 2018 at 3:01 PM Maxime Ripard <maxime.ripard@bootlin.com>=
  wrote:
 > >
-> > On Fri, Oct 26, 2018 at 08:13:33PM +0530, Jagan Teki wrote:
-> > > Increase the hfp packet overhead with another 10 bytes, the extra
-> > > 10 bytes(which is hblk packet overhead) is adding for hfp packet
-> > > overhead since hfp depends on hblk.
+> > On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
+> > > Some boards have VCC-DSI pin connected to voltage regulator which may
+> > > not be turned on by default.
 > > >
-> > > This is truely as per BSP code from BPI-M64-bsp.
-> > > The real computation from BSP is
-> > > (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > > dsi_hbp =3D (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
-> > > dsi_hact =3D x * dsi_pixel_bits[format]/8;
-> > > dsi_hblk =3D (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
-> > > dsi_hfp =3D dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
-> > >
-> > > Example,
-> > > u32 fmt =3D dsi_pixel_bits[format]/8;
-> > > =3D> ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
-> > > =3D> (ht - hspw - x - (hbp - hspw)) * fmt - 16
-> > > =3D> (ht - x - hbp) * fmt - 16
-> > > =3D> (ht - x - (timmings->hor_total_time - timmings->hor_front_porch =
-- x)
-> > > * fmt - 16
-> > > =3D> (timmings->hor_total_time - x - timmings->hor_total_time +
-> > > timmings->hor_front_porch + x) * fmt - 16
-> > > =3D> timmings->hor_front_porch * fmt - 16
-> > >
-> > > So, increase the DSI hfp packet overhead by hblk packet overhead.
-> > >
-> > > Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+> > > Add support for such boards by adding voltage regulator handling code=
+ to
+> > > MIPI DSI driver.
 > > >
 > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > > > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
@@ -112,72 +91,43 @@ On Mon, Oct 29, 2018 at 07:57:56PM +0530, Jagan Teki wrote:
 > > > Changes for v2:
 > > > - none
 > > >
-> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 22 +++++++++++++---------
-> > >  1 file changed, 13 insertions(+), 9 deletions(-)
+> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
+> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
+> > >  2 files changed, 17 insertions(+)
 > > >
 > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm=
 /sun4i/sun6i_mipi_dsi.c
-> > > index 6584b51736a9..20e330186b7f 100644
+> > > index 42bd7506abaf..bc57343592e0 100644
 > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > @@ -461,7 +461,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_=
-dsi *dsi,
-> > >  {
-> > >       struct mipi_dsi_device *device =3D dsi->device;
-> > >       unsigned int Bpp =3D mipi_dsi_pixel_format_to_bpp(device->forma=
-t) / 8;
-> > > -     u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
-> > > +     u16 hbp, hfp_pkt_overhead, hfp, hsa, hblk_max, hblk, vblk;
-> > >       size_t bytes;
-> > >       u8 *buffer;
+> > > @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, st=
+ruct device *master,
 > > >
-> > > @@ -484,14 +484,6 @@ static void sun6i_dsi_setup_timings(struct sun6i=
-_dsi *dsi,
-> > >       hbp =3D max((unsigned int)HBP_PACKET_OVERHEAD,
-> > >                 (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_O=
-VERHEAD);
+> > >       dsi->drv =3D drv;
 > > >
-> > > -     /*
-> > > -      * The frontporch is set using a blanking packet (4 bytes +
-> > > -      * payload + 2 bytes). Its minimal size is therefore 6 bytes
-> > > -      */
-> > > -#define HFP_PACKET_OVERHEAD  6
-> > > -     hfp =3D max((unsigned int)HFP_PACKET_OVERHEAD,
-> > > -               (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACK=
-ET_OVERHEAD);
-> > > -
-> > >       /*
-> > >        * hblk seems to be the line + porches length.
-> > >        * The blank is set using a blanking packet (4 bytes + 4 bytes +
-> > > @@ -502,6 +494,18 @@ static void sun6i_dsi_setup_timings(struct sun6i=
-_dsi *dsi,
-> > >       hblk_max -=3D HBLK_PACKET_OVERHEAD;
-> > >       hblk =3D max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
-> > >
-> > > +     /*
-> > > +      * The frontporch is set using a blanking packet (4 bytes +
-> > > +      * payload + 2 bytes). Its minimal size is therefore 6 bytes
-> > > +      *
-> > > +      * According to BSP code, extra 10 bytes(which is hblk packet o=
-verhead)
-> > > +      * is adding for hfp packet overhead since hfp depends on hblk.
+> > > +     ret =3D regulator_enable(dsi->regulator);
+> > > +     if (ret) {
+> > > +             dev_err(dev, "Failed to enable regulator\n");
+> > > +             return ret;
+> > > +     }
+> > > +
 > >
-> > "According to the BSP code, another 10 bytes (the HBLK packet
-> > overhead) need to be added to the front porch overhead."
-> >
-> > How has this been verified? Since we have registers to set all the
-> > parameters, this seems kind of weird.
+> > The regulator should be enabled only when the device is in use.
 >=20
-> Verified based on the BSP calculation which I explained in commit
-> message and tested by validating these numbers with mainline vs bsp
-> code.
+> True, but there is no device specific quirk needed because who ever
+> not needed simply use dummy regulator
+> [    0.245821] sun6i-mipi-dsi 1ca0000.dsi: 1ca0000.dsi supply vcc-dsi
+> not found, using dummy regulato
+> r
+>=20
+> even like HVCC in hdmi driver [1]
+>=20
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
+ommit/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c?id=3D633ba1e086e1abbeef1ffd8999=
+11de8cf3987d9f
 
-So, not verified?
-
-Did you have a panel that was broken due to this? Have you found that
-the timings output on the DSI bus were wrong using an oscilloscope or
-an analyzer? What makes you say that the Allwinner code is more
-correct than we are?
+That's not my point. You should enable the regulator only when the DSI
+bridge is being enabled, not when the driver has probed.
 
 Maxime
 
@@ -186,15 +136,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---iazds3sud6k36fef
+--2qv36qiifiyzutuf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AAQgAKCRDj7w1vZxhR
-xeFLAQDEuRB7X3QE4fFt6ewszUtuZMXr/cZWA3GJpOpxLiWdzwD9Fud8EFg6p8DV
-Kh9Ws5J9I3Q5H7uOUP1r1fNICfQAeQc=
-=4cHu
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AAfQAKCRDj7w1vZxhR
+xd1oAP0Urbi1rvfK+je57t0m58ZwVyBuK41Gmb4baeB/Wd/hzwEAxxeWPqC2+ZXe
+bXolpYlKicdGlbse9KJDHPX2oAHKpgE=
+=eprQ
 -----END PGP SIGNATURE-----
 
---iazds3sud6k36fef--
+--2qv36qiifiyzutuf--
