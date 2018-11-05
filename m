@@ -2,94 +2,228 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9622FC46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 855EEC0044C
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B07D20869
+	by mail.kernel.org (Postfix) with ESMTP id 2067B2085A
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:23:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hMYMJ2O3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ctlgWwLH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B07D20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2067B2085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbeKEUmc (ORCPT
+        id S1729578AbeKEUmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:42:32 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46054 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbeKEUmb (ORCPT
+        Mon, 5 Nov 2018 15:42:05 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55807 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728757AbeKEUmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:42:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AC1F960247; Mon,  5 Nov 2018 11:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541416982;
-        bh=LJvPMaTF68qXdRiCiIIYLIQdl/hjdYqeIwx27KUxXOM=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=hMYMJ2O36ZX8H4uJtB+xggwRgskYx8jouwDPAGbjmRZRIYH1GIx/77rJoLOjHk1hS
-         9aaPmeos+fvoo5/i2spBixRykZAHCer1h4q5V1jcSXFFiyschkakmjZQvgOVfXGj8z
-         w5Rqyu47ehKCBpSn3lpWNprrYAb/obbRgOFnGv7M=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6953760247;
-        Mon,  5 Nov 2018 11:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541416981;
-        bh=LJvPMaTF68qXdRiCiIIYLIQdl/hjdYqeIwx27KUxXOM=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=ctlgWwLHSwFzYFatTLA1P5Ba1ovUaHPslGDs1UMLXqQKn3JQmn/kf+z2s/kSYmkM1
-         UOk3AIvKjU7dKh0Ow5majtnotcEXI+wZf47TqJTO0PCpb0jxWILZpqxhPiL7FZMf0x
-         +PescQTFjCXAeLRXzCn7lgb/xuTHIlP4NzT6W3s8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6953760247
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 5 Nov 2018 15:42:05 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5BMUC8309753
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 5 Nov 2018 03:22:30 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5BMU8r309750;
+        Mon, 5 Nov 2018 03:22:30 -0800
+Date:   Mon, 5 Nov 2018 03:22:30 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ming Lei <tipbot@zytor.com>
+Message-ID: <tip-5c903e108d0b005cf59904ca3520934fca4b9439@git.kernel.org>
+Cc:     sagi@grimberg.me, hare@suse.com, hpa@zytor.com, mingo@kernel.org,
+        ming.lei@redhat.com, linux-kernel@vger.kernel.org,
+        keith.busch@intel.com, tglx@linutronix.de, axboe@kernel.dk
+Reply-To: sagi@grimberg.me, hare@suse.com, hpa@zytor.com,
+          ming.lei@redhat.com, mingo@kernel.org, keith.busch@intel.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org, axboe@kernel.dk
+In-Reply-To: <20181102145951.31979-3-ming.lei@redhat.com>
+References: <20181102145951.31979-3-ming.lei@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq/affinity: Move two stage affinity spreading
+ into a helper function
+Git-Commit-ID: 5c903e108d0b005cf59904ca3520934fca4b9439
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 01/20] ath6kl: Mark expected switch fall-through
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <7932c27ae4e53aceacb7a0a1ae26db91432e5014.1540239684.git.gustavo@embeddedor.com>
-References: <7932c27ae4e53aceacb7a0a1ae26db91432e5014.1540239684.git.gustavo@embeddedor.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        linux-wireless@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181105112302.AC1F960247@smtp.codeaurora.org>
-Date:   Mon,  5 Nov 2018 11:23:02 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+Commit-ID:  5c903e108d0b005cf59904ca3520934fca4b9439
+Gitweb:     https://git.kernel.org/tip/5c903e108d0b005cf59904ca3520934fca4b9439
+Author:     Ming Lei <ming.lei@redhat.com>
+AuthorDate: Fri, 2 Nov 2018 22:59:49 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 5 Nov 2018 12:16:26 +0100
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Addresses-Coverity-ID: 201383 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Acked-by: Steve deRosier <derosier@cal-sierra.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+genirq/affinity: Move two stage affinity spreading into a helper function
 
-3 patches applied to ath-next branch of ath.git, thanks.
+No functional change. Prepares for supporting allocating and affinitizing
+interrupt sets.
 
-6d9e1ecd1537 ath6kl: Mark expected switch fall-through
-003161445bc8 carl9170: rx: mark expected switch fall-through
-f458f9f43690 carl9170: tx: mark expected switch fall-throughs
+[ tglx: Minor changelog tweaks ]
 
--- 
-https://patchwork.kernel.org/patch/10652473/
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Link: https://lkml.kernel.org/r/20181102145951.31979-3-ming.lei@redhat.com
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+---
+ kernel/irq/affinity.c | 92 +++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 56 insertions(+), 36 deletions(-)
 
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index e12cdf637c71..2f9812b6035e 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -94,7 +94,7 @@ static int get_nodes_in_cpumask(cpumask_var_t *node_to_cpumask,
+ 	return nodes;
+ }
+ 
+-static int irq_build_affinity_masks(const struct irq_affinity *affd,
++static int __irq_build_affinity_masks(const struct irq_affinity *affd,
+ 				    int startvec, int numvecs,
+ 				    cpumask_var_t *node_to_cpumask,
+ 				    const struct cpumask *cpu_mask,
+@@ -165,6 +165,58 @@ out:
+ 	return done;
+ }
+ 
++/*
++ * build affinity in two stages:
++ *	1) spread present CPU on these vectors
++ *	2) spread other possible CPUs on these vectors
++ */
++static int irq_build_affinity_masks(const struct irq_affinity *affd,
++				    int startvec, int numvecs,
++				    cpumask_var_t *node_to_cpumask,
++				    struct cpumask *masks)
++{
++	int curvec = startvec, usedvecs = -1;
++	cpumask_var_t nmsk, npresmsk;
++
++	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
++			return usedvecs;
++
++	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
++			goto fail;
++
++	/* Stabilize the cpumasks */
++	get_online_cpus();
++	build_node_to_cpumask(node_to_cpumask);
++
++	/* Spread on present CPUs starting from affd->pre_vectors */
++	usedvecs = __irq_build_affinity_masks(affd, curvec, numvecs,
++					    node_to_cpumask, cpu_present_mask,
++					    nmsk, masks);
++
++	/*
++	 * Spread on non present CPUs starting from the next vector to be
++	 * handled. If the spreading of present CPUs already exhausted the
++	 * vector space, assign the non present CPUs to the already spread
++	 * out vectors.
++	 */
++	if (usedvecs >= numvecs)
++		curvec = affd->pre_vectors;
++	else
++		curvec = affd->pre_vectors + usedvecs;
++	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
++	usedvecs += __irq_build_affinity_masks(affd, curvec, numvecs,
++					     node_to_cpumask, npresmsk,
++					     nmsk, masks);
++	put_online_cpus();
++
++	free_cpumask_var(npresmsk);
++
++ fail:
++	free_cpumask_var(nmsk);
++
++	return usedvecs;
++}
++
+ /**
+  * irq_create_affinity_masks - Create affinity masks for multiqueue spreading
+  * @nvecs:	The total number of vectors
+@@ -177,7 +229,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ {
+ 	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+ 	int curvec, usedvecs;
+-	cpumask_var_t nmsk, npresmsk, *node_to_cpumask;
++	cpumask_var_t *node_to_cpumask;
+ 	struct cpumask *masks = NULL;
+ 
+ 	/*
+@@ -187,15 +239,9 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	if (nvecs == affd->pre_vectors + affd->post_vectors)
+ 		return NULL;
+ 
+-	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
+-		return NULL;
+-
+-	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
+-		goto outcpumsk;
+-
+ 	node_to_cpumask = alloc_node_to_cpumask();
+ 	if (!node_to_cpumask)
+-		goto outnpresmsk;
++		return NULL;
+ 
+ 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+ 	if (!masks)
+@@ -205,30 +251,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+ 		cpumask_copy(masks + curvec, irq_default_affinity);
+ 
+-	/* Stabilize the cpumasks */
+-	get_online_cpus();
+-	build_node_to_cpumask(node_to_cpumask);
+-
+-	/* Spread on present CPUs starting from affd->pre_vectors */
+ 	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
+-					    node_to_cpumask, cpu_present_mask,
+-					    nmsk, masks);
+-
+-	/*
+-	 * Spread on non present CPUs starting from the next vector to be
+-	 * handled. If the spreading of present CPUs already exhausted the
+-	 * vector space, assign the non present CPUs to the already spread
+-	 * out vectors.
+-	 */
+-	if (usedvecs >= affvecs)
+-		curvec = affd->pre_vectors;
+-	else
+-		curvec = affd->pre_vectors + usedvecs;
+-	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
+-	usedvecs += irq_build_affinity_masks(affd, curvec, affvecs,
+-					     node_to_cpumask, npresmsk,
+-					     nmsk, masks);
+-	put_online_cpus();
++					    node_to_cpumask, masks);
+ 
+ 	/* Fill out vectors at the end that don't need affinity */
+ 	if (usedvecs >= affvecs)
+@@ -240,10 +264,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 
+ outnodemsk:
+ 	free_node_to_cpumask(node_to_cpumask);
+-outnpresmsk:
+-	free_cpumask_var(npresmsk);
+-outcpumsk:
+-	free_cpumask_var(nmsk);
+ 	return masks;
+ }
+ 
