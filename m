@@ -2,124 +2,167 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBDAECDE43
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A143C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1633B2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DA7020866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rykwNpJ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1633B2085A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmcXL41y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA7020866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbeKEXqN (ORCPT
+        id S1730030AbeKEXqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:46:13 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:38728 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeKEXqM (ORCPT
+        Mon, 5 Nov 2018 18:46:20 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35882 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeKEXqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:46:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bDIKyuSp9LLH9BqGVqhJP/hbXdOmufd3UQW+85NbV+8=; b=rykwNpJ5nCzznn4Jucrx26gsq
-        +JH4MPOXMJ+pyWb4JU6Gj3AHUuigkLWXl9uB/Dn7tVxRF87Ptd16aKHV8RQW0nrfm1DqdeIboPOpJ
-        w2ytLOtAu3dVg33KI46V7z703S+T8XnZkGmRqV7gYgNLAL7GqHnE5WapNvgfRsWGdMSJ3gMnO0cyk
-        gZVOd/rhM4BbpGP6BT2UJhVvVWmX/HGnTnK8eZWbA8bXiFbqStjSfBDyJ0iWJjwae4/JjrmnjZYSd
-        F2LwaakSwVKD/wKt8d3+feCrExhqyR6midZcsGLi3jSKyovhcXMJjIGoqUavssAC/YMHmpKsUr2NC
-        QLv2vSwLQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gJfoG-0006kE-Li; Mon, 05 Nov 2018 14:24:57 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3223A2029F9FF; Mon,  5 Nov 2018 15:24:53 +0100 (CET)
-Date:   Mon, 5 Nov 2018 15:24:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, dvyukov@google.com,
-        willy@infradead.org
-Subject: Re: [RFC PATCH] lib: Introduce generic __cmpxchg_u64() and use it
- where needed
-Message-ID: <20181105142453.GA22449@hirez.programming.kicks-ass.net>
-References: <1541015538-11382-1-git-send-email-linux@roeck-us.net>
- <20181031213240.zhh7dfcm47ucuyfl@pburton-laptop>
- <20181031220253.GA15505@roeck-us.net>
- <20181031233235.qbedw3pinxcuk7me@pburton-laptop>
- <4e2438a23d2edf03368950a72ec058d1d299c32e.camel@hammerspace.com>
- <20181101131846.biyilr2msonljmij@lakrids.cambridge.arm.com>
- <20181101145926.GE3178@hirez.programming.kicks-ass.net>
- <f38e272f7a96e983549e4281aa9fd02833a4277a.camel@hammerspace.com>
- <20181101163212.GF3159@hirez.programming.kicks-ass.net>
- <5a846924-e642-d9d1-4e0e-810bd4d01c26@virtuozzo.com>
+        Mon, 5 Nov 2018 18:46:20 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a8-v6so8240337wmf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 06:26:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hBz67z/mJka6vEpb5Y3a3+XUqviDBoG9e/F7g9R54D8=;
+        b=YmcXL41yZOhgqeGgQlbxWfSZjBCKqUK9pJsIOR+O+4orMpQrZjUD/zO/eTNOVHRw3J
+         H0mD1T1/Kj1xkoCVvI4OuiemC7S5VPanxevRNvGWgarV4ipcCSM/PvH0y5cQa/drxEdP
+         9FyIEIYRWLoQrGf2FCSbxmCUKnpm3EuBJFs8mHWWbZVaCSxilmNUX9pSwYcP8kIf4pdl
+         D2ENrsIjVuY5zLUTnYpAoZVUDISpvTn0DFHIQxaT6FlzcOb41QMqJwyCQLN5JVE5JyfB
+         +mX+oZlaNJnod/odg9WlXMipw48ZPsqqGHxEnx4Imyk+CkdRWkBbZxtpWPtB0jUqigbq
+         ha5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hBz67z/mJka6vEpb5Y3a3+XUqviDBoG9e/F7g9R54D8=;
+        b=dZCrt6Q09SBgO+NtfX7txoCFkivS81n52v4nH0kmG6ViHTrWnvVB2AlmiOrDRy4R2E
+         OOygYbvrjkAMPjpZA9R71+My7UJlLMaDYID26yHXYfwb7hnSQK4GXk+y4/QRBQjRhrws
+         WqEG6Akr78eOxoIxj3NuLC3rR8/hjmcgQFHBlOpcgDGNq/Rw52/UpC0pBY+slg31LaHO
+         TEhOU5hSfDOAQI+w2w7NRtyNXtMSAWw7jugIgZJX58k1mQtXZKBsqHkFONVNqObfSfqC
+         jU/Fajaoo73EmZradj7NxMw8Gj+PUGSUxuElzmpGbal5l4nNta4hNQELztET39xj/RsN
+         zFEg==
+X-Gm-Message-State: AGRZ1gKFsMCN2EGNxe2T9K0s+kOKZzQ11coRgr/WXgaw8kCONgIQnOVA
+        KsjlDbhx0lHPlh5DKLllPcg=
+X-Google-Smtp-Source: AJdET5ck7py4QasQyGRzcxQm5JL6FXB01adS2g6uj+8nSnSBseNoO0Tzehiyf6BUze6097gNy0nVUg==
+X-Received: by 2002:a1c:2d57:: with SMTP id t84-v6mr2591331wmt.9.1541427980445;
+        Mon, 05 Nov 2018 06:26:20 -0800 (PST)
+Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
+        by smtp.gmail.com with ESMTPSA id b8-v6sm30105205wme.1.2018.11.05.06.26.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 06:26:19 -0800 (PST)
+From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
+To:     palmer@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] riscv: add asm/unistd.h UAPI header
+Date:   Mon,  5 Nov 2018 15:26:02 +0100
+Message-Id: <20181105142602.25750-1-david.abdurachmanov@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a846924-e642-d9d1-4e0e-810bd4d01c26@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 07:19:15PM +0300, Andrey Ryabinin wrote:
-> UBSAN warns about signed overflows despite -fno-strict-overflow if gcc version is < 8.
-> I have learned recently that UBSAN in GCC 8 ignores signed overflows if -fno-strict-overflow of fwrapv is used.
-> 
-> $ cat signed_overflow.c 
-> #include <stdio.h>
-> 
-> __attribute__((noinline))
-> int foo(int a, int b)
-> {
->         return a+b;
+Marcin Juszkiewicz reported issues while generating syscall table for riscv
+using 4.20-rc1. The patch refactors our unistd.h files to match some other
+architectures.
 
- s/+/<</
+- Add asm/unistd.h UAPI header, which has __ARCH_WANT_NEW_STAT
+- Remove asm/syscalls.h UAPI header and merge to asm/unistd.h
+- Adjust kernel asm/unistd.h
 
-> }
-> 
-> int main(void)
-> {
->         int a = 0x7fffffff;
->         int b = 2;
->         printf("%d\n", foo(a,b));
->         return 0;
-> }
+So now asm/unistd.h UAPI header should show all syscalls for riscv.
 
-It also seem to affect 'shift':
+Before this, Makefile simply put `#include <asm-generic/unistd.h>` into
+generated asm/unistd.h UAPI header thus user didn't see:
 
-peterz@hirez:~/tmp$ gcc -fsanitize=signed-integer-overflow,shift overflow.c ; ./a.out
-overflow.c:6:11: runtime error: left shift of 2147483647 by 2 places cannot be represented in type 'int'
--4
-peterz@hirez:~/tmp$ gcc -fsanitize=signed-integer-overflow,shift -fwrapv overflow.c ; ./a.out
--4
+- __NR_riscv_flush_icache
+- __NR_newfstatat
+- __NR_fstat
+
+which are supported by riscv kernel.
+
+Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Fixes: 67314ec7b025
+---
+ arch/riscv/include/asm/unistd.h               |  5 ++--
+ .../include/uapi/asm/{syscalls.h => unistd.h} | 24 +++++++++++++------
+ 2 files changed, 19 insertions(+), 10 deletions(-)
+ rename arch/riscv/include/uapi/asm/{syscalls.h => unistd.h} (54%)
+
+diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
+index eff7aa9aa163..fef96f117b4d 100644
+--- a/arch/riscv/include/asm/unistd.h
++++ b/arch/riscv/include/asm/unistd.h
+@@ -13,10 +13,9 @@
+ 
+ /*
+  * There is explicitly no include guard here because this file is expected to
+- * be included multiple times.  See uapi/asm/syscalls.h for more info.
++ * be included multiple times.
+  */
+ 
+-#define __ARCH_WANT_NEW_STAT
+ #define __ARCH_WANT_SYS_CLONE
++
+ #include <uapi/asm/unistd.h>
+-#include <uapi/asm/syscalls.h>
+diff --git a/arch/riscv/include/uapi/asm/syscalls.h b/arch/riscv/include/uapi/asm/unistd.h
+similarity index 54%
+rename from arch/riscv/include/uapi/asm/syscalls.h
+rename to arch/riscv/include/uapi/asm/unistd.h
+index 206dc4b0f6ea..5545f498071d 100644
+--- a/arch/riscv/include/uapi/asm/syscalls.h
++++ b/arch/riscv/include/uapi/asm/unistd.h
+@@ -1,13 +1,23 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ /*
+- * Copyright (C) 2017-2018 SiFive
++ * Copyright (C) 2018 David Abdurachmanov <david.abdurachmanov@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+-/*
+- * There is explicitly no include guard here because this file is expected to
+- * be included multiple times in order to define the syscall macros via
+- * __SYSCALL.
+- */
++#define __ARCH_WANT_NEW_STAT
++
++#include <asm-generic/unistd.h>
+ 
+ /*
+  * Allows the instruction cache to be flushed from userspace.  Despite RISC-V
+-- 
+2.19.1
+
