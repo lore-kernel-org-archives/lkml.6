@@ -2,81 +2,65 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E530C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5052CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD812081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD812081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 131F42081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 131F42081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729933AbeKEWkG (ORCPT
+        id S1729877AbeKEWjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:40:06 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52336 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728966AbeKEWkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:40:06 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id DHAWKaeZmGDH; Mon,  5 Nov 2018 14:20:21 +0100 (CET)
-Received: from zn.tnic (p200300EC2BC6CF00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:cf00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 388201EC01A8;
-        Mon,  5 Nov 2018 14:20:21 +0100 (CET)
-Date:   Mon, 5 Nov 2018 14:20:07 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Manish Narani <manish.narani@xilinx.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, mchehab@kernel.org, amit.kucheria@linaro.org,
-        sudeep.holla@arm.com, leoyang.li@nxp.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org
-Subject: Re: [PATCH v10 5/6] arm64: zynqmp: Add DDRC node
-Message-ID: <20181105132007.GB7937@zn.tnic>
-References: <1540447621-22870-1-git-send-email-manish.narani@xilinx.com>
- <1540447621-22870-6-git-send-email-manish.narani@xilinx.com>
- <20181105125644.GA7937@zn.tnic>
- <41c5ca53-ed4b-38d0-c612-e1229004293e@xilinx.com>
+        Mon, 5 Nov 2018 17:39:53 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34851 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728966AbeKEWjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:39:53 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gJenX-0005kh-QD; Mon, 05 Nov 2018 14:20:07 +0100
+Date:   Mon, 5 Nov 2018 14:20:07 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH V3 0/3] Unmap EFI boot services code/data regions after
+ boot.
+In-Reply-To: <CAKv+Gu_2cPZ5HKo2oDeYsLGAXgnENzWskZOcT_Z509Shbct+2Q@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811051419230.1566@nanos.tec.linutronix.de>
+References: <20181104201019.26142-1-sai.praneeth.prakhya@intel.com> <CAKv+Gu_2cPZ5HKo2oDeYsLGAXgnENzWskZOcT_Z509Shbct+2Q@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <41c5ca53-ed4b-38d0-c612-e1229004293e@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 02:06:11PM +0100, Michal Simek wrote:
-> I don't think that driver will be broken. You can build them, use them
-> on out of tree HW. And when this patch is merged to mainline it will be
-> enabled for xilinx soc.
+On Mon, 5 Nov 2018, Ard Biesheuvel wrote:
+> On 4 November 2018 at 21:10, Sai Praneeth Prakhya
+> <sai.praneeth.prakhya@intel.com> wrote:
+> Thanks Sai.
+> 
+> I have queued these up in efi/next for now, but I'd still like a fresh
+> ack from the x86 maintainers.
 
-But if the DT entries are missing, the driver won't load, would it?
+I've reviewed the CPA part and for the rest feel free to add
 
-> TBH I can't see any reason to do merges but if you want to do that way
-> we can also do it.
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
-The reason is because there's a separate DT tree and all those arm
-drivers need DT.
-
-I have already acked EDAC patches to go through other trees too, FWIW.
-Which is not optimal either if someone sends fixes ontop but I cannot
-apply them yet because the dependent patches are in a different tree.
-
-So yes, there are at least two good reasons for merging a shared branch.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
