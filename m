@@ -2,234 +2,105 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DF4C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DD7C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBFB20869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBFB20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id D063320827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="LSTRXrj5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D063320827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbeKEVB3 (ORCPT
+        id S1729485AbeKEVBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:01:29 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48688 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729004AbeKEVB0 (ORCPT
+        Mon, 5 Nov 2018 16:01:31 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35330 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729447AbeKEVBa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:01:26 -0500
-Received: from localhost.localdomain (unknown [IPv6:2a02:8109:92c0:207d:59be:d485:5b1c:9e22])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robertfoss)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 3F98927DF3B;
-        Mon,  5 Nov 2018 11:42:06 +0000 (GMT)
-From:   Robert Foss <robert.foss@collabora.com>
-To:     airlied@linux.ie, kraxel@redhat.com,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Cc:     Robert Foss <robert.foss@collabora.com>
-Subject: [PATCH v4 3/4] drm/virtio: add in/out fence support for explicit synchronization
-Date:   Mon,  5 Nov 2018 12:41:51 +0100
-Message-Id: <20181105114152.2088-4-robert.foss@collabora.com>
+        Mon, 5 Nov 2018 16:01:30 -0500
+Received: by mail-io1-f66.google.com with SMTP id 79-v6so6245159iou.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:42:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qmp5m3FdPiylEmUW8CNgXsb2BFd/kBJdIrvq/1re7hI=;
+        b=LSTRXrj5POp177ymc+YCrU7HuNuRYD1E1hzkKDDAkIpXhr9DpRLmgzEDaJwFzE4SPo
+         G/EyxzbR4DX0jmS4RdG4lN0CWpw2xoDvM26bhpaDM6ZJ4aw+1Mrn+PXluZp2VIRnWLhp
+         4T5NFjbKhbqcNTXs2pmDbQDAI+2TFTeUxUetTfrZAG9zNPEYr92P0hmg9jcplVURpuwO
+         T6hlcWcHjx+NLTJLlXK8FZZGirjTKP4cvhvgJ19BoaHOs9K5XXcJFRcFg8O9Q9rAGtsI
+         5DBloKBh1EjqYGZueoEpKrwMsjE5ZYJxXFoxzieaZ9xgZF6kLQOk39rvZf1xYMTIuYMs
+         WSaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qmp5m3FdPiylEmUW8CNgXsb2BFd/kBJdIrvq/1re7hI=;
+        b=mKDHwXKMSzdu5FT6fWuNlZtqqn3lCjJO53B/OkqLB6n4EwkBCDFuGQsGbQy9nIiqIp
+         QnEQcIXEA1T/hBu0YIkJfQT4wcMnG1hgnL5hiAnJqKzlvo9zwNlOTPDRN2HsOh7yOUpu
+         YULqzKWEF3aHHnYxQ8bfLCNUYV14vEkjgq/29i9xGfZOdBcW00Bi+PgtXT6ceW7z4zhI
+         9AEkBRoO0L1Zji1CrenTbqGBU/HUcbSSeZPc4YVMM2oTAjjwIMICN+mNTXaewhZZntf9
+         OdXERXBsgvFiLAeXoqhk421dbNpXgwwJgxvLwPN+UPY48EnV5qIARv6fnFA2ft/OTjjC
+         ggAA==
+X-Gm-Message-State: AGRZ1gI99zu828tZSLhZkPXMHhl7uDgquRnzp0XhmwcIVb5b6FkBGM1Z
+        DeqHF2djT+vNAxx17fXDm/LFew==
+X-Google-Smtp-Source: AJdET5cE78AdGuslIrBDmhDhhOGchcCfDIcOnB4C9WiEo1MnnQ/9vLKSOT2B2HJPhDcVHP4ad884Aw==
+X-Received: by 2002:a6b:d50d:: with SMTP id m13-v6mr18515586iog.152.1541418130637;
+        Mon, 05 Nov 2018 03:42:10 -0800 (PST)
+Received: from ch-lap-hans.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id 186-v6sm14880824itf.11.2018.11.05.03.42.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 03:42:10 -0800 (PST)
+From:   Hans Holmberg <hans@owltronix.com>
+X-Google-Original-From: Hans Holmberg <hans.ml.holmberg@cnexlabs.com>
+To:     Matias Bjorling <mb@lightnvm.io>
+Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.ml.holmberg@owltronix.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH 5/7] lightnvm: pblk: remove unused macro
+Date:   Mon,  5 Nov 2018 12:41:11 +0100
+Message-Id: <20181105114113.30932-6-hans.ml.holmberg@cnexlabs.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181105114152.2088-1-robert.foss@collabora.com>
-References: <20181105114152.2088-1-robert.foss@collabora.com>
+In-Reply-To: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
+References: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the execbuf call receives an in-fence it will get the dma_fence
-related to that fence fd and wait on it before submitting the draw call.
+From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
 
-On the out-fence side we get fence returned by the submitted draw call
-and attach it to a sync_file and send the sync_file fd to userspace. On
-error -1 is returned to userspace.
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-Signed-off-by: Robert Foss <robert.foss@collabora.com>
-Suggested-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+ADDR_POOL_SIZE is not used anymore, so remove the define.
+
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
+ drivers/lightnvm/pblk-init.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Changes since v3:
- - Move all in_fence handling to the same VIRTGPU_EXECBUF_FENCE_FD_IN block
- - Emil: Make sure to always call dma_fence_put()
- - Emil: Added r-b
-
-
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 81 ++++++++++++++++++++------
- 1 file changed, 64 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 3d497835b0f5..340f2513d829 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -28,6 +28,7 @@
- #include <drm/drmP.h>
- #include <drm/virtgpu_drm.h>
- #include <drm/ttm/ttm_execbuf_util.h>
-+#include <linux/sync_file.h>
- 
- #include "virtgpu_drv.h"
- 
-@@ -105,7 +106,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 	struct virtio_gpu_device *vgdev = dev->dev_private;
- 	struct virtio_gpu_fpriv *vfpriv = drm_file->driver_priv;
- 	struct drm_gem_object *gobj;
--	struct virtio_gpu_fence *fence;
-+	struct virtio_gpu_fence *out_fence;
- 	struct virtio_gpu_object *qobj;
- 	int ret;
- 	uint32_t *bo_handles = NULL;
-@@ -114,6 +115,9 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 	struct ttm_validate_buffer *buflist = NULL;
- 	int i;
- 	struct ww_acquire_ctx ticket;
-+	struct sync_file *sync_file;
-+	int in_fence_fd = exbuf->fence_fd;
-+	int out_fence_fd = -1;
- 	void *buf;
- 
- 	if (vgdev->has_virgl_3d == false)
-@@ -124,6 +128,33 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 
- 	exbuf->fence_fd = -1;
- 
-+	if (exbuf->flags & VIRTGPU_EXECBUF_FENCE_FD_IN) {
-+		struct dma_fence *in_fence;
-+
-+		in_fence = sync_file_get_fence(in_fence_fd);
-+
-+		if (!in_fence)
-+			return -EINVAL;
-+
-+		/*
-+		 * Wait if the fence is from a foreign context, or if the fence
-+		 * array contains any fence from a foreign context.
-+		 */
-+		ret = 0;
-+		if (!dma_fence_match_context(in_fence, vgdev->fence_drv.context))
-+			ret = dma_fence_wait(in_fence, true);
-+
-+		dma_fence_put(in_fence);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (exbuf->flags & VIRTGPU_EXECBUF_FENCE_FD_OUT) {
-+		out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
-+		if (out_fence_fd < 0)
-+			return out_fence_fd;
-+	}
-+
- 	INIT_LIST_HEAD(&validate_list);
- 	if (exbuf->num_bo_handles) {
- 
-@@ -133,26 +164,22 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 					   sizeof(struct ttm_validate_buffer),
- 					   GFP_KERNEL | __GFP_ZERO);
- 		if (!bo_handles || !buflist) {
--			kvfree(bo_handles);
--			kvfree(buflist);
--			return -ENOMEM;
-+			ret = -ENOMEM;
-+			goto out_unused_fd;
- 		}
- 
- 		user_bo_handles = (void __user *)(uintptr_t)exbuf->bo_handles;
- 		if (copy_from_user(bo_handles, user_bo_handles,
- 				   exbuf->num_bo_handles * sizeof(uint32_t))) {
- 			ret = -EFAULT;
--			kvfree(bo_handles);
--			kvfree(buflist);
--			return ret;
-+			goto out_unused_fd;
- 		}
- 
- 		for (i = 0; i < exbuf->num_bo_handles; i++) {
- 			gobj = drm_gem_object_lookup(drm_file, bo_handles[i]);
- 			if (!gobj) {
--				kvfree(bo_handles);
--				kvfree(buflist);
--				return -ENOENT;
-+				ret = -ENOENT;
-+				goto out_unused_fd;
- 			}
- 
- 			qobj = gem_to_virtio_gpu_obj(gobj);
-@@ -161,6 +188,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 			list_add(&buflist[i].head, &validate_list);
- 		}
- 		kvfree(bo_handles);
-+		bo_handles = NULL;
- 	}
- 
- 	ret = virtio_gpu_object_list_validate(&ticket, &validate_list);
-@@ -174,28 +202,47 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 		goto out_unresv;
- 	}
- 
--	fence = virtio_gpu_fence_alloc(vgdev);
--	if (!fence) {
--		kfree(buf);
-+	out_fence = virtio_gpu_fence_alloc(vgdev);
-+	if(!out_fence) {
- 		ret = -ENOMEM;
--		goto out_unresv;
-+		goto out_memdup;
-+	}
-+
-+	if (out_fence_fd >= 0) {
-+		sync_file = sync_file_create(&out_fence->f);
-+		if (!sync_file) {
-+			dma_fence_put(&out_fence->f);
-+			ret = -ENOMEM;
-+			goto out_memdup;
-+		}
-+
-+		exbuf->fence_fd = out_fence_fd;
-+		fd_install(out_fence_fd, sync_file->file);
- 	}
-+
- 	virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
--			      vfpriv->ctx_id, &fence);
-+			      vfpriv->ctx_id, &out_fence);
- 
--	ttm_eu_fence_buffer_objects(&ticket, &validate_list, &fence->f);
-+	ttm_eu_fence_buffer_objects(&ticket, &validate_list, &out_fence->f);
- 
- 	/* fence the command bo */
- 	virtio_gpu_unref_list(&validate_list);
- 	kvfree(buflist);
--	dma_fence_put(&fence->f);
- 	return 0;
- 
-+out_memdup:
-+	kfree(buf);
- out_unresv:
- 	ttm_eu_backoff_reservation(&ticket, &validate_list);
- out_free:
- 	virtio_gpu_unref_list(&validate_list);
-+out_unused_fd:
-+	kvfree(bo_handles);
- 	kvfree(buflist);
-+
-+	if (out_fence_fd >= 0)
-+		put_unused_fd(out_fence_fd);
-+
- 	return ret;
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 8b89bb26b0f1..33c1e83327c3 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -207,9 +207,6 @@ static int pblk_rwb_init(struct pblk *pblk)
+ 	return pblk_rb_init(&pblk->rwb, buffer_size, threshold, geo->csecs);
  }
  
+-/* Minimum pages needed within a lun */
+-#define ADDR_POOL_SIZE 64
+-
+ static int pblk_set_addrf_12(struct pblk *pblk, struct nvm_geo *geo,
+ 			     struct nvm_addrf_12 *dst)
+ {
 -- 
 2.17.1
 
