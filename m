@@ -2,167 +2,143 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A143C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8FDC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA7020866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:26:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmcXL41y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA7020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8158F20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8158F20819
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbeKEXqU (ORCPT
+        id S1729532AbeKEXrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:46:20 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35882 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeKEXqU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:46:20 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a8-v6so8240337wmf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 06:26:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hBz67z/mJka6vEpb5Y3a3+XUqviDBoG9e/F7g9R54D8=;
-        b=YmcXL41yZOhgqeGgQlbxWfSZjBCKqUK9pJsIOR+O+4orMpQrZjUD/zO/eTNOVHRw3J
-         H0mD1T1/Kj1xkoCVvI4OuiemC7S5VPanxevRNvGWgarV4ipcCSM/PvH0y5cQa/drxEdP
-         9FyIEIYRWLoQrGf2FCSbxmCUKnpm3EuBJFs8mHWWbZVaCSxilmNUX9pSwYcP8kIf4pdl
-         D2ENrsIjVuY5zLUTnYpAoZVUDISpvTn0DFHIQxaT6FlzcOb41QMqJwyCQLN5JVE5JyfB
-         +mX+oZlaNJnod/odg9WlXMipw48ZPsqqGHxEnx4Imyk+CkdRWkBbZxtpWPtB0jUqigbq
-         ha5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hBz67z/mJka6vEpb5Y3a3+XUqviDBoG9e/F7g9R54D8=;
-        b=dZCrt6Q09SBgO+NtfX7txoCFkivS81n52v4nH0kmG6ViHTrWnvVB2AlmiOrDRy4R2E
-         OOygYbvrjkAMPjpZA9R71+My7UJlLMaDYID26yHXYfwb7hnSQK4GXk+y4/QRBQjRhrws
-         WqEG6Akr78eOxoIxj3NuLC3rR8/hjmcgQFHBlOpcgDGNq/Rw52/UpC0pBY+slg31LaHO
-         TEhOU5hSfDOAQI+w2w7NRtyNXtMSAWw7jugIgZJX58k1mQtXZKBsqHkFONVNqObfSfqC
-         jU/Fajaoo73EmZradj7NxMw8Gj+PUGSUxuElzmpGbal5l4nNta4hNQELztET39xj/RsN
-         zFEg==
-X-Gm-Message-State: AGRZ1gKFsMCN2EGNxe2T9K0s+kOKZzQ11coRgr/WXgaw8kCONgIQnOVA
-        KsjlDbhx0lHPlh5DKLllPcg=
-X-Google-Smtp-Source: AJdET5ck7py4QasQyGRzcxQm5JL6FXB01adS2g6uj+8nSnSBseNoO0Tzehiyf6BUze6097gNy0nVUg==
-X-Received: by 2002:a1c:2d57:: with SMTP id t84-v6mr2591331wmt.9.1541427980445;
-        Mon, 05 Nov 2018 06:26:20 -0800 (PST)
-Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
-        by smtp.gmail.com with ESMTPSA id b8-v6sm30105205wme.1.2018.11.05.06.26.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 06:26:19 -0800 (PST)
-From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
-To:     palmer@sifive.com, aou@eecs.berkeley.edu,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] riscv: add asm/unistd.h UAPI header
-Date:   Mon,  5 Nov 2018 15:26:02 +0100
-Message-Id: <20181105142602.25750-1-david.abdurachmanov@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Mon, 5 Nov 2018 18:47:36 -0500
+Received: from mga07.intel.com ([134.134.136.100]:2490 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbeKEXrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:47:36 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:27:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
+   d="scan'208";a="86795185"
+Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
+  by orsmga007.jf.intel.com with ESMTP; 05 Nov 2018 06:27:27 -0800
+Date:   Mon, 5 Nov 2018 22:27:27 +0800
+From:   Aaron Lu <aaron.lu@intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: use kvzalloc for swap_info_struct allocation
+Message-ID: <20181105142727.GB6203@intel.com>
+References: <20181105061016.GA4502@intel.com>
+ <fc23172d-3c75-21e2-d551-8b1808cbe593@virtuozzo.com>
+ <20181105141156.GB10132@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105141156.GB10132@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marcin Juszkiewicz reported issues while generating syscall table for riscv
-using 4.20-rc1. The patch refactors our unistd.h files to match some other
-architectures.
+On Mon, Nov 05, 2018 at 03:11:56PM +0100, Michal Hocko wrote:
+> On Mon 05-11-18 14:17:01, Vasily Averin wrote:
+> > commit a2468cc9bfdf ("swap: choose swap device according to numa node")
+> > changed 'avail_lists' field of 'struct swap_info_struct' to an array.
+> > In popular linux distros it increased size of swap_info_struct up to
+> > 40 Kbytes and now swap_info_struct allocation requires order-4 page.
+> > Switch to kvzmalloc allows to avoid unexpected allocation failures.
+> 
+> While this fixes the most visible issue is this a good long term
+> solution? Aren't we wasting memory without a good reason? IIRC our limit
 
-- Add asm/unistd.h UAPI header, which has __ARCH_WANT_NEW_STAT
-- Remove asm/syscalls.h UAPI header and merge to asm/unistd.h
-- Adjust kernel asm/unistd.h
+That's right, we need a better way of handling this in the long term.
 
-So now asm/unistd.h UAPI header should show all syscalls for riscv.
+> for swap files/devices is much smaller than potential NUMA nodes numbers
+> so we can safely expect that would be only few numa affine nodes. I am
+> not really familiar with the rework which has added numa node awareness
+> but I wouls assueme that we should either go with one global table with
+> a linked list of possible swap_info structure per numa node or use a
+> sparse array.
 
-Before this, Makefile simply put `#include <asm-generic/unistd.h>` into
-generated asm/unistd.h UAPI header thus user didn't see:
+There is a per-numa-node plist of available swap devices, so every swap
+device needs an entry on those per-numa-node plist.
 
-- __NR_riscv_flush_icache
-- __NR_newfstatat
-- __NR_fstat
+I think we can convert avail_lists from array to pointer and use vzalloc
+to allocate the needed memory. MAX_NUMANODES can be used for a simple
+implementation, or use the precise online node number but then we will
+need to handle node online/offline events.
 
-which are supported by riscv kernel.
+sparse array sounds promising, I'll take a look, thanks for the pointer.
 
-Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Fixes: 67314ec7b025
----
- arch/riscv/include/asm/unistd.h               |  5 ++--
- .../include/uapi/asm/{syscalls.h => unistd.h} | 24 +++++++++++++------
- 2 files changed, 19 insertions(+), 10 deletions(-)
- rename arch/riscv/include/uapi/asm/{syscalls.h => unistd.h} (54%)
+> That being said I am not really objecting to this patch as it is simple
+> and backportable to older (stable kernels).
+>  
+> I would even dare to add
+> Fixes: a2468cc9bfdf ("swap: choose swap device according to numa node")
+> 
+> because not being able to add a swap space on a fragmented system looks
+> like a regression to me.
 
-diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
-index eff7aa9aa163..fef96f117b4d 100644
---- a/arch/riscv/include/asm/unistd.h
-+++ b/arch/riscv/include/asm/unistd.h
-@@ -13,10 +13,9 @@
- 
- /*
-  * There is explicitly no include guard here because this file is expected to
-- * be included multiple times.  See uapi/asm/syscalls.h for more info.
-+ * be included multiple times.
-  */
- 
--#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_SYS_CLONE
-+
- #include <uapi/asm/unistd.h>
--#include <uapi/asm/syscalls.h>
-diff --git a/arch/riscv/include/uapi/asm/syscalls.h b/arch/riscv/include/uapi/asm/unistd.h
-similarity index 54%
-rename from arch/riscv/include/uapi/asm/syscalls.h
-rename to arch/riscv/include/uapi/asm/unistd.h
-index 206dc4b0f6ea..5545f498071d 100644
---- a/arch/riscv/include/uapi/asm/syscalls.h
-+++ b/arch/riscv/include/uapi/asm/unistd.h
-@@ -1,13 +1,23 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-- * Copyright (C) 2017-2018 SiFive
-+ * Copyright (C) 2018 David Abdurachmanov <david.abdurachmanov@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
--/*
-- * There is explicitly no include guard here because this file is expected to
-- * be included multiple times in order to define the syscall macros via
-- * __SYSCALL.
-- */
-+#define __ARCH_WANT_NEW_STAT
-+
-+#include <asm-generic/unistd.h>
- 
- /*
-  * Allows the instruction cache to be flushed from userspace.  Despite RISC-V
--- 
-2.19.1
+Agree, especially it used to work.
 
+Regards,
+Aaron
+
+> > Acked-by: Aaron Lu <aaron.lu@intel.com>
+> > Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> >  mm/swapfile.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 644f746e167a..8688ae65ef58 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -2813,7 +2813,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+> >  	unsigned int type;
+> >  	int i;
+> >  
+> > -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> > +	p = kvzalloc(sizeof(*p), GFP_KERNEL);
+> >  	if (!p)
+> >  		return ERR_PTR(-ENOMEM);
+> >  
+> > @@ -2824,7 +2824,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+> >  	}
+> >  	if (type >= MAX_SWAPFILES) {
+> >  		spin_unlock(&swap_lock);
+> > -		kfree(p);
+> > +		kvfree(p);
+> >  		return ERR_PTR(-EPERM);
+> >  	}
+> >  	if (type >= nr_swapfiles) {
+> > @@ -2838,7 +2838,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+> >  		smp_wmb();
+> >  		nr_swapfiles++;
+> >  	} else {
+> > -		kfree(p);
+> > +		kvfree(p);
+> >  		p = swap_info[type];
+> >  		/*
+> >  		 * Do not memset this entry: a racing procfs swap_next()
+> > -- 
+> > 2.17.1
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
