@@ -2,105 +2,143 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6240DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC00C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1210720819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:01:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q4FHZzQd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1210720819
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C1E7B20819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E7B20819
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729789AbeKEWVa (ORCPT
+        id S1729843AbeKEWVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:21:30 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43206 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728643AbeKEWVa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:21:30 -0500
-Received: by mail-io1-f66.google.com with SMTP id t81-v6so6387942iod.10
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 05:01:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=F/Diglfu0cQmJoOlBIfw4Hdym/CCC9zalshDPd0545s=;
-        b=Q4FHZzQdKyyikvZCZKU1/LafoWhC46kSE+D3QmpUmC/Z6kNornBJB8g3/Iu+Bq7hZI
-         ZT7dp0+ET3uMwrTPDJZapJjnq0jVPc9RKHAcSoXAv3fV2lrNtebi6VfBADuB6t0tyk3/
-         aH1m7Hyyw3fkF8Nqor30cVQ3zjwGzvhJvoTDQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=F/Diglfu0cQmJoOlBIfw4Hdym/CCC9zalshDPd0545s=;
-        b=lfCN1DzGM0bjh3w76anYggd2hMd0HajX2CcS2cLdgEfTZwsPYrwl9S2G2vwgCYJlx7
-         Utqceqdcyld8D7yXaSuJxBX1LyYcTjmLx2b0TOLMqmT3mNIhPtPyWTLXabRFSS4xV29S
-         jE2/dWBKZPw6vX8eCazA+xrhWbhKnknF+ExDMrdVsm4eFwjDC40W8C+WCle2yYQ6Lsk0
-         iLVr64DYqqIUPqCmZudeqmjA3GAIbpHCft17Q75jP2te3mvE3jFU968nAA/k+zuKmjwO
-         PSgQmTj5+7NXE9fb5twufV6vjpHKsxs02eVBKlQ8J8zcbgefprx4hLddow8amKN9MUQe
-         8wJg==
-X-Gm-Message-State: AGRZ1gLvDwIdHga3YbCy90/t6+7Xu6q5MzDUwdESglBVs6+leodEXP0K
-        p6uWX0iPolq7KFypA6vtwwGJ47QFHe81C7Ri1nykAg==
-X-Google-Smtp-Source: AJdET5cv0rmNhekNrtu/WusiP9vtrngMz5lzXmLdzvieOkr+Cu0LfIWYdgaJBDxYab599DMdXm45puEDZq2a8CPnSIU=
-X-Received: by 2002:a6b:37c2:: with SMTP id e185-v6mr17889726ioa.173.1541422910859;
- Mon, 05 Nov 2018 05:01:50 -0800 (PST)
+        Mon, 5 Nov 2018 17:21:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42528 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728136AbeKEWVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:21:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8CC77AFE2;
+        Mon,  5 Nov 2018 13:02:10 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 14:02:09 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Kuo-Hsin Yang <vovoy@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v4] mm, drm/i915: mark pinned shmemfs pages as unevictable
+Message-ID: <20181105130209.GI4361@dhcp22.suse.cz>
+References: <20181105111348.182492-1-vovoy@chromium.org>
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 05:01:50 -0800 (PST)
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F485D622C@ORSMSX114.amr.corp.intel.com>
-References: <1540304307-2806-1-git-send-email-longman@redhat.com> <FFF73D592F13FD46B8700F0A279B802F485D622C@ORSMSX114.amr.corp.intel.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 5 Nov 2018 14:01:50 +0100
-Message-ID: <CAKv+Gu-JrZ+7VMbFt0u5_QWGJPJ=Dm+9FjbsKFEeHwfAwj_2wQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: Fix debugobjects warning on efi_rts_work
-To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105111348.182492-1-vovoy@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 October 2018 at 18:43, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
->
->
->> -----Original Message-----
->> From: Waiman Long [mailto:longman@redhat.com]
->> Sent: Tuesday, October 23, 2018 7:18 AM
->> To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> Cc: linux-efi@vger.kernel.org; linux-kernel@vger.kernel.org; Prakhya, Sai
->> Praneeth <sai.praneeth.prakhya@intel.com>; Waiman Long
->> <longman@redhat.com>
->> Subject: [PATCH] efi: Fix debugobjects warning on efi_rts_work
->>
->> The commit 9dbbedaa6171 ("efi: Make efi_rts_work accessible to efi page fault
->> handler") converted efi_rts_work from an auto variable to a global variable.
->> However, when submitting the work, INIT_WORK_ONSTACK() was still used
->> causing the following complaint from debugobjects:
->>
->> ODEBUG: object 00000000ed27b500 is NOT on stack 00000000c7d38760, but
->> annotated.
->>
->> Change the macro to just INIT_WORK() to eliminate the warning.
->>
->> Fixes: 9dbbedaa6171 ("efi: Make efi_rts_work accessible to efi page fault
->> handler")
->
-> Thanks for fixing this :)
-> Looks good to me.
->
-> Regards,
-> Sai
+On Mon 05-11-18 19:13:48, Kuo-Hsin Yang wrote:
+> The i915 driver uses shmemfs to allocate backing storage for gem
+> objects. These shmemfs pages can be pinned (increased ref count) by
+> shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
+> wastes a lot of time scanning these pinned pages. In some extreme case,
+> all pages in the inactive anon lru are pinned, and only the inactive
+> anon lru is scanned due to inactive_ratio, the system cannot swap and
+> invokes the oom-killer. Mark these pinned pages as unevictable to speed
+> up vmscan.
+> 
+> Export pagevec API check_move_unevictable_pages().
 
-Thanks
+Thanks for reworking the patch. This looks much more to my taste. At
+least the mm part. I haven't really looked at the the drm part.
 
-Queued in efi/urgent (with Sai's ack)
+Just a nit below
+
+> This patch was inspired by Chris Wilson's change [1].
+> 
+> [1]: https://patchwork.kernel.org/patch/9768741/
+
+I would recommend using msg-id based url.
+
+> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
+
+other than that
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+[...]
+
+> @@ -4184,15 +4185,13 @@ int page_evictable(struct page *page)
+>  
+>  #ifdef CONFIG_SHMEM
+>  /**
+> - * check_move_unevictable_pages - check pages for evictability and move to appropriate zone lru list
+> - * @pages:	array of pages to check
+> - * @nr_pages:	number of pages to check
+> + * check_move_unevictable_pages - move evictable pages to appropriate evictable
+> + * lru lists
+
+I am not sure this is an improvement. I would just keep the original
+wording. It is not great either but the explicit note about check for
+evictability sounds like a better fit to me.
+
+> + * @pvec: pagevec with pages to check
+>   *
+> - * Checks pages for evictability and moves them to the appropriate lru list.
+> - *
+> - * This function is only used for SysV IPC SHM_UNLOCK.
+> + * This function is only used to move shmem pages.
+
+I do not really see anything that would be shmem specific here. We can
+use this function for any LRU pages unless I am missing something
+obscure. I would just drop the last sentence.
+
+A note that this function should be only used for LRU pages would be
+nice.
+
+>   */
+> -void check_move_unevictable_pages(struct page **pages, int nr_pages)
+> +void check_move_unevictable_pages(struct pagevec *pvec)
+>  {
+>  	struct lruvec *lruvec;
+>  	struct pglist_data *pgdat = NULL;
+> @@ -4200,8 +4199,8 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
+>  	int pgrescued = 0;
+>  	int i;
+>  
+> -	for (i = 0; i < nr_pages; i++) {
+> -		struct page *page = pages[i];
+> +	for (i = 0; i < pvec->nr; i++) {
+> +		struct page *page = pvec->pages[i];
+>  		struct pglist_data *pagepgdat = page_pgdat(page);
+>  
+>  		pgscanned++;
+> @@ -4233,4 +4232,5 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
+>  		spin_unlock_irq(&pgdat->lru_lock);
+>  	}
+>  }
+> +EXPORT_SYMBOL(check_move_unevictable_pages);
+>  #endif /* CONFIG_SHMEM */
+> -- 
+> 2.19.1.930.g4563a0d9d0-goog
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
