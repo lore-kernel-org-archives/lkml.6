@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8934C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999C5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57ABC20868
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D5520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:03:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hh0qXXZN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57ABC20868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2tXuH9qu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D5520862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeKESWJ (ORCPT
+        id S1728108AbeKESWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:22:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50944 "EHLO mail.kernel.org"
+        Mon, 5 Nov 2018 13:22:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeKESWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:22:09 -0500
+        id S1726086AbeKESWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:22:37 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C28FD20862;
-        Mon,  5 Nov 2018 09:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 161B92082A;
+        Mon,  5 Nov 2018 09:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541408607;
-        bh=XwhWcqajQ4i4Isnae6wXmNh8OIAMmUbMi7DXbQfhHXY=;
+        s=default; t=1541408636;
+        bh=RgJdMTgfxOEiPn/Yt5MPvJvvvwKSzJfHi3rmJrQXxXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hh0qXXZNyrukkWfvbDP1Aykfz4JKBaZ8CvF3gtZEv9fF0E/V6ojjjBhzM1iWFU+cJ
-         V3Y8Ko+PAURpVyBrKs8n+DCzpHrKwkoPZlTYpa3P7rn/jAainh6hMFNqK4CdY/YiuU
-         dgvkFs5vMMD99YrVDhUAS+S24ittsufiCbAo4P3Q=
+        b=2tXuH9quqE8o6bJUb5/zqVipajOzoWa5en3uLsAUs3LGj3Hc/Cr/aEQfSgZRFrSCo
+         lAiEwcxKU+TeLnP5hf6GCL4b32cREF0vEDkq+WT5GY+7x6fL3iSx6jJXnv8gC0FsSX
+         gO/m1Rkc9ZH5HfdlWTmoYIf9fiMJue5sDqxG42Jg=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v2 07/12] tracing/uprobes: Use dyn_event framework for uprobe events
-Date:   Mon,  5 Nov 2018 18:03:04 +0900
-Message-Id: <154140858481.17322.9091293846515154065.stgit@devbox>
+Subject: [PATCH v2 08/12] tracing: Use dyn_event framework for synthetic events
+Date:   Mon,  5 Nov 2018 18:03:33 +0900
+Message-Id: <154140861301.17322.15454611233735614508.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154140838606.17322.15294184388075458777.stgit@devbox>
 References: <154140838606.17322.15294184388075458777.stgit@devbox>
@@ -56,579 +56,528 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dyn_event framework for uprobe events. This shows
-uprobe events on "dynamic_events" file.
-User can also define new uprobe events via dynamic_events.
+Use dyn_event framework for synthetic events. This shows
+synthetic events on "tracing/dynamic_events" file in addition
+to tracing/synthetic_events interface.
+
+User can also define new events via tracing/dynamic_events
+with "s:" prefix. So, the new syntax is below;
+
+  s:[synthetic/]EVENT_NAME TYPE ARG; [TYPE ARG;]...
+
+To remove events via tracing/dynamic_events, you can use
+"-:" prefix as same as other events.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Changes in v2:
-  - Use dyn_events_release_all() for clearing events.
-  - Use nolock event_call register/unregister and lock event_mutex
-    before dyn_event_mutex to avoid lock dependency error.
-  - Select CONFIG_DYNAMIC_EVENTS in Kconfig
-  - Add match operation and use new API for event deletion
-  - Return -ECANCELED if given event is not for uprobe.
-  - Remove unused for_each_trace_uprobe_safe.
----
- Documentation/trace/uprobetracer.rst |    4 
- kernel/trace/Kconfig                 |    1 
- kernel/trace/trace_uprobe.c          |  278 ++++++++++++++++++----------------
- 3 files changed, 153 insertions(+), 130 deletions(-)
+ kernel/trace/Kconfig             |    1 
+ kernel/trace/trace.c             |    8 +
+ kernel/trace/trace_events_hist.c |  265 ++++++++++++++++++++++++--------------
+ 3 files changed, 176 insertions(+), 98 deletions(-)
 
-diff --git a/Documentation/trace/uprobetracer.rst b/Documentation/trace/uprobetracer.rst
-index d0822811527a..4c3bfde2ba47 100644
---- a/Documentation/trace/uprobetracer.rst
-+++ b/Documentation/trace/uprobetracer.rst
-@@ -18,6 +18,10 @@ current_tracer. Instead of that, add probe points via
- However unlike kprobe-event tracer, the uprobe event interface expects the
- user to calculate the offset of the probepoint in the object.
- 
-+You can also use /sys/kernel/debug/tracing/dynamic_events instead of
-+uprobe_events. That interface will provide unified access to other
-+dynamic events too.
-+
- Synopsis of uprobe_tracer
- -------------------------
- ::
 diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index c0f6b0105609..2cab3c5dfe2c 100644
+index 2cab3c5dfe2c..fa8b1fe824f3 100644
 --- a/kernel/trace/Kconfig
 +++ b/kernel/trace/Kconfig
-@@ -501,6 +501,7 @@ config UPROBE_EVENTS
- 	depends on PERF_EVENTS
- 	select UPROBES
- 	select PROBE_EVENTS
-+	select DYNAMIC_EVENTS
+@@ -635,6 +635,7 @@ config HIST_TRIGGERS
+ 	depends on ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select TRACING_MAP
  	select TRACING
- 	default y
++	select DYNAMIC_EVENTS
+ 	default n
  	help
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 6eaaa2150685..4a7b21c891f3 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -7,6 +7,7 @@
-  */
- #define pr_fmt(fmt)	"trace_kprobe: " fmt
+ 	  Hist triggers allow one or more arbitrary trace event fields
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 2886e92e8eab..5e71d0c3373c 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4620,6 +4620,9 @@ static const char readme_msg[] =
+ 	"\t  accepts: event-definitions (one definition per line)\n"
+ 	"\t   Format: p[:[<group>/]<event>] <place> [<args>]\n"
+ 	"\t           r[maxactive][:[<group>/]<event>] <place> [<args>]\n"
++#ifdef CONFIG_HIST_TRIGGERS
++	"\t           s:[synthetic/]<event> <field> [<field>]\n"
++#endif
+ 	"\t           -:[<group>/]<event>\n"
+ #ifdef CONFIG_KPROBE_EVENTS
+ 	"\t    place: [<module>:]<symbol>[+<offset>]|<memaddr>\n"
+@@ -4638,6 +4641,11 @@ static const char readme_msg[] =
+ 	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string, symbol,\n"
+ 	"\t           b<bit-width>@<bit-offset>/<container-size>,\n"
+ 	"\t           <type>\\[<array-size>\\]\n"
++#ifdef CONFIG_HIST_TRIGGERS
++	"\t    field: <stype> <name>;\n"
++	"\t    stype: u8/u16/u32/u64, s8/s16/s32/s64, pid_t,\n"
++	"\t           [unsigned] char/int/long\n"
++#endif
+ #endif
+ 	"  events/\t\t- Directory containing all trace event subsystems:\n"
+ 	"      enable\t\t- Write 0/1 to enable/disable tracing of all events\n"
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 0feb7f460123..414aabd67d1f 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -15,6 +15,7 @@
  
-+#include <linux/ctype.h>
- #include <linux/module.h>
- #include <linux/uaccess.h>
- #include <linux/uprobes.h>
-@@ -14,6 +15,7 @@
- #include <linux/string.h>
- #include <linux/rculist.h>
- 
+ #include "tracing_map.h"
+ #include "trace.h"
 +#include "trace_dynevent.h"
- #include "trace_probe.h"
- #include "trace_probe_tmpl.h"
  
-@@ -37,11 +39,26 @@ struct trace_uprobe_filter {
- 	struct list_head	perf_events;
+ #define SYNTH_SYSTEM		"synthetic"
+ #define SYNTH_FIELDS_MAX	16
+@@ -292,6 +293,21 @@ struct hist_trigger_data {
+ 	unsigned int			n_max_var_str;
  };
  
-+static int trace_uprobe_create(int argc, const char **argv);
-+static int trace_uprobe_show(struct seq_file *m, struct dyn_event *ev);
-+static int trace_uprobe_release(struct dyn_event *ev);
-+static bool trace_uprobe_is_busy(struct dyn_event *ev);
-+static bool trace_uprobe_match(const char *system, const char *event,
-+			       struct dyn_event *ev);
++static int synth_event_create(int argc, const char **argv);
++static int synth_event_show(struct seq_file *m, struct dyn_event *ev);
++static int synth_event_release(struct dyn_event *ev);
++static bool synth_event_is_busy(struct dyn_event *ev);
++static bool synth_event_match(const char *system, const char *event,
++			      struct dyn_event *ev);
 +
-+static struct dyn_event_operations trace_uprobe_ops = {
-+	.create = trace_uprobe_create,
-+	.show = trace_uprobe_show,
-+	.is_busy = trace_uprobe_is_busy,
-+	.free = trace_uprobe_release,
-+	.match = trace_uprobe_match,
++static struct dyn_event_operations synth_event_ops = {
++	.create = synth_event_create,
++	.show = synth_event_show,
++	.is_busy = synth_event_is_busy,
++	.free = synth_event_release,
++	.match = synth_event_match,
 +};
 +
- /*
-  * uprobe event core functions
-  */
- struct trace_uprobe {
--	struct list_head		list;
-+	struct dyn_event		devent;
- 	struct trace_uprobe_filter	filter;
- 	struct uprobe_consumer		consumer;
- 	struct path			path;
-@@ -53,6 +70,25 @@ struct trace_uprobe {
- 	struct trace_probe		tp;
+ struct synth_field {
+ 	char *type;
+ 	char *name;
+@@ -301,7 +317,7 @@ struct synth_field {
  };
  
-+static bool is_trace_uprobe(struct dyn_event *ev)
-+{
-+	return ev->ops == &trace_uprobe_ops;
-+}
-+
-+static struct trace_uprobe *to_trace_uprobe(struct dyn_event *ev)
-+{
-+	return container_of(ev, struct trace_uprobe, devent);
-+}
-+
-+/**
-+ * for_each_trace_uprobe - iterate over the trace_uprobe list
-+ * @pos:	the struct trace_uprobe * for each entry
-+ * @dpos:	the struct dyn_event * to use as a loop cursor
-+ */
-+#define for_each_trace_uprobe(pos, dpos)	\
-+	for_each_dyn_event(dpos)		\
-+		if (is_trace_uprobe(dpos) && (pos = to_trace_uprobe(dpos)))
-+
- #define SIZEOF_TRACE_UPROBE(n)				\
- 	(offsetof(struct trace_uprobe, tp.args) +	\
- 	(sizeof(struct probe_arg) * (n)))
-@@ -60,9 +96,6 @@ struct trace_uprobe {
- static int register_uprobe_event(struct trace_uprobe *tu);
- static int unregister_uprobe_event(struct trace_uprobe *tu);
+ struct synth_event {
+-	struct list_head			list;
++	struct dyn_event			devent;
+ 	int					ref;
+ 	char					*name;
+ 	struct synth_field			**fields;
+@@ -312,6 +328,32 @@ struct synth_event {
+ 	struct tracepoint			*tp;
+ };
  
--static DEFINE_MUTEX(uprobe_lock);
--static LIST_HEAD(uprobe_list);
--
- struct uprobe_dispatch_data {
- 	struct trace_uprobe	*tu;
- 	unsigned long		bp_addr;
-@@ -209,6 +242,22 @@ static inline bool is_ret_probe(struct trace_uprobe *tu)
- 	return tu->consumer.ret_handler != NULL;
++static bool is_synth_event(struct dyn_event *ev)
++{
++	return ev->ops == &synth_event_ops;
++}
++
++static struct synth_event *to_synth_event(struct dyn_event *ev)
++{
++	return container_of(ev, struct synth_event, devent);
++}
++
++static bool synth_event_is_busy(struct dyn_event *ev)
++{
++	struct synth_event *event = to_synth_event(ev);
++
++	return event->ref != 0;
++}
++
++static bool synth_event_match(const char *system, const char *event,
++			      struct dyn_event *ev)
++{
++	struct synth_event *sev = to_synth_event(ev);
++
++	return strcmp(sev->name, event) == 0 &&
++		(!system || strcmp(system, SYNTH_SYSTEM) == 0);
++}
++
+ struct action_data;
+ 
+ typedef void (*action_fn_t) (struct hist_trigger_data *hist_data,
+@@ -402,7 +444,6 @@ static bool have_hist_err(void)
+ 	return false;
  }
  
-+static bool trace_uprobe_is_busy(struct dyn_event *ev)
-+{
-+	struct trace_uprobe *tu = to_trace_uprobe(ev);
-+
-+	return trace_probe_is_enabled(&tu->tp);
-+}
-+
-+static bool trace_uprobe_match(const char *system, const char *event,
-+			       struct dyn_event *ev)
-+{
-+	struct trace_uprobe *tu = to_trace_uprobe(ev);
-+
-+	return strcmp(trace_event_name(&tu->tp.call), event) == 0 &&
-+		(!system || strcmp(tu->tp.call.class->system, system) == 0);
-+}
-+
- /*
-  * Allocate new trace_uprobe and initialize it (including uprobes).
-  */
-@@ -236,7 +285,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
- 	if (!tu->tp.class.system)
- 		goto error;
+-static LIST_HEAD(synth_event_list);
+ static DEFINE_MUTEX(synth_event_mutex);
  
--	INIT_LIST_HEAD(&tu->list);
-+	dyn_event_init(&tu->devent, &trace_uprobe_ops);
- 	INIT_LIST_HEAD(&tu->tp.files);
- 	tu->consumer.handler = uprobe_dispatcher;
- 	if (is_ret)
-@@ -255,6 +304,9 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
- {
- 	int i;
- 
-+	if (!tu)
-+		return;
-+
- 	for (i = 0; i < tu->tp.nr_args; i++)
- 		traceprobe_free_probe_arg(&tu->tp.args[i]);
- 
-@@ -267,9 +319,10 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
- 
- static struct trace_uprobe *find_probe_event(const char *event, const char *group)
- {
-+	struct dyn_event *pos;
- 	struct trace_uprobe *tu;
- 
--	list_for_each_entry(tu, &uprobe_list, list)
-+	for_each_trace_uprobe(tu, pos)
- 		if (strcmp(trace_event_name(&tu->tp.call), event) == 0 &&
- 		    strcmp(tu->tp.call.class->system, group) == 0)
- 			return tu;
-@@ -277,7 +330,7 @@ static struct trace_uprobe *find_probe_event(const char *event, const char *grou
- 	return NULL;
+ struct synth_trace_event {
+@@ -738,14 +779,12 @@ static void free_synth_field(struct synth_field *field)
+ 	kfree(field);
  }
  
--/* Unregister a trace_uprobe and probe_event: call with locking uprobe_lock */
-+/* Unregister a trace_uprobe and probe_event */
- static int unregister_trace_uprobe(struct trace_uprobe *tu)
+-static struct synth_field *parse_synth_field(int argc, char **argv,
++static struct synth_field *parse_synth_field(int argc, const char **argv,
+ 					     int *consumed)
  {
- 	int ret;
-@@ -286,7 +339,7 @@ static int unregister_trace_uprobe(struct trace_uprobe *tu)
- 	if (ret)
- 		return ret;
+ 	struct synth_field *field;
+-	const char *prefix = NULL;
+-	char *field_type = argv[0], *field_name;
++	const char *prefix = NULL, *field_type = argv[0], *field_name, *array;
+ 	int len, ret = 0;
+-	char *array;
  
--	list_del(&tu->list);
-+	dyn_event_remove(&tu->devent);
- 	free_trace_uprobe(tu);
- 	return 0;
- }
-@@ -302,13 +355,14 @@ static int unregister_trace_uprobe(struct trace_uprobe *tu)
-  */
- static struct trace_uprobe *find_old_trace_uprobe(struct trace_uprobe *new)
- {
-+	struct dyn_event *pos;
- 	struct trace_uprobe *tmp, *old = NULL;
- 	struct inode *new_inode = d_real_inode(new->path.dentry);
- 
- 	old = find_probe_event(trace_event_name(&new->tp.call),
- 				new->tp.call.class->system);
- 
--	list_for_each_entry(tmp, &uprobe_list, list) {
-+	for_each_trace_uprobe(tmp, pos) {
- 		if ((old ? old != tmp : true) &&
- 		    new_inode == d_real_inode(tmp->path.dentry) &&
- 		    new->offset == tmp->offset &&
-@@ -326,7 +380,7 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
- 	struct trace_uprobe *old_tu;
- 	int ret;
- 
--	mutex_lock(&uprobe_lock);
-+	mutex_lock(&event_mutex);
- 
- 	/* register as an event */
- 	old_tu = find_old_trace_uprobe(tu);
-@@ -348,10 +402,10 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
- 		goto end;
+ 	if (field_type[0] == ';')
+ 		field_type++;
+@@ -762,20 +801,31 @@ static struct synth_field *parse_synth_field(int argc, char **argv,
+ 		*consumed = 2;
  	}
  
--	list_add_tail(&tu->list, &uprobe_list);
-+	dyn_event_add(&tu->devent);
+-	len = strlen(field_name);
+-	if (field_name[len - 1] == ';')
+-		field_name[len - 1] = '\0';
+-
+ 	field = kzalloc(sizeof(*field), GFP_KERNEL);
+ 	if (!field)
+ 		return ERR_PTR(-ENOMEM);
  
- end:
--	mutex_unlock(&uprobe_lock);
-+	mutex_unlock(&event_mutex);
+-	len = strlen(field_type) + 1;
++	len = strlen(field_name);
+ 	array = strchr(field_name, '[');
+ 	if (array)
++		len -= strlen(array);
++	else if (field_name[len - 1] == ';')
++		len--;
++
++	field->name = kmemdup_nul(field_name, len, GFP_KERNEL);
++	if (!field->name) {
++		ret = -ENOMEM;
++		goto free;
++	}
++
++	if (field_type[0] == ';')
++		field_type++;
++	len = strlen(field_type) + 1;
++	if (array)
+ 		len += strlen(array);
+ 	if (prefix)
+ 		len += strlen(prefix);
++
+ 	field->type = kzalloc(len, GFP_KERNEL);
+ 	if (!field->type) {
+ 		ret = -ENOMEM;
+@@ -786,7 +836,8 @@ static struct synth_field *parse_synth_field(int argc, char **argv,
+ 	strcat(field->type, field_type);
+ 	if (array) {
+ 		strcat(field->type, array);
+-		*array = '\0';
++		if (field->type[len - 1] == ';')
++			field->type[len - 1] = '\0';
+ 	}
  
- 	return ret;
- }
-@@ -362,91 +416,49 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
-  *
-  *  - Remove uprobe: -:[GRP/]EVENT
-  */
--static int create_trace_uprobe(int argc, char **argv)
-+static int trace_uprobe_create(int argc, const char **argv)
+ 	field->size = synth_field_size(field->type);
+@@ -800,11 +851,6 @@ static struct synth_field *parse_synth_field(int argc, char **argv,
+ 
+ 	field->is_signed = synth_field_signed(field->type);
+ 
+-	field->name = kstrdup(field_name, GFP_KERNEL);
+-	if (!field->name) {
+-		ret = -ENOMEM;
+-		goto free;
+-	}
+  out:
+ 	return field;
+  free:
+@@ -868,9 +914,13 @@ static inline void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+ 
+ static struct synth_event *find_synth_event(const char *name)
  {
- 	struct trace_uprobe *tu;
--	char *arg, *event, *group, *filename, *rctr, *rctr_end;
-+	const char *event = NULL, *group = UPROBE_EVENT_SYSTEM;
-+	char *arg, *filename, *rctr, *rctr_end, *tmp;
- 	char buf[MAX_EVENT_NAME_LEN];
- 	struct path path;
- 	unsigned long offset, ref_ctr_offset;
--	bool is_delete, is_return;
-+	bool is_return = false;
- 	int i, ret;
++	struct dyn_event *pos;
+ 	struct synth_event *event;
  
- 	ret = 0;
--	is_delete = false;
--	is_return = false;
--	event = NULL;
--	group = NULL;
- 	ref_ctr_offset = 0;
+-	list_for_each_entry(event, &synth_event_list, list) {
++	for_each_dyn_event(pos) {
++		if (!is_synth_event(pos))
++			continue;
++		event = to_synth_event(pos);
+ 		if (strcmp(event->name, name) == 0)
+ 			return event;
+ 	}
+@@ -921,7 +971,7 @@ static int register_synth_event(struct synth_event *event)
  
- 	/* argc must be >= 1 */
--	if (argv[0][0] == '-')
--		is_delete = true;
--	else if (argv[0][0] == 'r')
-+	if (argv[0][0] == 'r')
- 		is_return = true;
--	else if (argv[0][0] != 'p') {
--		pr_info("Probe definition must be started with 'p', 'r' or '-'.\n");
--		return -EINVAL;
+ 	ret = set_synth_event_print_fmt(call);
+ 	if (ret < 0) {
+-		trace_remove_event_call(call);
++		trace_remove_event_call_nolock(call);
+ 		goto err;
+ 	}
+  out:
+@@ -959,7 +1009,7 @@ static void free_synth_event(struct synth_event *event)
+ 	kfree(event);
+ }
+ 
+-static struct synth_event *alloc_synth_event(char *event_name, int n_fields,
++static struct synth_event *alloc_synth_event(const char *name, int n_fields,
+ 					     struct synth_field **fields)
+ {
+ 	struct synth_event *event;
+@@ -971,7 +1021,7 @@ static struct synth_event *alloc_synth_event(char *event_name, int n_fields,
+ 		goto out;
+ 	}
+ 
+-	event->name = kstrdup(event_name, GFP_KERNEL);
++	event->name = kstrdup(name, GFP_KERNEL);
+ 	if (!event->name) {
+ 		kfree(event);
+ 		event = ERR_PTR(-ENOMEM);
+@@ -985,6 +1035,8 @@ static struct synth_event *alloc_synth_event(char *event_name, int n_fields,
+ 		goto out;
+ 	}
+ 
++	dyn_event_init(&event->devent, &synth_event_ops);
++
+ 	for (i = 0; i < n_fields; i++)
+ 		event->fields[i] = fields[i];
+ 
+@@ -1008,16 +1060,11 @@ struct hist_var_data {
+ 	struct hist_trigger_data *hist_data;
+ };
+ 
+-static int create_synth_event(int argc, char **argv)
++static int __create_synth_event(int argc, const char *name, const char **argv)
+ {
+ 	struct synth_field *field, *fields[SYNTH_FIELDS_MAX];
+ 	struct synth_event *event = NULL;
+-	bool delete_event = false;
+ 	int i, consumed = 0, n_fields = 0, ret = 0;
+-	char *name;
+-
+-	mutex_lock(&event_mutex);
+-	mutex_lock(&synth_event_mutex);
+ 
+ 	/*
+ 	 * Argument syntax:
+@@ -1025,43 +1072,20 @@ static int create_synth_event(int argc, char **argv)
+ 	 *  - Remove synthetic event: !<event_name> field[;field] ...
+ 	 *      where 'field' = type field_name
+ 	 */
+-	if (argc < 1) {
+-		ret = -EINVAL;
+-		goto out;
 -	}
-+	else if (argv[0][0] != 'p' || argc < 2)
-+		return -ECANCELED;
  
--	if (argv[0][1] == ':') {
-+	if (argv[0][1] == ':')
- 		event = &argv[0][2];
--		arg = strchr(event, '/');
+-	name = argv[0];
+-	if (name[0] == '!') {
+-		delete_event = true;
+-		name++;
+-	}
++	if (name[0] == '\0' || argc < 1)
++		return -EINVAL;
++
++	mutex_lock(&event_mutex);
++	mutex_lock(&synth_event_mutex);
  
--		if (arg) {
--			group = event;
--			event = arg + 1;
--			event[-1] = '\0';
-+	if (!strchr(argv[1], '/'))
-+		return -ECANCELED;
- 
--			if (strlen(group) == 0) {
--				pr_info("Group name is not specified\n");
--				return -EINVAL;
+ 	event = find_synth_event(name);
+ 	if (event) {
+-		if (delete_event) {
+-			if (event->ref) {
+-				ret = -EBUSY;
+-				goto out;
 -			}
--		}
--		if (strlen(event) == 0) {
--			pr_info("Event name is not specified\n");
--			return -EINVAL;
--		}
--	}
--	if (!group)
--		group = UPROBE_EVENT_SYSTEM;
--
--	if (is_delete) {
--		int ret;
--
--		if (!event) {
--			pr_info("Delete command needs an event name.\n");
--			return -EINVAL;
--		}
--		mutex_lock(&uprobe_lock);
--		tu = find_probe_event(event, group);
--
--		if (!tu) {
--			mutex_unlock(&uprobe_lock);
--			pr_info("Event %s/%s doesn't exist.\n", group, event);
--			return -ENOENT;
--		}
--		/* delete an event */
--		ret = unregister_trace_uprobe(tu);
--		mutex_unlock(&uprobe_lock);
--		return ret;
--	}
-+	filename = kstrdup(argv[1], GFP_KERNEL);
-+	if (!filename)
-+		return -ENOMEM;
+-			ret = unregister_synth_event(event);
+-			if (!ret) {
+-				list_del(&event->list);
+-				free_synth_event(event);
+-			}
+-		} else
+-			ret = -EEXIST;
+-		goto out;
+-	} else if (delete_event) {
+-		ret = -ENOENT;
++		ret = -EEXIST;
+ 		goto out;
+ 	}
  
 -	if (argc < 2) {
--		pr_info("Probe point is not specified.\n");
--		return -EINVAL;
+-		ret = -EINVAL;
+-		goto out;
 -	}
- 	/* Find the last occurrence, in case the path contains ':' too. */
--	arg = strrchr(argv[1], ':');
--	if (!arg)
--		return -EINVAL;
-+	arg = strrchr(filename, ':');
-+	if (!arg || !isdigit(arg[1])) {
-+		kfree(filename);
-+		return -ECANCELED;
-+	}
- 
- 	*arg++ = '\0';
--	filename = argv[1];
- 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
--	if (ret)
-+	if (ret) {
-+		kfree(filename);
- 		return ret;
 -
-+	}
- 	if (!d_is_reg(path.dentry)) {
- 		ret = -EINVAL;
- 		goto fail_address_parse;
-@@ -480,7 +492,11 @@ static int create_trace_uprobe(int argc, char **argv)
- 	argv += 2;
- 
- 	/* setup a probe */
--	if (!event) {
-+	if (event) {
-+		ret = traceprobe_parse_event_name(&event, &group, buf);
-+		if (ret)
-+			goto fail_address_parse;
-+	} else {
- 		char *tail;
- 		char *ptr;
- 
-@@ -508,18 +524,19 @@ static int create_trace_uprobe(int argc, char **argv)
- 	tu->offset = offset;
- 	tu->ref_ctr_offset = ref_ctr_offset;
- 	tu->path = path;
--	tu->filename = kstrdup(filename, GFP_KERNEL);
--
--	if (!tu->filename) {
--		pr_info("Failed to allocate filename.\n");
--		ret = -ENOMEM;
--		goto error;
--	}
-+	tu->filename = filename;
- 
- 	/* parse arguments */
- 	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
--		ret = traceprobe_parse_probe_arg(&tu->tp, i, argv[i],
-+		tmp = kstrdup(argv[i], GFP_KERNEL);
-+		if (!tmp) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+
-+		ret = traceprobe_parse_probe_arg(&tu->tp, i, tmp,
- 					is_return ? TPARG_FL_RETURN : 0);
-+		kfree(tmp);
- 		if (ret)
- 			goto error;
+-	for (i = 1; i < argc - 1; i++) {
++	for (i = 0; i < argc - 1; i++) {
+ 		if (strcmp(argv[i], ";") == 0)
+ 			continue;
+ 		if (n_fields == SYNTH_FIELDS_MAX) {
+@@ -1091,7 +1115,7 @@ static int create_synth_event(int argc, char **argv)
  	}
-@@ -535,55 +552,35 @@ static int create_trace_uprobe(int argc, char **argv)
- 
- fail_address_parse:
- 	path_put(&path);
-+	kfree(filename);
- 
- 	pr_info("Failed to parse address or file.\n");
- 
- 	return ret;
+ 	ret = register_synth_event(event);
+ 	if (!ret)
+-		list_add(&event->list, &synth_event_list);
++		dyn_event_add(&event->devent);
+ 	else
+ 		free_synth_event(event);
+  out:
+@@ -1106,57 +1130,77 @@ static int create_synth_event(int argc, char **argv)
+ 	goto out;
  }
  
--static int cleanup_all_probes(void)
-+static int create_or_delete_trace_uprobe(int argc, char **argv)
+-static int release_all_synth_events(void)
++static int create_or_delete_synth_event(int argc, char **argv)
  {
--	struct trace_uprobe *tu;
+-	struct synth_event *event, *e;
 -	int ret = 0;
+-
+-	mutex_lock(&event_mutex);
+-	mutex_lock(&synth_event_mutex);
+-
+-	list_for_each_entry(event, &synth_event_list, list) {
+-		if (event->ref) {
+-			mutex_unlock(&synth_event_mutex);
+-			return -EBUSY;
+-		}
+-	}
++	const char *name = argv[0];
++	struct synth_event *event = NULL;
 +	int ret;
  
--	mutex_lock(&uprobe_lock);
--	/* Ensure no probe is in use. */
--	list_for_each_entry(tu, &uprobe_list, list)
--		if (trace_probe_is_enabled(&tu->tp)) {
--			ret = -EBUSY;
--			goto end;
--		}
--	while (!list_empty(&uprobe_list)) {
--		tu = list_entry(uprobe_list.next, struct trace_uprobe, list);
--		ret = unregister_trace_uprobe(tu);
--		if (ret)
+-	list_for_each_entry_safe(event, e, &synth_event_list, list) {
+-		ret = unregister_synth_event(event);
+-		if (!ret) {
+-			list_del(&event->list);
+-			free_synth_event(event);
++	/* trace_run_command() ensures argc != 0 */
++	if (name[0] == '!') {
++		mutex_lock(&event_mutex);
++		mutex_lock(&synth_event_mutex);
++		event = find_synth_event(name + 1);
++		if (event) {
++			if (event->ref)
++				ret = -EBUSY;
++			else {
++				ret = unregister_synth_event(event);
++				if (!ret) {
++					dyn_event_remove(&event->devent);
++					free_synth_event(event);
++				}
++			}
+ 		} else
 -			break;
--	}
--end:
--	mutex_unlock(&uprobe_lock);
--	return ret;
--}
-+	if (argv[0][0] == '-')
-+		return dyn_event_release(argc, argv, &trace_uprobe_ops);
++			ret = -ENOENT;
++		mutex_unlock(&synth_event_mutex);
++		mutex_unlock(&event_mutex);
++		return ret;
+ 	}
+-	mutex_unlock(&synth_event_mutex);
+-	mutex_unlock(&event_mutex);
  
--/* Probes listing interfaces */
--static void *probes_seq_start(struct seq_file *m, loff_t *pos)
--{
--	mutex_lock(&uprobe_lock);
--	return seq_list_start(&uprobe_list, *pos);
-+	ret = trace_uprobe_create(argc, (const char **)argv);
+-	return ret;
++	ret = __create_synth_event(argc - 1, name, (const char **)argv + 1);
 +	return ret == -ECANCELED ? -EINVAL : ret;
  }
  
--static void *probes_seq_next(struct seq_file *m, void *v, loff_t *pos)
-+static int trace_uprobe_release(struct dyn_event *ev)
+-
+-static void *synth_events_seq_start(struct seq_file *m, loff_t *pos)
++static int synth_event_create(int argc, const char **argv)
  {
--	return seq_list_next(v, &uprobe_list, pos);
--}
-+	struct trace_uprobe *tu = to_trace_uprobe(ev);
+-	mutex_lock(&synth_event_mutex);
++	const char *name = argv[0];
++	int len;
  
--static void probes_seq_stop(struct seq_file *m, void *v)
+-	return seq_list_start(&synth_event_list, *pos);
+-}
++	if (name[0] != 's' || name[1] != ':')
++		return -ECANCELED;
++	name += 2;
+ 
+-static void *synth_events_seq_next(struct seq_file *m, void *v, loff_t *pos)
 -{
--	mutex_unlock(&uprobe_lock);
-+	return unregister_trace_uprobe(tu);
+-	return seq_list_next(v, &synth_event_list, pos);
++	/* This interface accepts group name prefix */
++	if (strchr(name, '/')) {
++		len = sizeof(SYNTH_SYSTEM "/") - 1;
++		if (strncmp(name, SYNTH_SYSTEM "/", len))
++			return -EINVAL;
++		name += len;
++	}
++	return __create_synth_event(argc - 1, name, argv + 1);
  }
  
--static int probes_seq_show(struct seq_file *m, void *v)
-+/* Probes listing interfaces */
-+static int trace_uprobe_show(struct seq_file *m, struct dyn_event *ev)
+-static void synth_events_seq_stop(struct seq_file *m, void *v)
++static int synth_event_release(struct dyn_event *ev)
  {
--	struct trace_uprobe *tu = v;
-+	struct trace_uprobe *tu = to_trace_uprobe(ev);
- 	char c = is_ret_probe(tu) ? 'r' : 'p';
- 	int i;
+-	mutex_unlock(&synth_event_mutex);
++	struct synth_event *event = to_synth_event(ev);
++	int ret;
++
++	if (event->ref)
++		return -EBUSY;
++
++	ret = unregister_synth_event(event);
++	if (ret)
++		return ret;
++
++	dyn_event_remove(ev);
++	free_synth_event(event);
++	return 0;
+ }
  
-@@ -601,11 +598,21 @@ static int probes_seq_show(struct seq_file *m, void *v)
+-static int synth_events_seq_show(struct seq_file *m, void *v)
++static int __synth_event_show(struct seq_file *m, struct synth_event *event)
+ {
+ 	struct synth_field *field;
+-	struct synth_event *event = v;
+ 	unsigned int i;
+ 
+ 	seq_printf(m, "%s\t", event->name);
+@@ -1174,11 +1218,30 @@ static int synth_events_seq_show(struct seq_file *m, void *v)
  	return 0;
  }
  
-+static int probes_seq_show(struct seq_file *m, void *v)
++static int synth_event_show(struct seq_file *m, struct dyn_event *ev)
++{
++	struct synth_event *event = to_synth_event(ev);
++
++	seq_printf(m, "s:%s/", event->class.system);
++
++	return __synth_event_show(m, event);
++}
++
++static int synth_events_seq_show(struct seq_file *m, void *v)
 +{
 +	struct dyn_event *ev = v;
 +
-+	if (!is_trace_uprobe(ev))
++	if (!is_synth_event(ev))
 +		return 0;
 +
-+	return trace_uprobe_show(m, ev);
++	return __synth_event_show(m, to_synth_event(ev));
 +}
 +
- static const struct seq_operations probes_seq_op = {
--	.start	= probes_seq_start,
--	.next	= probes_seq_next,
--	.stop	= probes_seq_stop,
--	.show	= probes_seq_show
-+	.start  = dyn_event_seq_start,
-+	.next   = dyn_event_seq_next,
-+	.stop   = dyn_event_seq_stop,
-+	.show   = probes_seq_show
+ static const struct seq_operations synth_events_seq_op = {
+-	.start  = synth_events_seq_start,
+-	.next   = synth_events_seq_next,
+-	.stop   = synth_events_seq_stop,
+-	.show   = synth_events_seq_show
++	.start	= dyn_event_seq_start,
++	.next	= dyn_event_seq_next,
++	.stop	= dyn_event_seq_stop,
++	.show	= synth_events_seq_show,
  };
  
- static int probes_open(struct inode *inode, struct file *file)
-@@ -613,7 +620,7 @@ static int probes_open(struct inode *inode, struct file *file)
+ static int synth_events_open(struct inode *inode, struct file *file)
+@@ -1186,7 +1249,7 @@ static int synth_events_open(struct inode *inode, struct file *file)
  	int ret;
  
  	if ((file->f_mode & FMODE_WRITE) && (file->f_flags & O_TRUNC)) {
--		ret = cleanup_all_probes();
-+		ret = dyn_events_release_all(&trace_uprobe_ops);
- 		if (ret)
+-		ret = release_all_synth_events();
++		ret = dyn_events_release_all(&synth_event_ops);
+ 		if (ret < 0)
  			return ret;
  	}
-@@ -624,7 +631,8 @@ static int probes_open(struct inode *inode, struct file *file)
- static ssize_t probes_write(struct file *file, const char __user *buffer,
- 			    size_t count, loff_t *ppos)
+@@ -1199,7 +1262,7 @@ static ssize_t synth_events_write(struct file *file,
+ 				  size_t count, loff_t *ppos)
  {
--	return trace_parse_run_command(file, buffer, count, ppos, create_trace_uprobe);
-+	return trace_parse_run_command(file, buffer, count, ppos,
-+					create_or_delete_trace_uprobe);
+ 	return trace_parse_run_command(file, buffer, count, ppos,
+-				       create_synth_event);
++				       create_or_delete_synth_event);
  }
  
- static const struct file_operations uprobe_events_ops = {
-@@ -639,17 +647,22 @@ static const struct file_operations uprobe_events_ops = {
- /* Probes profiling interfaces */
- static int probes_profile_seq_show(struct seq_file *m, void *v)
- {
--	struct trace_uprobe *tu = v;
-+	struct dyn_event *ev = v;
-+	struct trace_uprobe *tu;
-+
-+	if (!is_trace_uprobe(ev))
-+		return 0;
- 
-+	tu = to_trace_uprobe(ev);
- 	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
- 			trace_event_name(&tu->tp.call), tu->nhit);
- 	return 0;
- }
- 
- static const struct seq_operations profile_seq_op = {
--	.start	= probes_seq_start,
--	.next	= probes_seq_next,
--	.stop	= probes_seq_stop,
-+	.start  = dyn_event_seq_start,
-+	.next   = dyn_event_seq_next,
-+	.stop   = dyn_event_seq_stop,
- 	.show	= probes_profile_seq_show
- };
- 
-@@ -1307,7 +1320,7 @@ static int register_uprobe_event(struct trace_uprobe *tu)
- 		return -ENODEV;
- 	}
- 
--	ret = trace_add_event_call(call);
-+	ret = trace_add_event_call_nolock(call);
- 
- 	if (ret) {
- 		pr_info("Failed to register uprobe event: %s\n",
-@@ -1324,7 +1337,7 @@ static int unregister_uprobe_event(struct trace_uprobe *tu)
- 	int ret;
- 
- 	/* tu->event is unregistered in trace_remove_event_call() */
--	ret = trace_remove_event_call(&tu->tp.call);
-+	ret = trace_remove_event_call_nolock(&tu->tp.call);
- 	if (ret)
- 		return ret;
- 	kfree(tu->tp.call.print_fmt);
-@@ -1351,7 +1364,7 @@ create_local_trace_uprobe(char *name, unsigned long offs,
- 	}
- 
- 	/*
--	 * local trace_kprobes are not added to probe_list, so they are never
-+	 * local trace_kprobes are not added to dyn_event, so they are never
- 	 * searched in find_trace_kprobe(). Therefore, there is no concern of
- 	 * duplicated name "DUMMY_EVENT" here.
- 	 */
-@@ -1399,6 +1412,11 @@ void destroy_local_trace_uprobe(struct trace_event_call *event_call)
- static __init int init_uprobe_trace(void)
- {
+ static const struct file_operations synth_events_fops = {
+@@ -5791,6 +5854,12 @@ static __init int trace_events_hist_init(void)
  	struct dentry *d_tracer;
-+	int ret;
-+
-+	ret = dyn_event_register(&trace_uprobe_ops);
-+	if (ret)
-+		return ret;
+ 	int err = 0;
  
++	err = dyn_event_register(&synth_event_ops);
++	if (err) {
++		pr_warn("Could not register synth_event_ops\n");
++		return err;
++	}
++
  	d_tracer = tracing_init_dentry();
- 	if (IS_ERR(d_tracer))
+ 	if (IS_ERR(d_tracer)) {
+ 		err = PTR_ERR(d_tracer);
 
