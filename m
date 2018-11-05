@@ -2,157 +2,109 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E167CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9264AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B6A20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:21:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B6A20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D2D52082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:21:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2D52082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeKESjr (ORCPT
+        id S1728946AbeKESkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:39:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54560 "EHLO mx1.suse.de"
+        Mon, 5 Nov 2018 13:40:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54660 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726125AbeKESjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:39:46 -0500
+        id S1726125AbeKESkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:40:11 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6745BAD70;
-        Mon,  5 Nov 2018 09:20:58 +0000 (UTC)
-Subject: Re: [PATCH] btrfs: avoid link error with CONFIG_NO_AUTO_INLINE
-To:     Arnd Bergmann <arnd@arndb.de>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Changbin Du <changbin.du@gmail.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
-        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181103153941.1881966-1-arnd@arndb.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7d372d84-f4ee-8e3f-795b-7fbdae6c0644@suse.com>
-Date:   Mon, 5 Nov 2018 11:20:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A5E4BAD70;
+        Mon,  5 Nov 2018 09:21:23 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 10:21:23 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
+Subject: Re: Will the recent memory leak fixes be backported to longterm
+ kernels?
+Message-ID: <20181105092053.GC4361@dhcp22.suse.cz>
+References: <20181102005816.GA10297@tower.DHCP.thefacebook.com>
+ <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181102073009.GP23921@dhcp22.suse.cz>
+ <20181102154844.GA17619@tower.DHCP.thefacebook.com>
+ <20181102161314.GF28039@dhcp22.suse.cz>
+ <20181102162237.GB17619@tower.DHCP.thefacebook.com>
+ <20181102165147.GG28039@dhcp22.suse.cz>
+ <20181102172547.GA19042@tower.DHCP.thefacebook.com>
+ <20181102174823.GI28039@dhcp22.suse.cz>
+ <20181102193827.GA18024@castle.DHCP.thefacebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20181103153941.1881966-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102193827.GA18024@castle.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 02-11-18 19:38:35, Roman Gushchin wrote:
+> On Fri, Nov 02, 2018 at 06:48:23PM +0100, Michal Hocko wrote:
+> > On Fri 02-11-18 17:25:58, Roman Gushchin wrote:
+> > > On Fri, Nov 02, 2018 at 05:51:47PM +0100, Michal Hocko wrote:
+> > > > On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
+> > [...]
+> > > > > 2) We do forget to scan the last page in the LRU list. So if we ended up with
+> > > > > 1-page long LRU, it can stay there basically forever.
+> > > > 
+> > > > Why 
+> > > > 		/*
+> > > > 		 * If the cgroup's already been deleted, make sure to
+> > > > 		 * scrape out the remaining cache.
+> > > > 		 */
+> > > > 		if (!scan && !mem_cgroup_online(memcg))
+> > > > 			scan = min(size, SWAP_CLUSTER_MAX);
+> > > > 
+> > > > in get_scan_count doesn't work for that case?
+> > > 
+> > > No, it doesn't. Let's look at the whole picture:
+> > > 
+> > > 		size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
+> > > 		scan = size >> sc->priority;
+> > > 		/*
+> > > 		 * If the cgroup's already been deleted, make sure to
+> > > 		 * scrape out the remaining cache.
+> > > 		 */
+> > > 		if (!scan && !mem_cgroup_online(memcg))
+> > > 			scan = min(size, SWAP_CLUSTER_MAX);
+> > > 
+> > > If size == 1, scan == 0 => scan = min(1, 32) == 1.
+> > > And after proportional adjustment we'll have 0.
+> > 
+> > My friday brain hurst when looking at this but if it doesn't work as
+> > advertized then it should be fixed. I do not see any of your patches to
+> > touch this logic so how come it would work after them applied?
+> 
+> This part works as expected. But the following
+> 	scan = div64_u64(scan * fraction[file], denominator);
+> reliable turns 1 page to scan to 0 pages to scan.
 
+OK, 68600f623d69 ("mm: don't miss the last page because of round-off
+error") sounds like a good and safe stable backport material.
 
-On 3.11.18 г. 17:39 ч., Arnd Bergmann wrote:
-> On 32-bit ARM with gcc-8, I see a link error with the addition of the
-> CONFIG_NO_AUTO_INLINE option:
-> 
-> fs/btrfs/super.o: In function `btrfs_statfs':
-> super.c:(.text+0x67b8): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x67fc): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x6858): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x6920): undefined reference to `__aeabi_uldivmod'
-> super.c:(.text+0x693c): undefined reference to `__aeabi_uldivmod'
-> fs/btrfs/super.o:super.c:(.text+0x6958): more undefined references to `__aeabi_uldivmod' follow
-> 
-> So far this is the only file that shows the behavior, so I'd propose
-> to just work around it by marking the functions as 'static inline'
-> that normally get inlined here.
-> 
-> The reference to __aeabi_uldivmod comes from a div_u64() which has an
-> optimization for a constant division that uses a straight '/' operator
-> when the result should be known to the compiler. My interpretation is
-> that as we turn off inlining, gcc still expects the result to be constant
-> but fails to use that constant value.
-> 
-> Cc: Changbin Du <changbin.du@gmail.com>
-> Fixes: 943b8435c3bd ("kernel hacking: add a config option to disable compiler auto-inlining")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-I spoke with Arnd on irc and am fine with taking this patch as-is if
-btrfs is the sole offender. So:
-
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-
-> ---
->  fs/btrfs/super.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index c3c1e7bee49d..b7af0b8936ad 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -1922,7 +1922,7 @@ static int btrfs_remount(struct super_block *sb, int *flags,
->  }
->  
->  /* Used to sort the devices by max_avail(descending sort) */
-> -static int btrfs_cmp_device_free_bytes(const void *dev_info1,
-> +static inline int btrfs_cmp_device_free_bytes(const void *dev_info1,
->  				       const void *dev_info2)
->  {
->  	if (((struct btrfs_device_info *)dev_info1)->max_avail >
-> @@ -1951,8 +1951,8 @@ static inline void btrfs_descending_sort_devices(
->   * The helper to calc the free space on the devices that can be used to store
->   * file data.
->   */
-> -static int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-> -				       u64 *free_bytes)
-> +static inline int btrfs_calc_avail_data_space(struct btrfs_fs_info *fs_info,
-> +					      u64 *free_bytes)
->  {
->  	struct btrfs_device_info *devices_info;
->  	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
-> 
+-- 
+Michal Hocko
+SUSE Labs
