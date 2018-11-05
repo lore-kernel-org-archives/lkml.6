@@ -2,694 +2,159 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C946BECDE46
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00C4C32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C3920854
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C3920854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 87CF72081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 01:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CF72081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dustymabe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbeKELF5 (ORCPT
+        id S1727272AbeKELKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 06:05:57 -0500
-Received: from mga14.intel.com ([192.55.52.115]:65216 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726474AbeKELF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 06:05:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Nov 2018 17:48:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,466,1534834800"; 
-   d="scan'208";a="271354443"
-Received: from unknown (HELO localhost) ([10.249.254.144])
-  by orsmga005.jf.intel.com with ESMTP; 04 Nov 2018 17:48:39 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 16/16] tpm: remove @flags from tpm_transmit()
-Date:   Mon,  5 Nov 2018 03:45:49 +0200
-Message-Id: <20181105014552.20262-17-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
-References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+        Mon, 5 Nov 2018 06:10:06 -0500
+Received: from p3plsmtpa12-07.prod.phx3.secureserver.net ([68.178.252.236]:48749
+        "EHLO p3plsmtpa12-07.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726474AbeKELKF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 06:10:05 -0500
+X-Greylist: delayed 440 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Nov 2018 06:10:05 EST
+Received: from [192.168.1.101] ([99.92.55.146])
+        by :SMTPAUTH: with ESMTPSA
+        id JTxPg0uEk8xclJTxPgFSq3; Sun, 04 Nov 2018 18:45:35 -0700
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+From:   Dusty Mabe <dusty@dustymabe.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dusty@dustymabe.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZOAQJwRgw4eT5NWnKty3FMtMZAdKH0x1RSq0iXM=
+Subject: multiplexing /dev/console to all console= entries
+Message-ID: <46b26403-395b-6a3c-ea6e-c3c811fdc400@dustymabe.com>
+Date:   Sun, 4 Nov 2018 20:45:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfBVhhY4THURGrlgclGe7Psgp1ii+MeMhNXvrFbwQot0UjvyVRH1CET9D+sEGwW9SWGHBr+QhoM+MYoHoVSAddq72m3i/qQV1OqzP8NqOY/JXeIzbY6i1
+ uTry2AqU/8lgM+TgGAInJAkXKtRGVt3SkJKR5h5E8X34EPx4hA5Q0Q82yZiB7CU043c3LpZs1z15l9nxgnDjtozzpEvTQfHbMn6F8LhB2jeDwgTg32YM8Rb8
+ CAPiloQROwLgOYyP9Q26sg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove @flags from tpm_transmit() API. It is no longer used for
-anything.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-chip.c       | 32 ++++++++++-----------
- drivers/char/tpm/tpm-dev-common.c |  2 +-
- drivers/char/tpm/tpm-interface.c  | 18 ++++--------
- drivers/char/tpm/tpm-sysfs.c      |  2 +-
- drivers/char/tpm/tpm.h            | 13 ++++-----
- drivers/char/tpm/tpm1-cmd.c       | 14 ++++-----
- drivers/char/tpm/tpm2-cmd.c       | 48 ++++++++++++++-----------------
- drivers/char/tpm/tpm2-space.c     | 16 +++++------
- drivers/char/tpm/tpm_vtpm_proxy.c |  2 +-
- 9 files changed, 65 insertions(+), 82 deletions(-)
+Hi Greg, Jiri,
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 87570182f75e..46aa68756bac 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -37,7 +37,7 @@ struct class *tpm_class;
- struct class *tpmrm_class;
- dev_t tpm_devt;
- 
--static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
-+static int tpm_request_locality(struct tpm_chip *chip)
- {
- 	int rc;
- 
-@@ -52,7 +52,7 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
- 	return 0;
- }
- 
--static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
-+static void tpm_relinquish_locality(struct tpm_chip *chip)
- {
- 	int rc;
- 
-@@ -66,7 +66,7 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
- 	chip->locality = -1;
- }
- 
--static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
-+static int tpm_cmd_ready(struct tpm_chip *chip)
- {
- 	if (!chip->ops->cmd_ready)
- 		return 0;
-@@ -74,7 +74,7 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
- 	return chip->ops->cmd_ready(chip);
- }
- 
--static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
-+static int tpm_go_idle(struct tpm_chip *chip)
- {
- 	if (!chip->ops->go_idle)
- 		return 0;
-@@ -85,13 +85,12 @@ static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
- /**
-  * tpm_chip_start() - power on the TPM
-  * @chip:	a TPM chip to use
-- * @flags:	TPM transmit flags
-  *
-  * Return:
-  * * The response length	- OK
-  * * -errno			- A system error
-  */
--int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
-+int tpm_chip_start(struct tpm_chip *chip)
- {
- 	int ret;
- 
-@@ -99,16 +98,16 @@ int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
- 		chip->ops->clk_enable(chip, true);
- 
- 	if (chip->locality == -1) {
--		ret = tpm_request_locality(chip, flags);
-+		ret = tpm_request_locality(chip);
- 		if (ret) {
- 			chip->ops->clk_enable(chip, false);
- 			return ret;
- 		}
- 	}
- 
--	ret = tpm_cmd_ready(chip, flags);
-+	ret = tpm_cmd_ready(chip);
- 	if (ret) {
--		tpm_relinquish_locality(chip, flags);
-+		tpm_relinquish_locality(chip);
- 		if (chip->ops->clk_enable)
- 			chip->ops->clk_enable(chip, false);
- 		return ret;
-@@ -120,16 +119,15 @@ int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
- /**
-  * tpm_chip_stop() - power off the TPM
-  * @chip:	a TPM chip to use
-- * @flags:	TPM transmit flags
-  *
-  * Return:
-  * * The response length	- OK
-  * * -errno			- A system error
-  */
--void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
-+void tpm_chip_stop(struct tpm_chip *chip)
- {
--	tpm_go_idle(chip, flags);
--	tpm_relinquish_locality(chip, flags);
-+	tpm_go_idle(chip);
-+	tpm_relinquish_locality(chip);
- 	if (chip->ops->clk_enable)
- 		chip->ops->clk_enable(chip, false);
- }
-@@ -157,7 +155,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
- 		goto out_lock;
- 
- 	mutex_lock(&chip->tpm_mutex);
--	return tpm_chip_start(chip, 0);
-+	return tpm_chip_start(chip);
- out_lock:
- 	up_read(&chip->ops_sem);
- 	put_device(&chip->dev);
-@@ -174,7 +172,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
-  */
- void tpm_put_ops(struct tpm_chip *chip)
- {
--	tpm_chip_stop(chip, 0);
-+	tpm_chip_stop(chip);
- 	mutex_unlock(&chip->tpm_mutex);
- 	up_read(&chip->ops_sem);
- 	put_device(&chip->dev);
-@@ -552,11 +550,11 @@ int tpm_chip_register(struct tpm_chip *chip)
- {
- 	int rc;
- 
--	rc = tpm_chip_start(chip, 0);
-+	rc = tpm_chip_start(chip);
- 	if (rc)
- 		return rc;
- 	rc = tpm_auto_startup(chip);
--	tpm_chip_stop(chip, 0);
-+	tpm_chip_stop(chip);
- 	if (rc)
- 		return rc;
- 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index d09c13d5c12e..1ed2d62a79ae 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -47,7 +47,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (ret)
- 		goto out_lock;
- 
--	len = tpm_transmit(chip, buf, bufsiz, 0);
-+	len = tpm_transmit(chip, buf, bufsiz);
- 	if (len < 0)
- 		ret = len;
- 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 697091f37057..669ba1587294 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -62,8 +62,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--				unsigned int flags)
-+static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- {
- 	struct tpm_output_header *header = (void *)buf;
- 	int rc;
-@@ -136,7 +135,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * @chip:	a TPM chip to use
-  * @buf:	a TPM command buffer
-  * @bufsiz:	length of the TPM command buffer
-- * @flags:	TPM transmit flags
-  *
-  * A wrapper around tpm_try_transmit() that handles TPM2_RC_RETRY returns from
-  * the TPM and retransmits the command after a delay up to a maximum wait of
-@@ -149,8 +147,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * * The response length	- OK
-  * * -errno			- A system error
-  */
--ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--		     unsigned int flags)
-+ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- {
- 	struct tpm_output_header *header = (struct tpm_output_header *)buf;
- 	/* space for header and handles */
-@@ -170,7 +167,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 	memcpy(save, buf, save_size);
- 
- 	for (;;) {
--		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
-+		ret = tpm_try_transmit(chip, buf, bufsiz);
- 
- 		rc = be32_to_cpu(header->return_code);
- 		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
-@@ -202,7 +199,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * @chip:			a TPM chip to use
-  * @buf:			a TPM command buffer
-  * @min_rsp_body_length:	minimum expected length of response body
-- * @flags:			TPM transmit flags
-  * @desc:			command description used in the error message
-  *
-  * Return:
-@@ -211,15 +207,14 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * * TPM_RC	- A TPM error
-  */
- ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
--			 size_t min_rsp_body_length, unsigned int flags,
--			 const char *desc)
-+			 size_t min_rsp_body_length, const char *desc)
- {
- 	const struct tpm_output_header *header =
- 		(struct tpm_output_header *)buf->data;
- 	int err;
- 	ssize_t len;
- 
--	len = tpm_transmit(chip, buf->data, PAGE_SIZE, flags);
-+	len = tpm_transmit(chip, buf->data, PAGE_SIZE);
- 	if (len <  0)
- 		return len;
- 
-@@ -368,8 +363,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
- 		goto out;
- 
- 	memcpy(buf.data, cmd, buflen);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0,
--			      "attempting to a send a command");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to a send a command");
- 	tpm_buf_destroy(&buf);
- out:
- 	tpm_put_ops(chip);
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 02521c4d631b..e3acd69481ce 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -55,7 +55,7 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
- 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
- 
- 	if (tpm_transmit_cmd(chip, &tpm_buf, READ_PUBEK_RESULT_MIN_BODY_SIZE,
--			      0, "attempting to read the PUBEK"))
-+			     "attempting to read the PUBEK"))
- 		goto out_buf;
- 
- 	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 8555fcc1ac0a..541c06fa982e 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -488,11 +488,9 @@ extern const struct file_operations tpm_fops;
- extern const struct file_operations tpmrm_fops;
- extern struct idr dev_nums_idr;
- 
--ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--		     unsigned int flags);
-+ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
- ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
--			 size_t min_rsp_body_length, unsigned int flags,
--			 const char *desc);
-+			 size_t min_rsp_body_length, const char *desc);
- int tpm_get_timeouts(struct tpm_chip *);
- int tpm_auto_startup(struct tpm_chip *chip);
- 
-@@ -517,8 +515,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
- 
--int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
--void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
-+int tpm_chip_start(struct tpm_chip *chip);
-+void tpm_chip_stop(struct tpm_chip *chip);
- struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
-@@ -551,8 +549,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
- int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 		    struct tpm2_digest *digests);
- int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
--void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
--			    unsigned int flags);
-+void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
- int tpm2_seal_trusted(struct tpm_chip *chip,
- 		      struct trusted_key_payload *payload,
- 		      struct trusted_key_options *options);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 162c255dd131..438c14106e19 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -334,7 +334,7 @@ static int tpm1_startup(struct tpm_chip *chip)
- 
- 	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to start the TPM");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -459,7 +459,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
- 	tpm_buf_append_u32(&buf, pcr_idx);
- 	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
- 
--	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, 0, log_msg);
-+	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, log_msg);
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -489,7 +489,7 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		tpm_buf_append_u32(&buf, 4);
- 		tpm_buf_append_u32(&buf, subcap_id);
- 	}
--	rc = tpm_transmit_cmd(chip, &buf, min_cap_length, 0, desc);
-+	rc = tpm_transmit_cmd(chip, &buf, min_cap_length, desc);
- 	if (!rc)
- 		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
- 	tpm_buf_destroy(&buf);
-@@ -530,7 +530,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 	do {
- 		tpm_buf_append_u32(&buf, num_bytes);
- 
--		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len), 0,
-+		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
- 				      "attempting get random");
- 		if (rc)
- 			goto out;
-@@ -575,7 +575,7 @@ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
- 
- 	tpm_buf_append_u32(&buf, pcr_idx);
- 
--	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, 0,
-+	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE,
- 			      "attempting to read a pcr value");
- 	if (rc)
- 		goto out;
-@@ -609,7 +609,7 @@ static int tpm1_continue_selftest(struct tpm_chip *chip)
- 	if (rc)
- 		return rc;
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "continue selftest");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "continue selftest");
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -735,7 +735,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
- 		return rc;
- 	/* now do the actual savestate */
- 	for (try = 0; try < TPM_RETRY; try++) {
--		rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
-+		rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
- 		/*
- 		 * If the TPM indicates that it is too busy to respond to
- 		 * this command then retry before giving up.  It can take
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 8fdd835ecc42..cdb5f5d5d2a1 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -197,7 +197,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
- 	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
- 		       sizeof(pcr_select));
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, res_buf ?
-+	rc = tpm_transmit_cmd(chip, &buf, 0, res_buf ?
- 			      "attempting to read a pcr value" : NULL);
- 	if (rc == 0 && res_buf) {
- 		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
-@@ -264,8 +264,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 		}
- 	}
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0,
--			      "attempting extend a PCR value");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
- 
- 	tpm_buf_destroy(&buf);
- 
-@@ -312,7 +311,7 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 		err = tpm_transmit_cmd(chip, &buf,
- 				       offsetof(struct tpm2_get_random_out,
- 						buffer),
--				       0, "attempting get random");
-+				       "attempting get random");
- 		if (err)
- 			goto out;
- 
-@@ -341,14 +340,11 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- }
- 
- /**
-- * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
-+ * tpm2_flush_context() - execute a TPM2_FlushContext command
-  * @chip:	TPM chip to use
-  * @handle:	context handle
-- * @flags:	tpm transmit flags - bitmap
-- *
-  */
--void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
--			    unsigned int flags)
-+void tpm2_flush_context(struct tpm_chip *chip, u32 handle)
- {
- 	struct tpm_buf buf;
- 	int rc;
-@@ -362,7 +358,7 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 
- 	tpm_buf_append_u32(&buf, handle);
- 
--	tpm_transmit_cmd(chip, &buf, 0, flags, "flushing context");
-+	tpm_transmit_cmd(chip, &buf, 0, "flushing context");
- 	tpm_buf_destroy(&buf);
- }
- 
-@@ -476,7 +472,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		goto out;
- 	}
- 
--	rc = tpm_transmit_cmd(chip, &buf, 4, 0, "sealing data");
-+	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
- 	if (rc)
- 		goto out;
- 
-@@ -513,7 +509,6 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-  * @payload: the key data in clear and encrypted form
-  * @options: authentication values and other options
-  * @blob_handle: returned blob handle
-- * @flags: tpm transmit flags
-  *
-  * Return: 0 on success.
-  *        -E2BIG on wrong payload size.
-@@ -523,7 +518,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- static int tpm2_load_cmd(struct tpm_chip *chip,
- 			 struct trusted_key_payload *payload,
- 			 struct trusted_key_options *options,
--			 u32 *blob_handle, unsigned int flags)
-+			 u32 *blob_handle)
- {
- 	struct tpm_buf buf;
- 	unsigned int private_len;
-@@ -558,7 +553,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		goto out;
- 	}
- 
--	rc = tpm_transmit_cmd(chip, &buf, 4, flags, "loading blob");
-+	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
- 	if (!rc)
- 		*blob_handle = be32_to_cpup(
- 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
-@@ -579,7 +574,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-  * @payload: the key data in clear and encrypted form
-  * @options: authentication values and other options
-  * @blob_handle: blob handle
-- * @flags: tpm_transmit_cmd flags
-  *
-  * Return: 0 on success
-  *         -EPERM on tpm error status
-@@ -588,7 +582,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			   struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
--			   u32 blob_handle, unsigned int flags)
-+			   u32 blob_handle)
- {
- 	struct tpm_buf buf;
- 	u16 data_len;
-@@ -608,7 +602,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			     options->blobauth /* hmac */,
- 			     TPM_DIGEST_SIZE);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 6, flags, "unsealing");
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
- 	if (rc > 0)
- 		rc = -EPERM;
- 
-@@ -652,12 +646,12 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 	u32 blob_handle;
- 	int rc;
- 
--	rc = tpm2_load_cmd(chip, payload, options, &blob_handle, 0);
-+	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
- 	if (rc)
- 		return rc;
- 
--	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle, 0);
--	tpm2_flush_context_cmd(chip, blob_handle, 0);
-+	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
-+	tpm2_flush_context(chip, blob_handle);
- 	return rc;
- }
- 
-@@ -693,7 +687,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
- 	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
- 	tpm_buf_append_u32(&buf, property_id);
- 	tpm_buf_append_u32(&buf, 1);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
- 	if (!rc) {
- 		out = (struct tpm2_get_cap_out *)
- 			&buf.data[TPM_HEADER_SIZE];
-@@ -723,7 +717,7 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- 	if (rc)
- 		return;
- 	tpm_buf_append_u16(&buf, shutdown_type);
--	tpm_transmit_cmd(chip, &buf, 0, 0, "stopping the TPM");
-+	tpm_transmit_cmd(chip, &buf, 0, "stopping the TPM");
- 	tpm_buf_destroy(&buf);
- }
- 
-@@ -752,7 +746,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 			return rc;
- 
- 		tpm_buf_append_u8(&buf, full);
--		rc = tpm_transmit_cmd(chip, &buf, 0, 0,
-+		rc = tpm_transmit_cmd(chip, &buf, 0,
- 				      "attempting the self test");
- 		tpm_buf_destroy(&buf);
- 
-@@ -789,7 +783,7 @@ int tpm2_probe(struct tpm_chip *chip)
- 	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
- 	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
- 	tpm_buf_append_u32(&buf, 1);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
- 	/* We ignore TPM return codes on purpose. */
- 	if (rc >=  0) {
- 		out = (struct tpm_output_header *)buf.data;
-@@ -828,7 +822,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 	tpm_buf_append_u32(&buf, 0);
- 	tpm_buf_append_u32(&buf, 1);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 9, 0, "get tpm pcr allocation");
-+	rc = tpm_transmit_cmd(chip, &buf, 9, "get tpm pcr allocation");
- 	if (rc)
- 		goto out;
- 
-@@ -899,7 +893,7 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- 	tpm_buf_append_u32(&buf, TPM2_CC_FIRST);
- 	tpm_buf_append_u32(&buf, nr_commands);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 9 + 4 * nr_commands, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &buf, 9 + 4 * nr_commands, NULL);
- 	if (rc) {
- 		tpm_buf_destroy(&buf);
- 		goto out;
-@@ -956,7 +950,7 @@ static int tpm2_startup(struct tpm_chip *chip)
- 		return rc;
- 
- 	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to start the TPM");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
- 	tpm_buf_destroy(&buf);
- 
- 	return rc;
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 763c93f4d950..cd88e700aed7 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -38,7 +38,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
- 
- 	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
- 		if (space->session_tbl[i])
--			tpm2_flush_context_cmd(chip, space->session_tbl[i], 0);
-+			tpm2_flush_context(chip, space->session_tbl[i]);
- 	}
- }
- 
-@@ -60,9 +60,9 @@ int tpm2_init_space(struct tpm_space *space)
- void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
- {
- 	mutex_lock(&chip->tpm_mutex);
--	if (!tpm_chip_start(chip, 0)) {
-+	if (!tpm_chip_start(chip)) {
- 		tpm2_flush_sessions(chip, space);
--		tpm_chip_stop(chip, 0);
-+		tpm_chip_stop(chip);
- 	}
- 	mutex_unlock(&chip->tpm_mutex);
- 	kfree(space->context_buf);
-@@ -85,7 +85,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
- 	body_size = sizeof(*ctx) + be16_to_cpu(ctx->blob_size);
- 	tpm_buf_append(&tbuf, &buf[*offset], body_size);
- 
--	rc = tpm_transmit_cmd(chip, &tbuf, 4, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &tbuf, 4, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -133,7 +133,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
- 
- 	tpm_buf_append_u32(&tbuf, handle);
- 
--	rc = tpm_transmit_cmd(chip, &tbuf, 0, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &tbuf, 0, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -169,7 +169,7 @@ void tpm2_flush_space(struct tpm_chip *chip)
- 
- 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
- 		if (space->context_tbl[i] && ~space->context_tbl[i])
--			tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
-+			tpm2_flush_context(chip, space->context_tbl[i]);
- 
- 	tpm2_flush_sessions(chip, space);
- }
-@@ -418,7 +418,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
- 
- 	return 0;
- out_no_slots:
--	tpm2_flush_context_cmd(chip, phandle, 0);
-+	tpm2_flush_context(chip, phandle);
- 	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
- 		 phandle);
- 	return -ENOMEM;
-@@ -505,7 +505,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
- 		} else if (rc)
- 			return rc;
- 
--		tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
-+		tpm2_flush_context(chip, space->context_tbl[i]);
- 		space->context_tbl[i] = ~0;
- 	}
- 
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index bd489d0c3cd7..82e867eb3ad5 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -417,7 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
- 
- 	proxy_dev->state |= STATE_DRIVER_COMMAND;
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to set locality");
- 
- 	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
- 
--- 
-2.19.1
+I'd like to bring up a question about multiplexing /dev/console to
+all specified console= devices on the kernel command line rather than just
+the last entry. In my personal experience using linux systems and also in
+my experience dealing with users of various server images (Fedora Cloud,
+Fedora Atomic Host, Fedora Server, CentOS, RHEL, etc..) it is often hard
+to debug properly when something goes wrong because of a number of reasons:
+
+- the user doesn't know the difference between a serial console and 
+  a VGA console
+- the user doesn't know what the settings were on the image they booted
+- the user doesn't know how to access the various console devices using
+  the cloud environments they are on (i.e. they know of one but not the other)
+- in an attempt to share configs for disk image creation the creators add
+  extra console= entries to cover various console devices and various
+  architectures (see [1] where we are covering VGA/serial, hvc0, AMA0. etc)
+
+I believe it would simplify debugging/troubleshooting with users if we
+were able to multiplex /dev/console to all console= entries. This
+conversation actually started as a PR to dracut [2] to get all of the
+systemd messages to be printed to all console= devices, but it was 
+pointed out there [3] that rather than change the the settings in dracut
+it would be better to attempt to change the kernel behavior.
+
+If a patch were submitted to enable this type of behavior would such a
+patch be acceptable? Maybe it could be a compile time option and also
+have a kernel arg option to enable/disable it.
+
+
+Note: I apologize if this functionality already exists and I missed it
+      somehow.
+
+Note: I grabbed info from [4] about who to contact for tty subsystem 
+      questions. I apologize in advance if you are the wrong people to
+      contact.
+
+Thanks!
+Dusty
+
+[1] https://pagure.io/fedora-kickstarts/blob/ee84a1650b8188cbd00d54a688838207c34906f4/f/fedora-atomic.ks#_36
+[2] https://github.com/dracutdevs/dracut/pull/445
+[3] https://github.com/dracutdevs/dracut/pull/445#issuecomment-424755057
+[4] https://github.com/torvalds/linux/blob/82aa4671516a3203261c835e98c3eecab10c994d/MAINTAINERS#L15149-L15151
 
