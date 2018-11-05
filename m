@@ -2,82 +2,86 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C803DECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E881C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C8E20685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:11:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C8E20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id B000820854
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:17:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RTWdadSG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B000820854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeKERaO (ORCPT
+        id S1727223AbeKERgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 12:30:14 -0500
-Received: from mga06.intel.com ([134.134.136.31]:42899 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727223AbeKERaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 12:30:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 00:11:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,467,1534834800"; 
-   d="scan'208";a="86727575"
-Received: from mke-mobl.ccr.corp.intel.com (HELO haswell-OptiPlex-9020.ccr.corp.intel.com) ([10.255.30.228])
-  by orsmga007.jf.intel.com with ESMTP; 05 Nov 2018 00:11:42 -0800
-From:   Li Zhijian <lizhijian@cn.fujitsu.com>
-To:     Song Liu <songliubraving@fb.com>, shuah@kernel.org,
-        netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        Li Zhijian <lizhijian@cn.fujitsu.com>,
-        Philip Li <philip.li@intel.com>
-Subject: [PATCH v2] kselftests/bpf: use ping6 as the default ipv6 ping binary when it exists
-Date:   Mon,  5 Nov 2018 16:57:48 +0800
-Message-Id: <1541408268-11256-1-git-send-email-lizhijian@cn.fujitsu.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 5 Nov 2018 12:36:17 -0500
+Received: from mail-pl1-f171.google.com ([209.85.214.171]:46582 "EHLO
+        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeKERgR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 12:36:17 -0500
+Received: by mail-pl1-f171.google.com with SMTP id c13-v6so4064965plz.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 00:17:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=+1Y0IESqCXAUF1WYQbbMkeCClugnfAHYwxu5cLWMc9g=;
+        b=RTWdadSG1e5PH2vKcq0L0taSIo6nZ8oS8AGYY6gb6lmyFgb3uuxLgBu9JCcP/VUqXV
+         +xWf8+qbfP1J8l+sXc0WNCZxd2uF1DBCyc0AC+LFnnRQiZoLz9wfP2ovtjeddGFUHrYS
+         zmrWdesgx+xj1II44YR5ft5oUljA35pbnAnj0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=+1Y0IESqCXAUF1WYQbbMkeCClugnfAHYwxu5cLWMc9g=;
+        b=bNNe5CunrOMp+9x/N8HkkTt/sDd0rWEtBcd9rz+8812gYzn506i7zdN65yW0vT8/zN
+         Y126bA+gGaYa10+c+Cc/lDI8mVmtdbIQB82zHvq9DAgZ7aOD0FllwuvWuRrZ9noaOolR
+         Nu+Qt3gwUT1zobwoKqhqhSE6FCDLRrIk5HBPrSfV2gt9UsjJO5Fw+5JMJmrsJ/lhanPJ
+         poR6Aiy89C3TAYpPZ+fAXugZ/15TboiGro/nQM+rBR/MOK0J7LQsvjVUv4VnG3Vxadbj
+         id8TXSOQgm9zxKJV273+5NwEB+hnd3Hl05JiEOXDY6je2fi01LlTB7T4azCpfkkYslon
+         aavA==
+X-Gm-Message-State: AGRZ1gK0V9XjgWiLDcwUQrfechH3zhQmWwICumUdlgnuAZcjaoiQWf2Y
+        HoZDqXNkzfDMXaPK9J5LqEEOxw==
+X-Google-Smtp-Source: AJdET5enD/tt4UAvGzwHL2lZdEawOpA/02ZfJ2sZRpS6LdLOMmsQ4Dkjli9VNexmyvieQTRI2fEi1w==
+X-Received: by 2002:a17:902:5590:: with SMTP id g16-v6mr21142365pli.56.1541405868132;
+        Mon, 05 Nov 2018 00:17:48 -0800 (PST)
+Received: from [10.176.68.125] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm43211112pfi.22.2018.11.05.00.17.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 00:17:47 -0800 (PST)
+Subject: Re: [PATCH 0/5] Use common cordic algorithm for b43
+To:     Kalle Valo <kvalo@codeaurora.org>, Priit Laes <plaes@plaes.org>
+References: <cover.f21c8e62e188620d586edb3f77514e6237122c4c.1541238842.git-series.plaes@plaes.org>
+ <87muqoar5i.fsf@purkki.adurom.net>
+Cc:     linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
+From:   Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <870a5f59-1031-c62d-0ee8-742bd0f16d8a@broadcom.com>
+Date:   Mon, 5 Nov 2018 09:17:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <87muqoar5i.fsf@purkki.adurom.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At commit deee2cae27d1 ("kselftests/bpf: use ping6 as the default ipv6 ping
-binary if it exists"), it fixed similar issues for shell script, but it
-missed a same issue in the C code.
+On 11/5/2018 9:02 AM, Kalle Valo wrote:
+> Also I don't see MAINTAINERS entry for cordic.[c|h], that would be good
+> to have as well.
 
-Fixes: 371e4fcc9d96 ("selftests/bpf: cgroup local storage-based network counters")
-CC: Philip Li <philip.li@intel.com>
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
-V2: Fix coding style: remove '{}' and 80+ characters per line
+We added the cordic library functions during brcm80211 staging cleanup. 
+We can add it to MAINTAINERS file.
 
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
- tools/testing/selftests/bpf/test_netcnt.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/bpf/test_netcnt.c b/tools/testing/selftests/bpf/test_netcnt.c
-index 7887df6..44ed7f2 100644
---- a/tools/testing/selftests/bpf/test_netcnt.c
-+++ b/tools/testing/selftests/bpf/test_netcnt.c
-@@ -81,7 +81,10 @@ int main(int argc, char **argv)
- 		goto err;
- 	}
- 
--	assert(system("ping localhost -6 -c 10000 -f -q > /dev/null") == 0);
-+	if (system("which ping6 &>/dev/null") == 0)
-+		assert(!system("ping6 localhost -c 10000 -f -q > /dev/null"));
-+	else
-+		assert(!system("ping -6 localhost -c 10000 -f -q > /dev/null"));
- 
- 	if (bpf_prog_query(cgroup_fd, BPF_CGROUP_INET_EGRESS, 0, NULL, NULL,
- 			   &prog_cnt)) {
--- 
-2.7.4
-
+Regards,
+Arend
