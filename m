@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1CEC46465
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7A5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A6B20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C96E22081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:49:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxXp5O3n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A6B20862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BprR4N7r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96E22081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387709AbeKFGKZ (ORCPT
+        id S2387751AbeKFGKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:10:25 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36175 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387580AbeKFGKY (ORCPT
+        Tue, 6 Nov 2018 01:10:35 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39368 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbeKFGKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:10:24 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z17-v6so4764967pgv.3;
-        Mon, 05 Nov 2018 12:48:54 -0800 (PST)
+        Tue, 6 Nov 2018 01:10:23 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n11-v6so4994545pfb.6;
+        Mon, 05 Nov 2018 12:48:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4p2prooMrBuBN4DjqsFBoeT3ZNXy+n4g0jtJQCtamEY=;
-        b=KxXp5O3nlFzH394M8iOijRUV4ze0v0Sq12AIemSnlkXkhvGj9mQg+fwckBIbH1YV33
-         j4AFPyY4Zl9d1RDgOwY+2f2Rlw6FKGauMeniuZjweP1qCeIVFFWikkxXhV7yTLxLDjAr
-         jXemXkRGntoAbaRSsYwFfQUcI/v9dFaH5OPZfhjr0poZrd5IJ8eFhtuUGV2t8fQrSBYA
-         lLyvh9+ALOkUBaiajSlNtaTTb5IaobkfhFQi9bzXJMosj9PeLAAviHcF0DUDEsV/mjK3
-         rr3n9tCoA0HRY6BIaEcSCyhyBS7fnUuQYSvClTPEQZVh24LapL9o6Lo8oJVJdIaEvDpy
-         XAng==
+        bh=py2saqwnL0jJ4Sun7/vf2GxVpITa6mnrjAiJg1FsXec=;
+        b=BprR4N7rR215A9dR1RcYyKb6e/6dzxI3wQEUfMbUe+6TgG5d7AzFmLekWowT++iUQD
+         H+pj/LZ4EMGoaoZgzZQHH+BiJToWrbistv4GRrRSwqi3gzHNqS3Q/Drw54ykQGIGYPSS
+         4y2G6SS3u+F1UGDi2dDNc2TIQPS+OZ8amjksDTfvULFRhkQNqacX+tutfFOhzVcP++CH
+         nr2OSNi2gCbbiWienBm9czyMbCKCSHmlynC7i5zDRsOUhoHXb1Yivix6OS1+ZW/an6/e
+         CfLjkjEtzYXpOkzb7RLFuhPzjj3gevdZq3O+AbzcKVLO7rZolA/VJJqW8Nyy92Y/PsSi
+         t6dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4p2prooMrBuBN4DjqsFBoeT3ZNXy+n4g0jtJQCtamEY=;
-        b=FJn4d19Zgj0qdOYVIGrVmIt6OZMRxwY31qKHtFwxHTlto6aO2KOxCcr0jTqepyUl/g
-         i9e3XNBeatxrTKpy4seso6aAVE9Py028UxWLSy97QeGlpEKwObuPl6mcLZNDLb6rbc2v
-         8JG44E0pbratrhSh7jBYLQ2Gd34hL3BTYQBQrVgWhl00cI0t4zgrCRCAv4T7bHuLFljj
-         zzDBvuRtVJrQu5j0I9anxx55a53NMQcPtNnIdiCTXgzVjWKUseY0S+8Q+ozjalo3VqpG
-         HF8bIZa6JXEXUnVRHGVlKAeoRnI/Fr73ODO5Cu6PkXHfL9f6pfaeK6LBATC64HmZJibx
-         yR2A==
-X-Gm-Message-State: AGRZ1gKnNnh5FxGhuSx+nevDhoNJT8OkeezQ7Pag2Z12r6jZlbl4HfI0
-        0iBs/cfV1LkaosktjepSNSI=
-X-Google-Smtp-Source: AJdET5fjqjSB6oZS+Mn3Cmw1GPHduZZkGC+b+pTIHWI3/bulXXQuNaIPjnRe0N5gJwv+0Xn4HalrgA==
-X-Received: by 2002:a63:1a0c:: with SMTP id a12mr1328600pga.157.1541450933245;
-        Mon, 05 Nov 2018 12:48:53 -0800 (PST)
+        bh=py2saqwnL0jJ4Sun7/vf2GxVpITa6mnrjAiJg1FsXec=;
+        b=QYIGh/gGbo2JJazXEr7YOf53CY839bWl91GYSpYkiEDTkiuOn+tSczFXLjuBDJAbXf
+         jBUZEAUz89Q4cahTyzy9y7QfPaqh+Tgbo5yv3dlAKmxC87VVVdfw7sbBAcgiVJvZQLHQ
+         gJF7wyEoENsk8POSsyuhbi4OqEgYtYMf99zb9krmmBgSDrpHV4SJx8Rn6j+aDpO65lP7
+         DFJbXxuYigHmHgZkKl2zTZ5lzckEp82iZRfbgEUOb1mLK8FsS6JNlJPVbojrasSvRKlb
+         cYxaHkspToIkLbhc9j1pch/ZNV1Hn/MpQES+EfJjObDfo1PfxA4kxXVr08RW9/kmpKRD
+         22Ig==
+X-Gm-Message-State: AGRZ1gJ4rUZ8e3efn0pqkGvESH0oJOGkYyXDArU4MgGDUs4IAIalpbb+
+        R5ioL5IGAKMC+jXciGMTWl0=
+X-Google-Smtp-Source: AJdET5dw8kn9cERxbLrnNAege2ZZaz2JDyNv4rUWxFCTsTWAwisZTx7ZYiYsOkiIT9mKKEVEKu8WJQ==
+X-Received: by 2002:a62:4816:: with SMTP id v22-v6mr14857525pfa.233.1541450932543;
+        Mon, 05 Nov 2018 12:48:52 -0800 (PST)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id q1sm25569257pgs.14.2018.11.05.12.48.52
+        by smtp.gmail.com with ESMTPSA id q1sm25569257pgs.14.2018.11.05.12.48.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Mon, 05 Nov 2018 12:48:52 -0800 (PST)
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     jdelvare@suse.com, linux@roeck-us.net
 Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] hwmon: (ina3221) Add PM runtime support
-Date:   Mon,  5 Nov 2018 12:48:43 -0800
-Message-Id: <20181105204843.4081-5-nicoleotsuka@gmail.com>
+Subject: [PATCH v5 3/4] hwmon: (ina3221) Make sure data is ready before reading
+Date:   Mon,  5 Nov 2018 12:48:42 -0800
+Message-Id: <20181105204843.4081-4-nicoleotsuka@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181105204843.4081-1-nicoleotsuka@gmail.com>
 References: <20181105204843.4081-1-nicoleotsuka@gmail.com>
@@ -72,236 +72,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all three channels are disabled via in[123]_enable ABI,
-the driver could suspend the chip for power saving purpose.
+The data might need some time to get ready after channel enabling,
+although the data register is always readable. The CVRF bit is to
+indicate that data conversion is finished, so polling the CVRF bit
+before data reading could ensure the result being valid.
 
-So this patch adds the PM runtime support in order to gain
-more power control than system suspend and resume use case.
+An alternative way could be to wait for expected time between the
+channel enabling and the data reading. And this could avoid extra
+I2C communications. However, INA3221 seemly takes longer time than
+what's stated in the datasheet. Test results show that sometimes
+it couldn't finish data conversion in time.
 
-For PM runtime, there are a few related changes happening:
-1) Added a new pm_dev device pointer for all the PM runtime
-   callbacks. This is because hwmon core registers a child
-   device for each hwmon driver and passes it back to each
-   driver. So there might be a mismatch between two device
-   pointers in the driver if mixing using them.
-2) Added a check in ina3221_is_enabled() to make sure that
-   the chip is resumed.
-3) Bypassed the unchanged status in ina3221_write_enable()
-   in order to keep the PM runtime refcount being matched.
-4) Removed the reset routine in the probe() by calling the
-   resume() via pm_runtime_get_sync() instead, as they're
-   similar. It's also necessary to do so to match initial
-   PM refcount with the number of enabled channels.
+So this patch plays safe by adding a CVRF polling to make sure the
+data register is updated with the new data.
 
 Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
 Changelog
-v4->v5:
- * Dropped the code of passing pm pointer via _info API
- ** Moved all changes back to the status of v3
- * Used i2c_client dev pointer for pm runtime callbacks
-v3->v4:
- * Passed pm pointer via _with_info API instead the i2c driver
+v3->v5:
+ * N/A
 v2->v3:
- * Improved a dev_err message
- * Added comments at pm_runtime_put_noidle() callbacks
- * Added pm_runtime header file in an alphabetical order
+ * Dropped timeout dev_err messages as it's indicated in the errno
 v1->v2:
- * Bypassed i2c_client->dev in suspend/resume()
- * Added a missing '\n' in one dev_err()
+ * Moved CVRF polling to data read routine
+ * Added calculation of wait time based on conversion time setting
 
- drivers/hwmon/ina3221.c | 93 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 74 insertions(+), 19 deletions(-)
+ drivers/hwmon/ina3221.c | 42 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index 07dd6ef58d3e..17a57dbc0424 100644
+index 10e8347a3c80..07dd6ef58d3e 100644
 --- a/drivers/hwmon/ina3221.c
 +++ b/drivers/hwmon/ina3221.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #define INA3221_DRIVER_NAME		"ina3221"
-@@ -53,6 +54,7 @@
- #define INA3221_CONFIG_CHs_EN_MASK	GENMASK(14, 12)
+@@ -44,6 +44,13 @@
+ #define INA3221_CONFIG_MODE_SHUNT	BIT(0)
+ #define INA3221_CONFIG_MODE_BUS		BIT(1)
+ #define INA3221_CONFIG_MODE_CONTINUOUS	BIT(2)
++#define INA3221_CONFIG_VSH_CT_SHIFT	3
++#define INA3221_CONFIG_VSH_CT_MASK	GENMASK(5, 3)
++#define INA3221_CONFIG_VSH_CT(x)	(((x) & GENMASK(5, 3)) >> 3)
++#define INA3221_CONFIG_VBUS_CT_SHIFT	6
++#define INA3221_CONFIG_VBUS_CT_MASK	GENMASK(8, 6)
++#define INA3221_CONFIG_VBUS_CT(x)	(((x) & GENMASK(8, 6)) >> 6)
++#define INA3221_CONFIG_CHs_EN_MASK	GENMASK(14, 12)
  #define INA3221_CONFIG_CHx_EN(x)	BIT(14 - (x))
  
-+#define INA3221_CONFIG_DEFAULT		0x7127
  #define INA3221_RSHUNT_DEFAULT		10000
+@@ -52,6 +59,9 @@ enum ina3221_fields {
+ 	/* Configuration */
+ 	F_RST,
  
- enum ina3221_fields {
-@@ -103,6 +105,7 @@ struct ina3221_input {
++	/* Status Flags */
++	F_CVRF,
++
+ 	/* Alert Flags */
+ 	F_WF3, F_WF2, F_WF1,
+ 	F_CF3, F_CF2, F_CF1,
+@@ -63,6 +73,7 @@ enum ina3221_fields {
+ static const struct reg_field ina3221_reg_fields[] = {
+ 	[F_RST] = REG_FIELD(INA3221_CONFIG, 15, 15),
  
- /**
-  * struct ina3221_data - device specific information
-+ * @pm_dev: Device pointer for pm runtime
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @inputs: Array of channel input source specific structures
-@@ -110,6 +113,7 @@ struct ina3221_input {
-  * @reg_config: Register value of INA3221_CONFIG
-  */
- struct ina3221_data {
-+	struct device *pm_dev;
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
-@@ -119,7 +123,8 @@ struct ina3221_data {
- 
- static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
- {
--	return ina->reg_config & INA3221_CONFIG_CHx_EN(channel);
-+	return pm_runtime_active(ina->pm_dev) &&
-+	       (ina->reg_config & INA3221_CONFIG_CHx_EN(channel));
++	[F_CVRF] = REG_FIELD(INA3221_MASK_ENABLE, 0, 0),
+ 	[F_WF3] = REG_FIELD(INA3221_MASK_ENABLE, 3, 3),
+ 	[F_WF2] = REG_FIELD(INA3221_MASK_ENABLE, 4, 4),
+ 	[F_WF1] = REG_FIELD(INA3221_MASK_ENABLE, 5, 5),
+@@ -111,6 +122,28 @@ static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
+ 	return ina->reg_config & INA3221_CONFIG_CHx_EN(channel);
  }
  
- /* Lookup table for Bus and Shunt conversion times in usec */
-@@ -290,21 +295,48 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(dev);
- 	u16 config, mask = INA3221_CONFIG_CHx_EN(channel);
-+	u16 config_old = ina->reg_config & mask;
- 	int ret;
- 
- 	config = enable ? mask : 0;
- 
-+	/* Bypass if enable status is not being changed */
-+	if (config_old == config)
-+		return 0;
++/* Lookup table for Bus and Shunt conversion times in usec */
++static const u16 ina3221_conv_time[] = {
++	140, 204, 332, 588, 1100, 2116, 4156, 8244,
++};
 +
-+	/* For enabling routine, increase refcount and resume() at first */
-+	if (enable) {
-+		ret = pm_runtime_get_sync(ina->pm_dev);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to get PM runtime\n");
++static inline int ina3221_wait_for_data(struct ina3221_data *ina)
++{
++	u32 channels = hweight16(ina->reg_config & INA3221_CONFIG_CHs_EN_MASK);
++	u32 vbus_ct_idx = INA3221_CONFIG_VBUS_CT(ina->reg_config);
++	u32 vsh_ct_idx = INA3221_CONFIG_VSH_CT(ina->reg_config);
++	u32 vbus_ct = ina3221_conv_time[vbus_ct_idx];
++	u32 vsh_ct = ina3221_conv_time[vsh_ct_idx];
++	u32 wait, cvrf;
++
++	/* Calculate total conversion time */
++	wait = channels * (vbus_ct + vsh_ct);
++
++	/* Polling the CVRF bit to make sure read data is ready */
++	return regmap_field_read_poll_timeout(ina->fields[F_CVRF],
++					      cvrf, cvrf, wait, 100000);
++}
++
+ static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
+ 			      int *val)
+ {
+@@ -150,6 +183,10 @@ static int ina3221_read_in(struct device *dev, u32 attr, int channel, long *val)
+ 		if (!ina3221_is_enabled(ina, channel))
+ 			return -ENODATA;
+ 
++		ret = ina3221_wait_for_data(ina);
++		if (ret)
 +			return ret;
-+		}
-+	}
 +
- 	/* Enable or disable the channel */
- 	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, config);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	/* Cache the latest config register value */
- 	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
- 	if (ret)
--		return ret;
-+		goto fail;
+ 		ret = ina3221_read_value(ina, reg, &regval);
+ 		if (ret)
+ 			return ret;
+@@ -189,6 +226,11 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
+ 	case hwmon_curr_input:
+ 		if (!ina3221_is_enabled(ina, channel))
+ 			return -ENODATA;
 +
-+	/* For disabling routine, decrease refcount or suspend() at last */
-+	if (!enable)
-+		pm_runtime_put_sync(ina->pm_dev);
- 
- 	return 0;
++		ret = ina3221_wait_for_data(ina);
++		if (ret)
++			return ret;
 +
-+fail:
-+	if (enable) {
-+		dev_err(dev, "Failed to enable channel %d: error %d\n",
-+			channel, ret);
-+		pm_runtime_put_sync(ina->pm_dev);
-+	}
-+
-+	return ret;
- }
- 
- static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
-@@ -631,44 +663,65 @@ static int ina3221_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
--	ret = regmap_field_write(ina->fields[F_RST], true);
--	if (ret) {
--		dev_err(dev, "Unable to reset device\n");
--		return ret;
--	}
--
--	/* Sync config register after reset */
--	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
--	if (ret)
--		return ret;
-+	/* The driver will be reset, so use reset value */
-+	ina->reg_config = INA3221_CONFIG_DEFAULT;
- 
- 	/* Disable channels if their inputs are disconnected */
- 	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
- 		if (ina->inputs[i].disconnected)
- 			ina->reg_config &= ~INA3221_CONFIG_CHx_EN(i);
- 	}
--	ret = regmap_write(ina->regmap, INA3221_CONFIG, ina->reg_config);
--	if (ret)
--		return ret;
- 
-+	ina->pm_dev = dev;
- 	mutex_init(&ina->lock);
- 	dev_set_drvdata(dev, ina);
- 
-+	/* Enable PM runtime -- status is suspended by default */
-+	pm_runtime_enable(ina->pm_dev);
-+
-+	/* Initialize (resume) the device */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
-+		if (ina->inputs[i].disconnected)
-+			continue;
-+		/* Match the refcount with number of enabled channels */
-+		ret = pm_runtime_get_sync(ina->pm_dev);
-+		if (ret < 0)
-+			goto fail;
-+	}
-+
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
- 							 &ina3221_chip_info,
- 							 ina3221_groups);
- 	if (IS_ERR(hwmon_dev)) {
- 		dev_err(dev, "Unable to register hwmon device\n");
--		mutex_destroy(&ina->lock);
--		return PTR_ERR(hwmon_dev);
-+		ret = PTR_ERR(hwmon_dev);
-+		goto fail;
- 	}
- 
- 	return 0;
-+
-+fail:
-+	pm_runtime_disable(ina->pm_dev);
-+	pm_runtime_set_suspended(ina->pm_dev);
-+	/* pm_runtime_put_noidle() will decrease the PM refcount until 0 */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++)
-+		pm_runtime_put_noidle(ina->pm_dev);
-+	mutex_destroy(&ina->lock);
-+
-+	return ret;
- }
- 
- static int ina3221_remove(struct i2c_client *client)
- {
- 	struct ina3221_data *ina = dev_get_drvdata(&client->dev);
-+	int i;
-+
-+	pm_runtime_disable(ina->pm_dev);
-+	pm_runtime_set_suspended(ina->pm_dev);
-+
-+	/* pm_runtime_put_noidle() will decrease the PM refcount until 0 */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++)
-+		pm_runtime_put_noidle(ina->pm_dev);
- 
- 	mutex_destroy(&ina->lock);
- 
-@@ -726,7 +779,9 @@ static int __maybe_unused ina3221_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops ina3221_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(ina3221_suspend, ina3221_resume)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(ina3221_suspend, ina3221_resume, NULL)
- };
- 
- static const struct of_device_id ina3221_of_match_table[] = {
+ 		/* fall through */
+ 	case hwmon_curr_crit:
+ 	case hwmon_curr_max:
 -- 
 2.17.1
 
