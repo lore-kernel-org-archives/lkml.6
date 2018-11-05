@@ -5,60 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2538C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05817C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5482B2085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF7E92081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC0QAZM/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5482B2085B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/GVD1Go"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7E92081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbeKFGyp (ORCPT
+        id S2388132AbeKFGyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 01:54:45 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46560 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387628AbeKFGyp (ORCPT
+        Tue, 6 Nov 2018 01:54:49 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46763 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387598AbeKFGys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 01:54:45 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r64-v6so5032080pfb.13;
-        Mon, 05 Nov 2018 13:33:03 -0800 (PST)
+        Tue, 6 Nov 2018 01:54:48 -0500
+Received: by mail-pl1-f196.google.com with SMTP id c13-v6so5065668plz.13;
+        Mon, 05 Nov 2018 13:33:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XHS8gkOFUvy4AC3AC6pIxVYKXEuWaPsDgcn2703bFBQ=;
-        b=DC0QAZM/2Jdtxp2zcyXnvv9+42P0RU902rz3nU5/ClWbpRwMwydX/m5ma4YdgLtZi7
-         oOcg/F8kLkN9ql1GHB98UbirWYVoPfkwPED9PwnTab3FWEcaDl/wC6eZ9GVGSxZSTIdA
-         ipT6FUTScNbhu3E2U+keUbWkX6VYXRKGoRFnbADSvYdWrViQ5PLVaAcPOPE4gFpQUtXq
-         iPGQnl/qYjp8AT0FmX5kb9QE4n8nTMUBkUsgvcxgeNA2iBbkDcRaT10+BjR7CPyst8Aa
-         BCbIdO1X+tSpHX8oSWwOrPlasxksbNbHUOGra9EyyKfsXZS6JTaKjGsGM9O5RXO5iArM
-         Egcw==
+        bh=oXPFAGO9CBh1PNvDRHgtigu8kPEG9MMwio1UV3mOaN8=;
+        b=F/GVD1GoFRY+47VtWmBY5PMNbpPc81MoeiMfFCs9D6dHB7eFaXV3vb+GAYcdFySkFQ
+         59Y20NgCTcpfr14ImyHUSwO/K33KONj9VvhI9GCwQYz0DGFDpbaaKSQ3HEeKEd5I3eN1
+         UoYjb8twlt0w2fRkm6r7FdMAe8GPmrYnNRoOkvxwtEp2x2mULCV07brx1lnEV9aXnXqz
+         qocVERjpXnRkLnj09jLgBb4+tde98inSZ8shWjwbwvRk76lUkh8U4eHyln+H/InEawZB
+         B5cTRo2DdLWlF6VoG9GizLLrEXuM+drFfszrGmHHszkHLI+7OV5FFgQFWKY0aNuH9iNb
+         pJog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XHS8gkOFUvy4AC3AC6pIxVYKXEuWaPsDgcn2703bFBQ=;
-        b=iQSEnR8cmPQKKvKQ3hZ5U6lBmRhLDIqg6xveTwPlv2ssYFtyC9ODt1z3a6sbJkUaRm
-         RKGbk7FHtCYglruIVa83UzvoL5QXq7l8uMYXwO9p4U5aPRBaOzAwKyzgCqnXjEA8F390
-         pgKW+1w63Cq2p33mr4uq58u6UOt58I3imqHPKsuY06Fs1l13r4ecPscNakHGGo3LaA8p
-         b1Naq7VeXasWNjSvd9n0Py8Wd52JValgtFAMWyT2rJe9oTQcpKEBucUVmK58ZoGVJgRm
-         INGkkfmj1wv7RtfCsPEKF03Be48OUmIBLssDDOO3WvOSqrANM2/jyGbmWais+bRbfbKC
-         0lVQ==
-X-Gm-Message-State: AGRZ1gKlo6IB+O3I71UnSSIGIinkC4WBqZsPMyit4bigvVUgdTKmmcvu
-        8wGTm38/KMXCCCtxk7wMQyh/Usix9jc=
-X-Google-Smtp-Source: AJdET5enw5kTkw2w/oWlBrr32UcYqcbdDxChR4Yu1FtUwaLpbANaXE0ZIxqCOWOd/zi4M+KsiYkXmQ==
-X-Received: by 2002:a63:151f:: with SMTP id v31mr10637738pgl.34.1541453582643;
-        Mon, 05 Nov 2018 13:33:02 -0800 (PST)
+        bh=oXPFAGO9CBh1PNvDRHgtigu8kPEG9MMwio1UV3mOaN8=;
+        b=FUxaJFYeM6vPoPup/jay32eywvZLe9+UB7Anp18oCc/ymt9d8F4d8aDJZQH7BR3mEB
+         Arqo4jerPn6jV8ErKuykq2ilIAeXsc6JnM/cZB4xDFOv2MSJgX44mbxifvubGQ593Yy0
+         kSlVlY9g0L4G3V7TLCdDH8yilj8DE54jUj7IAOYRH51hbqz03b7765AdHviAHON9+uB5
+         2/F+v5IGe4QoORbc7hrgGPAKm+AbFJD6bYhk5bC6xdzsLCUZI7Pw3wLEjLzY+hEH9WpH
+         LJNSSozX7ct43bmbGtHMIUy6p/Y6Wv73+kKUFaYJ9yyr/yWBL3yAlC197hrxAk7OWVEK
+         0jQQ==
+X-Gm-Message-State: AGRZ1gKMdLLzMqQEs0h6p7nn04wkEtb+cuZCnGD059RLqPQdvyJ9fNKZ
+        0BeHwk9siZ2ZHqDRpOIml9cpCBbKybw=
+X-Google-Smtp-Source: AJdET5dCpLjXo1H39p6UpTy/x4b3rXTKd6o2rcWIDMjKtMvMJZxPUrwl1CYuysig397M9pCWExE5/w==
+X-Received: by 2002:a17:902:7c0b:: with SMTP id x11-v6mr23371532pll.60.1541453586279;
+        Mon, 05 Nov 2018 13:33:06 -0800 (PST)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id m129-v6sm14328440pfm.78.2018.11.05.13.32.59
+        by smtp.gmail.com with ESMTPSA id m129-v6sm14328440pfm.78.2018.11.05.13.33.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 13:33:02 -0800 (PST)
+        Mon, 05 Nov 2018 13:33:05 -0800 (PST)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>,
@@ -87,9 +86,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Rishabh Bhatnagar <rishabhb@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH V3 2/6] usb: core: Add ability to skip phy exit on suspend and init on resume
-Date:   Mon,  5 Nov 2018 16:31:29 -0500
-Message-Id: <1541453493-34981-3-git-send-email-alcooperx@gmail.com>
+Subject: [PATCH V3 3/6] usb: xhci: xhci-plat: Add support for Broadcom STB SoC's
+Date:   Mon,  5 Nov 2018 16:31:30 -0500
+Message-Id: <1541453493-34981-4-git-send-email-alcooperx@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1541453493-34981-1-git-send-email-alcooperx@gmail.com>
 References: <1541453493-34981-1-git-send-email-alcooperx@gmail.com>
@@ -98,174 +97,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to skip calling the PHY's exit routine on suspend
-and the PHY's init routine on resume. This is to handle a USB PHY
-that should have it's power_off function called on suspend but cannot
-have it's exit function called because on exit it will disable the
-PHY to the point where register accesses to the Host Controllers
-using the PHY will be disabled and the host drivers will crash.
-
-This is enabled with the HCD flag "suspend_without_phy_exit" which
-can be set from any HCD driver.
+Add support for Broadcom STB SoC's to the xhci platform driver
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/usb/core/hcd.c  |  8 ++++----
- drivers/usb/core/phy.c  | 18 ++++++++++++------
- drivers/usb/core/phy.h  |  9 ++++++---
- include/linux/usb/hcd.h |  3 +++
- 4 files changed, 25 insertions(+), 13 deletions(-)
+ drivers/usb/host/xhci-brcm.c | 17 +++++++++++++++++
+ drivers/usb/host/xhci-brcm.h | 16 ++++++++++++++++
+ drivers/usb/host/xhci-plat.c |  8 ++++++++
+ 3 files changed, 41 insertions(+)
+ create mode 100644 drivers/usb/host/xhci-brcm.c
+ create mode 100644 drivers/usb/host/xhci-brcm.h
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 487025d31d44..5ebc82a69403 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -2249,7 +2249,7 @@ int hcd_bus_suspend(struct usb_device *rhdev, pm_message_t msg)
- 		hcd->state = HC_STATE_SUSPENDED;
- 
- 		if (!PMSG_IS_AUTO(msg))
--			usb_phy_roothub_suspend(hcd->self.sysdev,
-+			usb_phy_roothub_suspend(hcd,
- 						hcd->phy_roothub);
- 
- 		/* Did we race with a root-hub wakeup event? */
-@@ -2290,7 +2290,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
- 	}
- 
- 	if (!PMSG_IS_AUTO(msg)) {
--		status = usb_phy_roothub_resume(hcd->self.sysdev,
-+		status = usb_phy_roothub_resume(hcd,
- 						hcd->phy_roothub);
- 		if (status)
- 			return status;
-@@ -2333,7 +2333,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
- 		}
- 	} else {
- 		hcd->state = old_state;
--		usb_phy_roothub_suspend(hcd->self.sysdev, hcd->phy_roothub);
-+		usb_phy_roothub_suspend(hcd, hcd->phy_roothub);
- 		dev_dbg(&rhdev->dev, "bus %s fail, err %d\n",
- 				"resume", status);
- 		if (status != -ESHUTDOWN)
-@@ -2730,7 +2730,7 @@ int usb_add_hcd(struct usb_hcd *hcd,
- 	struct usb_device *rhdev;
- 
- 	if (!hcd->skip_phy_initialization && usb_hcd_is_primary_hcd(hcd)) {
--		hcd->phy_roothub = usb_phy_roothub_alloc(hcd->self.sysdev);
-+		hcd->phy_roothub = usb_phy_roothub_alloc(hcd);
- 		if (IS_ERR(hcd->phy_roothub))
- 			return PTR_ERR(hcd->phy_roothub);
- 
-diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-index 38b2c776c4b4..308d716304da 100644
---- a/drivers/usb/core/phy.c
-+++ b/drivers/usb/core/phy.c
-@@ -46,10 +46,11 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
- 	return 0;
- }
- 
--struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev)
-+struct usb_phy_roothub *usb_phy_roothub_alloc(struct usb_hcd *hcd)
- {
- 	struct usb_phy_roothub *phy_roothub;
- 	int i, num_phys, err;
-+	struct device *dev = hcd->self.sysdev;
- 
- 	if (!IS_ENABLED(CONFIG_GENERIC_PHY))
- 		return NULL;
-@@ -162,26 +163,30 @@ void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub)
- }
- EXPORT_SYMBOL_GPL(usb_phy_roothub_power_off);
- 
--int usb_phy_roothub_suspend(struct device *controller_dev,
-+int usb_phy_roothub_suspend(struct usb_hcd *hcd,
- 			    struct usb_phy_roothub *phy_roothub)
- {
-+	struct device *controller_dev = hcd->self.sysdev;
+diff --git a/drivers/usb/host/xhci-brcm.c b/drivers/usb/host/xhci-brcm.c
+new file mode 100644
+index 000000000000..a7220126f6af
+--- /dev/null
++++ b/drivers/usb/host/xhci-brcm.c
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, Broadcom */
 +
- 	usb_phy_roothub_power_off(phy_roothub);
- 
- 	/* keep the PHYs initialized so the device can wake up the system */
--	if (device_may_wakeup(controller_dev))
-+	if (device_may_wakeup(controller_dev) || hcd->suspend_without_phy_exit)
- 		return 0;
- 
- 	return usb_phy_roothub_exit(phy_roothub);
- }
- EXPORT_SYMBOL_GPL(usb_phy_roothub_suspend);
- 
--int usb_phy_roothub_resume(struct device *controller_dev,
-+int usb_phy_roothub_resume(struct usb_hcd *hcd,
- 			   struct usb_phy_roothub *phy_roothub)
- {
-+	struct device *controller_dev = hcd->self.sysdev;
- 	int err;
- 
- 	/* if the device can't wake up the system _exit was called */
--	if (!device_may_wakeup(controller_dev)) {
-+	if (!device_may_wakeup(controller_dev) &&
-+	    !hcd->suspend_without_phy_exit) {
- 		err = usb_phy_roothub_init(phy_roothub);
- 		if (err)
- 			return err;
-@@ -190,7 +195,8 @@ int usb_phy_roothub_resume(struct device *controller_dev,
- 	err = usb_phy_roothub_power_on(phy_roothub);
- 
- 	/* undo _init if _power_on failed */
--	if (err && !device_may_wakeup(controller_dev))
-+	if (err && !device_may_wakeup(controller_dev)
-+	    && !hcd->suspend_without_phy_exit)
- 		usb_phy_roothub_exit(phy_roothub);
- 
- 	return err;
-diff --git a/drivers/usb/core/phy.h b/drivers/usb/core/phy.h
-index 88a3c037e9df..34293e11a917 100644
---- a/drivers/usb/core/phy.h
-+++ b/drivers/usb/core/phy.h
-@@ -5,13 +5,16 @@
-  * Copyright (C) 2018 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-  */
- 
 +#include <linux/usb.h>
 +#include <linux/usb/hcd.h>
 +
- #ifndef __USB_CORE_PHY_H_
- #define __USB_CORE_PHY_H_
- 
- struct device;
- struct usb_phy_roothub;
- 
--struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev);
-+struct usb_phy_roothub *usb_phy_roothub_alloc(struct usb_hcd *hcd);
- 
- int usb_phy_roothub_init(struct usb_phy_roothub *phy_roothub);
- int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub);
-@@ -19,9 +22,9 @@
- int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub);
- void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub);
- 
--int usb_phy_roothub_suspend(struct device *controller_dev,
-+int usb_phy_roothub_suspend(struct usb_hcd *hcd,
- 			    struct usb_phy_roothub *phy_roothub);
--int usb_phy_roothub_resume(struct device *controller_dev,
-+int usb_phy_roothub_resume(struct usb_hcd *hcd,
- 			   struct usb_phy_roothub *phy_roothub);
- 
- #endif /* __USB_CORE_PHY_H_ */
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 97e2ddec18b1..87a104055b5e 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -157,6 +157,9 @@ struct usb_hcd {
- 	 */
- 	unsigned		skip_phy_initialization:1;
- 
-+	/* Some phys don't want the phy's exit/init called on suspend/resume */
-+	unsigned		suspend_without_phy_exit:1;
++#include "xhci.h"
 +
- 	/* The next flag is a stopgap, to be removed when all the HCDs
- 	 * support the new root-hub polling mechanism. */
- 	unsigned		uses_new_polling:1;
++int xhci_plat_brcm_init_quirk(struct usb_hcd *hcd)
++{
++	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++
++	xhci->quirks |= XHCI_RESET_ON_RESUME;
++	hcd->suspend_without_phy_exit = 1;
++	return 0;
++}
++
+diff --git a/drivers/usb/host/xhci-brcm.h b/drivers/usb/host/xhci-brcm.h
+new file mode 100644
+index 000000000000..e64800fae4d5
+--- /dev/null
++++ b/drivers/usb/host/xhci-brcm.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, Broadcom */
++
++#ifndef _XHCI_BRCM_H
++#define _XHCI_BRCM_H
++
++#if IS_ENABLED(CONFIG_USB_XHCI_BRCM)
++int xhci_plat_brcm_init_quirk(struct usb_hcd *hcd);
++#else
++static inline int xhci_plat_brcm_init_quirk(struct usb_hcd *hcd)
++{
++	return 0;
++}
++#endif
++#endif /* _XHCI_BRCM_H */
++
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 32b5574ad5c5..5372d4040be6 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -24,6 +24,7 @@
+ #include "xhci-plat.h"
+ #include "xhci-mvebu.h"
+ #include "xhci-rcar.h"
++#include "xhci-brcm.h"
+ 
+ static struct hc_driver __read_mostly xhci_plat_hc_driver;
+ 
+@@ -112,6 +113,10 @@ static int xhci_plat_start(struct usb_hcd *hcd)
+ 	.resume_quirk = xhci_rcar_resume_quirk,
+ };
+ 
++static const struct xhci_plat_priv xhci_plat_brcm = {
++	.init_quirk = xhci_plat_brcm_init_quirk
++};
++
+ static const struct of_device_id usb_xhci_of_match[] = {
+ 	{
+ 		.compatible = "generic-xhci",
+@@ -144,6 +149,9 @@ static int xhci_plat_start(struct usb_hcd *hcd)
+ 	}, {
+ 		.compatible = "renesas,rcar-gen3-xhci",
+ 		.data = &xhci_plat_renesas_rcar_gen3,
++	}, {
++		.compatible = "brcm,bcm7445-xhci",
++		.data = &xhci_plat_brcm,
+ 	},
+ 	{},
+ };
 -- 
 1.9.0.138.g2de3478
 
