@@ -2,157 +2,243 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE319C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7BCC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D97F20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D97F20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id DD89420825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:59:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bbb5bm7s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD89420825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbeKEURy (ORCPT
+        id S1729040AbeKEUSa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:17:54 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:44311 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbeKEURx (ORCPT
+        Mon, 5 Nov 2018 15:18:30 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:39011 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKEUSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:17:53 -0500
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 8128E40003;
-        Mon,  5 Nov 2018 10:58:43 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 11:58:41 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] [media] ov7670: make "xclk" clock optional
-Message-ID: <20181105105841.GJ20885@w540>
-References: <20181004212903.364064-1-lkundrak@v3.sk>
+        Mon, 5 Nov 2018 15:18:30 -0500
+Received: by mail-vk1-f194.google.com with SMTP id o10-v6so1893122vki.6
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 02:59:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EmH8ohNPPK8oq+GlociTrZsnnswkkeSudzCWTi+0ZNk=;
+        b=bbb5bm7sPMZqY0XJE6UOW7DqSQTlc173izsrA3BdD0IgITryguVXwsHfGzsXpwezrn
+         yAMpxU9XZxW5MGV5Kz0rrWeC52VRKseknfobkTVC1Pkv0toBxtc23XdrGW9B1FoK8Nos
+         EukXPObxYFuLcO8XYr2y1rEEU+rRZJkYF6jvzgKqpmrFq0rfWaGqtJhtKifp1ZtNHx4F
+         O0LpnAahNuUyw9dBiExoVbRd0dH379bhJjS6m7VcYHMe8e9gdnXI/eG8fgaq+dYqTxcN
+         CfuMAVR/TFZpJpnxyx0YPQFq+32z/baz+V56bOtYTnXHcT/dmJM//4j8gHTpWfQxfxt5
+         D2pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EmH8ohNPPK8oq+GlociTrZsnnswkkeSudzCWTi+0ZNk=;
+        b=HospHlIABL1n9WU+5ij6+waF4W+1lBbnHN6p4/ZmqQE4PnpPekdh56RYVjg9SP8+9D
+         VtzvJI6dQFLJbW8Al+dhiLg35uNBKbkzCNGVhe1CtLF7dFn1Gh4DDI06o+9IlmGPx/97
+         +vkRy5wp4tLuMlfOQMOtC6IgDthG8p2r7f0kMeQOr+JC2s4Sq7JUN6nR3Oo8qvhFVo+1
+         mCBpjBMcXhYg0upFoUfZlyFP0+OThuZan63jCFrQnj4FmOGr0592SrHeVFXHScZBsCF5
+         L2OlEDWgIh7LSTAFl9sa4l0BolDvAHrFDnq4qPrzZjC5MeoqaRF63ALvoPoHwd3wTS4O
+         ef0Q==
+X-Gm-Message-State: AGRZ1gJp3UWT5v4bic8ReIJqr0A0U4StXmgZrS0ieWQ96hLeS1fM2EzO
+        NrqTWJ79MuU4tnOsy1v2o0lpJ8xhd8NfvezhOfINBA==
+X-Google-Smtp-Source: AJdET5ePMJFJVC9VzGDssNgPueIropZJkVUcKeU4EynupwqFFm7z4956NZmL+wgGhRK8B4fp3YQOs5ziIVUFnFf0Qp0=
+X-Received: by 2002:a1f:b90a:: with SMTP id j10-v6mr9603540vkf.14.1541415560696;
+ Mon, 05 Nov 2018 02:59:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lildS9pRFgpM/xzO"
-Content-Disposition: inline
-In-Reply-To: <20181004212903.364064-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181024151116.30935-1-kan.liang@linux.intel.com>
+ <CABPqkBQEp9SLQuAonW7-c9HzH4bSgUyJGJ5ZZNXHy-0phHvvZQ@mail.gmail.com> <c7356e5d-71e2-1562-1a0b-2ca0d985d4cb@linux.intel.com>
+In-Reply-To: <c7356e5d-71e2-1562-1a0b-2ca0d985d4cb@linux.intel.com>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Mon, 5 Nov 2018 02:59:08 -0800
+Message-ID: <CABPqkBRT678TYMbPMwsUjmazQij_qFDgu2nS7dm619ukni5EGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: Add munmap callback
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kan,
 
---lildS9pRFgpM/xzO
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+I built a small test case for you to demonstrate the issue for code and data.
+Compile the test program and then do:
+For text:
+$ perf record  ./mmap
+$ perf report -D | fgrep MMAP2
 
-Hi Lubomir,
-   +Sakari in Cc
+The test program mmaps 2 pages, unmaps the second, and remap 1 page
+over the freed space.
+If you look at the MMAP2 record, you will not be able to reconstruct
+what happened and perf will
+get confused should it try to symbolize from the address range
 
-I just noticed this, and the patch is now in v4.20, but let me comment
-anyway on this.
+With Text:
+PERF_RECORD_MMAP2 5937/5937: [0x400000(0x1000) @ 0 08:01 400938
+824817672]: r-xp /home/eranian/mmap
+PERF_RECORD_MMAP2 5937/5937: [0x7f7c01019000(0x2000) @ 0x7f7c01019000
+00:00 0 0]: rwxp //anon
+PERF_RECORD_MMAP2 5937/5937: [0x7f7c01019000(0x2000) @ 0x7f7c01019000
+00:00 0 0]: rwxp //anon
 
-On Thu, Oct 04, 2018 at 11:29:03PM +0200, Lubomir Rintel wrote:
-> When the "xclk" clock was added, it was made mandatory. This broke the
-> driver on an OLPC plaform which doesn't know such clock. Make it
-> optional.
+^^^^^^^^^^^^^^^^^^^^^^^^ captures the whole VMA but not the mapping
+change in user space
+
+For data:
+$ perf record -d  ./mmap
+$ perf report -D | fgrep MMAP2
+With data:
+PERF_RECORD_MMAP2 6430/6430: [0x400000(0x1000) @ 0 08:01 400938
+3278843184]: r-xp /home/eranian/mmap
+PERF_RECORD_MMAP2 6430/6430: [0x7f4aa704b000(0x2000) @ 0x7f4aa704b000
+00:00 0 0]: rw-p //anon
+PERF_RECORD_MMAP2 6430/6430: [0x7f4aa704b000(0x2000) @ 0x7f4aa704b000
+00:00 0 0]: rw-p //anon
+
+Same test case with data.
+Perf will think the entire 2 pages have been replaced when in fact
+only the second has.
+I believe the problem is likely to impact data and jitted code cache
+
+#include <sys/types.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <err.h>
+#include <getopt.h>
+
+int main(int argc, char **argv)
+{
+void *addr1, *addr2;
+size_t pgsz = sysconf(_SC_PAGESIZE);
+int n = 2;
+int ret;
+int c, mode = 0;
+
+while ((c = getopt(argc, argv, "hd")) != -1) {
+switch (c) {
+case 'h':
+printf("[-h]\tget this help\n");
+printf("[-d]\tuse data mmaps (no PROT_EXEC)\n");
+return 0;
+case 'd':
+mode = PROT_EXEC;
+break;
+default:
+errx(1, "unknown option");
+}
+}
+/* default to data */
+if (mode == 0)
+mode = PROT_WRITE;
+
+/*
+* mmap 2 contiugous pages
+*/
+addr1 = mmap(NULL, n * pgsz, PROT_READ| mode, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+if (addr1 == (void *)MAP_FAILED)
+err(1, "mmap 1 failed");
+
+printf("addr1=[%p : %p]\n", addr1, addr1 + n * pgsz);
+
+/*
+* unmap only the second page
+*/
+ret = munmap(addr1 + pgsz, pgsz);
+if (ret == -1)
+err(1, "munmp failed");
+
+/*
+* mmap 1 page at the location of the unmap page (should reuse virtual space)
+* This creates a continuous region built from two mmaps and
+potentially two different sources
+* especially with jitted runtimes
+*/
+addr2 = mmap(addr1 + pgsz, 1 * pgsz, PROT_READ|PROT_WRITE | mode,
+MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+
+printf("addr2=%p\n", addr2);
+
+if (addr2 == (void *)MAP_FAILED)
+err(1, "mmap 2 failed");
+if (addr2 != (addr1 + pgsz))
+errx(1, "wrong mmap2 address");
+
+sleep(1);
+
+return 0;
+}
+
+On Thu, Nov 1, 2018 at 7:10 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
 >
-
-I don't think this is correct. The sensor needs a clock to work.
-
-With this patch clock_speed which is used to calculate
-the framerate is defaulted to 30MHz, crippling all the calculations if
-that default value doesn't match what is actually installed on the
-board.
-
-If this patch breaks the OLPC, then might it be the DTS for said
-device needs to be fixed instead of working around the issue here?
-
-Also, the DT bindings should be updated too if we decide this property
-can be omitted. At this point, with a follow-up patch.
-
-Thanks
-   j
-
-> Tested on a OLPC XO-1 laptop.
 >
-> Cc: stable@vger.kernel.org # 4.11+
-> Fixes: 0a024d634cee ("[media] ov7670: get xclk")
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/media/i2c/ov7670.c | 27 +++++++++++++++++----------
->  1 file changed, 17 insertions(+), 10 deletions(-)
 >
-> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> index 31bf577b0bd3..64d1402882c8 100644
-> --- a/drivers/media/i2c/ov7670.c
-> +++ b/drivers/media/i2c/ov7670.c
-> @@ -1808,17 +1808,24 @@ static int ov7670_probe(struct i2c_client *client,
->  			info->pclk_hb_disable = true;
->  	}
+> On 10/24/2018 3:30 PM, Stephane Eranian wrote:
+> > The need for this new record type extends beyond physical address conversions
+> > and PEBS. A long while ago, someone reported issues with symbolization related
+> > to perf lacking munmap tracking. It had to do with vma merging. I think the
+> > sequence of mmaps was as follows in the problematic case:
+> > 1.   addr1 = mmap(8192);
+> > 2.   munmap(addr1 + 4096, 4096)
+> > 3.   addr2 = mmap(addr1+4096, 4096)
+> >
+> > If successful, that yields addr2 = addr1 + 4096 (could also get the
+> > same without forcing the address).
+> >
+> > In that case, if I recall correctly, the vma for 1st mapping (now at
+> > 4k) and that of the 2nd mapping (4k)
+> > get merged into a single 8k vma and this is what perf_events will
+> > record for PERF_RECORD_MMAP.
+> > On the perf tool side, it is assumed that if two timestamped mappings
+> > overlap then, the latter overrides
+> > the former. In this case, perf would loose the mapping of the first
+> > 4kb and assume all symbols comes from
+> > 2nd mapping. Hopefully I got the scenario right. If so, then you'd
+> > need PERF_RECORD_UNMAP to
+> > disambiguate assuming the perf tool is modified accordingly.
+> >
 >
-> -	info->clk = devm_clk_get(&client->dev, "xclk");
-> -	if (IS_ERR(info->clk))
-> -		return PTR_ERR(info->clk);
-> -	ret = clk_prepare_enable(info->clk);
-> -	if (ret)
-> -		return ret;
-> +	info->clk = devm_clk_get(&client->dev, "xclk"); /* optional */
-> +	if (IS_ERR(info->clk)) {
-> +		ret = PTR_ERR(info->clk);
-> +		if (ret == -ENOENT)
-> +			info->clk = NULL;
-> +		else
-> +			return ret;
-> +	}
-> +	if (info->clk) {
-> +		ret = clk_prepare_enable(info->clk);
-> +		if (ret)
-> +			return ret;
+> Hi Stephane and Peter,
 >
-> -	info->clock_speed = clk_get_rate(info->clk) / 1000000;
-> -	if (info->clock_speed < 10 || info->clock_speed > 48) {
-> -		ret = -EINVAL;
-> -		goto clk_disable;
-> +		info->clock_speed = clk_get_rate(info->clk) / 1000000;
-> +		if (info->clock_speed < 10 || info->clock_speed > 48) {
-> +			ret = -EINVAL;
-> +			goto clk_disable;
-> +		}
->  	}
+> I went through the link(https://lkml.org/lkml/2017/1/27/452). I'm trying
+> to understand the problematic case.
 >
->  	ret = ov7670_init_gpio(client, info);
-> --
-> 2.19.0
+> It looks like the issue can only be triggered by perf inject --jit.
+> Because it can inject extra MMAP events.
+> As my understanding,  Linux kernel only try to merge VMAs if they are
+> both from anon or they are both from the same file. --jit breaks the
+> rule, and makes the merged VMA partly from anon, partly from file.
+> Now, there is a new MMAP event which range covers the modified VMA.
+> Without the help of MUNMAP event, perf tool have no idea if the new one
+> is a newly merged VMA (modified VMA + a new VMA) or a brand new VMA.
+> Current code just simply overwrite the modified VMAs. The VMA
+> information which --jit injected may be lost. The symbolization may be
+> lost as well.
 >
-
---lildS9pRFgpM/xzO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb4CJhAAoJEHI0Bo8WoVY8T4EP/20jk08NU+3uAbP5KtpmbirC
-bfLr1t5zfjIaq6okDqw1aslMbPzlOtb0BpcJX3adttCtUUWQT7bkWfiPUZLfkLAz
-zSBvPHZarIqhTtnc3wIA+2H4d1XB63j/+a8hAmqIK3CqLhUJOC3SxA7dxxive+hW
-HMfY3g4g33OtehF4OzVlFlrKUHBkFFuzUjy27MAZ3si7D8nHCzKONxIXuWbTkPj6
-Swsrg4Hl198IuMGdqWW9/rM84/Foa6osGZmr5DGlnw3slmbcCgiSWPQ4/+gkojNl
-4AtjRtwVAVHxUyE0EvK1T8TMnLD3vRWUu6m3Xmwqs+B7T2k5Ww8FiT3uHTVfsX0c
-SoOCuDfslzcK70xLeH+I/uK1PJCIVkhpNkmZnNJf0oG5C0oODg7gopYmbOQEFAF9
-IQdPwxdg4Z1YuA68SdE6vwNiBfuqWq9DQ3FqRHcQqOQDe0X2YcuMLK/sMa1XYkYn
-waduL0DD4LwhcnB39p1XNRRZ6UQ+rU8oWt8c/9HMq/ldVilVGkNhNE+fUmEZGtLk
-V0YPVw5pQKKjye6WPmQm66VxhFUD5w9A6wpcLUhrZI4OXxuMkkrtVBSHYHpGofIi
-zKAR5Fa9I5gNmXjmwvccJEi6Wir1mEDUIlAs4DR+b7EEMKyrXsRH/audZpnVEVY0
-Noq3MtAR6KxAtfNpppkA
-=WJ6g
------END PGP SIGNATURE-----
-
---lildS9pRFgpM/xzO--
+> Except --jit, the VMAs information should be consistent between kernel
+> and perf tools. We shouldn't observe the problem. MUNMAP event is not
+> needed.
+>
+> Is my understanding correct?
+>
+> Do you have a test case for the problem?
+>
+> Thanks,
+> Kan
