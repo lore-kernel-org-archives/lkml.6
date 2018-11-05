@@ -2,95 +2,151 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5251C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78128C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6874320869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:46:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6874320869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E6BE20869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:47:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KaIumE2N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6BE20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbeKEUFt (ORCPT
+        id S1729092AbeKEUGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:05:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33873 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeKEUFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:05:48 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AEDD8207B0; Mon,  5 Nov 2018 11:46:41 +0100 (CET)
-Received: from localhost (unknown [185.94.189.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3610F206D8;
-        Mon,  5 Nov 2018 11:46:27 +0100 (CET)
-Date:   Mon, 5 Nov 2018 11:46:26 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 07/10] drm/sun4i: sun6i_mipi_dsi: Enable burst mode HBP,
- HSA_HSE
-Message-ID: <20181105104626.ug4bwc3uc3vbyfpe@flea>
-References: <20181103100900.30313-1-jagan@amarulasolutions.com>
- <20181103100900.30313-8-jagan@amarulasolutions.com>
+        Mon, 5 Nov 2018 15:06:11 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33169 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKEUGL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 15:06:11 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f19-v6so6081629wmb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 02:47:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=83JBiHkJUogcG2xRvm16Iv+0IU5LY0uKKBHZhVcaePo=;
+        b=KaIumE2N+Sv5IZDz8XusC0AuYaFwHxM6EWK5MJiIozJ7B7YcWBzObYHyZ6aynEJfB2
+         IXYIQCIybLDHybMzuWfYg+aCrBBcwlbXTK34CAjJoZNRH4bRgZtIMoDDD9sO0tzCRMZC
+         EA/CkX4Xh3kSMcwDJoS6CTBD9s+oLmUesAjus=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=83JBiHkJUogcG2xRvm16Iv+0IU5LY0uKKBHZhVcaePo=;
+        b=Wz8xZWi8+Kw0KKiSveAPwzee85/aQl9g12/I564dBXaclXbzzBTQq21FY5i53Di8xG
+         OJkPf8FJWLRXFNchqWRD2FCMzW3Jd1Z3hBsw6WVCpdKC9E2XAQl40rtiHuXVSWgMwSWq
+         0jU3IcCkqjF5xW/bm3iecMeRiKfWH7KVleHTHQ9A1SaefG6y1g3PuaOkk+rOWik577l/
+         8OQfQIw/bH82D/J7L8Kfyk3k0a/nl/F9ZKRztNeB0YWt+hQW/CQTamk0c+2mEx7lvGdR
+         CPCKyK5PPgsbUwwO4zUEI/sdxf9IQcFlBYu7oKL6iw0H5Uo/LvS0WFb0rRQKbCQanoFu
+         2HHw==
+X-Gm-Message-State: AGRZ1gKP/B9DDiWjVEG87q8HJVjSPFAJ5RDlz2pPnC4uiYZc7w4RoE6u
+        zUQlCbCvOuNnUVwWvt9D3g2UDQ==
+X-Google-Smtp-Source: AJdET5eqJbnutZfUaNepyZEWHR5gxIjyoaqrE68KN8ZEnAQhoajLORKJyNbf5aoIvZzAuUf6qMORzQ==
+X-Received: by 2002:a1c:4489:: with SMTP id r131-v6mr6032676wma.121.1541414823775;
+        Mon, 05 Nov 2018 02:47:03 -0800 (PST)
+Received: from apalos (ppp-94-65-93-8.home.otenet.gr. [94.65.93.8])
+        by smtp.gmail.com with ESMTPSA id j129-v6sm8932815wmb.47.2018.11.05.02.47.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 02:47:03 -0800 (PST)
+Date:   Mon, 5 Nov 2018 12:46:59 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Aaron Lu <aaron.lu@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?UGF3ZcWC?= Staszewski <pstaszewski@itcare.pl>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Yoel Caspersen <yoel@kviknet.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in
+ page_frag_free()
+Message-ID: <20181105104659.GA5347@apalos>
+References: <20181105085820.6341-1-aaron.lu@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bu2md7yzvsefbush"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181103100900.30313-8-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181105085820.6341-1-aaron.lu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Aaron,
+> page_frag_free() calls __free_pages_ok() to free the page back to
+> Buddy. This is OK for high order page, but for order-0 pages, it
+> misses the optimization opportunity of using Per-Cpu-Pages and can
+> cause zone lock contention when called frequently.
+> 
+> Paweł Staszewski recently shared his result of 'how Linux kernel
+> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
+> found the lock contention comes from page allocator:
+> 
+>   mlx5e_poll_tx_cq
+>   |
+>    --16.34%--napi_consume_skb
+>              |
+>              |--12.65%--__free_pages_ok
+>              |          |
+>              |           --11.86%--free_one_page
+>              |                     |
+>              |                     |--10.10%--queued_spin_lock_slowpath
+>              |                     |
+>              |                      --0.65%--_raw_spin_lock
+>              |
+>              |--1.55%--page_frag_free
+>              |
+>               --1.44%--skb_release_data
+> 
+> Jesper explained how it happened: mlx5 driver RX-page recycle
+> mechanism is not effective in this workload and pages have to go
+> through the page allocator. The lock contention happens during
+> mlx5 DMA TX completion cycle. And the page allocator cannot keep
+> up at these speeds.[2]
+> 
+> I thought that __free_pages_ok() are mostly freeing high order
+> pages and thought this is an lock contention for high order pages
+> but Jesper explained in detail that __free_pages_ok() here are
+> actually freeing order-0 pages because mlx5 is using order-0 pages
+> to satisfy its page pool allocation request.[3]
+> 
+> The free path as pointed out by Jesper is:
+> skb_free_head()
+>   -> skb_free_frag()
+>     -> skb_free_frag()
+>       -> page_frag_free()
+> And the pages being freed on this path are order-0 pages.
+> 
+> Fix this by doing similar things as in __page_frag_cache_drain() -
+> send the being freed page to PCP if it's an order-0 page, or
+> directly to Buddy if it is a high order page.
+> 
+> With this change, Paweł hasn't noticed lock contention yet in
+> his workload and Jesper has noticed a 7% performance improvement
+> using a micro benchmark and lock contention is gone.
+I did the same tests on a 'low' speed 1Gbit interface on an cortex-a53.
+I used socionext's netsec driver and switched buffer allocation from the 
+current scheme to using page_pool API (which by default allocates order0 
+pages).
 
---bu2md7yzvsefbush
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Running 'perf top' pre and post patch got me the same results.
+__free_pages_ok() disappeared from perf top and i got an ~11% 
+performance boost testing with 64byte packets.
 
-On Sat, Nov 03, 2018 at 03:38:57PM +0530, Jagan Teki wrote:
-> Horizontal back porch, sync active and sync end bits are
-> needed to enable for burst mode panel operations.
->=20
-> So, enable them via dsi base control register.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-
-What is needed seems to be the exact opposite. The bits to *disable*
-them.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---bu2md7yzvsefbush
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AfggAKCRDj7w1vZxhR
-xVJpAP93E//ivIyaeoaYleCIAQyafwRqAPOndZVGOV8XJ0tKQwEAtqu1KJ8+/KEe
-YJK3pUtIz5OqYJItagRAae1rIuTpzQY=
-=dgmO
------END PGP SIGNATURE-----
-
---bu2md7yzvsefbush--
+Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Tested-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
