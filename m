@@ -2,114 +2,128 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5965C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D862C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B1020827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1144820685
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:47:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qhIihwZv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B1020827
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMmsPR9h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1144820685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbeKFAHP (ORCPT
+        id S1729695AbeKFAH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:07:15 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39076 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbeKFAHO (ORCPT
+        Mon, 5 Nov 2018 19:07:29 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37117 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKFAH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:07:14 -0500
-Received: by mail-qk1-f193.google.com with SMTP id e4so15047068qkh.6;
-        Mon, 05 Nov 2018 06:47:11 -0800 (PST)
+        Mon, 5 Nov 2018 19:07:28 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u13-v6so4542273pfm.4;
+        Mon, 05 Nov 2018 06:47:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oJCrd2ZI2MDJ7I0rSGqK7lK4chxD/7U3NIyzfpUqwFM=;
-        b=qhIihwZvkNi0PGwO7Ki4mcRp7buSmZ/xP72lBL2MZ3FNfOKtCqy6KMNnZE1tlxNcAO
-         S1ZtNpao+BXc+dTiT1opvxtxCCT++j7D5eebSXn2XuKt14kvb8iC+UE9/5b2DbxB2H4w
-         NCtsseeI2FHvsE2FRo0KXGp828d3BeSKlObQLAQTrTLGt49arwvEjvY2XIlZ4awFxh1u
-         cBiDvhn8KhBym/xUEZxfUIW8sLfX7pub/H6iSYGgfumrGJCefrA97/Xtl96ZHECuAZ9m
-         5VP/HgDtgcmHicpaFkTwkEZL9/V06fii17xUMgIacDVtDgg+PzW67cnvbL7UUC9W+fx3
-         vn+A==
+        h=from:to:cc:subject:date:message-id;
+        bh=YGDbV8M6ZQhO26iEMemFlbnzNSn4SXD18e12/JLSXVs=;
+        b=RMmsPR9hjn8LPbtES6bav82LC1g5/WYwn+HoicDgDaSIIbVrcehduVS0JWuXyjJJMy
+         SRU9xgFrAYeeob3ZB7zUY/l3g7TLeDIUgqoIVa/aldvD1V3Q13znsx1OsNXAFXX76699
+         LmGKn550c20qKejouedYZaFyupx7MDqUfeK0qPDhJL8ZxUMOfR/hcNKgSEqpNVDQr21f
+         4kazinm0bBZb0w8K8AtXrTBcAtYrCw/PlDUGN/CRgqxV2A7yGD6Qy616xfdxlNjYsD/h
+         /aqLz17morRx0/Lrfu6nEWCq4fJgQGbeElDb/3jdzLiygI8DUvH9c0plRg0sZSR+nlwZ
+         LPaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oJCrd2ZI2MDJ7I0rSGqK7lK4chxD/7U3NIyzfpUqwFM=;
-        b=hy8JNYQn5Cg3hM6FHbxq4vqo6Gr3QRdq6XVftYBEnLKldm5Q31zdYbwzvH0H07yQoN
-         8KlpaT0xniOIWOWo4mFDs39c1fyIBkYtN0Se5krOHjcF5bs9NlyXHG4mS93cK+6O5cxE
-         cP+1TJezcPUePJlmqvpEnGhx26wHoOkoy0qJo7ZxIo+1EM1zNKEKRoV9bAxj+zlUGcib
-         DB1R8chLcNA0MOEaIISmtDmhP796qmSEICPQrqSWIJ2ZYobwkXtYcmKXa6NKReQAUXeM
-         OhUHu+fljV67M3cABYB6H0gCQRd6winxcatQypvy1vAo+DpZVs8jpXElgL7pT5lWqycP
-         6ZAA==
-X-Gm-Message-State: AGRZ1gKPXXlDq3u8KRMwpGgRjaLF9o9+XOg2GDCVxldr1AHGpII6v4I3
-        qKYE+RoEves3/p/JVm+EMwHV71Y7i4Ther6DZ+Y=
-X-Google-Smtp-Source: AJdET5dqHikhAR18vPBY34XM1pwxOHDlVD/zs2wVDI3DgRy4keQzn/O32+rtzyaHeYwjCvLrOwLUY4GtB5us2j8u/Vc=
-X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr19595757qkc.219.1541429230816;
- Mon, 05 Nov 2018 06:47:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20181102041120.7603-1-ayman.bagabas@gmail.com>
- <20181102041120.7603-4-ayman.bagabas@gmail.com> <CAHp75VcA5M4XNVr94OALo3=AW3LbWU+Pz-KTRgodBtSP_K9-wA@mail.gmail.com>
- <33dce911f9544c53a7989430a1ce848444cf4e3b.camel@gmail.com>
-In-Reply-To: <33dce911f9544c53a7989430a1ce848444cf4e3b.camel@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 5 Nov 2018 16:46:59 +0200
-Message-ID: <CAHp75VfFbv8Xu8TZ3O7QPxrNiBN6admdUSUzOG9KZXYYZJzjyA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] ALSA: hda: add support for Huawei WMI MicMute LED
-To:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YGDbV8M6ZQhO26iEMemFlbnzNSn4SXD18e12/JLSXVs=;
+        b=hqA+6eeuDOBD2QLr4fR1YaWPh+GGszA+vUWSUQj87mwie3XzbP1Dd/QD2RdVGLlDq1
+         r1Oo8RF0rbHyNs5WNr8yF4cSZpDbrmsulhQ2pNZ6ft5LHV0cvesmhLSIY2ObGC5AWQF3
+         MzukqcZuslCTXy0GvKKo6nTk5GY/2D6Bw26kwR0lJ767Uy+qPlgh2Tm6fMvopK1kURjT
+         TG2mmvprd6hd4WaGncab2NxBC9ORnMOpDTfXmsIJdaEOs3rPtjufooFyHsC0Jbaf3tX0
+         jb+ihrXN1z1WN/kxrXEKxNRfeZm9VogIB4aICrKYBtyH3b8UPvUaEKuhqxpBSgzdPF2v
+         t95w==
+X-Gm-Message-State: AGRZ1gK/u+f+aA4F70tA8CSLTsp61iKR6F2F4tti/mrVQE2jfJJlv9mU
+        8W7aGD6cMbaaP7q/ciRnFcwWAUcUYsQ=
+X-Google-Smtp-Source: AJdET5eUcLJ+GtS+SNLmCHoE/gL2bJb7EPSmgPl24XzdFchd55UlHeIdmha17HQXvuyIdNFRQRIFmQ==
+X-Received: by 2002:a63:194f:: with SMTP id 15mr6214161pgz.192.1541429244750;
+        Mon, 05 Nov 2018 06:47:24 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z14-v6sm50956027pge.47.2018.11.05.06.47.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 06:47:23 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au
+Cc:     kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] KVM: PPC: Book3S HV: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Mon,  5 Nov 2018 09:47:17 -0500
+Message-Id: <20181105144717.6233-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 3, 2018 at 1:21 AM <ayman.bagabas@gmail.com> wrote:
-> On Fri, 2018-11-02 at 20:12 +0200, Andy Shevchenko wrote:
-> > On Fri, Nov 2, 2018 at 6:12 AM Ayman Bagabas <ayman.bagabas@gmail.com
-> > > wrote:
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Takashi explained me, that is the way sound driver are using the
-external symbols, so, follow his suggestion.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ arch/powerpc/kvm/book3s_xics.c | 12 +-----------
+ arch/powerpc/kvm/book3s_xive.c | 12 +-----------
+ 2 files changed, 2 insertions(+), 22 deletions(-)
 
-> > > +static int (*huawei_wmi_micmute_led_set_func)(bool);
-> >
-> > Why is that?
->
-> This is used with symbol_request and then in the update function to
-> locate the function from the wmi device. But I guess you are right, we
-> could use the function defined in the header file directly.
-
-> > Takashi, is it a way how the rest sound drivers are written? B/c this
-> > symbol_request(s) look to me a bit ugly.
-> >
-> > > +/* for alc_fixup_huawei_micmute_led */
-> > > +#include "huawei_wmi_helper.c"
-> >
-> > Ditto.
-> >
-> > Include *.c?! Huh?
->
-> Is that the wrong way? Should I define the functions directly into
-> patch_realtek.c?
-
-
+diff --git a/arch/powerpc/kvm/book3s_xics.c b/arch/powerpc/kvm/book3s_xics.c
+index b8356cdc0c04..8fdc8eb77039 100644
+--- a/arch/powerpc/kvm/book3s_xics.c
++++ b/arch/powerpc/kvm/book3s_xics.c
+@@ -1017,17 +1017,7 @@ static int xics_debug_show(struct seq_file *m, void *private)
+ 	return 0;
+ }
+ 
+-static int xics_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, xics_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations xics_debug_fops = {
+-	.open = xics_debug_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(xics_debug);
+ 
+ static void xics_debugfs_init(struct kvmppc_xics *xics)
+ {
+diff --git a/arch/powerpc/kvm/book3s_xive.c b/arch/powerpc/kvm/book3s_xive.c
+index 30c2eb766954..57ef1502a52c 100644
+--- a/arch/powerpc/kvm/book3s_xive.c
++++ b/arch/powerpc/kvm/book3s_xive.c
+@@ -1905,17 +1905,7 @@ static int xive_debug_show(struct seq_file *m, void *private)
+ 	return 0;
+ }
+ 
+-static int xive_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, xive_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations xive_debug_fops = {
+-	.open = xive_debug_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(xive_debug);
+ 
+ static void xive_debugfs_init(struct kvmppc_xive *xive)
+ {
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0
+
