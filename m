@@ -2,207 +2,117 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B74ECDE47
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEA9C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BBBB2081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BBBB2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2B38220866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 17:04:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GYMSZYLW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B38220866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387783AbeKFCXN (ORCPT
+        id S1729904AbeKFCY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:23:13 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35523 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387603AbeKFCXN (ORCPT
+        Mon, 5 Nov 2018 21:24:56 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:44893 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729692AbeKFCY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:23:13 -0500
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7] helo=dude.pengutronix.de.)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gJiGn-0006ss-Cw; Mon, 05 Nov 2018 18:02:33 +0100
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patchwork-lst@pengutronix.de, kernel@pengutronix.de
-Subject: [PATCH 1/2] firmware: add nowarn variant of request_firmware_nowait()
-Date:   Mon,  5 Nov 2018 18:02:31 +0100
-Message-Id: <20181105170232.28777-1-l.stach@pengutronix.de>
-X-Mailer: git-send-email 2.19.1
+        Mon, 5 Nov 2018 21:24:56 -0500
+Received: by mail-yw1-f67.google.com with SMTP id k6-v6so3928538ywa.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:04:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hRoZ+kzOnBGfRkKjLexuTFXVrg3YwVJKB0u8D7I0/4U=;
+        b=GYMSZYLWEq38jFxMlSgfIX0UOurbTp8XArE8Fs/zbl2S0mc0YIF1b94m2GlUFQmQsR
+         VWbgm7IXb1HKRz9h9kkMJGFqPqLBotqJ3kuAfDgB2rYyBko0022l5svC3Vl6QlgapsNl
+         RlduPXAI4lCRSvLgeVIKiNs3jtP+nmt3xvqZo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hRoZ+kzOnBGfRkKjLexuTFXVrg3YwVJKB0u8D7I0/4U=;
+        b=F42uPNM9aaKVFQGYY0wRKyvcQr0hZ/mx5NMVBI+mKOeehKCz7sclxyGcRpSoJ29qxK
+         iMjiUB2BvM+g1EKILqoNZmddqTaBzn90RL/VEfemSCFFlAxZPWk5limYHIWfN4FUGCmm
+         6xxVijtxkxJAWqGrEjQwAbUSfMDOnzuMLgcYr1TpZhvmgINiH6r7yEIqdHGJLQkAh23L
+         n8B9251h9I/I5deeV/7+J/K9sVUqbPVdo+MAFyd0g2zYb8z8ha5jgZ8CcyO6f3RS3y4a
+         O+TmI+3jZVg6DDbIL3C3pku4pRM3tiCT0rNx/JW5qkTve3aPJwwihRB5uo4nXcTCpdyZ
+         StRA==
+X-Gm-Message-State: AGRZ1gLIEopYJ3tYA7sMsrT9Ls9XsxHvSRTalIiztEYzfTZ9hn7QdGm3
+        1VkT4KoxF7cnhOjEWunfNLhJ84icriI=
+X-Google-Smtp-Source: AJdET5fTrSCX6/X4FGuom85qhCzivpxWiQU23Zqbn1CnSAiXW+rZK3hrSlnmGLihlmHWzQwfdhtlvA==
+X-Received: by 2002:a81:8103:: with SMTP id r3-v6mr2500656ywf.403.1541437457630;
+        Mon, 05 Nov 2018 09:04:17 -0800 (PST)
+Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
+        by smtp.gmail.com with ESMTPSA id e20-v6sm5342544ywe.32.2018.11.05.09.04.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 09:04:15 -0800 (PST)
+Received: by mail-yw1-f46.google.com with SMTP id l2-v6so3937475ywb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:04:15 -0800 (PST)
+X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr22383870ywf.237.1541437455114;
+ Mon, 05 Nov 2018 09:04:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Mon, 5 Nov 2018 09:04:13 -0800 (PST)
+In-Reply-To: <20181105044217.GB56850@google.com>
+References: <20181101235200.28584-1-keescook@chromium.org> <20181101235200.28584-9-keescook@chromium.org>
+ <20181102180111.GA14942@google.com> <CAGXu5jLcawCKQL9i6poyJu3v3Ru6VcAXqwa5dxKWQL1Bp+Ai_w@mail.gmail.com>
+ <20181105044217.GB56850@google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 5 Nov 2018 09:04:13 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJzszbMOZAj_K0tfBV-3Rs67_gedHd+RwSXvzY38Fu3dA@mail.gmail.com>
+Message-ID: <CAGXu5jJzszbMOZAj_K0tfBV-3Rs67_gedHd+RwSXvzY38Fu3dA@mail.gmail.com>
+Subject: Re: [PATCH 8/8] pstore/ram: Correctly calculate usable PRZ bytes
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Device drivers with optional firmware may still want to use the
-asynchronous firmware loading interface. To avoid printing a
-warning into the kernel log when the optional firmware is
-absent, add a nowarn variant of this interface.
+On Sun, Nov 4, 2018 at 8:42 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> Dumping the magic bytes of the non decompressable .enc.z files, I get this
+> which shows a valid zlib compressed header:
+>
+> Something like:
+> 48 89 85 54 4d 6f 1a 31
+>
+> The 0b1000 in the first byte means it is "deflate". The file tool indeed
+> successfully shows "zlib compressed data" and I did the math for the header
+> and it is indeed valid. So I don't think the data is insane. The buffer has
+> enough room because even the very small dumps are not decompressable.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/base/firmware_loader/main.c | 85 ++++++++++++++++++++---------
- include/linux/firmware.h            | 12 ++++
- 2 files changed, 70 insertions(+), 27 deletions(-)
+Interesting. So the kernel wouldn't decompress it even though it's the
+right algo and untruncated? That seems worth fixing.
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 8e9213b36e31..81f4a5f6aa5b 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -790,34 +790,12 @@ static void request_firmware_work_func(struct work_struct *work)
- 	kfree(fw_work);
- }
- 
--/**
-- * request_firmware_nowait() - asynchronous version of request_firmware
-- * @module: module requesting the firmware
-- * @uevent: sends uevent to copy the firmware image if this flag
-- *	is non-zero else the firmware copy must be done manually.
-- * @name: name of firmware file
-- * @device: device for which firmware is being loaded
-- * @gfp: allocation flags
-- * @context: will be passed over to @cont, and
-- *	@fw may be %NULL if firmware request fails.
-- * @cont: function will be called asynchronously when the firmware
-- *	request is over.
-- *
-- *	Caller must hold the reference count of @device.
-- *
-- *	Asynchronous variant of request_firmware() for user contexts:
-- *		- sleep for as small periods as possible since it may
-- *		  increase kernel boot time of built-in device drivers
-- *		  requesting firmware in their ->probe() methods, if
-- *		  @gfp is GFP_KERNEL.
-- *
-- *		- can't sleep at all if @gfp is GFP_ATOMIC.
-- **/
--int
--request_firmware_nowait(
-+
-+static int
-+_request_firmware_nowait(
- 	struct module *module, bool uevent,
- 	const char *name, struct device *device, gfp_t gfp, void *context,
--	void (*cont)(const struct firmware *fw, void *context))
-+	void (*cont)(const struct firmware *fw, void *context), bool nowarn)
- {
- 	struct firmware_work *fw_work;
- 
-@@ -835,7 +813,8 @@ request_firmware_nowait(
- 	fw_work->context = context;
- 	fw_work->cont = cont;
- 	fw_work->opt_flags = FW_OPT_NOWAIT |
--		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER);
-+		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER) |
-+		(nowarn ? FW_OPT_NO_WARN : 0);
- 
- 	if (!uevent && fw_cache_is_setup(device, name)) {
- 		kfree_const(fw_work->name);
-@@ -854,8 +833,60 @@ request_firmware_nowait(
- 	schedule_work(&fw_work->work);
- 	return 0;
- }
-+
-+/**
-+ * request_firmware_nowait() - asynchronous version of request_firmware
-+ * @module: module requesting the firmware
-+ * @uevent: sends uevent to copy the firmware image if this flag
-+ *	is non-zero else the firmware copy must be done manually.
-+ * @name: name of firmware file
-+ * @device: device for which firmware is being loaded
-+ * @gfp: allocation flags
-+ * @context: will be passed over to @cont, and
-+ *	@fw may be %NULL if firmware request fails.
-+ * @cont: function will be called asynchronously when the firmware
-+ *	request is over.
-+ *
-+ *	Caller must hold the reference count of @device.
-+ *
-+ *	Asynchronous variant of request_firmware() for user contexts:
-+ *		- sleep for as small periods as possible since it may
-+ *		  increase kernel boot time of built-in device drivers
-+ *		  requesting firmware in their ->probe() methods, if
-+ *		  @gfp is GFP_KERNEL.
-+ *
-+ *		- can't sleep at all if @gfp is GFP_ATOMIC.
-+ **/
-+int
-+request_firmware_nowait(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context))
-+{
-+	return _request_firmware_nowait(module, uevent, name, device, gfp,
-+					context, cont, false);
-+
-+}
- EXPORT_SYMBOL(request_firmware_nowait);
- 
-+/**
-+ * request_firmware_nowait_nowarn() - async version of request_firmware_nowarn
-+ *
-+ * Similar in fucntion to request_firmware_nowait(), but doesn't print a warning
-+ * when the firmware file could not be found.
-+ */
-+int
-+request_firmware_nowait_nowarn(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context))
-+{
-+	return _request_firmware_nowait(module, uevent, name, device, gfp,
-+					context, cont, true);
-+
-+}
-+EXPORT_SYMBOL(request_firmware_nowait_nowarn);
-+
- #ifdef CONFIG_PM_SLEEP
- static ASYNC_DOMAIN_EXCLUSIVE(fw_cache_domain);
- 
-diff --git a/include/linux/firmware.h b/include/linux/firmware.h
-index 2dd566c91d44..a6d0bc8273a4 100644
---- a/include/linux/firmware.h
-+++ b/include/linux/firmware.h
-@@ -48,6 +48,10 @@ int request_firmware_nowait(
- 	struct module *module, bool uevent,
- 	const char *name, struct device *device, gfp_t gfp, void *context,
- 	void (*cont)(const struct firmware *fw, void *context));
-+int request_firmware_nowait_nowarn(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context));
- int request_firmware_direct(const struct firmware **fw, const char *name,
- 			    struct device *device);
- int request_firmware_into_buf(const struct firmware **firmware_p,
-@@ -77,6 +81,14 @@ static inline int request_firmware_nowait(
- 	return -EINVAL;
- }
- 
-+static inline int request_firmware_nowait_nowarn(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context))
-+{
-+	return -EINVAL;
-+}
-+
- static inline void release_firmware(const struct firmware *fw)
- {
- }
+> At this point we can park this issue I guess, but a scenario that is still
+> broken is:
+> Say someone crashes the system on compress algo X and then recompiles with
+> compress algo Y, then the decompress would fail no?
+>
+> One way to fix that is to store the comrpession method in buffer as well,
+> then initialize all algorithms at boot and choose the right one in the
+> buffer ideally. Otherwise atleast we should print a message saying "buffer is
+> encoded with algo X but compression selected is Y" or something. But I agree
+> its a very low priority "doctor it hurts if I do this" kind of issue :)
+
+Right, this is fine: if algos change across a kernel version, I'm fine
+with it failing. pstore isn't expected to work sanely outside of a
+pretty narrow set of use-cases.
+
+-Kees
+
 -- 
-2.19.1
-
+Kees Cook
