@@ -2,109 +2,98 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1799C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDE0C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8967320819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:09:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nsuOEswK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cVldJ2Jn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8967320819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 364A920819
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:09:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364A920819
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729970AbeKEW2n (ORCPT
+        id S1729985AbeKEW3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:28:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40894 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729228AbeKEW2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:28:42 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A04796149D; Mon,  5 Nov 2018 13:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541423340;
-        bh=8W6e1wuTPzIOLy2jXkqxvCLb1nFN33D/z9pXvTcJFqg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nsuOEswK1IRKTGJUFDDjXbWjzKyJpcHTUr3d5f5X5KwmMxZpqmEg2ewbLMjazG64m
-         oXbiMjlLLXzNJ6VO0d27T6jcC/DjMc915LHr8OyEPeaGHlIjQVZfoOW5KtNS5ONjKq
-         qA4F7nhso4RgaJFzztvxw4eI10R/xcew4FRx1zGY=
-Received: from svishnoi-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: govinds@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C61F3614BA;
-        Mon,  5 Nov 2018 13:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541423338;
-        bh=8W6e1wuTPzIOLy2jXkqxvCLb1nFN33D/z9pXvTcJFqg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cVldJ2JnEbXB4lpSgLR/BLrzc2CXuF1uGNhDDNV3Z7hyggWgkbhCI96i+4nNPZKWj
-         4Ga3ky6abag9/UevTBoZ4SD8RXT/VEN04wGdUNDuKXV8uncwvCqo37DnBDA1r1h4nm
-         DnPX3Yk7LMdG/R6i70z/zqz081wetHZ3/akPXt/Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C61F3614BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
-From:   Govind Singh <govinds@codeaurora.org>
-To:     briannorris@chromium.org, andy.gross@linaro.org,
-        ath10k@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-wireless@vger.kernel.org, robh+dt@kernel.org,
-        sboyd@kernel.org, dianders@chromium.org,
-        linux-kernel@vger.kernel.org
-Cc:     Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 3/3] dt: bindings: add bindings for wifi iommu node
-Date:   Mon,  5 Nov 2018 18:38:38 +0530
-Message-Id: <1541423318-19312-4-git-send-email-govinds@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
-References: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
+        Mon, 5 Nov 2018 17:29:02 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32713 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729198AbeKEW3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:29:02 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 0D6A9FFDEDDA;
+        Mon,  5 Nov 2018 13:09:18 +0000 (GMT)
+Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 5 Nov
+ 2018 13:09:12 +0000
+Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     Mimi Zohar <zohar@linux.ibm.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+ <20181030154711.2782-5-roberto.sassu@huawei.com>
+ <1541088173.4035.26.camel@linux.ibm.com>
+ <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
+ <20181105120147.GA7621@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <3b198ce9-9e2e-5290-bd40-e9a62da1f50d@huawei.com>
+Date:   Mon, 5 Nov 2018 14:09:12 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181105120147.GA7621@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.142]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WCN3990 wifi module can optionally make use of the IOMMU.
-Add binding documentation for phandle to the IOMMU and
-the stream id of wifi iommu block.
+On 11/5/2018 1:01 PM, Jarkko Sakkinen wrote:
+> On Mon, Nov 05, 2018 at 10:47:19AM +0100, Roberto Sassu wrote:
+>>> Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+>>> PCR banks") defined active_banks[7].  Subsequently, commit
+>>> 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
+>>> log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
+>>> correct value, but the number of active_banks should not be hard coded
+>>> here.
+>>
+>> Jarkko, should I change the value of TPM2_PCR_ACTIVE_BANKS, or set the
+>> size of the active_banks array to TPM2_PCR_ACTIVE_BANKS?
+> 
+> Hi, sorry I missed your patch set. Please add me either to 'To' or 'Cc'
+> field of the email if you want a quick response.
+> 
+> I think the implementation is flakky in both places and should be fixed
+> before doing any other changes. Thanks James for pointing out these
+> commits.
+> 
+> What you need to do is to create a prequel commit that reads the number
+> of banks to a variable e.g.
+> 
+>    unsigned int nr_active_banks;
+> 
+> and allocate 'active_banks' dynamically and change the places that
+> James pointed out. I guess it is OK to have a commit with two 'Fixes'
+> tags.
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Tested-by: Brian Norris <briannorris@chromium.org>
----
- Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+Ok, then I can remove patch 1/5 if nr_active_banks is included in the
+tpm_chip structure.
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-index 55d255c..78fb56a 100644
---- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-+++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-@@ -66,6 +66,10 @@ Optional properties:
- - <supply-name>-supply: handle to the regulator device tree node
- 			   optional "supply-name" are "vdd-0.8-cx-mx",
- 			   "vdd-1.8-xo", "vdd-1.3-rfa" and "vdd-3.3-ch0".
-+- iommus:
-+	Usage: optional
-+	Value type: <prop-encoded-array>
-+	Definition: A list of phandle and IOMMU specifier pairs.
- 
- Example (to supply the calibration data alone):
- 
-@@ -162,4 +166,5 @@ wifi@18000000 {
- 		vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
- 		vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
- 		vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
-+		iommus = <&apps_smmu 0x0040 0x1>;
- };
+Roberto
+
+
+> /Jarkko
+> 
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
