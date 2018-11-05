@@ -2,182 +2,99 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AEBC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A90C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1902F2085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:39:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1902F2085A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ics.forth.gr
+	by mail.kernel.org (Postfix) with ESMTP id BB35A208E3
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:40:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HuxDfr/6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB35A208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbeKFFAv (ORCPT
+        id S1726924AbeKFFB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:00:51 -0500
-Received: from mailgate-4.ics.forth.gr ([139.91.1.7]:45925 "EHLO
-        mailgate-4.ics.forth.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725139AbeKFFAu (ORCPT
+        Tue, 6 Nov 2018 00:01:28 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39992 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbeKFFB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:00:50 -0500
-Received: from av1.ics.forth.gr (av3in.ics.forth.gr. [139.91.1.77])
-        by mailgate-4.ics.forth.gr (8.14.5/ICS-FORTH/V10-1.9-GATE-OUT) with ESMTP id wA5JdURL037948;
-        Mon, 5 Nov 2018 21:39:32 +0200 (EET)
-X-AuditID: 8b5b9d4d-91bff70000000e62-1e-5be09c72c25e
-Received: from enigma.ics.forth.gr (enigma.ics.forth.gr [139.91.1.35])
-        by av1.ics.forth.gr (SMTP Outbound / FORTH / ICS) with SMTP id 15.28.03682.27C90EB5; Mon,  5 Nov 2018 21:39:30 +0200 (EET)
-Received: from webmail.ics.forth.gr (localhost [127.0.0.1])
-        by enigma.ics.forth.gr (8.15.1//ICS-FORTH/V10.5.0C-EXTNULL-SSL-SASL) with ESMTP id wA5JdTaD019100;
-        Mon, 5 Nov 2018 21:39:30 +0200
-X-ICS-AUTH-INFO: Authenticated user:  at ics.forth.gr
+        Tue, 6 Nov 2018 00:01:28 -0500
+Received: by mail-pl1-f194.google.com with SMTP id q19-v6so1950816pll.7
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 11:40:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=79FFXPDXxKn+tLiOm0w09aLQfe6HmuIjKtK4WiHzhAc=;
+        b=HuxDfr/6N5+hMA8YlFnIkbIzDbho9GbyRNB6aKE9hG+8DE81tfD1LsdNmz2ullarGY
+         dQvAzYt69d3CIOnq5j4UHQZuSj+sLMf0AQGUUD61mlQ5foFZbjvHAWF77ArDg8f7eV0z
+         zoRJYxVUS958ZtAqj9sjVEzyGqU70eYpfbEjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=79FFXPDXxKn+tLiOm0w09aLQfe6HmuIjKtK4WiHzhAc=;
+        b=IA9uClx0N7g2TU2O0HN1IKBv6pRDf99XiCrM/Se6wBEbUs4w8gc804l7Acr88qt/lD
+         0i7qVthXxN15B/tdvjxaWXzD4ShT8OBJW7WfYOWZ7POK0cNht4fMuQpcAG/8zFMFcT+G
+         tRnG4llWCZR2QvsFHA5l3ZK25hSk2SkRHCIhzTSwX1w+z/zWGdi9d8oAVhMPNJt8Yh9T
+         dglJ28ow3XOUApT9aiR7voDD1Aw8g96p1ZMt7/VZ5MjTNxFmS4MMgVLSHshzOOu2tyRZ
+         Z1rts+psVkld1fR8vSh5YTESYuqKBhQDCNB4IUkVIQDUH7tSs2+dp8G5+YCPdk2t+h59
+         gKmQ==
+X-Gm-Message-State: AGRZ1gLgqn3WR9M8/5mTkIKRjSJXDgbLJbXONhvahHUsJTvJ9HdbfXIH
+        PTbX/DSz8iPQl0245Rqs7ldPcA==
+X-Google-Smtp-Source: AJdET5cmjOi5l9vpnYTJZLc2ES4JXomHv+ClejuLsc3UIYQe9e9ERJ3V1fM2o9hK1W9Q0N2eo+IMPQ==
+X-Received: by 2002:a17:902:aa0a:: with SMTP id be10-v6mr23549692plb.294.1541446814432;
+        Mon, 05 Nov 2018 11:40:14 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id q25sm700728pgb.2.2018.11.05.11.40.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 11:40:13 -0800 (PST)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/2] Introduce a 'protected-clocks' property
+Date:   Mon,  5 Nov 2018 11:40:09 -0800
+Message-Id: <20181105194011.43770-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Date:   Mon, 05 Nov 2018 21:39:29 +0200
-From:   Nick Kossifidis <mick@ics.forth.gr>
-To:     Vincent Chen <vincentc@andestech.com>
-Cc:     palmer@sifive.com, aou@eecs.berkeley.edu, zong@andestech.com,
-        arnd@arndb.de, alankao@andestech.com, greentime@andestech.com,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        deanbo422@gmail.com
-Subject: Re: [RFC 0/2] RISC-V: A proposal to add vendor-specific code
-Organization: FORTH
-In-Reply-To: <1540982130-28248-1-git-send-email-vincentc@andestech.com>
-References: <1540982130-28248-1-git-send-email-vincentc@andestech.com>
-Message-ID: <cac10a0961274e3ac4674e945f9d9e90@mailhost.ics.forth.gr>
-X-Sender: mick@mailhost.ics.forth.gr
-User-Agent: Roundcube Webmail/1.1.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LpjmZU1i2a8yDaYPM+KYttS1azWmz9PYvd
-        4u+kY+wWt368YbR4vL6H0eLyrjlsFts+t7BZbJ6wgNVi1+5dbBbPV/ayOXB57Dk9i9nj969J
-        jB6HO76we+ycdZfdY/OSeo9LzdfZPT5vkgtgj+KySUnNySxLLdK3S+DKeHJ3FWPBdY2K9xN7
-        mBoYnyt0MXJySAiYSLzoW8zcxcjFISRwmFFi++UpUM5BRoltC3oYIapMJWbv7QSzeQUEJU7O
-        fMICYjMLWEhMvbKfEcKWl2jeOpsZxGYRUJU48+MpmM0moCkx/9JBsHoRIPvewjnsIAuYBd4x
-        Suz+1skEkhAWcJXov7mXFcTmFxCW+HT3IpjNKeAucWFXB5gtJOAmsb/tLDvEES4SBybuZoI4
-        TkXiw+8HYHFRAWWJFyems05gFJqF5NZZSG6dheTWBYzMqxgFEsuM9TKTi/XS8otKMvTSizYx
-        guNnru8OxnML7A8xCnAwKvHwchQ8iBZiTSwrrsw9xCjBwawkwqvEBhTiTUmsrEotyo8vKs1J
-        LT7EKM3BoiTOe/hFeJCQQHpiSWp2ampBahFMlomDU6qBMaSUc7Lv4qD7q+5fqtKaPpX7snx+
-        0uVtTyY1MBZMt5Bx62hbsFZWQ3NyZ5iQ2XP57eFdcxeHbRKe2Lk/1XLPwv+ezssKzVdt8fi9
-        RJ5hlcNB19MdHS05p2t3Z3a6vHzJq5MyIVmoSPNE14HOp8/fbXu5yXfJfKV9T+eq3TF6fFZ6
-        5/xzp/9+clZiKc5INNRiLipOBACtXFszmwIAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Vincent,
+See full explanation in patch #1. It looks like on qcom platforms
+we're increasing the number of situations where we need to have
+a set of clks that aren't touched by the OS because firmware
+wants them for itself. This series introduces a method to do that
+by specifying in DT what clks shouldn't be read or written and
+then having the qcom clk driver neve register the ones that 
+are protected.
 
-Στις 2018-10-31 12:35, Vincent Chen έγραψε:
-> RISC-V permits each vendor to develop respective extension ISA based
-> on RISC-V standard ISA. This means that these vendor-specific features
-> may be compatible to their compiler and CPU. Therefore, each vendor may
-> be considered a sub-architecture of RISC-V. Currently, vendors do not
-> have the appropriate examples to add these specific features to the
-> kernel. In this RFC set, we propose an infrastructure that vendor can
-> easily hook their specific features into kernel. The first commit is
-> the main body of this infrastructure. In the second commit, we provide
-> a solution that allows dma_map_ops() to work without cache coherent
-> agent support. Cache coherent agent is unsupported for low-end CPUs in
-> the AndeStar RISC-V series. In order for Linux to run on these CPUs, we
-> need this solution to overcome the limitation of cache coherent agent
-> support. Hence, it also can be used as an example for the first commit.
-> 
->   I am glad to discuss any ideas, so if you have any idea, please give
-> me some feedback.
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Taniya Das <tdas@codeaurora.org>
 
-So if I got this right, in your case you've added some CSRs 
-(ucctlbeginaddr
-and ucctlcommand) for marking regions as non-cacheable, and you provide 
-your
-own get_arch_dma_ops by overriding the default header files with your
-vendor-specific ones.
+Stephen Boyd (2):
+  dt-bindings: clk: Introduce 'protected-clocks' property
+  clk: qcom: Support 'protected-clocks' property
 
-Some things that are IMHO wrong with the proposed approach:
+ .../bindings/clock/clock-bindings.txt          | 16 ++++++++++++++++
+ drivers/clk/qcom/common.c                      | 18 ++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-a) By directly modifying your custom CSRs, it means that we will need
-compiler support in order to compile a kernel with your code in it. This
-will break CI systems and will introduce various issues on testing and
-reviewing your code. In general if we need custom toolchains to compile
-the kernel, that may be unavailable (vendors will not always open source
-their compiler support), we won't be able to maintain a decent level of
-code quality in the tree. How can the maintainer push your code on the
-repository if he/she can't even perform a basic compilation test ?
+-- 
+Sent by a computer through tubes
 
-In contrast with ARM and others that have a standard set of possible
-extensions (e.g. NEON, crc32 etc), and provide compiler support for 
-those,
-a similar approach is not valid for RISC-V. We could demand that vendors
-add compiler support e.g. on gcc before submitting a patch with custom
-assembly but I don't think this approach is feasible (one vendor's CSRs
-or custom instructions may overlap with another's). I believe we should
-just use SBI calls instead and let the firmware (and/or custom userspace
-libraries) handle the custom CSRs/assembly instructions.
-
-This is a concern also for lib/ and crypto/ where vendors might want to 
-use
-their own extensions for providing optimized assembly for their cores. 
-It's
-not a big deal to use SBI and handle vendor-specific stuff on firmware 
-and/or
-userspace, it's actually more flexible for the vendors since they can 
-have
-their own process for maintaining their firmware and releasing it in 
-their
-own terms/license etc. If we see that the SBI has too much overhead or 
-is not
-enough we can design it in a better way or extend it. It will still be
-standard and easier to maintain than a fragmented ecosystem of mostly
-unusable code, inside the mainline kernel.
-
-In case we need to save/store registers related to a custom extension, I
-guess we can also have an SBI call for saving/restoring custom registers
-to/from S-managed memory and we should be ok. It should also be possible
-to do any extra state handling in firmware if needed. I believe we can 
-and
-should avoid custom assembly on the kernel at all costs !
-
-
-b) By using CONFIG_VENDOR_FOLDER_NAME you add a compile time dependency 
-that
-allows this kernel image to be built for a specific vendor. This is 
-problematic
-in different ways. At first it's not possible to have a kernel image 
-that's
-generic and can be used for all RISC-V systems. That's what distros want
-and that's how they 've been working so far.
-
-Also in case a vendor has many different boards with different 
-implementation
-details how will this approach help ? It would make more sense to have 
-something
-like arch/riscv/<platform>. Also have in mind that some extensions might 
-be
-available as IP to vendors so multiple vendors might use the same 
-extension
-made/licensed from another vendor. I think arch/riscv/<extension> is 
-more
-appropriate. Since we can use mvendorid/marchid/mimpid to identify that
-at runtime maybe we can have some wrapper code that initializes a struct 
-of
-function pointers early on setup_arch(), allowing vendors to populate it
-according to the available extensions in their hw, based on the above 
-ids.
-
-We can also just use device-tree for that and mark the used extensions 
-there.
-We can even pass extension-specific parameters this way (e.g. to save 
-CSRs)
-in case of extensions that can be parametrized on hw design phase (I'm
-thinking of IPs sold from companies with licenses for unlocking the X 
-feature
-or for supporting up to Y channels/slots/instances/whatever).
-
-
-In any case it's an interesting subject that we definitely need to think 
-about,
-thanks for bringing this up !
-
-Regards,
-Nick
