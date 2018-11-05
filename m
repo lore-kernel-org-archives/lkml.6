@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467BAC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0C7C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19D052085A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19D052085A
+	by mail.kernel.org (Postfix) with ESMTP id 013FD2085B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:54:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013FD2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387449AbeKFAOb (ORCPT
+        id S2387463AbeKFAOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 19:14:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45318 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387428AbeKFAOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:14:31 -0500
+        Mon, 5 Nov 2018 19:14:35 -0500
+Received: from foss.arm.com ([217.140.101.70]:45334 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387428AbeKFAOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 19:14:35 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E82E015AD;
-        Mon,  5 Nov 2018 06:54:25 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AE6615BF;
+        Mon,  5 Nov 2018 06:54:29 -0800 (PST)
 Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B3C1B3F5CF;
-        Mon,  5 Nov 2018 06:54:23 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 465683F5CF;
+        Mon,  5 Nov 2018 06:54:27 -0800 (PST)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -41,9 +41,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2 2/3] sched/fair: util_est: mask UTIL_AVG_UNCHANGED usages
-Date:   Mon,  5 Nov 2018 14:53:59 +0000
-Message-Id: <20181105145400.935-3-patrick.bellasi@arm.com>
+Subject: [PATCH v2 3/3] sched/fair: add lsub_positive and use it consistently
+Date:   Mon,  5 Nov 2018 14:54:00 +0000
+Message-Id: <20181105145400.935-4-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181105145400.935-1-patrick.bellasi@arm.com>
 References: <20181105145400.935-1-patrick.bellasi@arm.com>
@@ -52,70 +52,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The _task_util_est() is mainly used to add/remove the task contribution
-to/from the rq's estimated utilization at task enqueue/dequeue time.
-In both cases we ensure the UTIL_AVG_UNCHANGED flag is set to keep
-consistency between enqueue and dequeue time while still being
-transparent to update_load_avg calls which will eventually reset the
-flag.
+The following pattern:
 
-Let's move the flag forcing within _task_util_est() itself so that we
-can simplify calling code by hiding that estimated utilization
-implementation detail into one of its internal functions.
+   var -= min_t(typeof(var), var, val);
 
-This will affect also the "public" API task_util_est() but we know that
-the flag will (eventually) impact just on the LSB of the estimated
-utilization, thus it's certainly acceptable.
+is used multiple times in fair.c.
+
+The existing sub_positive() already capture that pattern but it adds
+also explicit load-sotre to properly support lockless observations.
+In other cases, the patter above is used to update local, and/or not
+concurrently accessed, variables.
+
+Let's add a simpler version of sub_positive, targeted to local variables
+updates, which gives the same readability benefits at calling sites
+without enforcing {READ,WRITE}_ONCE barriers.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Link: https://lore.kernel.org/lkml/20181031184527.GA3178@hirez.programming.kicks-ass.net
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: linux-kernel@vger.kernel.org
 ---
- kernel/sched/fair.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 473a9cc559e8..aeb37fe4dbb1 100644
+index aeb37fe4dbb1..d50c739127d6 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -3604,7 +3604,7 @@ static inline unsigned long _task_util_est(struct task_struct *p)
- {
- 	struct util_est ue = READ_ONCE(p->se.avg.util_est);
+@@ -2734,6 +2734,17 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ 	WRITE_ONCE(*ptr, res);					\
+ } while (0)
  
--	return max(ue.ewma, ue.enqueued);
-+	return (max(ue.ewma, ue.enqueued) | UTIL_AVG_UNCHANGED);
- }
++/*
++ * Remove and clamp on negative, from a local variable.
++ *
++ * A variant of sub_positive which do not use explicit load-store
++ * and thus optimized for local variable updates.
++ */
++#define lsub_positive(_ptr, _val) do {				\
++	typeof(_ptr) ptr = (_ptr);				\
++	*ptr -= min_t(typeof(*ptr), *ptr, _val);		\
++} while (0)
++
+ #ifdef CONFIG_SMP
+ static inline void
+ enqueue_runnable_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+@@ -4639,7 +4650,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
+ 		cfs_b->distribute_running = 0;
+ 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
  
- static inline unsigned long task_util_est(struct task_struct *p)
-@@ -3622,7 +3622,7 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
- 
- 	/* Update root cfs_rq's estimated utilization */
- 	enqueued  = cfs_rq->avg.util_est.enqueued;
--	enqueued += (_task_util_est(p) | UTIL_AVG_UNCHANGED);
-+	enqueued += _task_util_est(p);
- 	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
- }
- 
-@@ -3650,8 +3650,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- 
- 	/* Update root cfs_rq's estimated utilization */
- 	ue.enqueued  = cfs_rq->avg.util_est.enqueued;
--	ue.enqueued -= min_t(unsigned int, ue.enqueued,
--			     (_task_util_est(p) | UTIL_AVG_UNCHANGED));
-+	ue.enqueued -= min_t(unsigned int, ue.enqueued, _task_util_est(p));
- 	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
+-		cfs_b->runtime -= min(runtime, cfs_b->runtime);
++		lsub_positive(&cfs_b->runtime, runtime);
+ 	}
  
  	/*
-@@ -6292,7 +6291,7 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
+@@ -4773,7 +4784,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ 
+ 	raw_spin_lock(&cfs_b->lock);
+ 	if (expires == cfs_b->runtime_expires)
+-		cfs_b->runtime -= min(runtime, cfs_b->runtime);
++		lsub_positive(&cfs_b->runtime, runtime);
+ 	cfs_b->distribute_running = 0;
+ 	raw_spin_unlock(&cfs_b->lock);
+ }
+@@ -6240,7 +6251,7 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
+ 	util = READ_ONCE(cfs_rq->avg.util_avg);
+ 
+ 	/* Discount task's util from CPU's util */
+-	util -= min_t(unsigned int, util, task_util(p));
++	lsub_positive(&util, task_util(p));
+ 
+ 	/*
+ 	 * Covered cases:
+@@ -6289,10 +6300,9 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
+ 		 * properly fix the execl regression and it helps in further
+ 		 * reducing the chances for the above race.
  		 */
- 		if (unlikely(task_on_rq_queued(p) || current == p)) {
- 			estimated -= min_t(unsigned int, estimated,
--					   (_task_util_est(p) | UTIL_AVG_UNCHANGED));
-+					   _task_util_est(p));
- 		}
+-		if (unlikely(task_on_rq_queued(p) || current == p)) {
+-			estimated -= min_t(unsigned int, estimated,
+-					   _task_util_est(p));
+-		}
++		if (unlikely(task_on_rq_queued(p) || current == p))
++			lsub_positive(&estimated, _task_util_est(p));
++
  		util = max(util, estimated);
  	}
+ 
 -- 
 2.18.0
 
