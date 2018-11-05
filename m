@@ -2,99 +2,93 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F520C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB34AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05CE120825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6195920869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:16:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RTeJKN+h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CE120825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Cyh6l8gU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pD2XT/lH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6195920869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbeKEUfh (ORCPT
+        id S1729390AbeKEUgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:35:37 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53264 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728122AbeKEUfh (ORCPT
+        Mon, 5 Nov 2018 15:36:06 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43762 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbeKEUgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:35:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=r1d7Yt43rOmVVD4IN1niAw/SR/VySLqT+H7E4QJvsMQ=; b=RTeJKN+hFmD3WNqLoUUZgVYWW
-        QkKI8Q6CBju7iKSGMwxRm2ncaOvRqVfu+UxE4xL2CwH6s/4RZatve7+14Cq0Eq3seZVpQMbQKLVeB
-        EJGFhg8XGFiTSrzA868d/UmJMuPoy+3wTSm5PEiiAKg/95T1JmHbRx9IVycLZp+4NNyaQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gJcrP-0008En-71; Mon, 05 Nov 2018 11:15:59 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id AA9D21124D96; Mon,  5 Nov 2018 11:15:57 +0000 (GMT)
-Date:   Mon, 5 Nov 2018 11:15:57 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Cc:     "djkurtz@chromium.org" <djkurtz@chromium.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] ASoC: AMD: Fix race condition between register access
-Message-ID: <20181105111557.GB5365@sirena.org.uk>
-References: <1541020930-17337-1-git-send-email-akshu.agrawal@amd.com>
+        Mon, 5 Nov 2018 15:36:06 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CC7B1607F7; Mon,  5 Nov 2018 11:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541416613;
+        bh=d6b7Tdyi95bYgJvWcSADG72wdZvUnbof0HtXvex+OiA=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Cyh6l8gUFXrnspvL7th0w17YhqV0094LyfWXxQg1Og6yGU84AWnLMRVMZrCjym7Xb
+         4jNxa1T8OeWSjKSQAvI0MRVhU2fmE2FrKjLMiKzQdXlePnz89QRfzITNGTlkOGtAel
+         O19AyDaMGBYXP1vmr7y00r/A11kiihFCNsX0peSo=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E98DC60247;
+        Mon,  5 Nov 2018 11:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541416613;
+        bh=d6b7Tdyi95bYgJvWcSADG72wdZvUnbof0HtXvex+OiA=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=pD2XT/lHDoBav9JfEn7r9JL8Uh+4eoPh2cGCtB62k7KTq3AoSXsu7rznGt/MM8Q6T
+         BvA8MqHaivJNF9h0A2PIORBZkNj1rfxwY7+Fdx/Dmf9viX7p7KvgvAvAdh6u2x5sP8
+         K9qh3FgIZkdw+Q6R/qyx+ZaSa5ImRQon66naFObk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E98DC60247
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
-Content-Disposition: inline
-In-Reply-To: <1541020930-17337-1-git-send-email-akshu.agrawal@amd.com>
-X-Cookie: Contents may settle during shipment.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 02/20] ath9k: ar5008_phy: mark expected switch fall-through
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1727f5c9f0bb87651831d267e35af5aa1ed1f98b.1540239684.git.gustavo@embeddedor.com>
+References: <1727f5c9f0bb87651831d267e35af5aa1ed1f98b.1540239684.git.gustavo@embeddedor.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
+        linux-wireless@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181105111653.CC7B1607F7@smtp.codeaurora.org>
+Date:   Mon,  5 Nov 2018 11:16:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
---neYutvxvOLaeuPCA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Addresses-Coverity-ID: 1056532 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-On Wed, Oct 31, 2018 at 09:24:10PM +0000, Agrawal, Akshu wrote:
+3 patches applied to ath-next branch of ath.git, thanks.
 
-> +/* Lock to protect access to registers */
-> +static DEFINE_SPINLOCK(lock);
-> +
+604e98670072 ath9k: ar5008_phy: mark expected switch fall-through
+f2a881055094 ath9k: ar9002_phy: mark expected switch fall-throughs
+bf74fd75137d ath9k: hw: mark expected switch fall-through
 
-Why is this a global variable and not a part of the driver structure?
-Is there some interaction between multiple instances?
+-- 
+https://patchwork.kernel.org/patch/10652551/
 
---neYutvxvOLaeuPCA
-Content-Type: application/pgp-signature; name="signature.asc"
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvgJmwACgkQJNaLcl1U
-h9D/Mgf9GH4q+k9kKEx0SRVcKkgeynptlR5BeylHyoDKqeDDsZhyuUxEMdBoetL6
-hL4JxHQ5AVSjRESEKSy111NdknxrsNcc89qVykUmreP6URrAY9iLfRQnbjPOxMMK
-cxr7ZAnXrHAU3JssjrrwoldaRg/xMQoaStz1t+6Bm41ma1gJxJMREj3peDhjGb4A
-rrCqXJK5SsJf0m2GYTxRHjmc32xOsFMGmdBYtiBXXKhx/cvfKQU9JEeHKemlRyMV
-JIJZp75QGGWnoTG7D0UI32/SngudwYHabww1pHGPXM6ElrfhMS9J21xIExrBwBC2
-0Oqxxvddcb9PhkdYIqxrVsTq4zEkQQ==
-=aEa+
------END PGP SIGNATURE-----
-
---neYutvxvOLaeuPCA--
