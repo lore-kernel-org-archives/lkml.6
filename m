@@ -2,189 +2,117 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA052C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29EDC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8D02084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8D02084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E53A2084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 22:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E53A2084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388143AbeKFHYt (ORCPT
+        id S2388155AbeKFHZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:24:49 -0500
-Received: from mga17.intel.com ([192.55.52.151]:18238 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387992AbeKFHYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:24:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 14:03:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,469,1534834800"; 
-   d="scan'208";a="106142928"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2018 14:02:59 -0800
-Subject: Re: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote
- CPUs
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
- <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ea646842-bd32-3615-bf38-27b568a2d81e@linux.intel.com>
-Date:   Mon, 5 Nov 2018 14:02:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Tue, 6 Nov 2018 02:25:14 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33533 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387441AbeKFHZO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 02:25:14 -0500
+Received: by mail-ot1-f68.google.com with SMTP id q1so9602137otk.0;
+        Mon, 05 Nov 2018 14:03:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W5jYvTO3HGNDVrTqUtFhpYyIdeUPYSvIAUgFmRyERN4=;
+        b=S0pRHgvlhH5nTRgeGkC5ZPay6fNrA7wGyJ6WXfdMx1j6TflTJypwD9e7AlmDLqEN1Z
+         YXYe3iqAVDM2BYOZZHV0ju+gZbcXmNVg9ot0WNRMfsDa2UvxXrZlbVrloMg4TiLO5oQ+
+         OCgQAEzuFSOqhXfnZbXzPFOiBX+kEBNQ2xUOd667hnfkkMSla7tOl9Tq/0P1TQ6mMB0d
+         qoZTdeY3Md/Dbe+Qa1fs/K4RE2egnqwNQjA15/eNEB81QZYt+BvT8qf01pXpHaCq+Tu3
+         4BP9CUAR8iYN+YyqhkP+4/9Uf9BMqH2qYL10emJajT3QMui+QcoTwy5c5hT4BXlfJymy
+         ZFNw==
+X-Gm-Message-State: AGRZ1gKcRyXV7vvA7dPuro9qxFO4kx0dT9Kl+xRvmxds4rlwIAAk/nou
+        JSJ68hJEOrqiGNfroWFmKA==
+X-Google-Smtp-Source: AJdET5fn4xMVFU2tVsKohaOAedKOjGw6RWvtlXE+uFxfP2MrdCfNK6KTsYookAsdrS40cxDicNjowA==
+X-Received: by 2002:a9d:4333:: with SMTP id s48mr13929794ote.347.1541455404388;
+        Mon, 05 Nov 2018 14:03:24 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u12sm14221973otf.61.2018.11.05.14.03.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 14:03:23 -0800 (PST)
+Date:   Mon, 5 Nov 2018 16:03:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/1] drm/panel: Add support for Olimex LCD-OLinuXino
+ panel
+Message-ID: <20181105220322.GA10583@bogus>
+References: <1531383729-13932-1-git-send-email-stefan@olimex.com>
+ <20180716150836.GA16895@rob-hp-laptop>
+ <e677488e-34e0-512c-db13-15ccf78c5ea0@olimex.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e677488e-34e0-512c-db13-15ccf78c5ea0@olimex.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Thomas,
-
->> +	if (tifp & _TIF_UPDATE_SPEC_CTRL)
->> +		clear_tsk_thread_flag(prev_p, TIF_UPDATE_SPEC_CTRL);
->> +
->> +	if (tifn & _TIF_UPDATE_SPEC_CTRL) {
->> +		clear_tsk_thread_flag(next_p, TIF_UPDATE_SPEC_CTRL);
->> +		tifn &= ~_TIF_UPDATE_SPEC_CTRL;
->> +	}
+On Thu, Nov 01, 2018 at 04:34:42PM +0200, Stefan Mavrodiev wrote:
+> On 7/16/18 6:08 PM, Rob Herring wrote:
+> > On Thu, Jul 12, 2018 at 11:21:53AM +0300, Stefan Mavrodiev wrote:
+> > > This patch adds Olimex Ltd. LCD-OLinuXino bridge panel driver. The
+> > > panel is used with different LCDs (currently from 480x272 to 1280x800).
+> > > Small EEPROM chip is used for identification, which holds some
+> > > factory data and timing requirements.
+> > > 
+> > > Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> > > ---
+> > > Changes for v3:
+> > >    - Change module license from "GPL v2" to "GPL"
+> > >    - Make use of backlight_enable()/backlight_disable() helpers
+> > >    - Rework backlight device request
+> > >    - Remove drm_panel_detach()
+> > >    - Use module_i2c_driver() for initialization
+> > >    - Make the first mode preferred
+> > >    - If num_modes value is invalid, overwrite it with 4, which is the maximum
+> > >    - Some variable types optimizations
+> > > 
+> > > Changes for v2:
+> > >    - Changed lcd_olinuxino_funcs to static const
+> > > 
+> > >   .../display/panel/olimex,lcd-olinuxino.txt         |  42 +++
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > 
+> > >   MAINTAINERS                                        |   6 +
+> > >   drivers/gpu/drm/panel/Kconfig                      |  10 +
+> > >   drivers/gpu/drm/panel/Makefile                     |   1 +
+> > >   drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 331 +++++++++++++++++++++
+> > >   5 files changed, 390 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+> > >   create mode 100644 drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
 > 
-> I'm really unhappy about adding yet more conditionals into this code
-> path. We really need to find some better solution for that.
-> 
-> There are basically two options:
-> 
->  1) Restrict the PRCTL control so it is only possible to modify it at the
->     point where the application is still single threaded.
-> 
->  2) Add _TIF_UPDATE_SPEC_CTRL to the SYSCALL_EXIT_WORK_FLAGS and handle it
->     in the slow work path.
-> 
->     The KVM side can be handled in x86_virt_spec_ctrl().
-> 
+> I would like to ask if there will be any progress on this patch?
 
-How about sending an IPI if a remote CPU needs to have its SPEC_CTRL MSR
-updated?
+Thierry needs to pick this one up. At this point you need to re-send. No 
+one is going to look at patches 4 months old.
 
-Something like the following to replace this patch?
-
-Tim
-
----
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index b8103991..7505925 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -772,9 +772,15 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- 	return 0;
- }
- 
-+static void spec_ctrl_update_func(void *info)
-+{
-+	speculation_ctrl_update(task_thread_info(current)->flags);
-+}
-+
- static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
- {
- 	bool update = false;
-+	int cpu;
- 
- 	if (!static_branch_unlikely(&spectre_v2_app_lite))
- 		return;
-@@ -789,6 +795,12 @@ static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
- 
- 	if (tsk == current)
- 		speculation_ctrl_update_current();
-+	else {
-+		cpu = task_cpu(tsk);
-+		if (cpu != smp_processor_id())
-+			smp_call_function_single(cpu, spec_ctrl_update_func,
-+						 NULL, false); 
-+	}
- }
- 
- void arch_set_security(struct task_struct *tsk, unsigned int value)
+Rob
