@@ -2,109 +2,134 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9264AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45752C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2D52082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:21:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2D52082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F24562087A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F24562087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbeKESkL (ORCPT
+        id S1727381AbeKESnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:40:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54660 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726125AbeKESkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:40:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5E4BAD70;
-        Mon,  5 Nov 2018 09:21:23 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 10:21:23 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
-Subject: Re: Will the recent memory leak fixes be backported to longterm
- kernels?
-Message-ID: <20181105092053.GC4361@dhcp22.suse.cz>
-References: <20181102005816.GA10297@tower.DHCP.thefacebook.com>
- <PU1P153MB0169FE681EF81BCE81B005A1BFCF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181102073009.GP23921@dhcp22.suse.cz>
- <20181102154844.GA17619@tower.DHCP.thefacebook.com>
- <20181102161314.GF28039@dhcp22.suse.cz>
- <20181102162237.GB17619@tower.DHCP.thefacebook.com>
- <20181102165147.GG28039@dhcp22.suse.cz>
- <20181102172547.GA19042@tower.DHCP.thefacebook.com>
- <20181102174823.GI28039@dhcp22.suse.cz>
- <20181102193827.GA18024@castle.DHCP.thefacebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102193827.GA18024@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 5 Nov 2018 13:43:43 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34664 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKESnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:43:43 -0500
+Received: from ramsan.of.borg ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id w9Qu1y00X3XaVaC019QuHn; Mon, 05 Nov 2018 10:24:55 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gJb7u-0001MD-HA; Mon, 05 Nov 2018 10:24:54 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gJaCb-0005Wl-Lr; Mon, 05 Nov 2018 09:25:41 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] ubifs: CONFIG_UBIFS_FS_AUTHENTICATION should depend on UBIFS_FS
+Date:   Mon,  5 Nov 2018 09:25:40 +0100
+Message-Id: <20181105082540.21205-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 02-11-18 19:38:35, Roman Gushchin wrote:
-> On Fri, Nov 02, 2018 at 06:48:23PM +0100, Michal Hocko wrote:
-> > On Fri 02-11-18 17:25:58, Roman Gushchin wrote:
-> > > On Fri, Nov 02, 2018 at 05:51:47PM +0100, Michal Hocko wrote:
-> > > > On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
-> > [...]
-> > > > > 2) We do forget to scan the last page in the LRU list. So if we ended up with
-> > > > > 1-page long LRU, it can stay there basically forever.
-> > > > 
-> > > > Why 
-> > > > 		/*
-> > > > 		 * If the cgroup's already been deleted, make sure to
-> > > > 		 * scrape out the remaining cache.
-> > > > 		 */
-> > > > 		if (!scan && !mem_cgroup_online(memcg))
-> > > > 			scan = min(size, SWAP_CLUSTER_MAX);
-> > > > 
-> > > > in get_scan_count doesn't work for that case?
-> > > 
-> > > No, it doesn't. Let's look at the whole picture:
-> > > 
-> > > 		size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
-> > > 		scan = size >> sc->priority;
-> > > 		/*
-> > > 		 * If the cgroup's already been deleted, make sure to
-> > > 		 * scrape out the remaining cache.
-> > > 		 */
-> > > 		if (!scan && !mem_cgroup_online(memcg))
-> > > 			scan = min(size, SWAP_CLUSTER_MAX);
-> > > 
-> > > If size == 1, scan == 0 => scan = min(1, 32) == 1.
-> > > And after proportional adjustment we'll have 0.
-> > 
-> > My friday brain hurst when looking at this but if it doesn't work as
-> > advertized then it should be fixed. I do not see any of your patches to
-> > touch this logic so how come it would work after them applied?
-> 
-> This part works as expected. But the following
-> 	scan = div64_u64(scan * fraction[file], denominator);
-> reliable turns 1 page to scan to 0 pages to scan.
+Instead of adding yet another dependency on UBIFS_FS, wrap the whole
+block of ubifs config options in a single "if UBIFS_FS".
 
-OK, 68600f623d69 ("mm: don't miss the last page because of round-off
-error") sounds like a good and safe stable backport material.
+Fixes: d8a22773a12c6d78 ("ubifs: Enable authentication support")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ fs/ubifs/Kconfig | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
+diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
+index 529856fbccd0ee5f..3ee613361f4eeded 100644
+--- a/fs/ubifs/Kconfig
++++ b/fs/ubifs/Kconfig
+@@ -12,9 +12,10 @@ config UBIFS_FS
+ 	help
+ 	  UBIFS is a file system for flash devices which works on top of UBI.
+ 
++if UBIFS_FS
++
+ config UBIFS_FS_ADVANCED_COMPR
+ 	bool "Advanced compression options"
+-	depends on UBIFS_FS
+ 	help
+ 	  This option allows to explicitly choose which compressions, if any,
+ 	  are enabled in UBIFS. Removing compressors means inability to read
+@@ -24,7 +25,6 @@ config UBIFS_FS_ADVANCED_COMPR
+ 
+ config UBIFS_FS_LZO
+ 	bool "LZO compression support" if UBIFS_FS_ADVANCED_COMPR
+-	depends on UBIFS_FS
+ 	default y
+ 	help
+ 	   LZO compressor is generally faster than zlib but compresses worse.
+@@ -32,14 +32,12 @@ config UBIFS_FS_LZO
+ 
+ config UBIFS_FS_ZLIB
+ 	bool "ZLIB compression support" if UBIFS_FS_ADVANCED_COMPR
+-	depends on UBIFS_FS
+ 	default y
+ 	help
+ 	  Zlib compresses better than LZO but it is slower. Say 'Y' if unsure.
+ 
+ config UBIFS_ATIME_SUPPORT
+-	bool "Access time support" if UBIFS_FS
+-	depends on UBIFS_FS
++	bool "Access time support"
+ 	default n
+ 	help
+ 	  Originally UBIFS did not support atime, because it looked like a bad idea due
+@@ -54,7 +52,6 @@ config UBIFS_ATIME_SUPPORT
+ 
+ config UBIFS_FS_XATTR
+ 	bool "UBIFS XATTR support"
+-	depends on UBIFS_FS
+ 	default y
+ 	help
+ 	  Saying Y here includes support for extended attributes (xattrs).
+@@ -65,7 +62,7 @@ config UBIFS_FS_XATTR
+ 
+ config UBIFS_FS_ENCRYPTION
+ 	bool "UBIFS Encryption"
+-	depends on UBIFS_FS && UBIFS_FS_XATTR && BLOCK
++	depends on UBIFS_FS_XATTR && BLOCK
+ 	select FS_ENCRYPTION
+ 	default n
+ 	help
+@@ -76,7 +73,7 @@ config UBIFS_FS_ENCRYPTION
+ 
+ config UBIFS_FS_SECURITY
+ 	bool "UBIFS Security Labels"
+-	depends on UBIFS_FS && UBIFS_FS_XATTR
++	depends on UBIFS_FS_XATTR
+ 	default y
+ 	help
+ 	  Security labels provide an access control facility to support Linux
+@@ -96,3 +93,5 @@ config UBIFS_FS_AUTHENTICATION
+ 	  If you say yes here you should also select a hashing algorithm such as
+ 	  sha256, these are not selected automatically since there are many
+ 	  different options.
++
++endif # UBIFS_FS
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
