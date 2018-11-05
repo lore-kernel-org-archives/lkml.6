@@ -6,55 +6,59 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EE5C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B6AC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3725B20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D375E20825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DZXw+WQP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3725B20825
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SDtXEgE5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D375E20825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbeKEVS3 (ORCPT
+        id S1729421AbeKEVSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:18:29 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40248 "EHLO
+        Mon, 5 Nov 2018 16:18:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40752 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeKEVS3 (ORCPT
+        with ESMTP id S1726494AbeKEVSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:18:29 -0500
+        Mon, 5 Nov 2018 16:18:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=f8qwdsXUebOEp3PVNNoV914AhmdmiG6i8RLlUYYLyTQ=; b=DZXw+WQPGwv/
-        tuwKKdXWOb29Bj2YxlfMVbwkncEOirfugWlmL17MNZPSqaTU5GF5WQPTe/+Mv0QxB7KpmUNU5LD6+
-        YeZhkDeJHCVe8ThE0FzvsU1mTjOL8Dr3zjng1Y1HifX5O8VGgk5cj/2B7wW7mmxh/F/Zn/dnE5pwZ
-        +WyjY=;
+        List-Archive; bh=Xp1cvOYUMWsq6Y3iqTzyhO4J0pL7i2/Z32XOIDy+44E=; b=SDtXEgE5FVl+
+        9RN9xSDKFlfIfckxw+n1jVgdqUNX82KLM1cd6N4D+SWIWuroezFZY7cxCgDIWiIxWelxBpQ13SCzq
+        yZSe9Lxfz46IZT1CPAr1KzWQ3//Blxtg0KSeq3s/wa0ClvnIhnVF0Tu7sqNUvfareRyLqI7DmETB0
+        9arqE=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJdX1-0008Io-IX; Mon, 05 Nov 2018 11:58:59 +0000
+        id 1gJdXC-0008Ix-Pc; Mon, 05 Nov 2018 11:59:10 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4BC171124D98; Mon,  5 Nov 2018 11:58:59 +0000 (GMT)
+        id 773A81124D98; Mon,  5 Nov 2018 11:59:10 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: Intel: mrfld: fix uninitialized variable access" to the asoc tree
-In-Reply-To:  <20181103212140.890081-1-arnd@arndb.de>
-Message-Id: <20181105115859.4BC171124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 11:58:59 +0000 (GMT)
+Subject: Applied "ASoC: wm97xx: fix uninitialized regmap pointer problem" to the asoc tree
+In-Reply-To:  <20181102151922.889131-1-arnd@arndb.de>
+Message-Id: <20181105115910.773A81124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 11:59:10 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +66,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: mrfld: fix uninitialized variable access
+   ASoC: wm97xx: fix uninitialized regmap pointer problem
 
 has been applied to the asoc tree at
 
@@ -87,54 +91,175 @@ to this mail.
 Thanks,
 Mark
 
-From 1539c7f23f256120f89f8b9ec53160790bce9ed2 Mon Sep 17 00:00:00 2001
+From 576ce4075bfa0f03e0e91a89eecc539b3b828b08 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat, 3 Nov 2018 22:21:22 +0100
-Subject: [PATCH] ASoC: Intel: mrfld: fix uninitialized variable access
+Date: Fri, 2 Nov 2018 16:18:21 +0100
+Subject: [PATCH] ASoC: wm97xx: fix uninitialized regmap pointer problem
 
-Randconfig testing revealed a very old bug, with gcc-8:
+gcc notices that without either the ac97 bus or the pdata, we never
+initialize the regmap pointer, which leads to an uninitialized variable
+access:
 
-sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
-sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  if (fw == NULL) {
-     ^
-sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
-  const struct firmware *fw;
+sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
+sound/soc/codecs/wm9712.c:666:2: error: 'regmap' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-We must check the return code of request_firmware() before we look at the
-pointer result that may be uninitialized when the function fails.
+Since that configuration is invalid, it's better to return an error
+here. I tried to avoid adding complexity to the conditions, and turned
+the #ifdef into a regular if(IS_ENABLED()) check for readability.
+This in turn requires moving some header file declarations out of
+an #ifdef.
 
-Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+The same code is used in three drivers, all of which I'm changing
+the same way.
+
+Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/sound/soc.h       |  2 +-
+ sound/soc/codecs/wm9705.c | 10 ++++------
+ sound/soc/codecs/wm9712.c | 10 ++++------
+ sound/soc/codecs/wm9713.c | 10 ++++------
+ 4 files changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
-index 27413ebae956..b8c456753f01 100644
---- a/sound/soc/intel/atom/sst/sst_loader.c
-+++ b/sound/soc/intel/atom/sst/sst_loader.c
-@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
- 	const struct firmware *fw;
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index f1dab1f4b194..5a8b84140f01 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -553,12 +553,12 @@ static inline void snd_soc_jack_free_gpios(struct snd_soc_jack *jack, int count,
+ }
+ #endif
  
- 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
--	if (fw == NULL) {
--		dev_err(sst->dev, "fw is returning as null\n");
--		return -EINVAL;
--	}
- 	if (retval) {
- 		dev_err(sst->dev, "request fw failed %d\n", retval);
- 		return retval;
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ struct snd_ac97 *snd_soc_alloc_ac97_component(struct snd_soc_component *component);
+ struct snd_ac97 *snd_soc_new_ac97_component(struct snd_soc_component *component,
+ 	unsigned int id, unsigned int id_mask);
+ void snd_soc_free_ac97_component(struct snd_ac97 *ac97);
+ 
++#ifdef CONFIG_SND_SOC_AC97_BUS
+ int snd_soc_set_ac97_ops(struct snd_ac97_bus_ops *ops);
+ int snd_soc_set_ac97_ops_of_reset(struct snd_ac97_bus_ops *ops,
+ 		struct platform_device *pdev);
+diff --git a/sound/soc/codecs/wm9705.c b/sound/soc/codecs/wm9705.c
+index ccdf088461b7..54c306707c02 100644
+--- a/sound/soc/codecs/wm9705.c
++++ b/sound/soc/codecs/wm9705.c
+@@ -325,8 +325,7 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 	if (wm9705->mfd_pdata) {
+ 		wm9705->ac97 = wm9705->mfd_pdata->ac97;
+ 		regmap = wm9705->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		wm9705->ac97 = snd_soc_new_ac97_component(component, WM9705_VENDOR_ID,
+ 						      WM9705_VENDOR_ID_MASK);
+ 		if (IS_ERR(wm9705->ac97)) {
+@@ -339,7 +338,8 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9705->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
  	}
-+	if (fw == NULL) {
-+		dev_err(sst->dev, "fw is returning as null\n");
-+		return -EINVAL;
-+	}
- 	mutex_lock(&sst->sst_lock);
- 	retval = sst_cache_and_parse_fw(sst, fw);
- 	mutex_unlock(&sst->sst_lock);
+ 
+ 	snd_soc_component_set_drvdata(component, wm9705->ac97);
+@@ -350,14 +350,12 @@ static int wm9705_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9705_soc_remove(struct snd_soc_component *component)
+ {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9705_priv *wm9705 = snd_soc_component_get_drvdata(component);
+ 
+-	if (!wm9705->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9705->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9705->ac97);
+ 	}
+-#endif
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_wm9705 = {
+diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
+index e873baa9e778..01949eaba4fd 100644
+--- a/sound/soc/codecs/wm9712.c
++++ b/sound/soc/codecs/wm9712.c
+@@ -642,8 +642,7 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 	if (wm9712->mfd_pdata) {
+ 		wm9712->ac97 = wm9712->mfd_pdata->ac97;
+ 		regmap = wm9712->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		int ret;
+ 
+ 		wm9712->ac97 = snd_soc_new_ac97_component(component, WM9712_VENDOR_ID,
+@@ -660,7 +659,8 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9712->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_init_regmap(component, regmap);
+@@ -673,14 +673,12 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9712_soc_remove(struct snd_soc_component *component)
+ {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9712_priv *wm9712 = snd_soc_component_get_drvdata(component);
+ 
+-	if (!wm9712->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9712->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9712->ac97);
+ 	}
+-#endif
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_wm9712 = {
+diff --git a/sound/soc/codecs/wm9713.c b/sound/soc/codecs/wm9713.c
+index 643863bb32e0..5a2fdf4f69bf 100644
+--- a/sound/soc/codecs/wm9713.c
++++ b/sound/soc/codecs/wm9713.c
+@@ -1214,8 +1214,7 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 	if (wm9713->mfd_pdata) {
+ 		wm9713->ac97 = wm9713->mfd_pdata->ac97;
+ 		regmap = wm9713->mfd_pdata->regmap;
+-	} else {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
++	} else if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS)) {
+ 		wm9713->ac97 = snd_soc_new_ac97_component(component, WM9713_VENDOR_ID,
+ 						      WM9713_VENDOR_ID_MASK);
+ 		if (IS_ERR(wm9713->ac97))
+@@ -1225,7 +1224,8 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 			snd_soc_free_ac97_component(wm9713->ac97);
+ 			return PTR_ERR(regmap);
+ 		}
+-#endif
++	} else {
++		return -ENXIO;
+ 	}
+ 
+ 	snd_soc_component_init_regmap(component, regmap);
+@@ -1238,14 +1238,12 @@ static int wm9713_soc_probe(struct snd_soc_component *component)
+ 
+ static void wm9713_soc_remove(struct snd_soc_component *component)
+ {
+-#ifdef CONFIG_SND_SOC_AC97_BUS
+ 	struct wm9713_priv *wm9713 = snd_soc_component_get_drvdata(component);
+ 
+-	if (!wm9713->mfd_pdata) {
++	if (IS_ENABLED(CONFIG_SND_SOC_AC97_BUS) && !wm9713->mfd_pdata) {
+ 		snd_soc_component_exit_regmap(component);
+ 		snd_soc_free_ac97_component(wm9713->ac97);
+ 	}
+-#endif
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_wm9713 = {
 -- 
 2.19.0.rc2
 
