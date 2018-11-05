@@ -2,105 +2,105 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3012AC32789
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C66ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A162082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A162082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FBAE2082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BEPL279p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBAE2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbeKEMeA (ORCPT
+        id S1729059AbeKEMe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 07:34:00 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:38101 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727094AbeKEMeA (ORCPT
+        Mon, 5 Nov 2018 07:34:27 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45890 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728003AbeKEMe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 07:34:00 -0500
-X-ASG-Debug-ID: 1541387779-093b7e74774e360001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id PBaQc20qt1AAQVo7 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Mon, 05 Nov 2018 11:16:20 +0800 (CST)
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-Received: from y.localdomain (10.5.21.109) by HXTBJIDCEMVIW01.hxtcorp.net
- (10.128.0.14) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 5 Nov
- 2018 11:15:48 +0800
-From:   Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To:     <bhelgaas@google.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <okaya@codeaurora.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH] PCI: Add HXT vendor ID and ACS quirk
-Date:   Mon, 5 Nov 2018 11:15:59 +0800
-X-ASG-Orig-Subj: [PATCH] PCI: Add HXT vendor ID and ACS quirk
-Message-ID: <1541387759-2336-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1541387780
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: SPAM GLOBAL 0.9524 1.0000 3.7994
-X-Barracuda-Spam-Score: 4.30
-X-Barracuda-Spam-Status: No, SCORE=4.30 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_RULE7568M
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.61235
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.50 BSF_RULE7568M          Custom Rule 7568M
+        Mon, 5 Nov 2018 07:34:26 -0500
+Received: by mail-pf1-f194.google.com with SMTP id p17-v6so3313028pfj.12
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 19:16:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=+Abqyr0Tlz0dd8ae03r0keXJovqhbjDX9+vNfD+Uzik=;
+        b=BEPL279pKdQHOlzlhabGHLAJgREkzorzBOB9kb6szIY6paHzHSz0h2CHZGhZ1ryVk9
+         DTl8TEFBI37jIonnbqdBYmKVNT5cvSr4pCWEjw46mKvVPyfmDzAZM3H6S7vfuMM0PvCq
+         w4ZUxFOaILNGGi/c6dmoxMCx6+FId1Mwa81D4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+Abqyr0Tlz0dd8ae03r0keXJovqhbjDX9+vNfD+Uzik=;
+        b=cHVI3xGLN6LWJHoHVAAEMvzaQZV+slllxuZ4p9tIwVra9dy4vjp1he223vaZY3BiZ+
+         9FSX4VyKbiwJ9+UOOW8VTKn1RIzwYAJNVHgACz6zxvelfg2/BLhjl59d1rSOKK2omMsE
+         ZB0R8ru23Edi9U5d1qlSDSGd1RGMcpZj0qkCRGR1Xuz4mfDm6U1la9gi2Hh8gOcrQdPj
+         hzaqe6MXltJl+EV6xnCKcpgOVe3nS8iXwW+negbmmRrSqOObY8EmLlelrmK8e1/ul9VP
+         /tPMAtrB8BxmvGtNklkcAHd+OsZdo7LO2OpdsH8DejLfkBOhYdPoJqyiz01hA7f1nmE/
+         JFMg==
+X-Gm-Message-State: AGRZ1gL7joPAUZ1UHI0OsHY0xvSBqzyQU1lNyUmC4hmn1RQ1A12Zykr8
+        zBMwPSiDHdsWEfb1MHMz5C/vHw==
+X-Google-Smtp-Source: AJdET5d3IQsBBeeuM+JavzKZOcuTeTNRkChYZ13CdjsmUutLMCCXNZHeOFVNvbg6d4zwdOK9OdT7YA==
+X-Received: by 2002:a63:ee0e:: with SMTP id e14mr18263487pgi.8.1541387818840;
+        Sun, 04 Nov 2018 19:16:58 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id f10-v6sm40182773pgp.72.2018.11.04.19.16.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 04 Nov 2018 19:16:57 -0800 (PST)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH RFC 0/3] Add support for using external dma in SDHCI
+Date:   Mon,  5 Nov 2018 11:16:47 +0800
+Message-Id: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the HXT vendor ID to pci_ids.h and use it in quirks. As the
-design of HXT SD4800 ACS feature is the same as QCOM QDF2xxx,
-pci_quirk_qcom_rp_acs() is reused for SD4800 quirk.
+Currently the generic SDHCI code in the Linux kernel supports the SD
+standard DMA integrated into the host controller but does not have any
+support for external DMA controllers implemented using dmaengine meaning
+that custom code is needed for any systems that use a generic DMA
+controller with SDHCI which in practice means any SDHCI controller that
+doesn't have an integrated DMA controller so we should have this as a
+generic feature.
 
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
----
- drivers/pci/quirks.c    | 2 ++
- include/linux/pci_ids.h | 2 ++
- 2 files changed, 4 insertions(+)
+There are already a number of controller specific drivers that have dmaengine
+code, and some could use sdhci.c actually, but needed to implement mmc_ops->request()
+in their specific driver for sending command with external dma using dmaengine
+framework, with this patchset, them will take advantage of the generic support.
+TI's omap controller is the case as an example.
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 4700d24e5d55..1e00ef6a88f4 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4495,6 +4495,8 @@ static int pci_quirk_mf_endpoint_acs(struct pci_dev *dev, u16 acs_flags)
- 	/* QCOM QDF2xxx root ports */
- 	{ PCI_VENDOR_ID_QCOM, 0x0400, pci_quirk_qcom_rp_acs },
- 	{ PCI_VENDOR_ID_QCOM, 0x0401, pci_quirk_qcom_rp_acs },
-+	/* HXT SD4800 root ports. The ACS design is same as QCOM QDF2xxx */
-+	{ PCI_VENDOR_ID_HXT, 0x0401, pci_quirk_qcom_rp_acs },
- 	/* Intel PCH root ports */
- 	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_intel_pch_acs },
- 	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_intel_spt_pch_acs },
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index f4e278493f5b..e3d7efb1442f 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2559,6 +2559,8 @@
- 
- #define PCI_VENDOR_ID_AMAZON		0x1d0f
- 
-+#define PCI_VENDOR_ID_HXT		0x1dbf
-+
- #define PCI_VENDOR_ID_TEKRAM		0x1de1
- #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
- 
+Any comments are very appreciated.
+
+Thanks,
+Chunyan
+
+Chunyan Zhang (3):
+  mmc: sdhci: add support for using external DMA devices
+  mmc: sdhci-omap: Add using external dma
+  dt-bindings: sdhci-omap: Add example for using dmaengine
+
+ .../devicetree/bindings/mmc/sdhci-omap.txt         |   7 ++
+ drivers/mmc/host/Kconfig                           |  13 ++
+ drivers/mmc/host/sdhci-omap.c                      |   7 ++
+ drivers/mmc/host/sdhci.c                           | 137 ++++++++++++++++++++-
+ drivers/mmc/host/sdhci.h                           |  12 ++
+ 5 files changed, 175 insertions(+), 1 deletion(-)
+
 -- 
-1.8.3.1
+2.7.4
 
