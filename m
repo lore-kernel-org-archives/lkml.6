@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 905C3C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B968C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55CAF20866
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D06AE2081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:56:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EkKCZB+T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55CAF20866
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2BYNYTmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D06AE2081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387597AbeKFCRW (ORCPT
+        id S2387642AbeKFCRX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:17:22 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:43414 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729762AbeKFCRU (ORCPT
+        Mon, 5 Nov 2018 21:17:23 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49520 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730073AbeKFCRW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:17:20 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs0k6052184;
-        Mon, 5 Nov 2018 16:56:14 GMT
+        Mon, 5 Nov 2018 21:17:22 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5Gs2dF104430;
+        Mon, 5 Nov 2018 16:56:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=gutsZD7DMWVODOwljz7ZZ5gCU9HyKt2gG0UQQPSwfmk=;
- b=EkKCZB+TXN9kcQy8IJsFm22o2vVRS07DBy+dXqp9LYMjvEMjD1joAEahNPTZWc9ZSOmz
- jLoBY+e+kYHrOU9hF9AQU0sD8MM7+F56gU6xaI1jjB5+wQay9w/jLNviOetya7zvPXch
- GCibVfJyxI31RjE3qiCendiAu8YQSsbDf/1kd+mxdw/7Yk6uo+gvyW3uKGOdZy9bGC+P
- f6AfG+cN7UIfR/20nHqSA6ODKq6Za82OnJo62+9DObtkPG1xFnY4PoV6J6fxWBtxFwsa
- K2tZ3GX/fPrk0jTT9cDkMVQmy+sUTCPp9lxtYzpdf/CQNjvcmGHo+CDYsaxjIX/IuFoV /A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2nh4aqg2cp-1
+ bh=r9EK74CGq12tLNaMapE/4PyK+rMYKf32lRC9GP5eoB4=;
+ b=2BYNYTmHndcc9AtITIKvpRSM1QBsihQ9IWPChTb7cyKJB0Thb+tB3ma2zfr25u3qFQd+
+ kOBpr6MHXfz2ptLnvploitatlkhZ/jQ8eMmCoNXezIzt59/2z6LaLsmHCMVAOQBRnp+d
+ Q+/90S3DN1WT5g6uYqKPpQkpUqJNaV5YuJE6bpt/RgyRPIveZtEV9eLIaCTyIvorkLOZ
+ EpKur+8+QGDme/kOApS6CmjqCIUqerYjBtAdOXJSTlNsPZcB83O6U+qSs8/+GNI1mgDL
+ nTO+EtjbuNHKPEuU8Uj2QKCw3owstK3YF/bvGbBcgdC0M8+rAPK6KA5fdXbpz/VrXa7k BA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2nh3mpg584-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 05 Nov 2018 16:56:14 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuDIT022159
+        Mon, 05 Nov 2018 16:56:12 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuB96024422
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 5 Nov 2018 16:56:13 GMT
+        Mon, 5 Nov 2018 16:56:11 GMT
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA5GuCeZ010802;
-        Mon, 5 Nov 2018 16:56:12 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5GuARw008323;
+        Mon, 5 Nov 2018 16:56:10 GMT
 Received: from localhost.localdomain (/73.60.114.248)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 05 Nov 2018 08:56:11 -0800
+        with ESMTP ; Mon, 05 Nov 2018 08:56:10 -0800
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
 To:     linux-mm@kvack.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -63,16 +63,16 @@ Cc:     aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
         Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
         rdunlap@infradead.org, steven.sistare@oracle.com,
         tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz
-Subject: [RFC PATCH v4 04/13] ktask: run helper threads at MAX_NICE
-Date:   Mon,  5 Nov 2018 11:55:49 -0500
-Message-Id: <20181105165558.11698-5-daniel.m.jordan@oracle.com>
+Subject: [RFC PATCH v4 03/13] ktask: add undo support
+Date:   Mon,  5 Nov 2018 11:55:48 -0500
+Message-Id: <20181105165558.11698-4-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1811050153
@@ -81,103 +81,328 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multithreading may speed long-running kernel tasks, but overly
-optimistic parallelization can go wrong if too many helper threads are
-started on an already-busy system.  Such helpers can degrade the
-performance of other tasks, so they should be sensitive to current CPU
-utilization[1].
+Tasks can fail midway through their work.  To recover, the finished
+chunks of work need to be undone in a task-specific way.
 
-To achieve this, run helpers at MAX_NICE so that their CPU time is
-proportional to idle CPU time.  The main thread that called into ktask
-naturally runs at its original priority so that it can make progress on
-a heavily loaded system, as it would if ktask were not in the picture.
-
-I tested two different cases in which a non-ktask and a ktask workload
-compete for the same CPUs with the goal of showing that normal priority
-(i.e. nice=0) ktask helpers cause the non-ktask workload to run more
-slowly, whereas MAX_NICE ktask helpers don't.
-
-Testing notes:
-  - Each case was run using 8 CPUs on a large two-socket server, with a
-    cpumask allowing all test threads to run anywhere within the 8.
-  - The non-ktask workload used 7 threads and the ktask workload used 8
-    threads to evaluate how much ktask helpers, rather than the main ktask
-    thread, disturbed the non-ktask workload.
-  - The non-ktask workload was started after the ktask workload and run
-    for less time to maximize the chances that the non-ktask workload would
-    be disturbed.
-  - Runtimes in seconds.
-
-Case 1: Synthetic, worst-case CPU contention
-
-    ktask_test - a tight loop doing integer multiplication to max out on CPU;
-                 used for testing only, does not appear in this series
-    stress-ng  - cpu stressor ("-c --cpu-method ackerman --cpu-ops 1200");
-
-                 stress-ng
-                     alone  (stdev)   max_nice  (stdev)   normal_prio  (stdev)
-                  ------------------------------------------------------------
-    ktask_test                           96.87  ( 1.09)         90.81  ( 0.29)
-    stress-ng        43.04  ( 0.00)      43.58  ( 0.01)         75.86  ( 0.39)
-
-This case shows MAX_NICE helpers make a significant difference compared
-to normal priority helpers, with stress-ng taking 76% longer to finish
-when competing with normal priority ktask threads than when run by
-itself, but only 1% longer when run with MAX_NICE helpers.  The 1% comes
-from the small amount of CPU time MAX_NICE threads are given despite
-their low priority.
-
-Case 2: Real-world CPU contention
-
-    ktask_vfio - VFIO page pin a 175G kvm guest
-    usemem     - faults in 25G of anonymous THP per thread, PAGE_SIZE stride;
-                 used to mimic the page clearing that dominates in ktask_vfio
-                 so that usemem competes for the same system resources
-
-                    usemem
-                     alone  (stdev)   max_nice  (stdev)   normal_prio  (stdev)
-                  ------------------------------------------------------------
-    ktask_vfio                           14.74  ( 0.04)          9.93  ( 0.09)
-        usemem       10.45  ( 0.04)      10.75  ( 0.04)         14.14  ( 0.07)
-
-In the more realistic case 2, the effect is similar although not as
-pronounced.  The usemem threads take 35% longer to finish with normal
-priority ktask threads than when run alone, but only 3% longer when
-MAX_NICE is used.
-
-All ktask users outside of VFIO boil down to page clearing, so I imagine
-the results would be similar for them.
-
-[1] lkml.kernel.org/r/20171206143509.GG7515@dhcp22.suse.cz
+Allow ktask clients to pass an "undo" callback that is responsible for
+undoing one chunk of work.  To avoid multiple levels of error handling,
+do not allow the callback to fail.  For simplicity and because it's a
+slow path, undoing is not multithreaded.
 
 Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- kernel/ktask.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ include/linux/ktask.h |  36 +++++++++++-
+ kernel/ktask.c        | 125 +++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 138 insertions(+), 23 deletions(-)
 
+diff --git a/include/linux/ktask.h b/include/linux/ktask.h
+index 9c75a93b51b9..30a6a88e5dad 100644
+--- a/include/linux/ktask.h
++++ b/include/linux/ktask.h
+@@ -10,6 +10,7 @@
+ #ifndef _LINUX_KTASK_H
+ #define _LINUX_KTASK_H
+ 
++#include <linux/list.h>
+ #include <linux/mm.h>
+ #include <linux/types.h>
+ 
+@@ -23,9 +24,14 @@
+  * @kn_nid: NUMA node id to run threads on
+  */
+ struct ktask_node {
+-	void		*kn_start;
+-	size_t		kn_task_size;
+-	int		kn_nid;
++	void			*kn_start;
++	size_t			kn_task_size;
++	int			kn_nid;
++
++	/* Private fields below - do not touch these. */
++	void			*kn_position;
++	size_t			kn_remaining_size;
++	struct list_head	kn_failed_works;
+ };
+ 
+ /**
+@@ -43,6 +49,14 @@ struct ktask_node {
+  */
+ typedef int (*ktask_thread_func)(void *start, void *end, void *arg);
+ 
++/**
++ * typedef ktask_undo_func
++ *
++ * The same as ktask_thread_func, with the exception that it must always
++ * succeed, so it doesn't return anything.
++ */
++typedef void (*ktask_undo_func)(void *start, void *end, void *arg);
++
+ /**
+  * typedef ktask_iter_func
+  *
+@@ -77,6 +91,11 @@ void *ktask_iter_range(void *position, size_t size);
+  *
+  * @kc_thread_func: A thread function that completes one chunk of the task per
+  *                  call.
++ * @kc_undo_func: A function that undoes one chunk of the task per call.
++ *                If non-NULL and error(s) occur during the task, this is
++ *                called on all successfully completed chunks of work.  The
++ *                chunk(s) in which failure occurs should be handled in
++ *                kc_thread_func.
+  * @kc_func_arg: An argument to be passed to the thread and undo functions.
+  * @kc_iter_func: An iterator function to advance the iterator by some number
+  *                   of task-specific units.
+@@ -90,6 +109,7 @@ void *ktask_iter_range(void *position, size_t size);
+ struct ktask_ctl {
+ 	/* Required arguments set with DEFINE_KTASK_CTL. */
+ 	ktask_thread_func	kc_thread_func;
++	ktask_undo_func		kc_undo_func;
+ 	void			*kc_func_arg;
+ 	size_t			kc_min_chunk_size;
+ 
+@@ -101,6 +121,7 @@ struct ktask_ctl {
+ #define KTASK_CTL_INITIALIZER(thread_func, func_arg, min_chunk_size)	     \
+ 	{								     \
+ 		.kc_thread_func = (ktask_thread_func)(thread_func),	     \
++		.kc_undo_func = NULL,					     \
+ 		.kc_func_arg = (func_arg),				     \
+ 		.kc_min_chunk_size = (min_chunk_size),			     \
+ 		.kc_iter_func = (ktask_iter_range),			     \
+@@ -132,6 +153,15 @@ struct ktask_ctl {
+ #define ktask_ctl_set_iter_func(ctl, iter_func)				\
+ 	((ctl)->kc_iter_func = (ktask_iter_func)(iter_func))
+ 
++/**
++ * ktask_ctl_set_undo_func - Designate an undo function to unwind from error
++ *
++ * @ctl:  A control structure containing information about the task.
++ * @undo_func:  Undoes a piece of the task.
++ */
++#define ktask_ctl_set_undo_func(ctl, undo_func)				\
++	((ctl)->kc_undo_func = (ktask_undo_func)(undo_func))
++
+ /**
+  * ktask_ctl_set_max_threads - Set a task-specific maximum number of threads
+  *
 diff --git a/kernel/ktask.c b/kernel/ktask.c
-index b91c62f14dcd..72293a0f50c3 100644
+index a7b2b5a62737..b91c62f14dcd 100644
 --- a/kernel/ktask.c
 +++ b/kernel/ktask.c
-@@ -575,6 +575,18 @@ void __init ktask_init(void)
- 		goto alloc_fail;
+@@ -20,6 +20,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
++#include <linux/list_sort.h>
+ #include <linux/mutex.h>
+ #include <linux/printk.h>
+ #include <linux/random.h>
+@@ -46,7 +47,12 @@ struct ktask_work {
+ 	struct ktask_task	*kw_task;
+ 	int			kw_ktask_node_i;
+ 	int			kw_queue_nid;
+-	struct list_head	kw_list;	/* ktask_free_works linkage */
++	/* task units from kn_start to kw_error_start */
++	size_t			kw_error_offset;
++	void			*kw_error_start;
++	void			*kw_error_end;
++	/* ktask_free_works, kn_failed_works linkage */
++	struct list_head	kw_list;
+ };
+ 
+ static LIST_HEAD(ktask_free_works);
+@@ -170,11 +176,11 @@ static void ktask_thread(struct work_struct *work)
+ 	mutex_lock(&kt->kt_mutex);
+ 
+ 	while (kt->kt_total_size > 0 && kt->kt_error == KTASK_RETURN_SUCCESS) {
+-		void *start, *end;
+-		size_t size;
++		void *position, *end;
++		size_t size, position_offset;
+ 		int ret;
+ 
+-		if (kn->kn_task_size == 0) {
++		if (kn->kn_remaining_size == 0) {
+ 			/* The current node is out of work; pick a new one. */
+ 			size_t remaining_nodes_seen = 0;
+ 			size_t new_idx = prandom_u32_max(kt->kt_nr_nodes_left);
+@@ -184,7 +190,7 @@ static void ktask_thread(struct work_struct *work)
+ 			WARN_ON(kt->kt_nr_nodes_left == 0);
+ 			WARN_ON(new_idx >= kt->kt_nr_nodes_left);
+ 			for (i = 0; i < kt->kt_nr_nodes; ++i) {
+-				if (kt->kt_nodes[i].kn_task_size == 0)
++				if (kt->kt_nodes[i].kn_remaining_size == 0)
+ 					continue;
+ 
+ 				if (remaining_nodes_seen >= new_idx)
+@@ -205,27 +211,40 @@ static void ktask_thread(struct work_struct *work)
+ 			}
+ 		}
+ 
+-		start = kn->kn_start;
+-		size = min(kt->kt_chunk_size, kn->kn_task_size);
+-		end = kc->kc_iter_func(start, size);
+-		kn->kn_start = end;
+-		kn->kn_task_size -= size;
++		position = kn->kn_position;
++		position_offset = kn->kn_task_size - kn->kn_remaining_size;
++		size = min(kt->kt_chunk_size, kn->kn_remaining_size);
++		end = kc->kc_iter_func(position, size);
++		kn->kn_position = end;
++		kn->kn_remaining_size -= size;
+ 		WARN_ON(kt->kt_total_size < size);
+ 		kt->kt_total_size -= size;
+-		if (kn->kn_task_size == 0) {
++		if (kn->kn_remaining_size == 0) {
+ 			WARN_ON(kt->kt_nr_nodes_left == 0);
+ 			kt->kt_nr_nodes_left--;
+ 		}
+ 
+ 		mutex_unlock(&kt->kt_mutex);
+ 
+-		ret = kc->kc_thread_func(start, end, kc->kc_func_arg);
++		ret = kc->kc_thread_func(position, end, kc->kc_func_arg);
+ 
+ 		mutex_lock(&kt->kt_mutex);
+ 
+-		/* Save first error code only. */
+-		if (kt->kt_error == KTASK_RETURN_SUCCESS && ret != kt->kt_error)
+-			kt->kt_error = ret;
++		if (ret != KTASK_RETURN_SUCCESS) {
++			/* Save first error code only. */
++			if (kt->kt_error == KTASK_RETURN_SUCCESS)
++				kt->kt_error = ret;
++			/*
++			 * If this task has an undo function, save information
++			 * about where this thread failed for ktask_undo.
++			 */
++			if (kc->kc_undo_func) {
++				list_move(&kw->kw_list, &kn->kn_failed_works);
++				kw->kw_error_start = position;
++				kw->kw_error_offset = position_offset;
++				kw->kw_error_end = end;
++			}
++		}
  	}
  
-+	/*
-+	 * All ktask worker threads have the lowest priority on the system so
-+	 * they don't disturb other workloads.
-+	 */
-+	attrs->nice = MAX_NICE;
-+
-+	ret = apply_workqueue_attrs(ktask_wq, attrs);
-+	if (ret != 0) {
-+		pr_warn("disabled (couldn't apply attrs to ktask_wq)");
-+		goto apply_fail;
-+	}
-+
- 	attrs->no_numa = true;
+ 	WARN_ON(kt->kt_nr_nodes_left > 0 &&
+@@ -335,26 +354,85 @@ static size_t ktask_init_works(struct ktask_node *nodes, size_t nr_nodes,
+ }
  
- 	ret = apply_workqueue_attrs(ktask_nonuma_wq, attrs);
+ static void ktask_fini_works(struct ktask_task *kt,
++			     struct ktask_work *stack_work,
+ 			     struct list_head *works_list)
+ {
+-	struct ktask_work *work;
++	struct ktask_work *work, *next;
+ 
+ 	spin_lock(&ktask_rlim_lock);
+ 
+ 	/* Put the works back on the free list, adjusting rlimits. */
+-	list_for_each_entry(work, works_list, kw_list) {
++	list_for_each_entry_safe(work, next, works_list, kw_list) {
++		if (work == stack_work) {
++			/* On this thread's stack, so not subject to rlimits. */
++			list_del(&work->kw_list);
++			continue;
++		}
+ 		if (work->kw_queue_nid != NUMA_NO_NODE) {
+ 			WARN_ON(ktask_rlim_node_cur[work->kw_queue_nid] == 0);
+ 			--ktask_rlim_node_cur[work->kw_queue_nid];
+ 		}
+ 		WARN_ON(ktask_rlim_cur == 0);
+ 		--ktask_rlim_cur;
++		list_move(&work->kw_list, &ktask_free_works);
+ 	}
+-	list_splice(works_list, &ktask_free_works);
+-
+ 	spin_unlock(&ktask_rlim_lock);
+ }
+ 
++static int ktask_error_cmp(void *unused, struct list_head *a,
++			   struct list_head *b)
++{
++	struct ktask_work *work_a = list_entry(a, struct ktask_work, kw_list);
++	struct ktask_work *work_b = list_entry(b, struct ktask_work, kw_list);
++
++	if (work_a->kw_error_offset < work_b->kw_error_offset)
++		return -1;
++	else if (work_a->kw_error_offset > work_b->kw_error_offset)
++		return 1;
++	return 0;
++}
++
++static void ktask_undo(struct ktask_node *nodes, size_t nr_nodes,
++		       struct ktask_ctl *ctl, struct list_head *works_list)
++{
++	size_t i;
++
++	for (i = 0; i < nr_nodes; ++i) {
++		struct ktask_node *kn = &nodes[i];
++		struct list_head *failed_works = &kn->kn_failed_works;
++		struct ktask_work *failed_work;
++		void *undo_pos = kn->kn_start;
++		void *undo_end;
++
++		/* Sort so the failed ranges can be checked as we go. */
++		list_sort(NULL, failed_works, ktask_error_cmp);
++
++		/* Undo completed work on this node, skipping failed ranges. */
++		while (undo_pos != kn->kn_position) {
++			failed_work = list_first_entry_or_null(failed_works,
++							      struct ktask_work,
++							      kw_list);
++			if (failed_work)
++				undo_end = failed_work->kw_error_start;
++			else
++				undo_end = kn->kn_position;
++
++			if (undo_pos != undo_end) {
++				ctl->kc_undo_func(undo_pos, undo_end,
++						  ctl->kc_func_arg);
++			}
++
++			if (failed_work) {
++				undo_pos = failed_work->kw_error_end;
++				list_move(&failed_work->kw_list, works_list);
++			} else {
++				undo_pos = undo_end;
++			}
++		}
++		WARN_ON(!list_empty(failed_works));
++	}
++}
++
+ int ktask_run_numa(struct ktask_node *nodes, size_t nr_nodes,
+ 		   struct ktask_ctl *ctl)
+ {
+@@ -374,6 +452,9 @@ int ktask_run_numa(struct ktask_node *nodes, size_t nr_nodes,
+ 
+ 	for (i = 0; i < nr_nodes; ++i) {
+ 		kt.kt_total_size += nodes[i].kn_task_size;
++		nodes[i].kn_position = nodes[i].kn_start;
++		nodes[i].kn_remaining_size = nodes[i].kn_task_size;
++		INIT_LIST_HEAD(&nodes[i].kn_failed_works);
+ 		if (nodes[i].kn_task_size == 0)
+ 			kt.kt_nr_nodes_left--;
+ 
+@@ -396,12 +477,16 @@ int ktask_run_numa(struct ktask_node *nodes, size_t nr_nodes,
+ 
+ 	/* Use the current thread, which saves starting a workqueue worker. */
+ 	ktask_init_work(&kw, &kt, 0, nodes[0].kn_nid);
++	INIT_LIST_HEAD(&kw.kw_list);
+ 	ktask_thread(&kw.kw_work);
+ 
+ 	/* Wait for all the jobs to finish. */
+ 	wait_for_completion(&kt.kt_ktask_done);
+ 
+-	ktask_fini_works(&kt, &works_list);
++	if (kt.kt_error && ctl->kc_undo_func)
++		ktask_undo(nodes, nr_nodes, ctl, &works_list);
++
++	ktask_fini_works(&kt, &kw, &works_list);
+ 	mutex_destroy(&kt.kt_mutex);
+ 
+ 	return kt.kt_error;
 -- 
 2.19.1
 
