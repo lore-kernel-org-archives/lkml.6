@@ -2,172 +2,164 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6431C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B9DC46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 993AF20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:08:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993AF20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 0D48420869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D48420869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbeKET1l (ORCPT
+        id S1728432AbeKETaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:27:41 -0500
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:43018 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726228AbeKET1l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 14:27:41 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 0B5D3B86FD
-        for <linux-kernel@vger.kernel.org>; Mon,  5 Nov 2018 10:08:43 +0000 (GMT)
-Received: (qmail 1045 invoked from network); 5 Nov 2018 10:08:42 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 5 Nov 2018 10:08:42 -0000
-Date:   Mon, 5 Nov 2018 10:08:41 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     subhra mazumdar <subhra.mazumdar@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, dhaval.giani@oracle.com,
-        steven.sistare@oracle.com, Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH v2 1/1] pipe: busy wait for pipe
-Message-ID: <20181105100841.GG23537@techsingularity.net>
-References: <20180925233240.24451-1-subhra.mazumdar@oracle.com>
- <20180925233240.24451-2-subhra.mazumdar@oracle.com>
+        Mon, 5 Nov 2018 14:30:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60203 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbeKETaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:30:09 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BC027207B0; Mon,  5 Nov 2018 11:11:10 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 88E46206D8;
+        Mon,  5 Nov 2018 11:11:10 +0100 (CET)
+Date:   Mon, 5 Nov 2018 11:11:10 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@openedev.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for
+ minimal rate to NKM PLLs
+Message-ID: <20181105101110.agfik3oppd6ck25c@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-3-jagan@amarulasolutions.com>
+ <20181024180436.5n3i3z6h2yezc4cv@flea>
+ <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
+ <20181029085843.3bslqwktxbp2ywk2@flea>
+ <e7566001-8933-adbb-4c30-7a3f66ebae4e@openedev.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="24qnld42rl357a2y"
 Content-Disposition: inline
-In-Reply-To: <20180925233240.24451-2-subhra.mazumdar@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e7566001-8933-adbb-4c30-7a3f66ebae4e@openedev.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Al Viro as per get_maintainers.pl.
 
-On Tue, Sep 25, 2018 at 04:32:40PM -0700, subhra mazumdar wrote:
-> Introduce pipe_ll_usec field for pipes that indicates the amount of micro
-> seconds a thread should spin if pipe is empty or full before sleeping. This
-> is similar to network sockets.
+--24qnld42rl357a2y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you point to what pattern from network sockets you are duplicated
-exactly? One would assume it's busy_loop_current_time and busy_loop_timeout
-but it should be in the changelog because there are differences in polling
-depending on where you are in the network subsystem (which I'm not very
-familiar with).
+On Mon, Oct 29, 2018 at 06:10:47PM +0530, Jagan Teki wrote:
+> On 29/10/18 2:28 PM, Maxime Ripard wrote:
+> > On Thu, Oct 25, 2018 at 04:25:59PM +0530, Jagan Teki wrote:
+> > > On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
+> > > <maxime.ripard@bootlin.com> wrote:
+> > > >=20
+> > > > On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
+> > > > > Some NKM PLLs doesn't work well when their output clock rate is s=
+et below
+> > > > > certain rate.
+> > > > >=20
+> > > > > So, add support for minimal rate for relevant PLLs.
+> > > > >=20
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > > Changes for v2:
+> > > > > - new patch
+> > > > >=20
+> > > > >   drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
+> > > > >   drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+> > > > >   2 files changed, 8 insertions(+)
+> > > > >=20
+> > > > > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-n=
+g/ccu_nkm.c
+> > > > > index 841840e35e61..d17539dc88dd 100644
+> > > > > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > > > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > > > @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(stru=
+ct ccu_mux_internal *mux,
+> > > > >        if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > > > >                rate *=3D nkm->fixed_post_div;
+> > > > >=20
+> > > > > +     if (rate < nkm->min_rate) {
+> > > > > +             rate =3D nkm->min_rate;
+> > > > > +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDI=
+V)
+> > > > > +                     rate /=3D nkm->fixed_post_div;
+> > > >=20
+> > > > I'm not sure this is right. Is the post divider taken into account =
+to
+> > > > calculate the minimum, or is the minimum on the rate before the fix=
+ed
+> > > > post divider.
+> > >=20
+> > > Since we are returning from here, we need to take care post div which
+> > > is actually doing at the end of round_rate.
+> >=20
+> > That's not my point though. Does the rate needs to be superior to min
+> > / post_div, or min?
+>=20
+> ie what I'm trying to say, since it's common code min or max should /
+> post_div and PLL_MIPI doesn't use any post_div.
+>=20
+> We need to take care post_div though the current test (PLL_MIPI) in not u=
+sed
+> since it's common code. just like nkmp, nm etc.
+>=20
+> >=20
+> > > >=20
+> > > > How did you test this?
+> > >=20
+> > > I've not used this on PLL_MIPI atleast, so I didn't test this.
+> >=20
+> > If you've never tested this, why are you adding that code?
+>=20
+> Like above, it's common code. otherwise might effect.
 
-> Workloads like hackbench in pipe mode
-> benefits significantly from this by avoiding the sleep and wakeup overhead.
-> Other similar usecases can benefit. A tunable pipe_busy_poll is introduced
-> to enable or disable busy waiting via /proc. The value of it specifies the
-> amount of spin in microseconds. Default value is 0 indicating no spin.
-> 
+Adding untested, unverified and unneeded code is just bloat, nothing
+else.
 
-Your lead mail indicates the spin was set to a "suitable spin time". How
-should an administrator select this spin time? What works for hackbench
-might not be suitable for another workload. What if the spin time
-selected happens to be just slightly longer than the time it takes the
-reader to respond? In such a case, the result would be "all spin, no
-gain". While networking potentially suffers the same problem, it appears
-to be opt-in per socket so it's up to the application not to shoot
-itself in the foot.
+Maxime
 
-> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
-> ---
->  fs/pipe.c                 | 12 ++++++++++++
->  include/linux/pipe_fs_i.h |  2 ++
->  kernel/sysctl.c           |  7 +++++++
->  3 files changed, 21 insertions(+)
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index bdc5d3c..35d805b 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -26,6 +26,7 @@
->  
->  #include <linux/uaccess.h>
->  #include <asm/ioctls.h>
-> +#include <linux/sched/clock.h>
->  
->  #include "internal.h"
->  
-> @@ -40,6 +41,7 @@ unsigned int pipe_max_size = 1048576;
->   */
->  unsigned long pipe_user_pages_hard;
->  unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
-> +unsigned int pipe_busy_poll;
->  
->  /*
->   * We use a start+len construction, which provides full use of the 
-> @@ -106,6 +108,7 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
->  void pipe_wait(struct pipe_inode_info *pipe)
->  {
->  	DEFINE_WAIT(wait);
-> +	u64 start;
->  
->  	/*
->  	 * Pipes are system-local resources, so sleeping on them
-> @@ -113,6 +116,10 @@ void pipe_wait(struct pipe_inode_info *pipe)
->  	 */
->  	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
->  	pipe_unlock(pipe);
-> +	start = local_clock();
-> +	while (current->state != TASK_RUNNING &&
-> +	       ((local_clock() - start) >> 10) < pipe->pipe_ll_usec)
-> +		cpu_relax();
->  	schedule();
->  	finish_wait(&pipe->wait, &wait);
->  	pipe_lock(pipe);
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Networking breaks this out better in terms of options instead of
-hard-coding. This does not handle need_resched or signal delivery
-properly where as networking does for example.
+--24qnld42rl357a2y
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> @@ -825,6 +832,7 @@ static int do_pipe2(int __user *fildes, int flags)
->  	struct file *files[2];
->  	int fd[2];
->  	int error;
-> +	struct pipe_inode_info *pipe;
->  
->  	error = __do_pipe_flags(fd, files, flags);
->  	if (!error) {
-> @@ -838,6 +846,10 @@ static int do_pipe2(int __user *fildes, int flags)
->  			fd_install(fd[0], files[0]);
->  			fd_install(fd[1], files[1]);
->  		}
-> +		pipe = files[0]->private_data;
-> +		pipe->pipe_ll_usec = pipe_busy_poll;
-> +		pipe = files[1]->private_data;
-> +		pipe->pipe_ll_usec = pipe_busy_poll;
->  	}
->  	return error;
->  }
+-----BEGIN PGP SIGNATURE-----
 
-You add a pipe field but the value in always based on the sysctl
-so the information is redundantu (barring a race condition on one
-pipe write per sysctl update which is an irrelevant corner case). In
-comparison, the network subsystem appears to be explicitly opt-in via
-setsockopt(SO_BUSY_POLL) from a glance and the value appears to be tunable
-on a per-socket basis (I didn't check for sure, this is based on a glance
-at what networking does). It's not clear what a sensible way of replicating
-that for pipe file descriptors would be but it's possible that the only
-way would be to define the system-wide tunable as a max spin time and try
-detect the optimal spin time on a per-fd basis (not entirely dissimilar
-to how cpuidle menu guesses how long it'll be in an idle state for).
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AXPgAKCRDj7w1vZxhR
+xZGZAP9paH3R1hjXBV/78pQJPBNmhdWRfP1ia9/7402ZarjPbgEAhMrhFLZ5XMu9
+d1StSmseaJ/1DULVvnx5QFCiTcr5QQ8=
+=540+
+-----END PGP SIGNATURE-----
 
-It's not really my area but I feel that this patch is a benchmark-specific
-hack and that tuning it on a system-wide basis will be a game of "win
-some, lose some" that is never used in practice. Worse, it might end up
-in a tuning guide as "always set this sysctl" without considering the
-capabilities of the machine or the workload and falls victim to cargo
-cult tuning.
-
--- 
-Mel Gorman
-SUSE Labs
+--24qnld42rl357a2y--
