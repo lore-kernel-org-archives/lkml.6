@@ -2,136 +2,117 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A493C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42574C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06DB32081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:11:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06DB32081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FEF920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:12:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FEF920862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730045AbeKEXba (ORCPT
+        id S1730056AbeKEXby (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:31:30 -0500
-Received: from mga09.intel.com ([134.134.136.24]:14242 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbeKEXba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:31:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 06:11:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="84095054"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.180])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Nov 2018 06:11:28 -0800
-Date:   Mon, 5 Nov 2018 16:11:28 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>, davidwang@zhaoxin.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        qianyue.zj@alibaba-inc.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 05/23] x86/cpu/intel: Detect SGX support and update
- caps appropriately
-Message-ID: <20181105141128.GB24038@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-6-jarkko.sakkinen@linux.intel.com>
- <CAHp75VcG4FtiS9bDM_pP216kxobFxkChDu6uxvuTsMHQ=YJ3Zg@mail.gmail.com>
- <20181105140933.GA24038@linux.intel.com>
+        Mon, 5 Nov 2018 18:31:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54842 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727481AbeKEXbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:31:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 53F99AD36;
+        Mon,  5 Nov 2018 14:11:57 +0000 (UTC)
+Date:   Mon, 5 Nov 2018 15:11:56 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
+Subject: Re: [PATCH v2] mm: use kvzalloc for swap_info_struct allocation
+Message-ID: <20181105141156.GB10132@dhcp22.suse.cz>
+References: <20181105061016.GA4502@intel.com>
+ <fc23172d-3c75-21e2-d551-8b1808cbe593@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105140933.GA24038@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <fc23172d-3c75-21e2-d551-8b1808cbe593@virtuozzo.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 04:09:33PM +0200, Jarkko Sakkinen wrote:
-> On Sat, Nov 03, 2018 at 03:05:39PM +0200, Andy Shevchenko wrote:
-> > > +static void detect_sgx(struct cpuinfo_x86 *c)
-> > > +{
-> > > +       bool unsupported = false;
-> > > +       unsigned long long fc;
-> > > +
-> > > +       rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> > > +       if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> > > +               pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-> > > +               unsupported = true;
-> > > +       } else if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> > > +               pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
-> > > +               unsupported = true;
-> > > +       } else if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> > > +               pr_err_once("sgx: SGX1 instruction set not supported\n");
-> > > +               unsupported = true;
-> > > +       }
-> > 
-> > If you do
-> > 
-> > } else {
-> >  /* Supported */
-> >  return;
-> > }
+On Mon 05-11-18 14:17:01, Vasily Averin wrote:
+> commit a2468cc9bfdf ("swap: choose swap device according to numa node")
+> changed 'avail_lists' field of 'struct swap_info_struct' to an array.
+> In popular linux distros it increased size of swap_info_struct up to
+> 40 Kbytes and now swap_info_struct allocation requires order-4 page.
+> Switch to kvzmalloc allows to avoid unexpected allocation failures.
+
+While this fixes the most visible issue is this a good long term
+solution? Aren't we wasting memory without a good reason? IIRC our limit
+for swap files/devices is much smaller than potential NUMA nodes numbers
+so we can safely expect that would be only few numa affine nodes. I am
+not really familiar with the rework which has added numa node awareness
+but I wouls assueme that we should either go with one global table with
+a linked list of possible swap_info structure per numa node or use a
+sparse array.
+
+That being said I am not really objecting to this patch as it is simple
+and backportable to older (stable kernels).
+ 
+I would even dare to add
+Fixes: a2468cc9bfdf ("swap: choose swap device according to numa node")
+
+because not being able to add a swap space on a fragmented system looks
+like a regression to me.
+
+> Acked-by: Aaron Lu <aaron.lu@intel.com>
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/swapfile.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Agree. Would this be a more clean flow in the attached patch?
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 644f746e167a..8688ae65ef58 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -2813,7 +2813,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  	unsigned int type;
+>  	int i;
+>  
+> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	p = kvzalloc(sizeof(*p), GFP_KERNEL);
+>  	if (!p)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -2824,7 +2824,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  	}
+>  	if (type >= MAX_SWAPFILES) {
+>  		spin_unlock(&swap_lock);
+> -		kfree(p);
+> +		kvfree(p);
+>  		return ERR_PTR(-EPERM);
+>  	}
+>  	if (type >= nr_swapfiles) {
+> @@ -2838,7 +2838,7 @@ static struct swap_info_struct *alloc_swap_info(void)
+>  		smp_wmb();
+>  		nr_swapfiles++;
+>  	} else {
+> -		kfree(p);
+> +		kvfree(p);
+>  		p = swap_info[type];
+>  		/*
+>  		 * Do not memset this entry: a racing procfs swap_next()
+> -- 
+> 2.17.1
 
-Actually I'll paste the whole function for clarity because it is not too
-long:
-
-static void detect_sgx(struct cpuinfo_x86 *c)
-{
-	unsigned long long fc;
-
-	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-		goto out_unsupported;
-	}
-
-	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
-		goto out_unsupported;
-	}
-
-	if (!cpu_has(c, X86_FEATURE_SGX1)) {
-		pr_err_once("sgx: SGX1 instruction set not supported\n");
-		goto out_unsupported;
-	}
-
-	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
-		pr_info_once("sgx: launch control MSRs are not writable\n");
-		goto out_msrs_rdonly;
-	}
-
-	return;
-out_unsupported:
-	setup_clear_cpu_cap(X86_FEATURE_SGX);
-	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-out_msrs_rdonly:
-	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-}
-
-/Jarkko
+-- 
+Michal Hocko
+SUSE Labs
