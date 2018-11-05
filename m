@@ -1,141 +1,96 @@
 Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80908C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B6DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49BB62081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A77320869
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:52:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qhoWpUlu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BB62081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NYiYLY0G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A77320869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbeKFFMX (ORCPT
+        id S1727334AbeKFFNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:12:23 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50648 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeKFFMX (ORCPT
+        Tue, 6 Nov 2018 00:13:38 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43756 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeKFFNi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:12:23 -0500
-Received: by mail-wm1-f65.google.com with SMTP id 124-v6so4664732wmw.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 11:51:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dj5x/qtOD44tLpGIXqKyuHC2pvB7YAv1+t4er9GDfLw=;
-        b=qhoWpUluvjROFsbQ2MU0zcIrZ9bsU6tL0nddxNfkziZOJB+aMFd2jpyMkPHVDy1Fj5
-         fg56lqx4kHwSXCswmdMYUi6RdiCyHjWKrpU7s8i5ntjLKQKGm9uIDY4ausWyCyt8h3cL
-         y2h/GcBUgxQaTT/O4e12fGm8cPPEA65gbuKH4NGD6AXQCEp4WS0MKs/+i2YPcRya2djJ
-         pfgChKJouqA1KPX77JaW5logVcScA/enD0+E+XwiiBj+AcISHlxyV46EgJly/IV2VmKD
-         SoxYIMd6d0h995kH9XPbrVrnrRgjJArg58KuLN38QnhuElRRbOhOlt/7XLQIKpx8Znaf
-         emdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dj5x/qtOD44tLpGIXqKyuHC2pvB7YAv1+t4er9GDfLw=;
-        b=K1Yz54EV/LI4doI1pOn5X8+5XxydsgSIJ2Nr8IEIev1xjTmkAxoGSI1e8sAKFzEcsv
-         5OVSqeivNFNsn7sc3MfGibAo/Dy1RPay4QFjJVViKuZG46NMrwvz3KxCvUMHyFxzx85O
-         shwxttpzO0jJi4Geb/BQ74/uEI6bARJpaA8MZhZWjMNwGBZhw8VUt8up+LTjW2twjGKp
-         eznRku0QY52Ysr0+vxieeyLCAySTpnoCGdEp+nvjt1aSWMouc0/cGyBicjxfij9HKVML
-         nRKk3WYFXpG4Z7DD6tpt1QV8ynjEh2wMiB8JeLXmDxUTN7zs4MrIHTfpQO8DgSILD4QK
-         eMBg==
-X-Gm-Message-State: AGRZ1gJ0BB9xagrA5ww0S1s7FIPGPR9wQWWtcfVU0lXRFzhHHzPe4/fI
-        wnSqxsIXP+8/wqltA+tJrHM=
-X-Google-Smtp-Source: AJdET5f0jbv9g+tiNLNuGBs03NIjsfig3MEmvL1HHGWThFFxwxmCWpbv/226BBpm4BFfxZ5+iQD9dQ==
-X-Received: by 2002:a1c:85c5:: with SMTP id h188-v6mr7073103wmd.59.1541447464655;
-        Mon, 05 Nov 2018 11:51:04 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y83-v6sm2178564wmb.20.2018.11.05.11.51.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 11:51:03 -0800 (PST)
-Date:   Mon, 5 Nov 2018 20:51:01 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Peter Anvin <hpa@zytor.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Corey Minyard <cminyard@mvista.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        David Riley <davidriley@chromium.org>,
-        Colin Cross <ccross@android.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [patch 0/9] time: Add SPDX identifiers and cleanup boilerplates
-Message-ID: <20181105195101.GA86288@gmail.com>
-References: <20181031182107.726051323@linutronix.de>
+        Tue, 6 Nov 2018 00:13:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=moq2FjQAi+Yv6iK21DRu7ITctBWf6IR9fdLkymtdLtY=; b=NYiYLY0Gyd2AOhXan9oQJJXK4s
+        mJ7tvx31jJIkLyrODKP45D5e4qUa3bzV+UoZ3ZYqGCJ77SHFC/ID3YYu9DXOT0XJhmMJGREQozXzJ
+        xeFz19Kc2cEscBl6wjvS8Mdg+7ZfEhT5He0lPGW5yBMI5EDUoXHcXXMYKgwziQQHkVhZjPt563zXp
+        bFxXdQ1WWina1l0+9KK8UzzOLKo6m8G2LFxTXU0YaNpFSLo1GPyv+f41oBSKodleTrKDi2HUDq1K+
+        aVu14v7m0CPrxmGINN+z3ajzL2uMBtXgSHvB2e82pHMO5hfh382RqzpeYVdQruTe0wR2SR83LiAco
+        hjoT+GNw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJkuw-0000V0-Fg; Mon, 05 Nov 2018 19:52:10 +0000
+Subject: Re: [PATCH v6 5/5] sidechannel: Linux Security Module for sidechannel
+To:     Casey Schaufler <casey.schaufler@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
+        dave.hansen@intel.com, deneen.t.dock@intel.com,
+        kristen@linux.intel.com, arjan@linux.intel.com
+References: <20181105190504.500-1-casey.schaufler@intel.com>
+ <20181105190504.500-6-casey.schaufler@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <35bac572-14cc-d7c3-f788-1120c7431fb4@infradead.org>
+Date:   Mon, 5 Nov 2018 11:52:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031182107.726051323@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181105190504.500-6-casey.schaufler@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi:
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+On 11/5/18 11:05 AM, Casey Schaufler wrote:
+> diff --git a/security/sidechannel/Kconfig b/security/sidechannel/Kconfig
+> new file mode 100644
+> index 000000000000..653033027415
+> --- /dev/null
+> +++ b/security/sidechannel/Kconfig
+> @@ -0,0 +1,13 @@
+> +config SECURITY_SIDECHANNEL
+> +	bool "Sidechannel attack safety extra checks"
+> +	depends on SECURITY
+> +	default n
 
-> Add SPDX identifiers to all files in kernel/time and remove the license
-> boiler plates.
-> 
-> Aside of that use the chance to get rid of (stale) file references and tidy
-> up the top of file comments as they are touched anyway by this work.
-> 
-> This work is based on a script and data from Philippe Ombredanne, Kate
-> Stewart and myself. The data has been created with two independent license
-> scanners and manual inspection.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
-> ---
->  include/linux/hrtimer.h              |    5 +----
->  kernel/time/alarmtimer.c             |    5 +----
->  kernel/time/clockevents.c            |    6 +-----
->  kernel/time/clocksource.c            |   20 +-------------------
->  kernel/time/hrtimer.c                |   19 +++++--------------
->  kernel/time/itimer.c                 |    2 --
->  kernel/time/jiffies.c                |   28 ++++++----------------------
->  kernel/time/posix-clock.c            |   17 ++---------------
->  kernel/time/posix-stubs.c            |    5 +----
->  kernel/time/posix-timers.c           |   25 ++-----------------------
->  kernel/time/sched_clock.c            |    9 +++------
->  kernel/time/test_udelay.c            |   10 +---------
->  kernel/time/tick-broadcast-hrtimer.c |    4 +---
->  kernel/time/tick-broadcast.c         |    6 +-----
->  kernel/time/tick-common.c            |    6 +-----
->  kernel/time/tick-oneshot.c           |    6 +-----
->  kernel/time/tick-sched.c             |    5 +----
->  kernel/time/time.c                   |   13 +++++--------
->  kernel/time/timeconst.bc             |    2 ++
->  kernel/time/timeconv.c               |    1 +
->  kernel/time/timecounter.c            |   17 ++---------------
->  kernel/time/timekeeping.c            |   11 +++--------
->  kernel/time/timekeeping_debug.c      |   11 +----------
->  kernel/time/timer.c                  |    3 +--
->  kernel/time/timer_list.c             |    7 +------
->  25 files changed, 45 insertions(+), 198 deletions(-)
+Please drop the "default n" since it is already the default value.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+> +	help
+> +	  Look for a variety of cases where a side-channel attack
+> +	  could potentially be exploited. Instruct the switching
+> +	  code to use the indirect_branch_prediction_barrier in
+> +	  cases where the passed task and the current task may be
+> +	  at risk.
+> +
+> +          If you are unsure how to answer this question, answer N.
 
-Thanks,
+Use tab + 2 spaces to indent the line above.
+> +
 
-	Ingo
+thanx.
+-- 
+~Randy
