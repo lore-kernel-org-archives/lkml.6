@@ -2,135 +2,82 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D6AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8638CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F083520869
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:16:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6D5QHgX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F083520869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 574342085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574342085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387976AbeKFEh1 (ORCPT
+        id S2387952AbeKFEjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:37:27 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43215 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387441AbeKFEh1 (ORCPT
+        Mon, 5 Nov 2018 23:39:02 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38444 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387409AbeKFEjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:37:27 -0500
-Received: by mail-qk1-f193.google.com with SMTP id r71so16775522qkr.10;
-        Mon, 05 Nov 2018 11:16:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IL8R6y1gtaHkaLcJ+ACkXbSV0NqE62Dg14qzw/H8vqE=;
-        b=L6D5QHgXEnf7t8DF1KyoKyUyW3HFGh5J9ZoW8f2iQkVTKZDhDurqw3iK4qFOxRvLKo
-         pigaQlxQwbK78oFI0/xXoo/tFgXcpUDJPlQ5hPc3DrtZaHH0BnIvqb2b9NobY0xwHSW0
-         8uKYLOwCh9J8j0wkVJ/vOIfpqtpM9uwwrQ6W7dVCowKH+IR3GNdmdSEzHybpLv//Nig3
-         ZINhpNShw+rFUzqjTDQB/30k3u8BZGMmcfEwedEpz3b/rzAp04QF5W7br7Atc3niGUzF
-         xUZd1rQaGwJaRlUy1dahTjn3OJZ04IFQWdQLY6+oSolbLpC7Gf+c9gUNqlDG/PfrQ3Oz
-         n7Fw==
+        Mon, 5 Nov 2018 23:39:01 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v83-v6so8511105oia.5;
+        Mon, 05 Nov 2018 11:17:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IL8R6y1gtaHkaLcJ+ACkXbSV0NqE62Dg14qzw/H8vqE=;
-        b=aUwtTllq17LtPcskMJA2RhD+g/BuwNZ97a2fniULgGeQjmKxixAUv/oGPmN8k4n0kU
-         x11V7ufMYfL3qQNkSTJFFkyE6nXGMDRKn9ixFAAxIEt/1BeOEdiAyDueMAizuq2hCTOc
-         X05z6Qfw5/HZvk/J0mMbJRQrIgvQnDj7hBVNqCWTBrkM+V6qv0qDE1PU1JSRhZbxWNU5
-         ltPK2pNMQX2RWpir+jMjs0NYbBwzbCzEialr7P5D6VNgfYCNYmznxL6YSO17X8BcUT+E
-         oeruFibCPYPGuIGnM3Q4F6Fgge6oa4P1hbI2/MpxiavZVKgwq9CUQ+XPs5xYEsikOIHt
-         vP+A==
-X-Gm-Message-State: AGRZ1gJmlveGkD7rH82JMdJ+RPNsXpMn8BwIjVjVot+87qJ4Pv63pS+6
-        WYQjdXgb+2JqiRGD4JdDgQ0=
-X-Google-Smtp-Source: AJdET5fLmKLWWHCr9Orv5JzCnUGklmGdHaWq6nZD3Cczdqt2jPKMd4W+FOzhdDUVzwtSX/bpBgtOhw==
-X-Received: by 2002:a37:90c5:: with SMTP id s188-v6mr21684457qkd.104.1541445378692;
-        Mon, 05 Nov 2018 11:16:18 -0800 (PST)
-Received: from renatolg ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id b9-v6sm7208705qti.4.2018.11.05.11.16.15
+        bh=ezfmZeiONl94URb94qSMhkTawg5JXuYSft2Z1Q+PG8o=;
+        b=DmAPGh3UdgoLppqE27cH1eMYU7zJwR0mRbBDiYk0B2BU5YZbhnV3aFVrJOzhbJ3C5D
+         RmgUbF6NxwSx3cmfOfsA8bdqMyPhCnEPicMDAIg/S9AEFi5olMbJ1HdlJzxLDjUkft5v
+         Gw3bVswNy+whFUwWnc3y/kiqLTzChngFf5O1k6GwWSGtZ5IH+cUW1dsCb2TL4IlG5khC
+         v2V+a5QMaddtvvbHRDTJKiU4MukFTB38+pnMiUVyivR7Ks7Hnmsc22eOVKx0G4TeIwR8
+         oWjcNk9dYHesdm7AEfxJ1DBOaBX81HNUaNa3eiNXp9fCo2UwHWPZWENyhX1oBvOtyavB
+         cOPw==
+X-Gm-Message-State: AGRZ1gJbZzoF/pCnstJ1qeN9H/HtXLCEbtnQ8CwlLjEhzNLdRlrEIxKQ
+        1zD/HU6azMrzk0ilBcjvkWuRxSQ=
+X-Google-Smtp-Source: AJdET5f7M5T5LKeQRSZP9pYe9HBGQCn0vQVVAOuom6k6p+9Plbb9TlU0ovZNfp+KDk70he1bgQpJvQ==
+X-Received: by 2002:aca:5907:: with SMTP id n7-v6mr14440336oib.166.1541445473273;
+        Mon, 05 Nov 2018 11:17:53 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m63-v6sm15431304oia.30.2018.11.05.11.17.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 11:16:18 -0800 (PST)
-Date:   Mon, 5 Nov 2018 17:16:14 -0200
-From:   Renato Lui Geh <renatogeh@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        giuliano.belinassi@usp.br
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v4 2/2] staging: iio: ad7780: remove unnecessary stashed
- voltage value
-Message-ID: <3920d49d888f63b600a4d2f2600921ed2900a470.1541444377.git.renatogeh@gmail.com>
-References: <cover.1541444377.git.renatogeh@gmail.com>
+        Mon, 05 Nov 2018 11:17:52 -0800 (PST)
+Date:   Mon, 5 Nov 2018 13:17:51 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     frowand.list@gmail.com
+Cc:     pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] of: Documentation: remove unmaintained todo file
+Message-ID: <20181105191751.GA18970@bogus>
+References: <1539573739-2108-1-git-send-email-frowand.list@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1541444377.git.renatogeh@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1539573739-2108-1-git-send-email-frowand.list@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the unnecessary field int_vref_mv in ad7780_state
-referring to the device's voltage.
+On Sun, Oct 14, 2018 at 08:22:19PM -0700, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> The todo.txt file was created by a previous maintainer and has
+> never been updated by the current OPEN FIRMWARE AND FLATTENED
+> DEVICE TREE maintainers.  Remove the out of date file.
+> 
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>  Documentation/devicetree/todo.txt | 10 ----------
+>  1 file changed, 10 deletions(-)
+>  delete mode 100644 Documentation/devicetree/todo.txt
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
----
-Changes in v3:
-	- removed unnecessary int_vref_mv from ad7780_state
-Changes in v4:
-	- removed voltage reading on probe
+Some of this stuff I'd say is still todo, but having this file present 
+isn't serving any purpose towards getting them done. So I've applied.
 
- drivers/staging/iio/adc/ad7780.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index c7cb05cedbbc..52a914360574 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -42,7 +42,6 @@ struct ad7780_state {
- 	struct regulator		*reg;
- 	struct gpio_desc		*powerdown_gpio;
- 	unsigned int	gain;
--	u16				int_vref_mv;
- 
- 	struct ad_sigma_delta sd;
- };
-@@ -165,7 +164,7 @@ static int ad7780_probe(struct spi_device *spi)
- {
- 	struct ad7780_state *st;
- 	struct iio_dev *indio_dev;
--	int ret, voltage_uv = 0;
-+	int ret;
- 
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
- 	if (!indio_dev)
-@@ -185,16 +184,10 @@ static int ad7780_probe(struct spi_device *spi)
- 		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
- 		return ret;
- 	}
--	voltage_uv = regulator_get_voltage(st->reg);
- 
- 	st->chip_info =
- 		&ad7780_chip_info_tbl[spi_get_device_id(spi)->driver_data];
- 
--	if (voltage_uv)
--		st->int_vref_mv = voltage_uv / 1000;
--	else
--		dev_warn(&spi->dev, "Reference voltage unspecified\n");
--
- 	spi_set_drvdata(spi, indio_dev);
- 
- 	indio_dev->dev.parent = &spi->dev;
--- 
-2.19.1
-
+Rob
