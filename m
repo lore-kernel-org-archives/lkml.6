@@ -2,136 +2,122 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF11C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550F1C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C80372084F
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80372084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 18A9A2084F
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:55:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzeYz4Jn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A9A2084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388019AbeKFHQq (ORCPT
+        id S2388095AbeKFHRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:16:46 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47126 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387752AbeKFHQq (ORCPT
+        Tue, 6 Nov 2018 02:17:00 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35117 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387752AbeKFHQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:16:46 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5LsI9M194943
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 16:54:58 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2njvwvu8vt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 16:54:58 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Mon, 5 Nov 2018 21:54:57 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 21:54:54 -0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Lsr2N36175944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 21:54:53 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 30295124053;
-        Mon,  5 Nov 2018 21:54:53 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B5BAB124052;
-        Mon,  5 Nov 2018 21:54:52 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Nov 2018 21:54:52 +0000 (GMT)
-Subject: Re: [PATCH v3 03/16] tpm: return 0 from pcrs_show() when
- tpm1_pcr_read() fails
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-4-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 5 Nov 2018 16:54:52 -0500
+        Tue, 6 Nov 2018 02:16:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id n4-v6so5114515plp.2;
+        Mon, 05 Nov 2018 13:55:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dTx0MyxMvJWBg5FgKXcvGw8UE6R9YlJFE4cTpyv6Hk0=;
+        b=OzeYz4Jn507e8ZnCNYLV3fbItQs7vbYXycLbt7GelK6MRcmWh7L28Waz0WMcTHqngb
+         4KMQEflM8ui/OQgikeGlmPfaQYsm/fHRsdsynhUbm85ssHV2LWdbuGrfBcjY1HUdnL8u
+         S5h3l83dDuXKVBSS4IcYROGZSGez1UJJ3SVN1OCnkpxiv81JxQfnnjI6SnInSs4r1H2a
+         kpe+dcgNEDsfbXGwDhhMx/EcMP57ZCpaqXQRIstwyQKfXgBa3vz6qa+nmL3w0W8waERJ
+         BQkvVhBpFXJTPivAhBdFEThafvjjW6DVWtj5riy2DZuvtzztGlwLI7lSxIIhaFNqtAot
+         Lo1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dTx0MyxMvJWBg5FgKXcvGw8UE6R9YlJFE4cTpyv6Hk0=;
+        b=bjgGrdKMPsayNC8/GSkWgl/Ygg3aqxi62iYnQPeBBnsb78zuG2PrV2nBfDolssVVgO
+         kQEH8gZ1UTSKc8qulK9X0dJ3XRC2neecBTue+3ZdxGwgFXZg49pueQHcNFWUPM6riTAv
+         xgDJMP7JvKQi1OmoMAlVVjz44GOxHODjLHTxrEcdwNIPolp8NS9CNIrBfIVAUC6QnM9x
+         H+y3NBLBKWzRBOXRbDoeGcfpqI/WD1TcLuFl1x/WtxZQ2XZz4rKGvLizTMlHfKCl4rXy
+         zSVTgmuVGwXXuTgslai764UfvFpR7HdOy7o+06cNLB2RyHJ6d7pE1KZJZZkF5wiEuAZO
+         lUwA==
+X-Gm-Message-State: AGRZ1gLwYrlxFNUY96EX5NydciolYtSDYruW4co8XTj2yMeqZWEKGjah
+        EKDI9+y7b22J1azhvWtEUe0=
+X-Google-Smtp-Source: AJdET5fsEio7H+3d9hnXIjkpWArjkCv+s50ekmErvJfDcFyC+4UUHM2UczKdGNNikG1Icoy63QLOPg==
+X-Received: by 2002:a17:902:bc8c:: with SMTP id bb12-v6mr22797774plb.275.1541454912854;
+        Mon, 05 Nov 2018 13:55:12 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id f193-v6sm53474546pfc.74.2018.11.05.13.55.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 13:55:12 -0800 (PST)
+Subject: Re: [PATCH v6 00/18] of: overlay: validation checks, subsequent fixes
+To:     Rob Herring <robh+dt@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+References: <1541431515-25197-1-git-send-email-frowand.list@gmail.com>
+ <CAL_JsqJ6fJcqH4+YHrEZRb+8-KFEmL8WSTSE_XSyrtO=2+JQBA@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <bf1be459-22d7-6b23-7b1f-847dad5e028f@gmail.com>
+Date:   Mon, 5 Nov 2018 13:55:10 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181105014552.20262-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAL_JsqJ6fJcqH4+YHrEZRb+8-KFEmL8WSTSE_XSyrtO=2+JQBA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18110521-0040-0000-0000-0000048D488C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009973; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01112010; UDB=6.00576322; IPR=6.00892101;
- MB=3.00024008; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 21:54:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110521-0041-0000-0000-000008964CC1
-Message-Id: <d5296b84-0a2c-56ce-ae65-71e6a6d0c820@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050193
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> Do not print partial list of PCRs when tpm1_pcr_read() fails but instead
-> return 0 from pcrs_show(). This is consistent behavior with other sysfs
-> functions.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->   drivers/char/tpm/tpm-sysfs.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-> index 7ed7eb6f906a..d3b05c7526c8 100644
-> --- a/drivers/char/tpm/tpm-sysfs.c
-> +++ b/drivers/char/tpm/tpm-sysfs.c
-> @@ -115,13 +115,15 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
->   	for (i = 0; i < num_pcrs; i++) {
->   		rc = tpm1_pcr_read(chip, i, digest);
->   		if (rc)
-> -			break;
-> +			goto out;
+Hi Michael, Ben, Paul,
 
-Previous patch said "Return zero when tpm_buf_init() fails as we do for 
-other functions in tpm-sysfs.c.". Why not return 0 in this case as well?
+Do you know if anyone has tried this series on PowerPC?
+
+Thanks,
+
+-Frank
 
 
->   		str += sprintf(str, "PCR-%02d: ", i);
->   		for (j = 0; j < TPM_DIGEST_SIZE; j++)
->   			str += sprintf(str, "%02X ", digest[j]);
->   		str += sprintf(str, "\n");
->   	}
-> -	return str - buf;
-> +	rc = str - buf;
-> +out:
-> +	return rc;
->   }
->   static DEVICE_ATTR_RO(pcrs);
->
+On 11/5/18 11:24 AM, Rob Herring wrote:
+> On Mon, Nov 5, 2018 at 9:26 AM <frowand.list@gmail.com> wrote:
+>>
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> Add checks to (1) overlay apply process and (2) memory freeing
+>> triggered by overlay release.  The checks are intended to detect
+>> possible memory leaks and invalid overlays.
+>>
+>> The checks revealed bugs in existing code.  Fixed the bugs.
+>>
+>> While fixing bugs, noted other issues, which are fixed in
+>> separate patches.
+>>
+>> *****  Powerpc folks: I was not able to test the patches that
+>> *****  directly impact Powerpc systems that use dynamic
+>> *****  devicetree.  Please review that code carefully and
+>> *****  test.  The specific patches are: 03/16, 04/16, 07/16
+> 
+> I'm waiting for this to happen. Send me a pull req when it does or
+> when you give up waiting for a response.
+> 
+> Rob
+> 
 
