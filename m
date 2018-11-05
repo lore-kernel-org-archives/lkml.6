@@ -2,117 +2,110 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42574C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC75ECDE43
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FEF920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FEF920862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A8CC820862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 14:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8CC820862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbeKEXby (ORCPT
+        id S1729965AbeKEXeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:31:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54842 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727481AbeKEXbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:31:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53F99AD36;
-        Mon,  5 Nov 2018 14:11:57 +0000 (UTC)
-Date:   Mon, 5 Nov 2018 15:11:56 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
-Subject: Re: [PATCH v2] mm: use kvzalloc for swap_info_struct allocation
-Message-ID: <20181105141156.GB10132@dhcp22.suse.cz>
-References: <20181105061016.GA4502@intel.com>
- <fc23172d-3c75-21e2-d551-8b1808cbe593@virtuozzo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc23172d-3c75-21e2-d551-8b1808cbe593@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 5 Nov 2018 18:34:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727481AbeKEXeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 18:34:15 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5E8pQF020061
+        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 09:14:19 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njpt5abmr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 09:14:18 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 5 Nov 2018 14:14:16 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 14:14:12 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5EEBVa62390284
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 14:14:11 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4AFF752050;
+        Mon,  5 Nov 2018 14:14:11 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.137])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9283352052;
+        Mon,  5 Nov 2018 14:14:09 +0000 (GMT)
+Subject: Re: [PATCH security-next v5 12/30] LSM: Provide separate ordered
+ initialization
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 05 Nov 2018 09:13:58 -0500
+In-Reply-To: <CAGXu5jKM_goC2519EXZu7Bh0VoW8jQeR=AJ0XovUPe4_635XNw@mail.gmail.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+         <20181011001846.30964-13-keescook@chromium.org>
+         <1541182406.20901.31.camel@linux.ibm.com>
+         <CAGXu5jKM_goC2519EXZu7Bh0VoW8jQeR=AJ0XovUPe4_635XNw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110514-4275-0000-0000-000002D9A880
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110514-4276-0000-0000-000037E6C052
+Message-Id: <1541427238.21115.58.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=935 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 05-11-18 14:17:01, Vasily Averin wrote:
-> commit a2468cc9bfdf ("swap: choose swap device according to numa node")
-> changed 'avail_lists' field of 'struct swap_info_struct' to an array.
-> In popular linux distros it increased size of swap_info_struct up to
-> 40 Kbytes and now swap_info_struct allocation requires order-4 page.
-> Switch to kvzmalloc allows to avoid unexpected allocation failures.
-
-While this fixes the most visible issue is this a good long term
-solution? Aren't we wasting memory without a good reason? IIRC our limit
-for swap files/devices is much smaller than potential NUMA nodes numbers
-so we can safely expect that would be only few numa affine nodes. I am
-not really familiar with the rework which has added numa node awareness
-but I wouls assueme that we should either go with one global table with
-a linked list of possible swap_info structure per numa node or use a
-sparse array.
-
-That being said I am not really objecting to this patch as it is simple
-and backportable to older (stable kernels).
- 
-I would even dare to add
-Fixes: a2468cc9bfdf ("swap: choose swap device according to numa node")
-
-because not being able to add a swap space on a fragmented system looks
-like a regression to me.
-
-> Acked-by: Aaron Lu <aaron.lu@intel.com>
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/swapfile.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, 2018-11-02 at 13:49 -0700, Kees Cook wrote:
+> On Fri, Nov 2, 2018 at 11:13 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > I don't recall why "integrity" is on the security_initcall, while both
+> > IMA and EVM are on the late_initcall().
 > 
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 644f746e167a..8688ae65ef58 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2813,7 +2813,7 @@ static struct swap_info_struct *alloc_swap_info(void)
->  	unsigned int type;
->  	int i;
->  
-> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +	p = kvzalloc(sizeof(*p), GFP_KERNEL);
->  	if (!p)
->  		return ERR_PTR(-ENOMEM);
->  
-> @@ -2824,7 +2824,7 @@ static struct swap_info_struct *alloc_swap_info(void)
->  	}
->  	if (type >= MAX_SWAPFILES) {
->  		spin_unlock(&swap_lock);
-> -		kfree(p);
-> +		kvfree(p);
->  		return ERR_PTR(-EPERM);
->  	}
->  	if (type >= nr_swapfiles) {
-> @@ -2838,7 +2838,7 @@ static struct swap_info_struct *alloc_swap_info(void)
->  		smp_wmb();
->  		nr_swapfiles++;
->  	} else {
-> -		kfree(p);
-> +		kvfree(p);
->  		p = swap_info[type];
->  		/*
->  		 * Do not memset this entry: a racing procfs swap_next()
-> -- 
-> 2.17.1
+> It's because integrity needs to have a VFS buffer allocated extremely
+> early, so it used the security init to do it. While it's not an LSM,
+> it does use this part of LSM infrastructure. I didn't see an obvious
+> alternative at the time, but now that I think about it, maybe just a
+> simple postcore_initcall() would work?
 
--- 
-Michal Hocko
-SUSE Labs
+I was questioning why the "security_initcall", which is called after
+the late_initcall.  Moving it to the postcore_initcall, before the
+late_initcall, sounds right.
+
+Mimi
+
