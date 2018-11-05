@@ -2,109 +2,140 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD662ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F34C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DDB1204FD
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:09:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDB1204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 16D6E204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:10:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D6E204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729280AbeKEP1E convert rfc822-to-8bit (ORCPT
+        id S1729305AbeKEP2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 10:27:04 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33478 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727136AbeKEP1E (ORCPT
+        Mon, 5 Nov 2018 10:28:14 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49805 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728625AbeKEP2O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 10:27:04 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA564AS1073918
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 01:09:03 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2njed3br0q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 01:09:02 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Mon, 5 Nov 2018 06:09:01 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 06:08:58 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA568v1Q590192
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 06:08:57 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41C16AE045;
-        Mon,  5 Nov 2018 06:08:57 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F998AE057;
-        Mon,  5 Nov 2018 06:08:57 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.171])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  5 Nov 2018 06:08:56 +0000 (GMT)
-Date:   Mon, 5 Nov 2018 07:08:55 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] s390: numa: Export __node_distance
-References: <1541366886-32127-1-git-send-email-linux@roeck-us.net>
-In-Reply-To: <1541366886-32127-1-git-send-email-linux@roeck-us.net>
-X-TM-AS-GCONF: 00
-x-cbid: 18110506-4275-0000-0000-000002D96778
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110506-4276-0000-0000-000037E67D47
-Message-Id: <20181105060855.GA3747@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+        Mon, 5 Nov 2018 10:28:14 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA569oXi218054
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 4 Nov 2018 22:09:50 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA569oNr218051;
+        Sun, 4 Nov 2018 22:09:50 -0800
+Date:   Sun, 4 Nov 2018 22:09:50 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Randy Dunlap <tipbot@zytor.com>
+Message-ID: <tip-f75d651587f719a813ebbbfeee570e6570731d55@git.kernel.org>
+Cc:     akpm@linux-foundation.org, peterz@infradead.org,
+        rdunlap@infradead.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com, bp@suse.de,
+        linux-kernel@vger.kernel.org
+Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
+          rdunlap@infradead.org, mingo@kernel.org,
+          akpm@linux-foundation.org, peterz@infradead.org, bp@suse.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <dda2e4d8-bedd-3167-20fe-8c7d2d35b354@infradead.org>
+References: <dda2e4d8-bedd-3167-20fe-8c7d2d35b354@infradead.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] resource/docs: Fix new kernel-doc warnings
+Git-Commit-ID: f75d651587f719a813ebbbfeee570e6570731d55
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=825 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050055
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 04, 2018 at 01:28:06PM -0800, Guenter Roeck wrote:
-> __node_distance is used by nvme, resulting in:
-> 
-> ERROR: "__node_distance" [drivers/nvme/host/nvme-core.ko] undefined!
-> 
-> when trying to build nvme as module.
-> 
-> Fixes: f333444708f8 ("nvme: take node locality into account when selecting a path")
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> I thought I had seen that patch already, but I don't find it anywhere.
-> Maybe that was for another architecture. My apologies for the noise if it
-> is already queued.
+Commit-ID:  f75d651587f719a813ebbbfeee570e6570731d55
+Gitweb:     https://git.kernel.org/tip/f75d651587f719a813ebbbfeee570e6570731d55
+Author:     Randy Dunlap <rdunlap@infradead.org>
+AuthorDate: Sun, 4 Nov 2018 18:40:14 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 5 Nov 2018 07:05:04 +0100
 
-It's already queued here: https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git/commit/?h=for-linus&id=a541f0ebcc08ed8bc0cc492eec9a86cb280a9f24
+resource/docs: Fix new kernel-doc warnings
 
-> diff --git a/arch/s390/numa/numa.c b/arch/s390/numa/numa.c
-> index ae0d9e889534..d31bde0870d8 100644
-> --- a/arch/s390/numa/numa.c
-> +++ b/arch/s390/numa/numa.c
-> @@ -53,6 +53,7 @@ int __node_distance(int a, int b)
->  {
->  	return mode->distance ? mode->distance(a, b) : 0;
->  }
-> +EXPORT_SYMBOL(__node_distance);
+The first group of warnings is caused by a "/**" kernel-doc notation
+marker but the function comments are not in kernel-doc format.
+Also add another error return value here.
 
+  ../kernel/resource.c:337: warning: Function parameter or member 'start' not described in 'find_next_iomem_res'
+  ../kernel/resource.c:337: warning: Function parameter or member 'end' not described in 'find_next_iomem_res'
+  ../kernel/resource.c:337: warning: Function parameter or member 'flags' not described in 'find_next_iomem_res'
+  ../kernel/resource.c:337: warning: Function parameter or member 'desc' not described in 'find_next_iomem_res'
+  ../kernel/resource.c:337: warning: Function parameter or member 'first_lvl' not described in 'find_next_iomem_res'
+  ../kernel/resource.c:337: warning: Function parameter or member 'res' not described in 'find_next_iomem_res'
+
+Add the missing function parameter documentation for the other warnings:
+
+  ../kernel/resource.c:409: warning: Function parameter or member 'arg' not described in 'walk_iomem_res_desc'
+  ../kernel/resource.c:409: warning: Function parameter or member 'func' not described in 'walk_iomem_res_desc'
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: b69c2e20f6e4 ("resource: Clean it up a bit")
+Link: http://lkml.kernel.org/r/dda2e4d8-bedd-3167-20fe-8c7d2d35b354@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/resource.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/resource.c b/kernel/resource.c
+index b3a3a1fc499e..17bcb189d530 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -318,14 +318,14 @@ int release_resource(struct resource *old)
+ 
+ EXPORT_SYMBOL(release_resource);
+ 
+-/**
++/*
+  * Finds the lowest iomem resource that covers part of [start..end].  The
+  * caller must specify start, end, flags, and desc (which may be
+  * IORES_DESC_NONE).
+  *
+  * If a resource is found, returns 0 and *res is overwritten with the part
+  * of the resource that's within [start..end]; if none is found, returns
+- * -1.
++ * -1. Returns -EINVAL for other invalid parameters.
+  *
+  * This function walks the whole tree and not just first level children
+  * unless @first_lvl is true.
+@@ -390,7 +390,9 @@ static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
+ }
+ 
+ /**
+- * Walks through iomem resources and calls func() with matching resource
++ * walk_iomem_res_desc - walk through iomem resources
++ *
++ * Walks through iomem resources and calls @func() with matching resource
+  * ranges. This walks through whole tree and not just first level children.
+  * All the memory ranges which overlap start,end and also match flags and
+  * desc are valid candidates.
+@@ -399,6 +401,8 @@ static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
+  * @flags: I/O resource flags
+  * @start: start addr
+  * @end: end addr
++ * @arg: function argument for the callback @func
++ * @func: callback function that is called for each qualifying resource area
+  *
+  * NOTE: For a new descriptor search, define a new IORES_DESC in
+  * <linux/ioport.h> and set it in 'desc' of a target resource entry.
