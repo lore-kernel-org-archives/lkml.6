@@ -2,154 +2,182 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B66C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3058DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F0920819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 08:59:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F0920819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EBA8C20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:00:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CguLS4IB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA8C20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeKESSS (ORCPT
+        id S1727267AbeKESSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:18:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57208 "EHLO mail.bootlin.com"
+        Mon, 5 Nov 2018 13:18:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeKESSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:18:18 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 80104207B0; Mon,  5 Nov 2018 09:59:37 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4E872206A1;
-        Mon,  5 Nov 2018 09:59:27 +0100 (CET)
-Date:   Mon, 5 Nov 2018 09:59:27 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 1/7] drm/sun4i: tcon: Pass encoder instead of using
- panel for RGB setup
-Message-ID: <20181105085927.tvg5vy3oyygw65z6@flea>
-References: <20181101200045.6078-1-contact@paulk.fr>
- <20181101200045.6078-2-contact@paulk.fr>
+        id S1726086AbeKESSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 13:18:49 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CA9420819;
+        Mon,  5 Nov 2018 09:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541408410;
+        bh=VyuqcYOcRiwEs3jMJO3V5vlvjlzAzdxshh7oqF60v7M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CguLS4IBn2O2n7MhBt3SfYxXFVT2VAITnkf1NYYONscl16jOryo3nWkyqvy3ock5e
+         bqv+9VNstUs5kKuz4Lf+T1RQxRJAyBHP4Tw+jyLtIJNBq6viX4V5Ay6WFyIBktERax
+         y2+s3qhHP5HAmaL45WKocXs4ubCqsU/Pa9El6iZk=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: [PATCH v2 00/12] tracing: Unifying dynamic event interface
+Date:   Mon,  5 Nov 2018 17:59:46 +0900
+Message-Id: <154140838606.17322.15294184388075458777.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uq6r4rci3segdv2m"
-Content-Disposition: inline
-In-Reply-To: <20181101200045.6078-2-contact@paulk.fr>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---uq6r4rci3segdv2m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
 Hi,
 
-On Thu, Nov 01, 2018 at 09:00:39PM +0100, Paul Kocialkowski wrote:
-> Features such as dithering and pixel data edge configuration currently
-> rely on the panel registered with the TCON driver. However, bridges are
-> also supported in addition panels.
->=20
-> Instead of retrieving the connector from the panel, pass the encoder
-> from the calling function, as is done for other interfaces.
->=20
-> The connector is then retrieved from the encoder with the dedicated
-> helper. Even in the case of bridges, the connector is registered with
-> the encoder from our driver and is accessible when iterating connectors.
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index f949287d926c..262ffb6b0f82 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -478,8 +478,11 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_t=
-con *tcon,
->  }
-> =20
->  static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
-> +				     const struct drm_encoder *encoder,
->  				     const struct drm_display_mode *mode)
->  {
-> +	struct drm_connector *connector =3D sun4i_tcon_get_connector(encoder);
-> +	struct drm_display_info display_info =3D connector->display_info;
->  	unsigned int bp, hsync, vsync;
->  	u8 clk_delay;
->  	u32 val =3D 0;
-> @@ -491,8 +494,7 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tco=
-n *tcon,
->  	sun4i_tcon0_mode_set_common(tcon, mode);
-> =20
->  	/* Set dithering if needed */
-> -	if (tcon->panel)
-> -		sun4i_tcon0_mode_set_dithering(tcon, tcon->panel->connector);
-> +	sun4i_tcon0_mode_set_dithering(tcon, connector);
-> =20
->  	/* Adjust clock delay */
->  	clk_delay =3D sun4i_tcon_get_clk_delay(mode, 0);
-> @@ -556,17 +558,11 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_t=
-con *tcon,
->  	 * Following code is a way to avoid quirks all around TCON
->  	 * and DOTCLOCK drivers.
->  	 */
-> -	if (tcon->panel) {
-> -		struct drm_panel *panel =3D tcon->panel;
-> -		struct drm_connector *connector =3D panel->connector;
-> -		struct drm_display_info display_info =3D connector->display_info;
-> -
-> -		if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
-> -			clk_set_phase(tcon->dclk, 240);
-> +	if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
-> +		clk_set_phase(tcon->dclk, 240);
-> =20
-> -		if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
-> -			clk_set_phase(tcon->dclk, 0);
-> -	}
-> +	if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
-> +		clk_set_phase(tcon->dclk, 0);
+This is v2 series of unifying dynamic event interface on ftrace.
+Currently ftrace has 3 dynamic event interfaces, kprobes, uprobes
+and synthetic. This series unifies those dynamic event interfaces
+to "dynamic_events" so that we can add other dynamic events easily
+on same interface, e.g. function events.
+The older interfaces are left on the tracefs for backward
+compatibility.
 
-You're doing multiple things here: you're changing the function API,
-and then moving the display info checks outside of the tcon->panel
-condition.
+dynamic_events syntax has no difference from kprobe_events and
+uprobe_events. You can use same syntax for dynamic_events interface.
+For synthetic events, similar to the probe events, dynamic_events
+adds "s:[GROUP/]" prefix, where the "GROUP/" must be "synthetic/".
 
-You should do two separate patches for that.
+ s:[synthetic/]<event-name> type arg [type arg]...
 
-Maxime
+E.g.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ $ echo 'wakeup_latency u64 lat pid_t pid char' > synthetic_events
 
---uq6r4rci3segdv2m
-Content-Type: application/pgp-signature; name="signature.asc"
+is same as
 
------BEGIN PGP SIGNATURE-----
+ $ echo 's:wakeup_latency u64 lat pid_t pid char' > dynamic_events
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AGbwAKCRDj7w1vZxhR
-xTfPAP9AuTS4xuZD/oQ0LxkgVLv84/r1jr+R85CJsShxNcQrowD/YhDxft8w7Jre
-9IEwuyC3xu9KfMTLSp04hjoRbBhPZg4=
-=13tC
------END PGP SIGNATURE-----
+Or
 
---uq6r4rci3segdv2m--
+ $ echo 's:synthetic/wakeup_latency u64 lat pid_t pid char' > dynamic_events
+
+This series modifies synthetic event interface behavior a bit,
+reorder lock dependency and related cleanups so that we can integrate
+the synthetic event to dynamic_events interface. 
+
+In this version, I changed the generic '!' erase command, which
+now supports entire line style like other interfaces. So you can
+delete events via dynamic_events as below
+
+ $ cat dynamic_events | while read line; \
+   do echo "!$line" >> dynamic_events; done
+
+Also, the big change will be removing dyn_event_mutex and
+synth_event_mutex because all those parts are protected by
+event_mutex.
+
+Changes from v2 are here;
+
+New patches:
+ - Reorder event_mutex and synth_event_mutex to solve
+   AB-BA deadlock correctly. ([2/12])
+ - Simplify creation and deletion of synthetic event. ([3/12])
+ - Retern -ENOENT if there is no synthetic event when deleting ([4/12])
+ - Integrate similar probe argument parsers ([5/12])
+ - Use dyn_event framework for synthetic events ([9/12])
+ - Remove synth_event_mutex ([10/12])
+ - Remove unused APIs ([11/12])
+
+Modified patches:
+ [6/12] - [8/12]
+ - Generalize delete event and export as dyn_event_release_all().
+ - Add match operation for find deleting event.
+ - Reorder event_mutex and dyn_event_mutex to solve lock dependency
+   issue.
+ - Pass const char **argv for create operation and use -ECANCELED to
+   signal for trying next dyn_event_operations.
+ - Remove dyn_event_mutex.
+
+ [12/12]
+ - Accept entire line, but instead of checking the given entire line
+   strictly, simply checking the event and group name.
+
+Tom, thanks for your Ack for v1 series. Since I changed many things
+from v1 (not only minor change), I decided to not add your Ack for
+this version. Anyway, what I've added in this version are related to
+synthetic events. I need your review for those.
+(especially removing synth_event_mutex)
+
+You can try it from my git tree.
+
+  https://github.com/mhiramat/linux/tree/unify-dynamic-events-v2
+
+Thank you,
+
+---
+
+Masami Hiramatsu (12):
+      tracing/uprobes: Add busy check when cleanup all uprobes
+      tracing: Lock event_mutex before synth_event_mutex
+      tracing: Simplify creation and deletion of synthetic event
+      tracing: Integrate similar probe argument parsers
+      tracing: Add unified dynamic event framework
+      tracing/kprobes: Use dyn_event framework for kprobe events
+      tracing/uprobes: Use dyn_event framework for uprobe events
+      tracing: Use dyn_event framework for synthetic events
+      tracing: Remove unneeded synth_event_mutex
+      tracing: Remove orphaned trace_add/remove_event_call functions
+      tracing: Add generic event-name based remove event method
+      selftests/ftrace: Add testcases for dynamic event
+
+
+ Documentation/trace/kprobetrace.rst                |    3 
+ Documentation/trace/uprobetracer.rst               |    4 
+ include/linux/trace_events.h                       |    4 
+ kernel/trace/Kconfig                               |    6 
+ kernel/trace/Makefile                              |    1 
+ kernel/trace/trace.c                               |   12 +
+ kernel/trace/trace_dynevent.c                      |  217 ++++++++++++
+ kernel/trace/trace_dynevent.h                      |  119 +++++++
+ kernel/trace/trace_events.c                        |   12 -
+ kernel/trace/trace_events_hist.c                   |  322 ++++++++++--------
+ kernel/trace/trace_kprobe.c                        |  357 ++++++++++----------
+ kernel/trace/trace_probe.c                         |   74 ++++
+ kernel/trace/trace_probe.h                         |    9 -
+ kernel/trace/trace_uprobe.c                        |  305 ++++++++---------
+ .../ftrace/test.d/dynevent/add_remove_kprobe.tc    |   30 ++
+ .../ftrace/test.d/dynevent/add_remove_synth.tc     |   27 ++
+ .../ftrace/test.d/dynevent/clear_select_events.tc  |   50 +++
+ .../ftrace/test.d/dynevent/generic_clear_event.tc  |   49 +++
+ 18 files changed, 1094 insertions(+), 507 deletions(-)
+ create mode 100644 kernel/trace/trace_dynevent.c
+ create mode 100644 kernel/trace/trace_dynevent.h
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_kprobe.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_synth.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/clear_select_events.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/generic_clear_event.tc
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
