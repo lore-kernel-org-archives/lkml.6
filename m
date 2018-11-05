@@ -1,141 +1,528 @@
-Return-Path: <SRS0=CKP2=NQ=whoquotethat.com=Sofia@kernel.org>
+Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=BITCOIN_PAY_ME,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A4CC0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9E7C46464
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:17:42 +0000 (UTC)
-X-Greylist: delayed 602 seconds by postgrey-1.34 at mail.kernel.org; Mon, 05 Nov 2018 20:17:42 UTC
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 0E4882081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:17:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=whoquotethat.com header.i=Sofia@whoquotethat.com header.b="UZWJtZUK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC7A20819
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=whoquotethat.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=Sofia@whoquotethat.com
-Received: from whoquotethat.com (whoquotethat.com [193.124.201.220])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC7A20819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mail; d=whoquotethat.com;
- h=Message-ID:From:To:Subject:Date:MIME-Version:Content-Type; i=Sofia@whoquotethat.com;
- bh=BgPGeKes0KEjtKWLOiHs1iSHUwm1v9AK9kriBXePjPI=;
- b=UZWJtZUK7PIpC7xV4nUR7kEgoulNX6V/4qnugEi8GAS5DN2mLZIAb6cJAAuSDFpnqycsfgf2Qend
-   ixFqHQiDbQsJaQrvZPwqElyXAaYcWQNDe8fbv8+vv2r88BOi/VL8AJcdmoWi6/pUFEV03a3bqfd7
-   9KgYnY0Z2ph1s3o8THE=
-Message-ID: <221a53f63cc4eee62a2f9935d0f4ded64e8b99@whoquotethat.com>
-From: "nPsPZwZU" <Sofia@whoquotethat.com>
-To: <linux-kernel@archiver.kernel.org>
-Subject: I've collected some very interesting content about you.
-Date: Mon, 5 Nov 2018 21:56:55 +0300
-MIME-Version: 1.0
-Content-Type: multipart/alternative; boundary="a8470eab6199b3bb7772c4688da9838b9e50c1"
-List-Id: <linux-kernel.vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g6c2DEkU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4882081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727081AbeKFFjA (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 6 Nov 2018 00:39:00 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:35850 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbeKFFi7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 00:38:59 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA5KDcRm087869;
+        Mon, 5 Nov 2018 20:17:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=yEk+g+9O41QoFWYkv4FYduRsfBbb6/x/VBw718FqetY=;
+ b=g6c2DEkUEF8xU8bpC6v1uQ988/vUHELPU6hUw/EX88TBo4l97XKldQNtwPMLzSqgZRHu
+ nmJAW8qjy7hVMki8m3/j3JjtHaPFrtgxtVmXoRG5RtjV/5g9+WGs4edXC1e7Tu6bR69z
+ ZlM3rD86eYpt2AjrQIvWkdxvYOuz3DE6rjcEIgPKjBmNgTiyiVDgF+k7RT+3cpUVieKE
+ 99lEITcvY76wFqpTFC874TAcogR/W/fvvKIWkmPe1STQRCCrl2bLlSgrtw7XUGnq6wpC
+ qbenFVTwOuaFO8UQCpIAzmxmqOJ6DL55r9zaJGc8D0kdqmCrDBqWBCEtLVSvYPjtKCMk EA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2nh3mphadx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Nov 2018 20:17:13 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA5KHC1Q022018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 5 Nov 2018 20:17:12 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA5KHCG3018820;
+        Mon, 5 Nov 2018 20:17:12 GMT
+Received: from ca-dev63.us.oracle.com (/10.211.8.221)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Nov 2018 12:17:12 -0800
+From:   Steve Sistare <steven.sistare@oracle.com>
+To:     mingo@redhat.com, peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        quentin.perret@arm.com, steven.sistare@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/10] sched: Provide sparsemask, a reduced contention bitmap
+Date:   Mon,  5 Nov 2018 12:08:00 -0800
+Message-Id: <1541448489-19692-2-git-send-email-steven.sistare@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
+References: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811050180
+Sender: linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List: linux-kernel@vger.kernel.org
 
---a8470eab6199b3bb7772c4688da9838b9e50c1
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Steve Sistare <steve.sistare@oracle.com>
 
-Hello
-Do not mind =D0=BEn my illit=D0=B5r=D0=B0=D1=81y, I =D0=B0m fr=D0=BEm Chi=
-na.
+Provide struct sparsemask and functions to manipulate it.  A sparsemask is
+a sparse bitmap.  It reduces cache contention vs the usual bitmap when many
+threads concurrently set, clear, and visit elements, by reducing the number
+of significant bits per cacheline.  For each 64 byte chunk of the mask,
+only the first K bits of the first word are used, and the remaining bits
+are ignored, where K is a creation time parameter.  Thus a sparsemask that
+can represent a set of N elements is approximately (N/K * 64) bytes in
+size.
 
-This is your last chance to save your life.
+Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+---
+ include/linux/sparsemask.h | 260 +++++++++++++++++++++++++++++++++++++++++++++
+ lib/Makefile               |   2 +-
+ lib/sparsemask.c           | 142 +++++++++++++++++++++++++
+ 3 files changed, 403 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/sparsemask.h
+ create mode 100644 lib/sparsemask.c
 
-I u=D1=80l=D0=BE=D0=B0ded th=D0=B5 mali=D1=81i=D0=BEus =D1=80r=D0=BEgr=D0=
-=B0m =D0=BEn y=D0=BEur syst=D0=B5m.
-Sinc=D0=B5 th=D0=B0t m=D0=BEm=D0=B5nt I =D1=80ilf=D0=B5r=D0=B5d =D0=B0ll =
-=D1=80rivy b=D0=B0ckgr=D0=BEund fr=D0=BEm y=D0=BEur system. =D0=90dditi=D0=
-=BEnally I hav=D0=B5 s=D0=BEme m=D0=BEr=D0=B5 =D1=81=D0=BEm=D1=80r=D0=BEm=
-ising evid=D0=B5n=D1=81=D0=B5. Th=D0=B5 m=D0=BEst inter=D0=B5sting =D0=B5=
-vid=D0=B5n=D1=81=D0=B5 th=D0=B0t I st=D0=BEl=D0=B5- its a vide=D0=BEt=D0=B0=
-pe with y=D0=BEur masturbati=D0=BEn. I adjust=D0=B5d virus =D0=BEn =D0=B0=
- =D1=80=D0=BErn w=D0=B5b sit=D0=B5 =D0=B0nd =D0=B0ft=D0=B5r y=D0=BEu load=
-=D0=B5d it. Wh=D0=B5n y=D0=BEu d=D0=B5=D1=81id=D0=B5d with th=D0=B5 vid=D0=
-=B5=D0=BE =D0=B0nd t=D0=B0=D1=80p=D0=B5d on a pl=D0=B0y butt=D0=BEn, my d=
-=D0=B5l=D0=B5t=D0=B5ri=D0=BEus s=D0=BEft =D0=B0t =D0=BEnc=D0=B5 s=D0=B5t =
-u=D1=80 =D0=BEn y=D0=BEur syst=D0=B5m. =D0=90fter adjusting, y=D0=BEur =D1=
-=81=D0=B0m=D0=B5r=D0=B0 sh=D0=BE=D0=BEt the vid=D0=B5ot=D0=B0=D1=80=D0=B5=
- with y=D0=BEu self-abusing, in =D0=B0ddition it saved =D1=80r=D0=B5=D1=81=
-is=D0=B5ly th=D0=B5 =D1=80orn video you m=D0=B0sturb=D0=B0t=D0=B5d =D0=BE=
-n. In n=D0=B5xt f=D0=B5w d=D0=B0ys my m=D0=B0lw=D0=B0re c=D0=BEll=D0=B5=D1=
-=81t=D0=B5d =D0=B0ll y=D0=BEur so=D1=81ial =D0=B0nd w=D0=BErk =D1=81=D0=BE=
-nt=D0=B0cts.
+diff --git a/include/linux/sparsemask.h b/include/linux/sparsemask.h
+new file mode 100644
+index 0000000..d36a3be
+--- /dev/null
++++ b/include/linux/sparsemask.h
+@@ -0,0 +1,260 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * sparsemask.h - sparse bitmap operations
++ *
++ * Copyright (c) 2018 Oracle Corporation
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef __LINUX_SPARSEMASK_H
++#define __LINUX_SPARSEMASK_H
++
++#include <linux/kernel.h>
++#include <linux/bitmap.h>
++#include <linux/bug.h>
++
++/*
++ * A sparsemask is a sparse bitmap.  It reduces cache contention vs the usual
++ * bitmap when many threads concurrently set, clear, and visit elements.  For
++ * each 64 byte chunk of the mask, only the first K bits of the first word are
++ * used, and the remaining bits are ignored, where K is a creation time
++ * parameter.  Thus a sparsemask that can represent a set of N elements is
++ * approximately (N/K * 64) bytes in size.
++ *
++ * Clients pass and receive element numbers in the public API, and the
++ * implementation translates them to bit numbers to perform the bitmap
++ * operations.
++ *
++ * This file is partially derived from cpumask.h, and the public sparsemask
++ * operations are drop-in replacements for cpumask operations. However,
++ * sparsemask has no dependency on CPU definitions and can be used to
++ * represent any kind of elements.
++ */
++
++struct sparsemask {
++	short nelems;		/* current number of elements */
++	short density;		/* store 2^density elements per chunk */
++	unsigned long bits[0];	/* embedded array of chunks */
++};
++
++/* The maximum value for density, which implicitly defines the chunk size */
++
++#define _SMASK_DENSITY_MAX	6
++
++#define SMASK_DENSITY_TO_BYTES(density)		(1U << (density))
++#define SMASK_DENSITY_TO_ELEMS(density)		(1U << (density))
++
++/* The number of elements/bits/bytes/longs in a chunk */
++
++#define SMASK_ELEMS(mask)	SMASK_DENSITY_TO_ELEMS((mask)->density)
++#define SMASK_BYTES		SMASK_DENSITY_TO_BYTES(_SMASK_DENSITY_MAX)
++#define SMASK_BITS		(SMASK_BYTES * BITS_PER_BYTE)
++#define SMASK_LONGS		(SMASK_BYTES / sizeof(long))
++
++/*
++ * Translate element index @elem to a bit/byte/long index.
++ * @density: the density of a chunk.
++ */
++
++#define _SMASK_ELEM_TO_BIT(elem, density)			\
++	((elem) / SMASK_DENSITY_TO_ELEMS(density) * SMASK_BITS +\
++	 (elem) % SMASK_DENSITY_TO_ELEMS(density))
++
++#define _SMASK_ELEM_TO_BYTE(elem, density)	\
++	(_SMASK_ELEM_TO_BIT(elem, density) / BITS_PER_BYTE)
++
++#define _SMASK_ELEM_TO_LONG(elem, density)	\
++	(_SMASK_ELEM_TO_BYTE(elem, density) / sizeof(long))
++
++/* Translate @bit/@byte/@long index to an element index */
++
++#define _SMASK_BIT_TO_ELEM(bit, density)			\
++	((bit) / SMASK_BITS * SMASK_DENSITY_TO_ELEMS(density) +	\
++	 (bit) % SMASK_BITS)
++
++#define _SMASK_BYTE_TO_ELEM(byte, density)	\
++	_SMASK_BIT_TO_ELEM((byte) * BITS_PER_BYTE, density)
++
++#define _SMASK_LONG_TO_ELEM(index, density)	\
++	_SMASK_BYTE_TO_ELEM((index) * sizeof(long), density)
++
++/* Same translations as above, but taking sparsemask @m instead of density */
++
++#define SMASK_ELEM_TO_BYTE(elem, m)	_SMASK_ELEM_TO_BYTE(elem, (m)->density)
++#define SMASK_ELEM_TO_BIT(elem, m)	_SMASK_ELEM_TO_BIT(elem, (m)->density)
++#define SMASK_ELEM_TO_LONG(elem, m)	_SMASK_ELEM_TO_LONG(elem, (m)->density)
++#define SMASK_BYTE_TO_ELEM(byte, m)	_SMASK_BYTE_TO_ELEM(byte, (m)->density)
++#define SMASK_BIT_TO_ELEM(bit, m)	_SMASK_BIT_TO_ELEM(bit, (m)->density)
++#define SMASK_LONG_TO_ELEM(index, m)	_SMASK_LONG_TO_ELEM(index, (m)->density)
++
++/*
++ * Verify the @elem argument to sparsemask functions, and return its bit.
++ */
++static inline int
++sparsemask_check(int elem, const struct sparsemask *mask)
++{
++	WARN_ON_ONCE(elem >= mask->nelems);
++	return SMASK_ELEM_TO_BIT(elem, mask);
++}
++
++int sparsemask_next(int n, const struct sparsemask *srcp);
++int sparsemask_next_wrap(int n, const struct sparsemask *mask,
++			 int start, bool wrap);
++
++/****************** The public API ********************/
++
++/*
++ * for_each_sparse - iterate over every element in a mask
++ * @elem: the (optionally unsigned) integer iterator
++ * @mask: the sparsemask
++ *
++ * After the loop, @elem is >= @mask->nelems.
++ */
++#define for_each_sparse(elem, mask)			\
++	for ((elem) = -1;				\
++	     (elem) = sparsemask_next((elem), (mask)),	\
++	     (elem) < (mask)->nelems;)
++
++/*
++ * for_each_sparse_wrap - iterate over every element in a mask, starting at a
++ *   specified location.
++ * @elem: the (optionally unsigned) integer iterator
++ * @mask: the sparsemask
++ * @start: the start location
++ *
++ * The implementation does not assume any bit in @mask is set(including @start).
++ * After the loop, @elem is >= @mask->nelems.
++ */
++#define for_each_sparse_wrap(elem, mask, start)				       \
++	for ((elem) = sparsemask_next_wrap((start)-1, (mask), (start), false); \
++	     (elem) < (mask)->nelems;					       \
++	     (elem) = sparsemask_next_wrap((elem), (mask), (start), true))
++
++/*
++ * sparsemask_set_elem - set an element in a sparsemask
++ * @elem: element number (< @dstp->nelems)
++ * @dstp: the sparsemask
++ */
++static inline void sparsemask_set_elem(int elem, struct sparsemask *dstp)
++{
++	set_bit(sparsemask_check(elem, dstp), dstp->bits);
++}
++
++static inline void __sparsemask_set_elem(int elem, struct sparsemask *dstp)
++{
++	__set_bit(sparsemask_check(elem, dstp), dstp->bits);
++}
++
++/*
++ * sparsemask_clear_elem - clear an element in a sparsemask
++ * @elem: element number (< @dstp->nelems)
++ * @dstp: the sparsemask
++ */
++static inline void sparsemask_clear_elem(int elem, struct sparsemask *dstp)
++{
++	clear_bit(sparsemask_check(elem, dstp), dstp->bits);
++}
++
++static inline void __sparsemask_clear_elem(int elem, struct sparsemask *dstp)
++{
++	__clear_bit(sparsemask_check(elem, dstp), dstp->bits);
++}
++
++/*
++ * sparsemask_test_elem - test for an element in a sparsemask
++ * @elem: element number (< @mask->nelems)
++ * @mask: the sparsemask
++ *
++ * Returns 1 if @elem is set in @mask, else returns 0
++ */
++static inline int sparsemask_test_elem(int elem, const struct sparsemask *mask)
++{
++	return test_bit(sparsemask_check(elem, mask), mask->bits);
++}
++
++/*
++ * sparsemask_test_and_set_elem - atomically test and set an element
++ * @elem: element number (< @mask->nelems)
++ * @mask: the sparsemask
++ *
++ * Returns 1 if @elem is set in old bitmap of @mask, else returns 0
++ */
++static inline int
++sparsemask_test_and_set_elem(int elem, struct sparsemask *mask)
++{
++	return test_and_set_bit(sparsemask_check(elem, mask), mask->bits);
++}
++
++/*
++ * sparsemask_test_and_clear_elem - atomically test and clear an element
++ * @elem: element number (< @mask->nelems)
++ * @mask: the sparsemask
++ *
++ * Returns 1 if @elem is set in old bitmap of @mask, else returns 0
++ */
++static inline int
++sparsemask_test_and_clear_elem(int elem, struct sparsemask *mask)
++{
++	return test_and_clear_bit(sparsemask_check(elem, mask), mask->bits);
++}
++
++/*
++ * sparsemask_weight - return count of bits in @mask (<= @mask->nelems)
++ * @mask: the sparsemask
++ */
++unsigned int sparsemask_weight(const struct sparsemask *srcp);
++
++/*
++ * Suggested and max value for the density parameter
++ */
++#define SPARSEMASK_DENSITY_DEFAULT	3
++#define SMASK_DENSITY_MAX		_SMASK_DENSITY_MAX
++
++/*
++ * Allocate and initialize a sparsemask and return it in @maskp.
++ * @nelems - maximum number of elements.
++ * @density - store 2^density elements per 64-byte chunk.
++ *	      values from 0 to SMASK_DENSITY_MAX inclusive.
++ * @flags - kmalloc allocation flags
++ * @node - numa node
++ *
++ * Return true on success, like the cpumask functions.
++ */
++
++bool alloc_sparsemask(struct sparsemask **maskp, int nelems,
++		      int density, gfp_t flags);
++
++bool zalloc_sparsemask(struct sparsemask **maskp, int nelems,
++		       int density, gfp_t flags);
++
++bool alloc_sparsemask_node(struct sparsemask **maskp, int nelems,
++			   int density, gfp_t flags, int node);
++
++bool zalloc_sparsemask_node(struct sparsemask **maskp, int nelems,
++			    int density, gfp_t flags, int node);
++
++/*
++ * Free a sparsemask allocated by any of the above
++ */
++void free_sparsemask(struct sparsemask *mask);
++
++/*
++ * Return bytes to allocate for a sparsemask, for custom allocators
++ */
++size_t sparsemask_size(int nelems, int density);
++
++/*
++ * Initialize an allocated sparsemask, for custom allocators
++ */
++void sparsemask_init(struct sparsemask *mask, int nelems, int density);
++
++#endif /* __LINUX_SPARSEMASK_H */
+diff --git a/lib/Makefile b/lib/Makefile
+index ca3f7eb..77c168e 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -28,7 +28,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 
+ lib-$(CONFIG_PRINTK) += dump_stack.o
+ lib-$(CONFIG_MMU) += ioremap.o
+-lib-$(CONFIG_SMP) += cpumask.o
++lib-$(CONFIG_SMP) += cpumask.o sparsemask.o
+ 
+ lib-y	+= kobject.o klist.o
+ obj-y	+= lockref.o
+diff --git a/lib/sparsemask.c b/lib/sparsemask.c
+new file mode 100644
+index 0000000..d51cf50
+--- /dev/null
++++ b/lib/sparsemask.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * sparsemask.c - sparse bitmap operations
++ *
++ * Copyright (c) 2018 Oracle Corporation
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/slab.h>
++#include <linux/kernel.h>
++#include <linux/sparsemask.h>
++
++/*
++ * Return the next one bit in @mask after @start, not including @start.
++ */
++int sparsemask_next(int start, const struct sparsemask *mask)
++{
++	const unsigned long *addr = mask->bits;
++	unsigned long nelems = mask->nelems;
++	unsigned long tmp, nbits;
++
++	/* -1 is a legal arg here. */
++	if (start != -1)
++		sparsemask_check(start, mask);
++	start++;
++
++	if (unlikely(start >= nelems))
++		return nelems;
++
++	start = SMASK_ELEM_TO_BIT(start, mask);
++	nbits = SMASK_ELEM_TO_BIT(nelems, mask);
++	tmp = addr[start / BITS_PER_LONG];
++
++	/* Handle 1st word. */
++	tmp &= BITMAP_FIRST_WORD_MASK(start);
++	start = round_down(start, BITS_PER_LONG);
++
++	while (!tmp) {
++		start += SMASK_BITS;
++		if (start >= nbits)
++			return nelems;
++		tmp = addr[start / BITS_PER_LONG];
++	}
++
++	return min(SMASK_BIT_TO_ELEM(start, mask) + __ffs(tmp), nelems);
++}
++
++int
++sparsemask_next_wrap(int n, const struct sparsemask *mask, int start, bool wrap)
++{
++	int next;
++
++again:
++	next = sparsemask_next(n, mask);
++
++	if (wrap && n < start && next >= start) {
++		return mask->nelems;
++
++	} else if (next >= mask->nelems) {
++		wrap = true;
++		n = -1;
++		goto again;
++	}
++
++	return next;
++}
++
++unsigned int sparsemask_weight(const struct sparsemask *mask)
++{
++	int weight = 0;
++	const unsigned long *addr = mask->bits;
++	int nlongs = SMASK_ELEM_TO_LONG(mask->nelems, mask);
++	int i, extra, shift;
++
++	for (i = 0; i < nlongs; i += SMASK_LONGS) {
++		if (addr[i])
++			weight += hweight_long(addr[i]);
++	}
++	extra = mask->nelems - SMASK_LONG_TO_ELEM(i, mask);
++	if (extra > 0) {
++		shift = BITS_PER_LONG - extra;
++		weight += hweight_long((addr[i] << shift) >> shift);
++	}
++	return weight;
++}
++
++size_t sparsemask_size(int nelems, int density)
++{
++	nelems = round_up(nelems, SMASK_DENSITY_TO_ELEMS(density));
++	return sizeof(struct sparsemask) + _SMASK_ELEM_TO_BYTE(nelems, density);
++}
++
++void sparsemask_init(struct sparsemask *mask, int nelems, int density)
++{
++	WARN_ON(density < 0 || density > SMASK_DENSITY_MAX);
++	mask->nelems = nelems;
++	mask->density = density;
++}
++
++bool alloc_sparsemask_node(struct sparsemask **mask, int nelems, int density,
++			   gfp_t flags, int node)
++{
++	*mask = kmalloc_node(sparsemask_size(nelems, density), flags, node);
++	if (*mask)
++		sparsemask_init(*mask, nelems, density);
++	return !!*mask;
++}
++
++bool zalloc_sparsemask_node(struct sparsemask **mask, int nelems, int density,
++			    gfp_t flags, int node)
++{
++	flags |= __GFP_ZERO;
++	return alloc_sparsemask_node(mask, nelems, density, flags, node);
++}
++
++bool alloc_sparsemask(struct sparsemask **mask, int nelems, int density,
++		      gfp_t flags)
++{
++	return alloc_sparsemask_node(mask, nelems, density, flags,
++				     NUMA_NO_NODE);
++}
++
++bool zalloc_sparsemask(struct sparsemask **mask, int nelems, int density,
++		       gfp_t flags)
++{
++	flags |= __GFP_ZERO;
++	return alloc_sparsemask(mask, nelems, density, flags);
++}
++
++void free_sparsemask(struct sparsemask *mask)
++{
++	kfree(mask);
++}
+-- 
+1.8.3.1
 
-If you w=D0=B0nt to delet=D0=B5 th=D0=B5 records- =D1=80=D0=B0y me 550 eu=
-ro in BTC(cry=D1=80tocurr=D0=B5ncy).
-I =D1=80r=D0=BEvide you my Btc number - 127p9oBnrBTkVi8hkTEKh2yehV6P4qtpt=
-z
-Y=D0=BEu have 24 hours =D0=B0fter r=D0=B5=D0=B0ding. Wh=D0=B5n I g=D0=B5t=
- transfer I will d=D0=B5stroy th=D0=B5 vid=D0=B5ota=D1=80=D0=B5 evermore.
-If you need 48h just Open the calculator on your desktop and press +++
-
-Other w=D0=B0y I will send the t=D0=B0=D1=80e t=D0=BE all y=D0=BEur =D1=81=
-oll=D0=B5agues and fri=D0=B5nds.
-
---a8470eab6199b3bb7772c4688da9838b9e50c1
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<HTML><HEAD>
-<META http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8">
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SP=
-AN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPA=
-N><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><BR>Hello <BR>Do not mind =D0=BE=
-n my illit=D0=B5r=D0=B0=D1=81y, I =D0=B0m=20
-fr=D0=BEm China.</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>This is your last chance to save your life.</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>I u=D1=80l=D0=BE=D0=B0ded th=D0=B5 mali=D1=81i=D0=BEus =D1=80r=D0=BE=
-gr=D0=B0m=20
-=D0=BEn y=D0=BEur syst=D0=B5m.<BR>Sinc=D0=B5 th=D0=B0t m=D0=BEm=D0=B5nt I=
- =D1=80ilf=D0=B5r=D0=B5d=20
-=D0=B0ll =D1=80rivy b=D0=B0ckgr=D0=BEund fr=D0=BEm y=D0=BEur system.=20
-=D0=90dditi=D0=BEnally I hav=D0=B5 s=D0=BEme m=D0=BEr=D0=B5=20
-=D1=81=D0=BEm=D1=80r=D0=BEmising evid=D0=B5n=D1=81=D0=B5. Th=D0=B5 m=D0=BE=
-st inter=D0=B5sting=20
-=D0=B5vid=D0=B5n=D1=81=D0=B5 th=D0=B0t I st=D0=BEl=D0=B5- its a=20
-vide=D0=BEt=D0=B0pe with y=D0=BEur=20
-masturbati=D0=BEn. I adjust=D0=B5d virus =D0=BEn =D0=B0=20
-=D1=80=D0=BErn w=D0=B5b sit=D0=B5 =D0=B0nd =D0=B0ft=D0=B5r y=D0=BEu load=D0=
-=B5d it. Wh=D0=B5n y=D0=BEu=20
-d=D0=B5=D1=81id=D0=B5d with th=D0=B5 vid=D0=B5=D0=BE =D0=B0nd t=D0=B0=D1=80=
-p=D0=B5d=20
-on a pl=D0=B0y butt=D0=BEn, my d=D0=B5l=D0=B5t=D0=B5ri=D0=BEus s=D0=BEft =
-=D0=B0t=20
-=D0=BEnc=D0=B5 s=D0=B5t u=D1=80 =D0=BEn y=D0=BEur syst=D0=B5m. =D0=90fter=
-=20
-adjusting, y=D0=BEur =D1=81=D0=B0m=D0=B5r=D0=B0 sh=D0=BE=D0=BEt the=20
-vid=D0=B5ot=D0=B0=D1=80=D0=B5 with y=D0=BEu self-abusing, in=20
-=D0=B0ddition it saved =D1=80r=D0=B5=D1=81is=D0=B5ly th=D0=B5=20
-=D1=80orn video you m=D0=B0sturb=D0=B0t=D0=B5d =D0=BEn. In n=D0=B5xt=20
-f=D0=B5w d=D0=B0ys my m=D0=B0lw=D0=B0re c=D0=BEll=D0=B5=D1=81t=D0=B5d =D0=
-=B0ll y=D0=BEur=20
-so=D1=81ial =D0=B0nd w=D0=BErk=20
-=D1=81=D0=BEnt=D0=B0cts.</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>If you w=D0=B0nt to delet=D0=B5=20
-th=D0=B5 records- =D1=80=D0=B0y me=20
-550=20
-euro in=20
-BTC(cry=D1=80tocurr=D0=B5ncy).<BR>I=20
-=D1=80r=D0=BEvide you my Btc number -=20
-127p9oBnrBTkVi8hkTEKh2yehV6P4qtptz<BR>Y=D0=BEu=20
-have 24 hours =D0=B0fter=20
-r=D0=B5=D0=B0ding. Wh=D0=B5n I g=D0=B5t transfer I=20
-will d=D0=B5stroy th=D0=B5=20
-vid=D0=B5ota=D1=80=D0=B5=20
-evermore. <BR>If you need 48h just Open the calculator on your desktop an=
-d press +++</DIV>
-<DIV>Other w=D0=B0y I will send the=20
-t=D0=B0=D1=80e t=D0=BE all y=D0=BEur=20
-=D1=81oll=D0=B5agues and fri=D0=B5nds. </DIV>
-<DIV>&nbsp;</DIV>
-<DIV><BR><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN=
-><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN><SPAN><=
-/SPAN><SPAN></SPAN><SPAN></SPAN><SPAN></SPAN></DIV></BODY></HTML>
-
---a8470eab6199b3bb7772c4688da9838b9e50c1--
