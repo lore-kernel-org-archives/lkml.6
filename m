@@ -2,138 +2,143 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46006C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13568C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F65420862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:19:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F65420862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9094020862
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:19:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="cVt79Hka"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9094020862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbeKEShz (ORCPT
+        id S1729064AbeKESiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:37:55 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46087 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeKEShz (ORCPT
+        Mon, 5 Nov 2018 13:38:05 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:48465 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeKESiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:37:55 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B6F6A807E4; Mon,  5 Nov 2018 10:19:05 +0100 (CET)
-Date:   Mon, 5 Nov 2018 10:19:07 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] libertas: don't set URB_ZERO_PACKET on IN USB transfer
-Message-ID: <20181105091907.GC4439@amd>
-References: <20181006201232.2789936-1-lkundrak@v3.sk>
+        Mon, 5 Nov 2018 13:38:04 -0500
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id wA59J1vP001679;
+        Mon, 5 Nov 2018 18:19:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wA59J1vP001679
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541409542;
+        bh=5953TNGqFYaSYDubC/1Efna8xhOdcudA9Ev/Z2VUABQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cVt79HkaEH50XWPku/v1vwNWVL5b/a8365HujavCmNg7nVOizi2OmA4RiKUtVWC6g
+         i+7zmy823a2CVeXRd212eksXvXh7mL77wr7q9WaTwO7LaxCh2J5l5An7wyjIF8bV6u
+         m64XyvYdagWi6FWRY5tvWDoJiHr7Zw0QTdP9ZbVgJu+CLncaX4PS6c5LLPMibCaCzl
+         vEaZrgn1ilvvZALJ8ais6ELsS1NFZG/s/xALjiEmbGGGu+IMPrGlUXpIUND7v5G2PT
+         Utlv6lnWTcnzsdk0rYQXUfvcDokb+di5+65J+k8WxTXwOKrIH/HbyEFpVbN2Y3znVB
+         P3A8Mvu7LEZFA==
+X-Nifty-SrcIP: [209.85.221.170]
+Received: by mail-vk1-f170.google.com with SMTP id y14so1551588vky.9;
+        Mon, 05 Nov 2018 01:19:02 -0800 (PST)
+X-Gm-Message-State: AGRZ1gIEHkPUHxB4H8TchyWu9zzgmYZeHV0s6uRtq71mW47lC8j25aJR
+        geeANiQCpjtHAIZ8ArNnPTAZVk6eKX69DOyQvRw=
+X-Google-Smtp-Source: AJdET5fcpXmljxPwGWetTE7Kp6ORxX4rZUbuJFeZb9yutRDPnN8qGnqIwhOSqcUYiDXxKWqI5OjrY970Fz+Z+si/rqw=
+X-Received: by 2002:a1f:fcc3:: with SMTP id a186mr4045096vki.0.1541409541175;
+ Mon, 05 Nov 2018 01:19:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
-Content-Disposition: inline
-In-Reply-To: <20181006201232.2789936-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1541386099-13118-1-git-send-email-yamada.masahiro@socionext.com> <a55e4534ef759585088a037e4cfd8468@agner.ch>
+In-Reply-To: <a55e4534ef759585088a037e4cfd8468@agner.ch>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 5 Nov 2018 18:18:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT3ftcuNDfEhecMnfjG0Fkkh42wR7XQ1R9Tkr9OMrzAng@mail.gmail.com>
+Message-ID: <CAK7LNAT3ftcuNDfEhecMnfjG0Fkkh42wR7XQ1R9Tkr9OMrzAng@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: consolidate Clang compiler flags
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chris Fries <cfries@google.com>, Joel Stanley <joel@jms.id.au>,
+        dja@axtens.net, Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 5, 2018 at 6:10 PM Stefan Agner <stefan@agner.ch> wrote:
+>
+> On 05.11.2018 03:48, Masahiro Yamada wrote:
+> > Add basic options for Clang such as --target, --prefix, --gcc-toolchain,
+> > -no-integrated-as to a single variable CLANG_FLAGS.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  Makefile | 13 ++++++-------
+> >  1 file changed, 6 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 93315eb..58c838a 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -487,18 +487,17 @@ endif
+> >
+> >  ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+> >  ifneq ($(CROSS_COMPILE),)
+> > -CLANG_TARGET := --target=$(notdir $(CROSS_COMPILE:%-=%))
+> > +CLANG_FLAGS  = --target=$(notdir $(CROSS_COMPILE:%-=%))
+> >  GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+> > -CLANG_PREFIX := --prefix=$(GCC_TOOLCHAIN_DIR)
+> > +CLANG_FLAGS  += --prefix=$(GCC_TOOLCHAIN_DIR)
+>
+> So this will expand later now, is this ok?
+>
+> --
+> Stefan
+>
+> >  GCC_TOOLCHAIN        := $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+> >  endif
+> >  ifneq ($(GCC_TOOLCHAIN),)
+> > -CLANG_GCC_TC := --gcc-toolchain=$(GCC_TOOLCHAIN)
+> > +CLANG_FLAGS  += --gcc-toolchain=$(GCC_TOOLCHAIN)
+> >  endif
+> > -KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> > -KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> > -KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+> > -KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+> > +CLANG_FLAGS  += $(call cc-option, -no-integrated-as)
+> > +KBUILD_CFLAGS        += $(CLANG_FLAGS)
+> > +KBUILD_AFLAGS        += $(CLANG_FLAGS)
 
---gr/z0/N6AeWAPJVB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat 2018-10-06 22:12:32, Lubomir Rintel wrote:
-> The USB core gets rightfully upset:
->=20
->   usb 1-1: BOGUS urb flags, 240 --> 200
->   WARNING: CPU: 0 PID: 60 at drivers/usb/core/urb.c:503 usb_submit_urb+0x=
-2f8/0x3ed
->   Modules linked in:
->   CPU: 0 PID: 60 Comm: kworker/0:3 Not tainted 4.19.0-rc6-00319-g5206d00a=
-45c7 #39
->   Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
->   Workqueue: events request_firmware_work_func
->   EIP: usb_submit_urb+0x2f8/0x3ed
->   Code: 75 06 8b 8f 80 00 00 00 8d 47 78 89 4d e4 89 55 e8 e8 35 1c f6 ff=
- 8b 55 e8 56 52 8b 4d e4 51 50 68 e3 ce c7 c0 e8 ed 18 c6 ff <0f> 0b 83 c4 =
-14 80 7d ef 01 74 0a 80 7d ef 03 0f 85 b8 00 00 00 8b
->   EAX: 00000025 EBX: ce7d4980 ECX: 00000000 EDX: 00000001
->   ESI: 00000200 EDI: ce7d8800 EBP: ce7f5ea8 ESP: ce7f5e70
->   DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00210292
->   CR0: 80050033 CR2: 00000000 CR3: 00e80000 CR4: 00000090
->   Call Trace:
->    ? if_usb_fw_timeo+0x64/0x64
->    __if_usb_submit_rx_urb+0x85/0xe6
->    ? if_usb_fw_timeo+0x64/0x64
->    if_usb_submit_rx_urb_fwload+0xd/0xf
->    if_usb_prog_firmware+0xc0/0x3db
->    ? _request_firmware+0x54/0x47b
->    ? _request_firmware+0x89/0x47b
->    ? if_usb_probe+0x412/0x412
->    lbs_fw_loaded+0x55/0xa6
->    ? debug_smp_processor_id+0x12/0x14
->    helper_firmware_cb+0x3c/0x3f
->    request_firmware_work_func+0x37/0x6f
->    process_one_work+0x164/0x25a
->    worker_thread+0x1c4/0x284
->    kthread+0xec/0xf1
->    ? cancel_delayed_work_sync+0xf/0xf
->    ? kthread_create_on_node+0x1a/0x1a
->    ret_from_fork+0x2e/0x38
->   ---[ end trace 3ef1e3b2dd53852f ]---
->=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+CLANG_FLAGS is expanded here because KBUILD_CFLAGS and KBUILD_AFLAGS
+are defined by using :=
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+So, it should be OK, but turning CLANG_FLAGS into a simple variable
+will be a little more efficient since $(call cc-option, -no-integrated-as)
+is evaluated just once.
 
-> ---
->  drivers/net/wireless/marvell/libertas/if_usb.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net=
-/wireless/marvell/libertas/if_usb.c
-> index 5fee555a3d60..220dcdee8d2b 100644
-> --- a/drivers/net/wireless/marvell/libertas/if_usb.c
-> +++ b/drivers/net/wireless/marvell/libertas/if_usb.c
-> @@ -459,8 +459,6 @@ static int __if_usb_submit_rx_urb(struct if_usb_card =
-*cardp,
->  			  MRVDRV_ETH_RX_PACKET_BUFFER_SIZE, callbackfn,
->  			  cardp);
-> =20
-> -	cardp->rx_urb->transfer_flags |=3D URB_ZERO_PACKET;
-> -
->  	lbs_deb_usb2(&cardp->udev->dev, "Pointer for rx_urb %p\n", cardp->rx_ur=
-b);
->  	if ((ret =3D usb_submit_urb(cardp->rx_urb, GFP_ATOMIC))) {
->  		lbs_deb_usbd(&cardp->udev->dev, "Submit Rx URB failed: %d\n", ret);
+(Or, this cc-option may not be necessary any longer.)
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Will send v2.
 
---gr/z0/N6AeWAPJVB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Thanks.
 
-iEYEARECAAYFAlvgCwsACgkQMOfwapXb+vL21QCgilEZgq1eVkymkhwXl3HQzKFG
-tosAoL9s4UFoDpJrImORnVfqMk4nAbJV
-=PgN1
------END PGP SIGNATURE-----
 
---gr/z0/N6AeWAPJVB--
+
+
+> >  endif
+> >
+> >  RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern
+> > -mindirect-branch-register
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
