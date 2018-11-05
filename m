@@ -2,193 +2,112 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484BFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93397C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14DA32086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:12:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14DA32086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 59E592086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:12:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="By2nMyol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E592086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388004AbeKFEdW (ORCPT
+        id S2388022AbeKFEdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:33:22 -0500
-Received: from mga12.intel.com ([192.55.52.136]:5930 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387493AbeKFEdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:33:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 11:12:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="106104860"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2018 11:12:15 -0800
-Subject: Re: [Patch v4 03/18] x86/speculation: Reorganize cpu_show_common()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
- <30b577cf0ceba2ee7612fa7150a86f248b27a08e.1540923609.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1811031851010.3160@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ada2e62c-24bd-4293-17d2-d3e5b9ab6442@linux.intel.com>
-Date:   Mon, 5 Nov 2018 11:12:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Mon, 5 Nov 2018 23:33:38 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46263 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387948AbeKFEdi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 23:33:38 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r64-v6so4868287pfb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 11:12:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yUR50mVbEIidvjPOX4rU8yiwJ/RL5j4CCpaX9HPsNUE=;
+        b=By2nMyolptxrn0gJwPT2UrgRm2EE2q0jUtzgkTiNL1aFE1xMxcNAs5bo40n2ZfqkOL
+         R95kuwL775GbEjxO4k+G+4ccueuJzJl+rHXtCl6JP2NQOBULh36S3ngMlXzQ4LNcm5S5
+         Mh1P7GpsWyJ/GU5E7WQ5v5di93XpcoxxjBAGg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yUR50mVbEIidvjPOX4rU8yiwJ/RL5j4CCpaX9HPsNUE=;
+        b=k+XM+S0TXCGtVKaw2z9dP9HQjP/MyisrFJvmZtSrZ5koZGBxcygabEAk5WWEfC0FbX
+         CWu2xCBiLHZ0aZyH5oVk4f/j6nQgsPNkqc912UiT4qmU5fOtUjfuLJO9iVnHxKybUpAz
+         0JxVqsxS1kfJgB/UblH7o/rft37JlTW5aOhCAIER7apgf0U3fmVpwDr4sRKDdeZJamaH
+         DJN94V7VuQbwW18pr7MijSHqOajt08Q87CNGsAGhtCaCsFm6cjcuuP4Jm5LOB7x4JAnd
+         0DvwIfFVGQYgn9elj04ayDL2R5uMIqUH437gQlqL1hP8WkTkeKVKNC25/qNG4/HZOlKU
+         T1GQ==
+X-Gm-Message-State: AGRZ1gKwJGL8maTxX7W0jqO5ntLjqi8HdIKA/fE3KMv8B/zs5tBJNlo4
+        wK2gD90fMS+VQrN9hhlOEwZKqkR/tr8=
+X-Google-Smtp-Source: AJdET5c0mrJI7VhzwWFHsfOU63nflPy7ojL/acKetpwyW0ZwHCCydhaytaWpYuiYnSv+iNqtab4i3g==
+X-Received: by 2002:a62:8145:: with SMTP id t66-v6mr23178729pfd.246.1541445152014;
+        Mon, 05 Nov 2018 11:12:32 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 72-v6sm56846581pfl.126.2018.11.05.11.12.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 11:12:31 -0800 (PST)
+Date:   Mon, 5 Nov 2018 11:12:29 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 16/17] arm64: dts: qcom: qcs404: Use BAM DMA for
+ serial uart2
+Message-ID: <20181105191229.GU2523@minitux>
+References: <20181105154529.7614-1-vkoul@kernel.org>
+ <20181105154529.7614-17-vkoul@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811031851010.3160@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105154529.7614-17-vkoul@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/03/2018 11:07 AM, Thomas Gleixner wrote:
-> Tim,
-> 
-> On Tue, 30 Oct 2018, Tim Chen wrote:
->> Extract the logic to show IBPB, STIBP usages in cpu_show_common()
->> into helper functions.
->>
->> Later patches will add other userspace Spectre v2 mitigation modes.
->> This patch makes it easy to show IBPB and STIBP
->> usage scenario according to the mitigation mode.
-> 
-> First of all, I asked you before to do:
-> 
-> # git grep 'This patch' Documentation/process
-> 
-> This leads you to:
-> 
->  "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
->   instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
->   to do frotz", as if you are giving orders to the codebase to change
->   its behaviour."
-> 
-> Documentation is there for a reason.
-> 
-> Aside of that, I'd really have a hard time to figure out what you are
-> trying to say, if I didn't have the context already. Change logs need to
-> make sense on their own. So something like this:
-> 
->   The Spectre V2 printout in cpu_show_common() handles conditionals for the
->   various mitigation methods directly in the sprintf() argument list. That's
->   hard to read and will become unreadable if more complex decisions need to
->   be made for a particular method.
-> 
->   Move the conditionals for STIBP and IBPB string selection into helper
->   functions, so they can be extended later on.
-> 
-> follows the obvious ordering for change logs:
-> 
->   1) Describe context and problem
->   
->   2) Describe the solution
-> 
-> and is understandable without needing to know about the context in which
-> this change was developed.
-> 
-> Hmm? This is a suggestion, feel free to rewrite it in you own words. The
-> same applies to other change logs as well. I won't comment on those.
+On Mon 05 Nov 07:45 PST 2018, Vinod Koul wrote:
 
-Thanks for the suggestion.  Will update.
+> We can use BAM DAM for serial UART data transfers, so add it
+> 
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  arch/arm64/boot/dts/qcom/qcs404.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> index 88e04a0ee67f..23a16b7c43b6 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> @@ -273,6 +273,8 @@
+>  			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
+>  			clock-names = "core", "iface";
+> +			dmas = <&blsp1_dma 5>, <&blsp1_dma 4>;
+> +			dma-names = "rx", "tx";
+>  			status = "okay";
+>  		};
 >  
->>  static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
->>  			       char *buf, unsigned int bug)
->>  {
->> @@ -872,9 +888,8 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
->>  
->>  	case X86_BUG_SPECTRE_V2:
->>  		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
->> -			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
->>  			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
->> -			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
->> +			       ibpb_state(), stibp_state(),
->>  			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
->>  			       spectre_v2_module_string());
+> -- 
+> 2.14.4
 > 
-> Any particular reason for changing the output ordering here? If yes, then
-> the changelog should mention it. If no, why?
-> 
-
-I was putting the features related to user application protection together. It
-was not necessary and I can leave it at the same place.
-
-Tim
