@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FE7C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E95C46475
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF1120825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A7E320825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 12:06:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="AIKhB2yU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF1120825
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pOMtjh3z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A7E320825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbeKEV0A (ORCPT
+        id S1729740AbeKEV0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:26:00 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53072 "EHLO
+        Mon, 5 Nov 2018 16:26:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53140 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729244AbeKEV0A (ORCPT
+        with ESMTP id S1727820AbeKEV0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:26:00 -0500
+        Mon, 5 Nov 2018 16:26:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=KoqDGL25jrp36nm/XMpVPSB4lGYWCQhZgazEvNqw0yY=; b=AIKhB2yUjDG4
-        iqNSQvdaIMVrYsgNPhz9kfMNWNiqWfVaW7ddh0QozJM0F0T4b3s8dQHV75VLQTnJ+ORpF6H/T5Wcw
-        a7f0iUMzABZ6IKQ7IbVIspVDB6pNzvg9eKgc55t+QKw+1X9yBu5C9IOZn8kJjvYXpSaC49S29Ohah
-        JV2H0=;
+        List-Archive; bh=b4pQejAkMGDDXfWlmS8wWRza9tmARHoPXwD18GZJss0=; b=pOMtjh3zmLav
+        bWwnO7RkVOBopUbqly+cj8Ai+/No8G5lurVFr2HgUs1jE2YON548NwQZxW08beZExN7L8/B2s6sPH
+        OVmkRsVQLMeqBCMJbv3uJkxGwKeIbolxxzJFcQSLrEljBFv9CN5rx9pewXWDYTnSNumprwyjPt7TI
+        lT49k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gJde5-0008N9-G0; Mon, 05 Nov 2018 12:06:17 +0000
+        id 1gJdeE-0008NR-8G; Mon, 05 Nov 2018 12:06:26 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 35F9F1124D98; Mon,  5 Nov 2018 12:06:17 +0000 (GMT)
+        id CA85A1124D98; Mon,  5 Nov 2018 12:06:25 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Emil Renner Berthing <kernel@esmil.dk>
 Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
@@ -50,10 +50,10 @@ Cc:     Heiko Stuebner <heiko@sntech.de>, Mark Brown <broonie@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rockchip: precompute rx sample delay" to the spi tree
-In-Reply-To:  <20181031105711.19575-12-esmil@mailme.dk>
-Message-Id: <20181105120617.35F9F1124D98@debutante.sirena.org.uk>
-Date:   Mon,  5 Nov 2018 12:06:17 +0000 (GMT)
+Subject: Applied "spi: rockchip: simplify use_dma logic" to the spi tree
+In-Reply-To:  <20181031105711.19575-10-esmil@mailme.dk>
+Message-Id: <20181105120625.CA85A1124D98@debutante.sirena.org.uk>
+Date:   Mon,  5 Nov 2018 12:06:25 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: rockchip: precompute rx sample delay
+   spi: rockchip: simplify use_dma logic
 
 has been applied to the spi tree at
 
@@ -86,103 +86,81 @@ to this mail.
 Thanks,
 Mark
 
-From 74b7efa82b11914c21e30d987ed61d3daa57ff21 Mon Sep 17 00:00:00 2001
+From eff0275e5253604429aedc42b008c5fcaa6cc597 Mon Sep 17 00:00:00 2001
 From: Emil Renner Berthing <kernel@esmil.dk>
-Date: Wed, 31 Oct 2018 11:57:08 +0100
-Subject: [PATCH] spi: rockchip: precompute rx sample delay
+Date: Wed, 31 Oct 2018 11:57:06 +0100
+Subject: [PATCH] spi: rockchip: simplify use_dma logic
 
-Now that we no longer potentially change spi clock
-at runtime we can precompute the rx sample delay
-at probe time rather than for each transfer.
+We only need to know if we're using dma when setting
+up the transfer, so just use a local variable for
+that.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rockchip.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/spi/spi-rockchip.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index d1b3ba2b1532..5fe6099ff366 100644
+index 45a1479c1a29..ba60cbcd45c2 100644
 --- a/drivers/spi/spi-rockchip.c
 +++ b/drivers/spi/spi-rockchip.c
-@@ -94,6 +94,7 @@
- #define CR0_BHT_8BIT				0x1
+@@ -184,8 +184,6 @@ struct rockchip_spi {
+ 	void *rx_end;
  
- #define CR0_RSD_OFFSET				14
-+#define CR0_RSD_MAX				0x3
- 
- #define CR0_FRF_OFFSET				16
- #define CR0_FRF_SPI					0x0
-@@ -179,7 +180,7 @@ struct rockchip_spi {
- 	u32 freq;
- 
- 	u8 n_bytes;
--	u32 rsd_nsecs;
-+	u8 rsd;
- 
- 	const void *tx;
- 	const void *tx_end;
-@@ -450,13 +451,13 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 		bool use_dma)
- {
- 	u32 dmacr = 0;
--	int rsd = 0;
- 
- 	u32 cr0 = CR0_FRF_SPI  << CR0_FRF_OFFSET
- 	        | CR0_BHT_8BIT << CR0_BHT_OFFSET
- 	        | CR0_SSD_ONE  << CR0_SSD_OFFSET
- 	        | CR0_EM_BIG   << CR0_EM_OFFSET;
- 
-+	cr0 |= rs->rsd << CR0_RSD_OFFSET;
- 	cr0 |= (rs->n_bytes << CR0_DFS_OFFSET);
- 	cr0 |= (spi->mode & 0x3U) << CR0_SCPH_OFFSET;
- 
-@@ -474,20 +475,6 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
- 			dmacr |= RF_DMA_EN;
- 	}
- 
--	/* Rx sample delay is expressed in parent clock cycles (max 3) */
--	rsd = DIV_ROUND_CLOSEST(rs->rsd_nsecs * (rs->freq >> 8),
--				1000000000 >> 8);
--	if (!rsd && rs->rsd_nsecs) {
--		pr_warn_once("rockchip-spi: %u Hz are too slow to express %u ns delay\n",
--			     rs->freq, rs->rsd_nsecs);
--	} else if (rsd > 3) {
--		rsd = 3;
--		pr_warn_once("rockchip-spi: %u Hz are too fast to express %u ns delay, clamping at %u ns\n",
--			     rs->freq, rs->rsd_nsecs,
--			     rsd * 1000000000U / rs->freq);
--	}
--	cr0 |= rsd << CR0_RSD_OFFSET;
+ 	bool cs_asserted[ROCKCHIP_SPI_MAX_CS_NUM];
 -
- 	writel_relaxed(cr0, rs->regs + ROCKCHIP_SPI_CTRLR0);
+-	bool use_dma;
+ };
  
- 	if (rs->n_bytes == 1)
-@@ -620,8 +607,21 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 	rs->freq = clk_get_rate(rs->spiclk);
+ static inline void spi_enable_chip(struct rockchip_spi *rs, bool enable)
+@@ -450,7 +448,8 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+ }
  
- 	if (!of_property_read_u32(pdev->dev.of_node, "rx-sample-delay-ns",
--				  &rsd_nsecs))
--		rs->rsd_nsecs = rsd_nsecs;
-+				  &rsd_nsecs)) {
-+		/* rx sample delay is expressed in parent clock cycles (max 3) */
-+		u32 rsd = DIV_ROUND_CLOSEST(rsd_nsecs * (rs->freq >> 8),
-+				1000000000 >> 8);
-+		if (!rsd) {
-+			dev_warn(rs->dev, "%u Hz are too slow to express %u ns delay\n",
-+					rs->freq, rsd_nsecs);
-+		} else if (rsd > CR0_RSD_MAX) {
-+			rsd = CR0_RSD_MAX;
-+			dev_warn(rs->dev, "%u Hz are too fast to express %u ns delay, clamping at %u ns\n",
-+					rs->freq, rsd_nsecs,
-+					CR0_RSD_MAX * 1000000000U / rs->freq);
-+		}
-+		rs->rsd = rsd;
-+	}
+ static void rockchip_spi_config(struct rockchip_spi *rs,
+-		struct spi_device *spi, struct spi_transfer *xfer)
++		struct spi_device *spi, struct spi_transfer *xfer,
++		bool use_dma)
+ {
+ 	u32 div = 0;
+ 	u32 dmacr = 0;
+@@ -471,7 +470,7 @@ static void rockchip_spi_config(struct rockchip_spi *rs,
+ 	else
+ 		cr0 |= CR0_XFM_TO << CR0_XFM_OFFSET;
  
- 	rs->fifo_len = get_fifo_len(rs);
- 	if (!rs->fifo_len) {
+-	if (rs->use_dma) {
++	if (use_dma) {
+ 		if (xfer->tx_buf)
+ 			dmacr |= TF_DMA_EN;
+ 		if (xfer->rx_buf)
+@@ -537,6 +536,7 @@ static int rockchip_spi_transfer_one(
+ 		struct spi_transfer *xfer)
+ {
+ 	struct rockchip_spi *rs = spi_master_get_devdata(master);
++	bool use_dma;
+ 
+ 	WARN_ON(readl_relaxed(rs->regs + ROCKCHIP_SPI_SSIENR) &&
+ 		(readl_relaxed(rs->regs + ROCKCHIP_SPI_SR) & SR_BUSY));
+@@ -559,15 +559,11 @@ static int rockchip_spi_transfer_one(
+ 	rs->rx = xfer->rx_buf;
+ 	rs->rx_end = rs->rx + xfer->len;
+ 
+-	/* we need prepare dma before spi was enabled */
+-	if (master->can_dma && master->can_dma(master, spi, xfer))
+-		rs->use_dma = true;
+-	else
+-		rs->use_dma = false;
++	use_dma = master->can_dma ? master->can_dma(master, spi, xfer) : false;
+ 
+-	rockchip_spi_config(rs, spi, xfer);
++	rockchip_spi_config(rs, spi, xfer, use_dma);
+ 
+-	if (rs->use_dma)
++	if (use_dma)
+ 		return rockchip_spi_prepare_dma(rs, master, xfer);
+ 
+ 	return rockchip_spi_pio_transfer(rs);
 -- 
 2.19.0.rc2
 
