@@ -2,96 +2,93 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1408AC46464
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64D6C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A5A20825
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:38:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A5A20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9920920825
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 21:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9920920825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387825AbeKFHAO (ORCPT
+        id S2387935AbeKFHBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:00:14 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:36105 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387441AbeKFHAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:00:14 -0500
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gJmZm-0005vk-FD; Mon, 05 Nov 2018 22:38:26 +0100
-Date:   Mon, 5 Nov 2018 22:38:25 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Zubin Mithra <zsm@chromium.org>
-cc:     mingo@redhat.com, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
-        groeck@chromium.org, Kees Cook <keescook@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] x86/pci: Annotate 'pci_root_ops' with __ro_after_init
-In-Reply-To: <20181105201735.72026-1-zsm@chromium.org>
-Message-ID: <alpine.DEB.2.21.1811052232020.1659@nanos.tec.linutronix.de>
-References: <20181105201735.72026-1-zsm@chromium.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 6 Nov 2018 02:01:10 -0500
+Received: from bues.ch ([80.190.117.144]:45112 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387580AbeKFHBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 02:01:10 -0500
+Received: by bues.ch with esmtpsa (Exim 4.89)
+        (envelope-from <m@bues.ch>)
+        id 1gJmag-00060o-FF; Mon, 05 Nov 2018 22:39:22 +0100
+Date:   Mon, 5 Nov 2018 22:39:09 +0100
+From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>, b43-dev@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] b43: Use cordic algorithm from kernel library
+Message-ID: <20181105223909.61860cdd@wiggum>
+In-Reply-To: <77709642dacd9d855618bd9c2f3a56a88e881eaa.1541446422.git-series.plaes@plaes.org>
+References: <cover.9ec98292c595a111ae78f31383ff8618c9cb04da.1541446422.git-series.plaes@plaes.org>
+ <77709642dacd9d855618bd9c2f3a56a88e881eaa.1541446422.git-series.plaes@plaes.org>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/=TxR.mRkCm2uX+V6VXlLC0t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Nov 2018, Zubin Mithra wrote:
+--Sig_/=TxR.mRkCm2uX+V6VXlLC0t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cc+: Bjorn
+On Mon,  5 Nov 2018 21:37:18 +0200
+Priit Laes <plaes@plaes.org> wrote:
 
-> When CONFIG_X86_INTEL_MID is set pci_root_ops is written to inside
-> intel_mid_pci_init(which is marked __init) and not modified after. This
-> makes pci_root_ops a suitable candidate for annotating as
-> __ro_after_init.
+> Kernel library has a common cordic algorithm which is identical
+> to internally implementatd one, so use it and drop the duplicate
+> implementation.
+>=20
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
-This is confusing. What about CONFIG_X86_INTEL_MID=n?
 
-What you want to say is:
+This looks nice.
+But what is the testing status of this?
+Has this been tested on actual b43-LP hardware?
 
- pci_root_ops is only modified from intel_mid_pci_init() which is a init
- function, so it can be made __ro_after_init.
+Is the replacement algorithm exactly the same, or are there slight
+differences (e.g. in corner cases)?
 
-or something like this. Hmm?
+--=20
+Michael
 
-Other than the nitpick above:
+--Sig_/=TxR.mRkCm2uX+V6VXlLC0t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-      Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+-----BEGIN PGP SIGNATURE-----
 
-> Signed-off-by: Zubin Mithra <zsm@chromium.org>
-> ---
->  arch/x86/pci/common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
-> index d4ec117c1142..204ee80cfa63 100644
-> --- a/arch/x86/pci/common.c
-> +++ b/arch/x86/pci/common.c
-> @@ -67,7 +67,7 @@ static int pci_write(struct pci_bus *bus, unsigned int devfn, int where, int siz
->  				  devfn, where, size, value);
->  }
->  
-> -struct pci_ops pci_root_ops = {
-> +struct pci_ops pci_root_ops __ro_after_init = {
->  	.read = pci_read,
->  	.write = pci_write,
->  };
-> -- 
-> 2.19.1.930.g4563a0d9d0-goog
-> 
-> 
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlvguH0ACgkQ9TK+HZCN
+iw4TGxAA3rEjXSOKh/BC/zHNPYbmSGUHFPEwXSowS/EDt+0F2YwEpWEXzVGQOgiT
+qBxKLLcy5TyJ430lv1D9u6f0lVVyUz1sPTquT5NmIiktE7UAc4RP8w6ACbtI9OZ2
+4zqsF2G15mkzE8oilxC+EI/TlLKsli4pKTWgpL+UoShSRnG9cmFbUcbi/kzW0RbC
+7ciXgbqv/eirZcTREniI6e0/Qllst5NTlLLyBgXTCCg5hwLgBzO28DiJZR3ynGUD
+xPyyZ1NV+IfiueTCgF8DyFka1OA1uvAMsrVh8JDG1DXDlAaaS+bC8R/OUWymovcv
+5+f1SbzN/ANFLzTaNzd0vle9Te4V+OY/UcytZlg1Ijlud5YRsDm5ThnzM7MVDPTa
+3gfddvjte9PS+SDP4K3KcFUpnK6eZ0GuHJ1w6TEit3LAmjTxyuTV5x3iBUc0cnC3
+robcDI+XKUFKj5V0Ze5GOcuZ/L1kvMTSf6GR4QWrHC2k08WTNttvgcn2zAa1qPX5
+zZK0DdnMkBfUrM1PJqTrfMb6O1N+/xMlupwyGJs90pzaWdn51vrBFzjy+0O7jwTc
+cte2lVIec/Oy6oN5ohjkm5aPv4DGjf2q+UVfANjpldvWpG/GfQ5yG4Ip26f7XcKT
+ucrVAJlhgNl7jFjxdrKiqaBMEsr1Wk3jUthIJFdbwaciTBJDNGc=
+=Q3Le
+-----END PGP SIGNATURE-----
+
+--Sig_/=TxR.mRkCm2uX+V6VXlLC0t--
