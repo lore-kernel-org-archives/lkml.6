@@ -2,119 +2,136 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA2CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F508C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1073920831
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1F6520827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 06:34:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Jch0orA/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1073920831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3g8wWpW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F6520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbeKEPnZ (ORCPT
+        id S1729331AbeKEPwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 10:43:25 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36020 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729321AbeKEPnZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 10:43:25 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA56PBCB035927;
-        Mon, 5 Nov 2018 00:25:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1541399111;
-        bh=0PppT9mIaehdR4ZaC0+tEzCfp+TKjPHiJwNnjg6c5WY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Jch0orA/z5rv2CM5RY+A/+eh6BA4An5lNM7ID1FAW3HxSipxV1sLUmNx1NlRMsESN
-         CDLF+4E4Iz5WnZXj42+Yzza6rQNMO4pPdsfVplo1s9sLdKMpfoCOePXd+xX6b9Vgp4
-         1bXBziHKczc4gG1alFe4oCyigZPVv7rFNAxPWtZo=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA56PB8P036073
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 00:25:11 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 5 Nov
- 2018 00:25:11 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 5 Nov 2018 00:25:11 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA56P8Fp031313;
-        Mon, 5 Nov 2018 00:25:08 -0600
-Subject: Re: [PATCH 1/6] phy: Add max_bitrate attribute &
- phy_get_max_bitrate()
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>
-CC:     <wg@grandegger.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <kishon@ti.com>
-References: <20181102192616.28291-1-faiz_abbas@ti.com>
- <20181102192616.28291-2-faiz_abbas@ti.com>
- <5e1a0b67-510a-5512-d477-0b363e4733fe@pengutronix.de>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <d75c9e3c-e12b-e0b8-832c-ad117dcbe990@ti.com>
-Date:   Mon, 5 Nov 2018 11:57:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <5e1a0b67-510a-5512-d477-0b363e4733fe@pengutronix.de>
+        Mon, 5 Nov 2018 10:52:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728955AbeKEPwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 10:52:42 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C9AC20827;
+        Mon,  5 Nov 2018 06:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541399676;
+        bh=p7+cN13OraCfdQrQUt7TparT2ome498FdSCc0ue+C9Y=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=J3g8wWpWmLcn85b60bVCMqJtlKBEDddTo/TgW2sBjqWCwcMg2sRn5W30pePw62b5B
+         GiYYz0BtbnjkOvUUI7tXJewFdm77vVWmEasQ7GWuwsaga6rm6T+bb4goRHh99TEKmP
+         CfpKyrnso8q57C8q/uAF3kH5f6NmoC4uE0z8LQZo=
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Amit Nischal <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1534141987-29601-2-git-send-email-anischal@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+ <1534141987-29601-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <154139967580.88331.12189885863422622526@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks
+ with GDSC
+Date:   Sun, 04 Nov 2018 22:34:35 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Quoting Amit Nischal (2018-08-12 23:33:04)
+> For some of the GDSCs, there is a requirement to enable/disable the
+> few clocks before turning on/off the gdsc power domain. Add support
+> for the same by specifying a list of clk_hw pointers per gdsc and
+> enable/disable them along with power domain on/off callbacks.
+> =
 
-On Saturday 03 November 2018 03:06 PM, Marc Kleine-Budde wrote:
-> On 11/02/2018 08:26 PM, Faiz Abbas wrote:
->> In some subsystems (eg. CAN) the physical layer capabilities are
->> the limiting factor in the datarate of the device. Typically, the
->> physical layer transceiver does not provide a way to discover this
->> limitation at runtime. Thus this information needs to be represented as
->> a phy attribute which is read from the device tree.
->>
->> Therefore, add an optional max_bitrate attribute to the generic phy
->> sybsystem. Also add the complementary API which enables the consumer
->> to get max_bitrate.
->>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> 
-> NACK - We already have such a functionality in the CAN subsystem.
-> Please have a look at the patches:
-> 
-> e759c626d826 can: m_can: Support higher speed CAN-FD bitrates
-> b54f9eea7667 dt-bindings: can: m_can: Document new can transceiver binding
-> 2290aefa2e90 can: dev: Add support for limiting configured bitrate
-> 54a7fbcc17bc dt-bindings: can: can-transceiver: Document new binding
-> 
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 
-I remove the transceiver child node binding documentation in patch 5/6.
+In v1 of this patch series I asked for much more information in this
+commit text. Please add it here. I won't apply this patch until the
+justification is put into this commit text.
 
-The existing implementation is pretty limiting as it just has a child
-node with no associated device. What if a transceiver requires its own
-configurations before it can start sending/receiving messages (for
-example, my usecase requires it to pull the standby line low)?
+> ---
+>  drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h |  5 +++++
+>  2 files changed, 49 insertions(+)
+> =
 
-I think that can be solved by implementing the transceiver as a phy and
-exposing a generic get_max_bitrate API. That way, the transceiver device
-can do all its startup configuration in the phy probe function.
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a077133..b6adca1 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -12,6 +12,8 @@
+>   */
+>  =
 
-In any case, do suggest if you have a better idea on how to implement
-pull gpio low requirement.
+>  #include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
 
-Thanks,
-Faiz
+This makes me unhappy. It's almost always a problem when we see clk.h
+and clk-provider.h included in the same file, so if gdsc has to call clk
+APIs to operate correctly, then we should do that by having the gdsc
+code get clks properly instead of directly reaching into the clk_hw
+structure to get a clk pointer. This means we should have the gdsc code
+ask the clk framework to convert a clk_hw pointer into a clk pointer
+because of how so intimately connected the gdsc is to clks on this SoC.
+But given all that, I'm still trying to understand why we need to do
+this within the gdsc code.
+
+Adding these clk calls to the gdsc seems like we're attaching at the
+wrong abstraction level. Especially if the reason we do it is to make it
+easier for the GPU driver to handle dependencies. I hope that's not the
+case. Either way, it would make more sense to me if we made genpds for
+the clks and genpds for the gdscs and then associated the clk genpds
+with the gdsc genpds so that when a gdsc is enabled the clk domain that
+it depends on is enabled first. Then we have a generic solution for
+connecting clks to gdscs that doesn't require us to add more logic to
+the gdsc driver and avoids having clk providers do clk consumer things.
+Instead, it's all handled outside of this driver by specifying a domain
+dependency. It may turn out that such a solution would still need a way
+to make clk domains in the clk driver, and it will probably need to do
+that by converting clk_hw structures into clk pointers, but it would be
+good to do that anyway.
+
+So in summary, I believe we should end up at a point where we have clk
+domains and power domains (gdscs) all supported with genpds, and then we
+can connect them together however they're connected by linking the
+genpds to each other. Device drivers wouldn't really need to care how
+they're connected, as long as those genpds are attached to their device
+then the driver would be able to enable/disable them through runtime PM.
+But I can see how this may be hard to do for this patch series, so in
+the spirit of progress and getting things done, it would be OK with me
+if the gdsc code called some new clk API to convert a clk_hw pointer
+into a clk pointer and then did the same enable/disable things it's
+doing in this patch. This whole patch would need to be completely
+untangled and ripped out later when we have clk domains but at least we
+could get something working now while we work on making clk domains and
+plumbing them into genpds and runtime PM.
+
