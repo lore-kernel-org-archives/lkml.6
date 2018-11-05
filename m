@@ -2,157 +2,203 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D52EC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F14C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A3122086C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:36:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H3Tw0rNy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pNUGLgin"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3122086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F3B5204FD
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 09:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3B5204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeKESz1 (ORCPT
+        id S1727442AbeKES5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 13:55:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46600 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeKESz1 (ORCPT
+        Mon, 5 Nov 2018 13:57:01 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33895 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeKES5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:55:27 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1FB23611F1; Mon,  5 Nov 2018 09:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541410597;
-        bh=83hXxKdlWXHJz/Amse22GhmjLie8dwvrHLJuDSATidE=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=H3Tw0rNyNTpkZJjKYE56zfN/9hO6sCv05ex+hkv/F5Q/72/oRQVez2UKlXIeadUb1
-         rIDd1ibdiSKmlja0aA5IBADbKZ3w7fFR1vRq8fzTQOtsdGvexlZioQgq3/iURCXf8e
-         z1Xss4i6kw/lMVXH4yrch0qF9zCgchFP0KYCfMiE=
-Received: from x230.qca.qualcomm.com (37-33-75-124.bb.dnainternet.fi [37.33.75.124])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E043060B7A;
-        Mon,  5 Nov 2018 09:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541410596;
-        bh=83hXxKdlWXHJz/Amse22GhmjLie8dwvrHLJuDSATidE=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=pNUGLginyfl8/Jpcj/IseqhPDcv8Cc8003jR5wADkUW0bmyK34LF3P+a8O1klZuoG
-         s+rWaqmfC7Zl9nPzYqBzJ/suXiPRYTJ09llsR2k+ur2Sil74O+ea/AN7TMOLCjYNHb
-         +JwURceGVAL3fZAzD4kLnudyIsbpJ2M1z+oi975o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E043060B7A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        linux-wireless@vger.kernel.org
-Subject: Re: [RFC][PATCH] wlcore: Fixup "Add support for optional wakeirq"
-References: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
-Date:   Mon, 05 Nov 2018 11:36:32 +0200
-In-Reply-To: <1540490241-32021-1-git-send-email-john.stultz@linaro.org> (John
-        Stultz's message of "Thu, 25 Oct 2018 10:57:21 -0700")
-Message-ID: <87o9b3g927.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 5 Nov 2018 13:57:00 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1gJbKb-00010q-Qr; Mon, 05 Nov 2018 10:38:01 +0100
+Received: from [IPv6:2001:67c:670:202:c591:f55c:bb67:31f5] (unknown [IPv6:2001:67c:670:202:c591:f55c:bb67:31f5])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 81BCF384E90;
+        Mon,  5 Nov 2018 09:37:59 +0000 (UTC)
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-can@vger.kernel.org
+Cc:     wg@grandegger.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        kishon@ti.com
+References: <20181102192616.28291-1-faiz_abbas@ti.com>
+ <20181102192616.28291-2-faiz_abbas@ti.com>
+ <5e1a0b67-510a-5512-d477-0b363e4733fe@pengutronix.de>
+ <d75c9e3c-e12b-e0b8-832c-ad117dcbe990@ti.com>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [PATCH 1/6] phy: Add max_bitrate attribute &
+ phy_get_max_bitrate()
+Message-ID: <0c0885c4-f5ae-a29c-7176-f67fe546cfd8@pengutronix.de>
+Date:   Mon, 5 Nov 2018 10:37:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <d75c9e3c-e12b-e0b8-832c-ad117dcbe990@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="6AARXZWAuJ8EhVUM6hntMrHvTaIVOZrPu"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John Stultz <john.stultz@linaro.org> writes:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--6AARXZWAuJ8EhVUM6hntMrHvTaIVOZrPu
+Content-Type: multipart/mixed; boundary="a6ssr4tU7M1AjNaXKpOf9FyUhJjakeWFP";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-can@vger.kernel.org
+Cc: wg@grandegger.com, robh+dt@kernel.org, mark.rutland@arm.com, kishon@ti.com
+Message-ID: <0c0885c4-f5ae-a29c-7176-f67fe546cfd8@pengutronix.de>
+Subject: Re: [PATCH 1/6] phy: Add max_bitrate attribute &
+ phy_get_max_bitrate()
+References: <20181102192616.28291-1-faiz_abbas@ti.com>
+ <20181102192616.28291-2-faiz_abbas@ti.com>
+ <5e1a0b67-510a-5512-d477-0b363e4733fe@pengutronix.de>
+ <d75c9e3c-e12b-e0b8-832c-ad117dcbe990@ti.com>
+In-Reply-To: <d75c9e3c-e12b-e0b8-832c-ad117dcbe990@ti.com>
 
-> After commit 3c83dd577c7f ("wlcore: Add support for optional
-> wakeirq") landed upstream, I started seeing the following oops
-> on my HiKey board:
->
-> [    1.870279] Unable to handle kernel read from unreadable memory at virtual address 0000000000000010
-> [    1.870283] Mem abort info:
-> [    1.870287]   ESR = 0x96000005
-> [    1.870292]   Exception class = DABT (current EL), IL = 32 bits
-> [    1.870296]   SET = 0, FnV = 0
-> [    1.870299]   EA = 0, S1PTW = 0
-> [    1.870302] Data abort info:
-> [    1.870306]   ISV = 0, ISS = 0x00000005
-> [    1.870309]   CM = 0, WnR = 0
-> [    1.870312] [0000000000000010] user address but active_mm is swapper
-> [    1.870318] Internal error: Oops: 96000005 [#1] PREEMPT SMP
-> [    1.870327] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-05129-gb3d1e8e #48
-> [    1.870331] Hardware name: HiKey Development Board (DT)
-> [    1.870350] Workqueue: events_freezable mmc_rescan
-> [    1.870358] pstate: 60400005 (nZCv daif +PAN -UAO)
-> [    1.870366] pc : wl1271_probe+0x210/0x350
-> [    1.870371] lr : wl1271_probe+0x210/0x350
-> [    1.870374] sp : ffffff80080739b0
-> [    1.870377] x29: ffffff80080739b0 x28: 0000000000000000
-> [    1.870384] x27: 0000000000000000 x26: 0000000000000000
-> [    1.870391] x25: 0000000000000036 x24: ffffffc074ecb598
-> [    1.870398] x23: ffffffc07ffdce78 x22: ffffffc0744ed808
-> [    1.870404] x21: ffffffc074ecbb98 x20: ffffff8008ff9000
-> [    1.870411] x19: ffffffc0744ed800 x18: ffffff8008ff9a48
-> [    1.870418] x17: 0000000000000000 x16: 0000000000000000
-> [    1.870425] x15: ffffffc074ecb503 x14: ffffffffffffffff
-> [    1.870431] x13: ffffffc074ecb502 x12: 0000000000000030
-> [    1.870438] x11: 0101010101010101 x10: 0000000000000040
-> [    1.870444] x9 : ffffffc075400248 x8 : ffffffc075400270
-> [    1.870451] x7 : 0000000000000000 x6 : 0000000000000000
-> [    1.870457] x5 : 0000000000000000 x4 : 0000000000000000
-> [    1.870463] x3 : 0000000000000000 x2 : 0000000000000000
-> [    1.870469] x1 : 0000000000000028 x0 : 0000000000000000
-> [    1.870477] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
-> [    1.870480] Call trace:
-> [    1.870485]  wl1271_probe+0x210/0x350
-> [    1.870491]  sdio_bus_probe+0x100/0x128
-> [    1.870500]  really_probe+0x1a8/0x2b8
-> [    1.870506]  driver_probe_device+0x58/0x100
-> [    1.870511]  __device_attach_driver+0x94/0xd8
-> [    1.870517]  bus_for_each_drv+0x70/0xc8
-> [    1.870522]  __device_attach+0xe0/0x140
-> [    1.870527]  device_initial_probe+0x10/0x18
-> [    1.870532]  bus_probe_device+0x94/0xa0
-> [    1.870537]  device_add+0x374/0x5b8
-> [    1.870542]  sdio_add_func+0x60/0x88
-> [    1.870546]  mmc_attach_sdio+0x1b0/0x358
-> [    1.870551]  mmc_rescan+0x2cc/0x390
-> [    1.870558]  process_one_work+0x12c/0x320
-> [    1.870563]  worker_thread+0x48/0x458
-> [    1.870569]  kthread+0xf8/0x128
-> [    1.870575]  ret_from_fork+0x10/0x18
-> [    1.870583] Code: 92400c21 b2760021 a90687a2 97e95bf9 (f9400803)
-> [    1.870587] ---[ end trace 1e15f81d3c139ca9 ]---
->
-> It seems since we don't have a wakeirq value in the dts, the wakeirq
-> value in wl1271_probe() is zero, which then causes trouble in
-> irqd_get_trigger_type(irq_get_irq_data(wakeirq)).
->
-> This patch tries to address this by checking if wakeirq is zero,
-> and not trying to add it to the resources if that is the case.
->
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Eyal Reizer <eyalr@ti.com>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: linux-wireless@vger.kernel.org
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+--a6ssr4tU7M1AjNaXKpOf9FyUhJjakeWFP
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Any particular reason why you marked this as RFC? I'm asking because I
-would like to apply this patch as is and push to 4.20.
+On 11/05/2018 07:27 AM, Faiz Abbas wrote:
+> I remove the transceiver child node binding documentation in patch 5/6.=
 
-I'll just add:
+>=20
+> The existing implementation is pretty limiting as it just has a child
+> node with no associated device. What if a transceiver requires its own
+> configurations before it can start sending/receiving messages (for
+> example, my usecase requires it to pull the standby line low)?
+>=20
+> I think that can be solved by implementing the transceiver as a phy and=
 
-Fixes: 3c83dd577c7f ("wlcore: Add support for optional wakeirq")
+> exposing a generic get_max_bitrate API. That way, the transceiver devic=
+e
+> can do all its startup configuration in the phy probe function.
+>=20
+> In any case, do suggest if you have a better idea on how to implement
+> pull gpio low requirement.
 
--- 
-Kalle Valo
+As long as we don't have any proper transceiver/phy driver, that does
+more than swtich on/off a GPIO, please add a "xceiver" regulator to your
+driver. Look for:
+
+> devm_regulator_get(&pdev->dev, "xceiver");
+
+in the flexcan driver.
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--a6ssr4tU7M1AjNaXKpOf9FyUhJjakeWFP--
+
+--6AARXZWAuJ8EhVUM6hntMrHvTaIVOZrPu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlvgD3QACgkQk9IU1zQo
+ZfFSzwf+ORdSazr3ZdB5Ij/Ju2/oA2lKRHQoR/eKydjg7k/xtO4pHcV/91BB3OAf
+iJLYQ06kq5uO98L9qnzcArdEi6xG7JEH4sSQwBMdIksMEw29nsXhPgmB/oXoLQr9
+/x/U8gbQSjw6MmY0EOLD1qG7lVM6vFPTbo12VpcPQ3rkvoi4PGxG9Ef92lMe+GvX
+VT3vEWXHgub0B6kirdKVuJzta+p8HmK9qPz8FRBfttq7umIr99jFDiQvf1FoixAP
+okGrmB+0IiousOMtPKAhI4O/YRizXaeWgJzp5ZAqM7R2/2THLRFy3qyt3CLPdGag
+jPtqKS8D2rvQ4NUCzcm7idxIjKThnQ==
+=tWLD
+-----END PGP SIGNATURE-----
+
+--6AARXZWAuJ8EhVUM6hntMrHvTaIVOZrPu--
