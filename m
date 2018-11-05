@@ -2,112 +2,90 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45277C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53373C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7042085B
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134422085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 16:31:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4iXLd45"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7042085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhGQ907s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134422085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387500AbeKFBtq (ORCPT
+        id S2387524AbeKFBvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 20:49:46 -0500
-Received: from mail-it1-f181.google.com ([209.85.166.181]:54217 "EHLO
-        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387428AbeKFBtp (ORCPT
+        Mon, 5 Nov 2018 20:51:53 -0500
+Received: from mail-yb1-f172.google.com ([209.85.219.172]:44893 "EHLO
+        mail-yb1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387420AbeKFBvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 20:49:45 -0500
-Received: by mail-it1-f181.google.com with SMTP id r12-v6so10727745ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:29:17 -0800 (PST)
+        Mon, 5 Nov 2018 20:51:53 -0500
+Received: by mail-yb1-f172.google.com with SMTP id p144-v6so4027205yba.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 08:31:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3LVzHM5lskTi6bGYYRdf7iXcdzOsbozG4luwh+Hxvzc=;
-        b=N4iXLd45rysjFRiE03pt0ErVIJl9uxmH4vJurOZcDFE1T4YXSBkaX6Bga6uUZbcwsA
-         k9he3KLJ1ahVmIKBlGzOFzTa3nKjuJQVlVr8Vk8CWzEkEq0jRF8QwZG11E6IBrH7Agb+
-         ai9OqnOnlM7LAlnpz+GdVVmHR/JJF0wMAayMDlX5ji5i3zckUQNoKl8loEdKLHmwMtKo
-         ci/X1D/E3dLFfe1G/WCStEvE9WrG5HnAGFJuVYtYIVXIeHTUlAlFRS+yhFhNfoQEPg+j
-         fTSHQZQiLBILePSH9XdDvEOkbIolkh9Abs0MamxhAsm8EITTHd0TKvFYoRyB0giXA7IC
-         mzUw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8hrjh+rf7zQH2sGjQ6NuVoGNz4ChSSoB1qihJsjBu8Q=;
+        b=EhGQ907sHjOO6wLsoTzTllaUlYjSMgZZSqvm64NSlKF9CsqBj90gioyWyeMLcVB1X9
+         2UVfdNAmKdz542Vz16c/QvlMpQ4Reuz/TyklkojeUSdjoBff/6OgISaF9r6SXxc4ZpE1
+         w7ulW0h/NxRw0OvxtwLRWyoBnnL8N83ZtAFxFeGmPqRf4c+1bhFPUlPJbFGuOFy1nMR1
+         JmH2sn2S9R7LaLu3VyvTM+PRtMTDKaiAu/QZ7WUdMafrSiImFrGLm/5ZaQgNq1/Z5zGQ
+         HrNDGrH2JWjqK1AsDT67gmnN1hezYK6IVa8N6GXWXKWHK0LD31KPQWDWnj8j+ucSSfu4
+         IfQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3LVzHM5lskTi6bGYYRdf7iXcdzOsbozG4luwh+Hxvzc=;
-        b=Wv26Q9Zvv5XjbVq+jHop9xFLPiGiqm8C4e0EZn/dQV4f/BksH64Ch+736cVadZChqf
-         il5yRAsYfpEV27U0X/ePU91hUE16T3UiEOdO6RjcCjBetmQ9aTk53lMoSsxTsj8qDCJN
-         mYtr1GqMdRApxYma03NOEKQ+LlqfVxHWjuPVmq4WooZpK3GaurDNL4C3BqKoaviESMgF
-         0W9NVVBIkUz4IqHbgOc3xzqKXsAJO89+4xajFtxQnyTPDz/qmZ0YRyIxBWeydyrhSq9c
-         AhTE049P5dXWIbsPVBHzq/u9wQgDi4GxXd1VUfWOoVDv88obDMw+wJRYckC1Af+yY3cn
-         nmvQ==
-X-Gm-Message-State: AGRZ1gLaTKLx5YUBGQa+CIKti9hLvDj6BLGc+/SUr/DsA6fBRqclEJEy
-        VZ633UsZ77ydppuZlj6Zlog=
-X-Google-Smtp-Source: AJdET5f6gSMgV7q9c7qandTjOAy+zvWm02tf13aTQ/FZlCd3McQyRQwNV5PHg0XpA9Fkjx8AqZImEg==
-X-Received: by 2002:a24:1fc1:: with SMTP id d184-v6mr7705608itd.142.1541435357072;
-        Mon, 05 Nov 2018 08:29:17 -0800 (PST)
-Received: from [191.9.209.46] (rrcs-147-0-47-180.central.biz.rr.com. [147.0.47.180])
-        by smtp.gmail.com with ESMTPSA id 131-v6sm7416916itz.31.2018.11.05.08.29.15
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8hrjh+rf7zQH2sGjQ6NuVoGNz4ChSSoB1qihJsjBu8Q=;
+        b=YyQ4OVG49qG92Ai3BAowoMvhmr0XOYqcTM82jC+S25wCkefB72qZDyppiryF7/uGhG
+         eKCobIA1O+i2Fbcq4TTGAHooKRaxXHHIlOq2I9lvWsrqVimV2wK2APR8sCEHJ3x3HulP
+         1VxrKwf9ndtOrQA6hazZWuJqUaCJ/PnzpTmd+JMTdn0aDD8fP487VwbS5TJr+MTWGTrv
+         Q/5hUKF06d0LuR8gpS5oZjm+wR6D1W5Yneditx1q4tcNrzsuioOVjwhXgRdT1a0I9d2O
+         XLoyZFvy1G+ABAh6km2ZRLXU/iYxbz72nQamTbt0ej3rD+d6vDAdZKi72KTB66az0X7Y
+         7CIg==
+X-Gm-Message-State: AGRZ1gIKaI4ry8HlIj/zdX+FyEzLxlnKWgIeCJihnxVXl5Z3DxVKHhE+
+        6LPGyqkjtccB4AzMbIcABYI=
+X-Google-Smtp-Source: AJdET5e0tX+DWBhjfhCEibMMgWIwjb1CMcGUi9d9gQLcRJ4pIWAFlSTdKdyOm1JHc5VsJq3k5/iylg==
+X-Received: by 2002:a25:cb53:: with SMTP id b80-v6mr21675221ybg.303.1541435484454;
+        Mon, 05 Nov 2018 08:31:24 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:b217])
+        by smtp.gmail.com with ESMTPSA id 123-v6sm10884002ywx.15.2018.11.05.08.31.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 08:29:16 -0800 (PST)
-Subject: Re: Creating compressed backing_store as swapfile
-To:     valdis.kletnieks@vt.edu
-Cc:     Adam Borowski <kilobyte@angband.pl>,
-        Pintu Agarwal <pintu.ping@gmail.com>, linux-mm@kvack.org,
-        open list <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org
-References: <CAOuPNLjuM5qq3go9ZFZcK0G5pQxTQb0DY36xu+8SL4vC4zJntw@mail.gmail.com>
- <20181105155815.i654i5ctmfpqhggj@angband.pl>
- <79d0c96a-a0a2-63ec-db91-42fd349d50c1@gmail.com>
- <42594.1541434463@turing-police.cc.vt.edu>
-From:   "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
-Message-ID: <6a1f57b6-503c-48a2-689b-3c321cd6d29f@gmail.com>
-Date:   Mon, 5 Nov 2018 11:28:49 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 05 Nov 2018 08:31:23 -0800 (PST)
+Date:   Mon, 5 Nov 2018 08:31:21 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     guro@fb.com, axboe@kernel.dk, dennis@kernel.org,
+        hannes@cmpxchg.org, dennisszhou@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cgroup: remove unnecessary unlikely()
+Message-ID: <20181105163121.GJ4182586@devbig004.ftw2.facebook.com>
+References: <20181104022741.2518-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <42594.1541434463@turing-police.cc.vt.edu>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181104022741.2518-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/2018 11:14 AM, valdis.kletnieks@vt.edu wrote:
-> On Mon, 05 Nov 2018 11:07:12 -0500, "Austin S. Hemmelgarn" said:
+On Sat, Nov 03, 2018 at 10:27:41PM -0400, Yangtao Li wrote:
+> WARN_ON() already contains an unlikely(), so it's not necessary to use
+> unlikely.
 > 
->> Performance isn't _too_ bad for the BTRFS case though (I've actually
->> tested this before), just make sure you disable direct I/O mode on the
->> loop device, otherwise you run the risk of data corruption.
-> 
-> Did you test that for random-access. or just sequential read/write?
-> (Also, see the note in my other mail regarding doing a random-access
-> write to the middle of the file...)
-> 
-Actual swap usage.  About 16 months ago, I had been running a couple of 
-Intel NUC5PPYH boxes (Pentium N3700 CPU's, 4GB of DDR3-1333 RAM) for 
-some network prototyping.  On both, I had swap set up to use a file on 
-BTRFS via a loop device, and I made a point to test both with LZ4 inline 
-compression and without any compression, and saw negligible performance 
-differences (less than 1% in most cases).  It was, of course, 
-significantly worse than running on ext4, but on a system that's so 
-resource constrained that both storage and memory are at a premium to 
-this degree, the performance hit is probably going to be worth it.
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-Also, it's probably worth noting that BTRFS doesn't need to decompress 
-the entire file to read or write blocks in the middle, it splits the 
-file into 128k blocks and compresses each of those independent of the 
-others, so it can just decompress the 128k block that holds the actual 
-block that's needed.
+Applied to cgroup/for-4.21.
+
+Thanks.
+
+-- 
+tejun
