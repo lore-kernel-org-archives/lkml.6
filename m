@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E36ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC7FC32789
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9202082A
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 672EE2082A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 03:17:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B3ljs4mc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A9202082A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="juK4sSuc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672EE2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbeKEMeg (ORCPT
+        id S1729210AbeKEMek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 07:34:36 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44849 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbeKEMeg (ORCPT
+        Mon, 5 Nov 2018 07:34:40 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37500 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbeKEMek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 07:34:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id s5-v6so3699933plq.11
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 19:17:08 -0800 (PST)
+        Mon, 5 Nov 2018 07:34:40 -0500
+Received: by mail-pg1-f193.google.com with SMTP id c10-v6so3538812pgq.4
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Nov 2018 19:17:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yzwsoUSsA6n9GhAeRE9xmA2fjMci+vdbes/fUzU0UCs=;
-        b=B3ljs4mch/YbPLxq6teeIIcfZpElrfsxLw96UNC8Yrr6yFsKCFzHANFw3fbsTCePIL
-         b+KJCbQP5bUz2g2FCwCZH4NEHBujljf+5K4QpWA2ZHbCkBlm5YOisk/aS18LTOBveBjx
-         f2sKFWhhmk/Xak51D5W4rG43ao222Mi59km9k=
+        bh=MHt2HL1hPxLUZSU8tjk/yq874I7NV4UEGg3K2dqYbuQ=;
+        b=juK4sSuciGH3p7UyCKmk/sHoO1J/IiWYZbwQfBYDWg/eZVH3viQ6O6QnMJ3R+jKcpG
+         vH4ZqO4q0mrMlhqiDAy1JaLbeC9AISX9kQAjKe/pp7WB/CaqQCgS6PngvtcOYLNWLacp
+         QVEUg2kzbiRD/QSTdF8bSFtvq/AGe16kdLzuU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yzwsoUSsA6n9GhAeRE9xmA2fjMci+vdbes/fUzU0UCs=;
-        b=fEcPe9CSYw1UC+umrgoTsUweadpBOXnSRpTc6/oyGNAt/9glZBY2/ZSNAx3AvRUETQ
-         e6f63h4z12nW2jXPbnU/yzUxV6ZK3czLKvvJTFsubu1vybXXuzlRzDptBucmsor92YFO
-         N7RdHnfEeLg4YnPkAw//+d0/HNnTc9zjtPpTWYhXjncAu3PLM4QVJ4pZS3fS81+UkaK3
-         CU7vuX859x6kFfRUfbldVL/FZiVlngw/M6bgYcgXXopVOETqTIWzNQrtxaJr586Dhkyg
-         c+cqED8Cugw3IiXzx+Y6gVWIPigckBq88Bgxx60D2C5IVUXgX2wi4YOG4v+dzCq97qus
-         msiQ==
-X-Gm-Message-State: AGRZ1gLgqm/nZzIwonbNnFXRBQEko8/P2JNC3LUOuVSKyFvZ6XQIu7Qz
-        X5sXqVkI+dIbMefBILpuRztJEg==
-X-Google-Smtp-Source: AJdET5cCA6lFFFVVmeBKuzXK1pCh33eOYofvuGw1nvLRkCowWy+vaMHTge+68zOWD2uvl0vqA4El3w==
-X-Received: by 2002:a17:902:8d94:: with SMTP id v20-v6mr20757455plo.109.1541387827813;
-        Sun, 04 Nov 2018 19:17:07 -0800 (PST)
+        bh=MHt2HL1hPxLUZSU8tjk/yq874I7NV4UEGg3K2dqYbuQ=;
+        b=BhBANiJLNn/Lor3haLyVwrqG0WIQkzdbM98I9OdyMKhJLeGTcVvMSdeScXor3Tw/GR
+         nDXPvoqQw4DFNKo49uiWRguASfYuAEOngcKj2Y25zVeNL1LCp9ORuVT5GGo5aUjOyE1y
+         q9hVSyQxWjp6WTtEx5jGOWC9GQFPcBjOMq1XmUYswhLyStOnkd5KOqW+7VeQgg93miKA
+         MdVB+P6ixv5IcWgbNaiXXyecleS7/eqlkwS6xoAhL3MAB4pAhgXnGryArdhVEDk+KRTF
+         iXNnriewR5ikBPh4910Pl04Sf5KQaxbkRhk+ZoOyjSmphHTJMAq6pfXaXY6xLQOUcauR
+         9VIg==
+X-Gm-Message-State: AGRZ1gLLE7EDErGgh/yY05AsJBPxTkEGUklb3NyWMJLRvWHVlL6uZQny
+        kpcN4NFaTkR/R+OdvJFSegwIw4qF8MNudw==
+X-Google-Smtp-Source: AJdET5dlRsdvkPkjUWj6YEWtrhlqOU6vbQaVvURWfABWwImtHKSrnG9Ub3j//hH5sX+bNj/g6ZYjaw==
+X-Received: by 2002:a65:610e:: with SMTP id z14-v6mr18683200pgu.138.1541387831678;
+        Sun, 04 Nov 2018 19:17:11 -0800 (PST)
 Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id f10-v6sm40182773pgp.72.2018.11.04.19.17.03
+        by smtp.gmail.com with ESMTPSA id f10-v6sm40182773pgp.72.2018.11.04.19.17.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 04 Nov 2018 19:17:06 -0800 (PST)
+        Sun, 04 Nov 2018 19:17:10 -0800 (PST)
 From:   Chunyan Zhang <zhang.chunyan@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -63,9 +63,9 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Sekhar Nori <nsekhar@ti.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH RFC 2/3] mmc: sdhci-omap: Add using external dma
-Date:   Mon,  5 Nov 2018 11:16:49 +0800
-Message-Id: <1541387810-24867-3-git-send-email-zhang.chunyan@linaro.org>
+Subject: [PATCH RFC 3/3] dt-bindings: sdhci-omap: Add example for using dmaengine
+Date:   Mon,  5 Nov 2018 11:16:50 +0800
+Message-Id: <1541387810-24867-4-git-send-email-zhang.chunyan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
 References: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
@@ -79,48 +79,32 @@ framework as well as ADMA in which the controller acts as DMA master.
 
 Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- drivers/mmc/host/sdhci-omap.c | 7 +++++++
+ Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 88347ce..0a8162c 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -896,6 +896,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	struct sdhci_omap_data *data;
- 	const struct soc_device_attribute *soc;
-+	struct resource *regs;
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+index 393848c..c73fd47 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+@@ -12,6 +12,11 @@ Required properties:
+ 		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
+ 		 "hs200_1_8v",
+ - pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
++- dmas:		List of DMA specifiers with the controller specific format as described
++		in the generic DMA client binding. A tx and rx specifier is required.
++- dma-names:	List of DMA request names. These strings correspond 1:1 with the
++		DMA specifiers listed in dmas. The string naming is to be "rx"
++		and "tx" for RX and TX DMA requests, respectively.
  
- 	match = of_match_device(omap_sdhci_match, dev);
- 	if (!match)
-@@ -908,6 +909,10 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	}
- 	offset = data->offset;
- 
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!regs)
-+		return -ENXIO;
-+
- 	host = sdhci_pltfm_init(pdev, &sdhci_omap_pdata,
- 				sizeof(*omap_host));
- 	if (IS_ERR(host)) {
-@@ -924,6 +929,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	omap_host->timing = MMC_TIMING_LEGACY;
- 	omap_host->flags = data->flags;
- 	host->ioaddr += offset;
-+	host->mapbase = regs->start;
- 
- 	mmc = host->mmc;
- 	sdhci_get_of_property(pdev);
-@@ -991,6 +997,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
- 	host->mmc_host_ops.enable_sdio_irq = sdhci_omap_enable_sdio_irq;
- 
-+	sdhci_switch_extdma(host, true);
- 	ret = sdhci_setup_host(host);
- 	if (ret)
- 		goto err_put_sync;
+ Example:
+ 	mmc1: mmc@4809c000 {
+@@ -20,4 +25,6 @@ Example:
+ 		ti,hwmods = "mmc1";
+ 		bus-width = <4>;
+ 		vmmc-supply = <&vmmc>; /* phandle to regulator node */
++		dmas = <&sdma 61 &sdma 62>;
++		dma-names = "tx", "rx";
+ 	};
 -- 
 2.7.4
 
