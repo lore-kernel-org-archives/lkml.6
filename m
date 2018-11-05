@@ -2,154 +2,124 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3CCC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2068C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8665120882
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:08:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8665120882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id ADD5D2085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:08:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R1FCmRhi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD5D2085A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387919AbeKFE3C (ORCPT
+        id S2387959AbeKFE3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:29:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50882 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387695AbeKFE3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:29:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 503DFB0EC;
-        Mon,  5 Nov 2018 19:07:55 +0000 (UTC)
-Message-ID: <1541445118.3441.4.camel@suse.cz>
-Subject: Re: [RFC/RFT][PATCH v2] cpuidle: New timer events oriented governor
- for tickless systems
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Doug Smythies <dsmythies@telus.net>,
-        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc:     'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
-        'Peter Zijlstra' <peterz@infradead.org>,
-        'LKML' <linux-kernel@vger.kernel.org>,
-        'Frederic Weisbecker' <frederic@kernel.org>,
-        'Mel Gorman' <mgorman@suse.de>,
-        'Daniel Lezcano' <daniel.lezcano@linaro.org>,
-        'Linux PM' <linux-pm@vger.kernel.org>
-Date:   Mon, 05 Nov 2018 20:11:58 +0100
-In-Reply-To: <000301d472c2$49f28740$ddd795c0$@net>
-References: FyDag8LEB6DhgFyDfglTus <000301d472c2$49f28740$ddd795c0$@net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 5 Nov 2018 23:29:10 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35642 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387932AbeKFE3K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 23:29:10 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 32-v6so4654784pgu.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 11:08:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uxQ6TtxJN3C2wnhqS+RR3firXUmrm9Pg36r5o/Hfuxw=;
+        b=R1FCmRhiUOK5ciu1PFJqTIoJHWCh2yNVcB+I2Q3aTX9Rf1Ib31K3q6zqttSUOt6QHr
+         C1zxJ3sHqRIXip7kewTz6MO9aEzlerwIlu+mWRMScBe+PWN868vcDqqNqYBodC8WG15j
+         VJ9290PawYLPlH/eOtkaJZs8Kbwn6VOAntDaE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uxQ6TtxJN3C2wnhqS+RR3firXUmrm9Pg36r5o/Hfuxw=;
+        b=RT12QSeHssANMwihdJpRtS8ZNBIJvvWdFZ57LJaA4/Xh9odBDmZ8Z8wchmGFkG/VEf
+         W7d1NHJknD7Vx22Mu7ruOoWG8Wv/Pzy6lTCqeMBaMLee5gKFU6/z3AdSwJBeZP+FlXB2
+         38cYAkFkQ7iiBZRGV8LevWBYHR1oXLQKpKNqRs09jBjeHniH5j9BiXm/trI/u1sQ17Tf
+         92N0KzrLaW5ybHuEvnan3ftqkOAMIsY/0+oTHZ32rxnIQ53Bu1/2iOjerblmo/2f157W
+         4CXn9nC12Wjrc9nv1NePUzQ2ubuLXAi5pKvZHS78QxBjgGR6EzSlCVs3zkFZagvuhqUL
+         l2nw==
+X-Gm-Message-State: AGRZ1gIy4R7CfhzlIoHqTPsBX5hjZ0V/SswIHSVtEkeIbFylUU6gxQCj
+        9nM8RQH90kWT+TrN9bMHan2xoQ==
+X-Google-Smtp-Source: AJdET5cdwCDKoHQWKfdNTYhLiZD6C/V8WAS/DvYtke1lP1N23/y+jLL8vsS24iFC/OEx2mX5R4NM0A==
+X-Received: by 2002:a63:e101:: with SMTP id z1mr17707330pgh.310.1541444885505;
+        Mon, 05 Nov 2018 11:08:05 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h62-v6sm41237376pfg.27.2018.11.05.11.08.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 11:08:04 -0800 (PST)
+Date:   Mon, 5 Nov 2018 11:08:02 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/17] arm64: dts: qcom: pms405: add gpios
+Message-ID: <20181105190802.GQ2523@minitux>
+References: <20181105154529.7614-1-vkoul@kernel.org>
+ <20181105154529.7614-12-vkoul@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105154529.7614-12-vkoul@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-02 at 08:39 -0700, Doug Smythies wrote:
-> 
-> I have been testing this V2 against a baseline that includes all
-> of the pending menu patches. My baseline kernel is somewhere
-> after 4.19, at 345671e.
-> 
-> A side note:
-> Recall that with the menu patch set tests, I found that the baseline
-> reference performance for the pipe test on one core had changed
-> significantly (worse - Kernel 4.19-rc1). Well, now it has changed
-> significantly again (better, and even significantly better than it
-> was for 4.18). 4.18 ~4.8 uSec/loop; 4.19 ~5.2 uSec/loop; 4.19+
-> (345671e) 4.2 uSec/loop.
-> 
-> This V2 is pretty good. All of the tests that I run gave similar
-> performance and power use between the baseline reference and V2.
-> I couldn't find any issues with the decay stuff, and I tried.
-> (sorry, I didn't do pretty graphs.)
-> 
-> After reading Giovanni's reply the other day, I tried the
-> Phoronix dbench test: 12 clients resulted in similar performance,
-> But TEOv2 used a little less processor package power; 256 clients
-> had about -7% performance using TEOv2, but (my numbers are not
-> exact) also used less processor package power.
+On Mon 05 Nov 07:45 PST 2018, Vinod Koul wrote:
 
-Uhm, I see. The results I've got vary between machines; that could
-depend on the CPU type. What is your machine processor model (or
-microarchitecture, see the search box at the website https://ark.intel.com ),
-and how many logical cores does it have?
+> Add the GPIOs present on PMS405 chip.
+> 
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>  arch/arm64/boot/dts/qcom/pms405.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pms405.dtsi b/arch/arm64/boot/dts/qcom/pms405.dtsi
+> index cdb4547c998b..18410d9f0f8f 100644
+> --- a/arch/arm64/boot/dts/qcom/pms405.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pms405.dtsi
+> @@ -17,5 +17,21 @@
+>  			reg-names = "rtc", "alarm";
+>  			interrupts = <0x0 0x61 0x1 IRQ_TYPE_NONE>;
+>  		};
+> +
+> +		pms405_gpios: gpios@c000 {
+> +			compatible = "qcom,pms405-gpio";
+> +			reg = <0xc000>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupts = <0 0xc1 0 IRQ_TYPE_NONE>,
+> +				<0 0xc2 0 IRQ_TYPE_NONE>,
+> +				<0 0xc3 0 IRQ_TYPE_NONE>,
+> +				<0 0xc4 0 IRQ_TYPE_NONE>,
+> +				<0 0xc5 0 IRQ_TYPE_NONE>,
+> +				<0 0xc6 0 IRQ_TYPE_NONE>,
+> +				<0 0xc7 0 IRQ_TYPE_NONE>,
+> +				<0 0xca 0 IRQ_TYPE_NONE>,
+> +				<0 0xcb 0 IRQ_TYPE_NONE>;
 
-For the record, in my previous email I wrote that my script runs dbench with
-up to NUMCPUS*8 clients, but that's misleading; indeed for the 48-cores
-machines I had runs with 1, 2, 4, 8, 16, 32 and 64 clients.
-https://lore.kernel.org/lkml/1541010981.3423.2.camel@suse.cz/
+Is there a reason why gpio 1, 8 and 9 are omitted from this list?
 
-The sequence is generated with
+Regards,
+Bjorn
 
-    CLIENT=1
-    DBENCH_MAX_CLIENTS=$((NUMCPUS*8))
-
-    while [ $CLIENT -le $DBENCH_MAX_CLIENTS ]; do
-
-            ./bin/dbench [...] $CLIENT
-
-            if [ $CLIENT -lt $NUMCPUS ]; then
-                    CLIENT=$((CLIENT*2))
-            else
-                    CLIENT=$((CLIENT*8))
-            fi
-    done
-
-In practice the max number of clients I get is slightly below NUMCPUS*2 to
-reach saturation. I write this as I read you ran it with 256 clients but I
-never went that high.
-
-> 
-> On 2018.10.31 11:36 Giovanni Gherdovich wrote:
-> 
-> > Something I'd like to do now is verify that "teo"'s predictions
-> > are better than "menu"'s; I'll probably use systemtap to make
-> > some histograms of idle times versus what idle state was chosen
-> > -- that'd be enough to compare the two.
-> 
-> I don't know what a "systemtap" is, but I have (crude) tools to
-> post process trace data into histograms data. I did 5 minute
-> traces during the 12 client Phoronix dbench test and plotted
-> the results, [1]. Sometimes, to the right of the autoscaled
-> graph is another with fixed scaling. Better grouping of idle
-> durations with TEOv2 are clearly visible.
-> 
-> ... Doug
-> 
-> [1] http://fast.smythies.com/linux-pm/k419p/histo_compare.htm
-
-Oh, that's interesting, thanks. Can you post the break-even residency times and
-exit latencies for your CPUs? On my Skylake test machine I get this from sysfs:
-
-$ cd /sys/devices/system/cpu/cpu0/cpuidle
-$ for state in * ; do
-echo -e \
-"STATE: $state\t\
-DESC: $(cat $state/desc)\t\
-NAME: $(cat $state/name)\t\
-LATENCY: $(cat $state/latency)\t\
-RESIDENCY: $(cat $state/residency)"
-done
-
-STATE: state0   DESC: CPUIDLE CORE POLL IDLE    NAME: POLL      LATENCY: 0      RESIDENCY: 0
-STATE: state1   DESC: MWAIT 0x00        NAME: C1        LATENCY: 2      RESIDENCY: 2
-STATE: state2   DESC: MWAIT 0x01        NAME: C1E       LATENCY: 10     RESIDENCY: 20
-STATE: state3   DESC: MWAIT 0x10        NAME: C3        LATENCY: 70     RESIDENCY: 100
-STATE: state4   DESC: MWAIT 0x20        NAME: C6        LATENCY: 85     RESIDENCY: 200
-STATE: state5   DESC: MWAIT 0x33        NAME: C7s       LATENCY: 124    RESIDENCY: 800
-STATE: state6   DESC: MWAIT 0x40        NAME: C8        LATENCY: 200    RESIDENCY: 800
-
-At the bottom of the email at
-https://lore.kernel.org/lkml/4168371.zz0pVZtGOY@aspire.rjw.lan/
-Rafael explains how the sysfs residencies are important to understand the
-histograms.
-
-Thanks,
-Giovanni
+> +		};
+>  	};
+>  };
+> -- 
+> 2.14.4
+> 
