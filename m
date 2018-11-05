@@ -2,139 +2,148 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABA7C46475
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380AFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCD8620827
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCD8620827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id DE56320827
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 11:43:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="13N0a9Hs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE56320827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729200AbeKEVBZ (ORCPT
+        id S1729577AbeKEVCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 16:01:25 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48676 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729021AbeKEVBZ (ORCPT
+        Mon, 5 Nov 2018 16:02:24 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51722 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729006AbeKEVBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Nov 2018 16:01:25 -0500
-Received: from localhost.localdomain (unknown [IPv6:2a02:8109:92c0:207d:59be:d485:5b1c:9e22])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robertfoss)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C186627DF2C;
-        Mon,  5 Nov 2018 11:42:05 +0000 (GMT)
-From:   Robert Foss <robert.foss@collabora.com>
-To:     airlied@linux.ie, kraxel@redhat.com,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Emil Velikov <emil.velikov@collabora.com>
-Cc:     Robert Foss <robert.foss@collabora.com>
-Subject: [PATCH v4 2/4] drm/virtio: add uapi for in and out explicit fences
-Date:   Mon,  5 Nov 2018 12:41:50 +0100
-Message-Id: <20181105114152.2088-3-robert.foss@collabora.com>
+Received: by mail-it1-f195.google.com with SMTP id h13so12198433itl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 03:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=r0quzrvzfUc+HIm+eh/BxAuTv5KVldRphwW9NWd7VSo=;
+        b=13N0a9HsfaO2AhbJXeA3vtZIfDjx9BfeFj3OQIUvCxFR/dqPfhCXw+nmEkacTNkHPX
+         yfZg20WS95RtkVWUk/k0WsdjvMmw4NwVHmRY3t0FaVSFeD4itTylBIOQcih+0INYwZjb
+         oyFPi4IIaUs+dRLm7meeuMOdE1JoOpZjOJE7J5citlxk6h7FOEaoGI2AC2Ddw2vnhDAc
+         3b4dtTyVb8qQyzTKFjPV7oqqBFKPDJxtZn6UQnODI8Ckjf8l08F/QTb7r/3O/2GMYRWS
+         WhRmmFyMVvy5DJYRCn9wMsHJpshCvJmXVXG8v3MBYXsLIJ1xSEOs/Vds8RpFozXHrg2J
+         aXAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=r0quzrvzfUc+HIm+eh/BxAuTv5KVldRphwW9NWd7VSo=;
+        b=tKIz2N7CIdLEVisP1mSYs0itwqETeRFe1AN1S9IlYkk2a5Ziu33O2NiraYgrqaJrNn
+         /Pdd/Xq8TzPjrYS7suDCKg/dW7O5N3Chs/lrPs9bH0yBc/GJKvZkGWiM4PoqkliC96uR
+         Qbqk/WpRYfQXvYpJFAO4eNMK3tWfV2fhp1kiDd/k92diwNxBh+4lAVMd1fNEjN9MH7kJ
+         6KsCIU8gCqlQ4+OIyH6dqZ3eAYW0kdQ34x07zeq6My1lqeYpNMTU0E4o3nyhtdSr2jfN
+         dgsygVu9xlTMUlSlenrqYbF0fxUxu4T24KqLvZ1qW1/NnsUPCjhzRhbZshEawh5uBBxB
+         4lfA==
+X-Gm-Message-State: AGRZ1gK34CTWaJhWswAUoJOAmQRTaGkdwVzXcC84IchZ6X1V5cn47sFk
+        suo1L/az2jUct2oZ2NSyeklNxY7yxss3/A==
+X-Google-Smtp-Source: AJdET5dnUg1UmleJlFJefYJnfEEXmiFh8eO0WXx8WF4+Bzy9e4dYBgd4HJQ4svdZDqD+owqjGWfYKQ==
+X-Received: by 2002:a24:37ce:: with SMTP id r197-v6mr6045938itr.166.1541418125501;
+        Mon, 05 Nov 2018 03:42:05 -0800 (PST)
+Received: from ch-lap-hans.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id 186-v6sm14880824itf.11.2018.11.05.03.42.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 03:42:05 -0800 (PST)
+From:   Hans Holmberg <hans@owltronix.com>
+X-Google-Original-From: Hans Holmberg <hans.ml.holmberg@cnexlabs.com>
+To:     Matias Bjorling <mb@lightnvm.io>
+Cc:     Javier Gonzales <javier@cnexlabs.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.ml.holmberg@owltronix.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH 2/7] lightnvm: pblk: account for write error sectors in emeta
+Date:   Mon,  5 Nov 2018 12:41:08 +0100
+Message-Id: <20181105114113.30932-3-hans.ml.holmberg@cnexlabs.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181105114152.2088-1-robert.foss@collabora.com>
-References: <20181105114152.2088-1-robert.foss@collabora.com>
+In-Reply-To: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
+References: <20181105114113.30932-1-hans.ml.holmberg@cnexlabs.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new field called fence_fd that will be used by userspace to send
-in-fences to the kernel and receive out-fences created by the kernel.
+From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
 
-This uapi enables virtio to take advantage of explicit synchronization of
-dma-bufs.
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-There are two new flags:
+Lines inflicted with write errors lines might be recovered
+if they have not been recycled after write error garbage collection.
 
-* VIRTGPU_EXECBUF_FENCE_FD_IN to be used when passing an in-fence fd.
-* VIRTGPU_EXECBUF_FENCE_FD_OUT to be used when requesting an out-fence fd
+Ensure that the emeta accounting of valid lbas is correct
+for such lines to avoid recovery inconsistencies.
 
-The execbuffer IOCTL is now read-write to allow the userspace to read the
-out-fence.
-
-On error -1 should be returned in the fence_fd field.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-Signed-off-by: Robert Foss <robert.foss@collabora.com>
-Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
+ drivers/lightnvm/pblk-write.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-Changes since v3:
- - Emil: Move fence_fd assignment to after sanity checks
- - Emil: Added r-b
-
- drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
- include/uapi/drm/virtgpu_drm.h         | 13 ++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index d69fc356df0a..3d497835b0f5 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -119,6 +119,11 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 	if (vgdev->has_virgl_3d == false)
- 		return -ENOSYS;
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 3ddd16f47106..750f04b8a227 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -105,14 +105,20 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
+ }
  
-+	if ((exbuf->flags & ~VIRTGPU_EXECBUF_FLAGS))
-+		return -EINVAL;
+ /* Map remaining sectors in chunk, starting from ppa */
+-static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
++static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa,
++		int rqd_ppas)
+ {
+ 	struct pblk_line *line;
+ 	struct ppa_addr map_ppa = *ppa;
++	__le64 addr_empty = cpu_to_le64(ADDR_EMPTY);
++	__le64 *lba_list;
+ 	u64 paddr;
+ 	int done = 0;
++	int n = 0;
+ 
+ 	line = pblk_ppa_to_line(pblk, *ppa);
++	lba_list = emeta_to_lbas(pblk, line->emeta->buf);
 +
-+	exbuf->fence_fd = -1;
+ 	spin_lock(&line->lock);
+ 
+ 	while (!done)  {
+@@ -121,10 +127,17 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+ 		if (!test_and_set_bit(paddr, line->map_bitmap))
+ 			line->left_msecs--;
+ 
++		if (n < rqd_ppas && lba_list[paddr] != addr_empty)
++			line->nr_valid_lbas--;
 +
- 	INIT_LIST_HEAD(&validate_list);
- 	if (exbuf->num_bo_handles) {
- 
-diff --git a/include/uapi/drm/virtgpu_drm.h b/include/uapi/drm/virtgpu_drm.h
-index 9a781f0611df..91062f4ac7c5 100644
---- a/include/uapi/drm/virtgpu_drm.h
-+++ b/include/uapi/drm/virtgpu_drm.h
-@@ -47,6 +47,13 @@ extern "C" {
- #define DRM_VIRTGPU_WAIT     0x08
- #define DRM_VIRTGPU_GET_CAPS  0x09
- 
-+#define VIRTGPU_EXECBUF_FENCE_FD_IN	0x01
-+#define VIRTGPU_EXECBUF_FENCE_FD_OUT	0x02
-+#define VIRTGPU_EXECBUF_FLAGS  (\
-+		VIRTGPU_EXECBUF_FENCE_FD_IN |\
-+		VIRTGPU_EXECBUF_FENCE_FD_OUT |\
-+		0)
++		lba_list[paddr] = addr_empty;
 +
- struct drm_virtgpu_map {
- 	__u64 offset; /* use for mmap system call */
- 	__u32 handle;
-@@ -54,12 +61,12 @@ struct drm_virtgpu_map {
- };
+ 		if (!test_and_set_bit(paddr, line->invalid_bitmap))
+ 			le32_add_cpu(line->vsc, -1);
  
- struct drm_virtgpu_execbuffer {
--	__u32		flags;		/* for future use */
-+	__u32 flags;
- 	__u32 size;
- 	__u64 command; /* void* */
- 	__u64 bo_handles;
- 	__u32 num_bo_handles;
--	__u32 pad;
-+	__s32 fence_fd;
- };
+ 		done = nvm_next_ppa_in_chk(pblk->dev, &map_ppa);
++
++		n++;
+ 	}
  
- #define VIRTGPU_PARAM_3D_FEATURES 1 /* do we have 3D features in the hw */
-@@ -137,7 +144,7 @@ struct drm_virtgpu_get_caps {
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_VIRTGPU_MAP, struct drm_virtgpu_map)
+ 	line->w_err_gc->has_write_err = 1;
+@@ -202,7 +215,7 @@ static void pblk_submit_rec(struct work_struct *work)
  
- #define DRM_IOCTL_VIRTGPU_EXECBUFFER \
--	DRM_IOW(DRM_COMMAND_BASE + DRM_VIRTGPU_EXECBUFFER,\
-+	DRM_IOWR(DRM_COMMAND_BASE + DRM_VIRTGPU_EXECBUFFER,\
- 		struct drm_virtgpu_execbuffer)
+ 	pblk_log_write_err(pblk, rqd);
  
- #define DRM_IOCTL_VIRTGPU_GETPARAM \
+-	pblk_map_remaining(pblk, ppa_list);
++	pblk_map_remaining(pblk, ppa_list, rqd->nr_ppas);
+ 	pblk_queue_resubmit(pblk, c_ctx);
+ 
+ 	pblk_up_rq(pblk, c_ctx->lun_bitmap);
 -- 
 2.17.1
 
