@@ -2,99 +2,117 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E583C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF79C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 133682081D
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:26:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133682081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 2481F2081D
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 13:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2481F2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbeKEWqQ (ORCPT
+        id S1729745AbeKEWrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 17:46:16 -0500
-Received: from [110.188.70.11] ([110.188.70.11]:10618 "EHLO spam1.hygon.cn"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726723AbeKEWqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 17:46:16 -0500
-Received: from spam1.hygon.cn (localhost [127.0.0.2] (may be forged))
-        by spam1.hygon.cn with ESMTP id wA5CtGBO096732
-        for <linux-kernel@vger.kernel.org>; Mon, 5 Nov 2018 20:55:16 +0800 (GMT-8)
-        (envelope-from puwen@hygon.cn)
-Received: from MK-FE.hygon.cn ([172.23.18.61])
-        by spam1.hygon.cn with ESMTP id wA5CsJ4N096487;
-        Mon, 5 Nov 2018 20:54:19 +0800 (GMT-8)
-        (envelope-from puwen@hygon.cn)
-Received: from cncheex01.Hygon.cn ([172.23.18.10])
-        by MK-FE.hygon.cn with ESMTP id wA5CrnOe063640;
-        Mon, 5 Nov 2018 20:53:49 +0800 (GMT-8)
-        (envelope-from puwen@hygon.cn)
-Received: from pw-vbox.hygon.cn (172.23.18.44) by cncheex01.Hygon.cn
- (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 5 Nov 2018
- 20:54:14 +0800
-From:   Pu Wen <puwen@hygon.cn>
-To:     <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Pu Wen <puwen@hygon.cn>
-Subject: [PATCH] x86/cpu: Avoid endless loop to get the number of cache leaves
-Date:   Mon, 5 Nov 2018 20:53:45 +0800
-Message-ID: <1541422425-5855-1-git-send-email-puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
+        Mon, 5 Nov 2018 17:47:46 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45757 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729404AbeKEWrp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 17:47:45 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA5DRslZ348527
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 5 Nov 2018 05:27:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA5DRs0S348524;
+        Mon, 5 Nov 2018 05:27:54 -0800
+Date:   Mon, 5 Nov 2018 05:27:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yangtao Li <tipbot@zytor.com>
+Message-ID: <tip-7d9df98be66fec64349f9f1c9d3e896293fe7b45@git.kernel.org>
+Cc:     tiny.windzz@gmail.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, tiny.windzz@gmail.com
+In-Reply-To: <20181104023104.2572-1-tiny.windzz@gmail.com>
+References: <20181104023104.2572-1-tiny.windzz@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] clockevents: Remove unnecessary unlikely()
+Git-Commit-ID: 7d9df98be66fec64349f9f1c9d3e896293fe7b45
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.23.18.44]
-X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
- (172.23.18.10)
-X-MAIL: spam1.hygon.cn wA5CsJ4N096487
-X-DNSRBL: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To get the number of cache leaves on AMD or Hygon platform, it should
-get the value of cpuid leaf 0x8000001d. But on certain broken platform
-such as a not fullly implemented virtual platform(Xen, for example),
-the value of the cpuid leaf will nerver be CTYPE_NULL, so the kernel
-will run into an endless loop.
+Commit-ID:  7d9df98be66fec64349f9f1c9d3e896293fe7b45
+Gitweb:     https://git.kernel.org/tip/7d9df98be66fec64349f9f1c9d3e896293fe7b45
+Author:     Yangtao Li <tiny.windzz@gmail.com>
+AuthorDate: Sat, 3 Nov 2018 22:31:04 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 5 Nov 2018 14:22:54 +0100
 
-To fix this problem, add a new enum type CTYPE_MAX to limit the maximum
-cpuid accessing.
+clockevents: Remove unnecessary unlikely()
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
+WARN_ON() and WARN_ON_ONCE() already contains an unlikely(), so it's not
+necessary to use unlikely.
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20181104023104.2572-1-tiny.windzz@gmail.com
+
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/time/clockevents.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index dc1b934..7bd167f 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -121,7 +121,8 @@ enum _cache_type {
- 	CTYPE_NULL = 0,
- 	CTYPE_DATA = 1,
- 	CTYPE_INST = 2,
--	CTYPE_UNIFIED = 3
-+	CTYPE_UNIFIED = 3,
-+	CTYPE_MAX = 4
- };
+diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
+index 8c0e4092f661..af58898d9ebf 100644
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -39,10 +39,8 @@ static u64 cev_delta2ns(unsigned long latch, struct clock_event_device *evt,
+ 	u64 clc = (u64) latch << evt->shift;
+ 	u64 rnd;
  
- union _cpuid4_leaf_eax {
-@@ -640,7 +641,7 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- 		/* Do cpuid(op) loop to find out num_cache_leaves */
- 		cpuid_count(op, i, &eax, &ebx, &ecx, &edx);
- 		cache_eax.full = eax;
--	} while (cache_eax.split.type != CTYPE_NULL);
-+	} while (cache_eax.split.type != CTYPE_NULL && i != CTYPE_MAX);
- 	return i;
+-	if (unlikely(!evt->mult)) {
++	if (WARN_ON(!evt->mult))
+ 		evt->mult = 1;
+-		WARN_ON(1);
+-	}
+ 	rnd = (u64) evt->mult - 1;
+ 
+ 	/*
+@@ -164,10 +162,8 @@ void clockevents_switch_state(struct clock_event_device *dev,
+ 		 * on it, so fix it up and emit a warning:
+ 		 */
+ 		if (clockevent_state_oneshot(dev)) {
+-			if (unlikely(!dev->mult)) {
++			if (WARN_ON(!dev->mult))
+ 				dev->mult = 1;
+-				WARN_ON(1);
+-			}
+ 		}
+ 	}
  }
+@@ -315,10 +311,8 @@ int clockevents_program_event(struct clock_event_device *dev, ktime_t expires,
+ 	int64_t delta;
+ 	int rc;
  
--- 
-2.7.4
-
+-	if (unlikely(expires < 0)) {
+-		WARN_ON_ONCE(1);
++	if (WARN_ON_ONCE(expires < 0))
+ 		return -ETIME;
+-	}
+ 
+ 	dev->next_event = expires;
+ 
