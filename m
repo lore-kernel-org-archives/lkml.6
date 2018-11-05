@@ -2,173 +2,105 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27232C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D73C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E490D20685
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBADB2086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:14:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yG2zSNhb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E490D20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gvb/YqNz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBADB2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387999AbeKFEfU (ORCPT
+        id S2388052AbeKFEfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:35:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387841AbeKFEfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:35:20 -0500
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 703182086A;
-        Mon,  5 Nov 2018 19:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541445248;
-        bh=GCT2JXFvdH1s4I6/mrxBz+A3CRkfU/ndn+tv7gKD+Z8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yG2zSNhbilkBFbxgAxZoeX+hywMLL3yVMq+2zYQ8+mRlHHzzB503wnumcx7LjnWix
-         /BO7RG8go70PikRjD5UJiueveh9EUEH2wc2PFmiJLjRBIob0KOvkaAuhB0VLWJX1iL
-         4NvxvV8Ni7/S++E0hLmh6OZnfeQK3ocaUJR1cvdU=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 42373142D18; Mon,  5 Nov 2018 16:13:56 -0300 (-03)
-Date:   Mon, 5 Nov 2018 16:13:56 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: Re: [PATCH 19/28] perf beauty: Wire up the mmap flags table
- generator to the Makefile
-Message-ID: <20181105191356.GF7077@kernel.org>
-References: <20181031164508.4784-1-acme@kernel.org>
- <20181031164508.4784-20-acme@kernel.org>
- <20181105154433.GA11115@roeck-us.net>
- <20181105171140.GD11147@kernel.org>
- <20181105184612.GD7077@kernel.org>
+        Mon, 5 Nov 2018 23:35:41 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34410 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387841AbeKFEfl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 23:35:41 -0500
+Received: by mail-qk1-f195.google.com with SMTP id a132so16887139qkg.1;
+        Mon, 05 Nov 2018 11:14:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=H71BdfX3Eth0WEverzxdSWsLeCQ/VsuhCCtWA979mR0=;
+        b=Gvb/YqNzWfcrH+jdhV6/VRVPsnhSO6dbSBo786+GfSrzS/eSTl5grb+K7NBzw1BLOP
+         EeqKMtzh8XPSPf8+CWKN6kGGu7yx14NlrUuFsjPAO7dEBMNhTslJwpBxvNWhSbVkRWdY
+         T5znw9fbkHZ0CgvsJXNi/CBj3rVpFb4srQwLgiP1YaH1m1TMgpyrvFuwsiXpQMikbSfJ
+         NCtIvsVCc/0BQCEtMhoP5w3GbgTZzAEl5WvL/9QOERz4USOBkQTDlnjMejgH4mJCFtts
+         5PoX3zeEVvhslYrhCSZKHmcZTdPfqTiW1SwuFHM8c8zhcLm7MGCBIolp2PzBN9TAQDJH
+         TAWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=H71BdfX3Eth0WEverzxdSWsLeCQ/VsuhCCtWA979mR0=;
+        b=t/GYZKpQvtmWbavzNbRmTTNnY+IoUkhj3wBg20eaZ2alcaXWGqMUN9sq1aPzGbwk1A
+         usdrmoZt/yM7cSx30vryqV3Q04YSub50Vd4J5mT5wvnB9UGmGW5HykXQi67gMa1HEPZe
+         U1sQ2SG8wJj9Gm95msE5CFbYN/hRXiItsq2rBTVH1ubPR5oq1T/fDMmGK7hTcOU0sqhJ
+         doiN6BIL/qpCPDQCVGg9qdZv/KNHbO5FVF3KVOZI2i626lg7xD69HqvQVcPRi5aq8mGc
+         X+CCrwqGC0rDu49DaBjVpyAjIPpxaVT4UiJlcO13trRgwBOElyxJVi79HMUaok9m4vsM
+         F/lg==
+X-Gm-Message-State: AGRZ1gJb+MLUbrdz5diVZ1FHETZ5qY3oCfQjzd23a98iDYg8GQL59Esk
+        ydyuXeqqj1mbXEI3hz09zNk=
+X-Google-Smtp-Source: AJdET5fe4281rqtVk/m582/nb8fEn8DpXjhOF/og/1XZgU4oXOundFD5ViMYYzFqwAqzgGQdOKJZGw==
+X-Received: by 2002:a37:17df:: with SMTP id 92mr22436807qkx.191.1541445273922;
+        Mon, 05 Nov 2018 11:14:33 -0800 (PST)
+Received: from renatolg ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id q14-v6sm9424743qtl.65.2018.11.05.11.14.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 11:14:33 -0800 (PST)
+Date:   Mon, 5 Nov 2018 17:14:28 -0200
+From:   Renato Lui Geh <renatogeh@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        giuliano.belinassi@usp.br
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH v4 0/2] staging: iio: ad7780: correct driver read
+Message-ID: <cover.1541444377.git.renatogeh@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20181105184612.GD7077@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Nov 05, 2018 at 03:46:12PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Mon, Nov 05, 2018 at 02:11:40PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Mon, Nov 05, 2018 at 07:44:33AM -0800, Guenter Roeck escreveu:
-> > > On Wed, Oct 31, 2018 at 01:44:59PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> > > > Now when we run 'make -C tools/perf O=/tmp/build/perf' we end up with:
-> 
-> > > >   $ cat /tmp/build/perf/trace/beauty/generated/mmap_flags_array.c
-> > > >   static const char *mmap_flags[] = {
-> > > > 	[ilog2(0x40) + 1] = "32BIT",
-> <SNIP>
-> > > > +include ../scripts/Makefile.arch
-> 
-> > > >  # The default target of this Makefile is...
-> > > >  all:
-> > > > @@ -385,6 +386,8 @@ export INSTALL SHELL_PATH
-> > > >  SHELL = $(SHELL_PATH)
-> 
-> > > >  linux_uapi_dir := $(srctree)/tools/include/uapi/linux
-> > > > +asm_generic_uapi_dir := $(srctree)/tools/include/uapi/asm-generic
-> > > > +arch_asm_uapi_dir := $(srctree)/tools/arch/$(ARCH)/include/uapi/asm/
-> 
-> > > This doesn't work for me. With v4.20-rc1:
-> 
-> > > $ make ARCH=x86_64 defconfig
-> > > *** Default configuration is based on 'x86_64_defconfig'
->  
-> > I'll fix this, its the ARCH that needs to be normalized to x86 before
-> > building the path...
-> 
-> Can you try with the following patch?
+The purpose of this series is to correct an issue in the driver's raw
+read function and remove an unnecessary struct field.
 
-I did the tests and it seems to work, its the same method used by the
-kernel sources, so I have this in place now:
+Changelog:
+*v2
+	- separated original patch into two patches
+	  (https://marc.info/?l=linux-iio&m=154047435605492)
+*v3
+	- reordered patches so that fixes go first
+	- removed unnecessary initialization
+	- removed unnecessary voltage field variable
+	- dropped reading voltage on probe
+	- returns -EINVAL error on null voltage
+*v4
+	- removed voltage reading from probe
+	- fixed voltage error handling
 
-commit e2c39f36c354a06c6e9d32d4fdf8660b41803d82
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Mon Nov 5 15:46:51 2018 -0300
+Renato Lui Geh (2):
+  staging: iio: ad7780: update voltage on read
+  staging: iio: ad7780: remove unnecessary stashed voltage value
 
-    perf beauty: Use SRCARCH, ARCH=x86_64 must map to "x86" to find the headers
-    
-    Guenter reported that using ARCH=x86_64 to build perf has regressed:
-    
-      $ make -C tools/perf O=/tmp/build/perf ARCH=x86_64
-      make: Entering directory '/home/acme/git/perf/tools/perf'
-        BUILD:   Doing 'make -j4' parallel build
-        HOSTCC   /tmp/build/perf/fixdep.o
-        HOSTLD   /tmp/build/perf/fixdep-in.o
-        LINK     /tmp/build/perf/fixdep
-    
-      Auto-detecting system features:
-      ...                         dwarf: [ on  ]
-      <SNIP>
-      ...                           bpf: [ on  ]
-    
-        GEN      /tmp/build/perf/common-cmds.h
-      make[2]: *** No rule to make target '/home/acme/git/perf/tools/arch/x86_64/include/uapi/asm//mman.h', needed by '/tmp/build/perf/trace/beauty/generated/mmap_flags_array.c'.  Stop.
-      make[2]: *** Waiting for unfinished jobs....
-        PERF_VERSION = 4.19.gf6c23e3
-      make[1]: *** [Makefile.perf:207: sub-make] Error 2
-      make: *** [Makefile:70: all] Error 2
-      make: Leaving directory '/home/acme/git/perf/tools/perf'
-      $
-    
-    This is because we must use $(SRCARCH) where we were using $(ARCH), so
-    that, just like the top level Makefile, we get this done:
-    
-      # Additional ARCH settings for x86
-      ifeq ($(ARCH),i386)
-              SRCARCH := x86
-      endif
-      ifeq ($(ARCH),x86_64)
-              SRCARCH := x86
-      endif
-    
-    Which is done in tools/scripts/Makefile.arch, so switch to use
-    $(SRCARCH).
-    
-    Reported-by: Guenter Roeck <linux@roeck-us.net>
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: Clark Williams <williams@redhat.com>
-    Cc: David Ahern <dsahern@gmail.com>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Wang Nan <wangnan0@huawei.com>
-    Fixes: fbd7458db757 ("perf beauty: Wire up the mmap flags table generator to the Makefile")
-    Link: https://lkml.kernel.org/r/20181105184612.GD7077@kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ drivers/staging/iio/adc/ad7780.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 3ccb4f0bf088..d95655489f7e 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -387,7 +387,7 @@ SHELL = $(SHELL_PATH)
- 
- linux_uapi_dir := $(srctree)/tools/include/uapi/linux
- asm_generic_uapi_dir := $(srctree)/tools/include/uapi/asm-generic
--arch_asm_uapi_dir := $(srctree)/tools/arch/$(ARCH)/include/uapi/asm/
-+arch_asm_uapi_dir := $(srctree)/tools/arch/$(SRCARCH)/include/uapi/asm/
- 
- beauty_outdir := $(OUTPUT)trace/beauty/generated
- beauty_ioctl_outdir := $(beauty_outdir)/ioctl
+-- 
+2.19.1
+
