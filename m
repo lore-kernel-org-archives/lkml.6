@@ -2,115 +2,260 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967A8C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916CFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C26120883
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C26120883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 556C620700
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 18:53:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRyjWIxr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556C620700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387749AbeKFENj (ORCPT
+        id S1730189AbeKFEOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:13:39 -0500
-Received: from mga02.intel.com ([134.134.136.20]:31165 "EHLO mga02.intel.com"
+        Mon, 5 Nov 2018 23:14:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726932AbeKFENi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:13:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 10:52:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="105604627"
-Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
-  by orsmga001.jf.intel.com with ESMTP; 05 Nov 2018 10:52:36 -0800
-Subject: Re: [PATCH v4] mm, drm/i915: mark pinned shmemfs pages as unevictable
-To:     Kuo-Hsin Yang <vovoy@chromium.org>, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-mm@kvack.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Michal Hocko <mhocko@suse.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20181105111348.182492-1-vovoy@chromium.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <516428f4-93a9-9ed7-426e-344ba91d81e0@intel.com>
-Date:   Mon, 5 Nov 2018 10:52:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726932AbeKFEOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 23:14:49 -0500
+Received: from redbean (ip5f5adbf7.dynamic.kabel-deutschland.de [95.90.219.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EED820685;
+        Mon,  5 Nov 2018 18:53:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541444023;
+        bh=vs3DFB2JbEqeX6c1BeyLyyjoQ16pGfyqjuw4Iy9iv98=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cRyjWIxrAMvLXtyQbZkVY42ONfBbOx2qDyQLIkAeO/z8lNua8Nt5D2FJxSA+/QMmt
+         D6Qu/Q/8GFIB+gm61esaP9jTXdKP+aYAFX3QJ5+HZ10PRW2D3r/TsgGeCcYl1L/sBy
+         ztEVg6BR8pI59eKpWw626BLJhFTGHIXpY6Fnq5Io=
+Date:   Mon, 5 Nov 2018 19:53:23 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: [PATCH v2] arm64/module: use plt section indices for relocations
+Message-ID: <20181105185323.hgoflyvkyujdyjxj@redbean>
+References: <20181001140910.086E768BC7@newverein.lst.de>
+ <20181001141652.5478C68BE1@newverein.lst.de>
+ <20181105175722.removbbpilqxu7tr@redbean>
 MIME-Version: 1.0
-In-Reply-To: <20181105111348.182492-1-vovoy@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181105175722.removbbpilqxu7tr@redbean>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18 3:13 AM, Kuo-Hsin Yang wrote:
-> -These are currently used in two places in the kernel:
-> +These are currently used in three places in the kernel:
->  
->   (1) By ramfs to mark the address spaces of its inodes when they are created,
->       and this mark remains for the life of the inode.
-> @@ -154,6 +154,8 @@ These are currently used in two places in the kernel:
->       swapped out; the application must touch the pages manually if it wants to
->       ensure they're in memory.
->  
-> + (3) By the i915 driver to mark pinned address space until it's unpinned.
+Instead of saving a pointer to the .plt and .init.plt sections to apply
+plt-based relocations, save and use their section indices instead.
 
-At a minimum, I think we owe some documentation here of how to tell
-approximately how much memory i915 is consuming with this mechanism.
-The debugfs stuff sounds like a halfway reasonable way to approximate
-it, although it's imperfect.
+The mod->arch.{core,init}.plt pointers were problematic for livepatch
+because they pointed within temporary section headers (provided by the
+module loader via info->sechdrs) that would be freed after module load.
+Since livepatch modules may need to apply relocations post-module-load
+(for example, to patch a module that is loaded later), using section
+indices to offset into the section headers (instead of accessing them
+through a saved pointer) allows livepatch modules on arm64 to pass in
+their own copy of the section headers to apply_relocate_add() to apply
+delayed relocations.
+
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+---
+
+v2: 
+
+ - Do sechdrs[pltsec->plt_shndx].sh_addr instead of pointer math
+
+Note: Addressed Will's comment about the pltsec -> plt_info rename and
+removed that change to reduce unnecessary code churn. I didn't include the
+Ack's for this reason so let me know if this version is OK as well.
+
+ arch/arm64/include/asm/module.h |  8 +++++---
+ arch/arm64/kernel/module-plts.c | 36 ++++++++++++++++++++----------------
+ arch/arm64/kernel/module.c      |  9 +++++----
+ 3 files changed, 30 insertions(+), 23 deletions(-)
+
+diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
+index 97d0ef12e2ff..f81c1847312d 100644
+--- a/arch/arm64/include/asm/module.h
++++ b/arch/arm64/include/asm/module.h
+@@ -22,7 +22,7 @@
+ 
+ #ifdef CONFIG_ARM64_MODULE_PLTS
+ struct mod_plt_sec {
+-	struct elf64_shdr	*plt;
++	int			plt_shndx;
+ 	int			plt_num_entries;
+ 	int			plt_max_entries;
+ };
+@@ -36,10 +36,12 @@ struct mod_arch_specific {
+ };
+ #endif
+ 
+-u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela *rela,
++u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
++			  void *loc, const Elf64_Rela *rela,
+ 			  Elf64_Sym *sym);
+ 
+-u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val);
++u64 module_emit_veneer_for_adrp(struct module *mod, Elf64_Shdr *sechdrs,
++				void *loc, u64 val);
+ 
+ #ifdef CONFIG_RANDOMIZE_BASE
+ extern u64 module_alloc_base;
+diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
+index f0690c2ca3e0..a0efe30211d6 100644
+--- a/arch/arm64/kernel/module-plts.c
++++ b/arch/arm64/kernel/module-plts.c
+@@ -16,12 +16,13 @@ static bool in_init(const struct module *mod, void *loc)
+ 	return (u64)loc - (u64)mod->init_layout.base < mod->init_layout.size;
+ }
+ 
+-u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela *rela,
++u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
++			  void *loc, const Elf64_Rela *rela,
+ 			  Elf64_Sym *sym)
+ {
+ 	struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
+ 							  &mod->arch.init;
+-	struct plt_entry *plt = (struct plt_entry *)pltsec->plt->sh_addr;
++	struct plt_entry *plt = (struct plt_entry *)sechdrs[pltsec->plt_shndx].sh_addr;
+ 	int i = pltsec->plt_num_entries;
+ 	u64 val = sym->st_value + rela->r_addend;
+ 
+@@ -43,11 +44,12 @@ u64 module_emit_plt_entry(struct module *mod, void *loc, const Elf64_Rela *rela,
+ }
+ 
+ #ifdef CONFIG_ARM64_ERRATUM_843419
+-u64 module_emit_veneer_for_adrp(struct module *mod, void *loc, u64 val)
++u64 module_emit_veneer_for_adrp(struct module *mod, Elf64_Shdr *sechdrs,
++				void *loc, u64 val)
+ {
+ 	struct mod_plt_sec *pltsec = !in_init(mod, loc) ? &mod->arch.core :
+ 							  &mod->arch.init;
+-	struct plt_entry *plt = (struct plt_entry *)pltsec->plt->sh_addr;
++	struct plt_entry *plt = (struct plt_entry *)sechdrs[pltsec->plt_shndx].sh_addr;
+ 	int i = pltsec->plt_num_entries++;
+ 	u32 mov0, mov1, mov2, br;
+ 	int rd;
+@@ -202,7 +204,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 	unsigned long core_plts = 0;
+ 	unsigned long init_plts = 0;
+ 	Elf64_Sym *syms = NULL;
+-	Elf_Shdr *tramp = NULL;
++	Elf_Shdr *pltsec, *tramp = NULL;
+ 	int i;
+ 
+ 	/*
+@@ -211,9 +213,9 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 	 */
+ 	for (i = 0; i < ehdr->e_shnum; i++) {
+ 		if (!strcmp(secstrings + sechdrs[i].sh_name, ".plt"))
+-			mod->arch.core.plt = sechdrs + i;
++			mod->arch.core.plt_shndx = i;
+ 		else if (!strcmp(secstrings + sechdrs[i].sh_name, ".init.plt"))
+-			mod->arch.init.plt = sechdrs + i;
++			mod->arch.init.plt_shndx = i;
+ 		else if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE) &&
+ 			 !strcmp(secstrings + sechdrs[i].sh_name,
+ 				 ".text.ftrace_trampoline"))
+@@ -222,7 +224,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 			syms = (Elf64_Sym *)sechdrs[i].sh_addr;
+ 	}
+ 
+-	if (!mod->arch.core.plt || !mod->arch.init.plt) {
++	if (!mod->arch.core.plt_shndx || !mod->arch.init.plt_shndx) {
+ 		pr_err("%s: module PLT section(s) missing\n", mod->name);
+ 		return -ENOEXEC;
+ 	}
+@@ -254,17 +256,19 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 						sechdrs[i].sh_info, dstsec);
+ 	}
+ 
+-	mod->arch.core.plt->sh_type = SHT_NOBITS;
+-	mod->arch.core.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+-	mod->arch.core.plt->sh_addralign = L1_CACHE_BYTES;
+-	mod->arch.core.plt->sh_size = (core_plts  + 1) * sizeof(struct plt_entry);
++	pltsec = sechdrs + mod->arch.core.plt_shndx;
++	pltsec->sh_type = SHT_NOBITS;
++	pltsec->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
++	pltsec->sh_addralign = L1_CACHE_BYTES;
++	pltsec->sh_size = (core_plts  + 1) * sizeof(struct plt_entry);
+ 	mod->arch.core.plt_num_entries = 0;
+ 	mod->arch.core.plt_max_entries = core_plts;
+ 
+-	mod->arch.init.plt->sh_type = SHT_NOBITS;
+-	mod->arch.init.plt->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+-	mod->arch.init.plt->sh_addralign = L1_CACHE_BYTES;
+-	mod->arch.init.plt->sh_size = (init_plts + 1) * sizeof(struct plt_entry);
++	pltsec = sechdrs + mod->arch.init.plt_shndx;
++	pltsec->sh_type = SHT_NOBITS;
++	pltsec->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
++	pltsec->sh_addralign = L1_CACHE_BYTES;
++	pltsec->sh_size = (init_plts + 1) * sizeof(struct plt_entry);
+ 	mod->arch.init.plt_num_entries = 0;
+ 	mod->arch.init.plt_max_entries = init_plts;
+ 
+diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+index f0f27aeefb73..c2abe59c6f8f 100644
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -198,7 +198,8 @@ static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
+ 	return 0;
+ }
+ 
+-static int reloc_insn_adrp(struct module *mod, __le32 *place, u64 val)
++static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
++			   __le32 *place, u64 val)
+ {
+ 	u32 insn;
+ 
+@@ -215,7 +216,7 @@ static int reloc_insn_adrp(struct module *mod, __le32 *place, u64 val)
+ 		insn &= ~BIT(31);
+ 	} else {
+ 		/* out of range for ADR -> emit a veneer */
+-		val = module_emit_veneer_for_adrp(mod, place, val & ~0xfff);
++		val = module_emit_veneer_for_adrp(mod, sechdrs, place, val & ~0xfff);
+ 		if (!val)
+ 			return -ENOEXEC;
+ 		insn = aarch64_insn_gen_branch_imm((u64)place, val,
+@@ -368,7 +369,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 		case R_AARCH64_ADR_PREL_PG_HI21_NC:
+ 			overflow_check = false;
+ 		case R_AARCH64_ADR_PREL_PG_HI21:
+-			ovf = reloc_insn_adrp(me, loc, val);
++			ovf = reloc_insn_adrp(me, sechdrs, loc, val);
+ 			if (ovf && ovf != -ERANGE)
+ 				return ovf;
+ 			break;
+@@ -413,7 +414,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 
+ 			if (IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
+ 			    ovf == -ERANGE) {
+-				val = module_emit_plt_entry(me, loc, &rel[i], sym);
++				val = module_emit_plt_entry(me, sechdrs, loc, &rel[i], sym);
+ 				if (!val)
+ 					return -ENOEXEC;
+ 				ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2,
+-- 
+2.14.5
+
