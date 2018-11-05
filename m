@@ -2,171 +2,84 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDCDC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489ABC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726BD20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD1702085A
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 19:37:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yqpBdgK5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726BD20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="leeO7G3B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1702085A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388013AbeKFE5o (ORCPT
+        id S1729988AbeKFE6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:57:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34284 "EHLO mail.kernel.org"
+        Mon, 5 Nov 2018 23:58:33 -0500
+Received: from plaes.org ([188.166.43.21]:44038 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387693AbeKFE5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:57:44 -0500
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E2CB20700;
-        Mon,  5 Nov 2018 19:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541446587;
-        bh=5CsF3LZxVX6u2adx9GegquViSEsxxpYnlq0KC1BOZXU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yqpBdgK5UERzUxGsIcmh4gW55tBLZ/Bh5O/rSYXgHnHah/5xCImh0gWiyLSnjLwTp
-         jALctBwyN1rz8rBBqKrK+/cwL7RDrYdJ80FSyyuZCbaPaZpmPmysEcKPVMCFKr3bXy
-         pCp5efMCv8Ch6YFLCFvXzAOXc0bMKMV0AupNBu8M=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 2C9C4142D18; Mon,  5 Nov 2018 16:36:15 -0300 (-03)
-Date:   Mon, 5 Nov 2018 16:36:15 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     "Hunter, Adrian" <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "leo.yan@linaro.org" <leo.yan@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH 1/5] perf tools: Add fallback functions for cases where
- cpumode is insufficient
-Message-ID: <20181105193615.GG7077@kernel.org>
-References: <20181031091043.23465-1-adrian.hunter@intel.com>
- <20181031091043.23465-2-adrian.hunter@intel.com>
- <20181105172946.GH11147@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C313381@IRSMSX106.ger.corp.intel.com>
+        id S1728945AbeKFE6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Nov 2018 23:58:32 -0500
+Received: from localhost (85.253.196.132.cable.starman.ee [85.253.196.132])
+        by plaes.org (Postfix) with ESMTPSA id 4BC0F403FA
+        for <linux-kernel@vger.kernel.org>; Mon,  5 Nov 2018 19:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1541446639; bh=Tp2VpaSoqU54gxxeYHSeAP+EH+WMWEwZH+xOdtCmBjo=;
+        h=From:To:Subject:Date:From;
+        b=leeO7G3Bj7YgFEgsGOUilgJ+xPhcBuWSMVRP4fr5QZNsUXWnmgkr4EpgLETD3FQpI
+         +O6v1FTxc9boup5JPKFXWJUJtdVJv4GXEW1l6nqTQgTQlhNK184cFewg9E8OOoivNI
+         IuWaIAWfeaZWd5lrLsEbE3BiU24+TJRs04Uwu/V1quTAfKrEKZGJDLgRqJ+59VdE1s
+         2Tnzrei0Y8sahlpw6KzaENQ/IksVF2aIhY+LPJWnfRCvwkTD3yWdhf4RCd2QfY8tzM
+         A0IyZR9CZMnkQFM9ZFhzL4nugvhbbqJhEKtkXIPjJYQszeOuzEgB0s4MPVevb2Fsev
+         qVYNAMkd9fJdw==
+From:   Priit Laes <plaes@plaes.org>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] wireless: Use common cordic algorithm for b43 driver
+Date:   Mon,  5 Nov 2018 21:37:15 +0200
+Message-Id: <cover.9ec98292c595a111ae78f31383ff8618c9cb04da.1541446422.git-series.plaes@plaes.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <363DA0ED52042842948283D2FC38E4649C313381@IRSMSX106.ger.corp.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Nov 05, 2018 at 07:21:44PM +0000, Hunter, Adrian escreveu:
-> > In Monday, November 5, 2018 7:30 PM, Arnaldo Carvalho de Melo wrote
-<SNIP>
-> > > +struct map *thread__find_map_fallback(struct thread *thread, u8
-> > cpumode,
-> > > +				      u64 addr, struct addr_location *al) {
+b43 wireless driver includes an internal implementation of
+cordic algorithm, although there's a common cordic library
+which was split out from brcmsmac driver. Use that and drop
+internal implementation.
 
-> > You named one as _fallback...
+During the process, brcmfmac was driver was also cleaned up.
 
-> > > +	struct map *map = thread__find_map(thread, cpumode, addr, al);
-> > > +	struct machine *machine = thread->mg->machine;
-> > > +	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode,
-> > addr);
-> > > +
-> > > +	if (map || addr_cpumode == cpumode)
-> > > +		return map;
-> > > +
-> > > +	return thread__find_map(thread, addr_cpumode, addr, al); }
-> > > +
-> > >  struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
-> > >  				   u64 addr, struct addr_location *al)  { @@ -
-> > 1585,6 +1603,15 @@
-> > > struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
-> > >  	return al->sym;
-> > >  }
+Please note that this series is only compile-tested, as I
+do not have access to the hardware.
 
-> > > +struct symbol *thread__find_symbol_fb(struct thread *thread, u8
-> > cpumode,
-> > > +				      u64 addr, struct addr_location *al)
+Changes:
+- Merged brcmsmac driver patches into single patch
+- Merged b43 driver patches into single patch
 
-> > ... and the other as _fb, make it consistent, please.
+Priit Laes (3):
+  lib: cordic: Move cordic macros and defines to header file
+  brcmsmac: Use cordic-related macros from common cordic library
+  b43: Use cordic algorithm from kernel library
 
-> ok
+ drivers/net/wireless/broadcom/b43/Kconfig                      |  1 +-
+ drivers/net/wireless/broadcom/b43/phy_common.c                 | 47 +-------
+ drivers/net/wireless/broadcom/b43/phy_common.h                 |  9 +-
+ drivers/net/wireless/broadcom/b43/phy_lp.c                     | 13 +-
+ drivers/net/wireless/broadcom/b43/phy_n.c                      | 13 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_int.h |  7 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c |  4 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c   |  4 +-
+ include/linux/cordic.h                                         |  9 +-
+ lib/cordic.c                                                   | 23 +---
+ 10 files changed, 35 insertions(+), 95 deletions(-)
 
-> > > +{
-> > > +	al->sym = NULL;
-> > > +	if (thread__find_map_fallback(thread, cpumode, addr, al))
-> > > +		al->sym = map__find_symbol(al->map, al->addr);
-> > > +	return al->sym;
-> > > +}
-
-> > >  /*
-> > >   * Callers need to drop the reference to al->thread, obtained in
-> > >   * machine__findnew_thread()
-> > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > > index 111ae858cbcb..04edc0eac376 100644
-> > > --- a/tools/perf/util/machine.c
-> > > +++ b/tools/perf/util/machine.c
-> > > @@ -2542,6 +2542,46 @@ int machine__get_kernel_start(struct machine
-> > *machine)
-> > >  	return err;
-> > >  }
-
-> > > +/*
-> > > + * machine__single_ku_as - Machine has same address space for kernel
-> > and user.
-> > > + * @machine: machine object
-> > > + *
-> > > + * Some architectures have a single address space for kernel and user
-> > > +addresses,
-> > > + * which makes it possible to determine if an address is in kernel
-> > > +space or user
-> > > + * space.
-> > > + */
-> > > +static bool machine__single_ku_as(struct machine *machine) {
-> > > +	return strcmp(perf_env__arch(machine->env), "sparc"); }
-
-> > Can we avoid having this strcmp be done repeatedly?
- 
-> It is only done if there are mapping errors
- 
->  > Can we avoid having this strcmp be done repeatedly? I.e. just make this a
-> > boolean initialized at session start, when machine->env is setup, so we'd
-> > have:
-
-> >    machine->single_address_space
-
-> > Instead of a function?
- 
-> Sure  thing.
-
-Thanks
- 
-> > 
-> > Also have you considered making this fallback to be performed only from
-> > code that is that arch specific?
-> > 
-> > I.e. the code that supports branch samples/stacks is x86_86 specific at this
-> > point and thus only in that case we would call the routines that perform the
-> > fallback, which, in turn, wouldn't need to check for "sparc"?
- 
-> I will look at it, but theoretically someone could be processing x86 data but
-> doing it on a machine of a different architecture.
-
-Right, that should be supported, yes. What I meant was that when
-processing perf.data file with samples where the cpumode can't be
-inferred, we should use the fallback routines.
-
-It is super unfortunate that we have addresses without a accompanying
-cpumode :-\ Don't you think those coulde be fixed somehow? If this comes
-from things synthesized from Intel PT traces, then we can use the
-address ranges for kernel/userspace to derive that before hitting the
-core code, that would be fed with addr/cpumode pairs, just like we have
-hdr.misc & USER/KERNEL and the PERF_CONTEXT_ markers in callchains.
-
-- Arnaldo
+base-commit: 651022382c7f8da46cb4872a545ee1da6d097d2a
+-- 
+git-series 0.9.1
