@@ -2,137 +2,100 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02C1C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6767C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A17E20819
-	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:12:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A17E20819
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8F85520866
+	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 20:13:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F85520866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeKFFdi (ORCPT
+        id S1727166AbeKFFeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:33:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59694 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725774AbeKFFdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 00:33:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 877B4B0E9;
-        Mon,  5 Nov 2018 20:12:15 +0000 (UTC)
-Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1%
- regression
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        rong.a.chen@intel.com
-Cc:     yang.shi@linux.alibaba.com, kirill.shutemov@linux.intel.com,
-        mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        Colin King <colin.king@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-References: <20181105050813.GP24195@shao2-debian>
- <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <f901e346-6203-371d-a39a-ed9231187570@suse.cz>
-Date:   Mon, 5 Nov 2018 21:09:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 00:34:36 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34223 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeKFFef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 00:34:35 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i138-v6so5676644oib.1;
+        Mon, 05 Nov 2018 12:13:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q3r5NKxO2Ksj/vmkbvlQD7uRUgSDhVxSP39kwEGIUF0=;
+        b=YlW01/m15L6SALRrrENeELbAgg6nU5VMl86wfy0Ix6CC9hMZ9vqDG+tkOcDCMOI7sn
+         lht4rs9v0e3MPWdpWBxhVCYL9QRtPvfWFLcN6q8/jgjw14W1lx2trviVW/leIjqe6B2y
+         ATery+Q3C4f+8WSwzZF9lLikzfYMdaGpqLQCIif0hVUcNeFbscN1tC8VzXeN0AatB8fq
+         ANdYxo+Zp3iAWzwquY7Ey0D9YPeHxDzmA/pQM8a9FzMH0M5f5Eq99OnKowaQGfQxaArp
+         dGYMoZB21jy7HbHGShwSHR85XB8fG7TnxI5mSuLSYkbSwSoV9riryJLDplL41tXxxuvK
+         9QJA==
+X-Gm-Message-State: AGRZ1gKTR0IdtwnSYiY8FlRtkZ9HCELHAKzHjy3yDAtu/Yi6a/IVrfQl
+        +1rYQfQJFdggrvrt3OLgSw==
+X-Google-Smtp-Source: AJdET5fTNaXJzQajqgpbnq0m41HUY0nODMlVZ26a4kJwKb6R0NMfDXk7EJwXEBk/WaR8k27JfTxQ6A==
+X-Received: by 2002:aca:b2c5:: with SMTP id b188-v6mr13048287oif.160.1541448794011;
+        Mon, 05 Nov 2018 12:13:14 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m65sm15501973otc.79.2018.11.05.12.13.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 05 Nov 2018 12:13:13 -0800 (PST)
+Date:   Mon, 5 Nov 2018 14:13:12 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, sakari.ailus@iki.fi,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>, Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v4 2/4] dt-bindings: media: i2c: Add bindings for IMI
+ RDACM20
+Message-ID: <20181105201312.GA30170@bogus>
+References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
+ <20181102154723.23662-3-kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102154723.23662-3-kieran.bingham@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18 6:50 PM, Linus Torvalds wrote:
-> On Sun, Nov 4, 2018 at 9:08 PM kernel test robot <rong.a.chen@intel.com> wrote:
->>
->> FYI, we noticed a -64.1% regression of will-it-scale.per_thread_ops
->> due to commit 9bc8039e715d ("mm: brk: downgrade mmap_sem to read when
->> shrinking")
+On Fri,  2 Nov 2018 15:47:21 +0000, Kieran Bingham wrote:
+> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > 
-> Ugh. That looks pretty bad.
+> The IMI RDACM20 is a Gigabit Multimedia Serial Link (GMSL) camera
+> capable of transmitting video and I2C control messages on a coax cable
+> physical link for automotive applications.
 > 
->> in testcase: will-it-scale
->> on test machine: 8 threads Ivy Bridge with 16G memory
->> with following parameters:
->>
->>         nr_task: 100%
->>         mode: thread
->>         test: brk1
->>         ucode: 0x20
->>         cpufreq_governor: performance
+> Document its device tree binding interface.
 > 
-> The reason seems to be way more scheduler time due to lots more
-> context switches:
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > 
->>   34925294 ± 18%    +270.3%  1.293e+08 ±  4%  will-it-scale.time.voluntary_context_switches
-
-And what about this:
-
-      0.83 ± 27%     +25.9       26.75 ± 11%  perf-profile.calltrace.cycles-pp.intel_idle.cpuidle_enter_state.do_idle.cpu_startup_entry.start_secondary
-      1.09 ± 32%     +30.9       31.97 ± 10%  perf-profile.calltrace.cycles-pp.cpuidle_enter_state.do_idle.cpu_startup_entry.start_secondary.secondary_startup_64
-      1.62 ± 36%     +44.4       46.01 ±  9%  perf-profile.calltrace.cycles-pp.do_idle.cpu_startup_entry.start_secondary.secondary_startup_64
-      1.63 ± 36%     +44.5       46.18 ±  9%  perf-profile.calltrace.cycles-pp.cpu_startup_entry.start_secondary.secondary_startup_64
-      1.63 ± 36%     +44.6       46.21 ±  9%  perf-profile.calltrace.cycles-pp.start_secondary.secondary_startup_64
-      1.73 ± 29%     +51.1       52.86 ±  2%  perf-profile.calltrace.cycles-pp.secondary_startup_64
-
-And the graphs showing less user/kernel time and less "percent_of_cpu_this_job_got"...
-
-I didn't spot an obvious mistake in the patch itself, so it looks
-like some bad interaction between scheduler and the mmap downgrade?
- 
-> Yang Shi, would you mind taking a look at what's going on?
+> ---
+> v2:
+>  - Provide imi vendor prefix
+>  - Fix minor spelling
 > 
->               Linus
+> v3:
+>  - update binding descriptions
+> ---
+>  .../bindings/media/i2c/imi,rdacm20.txt        | 65 +++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+>  2 files changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
 > 
 
+Reviewed-by: Rob Herring <robh@kernel.org>
