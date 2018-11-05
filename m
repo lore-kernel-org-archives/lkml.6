@@ -2,101 +2,103 @@ Return-Path: <SRS0=bKrn=NQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF79C46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1D5ECDE4A
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DFFA20883
+	by mail.kernel.org (Postfix) with ESMTP id A5C2020881
 	for <linux-kernel@archiver.kernel.org>; Mon,  5 Nov 2018 10:45:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DFFA20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Mdk8YADz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C2020881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbeKEUDG (ORCPT
+        id S1727708AbeKEUEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 5 Nov 2018 15:03:06 -0500
-Received: from mail1.bemta24.messagelabs.com ([67.219.250.115]:18278 "EHLO
-        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729021AbeKEUDF (ORCPT
+        Mon, 5 Nov 2018 15:04:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53471 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeKEUET (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Nov 2018 15:03:05 -0500
-Received: from [67.219.250.197] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-b.us-west-2.aws.symcld.net id 38/7A-11353-9EE10EB5; Mon, 05 Nov 2018 10:43:53 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRWlGSWpSXmKPExsXi5LtOQPel3IN
-  og9dXWS3mHznHarFx820Wi1VTd7JYbHp8jdWi69dKZovLu+awWSy9fpHJonXvEXaLv9s3sVi8
-  2CLuwOWxZt4aRo9NqzrZPDYvqffY+G4Hk0f/XwOPz5vkAtiiWDPzkvIrElgz/p++wViwkq2iZ
-  /cFtgbGU6xdjFwcQgKrGCV6t51m72LkBHJWM0rM/5gNkdjMKLF6+14mkASbgI7ElP2HWUBsEQ
-  FJibUrFzGDFDELTGGSOP1tFxtIQlggXGLi5+tAkzg4WARUJLZ9KgUJ8wq4STxY8A5sgYSAnMT
-  Nc53MEHFBiZMzn4DNZBaQkDj44gUzxBHKEltWXGCEqFeQWHvgPNMERr5ZSFpmIWlZwMi0itEi
-  qSgzPaMkNzEzR9fQwEDX0NBI19DYRNfQ0kAvsUo3Sa+0WLc8tbhE10gvsbxYr7gyNzknRS8vt
-  WQTIzD4Uwra9u1gfLE8/RCjJAeTkihv+qX70UJ8SfkplRmJxRnxRaU5qcWHGGU4OJQkeG2B0S
-  QkWJSanlqRlpkDjEOYtAQHj5IIbwhImre4IDG3ODMdInWKUVFKHKJPACSRUZoH1waL/UuMslL
-  CvIwMDAxCPAWpRbmZJajyrxjFORiVhHk1QabwZOaVwE1/BbSYCWjxPVmwxSWJCCmpBkZ2RXd9
-  +0fZh6+cWnzLuP2me9Sj/PMdV9yTXB3z/SzPmOed1ePecfmIizz71XOR7WWy26Yl3HxzVnhd6
-  4rpLJH+JzOe14WK7+2XMg++eeXgyWy+rvuaO0Qscoz6/gkcfnRlY+m2+5MOzXcXmH1d1nzVTa
-  WctJDqj025jJc5xM5WL+O67DBBQkCJpTgj0VCLuag4EQDmw2cc+AIAAA==
-X-Env-Sender: Alex.Gonzalez@digi.com
-X-Msg-Ref: server-11.tower-345.messagelabs.com!1541414631!2057380!1
-X-Originating-IP: [66.77.174.16]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.14.24; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 13854 invoked from network); 5 Nov 2018 10:43:52 -0000
-Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
-  by server-11.tower-345.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 5 Nov 2018 10:43:52 -0000
-Received: from MTK-SMS-XCH02.digi.com (10.10.8.196) by MCL-VMS-XCH01.digi.com
- (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 5 Nov 2018
- 04:43:51 -0600
-Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MTK-SMS-XCH02.digi.com
- (10.10.8.196) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 5 Nov 2018
- 04:43:50 -0600
-Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
- dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 5 Nov 2018 11:43:49 +0100
-From:   Alex Gonzalez <alex.gonzalez@digi.com>
-To:     <shawnguo@kernel.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <alex.gonzalez@digi.com>
-Subject: [PATCH v2] ARM: dts: imx6ul: ccimx6ulsom: Add support for wireless SOM variant
-Date:   Mon, 5 Nov 2018 11:43:41 +0100
-Message-ID: <1541414622-18795-1-git-send-email-alex.gonzalez@digi.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 5 Nov 2018 15:04:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id v24-v6so7800258wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 02:45:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TKLLvWWerHEA8gEOK4LIPCxH8mV2pQQNbPRbXsJkDBo=;
+        b=Mdk8YADzsEYy0/qb5s3o0OfDAD9k719F/IpFxBeWgLMV3Le2MmY2t2Z6K4pLWBMKRM
+         M8kl7C2oueL0CmjtzONFpIZGXNNUFgMRahIxU4xTCDaWTixPsA6kwoCr4x5sC9YIlOHM
+         f4XunweBCCUU2jazKhUDT1EOFrGUftDkYvYwxMrCKxnlBM0qOQAT3TWq0pjQ+FW9sZIG
+         kzLV35Oe7KpmTHORWAHTmh31NS4CcLRMYtId8UvKNsjwvtkgSgoZlzhbOgdHsHW5xrZ/
+         VqAQSFaipWqNPyTdEfwevtgqziZx07yqqhBg9aWyj931vlo823WCDtXa4guoy4oEFndN
+         5gxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TKLLvWWerHEA8gEOK4LIPCxH8mV2pQQNbPRbXsJkDBo=;
+        b=koh3DXqscxgegzRjp60EbMgIkyspab0hCUPKEXj819jTUOzUtF8l1e/9/n9SyPfYld
+         26AEpsYaiwqQQ2vmt1rGIZgoEH/L4+WMaSZb97mhyvdlR96LA4YgPdf7l8OqnGDnKGKj
+         iNYd+t5Wf5vFq1WJ9nT5/pTZuMwvDzPlJ5nG51oBwXz3McQ0UZhcrgX/kxzZJVQM9C0V
+         ru2KAwUmD1X5CLQ82Bq3E86PhlK7afV8ImJ1yxhkSfQz7L0R3SYpSZNJuFUP2uTawnTq
+         lCwtvvVGV1tS0Lxgyd2CoOBmDSlcAWTB1NJfFVogi4w/JZYhVus6VsSxE9sCPsgcjvGR
+         C15A==
+X-Gm-Message-State: AGRZ1gJoq0cIHlfHW7E9+N3gWjDYreUVzQ6QQxGIBQB6YNZLIhEKRT3V
+        dmvCFF3OekB0+VEvEbjTjMPlpQ==
+X-Google-Smtp-Source: AJdET5cYQF9CdzXKWyLDSYw7/iD+eX8aCH6yOAPFbEcWqC2b9qv5FM/kh3ZCO6a7uE/wsfOp2xnmUA==
+X-Received: by 2002:a1c:4489:: with SMTP id r131-v6mr6026875wma.121.1541414713396;
+        Mon, 05 Nov 2018 02:45:13 -0800 (PST)
+Received: from localhost.localdomain (abo-99-183-68.mtp.modulonet.fr. [85.68.183.99])
+        by smtp.gmail.com with ESMTPSA id p125-v6sm8033114wmp.2.2018.11.05.02.45.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Nov 2018 02:45:11 -0800 (PST)
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH 1/2] dt-bindings: display: amlogic, meson-vpu: Add optional canvas provider node
+Date:   Mon,  5 Nov 2018 11:45:07 +0100
+Message-Id: <20181105104508.23090-2-mjourdan@baylibre.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181105104508.23090-1-mjourdan@baylibre.com>
+References: <20181105104508.23090-1-mjourdan@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.101.2.214]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The wireless variants of the ConnecCore 6UL SOM include a Qualcomm
-QCA6564 wireless chip with dual WiFi and Bluetooth.
+Allows using the new canvas provider module if present.
 
-The QCA6564 uses the out-of-tree driver at:
-https://source.codeaurora.org/quic/la/platform/vendor/qcom-opensource/wlan/qcacld-2.0/
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Blueooth uses the HCI H4 UART driver.
-
-Changes since v1 [2]:
-* Fixed indentation on iomuxc nodes
-* Added reviewed-by line
-
-Changes since [1]:
-* Removed extra new line
-
-[1] https://lore.kernel.org/lkml/1539962141-32418-2-git-send-email-alex.gonzalez@digi.com/
-[2] https://lore.kernel.org/lkml/1540200443-24773-1-git-send-email-alex.gonzalez@digi.com/ 
-
-Alex Gonzalez (1):
-  ARM: dts: imx6ul: ccimx6ulsom: Add support for wireless SOM variant
-
- arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi | 64 +++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt
+index 057b81335775..c65fd7a7467c 100644
+--- a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt
++++ b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.txt
+@@ -67,6 +67,8 @@ Required properties:
+ Optional properties:
+ - power-domains: Optional phandle to associated power domain as described in
+ 	the file ../power/power_domain.txt
++- amlogic,canvas: phandle to canvas provider node as described in the file
++	../soc/amlogic/amlogic,canvas.txt
+ 
+ Required nodes:
+ 
+-- 
+2.19.1
 
