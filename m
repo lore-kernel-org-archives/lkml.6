@@ -2,137 +2,124 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3953EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499F9C46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F1E2086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:35:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlGqvTkU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F1E2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1D3E920881
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3E920881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389729AbeKGDCK (ORCPT
+        id S2389709AbeKGDDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:02:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47636 "EHLO mail.kernel.org"
+        Tue, 6 Nov 2018 22:03:18 -0500
+Received: from mga07.intel.com ([134.134.136.100]:51946 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388987AbeKGDCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:02:09 -0500
-Received: from localhost (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CCE420881;
-        Tue,  6 Nov 2018 17:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541525752;
-        bh=i/4lk8MTWKVC4YTnXHiDzG8C54hCKbINwrrYQkIw6CA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YlGqvTkUyWlpZaF8pWGfTE1rCTfI9BKI5HugMaI6SwilNgHghCBDoR7CS2uf+yX3F
-         mK73y14nuMqasLoLlsX98SzOIOV+I6zQ4mLyXg2XlCW7guYrYYDDEQR7Ei1HsZmF1H
-         5OHqDWTcaiFZHZYS3l97+UwD5zqfNY0jW2ie7QAs=
-Date:   Tue, 6 Nov 2018 23:05:43 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/17] arm64: dts: qcom: qcs404: add base dts files
-Message-ID: <20181106173543.GZ12092@vkoul-mobl>
-References: <20181105154529.7614-1-vkoul@kernel.org>
- <20181105154529.7614-2-vkoul@kernel.org>
- <20181105185648.GL2523@minitux>
+        id S2389275AbeKGDDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:03:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="247464728"
+Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
+  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2018 09:36:56 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
+        (AT91) SoC support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 00/17] Remove nested TPM operations
+Date:   Tue,  6 Nov 2018 19:36:32 +0200
+Message-Id: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181105185648.GL2523@minitux>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the review Bjorn,
+[was Detach TPM space code out of the tpm_transmit() flow but the scope
+ expanded a bit.]
 
-On 05-11-18, 10:56, Bjorn Andersson wrote:
-> On Mon 05 Nov 07:45 PST 2018, Vinod Koul wrote:
-> 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dts b/arch/arm64/boot/dts/qcom/qcs404-evb.dts
-> > new file mode 100644
-> > index 000000000000..74dc09ddb0d2
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dts
-> > @@ -0,0 +1,21 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (c) 2018, Linaro Limited
-> > +
-> > +// QCS EVB DTS
-> 
-> This can be read from the filename and the model a few lines down. So
-> please drop.
+Make the changes necessary to detach TPM space code and TPM activation
+code out of the tpm_transmit() flow because of both of these can cause
+nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+to maintain, and thus, it is better to just fix things now before this
+turns into a bigger mess.
 
-Sure
+The commits are available in a branch called 'nested' in
 
-> 
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "qcs404.dtsi"
-> > +
-> > +/ {
-> > +	model = "Qualcomm Technologies, Inc. QCS404 EVB 1000";
-> > +	compatible = "qcom,qcs404-evb";
-> > +
-> > +	aliases {
-> > +		serial0 = &blsp1_uart2;
-> > +	};
-> > +
-> > +	chosen {
-> > +		stdout-path = "serial0";
-> > +	};
-> > +};
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> [..]
-> > +	timer {
-> > +		compatible = "arm,armv8-timer";
-> > +		interrupts = <GIC_PPI 2 0xff08>,
-> > +			     <GIC_PPI 3 0xff08>,
-> > +			     <GIC_PPI 4 0xff08>,
-> > +			     <GIC_PPI 1 0xff08>;
-> > +	};
-> > +
-> > +	clocks {
-> 
-> Please sort these nodes alphabetically.
+git://git.infradead.org/users/jjs/linux-tpmdd.git
 
-Will do and also while adding subsequent nodes
+v4:
+* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+* Fix error handling flow in tpm_try_transmit().
+* Replace struct tpm_input_header and struct tpm_output_header with
+  struct tpm_header.
 
-> > +		xo_board: xo_board {
-> > +			compatible = "fixed-clock";
-> > +			#clock-cells = <0>;
-> > +			clock-frequency = <19200000>;
-> > +		};
-> > +	};
-> > +
-> > +	soc: soc@0 {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <1>;
-> > +		ranges = <0 0 0 0xffffffff>;
-> > +		compatible = "simple-bus";
-> > +
-> 
-> Please pad the address in reg to 8 digits and sort these nodes by
-> address.
+v3:
+* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+* Move TPM power gating code and locking to tpm_try_get_ops() and
+  tpm_put_ops().
+* Call power gating code directly in tpm_chip_register() and
+  tpm2_del_space().
 
-Sure
+v2:
+* Print tpm2_commit_space() error inside tpm2_commit_space()
+* Error code was not printed when recv() callback failed. It is
+  fixed in this version.
+* Added a patch that removes @space from tpm_transmit().
+* Fixed a regression in earlier series. Forgot to amend the change
+  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+
+Jarkko Sakkinen (17):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: fix invalid return value in pubek_show()
+  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: declare struct tpm_header
+  tpm: access command header through struct in  tpm_try_transmit()
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: move TPM space code out of tpm_transmit()
+  tpm: remove @space from tpm_transmit()
+  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+  tpm: remove TPM_TRANSMIT_UNLOCKED flag
+  tpm: introduce tpm_chip_start() and tpm_chip_stop()
+  tpm: take TPM chip power gating out of tpm_transmit()
+  tpm: remove @flags from tpm_transmit()
+
+ drivers/char/tpm/tpm-chip.c       | 105 +++++++++++-
+ drivers/char/tpm/tpm-dev-common.c |  45 ++++-
+ drivers/char/tpm/tpm-interface.c  | 267 ++++++------------------------
+ drivers/char/tpm/tpm-sysfs.c      | 138 +++++++++------
+ drivers/char/tpm/tpm.h            |  64 +++----
+ drivers/char/tpm/tpm1-cmd.c       |  28 +---
+ drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+ drivers/char/tpm/tpm2-space.c     |  93 ++++++++---
+ drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 11 files changed, 406 insertions(+), 425 deletions(-)
 
 -- 
-~Vinod
+2.19.1
+
