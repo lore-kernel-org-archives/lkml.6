@@ -2,116 +2,100 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD711C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A21EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD002085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD002085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D15E2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D15E2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387563AbeKFTIg (ORCPT
+        id S2387609AbeKFTIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:08:36 -0500
-Received: from relay.sw.ru ([185.231.240.75]:60018 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387498AbeKFTIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:08:34 -0500
-Received: from [172.16.25.169] (helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gJxu4-00039H-UH; Tue, 06 Nov 2018 12:44:09 +0300
-Subject: [PATCH 6/6] fuse: Protect fuse_file::reserved_req via corresponding
- fuse_inode::lock
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     miklos@szeredi.hu, ktkhai@virtuozzo.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 06 Nov 2018 12:44:08 +0300
-Message-ID: <154149744887.18189.9866673230837073311.stgit@localhost.localdomain>
-In-Reply-To: <154149673368.18189.14752124997476502777.stgit@localhost.localdomain>
-References: <154149673368.18189.14752124997476502777.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
+        Tue, 6 Nov 2018 14:08:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44764 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729241AbeKFTIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:08:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8BF93B12F;
+        Tue,  6 Nov 2018 09:44:29 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 10:44:27 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Will Deacon <will.deacon@arm.com>
+cc:     Jessica Yu <jeyu@kernel.org>, Torsten Duwe <duwe@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] arm64/module: use plt section indices for
+ relocations
+In-Reply-To: <20181105192637.GB25023@brain-police>
+Message-ID: <alpine.LSU.2.21.1811061043270.23386@pobox.suse.cz>
+References: <20181001140910.086E768BC7@newverein.lst.de> <20181001141652.5478C68BE1@newverein.lst.de> <20181105175722.removbbpilqxu7tr@redbean> <20181105185323.hgoflyvkyujdyjxj@redbean> <20181105192637.GB25023@brain-police>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is rather natural action after previous patches,
-and it just decreases load of fc->lock.
+On Mon, 5 Nov 2018, Will Deacon wrote:
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- fs/fuse/dev.c    |   10 ++++++----
- fs/fuse/fuse_i.h |    5 ++++-
- 2 files changed, 10 insertions(+), 5 deletions(-)
+> On Mon, Nov 05, 2018 at 07:53:23PM +0100, Jessica Yu wrote:
+> > Instead of saving a pointer to the .plt and .init.plt sections to apply
+> > plt-based relocations, save and use their section indices instead.
+> > 
+> > The mod->arch.{core,init}.plt pointers were problematic for livepatch
+> > because they pointed within temporary section headers (provided by the
+> > module loader via info->sechdrs) that would be freed after module load.
+> > Since livepatch modules may need to apply relocations post-module-load
+> > (for example, to patch a module that is loaded later), using section
+> > indices to offset into the section headers (instead of accessing them
+> > through a saved pointer) allows livepatch modules on arm64 to pass in
+> > their own copy of the section headers to apply_relocate_add() to apply
+> > delayed relocations.
+> > 
+> > Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> > ---
+> > 
+> > v2:
+> > 
+> > - Do sechdrs[pltsec->plt_shndx].sh_addr instead of pointer math
+> > 
+> > Note: Addressed Will's comment about the pltsec -> plt_info rename and
+> > removed that change to reduce unnecessary code churn. I didn't include the
+> > Ack's for this reason so let me know if this version is OK as well.
+> 
+> Thanks, Jessica!
+> 
+> Acked-by: Will Deacon <will.deacon@arm.com>
+> 
+> > arch/arm64/include/asm/module.h |  8 +++++---
+> > arch/arm64/kernel/module-plts.c | 36 ++++++++++++++++++++----------------
+> > arch/arm64/kernel/module.c      |  9 +++++----
+> > 3 files changed, 30 insertions(+), 23 deletions(-)
+> 
+> Actually, I guess I should just queue this for 4.21 given that it's
+> completely self-contained.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 3bfc5ed61c9a..cc8b95ad5b16 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -247,17 +247,18 @@ static struct fuse_req *get_reserved_req(struct fuse_conn *fc,
- 					 struct file *file)
- {
- 	struct fuse_req *req = NULL;
-+	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
- 	struct fuse_file *ff = file->private_data;
- 
- 	do {
- 		wait_event(fc->reserved_req_waitq, ff->reserved_req);
--		spin_lock(&fc->lock);
-+		spin_lock(&fi->lock);
- 		if (ff->reserved_req) {
- 			req = ff->reserved_req;
- 			ff->reserved_req = NULL;
- 			req->stolen_file = get_file(file);
- 		}
--		spin_unlock(&fc->lock);
-+		spin_unlock(&fi->lock);
- 	} while (!req);
- 
- 	return req;
-@@ -269,16 +270,17 @@ static struct fuse_req *get_reserved_req(struct fuse_conn *fc,
- static void put_reserved_req(struct fuse_conn *fc, struct fuse_req *req)
- {
- 	struct file *file = req->stolen_file;
-+	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
- 	struct fuse_file *ff = file->private_data;
- 
- 	WARN_ON(req->max_pages);
--	spin_lock(&fc->lock);
-+	spin_lock(&fi->lock);
- 	memset(req, 0, sizeof(*req));
- 	fuse_request_init(req, NULL, NULL, 0);
- 	BUG_ON(ff->reserved_req);
- 	ff->reserved_req = req;
- 	wake_up_all(&fc->reserved_req_waitq);
--	spin_unlock(&fc->lock);
-+	spin_unlock(&fi->lock);
- 	fput(file);
- }
- 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index f7442bcecbb0..10b20a24f693 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -166,7 +166,10 @@ struct fuse_file {
- 	/** Fuse connection for this file */
- 	struct fuse_conn *fc;
- 
--	/** Request reserved for flush and release */
-+	/*
-+	 * Request reserved for flush and release.
-+	 * Modified under relative fuse_inode::lock.
-+	 */
- 	struct fuse_req *reserved_req;
- 
- 	/** Kernel file handle guaranteed to be unique */
+FWIW you can also add my
 
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+
+Thanks, Jessica.
+
+Miroslav
