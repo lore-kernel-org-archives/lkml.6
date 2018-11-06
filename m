@@ -2,134 +2,113 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA68C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E2AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E46C120892
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2EE82085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BaLQx2Yw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E46C120892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCbXLv0e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2EE82085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730907AbeKGDgM (ORCPT
+        id S1730918AbeKGDhO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:36:12 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57820 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730722AbeKGDgL (ORCPT
+        Tue, 6 Nov 2018 22:37:14 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37568 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730717AbeKGDhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:36:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=dvD0M2cTue70uFLwfv/XhJOAE+76uF6X+hqxwwi+zTg=; b=BaLQx2YwcKFC
-        ATrZp8kCJz9OXGRNCicp5aycX+oBX8NjJsIQde7lQzbkJeI/JiV3JGv0HKGrDnqAUOzWV1MyfrCoH
-        IW3HZL9KBY3HGlb8GzIzJJqcl6CP9G71A2CTMr3Bh5W4Isi8xh6VUdBqpeYAWH9gzM03in3VAjb/9
-        YlLp8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gK5nM-0002uh-M9; Tue, 06 Nov 2018 18:09:44 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 61478112266B; Tue,  6 Nov 2018 18:09:44 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: pfuze100-regulator: add coin support to PF0100" to the regulator tree
-In-Reply-To: 
-Message-Id: <20181106180944.61478112266B@debutante.sirena.org.uk>
-Date:   Tue,  6 Nov 2018 18:09:44 +0000 (GMT)
+        Tue, 6 Nov 2018 22:37:14 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p6-v6so6572094pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 10:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=fz3kunU5ZVhqs/5pZsL/70JG8neMn8vZHcTgAU3UaoA=;
+        b=LCbXLv0e98wW/rQK/pK+mYoWLLpFF0sYEmhQW+qcxJKnzYnerNV7uOIhErlCbFJvqC
+         NvGKd4dO55scZX5uD+h2Kmrh36oetYz7IDKG4oi48KCQOKZnPbmn1+fckQ3DcrWOuG40
+         Q/Fb+IpfUQ8mojuOy4oN/Y7ZrG0vWp9ZTTDMCe4AkqpngFHfCh5FI/h2vlFpjihhtZ1U
+         MEui33IBdw5L2b8bVrTFqi0Kpim60WBnSYAhFXrBsRMmZ2W2SWamXRP3aEyFe8NPMyrp
+         QxvF75LNl9wwfCYIR3j9Xid0AGXCwjKalRxXtZxEeyLKrpEWB7hiqi91R0v+/0Nh3Gk1
+         AQuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=fz3kunU5ZVhqs/5pZsL/70JG8neMn8vZHcTgAU3UaoA=;
+        b=omMaPhXkcxFUm5k3XGywreixNEzgsUO8XGxQj0Q7yoGxqZyNOV3/vSLmuOlpabCGus
+         RTbFUHgupc4g3Y/6fPdC5VXdbHD4NqL7njT0ejXcSRbbQ7K7ayu3CMwlJVmgY2sH2xsa
+         +SkUtThADkx7GYJWNi62oxcio1gDZ0mNuPLr5B/wS814N+BsM9y12fI/HXXHVYBAlpn+
+         ZNsh66fk/eWvUyD497MO2v2UnxcOcGY3xDgabYrX8c3kyyGXEiAQrg/pLcVSh7dyrIlZ
+         m15ICNOvPglzLF0m9R+8e7T5C/yGCOTlY4wi9GOehhHx5GSNH1dlXdaXB9rFLh+rdVrf
+         RFIg==
+X-Gm-Message-State: AGRZ1gL0WZ5P22ZH1Rtf8ql7xDUEuOGYF9UOTMJf559ITW5Y/iX9zGt/
+        QRdFBAPORmRjJAqgc6UtV7n2y/Qp
+X-Google-Smtp-Source: AJdET5cWKxfdb3d3tPHI88d4qTENUrByAer9/F6mSYW04EMyUaHeCLBaw4mbCS6TtgP7uBLrUOt7Qw==
+X-Received: by 2002:a17:902:b592:: with SMTP id a18-v6mr26607611pls.248.1541527847969;
+        Tue, 06 Nov 2018 10:10:47 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g27-v6sm21363552pfj.162.2018.11.06.10.10.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 10:10:46 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Genki Sky <sky@genki.is>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check more robust"
+Date:   Tue,  6 Nov 2018 10:10:38 -0800
+Message-Id: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+This reverts commit 6147b1cf19651c7de297e69108b141fb30aa2349.
 
-   regulator: pfuze100-regulator: add coin support to PF0100
+The reverted patch results in attempted write access to the source
+repository, even if that repository is mounted read-only.
 
-has been applied to the regulator tree at
+Output from "strace git status -uno --porcelain":
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+getcwd("/tmp/linux-test", 129)          = 16
+open("/tmp/linux-test/.git/index.lock", O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC, 0666) =
+	-1 EROFS (Read-only file system)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+While git appears to be able to handle this situation, a monitored build
+environment (such as the one used for Chrome OS kernel builds) may detect
+it and bail out with an access violation error. On top of that, the attempted
+write access suggests that git _will_ write to the file even if a build output
+directory is specified. Users may have the reasonable expectation that the
+source repository remains untouched in that situation.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 61d0de0543a6e982918c6054a6a12cfbdd73018a Mon Sep 17 00:00:00 2001
-From: Adam Ford <aford173@gmail.com>
-Date: Tue, 30 Oct 2018 09:55:07 -0500
-Subject: [PATCH] regulator: pfuze100-regulator: add coin support to PF0100
-
-The driver currently supports coin cell / super cap charging, so
-this patch extends it to support PF0100.
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 6147b1cf19651 ("scripts/setlocalversion: git: Make -dirty check more robust"
+Cc: Genki Sky <sky@genki.is>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/regulator/pfuze100-regulator.c | 2 ++
- include/linux/regulator/pfuze100.h     | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ scripts/setlocalversion | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index dd41a9bb3f5c..df5df1c495ad 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -370,6 +370,7 @@ static struct pfuze_regulator pfuze100_regulators[] = {
- 	PFUZE100_VGEN_REG(PFUZE100, VGEN4, PFUZE100_VGEN4VOL, 1800000, 3300000, 100000),
- 	PFUZE100_VGEN_REG(PFUZE100, VGEN5, PFUZE100_VGEN5VOL, 1800000, 3300000, 100000),
- 	PFUZE100_VGEN_REG(PFUZE100, VGEN6, PFUZE100_VGEN6VOL, 1800000, 3300000, 100000),
-+	PFUZE100_COIN_REG(PFUZE100, COIN, PFUZE100_COINVOL, 0x7, pfuze100_coin),
- };
+diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+index 79f7dd57d571..71f39410691b 100755
+--- a/scripts/setlocalversion
++++ b/scripts/setlocalversion
+@@ -74,7 +74,7 @@ scm_version()
+ 		fi
  
- static struct pfuze_regulator pfuze200_regulators[] = {
-@@ -436,6 +437,7 @@ static struct of_regulator_match pfuze100_matches[] = {
- 	{ .name = "vgen4",	},
- 	{ .name = "vgen5",	},
- 	{ .name = "vgen6",	},
-+	{ .name = "coin",	},
- };
+ 		# Check for uncommitted changes
+-		if git status -uno --porcelain | grep -qv '^.. scripts/package'; then
++		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+ 			printf '%s' -dirty
+ 		fi
  
- /* PFUZE200 */
-diff --git a/include/linux/regulator/pfuze100.h b/include/linux/regulator/pfuze100.h
-index cb5aecd40f07..331d7d940c7a 100644
---- a/include/linux/regulator/pfuze100.h
-+++ b/include/linux/regulator/pfuze100.h
-@@ -33,7 +33,8 @@
- #define PFUZE100_VGEN4		12
- #define PFUZE100_VGEN5		13
- #define PFUZE100_VGEN6		14
--#define PFUZE100_MAX_REGULATOR	15
-+#define PFUZE100_COIN		15
-+#define PFUZE100_MAX_REGULATOR	16
- 
- #define PFUZE200_SW1AB		0
- #define PFUZE200_SW2		1
 -- 
-2.19.0.rc2
+2.7.4
 
