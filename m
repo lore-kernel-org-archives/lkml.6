@@ -2,68 +2,71 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CDDC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8AFC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850E02083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850E02083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F35F82083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35F82083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbeKGHSm (ORCPT
+        id S1730688AbeKGHTS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:18:42 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56612 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbeKGHSm (ORCPT
+        Wed, 7 Nov 2018 02:19:18 -0500
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:46574 "EHLO
+        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbeKGHTR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:18:42 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F827A48;
-        Tue,  6 Nov 2018 21:51:23 +0000 (UTC)
-Date:   Tue, 6 Nov 2018 13:51:21 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     William Kucharski <william.kucharski@oracle.com>
-Cc:     miles.chen@mediatek.com, Michal Hocko <mhocko@suse.com>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v4] mm/page_owner: clamp read count to PAGE_SIZE
-Message-Id: <20181106135121.dd015f188709c4ccb2bff52c@linux-foundation.org>
-In-Reply-To: <FD1082D9-916E-47A4-95D3-59F308AD6D55@oracle.com>
-References: <1541091607-27402-1-git-send-email-miles.chen@mediatek.com>
-        <20181101144723.3ddc1fa1ab7f81184bc2fdb8@linux-foundation.org>
-        <FD1082D9-916E-47A4-95D3-59F308AD6D55@oracle.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Nov 2018 02:19:17 -0500
+Received: from darkstar.musicnaut.iki.fi (85-76-84-88-nat.elisa-mobile.fi [85.76.84.88])
+        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id E996C4002C;
+        Tue,  6 Nov 2018 23:51:57 +0200 (EET)
+Date:   Tue, 6 Nov 2018 23:51:57 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] OCTEON MMC driver failure with v4.19
+Message-ID: <20181106215157.GD14958@darkstar.musicnaut.iki.fi>
+References: <20181026205423.GD3792@darkstar.musicnaut.iki.fi>
+ <20181105220632.GA5083@darkstar.musicnaut.iki.fi>
+ <20181106062724.GA12413@lst.de>
+ <20181106090511.GA14958@darkstar.musicnaut.iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106090511.GA14958@darkstar.musicnaut.iki.fi>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Nov 2018 18:41:33 -0600 William Kucharski <william.kucharski@oracle.com> wrote:
+Hi,
 
-> 
-> 
-> > On Nov 1, 2018, at 3:47 PM, Andrew Morton <akpm@linux-foundation.org> wrote:
+On Tue, Nov 06, 2018 at 11:05:11AM +0200, Aaro Koskinen wrote:
+> On Tue, Nov 06, 2018 at 07:27:24AM +0100, Christoph Hellwig wrote:
+> > On Tue, Nov 06, 2018 at 12:06:32AM +0200, Aaro Koskinen wrote:
+> > > With the below change, the MMC card probe seems to with v4.19. But it
+> > > feels a bit hackish, don't you think... Is there some obvious simple
+> > > fix that I'm missing? Any comments?
 > > 
-> > -	count = count > PAGE_SIZE ? PAGE_SIZE : count;
-> > +	count = min_t(size_t, count, PAGE_SIZE);
-> > 	kbuf = kmalloc(count, GFP_KERNEL);
-> > 	if (!kbuf)
-> > 		return -ENOMEM;
+> > Please just use dma_coerce_mask_and_coherent in the platform drivers
+> > instead.
 > 
-> Is the use of min_t vs. the C conditional mostly to be more self-documenting?
+> Tried, but that doesn't help with v4.19:
+> 
+> [    1.290698] octeon_mmc 1180000002000.mmc: dma_coerce_mask_and_coherent(): -5
+> [    1.297825] octeon_mmc: probe of 1180000002000.mmc failed with error -5
+> 
+> A.
 
-Yup.  It saves the reader from having to parse the code to figure out
-"this is a min operation".
+Just for the archives, the fix is: https://patchwork.kernel.org/patch/10670177/
 
+A.
