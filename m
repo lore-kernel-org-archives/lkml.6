@@ -2,122 +2,96 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1399C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEC6C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761382086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C84E420862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:37:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNdAIDjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761382086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="k4AJzh6P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84E420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389311AbeKGCBL (ORCPT
+        id S2389306AbeKGCDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:01:11 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45350 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387685AbeKGCBL (ORCPT
+        Tue, 6 Nov 2018 21:03:35 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:54678 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388927AbeKGCDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:01:11 -0500
-Received: by mail-pl1-f194.google.com with SMTP id o19-v6so6438824pll.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 08:35:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=DdzvoSy2h2u5B6dtluZVRVLXIvWmyO3wmCU9GEAMkSM=;
-        b=gNdAIDjUgEk0J/V+ZzUawg2xno7kGvH2+uL520CKi2f+CTfbgdC0TEroPk3naDdk2/
-         GF1uF/hGvZxMv5ARQuLF0YN4UJF0US+ipfg5Qr+9PmBUCmX4VfhqfcmPLbizNiWQUX+X
-         CC22ULHw5tuf+YlPYlf44/+94Ne2jIWwh3RFJ/vIDOsPBEDpBMhEwkPJ4lq/3pkryLXp
-         voKm0+GZ6ZZIF8NgrZLnFgDdFoCCRAD3ymMsIr3c/Fm4oB0AwOdGs2k193WKQomrId/O
-         rgFVC47mon0swj/yf5byAKIVYwyEIh5itShfbeei9b+xGnwL8wlzA+uwqRQVYqhYo+kt
-         S+bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DdzvoSy2h2u5B6dtluZVRVLXIvWmyO3wmCU9GEAMkSM=;
-        b=Rboo8RaV42P1UKz3FkplpmfAVnuqkaF/WF6t5ghogWK5JcCrRqpDRizY33FKXl2xgE
-         vfhmRfkLb+1xJhzB0v+O+8ugh03OFcgWUJwYw5KPkdHSmf2bCQMg+V2pgfLDL3fuxmfx
-         IbLpwzYNgaSZeYOjicUgyTMOtJRNSDUrkNT1ZTc6uxwOzf+STNGbiju1wrh7Y6ArSFfk
-         vADzIETpZTgwzWZnQgZMjkcofjv2BbKLHA71Ssk7LNFKWEBRY47wbMucI8tpaS+4J2IW
-         s+F4z5qn4asK6azr1NCm9BjNkiUnNtFWCeZNWOsZAM6eytkkOKmxJF4Avf0tNp4nhQtR
-         J9hg==
-X-Gm-Message-State: AGRZ1gIRu8TPmpvsIrl+B4H8FLlfnhwsZuXz57tv5cmUA2XAktWlBIyD
-        m/+nntcJCmSVIM6UZ0XfCdU=
-X-Google-Smtp-Source: AJdET5di4dERSI9lLmnFBH8liblMeJocemM2khJbrL6GAMu8EPgjrGUPl7dqryfbKKsyuE/figNeUA==
-X-Received: by 2002:a17:902:b943:: with SMTP id h3-v6mr25557646pls.124.1541522110933;
-        Tue, 06 Nov 2018 08:35:10 -0800 (PST)
-Received: from ubuntu.localdomain ([104.238.150.158])
-        by smtp.gmail.com with ESMTPSA id t77-v6sm39005730pfj.79.2018.11.06.08.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 08:35:10 -0800 (PST)
-From:   Kaitao Cheng <pilgrimtao@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org, smuchun@gmail.com,
-        pilgrimtao@163.com, Kaitao cheng <pilgrimtao@gmail.com>
-Subject: [PATCH] driver core: Replace simple_strto{l,ul} by kstrtou{l,ul}
-Date:   Tue,  6 Nov 2018 08:34:54 -0800
-Message-Id: <1541522094-5113-1-git-send-email-pilgrimtao@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 6 Nov 2018 21:03:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3/n3ubq0OvqMAj8fIqoN7l0a9gNkaEd6ejwTFUoCEwo=; b=k4AJzh6P3aAHCP59h8iiRAiyD
+        WS99oJ2TRO4taPrZWWTnr+zkZlCvNPnZxzCj467WAaydRbdMtKNW761y+kZ3vYip5V3NTg9gDBGmL
+        dG8xpPIj4Qvcx0947PAZ0Qrw2KLcYm1O3fcB4Vi/cTa0Af1q3MALCsdAluGdjoIabzvik=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:44450)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gK4M4-0001K1-My; Tue, 06 Nov 2018 16:37:28 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gK4M2-0006HC-18; Tue, 06 Nov 2018 16:37:26 +0000
+Date:   Tue, 6 Nov 2018 16:37:24 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     David Binderman <dcb314@hotmail.com>
+Cc:     Julien Thierry <julien.thierry@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: linux-4.20-rc1/arch/arm/vfp/vfpmodule.c:576: possible
+ cut'n'paste error
+Message-ID: <20181106163724.GK30658@n2100.armlinux.org.uk>
+References: <VI1PR08MB3342D4ADBFBC43F2BE2FD34D9CCA0@VI1PR08MB3342.eurprd08.prod.outlook.com>
+ <VI1PR08MB33420789A2AA1096D3F5FC9D9CCA0@VI1PR08MB3342.eurprd08.prod.outlook.com>
+ <20181106162014.GH30658@n2100.armlinux.org.uk>
+ <VI1PR08MB33427CD1C653245DBB979B9B9CCB0@VI1PR08MB3342.eurprd08.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VI1PR08MB33427CD1C653245DBB979B9B9CCB0@VI1PR08MB3342.eurprd08.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kaitao cheng <pilgrimtao@gmail.com>
+On Tue, Nov 06, 2018 at 04:33:26PM +0000, David Binderman wrote:
+> hello there Russell,
+> 
+> > linux-4.20-rc1/arch/arm/vfp/vfpmodule.c:576]: (warning) Redundant assignment of >'ufp_exc->fpinst2' to itself.
+> 
+> >Thanks for the report - it most certainly is a bug introduced by
+> >Julien's patches, but I don't get your warning here.  Which compiler
+> >produces that warning?
+> 
+> Not a compiler, cppcheck, a static analyser for C and C++ code.
+> 
+> Interestingly, more of the same in file linux-4.20-rc1/arch/arm/mach-pxa/pxa3xx.c
+> 
+> [linux-4.20-rc1/arch/arm/mach-pxa/pxa3xx.c:84]: (warning) Redundant assignment of 'ASCR' to itself.
+> [linux-4.20-rc1/arch/arm/mach-pxa/pxa3xx.c:85]: (warning) Redundant assignment of 'ARSR' to itself.
+> [linux-4.20-rc1/arch/arm/mach-pxa/pxa3xx.c:120]: (warning) Redundant assignment of 'ASCR' to itself.
+> [linux-4.20-rc1/arch/arm/mach-pxa/pxa3xx.c:121]: (warning) Redundant assignment of 'ARSR' to itself.
+> 
+> I don't know if these four are also worth fixing.
 
-The simple_strto{l,ul} are deprecated, use kstrtou{l,ul} instead.
+There are cases where this can be false positives.  In the case of a
+status register with write-1-to-clear bits for example.  These ones
+look very much like that.
 
-Signed-off-by: Kaitao cheng <pilgrimtao@gmail.com>
----
- drivers/base/core.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 04bbcd7..ed145fb 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -794,10 +794,12 @@ ssize_t device_store_ulong(struct device *dev,
- 			   const char *buf, size_t size)
- {
- 	struct dev_ext_attribute *ea = to_ext_attr(attr);
--	char *end;
--	unsigned long new = simple_strtoul(buf, &end, 0);
--	if (end == buf)
--		return -EINVAL;
-+	int ret;
-+	unsigned long new;
-+
-+	ret = kstrtoul(buf, 0, &new);
-+	if (ret)
-+		return ret;
- 	*(unsigned long *)(ea->var) = new;
- 	/* Always return full write size even if we didn't consume all */
- 	return size;
-@@ -818,9 +820,14 @@ ssize_t device_store_int(struct device *dev,
- 			 const char *buf, size_t size)
- {
- 	struct dev_ext_attribute *ea = to_ext_attr(attr);
--	char *end;
--	long new = simple_strtol(buf, &end, 0);
--	if (end == buf || new > INT_MAX || new < INT_MIN)
-+	int ret;
-+	long new;
-+
-+	ret = kstrtol(buf, 0, &new);
-+	if (ret)
-+		return ret;
-+
-+	if (new > INT_MAX || new < INT_MIN)
- 		return -EINVAL;
- 	*(int *)(ea->var) = new;
- 	/* Always return full write size even if we didn't consume all */
 -- 
-2.7.4
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
