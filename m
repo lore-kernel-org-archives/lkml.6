@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B3DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C15C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212FF2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212FF2086A
+	by mail.kernel.org (Postfix) with ESMTP id 47B5720869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B5720869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388375AbeKFVdT (ORCPT
+        id S2388395AbeKFVdd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:33:19 -0500
+        Tue, 6 Nov 2018 16:33:33 -0500
 Received: from mga11.intel.com ([192.55.52.93]:34369 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387498AbeKFVdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387636AbeKFVdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Nov 2018 16:33:19 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 04:08:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
-   d="scan'208";a="105822631"
+   d="scan'208";a="89832638"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 06 Nov 2018 04:08:22 -0800
+  by orsmga008.jf.intel.com with ESMTP; 06 Nov 2018 04:08:22 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1gK09e-00078e-7d; Tue, 06 Nov 2018 20:08:22 +0800
+        id 1gK09e-000784-41; Tue, 06 Nov 2018 20:08:22 +0800
 Date:   Tue, 6 Nov 2018 20:07:23 +0800
 From:   kbuild test robot <fengguang.wu@intel.com>
 To:     Maxime Jourdan <mjourdan@baylibre.com>
@@ -48,7 +48,7 @@ Cc:     kbuild-all@01.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org
 Subject: [PATCH] media: meson: fix semicolon.cocci warnings
-Message-ID: <20181106120723.GA78582@athens>
+Message-ID: <20181106120723.GA78880@athens>
 References: <20181106075926.19269-3-mjourdan@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -62,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: kbuild test robot <fengguang.wu@intel.com>
 
-drivers/media/platform/meson/vdec/codec_mpeg12.c:149:2-3: Unneeded semicolon
+drivers/media/platform/meson/vdec/vdec_helpers.c:187:3-4: Unneeded semicolon
 
 
  Remove unneeded semicolon.
@@ -77,17 +77,17 @@ Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 url:    https://github.com/0day-ci/linux/commits/Maxime-Jourdan/dt-bindings-media-add-Amlogic-Video-Decoder-Bindings/20181106-162646
 base:   git://linuxtv.org/media_tree.git master
 
- codec_mpeg12.c |    2 +-
+ vdec_helpers.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/meson/vdec/codec_mpeg12.c
-+++ b/drivers/media/platform/meson/vdec/codec_mpeg12.c
-@@ -146,7 +146,7 @@ static void codec_mpeg12_update_dar(stru
- 		sess->pixelaspect.numerator = 1;
- 		sess->pixelaspect.denominator = 1;
- 		break;
--	};
-+	}
- }
+--- a/drivers/media/platform/meson/vdec/vdec_helpers.c
++++ b/drivers/media/platform/meson/vdec/vdec_helpers.c
+@@ -184,7 +184,7 @@ int amvdec_set_canvases(struct amvdec_se
+ 			dev_err(sess->core->dev, "Unsupported pixfmt %08X\n",
+ 				pixfmt);
+ 			return -EINVAL;
+-		};
++		}
  
- static irqreturn_t codec_mpeg12_threaded_isr(struct amvdec_session *sess)
+ 		reg_num_cur++;
+ 		if (reg_num_cur >= reg_num[reg_base_cur]) {
