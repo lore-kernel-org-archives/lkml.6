@@ -2,156 +2,182 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D27C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C2C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFDC2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D4EF2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:12:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxMHkqmv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFDC2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hO1CfC7N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D4EF2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728718AbeKFJdh (ORCPT
+        id S1729004AbeKFJed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 04:33:37 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54983 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbeKFJdh (ORCPT
+        Tue, 6 Nov 2018 04:34:33 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:55865 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbeKFJed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 04:33:37 -0500
-Received: by mail-it1-f194.google.com with SMTP id d6so15511010itl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 16:11:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wj8+MP0Q+X4/kErEU87GH8+TuYm6uQfnz8mN/PS1sCA=;
-        b=PxMHkqmvOyilx5T7xSJMKsvcmKY5aK9V1OWt2jkknnycevkyIaLh1dNhGT6QNEApe4
-         aU0WSOooN7ctM6E0iBorMiMhgP2OzQxEdZTu4Mk6apG3E38CPK+epXgfyr7jmqpzTRO6
-         dr32Y3AyauJuXYQslRR2BUZHbgwKToT5pWTMghj94PV7Ka3EfrjHlwTYl4q2NDW0h21g
-         0myyvt34mugKL2ZLeESPUxyvjXwdtBgBvC1viTOzxEkX4StWufF/tHxVJ+NQegmXqcei
-         4gocNj3ROGpsFxacny+jPBYdf+QMpq2p3ovsqjD6u8I9m41BfNP30VAQRYyd3lN/K3Cu
-         zGtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wj8+MP0Q+X4/kErEU87GH8+TuYm6uQfnz8mN/PS1sCA=;
-        b=SEqcwjQa04Y0Pj7dsN7AQ1y94DhQXOPr0xi/L8zLbt1yhK0HxFlWJbFTKAaAeQKc+1
-         LsfQFKynv279Tep8teo/c5UUZRmUacHoc11ZbHZk6uQh+SdS5XqV1r3Mxeq6Q6tZOQNA
-         cQCkaMFKtmiA1E76h8PZXDbUbsx6D3q0fczUJG3FmdPq/3nPBMMGBZNaUmL5UtchVPcF
-         pnAwAPJhXkut8KGHQ3GhN0Iq0iiMNB0Z1F3HSVCSbRCuq0Fvi+H7FfK4qGmf3FZTWuPA
-         bfZFhgYcU0ZpaNRVJJnGfVnrLBdybBKjmDE3Jz/TzEnY+SS8ItXx1q+aGXUxcl+C2BaU
-         JzTA==
-X-Gm-Message-State: AGRZ1gICr94tOf0tgV7aADPb39y+5Wvq578XgP6UZ0pGwcWNQ3bd81wD
-        AodRMoo8IPXAEzT6uf8uQbi8O9xf+YUZFDpAzN4=
-X-Google-Smtp-Source: AJdET5cydHOpUT4j6TMsClWSi5jU/tECrCdTx7u6DlxLGmbfkZzZ1bYs0LBrQKY99WmdZxgiRI9AlC0zHL9sTIqb4jw=
-X-Received: by 2002:a24:e385:: with SMTP id d127-v6mr282274ith.6.1541463076269;
- Mon, 05 Nov 2018 16:11:16 -0800 (PST)
+        Tue, 6 Nov 2018 04:34:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1541463133; x=1572999133;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=8a1aL70reaGLohkAFR3PuOjUHcIqIcEdntS639e0iiE=;
+  b=hO1CfC7NA2vmAruNVAodJ9XDPoOgYt6ogpSakrY0t47HZ4Rp8XxxclsU
+   72+JUlt4BjX8/AteVwWG7x8/Zx0sMVuRCt3zTu7mEVDQLBP3OMiGmsSMa
+   d20p/rMDecCYKuBt/N40himc6s832fy5IQn0r0+W8LtMt1jcSvENZB3jx
+   eD6gfq5KdLyZCKn1iYUhLzUh3ec9vr4odV0r71BvHCHRJkCRU+Jem17+O
+   XOy+Q2uVvW2nS86XCVp57WWk76g8342KyplVWEyky6rAtpJiSrCmfNYVT
+   A7yBWkLyAHKK5CDijEFsnWMly1w89IcUNoQwl35m5TDOws4dJw6ienjEU
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.54,469,1534780800"; 
+   d="scan'208";a="95274834"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Nov 2018 08:12:12 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 05 Nov 2018 15:55:50 -0800
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.69.187]) ([10.111.69.187])
+  by uls-op-cesaip02.wdc.com with ESMTP; 05 Nov 2018 16:12:12 -0800
+Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
+To:     Rob Herring <robh+dt@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "alankao@andestech.com" <alankao@andestech.com>,
+        Zong Li <zong@andestech.com>
+References: <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
+ <mhng-799bd6f4-e4af-481e-90d8-bdc0e30f2530@palmer-si-x1c4>
+ <CAL_JsqJOxdE=gD4MyKuL5XZ57Z6UdM4_SU4qs26BNz6YcqM76A@mail.gmail.com>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <8b502dca-bf5f-50b8-e1b2-997c6e2ca260@wdc.com>
+Date:   Mon, 5 Nov 2018 16:12:11 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181105204000.129023-1-bvanassche@acm.org> <20181105131305.574d85469f08a4b76592feb6@linux-foundation.org>
- <1541454489.196084.157.camel@acm.org> <ce6faf63-1661-abe5-16a6-8c19cc9f6689@rasmusvillemoes.dk>
- <1541457654.196084.159.camel@acm.org> <CAKgT0Udci4Ai4OD20NSRuDckE_G4RHma3Bg6H1Um6N9Se_zPew@mail.gmail.com>
- <1541462466.196084.163.camel@acm.org>
-In-Reply-To: <1541462466.196084.163.camel@acm.org>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Mon, 5 Nov 2018 16:11:04 -0800
-Message-ID: <CAKgT0Ue59US_f-cZtoA=yVbFJ03ca5OMce2opUdQcsvgd8LWMw@mail.gmail.com>
-Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
-To:     bvanassche@acm.org
-Cc:     linux@rasmusvillemoes.dk,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Lameter <cl@linux.com>, guro@fb.com,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_JsqJOxdE=gD4MyKuL5XZ57Z6UdM4_SU4qs26BNz6YcqM76A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 4:01 PM Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On Mon, 2018-11-05 at 14:48 -0800, Alexander Duyck wrote:
-> > On Mon, Nov 5, 2018 at 2:41 PM Bart Van Assche <bvanassche@acm.org> wrote:
-> > > How about this version, still untested? My compiler is able to evaluate
-> > > the switch expression if the argument is constant.
-> > >
-> > >  static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
-> > >  {
-> > > -       int is_dma = 0;
-> > > -       int type_dma = 0;
-> > > -       int is_reclaimable;
-> > > +       unsigned int dr = !!(flags & __GFP_RECLAIMABLE);
-> > >
-> > >  #ifdef CONFIG_ZONE_DMA
-> > > -       is_dma = !!(flags & __GFP_DMA);
-> > > -       type_dma = is_dma * KMALLOC_DMA;
-> > > +       dr |= !!(flags & __GFP_DMA) << 1;
-> > >  #endif
-> > >
-> > > -       is_reclaimable = !!(flags & __GFP_RECLAIMABLE);
-> > > -
-> > >         /*
-> > >          * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
-> > >          * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
-> > >          */
-> > > -       return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
-> > > +       switch (dr) {
-> > > +       default:
-> > > +       case 0:
-> > > +               return 0;
-> > > +       case 1:
-> > > +               return KMALLOC_RECLAIM;
-> > > +       case 2:
-> > > +       case 3:
-> > > +               return KMALLOC_DMA;
-> > > +       }
-> > >  }
-> >
-> > Doesn't this defeat the whole point of the code which I thought was to
-> > avoid conditional jumps and branches? Also why would you bother with
-> > the "dr" value when you could just mask the flags value and switch on
-> > that directly?
->
-> Storing the relevant bits of 'flags' in the 'dr' variable avoids that the
-> bit selection expressions have to be repeated and allows to use a switch
-> statement instead of multiple if / else statements.
+On 11/5/18 12:11 PM, Rob Herring wrote:
+> On Mon, Nov 5, 2018 at 1:39 PM Palmer Dabbelt <palmer@sifive.com> wrote:
+>>
+>> On Fri, 02 Nov 2018 06:09:39 PDT (-0700), robh+dt@kernel.org wrote:
+>>> On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> wrote:
+>>>>
+>>>> Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
+>>>> But it doesn't need a separate thread node for defining SMT systems.
+>>>> Multiple cpu phandle properties can be parsed to identify the sibling
+>>>> hardware threads. Moreover, we do not have cluster concept in RISC-V.
+>>>> So package is a better word choice than cluster for RISC-V.
+>>>
+>>> There was a proposal to add package info for ARM recently. Not sure
+>>> what happened to that, but we don't need 2 different ways.
+>>>
+>>> There's never going to be clusters for RISC-V? What prevents that?
+>>> Seems shortsighted to me.
+>>>
+>>>>
+>>>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>>>> ---
+>>>>   .../devicetree/bindings/riscv/topology.txt         | 154 +++++++++++++++++++++
+>>>>   1 file changed, 154 insertions(+)
+>>>>   create mode 100644 Documentation/devicetree/bindings/riscv/topology.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/riscv/topology.txt b/Documentation/devicetree/bindings/riscv/topology.txt
+>>>> new file mode 100644
+>>>> index 00000000..96039ed3
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/riscv/topology.txt
+>>>> @@ -0,0 +1,154 @@
+>>>> +===========================================
+>>>> +RISC-V cpu topology binding description
+>>>> +===========================================
+>>>> +
+>>>> +===========================================
+>>>> +1 - Introduction
+>>>> +===========================================
+>>>> +
+>>>> +In a RISC-V system, the hierarchy of CPUs can be defined through following nodes that
+>>>> +are used to describe the layout of physical CPUs in the system:
+>>>> +
+>>>> +- packages
+>>>> +- core
+>>>> +
+>>>> +The cpu nodes (bindings defined in [1]) represent the devices that
+>>>> +correspond to physical CPUs and are to be mapped to the hierarchy levels.
+>>>> +Simultaneous multi-threading (SMT) systems can also represent their topology
+>>>> +by defining multiple cpu phandles inside core node. The details are explained
+>>>> +in paragraph 3.
+>>>
+>>> I don't see a reason to do this differently than ARM. That said, I
+>>> don't think the thread part is in use on ARM, so it could possibly be
+>>> changed.
+>>>
+>>>> +
+>>>> +The remainder of this document provides the topology bindings for ARM, based
+>>>
+>>> for ARM?
+>>>
+>>>> +on the Devicetree Specification, available from:
+>>>> +
+>>>> +https://www.devicetree.org/specifications/
+>>>> +
+>>>> +If not stated otherwise, whenever a reference to a cpu node phandle is made its
+>>>> +value must point to a cpu node compliant with the cpu node bindings as
+>>>> +documented in [1].
+>>>> +A topology description containing phandles to cpu nodes that are not compliant
+>>>> +with bindings standardized in [1] is therefore considered invalid.
+>>>> +
+>>>> +This cpu topology binding description is mostly based on the topology defined
+>>>> +in ARM [2].
+>>>> +===========================================
+>>>> +2 - cpu-topology node
+>>>
+>>> cpu-map. Why change this?
+>>>
+>>> What I would like to see is the ARM topology binding reworked to be
+>>> common or some good reasons why it doesn't work for RISC-V as-is.
+>>
+>> I think it would be great if CPU topologies were not a RISC-V specific thing.
+>> We don't really do anything different than anyone else, so it'd be great if we
+>> could all share the same spec and code.  Looking quickly at the ARM cpu-map
+>> bindings, I don't see any reason why we can't just use the same thing on RISC-V
+>> -- it's not quite how I'd do it, but I don't think the differences are worth
+>> having another implementation.  Mechanically I'm not sure how to do this:
+>> should there just be a "Documentation/devicetree/bindings/cpu-map.txt"?
+> 
+> Yes, but ".../bindings/cpu/cpu-topology.txt".
+> 
+> And if we need $arch extensions, they can be moved there. (Really, I'd
+> like to get rid of /bindings/$arch/* except for maybe a few things.)
+> 
+>> If everyone is OK with that then I vote we just go ahead and genericise the ARM
+>> "cpu-map" stuff for CPU topology.  Sharing the implementation looks fairly
+>> straight-forward as well.
+> 
++1 for a common code base. I am happy to take it up if nobody else has 
+not already started working on it.
 
-Really they shouldn't have to be repeated. You essentially have just 3
-cases. 0, __GFP_RECLAIMABLE, and the default case.
+Is there a ARM hardware test farm that can be used to test such changes?
 
-> Most kmalloc() calls pass a constant to the gfp argument. That allows the
-> compiler to evaluate kmalloc_type() at compile time. So the conditional jumps
-> and branches only appear when the gfp argument is not a constant. What makes
-> you think it is important to optimize for that case?
->
-> Bart.
-
-I didn't really think it was all that important to optimize, but I
-thought that was what you were trying to maintain with the earlier
-patch since it was converting things to a table lookup.
-
-If we really don't care then why even bother with the switch statement
-anyway? It seems like you could just do one ternary operator and be
-done with it. Basically all you need is:
-return (defined(CONFIG_ZONE_DMA) && (flags & __GFP_DMA)) ? KMALLOC_DMA :
-        (flags & __GFP_RECLAIMABLE) ? KMALLOC_RECLAIM : 0;
-
-Why bother with all the extra complexity of the switch statement?
-
-Thanks.
-
-- Alex
+Regards,
+Atish
