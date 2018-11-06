@@ -2,109 +2,164 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4CDC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9C9C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 604F62085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:32:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 604F62085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F5302085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:32:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ieZmaKlh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5302085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389974AbeKGC62 (ORCPT
+        id S2389811AbeKGC5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:58:28 -0500
-Received: from mga14.intel.com ([192.55.52.115]:20571 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389760AbeKGC61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:58:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:32:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="106374973"
-Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 09:32:12 -0800
-Subject: Re: [PATCH v7] mm, drm/i915: mark pinned shmemfs pages as unevictable
-To:     Chris Wilson <chris@chris-wilson.co.uk>,
-        intel-gfx@lists.freedesktop.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Kuo-Hsin Yang <vovoy@chromium.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20181106093100.71829-1-vovoy@chromium.org>
- <20181106132324.17390-1-chris@chris-wilson.co.uk>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <14fd3be8-5415-a6e1-c45f-4b229dee9f93@intel.com>
-Date:   Tue, 6 Nov 2018 09:32:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 21:57:19 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44865 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389800AbeKGC5T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 21:57:19 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j17-v6so9330114wrq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:31:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sOnyIwb2g3YxDULpafZlyhPhyp1dzLGOVnhzsxDldCc=;
+        b=ieZmaKlhZlcp0nmdwsRMlwjHIcMezXernL9yhKeVBPEgaZe62JZ+moMlMYHN6OWt/y
+         rf3+57+dn6ZDMstn+SzB67CvHJUI6P1QFkf4QdNTBVtEydktJ54bZbtWTGYOUNkhq/Ck
+         uCam1MXgX6T3RjfXcTQv1WaOPZOyzeBgZVRItFC8NeBOdIrskJv/VP7FwaJ/31al//4P
+         p85j+2gjRtMwM4y0Ln2ytkDjR4ZA85EkPv/Bprts1gXeW33iSn8U1iW44Mj3hUgIorF7
+         vVFMmVbUbb99FfgXclwNO7mI/BTGpp1mHauUX+/h0ACe7g1L6GxcEbPe98hwyCWx6KGV
+         m9Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sOnyIwb2g3YxDULpafZlyhPhyp1dzLGOVnhzsxDldCc=;
+        b=YAy5Xtly1bJql6JSO9icwQvSoQJU3IXYWVBLu+lz+JuHzgXcC6NdesM0tM1uzI+cDg
+         Hnjv0lugAPJ9/uBWG2PevA5Qcc/lBHlmMmdPnY5nU9DQHDxDk9kLCE2ALu/KEPqmIhxn
+         a8Bf3TEcfPxgzuij09ggeDQH4hpGeZuvreu0/MIbereL9ZmErbXNjdViVlI8nFB6ofxV
+         bWqkLdpxprOWYjO9JIeYYWhIOmlCrUh8/yVOm6PsiQY1Nv1kZAXjzqpWWBy9jRt7gh9/
+         MNPoG3EWrCYOA7xp6LqdYhTQTAel9KqNWeAdhuTSbvJ+VW5/cXzLBlsaZfw3003ruxZ8
+         BH0Q==
+X-Gm-Message-State: AGRZ1gL2Vhytrj/k6uC5a6LXjbulksBYu8WrIZPywI0Hd6QxsLhNKLOL
+        0FWKcmLEcL5Ef7WkIv76qvhnfQ==
+X-Google-Smtp-Source: AJdET5e46JoBZfK+Mq6DCn35SKPr5NomvZUUHR+HaT+Vry+XqsfzQeNViUT2xlwDScnnnVPOhrepFw==
+X-Received: by 2002:adf:9589:: with SMTP id p9-v6mr24794980wrp.270.1541525462952;
+        Tue, 06 Nov 2018 09:31:02 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.31.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 09:31:02 -0800 (PST)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v10 13/22] kasan, arm64: enable top byte ignore for the kernel
+Date:   Tue,  6 Nov 2018 18:30:28 +0100
+Message-Id: <f73a69ce70e9c30efe1832773b30dd067c4b107e.1541525354.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+In-Reply-To: <cover.1541525354.git.andreyknvl@google.com>
+References: <cover.1541525354.git.andreyknvl@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181106132324.17390-1-chris@chris-wilson.co.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 5:23 AM, Chris Wilson wrote:
-> + (3) By the i915 driver to mark pinned address space until it's unpinned. The
-> +     amount of unevictable memory marked by i915 driver is roughly the bounded
-> +     object size in debugfs/dri/0/i915_gem_objects.
+Tag-based KASAN uses the Top Byte Ignore feature of arm64 CPUs to store a
+pointer tag in the top byte of each pointer. This commit enables the
+TCR_TBI1 bit, which enables Top Byte Ignore for the kernel, when tag-based
+KASAN is used.
 
-Thanks for adding this.  Feel free to add my:
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ arch/arm64/include/asm/pgtable-hwdef.h | 1 +
+ arch/arm64/mm/proc.S                   | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index 1d7d8da2ef9b..d43b870c39b3 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -291,6 +291,7 @@
+ #define TCR_A1			(UL(1) << 22)
+ #define TCR_ASID16		(UL(1) << 36)
+ #define TCR_TBI0		(UL(1) << 37)
++#define TCR_TBI1		(UL(1) << 38)
+ #define TCR_HA			(UL(1) << 39)
+ #define TCR_HD			(UL(1) << 40)
+ #define TCR_NFD1		(UL(1) << 54)
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 2c75b0b903ae..d861f208eeb1 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -47,6 +47,12 @@
+ /* PTWs cacheable, inner/outer WBWA */
+ #define TCR_CACHE_FLAGS	TCR_IRGN_WBWA | TCR_ORGN_WBWA
+ 
++#ifdef CONFIG_KASAN_SW_TAGS
++#define TCR_KASAN_FLAGS TCR_TBI1
++#else
++#define TCR_KASAN_FLAGS 0
++#endif
++
+ #define MAIR(attr, mt)	((attr) << ((mt) * 8))
+ 
+ /*
+@@ -445,7 +451,7 @@ ENTRY(__cpu_setup)
+ 	 */
+ 	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
+ 			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
+-			TCR_TBI0 | TCR_A1
++			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
+ 	tcr_set_idmap_t0sz	x10, x9
+ 
+ 	/*
+-- 
+2.19.1.930.g4563a0d9d0-goog
+
