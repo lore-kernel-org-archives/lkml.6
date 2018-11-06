@@ -2,189 +2,161 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25157C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82603C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DACE220866
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DACE220866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 3C35120862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:17:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="Swm9Y6Cv";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="adgg1oID"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C35120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbeKFRk0 (ORCPT
+        id S1729994AbeKFRlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:40:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57546 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728133AbeKFRkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:40:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED29DB102;
-        Tue,  6 Nov 2018 08:16:21 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] mm/page_alloc: use a single function to free page
-To:     Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Yoel Caspersen <yoel@kviknet.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <20181105085820.6341-1-aaron.lu@intel.com>
- <20181105085820.6341-2-aaron.lu@intel.com> <20181106053037.GD6203@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <d6b4890c-0def-6114-2dcf-3ed120dea82c@suse.cz>
-Date:   Tue, 6 Nov 2018 09:16:20 +0100
+        Tue, 6 Nov 2018 12:41:10 -0500
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:44813 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728133AbeKFRlJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 12:41:09 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 63BAC20F63;
+        Tue,  6 Nov 2018 11:17:04 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id YnaxRn5qqW-H3J0diq5;
+        Tue, 06 Nov 2018 11:17:04 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541492224; bh=VtYABd+o6/lUcLdkhNhck1zV6aEVEq8TNIgLCi2keEg=;
+        h=Subject:To:References:From:Message-ID:Date:In-Reply-To;
+        b=Swm9Y6Cvp3SUFjbYYHT23XOMcP+W594YoQc+Fo3Lg27WVR43wQfoBHHcYAuJI4xya
+         bowUr7UKusQvSmjhxxp/qocYaGGuyCchMuTbtozFEgF2RMBJGTXb+xbz/iPZeqQI/h
+         9m/ZS/4Z07iytr9uy1rWfoEzhU/7QUUxE1UaVNZU=
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:2501:1cc0:44e4:e39a])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id sxIx9PMn5E-H3oOSIjd;
+        Tue, 06 Nov 2018 11:17:03 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1541492223; bh=VtYABd+o6/lUcLdkhNhck1zV6aEVEq8TNIgLCi2keEg=;
+        h=Subject:To:References:From:Message-ID:Date:In-Reply-To;
+        b=adgg1oID1Z5lg91bVlJ/Fbyz6Jn7F2LUEOpzTz03Te1BuArY73zziXC4bfZdLeec4
+         28DVKAfOHMMYR36FOn6MUSV97pmJKGNyuF8pDy4i4yQqncdTl/cKIgB2HscFWnpRAu
+         9PI0j3JE7raQRu0UOuTjEHwZyLduxxkkZKVP5KA4=
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: Re: [PATCH v1 0/4]mm: convert totalram_pages, totalhigh_pages and
+ managed pages to atomic
+To:     Arun KS <arunks@codeaurora.org>, keescook@chromium.org,
+        minchan@kernel.org, getarunks@gmail.com,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, vbabka@suse.cz, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, julia.lawall@lip6.fr
+References: <1540551662-26458-1-git-send-email-arunks@codeaurora.org>
+ <9b210d4cc9925caf291412d7d45f16d7@codeaurora.org>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <63d9f48c-e39f-d345-0fb6-2f04afe769a2@yandex-team.ru>
+Date:   Tue, 6 Nov 2018 11:17:02 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181106053037.GD6203@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9b210d4cc9925caf291412d7d45f16d7@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 6:30 AM, Aaron Lu wrote:
-> We have multiple places of freeing a page, most of them doing similar
-> things and a common function can be used to reduce code duplicate.
-> 
-> It also avoids bug fixed in one function but left in another.
-> 
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+On 06.11.2018 8:38, Arun KS wrote:
+> Any comments?
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Looks good.
+Except unclear motivation behind this change.
+This should be in comment of one of patch.
 
-I assume there's no arch that would run page_ref_sub_and_test(1) slower
-than put_page_testzero(), for the critical __free_pages() case?
+Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-> ---
-> v2: move comments close to code as suggested by Dave.
 > 
->  mm/page_alloc.c | 36 ++++++++++++++++--------------------
->  1 file changed, 16 insertions(+), 20 deletions(-)
+> Regards,
+> Arun
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 91a9a6af41a2..4faf6b7bf225 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4425,9 +4425,17 @@ unsigned long get_zeroed_page(gfp_t gfp_mask)
->  }
->  EXPORT_SYMBOL(get_zeroed_page);
->  
-> -void __free_pages(struct page *page, unsigned int order)
-> +static inline void free_the_page(struct page *page, unsigned int order, int nr)
->  {
-> -	if (put_page_testzero(page)) {
-> +	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
-> +
-> +	/*
-> +	 * Free a page by reducing its ref count by @nr.
-> +	 * If its refcount reaches 0, then according to its order:
-> +	 * order0: send to PCP;
-> +	 * high order: directly send to Buddy.
-> +	 */
-> +	if (page_ref_sub_and_test(page, nr)) {
->  		if (order == 0)
->  			free_unref_page(page);
->  		else
-> @@ -4435,6 +4443,10 @@ void __free_pages(struct page *page, unsigned int order)
->  	}
->  }
->  
-> +void __free_pages(struct page *page, unsigned int order)
-> +{
-> +	free_the_page(page, order, 1);
-> +}
->  EXPORT_SYMBOL(__free_pages);
->  
->  void free_pages(unsigned long addr, unsigned int order)
-> @@ -4481,16 +4493,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->  
->  void __page_frag_cache_drain(struct page *page, unsigned int count)
->  {
-> -	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
-> -
-> -	if (page_ref_sub_and_test(page, count)) {
-> -		unsigned int order = compound_order(page);
-> -
-> -		if (order == 0)
-> -			free_unref_page(page);
-> -		else
-> -			__free_pages_ok(page, order);
-> -	}
-> +	free_the_page(page, compound_order(page), count);
->  }
->  EXPORT_SYMBOL(__page_frag_cache_drain);
->  
-> @@ -4555,14 +4558,7 @@ void page_frag_free(void *addr)
->  {
->  	struct page *page = virt_to_head_page(addr);
->  
-> -	if (unlikely(put_page_testzero(page))) {
-> -		unsigned int order = compound_order(page);
-> -
-> -		if (order == 0)
-> -			free_unref_page(page);
-> -		else
-> -			__free_pages_ok(page, order);
-> -	}
-> +	free_the_page(page, compound_order(page), 1);
->  }
->  EXPORT_SYMBOL(page_frag_free);
->  
-> 
-
+> On 2018-10-26 16:30, Arun KS wrote:
+>> This series convert totalram_pages, totalhigh_pages and
+>> zone->managed_pages to atomic variables.
+>>
+>> The patch was comiple tested on x86(x86_64_defconfig & i386_defconfig)
+>> on tip of linux-mmotm. And memory hotplug tested on arm64, but on an
+>> older version of kernel.
+>>
+>> Arun KS (4):
+>>   mm: Fix multiple evaluvations of totalram_pages and managed_pages
+>>   mm: Convert zone->managed_pages to atomic variable
+>>   mm: convert totalram_pages and totalhigh_pages variables to atomic
+>>   mm: Remove managed_page_count spinlock
+>>
+>>  arch/csky/mm/init.c                           |  4 +-
+>>  arch/powerpc/platforms/pseries/cmm.c          | 10 ++--
+>>  arch/s390/mm/init.c                           |  2 +-
+>>  arch/um/kernel/mem.c                          |  3 +-
+>>  arch/x86/kernel/cpu/microcode/core.c          |  5 +-
+>>  drivers/char/agp/backend.c                    |  4 +-
+>>  drivers/gpu/drm/amd/amdkfd/kfd_crat.c         |  2 +-
+>>  drivers/gpu/drm/i915/i915_gem.c               |  2 +-
+>>  drivers/gpu/drm/i915/selftests/i915_gem_gtt.c |  4 +-
+>>  drivers/hv/hv_balloon.c                       | 19 +++----
+>>  drivers/md/dm-bufio.c                         |  2 +-
+>>  drivers/md/dm-crypt.c                         |  2 +-
+>>  drivers/md/dm-integrity.c                     |  2 +-
+>>  drivers/md/dm-stats.c                         |  2 +-
+>>  drivers/media/platform/mtk-vpu/mtk_vpu.c      |  2 +-
+>>  drivers/misc/vmw_balloon.c                    |  2 +-
+>>  drivers/parisc/ccio-dma.c                     |  4 +-
+>>  drivers/parisc/sba_iommu.c                    |  4 +-
+>>  drivers/staging/android/ion/ion_system_heap.c |  2 +-
+>>  drivers/xen/xen-selfballoon.c                 |  6 +--
+>>  fs/ceph/super.h                               |  2 +-
+>>  fs/file_table.c                               |  7 +--
+>>  fs/fuse/inode.c                               |  2 +-
+>>  fs/nfs/write.c                                |  2 +-
+>>  fs/nfsd/nfscache.c                            |  2 +-
+>>  fs/ntfs/malloc.h                              |  2 +-
+>>  fs/proc/base.c                                |  2 +-
+>>  include/linux/highmem.h                       | 28 ++++++++++-
+>>  include/linux/mm.h                            | 27 +++++++++-
+>>  include/linux/mmzone.h                        | 15 +++---
+>>  include/linux/swap.h                          |  1 -
+>>  kernel/fork.c                                 |  5 +-
+>>  kernel/kexec_core.c                           |  5 +-
+>>  kernel/power/snapshot.c                       |  2 +-
+>>  lib/show_mem.c                                |  2 +-
+>>  mm/highmem.c                                  |  4 +-
+>>  mm/huge_memory.c                              |  2 +-
+>>  mm/kasan/quarantine.c                         |  2 +-
+>>  mm/memblock.c                                 |  6 +--
+>>  mm/memory_hotplug.c                           |  4 +-
+>>  mm/mm_init.c                                  |  2 +-
+>>  mm/oom_kill.c                                 |  2 +-
+>>  mm/page_alloc.c                               | 71 +++++++++++++--------------
+>>  mm/shmem.c                                    |  7 +--
+>>  mm/slab.c                                     |  2 +-
+>>  mm/swap.c                                     |  2 +-
+>>  mm/util.c                                     |  2 +-
+>>  mm/vmalloc.c                                  |  4 +-
+>>  mm/vmstat.c                                   |  4 +-
+>>  mm/workingset.c                               |  2 +-
+>>  mm/zswap.c                                    |  4 +-
+>>  net/dccp/proto.c                              |  7 +--
+>>  net/decnet/dn_route.c                         |  2 +-
+>>  net/ipv4/tcp_metrics.c                        |  2 +-
+>>  net/netfilter/nf_conntrack_core.c             |  7 +--
+>>  net/netfilter/xt_hashlimit.c                  |  5 +-
+>>  net/sctp/protocol.c                           |  7 +--
+>>  security/integrity/ima/ima_kexec.c            |  2 +-
+>>  58 files changed, 195 insertions(+), 144 deletions(-)
