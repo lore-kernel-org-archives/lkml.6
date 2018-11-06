@@ -2,132 +2,181 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7BBC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3ECC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C6B206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:11:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/WlHMMK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C6B206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BF3D2086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF3D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeKGHjG (ORCPT
+        id S1730821AbeKGHma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:39:06 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:47041 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbeKGHjG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:39:06 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f8-v6so11786441edt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 14:11:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=N2nxlAPwxCY787lzi2fWINFuw6kMiTtSA+BaIRlVVdE=;
-        b=C/WlHMMKOYEcEgEjRo2Yg7UrEFUFBwMB1djO2ApqWUwh5x7cBJq/MTMlHo2pQmKysM
-         XI9tZK0Q70rQ//Pu56TUvXr7IiWzbIhC/lxbVT5vVLjLh6Pkd3hMsBBViLCYXEFV1onN
-         bvPAErslPfA5Vf/Z49uLIkXOFW6kc1gm5nqAla9CyrESf+m3/B4UhBDp7j5AQ1nOdxiR
-         6VZ1d4aMw5JRII/fFhVZSCZqz7VI+ch4NibIYFLOQJ4PH2j7LV0CscV+4VVtUM3NxK3M
-         SIy7HtWZSvIlJrgLxT+bz+rfpJswo5/KzFxHp2KfkX5n9mqrDrsBkdeGaxf9MWRfFmad
-         ymsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=N2nxlAPwxCY787lzi2fWINFuw6kMiTtSA+BaIRlVVdE=;
-        b=qBdX3yH5tqgocfZYz9pUsWS/WMhsrsc56KviM/LHjB6VcQNkEEAq51vZr5Sx8/hO+T
-         RSZv8/cRjn2NdX0SJMpkUVla6ZORVqZO7khnm2BFPIklYpT2FzdJkyiXnJwVONCt8Tyt
-         tKyX+vWw6BTZUGZAJk49QNmEmEbKx33NsD6z83NXZ73aWiE6kufhin9NdC6pN61F5VMX
-         rBhd+aOn/TbatbxGlHoJx+jHfmXicqLKWjSMmQalHLtif4I/sroP095lYVqR4emYr78Y
-         ah87gTs8vGVInVmJxLXs/VGbwmkAzGWOSaDQvrhL73Rl1OBuZBaLU9iv8JSODWtBcD0Y
-         ds0g==
-X-Gm-Message-State: AGRZ1gKsccdmSWsy1AJAa76s1t5uASS4R5RY9Fh47D4UU/7eAVWy7SOn
-        jSs0ZQL+8QiF1wdMJoT79ka6PUVX
-X-Google-Smtp-Source: AJdET5esmLT6h771Ho/ikdxW+dkaiOrUxJj+ZF8b/nTujyTGmZzYenkWI6cqkvvE4klB08z8LAWiMA==
-X-Received: by 2002:a17:906:7a4e:: with SMTP id i14-v6mr9201046ejo.16.1541542301748;
-        Tue, 06 Nov 2018 14:11:41 -0800 (PST)
-Received: from dell.be.48ers.dk (d51a5bc31.access.telenet.be. [81.165.188.49])
-        by smtp.gmail.com with ESMTPSA id t29-v6sm2176595edd.53.2018.11.06.14.11.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 14:11:40 -0800 (PST)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peko@dell.be.48ers.dk>)
-        id 1gK9ZT-0003yf-W5; Tue, 06 Nov 2018 23:11:39 +0100
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Cc:     Peter Korsgaard <peter@korsgaard.com>
-Subject: [RESEND PATCH v2] ttyprintk: make the printk log level configurable
-Date:   Tue,  6 Nov 2018 23:11:37 +0100
-Message-Id: <20181106221137.15218-1-peter@korsgaard.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 7 Nov 2018 02:42:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbeKGHm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:42:29 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37B7220830;
+        Tue,  6 Nov 2018 22:15:03 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 17:15:01 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181106171501.59ccabbc@gandalf.local.home>
+In-Reply-To: <20181104115913.74l4yzecisvtt2j5@yavin>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+        <20181101083551.3805-2-cyphar@cyphar.com>
+        <20181101204720.6ed3fe37@vmware.local.home>
+        <20181102050509.tw3dhvj5urudvtjl@yavin>
+        <20181102065932.bdt4pubbrkvql4mp@yavin>
+        <20181102091658.1bc979a4@gandalf.local.home>
+        <20181103070253.ajrqzs5xu2vf5stu@yavin>
+        <20181104115913.74l4yzecisvtt2j5@yavin>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some use cases it is handy to use a different printk log level than the
-default (info) for the messages written to ttyprintk, so add a Kconfig
-option similar to what we have for default console loglevel.
+On Sun, 4 Nov 2018 22:59:13 +1100
+Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
----
-Changes since v1:
-- Leave [U] prefix in printk invocation and drop space before it as
-  suggested by Joe Perces.
+> The same issue is present in __save_stack_trace
+> (arch/x86/kernel/stacktrace.c). This is likely the only reason that --
+> as Steven said -- stacktraces wouldn't work with ftrace-graph (and thus
+> with the refactor both of you are discussing).
 
- drivers/char/Kconfig     | 8 ++++++++
- drivers/char/ttyprintk.c | 4 +++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+By the way, I was playing with the the orc unwinder and stack traces
+from the function graph tracer return code, and got it working with the
+below patch. Caution, that patch also has a stack trace hardcoded in
+the return path of the function graph tracer, so you don't want to run
+function graph tracing without filtering.
 
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index ce277ee0a28a..14a7f023f20b 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -66,6 +66,14 @@ config TTY_PRINTK
+You can apply the patch and do:
+
+ # cd /sys/kernel/debug/tracing
+ # echo schedule > set_ftrace_filter
+ # echo function_graph > current_tracer
+ # cat trace
+
+ 3)               |  schedule() {
+     rcu_preempt-10    [003] ....    91.160297: <stack trace>
+ => ftrace_return_to_handler
+ => return_to_handler
+ => schedule_timeout
+ => rcu_gp_kthread
+ => kthread
+ => ret_from_fork
+ 3) # 4009.085 us |  }
+ 3)               |  schedule() {
+     kworker/1:0-17    [001] ....    91.163288: <stack trace>
+ => ftrace_return_to_handler
+ => return_to_handler
+ => worker_thread
+ => kthread
+ => ret_from_fork
+ 1) # 7000.070 us |  }
+ 1)               |  schedule() {
+     rcu_preempt-10    [003] ....    91.164311: <stack trace>
+ => ftrace_return_to_handler
+ => return_to_handler
+ => schedule_timeout
+ => rcu_gp_kthread
+ => kthread
+ => ret_from_fork
+ 3) # 4006.540 us |  }
+
+
+Where just adding the stack trace without the other code, these traces
+ended at "return_to_handler".
+
+This patch is not for inclusion, it was just a test to see how to make
+this work.
+
+-- Steve
+
+diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
+index 91b2cff4b79a..4bcd646ae1f4 100644
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -320,13 +320,15 @@ ENTRY(ftrace_graph_caller)
+ ENDPROC(ftrace_graph_caller)
  
- 	  If unsure, say N.
+ ENTRY(return_to_handler)
+-	UNWIND_HINT_EMPTY
+-	subq  $24, %rsp
++	subq $8, %rsp
++	UNWIND_HINT_FUNC
++	subq  $16, %rsp
  
-+config TTY_PRINTK_LEVEL
-+	depends on TTY_PRINTK
-+	int "ttyprintk log level (1-7)"
-+	range 1 7
-+	default "6"
-+	help
-+	  Printk log level to use for ttyprintk messages.
+ 	/* Save the return values */
+ 	movq %rax, (%rsp)
+ 	movq %rdx, 8(%rsp)
+ 	movq %rbp, %rdi
++	leaq 16(%rsp), %rsi
+ 
+ 	call ftrace_return_to_handler
+ 
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 169b3c44ee97..aaeca73218cc 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -242,13 +242,16 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+ 	trace->calltime = current->ret_stack[index].calltime;
+ 	trace->overrun = atomic_read(&current->trace_overrun);
+ 	trace->depth = index;
 +
- config PRINTER
- 	tristate "Parallel printer support"
- 	depends on PARPORT
-diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-index 67549ce88cc9..88808dbba486 100644
---- a/drivers/char/ttyprintk.c
-+++ b/drivers/char/ttyprintk.c
-@@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
-  */
- #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
- #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
-+#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL)
-+
- static int tpk_curr;
- 
- static char tpk_buffer[TPK_STR_SIZE + 4];
-@@ -45,7 +47,7 @@ static void tpk_flush(void)
- {
- 	if (tpk_curr > 0) {
- 		tpk_buffer[tpk_curr] = '\0';
--		pr_info("[U] %s\n", tpk_buffer);
-+		printk(TPK_PREFIX "[U] %s\n", tpk_buffer);
- 		tpk_curr = 0;
- 	}
++	trace_dump_stack(0);
  }
--- 
-2.11.0
-
+ 
+ /*
+  * Send the trace to the ring-buffer.
+  * @return the original return address.
+  */
+-unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
++unsigned long ftrace_return_to_handler(unsigned long frame_pointer,
++	unsigned long *ptr)
+ {
+ 	struct ftrace_graph_ret trace;
+ 	unsigned long ret;
+@@ -257,6 +260,8 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
+ 	trace.rettime = trace_clock_local();
+ 	barrier();
+ 	current->curr_ret_stack--;
++	*ptr = ret;
++
+ 	/*
+ 	 * The curr_ret_stack can be less than -1 only if it was
+ 	 * filtered out and it's about to return from the function.
