@@ -2,164 +2,303 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC804C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B0CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C2E2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:57:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UUbLi7tr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C2E2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A712220862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:01:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A712220862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbeKFSWI (ORCPT
+        id S1730133AbeKFSZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:22:08 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42211 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729416AbeKFSWH (ORCPT
+        Tue, 6 Nov 2018 13:25:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52402 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729416AbeKFSZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:22:07 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y15-v6so12494618wru.9
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 00:57:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=npu6f52scOaswph7S3xG5VI0stM9qgkrpmiNFYq66BE=;
-        b=UUbLi7trCZYfFstMsNWjDdL5358z4tivmV/zZqUa7Nn11EaPnqlVxkDDksGcZgO4Ed
-         mgp4cbKtL3wAPP/lBPLgp8BkxuDCVROkHwWQGUxTw/HEtbU1GJ+nBuI//ezom5dLsG09
-         b/4GakvmMIDD0uvyseNj3Ab0IFgx9ITjYvf5k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=npu6f52scOaswph7S3xG5VI0stM9qgkrpmiNFYq66BE=;
-        b=bxfSz/iNUF6KHY+rfGhdqyF+VwWWIv1unzYVr295VDMREwFjynBjIyEp8m8rlV/ddF
-         O/yYz10eSxh8aQgUYJdt/JJp21wtR8nZatYKMwycpgH+4K+T6EJNzEv3jF/6Cm7tC52c
-         ceHNkplf/Udva82rpX5vAuZYUpdFqRTqUT98q1rY/ghL53Ay01v2RvjJun1E2fB1RcNB
-         gb0PCU4zNLfGxMp9H97I9BwyxCWL43IxmIlMjWC3bQaWd/wW/ZppV6pJTySZRx6PfVhh
-         VyKlZ648JGa1b2n7XZQZj46vUzWKo3cx+AfnWVWqDg4XmcbopEZThjvG0HZAK7cTEU1s
-         DLRA==
-X-Gm-Message-State: AGRZ1gKLaDCPesKHcwtvoZPHSGno0jqSlkboWaSpUiC4Y9VXRQvyAJnw
-        55H/Q84wgdaJ4OQ1fnsPoGnLxw==
-X-Google-Smtp-Source: AJdET5ctOWmd2/UvDSpOIlMRCdbJwkP7Ez46yKDKlA8NsT604u6DUiuFDFA3jljo42MYmX55+PaICg==
-X-Received: by 2002:adf:e28c:: with SMTP id v12-v6mr4260409wri.26.1541494674669;
-        Tue, 06 Nov 2018 00:57:54 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm108736952wrd.54.2018.11.06.00.57.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 00:57:53 -0800 (PST)
-Date:   Tue, 6 Nov 2018 08:57:51 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Michael Weiser <michael.weiser@gmx.de>,
-        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/arm64 : fix error in dump_backtrace
-Message-ID: <20181106085751.hrp7qkp53cftgew6@holly.lan>
-References: <1541488775-29610-1-git-send-email-huangzhaoyang@gmail.com>
- <20181106083901.erezwtcomiijvdrk@salmiak>
+        Tue, 6 Nov 2018 13:25:17 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA68xCFc028612
+        for <linux-kernel@vger.kernel.org>; Tue, 6 Nov 2018 04:01:04 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nk5t6cuaw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 04:01:04 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 6 Nov 2018 09:01:02 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 6 Nov 2018 09:00:59 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA690w5W15204574
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 09:00:58 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85C87A4051;
+        Tue,  6 Nov 2018 09:00:58 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7EC6AA4053;
+        Tue,  6 Nov 2018 09:00:57 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.36])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  6 Nov 2018 09:00:57 +0000 (GMT)
+Date:   Tue, 6 Nov 2018 11:00:55 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, vbabka@suse.cz,
+        riel@redhat.com, Linux-MM <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: Create the new vm_fault_t type
+References: <20181106074934.GA27620@jordon-HP-15-Notebook-PC>
+ <20181106082611.GB28505@rapoport-lnx>
+ <CAFqt6zaKHXbWbBhK+bCeF-0s5uPH+6hGiU+Xp_6v_2A+xzHe2A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106083901.erezwtcomiijvdrk@salmiak>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAFqt6zaKHXbWbBhK+bCeF-0s5uPH+6hGiU+Xp_6v_2A+xzHe2A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18110609-0016-0000-0000-0000021FF228
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110609-0017-0000-0000-00003278381C
+Message-Id: <20181106090054.GC28505@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811060080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 08:39:01AM +0000, Mark Rutland wrote:
-> On Tue, Nov 06, 2018 at 03:19:35PM +0800, Zhaoyang Huang wrote:
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > 
-> > In some cases, the instruction of "bl foo1" will be the last one of the
-> > foo2[1], which will cause the lr be the first instruction of the adjacent
-> > foo3[2]. Hence, the backtrace will show the weird result as bellow[3].
-> > The patch will fix it by miner 4 of the lr when dump_backtrace
+On Tue, Nov 06, 2018 at 02:04:54PM +0530, Souptick Joarder wrote:
+> On Tue, Nov 6, 2018 at 1:56 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > On Tue, Nov 06, 2018 at 01:19:34PM +0530, Souptick Joarder wrote:
+> > > Page fault handlers are supposed to return VM_FAULT codes,
+> > > but some drivers/file systems mistakenly return error
+> > > numbers. Now that all drivers/file systems have been converted
+> > > to use the vm_fault_t return type, change the type definition
+> > > to no longer be compatible with 'int'. By making it an unsigned
+> > > int, the function prototype becomes incompatible with a function
+> > > which returns int. Sparse will detect any attempts to return a
+> > > value which is not a VM_FAULT code.
+> > >
+> > > VM_FAULT_SET_HINDEX and VM_FAULT_GET_HINDEX values are changed
+> > > to avoid conflict with other VM_FAULT codes.
+> > >
+> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > ---
+> > > v2: Updated the change log and corrected the document part.
+> > >     name added to the enum that kernel-doc able to parse it.
+> > >
+> > >  include/linux/mm.h       | 46 ------------------------------
+> > >  include/linux/mm_types.h | 73 +++++++++++++++++++++++++++++++++++++++++++++++-
+> > >  2 files changed, 72 insertions(+), 47 deletions(-)
+> > >
+> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > > index fcf9cc9..511a3ce 100644
+> > > --- a/include/linux/mm.h
+> > > +++ b/include/linux/mm.h
+> > > @@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
+> > >  }
+> > >
+> > >  /*
+> > > - * Different kinds of faults, as returned by handle_mm_fault().
+> > > - * Used to decide whether a process gets delivered SIGBUS or
+> > > - * just gets major/minor fault counters bumped up.
+> > > - */
+> > > -
+> > > -#define VM_FAULT_OOM 0x0001
+> > > -#define VM_FAULT_SIGBUS      0x0002
+> > > -#define VM_FAULT_MAJOR       0x0004
+> > > -#define VM_FAULT_WRITE       0x0008  /* Special case for get_user_pages */
+> > > -#define VM_FAULT_HWPOISON 0x0010     /* Hit poisoned small page */
+> > > -#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
+> > > -#define VM_FAULT_SIGSEGV 0x0040
+> > > -
+> > > -#define VM_FAULT_NOPAGE      0x0100  /* ->fault installed the pte, not return page */
+> > > -#define VM_FAULT_LOCKED      0x0200  /* ->fault locked the returned page */
+> > > -#define VM_FAULT_RETRY       0x0400  /* ->fault blocked, must retry */
+> > > -#define VM_FAULT_FALLBACK 0x0800     /* huge page fault failed, fall back to small */
+> > > -#define VM_FAULT_DONE_COW   0x1000   /* ->fault has fully handled COW */
+> > > -#define VM_FAULT_NEEDDSYNC  0x2000   /* ->fault did not modify page tables
+> > > -                                      * and needs fsync() to complete (for
+> > > -                                      * synchronous page faults in DAX) */
+> > > -
+> > > -#define VM_FAULT_ERROR       (VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
+> > > -                      VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
+> > > -                      VM_FAULT_FALLBACK)
+> > > -
+> > > -#define VM_FAULT_RESULT_TRACE \
+> > > -     { VM_FAULT_OOM,                 "OOM" }, \
+> > > -     { VM_FAULT_SIGBUS,              "SIGBUS" }, \
+> > > -     { VM_FAULT_MAJOR,               "MAJOR" }, \
+> > > -     { VM_FAULT_WRITE,               "WRITE" }, \
+> > > -     { VM_FAULT_HWPOISON,            "HWPOISON" }, \
+> > > -     { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" }, \
+> > > -     { VM_FAULT_SIGSEGV,             "SIGSEGV" }, \
+> > > -     { VM_FAULT_NOPAGE,              "NOPAGE" }, \
+> > > -     { VM_FAULT_LOCKED,              "LOCKED" }, \
+> > > -     { VM_FAULT_RETRY,               "RETRY" }, \
+> > > -     { VM_FAULT_FALLBACK,            "FALLBACK" }, \
+> > > -     { VM_FAULT_DONE_COW,            "DONE_COW" }, \
+> > > -     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
+> > > -
+> > > -/* Encode hstate index for a hwpoisoned large page */
+> > > -#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
+> > > -#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
+> > > -
+> > > -/*
+> > >   * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
+> > >   */
+> > >  extern void pagefault_out_of_memory(void);
+> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > > index 5ed8f62..beee607 100644
+> > > --- a/include/linux/mm_types.h
+> > > +++ b/include/linux/mm_types.h
+> > > @@ -22,7 +22,6 @@
+> > >  #endif
+> > >  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
+> > >
+> > > -typedef int vm_fault_t;
+> > >
+> > >  struct address_space;
+> > >  struct mem_cgroup;
+> > > @@ -609,6 +608,78 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
+> > >
+> > >  struct vm_fault;
+> > >
+> > > +/**
+> > > + * typedef vm_fault_t - Return type for page fault handlers.
+> > > + *
+> > > + * Page fault handlers return a bitmask of %VM_FAULT values.
+> > > + */
+> > > +typedef __bitwise unsigned int vm_fault_t;
+> > > +
+> > > +/**
+> > > + * enum - VM_FAULT code
+> >
+> > It should be 'enum vm_fault_reason' here.
 > 
-> This has come up in the past (and a similar patch has been applied, then
-> reverted).
+> Sorry, missed it.
 > 
-> In general, we don't know that a function call was made via BL, and therefore
-> cannot know that LR - 4 is the address of the caller. The caller could set up
-> the LR as it likes, then B or BR to the callee, and depending on how the basic
-> blocks get laid out in memory, LR - 4 might point at something completely
-> different.
+> > A more elaborate brief description would also be nice.
+>
+> This much description is not sufficient to explain the enum ?
+> >
+
+The description below is fine, but kernel-doc will use "VM_FAULT code" as
+the "short description" and the explanation will be used as "long
+description".
+
+So either replace "VM_FAULT code" with something like "page fault handler
+return codes" or put the long explanation next to 'enum vm_fault_reason':
+
+/**
+ * enum vm_fault_reason - page fault handlers return a bitmask of these
+ * values ...
+ * ...
+ */
+
+Please take a look at "Structure, union, and enumeration documentation" in
+Documentation/doc-guide/kernel-doc.rst [1].
+
+[1] https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#structure-union-and-enumeration-documentation
+
+> > > + *
+> > > + * Page fault handlers return a bitmask of these values to tell
+> > > + * the core VM what happened when handling the fault. Used to decide
+> > > + * whether a process gets delivered SIGBUS or just gets major/minor
+> > > + * fault counters bumped up.
+> > > + *
+> > > + * @VM_FAULT_OOM:            Out Of Memory
+> > > + * @VM_FAULT_SIGBUS:         Bad access
+> > > + * @VM_FAULT_MAJOR:          Page read from storage
+> > > + * @VM_FAULT_WRITE:          Special case for get_user_pages
+> > > + * @VM_FAULT_HWPOISON:               Hit poisoned small page
+> > > + * @VM_FAULT_HWPOISON_LARGE: Hit poisoned large page. Index encoded
+> > > + *                           in upper bits
+> > > + * @VM_FAULT_SIGSEGV:                segmentation fault
+> > > + * @VM_FAULT_NOPAGE:         ->fault installed the pte, not return page
+> > > + * @VM_FAULT_LOCKED:         ->fault locked the returned page
+> > > + * @VM_FAULT_RETRY:          ->fault blocked, must retry
+> > > + * @VM_FAULT_FALLBACK:               huge page fault failed, fall back to small
+> > > + * @VM_FAULT_DONE_COW:               ->fault has fully handled COW
+> > > + * @VM_FAULT_NEEDDSYNC:              ->fault did not modify page tables and needs
+> > > + *                           fsync() to complete (for synchronous page faults
+> > > + *                           in DAX)
+> > > + */
+> > > +enum vm_fault_reason {
+> > > +     VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
+> > > +     VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
+> > > +     VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
+> > > +     VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
+> > > +     VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
+> > > +     VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
+> > > +     VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
+> > > +     VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
+> > > +     VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
+> > > +     VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
+> > > +     VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
+> > > +     VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
+> > > +     VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
+> > > +     VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
+> > > +};
+> > > +
+> > > +/* Encode hstate index for a hwpoisoned large page */
+> > > +#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
+> > > +#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
+> > > +
+> > > +#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |     \
+> > > +                     VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |  \
+> > > +                     VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
+> > > +
+> > > +#define VM_FAULT_RESULT_TRACE \
+> > > +     { VM_FAULT_OOM,                 "OOM" },        \
+> > > +     { VM_FAULT_SIGBUS,              "SIGBUS" },     \
+> > > +     { VM_FAULT_MAJOR,               "MAJOR" },      \
+> > > +     { VM_FAULT_WRITE,               "WRITE" },      \
+> > > +     { VM_FAULT_HWPOISON,            "HWPOISON" },   \
+> > > +     { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },     \
+> > > +     { VM_FAULT_SIGSEGV,             "SIGSEGV" },    \
+> > > +     { VM_FAULT_NOPAGE,              "NOPAGE" },     \
+> > > +     { VM_FAULT_LOCKED,              "LOCKED" },     \
+> > > +     { VM_FAULT_RETRY,               "RETRY" },      \
+> > > +     { VM_FAULT_FALLBACK,            "FALLBACK" },   \
+> > > +     { VM_FAULT_DONE_COW,            "DONE_COW" },   \
+> > > +     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
+> > > +
+> > >  struct vm_special_mapping {
+> > >       const char *name;       /* The name, e.g. "[vdso]". */
+> > >
+> > > --
+> > > 1.9.1
+> > >
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> >
 > 
-> More ideally, the compiler wouldn't end a function with a BL. When does that
-> happen, and is there some way we could arrange for that to not happen? e.g.
-> somehow pad a NOP after the BL.
 
-It's a consequence of having __noreturn isn't it? __noreturn frees the
-compiler from the burden of having to produce a valid return stack... so
-it doesn't and unwinding becomes hard.
+-- 
+Sincerely yours,
+Mike.
 
-
-Daniel.
-
-
-> > [1]
-> > 0xffffff80081e6b04 <handle_mm_fault+3996>:      adrp    x0, 0xffffff8008ca8000
-> > 0xffffff80081e6b08 <handle_mm_fault+4000>:      add     x0, x0, #0x5a8
-> > 0xffffff80081e6b0c <handle_mm_fault+4004>:      bl      0xffffff80081b0ca0 <panic>
-> > 0xffffff80081e6b10 <access_remote_vm>:  stp     x29, x30, [sp,#-64]!
-> > 0xffffff80081e6b14 <access_remote_vm+4>:        mov     x29, sp
-> > 
-> > [2]
-> > crash_arm64> rd ffffffc02eec3bd0 2
-> > ffffffc02eec3bd0:  ffffffc02eec3cb0 ffffff80081e6b10
-> > 
-> > [3]
-> > wrong:
-> > [<ffffff80081b0d90>] panic+0xf0/0x24c
-> > [<ffffff80081e6b10>] access_remote_vm+0x0/0x5c
-> > [<ffffff800809d7b0>] do_page_fault+0x290/0x3b8
-> > [<ffffff8008081570>] do_mem_abort+0x64/0xdc
-> > 
-> > correct:
-> > [ffffffc02eec3bd0] panic at ffffff80081b0da4
-> > [ffffffc02eec3cb0] handle_mm_fault at ffffff80081e6b0c
-> > [ffffffc02eec3d80] do_page_fault at ffffff800809d7ac
-> > [ffffffc02eec3df0] do_mem_abort at ffffff800808156c
-> > 
-> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > ---
-> >  arch/arm64/kernel/traps.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> > index d399d45..7a097cc 100644
-> > --- a/arch/arm64/kernel/traps.c
-> > +++ b/arch/arm64/kernel/traps.c
-> > @@ -113,7 +113,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
-> >  
-> >  	if (tsk == current) {
-> >  		frame.fp = (unsigned long)__builtin_frame_address(0);
-> > -		frame.pc = (unsigned long)dump_backtrace;
-> > +		frame.pc = (unsigned long)dump_backtrace + 4;
-> >  	} else {
-> >  		/*
-> >  		 * task blocked in __switch_to
-> > @@ -130,7 +130,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
-> >  	do {
-> >  		/* skip until specified stack frame */
-> >  		if (!skip) {
-> > -			dump_backtrace_entry(frame.pc);
-> > +			dump_backtrace_entry(frame.pc - 4);
-> >  		} else if (frame.fp == regs->regs[29]) {
-> >  			skip = 0;
-> >  			/*
-> > -- 
-> > 1.9.1
-> > 
