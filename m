@@ -2,286 +2,130 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93EBC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C85CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425D820869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425D820869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 48E1620827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:37:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fL6NNclU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E1620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387627AbeKFQ7K (ORCPT
+        id S1729513AbeKFRBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:59:10 -0500
-Received: from mga14.intel.com ([192.55.52.115]:42050 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387461AbeKFQ7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 11:59:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 23:34:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="278681621"
-Received: from dgao1-mobl1.ccr.corp.intel.com ([10.255.30.243])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Nov 2018 23:34:41 -0800
-Message-ID: <1541489678.2124.71.camel@intel.com>
-Subject: Re: [PATCH v2 00/17] thermal: enable+check sensor after its setup
- is finished
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Amit kucheria <amit.kucheria@linaro.org>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jun Nie <jun.nie@linaro.org>,
-        Baoyou Xie <baoyou.xie@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 06 Nov 2018 15:34:38 +0800
-In-Reply-To: <ba5bc790-6809-e0e3-58fb-757c8c617181@samsung.com>
-References: <CGME20181017155314epcas2p4a5aa24978b36354a2ccb2f9b0fb6f0f6@epcas2p4.samsung.com>
-         <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
-         <1541387097.2124.9.camel@intel.com>
-         <ba5bc790-6809-e0e3-58fb-757c8c617181@samsung.com>
+        Tue, 6 Nov 2018 12:01:40 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46179 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726863AbeKFRBj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 12:01:39 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f23so3529422lfc.13;
+        Mon, 05 Nov 2018 23:37:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nhk9tgRJPO1OgSqC6y/I3b4xengCg3+eMjxq179bAls=;
+        b=fL6NNclUFvfRF1HNWDy5QY8QTYWCQhCAdZt3CX6V4hrPSYBlOh2K3QNKvvBNgCQ6xq
+         9eK3MjmCjjhDMI1O+hEXIBbyfP1bA7hs3TnSdX5bRR77GJF4g7nSxR2iKUOaH5kaquia
+         ktSWLgeV+CH12MTlwME+w13oyOYsQCF8J2rAa9xkOqvqwtbsi9m89MfsoFGESfp+v2gC
+         iXCOgmzLvXWYVpjVuN9m9vfLZwuMSifZ6sRCsYdoTQP/WCzT+doFeWcWfOll//fgJrZz
+         /37AD1KGS4Pt4Gy0P80Epcr5kUO4DtVj9OLShE2H5ao2gWKvj1krcBKbMiHQW1hYYFWf
+         dk1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nhk9tgRJPO1OgSqC6y/I3b4xengCg3+eMjxq179bAls=;
+        b=FMfoAGR+EP1gKIsalIL88C4+idgZYzknokm4CXlMbUN/yAXARlBAbi7QMTXNfuwgxL
+         tl+ADiWbDyRc3RW6gwEsVRVHuai6EaeEg5+a2aoxewAR3rZIxjE+m1SZxsKPRZV/79+F
+         zKxICF2jm7tsLZj8F5mAPBgIRau7CSd0NwZf3UZgfH8EfRy7uFnTLb5ofG7hRIWWfRbs
+         m6663JB75UNp7PNwP37cDuj64A89BrMAlBcXr4G6Dw7KdEUKEzcldmSYzGXzT3amYHbu
+         IuQhehWdBTTPM++AGi333Yi6HWr8zKcM4tOZmuwli35H10JaUyO8cm0b+TW5tgSvUKnR
+         9o/A==
+X-Gm-Message-State: AGRZ1gKpt75OEJKv99UOTnQ3ou8Z1c4RHUGX7Tic0nAMFrDZzJcYb4ac
+        2A8gTDuQHtbhWTUzkxdqfnEYC/a4g0Yp3WF6bCn0d5ZPHKA=
+X-Google-Smtp-Source: AJdET5d7xwT5/YAvI7So3dS5H0HyGizcy5bMZ9jSwtEFXtHgcuy4u9FW6jtPyOL2JJaQw9iR9UiLaQYQ+7/+eb4qbP0=
+X-Received: by 2002:a19:ec09:: with SMTP id b9mr9946529lfa.65.1541489864164;
+ Mon, 05 Nov 2018 23:37:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20181031230541.28822-1-sashal@kernel.org> <20181031230541.28822-118-sashal@kernel.org>
+In-Reply-To: <20181031230541.28822-118-sashal@kernel.org>
+From:   Jack Wang <jack.wang.usish@gmail.com>
+Date:   Tue, 6 Nov 2018 08:37:32 +0100
+Message-ID: <CA+res+QxUmb2B=Owy3+PV_Jgsm0DBshF3RYzhcTEMnGepOZ_qg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.19 118/146] MD: fix invalid stored role for a disk
+To:     sashal@kernel.org
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org, shli@fb.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bartlomiej,
+Sasha Levin <sashal@kernel.org> =E4=BA=8E2018=E5=B9=B411=E6=9C=881=E6=97=A5=
+=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=8812:45=E5=86=99=E9=81=93=EF=BC=9A
+>
+> From: Shaohua Li <shli@fb.com>
+>
+> [ Upstream commit d595567dc4f0c1d90685ec1e2e296e2cad2643ac ]
+>
+> If we change the number of array's device after device is removed from ar=
+ray,
+> then add the device back to array, we can see that device is added as act=
+ive
+> role instead of spare which we expected.
+>
+> Please see the below link for details:
+> https://marc.info/?l=3Dlinux-raid&m=3D153736982015076&w=3D2
+>
+> This is caused by that we prefer to use device's previous role which is
+> recorded by saved_raid_disk, but we should respect the new number of
+> conf->raid_disks since it could be changed after device is removed.
+>
+> Reported-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+> Tested-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+> Acked-by: Guoqing Jiang <gqjiang@suse.com>9e753ba9b9b405e3902d9f08aec5f2e=
+a58a0c317
+> Signed-off-by: Shaohua Li <shli@fb.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Hi Sasha,
 
-On 一, 2018-11-05 at 17:35 +0100, Bartlomiej Zolnierkiewicz wrote:
-> On 11/05/2018 04:04 AM, Zhang Rui wrote:
-> > 
-> > Hi, Bartlomiej,
-> Hi Rui,
-> 
-> > 
-> > Interesting, I'm about to bring this issue to Linux Plumber
-> > Conference
-> > this year for discussion, and I'm also proposing a solution to fix
-> > the
-> > issues, but only with thermal core part finished yet.
-> > can you please take a look at it?
-> > https://patchwork.kernel.org/project/linux-pm/list/?series=38181
-> Thank you for the patches but they seem to be far from being
-> a complete solution for issues fixed by my patchset.
+This patch breaks linear hotadd please also include  commit
+9e753ba9b9b405e3902d9f08aec5f2ea58a0c317
+MD: fix invalid stored role for a disk - try2
 
-Right, as I said, this is a draft patch to illustrate my idea for those
-issues. And it is not targeting for upstream.
+Regards,
+Jack Wang
 
->  Even
-> thermal core part is not finished yet as it doesn't provide
-> a way to register disabled sensors for DT thermal drivers (only
-> for platform ones)..
-
-we need sequential change of of_thermal to set tzp->disable
-in of_parse_thermal_zones.
-
-> 
-> Why not simply apply my patchset now and incrementally work
-> on top of it to implement fixes for issues your patchset is
-> addressing?
-
-The main concern is that, as you point out, we have too many private
-mode implementation, and I'm looking for the possibility to handle them
-in the thermal core framework.
-
-> 
-> My patchset may not be a perfect solution but IMO it is good
-> enough and it has been practically ready since v1 posted in
-> April (v2 fixes all issues requested by Eduardo's review from
-> September)..
-
-I'm not against doing this, as long as it fixes something and doesn't
-break the others.
-But, I still have a couple of comments about your patches, and let me
-comment in lines.
-
-thanks,
-rui
-> 
-> > 
-> > thanks,
-> > rui
-> > 
-> > On 三, 2018-10-17 at 17:52 +0200, Bartlomiej Zolnierkiewicz wrote:
-> > > 
-> > > Hi,
-> > > 
-> > > [devm]_thermal_zone_of_sensor_register() is used to register
-> > > thermal sensor by thermal drivers using DeviceTree. Besides
-> > > registering sensor this function also immediately:
-> > > 
-> > > - enables it:
-> > > 
-> > >   tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED)
-> > >   (->set_mode is set to of_thermal_set_mode() in of-thermal.c)
-> > > 
-> > > - checks it (indirectly by using of_thermal_set_mode()):
-> > > 
-> > >   thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-> > >   (which in turn ends up using ->get_temp method).
-> > > 
-> > > For many DT thermal drivers this causes a problem because:
-> > > 
-> > > - [devm]_thermal_zone_of_sensor_register() need to be called in
-> > >   order to obtain data about thermal trips which are then used to
-> > >   finish hardware sensor setup (only after which ->get_temp can
-> > >   be used)
-> > > 
-> > > There is also related issue for DT thermal drivers that support
-> > > IRQ (i.e. exynos and rockchip ones):
-> > > 
-> > > - sensor hardware should be enabled only after IRQ handler is
-> > >   requested (because otherwise we might get IRQs that we can't
-> > >   handle)
-> > > 
-> > > - IRQ handler needs tzd structure which is obtained from
-> > >   [devm_]thermal_zone_of_sensor_register()
-> > > 
-> > > - after [devm_]thermal_zone_of_sensor_register() call core
-> > >   thermal code assumes that sensor is enabled and ready to use
-> > >   (i.e. that IRQ handler has been requested and sensor hardware
-> > >   has been enabled)
-> > > 
-> > > In order to fix all abovementioned issues sensor registration,
-> > > enable and check operations are separated in the core DT thermal
-> > > code and corresponding DT thermal drivers are modified to do
-> > > sensor
-> > > setup correctly.
-> > > 
-> > > Changes since v1:
-> > > - rebased on the current -next kernel (next-20181015)
-> > > - enhanced patch descriptions and cover letter
-> > > - renamed thermal_zone_device_toggler() to
-> > > thermal_zone_set_mode()
-> > > - converted thermal_zone_set_mode() to use enum
-> > > thermal_device_mode
-> > > - added CONFIG_THERMAL=n stubs for thermal_zone_set_mode() and
-> > >   thermal_zone_device_check()
-> > > - fixed uses of [devm]_thermal_zone_of_sensor_register() outside
-> > > of
-> > >   drivers/thermal/
-> > > - changed ordering between patch #2 and #3 in order to add all
-> > >   needed core helpers first before fixing sensor setup code
-> > > - changed ordering between patch #3 and #4 in order to simplify
-> > > them
-> > > - renamed patch #3 to "thermal: separate sensor enable and check
-> > >   operations"
-> > > - renamed patch #4 to "thermal: separate sensor registration and
-> > >   enable+check operations"
-> > > 
-> > > Best regards,
-> > > --
-> > > Bartlomiej Zolnierkiewicz
-> > > Samsung R&D Institute Poland
-> > > Samsung Electronics
-> > > 
-> > > 
-> > > Bartlomiej Zolnierkiewicz (17):
-> > >   thermal: add thermal_zone_set_mode() helper
-> > >   thermal: add thermal_zone_device_check() helper
-> > >   thermal: separate sensor enable and check operations
-> > >   thermal: separate sensor registration and enable+check
-> > > operations
-> > >   thermal: bcm2835: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: brcmstb: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: hisi_thermal: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: qcom: tsens: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: qoriq: enable+check sensor after its setup is finished
-> > >   thermal: rcar_gen3_thermal: enable+check sensor after its setup
-> > > is
-> > >     finished
-> > >   thermal: rockchip_thermal: enable+check sensor after its setup
-> > > is
-> > >     finished
-> > >   thermal: exynos: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: tegra: enable+check sensor after its setup is finished
-> > >   thermal: ti-soc-thermal: enable+check sensor after its setup is
-> > >     finished
-> > >   thermal: uniphier: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: zx2967: enable+check sensor after its setup is
-> > > finished
-> > >   thermal: warn on attempts to read temperature on disabled
-> > > sensors
-> > > 
-> > >  drivers/acpi/thermal.c                             |  5 +--
-> > >  drivers/ata/ahci_imx.c                             | 10 ++++--
-> > >  drivers/hwmon/hwmon.c                              |  5 +++
-> > >  drivers/hwmon/ntc_thermistor.c                     |  4 +++
-> > >  drivers/hwmon/scpi-hwmon.c                         |  4 +++
-> > >  drivers/iio/adc/sun4i-gpadc-iio.c                  |  5 +++
-> > >  drivers/input/touchscreen/sun4i-ts.c               |  8 ++++-
-> > >  drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  1 -
-> > >  drivers/platform/x86/acerhdf.c                     |  6 +++-
-> > >  drivers/regulator/max8973-regulator.c              |  6 ++--
-> > >  drivers/thermal/armada_thermal.c                   |  3 ++
-> > >  drivers/thermal/broadcom/bcm2835_thermal.c         |  3 ++
-> > >  drivers/thermal/broadcom/brcmstb_thermal.c         |  3 ++
-> > >  drivers/thermal/broadcom/ns-thermal.c              |  3 ++
-> > >  drivers/thermal/da9062-thermal.c                   |  7 ++--
-> > >  drivers/thermal/db8500_thermal.c                   |  5 ++-
-> > >  drivers/thermal/hisi_thermal.c                     | 22 ++++--
-> > > ----
-> > > ---
-> > >  drivers/thermal/imx_thermal.c                      |  3 +-
-> > >  drivers/thermal/int340x_thermal/int3400_thermal.c  |  1 +
-> > >  drivers/thermal/intel_bxt_pmic_thermal.c           |  3 +-
-> > >  drivers/thermal/intel_soc_dts_iosf.c               |  3 +-
-> > >  drivers/thermal/max77620_thermal.c                 |  6 ++--
-> > >  drivers/thermal/mtk_thermal.c                      |  3 ++
-> > >  drivers/thermal/of-thermal.c                       |  6 ++--
-> > >  drivers/thermal/qcom-spmi-temp-alarm.c             |  5 ++-
-> > >  drivers/thermal/qcom/tsens.c                       |  6 ++++
-> > >  drivers/thermal/qoriq_thermal.c                    |  3 ++
-> > >  drivers/thermal/rcar_gen3_thermal.c                |  7 ++--
-> > >  drivers/thermal/rcar_thermal.c                     |  7 ++--
-> > >  drivers/thermal/rockchip_thermal.c                 | 38
-> > > +++++++++++-
-> > > ----------
-> > >  drivers/thermal/samsung/exynos_tmu.c               |  7 +++-
-> > >  drivers/thermal/st/st_thermal_memmap.c             |  3 +-
-> > >  drivers/thermal/tango_thermal.c                    |  5 +++
-> > >  drivers/thermal/tegra/soctherm.c                   |  3 ++
-> > >  drivers/thermal/tegra/tegra-bpmp-thermal.c         |  3 ++
-> > >  drivers/thermal/thermal-generic-adc.c              |  3 ++
-> > >  drivers/thermal/thermal_core.c                     | 14 ++++----
-> > >  drivers/thermal/thermal_helpers.c                  | 32
-> > > ++++++++++++++++++
-> > >  drivers/thermal/thermal_sysfs.c                    | 17 ++++++
-> > > ----
-> > >  drivers/thermal/ti-soc-thermal/ti-thermal-common.c |  7 +++-
-> > >  drivers/thermal/uniphier_thermal.c                 |  6 +++-
-> > >  drivers/thermal/x86_pkg_temp_thermal.c             |  2 +-
-> > >  drivers/thermal/zx2967_thermal.c                   |  3 ++
-> > >  include/linux/thermal.h                            | 11 +++++++
-> > >  44 files changed, 220 insertions(+), 87 deletions(-)
-> Best regards,
+> ---
+>  drivers/md/md.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 8668793262d0..85459c17cc60 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -1776,6 +1776,10 @@ static int super_1_validate(struct mddev *mddev, s=
+truct md_rdev *rdev)
+>                         } else
+>                                 set_bit(In_sync, &rdev->flags);
+>                         rdev->raid_disk =3D role;
+> +                       if (role >=3D mddev->raid_disks) {
+> +                               rdev->saved_raid_disk =3D -1;
+> +                               rdev->raid_disk =3D -1;
+> +                       }
+>                         break;
+>                 }
+>                 if (sb->devflags & WriteMostly1)
 > --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
+> 2.17.1
+>
