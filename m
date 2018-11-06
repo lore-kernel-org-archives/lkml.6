@@ -7,102 +7,105 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E64C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0449AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD9A2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B216F20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:46:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDuji+jW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD9A2085B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGHG9927"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B216F20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbeKFPGe (ORCPT
+        id S1729794AbeKFPKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:06:34 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43195 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729319AbeKFPGd (ORCPT
+        Tue, 6 Nov 2018 10:10:04 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36255 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbeKFPKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:06:33 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g59-v6so5616334plb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 21:43:04 -0800 (PST)
+        Tue, 6 Nov 2018 10:10:04 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z17-v6so5315528pgv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 21:46:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=713B2YJc8DMVCIsxQId0TubBbtFhH4LE/O/KGRCq34k=;
-        b=BDuji+jWtTodTv9YA1GG0M4rOt+B+BWvdHCL3jKgBUvNJ6rvt8Yz6nfyDc84U1EtOO
-         LyAP6oXHf255DMCLvc8fDKjGmwVUY258z9ZmqEGMBbY+emAckoXIPE9Jnd8YrhqtzyK0
-         wUBxPfqhFcMKXkU+TRrRKWMq27d8iq6aPAnJ4=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+ZeF+kAyK15pjP+Yr+/pWxXTXoG5eNAVYz+WyoJvFGk=;
+        b=iGHG9927YgmW+7xGwZbKb/g1NQiwEzQ5JD/u4JzLGlAK0moVMX/ngtxZaqeMcTL4Wh
+         ryGDj2xdIaEQ2EsmHyRUBBmHcxJMy8WKep9N+N/SANCJ+Az31SIzbI2BA/eAreoUCR/0
+         l/d55jENqV8lGgYfmN6uwzHiBWglQwFfaTKW4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=713B2YJc8DMVCIsxQId0TubBbtFhH4LE/O/KGRCq34k=;
-        b=KcA1WVFAcMbf5CCq9ALCMz4s4EFBWY0914Bp4tOON7YG9THmlUDNDcQ73UZ/wt7vuE
-         MseSdVCxY8gJWyRKnomM3Nd0ZhNqu6/J/6vwDY9ixYK75Wj20WwcNpvBPXUP+B5mPql3
-         Bzs4bJqs14hk3XMyCVPvlP5Y8dzlHDr0W/g9zdfzZxUwXjCoROw7gXwIKlXYVtmsrM2h
-         MeA4RBJppoXJhCgbzN2L8QbRPtqJpWsydXF7QXG61AU/YHZ9UGmZoGOGbRWGENaklg8n
-         qhVLXdZe4Lp1xwTdaQpF+5AmDUNSWBrgVegFY2HYZvirwtSUlgkIH/xEtvRDe2t1UXPc
-         WjzQ==
-X-Gm-Message-State: AGRZ1gLAeLeKIrmqk3itXLL6uhW79X5rgM3T4ZT/YMWwNqfZUrVr1phg
-        FrpesWrt2n398cNM8L0W3xBEWw==
-X-Google-Smtp-Source: AJdET5djf5Qwp0b0gp77RMoE0xmL/WiJqOXzjpyfPOfEZKB0HR8U7AdOc/vH1yaj2hP7YIE0y+9UNg==
-X-Received: by 2002:a17:902:a5c6:: with SMTP id t6-v6mr25260883plq.31.1541482983020;
-        Mon, 05 Nov 2018 21:43:03 -0800 (PST)
-Received: from localhost ([171.61.116.174])
-        by smtp.gmail.com with ESMTPSA id g8-v6sm26747069pfh.57.2018.11.05.21.43.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+ZeF+kAyK15pjP+Yr+/pWxXTXoG5eNAVYz+WyoJvFGk=;
+        b=oE2Xp/CRv8iX3hrf6XQJJfYoJM6gecd+AoKtUYJNCXskbGZBPBf2KXWvxDp4uhTA3L
+         9jIsqL9VpNJUNbgGwhliH7HlPgny6QOaQX+iLOfQXpm5AKsTel6v1N0RpdgSJJPrqGvX
+         /bWLAaM/6dzJDt5Gnh4Uo+WTO1R6vS4ePYRbNtRCWGMNr4yGIWd9B9L6EhKhN/oszf50
+         O0d+RSBh4E+HwpZU0GfYP709G5OBQogA2yDN4wCBgmkB1OHQ320eG4neX4DSQu+JrXPj
+         xcRVb29q5lf7sxhrB0j8ys1rFXSudjoo80c4icY0GTDu28L06W4DEdRzCiN0w8ArCcnV
+         7s6g==
+X-Gm-Message-State: AGRZ1gI+gFRKllQf/43rcFT8Z9BPwhfy5v03BPFuJNyve390Jbk99gZR
+        jUF+eJiCS9QsXUu3m7/RvQtN0Q==
+X-Google-Smtp-Source: AJdET5dL1Aqqcw0y/EeNif63HTNXec1E1Qwid5AhYK5Q6122pjqW+pAK3EMWCTq0ry+uh4U5fg9pQQ==
+X-Received: by 2002:a63:3287:: with SMTP id y129mr22829950pgy.337.1541483193746;
+        Mon, 05 Nov 2018 21:46:33 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id d196-v6sm7855817pfd.58.2018.11.05.21.46.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 21:43:01 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] sched: Fix the ifdef block in add_nr_running()
-Date:   Tue,  6 Nov 2018 11:12:57 +0530
-Message-Id: <78cbd78a615d6f9fdcd3327f1ead68470f92593e.1541482935.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 05 Nov 2018 21:46:33 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
+Date:   Mon,  5 Nov 2018 21:50:13 -0800
+Message-Id: <20181106055013.11271-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181105194011.43770-1-swboyd@chromium.org>
+References: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point in keeping the conditional statement of the if block
-outside of the ifdef block, while all of its body is contained within
-the ifdef block. Move the conditional statement as well under the ifdef
-block.
+As of v4.20-rc1 probing the GCC driver on a SDM845 device with the
+standard security implementation causes an access violation and an
+immediate system restart. Use the protected-clocks property to mark the
+offending clocks protected for the MTP, in order to allow it to boot.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- kernel/sched/sched.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b7a3147874e3..e0e052a50fcd 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1801,12 +1801,12 @@ static inline void add_nr_running(struct rq *rq, unsigned count)
+This depends on the acceptance of
+https://lore.kernel.org/lkml/20181105194011.43770-1-swboyd@chromium.org/
+
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index d667eee4e6d0..b3def0358177 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -343,6 +343,12 @@
+ 	};
+ };
  
- 	rq->nr_running = prev_nr + count;
- 
--	if (prev_nr < 2 && rq->nr_running >= 2) {
- #ifdef CONFIG_SMP
-+	if (prev_nr < 2 && rq->nr_running >= 2) {
- 		if (!READ_ONCE(rq->rd->overload))
- 			WRITE_ONCE(rq->rd->overload, 1);
--#endif
- 	}
-+#endif
- 
- 	sched_update_tick_dependency(rq);
- }
++&gcc {
++	protected-clocks = <GCC_QSPI_CORE_CLK>,
++			   <GCC_QSPI_CORE_CLK_SRC>,
++			   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>;
++};
++
+ &i2c10 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
 -- 
-2.19.1.568.g152ad8e3369a
+2.18.0
 
