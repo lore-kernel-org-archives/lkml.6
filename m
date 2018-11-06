@@ -2,105 +2,85 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B019C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5807CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33AB20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:12:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33AB20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B97020830
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:13:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B97020830
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730950AbeKGDij (ORCPT
+        id S1730953AbeKGDkE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:38:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39524 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730315AbeKGDij (ORCPT
+        Tue, 6 Nov 2018 22:40:04 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:57991 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729642AbeKGDkD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:38:39 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 273DC516;
-        Tue,  6 Nov 2018 18:12:12 +0000 (UTC)
-Date:   Tue, 6 Nov 2018 10:12:11 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Kuo-Hsin Yang <vovoy@chromium.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v7] mm, drm/i915: mark pinned shmemfs pages as
- unevictable
-Message-Id: <20181106101211.d2e4857aa36ea8ffbd870d2f@linux-foundation.org>
-In-Reply-To: <20181106132324.17390-1-chris@chris-wilson.co.uk>
-References: <20181106093100.71829-1-vovoy@chromium.org>
-        <20181106132324.17390-1-chris@chris-wilson.co.uk>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 6 Nov 2018 22:40:03 -0500
+Received: from null ([172.19.246.7]) by mrelayeu.kundenserver.de (mreue012
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1N4eOd-1fLhn61sTH-011gGX; Tue, 06
+ Nov 2018 19:13:19 +0100
+Received: from null ([172.19.246.7]) by mrelayeu.kundenserver.de (mreue012
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1N4eOd-1fLhn61sTH-011gGX; Tue, 06
+ Nov 2018 19:13:19 +0100
+Date:   Tue, 6 Nov 2018 19:13:18 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <619586887.222691.1541527998449@email.ionos.de>
+In-Reply-To: <87k1lyghp7.fsf@anholt.net>
+References: <1540922921-3653-1-git-send-email-stefan.wahren@i2se.com>
+ <87k1lyghp7.fsf@anholt.net>
+Subject: Re: [PATCH] firmware: raspberrypi: Define timeout for transactions
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:f94RfDlIddf8EgbuR0JPFJ4Rd34+GnQU79b80tYLoHqT2zi5mnp
+ 8uqb68jVqH7elAwDfVQLRAl4IUWP/y95gK9NWtK9YaCgfTpLOc7hiX/eRk9VJgNNSTeL68x
+ 1+6e7GtkRfQ/uQ2R0duXts9wHEO3fzqb9fcvLUQ6pHmqJH0OZEpo5TWIL1kwSTZmwr7VGef
+ b87VL786EmuA48/D0g11Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:GxEuiASqIs4=:qZEa3RgJmKIMd+wM/+gGiX
+ 8rnD1Z3h02kGBS1t7/716z1rMWYt7wyGUhB9dRceeLii5gqVbAvsz/Q+9H05md7Mm4eYX0X1q
+ 5kUfhu3/0OPXvVttvl9wrXarAX7hKMufILAw5kJrySvqlVGI94BriCU1/DWvlSl889ju+C/6y
+ JqSVJsvHPgkA593ymPaJ9i8ZlOGryNHtUSeBnwgL8tjMY9YmkrBnmXpT4N0HcqaTKaSDPMSaL
+ oEiM6CdoRQWo2cjwsCMtuMvLJa3vpYI6WjSwl6Nx9cSmb6ysf01LGL58K1Pf/agQ2dVffhb9b
+ ESKAAYp8Ww5ZbbakU+tyHOTyrA1RZOSdE5Z7nyM4G7jCFXNsb297BsObbTd5yf4W+IHzS3azC
+ 7+bCoXAAsVo5gb059mG8+FdM6FA6TY6jgyoTe/uMReUfgI/QHp68ezo5u2tXZwieI+58Yq7hw
+ /QMCvZ0e45SZUAULiYGKmWfBsSSz3Wx4LrJtY4wclPLjdR7tL+LBXC0TcNF1kuSAFd2B8WfBR
+ ve6DdDtzOcokPMttyykfaPqT30bEBSEB3XLTaffhzE4X5AsyJ90d0CCLnJNwIBODv2O37CdCt
+ YTEMTyQUV1U50lggFKf2gPWmSxHbXfwqZvyRDMK7IaRoEpeEI9B429ZOcn7FINnsK5xJ5Nrqr
+ 5A1NWT3m10pqxcfFb04aVml5HMEmhje9S2Jt4E1ysQB1A+ejvONLIEW5P0dT4SJgR9ZdghhvB
+ xEVkzjwifgKBHKNe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  6 Nov 2018 13:23:24 +0000 Chris Wilson <chris@chris-wilson.co.uk> wrote:
-
-> From: Kuo-Hsin Yang <vovoy@chromium.org>
+> Eric Anholt <eric@anholt.net> hat am 31. Oktober 2018 um 18:16 geschrieben:
 > 
-> The i915 driver uses shmemfs to allocate backing storage for gem
-> objects. These shmemfs pages can be pinned (increased ref count) by
-> shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
-> wastes a lot of time scanning these pinned pages. In some extreme case,
-> all pages in the inactive anon lru are pinned, and only the inactive
-> anon lru is scanned due to inactive_ratio, the system cannot swap and
-> invokes the oom-killer. Mark these pinned pages as unevictable to speed
-> up vmscan.
 > 
-> Export pagevec API check_move_unevictable_pages().
+> Stefan Wahren <stefan.wahren@i2se.com> writes:
 > 
-> This patch was inspired by Chris Wilson's change [1].
+> > We should never assume to get a reply from the firmware otherwise
+> > the call could block forever and the user don't get informed. So
+> > define a timeout of 1 sec and print a stacktrace once in the unlikely
+> > case the timeout expired.
+> >
+> > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 > 
-> [1]: https://patchwork.kernel.org/patch/9768741/
-> 
-> ...
->
-> --- a/drivers/gpu/drm/i915/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> @@ -2382,12 +2382,26 @@ void __i915_gem_object_invalidate(struct drm_i915_gem_object *obj)
->  	invalidate_mapping_pages(mapping, 0, (loff_t)-1);
->  }
->  
-> +/**
+> Reviewed-by: Eric Anholt <eric@anholt.net>
 
-This token is used to introduce a kerneldoc comment.
-
-> + * Move pages to appropriate lru and release the pagevec. Decrement the ref
-> + * count of these pages.
-> + */
-
-But this isn't a kerneldoc comment.
-
-At least, I don't think it is.  Maybe the parser got smarter when I
-wasn't looking.
-
-> +static inline void check_release_pagevec(struct pagevec *pvec)
-> +{
-> +	if (pagevec_count(pvec)) {
-> +		check_move_unevictable_pages(pvec);
-> +		__pagevec_release(pvec);
-> +		cond_resched();
-> +	}
-> +}
-
-This looks too large to be inlined and the compiler will ignore the
-`inline' anyway.
-
-
-Otherwise, Acked-by: Andrew Morton <akpm@linux-foundation.org>.  Please
-go ahead and merge via the appropriate drm tree.
-
+Applied to bcm2835-soc-next
