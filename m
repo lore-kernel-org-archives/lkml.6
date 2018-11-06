@@ -2,124 +2,129 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C804C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4712DC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BEEB2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BEEB2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C86B2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:05:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uu2hpiZY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C86B2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbeKFK1Y (ORCPT
+        id S1729341AbeKFK1n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 05:27:24 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44360 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbeKFK1Y (ORCPT
+        Tue, 6 Nov 2018 05:27:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49000 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728874AbeKFK1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 05:27:24 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s5-v6so5299789plq.11;
-        Mon, 05 Nov 2018 17:04:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RB5kf5WkwZdcoqGqrMmKLFR3uy3C5ZpadIkZIn3HqWE=;
-        b=bRfp5N4i+hAU2IR/anuDyiztVR2Qj9xts75TfUo3+2NH7fJT7iE0ZYECxIhSS9ld/a
-         R+lB2gcVLXea8MtWkRjBpvqgbfyyN7iYoza8fOw65vagzQ7px3J8lBI/RIC93VvCdrW6
-         kEEkTfd4BH9F9VjZi/yqhHq8LaUPveC3X00IqjNPhtE3ABN6PAeUUL6AZG/xR5L5BcDO
-         pw4L9uERcuu849N4UlSl9XNipc3A6eLYhjAwSxX4xjDP15keYqDJJee8ehqY9qpaO0If
-         4FkRaxDKbIdpm/+uuoEwLspqWS7uVsQc66uM6Kf1ZbnnCacN2K/77+tIvSFrkZeQzEl0
-         0GtQ==
-X-Gm-Message-State: AGRZ1gKnRT7djGFn7ObuDZjkW+CXATCN2wblph89nJGMh5XHpHBADTvf
-        M/3xqQttKsYSNAbx9TcKioM=
-X-Google-Smtp-Source: AJdET5dgXM4hXc6b1LqOBtTi1tIzCJrdObE9tFVICMwKwq2t0Z/ih7b7vMqcM6GB5J0mmaupi/o0dw==
-X-Received: by 2002:a17:902:d907:: with SMTP id c7-v6mr23845767plz.198.1541466291785;
-        Mon, 05 Nov 2018 17:04:51 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id u124-v6sm69765047pgc.0.2018.11.05.17.04.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 17:04:51 -0800 (PST)
-Message-ID: <1541466289.196084.176.camel@acm.org>
-Subject: Re: [driver-core PATCH v5 4/9] driver core: Move
- async_synchronize_full call
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com
-Date:   Mon, 05 Nov 2018 17:04:49 -0800
-In-Reply-To: <154145231976.29224.39638353241256116.stgit@ahduyck-desk1.jf.intel.com>
-References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
-         <154145231976.29224.39638353241256116.stgit@ahduyck-desk1.jf.intel.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Tue, 6 Nov 2018 05:27:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:Subject:From:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=yD2Kn6zCqGM9XM2r+MV3pzy6/nGXxCSzxHkKfnLJIKQ=; b=uu2hpiZYb2hrGizUF0EIScHv2Q
+        c7ol08m63g1QbeOcnPMrL5Fjj9MWF8wPNi3IRPNx6eeeaNJtvQ+PwiNzqFq2jhdPAK48bdtwj6Ub2
+        bHAfij7ifldYQ+W1vyQu8zU//0ZmyG1X/XZ72h+bU7wePdtBfReq4oudEkxRm6hbLVV9OMR5UTdJZ
+        NUyMAdKfGXw4cZ7ZtEDyQ9jdGOJKBE+HayUFOX9BXX//0JhlpcMSvZbCOV2Dp+fkw8VrKKN1c98Sy
+        12x6VHQPXxv+q7Yo0+QCHHjXwl/no0FU9dq1TSMYcMowucBZ/Pc6r7nM4pUXcLHgtBIttHUhphvLk
+        vDtF/ZLw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJpnZ-0002PW-BA; Tue, 06 Nov 2018 01:04:53 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: Build regressions/improvements in v4.20-rc1
+ (sound/pci/hda/patch_ca0132.c)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     linux-s390 <linux-s390@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20181105220559.27458-1-geert@linux-m68k.org>
+ <CAMuHMdWGpjvwunNWgFujPO9_j+=QiNsi346s4-xBF1g4DT5xZw@mail.gmail.com>
+Message-ID: <80f2f98b-9ab1-2a1c-0962-63e3be1dd742@infradead.org>
+Date:   Mon, 5 Nov 2018 17:04:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWGpjvwunNWgFujPO9_j+=QiNsi346s4-xBF1g4DT5xZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-05 at 13:11 -0800, Alexander Duyck wrote:
-+AD4 This patch moves the async+AF8-synchronize+AF8-full call out of
-+AD4 +AF8AXw-device+AF8-release+AF8-driver and into driver+AF8-detach.
-+AD4 
-+AD4 The idea behind this is that the async+AF8-synchronize+AF8-full call will only
-+AD4 guarantee that any existing async operations are flushed. This doesn't do
-+AD4 anything to guarantee that a hotplug event that may occur while we are
-+AD4 doing the release of the driver will not be asynchronously scheduled.
-+AD4 
-+AD4 By moving this into the driver+AF8-detach path we can avoid potential deadlocks
-+AD4 as we aren't holding the device lock at this point and we should not have
-+AD4 the driver we want to flush loaded so the flush will take care of any
-+AD4 asynchronous events the driver we are detaching might have scheduled.
-+AD4 
-+AD4 Signed-off-by: Alexander Duyck +ADw-alexander.h.duyck+AEA-linux.intel.com+AD4
-+AD4 ---
-+AD4  drivers/base/dd.c +AHw    6 +-+-+----
-+AD4  1 file changed, 3 insertions(+-), 3 deletions(-)
-+AD4 
-+AD4 diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-+AD4 index 76c40fe69463..e74cefeb5b69 100644
-+AD4 --- a/drivers/base/dd.c
-+AD4 +-+-+- b/drivers/base/dd.c
-+AD4 +AEAAQA -975,9 +-975,6 +AEAAQA static void +AF8AXw-device+AF8-release+AF8-driver(struct device +ACo-dev, struct device +ACo-parent)
-+AD4  
-+AD4  	drv +AD0 dev-+AD4-driver+ADs
-+AD4  	if (drv) +AHs
-+AD4 -		if (driver+AF8-allows+AF8-async+AF8-probing(drv))
-+AD4 -			async+AF8-synchronize+AF8-full()+ADs
-+AD4 -
-+AD4  		while (device+AF8-links+AF8-busy(dev)) +AHs
-+AD4  			+AF8AXw-device+AF8-driver+AF8-unlock(dev, parent)+ADs
-+AD4  
-+AD4 +AEAAQA -1087,6 +-1084,9 +AEAAQA void driver+AF8-detach(struct device+AF8-driver +ACo-drv)
-+AD4  	struct device+AF8-private +ACo-dev+AF8-prv+ADs
-+AD4  	struct device +ACo-dev+ADs
-+AD4  
-+AD4 +-	if (driver+AF8-allows+AF8-async+AF8-probing(drv))
-+AD4 +-		async+AF8-synchronize+AF8-full()+ADs
-+AD4 +-
-+AD4  	for (+ADsAOw) +AHs
-+AD4  		spin+AF8-lock(+ACY-drv-+AD4-p-+AD4-klist+AF8-devices.k+AF8-lock)+ADs
-+AD4  		if (list+AF8-empty(+ACY-drv-+AD4-p-+AD4-klist+AF8-devices.k+AF8-list)) +AHs
+On 11/5/18 2:12 PM, Geert Uytterhoeven wrote:
+> On Mon, Nov 5, 2018 at 11:07 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> Below is the list of build error/warning regressions/improvements in
+>> v4.20-rc1[1] compared to v4.19[2].
+>>
+>> Summarized:
+>>   - build errors: +3/-0
+>>   - build warnings: +449/-2712
+>>
+>> Happy fixing! ;-)
+>>
+>> Thanks to the linux-next team for providing the build service.
+>>
+>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/651022382c7f8da46cb4872a545ee1da6d097d2a/ (all 240 configs)
+>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d/ (all 240 configs)
+>>
+>>
+>> *** ERRORS ***
+>>
+>>   + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]:  => 8799:3
+> 
+> sh4-all{mod,yes}config
+> 
+> Looks like d9b84a15892c0233 ("ALSA: hda: Fix implicit definition of
+> pci_iomap() on SH")
+> is not sufficient?
 
-Have you considered to move that async+AF8-synchronize+AF8-full() call into
-bus+AF8-remove+AF8-driver()? Verifying the correctness of this patch requires to
-check whether the async+AF8-synchronize+AF8-full() comes after the
-klist+AF8-remove(+ACY-drv-+AD4-p-+AD4-knode+AF8-bus) call. That verification is easier when
-the async+AF8-synchronize+AF8-full() call occurs in bus+AF8-remove+AF8-driver() instead
-of in driver+AF8-detach().
+Different problem.  This is about "select":
 
-Thanks,
+config SND_SOC_ALL_CODECS
+	tristate "Build all ASoC CODEC drivers"
 
-Bart.
+That enables (sets):
+	select SND_SOC_HDAC_HDA
+which selects SND_HDA even though CONFIG_PCI is not enabled.
+
+After SND_HDA is selected (above), the Kconfig symbols in
+sound/pci/hda/Kconfig are available for enabling, so
+SND_HDA_CODEC_CA0132 is enabled but will not build.
+
+
+One simple solution (but possibly too naive) is:
+
+---
+ sound/soc/codecs/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- lnx-420-rc1.orig/sound/soc/codecs/Kconfig
++++ lnx-420-rc1/sound/soc/codecs/Kconfig
+@@ -82,7 +82,7 @@ config SND_SOC_ALL_CODECS
+ 	select SND_SOC_ES7241
+ 	select SND_SOC_GTM601
+ 	select SND_SOC_HDAC_HDMI
+-	select SND_SOC_HDAC_HDA
++	select SND_SOC_HDAC_HDA if PCI
+ 	select SND_SOC_ICS43432
+ 	select SND_SOC_INNO_RK3036
+ 	select SND_SOC_ISABELLE if I2C
+
+
+
+
+-- 
+~Randy
