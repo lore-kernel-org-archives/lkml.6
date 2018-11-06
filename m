@@ -6,99 +6,86 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95446C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC935C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E49C2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C1FF2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:01:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ltU1qq2T";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="L5p26fea"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E49C2081D
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OoP3v9LA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IW6wLIWe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1FF2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389560AbeKGC0z (ORCPT
+        id S2389577AbeKGC1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:26:55 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58230 "EHLO
+        Tue, 6 Nov 2018 21:27:52 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58744 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389285AbeKGC0y (ORCPT
+        with ESMTP id S2389285AbeKGC1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:26:54 -0500
+        Tue, 6 Nov 2018 21:27:52 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0C98E6053D; Tue,  6 Nov 2018 17:00:46 +0000 (UTC)
+        id E8C4F601D7; Tue,  6 Nov 2018 17:01:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541523647;
-        bh=CrI7q0jneloLOpDoz+IoAKiqCZMUtdwfFxmhByKRO3k=;
+        s=default; t=1541523703;
+        bh=VhR3OzK4s1aY/KqeZ6NOUhweOuZTUdQLttBQA1bzZ7o=;
         h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=ltU1qq2TBJV/bg2a6lQeinYCw/TPcVcSiev3OZFnjcJfzqwsq+Wuw0aHGOup7M2ao
-         8Y6WZyyqHXAh6jZXxN6qjOVPHunySwA0XVZUK2CdAkMq9p4QihGXBO4m4kGEmREd7c
-         NqE3447LT0RDeqUhdChi5osA/ptaesxYVil7LQlk=
+        b=OoP3v9LAeBdaFS/za3/R9T1IoZablBXYV0QqllzylTvhovugTXOLliDPI5yPIZx5q
+         mgGcli/og86m19HP3kJW7iqa0tUilzSP+DdGpYkzoQMFOWFji4EgBBja+hcIkwWCd5
+         ZK20Mt9QT/LbavOVWpBLh2rZ7Dshsr/VNJ0Kog3s=
 Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CE8C601DA;
-        Tue,  6 Nov 2018 17:00:44 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0C48E601D7;
+        Tue,  6 Nov 2018 17:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541523646;
-        bh=CrI7q0jneloLOpDoz+IoAKiqCZMUtdwfFxmhByKRO3k=;
+        s=default; t=1541523702;
+        bh=VhR3OzK4s1aY/KqeZ6NOUhweOuZTUdQLttBQA1bzZ7o=;
         h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=L5p26fea6RkffJ95WzU3J1igRuzTAsSCs1aNZwMoe8sE/9dS/iyHgCPGdsyl9z8ud
-         NTsnU1xWyrIwvXFmZxkC5LyPvZNPPynlu0l9mYhDbFkMjdVNc8OzQCRgLQicYDL7Gh
-         AzRWGSptN7C/mhvl3k9ju1YOh2RgxolRaBWoj2aI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CE8C601DA
+        b=IW6wLIWeWWUgJYb1F1VWubYPXkwa+c/0ymKanKTvCtqqFnS3/aWjFF9udG3+Ezgov
+         9zXwR7x6hn7L3Fx+vC1mMjyDFkSQtAGllNzvIfa9Y5jQVL6msfzTMEp/U2oRfu+jsR
+         MTgtLTEyrA0aOkrklLltzqJLJ0HNZHHnXoqV5Gww=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C48E601D7
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 07/20] iwlegacy: 4965-mac: mark expected switch
- fall-through
+Subject: Re: [PATCHv3] rtlwifi: rtl8723ae: Remove set but not used variables
+ and #defines
 From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <8d72b8a6f1529906672ac458e96d272bc55a1410.1540239684.git.gustavo@embeddedor.com>
-References: <8d72b8a6f1529906672ac458e96d272bc55a1410.1540239684.git.gustavo@embeddedor.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <1540360329-65013-1-git-send-email-zhongjiang@huawei.com>
+References: <1540360329-65013-1-git-send-email-zhongjiang@huawei.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <pkshih@realtek.com>, <davem@davemloft.net>,
+        <linux-wireless@vger.kernel.org>, <joe@perches.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181106170047.0C98E6053D@smtp.codeaurora.org>
-Date:   Tue,  6 Nov 2018 17:00:46 +0000 (UTC)
+Message-Id: <20181106170143.E8C4F601D7@smtp.codeaurora.org>
+Date:   Tue,  6 Nov 2018 17:01:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+zhong jiang <zhongjiang@huawei.com> wrote:
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+> radiob_array_table' and 'radiob_arraylen' are not used after setting its value.
+> It is safe to remove the unused variable. Meanwhile, radio B array should be
+> removed as well. because it will no longer be referenced.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-14 patches applied to wireless-drivers-next.git, thanks.
+Patch applied to wireless-drivers-next.git, thanks.
 
-e9904084dd1b iwlegacy: 4965-mac: mark expected switch fall-through
-af71f8fef45c iwlegacy: common: mark expected switch fall-throughs
-d56b26801e1d orinoco_usb: mark expected switch fall-through
-d22b8fadd08e prism54: isl_38xx: Mark expected switch fall-through
-3d238b9d5048 prism54: isl_ioctl: mark expected switch fall-through
-38a0792d08e9 prism54: islpci_dev: mark expected switch fall-through
-63fdc952df36 mwifiex: Mark expected switch fall-through
-6eba8fd22352 rt2x00: rt2400pci: mark expected switch fall-through
-10bb92217747 rt2x00: rt2500pci: mark expected switch fall-through
-916e6bbcfcff rt2x00: rt2800lib: mark expected switch fall-throughs
-641dd8068ecb rt2x00: rt61pci: mark expected switch fall-through
-d22d2492a35d ray_cs: mark expected switch fall-throughs
-89e54fa4562e rtlwifi: rtl8821ae: phy: Mark expected switch fall-through
-7cbbe1597e44 zd1201: mark expected switch fall-through
+90e3243d16ad rtlwifi: rtl8723ae: Remove set but not used variables and #defines
 
 -- 
-https://patchwork.kernel.org/patch/10652563/
+https://patchwork.kernel.org/patch/10654181/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
