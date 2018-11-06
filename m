@@ -2,158 +2,108 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16DBC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3EBC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8142F2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:16:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZxKA8ICA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8142F2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 0234620827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:22:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0234620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbeKFJiX (ORCPT
+        id S1727200AbeKFJon (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 04:38:23 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42141 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbeKFJiX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 04:38:23 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x63-v6so5507052oix.9
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 16:16:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0IgQmPMuONbf/jroYcUop5JoTdZG60Yj4YKkksGzoF8=;
-        b=ZxKA8ICAjqhYhfC/l4gMeRxTW4oytZHl116F6g4IHDEWphkdZkf0LKH4mcPhtIeV98
-         GOfX61FTnuyk17SRO81d9VyGtiJBvYt/QMOoNpjRSLP9gmcKeF7OufzFY1UgXytp2e8I
-         yrtmkAmoVd2p9egDVfk8Q85Ezu6Mych6qVHmBcUV4hpxvBcmm9k8gChAH0bJ0wQDu3wq
-         1YudZtvB30k1zkFUWzbaTcDe7Pm5oAtB4b7i0KakDEzXp02hhDDHixOylOQ5SSqvobHU
-         lCwE2NCvZNrby7GL/qF1r7mv1+uK6pBwJA5eHHkU8h6Je9KzmHD/EIKwQPGDYkNDheOD
-         teHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0IgQmPMuONbf/jroYcUop5JoTdZG60Yj4YKkksGzoF8=;
-        b=Jm8X9ma1VvPbVIEqwohoxu8bUDcvXlMYzw6wWmUilP9vQChAdl6KHXuqTfIuut16e9
-         TcHBNaLYx6nNd31CA2rYT7opcoPh8CUVCujdYnuWXdtaUdfQqs95o18Md8wb/5TZWv4m
-         7gVyDJyE/io49LzZwaJwnbpSH/uLjatrL+ACehgEpx34bfiVNt6QiVN0uA64tIW8I5JS
-         d9SGEZkGv9E2U7iRpSyQiVched/NkKjoj1ExuHsemdMPKuMmopaErjtqVrnlDrq3Ndg7
-         i313xSrpHk9uiBTWck4Gh6ssv1RMKEpkZ7kr0P63V6dWJyXdG0hTrjeKZVyZeMJ1Nb2+
-         zDKA==
-X-Gm-Message-State: AGRZ1gLv7yKaIWIV4ZD9Hw5TNFvi5igEVPUPDx0zTyz2BWia+ZYweqgZ
-        NLrrKFD4AIiHRKW8qFwjSe+r1pL0dkfLrhpWxdtgtw==
-X-Google-Smtp-Source: AJdET5dlp+aKXJ6Qeq8JMdLVeN3HY7bYUFOGOLv0i0fev1YlF/lv3QsM0cNCinEKup52OLh1/EPK/4qXSs8eUtYpbmg=
-X-Received: by 2002:aca:f1d6:: with SMTP id p205-v6mr14737058oih.332.1541463361388;
- Mon, 05 Nov 2018 16:16:01 -0800 (PST)
+        Tue, 6 Nov 2018 04:44:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49464 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbeKFJon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 04:44:43 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C0F931256BA;
+        Tue,  6 Nov 2018 00:22:21 +0000 (UTC)
+Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5C90266061;
+        Tue,  6 Nov 2018 00:22:20 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 08:22:16 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH] mm, memory_hotplug: teach has_unmovable_pages about of
+ LRU migrateable pages
+Message-ID: <20181106002216.GK27491@MiWiFi-R3L-srv>
+References: <20181101091055.GA15166@MiWiFi-R3L-srv>
+ <20181102155528.20358-1-mhocko@kernel.org>
+ <20181105002009.GF27491@MiWiFi-R3L-srv>
+ <20181105091407.GB4361@dhcp22.suse.cz>
+ <20181105092851.GD4361@dhcp22.suse.cz>
+ <20181105102520.GB22011@MiWiFi-R3L-srv>
+ <20181105123837.GH4361@dhcp22.suse.cz>
+ <20181105142308.GJ27491@MiWiFi-R3L-srv>
+ <20181105171002.GO4361@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20181001194501.58338-1-badhri@google.com> <20181001194501.58338-3-badhri@google.com>
- <20181102132847.GC6543@kuha.fi.intel.com>
-In-Reply-To: <20181102132847.GC6543@kuha.fi.intel.com>
-From:   Badhri Jagan Sridharan <badhri@google.com>
-Date:   Mon, 5 Nov 2018 16:15:24 -0800
-Message-ID: <CAPTae5K7o31eFJxaW=_6UCyLgiagSz45O6iDhgfqh2vu3QMQsg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] usb: typec: tcpm: charge current handling for sink
- during hard reset
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        cw00.choi@samsung.com, a.hajda@samsung.com, jun.li@nxp.com,
-        Guenter Roeck <linux@roeck-us.net>, jackp@codeaurora.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105171002.GO4361@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 06 Nov 2018 00:22:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki, Rob,
+On 11/05/18 at 06:10pm, Michal Hocko wrote:
+> On Mon 05-11-18 22:23:08, Baoquan He wrote:
+> > On 11/05/18 at 01:38pm, Michal Hocko wrote:
+> > > On Mon 05-11-18 18:25:20, Baoquan He wrote:
+> > > > Hi Michal,
+> > > > 
+> > > > On 11/05/18 at 10:28am, Michal Hocko wrote:
+> > > > > 
+> > > > > Or something like this. Ugly as hell, no question about that. I also
+> > > > > have to think about this some more to convince myself this will not
+> > > > > result in an endless loop under some situations.
+> > > > 
+> > > > It failed. Paste the log and patch diff here, please help check if I made
+> > > > any mistake on manual code change. The log is at bottom.
+> > > 
+> > > The retry patch is obviously still racy, it just makes the race window
+> > > slightly smaller and I hoped it would catch most of those races but this
+> > > is obviously not the case.
+> > > 
+> > > I was thinking about your MIGRATE_MOVABLE check some more and I still do
+> > > not like it much, we just change migrate type at many places and I have
+> > > hard time to actually see this is always safe wrt. to what we need here.
+> > > 
+> > > We should be able to restore the zone type check though. The
+> > > primary problem fixed by 15c30bc09085 ("mm, memory_hotplug: make
+> > > has_unmovable_pages more robust") was that early allocations made it to
+> > > the zone_movable range. If we add the check _after_ the PageReserved()
+> > > check then we should be able to rule all bootmem allocation out.
+> > > 
+> > > So what about the following (on top of the previous patch which makes
+> > > sense on its own I believe).
+> > 
+> > Yes, I think this looks very reasonable and should be robust.
+> > 
+> > Have tested it, hot removing 4 hotpluggable nodes continusously
+> > succeeds, and then hot adding them back, still works well.
+> > 
+> > So please feel free to add my Tested-by or Acked-by.
+> > 
+> > Tested-by: Baoquan He <bhe@redhat.com>
+> > or
+> > Acked-by: Baoquan He <bhe@redhat.com>
+> 
+> Thanks for retesting! Does this apply to both patches?
 
-Thanks for reviewing !
-Should I update the patchset with the Reviewed-by tag and bumpup the
-patchset version ?
-Or is that not necessary?
-
-Thanks,
-Badhri.
-
-On Fri, Nov 2, 2018 at 6:28 AM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> On Mon, Oct 01, 2018 at 12:45:01PM -0700, Badhri Jagan Sridharan wrote:
-> > During the initial connect to a non-pd port, sink would hard reset
-> > twice before deeming that the port partner is non-pd. TCPM sets the
-> > the charge path to false during the hard reset. This causes unnecessary
-> > connects/disconnects of charge path and makes port take longer to
-> > charge from the non-pd ports. Avoid this by not setting the charge path
-> > to false unless the partner has already identified to be pd capable.
-> >
-> > When partner is a pd port, set the charge path to false in
-> > SNK_HARD_RESET_SINK_OFF. Set the current limits to default value based
-> > of CC pull up and resume the charge path when port enters
-> > SNK_HARD_RESET_SINK_ON.
-> >
-> > Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
->
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->
-> > --------
-> > Changes in V3:
-> > Rebase on top of usb-next
-> >
-> > Changes in V2:
-> > Based on feedback of jackp@codeaurora.org
-> > - vsafe_5v_hard_reset flag from tcpc_config is removed
-> > - Patch only differentiates between pd port partner and non-pd port
-> > partner
-> >
-> > V1 version of the patch is here:
-> > https://lkml.org/lkml/2018/9/14/11
-> > ---
-> >  drivers/usb/typec/tcpm/tcpm.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> > index c3ac0e46106b..c25a69922ee6 100644
-> > --- a/drivers/usb/typec/tcpm/tcpm.c
-> > +++ b/drivers/usb/typec/tcpm/tcpm.c
-> > @@ -3273,7 +3273,8 @@ static void run_state_machine(struct tcpm_port *port)
-> >       case SNK_HARD_RESET_SINK_OFF:
-> >               memset(&port->pps_data, 0, sizeof(port->pps_data));
-> >               tcpm_set_vconn(port, false);
-> > -             tcpm_set_charge(port, false);
-> > +             if (port->pd_capable)
-> > +                     tcpm_set_charge(port, false);
-> >               tcpm_set_roles(port, port->self_powered, TYPEC_SINK,
-> >                              TYPEC_DEVICE);
-> >               /*
-> > @@ -3305,6 +3306,12 @@ static void run_state_machine(struct tcpm_port *port)
-> >                * Similar, dual-mode ports in source mode should transition
-> >                * to PE_SNK_Transition_to_default.
-> >                */
-> > +             if (port->pd_capable) {
-> > +                     tcpm_set_current_limit(port,
-> > +                                            tcpm_get_current_limit(port),
-> > +                                            5000);
-> > +                     tcpm_set_charge(port, true);
-> > +             }
-> >               tcpm_set_attached_state(port, true);
-> >               tcpm_set_state(port, SNK_STARTUP, 0);
-> >               break;
-> > --
-> > 2.19.0.605.g01d371f741-goog
->
-> thanks,
->
-> --
-> heikki
+Sorry, don't get it. I just applied this on top of linus's tree and
+tested. Do you mean applying it on top of previous code change?
