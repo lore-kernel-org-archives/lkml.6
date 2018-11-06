@@ -2,303 +2,353 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B0CC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE87C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A712220862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:01:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A712220862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4614B2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:03:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4614B2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730133AbeKFSZS (ORCPT
+        id S1730207AbeKFS1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:25:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729416AbeKFSZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:25:17 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA68xCFc028612
-        for <linux-kernel@vger.kernel.org>; Tue, 6 Nov 2018 04:01:04 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nk5t6cuaw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 04:01:04 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 6 Nov 2018 09:01:02 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 6 Nov 2018 09:00:59 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA690w5W15204574
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Nov 2018 09:00:58 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85C87A4051;
-        Tue,  6 Nov 2018 09:00:58 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7EC6AA4053;
-        Tue,  6 Nov 2018 09:00:57 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.36])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  6 Nov 2018 09:00:57 +0000 (GMT)
-Date:   Tue, 6 Nov 2018 11:00:55 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, vbabka@suse.cz,
-        riel@redhat.com, Linux-MM <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: Create the new vm_fault_t type
-References: <20181106074934.GA27620@jordon-HP-15-Notebook-PC>
- <20181106082611.GB28505@rapoport-lnx>
- <CAFqt6zaKHXbWbBhK+bCeF-0s5uPH+6hGiU+Xp_6v_2A+xzHe2A@mail.gmail.com>
+        Tue, 6 Nov 2018 13:27:51 -0500
+Received: from mga07.intel.com ([134.134.136.100]:16724 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729416AbeKFS1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:27:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 01:03:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
+   d="scan'208";a="97984282"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 06 Nov 2018 01:03:39 -0800
+Received: from [10.125.252.37] (abudanko-mobl.ccr.corp.intel.com [10.125.252.37])
+        by linux.intel.com (Postfix) with ESMTP id D05BB580213;
+        Tue,  6 Nov 2018 01:03:36 -0800 (PST)
+Subject: [PATCH v15 1/3]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <5fcda10c-6c63-68df-383a-c6d9e5d1f918@linux.intel.com>
+Date:   Tue, 6 Nov 2018 12:03:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zaKHXbWbBhK+bCeF-0s5uPH+6hGiU+Xp_6v_2A+xzHe2A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18110609-0016-0000-0000-0000021FF228
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110609-0017-0000-0000-00003278381C
-Message-Id: <20181106090054.GC28505@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811060080
+In-Reply-To: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 02:04:54PM +0530, Souptick Joarder wrote:
-> On Tue, Nov 6, 2018 at 1:56 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> >
-> > On Tue, Nov 06, 2018 at 01:19:34PM +0530, Souptick Joarder wrote:
-> > > Page fault handlers are supposed to return VM_FAULT codes,
-> > > but some drivers/file systems mistakenly return error
-> > > numbers. Now that all drivers/file systems have been converted
-> > > to use the vm_fault_t return type, change the type definition
-> > > to no longer be compatible with 'int'. By making it an unsigned
-> > > int, the function prototype becomes incompatible with a function
-> > > which returns int. Sparse will detect any attempts to return a
-> > > value which is not a VM_FAULT code.
-> > >
-> > > VM_FAULT_SET_HINDEX and VM_FAULT_GET_HINDEX values are changed
-> > > to avoid conflict with other VM_FAULT codes.
-> > >
-> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > ---
-> > > v2: Updated the change log and corrected the document part.
-> > >     name added to the enum that kernel-doc able to parse it.
-> > >
-> > >  include/linux/mm.h       | 46 ------------------------------
-> > >  include/linux/mm_types.h | 73 +++++++++++++++++++++++++++++++++++++++++++++++-
-> > >  2 files changed, 72 insertions(+), 47 deletions(-)
-> > >
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index fcf9cc9..511a3ce 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
-> > >  }
-> > >
-> > >  /*
-> > > - * Different kinds of faults, as returned by handle_mm_fault().
-> > > - * Used to decide whether a process gets delivered SIGBUS or
-> > > - * just gets major/minor fault counters bumped up.
-> > > - */
-> > > -
-> > > -#define VM_FAULT_OOM 0x0001
-> > > -#define VM_FAULT_SIGBUS      0x0002
-> > > -#define VM_FAULT_MAJOR       0x0004
-> > > -#define VM_FAULT_WRITE       0x0008  /* Special case for get_user_pages */
-> > > -#define VM_FAULT_HWPOISON 0x0010     /* Hit poisoned small page */
-> > > -#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
-> > > -#define VM_FAULT_SIGSEGV 0x0040
-> > > -
-> > > -#define VM_FAULT_NOPAGE      0x0100  /* ->fault installed the pte, not return page */
-> > > -#define VM_FAULT_LOCKED      0x0200  /* ->fault locked the returned page */
-> > > -#define VM_FAULT_RETRY       0x0400  /* ->fault blocked, must retry */
-> > > -#define VM_FAULT_FALLBACK 0x0800     /* huge page fault failed, fall back to small */
-> > > -#define VM_FAULT_DONE_COW   0x1000   /* ->fault has fully handled COW */
-> > > -#define VM_FAULT_NEEDDSYNC  0x2000   /* ->fault did not modify page tables
-> > > -                                      * and needs fsync() to complete (for
-> > > -                                      * synchronous page faults in DAX) */
-> > > -
-> > > -#define VM_FAULT_ERROR       (VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
-> > > -                      VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
-> > > -                      VM_FAULT_FALLBACK)
-> > > -
-> > > -#define VM_FAULT_RESULT_TRACE \
-> > > -     { VM_FAULT_OOM,                 "OOM" }, \
-> > > -     { VM_FAULT_SIGBUS,              "SIGBUS" }, \
-> > > -     { VM_FAULT_MAJOR,               "MAJOR" }, \
-> > > -     { VM_FAULT_WRITE,               "WRITE" }, \
-> > > -     { VM_FAULT_HWPOISON,            "HWPOISON" }, \
-> > > -     { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" }, \
-> > > -     { VM_FAULT_SIGSEGV,             "SIGSEGV" }, \
-> > > -     { VM_FAULT_NOPAGE,              "NOPAGE" }, \
-> > > -     { VM_FAULT_LOCKED,              "LOCKED" }, \
-> > > -     { VM_FAULT_RETRY,               "RETRY" }, \
-> > > -     { VM_FAULT_FALLBACK,            "FALLBACK" }, \
-> > > -     { VM_FAULT_DONE_COW,            "DONE_COW" }, \
-> > > -     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> > > -
-> > > -/* Encode hstate index for a hwpoisoned large page */
-> > > -#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
-> > > -#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
-> > > -
-> > > -/*
-> > >   * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
-> > >   */
-> > >  extern void pagefault_out_of_memory(void);
-> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > index 5ed8f62..beee607 100644
-> > > --- a/include/linux/mm_types.h
-> > > +++ b/include/linux/mm_types.h
-> > > @@ -22,7 +22,6 @@
-> > >  #endif
-> > >  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
-> > >
-> > > -typedef int vm_fault_t;
-> > >
-> > >  struct address_space;
-> > >  struct mem_cgroup;
-> > > @@ -609,6 +608,78 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
-> > >
-> > >  struct vm_fault;
-> > >
-> > > +/**
-> > > + * typedef vm_fault_t - Return type for page fault handlers.
-> > > + *
-> > > + * Page fault handlers return a bitmask of %VM_FAULT values.
-> > > + */
-> > > +typedef __bitwise unsigned int vm_fault_t;
-> > > +
-> > > +/**
-> > > + * enum - VM_FAULT code
-> >
-> > It should be 'enum vm_fault_reason' here.
-> 
-> Sorry, missed it.
-> 
-> > A more elaborate brief description would also be nice.
->
-> This much description is not sufficient to explain the enum ?
-> >
 
-The description below is fine, but kernel-doc will use "VM_FAULT code" as
-the "short description" and the explanation will be used as "long
-description".
+The map->data buffer is used to preserve map->base profiling data 
+for writing to disk. AIO map->cblock is used to queue corresponding 
+map->data buffer for asynchronous writing.
 
-So either replace "VM_FAULT code" with something like "page fault handler
-return codes" or put the long explanation next to 'enum vm_fault_reason':
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v15:
+ - implemented libaio feature check and defined HAVE_AIO_SUPPORT accordingly
+Changes in v13:
+ - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
+Changes in v12:
+ - applied stub functions design for the whole patch kit
+ - grouped AIO related data into a struct under struct perf_mmap
+Changes in v10:
+ - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap()
+ - adjusted error reporting by using %m
+Changes in v9:
+  - implemented NO_AIO and HAVE_AIO_SUPPORT defines to cover cases of 
+    libc implementations without Posix AIO API support
+Changes in v7:
+  - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+  - adjusted setting of priorities for cblocks;
+ Changes in v5:
+  - reshaped layout of data structures;
+  - implemented --aio option;
+ Changes in v4:
+  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
+ Changes in v2:
+  - converted zalloc() to calloc() for allocation of mmap_aio array,
+  - cleared typo and adjusted fallback branch code;
+---
+ tools/build/Makefile.feature      |  6 +++--
+ tools/build/feature/Makefile      |  6 ++++-
+ tools/build/feature/test-all.c    |  5 ++++
+ tools/build/feature/test-libaio.c | 16 +++++++++++++
+ tools/perf/Makefile.config        |  6 +++++
+ tools/perf/Makefile.perf          |  7 +++++-
+ tools/perf/util/evlist.c          |  2 +-
+ tools/perf/util/mmap.c            | 49 ++++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/mmap.h            | 11 ++++++++-
+ 9 files changed, 101 insertions(+), 7 deletions(-)
 
-/**
- * enum vm_fault_reason - page fault handlers return a bitmask of these
- * values ...
- * ...
- */
-
-Please take a look at "Structure, union, and enumeration documentation" in
-Documentation/doc-guide/kernel-doc.rst [1].
-
-[1] https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#structure-union-and-enumeration-documentation
-
-> > > + *
-> > > + * Page fault handlers return a bitmask of these values to tell
-> > > + * the core VM what happened when handling the fault. Used to decide
-> > > + * whether a process gets delivered SIGBUS or just gets major/minor
-> > > + * fault counters bumped up.
-> > > + *
-> > > + * @VM_FAULT_OOM:            Out Of Memory
-> > > + * @VM_FAULT_SIGBUS:         Bad access
-> > > + * @VM_FAULT_MAJOR:          Page read from storage
-> > > + * @VM_FAULT_WRITE:          Special case for get_user_pages
-> > > + * @VM_FAULT_HWPOISON:               Hit poisoned small page
-> > > + * @VM_FAULT_HWPOISON_LARGE: Hit poisoned large page. Index encoded
-> > > + *                           in upper bits
-> > > + * @VM_FAULT_SIGSEGV:                segmentation fault
-> > > + * @VM_FAULT_NOPAGE:         ->fault installed the pte, not return page
-> > > + * @VM_FAULT_LOCKED:         ->fault locked the returned page
-> > > + * @VM_FAULT_RETRY:          ->fault blocked, must retry
-> > > + * @VM_FAULT_FALLBACK:               huge page fault failed, fall back to small
-> > > + * @VM_FAULT_DONE_COW:               ->fault has fully handled COW
-> > > + * @VM_FAULT_NEEDDSYNC:              ->fault did not modify page tables and needs
-> > > + *                           fsync() to complete (for synchronous page faults
-> > > + *                           in DAX)
-> > > + */
-> > > +enum vm_fault_reason {
-> > > +     VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
-> > > +     VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
-> > > +     VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
-> > > +     VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
-> > > +     VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
-> > > +     VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
-> > > +     VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
-> > > +     VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
-> > > +     VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
-> > > +     VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
-> > > +     VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
-> > > +     VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
-> > > +     VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
-> > > +     VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
-> > > +};
-> > > +
-> > > +/* Encode hstate index for a hwpoisoned large page */
-> > > +#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
-> > > +#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
-> > > +
-> > > +#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |     \
-> > > +                     VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |  \
-> > > +                     VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
-> > > +
-> > > +#define VM_FAULT_RESULT_TRACE \
-> > > +     { VM_FAULT_OOM,                 "OOM" },        \
-> > > +     { VM_FAULT_SIGBUS,              "SIGBUS" },     \
-> > > +     { VM_FAULT_MAJOR,               "MAJOR" },      \
-> > > +     { VM_FAULT_WRITE,               "WRITE" },      \
-> > > +     { VM_FAULT_HWPOISON,            "HWPOISON" },   \
-> > > +     { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },     \
-> > > +     { VM_FAULT_SIGSEGV,             "SIGSEGV" },    \
-> > > +     { VM_FAULT_NOPAGE,              "NOPAGE" },     \
-> > > +     { VM_FAULT_LOCKED,              "LOCKED" },     \
-> > > +     { VM_FAULT_RETRY,               "RETRY" },      \
-> > > +     { VM_FAULT_FALLBACK,            "FALLBACK" },   \
-> > > +     { VM_FAULT_DONE_COW,            "DONE_COW" },   \
-> > > +     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> > > +
-> > >  struct vm_special_mapping {
-> > >       const char *name;       /* The name, e.g. "[vdso]". */
-> > >
-> > > --
-> > > 1.9.1
-> > >
-> >
-> > --
-> > Sincerely yours,
-> > Mike.
-> >
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index f216b2f5c3d7..185b1932b25a 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -68,7 +68,8 @@ FEATURE_TESTS_BASIC :=                  \
+         sched_getcpu			\
+         sdt				\
+         setns				\
+-        libopencsd
++        libopencsd			\
++        libaio
+ 
+ # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
+ # of all feature tests
+@@ -114,7 +115,8 @@ FEATURE_DISPLAY ?=              \
+          zlib                   \
+          lzma                   \
+          get_cpuid              \
+-         bpf
++         bpf			\
++         libaio
+ 
+ # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+ # If in the future we need per-feature checks/flags for features not
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 0516259be70f..468817a6bc44 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -58,7 +58,8 @@ FILES=                                          \
+          test-libopencsd.bin			\
+          test-clang.bin				\
+          test-llvm.bin				\
+-         test-llvm-version.bin
++         test-llvm-version.bin			\
++         test-libaio.bin
+ 
+ FILES := $(addprefix $(OUTPUT),$(FILES))
+ 
+@@ -285,6 +286,9 @@ $(OUTPUT)test-clang.bin:
+ 
+ -include $(OUTPUT)*.d
+ 
++$(OUTPUT)test-libaio.bin:
++	$(BUILD) -lrt
++
+ ###############################
+ 
+ clean:
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 8dc20a61341f..19ca9c87cc61 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -166,6 +166,10 @@
+ # include "test-libopencsd.c"
+ #undef main
+ 
++#define main main_test_libaio
++# include "test-libaio.c"
++#undef main
++
+ int main(int argc, char *argv[])
+ {
+ 	main_test_libpython();
+@@ -204,6 +208,7 @@ int main(int argc, char *argv[])
+ 	main_test_sdt();
+ 	main_test_setns();
+ 	main_test_libopencsd();
++	main_test_libaio();
+ 
+ 	return 0;
+ }
+diff --git a/tools/build/feature/test-libaio.c b/tools/build/feature/test-libaio.c
+new file mode 100644
+index 000000000000..932133c9a265
+--- /dev/null
++++ b/tools/build/feature/test-libaio.c
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <aio.h>
++
++int main(void)
++{
++	struct aiocb aiocb;
++
++	aiocb.aio_fildes  = 0;
++	aiocb.aio_offset  = 0;
++	aiocb.aio_buf     = 0;
++	aiocb.aio_nbytes  = 0;
++	aiocb.aio_reqprio = 0;
++	aiocb.aio_sigevent.sigev_notify = 1 /*SIGEV_NONE*/;
++
++	return (int)aio_return(&aiocb);
++}
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f6d1a03c7523..533282da45ae 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -357,6 +357,12 @@ ifeq ($(feature-glibc), 1)
+   CFLAGS += -DHAVE_GLIBC_SUPPORT
+ endif
+ 
++ifeq ($(feature-libaio), 1)
++  ifndef NO_AIO
++    CFLAGS += -DHAVE_AIO_SUPPORT
++  endif
++endif
++
+ ifdef NO_DWARF
+   NO_LIBDW_DWARF_UNWIND := 1
+ endif
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 92514fb3689f..7becc6a72cf2 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -97,8 +97,13 @@ include ../scripts/utilities.mak
+ # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
+ # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
+ # llvm-config is not in $PATH.
+-
++#
+ # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
++#
++# Define NO_AIO if you do not want support of Posix AIO based trace
++# streaming for record mode. Currently Posix AIO trace streaming is
++# supported only when linking with glibc.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index be440df29615..1a83bf2c069c 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * Its value is decided by evsel's write_backward.
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+-	struct mmap_params mp;
++	struct mmap_params mp = { .nr_cblocks = 0 };
+ 
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index cdb95b3a1213..47cdc3ad6546 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -153,8 +153,55 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ {
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
++static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
++{
++	int delta_max;
++
++	if (mp->nr_cblocks) {
++		map->aio.data = malloc(perf_mmap__mmap_len(map));
++		if (!map->aio.data) {
++			pr_debug2("failed to allocate data buffer, error %m\n");
++			return -1;
++		}
++		/*
++		 * Use cblock.aio_fildes value different from -1
++		 * to denote started aio write operation on the
++		 * cblock so it requires explicit record__aio_sync()
++		 * call prior the cblock may be reused again.
++		 */
++		map->aio.cblock.aio_fildes = -1;
++		/*
++		 * Allocate cblock with max priority delta to
++		 * have faster aio write system calls.
++		 */
++		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++		map->aio.cblock.aio_reqprio = delta_max;
++	}
++
++	return 0;
++}
++
++static void perf_mmap__aio_munmap(struct perf_mmap *map)
++{
++	if (map->aio.data)
++		zfree(&map->aio.data);
++}
++#else
++static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
++			       struct mmap_params *mp __maybe_unused)
++{
++	return 0;
++}
++
++static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
++{
++}
++#endif
++
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++	perf_mmap__aio_munmap(map);
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -197,7 +244,7 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
+ 
+-	return 0;
++	return perf_mmap__aio_mmap(map, mp);
+ }
+ 
+ static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index e603314dc792..a46dbdcdcc8a 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,9 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#ifdef HAVE_AIO_SUPPORT
++#include <aio.h>
++#endif
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -26,6 +29,12 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++#ifdef HAVE_AIO_SUPPORT
++	struct {
++		void 		 *data;
++		struct aiocb	 cblock;
++	} aio;
++#endif
+ };
+ 
+ /*
+@@ -57,7 +66,7 @@ enum bkw_mmap_state {
+ };
+ 
+ struct mmap_params {
+-	int			    prot, mask;
++	int			    prot, mask, nr_cblocks;
+ 	struct auxtrace_mmap_params auxtrace_mp;
+ };
+ 
