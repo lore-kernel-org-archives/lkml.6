@@ -7,198 +7,162 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 989A5C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33619C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 575292086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E85ED20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOVftvL4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 575292086B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVnmd2rx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85ED20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388033AbeKFVbm (ORCPT
+        id S2388059AbeKFVbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:31:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33534 "EHLO mail.kernel.org"
+        Tue, 6 Nov 2018 16:31:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387612AbeKFVbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:31:41 -0500
+        id S2388034AbeKFVbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:31:45 -0500
 Received: from jouet.infradead.org (unknown [189.40.102.97])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FFB62086C;
-        Tue,  6 Nov 2018 12:06:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6474C20862;
+        Tue,  6 Nov 2018 12:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541506007;
-        bh=KOPmIdvPPP9IyM3b2VbKi7m+FOKPr7LzwyRg/dmHyxs=;
+        s=default; t=1541506010;
+        bh=C+CjcnvyebvbqffpR6Re98JDGkTpts6d3KNWGjrAF+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HOVftvL4HukwzkqIb9WE+NLphI3YjSP/+ugGY3r1N1ut4+sYRLpaoWsdHnJI/MusO
-         meOu3HkofU/v+8jLac9Ls3Ic2PSp50ZCzN1Iwc7R8vnfVM9LHVrtAexq8NoeT5us6v
-         Zm82D2ykI9z51zDNIgq4V1Y28744AdciFxG1l8iM=
+        b=SVnmd2rx3fq73zg1y183dm4za1RjmgJ1pYjRgwFBmY0+LfYU8OC4BxC1I7PNqvAD8
+         tW0r11pqhAh9cht9O56jATGV0nNSyEL93JWOpF1Q3/Nqjt3psahYBTBmCsCCphEU5R
+         GDWlu8m5G1UsBkIs5meHsRt7Ms+DcaOpwpZS5bts=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Ahern <dsahern@gmail.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Jiri Olsa <jolsa@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>, Yonghong Song <yhs@fb.com>
-Subject: [PATCH 05/18] perf augmented_syscalls: Start collecting pathnames in the BPF program
-Date:   Tue,  6 Nov 2018 09:05:59 -0300
-Message-Id: <20181106120612.8262-6-acme@kernel.org>
+        linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 06/18] perf evlist: Move perf_evsel__reset_weak_group into evlist
+Date:   Tue,  6 Nov 2018 09:06:00 -0300
+Message-Id: <20181106120612.8262-7-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181106120612.8262-1-acme@kernel.org>
 References: <20181106120612.8262-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-This is the start of having the raw_syscalls:sys_enter BPF handler
-collecting pointer arguments, namely pathnames, and with two syscalls
-that have that pointer in different arguments, "open" as it as its first
-argument, "openat" as the second.
+- Move the function from builtin-stat to evlist for reuse
+- Rename to evlist to match purpose better
+- Pass the evlist as first argument.
+- No functional changes
 
-With this in place the existing beautifiers in 'perf trace' works, those
-args are shown instead of just the pointer that comes with the syscalls
-tracepoints.
-
-This also serves to show and document pitfalls in the process of using
-just that place in the kernel (raw_syscalls:sys_enter) plus tables
-provided by userspace to collect syscall pointer arguments.
-
-One is the need to use a barrier, as suggested by Edward, to avoid clang
-optimizations that make the kernel BPF verifier to refuse loading our
-pointer contents collector.
-
-The end result should be a generic eBPF program that works in all
-architectures, with the differences amongst archs resolved by the
-userspace component, 'perf trace', that should get all its tables
-created automatically from the kernel components where they are defined,
-via string table constructors for things not expressed in BTF/DWARF
-(enums, structs, etc), and otherwise using those observability files
-(BTF).
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Edward Cree <ecree@solarflare.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/n/tip-37dz54pmotgpnwg9tb6zuk9j@git.kernel.org
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20181001195927.14211-1-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_raw_syscalls.c | 72 ++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ tools/perf/builtin-stat.c | 28 +---------------------------
+ tools/perf/util/evlist.c  | 27 +++++++++++++++++++++++++++
+ tools/perf/util/evlist.h  |  3 +++
+ 3 files changed, 31 insertions(+), 27 deletions(-)
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index cde91c34b101..90a19336310b 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -37,15 +37,87 @@ struct syscall_exit_args {
- 	long		   ret;
- };
- 
-+struct augmented_filename {
-+	unsigned int	size;
-+	int		reserved;
-+	char		value[256];
-+};
-+
-+#define SYS_OPEN 2
-+#define SYS_OPENAT 257
-+
- SEC("raw_syscalls:sys_enter")
- int sys_enter(struct syscall_enter_args *args)
- {
- 	struct {
- 		struct syscall_enter_args args;
-+		struct augmented_filename filename;
- 	} augmented_args;
- 	unsigned int len = sizeof(augmented_args);
-+	const void *filename_arg = NULL;
- 
- 	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);
-+	/*
-+	 * Yonghong and Edward Cree sayz:
-+	 *
-+	 * https://www.spinics.net/lists/netdev/msg531645.html
-+	 *
-+	 * >>   R0=inv(id=0) R1=inv2 R6=ctx(id=0,off=0,imm=0) R7=inv64 R10=fp0,call_-1
-+	 * >> 10: (bf) r1 = r6
-+	 * >> 11: (07) r1 += 16
-+	 * >> 12: (05) goto pc+2
-+	 * >> 15: (79) r3 = *(u64 *)(r1 +0)
-+	 * >> dereference of modified ctx ptr R1 off=16 disallowed
-+	 * > Aha, we at least got a different error message this time.
-+	 * > And indeed llvm has done that optimisation, rather than the more obvious
-+	 * > 11: r3 = *(u64 *)(r1 +16)
-+	 * > because it wants to have lots of reads share a single insn.  You may be able
-+	 * > to defeat that optimisation by adding compiler barriers, idk.  Maybe someone
-+	 * > with llvm knowledge can figure out how to stop it (ideally, llvm would know
-+	 * > when it's generating for bpf backend and not do that).  -O0?  ¯\_(ツ)_/¯
-+	 *
-+	 * The optimization mostly likes below:
-+	 *
-+	 *	br1:
-+	 * 	...
-+	 *	r1 += 16
-+	 *	goto merge
-+	 *	br2:
-+	 *	...
-+	 *	r1 += 20
-+	 *	goto merge
-+	 *	merge:
-+	 *	*(u64 *)(r1 + 0)
-+	 *
-+	 * The compiler tries to merge common loads. There is no easy way to
-+	 * stop this compiler optimization without turning off a lot of other
-+	 * optimizations. The easiest way is to add barriers:
-+	 *
-+	 * 	 __asm__ __volatile__("": : :"memory")
-+	 *
-+	 * 	 after the ctx memory access to prevent their down stream merging.
-+	 */
-+	switch (augmented_args.args.syscall_nr) {
-+	case SYS_OPEN:	 filename_arg = (const void *)args->args[0];
-+			__asm__ __volatile__("": : :"memory");
-+			 break;
-+	case SYS_OPENAT: filename_arg = (const void *)args->args[1];
-+			 break;
-+	}
-+
-+	if (filename_arg != NULL) {
-+		augmented_args.filename.reserved = 0;
-+		augmented_args.filename.size = probe_read_str(&augmented_args.filename.value,
-+							      sizeof(augmented_args.filename.value),
-+							      filename_arg);
-+		if (augmented_args.filename.size < sizeof(augmented_args.filename.value)) {
-+			len -= sizeof(augmented_args.filename.value) - augmented_args.filename.size;
-+			len &= sizeof(augmented_args.filename.value) - 1;
-+		}
-+	} else {
-+		len = sizeof(augmented_args.args);
-+	}
-+
- 	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, len);
- 	return 0;
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index d1028d7755bb..a635abfa77b6 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -383,32 +383,6 @@ static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+ 	return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
  }
+ 
+-static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
+-{
+-	struct perf_evsel *c2, *leader;
+-	bool is_open = true;
+-
+-	leader = evsel->leader;
+-	pr_debug("Weak group for %s/%d failed\n",
+-			leader->name, leader->nr_members);
+-
+-	/*
+-	 * for_each_group_member doesn't work here because it doesn't
+-	 * include the first entry.
+-	 */
+-	evlist__for_each_entry(evsel_list, c2) {
+-		if (c2 == evsel)
+-			is_open = false;
+-		if (c2->leader == leader) {
+-			if (is_open)
+-				perf_evsel__close(c2);
+-			c2->leader = c2;
+-			c2->nr_members = 0;
+-		}
+-	}
+-	return leader;
+-}
+-
+ static bool is_target_alive(struct target *_target,
+ 			    struct thread_map *threads)
+ {
+@@ -477,7 +451,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 			if ((errno == EINVAL || errno == EBADF) &&
+ 			    counter->leader != counter &&
+ 			    counter->weak_group) {
+-				counter = perf_evsel__reset_weak_group(counter);
++				counter = perf_evlist__reset_weak_group(evsel_list, counter);
+ 				goto try_again;
+ 			}
+ 
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e88e6f9b1463..668d2a9ef0f4 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1810,3 +1810,30 @@ void perf_evlist__force_leader(struct perf_evlist *evlist)
+ 		leader->forced_leader = true;
+ 	}
+ }
++
++struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evsel_list,
++						 struct perf_evsel *evsel)
++{
++	struct perf_evsel *c2, *leader;
++	bool is_open = true;
++
++	leader = evsel->leader;
++	pr_debug("Weak group for %s/%d failed\n",
++			leader->name, leader->nr_members);
++
++	/*
++	 * for_each_group_member doesn't work here because it doesn't
++	 * include the first entry.
++	 */
++	evlist__for_each_entry(evsel_list, c2) {
++		if (c2 == evsel)
++			is_open = false;
++		if (c2->leader == leader) {
++			if (is_open)
++				perf_evsel__close(c2);
++			c2->leader = c2;
++			c2->nr_members = 0;
++		}
++	}
++	return leader;
++}
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..9919eed6d15b 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -312,4 +312,7 @@ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist);
+ 
+ void perf_evlist__force_leader(struct perf_evlist *evlist);
+ 
++struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
++						 struct perf_evsel *evsel);
++
+ #endif /* __PERF_EVLIST_H */
 -- 
 2.14.4
 
