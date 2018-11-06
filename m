@@ -2,143 +2,246 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093FDC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61956C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF7E520869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:51:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF7E520869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 1D74F20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:51:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YS3wKV4m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D74F20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388922AbeKGAQl (ORCPT
+        id S2388936AbeKGARa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:16:41 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:36610 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S2388428AbeKGAQl (ORCPT
+        Tue, 6 Nov 2018 19:17:30 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:34664 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388428AbeKGAR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:16:41 -0500
-Received: (qmail 2264 invoked by uid 2102); 6 Nov 2018 09:51:06 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 6 Nov 2018 09:51:06 -0500
-Date:   Tue, 6 Nov 2018 09:51:06 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Felipe Balbi <balbi@kernel.org>
-cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul Elder <paul.elder@ideasonboard.com>,
-        Bin Liu <b-liu@ti.com>, <kieran.bingham@ideasonboard.com>,
-        <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <rogerq@ti.com>
-Subject: Re: [PATCH 4/6] usb: gadget: add functions to signal udc driver to
- delay status stage
-In-Reply-To: <87d0riv4jw.fsf@linux.intel.com>
-Message-ID: <Pine.LNX.4.44L0.1811060939160.1450-100000@iolanthe.rowland.org>
+        Tue, 6 Nov 2018 19:17:29 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA6EpnAq024842;
+        Tue, 6 Nov 2018 08:51:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1541515909;
+        bh=GYQ0MFXS1TtNLqvUbBGA4h/Z95rKTg82ie2Ax0W2iRc=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=YS3wKV4mRSsuEfMEtS55nSvr0OBW33qKbmq/6Lsapw+JG2CXebguqz2L+zFcQwhRM
+         MNGFR2Ud+VIsICIii21g7HmPqisruR3Lix7DB6toRxwE09bByQO/o9SS4kBefkakgE
+         ewGMT5Sqq5wJrHCIQDdUoyJ1wdNNW3O1N0VlQIWw=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA6EpnOZ126640
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 08:51:49 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 6 Nov
+ 2018 08:51:49 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 6 Nov 2018 08:51:49 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA6EpkvO025162;
+        Tue, 6 Nov 2018 08:51:47 -0600
+Subject: Re: [RFC PATCH v1 14/14] usb:cdns3: Feature for changing role
+To:     Pawel Laszczak <pawell@cadence.com>, <gregkh@linuxfoundation.org>
+References: <1541267487-3664-1-git-send-email-pawell@cadence.com>
+ <1541267487-3664-15-git-send-email-pawell@cadence.com>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <adouglas@cadence.com>, <jbergsagel@ti.com>, <peter.chen@nxp.com>,
+        <pjez@cadence.com>, <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BE1AA81.3030107@ti.com>
+Date:   Tue, 6 Nov 2018 16:51:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1541267487-3664-15-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Nov 2018, Felipe Balbi wrote:
-
-> DATA stage always depends on a usb_ep_queue() from gadget driver. So
-> it's always "delayed" in that sense.
-
-However, it's conceivable that some UDC drivers might behave 
-differently depending on whether the usb_ep_queue call occurs within 
-the setup callback or after that callback returns.  They _shouldn't_, 
-but they might.
-
-> it avoids all the special cases. UDC drivers can implement a single
-> handling for struct usb_request. We could do away with special return
-> values and so on...
-
-It's not quite so simple, because the UDC driver will need to keep 
-track of whether a request queued on ep0 should be in the IN or the OUT 
-direction.  (Maybe they have to do this already, I don't know.)
-
-> > request and the UDC would then need to check whether that request corresponds 
-> > to a status stage and process it accordingly. A new operation specific to this 
+On 03/11/18 19:51, Pawel Laszczak wrote:
+> Patch adds feature that allow to change role from user space.
 > 
-> no, it wouldn't. UDC would have to check the size of request, that's
-> all:
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/cdns3/Makefile  |  2 +-
+>  drivers/usb/cdns3/core.c    |  2 +
+>  drivers/usb/cdns3/debugfs.c | 94 +++++++++++++++++++++++++++++++++++++
+>  drivers/usb/cdns3/drd.h     |  3 ++
+>  4 files changed, 100 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/usb/cdns3/debugfs.c
 > 
-> 	if (r->length == 0)
->         	special_zlp_handling();
-> 	else
->         	regular_non_zlp_handling();
+> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+> index 34e60d03c4ec..08e6cdbebd46 100644
+> --- a/drivers/usb/cdns3/Makefile
+> +++ b/drivers/usb/cdns3/Makefile
+> @@ -1,7 +1,7 @@
+>  obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
+>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
+>  
+> -cdns3-y					:= core.o drd.o
+> +cdns3-y					:= core.o drd.o debugfs.o
+>  cdns3-$(CONFIG_USB_CDNS3_GADGET)	+= gadget.o ep0.o debug.o
+>  cdns3-$(CONFIG_USB_CDNS3_HOST)		+= host.o
+>  cdns3-pci-y		 		:= cdns3-pci-wrap.o
+> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+> index 20ae9e76940e..4012f1007da9 100644
+> --- a/drivers/usb/cdns3/core.c
+> +++ b/drivers/usb/cdns3/core.c
+> @@ -309,6 +309,7 @@ static int cdns3_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err4;
+>  
+> +	cdns3_debugfs_init(cdns);
+>  	device_set_wakeup_capable(dev, true);
+>  	pm_runtime_set_active(dev);
+>  	pm_runtime_enable(dev);
+> @@ -346,6 +347,7 @@ static int cdns3_remove(struct platform_device *pdev)
+>  	pm_runtime_get_sync(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+>  	pm_runtime_put_noidle(&pdev->dev);
+> +	cdns3_debugfs_exit(cdns);
+>  	cdns3_remove_roles(cdns);
+>  	usb_phy_shutdown(cdns->usbphy);
+>  
+> diff --git a/drivers/usb/cdns3/debugfs.c b/drivers/usb/cdns3/debugfs.c
+> new file mode 100644
+> index 000000000000..d4871bc1a69d
+> --- /dev/null
+> +++ b/drivers/usb/cdns3/debugfs.c
+> @@ -0,0 +1,94 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Cadence USBSS DRD Controller DebugFS filer.
+> + *
+> + * Copyright (C) 2018 Cadence.
+> + *
+> + * Author: Pawel Laszczak <pawell@cadence.com>
+> + */
+> +
+> +#include <linux/types.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/uaccess.h>
+> +
+> +#include "core.h"
+> +#include "gadget.h"
+> +
+> +static int cdns3_mode_show(struct seq_file *s, void *unused)
+> +{
+> +	struct cdns3		*cdns = s->private;
+> +
+> +	switch (cdns->role) {
+> +	case CDNS3_ROLE_HOST:
+> +		seq_puts(s, "host\n");
+> +		break;
+> +	case CDNS3_ROLE_GADGET:
+> +		seq_puts(s, "device\n");
+> +		break;
+> +	case CDNS3_ROLE_OTG:
+> +	case CDNS3_ROLE_END:
+> +		seq_puts(s, "otg\n");
+> +		break;
+> +	default:
+> +		seq_puts(s, "UNKNOWN mode\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns3_mode_open(struct inode *inode, struct file *file)
+> +{
+> +	return single_open(file, cdns3_mode_show, inode->i_private);
+> +}
+> +
+> +static ssize_t cdns3_mode_write(struct file *file,
+> +				const char __user *ubuf,
+> +				size_t count, loff_t *ppos)
+> +{
+> +	struct seq_file		*s = file->private_data;
+> +	struct cdns3		*cdns = s->private;
+> +	u32			mode = 0;
+> +	char			buf[32];
+> +
+> +	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
+> +		return -EFAULT;
+> +
+> +	if (!strncmp(buf, "host", 4))
+> +		mode = USB_DR_MODE_HOST;
+> +
+> +	if (!strncmp(buf, "device", 6))
+> +		mode = USB_DR_MODE_PERIPHERAL;
+> +
+> +	if (!strncmp(buf, "otg", 3))
+> +		mode = USB_DR_MODE_OTG;
+> +
+> +	cdns->desired_role = mode;
+> +	queue_work(system_freezable_wq, &cdns->role_switch_wq);
 
-Checking the length isn't enough.  A data stage can have 0 length.
+If we start with OTG mode and user says change mode to device will we still
+switch to host based on ID pin change?
 
-> But we don't need to care about special return values and the like. We
-> don't even need to care (from UDC perspective) if we're dealing with
-> 2-stage or 3-stage control transfers (well, dwc3 needs to care because
-> of different TRB types that needs to be used, but that's another story)
+If it does then this isn't working correctly.
+We need to stop processing ID interrupts and keep the role static till
+the user switches it back to otg.
 
-No, we do need to care because of the direction issue.
-
-> > There's also the fact that requests can specify a completion handler, but only 
-> > the data stage request would see its completion handler called (unless we 
-> > require UDCs to call completion requests at the completion of the status 
-> > stage, but I'm not sure that all UDCs can report the event to the driver, and 
-> > that would likely be useless as nobody needs that feature).
+> +	return count;
+> +}
+> +
+> +static const struct file_operations cdns3_mode_fops = {
+> +	.open			= cdns3_mode_open,
+> +	.write			= cdns3_mode_write,
+> +	.read			= seq_read,
+> +	.llseek			= seq_lseek,
+> +	.release		= single_release,
+> +};
+> +
+> +void cdns3_debugfs_init(struct cdns3 *cdns)
+> +{
+> +	struct dentry *root;
+> +
+> +	root = debugfs_create_dir(dev_name(cdns->dev), NULL);
+> +	cdns->root = root;
+> +	if (IS_ENABLED(CONFIG_USB_CDNS3_GADGET) &&
+> +	    IS_ENABLED(CONFIG_USB_CDNS3_HOST))
+> +		debugfs_create_file("mode", 0644, root, cdns,
+> +				    &cdns3_mode_fops);
+> +}
+> +
+> +void cdns3_debugfs_exit(struct cdns3 *cdns)
+> +{
+> +	debugfs_remove_recursive(cdns->root);
+> +}
+> diff --git a/drivers/usb/cdns3/drd.h b/drivers/usb/cdns3/drd.h
+> index 85731f3b693c..5344290c76f2 100644
+> --- a/drivers/usb/cdns3/drd.h
+> +++ b/drivers/usb/cdns3/drd.h
+> @@ -119,4 +119,7 @@ int cdns3_drd_probe(struct cdns3 *cdns);
+>  void cdns3_set_hw_mode(struct cdns3 *cdns, u32 mode);
+>  irqreturn_t cdns3_drd_irq(struct cdns3 *cdns);
+>  
+> +void cdns3_debugfs_init(struct cdns3 *cdns);
+> +void cdns3_debugfs_exit(struct cdns3 *cdns);
+> +
+>  #endif /* __LINUX_CDNS3_DRD */
 > 
-> you still wanna know if the host actually processed your status
-> stage. udc-core can (and should) provide a generic status stage
-> completion function which, at a minimum, aids with some tracepoints.
 
-Helping with tracepoints is fine.  However, I don't think function 
-drivers really need to know whether the status stage was processed by 
-the host.  Can you point out any examples where such information would 
-be useful?
-
-> One way to satisfy what you want, with what I want is to have UDC core
-> implement something like below:
-> 
-> int usb_ep_start_status_stage(struct usb_gadget *g)
-> {
-> 	return usb_ep_queue(g->ep0, &g->ep0_status_request);
-> }
-> 
-> special function for you, usb_ep_queue() for me :-p
-
-Sure, this is one of the options Laurent and I have discussed.
-
-> >> (But it does involve a
-> >> race in cases where the host gets tired of waiting and issues another
-> >> SETUP packet before the processing of the first transfer is finished.)
-> 
-> Host would stall first in that case.
-
-I don't follow.  Suppose the host sends a SETUP packet for an IN 
-transfer, but the gadget takes so long to send the IN data back that 
-the host times out.  So then the host sends a SETUP packet for a new 
-transfer.  No stalls.
-
-(Besides, hosts never send STALL packets anyway.  Only peripherals do.)
-
-> Driver is already required to
-> handle stalls for several other conditions. If thehre are bugs in that
-> area, I'd prefer catching them.
-
-> > To simplify function drivers, do you think the above proposal of adding a flag 
-> > to the (data stage) request to request an automatic transition to the status 
-> > stage is a good idea ? We could even possibly invert the logic and transition 
-> 
-> no, I don't think so. Making the status phase always explicit is far
-> better. UDCs won't have to check flags, or act on magic return
-> values. It just won't do anything until a request is queued.
-
-I don't agree.  This would be a simple test in a localized area (the 
-completion callback for control requests).  It could even be 
-implemented by a library routine; the UDC driver would simply have to 
-call this routine immediately after invoking the callback.
-
-Alan Stern
-
+cheers,
+-roger
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
