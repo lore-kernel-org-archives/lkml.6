@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B63C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD711C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871C42085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871C42085B
+	by mail.kernel.org (Postfix) with ESMTP id ABD002085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:44:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD002085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387497AbeKFTI2 (ORCPT
+        id S2387563AbeKFTIg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:08:28 -0500
-Received: from relay.sw.ru ([185.231.240.75]:59958 "EHLO relay.sw.ru"
+        Tue, 6 Nov 2018 14:08:36 -0500
+Received: from relay.sw.ru ([185.231.240.75]:60018 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729241AbeKFTI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:08:28 -0500
+        id S2387498AbeKFTIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:08:34 -0500
 Received: from [172.16.25.169] (helo=localhost.localdomain)
         by relay.sw.ru with esmtp (Exim 4.90_1)
         (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gJxtz-00037m-KI; Tue, 06 Nov 2018 12:44:03 +0300
-Subject: [PATCH 5/6] fuse: Protect fuse_inode::nlookup with fuse_inode::lock
+        id 1gJxu4-00039H-UH; Tue, 06 Nov 2018 12:44:09 +0300
+Subject: [PATCH 6/6] fuse: Protect fuse_file::reserved_req via corresponding
+ fuse_inode::lock
 From:   Kirill Tkhai <ktkhai@virtuozzo.com>
 To:     miklos@szeredi.hu, ktkhai@virtuozzo.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 06 Nov 2018 12:44:03 +0300
-Message-ID: <154149744356.18189.13444618369955494886.stgit@localhost.localdomain>
+Date:   Tue, 06 Nov 2018 12:44:08 +0300
+Message-ID: <154149744887.18189.9866673230837073311.stgit@localhost.localdomain>
 In-Reply-To: <154149673368.18189.14752124997476502777.stgit@localhost.localdomain>
 References: <154149673368.18189.14752124997476502777.stgit@localhost.localdomain>
 User-Agent: StGit/0.18
@@ -43,64 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This continues previous patch and introduces the same
-protection for nlookup field. It goes as separate patch
-since it's separate logic change (sadly, but it looks
-impossible to split previous patch more then in this way).
+This is rather natural action after previous patches,
+and it just decreases load of fc->lock.
 
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- fs/fuse/dir.c     |    4 ++--
- fs/fuse/inode.c   |    4 ++--
- fs/fuse/readdir.c |    4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ fs/fuse/dev.c    |   10 ++++++----
+ fs/fuse/fuse_i.h |    5 ++++-
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 35f3b3d1e044..ac8519285327 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -222,9 +222,9 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 				fuse_queue_forget(fc, forget, outarg.nodeid, 1);
- 				goto invalid;
- 			}
--			spin_lock(&fc->lock);
-+			spin_lock(&fi->lock);
- 			fi->nlookup++;
--			spin_unlock(&fc->lock);
-+			spin_unlock(&fi->lock);
- 		}
- 		kfree(forget);
- 		if (ret == -ENOMEM)
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 5f488b019cd9..b8092d49a4b2 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -327,9 +327,9 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 	}
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 3bfc5ed61c9a..cc8b95ad5b16 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -247,17 +247,18 @@ static struct fuse_req *get_reserved_req(struct fuse_conn *fc,
+ 					 struct file *file)
+ {
+ 	struct fuse_req *req = NULL;
++	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
+ 	struct fuse_file *ff = file->private_data;
  
- 	fi = get_fuse_inode(inode);
--	spin_lock(&fc->lock);
-+	spin_lock(&fi->lock);
- 	fi->nlookup++;
--	spin_unlock(&fc->lock);
-+	spin_unlock(&fi->lock);
- 	fuse_change_attributes(inode, attr, attr_valid, attr_version);
- 
- 	return inode;
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index ab18b78f4755..574d03f8a573 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -213,9 +213,9 @@ static int fuse_direntplus_link(struct file *file,
- 		}
- 
- 		fi = get_fuse_inode(inode);
+ 	do {
+ 		wait_event(fc->reserved_req_waitq, ff->reserved_req);
 -		spin_lock(&fc->lock);
 +		spin_lock(&fi->lock);
- 		fi->nlookup++;
+ 		if (ff->reserved_req) {
+ 			req = ff->reserved_req;
+ 			ff->reserved_req = NULL;
+ 			req->stolen_file = get_file(file);
+ 		}
 -		spin_unlock(&fc->lock);
 +		spin_unlock(&fi->lock);
+ 	} while (!req);
  
- 		forget_all_cached_acls(inode);
- 		fuse_change_attributes(inode, &o->attr,
+ 	return req;
+@@ -269,16 +270,17 @@ static struct fuse_req *get_reserved_req(struct fuse_conn *fc,
+ static void put_reserved_req(struct fuse_conn *fc, struct fuse_req *req)
+ {
+ 	struct file *file = req->stolen_file;
++	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
+ 	struct fuse_file *ff = file->private_data;
+ 
+ 	WARN_ON(req->max_pages);
+-	spin_lock(&fc->lock);
++	spin_lock(&fi->lock);
+ 	memset(req, 0, sizeof(*req));
+ 	fuse_request_init(req, NULL, NULL, 0);
+ 	BUG_ON(ff->reserved_req);
+ 	ff->reserved_req = req;
+ 	wake_up_all(&fc->reserved_req_waitq);
+-	spin_unlock(&fc->lock);
++	spin_unlock(&fi->lock);
+ 	fput(file);
+ }
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f7442bcecbb0..10b20a24f693 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -166,7 +166,10 @@ struct fuse_file {
+ 	/** Fuse connection for this file */
+ 	struct fuse_conn *fc;
+ 
+-	/** Request reserved for flush and release */
++	/*
++	 * Request reserved for flush and release.
++	 * Modified under relative fuse_inode::lock.
++	 */
+ 	struct fuse_req *reserved_req;
+ 
+ 	/** Kernel file handle guaranteed to be unique */
 
