@@ -2,191 +2,154 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17C5C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE4C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 866FF20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:58:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866FF20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2ECF32083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ECF32083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730830AbeKGGZN (ORCPT
+        id S2388549AbeKGG15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:25:13 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38685 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbeKGGZN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:25:13 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6KvrVN954061
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 6 Nov 2018 12:57:53 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6Kvr1c954058;
-        Tue, 6 Nov 2018 12:57:53 -0800
-Date:   Tue, 6 Nov 2018 12:57:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Daniel Vacek <tipbot@zytor.com>
-Message-ID: <tip-a786ef152cdcfebc923a67f63c7815806eefcf81@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        neelx@redhat.com, hpa@zytor.com, bp@alien8.de
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, neelx@redhat.com,
-          tglx@linutronix.de, mingo@kernel.org, bp@alien8.de
-In-Reply-To: <1541437840-29293-1-git-send-email-neelx@redhat.com>
-References: <1541437840-29293-1-git-send-email-neelx@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/tsc: Make calibration refinement more robust
-Git-Commit-ID: a786ef152cdcfebc923a67f63c7815806eefcf81
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 7 Nov 2018 01:27:57 -0500
+Received: from mga06.intel.com ([134.134.136.31]:19795 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727382AbeKGG15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:27:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 13:00:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="105956434"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga001.jf.intel.com with ESMTP; 06 Nov 2018 13:00:50 -0800
+Subject: Re: RFC: userspace exception fixups
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <20181102170627.GD7393@linux.intel.com>
+ <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com>
+ <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com>
+ <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com>
+ <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+Date:   Tue, 6 Nov 2018 13:00:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a786ef152cdcfebc923a67f63c7815806eefcf81
-Gitweb:     https://git.kernel.org/tip/a786ef152cdcfebc923a67f63c7815806eefcf81
-Author:     Daniel Vacek <neelx@redhat.com>
-AuthorDate: Mon, 5 Nov 2018 18:10:40 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 6 Nov 2018 21:53:15 +0100
+On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> True, but what if we have a nasty enclave that writes to memory just
+> below SP *before* decrementing SP?
 
-x86/tsc: Make calibration refinement more robust
+Yeah, that would be unfortunate.  If an enclave did this (roughly):
 
-The threshold in tsc_read_refs() is constant which may favor slower CPUs
-but may not be optimal for simple reading of reference on faster ones.
+	1. EENTER
+	2. Hardware sets eenter_hwframe->sp = %sp
+	3. Enclave runs... wants to do out-call
+	4. Enclave sets up parameters:
+		memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+		...
+	5. Enclave sets eenter_hwframe->sp -= offset
 
-Hence make it proportional to tsc_khz when available to compensate for
-this. The threshold guards against any disturbance like IRQs, NMIs, SMIs
-or CPU stealing by host on guest systems so rename it accordingly and
-fix comments as well.
+If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
+was on the stack.  The enclave could easily fix this by moving ->sp first.
 
-Also on some systems there is noticeable DMI bus contention at some point
-during boot keeping the readout failing (observed with about one in ~300
-boots when testing). In that case retry also the second readout instead of
-simply bailing out unrefined. Usually the next second the readout returns
-fast just fine without any issues.
+But, this is one of those "fun" parts of the ABI that I think we need to
+talk about.  If we do this, we also basically require that the code
+which handles asynchronous exits must *not* write to the stack.  That's
+not hard because it's typically just a single ERESUME instruction, but
+it *is* a requirement.
 
-Signed-off-by: Daniel Vacek <neelx@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/1541437840-29293-1-git-send-email-neelx@redhat.com
-
----
- arch/x86/kernel/tsc.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index e9f777bfed40..3fae23834069 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -297,15 +297,16 @@ static int __init tsc_setup(char *str)
- 
- __setup("tsc=", tsc_setup);
- 
--#define MAX_RETRIES     5
--#define SMI_TRESHOLD    50000
-+#define MAX_RETRIES		5
-+#define TSC_DEFAULT_THRESHOLD	0x20000
- 
- /*
-- * Read TSC and the reference counters. Take care of SMI disturbance
-+ * Read TSC and the reference counters. Take care of any disturbances
-  */
- static u64 tsc_read_refs(u64 *p, int hpet)
- {
- 	u64 t1, t2;
-+	u64 thresh = tsc_khz ? tsc_khz >> 5 : TSC_DEFAULT_THRESHOLD;
- 	int i;
- 
- 	for (i = 0; i < MAX_RETRIES; i++) {
-@@ -315,7 +316,7 @@ static u64 tsc_read_refs(u64 *p, int hpet)
- 		else
- 			*p = acpi_pm_read_early();
- 		t2 = get_cycles();
--		if ((t2 - t1) < SMI_TRESHOLD)
-+		if ((t2 - t1) < thresh)
- 			return t2;
- 	}
- 	return ULLONG_MAX;
-@@ -703,15 +704,15 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
- 	 * zero. In each wait loop iteration we read the TSC and check
- 	 * the delta to the previous read. We keep track of the min
- 	 * and max values of that delta. The delta is mostly defined
--	 * by the IO time of the PIT access, so we can detect when a
--	 * SMI/SMM disturbance happened between the two reads. If the
-+	 * by the IO time of the PIT access, so we can detect when
-+	 * any disturbance happened between the two reads. If the
- 	 * maximum time is significantly larger than the minimum time,
- 	 * then we discard the result and have another try.
- 	 *
- 	 * 2) Reference counter. If available we use the HPET or the
- 	 * PMTIMER as a reference to check the sanity of that value.
- 	 * We use separate TSC readouts and check inside of the
--	 * reference read for a SMI/SMM disturbance. We dicard
-+	 * reference read for any possible disturbance. We dicard
- 	 * disturbed values here as well. We do that around the PIT
- 	 * calibration delay loop as we have to wait for a certain
- 	 * amount of time anyway.
-@@ -744,7 +745,7 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
- 		if (ref1 == ref2)
- 			continue;
- 
--		/* Check, whether the sampling was disturbed by an SMI */
-+		/* Check, whether the sampling was disturbed */
- 		if (tsc1 == ULLONG_MAX || tsc2 == ULLONG_MAX)
- 			continue;
- 
-@@ -1268,7 +1269,7 @@ static DECLARE_DELAYED_WORK(tsc_irqwork, tsc_refine_calibration_work);
-  */
- static void tsc_refine_calibration_work(struct work_struct *work)
- {
--	static u64 tsc_start = -1, ref_start;
-+	static u64 tsc_start = ULLONG_MAX, ref_start;
- 	static int hpet;
- 	u64 tsc_stop, ref_stop, delta;
- 	unsigned long freq;
-@@ -1283,14 +1284,15 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 	 * delayed the first time we expire. So set the workqueue
- 	 * again once we know timers are working.
- 	 */
--	if (tsc_start == -1) {
-+	if (tsc_start == ULLONG_MAX) {
-+restart:
- 		/*
- 		 * Only set hpet once, to avoid mixing hardware
- 		 * if the hpet becomes enabled later.
- 		 */
- 		hpet = is_hpet_enabled();
--		schedule_delayed_work(&tsc_irqwork, HZ);
- 		tsc_start = tsc_read_refs(&ref_start, hpet);
-+		schedule_delayed_work(&tsc_irqwork, HZ);
- 		return;
- 	}
- 
-@@ -1300,9 +1302,9 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 	if (ref_start == ref_stop)
- 		goto out;
- 
--	/* Check, whether the sampling was disturbed by an SMI */
--	if (tsc_start == ULLONG_MAX || tsc_stop == ULLONG_MAX)
--		goto out;
-+	/* Check, whether the sampling was disturbed */
-+	if (tsc_stop == ULLONG_MAX)
-+		goto restart;
- 
- 	delta = tsc_stop - tsc_start;
- 	delta *= 1000000LL;
+It means fun stuff like that you absolutely can't just async-exit to C code.
