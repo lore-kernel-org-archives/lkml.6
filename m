@@ -2,93 +2,105 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 687EBC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C30C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BCC2083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BCC2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EA3EF2086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:08:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3EF2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387921AbeKFVbc (ORCPT
+        id S2388362AbeKFVdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:31:32 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14598 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387454AbeKFVbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:31:32 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 02F102112A9DE;
-        Tue,  6 Nov 2018 20:06:36 +0800 (CST)
-Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
- 20:06:28 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@google.com>
-CC:     <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [RFC PATCH v2 1/2] fscrypt: remove d_lock on reading DCACHE_ENCRYPTED_WITH_KEY
-Date:   Tue, 6 Nov 2018 20:20:51 +0800
-Message-ID: <20181106122052.18507-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
+        Tue, 6 Nov 2018 16:33:19 -0500
+Received: from mga12.intel.com ([192.55.52.136]:31198 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387498AbeKFVdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:33:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 04:08:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
+   d="scan'208";a="83701571"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Nov 2018 04:08:22 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gK09e-00078E-5L; Tue, 06 Nov 2018 20:08:22 +0800
+Date:   Tue, 6 Nov 2018 20:07:24 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Maxime Jourdan <mjourdan@baylibre.com>
+Cc:     kbuild-all@01.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH] media: meson: fix zalloc-simple.cocci warnings
+Message-ID: <20181106120724.GA79146@athens>
+References: <20181106075926.19269-3-mjourdan@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106075926.19269-3-mjourdan@baylibre.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems there is no need to take d_lock when accessing
-dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY in
-fscrypt_d_revalidate. It only needs to be serialized for updating.
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+drivers/media/platform/meson/vdec/esparser.c:148:13-31: WARNING: dma_zalloc_coherent should be used for eos_vaddr, instead of dma_alloc_coherent/memset
+
+
+ Use zeroing allocator rather than allocator followed by memset with 0
+
+ This considers some simple cases that are common and easy to validate
+ Note in particular that there are no ...s in the rule, so all of the
+ matched code has to be contiguous
+
+Generated by: scripts/coccinelle/api/alloc/zalloc-simple.cocci
+
+Fixes: 3ab8ea56b2f6 ("media: meson: add v4l2 m2m video decoder driver")
+CC: Maxime Jourdan <mjourdan@baylibre.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
 
-Change log v2:
- - Fix negative dentry (NULL d_inode) issue as Eric pointed out;
- - Fix to use '__lockref_is_dead()' as Eric pointed out before;
+url:    https://github.com/0day-ci/linux/commits/Maxime-Jourdan/dt-bindings-media-add-Amlogic-Video-Decoder-Bindings/20181106-162646
+base:   git://linuxtv.org/media_tree.git master
 
-[original message]
-Hi,
- At glance, I have no idea why fscrypt_d_revalidate disables
-RCU-lookup. Therefore I made patches to raise a question and
-do some test (eg. fsstress w/ and w/o drop_caches) and it
-seems to work.
+Please take the patch only if it's a positive warning. Thanks!
 
-Thanks,
-Gao Xiang
+ esparser.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- fs/crypto/crypto.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 0f46cf550907..b38c574f70ac 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -329,9 +329,8 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
- 		return 0;
- 	}
+--- a/drivers/media/platform/meson/vdec/esparser.c
++++ b/drivers/media/platform/meson/vdec/esparser.c
+@@ -145,13 +145,11 @@ int esparser_queue_eos(struct amvdec_cor
+ 	dma_addr_t eos_paddr;
+ 	int ret;
  
--	spin_lock(&dentry->d_lock);
--	cached_with_key = dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY;
--	spin_unlock(&dentry->d_lock);
-+	cached_with_key = READ_ONCE(dentry->d_flags) &
-+		DCACHE_ENCRYPTED_WITH_KEY;
- 	dir_has_key = (d_inode(dir)->i_crypt_info != NULL);
- 	dput(dir);
+-	eos_vaddr = dma_alloc_coherent(dev,
+-				       len + SEARCH_PATTERN_LEN,
+-				       &eos_paddr, GFP_KERNEL);
++	eos_vaddr = dma_zalloc_coherent(dev, len + SEARCH_PATTERN_LEN,
++					&eos_paddr, GFP_KERNEL);
+ 	if (!eos_vaddr)
+ 		return -ENOMEM;
  
--- 
-2.14.4
-
+-	memset(eos_vaddr, 0, len + SEARCH_PATTERN_LEN);
+ 	memcpy(eos_vaddr, data, len);
+ 	ret = esparser_write_data(core, eos_paddr, len);
+ 	dma_free_coherent(dev, len + SEARCH_PATTERN_LEN,
