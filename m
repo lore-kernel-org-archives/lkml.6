@@ -2,79 +2,97 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE43C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93519C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81649206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81649206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 57C9E2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:18:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a/XcVvAt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aAH0FG5E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C9E2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389226AbeKGBn1 (ORCPT
+        id S2389242AbeKGBn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:43:27 -0500
-Received: from mga09.intel.com ([134.134.136.24]:64954 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389204AbeKGBn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:43:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 08:17:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="247445525"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2018 08:17:31 -0800
-Subject: [PATCH] acpi, nfit: Fix ARS overflow continuation
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Jacek Zloch <jacek.zloch@intel.com>,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 06 Nov 2018 08:05:43 -0800
-Message-ID: <154152034315.1304656.17798869260848445154.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
+        Tue, 6 Nov 2018 20:43:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55420 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389102AbeKGBn5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 20:43:57 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 81E366053D; Tue,  6 Nov 2018 16:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541521080;
+        bh=7gFUWLtbegbx44OKrzSG1K5V7SQ8IaQEldTZgGfxv5Q=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=a/XcVvAtuHFECwN5LZx4BIhK+kQvn+PXe4jIkwxUsdempebPLkcsE9oZfsrd7irIr
+         wIYudiQHynnYaPpfuzlVn8Tubuvg6kYptyvnYNIV4Rr4IyCja7DNVgSUiNdKkeRQIF
+         bbnH7bNQS4i1dWyXC/rQl/2sA5yJNVBJBkaq47l0=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51059601D7;
+        Tue,  6 Nov 2018 16:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541521080;
+        bh=7gFUWLtbegbx44OKrzSG1K5V7SQ8IaQEldTZgGfxv5Q=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=aAH0FG5EyR/6GbSYrMlMvYjj073rz+0A/u4WBtvltVjq1wSPir/8yuL1Gpf+GQPB7
+         w4SopAhwKS65PHCnmgMn5UPhdu8jXlM3EZG6YnMB1jyCFYg1AVfep2deBJvxqO3b+y
+         C9etG10Tl+ZWxRspuZJ7KbVeJpOizC/Sr1YnEWQc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51059601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/4] ath10k: snoc: remove 'wcn3990' from generic resource
+ handling
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181013005504.46399-1-briannorris@chromium.org>
+References: <20181013005504.46399-1-briannorris@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181106161800.81E366053D@smtp.codeaurora.org>
+Date:   Tue,  6 Nov 2018 16:18:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the platform BIOS is unable to report all the media error records
-it requires the OS to restart the scrub at a prescribed location. The
-driver detects the overflow condition, but then fails to report it to
-the ARS state machine after reaping the records. Propagate -ENOSPC
-correctly to continue the ARS operation.
+Brian Norris <briannorris@chromium.org> wrote:
 
-Cc: <stable@vger.kernel.org>
-Fixes: 1cf03c00e7c1 ("nfit: scrub and register regions in a workqueue")
-Reported-by: Jacek Zloch <jacek.zloch@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/acpi/nfit/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> ath10k_wcn3990_clk_info and ath10k_wcn3990_vreg_info are not
+> WCN3990-specific structures. They hold generic data. So don't name them
+> with wcn3990 specifics.
+> 
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index f8c638f3c946..5970b8f5f768 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -2928,9 +2928,9 @@ static int acpi_nfit_query_poison(struct acpi_nfit_desc *acpi_desc)
- 		return rc;
- 
- 	if (ars_status_process_records(acpi_desc))
--		return -ENOMEM;
-+		dev_err(acpi_desc->dev, "Failed to process ARS records\n");
- 
--	return 0;
-+	return rc;
- }
- 
- static int ars_register(struct acpi_nfit_desc *acpi_desc,
+4 patches applied to ath-next branch of ath.git, thanks.
+
+887a3dcf5893 ath10k: snoc: remove 'wcn3990' from generic resource handling
+1a1a0d5ccefc ath10k: snoc: fix unabalanced regulator error handling
+bfe57a6ac75a ath10k: snoc: relax voltage requirements
+82e60d920e8a ath10k: snoc: fix unbalanced clock error handling
+
+-- 
+https://patchwork.kernel.org/patch/10639795/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
