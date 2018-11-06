@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84360C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7C2C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE0020862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06FCC20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+YCR0Nn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE0020862
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gutae7G7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FCC20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbeKFOZ2 (ORCPT
+        id S1729852AbeKFOZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 09:25:28 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36181 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729724AbeKFOZ2 (ORCPT
+        Tue, 6 Nov 2018 09:25:31 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40509 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729794AbeKFOZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 09:25:28 -0500
-Received: by mail-pf1-f195.google.com with SMTP id j22-v6so5539152pfh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 21:02:06 -0800 (PST)
+        Tue, 6 Nov 2018 09:25:31 -0500
+Received: by mail-pl1-f194.google.com with SMTP id q19-v6so2579118pll.7
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 21:02:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=sy/AQFQMaVt4C0zh+b0IOP8wDwMdYLhdTc2K4kZ/W/E=;
-        b=S+YCR0NnfFkn0XSpoQbyn6N99EvfFcVtcsSNDeAqW3vUoxp81iTMd1XtpDF7USkANh
-         fQM8DVG9Tye6T7w6cM1dn1glzsTnzrBFDQf+ScM5967tKT+c70ssVf0jjbR1WVrUvEUs
-         CMboNPqZTUpwKgFrOPswpHOLTZL2fO2HKt2p0=
+        bh=Ipu0OKiVTAGWTLE4fg/nM2ymSy+8y5EVSd0lvjhlhp8=;
+        b=gutae7G74a5xWjvogNtC3uF7yCVomb6SNDj4i/rOZwIqyQrrPMcLKpUVx0rsnX15Ju
+         kE3KVj6sicYEePLve7JYvmafJCZsUduo0QgnTSQFHG2AvthQXdg3uIeN7/WCdzg61MOC
+         MlSY9nCD6TpzzC31M86yCd7b1Xa81FTIzHdoM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=sy/AQFQMaVt4C0zh+b0IOP8wDwMdYLhdTc2K4kZ/W/E=;
-        b=SArCUE3ThS5itLzAb36ySZjK9X2BoVz8ADkinUyDGK07vAYNvWkyjJwO7GWGMjjR9Y
-         uiGOEwCyD1DIrCsKu6naowU3SFLY0/nI3sQEgL7Un4mcC6bvwJH8jK7NUavzVWWhxIkQ
-         1Hl+THPnKufb9AJrociuiNIzuPkT4wsUrkiy2uWaufB1znlU9/tdpALQE6hFx19M6QU6
-         aBfc56D4UNMkRC7xNC6XtIu9p1jRIvogwVLDvGRkQegX3X4r0d6hhKOsqgHXLRIWoVVa
-         n7gAEIJ5gu7erGHb3FpoFUJtniBvQTvYzkfErq9H6LZwezJ8EXLEwCUCYFbud08/a2cY
-         gDqw==
-X-Gm-Message-State: AGRZ1gIE2CbtGV8q4KuAnxe/vz2gTTNHixZpVxDUgSp8pdTKO4HhhccZ
-        sdoNJ1r7Lu8xWQlK6q5YxLP3SA==
-X-Google-Smtp-Source: AJdET5cwk/YCksbb909uu3cC0k5TcdMMTZ2UgY9k6BaXQojLaPNo8OqbMpSlPi+QPNKUZWBHQRoFhQ==
-X-Received: by 2002:a63:2e02:: with SMTP id u2mr2621110pgu.9.1541480525976;
-        Mon, 05 Nov 2018 21:02:05 -0800 (PST)
+        bh=Ipu0OKiVTAGWTLE4fg/nM2ymSy+8y5EVSd0lvjhlhp8=;
+        b=FHRu2RaHfNhOfxaoBm1wxElg6JRsBZ/GJ3Xn5ZCLGjlSwdTEY7nc0WwFIy0fD1LDeM
+         xPANDb4IWwxoKoAE3Ychs2Dbfzv82g/lA6NOTpwMNT/ERgxKHqkovmCW6xinlAeAQNm8
+         O9A0Bss6K7AEx+Tf+aeCOfkK7Xv+gvIto6F8OSPK/LygSVDT1ElnVer07UBGBpE1aFjE
+         shNVmAb9hOQuOTPgfN4WJ/fH9dpKIhlqHLrSUDBt5G6Y7cs29E+RGT4Hntq66q47vrZY
+         2hniYaX2E2jwbhaZIUUmdt50mcg3nctMYbsYWM2qQ+Z6g0lVn2kK+735embwbOiKonAc
+         tANQ==
+X-Gm-Message-State: AGRZ1gIPAiTodEn1L5ukZko0qtJ7uPFFhUQFFKCAi/iQ3Vrl0QJ8Jh1z
+        bNgzQZcK+3bmWKXFxuLt/I5kEQ==
+X-Google-Smtp-Source: AJdET5ejAw5ZSntam1RDEA1skDfRYO2Q88ZXm3BjphhZKf+kfSrc0digFKk9c1c/5ZbHRlQdO8x+IA==
+X-Received: by 2002:a17:902:4222:: with SMTP id g31-v6mr24679107pld.236.1541480528979;
+        Mon, 05 Nov 2018 21:02:08 -0800 (PST)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id o7-v6sm55735416pfb.23.2018.11.05.21.02.03
+        by smtp.gmail.com with ESMTPSA id o7-v6sm55735416pfb.23.2018.11.05.21.02.06
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 05 Nov 2018 21:02:05 -0800 (PST)
+        Mon, 05 Nov 2018 21:02:08 -0800 (PST)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     dan.j.williams@intel.com, vkoul@kernel.org, eric.long@unisoc.com
 Cc:     broonie@kernel.org, baolin.wang@linaro.org,
         dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 2/7] dmaengine: sprd: Get transfer residue depending on the transfer direction
-Date:   Tue,  6 Nov 2018 13:01:32 +0800
-Message-Id: <2968b6dce6864608b97391e5b86ee3c47e3fb8e6.1541480353.git.baolin.wang@linaro.org>
+Subject: [RESEND PATCH 3/7] dmaengine: sprd: Fix the last link-list configuration
+Date:   Tue,  6 Nov 2018 13:01:33 +0800
+Message-Id: <95cbea4b835bb2689036afe78ff0b2239a24f352.1541480353.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1541480353.git.baolin.wang@linaro.org>
 References: <cover.1541480353.git.baolin.wang@linaro.org>
@@ -75,70 +75,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Long <eric.long@spreadtrum.com>
 
-Add one field to save the transfer direction for struct sprd_dma_desc,
-which is used to get correct transfer residue depending on the transfer
-direction.
+We will pass sglen as 0 configure the last link-list configuration
+when filling the descriptor, which will cause the incorrect link-list
+configuration. Thus we should check if the sglen is 0 to configure
+the correct link-list configuration.
 
-[Baolin Wang adds one field to present the transfer direction]
 Signed-off-by: Eric Long <eric.long@spreadtrum.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/dma/sprd-dma.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/dma/sprd-dma.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index c226dc93..4f3587b 100644
+index 4f3587b..e6a74dc 100644
 --- a/drivers/dma/sprd-dma.c
 +++ b/drivers/dma/sprd-dma.c
-@@ -159,6 +159,7 @@ struct sprd_dma_chn_hw {
- struct sprd_dma_desc {
- 	struct virt_dma_desc	vd;
- 	struct sprd_dma_chn_hw	chn_hw;
-+	enum dma_transfer_direction dir;
- };
+@@ -697,7 +697,8 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
+ 		hw->cfg |= SPRD_DMA_LINKLIST_EN;
  
- /* dma channel description */
-@@ -331,6 +332,17 @@ static void sprd_dma_stop_and_disable(struct sprd_dma_chn *schan)
- 	sprd_dma_disable_chn(schan);
- }
- 
-+static unsigned long sprd_dma_get_src_addr(struct sprd_dma_chn *schan)
-+{
-+	unsigned long addr, addr_high;
+ 		/* link-list index */
+-		temp = (sg_index + 1) % sglen;
++		temp = sglen ? (sg_index + 1) % sglen : 0;
 +
-+	addr = readl(schan->chn_base + SPRD_DMA_CHN_SRC_ADDR);
-+	addr_high = readl(schan->chn_base + SPRD_DMA_CHN_WARP_PTR) &
-+		    SPRD_DMA_HIGH_ADDR_MASK;
-+
-+	return addr | (addr_high << SPRD_DMA_HIGH_ADDR_OFFSET);
-+}
-+
- static unsigned long sprd_dma_get_dst_addr(struct sprd_dma_chn *schan)
- {
- 	unsigned long addr, addr_high;
-@@ -534,7 +546,12 @@ static enum dma_status sprd_dma_tx_status(struct dma_chan *chan,
- 		else
- 			pos = 0;
- 	} else if (schan->cur_desc && schan->cur_desc->vd.tx.cookie == cookie) {
--		pos = sprd_dma_get_dst_addr(schan);
-+		struct sprd_dma_desc *sdesc = to_sprd_dma_desc(vd);
-+
-+		if (sdesc->dir == DMA_DEV_TO_MEM)
-+			pos = sprd_dma_get_dst_addr(schan);
-+		else
-+			pos = sprd_dma_get_src_addr(schan);
- 	} else {
- 		pos = 0;
- 	}
-@@ -804,6 +821,8 @@ static int sprd_dma_fill_linklist_desc(struct dma_chan *chan,
- 	if (!sdesc)
- 		return NULL;
- 
-+	sdesc->dir = dir;
-+
- 	for_each_sg(sgl, sg, sglen, i) {
- 		len = sg_dma_len(sg);
- 
+ 		/* Next link-list configuration's physical address offset */
+ 		temp = temp * sizeof(*hw) + SPRD_DMA_CHN_SRC_ADDR;
+ 		/*
 -- 
 1.7.9.5
 
