@@ -2,393 +2,148 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41015C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411A8C46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12122083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:50:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12122083D
+	by mail.kernel.org (Postfix) with ESMTP id 135FA2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:50:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 135FA2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388615AbeKFXQL (ORCPT
+        id S2388629AbeKFXQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:16:11 -0500
-Received: from mga12.intel.com ([192.55.52.136]:37613 "EHLO mga12.intel.com"
+        Tue, 6 Nov 2018 18:16:13 -0500
+Received: from mga01.intel.com ([192.55.52.88]:27715 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388191AbeKFXQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:16:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S2388191AbeKFXQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 18:16:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 05:50:51 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 05:50:53 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="88972388"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 06 Nov 2018 05:50:47 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 06 Nov 2018 15:50:46 +0200
-Date:   Tue, 6 Nov 2018 15:50:46 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     intel-gfx@lists.freedesktop.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] drm/i915: Add short HPD IRQ storm detection for
- non-MST systems
-Message-ID: <20181106135046.GS9144@intel.com>
-References: <20181105222011.2913-1-lyude@redhat.com>
- <20181105222011.2913-6-lyude@redhat.com>
+   d="scan'208";a="106322666"
+Received: from fhoeg-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.66])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 05:50:46 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v16 09/22] x86/sgx: Define SGX1 and SGX2 ENCLS leafs
+Date:   Tue,  6 Nov 2018 15:45:48 +0200
+Message-Id: <20181106134758.10572-10-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181105222011.2913-6-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 05:20:11PM -0500, Lyude Paul wrote:
-> Unfortunately, it seems that the HPD IRQ storm problem from the early
-> days of Intel GPUs was never entirely solved, only mostly. Within the
-> last couple of days, I got a bug report from one of our customers who
-> had been having issues with their machine suddenly booting up very
-> slowly after having updated. The amount of time it took to boot went
-> from around 30 seconds, to over 6 minutes consistently.
-> 
-> After some investigation, I discovered that i915 was reporting massive
-> amounts of short HPD IRQ spam on this system from the DisplayPort port,
-> despite there not being anything actually connected. The symptoms would
-> start with one "long" HPD IRQ being detected at boot:
-> 
-> [    1.891398] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00440000, dig 0x00440000, pins 0x000000a0
-> [    1.891436] [drm:intel_hpd_irq_handler [i915]] digital hpd port B - long
-> [    1.891472] [drm:intel_hpd_irq_handler [i915]] Received HPD interrupt on PIN 5 - cnt: 0
-> [    1.891508] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - long
-> [    1.891544] [drm:intel_hpd_irq_handler [i915]] Received HPD interrupt on PIN 7 - cnt: 0
-> [    1.891592] [drm:intel_dp_hpd_pulse [i915]] got hpd irq on port B - long
-> [    1.891628] [drm:intel_dp_hpd_pulse [i915]] got hpd irq on port D - long
-> …
-> 
-> followed by constant short IRQs afterwards:
-> 
-> [    1.895091] [drm:intel_encoder_hotplug [i915]] [CONNECTOR:66:DP-1] status updated from unknown to disconnected
-> [    1.895129] [drm:i915_hotplug_work_func [i915]] Connector DP-3 (pin 7) received hotplug event.
-> [    1.895165] [drm:intel_dp_detect [i915]] [CONNECTOR:72:DP-3]
-> [    1.895275] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
-> [    1.895312] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
-> [    1.895762] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
-> [    1.895799] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
-> [    1.896239] [drm:intel_dp_aux_xfer [i915]] dp_aux_ch timeout status 0x71450085
-> [    1.896293] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
-> [    1.896330] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
-> [    1.896781] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
-> [    1.896817] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
-> [    1.897275] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
-> 
-> The customer's system in question has a GM45 GPU, which is apparently
-> well known for hotplugging storms.
-> 
-> So, workaround this impressively broken hardware by changing the default
-> HPD storm threshold from 5 to 50. Then, make long IRQs count for 10, and
-> short IRQs count for 1. This makes it so that 5 long IRQs will trigger
-> an HPD storm, and on systems with short HPD storm detection 50 short
-> IRQs will trigger an HPD storm. 50 short IRQs amounts to 100ms of
-> constant pulsing, which seems like a good middleground between being too
-> sensitive and not being sensitive enough (which would cause visible
-> stutters in userspace every time a storm occurs).
-> 
-> And just to be extra safe: we don't enable this by default on systems
-> with MST support. There's too high of a chance of MST support triggering
-> storm detection, and systems that are new enough to support MST are a
-> lot less likely to have issues with IRQ storms anyway.
-> 
-> As a note: this patch was tested using a ThinkPad T450s and a Chamelium
-> to simulate the short IRQ storms.
-> 
-> Changes since v1:
-> - Don't use two separate thresholds, just make long IRQs count for 10
->   each and short IRQs count for 1. This simplifies the code a bit
->   - Ville Syrjälä
-> Changes since v2:
-> - Document @long_hpd in intel_hpd_irq_storm_detect, no functional
->   changes
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> ---
->  drivers/gpu/drm/i915/i915_debugfs.c  | 74 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/i915/i915_drv.h      |  5 +-
->  drivers/gpu/drm/i915/i915_irq.c      |  7 +++
->  drivers/gpu/drm/i915/intel_hotplug.c | 49 ++++++++++--------
->  4 files changed, 114 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-> index f60485906f7e..670db5073d70 100644
-> --- a/drivers/gpu/drm/i915/i915_debugfs.c
-> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
-> @@ -4658,6 +4658,79 @@ static const struct file_operations i915_hpd_storm_ctl_fops = {
->  	.write = i915_hpd_storm_ctl_write
->  };
->  
-> +static int i915_hpd_short_storm_ctl_show(struct seq_file *m, void *data)
-> +{
-> +	struct drm_i915_private *dev_priv = m->private;
-> +
-> +	seq_printf(m, "Enabled: %s\n",
-> +		   yesno(dev_priv->hotplug.hpd_short_storm_enabled));
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +i915_hpd_short_storm_ctl_open(struct inode *inode, struct file *file)
-> +{
-> +	return single_open(file, i915_hpd_short_storm_ctl_show,
-> +			   inode->i_private);
-> +}
-> +
-> +static ssize_t i915_hpd_short_storm_ctl_write(struct file *file,
-> +					      const char __user *ubuf,
-> +					      size_t len, loff_t *offp)
-> +{
-> +	struct seq_file *m = file->private_data;
-> +	struct drm_i915_private *dev_priv = m->private;
-> +	struct i915_hotplug *hotplug = &dev_priv->hotplug;
-> +	char *newline;
-> +	char tmp[16];
-> +	int i;
-> +	bool new_state;
-> +
-> +	if (len >= sizeof(tmp))
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(tmp, ubuf, len))
-> +		return -EFAULT;
-> +
-> +	tmp[len] = '\0';
-> +
-> +	/* Strip newline, if any */
-> +	newline = strchr(tmp, '\n');
-> +	if (newline)
-> +		*newline = '\0';
-> +
-> +	/* Reset to the "default" state for this system */
-> +	if (strcmp(tmp, "reset") == 0)
-> +		new_state = !HAS_DP_MST(dev_priv);
-> +	else if (kstrtobool(tmp, &new_state) != 0)
-> +		return -EINVAL;
-> +
-> +	DRM_DEBUG_KMS("%sabling HPD short storm detection\n",
-> +		      new_state ? "En" : "Dis");
-> +
-> +	spin_lock_irq(&dev_priv->irq_lock);
-> +	hotplug->hpd_short_storm_enabled = new_state;
-> +	/* Reset the HPD storm stats so we don't accidentally trigger a storm */
-> +	for_each_hpd_pin(i)
-> +		hotplug->stats[i].count = 0;
-> +	spin_unlock_irq(&dev_priv->irq_lock);
-> +
-> +	/* Re-enable hpd immediately if we were in an irq storm */
-> +	flush_delayed_work(&dev_priv->hotplug.reenable_work);
-> +
-> +	return len;
-> +}
-> +
-> +static const struct file_operations i915_hpd_short_storm_ctl_fops = {
-> +	.owner = THIS_MODULE,
-> +	.open = i915_hpd_short_storm_ctl_open,
-> +	.read = seq_read,
-> +	.llseek = seq_lseek,
-> +	.release = single_release,
-> +	.write = i915_hpd_short_storm_ctl_write,
-> +};
-> +
->  static int i915_drrs_ctl_set(void *data, u64 val)
->  {
->  	struct drm_i915_private *dev_priv = data;
-> @@ -4865,6 +4938,7 @@ static const struct i915_debugfs_files {
->  	{"i915_guc_log_level", &i915_guc_log_level_fops},
->  	{"i915_guc_log_relay", &i915_guc_log_relay_fops},
->  	{"i915_hpd_storm_ctl", &i915_hpd_storm_ctl_fops},
-> +	{"i915_hpd_short_storm_ctl", &i915_hpd_short_storm_ctl_fops},
->  	{"i915_ipc_status", &i915_ipc_status_fops},
->  	{"i915_drrs_ctl", &i915_drrs_ctl_fops},
->  	{"i915_edp_psr_debug", &i915_edp_psr_debug_fops}
-> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
-> index 2a88a7eb871b..0c8438de3c1b 100644
-> --- a/drivers/gpu/drm/i915/i915_drv.h
-> +++ b/drivers/gpu/drm/i915/i915_drv.h
-> @@ -283,7 +283,8 @@ enum hpd_pin {
->  #define for_each_hpd_pin(__pin) \
->  	for ((__pin) = (HPD_NONE + 1); (__pin) < HPD_NUM_PINS; (__pin)++)
->  
-> -#define HPD_STORM_DEFAULT_THRESHOLD 5
-> +/* Threshold == 5 for long IRQs, 50 for short */
-> +#define HPD_STORM_DEFAULT_THRESHOLD 50
->  
->  struct i915_hotplug {
->  	struct work_struct hotplug_work;
-> @@ -308,6 +309,8 @@ struct i915_hotplug {
->  	bool poll_enabled;
->  
->  	unsigned int hpd_storm_threshold;
-> +	/* Whether or not to count short HPD IRQs in HPD storms */
-> +	u8 hpd_short_storm_enabled;
->  
->  	/*
->  	 * if we get a HPD irq from DP and a HPD irq from non-DP
-> diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
-> index 5d1f53723388..d7e47d6082de 100644
-> --- a/drivers/gpu/drm/i915/i915_irq.c
-> +++ b/drivers/gpu/drm/i915/i915_irq.c
-> @@ -4863,6 +4863,13 @@ void intel_irq_init(struct drm_i915_private *dev_priv)
->  		dev_priv->display_irqs_enabled = false;
->  
->  	dev_priv->hotplug.hpd_storm_threshold = HPD_STORM_DEFAULT_THRESHOLD;
-> +	/* If we have MST support, we want to avoid doing short HPD IRQ storm
-> +	 * detection, as short HPD storms will occur as a natural part of
-> +	 * sideband messaging with MST.
-> +	 * On older platforms however, IRQ storms can occur with both long and
-> +	 * short pulses, as seen on some G4x systems.
-> +	 */
-> +	dev_priv->hotplug.hpd_short_storm_enabled = !HAS_DP_MST(dev_priv);
->  
->  	dev->driver->get_vblank_timestamp = drm_calc_vbltimestamp_from_scanoutpos;
->  	dev->driver->get_scanout_position = i915_get_crtc_scanoutpos;
-> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-> index d642c0795452..f10e72496ae1 100644
-> --- a/drivers/gpu/drm/i915/intel_hotplug.c
-> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
-> @@ -114,34 +114,46 @@ enum hpd_pin intel_hpd_pin_default(struct drm_i915_private *dev_priv,
->  #define HPD_STORM_REENABLE_DELAY	(2 * 60 * 1000)
->  
->  /**
-> - * intel_hpd_irq_storm_detect - gather stats and detect HPD irq storm on a pin
-> + * intel_hpd_irq_storm_detect - gather stats and detect HPD IRQ storm on a pin
->   * @dev_priv: private driver data pointer
->   * @pin: the pin to gather stats on
-> + * @long_hpd: whether the HPD IRQ was long or short
->   *
-> - * Gather stats about HPD irqs from the specified @pin, and detect irq
-> + * Gather stats about HPD IRQs from the specified @pin, and detect IRQ
->   * storms. Only the pin specific stats and state are changed, the caller is
->   * responsible for further action.
->   *
-> - * The number of irqs that are allowed within @HPD_STORM_DETECT_PERIOD is
-> + * The number of IRQs that are allowed within @HPD_STORM_DETECT_PERIOD is
->   * stored in @dev_priv->hotplug.hpd_storm_threshold which defaults to
-> - * @HPD_STORM_DEFAULT_THRESHOLD. If this threshold is exceeded, it's
-> - * considered an irq storm and the irq state is set to @HPD_MARK_DISABLED.
-> + * @HPD_STORM_DEFAULT_THRESHOLD. Long IRQs count as +10 to this threshold, and
-> + * short IRQs count as +1. If this threshold is exceeded, it's considered an
-> + * IRQ storm and the IRQ state is set to @HPD_MARK_DISABLED.
-> + *
-> + * By default, most systems will only count long IRQs towards
-> + * &dev_priv->hotplug.hpd_storm_threshold. However, some older systems also
-> + * suffer from short IRQ storms and must also track these. Because short IRQ
-> + * storms are naturally caused by sideband interactions with DP MST devices,
-> + * short IRQ detection is only enabled for systems without DP MST support.
-> + * Systems which are new enough to support DP MST are far less likely to
-> + * suffer from IRQ storms at all, so this is fine.
->   *
->   * The HPD threshold can be controlled through i915_hpd_storm_ctl in debugfs,
->   * and should only be adjusted for automated hotplug testing.
->   *
-> - * Return true if an irq storm was detected on @pin.
-> + * Return true if an IRQ storm was detected on @pin.
->   */
->  static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
-> -				       enum hpd_pin pin)
-> +				       enum hpd_pin pin, bool long_hpd)
->  {
->  	struct i915_hotplug *hpd = &dev_priv->hotplug;
->  	unsigned long start = hpd->stats[pin].last_jiffies;
->  	unsigned long end = start + msecs_to_jiffies(HPD_STORM_DETECT_PERIOD);
-> +	const int increment = long_hpd ? 10 : 1;
->  	const int threshold = hpd->hpd_storm_threshold;
->  	bool storm = false;
->  
-> -	if (!threshold)
-> +	if (!threshold ||
-> +	    (!long_hpd && !dev_priv->hotplug.hpd_short_storm_enabled))
->  		return false;
->  
->  	if (!time_in_range(jiffies, start, end)) {
-> @@ -149,7 +161,8 @@ static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
->  		hpd->stats[pin].count = 0;
->  	}
->  
-> -	if (++hpd->stats[pin].count > threshold) {
-> +	hpd->stats[pin].count += increment;
-> +	if (hpd->stats[pin].count > threshold) {
->  		hpd->stats[pin].state = HPD_MARK_DISABLED;
->  		DRM_DEBUG_KMS("HPD interrupt storm detected on PIN %d\n", pin);
->  		storm = true;
-> @@ -409,28 +422,24 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
->  	for_each_intel_encoder(&dev_priv->drm, encoder) {
->  		enum hpd_pin pin = encoder->hpd_pin;
->  		bool has_hpd_pulse = intel_encoder_has_hpd_pulse(encoder);
-> +		bool long_hpd = true;
->  
->  		if (!(BIT(pin) & pin_mask))
->  			continue;
->  
->  		if (has_hpd_pulse) {
-> -			bool long_hpd = long_mask & BIT(pin);
->  			enum port port = encoder->port;
->  
-> +			long_hpd = !!(long_mask & BIT(pin));
-> +
+ENCLS, a.k.a. Enclave System instruction, is an umbrella instruction
+for a variety of privileged SGX functions.  The ENCLS function to be
+executed is specified in EAX, a la GETSEC of SMX/TXT fame.  Leafs may
+use additional registers for function-specific operands.  ENCLS also
+introduces its own set of error codes that (some) leafs use to return
+pass/fail information to software.  Leafs that return an error code
+also modify RFLAGS.  And finally, ENCLS generates ENCLS-specific #GPs
+and #PFs.
 
-!! not needed
+ENCLS leafs functions are organized under SGX sub-features, e.g. SGX1
+defines the base ENCLS function set and SGX2 adds ENCLS functions to
+enable dynamic EPC management.  At this time, only the SGX1 and SGX2
+function sets are supported by Linux; the other published sets relate
+to VMM EPC oversubscription, which is far out on the horizon.
 
->  			DRM_DEBUG_DRIVER("digital hpd port %c - %s\n", port_name(port),
->  					 long_hpd ? "long" : "short");
-> -			/*
-> -			 * For long HPD pulses we want to have the digital queue happen,
-> -			 * but we still want HPD storm detection to function.
-> -			 */
->  			queue_dig = true;
-> -			if (long_hpd) {
-> +			if (long_hpd)
->  				dev_priv->hotplug.long_port_mask |= (1 << port);
-> -			} else {
-> -				/* for short HPD just trigger the digital queue */
-> +			else
->  				dev_priv->hotplug.short_port_mask |= (1 << port);
-> -				continue;
-> -			}
-> +
->  		}
->  
->  		if (dev_priv->hotplug.stats[pin].state == HPD_DISABLED) {
-> @@ -453,7 +462,7 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
->  			queue_hp = true;
->  		}
->  
-> -		if (intel_hpd_irq_storm_detect(dev_priv, pin)) {
-> +		if (intel_hpd_irq_storm_detect(dev_priv, pin, long_hpd)) {
->  			dev_priv->hotplug.event_bits &= ~BIT(pin);
->  			storm_detected = true;
+Define the ENCLS leafs in a dedicated file as more architecturally
+defined SGX constants and data structures will be introduced in short
+order.
 
-queue_hp = true ?
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/include/asm/sgx_arch.h | 54 +++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 arch/x86/include/asm/sgx_arch.h
 
->  		}
-> -- 
-> 2.19.1
-
+diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
+new file mode 100644
+index 000000000000..e068db46835e
+--- /dev/null
++++ b/arch/x86/include/asm/sgx_arch.h
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
++/**
++ * Copyright(c) 2016-18 Intel Corporation.
++ *
++ * Contains data structures defined by the SGX architecture.  Data structures
++ * defined by the Linux software stack should not be placed here.
++ */
++#ifndef _ASM_X86_SGX_ARCH_H
++#define _ASM_X86_SGX_ARCH_H
++
++/**
++ * enum sgx_encls_leaves - ENCLS leaf functions
++ * %SGX_ECREATE:	Create an enclave.
++ * %SGX_EADD:		Add a page to an uninitialized enclave.
++ * %SGX_EINIT:		Initialize an enclave, i.e. launch an enclave.
++ * %SGX_EREMOVE:	Remove a page from an enclave.
++ * %SGX_EDBGRD:		Read a word from an enclve (peek).
++ * %SGX_EDBGWR:		Write a word to an enclave (poke).
++ * %SGX_EEXTEND:	Measure 256 bytes of an added enclave page.
++ * %SGX_ELDB:		Load a swapped page in blocked state.
++ * %SGX_ELDU:		Load a swapped page in unblocked state.
++ * %SGX_EBLOCK:		Change page state to blocked i.e. entering hardware
++ *			threads cannot access it and create new TLB entries.
++ * %SGX_EPA:		Create a Version Array (VA) page used to store isvsvn
++ *			number for a swapped EPC page.
++ * %SGX_EWB:		Swap an enclave page to the regular memory. Checks that
++ *			all threads have exited that were in the previous
++ *			shoot-down sequence.
++ * %SGX_ETRACK:		Start a new shoot down sequence. Used to together with
++ *			EBLOCK to make sure that a page is safe to swap.
++ * %SGX_EAUG:		Add a page to an initialized enclave.
++ * %SGX_EMODPR:		Restrict an EPC page's permissions.
++ * %SGX_EMODT:		Modify the page type of an EPC page.
++ */
++enum sgx_encls_leaves {
++	SGX_ECREATE	= 0x00,
++	SGX_EADD	= 0x01,
++	SGX_EINIT	= 0x02,
++	SGX_EREMOVE	= 0x03,
++	SGX_EDGBRD	= 0x04,
++	SGX_EDGBWR	= 0x05,
++	SGX_EEXTEND	= 0x06,
++	SGX_ELDB	= 0x07,
++	SGX_ELDU	= 0x08,
++	SGX_EBLOCK	= 0x09,
++	SGX_EPA		= 0x0A,
++	SGX_EWB		= 0x0B,
++	SGX_ETRACK	= 0x0C,
++	SGX_EAUG	= 0x0D,
++	SGX_EMODPR	= 0x0E,
++	SGX_EMODT	= 0x0F,
++};
++
++#endif /* _ASM_X86_SGX_ARCH_H */
 -- 
-Ville Syrjälä
-Intel
+2.19.1
+
