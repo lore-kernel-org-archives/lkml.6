@@ -2,75 +2,116 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE4EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C67C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503ED20685
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:59:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503ED20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 30A9020685
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:00:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RHd7XfBm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A9020685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388945AbeKGAZD (ORCPT
+        id S2388975AbeKGAZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:25:03 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38058 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388800AbeKGAZD (ORCPT
+        Tue, 6 Nov 2018 19:25:45 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34626 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388800AbeKGAZp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:25:03 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v83-v6so10931139oia.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 06:59:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8mvrppLPNyUmK9QoeGegp7B8KyARBY7NMFJppKuMgJ8=;
-        b=iX4qZQ/5KrMVGU0MG+jiPOA4oS2GgjUQ732cPLU733Tb5ERM4a42g258Kc4hl8P0o+
-         4UWpb8TKZpNcaAoPZE95cnFyfmP15R6SXfTgD5p7zSFQ2+SPfAiK3OQx+iJXQtgSbJ84
-         SO90IP6uLBYzPA333TImdYwQsqIKyE1KlsQkaSfEvTz7ClTQjNTPb8pLUYtuOg6aFKK1
-         NK615O46c6Vp2a6iubpok6kolmXlPMRA6Fw/C4HgsRvpp1vbTppTwLck4QdR2jEGZOAU
-         h2wOcv6bPRqZUBIxkYKHQFZI6q8KLmFcoZA0AfZppR4UKo5av/Cl+q+47LgcXjL3ogj2
-         chhg==
-X-Gm-Message-State: AGRZ1gICKR4SuQS3eCSj+EQTswfaAq8qmTFMsdV7XKxeVAHd/2ibb1zl
-        +Soo3sDej+p2mXYpisM4n5MqNUtiIsrPaoc1w/c=
-X-Google-Smtp-Source: AJdET5e72JUGUlaZrjLcKt6ISVE+Q5FJuRPAqMx1meV9Prr2FPv8DF+SL//ruYx21PzTRBD/NnJNHYKDFJQafuXjNr8=
-X-Received: by 2002:aca:f3d4:: with SMTP id r203-v6mr14225673oih.95.1541516366654;
- Tue, 06 Nov 2018 06:59:26 -0800 (PST)
+        Tue, 6 Nov 2018 19:25:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HZSYKT3uQCFQJBlGvwG2ps1CJ4htXqv8eg+KTQRCM6g=; b=RHd7XfBmujZLbiEty7C1kZK3b
+        cEyUn6e8OhGUw6pLygs4Re7gzc6LGN55Xmq6UkfDXUPypSPyTTTBX8uT7EOS2tJqR0CHqxyILxG8R
+        Ne64R0LxYKSAYZ7pBJF9AGfvm6QGc+9/cR91Q5NLgi4V176oqPQMMV8p6GfPvDZBel9xayVLh692o
+        ri+HYNf//lZb1wb8/SHvNuHrRYVDoC5AFLL5+ZhbjWyO6OHLaMgjtmSkcGkMMPal+vNCnieulfdwy
+        8oNsxk3e1yNMJcqkNsmwkYkY9uayWfeNitg2oxgw45z9bX4sLJAT+F4BLv4N/+Mjfi9rkemvGI0NB
+        9Gl4tqKug==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gK2pm-0007c9-CR; Tue, 06 Nov 2018 15:00:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 371CA20284F96; Tue,  6 Nov 2018 15:59:56 +0100 (CET)
+Date:   Tue, 6 Nov 2018 15:59:56 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Morten Rasmussen <morten.rasmussen@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org
+Subject: Re: [PATCH v5 2/2] sched/fair: update scale invariance of PELT
+Message-ID: <20181106145956.GA9761@hirez.programming.kicks-ass.net>
+References: <1540570303-6097-1-git-send-email-vincent.guittot@linaro.org>
+ <1540570303-6097-3-git-send-email-vincent.guittot@linaro.org>
+ <b89b6805-45c0-8462-b75b-b7da4a35c022@arm.com>
+ <CAKfTPtBapA3JvbgUyESzE=2ZXOGLRLmZh7oi8N=H9PHubCCuNg@mail.gmail.com>
+ <20181105145854.GA6401@e105550-lin.cambridge.arm.com>
 MIME-Version: 1.0
-References: <20181106134630.29591-1-smuchun@gmail.com> <CAJZ5v0ifsQqkoFw2tossFKJAUkqDLdR9NpN3eZTn3t0xUz6K-g@mail.gmail.com>
- <CAPSr9jE8EbWue31LP18eF9+KysZHNRqHNrzif8H4NkCzHHtueQ@mail.gmail.com>
-In-Reply-To: <CAPSr9jE8EbWue31LP18eF9+KysZHNRqHNrzif8H4NkCzHHtueQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 6 Nov 2018 15:59:15 +0100
-Message-ID: <CAJZ5v0iZo95ssiu3JcGJMgP+QrKLy0wu9vshk212FE3aY_kwoQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Add branch prediction hints in really_probe()
-To:     smuchun@gmail.com
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181105145854.GA6401@e105550-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 3:43 PM Muchun Song <smuchun@gmail.com> wrote:
->
-> Hi Rafael,
->
-> If we want the driver core to test driver remove functions, we can
-> enable CONFIG_DEBUG_TEST_DRIVER_REMOVE. This option is
-> just for testing it. So, in most cases, the option is disabled and the if
-> condition is false. So I think we can add an unlikely() to it.
+On Mon, Nov 05, 2018 at 02:58:54PM +0000, Morten Rasmussen wrote:
 
-Yes, it can be added there, but does it really need to be added?
+> It has always been debatable what to do with utilization when there are
+> no spare cycles.
+> 
+> In Dietmar's example where two 25% tasks are put on a 512 (50%) capacity
+> CPU we add just enough utilization to have no spare cycles left. One
+> could argue that 25% is still the correct utilization for those tasks.
+> However, we only know their true utilization because they just ran
+> unconstrained on a higher capacity CPU. Once they are on the 512 capacity
+> CPU we wouldn't know if the tasks grew in utilization as there are no
+> spare cycles to use.
+> 
+> As I see it, the most fundamental difference between scaling
+> contribution and time for PELT is the characteristics when CPUs are
+> over-utilized.
+> 
+> With contribution scaling the PELT utilization of a task is a _minimum_
+> utilization. Regardless of where the task is currently/was running (and
+> provided that it doesn't change behaviour) its PELT utilization will
+> approximate its _minimum_ utilization on an idle 1024 capacity CPU.
+> 
+> With time scaling the PELT utilization doesn't really have a meaning on
+> its own. It has to be compared to the capacity of the CPU where it
+> is/was running to know what the its current PELT utilization means. When
+> the utilization over-shoots the capacity its value is no longer
+> represents utilization, it just means that it has a higher compute
+> demand than is offered on its current CPU and a high value means that it
+> has been suffering longer. It can't be used to predict the actual
+> utilization on an idle 1024 capacity any better than contribution scaled
+> PELT utilization.
+> 
+> This change might not be a showstopper, but it is something to be aware
+> off and take into account wherever PELT utilization is used.
 
-If the conditions are false all the time, the branch predictor in the
-processor should be able to deal with it just fine.
+So for things like x86, where we don't have immediate control over the
+OPPs nor actually know the current dynamic max OPP (or even can know), I
+much prefer the model Vincent proposes.
 
-And if they are false already at build time, the compiler should just
-optimize them away.
+The one thing we do know is the lack of idle time, and I feel equating
+no idle with u=1 makes perfect sense.
+
+Luckily x86 does provide means of querying the current effective OPP
+and so a utilization value can be usefully compared to another.
