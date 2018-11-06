@@ -2,80 +2,105 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730C5C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDACC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EE12085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:22:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EE12085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 75F5220862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:23:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="oIi9HXph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F5220862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbeKFSrL (ORCPT
+        id S1730334AbeKFSrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:47:11 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36360 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbeKFSrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:47:10 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gYcSjSxHh4l6; Tue,  6 Nov 2018 10:22:52 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 019811EC0979;
-        Tue,  6 Nov 2018 10:22:51 +0100 (CET)
-Date:   Tue, 6 Nov 2018 10:22:51 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        manish.narani@xilinx.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org
-Subject: Re: [PATCH v10 5/6] arm64: zynqmp: Add DDRC node
-Message-ID: <20181106092251.GB13712@zn.tnic>
-References: <20181105125644.GA7937@zn.tnic>
- <41c5ca53-ed4b-38d0-c612-e1229004293e@xilinx.com>
- <20181105132007.GB7937@zn.tnic>
- <a81f47e0-1778-a6ac-4cd8-634502661d6f@xilinx.com>
- <20181105134218.GD7937@zn.tnic>
- <CAOesGMj=EbWgcYF2Mhh6TFMCdn1ub1Ze6fbXJnFFdsttWByXYg@mail.gmail.com>
- <20181105194721.GB26868@zn.tnic>
- <CAOesGMjsPWeRZEeBH37uLQFBKwAWNMh5yCvuKNYrOUDfRSSYog@mail.gmail.com>
- <20181105204322.GE26868@zn.tnic>
- <38dc38b6-25f4-194c-9ba9-577d35e92700@xilinx.com>
+        Tue, 6 Nov 2018 13:47:47 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52004 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729349AbeKFSrr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:47:47 -0500
+Received: by mail-it1-f193.google.com with SMTP id h13so16897760itl.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:23:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rlRXtxyBTWqlbWk0rrvDcwsQSfNabCivduvMrSeh33Q=;
+        b=oIi9HXphln/F0ZqV2xeDzeRKbXntqPXDvoFnxD5dLaxE9aRulBryf1ae3RhJqkm53l
+         +9XvLDLfTgho1rjr90OulrOXTLHHRBmUQmmbhfDtC07iLuqckrCTjzTUCA6fA6ENhceV
+         ogaGfmv8P/h2wIOUfgDI3Z+rm2DcbuKjaKuYs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rlRXtxyBTWqlbWk0rrvDcwsQSfNabCivduvMrSeh33Q=;
+        b=p4vyi9TZEpNcU6XBHxYe2viVAGu0+d/tDtJQnUGORYWxJYMTxydh4GVF+gp75NenGr
+         C1+5pu7O1+e1GSBDDxP5yKH1n6SOQ3cM30hP3iiJRvEkzQdoKBcONK5DEyvSfsOTTHTP
+         THbdYz4ewrk2xc0eVHxCbaLTqnMSS9u67Uvpfca2nmG7h0lP0C7QD7oR6W7KO7xTAzcA
+         tVYDDz/uNdmZkzHh6mY5H6tnAD1gn/xsXwfCareo9aUoJjvGqoyUApKWRZGPPHSCQQGP
+         PV/K/LLFM7WC+4sNXQcJuA/Cakj0wYiZhz67jeJay0itL3KEBhM5Cqmsur2cb13VFavo
+         SSNw==
+X-Gm-Message-State: AGRZ1gLsDbQ6LNqUhyTKryxf9kk3l40MQno4+V1+aBQema2ZuG6UGDtI
+        43Q5T96IC1Y1YXyBHAiy+x0u77JGI5kRvzv0a9Y2Kg==
+X-Google-Smtp-Source: AJdET5eXCIeBxNmNyMwwJjNHn9VrOSU7eip6yIMu8EvG23Gv2AmlZ/fbNToK5vihDp3rBdWAjNHiNIhq2LhylesmkP4=
+X-Received: by 2002:a02:9951:: with SMTP id d17-v6mr22421065jak.78.1541496208782;
+ Tue, 06 Nov 2018 01:23:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <38dc38b6-25f4-194c-9ba9-577d35e92700@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Tue, 6 Nov 2018 01:23:28 -0800 (PST)
+X-Originating-IP: [94.21.144.184]
+In-Reply-To: <154149557692.17196.12607896696117775780.stgit@localhost.localdomain>
+References: <154149557692.17196.12607896696117775780.stgit@localhost.localdomain>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 6 Nov 2018 10:23:28 +0100
+Message-ID: <CAJfpegtMmrvnZE3xtMDNTmF=pSmqFROtehamivbLeAh2E_qZ6Q@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Put leaked request on error path of fuse_retrieve()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 07:46:55AM +0100, Michal Simek wrote:
-> I think Boris should take also this one (dt binding doc change) because
-> it is aligned with changes in the driver.
-> https://lkml.kernel.org/r/1538667328-9465-7-git-send-email-manish.narani@xilinx.com
+On Tue, Nov 6, 2018 at 10:13 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> fuse_request_send_notify_reply() may fail, and this case
+> it remains leaked (fuse_retrieve_end(), which is called
+> on error path, does not do that). Also, fc->num_waiting,
+> will never be decremented, and fuse_wait_aborted() will
+> never finish. So, put the request patently.
+>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-Ok, done.
+Posted same patch yesterday for a syzbot report.   How did you notice this?
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
+Miklos
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+
+> ---
+>  fs/fuse/dev.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index ae813e609932..6fe330cc9709 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1768,8 +1768,10 @@ static int fuse_retrieve(struct fuse_conn *fc, struct inode *inode,
+>         req->in.args[1].size = total_len;
+>
+>         err = fuse_request_send_notify_reply(fc, req, outarg->notify_unique);
+> -       if (err)
+> +       if (err) {
+>                 fuse_retrieve_end(fc, req);
+> +               fuse_put_request(fc, req);
+> +       }
+>
+>         return err;
+>  }
+>
