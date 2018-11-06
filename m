@@ -2,108 +2,129 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8659FC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FC5C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 333C92086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:23:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vP34rVtX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333C92086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F8EE2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:26:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F8EE2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730992AbeKGIvK (ORCPT
+        id S2388162AbeKGIx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 03:51:10 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40446 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbeKGIvK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 03:51:10 -0500
-Received: by mail-qk1-f194.google.com with SMTP id y16so18372015qki.7
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 15:23:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JzT+g1DyVK0RCYgiq7kipbM1x/+NWgJ0z8J8CTpmR94=;
-        b=vP34rVtXDRsGguxG8GY2V2poJXhxcPEX36ALqT0JmA57/l6gYrEbxj+Zyxkq6j9Okw
-         VOzv6dqFN6N1FuAx7Ek58+SZHl6/ngXHnnXHwuqA/9xatb+36qrc4w3/mxEw11ew5JnK
-         TUlNq1pfNmQ0euHUjM3sjLQ8RCFoSc64pLGERsyM3wUkR17TkhJEr5wlAvsU2wuLwIkZ
-         WYRtwsAMGBlKZgwinwxF/sTRBwoPKVJ8GOI/Ez5MBLhWFNZfJgw6nohZsybZ1T5scK8W
-         gnjmPdhMYI69VPX145t8zi+LjVTrvgjKLeZ/ixrI1k8lcOsT7lipfVvJdQGn2MfxMiYI
-         geFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JzT+g1DyVK0RCYgiq7kipbM1x/+NWgJ0z8J8CTpmR94=;
-        b=OuV4biQ+7icJ3kyCan7PTamFSabv+eUY7uc7R2jywjEL7r9caSx8LyBMLdCW3CmEv3
-         Vofze0ncJf4bnEx2agpUqDrCVQp86CulVyAgZ2xgYltjo/8vsDDc80ksEk5f+QcdbC4A
-         NtuU5no8puD7JOxV4HRocEwHCfcL8ciSM+q0ZXwrp/aYxepRiI+QPZrFhB4sbA6P6qCr
-         eO8c5VGCWO8yS5cdG75P7ba3zkGKjYZqyCHLlbgrC5kpmoLW4mHfMlPQy148hJTaj1i/
-         y/4/elPylOHWDWbYRz6iRbmEDOJ/QwvAX2b8HdznBQZVp+8SCFNvl6kvLTfoA40krznw
-         xfHQ==
-X-Gm-Message-State: AGRZ1gKwlU5bCNBMggXc6tPzCEs6yrkTs1KX3neUUkp0VgMIi0gvPIGV
-        1O9zoT5UL/Px2ZXPFshGJTO/NgoVXLsV2qZ1Zny2IA==
-X-Google-Smtp-Source: AJdET5eDmo7ilLkJyEr942I8c680YRvWyOE3kVNfuxG91ZpJCHV7Th4T9nqC7EBHXwlIK6zMITsEozK+9o8aOc3EeUY=
-X-Received: by 2002:a37:d4d9:: with SMTP id s86mr26733675qks.190.1541546610786;
- Tue, 06 Nov 2018 15:23:30 -0800 (PST)
+        Wed, 7 Nov 2018 03:53:57 -0500
+Received: from mga02.intel.com ([134.134.136.20]:36687 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbeKGIx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 03:53:57 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 15:26:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
+   d="scan'208";a="277680927"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Nov 2018 15:26:16 -0800
+Date:   Tue, 6 Nov 2018 15:26:16 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181106232616.GA11101@linux.intel.com>
+References: <20181102220437.GI7393@linux.intel.com>
+ <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
 MIME-Version: 1.0
-References: <20181022222614.41016-1-mikewu@google.com> <20181106232130.33932-1-mikewu@google.com>
-In-Reply-To: <20181106232130.33932-1-mikewu@google.com>
-From:   Ke Wu <mikewu@google.com>
-Date:   Tue, 6 Nov 2018 15:23:19 -0800
-Message-ID: <CANRnR9QkiiNNxSBzLUeFHw--xPGVEd5E0RfqNTgj4ji8LmVz7g@mail.gmail.com>
-Subject: Re: [PATCH v2] modsign: use all trusted keys to verify module signature
-To:     jeyu@kernel.org, dhowells@redhat.com
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106231730.GR5150@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the comment! I switched to use
-VERIFY_USE_SECONDARY_KEYRING, please take a look.
+On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
+> On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
+> > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+> > >
+> > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
+> > > > I almost feel like the right solution is to call into SGX on its own
+> > > > private stack or maybe even its own private address space.
+> > >
+> > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
+> > > enclave like its own "thread" with its own stack and its own set of
+> > > registers and context?  That seems like a much more workable model than
+> > > trying to weave it together with the EENTER context.
+> > 
+> > So maybe the API should be, roughly
+> > 
+> > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
+> > host_state *state);
+> > sgx_exit_reason_t sgx_resume_enclave(same args);
+> > 
+> > where host_state is something like:
+> > 
+> > struct host_state {
+> >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
+> > };
+> > 
+> > and the values in host_state explicitly have nothing to do with the
+> > actual host registers.  So, if you want to use the outcall mechanism,
+> > you'd allocate some memory, point sp to that memory, call
+> > sgx_enter_enclave(), and then read that memory to do the outcall.
+> > 
+> > Actually implementing this would be distinctly nontrivial, and would
+> > almost certainly need some degree of kernel help to avoid an explosion
+> > when a signal gets delivered while we have host_state.sp loaded into
+> > the actual SP register.  Maybe rseq could help with this?
+> > 
+> > The ISA here is IMO not well thought through.
+> 
+> Maybe I'm mistaken about some fundamentals here, but my understanding
+> of SGX is that the whole point is that the host application and the
+> code running in the enclave are mutually adversarial towards one
+> another. Do any or all of the proposed protocols here account for this
+> and fully protect the host application from malicious code in the
+> enclave? It seems that having control over the register file on exit
+> from the enclave is fundamentally problematic but I assume there must
+> be some way I'm missing that this is fixed up.
 
-On Tue, Nov 6, 2018 at 3:21 PM Ke Wu <mikewu@google.com> wrote:
->
-> Make mod_verify_sig to use all trusted keys. This allows keys in
-> secondary_trusted_keys to be used to verify PKCS#7 signature on a
-> kernel module.
->
-> Signed-off-by: Ke Wu <mikewu@google.com>
-> ---
-> Changelog since v1:
-> - Use VERIFY_USE_SECONDARY_KEYRING rather than (void *)1UL
->
->  kernel/module_signing.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> index f2075ce8e4b3..6b9a926fd86b 100644
-> --- a/kernel/module_signing.c
-> +++ b/kernel/module_signing.c
-> @@ -83,6 +83,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
->         }
->
->         return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> -                                     NULL, VERIFYING_MODULE_SIGNATURE,
-> +                                     VERIFY_USE_SECONDARY_KEYRING,
-> +                                     VERIFYING_MODULE_SIGNATURE,
->                                       NULL, NULL);
->  }
-> --
-> 2.19.1.930.g4563a0d9d0-goog
->
-
-
--- 
-Ke Wu | Software Engineer | mikewu@google.com | Google Inc.
+SGX provides protections for the enclave but not the other way around.
+The kernel has all of its normal non-SGX protections in place, but the
+enclave can certainly wreak havoc on its userspace process.  The basic
+design idea is that the enclave is a specialized .so that gets extra
+security protections but is still effectively part of the overall
+application, e.g. it has full access to its host userspace process'
+virtual memory.
