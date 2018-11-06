@@ -2,152 +2,112 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFCFC46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83F1C46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3332520862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3332520862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 708C320862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:01:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708C320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbeKGH0q (ORCPT
+        id S1727410AbeKGH2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:26:46 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6185 "EHLO mga07.intel.com"
+        Wed, 7 Nov 2018 02:28:34 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:38324 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbeKGH0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:26:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 13:59:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
-   d="scan'208";a="87187056"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 13:59:25 -0800
-Message-ID: <1541541565.8854.13.camel@intel.com>
-Subject: Re: RFC: userspace exception fixups
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S1726507AbeKGH2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:28:34 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id HPvrOi1BGsgt; Tue,  6 Nov 2018 23:01:12 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2D101EC0266;
+        Tue,  6 Nov 2018 23:01:11 +0100 (CET)
+Date:   Tue, 6 Nov 2018 23:00:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Date:   Tue, 06 Nov 2018 13:59:25 -0800
-In-Reply-To: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
-References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
-         <20181102170627.GD7393@linux.intel.com>
-         <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
-         <20181102173350.GF7393@linux.intel.com>
-         <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
-         <20181102182712.GG7393@linux.intel.com>
-         <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
-         <20181102220437.GI7393@linux.intel.com>
-         <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
-         <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
-         <1541518670.7839.31.camel@intel.com>
-         <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
-         <1541524750.7839.51.camel@intel.com>
-         <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
-         <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
-         <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
-         <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
-         <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
-         <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
-         <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
-         <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Myron Stowe <myron.stowe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
+Message-ID: <20181106220059.GA4139@zn.tnic>
+References: <20181102181055.130531-1-brian.woods@amd.com>
+ <20181102181055.130531-3-brian.woods@amd.com>
+ <20181102195925.GB160487@google.com>
+ <20181102232948.GC26770@zn.tnic>
+ <20181105214537.GA19420@google.com>
+ <20181105215650.GG26868@zn.tnic>
+ <20181106214256.GA65443@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181106214256.GA65443@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 1:07 PM Andy Lutomirski <luto@amacapital.net> wrote:
-> > 
-> > > 
-> > > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
-> > > 
-> > > > 
-> > > > On 11/6/18 12:12 PM, Andy Lutomirski wrote:
-> > > > True, but what if we have a nasty enclave that writes to memory just
-> > > > below SP *before* decrementing SP?
-> > > Yeah, that would be unfortunate.  If an enclave did this (roughly):
-> > > 
-> > >    1. EENTER
-> > >    2. Hardware sets eenter_hwframe->sp = %sp
-> > >    3. Enclave runs... wants to do out-call
-> > >    4. Enclave sets up parameters:
-> > >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
-> > >        ...
-> > >    5. Enclave sets eenter_hwframe->sp -= offset
-> > > 
-> > > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
-> > > was on the stack.  The enclave could easily fix this by moving ->sp first.
-> > > 
-> > > But, this is one of those "fun" parts of the ABI that I think we need to
-> > > talk about.  If we do this, we also basically require that the code
-> > > which handles asynchronous exits must *not* write to the stack.  That's
-> > > not hard because it's typically just a single ERESUME instruction, but
-> > > it *is* a requirement.
-> > > 
-> > I was assuming that the async exit stuff was completely hidden by the API. The AEP code would decide whether the exit got fixed up by the kernel (which may or may not be easy to tell — can the
-> > code even tell without kernel help whether it was, say, an IRQ vs #UD?) and then either do ERESUME or cause sgx_enter_enclave() to return with an appropriate return value.
-> > 
-> > 
-> Sean, how does the current SDK AEX handler decide whether to do
-> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
-> like the *CPU* could give a big hint, but I don't see where there is
-> any architectural indication of why the AEX code got called or any
-> obvious way for the user code to know whether the exit was fixed up by
-> the kernel?
+On Tue, Nov 06, 2018 at 03:42:56PM -0600, Bjorn Helgaas wrote:
+> This isn't some complicated new device where the programming model
+> changed on the new CPU.  This is a thermometer that was already
+> supported.  ACPI provides plenty of functionality that could be used
+> to support this generically, e.g., see drivers/acpi/thermal.c,
+> drivers/thermal/int340x_thermal/processor_thermal_device.c, etc.
 
-The SDK "unconditionally" does ERESUME at the AEP location, but that's
-bit misleading because its signal handler may muck with the context's
-RIP, e.g. to abort the enclave on a fatal fault.
+Ok, you say ACPI but how do you envision practically doing that? I mean,
+this is used by old boxes too - ever since K8. So how do we go and add
+ACPI functionality to old boxes?
 
-On an event/exception from within an enclave, the event is immediately
-delivered after loading synthetic state and changing RIP to the AEP.
-In other words, jamming CPU state is essentially a bunch of vectoring
-ucode preamble, but from software's perspective it's a normal event
-that happens to point at the AEP instead of somewhere in the enclave.
-And because the signals the SDK cares about are all synchronous, the
-SDK can simply hardcode ERESUME at the AEP since all of the fault logic
-resides in its signal handler.  IRQs and whatnot simply trampoline back
-into the enclave.
+Or do you mean it should simply be converted to do pci_register_driver()
+with a struct pci_driver pointer which has all those PCI device IDs in a
+table? I'm looking at the last example
+drivers/thermal/int340x_thermal/processor_thermal_device.c you gave above.
 
-Userspace can do something funky instead of ERESUME, but only *after*
-IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
-case, after the trap handler has run.
+> But maybe there's some real value in the nitty-gritty device-specific
+> code in amd_nb.c.  If so, I guess you're stuck with updates like this
+> and negotiating with the distros to do backports and new releases.
 
-Jumping back a bit, how much do we care about preventing userspace
-from doing stupid things?  I did a quick POC on the idea of hardcoding
-fixup for the ENCLU opcode, and the basic idea checks out.  The code
-is fairly minimal and doesn't impact the core functionality of the SDK.
-They'd need to redo their trap handling to move it from the signal
-handler to inline, but their stack shenanigans won't be any more broken
-than they already are.
+Well, even if it is converted to a different registration scheme, you
+still need to add new PCI device IDs to the table, no? So *some* sort of
+enablement still needs to happen.
+
+And then the argument about needing enablement for distros is moot
+because it still needs enablement/backporting - regardless of the
+registration scheme.
+
+Or do you mean something else?
+
+I mean, don't get me wrong, I don't mind if it gets converted to
+pci_register_driver() if you think it fits better this way with the
+drivers registering with PCI devices - I'm just trying to understand the
+reasoning for it.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
