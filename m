@@ -2,97 +2,124 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93519C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D95C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57C9E2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:18:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a/XcVvAt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aAH0FG5E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C9E2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 43D8B2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43D8B2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389242AbeKGBn5 (ORCPT
+        id S2389247AbeKGBok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:43:57 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55420 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389102AbeKGBn5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:43:57 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 81E366053D; Tue,  6 Nov 2018 16:18:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541521080;
-        bh=7gFUWLtbegbx44OKrzSG1K5V7SQ8IaQEldTZgGfxv5Q=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=a/XcVvAtuHFECwN5LZx4BIhK+kQvn+PXe4jIkwxUsdempebPLkcsE9oZfsrd7irIr
-         wIYudiQHynnYaPpfuzlVn8Tubuvg6kYptyvnYNIV4Rr4IyCja7DNVgSUiNdKkeRQIF
-         bbnH7bNQS4i1dWyXC/rQl/2sA5yJNVBJBkaq47l0=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51059601D7;
-        Tue,  6 Nov 2018 16:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541521080;
-        bh=7gFUWLtbegbx44OKrzSG1K5V7SQ8IaQEldTZgGfxv5Q=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=aAH0FG5EyR/6GbSYrMlMvYjj073rz+0A/u4WBtvltVjq1wSPir/8yuL1Gpf+GQPB7
-         w4SopAhwKS65PHCnmgMn5UPhdu8jXlM3EZG6YnMB1jyCFYg1AVfep2deBJvxqO3b+y
-         C9etG10Tl+ZWxRspuZJ7KbVeJpOizC/Sr1YnEWQc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51059601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Tue, 6 Nov 2018 20:44:40 -0500
+Received: from mga09.intel.com ([134.134.136.24]:65051 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387685AbeKGBoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 20:44:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 08:18:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="105885000"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 06 Nov 2018 08:18:43 -0800
+Message-ID: <e2fec0e159757f31abbd258e284a844d0d8a2859.camel@linux.intel.com>
+Subject: Re: [driver-core PATCH v5 4/9] driver core: Move
+ async_synchronize_full call
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org
+Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com
+Date:   Tue, 06 Nov 2018 08:18:43 -0800
+In-Reply-To: <1541466289.196084.176.camel@acm.org>
+References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
+         <154145231976.29224.39638353241256116.stgit@ahduyck-desk1.jf.intel.com>
+         <1541466289.196084.176.camel@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/4] ath10k: snoc: remove 'wcn3990' from generic resource
- handling
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181013005504.46399-1-briannorris@chromium.org>
-References: <20181013005504.46399-1-briannorris@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181106161800.81E366053D@smtp.codeaurora.org>
-Date:   Tue,  6 Nov 2018 16:18:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> wrote:
-
-> ath10k_wcn3990_clk_info and ath10k_wcn3990_vreg_info are not
-> WCN3990-specific structures. They hold generic data. So don't name them
-> with wcn3990 specifics.
+On Mon, 2018-11-05 at 17:04 -0800, Bart Van Assche wrote:
+> On Mon, 2018-11-05 at 13:11 -0800, Alexander Duyck wrote:
+> > This patch moves the async_synchronize_full call out of
+> > __device_release_driver and into driver_detach.
+> > 
+> > The idea behind this is that the async_synchronize_full call will only
+> > guarantee that any existing async operations are flushed. This doesn't do
+> > anything to guarantee that a hotplug event that may occur while we are
+> > doing the release of the driver will not be asynchronously scheduled.
+> > 
+> > By moving this into the driver_detach path we can avoid potential deadlocks
+> > as we aren't holding the device lock at this point and we should not have
+> > the driver we want to flush loaded so the flush will take care of any
+> > asynchronous events the driver we are detaching might have scheduled.
+> > 
+> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > ---
+> >  drivers/base/dd.c |    6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > index 76c40fe69463..e74cefeb5b69 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -975,9 +975,6 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+> >  
+> >  	drv = dev->driver;
+> >  	if (drv) {
+> > -		if (driver_allows_async_probing(drv))
+> > -			async_synchronize_full();
+> > -
+> >  		while (device_links_busy(dev)) {
+> >  			__device_driver_unlock(dev, parent);
+> >  
+> > @@ -1087,6 +1084,9 @@ void driver_detach(struct device_driver *drv)
+> >  	struct device_private *dev_prv;
+> >  	struct device *dev;
+> >  
+> > +	if (driver_allows_async_probing(drv))
+> > +		async_synchronize_full();
+> > +
+> >  	for (;;) {
+> >  		spin_lock(&drv->p->klist_devices.k_lock);
+> >  		if (list_empty(&drv->p->klist_devices.k_list)) {
 > 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Have you considered to move that async_synchronize_full() call into
+> bus_remove_driver()? Verifying the correctness of this patch requires to
+> check whether the async_synchronize_full() comes after the
+> klist_remove(&drv->p->knode_bus) call. That verification is easier when
+> the async_synchronize_full() call occurs in bus_remove_driver() instead
+> of in driver_detach().
+> 
+> Thanks,
+> 
+> Bart.
 
-4 patches applied to ath-next branch of ath.git, thanks.
+I considered it, however it ends up with things being more symmetric to
+have use take care of synchronizing things in driver_detach since after
+this patch set we are scheduling thing asynchronously in driver_attach.
 
-887a3dcf5893 ath10k: snoc: remove 'wcn3990' from generic resource handling
-1a1a0d5ccefc ath10k: snoc: fix unabalanced regulator error handling
-bfe57a6ac75a ath10k: snoc: relax voltage requirements
-82e60d920e8a ath10k: snoc: fix unbalanced clock error handling
+Also I don't think it would be any great risk simply because calling
+driver_detach with the driver still associated with the bus would be a
+blatent error as it could easily lead to issues where you unbind a
+driver but have it get hotplugged to a device while that is going on.
 
--- 
-https://patchwork.kernel.org/patch/10639795/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+- Alex
 
