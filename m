@@ -2,128 +2,79 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383D5C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A64C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDBBE20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDBBE20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 2228D2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:49:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2228D2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbeKFMKN (ORCPT
+        id S1729595AbeKFMLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 07:10:13 -0500
-Received: from ipmail02.adl2.internode.on.net ([150.101.137.139]:43902 "EHLO
-        ipmail02.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726389AbeKFMKN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 07:10:13 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail02.adl2.internode.on.net with ESMTP; 06 Nov 2018 13:17:16 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gJrOd-0006SW-Hz; Tue, 06 Nov 2018 13:47:15 +1100
-Date:   Tue, 6 Nov 2018 13:47:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-Message-ID: <20181106024715.GU6311@dastard>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com>
- <20181013035516.GA18822@dastard>
- <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
- <20181013164740.GA6593@infradead.org>
- <84811b54-60bf-2bc3-a58d-6a7925c24aad@nvidia.com>
- <20181105095447.GE6953@quack2.suse.cz>
- <f5ad7210-05e0-3dc4-02df-01ce5346e198@nvidia.com>
+        Tue, 6 Nov 2018 07:11:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40870 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727448AbeKFMLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 07:11:53 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 31E6C81DEA;
+        Tue,  6 Nov 2018 02:48:59 +0000 (UTC)
+Received: from [10.72.12.184] (ovpn-12-184.pek2.redhat.com [10.72.12.184])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 089E019748;
+        Tue,  6 Nov 2018 02:48:53 +0000 (UTC)
+Subject: Re: [PATCH 1/1] vhost: add per-vq worker thread
+To:     Vitaly Mayatskih <v.mayatskih@gmail.com>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181102160710.3741-1-v.mayatskih@gmail.com>
+ <20181102160710.3741-2-v.mayatskih@gmail.com>
+ <fe79c7fd-1e9f-dab8-3c65-8151181c922c@redhat.com>
+ <CAGF4SLgDk+48aLKHhA_ZgRc6D30tGdnB89b5m5bZKwzyoDb0dQ@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <617e0c54-7d11-09b6-21e5-968260107872@redhat.com>
+Date:   Tue, 6 Nov 2018 10:48:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f5ad7210-05e0-3dc4-02df-01ce5346e198@nvidia.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAGF4SLgDk+48aLKHhA_ZgRc6D30tGdnB89b5m5bZKwzyoDb0dQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 06 Nov 2018 02:48:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 04:26:04PM -0800, John Hubbard wrote:
-> On 11/5/18 1:54 AM, Jan Kara wrote:
-> > Hmm, have you tried larger buffer sizes? Because synchronous 8k IO isn't
-> > going to max-out NVME iops by far. Can I suggest you install fio [1] (it
-> > has the advantage that it is pretty much standard for a test like this so
-> > everyone knows what the test does from a glimpse) and run with it something
-> > like the following workfile:
-> > 
-> > [reader]
-> > direct=1
-> > ioengine=libaio
-> > blocksize=4096
-> > size=1g
-> > numjobs=1
-> > rw=read
-> > iodepth=64
-> > 
-> > And see how the numbers with and without your patches compare?
-> > 
-> > 								Honza
-> > 
-> > [1] https://github.com/axboe/fio
-> 
-> That program is *very* good to have. Whew. Anyway, it looks like read bandwidth 
-> is approximately 74 MiB/s with my patch (it varies a bit, run to run),
-> as compared to around 85 without the patch, so still showing about a 20%
-> performance degradation, assuming I'm reading this correctly.
-> 
-> Raw data follows, using the fio options you listed above:
-> 
-> Baseline (without my patch):
-> ---------------------------- 
-....
->      lat (usec): min=179, max=14003, avg=2913.65, stdev=1241.75
->     clat percentiles (usec):
->      |  1.00th=[ 2311],  5.00th=[ 2343], 10.00th=[ 2343], 20.00th=[ 2343],
->      | 30.00th=[ 2343], 40.00th=[ 2376], 50.00th=[ 2376], 60.00th=[ 2376],
->      | 70.00th=[ 2409], 80.00th=[ 2933], 90.00th=[ 4359], 95.00th=[ 5276],
->      | 99.00th=[ 8291], 99.50th=[ 9110], 99.90th=[10945], 99.95th=[11469],
->      | 99.99th=[12256]
-.....
-> Modified (with my patch):
-> ---------------------------- 
-.....
->      lat (usec): min=81, max=15766, avg=3496.57, stdev=1450.21
->     clat percentiles (usec):
->      |  1.00th=[ 2835],  5.00th=[ 2835], 10.00th=[ 2835], 20.00th=[ 2868],
->      | 30.00th=[ 2868], 40.00th=[ 2868], 50.00th=[ 2868], 60.00th=[ 2900],
->      | 70.00th=[ 2933], 80.00th=[ 3425], 90.00th=[ 5080], 95.00th=[ 6259],
->      | 99.00th=[10159], 99.50th=[11076], 99.90th=[12649], 99.95th=[13435],
->      | 99.99th=[14484]
 
-So it's adding at least 500us of completion latency to every IO?
-I'd argue that the IO latency impact is far worse than the a 20%
-throughput drop.
+On 2018/11/5 上午11:28, Vitaly Mayatskih wrote:
+> On Sun, Nov 4, 2018 at 9:53 PM Jason Wang <jasowang@redhat.com> wrote:
+>
+>> I wonder whether or not it's better to allow the device to specific the
+>> worker here instead of forcing a per vq worker model. Then we can keep
+>> the behavior of exist implementation and do optimization on top?
+> I was thinking about that too, but for the sake of simplicity it
+> sounds valid that if the user wanted 8 parallel queues for the disk,
+> they better be parallel, i.e. worker per queue. The rest of disks that
+> don't need high-performance, can have 1 queue specified.
+>
 
-i.e. You can make up for throughput drops by running a deeper
-queue/more dispatch threads, but you can't reduce IO latency at
-all...
+If you allow device to specify the worker itself, you can do any kinds 
+of mapping bettween work and worker kthread I think. The advantage of 
+doing this is that you can keep the vhost-net untouched. This makes 
+things a little bit easier and proving two kthreads is better than one 
+for -net workload is probably not as easy as it looks. We may get boost 
+in some cases but degradation for the rest.
 
-Cheers,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks
+
