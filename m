@@ -2,144 +2,119 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52050C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1B8C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2293920862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2293920862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id C765820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:15:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xnEPe17p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C765820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388445AbeKGEli (ORCPT
+        id S2388591AbeKGElt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 23:41:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46247 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388107AbeKGEli (ORCPT
+        Tue, 6 Nov 2018 23:41:49 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34859 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387928AbeKGElt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:41:38 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6JEbCS911187
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 6 Nov 2018 11:14:37 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6JEbYa911184;
-        Tue, 6 Nov 2018 11:14:37 -0800
-Date:   Tue, 6 Nov 2018 11:14:37 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-590ac60d8aa929bd21e35cd95a7d8720d00eb4f3@git.kernel.org>
-Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        hpa@zytor.com, kan.liang@linux.intel.com, ak@linux.intel.com,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        yao.jin@linux.intel.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-          yao.jin@linux.intel.com, mingo@kernel.org,
-          kan.liang@linux.intel.com, ak@linux.intel.com,
-          peterz@infradead.org, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com
-In-Reply-To: <1540983995-20462-1-git-send-email-yao.jin@linux.intel.com>
-References: <1540983995-20462-1-git-send-email-yao.jin@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf top: Display the LBR stats in callchain
- entry
-Git-Commit-ID: 590ac60d8aa929bd21e35cd95a7d8720d00eb4f3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 6 Nov 2018 23:41:49 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t15-v6so5527818wmt.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 11:15:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=pcUwBxDc1aUnql2XUzrbkeZwpflQ0RmvIs/O/e0efkU=;
+        b=xnEPe17pHXdMfvDfYmcknFCLkMnh0R4kCPnRnybsTuLwHBS9m96P/04gzYZ9MqVOKF
+         m8raApQFp2vftgAiYpCbfZ8yVqrI9oIci2vNfQCvPXjpdg5OpnKvCK+jaIwyZxF48LVV
+         OR2Gjlz6heIZONWYXvBmTT8iU1d8IIM7/LIamyaTuB7VxFDx+mDyolfOBexXXv6NyqzA
+         Na/+fNI+4vNuTuM8JwG0Oi4kHejaeOmrlTV3ZCp4Nr1V4ubCk/zJ8mzvEEwFvn1ygf7c
+         4pWiD2TuU2yMMifcJ1JZ9qOglVR2JinaeAHIlCllBDxIWKFnBoAhRw16ZnIoomSDHN0j
+         5eew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=pcUwBxDc1aUnql2XUzrbkeZwpflQ0RmvIs/O/e0efkU=;
+        b=XcRjDUBd+uvXf6Qz1K54dbgBbCMJ6kZefTcoBcEMS+PRIcwkQVfzXYQlgzP/C1twZV
+         AETeLlvoEuVc8Q34rR6d6MZeS/cgy5OqgUJ3ymQmTnnK3u4CYyaR6PBfxlrk8hjvh78C
+         sCa8oQ34DAOWcYD/2punSLxObXkzODvqgA/2oPjjzjKPB/3DKQOrX2/xXqGYfhztMy+5
+         slzfimEVUzgJePy/Dru35d/WYENc/RuKWf53yA+o8uMRtyotKE/JzrLjctWhxc85MvIA
+         4CdE/dnta72Q6d39aWOYIrOBgfH5s3Sq/Ah8IvQsm+gOkibu+8Filu8qn3cYnPNejBwm
+         Tr8w==
+X-Gm-Message-State: AGRZ1gLcTXci+YHzS36ZBNtk22mKuWiQxGQx7BMsLXRxPfYY8MIROOAY
+        9g75tfiS/WPBZPTaLTz6cTrKsQ==
+X-Google-Smtp-Source: AJdET5f12r4PEchKVY6ncW232QFAJmiInKP38caB0Rig64Vet0VEFMedV33BoQB071v3aBIy2nOtxw==
+X-Received: by 2002:a1c:95:: with SMTP id 143-v6mr3246281wma.4.1541530165389;
+        Tue, 06 Nov 2018 10:49:25 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id m13-v6sm9473039wrw.14.2018.11.06.10.49.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 10:49:24 -0800 (PST)
+Message-ID: <72269086b0ce0be5517c7ffb2bc979c4d17d5cc3.camel@baylibre.com>
+Subject: Re: [PATCH v2] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+From:   jbrunet@baylibre.com
+To:     Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Christian Hewitt <christianshewitt@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 06 Nov 2018 19:49:21 +0100
+In-Reply-To: <154152980131.88331.14307558394241579493@swboyd.mtv.corp.google.com>
+References: <20181105230820.3562-1-jbrunet@baylibre.com>
+         <154152980131.88331.14307558394241579493@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  590ac60d8aa929bd21e35cd95a7d8720d00eb4f3
-Gitweb:     https://git.kernel.org/tip/590ac60d8aa929bd21e35cd95a7d8720d00eb4f3
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Wed, 31 Oct 2018 19:06:35 +0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Nov 2018 14:37:11 -0300
+On Tue, 2018-11-06 at 10:43 -0800, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-11-05 15:08:20)
+> > From: Christian Hewitt <christianshewitt@gmail.com>
+> > 
+> > On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
+> > with reboot; e.g. a ~60 second delay between issuing reboot and the
+> > board power cycling (and in some OS configurations reboot will fail
+> > and require manual power cycling).
+> > 
+> > Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
+> > meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
+> > Co-Processor seems to depend on FCLK_DIV3 being operational.
+> > 
+> > Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
+> > meson: add fdiv clock gates"), this clock was modeled and left on by
+> > the bootloader.
+> > 
+> > We don't have precise documentation about the SCPI Co-Processor and
+> > its clock requirement so we are learning things the hard way.
+> > 
+> > Marking this clock as critical solves the problem but it should not
+> > be viewed as final solution. Ideally, the SCPI driver should claim
+> > these clocks. We also depends on some clock hand-off mechanism
+> > making its way to CCF, to make sure the clock stays on between its
+> > registration and the SCPI driver probe.
+> > 
+> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+> > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> 
+> I can toss this into clk-fixes?
+> 
 
-perf top: Display the LBR stats in callchain entry
+Sure, it would be great. Thx Stephen.
 
-'perf report' has supported the displaying of LBR stats (such as cycles,
-predicted%) in callchain entry.
 
-For example:
-
-  $ perf report --branch-history --stdio
-
-  --1.01%--intel_idle mwait.h:29
-            intel_idle cpufeature.h:164 (cycles:5)
-            intel_idle cpufeature.h:164 (predicted:76.4%)
-            intel_idle mwait.h:102 (cycles:41)
-            intel_idle current.h:15
-
-While 'perf top' doesn't support that.
-
-For example:
-
-  $ perf top -a -b --call-graph branch
-
-  -   13.86%     0.23%  [kernel]		[k] __x86_indirect_thunk_rax
-     - 13.65% __x86_indirect_thunk_rax
-        + 1.69% do_syscall_64
-        + 1.68% do_select
-        + 1.41% ktime_get
-        + 0.70% __schedule
-        + 0.62% do_sys_poll
-          0.58% __x86_indirect_thunk_rax
-
-Actually it's very easy to enable this feature in 'perf top'.
-
-With this patch, the result is:
-
-  $ perf top -a -b --call-graph branch
-
-  $ -   13.58%     0.00%  [kernel]		[k] __x86_indirect_thunk_rax
-     $ - 13.57% __x86_indirect_thunk_rax (predicted:93.9%)
-        $ + 1.78% do_select (cycles:2)
-        $ + 1.68% perf_pmu_disable.part.99 (cycles:1)
-        $ + 1.45% ___sys_recvmsg (cycles:25)
-        $ + 0.81% unix_stream_sendmsg (cycles:18)
-        $ + 0.80% ktime_get (cycles:400)
-          $ 0.58% pick_next_task_fair (cycles:47)
-        $ + 0.56% i915_request_retire (cycles:2)
-        $ + 0.52% do_sys_poll (cycles:4)
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1540983995-20462-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-top.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index b2838de13de0..aa0c73e57924 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1429,6 +1429,9 @@ int cmd_top(int argc, const char **argv)
- 		}
- 	}
- 
-+	if (opts->branch_stack && callchain_param.enabled)
-+		symbol_conf.show_branchflag_count = true;
-+
- 	sort__mode = SORT_MODE__TOP;
- 	/* display thread wants entries to be collapsed in a different tree */
- 	perf_hpp_list.need_collapse = 1;
