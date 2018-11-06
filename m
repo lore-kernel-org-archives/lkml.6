@@ -2,96 +2,110 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B120C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA1CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB14220862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:57:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1Jon3Cm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB14220862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 53D6020862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D6020862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbeKGHYt (ORCPT
+        id S1727382AbeKGH0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:24:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42406 "EHLO mail.kernel.org"
+        Wed, 7 Nov 2018 02:26:02 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38375 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbeKGHYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:24:49 -0500
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 414AD20862;
-        Tue,  6 Nov 2018 21:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541541449;
-        bh=2XOKHhV4+27AGs+8QD6s/rcIOi1MHc1JnYnso7P0mds=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=X1Jon3CmZuRuKTbCid4dQRz2pCd9IJNFYuS3k40npFOnj+TrXtFLdl+RS5Jpc8qWw
-         P1JaRD/viNDMs7y3qbq/+hFEl7VuY/bFzGhqSZ0AvxCJmhKLChVBObUvwq13dXrasd
-         9lOIw1n1N0+XDiMfu2TGQnRGPT7qZfBNN3VaKInM=
-Received: by mail-qt1-f174.google.com with SMTP id l11so4499354qtp.0;
-        Tue, 06 Nov 2018 13:57:29 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJjDnWgrxGa9tYoECwl/oEZ6WsBzYVHpQBEQHk776yXf+WvaN9b
-        MUVicMeO1iI/s8ejZXnP0thUSoEXKBbR/rzotg==
-X-Google-Smtp-Source: AJdET5ebPPTkDTJguHqnF9YPNHdR+x2pzY3ncNJAYP32u4fc3gdYcrEvZIe3FvNWqLyoTs0qHxSD3oi3s1934OD+s88=
-X-Received: by 2002:ac8:6b18:: with SMTP id w24mr27857174qts.144.1541541448517;
- Tue, 06 Nov 2018 13:57:28 -0800 (PST)
+        id S1726069AbeKGH0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:26:01 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7716920510; Tue,  6 Nov 2018 22:58:40 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 22D1020379;
+        Tue,  6 Nov 2018 22:58:30 +0100 (CET)
+Date:   Tue, 6 Nov 2018 22:58:29 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-mtd@lists.infradead.org, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] mtd: maps: physmap: Fix infinite loop crash in ROM
+ type probing
+Message-ID: <20181106225829.5ecbe19e@bbrezillon>
+In-Reply-To: <20181106214416.11342-1-geert@linux-m68k.org>
+References: <20181106214416.11342-1-geert@linux-m68k.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180928225044.20132-1-robh@kernel.org> <20181001081659.GW11082@phenom.ffwll.local>
-In-Reply-To: <20181001081659.GW11082@phenom.ffwll.local>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 6 Nov 2018 15:57:16 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJaoXd5xhhi1kvLHrRiMh1BTbnQ=p8Oz9893uVMJ1UpEQ@mail.gmail.com>
-Message-ID: <CAL_JsqJaoXd5xhhi1kvLHrRiMh1BTbnQ=p8Oz9893uVMJ1UpEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm: Convert to using %pOFn instead of device_node.name
-To:     Sean Paul <sean@poorly.run>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 3:17 AM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Fri, Sep 28, 2018 at 05:50:44PM -0500, Rob Herring wrote:
-> > In preparation to remove the node name pointer from struct device_node,
-> > convert printf users to use the %pOFn format specifier.
-> >
-> > For drm_modes.c, the full node path is already printed out, so printing
-> > just the node name a 2nd time is redundant and can be removed.
-> >
-> > Cc: Gustavo Padovan <gustavo@padovan.org>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Cc: Sean Paul <sean@poorly.run>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Acked-by: Rob Clark <robdclark@gmail.com>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-arm-msm@vger.kernel.org
-> > Cc: freedreno@lists.freedesktop.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > v2:
-> > - Add to commit msg that we're dropping redundant printing of node name.
->
-> Applied, thanks for the patch.
+On Tue,  6 Nov 2018 22:44:16 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-It appears this hasn't been.
+> On Toshiba RBTX4927, where map_probe is supposed to fail:
+> 
+>     Creating 2 MTD partitions on "physmap-flash.0":
+>     0x000000c00000-0x000001000000 : "boot"
+>     0x000000000000-0x000000c00000 : "user"
+>     physmap-flash physmap-flash.1: physmap platform flash device: [mem 0x1e000000-0x1effffff]
+>     CPU 0 Unable to handle kernel paging request at virtual address 00000000, epc == 80320f40, ra == 80321004
+>     ...
+>     Call Trace:
+>     [<80320f40>] get_mtd_chip_driver+0x30/0x8c
+>     [<80321004>] do_map_probe+0x20/0x90
+>     [<80328448>] physmap_flash_probe+0x484/0x4ec
+> 
+> The access to rom_probe_types[] was changed from a sentinel-based loop
+> to an infinite loop, causing a crash when reaching the sentinel.
 
-> Aside, still don't want drm-misc commit rights so you can offload these
-> yourself?
+Oops. Do you mind if I fix that in-place (squash your changes in
+Ricardo's original commit)?
 
-No thanks.
+> 
+> Fix this by:
+>   - Removing the no longer needed sentinel,
+>   - Limiting the number of loop iterations to the actual number of ROM
+>     types.
+> 
+> Fixes: c7afe08496fa463e ("mtd: maps: physmap: Invert logic on if/else branch")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/mtd/maps/physmap-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/maps/physmap-core.c b/drivers/mtd/maps/physmap-core.c
+> index 33b77bd9022ce251..e8c3b250d8421edc 100644
+> --- a/drivers/mtd/maps/physmap-core.c
+> +++ b/drivers/mtd/maps/physmap-core.c
+> @@ -396,7 +396,7 @@ static int physmap_flash_of_init(struct platform_device *dev)
+>  #endif /* IS_ENABLED(CONFIG_MTD_PHYSMAP_OF) */
+>  
+>  static const char * const rom_probe_types[] = {
+> -	"cfi_probe", "jedec_probe", "qinfo_probe", "map_rom", NULL
+> +	"cfi_probe", "jedec_probe", "qinfo_probe", "map_rom",
+>  };
+>  
+>  static const char * const part_probe_types[] = {
+> @@ -524,7 +524,7 @@ static int physmap_flash_probe(struct platform_device *dev)
+>  		} else {
+>  			int j;
+>  
+> -			for (j = 0; ARRAY_SIZE(rom_probe_types); j++) {
+> +			for (j = 0; j < ARRAY_SIZE(rom_probe_types); j++) {
+>  				info->mtds[i] = do_map_probe(rom_probe_types[j],
+>  							     &info->maps[i]);
+>  				if (info->mtds[i])
 
-Rob
