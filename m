@@ -2,320 +2,620 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CCCC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604F4C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C79632086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:04:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PJDSM+Nd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79632086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 11A152081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A152081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbeKFS2M (ORCPT
+        id S1730283AbeKFS3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:28:12 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38700 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729416AbeKFS2M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:28:12 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p4-v6so3477128plo.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:03:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6zlvTsVHd3k666bMLZbDuaJd+11QsFWXBNoFpIC//8E=;
-        b=PJDSM+NdrZyMQTbw3K2V4ofmuIkJJDa//Acr6pvUYbMvAMOYn7kh8k/UrYvvLl5sLh
-         GNS/m7aRkty513hEV6IcS3ar54x6BQ5E+vx19r0DwE0TwC8kc0dBzBujoj/Wb9bZLBx1
-         R8feuJBHX0tgB+8ZgCwlir+gffLmhSW1mxQ2o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6zlvTsVHd3k666bMLZbDuaJd+11QsFWXBNoFpIC//8E=;
-        b=poM//nt9pRHSL4IVrCy4uz6wu+cSGaTLrt1xwjPko27wEFLKiXZiL5+GkiCHZbfDYt
-         3FaNsTgcni/WhE71d1nLUD1QKsquS2q7Isetr7CVsRI/61bdP5RKmkcrtA3hU2sr9q3N
-         wVOzZmNUz+q2i3g1aEzKatDP12K76sqc8818mp5Amf8dNuxQiGUVBfJkiScI0+9s2vPK
-         wnB9r3EzlEr2fqjOjvjqLb5pqxDMmT9Nl1ChVh7Lgx8VfRPdqEd8WtLzwUSL3AXj5OdS
-         gfgMpxuU3Uyrnkl8yu7q9rLqV5WgOw0lx1ZL7igf8XXNnVJ/112Vc0lU/YrkDhD3fIJo
-         r9Jw==
-X-Gm-Message-State: AGRZ1gKT4tQqcJE+a7k+ugOMFlV+gNVL0ynQJ47aMfSqnrQkf82TygaS
-        697ozYezqfLOamgLhm1zX6KKC+/1Hg==
-X-Google-Smtp-Source: AJdET5ellJRZrg9uGSIOlyL4JV5B2CMNOJusfcNntNYzFQPXvasWnVnL05ZZTgV5Q9QjEpCIFFD0OQ==
-X-Received: by 2002:a17:902:4624:: with SMTP id o33-v6mr25754461pld.285.1541495038388;
-        Tue, 06 Nov 2018 01:03:58 -0800 (PST)
-Received: from vovoy-z840.tpe.corp.google.com ([2401:fa00:1:b:c11e:9571:ae83:d95b])
-        by smtp.gmail.com with ESMTPSA id x12sm3750763pgr.55.2018.11.06.01.03.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 01:03:57 -0800 (PST)
-From:   Kuo-Hsin Yang <vovoy@chromium.org>
-To:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org
-Cc:     Kuo-Hsin Yang <vovoy@chromium.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v5] mm, drm/i915: mark pinned shmemfs pages as unevictable
-Date:   Tue,  6 Nov 2018 17:03:51 +0800
-Message-Id: <20181106090352.64114-1-vovoy@chromium.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+        Tue, 6 Nov 2018 13:29:16 -0500
+Received: from mga06.intel.com ([134.134.136.31]:34288 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729416AbeKFS3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:29:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 01:05:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
+   d="scan'208";a="106272064"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 01:05:02 -0800
+Received: from [10.125.252.37] (abudanko-mobl.ccr.corp.intel.com [10.125.252.37])
+        by linux.intel.com (Postfix) with ESMTP id 7758F58014B;
+        Tue,  6 Nov 2018 01:04:59 -0800 (PST)
+Subject: [PATCH v15 2/3]: perf record: enable asynchronous trace writing
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <ce2d45e9-d236-871c-7c8f-1bed2d37e8ac@linux.intel.com>
+Date:   Tue, 6 Nov 2018 12:04:58 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i915 driver uses shmemfs to allocate backing storage for gem
-objects. These shmemfs pages can be pinned (increased ref count) by
-shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
-wastes a lot of time scanning these pinned pages. In some extreme case,
-all pages in the inactive anon lru are pinned, and only the inactive
-anon lru is scanned due to inactive_ratio, the system cannot swap and
-invokes the oom-killer. Mark these pinned pages as unevictable to speed
-up vmscan.
 
-Export pagevec API check_move_unevictable_pages().
+Trace file offset is read once before mmaps iterating loop and written
+back after all performance data enqueued for aio writing. Trace file offset 
+is incremented linearly after every successful aio write operation. 
 
-This patch was inspired by Chris Wilson's change [1].
+record__aio_sync() blocks till completion of started AIO operation 
+and then proceeds.
 
-[1]: https://patchwork.kernel.org/patch/9768741/
+record__aio_mmap_read_sync() implements a barrier for all incomplete
+aio write requests.
 
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
-Changes for v5:
- Modify doc and comments. Remove the ifdef surrounding
- check_move_unevictable_pages.
+ Changes in v14:
+ - implement default nr_cblocks_default variable
+ Changes in v13:
+ - named new functions with _aio_ word
+ - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
+ - moved perf_mmap__aio_push() stub into header
+ - removed trailed white space
+ Changes in v12:
+ - implemented record__aio_get/set_pos(), record__aio_enabled()
+ - implemented simple --aio option
+ Changes in v11:
+ - replacing the both lseek() syscalls in every loop iteration by the only 
+   two syscalls just before and after the loop at record__mmap_read_evlist() 
+   and advancing *in-flight* off file pos value at perf_mmap__aio_push()
+ Changes in v10:
+ - avoided lseek() setting file pos back in case of record__aio_write() failure
+ - compacted code selecting between serial and AIO streaming
+ - optimized call places of record__mmap_read_sync()
+ Changes in v9:
+ - enable AIO streaming only when --aio-cblocks option is specified explicitly
+ Changes in v8:
+ - split AIO completion check into separate record__aio_complete()
+ Changes in v6:
+ - handled errno == EAGAIN case from aio_write();
+ Changes in v5:
+ - data loss metrics decreased from 25% to 2x in trialed configuration;
+ - avoided nanosleep() prior calling aio_suspend();
+ - switched to per cpu multi record__aio_sync() aio
+ - record_mmap_read_sync() now does global barrier just before 
+   switching trace file or collection stop;
+ - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
+ Changes in v4:
+ - converted void *bf to struct perf_mmap *md in signatures
+ - written comment in perf_mmap__push() just before perf_mmap__get();
+ - written comment in record__mmap_read_sync() on possible restarting 
+   of aio_write() operation and releasing perf_mmap object after all;
+ - added perf_mmap__put() for the cases of failed aio_write();
+ Changes in v3:
+ - written comments about nanosleep(0.5ms) call prior aio_suspend()
+   to cope with intrusiveness of its implementation in glibc;
+ - written comments about rationale behind coping profiling data 
+   into mmap->data buffer;
+---
+ tools/perf/Documentation/perf-record.txt |   5 +
+ tools/perf/builtin-record.c              | 218 ++++++++++++++++++++++++++++++-
+ tools/perf/perf.h                        |   1 +
+ tools/perf/util/evlist.c                 |   6 +-
+ tools/perf/util/evlist.h                 |   2 +-
+ tools/perf/util/mmap.c                   |  77 ++++++++++-
+ tools/perf/util/mmap.h                   |  14 ++
+ 7 files changed, 314 insertions(+), 9 deletions(-)
 
-Changes for v4:
- Export pagevec API check_move_unevictable_pages().
-
-Changes for v3:
- Use check_move_lru_page instead of shmem_unlock_mapping to move pages
- to appropriate lru lists.
-
-Changes for v2:
- Squashed the two patches.
-
- Documentation/vm/unevictable-lru.rst |  6 +++++-
- drivers/gpu/drm/i915/i915_gem.c      | 28 ++++++++++++++++++++++++++--
- include/linux/swap.h                 |  4 +++-
- mm/shmem.c                           |  2 +-
- mm/vmscan.c                          | 22 +++++++++++-----------
- 5 files changed, 46 insertions(+), 16 deletions(-)
-
-diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
-index fdd84cb8d511..b8e29f977f2d 100644
---- a/Documentation/vm/unevictable-lru.rst
-+++ b/Documentation/vm/unevictable-lru.rst
-@@ -143,7 +143,7 @@ using a number of wrapper functions:
- 	Query the address space, and return true if it is completely
- 	unevictable.
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 246dee081efd..7efb4af88a68 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -435,6 +435,11 @@ Specify vmlinux path which has debuginfo.
+ --buildid-all::
+ Record build-id of all DSOs regardless whether it's actually hit or not.
  
--These are currently used in two places in the kernel:
-+These are currently used in three places in the kernel:
- 
-  (1) By ramfs to mark the address spaces of its inodes when they are created,
-      and this mark remains for the life of the inode.
-@@ -154,6 +154,10 @@ These are currently used in two places in the kernel:
-      swapped out; the application must touch the pages manually if it wants to
-      ensure they're in memory.
- 
-+ (3) By the i915 driver to mark pinned address space until it's unpinned. The
-+     amount of unevictable memory marked by i915 driver is roughly the bounded
-+     object size in debugfs/dri/0/i915_gem_objects.
++--aio::
++Enable asynchronous (Posix AIO) trace writing mode.
++Asynchronous mode is supported only when linking Perf tool with libc library
++providing implementation for Posix AIO API.
 +
+ --all-kernel::
+ Configure all used events to run in kernel space.
  
- Detecting Unevictable Pages
- ---------------------------
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index 0c8aa57ce83b..c620891e0d02 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -2381,12 +2381,25 @@ void __i915_gem_object_invalidate(struct drm_i915_gem_object *obj)
- 	invalidate_mapping_pages(mapping, 0, (loff_t)-1);
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 0980dfe3396b..0c6105860123 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -124,6 +124,183 @@ static int record__write(struct record *rec, struct perf_mmap *map __maybe_unuse
+ 	return 0;
  }
  
-+/**
-+ * Move pages to appropriate lru and release the pagevec. Decrement the ref
-+ * count of these pages.
-+ */
-+static inline void check_release_pagevec(struct pagevec *pvec)
++#ifdef HAVE_AIO_SUPPORT
++static int record__aio_write(struct aiocb *cblock, int trace_fd,
++		void *buf, size_t size, off_t off)
 +{
-+	if (pagevec_count(pvec)) {
-+		check_move_unevictable_pages(pvec);
-+		__pagevec_release(pvec);
++	int rc;
++
++	cblock->aio_fildes = trace_fd;
++	cblock->aio_buf    = buf;
++	cblock->aio_nbytes = size;
++	cblock->aio_offset = off;
++	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
++
++	do {
++		rc = aio_write(cblock);
++		if (rc == 0) {
++			break;
++		} else if (errno != EAGAIN) {
++			cblock->aio_fildes = -1;
++			pr_err("failed to queue perf data, error: %m\n");
++			break;
++		}
++	} while (1);
++
++	return rc;
++}
++
++static int record__aio_complete(struct perf_mmap *md, struct aiocb *cblock)
++{
++	void *rem_buf;
++	off_t rem_off;
++	size_t rem_size;
++	int rc, aio_errno;
++	ssize_t aio_ret, written;
++
++	aio_errno = aio_error(cblock);
++	if (aio_errno == EINPROGRESS)
++		return 0;
++
++	written = aio_ret = aio_return(cblock);
++	if (aio_ret < 0) {
++		if (aio_errno != EINTR)
++			pr_err("failed to write perf data, error: %m\n");
++		written = 0;
++	}
++
++	rem_size = cblock->aio_nbytes - written;
++
++	if (rem_size == 0) {
++		cblock->aio_fildes = -1;
++		/*
++		 * md->refcount is incremented in perf_mmap__push() for
++		 * every enqueued aio write request so decrement it because
++		 * the request is now complete.
++		 */
++		perf_mmap__put(md);
++		rc = 1;
++	} else {
++		/*
++		 * aio write request may require restart with the
++		 * reminder if the kernel didn't write whole
++		 * chunk at once.
++		 */
++		rem_off = cblock->aio_offset + written;
++		rem_buf = (void *)(cblock->aio_buf + written);
++		record__aio_write(cblock, cblock->aio_fildes,
++				rem_buf, rem_size, rem_off);
++		rc = 0;
++	}
++
++	return rc;
++}
++
++static void record__aio_sync(struct perf_mmap *md)
++{
++	struct aiocb *cblock = &md->aio.cblock;
++	struct timespec timeout = { 0, 1000 * 1000  * 1 }; /* 1ms */
++
++	do {
++		if (cblock->aio_fildes == -1 || record__aio_complete(md, cblock))
++			return;
++
++		while (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
++			if (!(errno == EAGAIN || errno == EINTR))
++				pr_err("failed to sync perf data, error: %m\n");
++		}
++	} while (1);
++}
++
++static int record__aio_pushfn(void *to, struct aiocb *cblock, void *bf, size_t size, off_t off)
++{
++	struct record *rec = to;
++	int ret, trace_fd = rec->session->data->file.fd;
++
++	rec->samples++;
++
++	ret = record__aio_write(cblock, trace_fd, bf, size, off);
++	if (!ret) {
++		rec->bytes_written += size;
++		if (switch_output_size(rec))
++			trigger_hit(&switch_output_trigger);
++	}
++
++	return ret;
++}
++
++static off_t record__aio_get_pos(int trace_fd)
++{
++	return lseek(trace_fd, 0, SEEK_CUR);
++}
++
++static void record__aio_set_pos(int trace_fd, off_t pos)
++{
++	lseek(trace_fd, pos, SEEK_SET);
++}
++
++static void record__aio_mmap_read_sync(struct record *rec)
++{
++	int i;
++	struct perf_evlist *evlist = rec->evlist;
++	struct perf_mmap *maps = evlist->mmap;
++
++	if (!rec->opts.nr_cblocks)
++		return;
++
++	for (i = 0; i < evlist->nr_mmaps; i++) {
++		struct perf_mmap *map = &maps[i];
++
++		if (map->base)
++			record__aio_sync(map);
 +	}
 +}
 +
- static void
- i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
- 			      struct sg_table *pages)
- {
- 	struct sgt_iter sgt_iter;
- 	struct page *page;
-+	struct pagevec pvec;
- 
- 	__i915_gem_object_release_shmem(obj, pages, true);
- 
-@@ -2395,6 +2408,9 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
- 	if (i915_gem_object_needs_bit17_swizzle(obj))
- 		i915_gem_object_save_bit_17_swizzle(obj, pages);
- 
-+	mapping_clear_unevictable(file_inode(obj->base.filp)->i_mapping);
++static int nr_cblocks_default = 1;
 +
-+	pagevec_init(&pvec);
- 	for_each_sgt_page(page, sgt_iter, pages) {
- 		if (obj->mm.dirty)
- 			set_page_dirty(page);
-@@ -2402,8 +2418,10 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
- 		if (obj->mm.madv == I915_MADV_WILLNEED)
- 			mark_page_accessed(page);
- 
--		put_page(page);
-+		if (!pagevec_add(&pvec, page))
-+			check_release_pagevec(&pvec);
- 	}
-+	check_release_pagevec(&pvec);
- 	obj->mm.dirty = false;
- 
- 	sg_free_table(pages);
-@@ -2526,6 +2544,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
- 	unsigned int sg_page_sizes;
- 	gfp_t noreclaim;
- 	int ret;
-+	struct pagevec pvec;
- 
- 	/*
- 	 * Assert that the object is not currently in any GPU domain. As it
-@@ -2559,6 +2578,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
- 	 * Fail silently without starting the shrinker
- 	 */
- 	mapping = obj->base.filp->f_mapping;
-+	mapping_set_unevictable(mapping);
- 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
- 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
- 
-@@ -2673,8 +2693,12 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
- err_sg:
- 	sg_mark_end(sg);
- err_pages:
-+	mapping_clear_unevictable(mapping);
-+	pagevec_init(&pvec);
- 	for_each_sgt_page(page, sgt_iter, st)
--		put_page(page);
-+		if (!pagevec_add(&pvec, page))
-+			check_release_pagevec(&pvec);
-+	check_release_pagevec(&pvec);
- 	sg_free_table(st);
- 	kfree(st);
- 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index d8a07a4f171d..a8f6d5d89524 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -18,6 +18,8 @@ struct notifier_block;
- 
- struct bio;
- 
-+struct pagevec;
++static int record__aio_parse(const struct option *opt,
++			     const char *str __maybe_unused,
++			     int unset)
++{
++	struct record_opts *opts = (struct record_opts *)opt->value;
 +
- #define SWAP_FLAG_PREFER	0x8000	/* set if swap priority specified */
- #define SWAP_FLAG_PRIO_MASK	0x7fff
- #define SWAP_FLAG_PRIO_SHIFT	0
-@@ -369,7 +371,7 @@ static inline int node_reclaim(struct pglist_data *pgdat, gfp_t mask,
- #endif
++	if (unset)
++		opts->nr_cblocks = 0;
++	else
++		opts->nr_cblocks = nr_cblocks_default;
++
++	return 0;
++}
++#else /* HAVE_AIO_SUPPORT */
++static void record__aio_sync(struct perf_mmap *md __maybe_unused)
++{
++}
++
++static int record__aio_pushfn(void *to __maybe_unused, struct aiocb *cblock __maybe_unused,
++		void *bf __maybe_unused, size_t size __maybe_unused, off_t off __maybe_unused)
++{
++	return -1;
++}
++
++static off_t record__aio_get_pos(int trace_fd __maybe_unused)
++{
++	return -1;
++}
++
++static void record__aio_set_pos(int trace_fd __maybe_unused, off_t pos __maybe_unused)
++{
++}
++
++static void record__aio_mmap_read_sync(struct record *rec __maybe_unused)
++{
++}
++#endif
++
++static int record__aio_enabled(struct record *rec)
++{
++	return rec->opts.nr_cblocks > 0;
++}
++
+ static int process_synthesized_event(struct perf_tool *tool,
+ 				     union perf_event *event,
+ 				     struct perf_sample *sample __maybe_unused,
+@@ -329,7 +506,7 @@ static int record__mmap_evlist(struct record *rec,
  
- extern int page_evictable(struct page *page);
--extern void check_move_unevictable_pages(struct page **, int nr_pages);
-+extern void check_move_unevictable_pages(struct pagevec *pvec);
- 
- extern int kswapd_run(int nid);
- extern void kswapd_stop(int nid);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index ea26d7a0342d..de4893c904a3 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -756,7 +756,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
- 			break;
- 		index = indices[pvec.nr - 1] + 1;
- 		pagevec_remove_exceptionals(&pvec);
--		check_move_unevictable_pages(pvec.pages, pvec.nr);
-+		check_move_unevictable_pages(&pvec);
- 		pagevec_release(&pvec);
- 		cond_resched();
- 	}
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 62ac0c488624..d070f431ff19 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -50,6 +50,7 @@
- #include <linux/printk.h>
- #include <linux/dax.h>
- #include <linux/psi.h>
-+#include <linux/pagevec.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/div64.h>
-@@ -4182,17 +4183,16 @@ int page_evictable(struct page *page)
- 	return ret;
- }
- 
--#ifdef CONFIG_SHMEM
- /**
-- * check_move_unevictable_pages - check pages for evictability and move to appropriate zone lru list
-- * @pages:	array of pages to check
-- * @nr_pages:	number of pages to check
-+ * check_move_unevictable_pages - check pages for evictability and move to
-+ * appropriate zone lru list
-+ * @pvec: pagevec with lru pages to check
-  *
-- * Checks pages for evictability and moves them to the appropriate lru list.
-- *
-- * This function is only used for SysV IPC SHM_UNLOCK.
-+ * Checks pages for evictability, if an evictable page is in the unevictable
-+ * lru list, moves it to the appropriate evictable lru list. This function
-+ * should be only used for lru pages.
-  */
--void check_move_unevictable_pages(struct page **pages, int nr_pages)
-+void check_move_unevictable_pages(struct pagevec *pvec)
- {
- 	struct lruvec *lruvec;
- 	struct pglist_data *pgdat = NULL;
-@@ -4200,8 +4200,8 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
- 	int pgrescued = 0;
+ 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
+ 				 opts->auxtrace_mmap_pages,
+-				 opts->auxtrace_snapshot_mode) < 0) {
++				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
+ 		if (errno == EPERM) {
+ 			pr_err("Permission error mapping pages.\n"
+ 			       "Consider increasing "
+@@ -520,6 +697,8 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
  	int i;
+ 	int rc = 0;
+ 	struct perf_mmap *maps;
++	int trace_fd = rec->data.file.fd;
++	off_t off;
  
--	for (i = 0; i < nr_pages; i++) {
--		struct page *page = pages[i];
-+	for (i = 0; i < pvec->nr; i++) {
-+		struct page *page = pvec->pages[i];
- 		struct pglist_data *pagepgdat = page_pgdat(page);
+ 	if (!evlist)
+ 		return 0;
+@@ -531,13 +710,29 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+ 		return 0;
  
- 		pgscanned++;
-@@ -4233,4 +4233,4 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
- 		spin_unlock_irq(&pgdat->lru_lock);
++	if (record__aio_enabled(rec))
++		off = record__aio_get_pos(trace_fd);
++
+ 	for (i = 0; i < evlist->nr_mmaps; i++) {
+ 		struct perf_mmap *map = &maps[i];
+ 
+ 		if (map->base) {
+-			if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+-				rc = -1;
+-				goto out;
++			if (!record__aio_enabled(rec)) {
++				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
++					rc = -1;
++					goto out;
++				}
++			} else {
++				/*
++				 * Call record__aio_sync() to wait till map->data buffer
++				 * becomes available after previous aio write request.
++				 */
++				record__aio_sync(map);
++				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
++					record__aio_set_pos(trace_fd, off);
++					rc = -1;
++					goto out;
++				}
+ 			}
+ 		}
+ 
+@@ -548,6 +743,9 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 		}
  	}
+ 
++	if (record__aio_enabled(rec))
++		record__aio_set_pos(trace_fd, off);
++
+ 	/*
+ 	 * Mark the round finished in case we wrote
+ 	 * at least one event.
+@@ -650,6 +848,8 @@ record__switch_output(struct record *rec, bool at_exit)
+ 	/* Same Size:      "2015122520103046"*/
+ 	char timestamp[] = "InvalidTimestamp";
+ 
++	record__aio_mmap_read_sync(rec);
++
+ 	record__synthesize(rec, true);
+ 	if (target__none(&rec->opts.target))
+ 		record__synthesize_workload(rec, true);
+@@ -1157,6 +1357,8 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		record__synthesize_workload(rec, true);
+ 
+ out_child:
++	record__aio_mmap_read_sync(rec);
++
+ 	if (forks) {
+ 		int exit_status;
+ 
+@@ -1681,6 +1883,11 @@ static struct option __record_options[] = {
+ 			  "signal"),
+ 	OPT_BOOLEAN(0, "dry-run", &dry_run,
+ 		    "Parse options then exit"),
++#ifdef HAVE_AIO_SUPPORT
++	OPT_CALLBACK_NOOPT(0, "aio", &record.opts,
++		     NULL, "Enable asynchronous trace writing mode",
++		     record__aio_parse),
++#endif
+ 	OPT_END()
+ };
+ 
+@@ -1873,6 +2080,9 @@ int cmd_record(int argc, const char **argv)
+ 		goto out;
+ 	}
+ 
++	if (verbose > 0)
++		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
++
+ 	err = __cmd_record(&record, argc, argv);
+ out:
+ 	perf_evlist__delete(rec->evlist);
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 21bf7f5a3cf5..0a1ae2ae567a 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -82,6 +82,7 @@ struct record_opts {
+ 	bool         use_clockid;
+ 	clockid_t    clockid;
+ 	unsigned int proc_map_timeout;
++	int	     nr_cblocks;
+ };
+ 
+ struct option;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 1a83bf2c069c..6593bd0dc2af 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1018,7 +1018,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
+  */
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite)
++			 bool auxtrace_overwrite, int nr_cblocks)
+ {
+ 	struct perf_evsel *evsel;
+ 	const struct cpu_map *cpus = evlist->cpus;
+@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * Its value is decided by evsel's write_backward.
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+-	struct mmap_params mp = { .nr_cblocks = 0 };
++	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
+ 
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+@@ -1060,7 +1060,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
+ {
+-	return perf_evlist__mmap_ex(evlist, pages, 0, false);
++	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
  }
--#endif /* CONFIG_SHMEM */
-+EXPORT_SYMBOL_GPL(check_move_unevictable_pages);
--- 
-2.19.1.930.g4563a0d9d0-goog
-
+ 
+ int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..2464463879b4 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -162,7 +162,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
+ 
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite);
++			 bool auxtrace_overwrite, int nr_cblocks);
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
+ void perf_evlist__munmap(struct perf_evlist *evlist);
+ 
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 47cdc3ad6546..61aa381d05d0 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -158,7 +158,8 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ {
+ 	int delta_max;
+ 
+-	if (mp->nr_cblocks) {
++	map->aio.nr_cblocks = mp->nr_cblocks;
++	if (map->aio.nr_cblocks) {
+ 		map->aio.data = malloc(perf_mmap__mmap_len(map));
+ 		if (!map->aio.data) {
+ 			pr_debug2("failed to allocate data buffer, error %m\n");
+@@ -187,6 +188,80 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ 	if (map->aio.data)
+ 		zfree(&map->aio.data);
+ }
++
++int perf_mmap__aio_push(struct perf_mmap *md, void *to,
++			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
++			off_t *off)
++{
++	u64 head = perf_mmap__read_head(md);
++	unsigned char *data = md->base + page_size;
++	unsigned long size, size0 = 0;
++	void *buf;
++	int rc = 0;
++
++	rc = perf_mmap__read_init(md);
++	if (rc < 0)
++		return (rc == -EAGAIN) ? 0 : -1;
++
++	/*
++	 * md->base data is copied into md->data buffer to
++	 * release space in the kernel buffer as fast as possible,
++	 * thru perf_mmap__consume() below.
++	 *
++	 * That lets the kernel to proceed with storing more
++	 * profiling data into the kernel buffer earlier than other
++	 * per-cpu kernel buffers are handled.
++	 *
++	 * Coping can be done in two steps in case the chunk of
++	 * profiling data crosses the upper bound of the kernel buffer.
++	 * In this case we first move part of data from md->start
++	 * till the upper bound and then the reminder from the
++	 * beginning of the kernel buffer till the end of
++	 * the data chunk.
++	 */
++
++	size = md->end - md->start;
++
++	if ((md->start & md->mask) + size != (md->end & md->mask)) {
++		buf = &data[md->start & md->mask];
++		size = md->mask + 1 - (md->start & md->mask);
++		md->start += size;
++		memcpy(md->aio.data, buf, size);
++		size0 = size;
++	}
++
++	buf = &data[md->start & md->mask];
++	size = md->end - md->start;
++	md->start += size;
++	memcpy(md->aio.data + size0, buf, size);
++
++	/*
++	 * Increment md->refcount to guard md->data buffer
++	 * from premature deallocation because md object can be
++	 * released earlier than aio write request started
++	 * on mmap->data is complete.
++	 *
++	 * perf_mmap__put() is done at record__aio_complete()
++	 * after started request completion.
++	 */
++	perf_mmap__get(md);
++
++	md->prev = head;
++	perf_mmap__consume(md);
++
++	rc = push(to, &md->aio.cblock, md->aio.data, size0 + size, *off);
++	if (!rc) {
++		*off += size0 + size;
++	} else {
++		/*
++		 * Decrement md->refcount back if aio write
++		 * operation failed to start.
++		 */
++		perf_mmap__put(md);
++	}
++
++	return rc;
++}
+ #else
+ static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
+ 			       struct mmap_params *mp __maybe_unused)
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index a46dbdcdcc8a..9be06f18f17a 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -12,6 +12,7 @@
+ #include "auxtrace.h"
+ #include "event.h"
+ 
++struct aiocb;
+ /**
+  * struct perf_mmap - perf's ring buffer mmap details
+  *
+@@ -33,6 +34,7 @@ struct perf_mmap {
+ 	struct {
+ 		void 		 *data;
+ 		struct aiocb	 cblock;
++		int		 nr_cblocks;
+ 	} aio;
+ #endif
+ };
+@@ -103,6 +105,18 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
+ 
+ int perf_mmap__push(struct perf_mmap *md, void *to,
+ 		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
++#ifdef HAVE_AIO_SUPPORT
++int perf_mmap__aio_push(struct perf_mmap *md, void *to,
++			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
++			off_t *off);
++#else
++static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused,
++	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
++	off_t *off __maybe_unused)
++{
++	return 0;
++}
++#endif
+ 
+ size_t perf_mmap__mmap_len(struct perf_mmap *map);
