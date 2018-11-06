@@ -2,94 +2,121 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4861C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD60C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 845EE20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 845EE20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 504CD20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:36:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504CD20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbeKFTAi (ORCPT
+        id S1730347AbeKFTBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:00:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43148 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729241AbeKFTAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:00:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BEA1CAD3F;
-        Tue,  6 Nov 2018 09:36:15 +0000 (UTC)
-Subject: Re: [PATCH] xen/grant-table: Fix incorrect gnttab_dma_free_pages()
- pr_debug message
-To:     Liam Merwick <Liam.Merwick@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com
-References: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8ef30c47-ca0f-0a43-e05d-e7360ecbe4af@suse.com>
-Date:   Tue, 6 Nov 2018 10:36:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 14:01:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729241AbeKFTBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:01:10 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37E5A394D2B;
+        Tue,  6 Nov 2018 09:36:49 +0000 (UTC)
+Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8617219748;
+        Tue,  6 Nov 2018 09:36:48 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 17:36:45 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH] mm, memory_hotplug: teach has_unmovable_pages about of
+ LRU migrateable pages
+Message-ID: <20181106093645.GM27491@MiWiFi-R3L-srv>
+References: <20181105002009.GF27491@MiWiFi-R3L-srv>
+ <20181105091407.GB4361@dhcp22.suse.cz>
+ <20181105092851.GD4361@dhcp22.suse.cz>
+ <20181105102520.GB22011@MiWiFi-R3L-srv>
+ <20181105123837.GH4361@dhcp22.suse.cz>
+ <20181105142308.GJ27491@MiWiFi-R3L-srv>
+ <20181105171002.GO4361@dhcp22.suse.cz>
+ <20181106002216.GK27491@MiWiFi-R3L-srv>
+ <20181106082826.GC27423@dhcp22.suse.cz>
+ <20181106091624.GL27491@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106091624.GL27491@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 06 Nov 2018 09:36:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/11/2018 15:04, Liam Merwick wrote:
-> If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
-> fails it triggers a message "Failed to decrease reservation..." which
-> should be "Failed to increase reservation..."
+On 11/06/18 at 05:16pm, Baoquan He wrote:
+> On 11/06/18 at 09:28am, Michal Hocko wrote:
+> > > > > > > It failed. Paste the log and patch diff here, please help check if I made
+> > > > > > > any mistake on manual code change. The log is at bottom.
+> > > > > > 
+> > > > > > The retry patch is obviously still racy, it just makes the race window
+> > > > > > slightly smaller and I hoped it would catch most of those races but this
+> > > > > > is obviously not the case.
+> > > > > > 
+> > > > > > I was thinking about your MIGRATE_MOVABLE check some more and I still do
+> > > > > > not like it much, we just change migrate type at many places and I have
+> > > > > > hard time to actually see this is always safe wrt. to what we need here.
+> > > > > > 
+> > > > > > We should be able to restore the zone type check though. The
+> > > > > > primary problem fixed by 15c30bc09085 ("mm, memory_hotplug: make
+> > > > > > has_unmovable_pages more robust") was that early allocations made it to
+> > > > > > the zone_movable range. If we add the check _after_ the PageReserved()
+> > > > > > check then we should be able to rule all bootmem allocation out.
+> > > > > > 
+> > > > > > So what about the following (on top of the previous patch which makes
+> > > > > > sense on its own I believe).
+> > > > > 
+> > > > > Yes, I think this looks very reasonable and should be robust.
+> > > > > 
+> > > > > Have tested it, hot removing 4 hotpluggable nodes continusously
+> > > > > succeeds, and then hot adding them back, still works well.
+> > > > > 
+> > > > > So please feel free to add my Tested-by or Acked-by.
+> > > > > 
+> > > > > Tested-by: Baoquan He <bhe@redhat.com>
+> > > > > or
+> > > > > Acked-by: Baoquan He <bhe@redhat.com>
+> > > > 
+> > > > Thanks for retesting! Does this apply to both patches?
+> > > 
+> > > Sorry, don't get it. I just applied this on top of linus's tree and
+> > > tested. Do you mean applying it on top of previous code change?
+> > 
+> > Yes. While the first patch will obviously not help for movable zone
+> > because the movable check will override any later check it
+> > seems still useful to reduce false positives on normal zones.
 > 
-> Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
-> Reported-by: Ross Philipson <ross.philipson@oracle.com>
-> Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
-> Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
-
-Pushed to xen.git for-linus-4.20a
-
-
-Juergen
+> Hmm, I don't know if it will bring a little bit confusion on code
+> understanding. Since we only recognize the movable zone issue, and I can
+> only reproduce and verify it on the movable zone issue with the movable
+> zone check adding.
+> 
+> Not sure if there are any scenario or use cases to cover those newly added
+> checking other movable zone checking. Surely, I have no objection to
+		^ than
+> adding them. But the two patches are separate issues, they have no
+> dependency on each other.
+> 
+> I just tested the movable zone checking yesterday, will add your
+> previous check back, then test again. I believe the result will be
+> positive. Will udpate once done.
+> 
+> Thanks
+> Baoquan
