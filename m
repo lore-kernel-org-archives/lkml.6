@@ -2,107 +2,141 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A58C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22136C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52A4F2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B71722085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:33:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=genki.is header.i=@genki.is header.b="ObKyxVxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A4F2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=genki.is
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sdBoq14U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71722085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388496AbeKGE4c (ORCPT
+        id S2388477AbeKGE7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 23:56:32 -0500
-Received: from genki.is ([104.200.25.21]:43210 "EHLO genki.is"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387624AbeKGE4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:56:31 -0500
-X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Nov 2018 23:56:31 EST
-Received: by genki.is (OpenSMTPD) with ESMTP id 62d872ac;
-        Tue, 6 Nov 2018 19:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=genki.is; h=date
-        :message-id:mime-version:content-transfer-encoding:content-type
-        :from:subject:to:cc:in-reply-to:references; s=dkim; bh=kI74M9ymW
-        7EHRl29+Eu/hRBf14w=; b=ObKyxVxkVVAmtfyfwlu0J4dyiwdhHe9bWoGMsM0tC
-        ryFOEauR7aYVKRVNcZmpA78N6OOqO0C/AI/LvEiQUSatQaoq0A+dGXM5J/Hc9Og/
-        9Iw0CX4wQBdZmUGFHeYZOJuS8ga7T8AGvtWBT/Ik1PIPJ9q9rP2jw8/d90nIG/GK
-        P7I7MHj+O8cMgWLMVyih0AUBvprMXHzEZFcd9U9Qz+AAK2deF3UnyjzPn33iWzS7
-        X30NgU6CcDQze2g5frN58y+ijG7Fe7SIp/Xr/ovZObpV07EK+m4Q8bBRWlajsnKf
-        jmRp2nqVmRzmUfcRoINKdCmza5QRhxMwAyZMgp2zTHPwQ==
-Received: by genki.is (OpenSMTPD) with ESMTPSA id 76876191 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Tue, 6 Nov 2018 19:23:06 +0000 (UTC)
-Date:   Tue, 06 Nov 2018 11:23:05 -0800
-Message-ID: <20181106.192305.406697677@genki.is>
+        Tue, 6 Nov 2018 23:59:55 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:35718 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387804AbeKGE7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 23:59:55 -0500
+Received: by mail-vk1-f193.google.com with SMTP id b18so3161898vke.2;
+        Tue, 06 Nov 2018 11:33:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TduehDfaomBTPPDfXcBlFgUI2m0b+zODRnRbOn2Bb2U=;
+        b=sdBoq14UPCv0z9GypZx0euV7j3t3vWoyCjk+FB0A56q1Iw7kZXjroESRpqupdtIzMO
+         Lf+TK5YwXdhBq64alIAlilQVjVCIUSiy6zwbuDARnVqMYL89PocjryFo9FA+/yWCUwfb
+         /lrpPQeEuV6d+yn8Cdi5X59vvarHozxhx+jkPcD0Cu7ac7vPArOcRsb+yUhSq0EGqJW0
+         P3Nbebz3hFLNLDeGZlahnCYCdi7kqTItOL5BfKmYYFjnqlvm3/CQ0MysCI6d52yYIOAJ
+         vLgfrBQuJMD5vaDBYkjHGhJYwjLUXNbD3TrK0E8TJKBAPbjmb2Q6qX9jZbdyL6VuSEkO
+         D7Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TduehDfaomBTPPDfXcBlFgUI2m0b+zODRnRbOn2Bb2U=;
+        b=WvDcANGV5GOxNKoeeJ4AOVjgNAjT6WGgLcBE5wxamJJGt1em66EJWzg6SMsfd+Sq7R
+         0LPzF1xHIF7Uq8eL0cU4xsrdccQCB3gg4c5zb+g6YJs17ozpnbF5vSBfZOpYA6RsoLTI
+         5M6cBBd60VSOHGPLThxpAdbK9TmaAgn13obVddG5KPX8Lsjp7YAbzH6i48CcxexPqF2J
+         P4+QPPN8KObhCVj18gPXDvjFG6ZuxzWTPD4LwrznCB2gLHg/QiewueYp+QK/C8Phfy4n
+         SUvA6t7KGGAudbA/RvqivVNj+zdDQXbNRDRcLCniz5ChaPrMQ0XX/a+CyQnkEvF8WaL/
+         1hhA==
+X-Gm-Message-State: AGRZ1gKTz9XsmfqGZVO6yiuFfS4C3xpG5ycn8xFrghb2wsiO3S8ozic4
+        PGtBS1aMVbWXpXSgyA7IOQ2PxnvVAK+824/37cU=
+X-Google-Smtp-Source: AJdET5e8m/8BV8N6QMpTL+Soqb+2CjNDo+QlglP2lk0/WBSxdqPAfJZqfUFO2vKBqu5o0iO0r6ZqfII10Yq+lB2VEy0=
+X-Received: by 2002:a1f:83ca:: with SMTP id f193mr11614580vkd.75.1541532787599;
+ Tue, 06 Nov 2018 11:33:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-From:   Genki Sky <sky@genki.is>
-Subject: Re: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check
- more robust"
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Christian Kujau <lists@nerdbynature.de>
-Cc:     linux-kernel@vger.kernel.org
-In-Reply-To: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
-References: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
+References: <1541453493-34981-1-git-send-email-alcooperx@gmail.com>
+ <1541453493-34981-7-git-send-email-alcooperx@gmail.com> <CAK8P3a0AoHuaiPsMTqhWm3a4X95NpPTPUHkt9vS9Z2ow8NobhA@mail.gmail.com>
+ <CAOGqxeX1FckLz7XEm-doh_AHUjvRtn00yZfir6dRNMYNOMY5_g@mail.gmail.com> <CAK8P3a2Xuq77sXKy4QX1YhStOEhm+oAM_AErEGuwqB115pHB_w@mail.gmail.com>
+In-Reply-To: <CAK8P3a2Xuq77sXKy4QX1YhStOEhm+oAM_AErEGuwqB115pHB_w@mail.gmail.com>
+From:   Alan Cooper <alcooperx@gmail.com>
+Date:   Tue, 6 Nov 2018 14:33:04 -0500
+Message-ID: <CAOGqxeVC0atR0neerxLNDbHWgpuXYCVUW0YLhHxvQzDO0CHWZw@mail.gmail.com>
+Subject: Re: [PATCH V3 6/6] usb: host: Add ability to build new Broadcom STB
+ USB drivers
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     ": Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        chunfeng yun <chunfeng.yun@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        James Hogan <jhogan@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
-
-On Tue,  6 Nov 2018 10:10:38 -0800, Guenter Roeck <linux@roeck-us.net> wrote:
-> This reverts commit 6147b1cf19651c7de297e69108b141fb30aa2349.
+On Tue, Nov 6, 2018 at 1:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> The reverted patch results in attempted write access to the source
-> repository, even if that repository is mounted read-only.
+> On 11/6/18, Alan Cooper <alcooperx@gmail.com> wrote:
+> > On Tue, Nov 6, 2018 at 6:09 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >>
+> >> On 11/5/18, Al Cooper <alcooperx@gmail.com> wrote:
+> >>
+> >> > +
+> >> > +config USB_BRCM
+> >> > +     tristate "Broadcom STB USB support"
+> >> > +     depends on ARCH_BRCMSTB
+> >> > +     select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
+> >> > +     select USB_EHCI_BRCM if USB_EHCI_HCD
+> >> > +     select USB_XHCI_BRCM if USB_XHCI_HCD
+> >> > +     select USB_XHCI_PLATFORM if USB_XHCI_HCD
+> >> > +     select BRCM_USB_PHY if USB_OHCI_HCD || USB_EHCI_HCD ||
+> >> > USB_XHCI_HCD
+> >> > +     select GENERIC_PHY if BRCM_USB_PHY
+> >> > +     default ARCH_BRCMSTB
+> >>
+> >> Is there a build time dependency on the PHY layer? If not, I would
+> >> suggest
+> >> dropping the last two 'select' statements. I would also suggest
+> >> making the dependency 'depends on ARCH_BRCMSTB || COMPILE_TEST'
+> >> to allow building it on other architecture for better build testing, and
+> >> dropping the 'default' line. Just add this to the defconfig like the
+> >> other
+> >> drivers you have.
+> >
+> > I added COMPILE_TEST and dropped the last 2 select lines.
+> > Most of our other drivers default to "y" for "ARCH_BRCMSTB", would it
+> > be better if I changed it to "default y"?
 >
-> Output from "strace git status -uno --porcelain":
+> No, "default ARCH_BRCMSTB" is better than "default y", but I'd recommend
+> to just not have non-essential drivers default-on.
 >
-> getcwd("/tmp/linux-test", 129)          = 16
-> open("/tmp/linux-test/.git/index.lock", O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC, 0666) =
-> 	-1 EROFS (Read-only file system)
->
-> While git appears to be able to handle this situation, a monitored build
-> environment (such as the one used for Chrome OS kernel builds) may detect
-> it and bail out with an access violation error. On top of that, the attempted
-> write access suggests that git _will_ write to the file even if a build output
-> directory is specified. Users may have the reasonable expectation that the
-> source repository remains untouched in that situation.
+>       Arnd
 
-Hmm, so in summary: According to 6147b1cf1965
-("scripts/setlocalversion: git: Make -dirty check more robust",
-2018-08-28), one scenario requires the index to be refreshed to get a
-correct "dirty" or "not dirty" status. But according to your commit
-here, another scenario requires the kernel build system to not even
-attempt to update the git index, and doesn't care / aren't impacted by
-the cases where the index needs to be refreshed.
+Okay.
 
-Perhaps both scenarios could be satisfied by having
-scripts/setlocalversion first check if .git has write permissions, and
-acting accordingly. Looking into history, this actually used to be
-done, but cdf2bc632ebc ("scripts/setlocalversion on write-protected
-source tree", 2013-06-14) removed the updating of the index.
-
-However, I admit I don't understand the justification in that commit
-from 2013. I'm no NFS expert, but perhaps the real problem there is an
-incorrectly configured NFS setup (uid/gid mismatch between NFS
-client/server, or permissions mismatch between mount options and NFS
-server?). Christian Kujau: can you speak to that?
-
-Well, we could also make our check $(touch .git/some-file-here
-2>/dev/null && ...) instead of $(test -w .git) to handle misconfigured
-NFS setups. But not sure if that has its own problems.
-
-Thoughts? It'd be nice to find a fix that works for everyone.
-
-Genki
+Thanks
+Al
