@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4D2C32789
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD0CC46465
 	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8702086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8702086C
+	by mail.kernel.org (Postfix) with ESMTP id BC2D1206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2D1206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730824AbeKGG5p (ORCPT
+        id S1730863AbeKGG5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:57:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44058 "EHLO mx1.redhat.com"
+        Wed, 7 Nov 2018 01:57:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44080 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbeKGG5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:57:44 -0500
+        id S1726321AbeKGG5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:57:46 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C4840A402A;
-        Tue,  6 Nov 2018 21:30:31 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0FD2B394D5C;
+        Tue,  6 Nov 2018 21:30:33 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D40F1600C4;
-        Tue,  6 Nov 2018 21:30:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F2A9600C7;
+        Tue,  6 Nov 2018 21:30:31 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     intel-gfx@lists.freedesktop.org
 Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
@@ -39,81 +39,74 @@ Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/5] drm/i915: Fix threshold check in intel_hpd_irq_storm_detect()
-Date:   Tue,  6 Nov 2018 16:30:14 -0500
-Message-Id: <20181106213017.14563-4-lyude@redhat.com>
+Subject: [PATCH v5 4/5] drm/i915: Clarify flow for disabling IRQs on storms
+Date:   Tue,  6 Nov 2018 16:30:15 -0500
+Message-Id: <20181106213017.14563-5-lyude@redhat.com>
 In-Reply-To: <20181106213017.14563-1-lyude@redhat.com>
 References: <20181106213017.14563-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 06 Nov 2018 21:30:32 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 06 Nov 2018 21:30:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently in intel_hpd_irq_storm_detect() when we detect that the last
-recorded hotplug wasn't within the period defined by
-HPD_STORM_DETECT_DELAY, we make the mistake of resetting the HPD count
-to 0 without incrementing it. This results in us only enabling storm
-detection when we go +2 above the threshold, e.g. an HPD threshold of 5
-would not trigger a storm until we reach a total of 7 hotplugs.
+This is rather confusing to look at as-is:
+dev_priv->display.hpd_irq_setup(dev_priv); in intel_hpd_irq_handler()
+handles disabling the actual HPD IRQ, while
+intel_hpd_irq_storm_disable() handles moving the HPD pin state over from
+MARK_DISABLED to DISABLED along with enabling polling for it.
 
-So: rework the code a bit so we reset the HPD count when
-HPD_STORM_DETECT_DELAY has passed, then increment the count afterwards.
-Also, clean things up a bit to make it easier to undertand.
+Changes since v3:
+- Rename i915_hpd_irq_storm_disable() to
+  i915_hpd_irq_storm_switch_to_polling() - Rodrigo Vivi
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 ---
- drivers/gpu/drm/i915/intel_hotplug.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/i915/intel_hotplug.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-index 8326900a311e..c11d73de16f2 100644
+index c11d73de16f2..d642c0795452 100644
 --- a/drivers/gpu/drm/i915/intel_hotplug.c
 +++ b/drivers/gpu/drm/i915/intel_hotplug.c
-@@ -135,24 +135,27 @@ enum hpd_pin intel_hpd_pin_default(struct drm_i915_private *dev_priv,
- static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
- 				       enum hpd_pin pin)
- {
--	unsigned long start = dev_priv->hotplug.stats[pin].last_jiffies;
-+	struct i915_hotplug *hpd = &dev_priv->hotplug;
-+	unsigned long start = hpd->stats[pin].last_jiffies;
- 	unsigned long end = start + msecs_to_jiffies(HPD_STORM_DETECT_PERIOD);
--	const int threshold = dev_priv->hotplug.hpd_storm_threshold;
-+	const int threshold = hpd->hpd_storm_threshold;
- 	bool storm = false;
+@@ -161,7 +161,8 @@ static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
+ 	return storm;
+ }
  
-+	if (!threshold)
-+		return false;
-+
- 	if (!time_in_range(jiffies, start, end)) {
--		dev_priv->hotplug.stats[pin].last_jiffies = jiffies;
--		dev_priv->hotplug.stats[pin].count = 0;
--		DRM_DEBUG_KMS("Received HPD interrupt on PIN %d - cnt: 0\n", pin);
--	} else if (dev_priv->hotplug.stats[pin].count > threshold &&
--		   threshold) {
--		dev_priv->hotplug.stats[pin].state = HPD_MARK_DISABLED;
-+		hpd->stats[pin].last_jiffies = jiffies;
-+		hpd->stats[pin].count = 0;
-+	}
-+
-+	if (++hpd->stats[pin].count > threshold) {
-+		hpd->stats[pin].state = HPD_MARK_DISABLED;
- 		DRM_DEBUG_KMS("HPD interrupt storm detected on PIN %d\n", pin);
- 		storm = true;
- 	} else {
--		dev_priv->hotplug.stats[pin].count++;
- 		DRM_DEBUG_KMS("Received HPD interrupt on PIN %d - cnt: %d\n", pin,
--			      dev_priv->hotplug.stats[pin].count);
-+			      hpd->stats[pin].count);
+-static void intel_hpd_irq_storm_disable(struct drm_i915_private *dev_priv)
++static void
++intel_hpd_irq_storm_switch_to_polling(struct drm_i915_private *dev_priv)
+ {
+ 	struct drm_device *dev = &dev_priv->drm;
+ 	struct intel_connector *intel_connector;
+@@ -351,8 +352,8 @@ static void i915_hotplug_work_func(struct work_struct *work)
+ 	hpd_event_bits = dev_priv->hotplug.event_bits;
+ 	dev_priv->hotplug.event_bits = 0;
+ 
+-	/* Disable hotplug on connectors that hit an irq storm. */
+-	intel_hpd_irq_storm_disable(dev_priv);
++	/* Enable polling for connectors which had HPD IRQ storms */
++	intel_hpd_irq_storm_switch_to_polling(dev_priv);
+ 
+ 	spin_unlock_irq(&dev_priv->irq_lock);
+ 
+@@ -458,6 +459,10 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
+ 		}
  	}
  
- 	return storm;
++	/*
++	 * Disable any IRQs that storms were detected on. Polling enablement
++	 * happens later in our hotplug work.
++	 */
+ 	if (storm_detected && dev_priv->display_irqs_enabled)
+ 		dev_priv->display.hpd_irq_setup(dev_priv);
+ 	spin_unlock(&dev_priv->irq_lock);
 -- 
 2.19.1
 
