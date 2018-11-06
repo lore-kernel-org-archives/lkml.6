@@ -2,72 +2,221 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDB4C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C45C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0CE2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:02:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0CE2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id BBBAE2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBAE2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbeKFX1d (ORCPT
+        id S2388508AbeKFX1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:27:33 -0500
-Received: from mail114-240.sinamail.sina.com.cn ([218.30.114.240]:50607 "HELO
-        mail114-240.sinamail.sina.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1730421AbeKFX1d (ORCPT
+        Tue, 6 Nov 2018 18:27:51 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52424 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730634AbeKFX1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:27:33 -0500
-Received: from unknown (HELO localhost.localdomain.localdomain)([110.184.32.86])
-        by sina.com with ESMTP
-        id 5BE19EB200001FD8; Tue, 6 Nov 2018 22:01:30 +0800 (CST)
-X-Sender: penghao122@sina.com.cn
-X-Auth-ID: penghao122@sina.com.cn
-X-SMAIL-MID: 7757325952691
-From:   Peng Hao <penghao122@sina.com.cn>
-To:     haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
-        kys@microsoft.com, mingo@redhat.com
-Cc:     x86@kernel.org, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  x86/hyper-v: fix a commit description style in the comments
-Date:   Tue,  6 Nov 2018 09:01:18 -0500
-Message-Id: <1541512878-5121-1-git-send-email-penghao122@sina.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 6 Nov 2018 18:27:51 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA6E1t0m048115;
+        Tue, 6 Nov 2018 08:01:55 -0600
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA6E1tdr042697
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 08:01:55 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 6 Nov
+ 2018 08:01:54 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 6 Nov 2018 08:01:54 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA6E1oT1021945;
+        Tue, 6 Nov 2018 08:01:51 -0600
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+To:     Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+        <linux-mmc@vger.kernel.org>
+CC:     <kernel@collabora.com>, <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
+Date:   Tue, 6 Nov 2018 19:34:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sjoerd,
 
-From: Peng Hao <peng.hao2@zte.com.cn>
+On Tuesday 06 November 2018 07:00 PM, Sjoerd Simons wrote:
+> On some of our boards containing Micron eMMC chips compatible with
+> the eMMC 5.0 specification we starting seeing boot failures due to
+> timeouts:
+>   mmc1: error -110 whilst initialising MMC card
+> 
+> It turns out that switching the cache on after a power loss event can
+> take quite long. In some simple testing thusfar we've seen values up to
+> 700ms, which is far longer then the GENERIC_CMD6_TIME of the chip
+> (250ms).
+> 
+> Looking at both the eMMC 4.51 and 5.0 specification there doesn't seem
+> to be a defined upper bound for the CACHE_CTRL ON command. For both
+> CACHE_CTRL OFF and FLUSH_CACHE it is documented that they can take
+> essentially unbounded time, but CACHE_CTRL ON i get the impression that
+> it's assumed to be "fast". Unfortunately this is not true in reality.
+> 
+> To resolve this, simply drop the timeout from CACHE_CTRL ON and assume
+> it might take an unbounded time similar to the FLUSH_CACHE command.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> 
 
-Use commit description style 'commit <12+ chars of sha1> ("<title line>")'.
+I have the exact same problem with micron cards. Specifically with CID: 
+R1J56L
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+The correct way to solve this would be to add a quirk for the specific 
+card. Does this patch solve your issue?
+
+---8<---
+From 9d470be59acd82859beb4c965a620c9a32858bb4 Mon Sep 17 00:00:00 2001
+From: Faiz Abbas <faiz_abbas@ti.com>
+Date: Wed, 20 Jun 2018 20:36:38 +0530
+Subject: [PATCH] mmc: core: Add QUIRK for eMMC CMD6 timeout for some Micron
+ cards
+
+It seems that on some Micron eMMC cards present on TI's AM654 EVM
+the CACHE_CTRL_ENABLE function in CMD6 takes longer (~750 ms) than
+the specified timeout in the GENERIC_CMD6_TIMEOUT byte of the
+Extended CSD (~250 ms).
+
+Therefore, add a quirk to detect this card and use a value of 1 sec for
+timeout.
+
+Reported-by: Andreas Dannenberg <dannenberg@ti.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 ---
- arch/x86/include/asm/mshyperv.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/core/card.h   |  7 +++++++
+ drivers/mmc/core/mmc.c    | 14 +++++++++++++-
+ drivers/mmc/core/quirks.h |  8 ++++++++
+ include/linux/mmc/card.h  |  1 +
+ 4 files changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index f377044..b56b77c 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -386,7 +386,8 @@ static inline u64 hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *tsc_pg,
- 	 *   A special '0' value indicates the time source is unreliable and we
- 	 *   need to use something else. The currently published specification
- 	 *   versions (up to 4.0b) contain a mistake and wrongly claim '-1'
--	 *   instead of '0' as the special value, see commit c35b82ef0294.
-+	 *   instead of '0' as the special value, see commit c35b82ef0294 (
-+	 *   "drivers/hv: correct tsc page sequence invalid value").
- 	 * - ReferenceTime =
- 	 *        ((RDTSC() * ReferenceTscScale) >> 64) + ReferenceTscOffset
- 	 * - READ ReferenceTscSequence again. In case its value has changed
+diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
+index 9c821eedd156..6b5e3c6253f5 100644
+--- a/drivers/mmc/core/card.h
++++ b/drivers/mmc/core/card.h
+@@ -84,6 +84,8 @@ struct mmc_fixup {
+ #define CID_MANFID_HYNIX	0x90
+ #define CID_MANFID_NUMONYX	0xFE
+ 
++#define CID_NAME_R1J56L	"R1J56L"
++
+ #define END_FIXUP { NULL }
+ 
+ #define _FIXUP_EXT(_name, _manfid, _oemid, _rev_start, _rev_end,	\
+@@ -221,4 +223,9 @@ static inline int mmc_card_broken_hpi(const struct mmc_card *c)
+ 	return c->quirks & MMC_QUIRK_BROKEN_HPI;
+ }
+ 
++static inline int mmc_card_long_cache_ctrl(const struct mmc_card *c)
++{
++	return c->quirks & MMC_QUIRK_LONG_CACHE_ENABLE_TIME;
++}
++
+ #endif
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index bad5c1bf4ed9..667caeb640a3 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1522,6 +1522,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	struct mmc_card *oldcard)
+ {
+ 	struct mmc_card *card;
++	unsigned int cache_ctrl_timeout;
+ 	int err;
+ 	u32 cid[4];
+ 	u32 rocr;
+@@ -1766,9 +1767,20 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	 */
+ 	if (!mmc_card_broken_hpi(card) &&
+ 	    card->ext_csd.cache_size > 0) {
++
++		/*
++		 * Some cards require a longer timeout than given in CSD.
++		 * Use a one second timeout here which can be increased
++		 * further if more cards needing larger timeouts are found
++		 */
++		if (mmc_card_long_cache_ctrl(card))
++			cache_ctrl_timeout = 1000;
++		else
++			cache_ctrl_timeout = card->ext_csd.generic_cmd6_time;
++
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+ 				EXT_CSD_CACHE_CTRL, 1,
+-				card->ext_csd.generic_cmd6_time);
++				cache_ctrl_timeout);
+ 		if (err && err != -EBADMSG)
+ 			goto free_card;
+ 
+diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
+index 5153577754f0..934ca72ef2b1 100644
+--- a/drivers/mmc/core/quirks.h
++++ b/drivers/mmc/core/quirks.h
+@@ -116,6 +116,14 @@ static const struct mmc_fixup mmc_ext_csd_fixups[] = {
+ 	MMC_FIXUP_EXT_CSD_REV(CID_NAME_ANY, CID_MANFID_NUMONYX,
+ 			      0x014e, add_quirk, MMC_QUIRK_BROKEN_HPI, 6),
+ 
++	/*
++	 * Certain Micron eMMC cards need a longer CMD6:CACHE_CTRL timeout
++	 * than indicated in CSD
++	 */
++	MMC_FIXUP_EXT_CSD_REV(CID_NAME_R1J56L, CID_MANFID_MICRON,
++			      0x14e, add_quirk,
++			      MMC_QUIRK_LONG_CACHE_ENABLE_TIME, 7),
++
+ 	END_FIXUP
+ };
+ 
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 279b39008a33..5a8ce0bb222e 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -268,6 +268,7 @@ struct mmc_card {
+ #define MMC_QUIRK_BROKEN_IRQ_POLLING	(1<<11)	/* Polling SDIO_CCCR_INTx could create a fake interrupt */
+ #define MMC_QUIRK_TRIM_BROKEN	(1<<12)		/* Skip trim */
+ #define MMC_QUIRK_BROKEN_HPI	(1<<13)		/* Disable broken HPI support */
++#define MMC_QUIRK_LONG_CACHE_ENABLE_TIME	(1 << 14) /* CACHE_CTRL enable time > CSD says */
+ 
+ 	bool			reenable_cmdq;	/* Re-enable Command Queue */
+ 
 -- 
-1.8.3.1
+2.18.0
 
 
+Thanks,
+Faiz
