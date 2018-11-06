@@ -2,92 +2,93 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22557C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CE7C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A2A2083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:28:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A2A2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id A9BDC2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:34:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BDC2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388099AbeKGHze (ORCPT
+        id S1730945AbeKGICD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:55:34 -0500
-Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:49234 "EHLO
-        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeKGHzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:55:33 -0500
-Received: from localhost.localdomain (85-76-84-88-nat.elisa-mobile.fi [85.76.84.88])
-        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 0AB3240047;
-        Wed,  7 Nov 2018 00:28:04 +0200 (EET)
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Jarkko Lavinen <jarkko.lavinen@nokia.com>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: [PATCH v2] MAINTAINERS: update OMAP MMC entry
-Date:   Wed,  7 Nov 2018 00:27:50 +0200
-Message-Id: <20181106222750.12939-1-aaro.koskinen@iki.fi>
-X-Mailer: git-send-email 2.17.0
+        Wed, 7 Nov 2018 03:02:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39324 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730835AbeKGICD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 03:02:03 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C5E7C20712; Tue,  6 Nov 2018 23:34:32 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7336A2039F;
+        Tue,  6 Nov 2018 23:34:32 +0100 (CET)
+Date:   Tue, 6 Nov 2018 23:34:32 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH next] mtd: maps: physmap: Fix infinite loop crash in ROM
+ type probing
+Message-ID: <20181106233432.76df6bbf@bbrezillon>
+In-Reply-To: <CAMuHMdUQhsikcBzRFAvrCwZwzFK_Coh=fqpSihFP6jEtugCMQw@mail.gmail.com>
+References: <20181106214416.11342-1-geert@linux-m68k.org>
+        <20181106225829.5ecbe19e@bbrezillon>
+        <CAMuHMdUQhsikcBzRFAvrCwZwzFK_Coh=fqpSihFP6jEtugCMQw@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jarkko's e-mail address hasn't worked for a long time. We still want
-to keep this driver working as it is critical for some of the OMAP boards.
-I use and test this driver frequently, so change myself as a maintainer
-with "Odd Fixes" status.
+On Tue, 6 Nov 2018 23:19:14 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- CREDITS     | 4 ++++
- MAINTAINERS | 4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+> Hi Boris,
+> 
+> On Tue, Nov 6, 2018 at 10:58 PM Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > On Tue,  6 Nov 2018 22:44:16 +0100
+> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
+> > > On Toshiba RBTX4927, where map_probe is supposed to fail:
+> > >
+> > >     Creating 2 MTD partitions on "physmap-flash.0":
+> > >     0x000000c00000-0x000001000000 : "boot"
+> > >     0x000000000000-0x000000c00000 : "user"
+> > >     physmap-flash physmap-flash.1: physmap platform flash device: [mem 0x1e000000-0x1effffff]
+> > >     CPU 0 Unable to handle kernel paging request at virtual address 00000000, epc == 80320f40, ra == 80321004
+> > >     ...
+> > >     Call Trace:
+> > >     [<80320f40>] get_mtd_chip_driver+0x30/0x8c
+> > >     [<80321004>] do_map_probe+0x20/0x90
+> > >     [<80328448>] physmap_flash_probe+0x484/0x4ec
+> > >
+> > > The access to rom_probe_types[] was changed from a sentinel-based loop
+> > > to an infinite loop, causing a crash when reaching the sentinel.  
+> >
+> > Oops. Do you mind if I fix that in-place (squash your changes in
+> > Ricardo's original commit)?
 
-	v2: Add Jarkko to CREDITS.
+Done.
 
-	v1: https://patchwork.kernel.org/patch/10369861/
+> 
+> No problem. Thanks!
 
-diff --git a/CREDITS b/CREDITS
-index 5befd2d714d0..84cbec4c6211 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -2138,6 +2138,10 @@ E: paul@laufernet.com
- D: Soundblaster driver fixes, ISAPnP quirk
- S: California, USA
- 
-+N: Jarkko Lavinen
-+E: jarkko.lavinen@nokia.com
-+D: OMAP MMC support
-+
- N: Jonathan Layes
- D: ARPD support
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4855974f325..1c2badfec2ec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10793,9 +10793,9 @@ F:	drivers/media/platform/omap3isp/
- F:	drivers/staging/media/omap4iss/
- 
- OMAP MMC SUPPORT
--M:	Jarkko Lavinen <jarkko.lavinen@nokia.com>
-+M:	Aaro Koskinen <aaro.koskinen@iki.fi>
- L:	linux-omap@vger.kernel.org
--S:	Maintained
-+S:	Odd Fixes
- F:	drivers/mmc/host/omap.c
- 
- OMAP POWER MANAGEMENT SUPPORT
--- 
-2.17.0
+Thanks for reporting/fixing the bug.
+
+Boris
 
