@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA72DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B234FC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6552085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C0AE2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="udLfAObm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6552085B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NdZcOdV+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C0AE2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389839AbeKGC5U (ORCPT
+        id S2389852AbeKGC5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:57:20 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39932 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389780AbeKGC5R (ORCPT
+        Tue, 6 Nov 2018 21:57:22 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46469 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389812AbeKGC5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:57:17 -0500
-Received: by mail-wm1-f65.google.com with SMTP id u13-v6so13004043wmc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:31:00 -0800 (PST)
+        Tue, 6 Nov 2018 21:57:21 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 74-v6so14450646wrb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rI9jB7TmpIHEDx4oMZya4ulbXmsHhxN+ATa3+HN3hoo=;
-        b=udLfAObmnevegDvmjvehrjJ6fumrvuolhCuOXNHOAd13A3IJR05UKexovQypoDryBl
-         xLOfxlCW403tvGmJitkdVnWP7/inh2psYBnbktlBrzAK8mjKmw6moztKW1XJ6QYWQM1F
-         3PRa4CiYmZw0K3YGr1xsblXGBg4vv7sPsZssjowCWXs25jv1SARq4KappkjxjvWnJsDF
-         1tuvR5qdMddlKt/5Yj0fwcYGGAnCShDN/OSzNjeL+0o2oVf1rTI++h3oVLiW2rGdCUd2
-         hw2TBR1eOAjs9cRRTBWTQw9tCVAM1ZZAc8GBO34Bg7TV9cfuAYpgnPpRsVM/RsfLCtNr
-         i8kQ==
+        bh=wyLKUPGn9jgKs5kyhcnEkFlESwFUwxhfNlag9MpDnKY=;
+        b=NdZcOdV+SeQJsPz94m7H4XbZIwYUVU7yfboopa1Zjkyz1uIe2LlTLBqR71KPODjk4w
+         w2i8lDUlVZAZkkOc9R+Q3ZJezDsbmPNngjH5GGihgainLZsCuwZov11A/67GWeqlJcfq
+         +nbTxxtex/VSTC6mj0qA21CD7O1h+ebTAPCJNL2lovRDEHcZNUuJySqcFbS+ZbxwDr/E
+         K2ifbpcrlmfB0NCeAVLhsJelIHCbITz8Q/LhoU36zDmoN+csn7I9AlcesdomO9yOLYsd
+         khQiU+Km8JaWBY1mrboUqf+Qb5s/GZ9L6HQqsuN/RYVQLW821T971uEQ1HkkHYY5Jlsp
+         V76w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rI9jB7TmpIHEDx4oMZya4ulbXmsHhxN+ATa3+HN3hoo=;
-        b=O92bOhjb00YniqDWqyxy9qfkPaN2bTe7Zfn1yHt9CxERUiDuOt2A1rRfpI4+Y5SzlA
-         MV2ADUhd6k6qXoB6BguUR9ohnlr92Yh/vE617BlEAmkZKf+dd8XkfjxG5GB4eUtYLXoX
-         9VV++WrtQSvQXdej86TimB6TSmoTLKiWIY9U5SdQuRnnZTo62FkDIYzPzWtoMR6fWddE
-         78JqubiizKVS1qtjGe7cwrBXiJo7yfivAKXZQ+CvuvNseE2K1O5g68fVOckcxcsrNIxD
-         8KPli6ijEp2I6a1w27BS7IX5YHSQGSNt5kimmDn2U2b1ahIe8bUJjmxBXRuVIoPc0qyR
-         2F4w==
-X-Gm-Message-State: AGRZ1gKJyiDGVzNoawPKDt+wujAeYRfuB1Iq0CJzMLSGIwBRvzvlSzMz
-        XSmGfugBOWISltPmaetd5D31XA==
-X-Google-Smtp-Source: AJdET5cXF3fWWc+IszXIBT7xTDA/coT3Nkazw/U/NtSkMe85oUqeoQTw9O2ShjMSgQDgFzZmWWgchA==
-X-Received: by 2002:a1c:1c0c:: with SMTP id c12-v6mr2675547wmc.18.1541525459907;
-        Tue, 06 Nov 2018 09:30:59 -0800 (PST)
+        bh=wyLKUPGn9jgKs5kyhcnEkFlESwFUwxhfNlag9MpDnKY=;
+        b=qV/d+5Im5FIMG1l+PKR6EYsuthC2M2cAly5GlkX9fX5Ab1QHC+bqtg3EHChXN4WXbf
+         9CIETeQpsnjsWAHE/9RN4SWoh/uedMlwkVRieHhk4C8DeO2i/8nZ6ALe93RJFvUVfgsr
+         bLUDDNXFHsGDzYpSTpuBpjkhcnpAy5l7eWrr2W8Gei5wp4F7pLNoLWXWlOUPPQLvux7P
+         flE/F5EH2MrJk4hIGOwsMr2bbjXMN87WTVJns4gwys0zCWiF8okSCLsntYiE2NMEO0Du
+         NNPby7iH2mOWq2WOXtPNk1KU9rDxE80jvoMVjlKtfzG10pETLmyQ9/7uhz00AuCA8fhH
+         bvYQ==
+X-Gm-Message-State: AGRZ1gJ+hWAQNCG3G/gGc4unhfqe89AOXJfCClPj03JaKJ4F8EWbtpLs
+        NbyLLUct0uJiXk81hQ9S29ZwxA==
+X-Google-Smtp-Source: AJdET5d8EgWArhBW85rMDSm87h+TZuEVQo4IoirzvQvLb/UzVNBtYXRv1TEEXHRWUFUXNfkKIR1brQ==
+X-Received: by 2002:a5d:6551:: with SMTP id z17-v6mr20589467wrv.231.1541525464645;
+        Tue, 06 Nov 2018 09:31:04 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.30.58
+        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.31.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 09:30:58 -0800 (PST)
+        Tue, 06 Nov 2018 09:31:03 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v10 11/22] mm: move obj_to_index to include/linux/slab_def.h
-Date:   Tue,  6 Nov 2018 18:30:26 +0100
-Message-Id: <c4424b4917e92007a20170909460aac91710f1df.1541525354.git.andreyknvl@google.com>
+Subject: [PATCH v10 14/22] kasan, mm: perform untagged pointers comparison in krealloc
+Date:   Tue,  6 Nov 2018 18:30:29 +0100
+Message-Id: <1d9612a508dd95248cc1cd3b4a4b332b4a198212.1541525354.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <cover.1541525354.git.andreyknvl@google.com>
 References: <cover.1541525354.git.andreyknvl@google.com>
@@ -109,76 +109,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While with SLUB we can actually preassign tags for caches with contructors
-and store them in pointers in the freelist, SLAB doesn't allow that since
-the freelist is stored as an array of indexes, so there are no pointers to
-store the tags.
+The krealloc function checks where the same buffer was reused or a new one
+allocated by comparing kernel pointers. Tag-based KASAN changes memory tag
+on the krealloc'ed chunk of memory and therefore also changes the pointer
+tag of the returned pointer. Therefore we need to perform comparison on
+untagged (with tags reset) pointers to check whether it's the same memory
+region or not.
 
-Instead we compute the tag twice, once when a slab is created before
-calling the constructor and then again each time when an object is
-allocated with kmalloc. Tag is computed simply by taking the lowest byte of
-the index that corresponds to the object. However in kasan_kmalloc we only
-have access to the objects pointer, so we need a way to find out which
-index this object corresponds to.
-
-This patch moves obj_to_index from slab.c to include/linux/slab_def.h to
-be reused by KASAN.
-
-Acked-by: Christoph Lameter <cl@linux.com>
 Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- include/linux/slab_def.h | 13 +++++++++++++
- mm/slab.c                | 13 -------------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ mm/slab_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
-index 3485c58cfd1c..9a5eafb7145b 100644
---- a/include/linux/slab_def.h
-+++ b/include/linux/slab_def.h
-@@ -104,4 +104,17 @@ static inline void *nearest_obj(struct kmem_cache *cache, struct page *page,
- 		return object;
- }
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 5f3504e26d4c..5aabcbd32d82 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1534,7 +1534,7 @@ void *krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	}
  
-+/*
-+ * We want to avoid an expensive divide : (offset / cache->size)
-+ *   Using the fact that size is a constant for a particular cache,
-+ *   we can replace (offset / cache->size) by
-+ *   reciprocal_divide(offset, cache->reciprocal_buffer_size)
-+ */
-+static inline unsigned int obj_to_index(const struct kmem_cache *cache,
-+					const struct page *page, void *obj)
-+{
-+	u32 offset = (obj - page->s_mem);
-+	return reciprocal_divide(offset, cache->reciprocal_buffer_size);
-+}
-+
- #endif	/* _LINUX_SLAB_DEF_H */
-diff --git a/mm/slab.c b/mm/slab.c
-index 27859fb39889..d2f827316dfc 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -406,19 +406,6 @@ static inline void *index_to_obj(struct kmem_cache *cache, struct page *page,
- 	return page->s_mem + cache->size * idx;
- }
+ 	ret = __do_krealloc(p, new_size, flags);
+-	if (ret && p != ret)
++	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+ 		kfree(p);
  
--/*
-- * We want to avoid an expensive divide : (offset / cache->size)
-- *   Using the fact that size is a constant for a particular cache,
-- *   we can replace (offset / cache->size) by
-- *   reciprocal_divide(offset, cache->reciprocal_buffer_size)
-- */
--static inline unsigned int obj_to_index(const struct kmem_cache *cache,
--					const struct page *page, void *obj)
--{
--	u32 offset = (obj - page->s_mem);
--	return reciprocal_divide(offset, cache->reciprocal_buffer_size);
--}
--
- #define BOOT_CPUCACHE_ENTRIES	1
- /* internal cache of cache description objs */
- static struct kmem_cache kmem_cache_boot = {
+ 	return ret;
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
