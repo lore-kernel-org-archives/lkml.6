@@ -2,91 +2,368 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AE2C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8021AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B7D20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:38:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B7D20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C47D20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:41:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N1fqbbDq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C47D20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387965AbeKFWDY (ORCPT
+        id S2387949AbeKFWGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 17:03:24 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387454AbeKFWDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:03:24 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 799112151093A;
-        Tue,  6 Nov 2018 20:38:17 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
- 20:38:11 +0800
-Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Chao Yu <chao@kernel.org>
-References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
- <20181030060441.16107-1-gaoxiang25@huawei.com>
- <20181105224654.GA25864@brain-police>
- <20181106090642.GH22431@hirez.programming.kicks-ass.net>
- <5eb42b84-5195-69f2-e7a7-97568f360506@huawei.com>
- <20181106110026.GJ22431@hirez.programming.kicks-ass.net>
- <dedbc211-082b-be4a-1bce-2593084d4ca3@huawei.com>
- <20181106122713.GR22431@hirez.programming.kicks-ass.net>
- <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
-Message-ID: <44213253-d108-cd63-db64-7d41fcd8af66@huawei.com>
-Date:   Tue, 6 Nov 2018 20:38:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 6 Nov 2018 17:06:47 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:32946 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387704AbeKFWGq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 17:06:46 -0500
+Received: by mail-it1-f196.google.com with SMTP id p11-v6so10330621itf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 04:41:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=yqoNuWz8D73NoSLRRAxml6RIRRLbsLae4D1Y6ii1lEg=;
+        b=N1fqbbDqW0bhO45M4p0XMSnjY2oXiK+NRrFe6f24zbaxTwahqYbywXGsJUc+EVfNPR
+         1tx5IOhxuYR3iaTylolatNrgrm+6CDCyJTl89Tpf59poS5FxA6g1ucNvl6/xASSL6654
+         G99XMhZH5ZmZ6RFi0MOlRws2ve4UFHyeEy5YY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=yqoNuWz8D73NoSLRRAxml6RIRRLbsLae4D1Y6ii1lEg=;
+        b=L/FaAsoL7CZ7YNfQBSS24PKhEvaGO+lw6292WqWjmi+gfDW3vjk30dLsS7Euq9f+xO
+         yiKAr5T3yQ7213THjeLsAkkxbGsCn1gKw4q4XywnLm4UphiqFQBlsnKHl/lQ4GlkMKTH
+         7ZAJtQ4N0XlswzerH1lENtI20Y8Y8OAHKMeS/IE7BGbS6VkM0csL1HJ+HiGWbehJrh66
+         ZYQMu2OeuDXR9ubydtB9VQOI967ZbIPnxKUXqB/ImqVmxhPzR8LAhC/HOqXC9AVa2uaz
+         yyrEbVSxAQe8CvlL3uxPTNfqRzDhoJNj1dyon/R3LIjS2tG+3QBeF5zvs5YailrxoLvP
+         zgaQ==
+X-Gm-Message-State: AGRZ1gIw4LdEe7+FAKzJCy4jSDsmVXeZzcZErg/7WcTHu1E9DjpIIXQn
+        R3P8tpI9AeZVuomA8vc3HyhH4nRMiMVkv09PptsN+A==
+X-Google-Smtp-Source: AJdET5fiWsvVEQTR5PUa5avUi85H3s2+4mLvhi4OOt/MCAmd8TsQsOVJldn3HlvvxQ1jFdAhZnoJoFhx6zBY37A+n08=
+X-Received: by 2002:a02:9f85:: with SMTP id a5-v6mr24122953jam.2.1541508103282;
+ Tue, 06 Nov 2018 04:41:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Tue, 6 Nov 2018 04:41:42 -0800 (PST)
+In-Reply-To: <20181105232526.173947-8-ebiggers@kernel.org>
+References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-8-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 6 Nov 2018 13:41:42 +0100
+Message-ID: <CAKv+Gu8XRDqv+S8oA3AScHpC6LQv7bcfSi0Ynzu6LWOCds7Qog@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 07/15] crypto: arm/chacha20 - add XChaCha20 support
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On 6 November 2018 at 00:25, Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add an XChaCha20 implementation that is hooked up to the ARM NEON
+> implementation of ChaCha20.  This is needed for use in the Adiantum
+> encryption mode; see the generic code patch,
+> "crypto: chacha20-generic - add XChaCha20 support", for more details.
+>
+> We also update the NEON code to support HChaCha20 on one block, so we
+> can use that in XChaCha20 rather than calling the generic HChaCha20.
+> This required factoring the permutation out into its own macro.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-OK, I think I understand your point. If you think the performance of bit_spinlock
-doesn't matter, Let's keep the current status.
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Thanks,
-Gao Xiang
-
-On 2018/11/6 20:33, Gao Xiang wrote:
-> Hi Peter,
-> 
-> On 2018/11/6 20:27, Peter Zijlstra wrote:
->> On Tue, Nov 06, 2018 at 07:36:41PM +0800, Gao Xiang wrote:
->>> IMO, to use wrapped up function for the detailed scenario could be better than
->>> open-coded all the time (eg. do cpu_relax(); while(...)) since it could be
->>> optimizated even more for the specific architecture...
->> That's the whole point though; if this actually matters, you're doing it
->> wrong.
-> 
-> I cannot fully understand your point...Sorry about my English...
-> 
-> To the point, you mean it is much better to fix it as Will suggested before or
-> leave the matter as it is since the performance of bit_spinlock itself doesn't matter?
-> 
-> Thanks in advance.
-> 
-> Thanks,
-> Gao Xiang
-> 
+> ---
+>  arch/arm/crypto/Kconfig              |   2 +-
+>  arch/arm/crypto/chacha20-neon-core.S |  70 ++++++++++++------
+>  arch/arm/crypto/chacha20-neon-glue.c | 103 ++++++++++++++++++++-------
+>  3 files changed, 126 insertions(+), 49 deletions(-)
+>
+> diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+> index ef0c7feea6e2..0aa1471f27d2 100644
+> --- a/arch/arm/crypto/Kconfig
+> +++ b/arch/arm/crypto/Kconfig
+> @@ -117,7 +117,7 @@ config CRYPTO_CRC32_ARM_CE
+>         select CRYPTO_HASH
+>
+>  config CRYPTO_CHACHA20_NEON
+> -       tristate "NEON accelerated ChaCha20 symmetric cipher"
+> +       tristate "NEON accelerated ChaCha20 stream cipher algorithms"
+>         depends on KERNEL_MODE_NEON
+>         select CRYPTO_BLKCIPHER
+>         select CRYPTO_CHACHA20
+> diff --git a/arch/arm/crypto/chacha20-neon-core.S b/arch/arm/crypto/chacha20-neon-core.S
+> index 50e7b9896818..2335e5055d2b 100644
+> --- a/arch/arm/crypto/chacha20-neon-core.S
+> +++ b/arch/arm/crypto/chacha20-neon-core.S
+> @@ -52,27 +52,16 @@
+>         .fpu            neon
+>         .align          5
+>
+> -ENTRY(chacha20_block_xor_neon)
+> -       // r0: Input state matrix, s
+> -       // r1: 1 data block output, o
+> -       // r2: 1 data block input, i
+> -
+> -       //
+> -       // This function encrypts one ChaCha20 block by loading the state matrix
+> -       // in four NEON registers. It performs matrix operation on four words in
+> -       // parallel, but requireds shuffling to rearrange the words after each
+> -       // round.
+> -       //
+> -
+> -       // x0..3 = s0..3
+> -       add             ip, r0, #0x20
+> -       vld1.32         {q0-q1}, [r0]
+> -       vld1.32         {q2-q3}, [ip]
+> -
+> -       vmov            q8, q0
+> -       vmov            q9, q1
+> -       vmov            q10, q2
+> -       vmov            q11, q3
+> +/*
+> + * chacha20_permute - permute one block
+> + *
+> + * Permute one 64-byte block where the state matrix is stored in the four NEON
+> + * registers q0-q3.  It performs matrix operations on four words in parallel,
+> + * but requires shuffling to rearrange the words after each round.
+> + *
+> + * Clobbers: r3, ip, q4-q5
+> + */
+> +chacha20_permute:
+>
+>         adr             ip, .Lrol8_table
+>         mov             r3, #10
+> @@ -142,6 +131,27 @@ ENTRY(chacha20_block_xor_neon)
+>         subs            r3, r3, #1
+>         bne             .Ldoubleround
+>
+> +       bx              lr
+> +ENDPROC(chacha20_permute)
+> +
+> +ENTRY(chacha20_block_xor_neon)
+> +       // r0: Input state matrix, s
+> +       // r1: 1 data block output, o
+> +       // r2: 1 data block input, i
+> +       push            {lr}
+> +
+> +       // x0..3 = s0..3
+> +       add             ip, r0, #0x20
+> +       vld1.32         {q0-q1}, [r0]
+> +       vld1.32         {q2-q3}, [ip]
+> +
+> +       vmov            q8, q0
+> +       vmov            q9, q1
+> +       vmov            q10, q2
+> +       vmov            q11, q3
+> +
+> +       bl              chacha20_permute
+> +
+>         add             ip, r2, #0x20
+>         vld1.8          {q4-q5}, [r2]
+>         vld1.8          {q6-q7}, [ip]
+> @@ -166,9 +176,25 @@ ENTRY(chacha20_block_xor_neon)
+>         vst1.8          {q0-q1}, [r1]
+>         vst1.8          {q2-q3}, [ip]
+>
+> -       bx              lr
+> +       pop             {pc}
+>  ENDPROC(chacha20_block_xor_neon)
+>
+> +ENTRY(hchacha20_block_neon)
+> +       // r0: Input state matrix, s
+> +       // r1: output (8 32-bit words)
+> +       push            {lr}
+> +
+> +       vld1.32         {q0-q1}, [r0]!
+> +       vld1.32         {q2-q3}, [r0]
+> +
+> +       bl              chacha20_permute
+> +
+> +       vst1.32         {q0}, [r1]!
+> +       vst1.32         {q3}, [r1]
+> +
+> +       pop             {pc}
+> +ENDPROC(hchacha20_block_neon)
+> +
+>         .align          4
+>  .Lctrinc:      .word   0, 1, 2, 3
+>  .Lrol8_table:  .byte   3, 0, 1, 2, 7, 4, 5, 6
+> diff --git a/arch/arm/crypto/chacha20-neon-glue.c b/arch/arm/crypto/chacha20-neon-glue.c
+> index 2bc035cb8f23..f2d3b0f70a8d 100644
+> --- a/arch/arm/crypto/chacha20-neon-glue.c
+> +++ b/arch/arm/crypto/chacha20-neon-glue.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * ChaCha20 256-bit cipher algorithm, RFC7539, ARM NEON functions
+> + * ChaCha20 (RFC7539) and XChaCha20 stream ciphers, NEON accelerated
+>   *
+>   * Copyright (C) 2016 Linaro, Ltd. <ard.biesheuvel@linaro.org>
+>   *
+> @@ -30,6 +30,7 @@
+>
+>  asmlinkage void chacha20_block_xor_neon(u32 *state, u8 *dst, const u8 *src);
+>  asmlinkage void chacha20_4block_xor_neon(u32 *state, u8 *dst, const u8 *src);
+> +asmlinkage void hchacha20_block_neon(const u32 *state, u32 *out);
+>
+>  static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
+>                             unsigned int bytes)
+> @@ -57,20 +58,16 @@ static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
+>         }
+>  }
+>
+> -static int chacha20_neon(struct skcipher_request *req)
+> +static int chacha20_neon_stream_xor(struct skcipher_request *req,
+> +                                   struct chacha_ctx *ctx, u8 *iv)
+>  {
+> -       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> -       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+>         struct skcipher_walk walk;
+>         u32 state[16];
+>         int err;
+>
+> -       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> -               return crypto_chacha_crypt(req);
+> -
+>         err = skcipher_walk_virt(&walk, req, false);
+>
+> -       crypto_chacha_init(state, ctx, walk.iv);
+> +       crypto_chacha_init(state, ctx, iv);
+>
+>         while (walk.nbytes > 0) {
+>                 unsigned int nbytes = walk.nbytes;
+> @@ -88,22 +85,73 @@ static int chacha20_neon(struct skcipher_request *req)
+>         return err;
+>  }
+>
+> -static struct skcipher_alg alg = {
+> -       .base.cra_name          = "chacha20",
+> -       .base.cra_driver_name   = "chacha20-neon",
+> -       .base.cra_priority      = 300,
+> -       .base.cra_blocksize     = 1,
+> -       .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> -       .base.cra_module        = THIS_MODULE,
+> -
+> -       .min_keysize            = CHACHA_KEY_SIZE,
+> -       .max_keysize            = CHACHA_KEY_SIZE,
+> -       .ivsize                 = CHACHA_IV_SIZE,
+> -       .chunksize              = CHACHA_BLOCK_SIZE,
+> -       .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> -       .setkey                 = crypto_chacha20_setkey,
+> -       .encrypt                = chacha20_neon,
+> -       .decrypt                = chacha20_neon,
+> +static int chacha20_neon(struct skcipher_request *req)
+> +{
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +
+> +       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> +               return crypto_chacha_crypt(req);
+> +
+> +       return chacha20_neon_stream_xor(req, ctx, req->iv);
+> +}
+> +
+> +static int xchacha20_neon(struct skcipher_request *req)
+> +{
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +       struct chacha_ctx subctx;
+> +       u32 state[16];
+> +       u8 real_iv[16];
+> +
+> +       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> +               return crypto_xchacha_crypt(req);
+> +
+> +       crypto_chacha_init(state, ctx, req->iv);
+> +
+> +       kernel_neon_begin();
+> +       hchacha20_block_neon(state, subctx.key);
+> +       kernel_neon_end();
+> +
+> +       memcpy(&real_iv[0], req->iv + 24, 8);
+> +       memcpy(&real_iv[8], req->iv + 16, 8);
+> +       return chacha20_neon_stream_xor(req, &subctx, real_iv);
+> +}
+> +
+> +static struct skcipher_alg algs[] = {
+> +       {
+> +               .base.cra_name          = "chacha20",
+> +               .base.cra_driver_name   = "chacha20-neon",
+> +               .base.cra_priority      = 300,
+> +               .base.cra_blocksize     = 1,
+> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> +               .base.cra_module        = THIS_MODULE,
+> +
+> +               .min_keysize            = CHACHA_KEY_SIZE,
+> +               .max_keysize            = CHACHA_KEY_SIZE,
+> +               .ivsize                 = CHACHA_IV_SIZE,
+> +               .chunksize              = CHACHA_BLOCK_SIZE,
+> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> +               .setkey                 = crypto_chacha20_setkey,
+> +               .encrypt                = chacha20_neon,
+> +               .decrypt                = chacha20_neon,
+> +       }, {
+> +               .base.cra_name          = "xchacha20",
+> +               .base.cra_driver_name   = "xchacha20-neon",
+> +               .base.cra_priority      = 300,
+> +               .base.cra_blocksize     = 1,
+> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> +               .base.cra_module        = THIS_MODULE,
+> +
+> +               .min_keysize            = CHACHA_KEY_SIZE,
+> +               .max_keysize            = CHACHA_KEY_SIZE,
+> +               .ivsize                 = XCHACHA_IV_SIZE,
+> +               .chunksize              = CHACHA_BLOCK_SIZE,
+> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> +               .setkey                 = crypto_chacha20_setkey,
+> +               .encrypt                = xchacha20_neon,
+> +               .decrypt                = xchacha20_neon,
+> +       }
+>  };
+>
+>  static int __init chacha20_simd_mod_init(void)
+> @@ -111,12 +159,12 @@ static int __init chacha20_simd_mod_init(void)
+>         if (!(elf_hwcap & HWCAP_NEON))
+>                 return -ENODEV;
+>
+> -       return crypto_register_skcipher(&alg);
+> +       return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
+>  }
+>
+>  static void __exit chacha20_simd_mod_fini(void)
+>  {
+> -       crypto_unregister_skcipher(&alg);
+> +       crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
+>  }
+>
+>  module_init(chacha20_simd_mod_init);
+> @@ -125,3 +173,6 @@ module_exit(chacha20_simd_mod_fini);
+>  MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS_CRYPTO("chacha20");
+> +MODULE_ALIAS_CRYPTO("chacha20-neon");
+> +MODULE_ALIAS_CRYPTO("xchacha20");
+> +MODULE_ALIAS_CRYPTO("xchacha20-neon");
+> --
+> 2.19.1.930.g4563a0d9d0-goog
+>
