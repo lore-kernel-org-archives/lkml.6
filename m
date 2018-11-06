@@ -2,109 +2,67 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F278C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378AEC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1A62081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:20:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lcmS2Lu+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C1A62081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id F3EBF20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:22:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EBF20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbeKFRod (ORCPT
+        id S1729799AbeKFRq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:44:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50444 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbeKFRod (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:44:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=u83gyhzFurb5QKDqHvJAZVQNtWakrvZ/YT8iZtTmPK8=; b=lcmS2Lu+wP51e0cmSDwmIa61U
-        jRGxcKG5NaLozal88IoiSTs8nHqjgPQQz2gVOtjJ/neRzux2sX0GJiyI0OUJ3CNyue3mw+7Rg9Cg+
-        W4tKsRkThqEYUqZ2BbuQqmZQNc58G3z0MbWE+GsA1LBwH4qBANln4PBlRyZY11EoYt9MrwBLECUVt
-        5nNSOLFeRb3+j297eorEwImusMB8j6fswLFZuA0j1GoqhxlKzD373Ms1jJ84TrwFUmmpnnpW4olcB
-        TvnYIZi6tsB/tYFnhOMLtvcUxut3Yhnddh7+qh8bHTRI2O67JFJTuPz5yj8fEel4jw5vw+9Xnrk2l
-        sylwyjO8A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gJwaz-00018k-Q1; Tue, 06 Nov 2018 08:20:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3CE932029F9FF; Tue,  6 Nov 2018 09:20:19 +0100 (CET)
-Date:   Tue, 6 Nov 2018 09:20:19 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3 6/7] x86/alternatives: use temporary mm for text poking
-Message-ID: <20181106082019.GF22431@hirez.programming.kicks-ass.net>
-References: <20181102232946.98461-1-namit@vmware.com>
- <20181102232946.98461-7-namit@vmware.com>
- <20181105133041.GC22467@hirez.programming.kicks-ass.net>
- <EFF64D16-26DE-437E-99B5-A870921B7D5F@vmware.com>
+        Tue, 6 Nov 2018 12:46:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58610 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729021AbeKFRq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 12:46:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 80D40B0D3;
+        Tue,  6 Nov 2018 08:22:22 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 09:22:21 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: kstrdup_quotable_cmdline and gfp flags
+Message-ID: <20181106082221.GB27423@dhcp22.suse.cz>
+References: <84197642-f414-81dc-ee68-1a4c1cdea5ae@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <EFF64D16-26DE-437E-99B5-A870921B7D5F@vmware.com>
+In-Reply-To: <84197642-f414-81dc-ee68-1a4c1cdea5ae@rasmusvillemoes.dk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 06:04:42PM +0000, Nadav Amit wrote:
-> From: Peter Zijlstra
-> Sent: November 5, 2018 at 1:30:41 PM GMT
-> > To: Nadav Amit <namit@vmware.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, H. Peter Anvin <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>, Dave Hansen <dave.hansen@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
-> > Subject: Re: [PATCH v3 6/7] x86/alternatives: use temporary mm for text poking
-> > 
-> > 
-> > On Fri, Nov 02, 2018 at 04:29:45PM -0700, Nadav Amit wrote:
-> >> +	unuse_temporary_mm(prev);
-> >> +
-> >> +	pte_unmap_unlock(ptep, ptl);
-> > 
-> > That; that does kunmap_atomic() on 32bit.
-> > 
-> > I've been thinking that the whole kmap_atomic thing on x86_32 is
-> > terminally broken, and with that most of x86_32 is.
-> > 
-> > kmap_atomic does the per-cpu fixmap pte fun-and-games we're here saying
-> > is broken. Yes, only the one CPU will (explicitly) use those fixmap PTEs
-> > and thus the local invalidate _should_ work. However nothing prohibits
-> > speculation on another CPU from using our fixmap addresses. Which can
-> > lead to the remote CPU populating its TLBs for our fixmap entry.
-> > 
-> > And, as we've found, there are AMD parts that #MC when there are
-> > mis-matched TLB entries.
-> > 
-> > So what do we do? mark x86_32 SMP broken?
+On Mon 05-11-18 22:32:07, Rasmus Villemoes wrote:
+> kstrdup_quotable_cmdline takes gfp flags and passes those on to
+> kstrdup_quotable, but before that it has done a kmalloc(PAGE_SIZE) with
+> a hard-coded GFP_KERNEL. There is one caller of kstrdup_quotable_cmdline
+> which passes GFP_ATOMIC, and the commit introducing that (65a3c2748e)
+> conveniently has this piece of history:
 > 
-> pte_unmap() seems to only use kunmap_atomic() when CONFIG_HIGHPTE is set, no?
+>     v2: Use GFP_ATOMIC while holding the rcu lock per Chris Wilson
 > 
-> Do most distributions run with CONFIG_HIGHPTE?
+> So, should the GFP_KERNEL in kstrdup_quotable_cmdline simply be changed
+> to use the passed-in gfp, or is there some deeper reason for the
+> GFP_KERNEL (in which case it doesn't really make sense to take gfp at
+> all...)?
 
-Sure; but all of x86_32 relies on kmap_atomic. This was just the the one
-way I ran into it again.
+I would just drop the gfp argument and move comm = kstrdup(task->comm, GFP_ATOMIC);
+before rcu read lock
 
-By our current way of thinking, kmap_atomic simply is not correct.
+The code in its current form is buggy.
+-- 
+Michal Hocko
+SUSE Labs
