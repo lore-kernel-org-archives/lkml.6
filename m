@@ -2,98 +2,234 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B296C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA725C46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7BB2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CC9B2086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="flP7f9nE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f09E1gtg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7BB2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="a1liUfpu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC9B2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389439AbeKGCXW (ORCPT
+        id S2389479AbeKGCXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:23:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56522 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389214AbeKGCXW (ORCPT
+        Tue, 6 Nov 2018 21:23:45 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34979 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389386AbeKGCXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:23:22 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A31B3605FD; Tue,  6 Nov 2018 16:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541523435;
-        bh=9LMKUKsEfm2vU8KkmpdXiTBuWWy/9AVwmbStrC/JQig=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=flP7f9nEOfIFbs+nxcwMCMeWOEg/9PUrMU4v2iwZfLBrbTJUeOkYBU6G20bVaVHkG
-         xJBsDi8KTcDXDvPudWcD+tbRZdaRPfbbke+KJDXC+c2zn0sftwCMM9A519M/rlRfo2
-         /Q+bN1H+papBRy2JN45mS2DI23asyryat8w5FSYs=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 37BF6601D7;
-        Tue,  6 Nov 2018 16:57:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541523435;
-        bh=9LMKUKsEfm2vU8KkmpdXiTBuWWy/9AVwmbStrC/JQig=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=f09E1gtggzV3NiSYUw4SsEyrFP4Wsjw/81Fbh3zElZdXgTKJ0YhYrDqheBRVUDCVQ
-         MQI08P4q+CUQ3C2qPBxa771B6LQZlJwjPMvEn3DiY298dLWCO8HsOIbILIz8hsA80d
-         5PQ18GfMfEqIKK5duinS7Edk7K0bkCZMbUkp98EU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 37BF6601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] brcmfmac: fix spelling mistake "Retreiving" ->
- "Retrieving"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181016174342.1867-1-colin.king@canonical.com>
-References: <20181016174342.1867-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181106165715.A31B3605FD@smtp.codeaurora.org>
-Date:   Tue,  6 Nov 2018 16:57:15 +0000 (UTC)
+        Tue, 6 Nov 2018 21:23:45 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 32-v6so6081622pgu.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 08:57:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=fuTYZ0EUURoM2npeeIQL7Ud5k/6P95lXaguV2MbS8Ks=;
+        b=a1liUfpuFJJmS06nU/EjBdoWCE3hJsy7OELbBpdzO9qBINWaExkerGXPukA2B6Vckm
+         uQjTGSavGI9BxMFjKgA0zSLUCe+QgFIvr7btS831iBlLMi12pYZhxdS+1hKLflPNqshm
+         ZB9GOHMVrE6QLsWgkdEb6scSl1nmFe9WDpsL/Hp3As5A2KVrC7PVoWcT3QPMVcs8ZkhS
+         b2Ni2DR9+lg3U07J6DlElfqLGyFhNFn3qvMJnOhnsg1OZE9FwnzzE70kY5s4LohszlDs
+         dnI6jaaGFyBSicX8AoIvApjRObCMLmht+ZCXjVNxJZh7p4HkwvXCAdsxmMQamdR4ypgn
+         aXtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=fuTYZ0EUURoM2npeeIQL7Ud5k/6P95lXaguV2MbS8Ks=;
+        b=XJSHaco74bhuyMEbweoclNJ9ht/XD/iKFbaTFGLY9ip1YR+hWA5iNslLUQkZxqzeWI
+         OYWqvF4EO+auyTvj2WYQbx/ARIzd38YsLbs6Orsg5HEfJVStq2d6IXTBLYc22AdAGrAP
+         ZlWviy13LI6F71xBKwMYOCZHk6dejGBZEitNACkZU123m0FE3Lz8JSQvHbKxgEYjgRye
+         yTE4D5gZZh7hTnjfnl48CwOqg2/ApGJ7er694Xeh1tAQ9Bo70mLybeg+fRUR3zJzBIqG
+         XBa5fxiTBpEDLgKqdJTxlnUX3KmcAOrRNqW5WOyvM6W8joKgrhsyFfl9Qrqr6QRKig49
+         DI5Q==
+X-Gm-Message-State: AGRZ1gIwte1LYFh7vof6PNd0VmNXToVfFTEBTTITMDYyyUm8WG4YsJs9
+        AXmx8+QzhFFRsUXexruVKSkZRg==
+X-Google-Smtp-Source: AJdET5ewp8P0a3cow3VwO66aaPT5T67qfqdfTA0/4oDjmvqaX2Rx4QQgXdh/BvW4ZtHvcB99jiYIAA==
+X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr26698555pfe.11.1541523457476;
+        Tue, 06 Nov 2018 08:57:37 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:7429:41cb:cc75:c7b0:b9a? ([2601:646:c200:7429:41cb:cc75:c7b0:b9a])
+        by smtp.gmail.com with ESMTPSA id 7-v6sm48620961pgk.31.2018.11.06.08.57.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 08:57:36 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: RFC: userspace exception fixups
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <1541518670.7839.31.camel@intel.com>
+Date:   Tue, 6 Nov 2018 08:57:35 -0800
+Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com> <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com> <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com> <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com> <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com> <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com> <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com> <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com> <1541518670.7839.31.camel@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in brcmf_err error message.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-Patch applied to wireless-drivers-next.git, thanks.
+> On Nov 6, 2018, at 7:37 AM, Sean Christopherson <sean.j.christopherson@int=
+el.com> wrote:
+>=20
+>> On Fri, 2018-11-02 at 16:32 -0700, Andy Lutomirski wrote:
+>>> On Fri, Nov 2, 2018 at 4:28 PM Jann Horn <jannh@google.com> wrote:
+>>>=20
+>>>=20
+>>> On Fri, Nov 2, 2018 at 11:04 PM Sean Christopherson
+>>> <sean.j.christopherson@intel.com> wrote:
+>>>>=20
+>>>>> On Fri, Nov 02, 2018 at 08:02:23PM +0100, Jann Horn wrote:
+>>>>>=20
+>>>>> On Fri, Nov 2, 2018 at 7:27 PM Sean Christopherson
+>>>>> <sean.j.christopherson@intel.com> wrote:
+>>>>>>=20
+>>>>>>> On Fri, Nov 02, 2018 at 10:48:38AM -0700, Andy Lutomirski wrote:
+>>>>>>>=20
+>>>>>>> This whole mechanism seems very complicated, and it's not clear
+>>>>>>> exactly what behavior user code wants.
+>>>>>> No argument there.  That's why I like the approach of dumping the
+>>>>>> exception to userspace without trying to do anything intelligent in
+>>>>>> the kernel.  Userspace can then do whatever it wants AND we don't
+>>>>>> have to worry about mucking with stacks.
+>>>>>>=20
+>>>>>> One of the hiccups with the VDSO approach is that the enclave may
+>>>>>> want to use the untrusted stack, i.e. the stack that has the VDSO's
+>>>>>> stack frame.  For example, Intel's SDK uses the untrusted stack to
+>>>>>> pass parameters for EEXIT, which means an AEX might occur with what
+>>>>>> is effectively a bad stack from the VDSO's perspective.
+>>>>> What exactly does "uses the untrusted stack to pass parameters for
+>>>>> EEXIT" mean? I guess you're saying that the enclave is writing to
+>>>>> RSP+[0...some_positive_offset], and the written data needs to be
+>>>>> visible to the code outside the enclave afterwards?
+>>>> As is, they actually do it the other way around, i.e. negative offsets
+>>>> relative to the untrusted %RSP.  Going into the enclave there is no
+>>>> reserved space on the stack.  The SDK uses EEXIT like a function call,
+>>>> i.e. pushing parameters on the stack and making an call outside of the
+>>>> enclave, hence the name out-call.  This allows the SDK to handle any
+>>>> reasonable out-call without a priori knowledge of the application's
+>>>> maximum out-call "size".
+>>> But presumably this is bounded to be at most 128 bytes (the red zone
+>>> size), right? Otherwise this would be incompatible with
+>>> non-sigaltstack signal delivery.
+>>=20
+>> I think Sean is saying that the enclave also updates RSP.
+>=20
+> Yeah, the enclave saves/restores RSP from/to the current save state area.
+>=20
+>> One might reasonably wonder how the SDX knows the offset from RSP to
+>> the function ID.  Presumably using RBP?
+>=20
+> Here's pseudocode for how the SDK uses the untrusted stack, minus a
+> bunch of error checking and gory details.
+>=20
+> The function ID and a pointer to a marshalling struct are passed to
+> the untrusted runtime via normal register params, e.g. RDI and RSI.
+> The marshalling struct is what's actually allocated on the untrusted
+> stack, like alloca() but more complex and explicit.  The marshalling
+> struct size is not artificially restricted by the SDK, e.g. AFAIK it
+> could span multiple 4k pages.
+>=20
+>=20
+> int sgx_out_call(const unsigned int func_index, void *marshalling_struct)
+> {
+>    struct sgx_encl_tls *tls =3D get_encl_tls();
+>=20
+>    %RBP =3D tls->save_state_area[SSA_RBP];
+>    %RSP =3D tls->save_state_area[SSA_RSP];
+>    %RDI =3D func_index;
+>    %RSI =3D marshalling_struct;
+>=20
+>    EEXIT
+>=20
+>    /* magic elsewhere to get back here on an EENTER(OUT_CALL_RETURN) */
+>    return %RAX
+> }
+>=20
+> void *sgx_alloc_untrusted_stack(size_t size)
+> {
+>    struct sgx_encl_tls *tls =3D get_encl_tls();
+>    struct sgx_out_call_context *context;
+>    void *tmp;
+>=20
+>    /* create a frame on the trusted stack to hold the out-call context */
+>    tls->trusted_stack -=3D sizeof(struct sgx_out_call_context);
+>=20
+>    /* save the untrusted %RSP into the out-call context */
+>    context =3D (struct sgx_out_call_context *)tls->trusted_stack;
+>    context->untrusted_stack =3D tls->save_state_area[SSA_RSP];
+>=20
+>    /* allocate space on the untrusted stack */
+>    tmp =3D (void *)(tls->save_state_area[SSA_RSP] - size);
+>    tls->save_state_area[SSA_RSP] =3D tmp;
+>=20
+>    return tmp;
+> }
+>=20
+> void sgx_pop_untrusted_stack(void)
+> {
+>    struct sgx_encl_tls *tls =3D get_encl_tls();
+>    struct sgx_out_call_context *context;
+>=20
+>    /* retrieve the current out-call context from the trusted stack */
+>    context =3D (struct sgx_out_call_context *)tls->trusted_stack;
+>=20
+>    /* restore untrusted %RSP */
+>    tls->save_state_area[SSA_RSP] =3D context->untrusted_stack;
+>=20
+>    /* pop the out-call context frame */
+>    tls->trusted_stack +=3D sizeof(struct sgx_out_call_context);
+> }
+>=20
+> int sgx_main(void)
+> {
+>    struct my_out_call_struct *params;
+>=20
+>    params =3D sgx_alloc_untrusted_stack(sizeof(*params));
+>=20
+>    params->0..N =3D XYZ;
+>=20
+>    ret =3D sgx_out_call(DO_WORK, params);
+>=20
+>    sgx_pop_untrusted_stack();
+>=20
+>    return ret;
+> }
 
-e966a79c2f76 brcmfmac: fix spelling mistake "Retreiving" -> "Retrieving"
+So I guess the non-enclave code basically can=E2=80=99t trust its stack poin=
+ter because of these shenanigans. And the AEP code has to live with the fact=
+ that its RSP is basically arbitrary and probably can=E2=80=99t even be unwo=
+und by a debugger?  And the EENTER code has to deal with the fact that its r=
+ed zone can be blatantly violated by the enclave?
 
--- 
-https://patchwork.kernel.org/patch/10643927/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+I=E2=80=99m assuming it=E2=80=99s way too late for the SGX SDK to be changed=
+ to use a normal RPC mechanism? I=E2=80=99m a bit disappointed that enclaves=
+ can even manipulate outside state like this. I assume Intel had some reason=
+ for making it possible, but still.=
