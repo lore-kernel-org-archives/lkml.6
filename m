@@ -2,109 +2,105 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E1BC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A7CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB522081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB522081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D2892081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:40:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zIaNLWmP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2892081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbeKFTBZ (ORCPT
+        id S1730132AbeKFTE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:01:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43284 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729241AbeKFTBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:01:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 07277AD4D;
-        Tue,  6 Nov 2018 09:37:00 +0000 (UTC)
-Subject: Re: [PATCH v2] xen-blkfront: fix kernel panic with negotiate_mq error
- path
-To:     Manjunath Patil <manjunath.b.patil@oracle.com>,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com
-Cc:     axboe@kernel.dk, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1540918161-31283-1-git-send-email-manjunath.b.patil@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <900be20c-459f-7adb-137c-f7451285f26a@suse.com>
-Date:   Tue, 6 Nov 2018 10:37:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1540918161-31283-1-git-send-email-manjunath.b.patil@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Nov 2018 14:04:29 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44595 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729605AbeKFTE3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:04:29 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j17-v6so7515806wrq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:40:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=HfNnbHeKEcbPNJPvCyFTqb9/GOXtzkY2zjSPRrdIZ0U=;
+        b=zIaNLWmPg4aQ/VbeWJHTDHYHF1KEiyhyptyM6clSeuWQbA1gF8kKv/xFpnkiCGBfvW
+         WNPLQFVnPwKVnhwcB+ewvvrwYHxEHRW/W3AmND8ZtG8ud6+PvPtoavYtSdGEW+e2WZNj
+         0t0zr0xiAB890DUbEiR1agXFaonAoHtyCGk0S9V9X+gS46vtdscc3bGC37YE0a/j7CSS
+         /U2zDpE1OdLtET5DccS5IlqBsu5iUH5hKBT8Km3XcKKFQhIOHi2xm4xsU5gEIJ9oKSip
+         TfpREGnsNmC3NnW6zQCz7ABq72kAe5+5jLU4Lnrw1YvMKETbosbafhDhij2X3y8SY8Q/
+         +LZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HfNnbHeKEcbPNJPvCyFTqb9/GOXtzkY2zjSPRrdIZ0U=;
+        b=A1mTM/Lmb63wx3JRormQz/vNYwhEjWsM6IHoprRdVGjxJ9P25B9o6yW+oxYwc48L4t
+         A+ZUYUouY2OHJcp5T0/6lh9hRiL/hF6qTUR0OiEi0SmFc1oMnapGID+oHCqvzXaXOUwF
+         UJj2wKsqUk7PeWmHk9gfxHcTKyGK1V854a+DeedVnD11VqJCMPHUT8ocoGOQPxyw+bON
+         0Tn1u6cAvw/MoazN2VNeiS83YBMwZxFTfqUxJyNIrCvJJ4fnhwDqmZEJssY/pWojD4nX
+         8IOcTrn1UATgqOC80Ld7hZUbMDq8Tkl6j7gw5SpO/g/3o5Nc6Tlc1yXfiQYI+yOOW4j8
+         XRLg==
+X-Gm-Message-State: AGRZ1gK0OTc9LwUNtdthzC8TsRSu4ILiqaNJqldxsopeYf0WblIgK1FP
+        7NfUrE0F1yDw6C3SUHP4wI9Jxg==
+X-Google-Smtp-Source: AJdET5deUI1UAnHLkabLrYT3aEMYhbX/f3/WJb0MAx6ub55jn+fAOA/XU42/vnrFMVBPgDUQvhZ+RQ==
+X-Received: by 2002:a5d:6a8d:: with SMTP id s13-v6mr7707642wru.179.1541497205423;
+        Tue, 06 Nov 2018 01:40:05 -0800 (PST)
+Received: from bender.baylibre.local ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm29682434wrn.11.2018.11.06.01.40.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 06 Nov 2018 01:40:04 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] drm/meson: Add support for Overlay and OSD Plane scaling
+Date:   Tue,  6 Nov 2018 10:39:59 +0100
+Message-Id: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2018 17:49, Manjunath Patil wrote:
-> info->nr_rings isn't adjusted in case of ENOMEM error from
-> negotiate_mq(). This leads to kernel panic in error path.
-> 
-> Typical call stack involving panic -
->  #8 page_fault at ffffffff8175936f
->     [exception RIP: blkif_free_ring+33]
->     RIP: ffffffffa0149491  RSP: ffff8804f7673c08  RFLAGS: 00010292
->  ...
->  #9 blkif_free at ffffffffa0149aaa [xen_blkfront]
->  #10 talk_to_blkback at ffffffffa014c8cd [xen_blkfront]
->  #11 blkback_changed at ffffffffa014ea8b [xen_blkfront]
->  #12 xenbus_otherend_changed at ffffffff81424670
->  #13 backend_changed at ffffffff81426dc3
->  #14 xenwatch_thread at ffffffff81422f29
->  #15 kthread at ffffffff810abe6a
->  #16 ret_from_fork at ffffffff81754078
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7ed8ce1c5fc7 ("xen-blkfront: move negotiate_mq to cover all cases of new VBDs")
-> Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
+This serie adds support for :
+- Overlay Plane blended with the primary plane, we can describe as "behind"
+- Primary Plane up-scaling up to 5x factor to support the OSD plane being
+  upscaled from 1920x1080 when the display mode is set as 3840x2160.
 
-Pushed to xen.git for-linus-4.20a
+These patches depends on the "drm/meson: Allow using optional canvas provider"
+patchset from Maxime Jourdan at [1]
 
+[1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=38355
 
-Juergen
+Neil Armstrong (3):
+  drm/meson: Support Overlay plane for video rendering
+  drm/meson: move OSD scaler management into plane atomic update
+  drm/meson: Add primary plane scaling
+
+ drivers/gpu/drm/meson/Makefile          |   2 +-
+ drivers/gpu/drm/meson/meson_canvas.c    |   7 +-
+ drivers/gpu/drm/meson/meson_canvas.h    |  11 +-
+ drivers/gpu/drm/meson/meson_crtc.c      | 251 +++++++++++++-
+ drivers/gpu/drm/meson/meson_drv.c       |  29 +-
+ drivers/gpu/drm/meson/meson_drv.h       |  62 ++++
+ drivers/gpu/drm/meson/meson_overlay.c   | 586 ++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/meson/meson_overlay.h   |  14 +
+ drivers/gpu/drm/meson/meson_plane.c     | 177 ++++++++--
+ drivers/gpu/drm/meson/meson_registers.h |   3 +
+ drivers/gpu/drm/meson/meson_viu.c       |  15 +
+ drivers/gpu/drm/meson/meson_vpp.c       |  90 +++--
+ 12 files changed, 1156 insertions(+), 91 deletions(-)
+ create mode 100644 drivers/gpu/drm/meson/meson_overlay.c
+ create mode 100644 drivers/gpu/drm/meson/meson_overlay.h
+
+-- 
+2.7.4
+
