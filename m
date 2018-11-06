@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7C2C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCD1C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FCC20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA2C82089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:02:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gutae7G7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FCC20862
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5pOzBEP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA2C82089F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbeKFOZb (ORCPT
+        id S2387441AbeKFOZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 09:25:31 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40509 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729794AbeKFOZb (ORCPT
+        Tue, 6 Nov 2018 09:25:34 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44711 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729794AbeKFOZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 09:25:31 -0500
-Received: by mail-pl1-f194.google.com with SMTP id q19-v6so2579118pll.7
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 21:02:09 -0800 (PST)
+        Tue, 6 Nov 2018 09:25:34 -0500
+Received: by mail-pf1-f194.google.com with SMTP id j13-v6so5515328pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 21:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=Ipu0OKiVTAGWTLE4fg/nM2ymSy+8y5EVSd0lvjhlhp8=;
-        b=gutae7G74a5xWjvogNtC3uF7yCVomb6SNDj4i/rOZwIqyQrrPMcLKpUVx0rsnX15Ju
-         kE3KVj6sicYEePLve7JYvmafJCZsUduo0QgnTSQFHG2AvthQXdg3uIeN7/WCdzg61MOC
-         MlSY9nCD6TpzzC31M86yCd7b1Xa81FTIzHdoM=
+        bh=VKu6Lyuuq1HCg2vjK0SKqBKedEZKBAaQkFejaBLFPf0=;
+        b=P5pOzBEPVvT+v94DFEU22LAsgxhHRTt6Ea6meOS+GbP+YI+0kE5s7mOwEVDwpyE7GE
+         xN8AUVPCtu0UPYvze/fOUyRJ8UmOOoHj2pvwkgho1DdT03DyfSEbj8aXIt9cpvE48ju9
+         mG0ZWl+bbahRA3mvPwY8FbjEg1MpxHMbhmdKM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=Ipu0OKiVTAGWTLE4fg/nM2ymSy+8y5EVSd0lvjhlhp8=;
-        b=FHRu2RaHfNhOfxaoBm1wxElg6JRsBZ/GJ3Xn5ZCLGjlSwdTEY7nc0WwFIy0fD1LDeM
-         xPANDb4IWwxoKoAE3Ychs2Dbfzv82g/lA6NOTpwMNT/ERgxKHqkovmCW6xinlAeAQNm8
-         O9A0Bss6K7AEx+Tf+aeCOfkK7Xv+gvIto6F8OSPK/LygSVDT1ElnVer07UBGBpE1aFjE
-         shNVmAb9hOQuOTPgfN4WJ/fH9dpKIhlqHLrSUDBt5G6Y7cs29E+RGT4Hntq66q47vrZY
-         2hniYaX2E2jwbhaZIUUmdt50mcg3nctMYbsYWM2qQ+Z6g0lVn2kK+735embwbOiKonAc
-         tANQ==
-X-Gm-Message-State: AGRZ1gIPAiTodEn1L5ukZko0qtJ7uPFFhUQFFKCAi/iQ3Vrl0QJ8Jh1z
-        bNgzQZcK+3bmWKXFxuLt/I5kEQ==
-X-Google-Smtp-Source: AJdET5ejAw5ZSntam1RDEA1skDfRYO2Q88ZXm3BjphhZKf+kfSrc0digFKk9c1c/5ZbHRlQdO8x+IA==
-X-Received: by 2002:a17:902:4222:: with SMTP id g31-v6mr24679107pld.236.1541480528979;
-        Mon, 05 Nov 2018 21:02:08 -0800 (PST)
+        bh=VKu6Lyuuq1HCg2vjK0SKqBKedEZKBAaQkFejaBLFPf0=;
+        b=CLLGsDMe5OCExtzUP/C7ldcGmpi7c/RSisecPsf8ePZmVncCbmdv4pu9YjGfSYUy1F
+         YON802WKSRvE04i3JQfsodnNTK15LfcWaqYMENCHauObDn0zKZX66IAQomYIQYYPGufc
+         5N1KsMUNN3UmAVQVzyDrMnxkjdf6TPja1/zMwbXFV3YfqzSz6OjnbKTjjPiT0LJPXEJ5
+         wNiczXju1pn5/rN3cNv5Pg1ZWdWQv+k4Xhi4aqU5qHJiW6mR+l8R0XUJgT67GWs3NHRd
+         3AlOKfZU1Zw1K9Xk2BFsqhZYMYEYabe5/kneuWlpeThv4uL7qYgElV9uh5l3q3R5hrbv
+         b6Jw==
+X-Gm-Message-State: AGRZ1gJVzIZA4T7UQLSEmnJbONy65fyBumEPavNlSqszzLpfEfx+eajZ
+        5PY5EQuJivdgkZ6kuDO5Hx8c2w==
+X-Google-Smtp-Source: AJdET5e3MgGqFde5O0+CD/ST5M95yfejt8EPaczM6rLk2T3feF/XQXr1rjzQDcTnC48CURkzU9uhPA==
+X-Received: by 2002:a63:d655:: with SMTP id d21mr13363464pgj.280.1541480531978;
+        Mon, 05 Nov 2018 21:02:11 -0800 (PST)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id o7-v6sm55735416pfb.23.2018.11.05.21.02.06
+        by smtp.gmail.com with ESMTPSA id o7-v6sm55735416pfb.23.2018.11.05.21.02.09
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 05 Nov 2018 21:02:08 -0800 (PST)
+        Mon, 05 Nov 2018 21:02:11 -0800 (PST)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     dan.j.williams@intel.com, vkoul@kernel.org, eric.long@unisoc.com
 Cc:     broonie@kernel.org, baolin.wang@linaro.org,
         dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 3/7] dmaengine: sprd: Fix the last link-list configuration
-Date:   Tue,  6 Nov 2018 13:01:33 +0800
-Message-Id: <95cbea4b835bb2689036afe78ff0b2239a24f352.1541480353.git.baolin.wang@linaro.org>
+Subject: [RESEND PATCH 4/7] dmaengine: sprd: Set cur_desc as NULL when free or terminate one dma channel
+Date:   Tue,  6 Nov 2018 13:01:34 +0800
+Message-Id: <4b13aba73775582aa570212a1dccc6c511031de6.1541480353.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1541480353.git.baolin.wang@linaro.org>
 References: <cover.1541480353.git.baolin.wang@linaro.org>
@@ -75,31 +75,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Long <eric.long@spreadtrum.com>
 
-We will pass sglen as 0 configure the last link-list configuration
-when filling the descriptor, which will cause the incorrect link-list
-configuration. Thus we should check if the sglen is 0 to configure
-the correct link-list configuration.
+It will be failed to start one new transfer if the channel started one
+none interrupt transfer before, since we will only set the schan->cur_desc
+as NULL depending on the transfer interrupt now. Thus we should set
+schan->cur_desc as NULL when free or terminate one dma channel to
+avoid this issue.
 
 Signed-off-by: Eric Long <eric.long@spreadtrum.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/dma/sprd-dma.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/dma/sprd-dma.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 4f3587b..e6a74dc 100644
+index e6a74dc..1b39661 100644
 --- a/drivers/dma/sprd-dma.c
 +++ b/drivers/dma/sprd-dma.c
-@@ -697,7 +697,8 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 		hw->cfg |= SPRD_DMA_LINKLIST_EN;
+@@ -439,6 +439,7 @@ static void sprd_dma_stop(struct sprd_dma_chn *schan)
+ 	sprd_dma_stop_and_disable(schan);
+ 	sprd_dma_unset_uid(schan);
+ 	sprd_dma_clear_int(schan);
++	schan->cur_desc = NULL;
+ }
  
- 		/* link-list index */
--		temp = (sg_index + 1) % sglen;
-+		temp = sglen ? (sg_index + 1) % sglen : 0;
-+
- 		/* Next link-list configuration's physical address offset */
- 		temp = temp * sizeof(*hw) + SPRD_DMA_CHN_SRC_ADDR;
- 		/*
+ static bool sprd_dma_check_trans_done(struct sprd_dma_desc *sdesc,
 -- 
 1.7.9.5
 
