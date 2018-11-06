@@ -2,85 +2,100 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1605EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B30C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D71032081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:24:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D71032081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3E8272081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAsChPpm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8272081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387561AbeKFQs2 (ORCPT
+        id S2387614AbeKFQw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:48:28 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34383 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387457AbeKFQs1 (ORCPT
+        Tue, 6 Nov 2018 11:52:56 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45379 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387457AbeKFQw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 11:48:27 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gJviz-0005PT-0l; Tue, 06 Nov 2018 08:24:33 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gJviw-0001am-OR; Tue, 06 Nov 2018 08:24:30 +0100
-Date:   Tue, 6 Nov 2018 08:24:30 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: linux-next: build warning after merge of the gpio tree
-Message-ID: <20181106072430.vub6xjvyof2agj3h@pengutronix.de>
-References: <20181106121502.00efbd07@canb.auug.org.au>
+        Tue, 6 Nov 2018 11:52:56 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so8043022lfa.12;
+        Mon, 05 Nov 2018 23:29:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4DS0e1/Mx7JE2alqTDAlfQ7FsMrVaa/GA9priE5a6/U=;
+        b=FAsChPpmmQXC3L0uJan3VFsPlIQ/1eJhSnG1zSxmBcouejDuf82yWvrn2QDXslBxit
+         HPDK+o7FjhvlyL0wPmiSatZJTESIJjJrgdI5i1p6DOUBWpLoTIfJ9Ik1OcoFmMRHTp3G
+         Z/IsADYPvBmsCTnrnXUP4azseRyu5G0pW2kUsocLW978uHTuzuw40HaFHdeaQ2O7Fa+b
+         yjL74ebUIjyifu7vQIB68CdhNYpoYydQKkxho5p4DtguA1c3QKF0XAhTaRpIwZ6ritzt
+         z/cgMZieYvlzSBBcUtPzTtco6Td3v6TQNaacBN1F6rl+p8t4HX4xiQgbYYLCXH/iVmOy
+         OlRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4DS0e1/Mx7JE2alqTDAlfQ7FsMrVaa/GA9priE5a6/U=;
+        b=YspT3PF2AkBXNfT6by5aBdv/4JZaBVbCz9L30LQizw9+0f8Z165UlXjs7/qzCg7uGI
+         uZ7DAUMK7q+lW3/SX1wEq2+c0wv9c61aigzJmjFBczmzyhPblF2Im8+uxDW+T4+phD5V
+         dINJwmIganKaWtt98Kp0+w1uKaZUWRV2HWylO04C+kN67NMskn/83dL3E672C/UQfMxs
+         qzed9/BcHin7GzYigWSvviuoMzIqyTk31y+Y5izQAkVZohSyOK1DvtkHpMFYaKn23xES
+         F+ji3aA4uP8tWYhdb2luYCs0fFfPChZ1GTAUD+GPHfBl1uLxi4XbTUiPDEGfdkhbPjpE
+         1ymA==
+X-Gm-Message-State: AGRZ1gIusq+VMc5kIVG3m8sVriIWYemjZToMB92CXO/iFrO01P5O15QG
+        pE70Xuw6HHzisfx88OK+kTmS3w8Szh7KqPJkbes=
+X-Google-Smtp-Source: AJdET5cL8gvm7QeXo9hPunN38WdfX9v8fWFAcfGZ0H/uHfPcICd4Z7x0WdZrYF4IV5bVBLeLCSjcCzNKwrM5r0bCs6g=
+X-Received: by 2002:a19:2a4b:: with SMTP id f72mr13561663lfl.139.1541489341895;
+ Mon, 05 Nov 2018 23:29:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181106121502.00efbd07@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <CAAGb-1fPZsJRqa4C3zDiatqE2sPAV8m-pGBoG+z=3nAd+Koj-A@mail.gmail.com>
+In-Reply-To: <CAAGb-1fPZsJRqa4C3zDiatqE2sPAV8m-pGBoG+z=3nAd+Koj-A@mail.gmail.com>
+From:   Jack Wang <jack.wang.usish@gmail.com>
+Date:   Tue, 6 Nov 2018 08:28:50 +0100
+Message-ID: <CA+res+SDaTwjkKQpnREP1dW8XmtQsk7NGLj=heYGbGeL3Dr-OQ@mail.gmail.com>
+Subject: Re: BUG: aio/direct-io data corruption in 4.7
+To:     shapiro.gregory@gmail.com
+Cc:     hch@infradead.org, jnicklin@blockbridge.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregory.shapiro@kaminario.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Gregory Shapiro <shapiro.gregory@gmail.com> =E4=BA=8E2018=E5=B9=B411=E6=9C=
+=885=E6=97=A5=E5=91=A8=E4=B8=80 =E4=B8=8B=E5=8D=884:19=E5=86=99=E9=81=93=EF=
+=BC=9A
+>
+> Hello, my name is Gregory Shapiro and I am a newbie on this list.
+> I recently encountered data corruption as I got a kernel to
+> acknowledge write ("io_getevents" system call with a correct number of
+> bytes) but undergoing write to disk failed.
+> After investigating the problem I found it is identical to issue found
+> in direct-io.c mentioned the bellow thread.
+> https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/
+> Is there a reason proposed patch didn't apply to the kernel?
+> When can I expect it to be applied?
+> Thanks,
+>  Gregory
 
-On Tue, Nov 06, 2018 at 12:15:02PM +1100, Stephen Rothwell wrote:
-> After merging the gpio tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/gpio/gpiolib.c:1514:12: warning: 'devm_gpio_chip_match' defined but not used [-Wunused-function]
->  static int devm_gpio_chip_match(struct device *dev, void *res, void *data)
->             ^~~~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   48207d7595d2 ("gpio: drop devm_gpiochip_remove()")
+Hi Gregory,
 
-I noticed this, too, but didn't tell immediately because I thought I'd
-have to resent this patch and then forgot as you applied yourself.
+Thanks for your info.
+Have you tried with latest kernel other than 4.7, is the problem still ther=
+e?
 
-Sorry for that, the obvious resolution is to drop
-devm_gpio_chip_match(). Feel free to squash that into 48207d7595d2. If
-your branch is already stable I can provide a patch for that.
+Could you share your test case?
 
-Thanks
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Regards,
+Jack Wang
