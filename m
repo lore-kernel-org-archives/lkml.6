@@ -2,124 +2,214 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD7FC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B225FC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF45C2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:40:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF45C2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5C32B2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:41:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C32B2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbeKFSET (ORCPT
+        id S1730077AbeKFSFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:04:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33216 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387505AbeKFSET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:04:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 00E3AACD8;
-        Tue,  6 Nov 2018 08:40:09 +0000 (UTC)
-Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
-References: <20181105204000.129023-1-bvanassche@acm.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <b9738f05-2d9d-1489-8398-790e815294cc@suse.cz>
-Date:   Tue, 6 Nov 2018 09:40:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 13:05:45 -0500
+Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:44798 "EHLO
+        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729241AbeKFSFp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:05:45 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 10155B8945
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Nov 2018 08:41:36 +0000 (GMT)
+Received: (qmail 22382 invoked from network); 6 Nov 2018 08:41:36 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.69])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 6 Nov 2018 08:41:35 -0000
+Date:   Tue, 6 Nov 2018 08:41:34 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, dhaval.giani@oracle.com,
+        steven.sistare@oracle.com, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH v2 1/1] pipe: busy wait for pipe
+Message-ID: <20181106084134.GJ23537@techsingularity.net>
+References: <20180925233240.24451-1-subhra.mazumdar@oracle.com>
+ <20180925233240.24451-2-subhra.mazumdar@oracle.com>
+ <20181105100841.GG23537@techsingularity.net>
+ <e750e230-a49b-de61-86f1-25dc47170d18@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20181105204000.129023-1-bvanassche@acm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <e750e230-a49b-de61-86f1-25dc47170d18@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18 9:40 PM, Bart Van Assche wrote:
-> This patch suppresses the following sparse warning:
+On Mon, Nov 05, 2018 at 03:40:40PM -0800, Subhra Mazumdar wrote:
 > 
-> ./include/linux/slab.h:332:43: warning: dubious: x & !y
+> On 11/5/18 2:08 AM, Mel Gorman wrote:
+> > Adding Al Viro as per get_maintainers.pl.
+> > 
+> > On Tue, Sep 25, 2018 at 04:32:40PM -0700, subhra mazumdar wrote:
+> > > Introduce pipe_ll_usec field for pipes that indicates the amount of micro
+> > > seconds a thread should spin if pipe is empty or full before sleeping. This
+> > > is similar to network sockets.
+> > Can you point to what pattern from network sockets you are duplicated
+> > exactly? One would assume it's busy_loop_current_time and busy_loop_timeout
+> > but it should be in the changelog because there are differences in polling
+> > depending on where you are in the network subsystem (which I'm not very
+> > familiar with).
+> I was referring to the sk_busy_loop_timeout() that uses sk_ll_usec. By
+> similar I meant having a similar mechanism for pipes to busy wait
+
+Expand that in the changelog.
+
+> > > Workloads like hackbench in pipe mode
+> > > benefits significantly from this by avoiding the sleep and wakeup overhead.
+> > > Other similar usecases can benefit. A tunable pipe_busy_poll is introduced
+> > > to enable or disable busy waiting via /proc. The value of it specifies the
+> > > amount of spin in microseconds. Default value is 0 indicating no spin.
+> > > 
+> > Your lead mail indicates the spin was set to a "suitable spin time". How
+> > should an administrator select this spin time? What works for hackbench
+> > might not be suitable for another workload. What if the spin time
+> > selected happens to be just slightly longer than the time it takes the
+> > reader to respond? In such a case, the result would be "all spin, no
+> > gain". While networking potentially suffers the same problem, it appears
+> > to be opt-in per socket so it's up to the application not to shoot
+> > itself in the foot.
+>
+> Even for network, sk_ll_usec is assigned the value of the tunable
+> sysctl_net_busy_read in sock_init_data() for all sockets initialized by
+> default. There is way for per socket setting using sock_setsockopt(), for
+> pipes that can be added later if needed in case of different apps running
+> in one system. But there are cases where only one app runs (e.g big DBs)
+> and one tunable will suffice. It can be set to a value that is tested to be
+> beneficial under the operating conditions.
+
+While sockets have an existing API to alter the polling interval, I don't
+think pipes do and it's not clear what API should be used. fcntl would
+be a candidate I guess but that would need careful review. If this is
+in error, expand upon it in the changelog. Otherwise it'll have to be
+considered what happens for applications that has a default setting for
+one app that is detrimental to others.
+
+> > > @@ -106,6 +108,7 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
+> > >   void pipe_wait(struct pipe_inode_info *pipe)
+> > >   {
+> > >   	DEFINE_WAIT(wait);
+> > > +	u64 start;
+> > >   	/*
+> > >   	 * Pipes are system-local resources, so sleeping on them
+> > > @@ -113,6 +116,10 @@ void pipe_wait(struct pipe_inode_info *pipe)
+> > >   	 */
+> > >   	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
+> > >   	pipe_unlock(pipe);
+> > > +	start = local_clock();
+> > > +	while (current->state != TASK_RUNNING &&
+> > > +	       ((local_clock() - start) >> 10) < pipe->pipe_ll_usec)
+> > > +		cpu_relax();
+> > >   	schedule();
+> > >   	finish_wait(&pipe->wait, &wait);
+> > >   	pipe_lock(pipe);
+>
+> > Networking breaks this out better in terms of options instead of
+> > hard-coding. This does not handle need_resched or signal delivery
+> > properly where as networking does for example.
+>
+> I don't disable preemption, so don't think checking need_resched is needed.
+
+With either preemption disabled in the config or a preemption point,
+this can loop when it should be rescheduling. While it's unlikely to
+trigger a soft lockup unless the spin interval is set to a stupidly high
+value, it still should be accounted for.
+
+> Can you point to what you mean by handling signal delivery in case of
+> networking? Not sure what I am missing. My initial version broke it out
+> like networking but after Peter's suggestion I clubbed it. I don't feel
+> strongly either way.
+
+It's checked in sk_can_busy_loop(). Again, may or may not be relevant
+but it should be explained why signal delivery and the need for
+scheduling is not checked in either the changelog or the comments.
+
+> > 
+> > > @@ -825,6 +832,7 @@ static int do_pipe2(int __user *fildes, int flags)
+> > >   	struct file *files[2];
+> > >   	int fd[2];
+> > >   	int error;
+> > > +	struct pipe_inode_info *pipe;
+> > >   	error = __do_pipe_flags(fd, files, flags);
+> > >   	if (!error) {
+> > > @@ -838,6 +846,10 @@ static int do_pipe2(int __user *fildes, int flags)
+> > >   			fd_install(fd[0], files[0]);
+> > >   			fd_install(fd[1], files[1]);
+> > >   		}
+> > > +		pipe = files[0]->private_data;
+> > > +		pipe->pipe_ll_usec = pipe_busy_poll;
+> > > +		pipe = files[1]->private_data;
+> > > +		pipe->pipe_ll_usec = pipe_busy_poll;
+> > >   	}
+> > >   	return error;
+> > >   }
+> > You add a pipe field but the value in always based on the sysctl
+> > so the information is redundantu (barring a race condition on one
+> > pipe write per sysctl update which is an irrelevant corner case). In
+> > comparison, the network subsystem appears to be explicitly opt-in via
+> > setsockopt(SO_BUSY_POLL) from a glance and the value appears to be tunable
+> > on a per-socket basis (I didn't check for sure, this is based on a glance
+> > at what networking does). It's not clear what a sensible way of replicating
+> > that for pipe file descriptors would be but it's possible that the only
+> > way would be to define the system-wide tunable as a max spin time and try
+> > detect the optimal spin time on a per-fd basis (not entirely dissimilar
+> > to how cpuidle menu guesses how long it'll be in an idle state for).
+>
+> As I said above even networking assigns the global tunable value to each
+> socket during initialization.
+
+But it's an invariant in your pipe patch so why carry it now when it
+can't be changed from userspace?
+
+> Trying to detect an optimal spin time will
+> be extremely difficult, I had tried a lot of heuristics but doesn't quite
+> work under all workloads/utilization level. This change also doesn't
+> preclude such work in future. In mean time some workloads can benefit from
+> straight forward constant tunable setting.
+
+It would be preferred if there was some guideline on how and when it
+should be used. As the patch stands, there isn't even documentation on
+the existance of the tunable, let alone how or when it should be used.
+
+> > It's not really my area but I feel that this patch is a benchmark-specific
+> > hack and that tuning it on a system-wide basis will be a game of "win
+> > some, lose some" that is never used in practice. Worse, it might end up
+> > in a tuning guide as "always set this sysctl" without considering the
+> > capabilities of the machine or the workload and falls victim to cargo
+> > cult tuning.
+> > 
+> It is 0 by default so no spin.
+
+Which also means that it's dead code by default and given its
+undocumented nature, it's hard to see whether anyone would even notice.
+
+> Workloads that do set this should know what
+> they are doing and if it's beneficial. I will try DB OLTP workload to see
+> any benefits.
 > 
-> Fixes: 1291523f2c1d ("mm, slab/slub: introduce kmalloc-reclaimable caches")
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Roman Gushchin <guro@fb.com>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 
-Thanks.
+This should be a given because if this is aimed at DB OLTP workloads,
+then there should at least be one example showing that DB OLTP workloads
+even benefit and are bound to the performance of pipe and not the more
+obvious candidate -- sockets.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Thanks!
 
-> ---
->  include/linux/slab.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 918f374e7156..97d0599ddb7b 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -329,7 +329,7 @@ static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
->  	 * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
->  	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
->  	 */
-> -	return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
-> +	return type_dma + is_reclaimable * !is_dma * KMALLOC_RECLAIM;
->  }
->  
->  /*
-> 
-
+-- 
+Mel Gorman
+SUSE Labs
