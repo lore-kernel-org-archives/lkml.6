@@ -2,124 +2,87 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8161C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E1EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB03B2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB03B2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 569F22081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 569F22081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389162AbeKGBc5 (ORCPT
+        id S2389174AbeKGBeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:32:57 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:60989 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389070AbeKGBc5 (ORCPT
+        Tue, 6 Nov 2018 20:34:46 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:37098 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S2388346AbeKGBeq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:32:57 -0500
-Received: from [192.168.178.52] ([109.104.45.188]) by mrelayeu.kundenserver.de
- (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0MgkXH-1g8HvB2CLX-00O2Zr; Tue, 06 Nov 2018 17:06:34 +0100
-Received: from [192.168.178.52] ([109.104.45.188]) by mrelayeu.kundenserver.de
- (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0MgkXH-1g8HvB2CLX-00O2Zr; Tue, 06 Nov 2018 17:06:34 +0100
-Subject: Re: [PATCH RFC 09/18] staging: vchiq_core: do not initialize
- semaphores twice
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     linux-rpi-kernel@lists.infradead.org, eric@anholt.net,
-        gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        dave.stevenson@raspberrypi.org
-References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
- <20181026134813.7775-10-nsaenzjulienne@suse.de>
- <1781917429.4071.1540759539282@email.ionos.de>
- <ddef268b97543abc9de05842b92e1fc5f0134de8.camel@suse.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <9366d835-a291-2770-4409-b88ea1a155e2@i2se.com>
-Date:   Tue, 6 Nov 2018 17:06:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 20:34:46 -0500
+Received: (qmail 4612 invoked by uid 2102); 6 Nov 2018 11:08:52 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 6 Nov 2018 11:08:52 -0500
+Date:   Tue, 6 Nov 2018 11:08:52 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Al Cooper <alcooperx@gmail.com>
+cc:     linux-kernel@vger.kernel.org, Alban Bedel <albeu@free.fr>,
+        Alex Elder <elder@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <devicetree@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kees Cook <keescook@chromium.org>, <linux-usb@vger.kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: Re: [PATCH V3 4/6] usb: ohci-platform: Add support for Broadcom STB
+ SoC's
+In-Reply-To: <1541453493-34981-5-git-send-email-alcooperx@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1811061105120.1450-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <ddef268b97543abc9de05842b92e1fc5f0134de8.camel@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:PwMs5Xh9aWgFlBpWdvhuW4dNGbSqGG+tlR4vpZu1C4Xvi/tWdYm
- gzBnuunzMFVAxh/LJPyZXWxsJO40Qe5sQskwQ9ngPaSJOjAlBfCusNc3Sh4Xwnz5/iTOyzT
- RQjxxAkHufX9/3zxYvIgrim9y8Pf45dVxU5tx+gAY6B+lfRdlF3X/GqM4+qEjxMeK2pxlrR
- rUJ1cpQ1rGidA4UWnHXyg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:r2GWi1VkVdc=:qlFU028SsX2MGivt5VA1ns
- Vi4u03s81oneN4kqwMxi3VGLDIXRIXG2i4vJVKj00ZdtIAorGPSvkJjtvXScGAIlDMj+g+GLA
- 0hk0MC74M9IQ4f3UG0Gy4Dhyerum9MXNAmIAzDzwrxUitKuAKQ0Co+hUOyaboXnPuF4XT8Ajz
- qKbRp7ICb/FUyZJ9+FVHVFp16y1j2Il8OiiAkvRhmEYOHCo1jIxQthpg3xxeFlTcyClqXHUVu
- fkLGmu/jUQzBNXieUn4v/LzXk3FlIGj5Vwl6lgEFMtikRNrkUH9atft3tawFIn3k27CCh54Yk
- 3yarD1wyqaM2uXFYE5koCi9oXClmiHC4c6YaiR0TQYX/ah8N9/nCvnLbxeeQGvXKmnwfaAASP
- xzofOvyMPsSSYhxnL/A+2b0TLacfk0ZwkpDsKN24Ok1R/XjcrnSUOAQpdC7OXWDtlsl0A8FkC
- dwlXyZ9dZvrASWiSFwOKh0b2CdDsbwpOYdC9p+ENWhwHYV6ndqHBViKuBSPPSUKT2xyHUXqsH
- EG6apo5ASyLp/nuy0fWVydykrv5b0x1DHo1W3S5irkbz5KkGOdam1qEVz76Detp32DyoodeWx
- ETL55NR0pr7jR9WaUY0AU7HiMDkkit/cnd6CNRErS27akE+2of6iVFth8rAAGW74HjZW2V1g+
- R11e39B04Zb50f3HwOdWonGMfxd3qn4/5FIumn5FPJ7pc72doLVm7ACee5NpRsrV+w4zXhdTa
- XSD0q2hFZ70bQ2uG
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 06.11.18 um 16:41 schrieb Nicolas Saenz Julienne:
-> Hi Stefan,
-> thanks for spending the time reviewing the code. I took note of the
-> rest of comments.
->
-> On Sun, 2018-10-28 at 21:45 +0100, Stefan Wahren wrote:
->> Hi Nicolas,
->>
->>> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 26. Oktober
->>> 2018 um 15:48 geschrieben:
->>>
->>>
->>> vchiq_init_state() initialises a series of semaphores to then call
->>> remote_event_create() on the same semaphores, which initializes
->>> them
->>> again.
->> i would prefer to have all init stuff at one place in
->> vchiq_init_state() and drop this ugliness from remote_event_create()
->> instead. Is this possible?
-> As I'm sure you're aware of, REMOTE_EVENT_T is shared between the CPU
-> and VC4, which can't be expanded. And since storing a pointer is out of
-> question because of arm64, I can only think of storing an index to an
-> array of completions in the shared structure instead of the pointer
-> magic implemented right now. It would be a little more explicit. Then
-> we could completely decouple both initializations. I'm not sure if it's
-> similar to what you had in mind. 
+On Mon, 5 Nov 2018, Al Cooper wrote:
 
-I don't think so, this was my intention:
+> Add support for Broadcom STB SoC's to the ohci platform driver.
+> 
+> Signed-off-by: Al Cooper <alcooperx@gmail.com>
+> ---
 
- static inline void
- remote_event_create(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
- {
-    event->armed = 0;
-    /* Don't clear the 'fired' flag because it may already have been set
-    ** by the other side. */
--    sema_init((struct semaphore *)((char *)state + event->event), 0);
- }
+> @@ -177,6 +189,8 @@ static int ohci_platform_probe(struct platform_device *dev)
+>  		ohci->flags |= OHCI_QUIRK_FRAME_NO;
+>  	if (pdata->num_ports)
+>  		ohci->num_ports = pdata->num_ports;
+> +	if (pdata->suspend_without_phy_exit)
+> +		hcd->suspend_without_phy_exit = 1;
 
+Sorry if I missed this in the earlier discussions...  Is there any 
+possibility of adding a DT binding that could express this requirement, 
+instead of putting it in the platform data?
 
->
-> On a semi-related topic, I'm curious to know why these shared
-> structures aren't set with the "__packed" preprocessor macro. Any
-> ideas? As fas as I've been told, in general, the compiler may reorder
-> or add unexpected padding to any structure. Which would be very bad in
-> this case.
+Alan Stern
 
-This would be better, but i assume the firmware side uses the same
-source code. So using __packed only on ARM side could also break :-(
-
->
-> Regards,
-> Nicolas
