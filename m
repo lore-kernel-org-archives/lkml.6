@@ -2,249 +2,131 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE138C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D9BC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6977820862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:46:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHrUCI/q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6977820862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC57020827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:46:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC57020827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729814AbeKFRKB (ORCPT
+        id S1729862AbeKFRKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:10:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35085 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeKFRKA (ORCPT
+        Tue, 6 Nov 2018 12:10:51 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:36895 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbeKFRKv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:10:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id n4-v6so5784728plp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 23:46:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=LoPekBv4ecKgNNEo5tW7CAeKBEcSexsyyurwBOBdMEw=;
-        b=VHrUCI/qHIB6awukFBbx6Ej+M+JEpfrSip7vIcOekvVO9a5ITIV55GRLl8iR84CKhU
-         wND1OKDQ4MIZythqmUOs6VTTN7ZQ93lQUGLfzvBfdgN9wAHGxgF6FIHfrlsJLlIke715
-         ayZOJrSJb/KGn/3JMrHXApnglwbqh+MeBfpVMlZO/KGPJEEtWFd5vpV69P0iWXGzOgnx
-         cNs1vKE1nwGPiDyRoUWBM7FERjxn5DCmLyIfC8xfS5nnggRPIVWqvaYYtIrjeP+FqjK7
-         CfEg6mvwi9m1V1Jrq8eZcOPDOU77yxD4nSHTDErf/LBWBcTOGLpA6lHjitzFS3eEQrDP
-         0sMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=LoPekBv4ecKgNNEo5tW7CAeKBEcSexsyyurwBOBdMEw=;
-        b=ou/1wFF4fitF3YeBsnUmGSOvO28j/EBxIAE6MZ8nz1K9IndyOskI6x0tohRv0ZGyZX
-         wJ8zfn1ZIGVlbCIPW9UccMypBTdcQJjbaBiaqULtIw2+6QYKQhJ47+A4Ut97Dl3h7Pzr
-         nYtBnrP8x+VUNaJq8g5LqK3GwV6jmm0hF5NSgmlppQU3XRdDQxalxT+Cibukcytukqv3
-         7KvrxFzeKmKDZN7rpbIrzy9aFwPV39m4Why+lNfyTEnvS5Vrz3XoqACpgdve5HMoBpiZ
-         /ZiL7p6djCr7dCTKVipjmTDXV34BXgHG2Eh+ALiFsURElZdtCGnoH2CqKMVaoKm1W9/p
-         +FaQ==
-X-Gm-Message-State: AGRZ1gKhYVf/D7nYAz7VyUvNSyprBJRv3wVK3rZDEFsMA7rHj8ckNQNs
-        YzKYKPQNf5A4/EtdcdrOxnzyWqWC
-X-Google-Smtp-Source: AJdET5csnpgnlXTXojYEz93SOw5hPVclTJzYRyeUa8iMUmrKgQaNTbC9J1vznGAscOCt7WXSyMc9uQ==
-X-Received: by 2002:a17:902:8b8a:: with SMTP id ay10-v6mr25221832plb.130.1541490364194;
-        Mon, 05 Nov 2018 23:46:04 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([103.227.97.85])
-        by smtp.gmail.com with ESMTPSA id z9-v6sm22039200pfg.174.2018.11.05.23.46.02
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 05 Nov 2018 23:46:02 -0800 (PST)
-Date:   Tue, 6 Nov 2018 13:19:34 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     willy@infradead.org, akpm@linux-foundation.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        vbabka@suse.cz, riel@redhat.com, rppt@linux.ibm.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm: Create the new vm_fault_t type
-Message-ID: <20181106074934.GA27620@jordon-HP-15-Notebook-PC>
+        Tue, 6 Nov 2018 12:10:51 -0500
+Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gJw4K-0005UY-0Q; Tue, 06 Nov 2018 08:46:36 +0100
+Date:   Tue, 6 Nov 2018 08:46:35 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote
+ CPUs
+In-Reply-To: <81398b26-e1c3-aac3-b44a-2a0982ae74e0@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1811060139090.1659@nanos.tec.linutronix.de>
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com> <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com> <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de> <ea646842-bd32-3615-bf38-27b568a2d81e@linux.intel.com>
+ <alpine.DEB.2.21.1811052326040.1659@nanos.tec.linutronix.de> <81398b26-e1c3-aac3-b44a-2a0982ae74e0@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Page fault handlers are supposed to return VM_FAULT codes,
-but some drivers/file systems mistakenly return error
-numbers. Now that all drivers/file systems have been converted
-to use the vm_fault_t return type, change the type definition
-to no longer be compatible with 'int'. By making it an unsigned
-int, the function prototype becomes incompatible with a function
-which returns int. Sparse will detect any attempts to return a
-value which is not a VM_FAULT code.
+Tim,
 
-VM_FAULT_SET_HINDEX and VM_FAULT_GET_HINDEX values are changed
-to avoid conflict with other VM_FAULT codes.
+On Mon, 5 Nov 2018, Tim Chen wrote:
+> > Aside of the condition being pointless in that case, that issues an IPI
+> > whether the task is running or not. So this allows a task to issue tons of
+> > async IPIs disturbing others by toggling the control.
+> 
+> I'm not crazy about sending IPIs too.  Hence the original implementation
+> using TIF_UPDATE_SPEC_CTRL flag.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
-v2: Updated the change log and corrected the document part.
-    name added to the enum that kernel-doc able to parse it.
+which has it's own problems of bloating the context switch code.
 
- include/linux/mm.h       | 46 ------------------------------
- include/linux/mm_types.h | 73 +++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 72 insertions(+), 47 deletions(-)
+> I've thought a bit about the options you suggested and was unclear
+> on a few things.
+> 
+> > 1) Restrict the PRCTL control so it is only possible to modify it at the
+> >    point where the application is still single threaded.
+> 
+> My understanding is PRCTL applied on the task only. Should it be extended
+> to other task threads?  In that case, it seems like we didn't do that for SSBD?
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index fcf9cc9..511a3ce 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
- }
- 
- /*
-- * Different kinds of faults, as returned by handle_mm_fault().
-- * Used to decide whether a process gets delivered SIGBUS or
-- * just gets major/minor fault counters bumped up.
-- */
--
--#define VM_FAULT_OOM	0x0001
--#define VM_FAULT_SIGBUS	0x0002
--#define VM_FAULT_MAJOR	0x0004
--#define VM_FAULT_WRITE	0x0008	/* Special case for get_user_pages */
--#define VM_FAULT_HWPOISON 0x0010	/* Hit poisoned small page */
--#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
--#define VM_FAULT_SIGSEGV 0x0040
--
--#define VM_FAULT_NOPAGE	0x0100	/* ->fault installed the pte, not return page */
--#define VM_FAULT_LOCKED	0x0200	/* ->fault locked the returned page */
--#define VM_FAULT_RETRY	0x0400	/* ->fault blocked, must retry */
--#define VM_FAULT_FALLBACK 0x0800	/* huge page fault failed, fall back to small */
--#define VM_FAULT_DONE_COW   0x1000	/* ->fault has fully handled COW */
--#define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
--					 * and needs fsync() to complete (for
--					 * synchronous page faults in DAX) */
--
--#define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
--			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
--			 VM_FAULT_FALLBACK)
--
--#define VM_FAULT_RESULT_TRACE \
--	{ VM_FAULT_OOM,			"OOM" }, \
--	{ VM_FAULT_SIGBUS,		"SIGBUS" }, \
--	{ VM_FAULT_MAJOR,		"MAJOR" }, \
--	{ VM_FAULT_WRITE,		"WRITE" }, \
--	{ VM_FAULT_HWPOISON,		"HWPOISON" }, \
--	{ VM_FAULT_HWPOISON_LARGE,	"HWPOISON_LARGE" }, \
--	{ VM_FAULT_SIGSEGV,		"SIGSEGV" }, \
--	{ VM_FAULT_NOPAGE,		"NOPAGE" }, \
--	{ VM_FAULT_LOCKED,		"LOCKED" }, \
--	{ VM_FAULT_RETRY,		"RETRY" }, \
--	{ VM_FAULT_FALLBACK,		"FALLBACK" }, \
--	{ VM_FAULT_DONE_COW,		"DONE_COW" }, \
--	{ VM_FAULT_NEEDDSYNC,		"NEEDDSYNC" }
--
--/* Encode hstate index for a hwpoisoned large page */
--#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
--#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
--
--/*
-  * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
-  */
- extern void pagefault_out_of_memory(void);
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f62..beee607 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -22,7 +22,6 @@
- #endif
- #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
- 
--typedef int vm_fault_t;
- 
- struct address_space;
- struct mem_cgroup;
-@@ -609,6 +608,78 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
- 
- struct vm_fault;
- 
-+/**
-+ * typedef vm_fault_t - Return type for page fault handlers.
-+ *
-+ * Page fault handlers return a bitmask of %VM_FAULT values.
-+ */
-+typedef __bitwise unsigned int vm_fault_t;
-+
-+/**
-+ * enum - VM_FAULT code
-+ *
-+ * Page fault handlers return a bitmask of these values to tell
-+ * the core VM what happened when handling the fault. Used to decide
-+ * whether a process gets delivered SIGBUS or just gets major/minor
-+ * fault counters bumped up.
-+ *
-+ * @VM_FAULT_OOM:		Out Of Memory
-+ * @VM_FAULT_SIGBUS:		Bad access
-+ * @VM_FAULT_MAJOR:		Page read from storage
-+ * @VM_FAULT_WRITE:		Special case for get_user_pages
-+ * @VM_FAULT_HWPOISON:		Hit poisoned small page
-+ * @VM_FAULT_HWPOISON_LARGE:	Hit poisoned large page. Index encoded
-+ *				in upper bits
-+ * @VM_FAULT_SIGSEGV:		segmentation fault
-+ * @VM_FAULT_NOPAGE:		->fault installed the pte, not return page
-+ * @VM_FAULT_LOCKED:		->fault locked the returned page
-+ * @VM_FAULT_RETRY:		->fault blocked, must retry
-+ * @VM_FAULT_FALLBACK:		huge page fault failed, fall back to small
-+ * @VM_FAULT_DONE_COW:		->fault has fully handled COW
-+ * @VM_FAULT_NEEDDSYNC:		->fault did not modify page tables and needs
-+ *				fsync() to complete (for synchronous page faults
-+ *				in DAX)
-+ */
-+enum vm_fault_reason {
-+	VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
-+	VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
-+	VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
-+	VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
-+	VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
-+	VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
-+	VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
-+	VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
-+	VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
-+	VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
-+	VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
-+	VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
-+	VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
-+	VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
-+};
-+
-+/* Encode hstate index for a hwpoisoned large page */
-+#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
-+#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
-+
-+#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |	\
-+			VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |	\
-+			VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
-+
-+#define VM_FAULT_RESULT_TRACE \
-+	{ VM_FAULT_OOM,                 "OOM" },	\
-+	{ VM_FAULT_SIGBUS,              "SIGBUS" },	\
-+	{ VM_FAULT_MAJOR,               "MAJOR" },	\
-+	{ VM_FAULT_WRITE,               "WRITE" },	\
-+	{ VM_FAULT_HWPOISON,            "HWPOISON" },	\
-+	{ VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },	\
-+	{ VM_FAULT_SIGSEGV,             "SIGSEGV" },	\
-+	{ VM_FAULT_NOPAGE,              "NOPAGE" },	\
-+	{ VM_FAULT_LOCKED,              "LOCKED" },	\
-+	{ VM_FAULT_RETRY,               "RETRY" },	\
-+	{ VM_FAULT_FALLBACK,            "FALLBACK" },	\
-+	{ VM_FAULT_DONE_COW,            "DONE_COW" },	\
-+	{ VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-+
- struct vm_special_mapping {
- 	const char *name;	/* The name, e.g. "[vdso]". */
- 
--- 
-1.9.1
+Right, we did not.
+
+This was discussed back then already and we agreed on avoiding the
+complexity for this and only allow task scope. Though the child tasks will
+inherit the TIF flag.
+
+> > 2) Add _TIF_UPDATE_SPEC_CTRL to the SYSCALL_EXIT_WORK_FLAGS and handle it
+> >    in the slow work path.
+> 
+> There can be tasks that don't do any syscalls, and it seems like we can
+> have MSRs getting out of sync?
+
+Setting the TIF flag directly in a remote task is wrong. It needs to be
+handled when the _TIF_UPDATE_SPEC_CTRL is evaluated, i.e. the information
+needs to be stored process wide e.g. in task->mm.
+
+But yes, if the remote task runs in user space forever, it won't
+help. Though the point is that dumpable is usually set when the process
+starts, so it's probably mostly a theoretical issue.
+
+> > I'm less and less convinced that piggybacking this on dumpable is a good
+> > idea. 
+> 
+> There are daemons like sshd that are non-dumpable.  So I think protecting
+> them is desired.  Otherwise all those daemons will need to be updated to
+> use PRCTL.  In the original implementation, IBPB is issued for
+> non-dumpable task.  It will be nice to retain that.
+
+A lot of things are nice to have, but you really have to carefully weigh
+the tradeoff between the conveniance and the complexity plus the fast path
+bloat it creates.
+
+IBPB is a different thing as it writes into a different MSR and there is no
+requirement to have the MSR access coordinated with the SSB handling in
+switch_to(). 
+
+As dumpable is evaluated in switch_mm() already it might be worthwhile to
+evaluate whether the STIBP propagation can be tied to that. That does not
+solve the problem of tasks running in user space forever, but we don't care
+about that for IBPB either and as I said above it's mostly a theoretical
+problem.
+
+Thanks,
+
+	tglx
 
