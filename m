@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E21C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A66C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6D72081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6D72081D
+	by mail.kernel.org (Postfix) with ESMTP id D98E420862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98E420862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387549AbeKFQKz (ORCPT
+        id S2387590AbeKFQLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:10:55 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:19862 "EHLO mxhk.zte.com.cn"
+        Tue, 6 Nov 2018 11:11:03 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:17402 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387397AbeKFQKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 11:10:55 -0500
+        id S2387551AbeKFQLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 11:11:03 -0500
 Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id E9AC0EA3C18115977977;
-        Tue,  6 Nov 2018 14:47:09 +0800 (CST)
+        by Forcepoint Email with ESMTPS id A22F32AC5F19ED3F0D67;
+        Tue,  6 Nov 2018 14:47:18 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wA66l3wZ044568;
-        Tue, 6 Nov 2018 14:47:03 +0800 (GMT-8)
+        by mse01.zte.com.cn with ESMTP id wA66lBav044660;
+        Tue, 6 Nov 2018 14:47:11 +0800 (GMT-8)
         (envelope-from peng.hao2@zte.com.cn)
 Received: from localhost.localdomain.localdomain ([10.74.120.59])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018110614471652-8886577 ;
-          Tue, 6 Nov 2018 14:47:16 +0800 
+          with ESMTP id 2018110614472470-8886605 ;
+          Tue, 6 Nov 2018 14:47:24 +0800 
 From:   Peng Hao <peng.hao2@zte.com.cn>
 To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
         gregkh@linuxfoundation.org, andy@infradead.org,
@@ -40,99 +40,101 @@ To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
 Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         hutao@cn.fujitsu.com, linux-doc@vger.kernel.org,
         Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH V8 01/11]  pvpanic: move pvpanic to misc as common driver
-Date:   Tue, 6 Nov 2018 22:57:12 +0800
-Message-Id: <1541516242-98568-1-git-send-email-peng.hao2@zte.com.cn>
+Subject: [PATCH V8 07/11]  misc/pvpanic : break dependency on ACPI
+Date:   Tue, 6 Nov 2018 22:57:18 +0800
+Message-Id: <1541516242-98568-7-git-send-email-peng.hao2@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1541516242-98568-1-git-send-email-peng.hao2@zte.com.cn>
+References: <1541516242-98568-1-git-send-email-peng.hao2@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-06 14:47:16,
+ 21, 2013) at 2018-11-06 14:47:24,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-06 14:46:59,
-        Serialize complete at 2018-11-06 14:46:59
-X-MAIL: mse01.zte.com.cn wA66l3wZ044568
+ 2018-11-06 14:47:07,
+        Serialize complete at 2018-11-06 14:47:07
+X-MAIL: mse01.zte.com.cn wA66lBav044660
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move pvpanic.c from drivers/platform/x86 to drivers/misc.
-Following patches will use pvpanic device in arm64.
+The pvpanic driver is available for architectures that do not
+support ACPI.So break the dependency.
 
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
 ---
- drivers/misc/Kconfig                     | 8 ++++++++
- drivers/misc/Makefile                    | 1 +
- drivers/{platform/x86 => misc}/pvpanic.c | 0
- drivers/platform/x86/Kconfig             | 8 --------
- drivers/platform/x86/Makefile            | 1 -
- 5 files changed, 9 insertions(+), 9 deletions(-)
- rename drivers/{platform/x86 => misc}/pvpanic.c (100%)
+ drivers/misc/Kconfig   |  2 +-
+ drivers/misc/pvpanic.c | 23 +++++++++++++++++++++--
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3726eac..64c898a 100644
+index 64c898a..642626a 100644
 --- a/drivers/misc/Kconfig
 +++ b/drivers/misc/Kconfig
-@@ -513,6 +513,14 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
+@@ -515,7 +515,7 @@ config MISC_RTSX
  
-+config PVPANIC
-+	tristate "pvpanic device support"
-+	depends on ACPI
-+	help
-+	  This driver provides support for the pvpanic device.  pvpanic is
-+	  a paravirtualized device provided by QEMU; it lets a virtual machine
-+	  (guest) communicate panic events to the host.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index af22bbc..b76d611 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-$(CONFIG_MISC_RTSX)		+= cardreader/
-+obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
-diff --git a/drivers/platform/x86/pvpanic.c b/drivers/misc/pvpanic.c
-similarity index 100%
-rename from drivers/platform/x86/pvpanic.c
-rename to drivers/misc/pvpanic.c
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 0c1aa6c..4ac276c 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1121,14 +1121,6 @@ config INTEL_SMARTCONNECT
- 	  This driver checks to determine whether the device has Intel Smart
- 	  Connect enabled, and if so disables it.
- 
--config PVPANIC
--	tristate "pvpanic device support"
+ config PVPANIC
+ 	tristate "pvpanic device support"
 -	depends on ACPI
--	---help---
--	  This driver provides support for the pvpanic device.  pvpanic is
--	  a paravirtualized device provided by QEMU; it lets a virtual machine
--	  (guest) communicate panic events to the host.
--
- config INTEL_PMC_IPC
- 	tristate "Intel PMC IPC Driver"
- 	depends on ACPI
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e6d1bec..e88f44e 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -75,7 +75,6 @@ obj-$(CONFIG_APPLE_GMUX)	+= apple-gmux.o
- obj-$(CONFIG_INTEL_RST)		+= intel-rst.o
- obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
++	depends on ACPI || OF
+ 	help
+ 	  This driver provides support for the pvpanic device.  pvpanic is
+ 	  a paravirtualized device provided by QEMU; it lets a virtual machine
+diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+index a9676b7..83f3187 100644
+--- a/drivers/misc/pvpanic.c
++++ b/drivers/misc/pvpanic.c
+@@ -57,6 +57,7 @@
+ 	.priority = 1, /* let this called before broken drm_fb_helper */
+ };
  
--obj-$(CONFIG_PVPANIC)           += pvpanic.o
- obj-$(CONFIG_ALIENWARE_WMI)	+= alienware-wmi.o
- obj-$(CONFIG_INTEL_PMC_IPC)	+= intel_pmc_ipc.o
- obj-$(CONFIG_TOUCHSCREEN_DMI)	+= touchscreen_dmi.o
++#ifdef CONFIG_ACPI
+ static int pvpanic_add(struct acpi_device *device);
+ static int pvpanic_remove(struct acpi_device *device);
+ 
+@@ -126,6 +127,24 @@ static int pvpanic_remove(struct acpi_device *device)
+ 	return 0;
+ }
+ 
++static int pvpanic_register_acpi_driver(void)
++{
++	return acpi_bus_register_driver(&pvpanic_driver);
++}
++
++static void pvpanic_unregister_acpi_driver(void)
++{
++	acpi_bus_unregister_driver(&pvpanic_driver);
++}
++#else
++static int pvpanic_register_acpi_driver(void)
++{
++	return -ENODEV;
++}
++
++static void pvpanic_unregister_acpi_driver(void) {}
++#endif
++
+ static int pvpanic_mmio_probe(struct platform_device *pdev)
+ {
+ 	struct resource *mem;
+@@ -172,7 +191,7 @@ static int __init pvpanic_mmio_init(void)
+ 	if (acpi_disabled)
+ 		return platform_driver_register(&pvpanic_mmio_driver);
+ 	else
+-		return acpi_bus_register_driver(&pvpanic_driver);
++		return pvpanic_register_acpi_driver();
+ }
+ 
+ static void __exit pvpanic_mmio_exit(void)
+@@ -180,7 +199,7 @@ static void __exit pvpanic_mmio_exit(void)
+ 	if (acpi_disabled)
+ 		platform_driver_unregister(&pvpanic_mmio_driver);
+ 	else
+-		acpi_bus_unregister_driver(&pvpanic_driver);
++		pvpanic_unregister_acpi_driver();
+ }
+ 
+ module_init(pvpanic_mmio_init);
 -- 
 1.8.3.1
 
