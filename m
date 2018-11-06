@@ -2,188 +2,342 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAEFC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D64C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D023A2083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69BF22083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:37:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="m9kO7J5T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D023A2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="f3k8fWaC";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="QEV2Nd0z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69BF22083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388377AbeKFXCQ (ORCPT
+        id S2388421AbeKFXCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:02:16 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46697 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388116AbeKFXCP (ORCPT
+        Tue, 6 Nov 2018 18:02:54 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:44486 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388116AbeKFXCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:02:15 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 74-v6so13510885wrb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 05:36:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0/KvwNXApNOUnRf5yyLFmWPtGfdCTPu2OGRKhSYWFoY=;
-        b=m9kO7J5TIYRFtQcy9fAPIsPeGdIbl2WcJENisVye/3Efbvw8MzvTqmvNz7mw973tLr
-         zXdZBiIR07S4sJqxmrcLmgrwfhcY1nprs3HST2BC13ueZj2do8RkBx0GBidFx9T+oK6C
-         PJ9WQX1TtT12UVA1Glew9HM0ZfYiazHwVJJELeSYVxI0z36QgzS/jneQxTIffmioAy7A
-         cjBpNyKacl2u7obII+yVs+Gr65WMxs683S5sMiaqI0j8AGbfaanwkmpCDutbXFvfNPrM
-         nuGftxryJAKTOmzXCdOu0Y1JQ57I3RzE8BkUhd1FcFIursq+fuxOb8rxIV1jMSE4Ihmi
-         35PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=0/KvwNXApNOUnRf5yyLFmWPtGfdCTPu2OGRKhSYWFoY=;
-        b=CzaKVBTgKEJcxH7JAg02fpXouatJYasDdTXTT4h3Y1VeTiTK2YtaXInEC9cU/NY2tI
-         ue8QzMXVzF1excScijUvXgbZE6uv2VWuLrjcYkBZsWCdDfwcwAZRnIXk0c5JzKO4FZHC
-         Wo1j4Oemo0H7EYk6GZNgsQyqjZsWQttwGtWVj3xKzL1qxc88VXaYskIaFJVk5tQFh02t
-         IAFgll/SSz3KrSx14QpyTkjANNJHznRd1vDw1QB2d7R5IH3Qlh+nCkpQHW6DV6IXE5NJ
-         SphAaED7eixwvgZVCzzqDvyt1bUGIxzGPYLWOdo9hkiCPksdscl0FX5lvpp9BQ0HSHri
-         IUwA==
-X-Gm-Message-State: AGRZ1gL+6svfvDTeVqW3jRKRmHLqIUKhp5jU9C9Bw6tM3B6m/Cvfvv9q
-        NQIvCnn9jiQTX42Ez4OrJyoCDA==
-X-Google-Smtp-Source: AJdET5cpP1hjKDAOEJ64GoiYKQjznWcFXQyh+TmsB0TA3O1ALF6SiI8PpHTGLq1mHU4+mMT7Kxz4xg==
-X-Received: by 2002:adf:ff4e:: with SMTP id u14-v6mr23493401wrs.232.1541511418270;
-        Tue, 06 Nov 2018 05:36:58 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm2031488wme.4.2018.11.06.05.36.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 05:36:57 -0800 (PST)
-Subject: Re: [PATCH 0/3] drm/meson: Add support for Overlay and OSD Plane
- scaling
-To:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
- <20181106111310.GP21967@phenom.ffwll.local>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <c991c4cc-317c-19e7-a106-ce675f239559@baylibre.com>
-Date:   Tue, 6 Nov 2018 14:36:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181106111310.GP21967@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8
+        Tue, 6 Nov 2018 18:02:54 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wA6DXmca020262;
+        Tue, 6 Nov 2018 05:37:25 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=proofpoint;
+ bh=GljHdJBhbJQOOKUaSzIM5jdx6nlC7g8Rs9Y9UggQWag=;
+ b=f3k8fWaCgy1CPNULBH5hTB7ZiCMKpDbp+uvwwgWnn9mq8CqwKUkbtpuWnCsIfrYjjFL3
+ m5ACBpOQ4mzOPiXCRkw4NlPgnhNCDh/jz3Sn35/DBljj6h2P31dZcfn0ttBfVOyYrnZt
+ SAVHu0OGWDTmeIdU0EOPDG+VAhVlfGZ2czwBJjib3BQXhSH4CmtpvIEArbZVFemv0i27
+ ZWxIVcowo0LHnLN4DzCI6eXG1KyE8pgQg4fXhSjnn9cTxWrPM96jwn3G/QkqhQBGIrPF
+ YGlNb5d+trqmaFx4937GD6XS6fPcWbUfnSvB1aZBpdQFuEguwo+jR5YlEgb5L2bwI15I kA== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=jank@cadence.com
+Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp0052.outbound.protection.outlook.com [216.32.180.52])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2nh9edpem1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 06 Nov 2018 05:37:24 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GljHdJBhbJQOOKUaSzIM5jdx6nlC7g8Rs9Y9UggQWag=;
+ b=QEV2Nd0zboHE8SWkwOTc8b0u/vCMy7BJeScJmINo5UWhUzUgmZ3qh1QvB2iil426blM5ZO6VIaObWKK41Vj83YlqWBbwF6y0nVLM6t++9iQLIEZIDN1V7GhuIisCaJ2S2FITFODn7NEbo1UsL+k3Sq3Ytyzx6lxTvGVPIOuo+wQ=
+Received: from BN3PR07MB2690.namprd07.prod.outlook.com (10.167.5.141) by
+ BN3PR07MB2482.namprd07.prod.outlook.com (10.167.4.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Tue, 6 Nov 2018 13:37:21 +0000
+Received: from BN3PR07MB2690.namprd07.prod.outlook.com
+ ([fe80::98db:442c:9721:e086]) by BN3PR07MB2690.namprd07.prod.outlook.com
+ ([fe80::98db:442c:9721:e086%4]) with mapi id 15.20.1294.034; Tue, 6 Nov 2018
+ 13:37:21 +0000
+From:   Janek Kotas <jank@cadence.com>
+To:     "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] scsi: ufs: Add UFS platform driver for Cadence UFS
+Thread-Topic: [PATCH v4 2/2] scsi: ufs: Add UFS platform driver for Cadence
+ UFS
+Thread-Index: AQHUUOMHXEPp/a1DKUixcejdU+ucqaVDCeeA
+Date:   Tue, 6 Nov 2018 13:37:21 +0000
+Message-ID: <1A428C77-982A-4EB8-8FDD-A33979753660@global.cadence.com>
+References: <C77CE2E3-F88A-4B1E-BECB-5D031E2930E3@global.cadence.com>
+In-Reply-To: <C77CE2E3-F88A-4B1E-BECB-5D031E2930E3@global.cadence.com>
+Accept-Language: en-US, pl-PL
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN3PR07MB2482;20:8K65QEl0XM82qjNR7OZd5cXKGLjuiIwcKD3Z0vioEOkOctPBylljKxkmRANHSlVb+BceAIgAC9AkcGad4wS2sz2W4I0mLq7VhKB7Lwx/oTo7WBOLsIJp87j11VVETbgCbRjg7CwUNryVurAW4E2cuUWX+Zm7UbEVgQ3ZN0wP41w5+9iHtq8I9HPBNWhbd6e6J1tj2SGD0ePVxDCloEN2cOIQVXVTIBtCdnux+OVw1Jkk7ZHxxK6H4j9lm33qMqMV
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 7b2832bc-4676-48e3-9e86-08d643ecfa97
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN3PR07MB2482;
+x-ms-traffictypediagnostic: BN3PR07MB2482:
+x-microsoft-antispam-prvs: <BN3PR07MB24824198863BFAD52917E598D0CB0@BN3PR07MB2482.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN3PR07MB2482;BCL:0;PCL:0;RULEID:;SRVR:BN3PR07MB2482;
+x-forefront-prvs: 0848C1A6AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39860400002)(346002)(376002)(189003)(199004)(36092001)(5660300001)(102836004)(6506007)(53546011)(2201001)(6436002)(6512007)(66066001)(8936002)(86362001)(186003)(446003)(11346002)(486006)(476003)(106356001)(105586002)(82746002)(7736002)(14444005)(83716004)(26005)(53936002)(2900100001)(68736007)(97736004)(316002)(6246003)(25786009)(256004)(2906002)(54906003)(4326008)(305945005)(6116002)(3846002)(14454004)(8676002)(478600001)(33656002)(71200400001)(229853002)(81166006)(76176011)(39060400002)(110136005)(81156014)(2501003)(99286004)(71190400001)(6486002)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR07MB2482;H:BN3PR07MB2690.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 95Mi6mqmXAHqlGKrN0C8zC4ShKujJFjP/Cm2rR2U6an+C6CjlSEe018JoyHljPw44h4+Nt1vgkMIHiXiOIrYuf9kM5RE0xdJ5wWEtfxaIDxbYe/Prfw2+r1EyO9MU7tK0080N9i8tsKV/8pprezlJSgeeQKbl9Tzgan6A+PyttsM6Zbw/jIrm90b1BTnCDCQWivAfeIATKEmFryTuVHVfPZYwZ27TzhUoniVhpqzxmZJ/2jznB0lbzDaue9P7qBlTM9teEmZHCSdxbF2NbKfajfFeuR3ceb7E3TbT3Aqpro4kA94w90QMI70DXquWDu35bbpLpNkiZi6lQaGN8JG16JUZjyCYaO6PnO68ljA6wU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B950FC8FF19471479751E5DBCAC05743@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b2832bc-4676-48e3-9e86-08d643ecfa97
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2018 13:37:21.3195
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR07MB2482
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
+ a:mx-sanjose5.Cadence.COM include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811060120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+A very gentle ping.=20
 
-On 06/11/2018 12:13, Daniel Vetter wrote:
-> On Tue, Nov 06, 2018 at 10:39:59AM +0100, Neil Armstrong wrote:
->> This serie adds support for :
->> - Overlay Plane blended with the primary plane, we can describe as "behind"
->> - Primary Plane up-scaling up to 5x factor to support the OSD plane being
->>   upscaled from 1920x1080 when the display mode is set as 3840x2160.
->>
->> These patches depends on the "drm/meson: Allow using optional canvas provider"
->> patchset from Maxime Jourdan at [1]
->>
->> [1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=38355
->>
->> Neil Armstrong (3):
->>   drm/meson: Support Overlay plane for video rendering
->>   drm/meson: move OSD scaler management into plane atomic update
->>   drm/meson: Add primary plane scaling
-> 
-> Got bored, read a bit your patch series. Two things I've noticed:
+Could you please take a look at the proposed patch?
 
-Great you got bored today !
+Thanks,
+Jan
 
-> - We need to drop the crtc_state argument from
->   drm_atomic_helper_check_plane_state(), some drivers (not meson) do
->   really funny stuff with this.
-
-Should drm_atomic_get_crtc_state() be integrated into drm_atomic_helper_check_plane_state() ?
-
-> 
-> - I think your osd1_commit = true update is racy with the interrupt
->   handler checking it. Needs at least a few memory barriers. Since helpers
->   guarantee that you can't overtake a preceending update (you do the
->   vblank handling after the updating) that should be ok, except you arm
->   the vblank before setting up registers, so this might race too.
-
-Yeah, I need to do a cleanup of this at some point...
-
-> 
-> Anyway all unrelated, so feel free to smash an
-> 
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
-> on the entire series.
-
-thanks !
-
-Will push to drm-misc-next once the branch is ready.
-
-Neil
-
-> 
-> Cheers, Daniel
-> 
->>
->>  drivers/gpu/drm/meson/Makefile          |   2 +-
->>  drivers/gpu/drm/meson/meson_canvas.c    |   7 +-
->>  drivers/gpu/drm/meson/meson_canvas.h    |  11 +-
->>  drivers/gpu/drm/meson/meson_crtc.c      | 251 +++++++++++++-
->>  drivers/gpu/drm/meson/meson_drv.c       |  29 +-
->>  drivers/gpu/drm/meson/meson_drv.h       |  62 ++++
->>  drivers/gpu/drm/meson/meson_overlay.c   | 586 ++++++++++++++++++++++++++++++++
->>  drivers/gpu/drm/meson/meson_overlay.h   |  14 +
->>  drivers/gpu/drm/meson/meson_plane.c     | 177 ++++++++--
->>  drivers/gpu/drm/meson/meson_registers.h |   3 +
->>  drivers/gpu/drm/meson/meson_viu.c       |  15 +
->>  drivers/gpu/drm/meson/meson_vpp.c       |  90 +++--
->>  12 files changed, 1156 insertions(+), 91 deletions(-)
->>  create mode 100644 drivers/gpu/drm/meson/meson_overlay.c
->>  create mode 100644 drivers/gpu/drm/meson/meson_overlay.h
->>
->> -- 
->> 2.7.4
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
+> On 20 Sep 2018, at 15:08, Janek Kotas <jank@cadence.com> wrote:
+>=20
+> This patch adds a device tree platform driver for
+> Cadence UFS Host Controller.
+> It can be enabled with SCSI_UFS_CDNS_PLATFORM Kconfig option.
+>=20
+> Signed-off-by: Jan Kotas <jank@cadence.com>
+> ---
+> drivers/scsi/ufs/Kconfig       |   8 +++
+> drivers/scsi/ufs/Makefile      |   1 +
+> drivers/scsi/ufs/cdns-pltfrm.c | 149 ++++++++++++++++++++++++++++++++++++=
++++++
+> 3 files changed, 158 insertions(+)
+> create mode 100644 drivers/scsi/ufs/cdns-pltfrm.c
+>=20
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index e09fe6a..8f884c3 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -80,6 +80,14 @@ config SCSI_UFSHCD_PLATFORM
+>=20
+> 	  If unsure, say N.
+>=20
+> +config SCSI_UFS_CDNS_PLATFORM
+> +	tristate "Cadence UFS Controller platform driver"
+> +	depends on SCSI_UFSHCD_PLATFORM
+> +	help
+> +	This selects the Cadence specific additions to UFSHCD platform driver.
+> +
+> +	  If unsure, say N.
+> +
+> config SCSI_UFS_DWC_TC_PLATFORM
+> 	tristate "DesignWare platform support using a G210 Test Chip"
+> 	depends on SCSI_UFSHCD_PLATFORM
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 2c50f03..e17d14a 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -2,6 +2,7 @@
+> # UFSHCD makefile
+> obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) +=3D tc-dwc-g210-pci.o ufshcd-dwc.o tc-=
+dwc-g210.o
+> obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) +=3D tc-dwc-g210-pltfrm.o ufshcd-d=
+wc.o tc-dwc-g210.o
+> +obj-$(CONFIG_SCSI_UFS_CDNS_PLATFORM) +=3D cdns-pltfrm.o
+> obj-$(CONFIG_SCSI_UFS_QCOM) +=3D ufs-qcom.o
+> obj-$(CONFIG_SCSI_UFSHCD) +=3D ufshcd-core.o
+> ufshcd-core-objs :=3D ufshcd.o ufs-sysfs.o
+> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfr=
+m.c
+> new file mode 100644
+> index 0000000..8bcf863
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
+> @@ -0,0 +1,149 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Platform UFS Host driver for Cadence controller
+> + *
+> + * Copyright (C) 2018 Cadence Design Systems, Inc.
+> + *
+> + * Authors:
+> + *	Jan Kotas <jank@cadence.com>
+> + *
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/time.h>
+> +
+> +#include "ufshcd-pltfrm.h"
+> +
+> +#define CDNS_UFS_REG_HCLKDIV 0xFC
+> +
+> +/**
+> + * Sets HCLKDIV register value based on the core_clk
+> + * @hba: host controller instance
+> + *
+> + * Return zero for success and non-zero for failure
+> + */
+> +static int cdns_ufs_set_hclkdiv(struct ufs_hba *hba)
+> +{
+> +	struct ufs_clk_info *clki;
+> +	struct list_head *head =3D &hba->clk_list_head;
+> +	unsigned long core_clk_rate =3D 0;
+> +	u32 core_clk_div =3D 0;
+> +
+> +	if (list_empty(head))
+> +		return 0;
+> +
+> +	list_for_each_entry(clki, head, list) {
+> +		if (IS_ERR_OR_NULL(clki->clk))
+> +			continue;
+> +		if (!strcmp(clki->name, "core_clk"))
+> +			core_clk_rate =3D clk_get_rate(clki->clk);
+> +	}
+> +
+> +	if (!core_clk_rate) {
+> +		dev_err(hba->dev, "%s: unable to find core_clk rate\n",
+> +			__func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	core_clk_div =3D core_clk_rate / USEC_PER_SEC;
+> +
+> +	ufshcd_writel(hba, core_clk_div, CDNS_UFS_REG_HCLKDIV);
+> +	/**
+> +	 * Make sure the register was updated,
+> +	 * UniPro layer will not work with an incorrect value.
+> +	 */
+> +	mb();
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * Sets clocks used by the controller
+> + * @hba: host controller instance
+> + * @on: if true, enable clocks, otherwise disable
+> + * @status: notify stage (pre, post change)
+> + *
+> + * Return zero for success and non-zero for failure
+> + */
+> +static int cdns_ufs_setup_clocks(struct ufs_hba *hba, bool on,
+> +				 enum ufs_notify_change_status status)
+> +{
+> +	if ((!on) || (status =3D=3D PRE_CHANGE))
+> +		return 0;
+> +
+> +	return cdns_ufs_set_hclkdiv(hba);
+> +}
+> +
+> +static struct ufs_hba_variant_ops cdns_pltfm_hba_vops =3D {
+> +	.name =3D "cdns-ufs-pltfm",
+> +	.setup_clocks =3D cdns_ufs_setup_clocks,
+> +};
+> +
+> +/**
+> + * cdns_ufs_pltfrm_probe - probe routine of the driver
+> + * @pdev: pointer to platform device handle
+> + *
+> + * Return zero for success and non-zero for failure
+> + */
+> +static int cdns_ufs_pltfrm_probe(struct platform_device *pdev)
+> +{
+> +	int err;
+> +	struct device *dev =3D &pdev->dev;
+> +
+> +	/* Perform generic probe */
+> +	err =3D ufshcd_pltfrm_init(pdev, &cdns_pltfm_hba_vops);
+> +	if (err)
+> +		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * cdns_ufs_pltfrm_remove - removes the ufs driver
+> + * @pdev: pointer to platform device handle
+> + *
+> + * Always returns 0
+> + */
+> +static int cdns_ufs_pltfrm_remove(struct platform_device *pdev)
+> +{
+> +	struct ufs_hba *hba =3D  platform_get_drvdata(pdev);
+> +
+> +	ufshcd_remove(hba);
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id cdns_ufs_of_match[] =3D {
+> +	{ .compatible =3D "cdns,ufshc" },
+> +	{},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, cdns_ufs_of_match);
+> +
+> +static const struct dev_pm_ops cdns_ufs_dev_pm_ops =3D {
+> +	.suspend         =3D ufshcd_pltfrm_suspend,
+> +	.resume          =3D ufshcd_pltfrm_resume,
+> +	.runtime_suspend =3D ufshcd_pltfrm_runtime_suspend,
+> +	.runtime_resume  =3D ufshcd_pltfrm_runtime_resume,
+> +	.runtime_idle    =3D ufshcd_pltfrm_runtime_idle,
+> +};
+> +
+> +static struct platform_driver cdns_ufs_pltfrm_driver =3D {
+> +	.probe	=3D cdns_ufs_pltfrm_probe,
+> +	.remove	=3D cdns_ufs_pltfrm_remove,
+> +	.driver	=3D {
+> +		.name   =3D "cdns-ufshcd",
+> +		.owner  =3D THIS_MODULE,
+> +		.pm     =3D &cdns_ufs_dev_pm_ops,
+> +		.of_match_table =3D cdns_ufs_of_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(cdns_ufs_pltfrm_driver);
+> +
+> +MODULE_AUTHOR("Jan Kotas <jank@cadence.com>");
+> +MODULE_DESCRIPTION("Cadence UFS host controller platform driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_VERSION(UFSHCD_DRIVER_VERSION);
+> --=20
+> 1.9.0
+>=20
+>=20
 
