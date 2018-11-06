@@ -2,123 +2,96 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BA0C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF15C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BCAF20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:55:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCAF20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BC1292085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:56:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1292085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387538AbeKFTUB (ORCPT
+        id S2387652AbeKFTUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:20:01 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37681 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729886AbeKFTUB (ORCPT
+        Tue, 6 Nov 2018 14:20:32 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:35988 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387552AbeKFTUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:20:01 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y10-v6so3456284edr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:55:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=x3QB24GscqKW6OlfJNvDgSgXHJOuhucfbfMPrZrMSTQ=;
-        b=dwQjsfC+4ZDpMDYTY/nIA8u1wAvk11qNfGsx3DQyRdTy1QjZ5QZjgcmkR+LCZ5RO96
-         7OqsFmHi+Vm9AC9VlFnwpz8cf1iit5jKWnSt0hwNZWu/JQFyfseVdivRTAxwY0pjBvbB
-         wMyCewqvw5ge6R3pLHlnCmvl4QUbRMaWVHxy6Q1AboUW5dtl+ffMgXpIvFYJsWj8E9bT
-         0ZSArenr+ur0SYnRDUOa22Q3nNFVXJNCgL9TQKi6J7BIVWWm3+CEk1SPZQCQA7EN7WUq
-         Jsr3/cpOxZ1kTPOVVWOfg1UrgZoDsUCq21jVmEcSnxMLI/lERXX7a9fg4jRVBmftTRlT
-         uWjg==
-X-Gm-Message-State: AGRZ1gLxY2CaB4ZhXpCEjNgvkTlI28OnqAI/pThgizBOpA9XshU8WqQ0
-        rQViv5jBYGxPd6ho8fqDYa4=
-X-Google-Smtp-Source: AJdET5e6Y/4UEzYitJHRDi9SVaYsmhKzVjuRWC8WSCVZyBRihPZ/cCHv6hil1p3VDbsWL4FOmdp5iQ==
-X-Received: by 2002:a50:a9c4:: with SMTP id n62-v6mr20483983edc.187.1541498133562;
-        Tue, 06 Nov 2018 01:55:33 -0800 (PST)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id gp22-v6sm1431007ejb.4.2018.11.06.01.55.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 01:55:32 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Baoquan He <bhe@redhat.com>, Oscar Salvador <OSalvador@suse.com>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] mm, memory_hotplug: check zone_movable in has_unmovable_pages
-Date:   Tue,  6 Nov 2018 10:55:24 +0100
-Message-Id: <20181106095524.14629-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Tue, 6 Nov 2018 14:20:32 -0500
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA69u5uY021194;
+        Tue, 6 Nov 2018 18:56:05 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Tue, 06 Nov 2018 18:56:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA69u5FW021189
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 6 Nov 2018 18:56:05 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
+ messages.
+To:     Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181102133629.GN3178@hirez.programming.kicks-ass.net>
+ <20181106083856.lhmibz6vrgtkqsj7@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <b725c54e-a5b7-12fe-8269-8beccc4c88ce@i-love.sakura.ne.jp>
+Date:   Tue, 6 Nov 2018 18:56:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181106083856.lhmibz6vrgtkqsj7@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On 2018/11/06 17:38, Petr Mladek wrote:
+> If you would want to avoid buffering, you could set the number
+> of buffers to zero. Then it would always fallback to
+> the direct printk().
 
-Page state checks are racy. Under a heavy memory workload (e.g. stress
--m 200 -t 2h) it is quite easy to hit a race window when the page is
-allocated but its state is not fully populated yet. A debugging patch to
-dump the struct page state shows
-: [  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
-: [  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
-: [  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
+  1 lock held by swapper/1/0:
+   #0: 
+   (
+  rcu_read_lock
+  ){....}
+  , at: trace_call_bpf+0xf8/0x640 kernel/trace/bpf_trace.c:46
 
-Note that the state has been checked for both PageLRU and PageSwapBacked
-already. Closing this race completely would require some sort of retry
-logic. This can be tricky and error prone (think of potential endless
-or long taking loops).
+is not welcomed and
 
-Workaround this problem for movable zones at least. Such a zone should
-only contain movable pages. 15c30bc09085 ("mm, memory_hotplug: make
-has_unmovable_pages more robust") has told us that this is not strictly
-true though. Bootmem pages should be marked reserved though so we can
-move the original check after the PageReserved check. Pages from other
-zones are still prone to races but we even do not pretend that memory
-hotremove works for those so pre-mature failure doesn't hurt that much.
+  1 lock held by swapper/1/0:
+   #0:  (rcu_read_lock){....}, at: trace_call_bpf+0xf8/0x640 kernel/trace/bpf_trace.c:46
 
-Reported-and-tested-by: Baoquan He <bhe@redhat.com>
-Acked-by: Baoquan He <bhe@redhat.com>
-Fixes: "mm, memory_hotplug: make has_unmovable_pages more robust")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
+is welcomed.
 
-Hi,
-this has been reported [1] and we have tried multiple things to address
-the issue. The only reliable way was to reintroduce the movable zone
-check into has_unmovable_pages. This time it should be safe also for
-the bug originally fixed by 15c30bc09085.
-
-[1] http://lkml.kernel.org/r/20181101091055.GA15166@MiWiFi-R3L-srv
- mm/page_alloc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 863d46da6586..c6d900ee4982 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7788,6 +7788,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		if (PageReserved(page))
- 			goto unmovable;
- 
-+		/*
-+		 * If the zone is movable and we have ruled out all reserved
-+		 * pages then it should be reasonably safe to assume the rest
-+		 * is movable.
-+		 */
-+		if (zone_idx(zone) == ZONE_MOVABLE)
-+			continue;
-+
- 		/*
- 		 * Hugepages are not in LRU lists, but they're movable.
- 		 * We need not scan over tail pages bacause we don't
--- 
-2.19.1
+If you want to avoid fallback to direct printk(), please allocate on-stack
+buffer with appropriate size. Since lockdep splat may happen when kernel
+stack is already tight, blindly allocating large buffer on the stack is
+not good.
 
