@@ -3,54 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E05C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA68C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E1E2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E46C120892
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:09:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Oyd8k/bq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E1E2085B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BaLQx2Yw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E46C120892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbeKGDgI (ORCPT
+        id S1730907AbeKGDgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:36:08 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57702 "EHLO
+        Tue, 6 Nov 2018 22:36:12 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57820 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730722AbeKGDgI (ORCPT
+        with ESMTP id S1730722AbeKGDgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:36:08 -0500
+        Tue, 6 Nov 2018 22:36:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=YRUtg4X3WgJ+F4vAx1oIFQMhqzWbuFUSlNzUdPfzWc4=; b=Oyd8k/bqkY9s
-        Y7riBALHC8hnfDm3jR9Lck5lt1sxFb3tExkm3f6ZaVpcgG/JSm1mDqW1J4GGOyTcqt1YQqfgti9LS
-        NiafBV5Wq+PFkMQWzl6yuF78IXRIw2Y3u9iH8LO68CR42/0LIMROot+TiVqt8+uY8V848QyaOXipK
-        tYxLY=;
+        List-Archive; bh=dvD0M2cTue70uFLwfv/XhJOAE+76uF6X+hqxwwi+zTg=; b=BaLQx2YwcKFC
+        ATrZp8kCJz9OXGRNCicp5aycX+oBX8NjJsIQde7lQzbkJeI/JiV3JGv0HKGrDnqAUOzWV1MyfrCoH
+        IW3HZL9KBY3HGlb8GzIzJJqcl6CP9G71A2CTMr3Bh5W4Isi8xh6VUdBqpeYAWH9gzM03in3VAjb/9
+        YlLp8=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gK5nF-0002uX-SG; Tue, 06 Nov 2018 18:09:37 +0000
+        id 1gK5nM-0002uh-M9; Tue, 06 Nov 2018 18:09:44 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 94942112266B; Tue,  6 Nov 2018 18:09:37 +0000 (GMT)
+        id 61478112266B; Tue,  6 Nov 2018 18:09:44 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.com,
-        rohitkr@codeaurora.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6asm-dai: Only add routing once." to the asoc tree
-In-Reply-To:  <20181106113857.19737-2-srinivas.kandagatla@linaro.org>
-Message-Id: <20181106180937.94942112266B@debutante.sirena.org.uk>
-Date:   Tue,  6 Nov 2018 18:09:37 +0000 (GMT)
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: pfuze100-regulator: add coin support to PF0100" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181106180944.61478112266B@debutante.sirena.org.uk>
+Date:   Tue,  6 Nov 2018 18:09:44 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,11 +55,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6asm-dai: Only add routing once.
+   regulator: pfuze100-regulator: add coin support to PF0100
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -83,103 +80,56 @@ to this mail.
 Thanks,
 Mark
 
-From 9de57ff1566fd36a664c1b04a641e26fed472a9c Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 6 Nov 2018 11:38:56 +0000
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: Only add routing once.
+From 61d0de0543a6e982918c6054a6a12cfbdd73018a Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 30 Oct 2018 09:55:07 -0500
+Subject: [PATCH] regulator: pfuze100-regulator: add coin support to PF0100
 
-q6asm routing gets added multiple times as part of dai probe.
-Move this to q6routing routes which has those widgets defined, this also
-fixes the issue where these are added each time at dai probe.
+The driver currently supports coin cell / super cap charging, so
+this patch extends it to support PF0100.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 33 --------------------------------
- sound/soc/qcom/qdsp6/q6routing.c | 19 ++++++++++++++++++
- 2 files changed, 19 insertions(+), 33 deletions(-)
+ drivers/regulator/pfuze100-regulator.c | 2 ++
+ include/linux/regulator/pfuze100.h     | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index a16c71c03058..86115de5c1b2 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -122,7 +122,6 @@ static struct snd_pcm_hardware q6asm_dai_hardware_playback = {
- 			.rate_max =	48000,				\
- 		},							\
- 		.name = "MultiMedia"#num,				\
--		.probe = fe_dai_probe,					\
- 		.id = MSM_FRONTEND_DAI_MULTIMEDIA##num,			\
- 	}
- 
-@@ -511,38 +510,6 @@ static void q6asm_dai_pcm_free(struct snd_pcm *pcm)
- 	}
- }
- 
--static const struct snd_soc_dapm_route afe_pcm_routes[] = {
--	{"MM_DL1",  NULL, "MultiMedia1 Playback" },
--	{"MM_DL2",  NULL, "MultiMedia2 Playback" },
--	{"MM_DL3",  NULL, "MultiMedia3 Playback" },
--	{"MM_DL4",  NULL, "MultiMedia4 Playback" },
--	{"MM_DL5",  NULL, "MultiMedia5 Playback" },
--	{"MM_DL6",  NULL, "MultiMedia6 Playback" },
--	{"MM_DL7",  NULL, "MultiMedia7 Playback" },
--	{"MM_DL7",  NULL, "MultiMedia8 Playback" },
--	{"MultiMedia1 Capture", NULL, "MM_UL1"},
--	{"MultiMedia2 Capture", NULL, "MM_UL2"},
--	{"MultiMedia3 Capture", NULL, "MM_UL3"},
--	{"MultiMedia4 Capture", NULL, "MM_UL4"},
--	{"MultiMedia5 Capture", NULL, "MM_UL5"},
--	{"MultiMedia6 Capture", NULL, "MM_UL6"},
--	{"MultiMedia7 Capture", NULL, "MM_UL7"},
--	{"MultiMedia8 Capture", NULL, "MM_UL8"},
--
--};
--
--static int fe_dai_probe(struct snd_soc_dai *dai)
--{
--	struct snd_soc_dapm_context *dapm;
--
--	dapm = snd_soc_component_get_dapm(dai->component);
--	snd_soc_dapm_add_routes(dapm, afe_pcm_routes,
--				ARRAY_SIZE(afe_pcm_routes));
--
--	return 0;
--}
--
--
- static const struct snd_soc_component_driver q6asm_fe_dai_component = {
- 	.name		= DRV_NAME,
- 	.ops		= &q6asm_dai_ops,
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-index c6b51571be94..d61b8404f7da 100644
---- a/sound/soc/qcom/qdsp6/q6routing.c
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -909,6 +909,25 @@ static const struct snd_soc_dapm_route intercon[] = {
- 	{"MM_UL6", NULL, "MultiMedia6 Mixer"},
- 	{"MM_UL7", NULL, "MultiMedia7 Mixer"},
- 	{"MM_UL8", NULL, "MultiMedia8 Mixer"},
-+
-+	{"MM_DL1",  NULL, "MultiMedia1 Playback" },
-+	{"MM_DL2",  NULL, "MultiMedia2 Playback" },
-+	{"MM_DL3",  NULL, "MultiMedia3 Playback" },
-+	{"MM_DL4",  NULL, "MultiMedia4 Playback" },
-+	{"MM_DL5",  NULL, "MultiMedia5 Playback" },
-+	{"MM_DL6",  NULL, "MultiMedia6 Playback" },
-+	{"MM_DL7",  NULL, "MultiMedia7 Playback" },
-+	{"MM_DL8",  NULL, "MultiMedia8 Playback" },
-+
-+	{"MultiMedia1 Capture", NULL, "MM_UL1"},
-+	{"MultiMedia2 Capture", NULL, "MM_UL2"},
-+	{"MultiMedia3 Capture", NULL, "MM_UL3"},
-+	{"MultiMedia4 Capture", NULL, "MM_UL4"},
-+	{"MultiMedia5 Capture", NULL, "MM_UL5"},
-+	{"MultiMedia6 Capture", NULL, "MM_UL6"},
-+	{"MultiMedia7 Capture", NULL, "MM_UL7"},
-+	{"MultiMedia8 Capture", NULL, "MM_UL8"},
-+
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index dd41a9bb3f5c..df5df1c495ad 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -370,6 +370,7 @@ static struct pfuze_regulator pfuze100_regulators[] = {
+ 	PFUZE100_VGEN_REG(PFUZE100, VGEN4, PFUZE100_VGEN4VOL, 1800000, 3300000, 100000),
+ 	PFUZE100_VGEN_REG(PFUZE100, VGEN5, PFUZE100_VGEN5VOL, 1800000, 3300000, 100000),
+ 	PFUZE100_VGEN_REG(PFUZE100, VGEN6, PFUZE100_VGEN6VOL, 1800000, 3300000, 100000),
++	PFUZE100_COIN_REG(PFUZE100, COIN, PFUZE100_COINVOL, 0x7, pfuze100_coin),
  };
  
- static int routing_hw_params(struct snd_pcm_substream *substream,
+ static struct pfuze_regulator pfuze200_regulators[] = {
+@@ -436,6 +437,7 @@ static struct of_regulator_match pfuze100_matches[] = {
+ 	{ .name = "vgen4",	},
+ 	{ .name = "vgen5",	},
+ 	{ .name = "vgen6",	},
++	{ .name = "coin",	},
+ };
+ 
+ /* PFUZE200 */
+diff --git a/include/linux/regulator/pfuze100.h b/include/linux/regulator/pfuze100.h
+index cb5aecd40f07..331d7d940c7a 100644
+--- a/include/linux/regulator/pfuze100.h
++++ b/include/linux/regulator/pfuze100.h
+@@ -33,7 +33,8 @@
+ #define PFUZE100_VGEN4		12
+ #define PFUZE100_VGEN5		13
+ #define PFUZE100_VGEN6		14
+-#define PFUZE100_MAX_REGULATOR	15
++#define PFUZE100_COIN		15
++#define PFUZE100_MAX_REGULATOR	16
+ 
+ #define PFUZE200_SW1AB		0
+ #define PFUZE200_SW2		1
 -- 
 2.19.0.rc2
 
