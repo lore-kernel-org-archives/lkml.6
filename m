@@ -2,80 +2,99 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C2AC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E9AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B532083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:03:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WLJPHzVF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B532083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 04B9F2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04B9F2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388251AbeKFW2F (ORCPT
+        id S1730489AbeKFWae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 17:28:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53654 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387905AbeKFW2F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:28:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aRKW4wlwG4QS07tI8fk4RLPuTZ5oNk/YVfNKZ1kRldA=; b=WLJPHzVFJkUJWwjet7VF0xwSi
-        WqEGnZksiCUfBJ/CMHsiRZnUxOvfdiy4W3zc+LOHPC/KS8o0va1GSMHnKqYqprfiuX6RK5t2wnSsS
-        YkdYsXEAacatLLLLdLtpxfAztM36fmcO/gCjj323JuTekeD3VKHUt+zO7fVHZUwrYbZZ7AYl0gNWY
-        lVGV1iHL3SQsFlnKalwYpu6wwjKwif4WKFO6+KRc0y3w7NsPXeWGMaHlOrkwSHSsZuT0oci6Z3tPN
-        EECEXgSO6AgszzjgxbNglI0WfVDxtOwsZur4wk5hJPUFlQ71wMC/mU/vB3L69PniGlOCQJ/La2eSg
-        sxF/yVu2w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gK10O-0000CR-Tf; Tue, 06 Nov 2018 13:02:52 +0000
-Date:   Tue, 6 Nov 2018 05:02:52 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 6 Nov 2018 17:30:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52304 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729272AbeKFWae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 17:30:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5D181ACC1;
+        Tue,  6 Nov 2018 13:05:25 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 14:05:24 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     linux-kernel@vger.kernel.org, rppt@linux.ibm.com,
+        timmurray@google.com, joelaf@google.com, surenb@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
-        Manfred Spraul <manfred@colorfullife.com>
-Subject: Re: [PATCH v10 4/4] ipc: Add a cyclic mode for id generation
-Message-ID: <20181106130252.GC3074@bombadil.infradead.org>
-References: <1541432626-27780-1-git-send-email-longman@redhat.com>
- <1541432626-27780-5-git-send-email-longman@redhat.com>
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+Message-ID: <20181106130524.GC2453@dhcp22.suse.cz>
+References: <20181031150625.147369-1-dancol@google.com>
+ <20181105132205.138695-1-dancol@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1541432626-27780-5-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181105132205.138695-1-dancol@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 10:43:46AM -0500, Waiman Long wrote:
-> The idea of using the cyclic mode to reduce id reuse came from Manfred
-> Spraul <manfred@colorfullife.com>. There may be a little bit of
-> additional memory/performance overhead in doing cyclic id allocation,
-> but it is a slow path anyway and a bit of overhead shouldn't be an issue.
+On Mon 05-11-18 13:22:05, Daniel Colascione wrote:
+> State explicitly that holding a /proc/pid file descriptor open does
+> not reserve the PID. Also note that in the event of PID reuse, these
+> open file descriptors refer to the old, now-dead process, and not the
+> new one that happens to be named the same numeric PID.
+
+This sounds quite obvious otherwise anybody could simply DoS the system
+by consuming all available pids. But I do not see any strong reason
+against having that stated explicitly.
+
+> Signed-off-by: Daniel Colascione <dancol@google.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  Documentation/filesystems/proc.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> This patch differs from his as the cyclic mode is not the default and
-> has to be explicitly opted in for users who want that.
+> Moved paragraphed to start of /proc/pid section; added signed-off-by.
+> 
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index 12a5e6e693b6..0b14460f721d 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -125,6 +125,13 @@ process running on the system, which is named after the process ID (PID).
+>  The link  self  points  to  the  process reading the file system. Each process
+>  subdirectory has the entries listed in Table 1-1.
+>  
+> +Note that an open a file descriptor to /proc/<pid> or to any of its
+> +contained files or subdirectories does not prevent <pid> being reused
+> +for some other process in the event that <pid> exits. Operations on
+> +open /proc/<pid> file descriptors corresponding to dead processes
+> +never act on any new process that the kernel may, through chance, have
+> +also assigned the process ID <pid>. Instead, operations on these FDs
+> +usually fail with ESRCH.
+>  
+>  Table 1-1: Process specific entries in /proc
+>  ..............................................................................
+> -- 
+> 2.19.1.930.g4563a0d9d0-goog
 
-I really don't like the "make the sysadmin choose" approach.  It's
-shifting blame to someone who has no idea what the tradeoffs are.
-We should try to get it right rather than force more people to learn
-why we're incapable of making the right decision for them.
-
+-- 
+Michal Hocko
+SUSE Labs
