@@ -2,85 +2,86 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EC8C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF98C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158872085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158872085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B438F204FD
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BKzqVnDq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B438F204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730678AbeKFVQO (ORCPT
+        id S1730707AbeKFVR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:16:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729878AbeKFVQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:16:13 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E2BD811A9;
-        Tue,  6 Nov 2018 11:51:24 +0000 (UTC)
-Received: from krava (unknown [10.40.205.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id BCE3417D5F;
-        Tue,  6 Nov 2018 11:51:22 +0000 (UTC)
-Date:   Tue, 6 Nov 2018 12:51:21 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [PATCH RFC] hist lookups
-Message-ID: <20181106115121.GD3164@krava>
-References: <20181104201821.GA22049@krava>
- <20181104.165039.878682622135788379.davem@davemloft.net>
- <20181105203447.GA25674@krava>
- <20181105.194542.476367332910923203.davem@davemloft.net>
+        Tue, 6 Nov 2018 16:17:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53996 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730271AbeKFVR1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:17:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GFyEAi/5ntHNaVjY7w8ti5shFbhzc/6OhXu7odl5N4E=; b=BKzqVnDq6A5rInnH4ONRw4+BK
+        G/QyJjPFMMjpvvFBZa/DTjQWJm8NEetKTs8CmEmB2vlX7ARuVEj6ceMXi/eLE04uZmBnEB4SXyISN
+        AGVVHYDBKqq42MTLzLmMfwIP3q+IOvfncWom4J6bNSWdNxN23N/nmdmJ03WVFpRoHIJsI+mtU4W/z
+        5wOYaDNR2J+zyo4PD2A1fwLMZD170trr19XYHKLP6GTAj/hbXqnnN6hH9562esJzlOd3WgYXgT+xN
+        ezjAVsp0SmKW+7wHdjVH/LARVjC6AWS+gF9yWjMTa7zPRh5hOlSyxIAka8FpqLISXSU8SwVLw4LBX
+        vsIeLk8vA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gJzuE-0005VX-UW; Tue, 06 Nov 2018 11:52:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CB5CD2029F9FF; Tue,  6 Nov 2018 12:52:20 +0100 (CET)
+Date:   Tue, 6 Nov 2018 12:52:20 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>
+Subject: Re: [PATCH v14 12/12] cpuset: Show descriptive text when reading
+ cpuset.sched.partition
+Message-ID: <20181106115220.GP22431@hirez.programming.kicks-ass.net>
+References: <1539635377-22335-1-git-send-email-longman@redhat.com>
+ <1539635377-22335-13-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105.194542.476367332910923203.davem@davemloft.net>
+In-Reply-To: <1539635377-22335-13-git-send-email-longman@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 06 Nov 2018 11:51:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 07:45:42PM -0800, David Miller wrote:
-> From: Jiri Olsa <jolsa@redhat.com>
-> Date: Mon, 5 Nov 2018 21:34:47 +0100
+On Mon, Oct 15, 2018 at 04:29:37PM -0400, Waiman Long wrote:
+> Currently, cpuset.sched.partition returns the values, 0, 1 or -1 on
+> read. A person who is not familiar with the partition code may not
+> understand what they mean.
 > 
-> > I pushed it in perf/fixes branch in:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+> In order to make cpuset.sched.partition more user-friendly, it will
+> now display the following descriptive text on read:
 > 
-> Build fix for sparc below, I'm playing with this now.
-> 
-> perf: Use PRIu64 for printing top lost events count.
-> 
-> Signed-off-by: David S. Miller <davem@davemloft.net>
+>   "normal" - A normal cpuset, not a partition root
+>   "partition" - A partition root
+>   "partition invalid" - An invalid partition root
 
-will add this one, thanks
+As a person who is familiar with it: "normal" doesn't make sense.
 
-jirka
-
-> 
-> diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
-> index db3413e..2c8eac8 100644
-> --- a/tools/perf/util/top.c
-> +++ b/tools/perf/util/top.c
-> @@ -46,7 +46,7 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
->  							samples_per_sec;
->  		ret = SNPRINTF(bf, size,
->  			       "   PerfTop:%8.0f irqs/sec  kernel:%4.1f%%"
-> -			       "  exact: %4.1f%% lost: %lu [", samples_per_sec,
-> +			       "  exact: %4.1f%% lost: %" PRIu64 " [", samples_per_sec,
->  			       ksamples_percent, esamples_percent, top->lost);
->  	} else {
->  		float us_samples_per_sec = top->us_samples / top->delay_secs;
+It either is or is not a parition. normal doesn't some into it.
