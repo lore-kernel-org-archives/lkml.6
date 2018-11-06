@@ -2,353 +2,397 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C704EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 860B8C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1FA2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3810D2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:54:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dK6rsDy/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1FA2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="klECkeKv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3810D2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbeKFUSt (ORCPT
+        id S1730274AbeKFUTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 15:18:49 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44578 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729272AbeKFUSt (ORCPT
+        Tue, 6 Nov 2018 15:19:20 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45686 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729272AbeKFUTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:18:49 -0500
-Received: by mail-ed1-f65.google.com with SMTP id n19-v6so10065975edq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 02:54:10 -0800 (PST)
+        Tue, 6 Nov 2018 15:19:20 -0500
+Received: by mail-wr1-f66.google.com with SMTP id k15-v6so9962122wre.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 02:54:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=OGPLlvaEaydbhwOTndVZDHSNwtiPv9n6A9iZehHX+Hw=;
-        b=dK6rsDy/U6OByk3/N/NyTcP3TgMbY1zK8RQu2N4oPiO3ZjjwD/fS3d5iXe7fZ2x0jG
-         VFZYmhwho0pXB85D+uUTPle9cdzc0udfUrPrT5+99BWy0vXrFPQjqoJmAf+wvYIw62/x
-         npTfHnDNi/mhvsIYwd9dirodO3TsebAgGkGNY=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=4GUprm9HmbWPoDJRU2zuoLJ8O3xIDWpcOXQKbm06s7Y=;
+        b=klECkeKvIejdZFcg5RmGjvdaKXtw4HEJHWFX0AxJ0OnxqIRe6QH+gd/NLgbjQEXYDo
+         JFsZ7LdHwhAl5Sgs5DIn2vSygabO/xWD7MMtUAY1vCmmmhc2xcAkGqAyImLCtPL4SFvh
+         /5oqOVUF6mEEe2JA3jgcehtDEHkfomWizo0aDEYPhvcVi56rGObxfSmvtAfz8weR5wLQ
+         NSZJjngveq0BbD1Oeod8rFHHmXQdRO/LtQrk/fUPK3nM5uioia/uojfBITXlmmMmblG/
+         bKmhbdPnxi84mNtyYDkpECrwaEFO/DTQzKkeYXDBRJ7h9VT21Ptj06hCsQxZ0iJriRl3
+         IB7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=OGPLlvaEaydbhwOTndVZDHSNwtiPv9n6A9iZehHX+Hw=;
-        b=S+XzxSMI8g1TKLX8PqxWf6CkiKALXF+3u146rbda6QnyhVXPixoZWRRDm2eSjam3w8
-         Ju2oBK0cFD4RMpOEoOC+TBK+ow96fEM33RyAtC9PcjxrSspgcOtSNNWEIgPy3W+AEYRD
-         K31sDYsHO541f1LsSoUJhvZqmiu2Z+BlQC8uU91j6z9Z1On1aosvNtnhXXvpQvaphhx7
-         Fchz0vHFfUp9sUu2nWifb3L5G3PecmmGV+x8SuBPhTwTQiyJs7ZTvUQSGADv1Leo04a+
-         fwWd7sLFPmaVnt4+iiselRFjfnXJjsDlIQ+BP7wBnkhF98GXSeet3G5i6yexQImINa4r
-         Sw7w==
-X-Gm-Message-State: AGRZ1gLqISrjbbTWS2hs0qH1o3A0QHLDEhwVpQfhHZh1k8ZxdsrZ4Mw+
-        OEAMdrXB33AXnK9pUJx9P/VF5A==
-X-Google-Smtp-Source: AJdET5cgdyODqiP7A8Ej8G69AiGRR5xTqjA824Pfq2agNO8dpbnrOnPfIQOeX9di+guQScvkg68Wvw==
-X-Received: by 2002:a17:906:4c89:: with SMTP id q9-v6mr16691636eju.26.1541501649546;
-        Tue, 06 Nov 2018 02:54:09 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id e10-v6sm7450060ejf.28.2018.11.06.02.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 02:54:08 -0800 (PST)
-Date:   Tue, 6 Nov 2018 11:54:06 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Kuo-Hsin Yang <vovoy@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v6] mm, drm/i915: mark pinned shmemfs pages as unevictable
-Message-ID: <20181106105406.GO21967@phenom.ffwll.local>
-Mail-Followup-To: Kuo-Hsin Yang <vovoy@chromium.org>,
-        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>, Michal Hocko <mhocko@suse.com>
-References: <20181106093100.71829-1-vovoy@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181106093100.71829-1-vovoy@chromium.org>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4GUprm9HmbWPoDJRU2zuoLJ8O3xIDWpcOXQKbm06s7Y=;
+        b=fGQr4aOn8xKU6/Lb4fa0ojUa2xyVf2TKkMbMZ9XhoEmiM0YB5dyrXiCLgqQFhn0okM
+         +asMhSYeGfdhAych7FsjO4s9GyNUmWYeS2c8EeBuUXmLDhlA62ISVjpCYLmbhMU7OwE3
+         dn5sDWSVLhgqauxsdH/FLhLcrBtaDnjX8hJYLUsr04PBkkfywXW2ON7tJHb1g0YVbdXs
+         h+9CHrBsupSVrhI+iNMsxXoDxo0+fQBLJrWoSkvlv6jiTsH4GLs81fF6y4kcEqIl3jQd
+         3IdyyWRSMjBVtmqKF8isAPGXF907N7bVhBUGBGMvNYy132xaqeedtjVtMFDJ9hJLUXiW
+         jd2g==
+X-Gm-Message-State: AGRZ1gLzGOWYfoTgsQLechQmgsIxHeo1YrV1fnlhP5P7SbDxzutzTXw9
+        MB5EMI67ZwG9jxp/Tq4LGdF+tg==
+X-Google-Smtp-Source: AJdET5c9o2Q8/t3T3B9Bn7Ln57+p3tKSHUUv8GAxwKwnEq0xw6NuhQC1qzCJ0ILHRYxgWGm1O9uH5w==
+X-Received: by 2002:a5d:4e4e:: with SMTP id r14-v6mr23334565wrt.326.1541501680374;
+        Tue, 06 Nov 2018 02:54:40 -0800 (PST)
+Received: from bender.baylibre.local ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b204-v6sm641147wmh.0.2018.11.06.02.54.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 06 Nov 2018 02:54:39 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/meson: Add support for VIC alternate timings
+Date:   Tue,  6 Nov 2018 11:54:35 +0100
+Message-Id: <1541501675-3928-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 05:30:59PM +0800, Kuo-Hsin Yang wrote:
-> The i915 driver uses shmemfs to allocate backing storage for gem
-> objects. These shmemfs pages can be pinned (increased ref count) by
-> shmem_read_mapping_page_gfp(). When a lot of pages are pinned, vmscan
-> wastes a lot of time scanning these pinned pages. In some extreme case,
-> all pages in the inactive anon lru are pinned, and only the inactive
-> anon lru is scanned due to inactive_ratio, the system cannot swap and
-> invokes the oom-killer. Mark these pinned pages as unevictable to speed
-> up vmscan.
-> 
-> Export pagevec API check_move_unevictable_pages().
-> 
-> This patch was inspired by Chris Wilson's change [1].
-> 
-> [1]: https://patchwork.kernel.org/patch/9768741/
-> 
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-> Acked-by: Michal Hocko <mhocko@suse.com> # mm part
+This change is an attempt to handle the alternate clock for the CEA mode.
+60Hz vs. 59.94Hz, 30Hz vs 29.97Hz or 24Hz vs 23.97Hz on the Amlogic Meson SoC
+DRM Driver pixel clock generation.
 
-There was ages ago some planes to have our own i915fs, so that we could
-overwrite the address_space hooks for page migration and eviction and that
-sort of thing, which would make all these pages evictable. Atm you have to
-ĥope our shrinker drops them on the floor, which I think is fairly
-confusing to core mm code (it's kinda like page eviction worked way back
-before rmaps).
+The actual clock generation will be moved to the Common Clock framework once
+all the video clock are handled by the Amlogic Meson SoC clock driver,
+then these alternate timings will be handled in the same time in a cleaner
+fashion.
 
-Just an side really.
--Daniel
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_dw_hdmi.c |  12 +---
+ drivers/gpu/drm/meson/meson_vclk.c    | 127 +++++++++++++++++++++++-----------
+ drivers/gpu/drm/meson/meson_vclk.h    |   2 +
+ 3 files changed, 89 insertions(+), 52 deletions(-)
 
-> ---
-> Changes for v6:
->  Tweak the acked-by.
-> 
-> Changes for v5:
->  Modify doc and comments. Remove the ifdef surrounding
->  check_move_unevictable_pages.
-> 
-> Changes for v4:
->  Export pagevec API check_move_unevictable_pages().
-> 
-> Changes for v3:
->  Use check_move_lru_page instead of shmem_unlock_mapping to move pages
->  to appropriate lru lists.
-> 
-> Changes for v2:
->  Squashed the two patches.
-> 
->  Documentation/vm/unevictable-lru.rst |  6 +++++-
->  drivers/gpu/drm/i915/i915_gem.c      | 28 ++++++++++++++++++++++++++--
->  include/linux/swap.h                 |  4 +++-
->  mm/shmem.c                           |  2 +-
->  mm/vmscan.c                          | 22 +++++++++++-----------
->  5 files changed, 46 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
-> index fdd84cb8d511..b8e29f977f2d 100644
-> --- a/Documentation/vm/unevictable-lru.rst
-> +++ b/Documentation/vm/unevictable-lru.rst
-> @@ -143,7 +143,7 @@ using a number of wrapper functions:
->  	Query the address space, and return true if it is completely
->  	unevictable.
->  
-> -These are currently used in two places in the kernel:
-> +These are currently used in three places in the kernel:
->  
->   (1) By ramfs to mark the address spaces of its inodes when they are created,
->       and this mark remains for the life of the inode.
-> @@ -154,6 +154,10 @@ These are currently used in two places in the kernel:
->       swapped out; the application must touch the pages manually if it wants to
->       ensure they're in memory.
->  
-> + (3) By the i915 driver to mark pinned address space until it's unpinned. The
-> +     amount of unevictable memory marked by i915 driver is roughly the bounded
-> +     object size in debugfs/dri/0/i915_gem_objects.
-> +
->  
->  Detecting Unevictable Pages
->  ---------------------------
-> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-> index 0c8aa57ce83b..c620891e0d02 100644
-> --- a/drivers/gpu/drm/i915/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> @@ -2381,12 +2381,25 @@ void __i915_gem_object_invalidate(struct drm_i915_gem_object *obj)
->  	invalidate_mapping_pages(mapping, 0, (loff_t)-1);
->  }
->  
-> +/**
-> + * Move pages to appropriate lru and release the pagevec. Decrement the ref
-> + * count of these pages.
-> + */
-> +static inline void check_release_pagevec(struct pagevec *pvec)
-> +{
-> +	if (pagevec_count(pvec)) {
-> +		check_move_unevictable_pages(pvec);
-> +		__pagevec_release(pvec);
-> +	}
-> +}
-> +
->  static void
->  i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
->  			      struct sg_table *pages)
->  {
->  	struct sgt_iter sgt_iter;
->  	struct page *page;
-> +	struct pagevec pvec;
->  
->  	__i915_gem_object_release_shmem(obj, pages, true);
->  
-> @@ -2395,6 +2408,9 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
->  	if (i915_gem_object_needs_bit17_swizzle(obj))
->  		i915_gem_object_save_bit_17_swizzle(obj, pages);
->  
-> +	mapping_clear_unevictable(file_inode(obj->base.filp)->i_mapping);
-> +
-> +	pagevec_init(&pvec);
->  	for_each_sgt_page(page, sgt_iter, pages) {
->  		if (obj->mm.dirty)
->  			set_page_dirty(page);
-> @@ -2402,8 +2418,10 @@ i915_gem_object_put_pages_gtt(struct drm_i915_gem_object *obj,
->  		if (obj->mm.madv == I915_MADV_WILLNEED)
->  			mark_page_accessed(page);
->  
-> -		put_page(page);
-> +		if (!pagevec_add(&pvec, page))
-> +			check_release_pagevec(&pvec);
->  	}
-> +	check_release_pagevec(&pvec);
->  	obj->mm.dirty = false;
->  
->  	sg_free_table(pages);
-> @@ -2526,6 +2544,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
->  	unsigned int sg_page_sizes;
->  	gfp_t noreclaim;
->  	int ret;
-> +	struct pagevec pvec;
->  
->  	/*
->  	 * Assert that the object is not currently in any GPU domain. As it
-> @@ -2559,6 +2578,7 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
->  	 * Fail silently without starting the shrinker
->  	 */
->  	mapping = obj->base.filp->f_mapping;
-> +	mapping_set_unevictable(mapping);
->  	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
->  	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
->  
-> @@ -2673,8 +2693,12 @@ static int i915_gem_object_get_pages_gtt(struct drm_i915_gem_object *obj)
->  err_sg:
->  	sg_mark_end(sg);
->  err_pages:
-> +	mapping_clear_unevictable(mapping);
-> +	pagevec_init(&pvec);
->  	for_each_sgt_page(page, sgt_iter, st)
-> -		put_page(page);
-> +		if (!pagevec_add(&pvec, page))
-> +			check_release_pagevec(&pvec);
-> +	check_release_pagevec(&pvec);
->  	sg_free_table(st);
->  	kfree(st);
->  
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index d8a07a4f171d..a8f6d5d89524 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -18,6 +18,8 @@ struct notifier_block;
->  
->  struct bio;
->  
-> +struct pagevec;
-> +
->  #define SWAP_FLAG_PREFER	0x8000	/* set if swap priority specified */
->  #define SWAP_FLAG_PRIO_MASK	0x7fff
->  #define SWAP_FLAG_PRIO_SHIFT	0
-> @@ -369,7 +371,7 @@ static inline int node_reclaim(struct pglist_data *pgdat, gfp_t mask,
->  #endif
->  
->  extern int page_evictable(struct page *page);
-> -extern void check_move_unevictable_pages(struct page **, int nr_pages);
-> +extern void check_move_unevictable_pages(struct pagevec *pvec);
->  
->  extern int kswapd_run(int nid);
->  extern void kswapd_stop(int nid);
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index ea26d7a0342d..de4893c904a3 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -756,7 +756,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
->  			break;
->  		index = indices[pvec.nr - 1] + 1;
->  		pagevec_remove_exceptionals(&pvec);
-> -		check_move_unevictable_pages(pvec.pages, pvec.nr);
-> +		check_move_unevictable_pages(&pvec);
->  		pagevec_release(&pvec);
->  		cond_resched();
->  	}
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 62ac0c488624..d070f431ff19 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -50,6 +50,7 @@
->  #include <linux/printk.h>
->  #include <linux/dax.h>
->  #include <linux/psi.h>
-> +#include <linux/pagevec.h>
->  
->  #include <asm/tlbflush.h>
->  #include <asm/div64.h>
-> @@ -4182,17 +4183,16 @@ int page_evictable(struct page *page)
->  	return ret;
->  }
->  
-> -#ifdef CONFIG_SHMEM
->  /**
-> - * check_move_unevictable_pages - check pages for evictability and move to appropriate zone lru list
-> - * @pages:	array of pages to check
-> - * @nr_pages:	number of pages to check
-> + * check_move_unevictable_pages - check pages for evictability and move to
-> + * appropriate zone lru list
-> + * @pvec: pagevec with lru pages to check
->   *
-> - * Checks pages for evictability and moves them to the appropriate lru list.
-> - *
-> - * This function is only used for SysV IPC SHM_UNLOCK.
-> + * Checks pages for evictability, if an evictable page is in the unevictable
-> + * lru list, moves it to the appropriate evictable lru list. This function
-> + * should be only used for lru pages.
->   */
-> -void check_move_unevictable_pages(struct page **pages, int nr_pages)
-> +void check_move_unevictable_pages(struct pagevec *pvec)
->  {
->  	struct lruvec *lruvec;
->  	struct pglist_data *pgdat = NULL;
-> @@ -4200,8 +4200,8 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
->  	int pgrescued = 0;
->  	int i;
->  
-> -	for (i = 0; i < nr_pages; i++) {
-> -		struct page *page = pages[i];
-> +	for (i = 0; i < pvec->nr; i++) {
-> +		struct page *page = pvec->pages[i];
->  		struct pglist_data *pagepgdat = page_pgdat(page);
->  
->  		pgscanned++;
-> @@ -4233,4 +4233,4 @@ void check_move_unevictable_pages(struct page **pages, int nr_pages)
->  		spin_unlock_irq(&pgdat->lru_lock);
->  	}
->  }
-> -#endif /* CONFIG_SHMEM */
-> +EXPORT_SYMBOL_GPL(check_move_unevictable_pages);
-> -- 
-> 2.19.1.930.g4563a0d9d0-goog
-> 
-
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index df7247c..d8c5cc3 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -594,17 +594,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 	dev_dbg(connector->dev->dev, "%s: vclk:%d venc=%d hdmi=%d\n", __func__,
+ 		vclk_freq, venc_freq, hdmi_freq);
+ 
+-	/* Finally filter by configurable vclk frequencies for VIC modes */
+-	switch (vclk_freq) {
+-	case 54000:
+-	case 74250:
+-	case 148500:
+-	case 297000:
+-	case 594000:
+-		return MODE_OK;
+-	}
+-
+-	return MODE_CLOCK_RANGE;
++	return meson_vclk_vic_supported_freq(vclk_freq);
+ }
+ 
+ /* Encoder */
+diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
+index ae54732..5accceb 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.c
++++ b/drivers/gpu/drm/meson/meson_vclk.c
+@@ -117,6 +117,8 @@
+ #define HDMI_PLL_RESET		BIT(28)
+ #define HDMI_PLL_LOCK		BIT(31)
+ 
++#define FREQ_1000_1001(_freq)	DIV_ROUND_CLOSEST(_freq * 1000, 1001)
++
+ /* VID PLL Dividers */
+ enum {
+ 	VID_PLL_DIV_1 = 0,
+@@ -323,7 +325,7 @@ static void meson_venci_cvbs_clock_config(struct meson_drm *priv)
+ enum {
+ /* PLL	O1 O2 O3 VP DV     EN TX */
+ /* 4320 /4 /4 /1 /5 /1  => /2 /2 */
+-	MESON_VCLK_HDMI_ENCI_54000 = 1,
++	MESON_VCLK_HDMI_ENCI_54000 = 0,
+ /* 4320 /4 /4 /1 /5 /1  => /1 /2 */
+ 	MESON_VCLK_HDMI_DDR_54000,
+ /* 2970 /4 /1 /1 /5 /1  => /1 /2 */
+@@ -339,6 +341,7 @@ enum {
+ };
+ 
+ struct meson_vclk_params {
++	unsigned int pixel_freq;
+ 	unsigned int pll_base_freq;
+ 	unsigned int pll_od1;
+ 	unsigned int pll_od2;
+@@ -347,6 +350,7 @@ struct meson_vclk_params {
+ 	unsigned int vclk_div;
+ } params[] = {
+ 	[MESON_VCLK_HDMI_ENCI_54000] = {
++		.pixel_freq = 54000,
+ 		.pll_base_freq = 4320000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 4,
+@@ -355,6 +359,7 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_DDR_54000] = {
++		.pixel_freq = 54000,
+ 		.pll_base_freq = 4320000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 4,
+@@ -363,6 +368,7 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_DDR_148500] = {
++		.pixel_freq = 148500,
+ 		.pll_base_freq = 2970000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 1,
+@@ -371,6 +377,7 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_74250] = {
++		.pixel_freq = 74250,
+ 		.pll_base_freq = 2970000,
+ 		.pll_od1 = 2,
+ 		.pll_od2 = 2,
+@@ -379,6 +386,7 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_148500] = {
++		.pixel_freq = 148500,
+ 		.pll_base_freq = 2970000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 2,
+@@ -387,6 +395,7 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_297000] = {
++		.pixel_freq = 297000,
+ 		.pll_base_freq = 2970000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 1,
+@@ -395,6 +404,7 @@ struct meson_vclk_params {
+ 		.vclk_div = 2,
+ 	},
+ 	[MESON_VCLK_HDMI_594000] = {
++		.pixel_freq = 594000,
+ 		.pll_base_freq = 5940000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 1,
+@@ -402,6 +412,7 @@ struct meson_vclk_params {
+ 		.vid_pll_div = VID_PLL_DIV_5,
+ 		.vclk_div = 1,
+ 	},
++	{ /* sentinel */ },
+ };
+ 
+ static inline unsigned int pll_od_to_reg(unsigned int od)
+@@ -626,12 +637,37 @@ static void meson_hdmi_pll_generic_set(struct meson_drm *priv,
+ 		  pll_freq);
+ }
+ 
++enum drm_mode_status
++meson_vclk_vic_supported_freq(unsigned int freq)
++{
++	int i;
++
++	DRM_DEBUG_DRIVER("freq = %d\n", freq);
++
++	for (i = 0 ; params[i].pixel_freq ; ++i) {
++		DRM_DEBUG_DRIVER("i = %d pixel_freq = %d alt = %d\n",
++				 i, params[i].pixel_freq,
++				 FREQ_1000_1001(params[i].pixel_freq));
++		/* Match strict frequency */
++		if (freq == params[i].pixel_freq)
++			return MODE_OK;
++		/* Match 1000/1001 variant */
++		if (freq == FREQ_1000_1001(params[i].pixel_freq))
++			return MODE_OK;
++	}
++
++	return MODE_CLOCK_RANGE;
++}
++EXPORT_SYMBOL_GPL(meson_vclk_vic_supported_freq);
++
+ static void meson_vclk_set(struct meson_drm *priv, unsigned int pll_base_freq,
+ 			   unsigned int od1, unsigned int od2, unsigned int od3,
+ 			   unsigned int vid_pll_div, unsigned int vclk_div,
+ 			   unsigned int hdmi_tx_div, unsigned int venc_div,
+-			   bool hdmi_use_enci)
++			   bool hdmi_use_enci, bool vic_alternate_clock)
+ {
++	unsigned int m, frac;
++
+ 	/* Set HDMI-TX sys clock */
+ 	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL,
+ 			   CTS_HDMI_SYS_SEL_MASK, 0);
+@@ -646,34 +682,38 @@ static void meson_vclk_set(struct meson_drm *priv, unsigned int pll_base_freq,
+ 	} else if (meson_vpu_is_compatible(priv, "amlogic,meson-gxbb-vpu")) {
+ 		switch (pll_base_freq) {
+ 		case 2970000:
+-			meson_hdmi_pll_set_params(priv, 0x3d, 0xe00,
+-						  od1, od2, od3);
++			m = 0x3d;
++			frac = vic_alternate_clock ? 0xd02 : 0xe00;
+ 			break;
+ 		case 4320000:
+-			meson_hdmi_pll_set_params(priv, 0x5a, 0,
+-						  od1, od2, od3);
++			m = vic_alternate_clock ? 0x59 : 0x5a;
++			frac = vic_alternate_clock ? 0xe8f : 0;
+ 			break;
+ 		case 5940000:
+-			meson_hdmi_pll_set_params(priv, 0x7b, 0xc00,
+-						  od1, od2, od3);
++			m = 0x7b;
++			frac = vic_alternate_clock ? 0xa05 : 0xc00;
+ 			break;
+ 		}
++
++		meson_hdmi_pll_set_params(priv, m, frac, od1, od2, od3);
+ 	} else if (meson_vpu_is_compatible(priv, "amlogic,meson-gxm-vpu") ||
+ 		   meson_vpu_is_compatible(priv, "amlogic,meson-gxl-vpu")) {
+ 		switch (pll_base_freq) {
+ 		case 2970000:
+-			meson_hdmi_pll_set_params(priv, 0x7b, 0x300,
+-						  od1, od2, od3);
++			m = 0x7b;
++			frac = vic_alternate_clock ? 0x281 : 0x300;
+ 			break;
+ 		case 4320000:
+-			meson_hdmi_pll_set_params(priv, 0xb4, 0,
+-						  od1, od2, od3);
++			m = vic_alternate_clock ? 0xb3 : 0xb4;
++			frac = vic_alternate_clock ? 0x347 : 0;
+ 			break;
+ 		case 5940000:
+-			meson_hdmi_pll_set_params(priv, 0xf7, 0x200,
+-						  od1, od2, od3);
++			m = 0xf7;
++			frac = vic_alternate_clock ? 0x102 : 0x200;
+ 			break;
+ 		}
++
++		meson_hdmi_pll_set_params(priv, m, frac, od1, od2, od3);
+ 	}
+ 
+ 	/* Setup vid_pll divider */
+@@ -826,6 +866,7 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		      unsigned int vclk_freq, unsigned int venc_freq,
+ 		      unsigned int dac_freq, bool hdmi_use_enci)
+ {
++	bool vic_alternate_clock = false;
+ 	unsigned int freq;
+ 	unsigned int hdmi_tx_div;
+ 	unsigned int venc_div;
+@@ -843,7 +884,7 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		 * - encp encoder
+ 		 */
+ 		meson_vclk_set(priv, vclk_freq * 10, 0, 0, 0,
+-			       VID_PLL_DIV_5, 2, 1, 1, false);
++			       VID_PLL_DIV_5, 2, 1, 1, false, false);
+ 		return;
+ 	}
+ 
+@@ -863,31 +904,35 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		return;
+ 	}
+ 
+-	switch (vclk_freq) {
+-	case 54000:
+-		if (hdmi_use_enci)
+-			freq = MESON_VCLK_HDMI_ENCI_54000;
+-		else
+-			freq = MESON_VCLK_HDMI_DDR_54000;
+-		break;
+-	case 74250:
+-		freq = MESON_VCLK_HDMI_74250;
+-		break;
+-	case 148500:
+-		if (dac_freq != 148500)
+-			freq = MESON_VCLK_HDMI_DDR_148500;
+-		else
+-			freq = MESON_VCLK_HDMI_148500;
+-		break;
+-	case 297000:
+-		freq = MESON_VCLK_HDMI_297000;
+-		break;
+-	case 594000:
+-		freq = MESON_VCLK_HDMI_594000;
+-		break;
+-	default:
+-		pr_err("Fatal Error, invalid HDMI vclk freq %d\n",
+-		       vclk_freq);
++	for (freq = 0 ; params[freq].pixel_freq ; ++freq) {
++		if (vclk_freq == params[freq].pixel_freq ||
++		    vclk_freq == FREQ_1000_1001(params[freq].pixel_freq)) {
++			if (vclk_freq != params[freq].pixel_freq)
++				vic_alternate_clock = true;
++			else
++				vic_alternate_clock = false;
++
++			if (freq == MESON_VCLK_HDMI_ENCI_54000 &&
++			    !hdmi_use_enci)
++				continue;
++
++			if (freq == MESON_VCLK_HDMI_DDR_54000 &&
++			    hdmi_use_enci)
++				continue;
++
++			if (freq == MESON_VCLK_HDMI_DDR_148500 &&
++			    dac_freq == vclk_freq)
++				continue;
++
++			if (freq == MESON_VCLK_HDMI_148500 &&
++			    dac_freq != vclk_freq)
++				continue;
++			break;
++		}
++	}
++
++	if (!params[freq].pixel_freq) {
++		pr_err("Fatal Error, invalid HDMI vclk freq %d\n", vclk_freq);
+ 		return;
+ 	}
+ 
+@@ -895,6 +940,6 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		       params[freq].pll_od1, params[freq].pll_od2,
+ 		       params[freq].pll_od3, params[freq].vid_pll_div,
+ 		       params[freq].vclk_div, hdmi_tx_div, venc_div,
+-		       hdmi_use_enci);
++		       hdmi_use_enci, vic_alternate_clock);
+ }
+ EXPORT_SYMBOL_GPL(meson_vclk_setup);
+diff --git a/drivers/gpu/drm/meson/meson_vclk.h b/drivers/gpu/drm/meson/meson_vclk.h
+index 869fa3a..4bd8752 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.h
++++ b/drivers/gpu/drm/meson/meson_vclk.h
+@@ -32,6 +32,8 @@ enum {
+ 
+ enum drm_mode_status
+ meson_vclk_dmt_supported_freq(struct meson_drm *priv, unsigned int freq);
++enum drm_mode_status
++meson_vclk_vic_supported_freq(unsigned int freq);
+ 
+ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		      unsigned int vclk_freq, unsigned int venc_freq,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
+
