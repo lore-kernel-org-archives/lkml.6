@@ -2,183 +2,168 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0230CC46464
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55335C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE4D520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:05:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4D520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ics.forth.gr
+	by mail.kernel.org (Postfix) with ESMTP id BE7BB20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE7BB20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=thorsis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387771AbeKFT37 (ORCPT
+        id S2387806AbeKFTaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:29:59 -0500
-Received: from mailgate-4.ics.forth.gr ([139.91.1.7]:11314 "EHLO
-        mailgate-4.ics.forth.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387480AbeKFT37 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:29:59 -0500
-Received: from av1.ics.forth.gr (av3in.ics.forth.gr. [139.91.1.77])
-        by mailgate-4.ics.forth.gr (8.14.5/ICS-FORTH/V10-1.9-GATE-OUT) with ESMTP id wA6A3Kkv051876;
-        Tue, 6 Nov 2018 12:03:22 +0200 (EET)
-X-AuditID: 8b5b9d4d-91bff70000000e62-72-5be166e76bcb
-Received: from enigma.ics.forth.gr (webmail.ics.forth.gr [139.91.1.35])
-        by av1.ics.forth.gr (SMTP Outbound / FORTH / ICS) with SMTP id A4.A8.03682.7E661EB5; Tue,  6 Nov 2018 12:03:19 +0200 (EET)
-Received: from webmail.ics.forth.gr (localhost [127.0.0.1])
-        by enigma.ics.forth.gr (8.15.1//ICS-FORTH/V10.5.0C-EXTNULL-SSL-SASL) with ESMTP id wA6A3HlQ008115;
-        Tue, 6 Nov 2018 12:03:17 +0200
-X-ICS-AUTH-INFO: Authenticated user:  at ics.forth.gr
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 06 Nov 2018 12:03:17 +0200
-From:   Nick Kossifidis <mick@ics.forth.gr>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Damien.LeMoal@wdc.com,
-        alankao@andestech.com, zong@andestech.com, anup@brainfault.org,
-        linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, atish.patra@wdc.com,
-        linux-riscv@lists.infradead.org, tglx@linutronix.de
-Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
-Organization: FORTH
-In-Reply-To: <mhng-799bd6f4-e4af-481e-90d8-bdc0e30f2530@palmer-si-x1c4>
-References: <mhng-799bd6f4-e4af-481e-90d8-bdc0e30f2530@palmer-si-x1c4>
-Message-ID: <9e77989d6b868d914bc328401cd64557@mailhost.ics.forth.gr>
-X-Sender: mick@mailhost.ics.forth.gr
-User-Agent: Roundcube Webmail/1.1.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsXSHc2orPs87WG0waIeM4ttS1azWrR8eMdq
-        sWjFdxaL1vZvTBbzj5xjtTg9YRGTxeVdc9gstn1uYbNYev0ik8XmCQtYLVr3HmG32LxpKrPF
-        85W9bA68HntOz2L2WDNvDaPH1N9nWDw2r9Dy2LSqk83j3blz7B6bl9R7XGq+zu7xeZOcR/uB
-        bqYArigum5TUnMyy1CJ9uwSujGPv1zAXfFOsOLJ0FnMD4zHpLkZODgkBE4n9Z3axdDFycQgJ
-        HGGUmHOljxnCOcgo8e37WzaIKlOJ2Xs7GUFsXgFBiZMzn7CA2MwCFhJTr+xnhLDlJZq3zmYG
-        sVkEVCWmtvaBxdkENCXmXzoIVi8ioCZxqOkII8gCZoErTBKH9k8FSwgLuEl8uPkIrJlfQFji
-        092LrCA2p4C7xK/zf8BqhIBqXt+/ydTFyAF0hIvE/QM6ELepSHz4/YAdxBYVUJZ4cWI66wRG
-        oVlITp2F5NRZSE5dwMi8ilEgscxYLzO5WC8tv6gkQy+9aBMjOO7m+u5gPLfA/hCjAAejEg8v
-        R8GDaCHWxLLiytxDjBIczEoivEpsQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8h1+EBwkJpCeW
-        pGanphakFsFkmTg4pRoYzaqbDX9/9jb773f0tABHWsOOrEc8Tw2nlTr+vqj8zPP5TYfSDS/3
-        unOc5es59eiNXJaRxTUPf9/mug+LJ+iefnI81yXvLtut+EtTjVR8H4ef6WRckmjZ0LU2NXXK
-        NDYbeYkNW59yrXS7sWq6vpD8y43WhS+5T+qGrZb5JLpW8dL87ZeluWInKLEUZyQaajEXFScC
-        ADT1tbO3AgAA
+        Tue, 6 Nov 2018 14:30:10 -0500
+Received: from mail.thorsis.com ([92.198.35.195]:39838 "EHLO mail.thorsis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387480AbeKFTaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:30:10 -0500
+X-Greylist: delayed 503 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Nov 2018 14:30:08 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.thorsis.com (Postfix) with ESMTP id E5D7D16547
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Nov 2018 10:57:59 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
+Received: from mail.thorsis.com ([127.0.0.1])
+        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zYr7tTm2pbHG for <linux-kernel@vger.kernel.org>;
+        Tue,  6 Nov 2018 10:57:59 +0100 (CET)
+Received: by mail.thorsis.com (Postfix, from userid 109)
+        id 3808689C6; Tue,  6 Nov 2018 10:57:58 +0100 (CET)
+From:   Alexander Dahl <ada@thorsis.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Jean-Michel Hautbois <jhautbois@gmail.com>,
+        boris.brezillon@bootlin.com,
+        Nicolas Ferre <nicolas.ferre@atmel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: sama5d: using the ebi interface from another driver
+Date:   Tue, 06 Nov 2018 10:57:11 +0100
+Message-ID: <3857132.MlRd14rs7I@ada>
+In-Reply-To: <CAL8zT=imudTXvbsxx42mPSQj7Qt1b=44wnPHpb09-sOqLewu-w@mail.gmail.com>
+References: <CAL8zT=imudTXvbsxx42mPSQj7Qt1b=44wnPHpb09-sOqLewu-w@mail.gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Στις 2018-11-05 21:38, Palmer Dabbelt έγραψε:
-> On Fri, 02 Nov 2018 06:09:39 PDT (-0700), robh+dt@kernel.org wrote:
->> On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> 
->> wrote:
->>> 
->>> Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
->>> But it doesn't need a separate thread node for defining SMT systems.
->>> Multiple cpu phandle properties can be parsed to identify the sibling
->>> hardware threads. Moreover, we do not have cluster concept in RISC-V.
->>> So package is a better word choice than cluster for RISC-V.
->> 
->> There was a proposal to add package info for ARM recently. Not sure
->> what happened to that, but we don't need 2 different ways.
->> 
->> There's never going to be clusters for RISC-V? What prevents that?
->> Seems shortsighted to me.
->> 
->>> 
->>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->>> ---
->>>  .../devicetree/bindings/riscv/topology.txt         | 154 
->>> +++++++++++++++++++++
->>>  1 file changed, 154 insertions(+)
->>>  create mode 100644 
->>> Documentation/devicetree/bindings/riscv/topology.txt
->>> 
->>> diff --git a/Documentation/devicetree/bindings/riscv/topology.txt 
->>> b/Documentation/devicetree/bindings/riscv/topology.txt
->>> new file mode 100644
->>> index 00000000..96039ed3
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/riscv/topology.txt
->>> @@ -0,0 +1,154 @@
->>> +===========================================
->>> +RISC-V cpu topology binding description
->>> +===========================================
->>> +
->>> +===========================================
->>> +1 - Introduction
->>> +===========================================
->>> +
->>> +In a RISC-V system, the hierarchy of CPUs can be defined through 
->>> following nodes that
->>> +are used to describe the layout of physical CPUs in the system:
->>> +
->>> +- packages
->>> +- core
->>> +
->>> +The cpu nodes (bindings defined in [1]) represent the devices that
->>> +correspond to physical CPUs and are to be mapped to the hierarchy 
->>> levels.
->>> +Simultaneous multi-threading (SMT) systems can also represent their 
->>> topology
->>> +by defining multiple cpu phandles inside core node. The details are 
->>> explained
->>> +in paragraph 3.
->> 
->> I don't see a reason to do this differently than ARM. That said, I
->> don't think the thread part is in use on ARM, so it could possibly be
->> changed.
->> 
->>> +
->>> +The remainder of this document provides the topology bindings for 
->>> ARM, based
->> 
->> for ARM?
->> 
->>> +on the Devicetree Specification, available from:
->>> +
->>> +https://www.devicetree.org/specifications/
->>> +
->>> +If not stated otherwise, whenever a reference to a cpu node phandle 
->>> is made its
->>> +value must point to a cpu node compliant with the cpu node bindings 
->>> as
->>> +documented in [1].
->>> +A topology description containing phandles to cpu nodes that are not 
->>> compliant
->>> +with bindings standardized in [1] is therefore considered invalid.
->>> +
->>> +This cpu topology binding description is mostly based on the 
->>> topology defined
->>> +in ARM [2].
->>> +===========================================
->>> +2 - cpu-topology node
->> 
->> cpu-map. Why change this?
->> 
->> What I would like to see is the ARM topology binding reworked to be
->> common or some good reasons why it doesn't work for RISC-V as-is.
-> 
-> I think it would be great if CPU topologies were not a RISC-V specific
-> thing.  We don't really do anything different than anyone else, so
-> it'd be great if we could all share the same spec and code.  Looking
-> quickly at the ARM cpu-map bindings, I don't see any reason why we
-> can't just use the same thing on RISC-V -- it's not quite how I'd do
-> it, but I don't think the differences are worth having another
-> implementation.  Mechanically I'm not sure how to do this: should
-> there just be a "Documentation/devicetree/bindings/cpu-map.txt"?
-> 
-> If everyone is OK with that then I vote we just go ahead and
-> genericise the ARM "cpu-map" stuff for CPU topology.  Sharing the
-> implementation looks fairly straight-forward as well.
-> 
+Hei hei,
 
-Please check this out...
-https://lkml.org/lkml/2018/11/3/99
+Am Freitag, 2. November 2018, 14:35:26 CET schrieb Jean-Michel Hautbois:
+> Then, after looking into deeper details in the datasheet I understand
+> it is connected through EBI and it sounds not so easy :D.
 
-It's also non arch-dependent and it can handle the scheduler's 
-capabilities
-better than cpu-map.
+Did you read docs on that? You'll find the binding docs here:
+
+Documentation/devicetree/bindings/memory-controllers/atmel,ebi.txt
+
+> I would appreciate some help/pointers on this, as there is (at least,
+> I could find) few documentation on how to use it except for NAND
+> cases.
+
+I use EBI with at91sam9g20 and custom FPGA on CS5 (0x6000000) and CS7 
+(0x8000000).
+
+> I have something like that in my DTS, but not sure this is the correct
+> way to do it :
+> 
+>         ebi: ebi@10000000 {
+>             pinctrl-0 = <&pinctrl_ebi_nand_addr>;
+>             pinctrl-names = "default";
+>             status = "okay";
+> 
+>             dsp0: pef24628@1 {
+>                 status = "okay";
+>                 compatible = "intel,pef24628";
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
+>                 reg = <0x1 0x0 0x8000>;
+>                 pinctrl-0 = <&pinctrl_dsp_cs1>;
+>             };
+> 
+>             dsp1: pef24628@2 {
+>                 status = "okay";
+>                 compatible = "intel,pef24628";
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
+>                 reg = <0x2 0x0 0x8000>;
+>                 pinctrl-0 = <&pinctrl_dsp_cs2>;
+>             };
+
+I'm not sure about those 'reg' settings. IIRC the first should correspond to 
+the CS line, on at91sam9g20 the 0x40000000 would be CS3 (which is used by 
+NAND, like in the dts snippet you posted) and 0x50000000 would be CS4. Are CS1 
+(which is used by SD-RAM) and CS2 free to use on sama5d3?
+
+Maybe that's different on sama5d3? I would check it again.
+
+> The pinctrl for ebi should probably be changed however, I am wondering
+> how the (platform ?) driver can access the adress ? Should it parse
+> itself the parent, and find range, etc. Or is there an accessor for it
+> ?
+
+Probably. This is what I have for the at91sam9g20:
+
+            pinctrl@fffff400 {                                          
+                ebi {                                                   
+                    pinctrl_ebi_cs5: ebi-cs5-0 {                        
+                        atmel,pins =                                    
+                            <AT91_PIOC 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+                    };                                                  
+                                                                        
+                    pinctrl_ebi_cs7: ebi-cs7-0 {                        
+                        atmel,pins =                                    
+                            <AT91_PIOC 12 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>;
+                    };                                                  
+                                                                        
+                    pinctrl_ebi_nwait: ebi-nwait-0 {                    
+                        atmel,pins =                                    
+                            <AT91_PIOC 15 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+                    };                                                  
+                };                                                      
+            };                                                          
+
+> Maybe can I just manually toggle the CS GPIO, and don't try to make
+> anything more complex than what it should be ? The driver should not
+> be atmel dependant...
+
+As Ludovic said, you should check the settings and timings for the external 
+memory interface. This could look more or less similar to that:
+
+            foo_bar: foo-bar@5,0 {                              
+                status = "okay";                                        
+                pinctrl-0 = <&pinctrl_ebi_cs5>;                         
+                pinctrl-names = "default";                              
+                reg = <0x5 0x0 0x80000>;                                
+                                                                        
+                atmel,smc-bus-width = <8>;                              
+                atmel,smc-read-mode = "nrd";                            
+                atmel,smc-write-mode = "nwe";                           
+                atmel,smc-exnw-mode = "ready";                          
+                                                                        
+                atmel,smc-ncs-rd-setup-ns = <7>;                        
+                atmel,smc-nrd-setup-ns = <7>;                           
+                atmel,smc-ncs-wr-setup-ns = <7>;                        
+                atmel,smc-nwe-setup-ns = <7>;                           
+                                                                        
+                atmel,smc-ncs-rd-pulse-ns = <56>;                       
+                atmel,smc-nrd-pulse-ns = <56>;                          
+                atmel,smc-ncs-wr-pulse-ns = <56>;                       
+                atmel,smc-nwe-pulse-ns = <56>;                          
+                                                                        
+                atmel,smc-nwe-cycle-ns = <77>;                          
+                atmel,smc-nrd-cycle-ns = <77>;                          
+                                                                        
+                atmel,smc-tdf-ns = <0>;                                 
+            };        
+
+As you can see, quite a lot of settings are made, all depending on how the 
+memory access is supposed to be configured. You should look out for details in 
+the hardware manuals of the SoC and the devices you want to connect.
+
+HTH & Greets
+Alex
+                                                  
