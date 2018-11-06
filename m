@@ -2,144 +2,109 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC4DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788A8C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1369920869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35C9120869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:16:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FrIGheyq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1369920869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OsuhSkHu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C9120869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730364AbeKFUh5 (ORCPT
+        id S1730179AbeKFUko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 15:37:57 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36676 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeKFUh5 (ORCPT
+        Tue, 6 Nov 2018 15:40:44 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46004 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbeKFUko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:37:57 -0500
-Received: by mail-ed1-f65.google.com with SMTP id x2-v6so10155916eds.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 03:13:14 -0800 (PST)
+        Tue, 6 Nov 2018 15:40:44 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l9-v6so2088424qtj.12;
+        Tue, 06 Nov 2018 03:16:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wI+hRQrHO6ppi4lNw20EE6k+GMmoTPE9RhuGCgvInyw=;
-        b=FrIGheyqOMf040ZcQZMYzCPbbGQPxo5wOgNpV6A2saoSRjLDMtnOGdvU6RugLE/w7e
-         DV922lHE2eZVpIvGk1EGcyQai7uh5n6kU50yosNnQ4sORI6kF+XWu8jdgzeNhAtqNJ9X
-         OQ3gTGFr54fxyozYtbW+q22fe5YqcgD7k0Lz0=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=83IN5G0ix7r+IaBQDu0omdTI0gPN8wWLp3vequMbwng=;
+        b=OsuhSkHuvC3vdQOTqnJFu6lIQjUKnjOAXzfgrj+vwtUlsdwphhZ9yKMAjl8Bp/3Qyy
+         6loHY6jtxpAwDqzlShwU97bKSPmH24Shl3jXurfDNwD4Meq9zxUswOGutkI+3neZOCM7
+         U/cb+gYg0axzKwnD5dFDU7pXo4roZtQ9ezpu36wZVZe42FzSOmQlN8We+jk3RjXzLS3Z
+         Pa7l6ElXgP6Q4DZ29OUmJzmh9I29zyMMMZda0Pp0V/eVNTJssmkjjH7+kmgDcQSVZKZU
+         hr44a1g9a++rh3MPa217Z+lQHsfG1bVvdkQPgCQfxxDEdssAsIvQjpDg+8cWEuhqmbYC
+         t3Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=wI+hRQrHO6ppi4lNw20EE6k+GMmoTPE9RhuGCgvInyw=;
-        b=PFwRhss6QF4ncCmZvkROGRrQFO/mawhv4GaevLmOopHqkvxeuoZYScw481nY1IYDTg
-         4yIGTGZxXmdOySmiCGPE71PXWfc4lLI9sm/WI9I+4iDv4P7Jbcjn1fcpxSzyIoKlaY2p
-         LtqXXKpzAPPLmSdQNgQ3yFt/WXW8jQhzb2zOtJIA4NehsogGqwjPcpBz7ChOdFRofO1A
-         fBFnRoRt85bKPGnqDgFdySRv+3QoD36q0Gq+wRacnoo0iPaF21PFkZvEmtcJV0iiNiCZ
-         1Tro4vvN/GnRgMmJfcd3xc8hy7nO4E0O3d/ifODiWOu/7B5C4b6d8jf4vFYhPOdXqixW
-         +F0A==
-X-Gm-Message-State: AGRZ1gLt++NOFsg5gStGu1FhHUWYF7TDZ2LCssbRGbOzMY8F+lp6XStP
-        c+hPNNVL4ye4ql00BGimb7Z7VQp8ACI=
-X-Google-Smtp-Source: AJdET5d6G9P61X2nLvYe8ose+2BEUmG3pIpMaQKB9kWLnt1UmmHk5UWw/52qnxast0G8lbB8i14sMQ==
-X-Received: by 2002:a50:8fa1:: with SMTP id y30-v6mr2667628edy.131.1541502793379;
-        Tue, 06 Nov 2018 03:13:13 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x28-v6sm777253edx.1.2018.11.06.03.13.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 03:13:12 -0800 (PST)
-Date:   Tue, 6 Nov 2018 12:13:10 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] drm/meson: Add support for Overlay and OSD Plane
- scaling
-Message-ID: <20181106111310.GP21967@phenom.ffwll.local>
-Mail-Followup-To: Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=83IN5G0ix7r+IaBQDu0omdTI0gPN8wWLp3vequMbwng=;
+        b=aD0qkvYq4g+RmAVHh/9yFaM27fP0u4IzHQszASi5ltA4gmky1OnsRjDQOA9YkkGIWX
+         I8Xzw2c7iYxmRd1KFHeJL6qALPnswHwURP1f4LZlRwq6y8jQf44h2H5SSp8vhyREaWop
+         hgtGi2W/A8PD0x6jp1d9lHfCeyYz0Giz9IVDF1QaaBeyUXry0Q+32YCt7dJUr5oCnZ3O
+         ijJi8ip7vj/UwkfgRidbQ21H/isWmJJ3fffs8sZqDeIf4BjKtsJkdwwhFTFL+AH8nA77
+         O3mN6xFahSoGm8CophSxhom3s0Ln01R/jIRe1kQXWwWIMuxINZJbS+TLfC2HP46zgjLs
+         Fkjw==
+X-Gm-Message-State: AGRZ1gJjklEPrqw6WbuAEFoq44jJGLOKktP7KKNnFcJeqcCLHczWForu
+        zU5AD3zBdz8G56WwN3e/hr6rbG0/c9fuJ6vgjRo=
+X-Google-Smtp-Source: AJdET5eKsiK8/N5Jtx3N76PVzXbkmg9xSz0jcMDF5dDPkNyi9qIiILgW17vWcbsvkWF25EdCxw8Q5zjbm5L87E5upEw=
+X-Received: by 2002:ac8:410a:: with SMTP id q10-v6mr23883842qtl.96.1541502961142;
+ Tue, 06 Nov 2018 03:16:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Tue, 6 Nov 2018 03:16:00 -0800 (PST)
+In-Reply-To: <1541387810-24867-2-git-send-email-zhang.chunyan@linaro.org>
+References: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org> <1541387810-24867-2-git-send-email-zhang.chunyan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 6 Nov 2018 12:16:00 +0100
+X-Google-Sender-Auth: LOJufIe7PeLQOTYFgDX6v6sjRb4
+Message-ID: <CAK8P3a2aUjLsP70zSjkavR4-mkV9iEVCw96Vces4N15Dno8SHw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] mmc: sdhci: add support for using external DMA devices
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 10:39:59AM +0100, Neil Armstrong wrote:
-> This serie adds support for :
-> - Overlay Plane blended with the primary plane, we can describe as "behind"
-> - Primary Plane up-scaling up to 5x factor to support the OSD plane being
->   upscaled from 1920x1080 when the display mode is set as 3840x2160.
-> 
-> These patches depends on the "drm/meson: Allow using optional canvas provider"
-> patchset from Maxime Jourdan at [1]
-> 
-> [1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=38355
-> 
-> Neil Armstrong (3):
->   drm/meson: Support Overlay plane for video rendering
->   drm/meson: move OSD scaler management into plane atomic update
->   drm/meson: Add primary plane scaling
+On 11/5/18, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
+> Some standard SD host controller can support both external dma
+> controllers as well as ADMA in which the controller acts as
+> DMA master.
+>
+> Currently the generic SDHCI code supports ADMA/SDMA integrated into
+> the host controller but does not have any support for external DMA
+> controllers implemented using dmaengine meaning that custom code is
+> needed for any systems that use a generic DMA controller with SDHCI.
+>
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
-Got bored, read a bit your patch series. Two things I've noticed:
-- We need to drop the crtc_state argument from
-  drm_atomic_helper_check_plane_state(), some drivers (not meson) do
-  really funny stuff with this.
+Looks good to me overall, but I think I found one small bug:
 
-- I think your osd1_commit = true update is racy with the interrupt
-  handler checking it. Needs at least a few memory barriers. Since helpers
-  guarantee that you can't overtake a preceending update (you do the
-  vblank handling after the updating) that should be ok, except you arm
-  the vblank before setting up registers, so this might race too.
 
-Anyway all unrelated, so feel free to smash an
+> +	dma->rx_chan = dma_request_chan(mmc->parent, "rx");
+> +	if (IS_ERR(dma->rx_chan)) {
+> +		ret = PTR_ERR(dma->rx_chan);
+> +		if (ret == -EPROBE_DEFER && dma->tx_chan)
+> +			dma_release_channel(dma->tx_chan);
+> +
+> +		dma->rx_chan = NULL;
+> +		pr_warn("Failed to request RX DMA channel.\n");
+> +	}
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+The error handling looks wrong here: if you get EPROBE_DEFER,
+you want to skip the warning message. If you get any other error code,
+you want the warning message and also the dma_release_channel()
+which should be unconditional here.
 
-on the entire series.
-
-Cheers, Daniel
-
-> 
->  drivers/gpu/drm/meson/Makefile          |   2 +-
->  drivers/gpu/drm/meson/meson_canvas.c    |   7 +-
->  drivers/gpu/drm/meson/meson_canvas.h    |  11 +-
->  drivers/gpu/drm/meson/meson_crtc.c      | 251 +++++++++++++-
->  drivers/gpu/drm/meson/meson_drv.c       |  29 +-
->  drivers/gpu/drm/meson/meson_drv.h       |  62 ++++
->  drivers/gpu/drm/meson/meson_overlay.c   | 586 ++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/meson/meson_overlay.h   |  14 +
->  drivers/gpu/drm/meson/meson_plane.c     | 177 ++++++++--
->  drivers/gpu/drm/meson/meson_registers.h |   3 +
->  drivers/gpu/drm/meson/meson_viu.c       |  15 +
->  drivers/gpu/drm/meson/meson_vpp.c       |  90 +++--
->  12 files changed, 1156 insertions(+), 91 deletions(-)
->  create mode 100644 drivers/gpu/drm/meson/meson_overlay.c
->  create mode 100644 drivers/gpu/drm/meson/meson_overlay.h
-> 
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+        Arnd
