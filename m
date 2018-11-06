@@ -2,205 +2,151 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCF1C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AF5C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BA22086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:41:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BA22086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C1C02086C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:41:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1C02086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbeKGGId (ORCPT
+        id S1730844AbeKGGI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:08:33 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53751 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeKGGIc (ORCPT
+        Wed, 7 Nov 2018 01:08:58 -0500
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:60312 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730766AbeKGGI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:08:32 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6KePn2947505
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 6 Nov 2018 12:40:25 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6KePXs947502;
-        Tue, 6 Nov 2018 12:40:25 -0800
-Date:   Tue, 6 Nov 2018 12:40:25 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-a0e6e0831c516860fc7f9be1db6c081fe902ebcf@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          kirill.shutemov@linux.intel.com, mingo@kernel.org
-In-Reply-To: <20181026122856.66224-3-kirill.shutemov@linux.intel.com>
-References: <20181026122856.66224-3-kirill.shutemov@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/ldt: Unmap PTEs for the slot before freeing
- LDT pages
-Git-Commit-ID: a0e6e0831c516860fc7f9be1db6c081fe902ebcf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 7 Nov 2018 01:08:58 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl6.internode.on.net with ESMTP; 07 Nov 2018 07:11:53 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gK8AX-0007Vx-Kj; Wed, 07 Nov 2018 07:41:49 +1100
+Date:   Wed, 7 Nov 2018 07:41:49 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
+Message-ID: <20181106204149.GV6311@dastard>
+References: <20181012060014.10242-1-jhubbard@nvidia.com>
+ <20181012060014.10242-5-jhubbard@nvidia.com>
+ <20181013035516.GA18822@dastard>
+ <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
+ <20181013164740.GA6593@infradead.org>
+ <84811b54-60bf-2bc3-a58d-6a7925c24aad@nvidia.com>
+ <20181105095447.GE6953@quack2.suse.cz>
+ <f5ad7210-05e0-3dc4-02df-01ce5346e198@nvidia.com>
+ <20181106024715.GU6311@dastard>
+ <20181106110006.GE25414@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181106110006.GE25414@quack2.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a0e6e0831c516860fc7f9be1db6c081fe902ebcf
-Gitweb:     https://git.kernel.org/tip/a0e6e0831c516860fc7f9be1db6c081fe902ebcf
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Fri, 26 Oct 2018 15:28:55 +0300
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 6 Nov 2018 21:35:11 +0100
+On Tue, Nov 06, 2018 at 12:00:06PM +0100, Jan Kara wrote:
+> On Tue 06-11-18 13:47:15, Dave Chinner wrote:
+> > On Mon, Nov 05, 2018 at 04:26:04PM -0800, John Hubbard wrote:
+> > > On 11/5/18 1:54 AM, Jan Kara wrote:
+> > > > Hmm, have you tried larger buffer sizes? Because synchronous 8k IO isn't
+> > > > going to max-out NVME iops by far. Can I suggest you install fio [1] (it
+> > > > has the advantage that it is pretty much standard for a test like this so
+> > > > everyone knows what the test does from a glimpse) and run with it something
+> > > > like the following workfile:
+> > > > 
+> > > > [reader]
+> > > > direct=1
+> > > > ioengine=libaio
+> > > > blocksize=4096
+> > > > size=1g
+> > > > numjobs=1
+> > > > rw=read
+> > > > iodepth=64
+> > > > 
+> > > > And see how the numbers with and without your patches compare?
+> > > > 
+> > > > 								Honza
+> > > > 
+> > > > [1] https://github.com/axboe/fio
+> > > 
+> > > That program is *very* good to have. Whew. Anyway, it looks like read bandwidth 
+> > > is approximately 74 MiB/s with my patch (it varies a bit, run to run),
+> > > as compared to around 85 without the patch, so still showing about a 20%
+> > > performance degradation, assuming I'm reading this correctly.
+> > > 
+> > > Raw data follows, using the fio options you listed above:
+> > > 
+> > > Baseline (without my patch):
+> > > ---------------------------- 
+> > ....
+> > >      lat (usec): min=179, max=14003, avg=2913.65, stdev=1241.75
+> > >     clat percentiles (usec):
+> > >      |  1.00th=[ 2311],  5.00th=[ 2343], 10.00th=[ 2343], 20.00th=[ 2343],
+> > >      | 30.00th=[ 2343], 40.00th=[ 2376], 50.00th=[ 2376], 60.00th=[ 2376],
+> > >      | 70.00th=[ 2409], 80.00th=[ 2933], 90.00th=[ 4359], 95.00th=[ 5276],
+> > >      | 99.00th=[ 8291], 99.50th=[ 9110], 99.90th=[10945], 99.95th=[11469],
+> > >      | 99.99th=[12256]
+> > .....
+> > > Modified (with my patch):
+> > > ---------------------------- 
+> > .....
+> > >      lat (usec): min=81, max=15766, avg=3496.57, stdev=1450.21
+> > >     clat percentiles (usec):
+> > >      |  1.00th=[ 2835],  5.00th=[ 2835], 10.00th=[ 2835], 20.00th=[ 2868],
+> > >      | 30.00th=[ 2868], 40.00th=[ 2868], 50.00th=[ 2868], 60.00th=[ 2900],
+> > >      | 70.00th=[ 2933], 80.00th=[ 3425], 90.00th=[ 5080], 95.00th=[ 6259],
+> > >      | 99.00th=[10159], 99.50th=[11076], 99.90th=[12649], 99.95th=[13435],
+> > >      | 99.99th=[14484]
+> > 
+> > So it's adding at least 500us of completion latency to every IO?
+> > I'd argue that the IO latency impact is far worse than the a 20%
+> > throughput drop.
+> 
+> Hum, right. So for each IO we have to remove the page from LRU on submit
 
-x86/ldt: Unmap PTEs for the slot before freeing LDT pages
+Which cost us less then 10us on average:
 
-modify_ldt(2) leaves the old LDT mapped after switching over to the new
-one. The old LDT gets freed and the pages can be re-used.
+	slat (usec): min=13, max=3855, avg=44.17, stdev=61.18
+vs
+	slat (usec): min=18, max=4378, avg=52.59, stdev=63.66
 
-Leaving the mapping in place can have security implications. The mapping is
-present in the userspace page tables and Meltdown-like attacks can read
-these freed and possibly reused pages.
+> and then put it back on IO completion (which is going to race with new
+> submits so LRU lock contention might be an issue).
 
-It's relatively simple to fix: unmap the old LDT and flush TLB before
-freeing the old LDT memory.
+Removal has to take the same LRU lock, so I don't think contention
+is the problem here. More likely the overhead is in selecting the
+LRU to put it on. e.g. list_lru_from_kmem() which may well be doing
+a memcg lookup.
 
-This further allows to avoid flushing the TLB in map_ldt_struct() as the
-slot is unmapped and flushed by unmap_ldt_struct() or has never been mapped
-at all.
+> Spending 500 us on that
+> is not unthinkable when the lock is contended but it is more expensive than
+> I'd have thought. John, could you perhaps profile where the time is spent?
 
-[ tglx: Massaged changelog and removed the needless line breaks ]
+That'll tell us for sure :)
 
-Fixes: f55f0501cbf6 ("x86/pti: Put the LDT in its own PGD if PTI is on")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: bhe@redhat.com
-Cc: willy@infradead.org
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181026122856.66224-3-kirill.shutemov@linux.intel.com
+Cheers,
 
----
- arch/x86/kernel/ldt.c | 51 ++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index ab18e0884dc6..18e4525c5933 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -199,14 +199,6 @@ static void sanity_check_ldt_mapping(struct mm_struct *mm)
- /*
-  * If PTI is enabled, this maps the LDT into the kernelmode and
-  * usermode tables for the given mm.
-- *
-- * There is no corresponding unmap function.  Even if the LDT is freed, we
-- * leave the PTEs around until the slot is reused or the mm is destroyed.
-- * This is harmless: the LDT is always in ordinary memory, and no one will
-- * access the freed slot.
-- *
-- * If we wanted to unmap freed LDTs, we'd also need to do a flush to make
-- * it useful, and the flush would slow down modify_ldt().
-  */
- static int
- map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
-@@ -214,8 +206,8 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	unsigned long va;
- 	bool is_vmalloc;
- 	spinlock_t *ptl;
-+	int i, nr_pages;
- 	pgd_t *pgd;
--	int i;
- 
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return 0;
-@@ -238,7 +230,9 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 
- 	is_vmalloc = is_vmalloc_addr(ldt->entries);
- 
--	for (i = 0; i * PAGE_SIZE < ldt->nr_entries * LDT_ENTRY_SIZE; i++) {
-+	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
-+
-+	for (i = 0; i < nr_pages; i++) {
- 		unsigned long offset = i << PAGE_SHIFT;
- 		const void *src = (char *)ldt->entries + offset;
- 		unsigned long pfn;
-@@ -272,13 +266,39 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	/* Propagate LDT mapping to the user page-table */
- 	map_ldt_struct_to_user(mm);
- 
--	va = (unsigned long)ldt_slot_va(slot);
--	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, PAGE_SHIFT, false);
--
- 	ldt->slot = slot;
- 	return 0;
- }
- 
-+static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
-+{
-+	unsigned long va;
-+	int i, nr_pages;
-+
-+	if (!ldt)
-+		return;
-+
-+	/* LDT map/unmap is only required for PTI */
-+	if (!static_cpu_has(X86_FEATURE_PTI))
-+		return;
-+
-+	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		unsigned long offset = i << PAGE_SHIFT;
-+		spinlock_t *ptl;
-+		pte_t *ptep;
-+
-+		va = (unsigned long)ldt_slot_va(ldt->slot) + offset;
-+		ptep = get_locked_pte(mm, va, &ptl);
-+		pte_clear(mm, va, ptep);
-+		pte_unmap_unlock(ptep, ptl);
-+	}
-+
-+	va = (unsigned long)ldt_slot_va(ldt->slot);
-+	flush_tlb_mm_range(mm, va, va + nr_pages * PAGE_SIZE, PAGE_SHIFT, false);
-+}
-+
- #else /* !CONFIG_PAGE_TABLE_ISOLATION */
- 
- static int
-@@ -286,6 +306,10 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- {
- 	return 0;
- }
-+
-+static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
-+{
-+}
- #endif /* CONFIG_PAGE_TABLE_ISOLATION */
- 
- static void free_ldt_pgtables(struct mm_struct *mm)
-@@ -524,6 +548,7 @@ static int write_ldt(void __user *ptr, unsigned long bytecount, int oldmode)
- 	}
- 
- 	install_ldt(mm, new_ldt);
-+	unmap_ldt_struct(mm, old_ldt);
- 	free_ldt_struct(old_ldt);
- 	error = 0;
- 
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
