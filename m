@@ -2,119 +2,119 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EEDC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A24EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9E220827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:48:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9E220827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id CDF9820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:51:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iEYuFhGR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mc46Nkvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF9820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389791AbeKGDPE (ORCPT
+        id S2389673AbeKGDRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:15:04 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42660 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389573AbeKGDPE (ORCPT
+        Tue, 6 Nov 2018 22:17:49 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51010 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730671AbeKGDRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:15:04 -0500
-Received: by mail-pg1-f194.google.com with SMTP id i4-v6so6128548pgq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:48:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1X++K30qlocAaocdfUugyzmpdC+vrNZ6Xh46RqadmCM=;
-        b=cJVeTFkSHcqistFCtlDmYQ+vPwzGfeTA+s/CEcHOoUJbwZUL2j5Av1u9p6UqlqB88O
-         GeiMrADVKmeosob5MuLYl57N7wtjjQNdbsIPBk0uvKuXZ8cyiZPEMccOL3bNahCuPkce
-         qp7xcvsHcWMQnNsAm/Mercn4IzdLG4Tgzkj/m82Kf2wnEQklsks4SoYF9dHlLzC+vlOL
-         wKPSMloC4TuNYFXeBK44f5qHs9HwHY6/fbRkSJ3eZZu7kQhjVHxkfyG4SCscgp8v4RBu
-         euWg9z0CKT/nRGXJXy2ToMbMHOmbme04GVITV6akHR+leqAjP3C/NawpwgiIqpgcpR9O
-         JCqw==
-X-Gm-Message-State: AGRZ1gLUyaLiTGYHN54G/feBw1LlHOrUw51K4PcA1soF69nF+guykHyf
-        IuNLoPjQFLshEi4PdB+eMy4=
-X-Google-Smtp-Source: AJdET5cSYCQXO+1Xw/c8qiUWT4SetcKkrKLJJCEHOSI04vLNkzOvGNfzw0vV8MSKA9GaVACnUfJkgw==
-X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr26898974pfe.11.1541526523366;
-        Tue, 06 Nov 2018 09:48:43 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm31281642pgr.40.2018.11.06.09.48.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 09:48:42 -0800 (PST)
-Message-ID: <1541526521.196084.184.camel@acm.org>
-Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux@rasmusvillemoes.dk,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Lameter <cl@linux.com>, guro@fb.com,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        linux-mm <linux-mm@kvack.org>
-Date:   Tue, 06 Nov 2018 09:48:41 -0800
-In-Reply-To: <CAKgT0UekDV4euPHs-wrZixGN1ryhZBq_42XdK6BapYke_xomJg@mail.gmail.com>
-References: <20181105204000.129023-1-bvanassche@acm.org>
-         <20181105131305.574d85469f08a4b76592feb6@linux-foundation.org>
-         <1541454489.196084.157.camel@acm.org>
-         <ce6faf63-1661-abe5-16a6-8c19cc9f6689@rasmusvillemoes.dk>
-         <1541457654.196084.159.camel@acm.org>
-         <CAKgT0Udci4Ai4OD20NSRuDckE_G4RHma3Bg6H1Um6N9Se_zPew@mail.gmail.com>
-         <1541462466.196084.163.camel@acm.org>
-         <CAKgT0Ue59US_f-cZtoA=yVbFJ03ca5OMce2opUdQcsvgd8LWMw@mail.gmail.com>
-         <1541464370.196084.166.camel@acm.org>
-         <CAKgT0UekDV4euPHs-wrZixGN1ryhZBq_42XdK6BapYke_xomJg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Tue, 6 Nov 2018 22:17:48 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 26C1060591; Tue,  6 Nov 2018 17:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541526687;
+        bh=3pydGgseVOh8qzszlmwXRs8KbQJa8kox0KVqIwonH18=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iEYuFhGRNYOfj6w4/eQTGSbiSN9CyrATldeV6H6qg1pVDJASFlt9Tr1Tl2O63IOh5
+         AwoLN0ZllduXI2HClLwRIdrQzjYvRgf8mSqMUvWx52kvaVxer962kXpJwXqtJQ1fH9
+         /eI1nBNBgLtnWGchpjU7lYZXQv6yT6ZDIA7c5OI0=
+Received: from [192.168.0.104] (unknown [183.83.73.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 94956601D7;
+        Tue,  6 Nov 2018 17:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541526686;
+        bh=3pydGgseVOh8qzszlmwXRs8KbQJa8kox0KVqIwonH18=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mc46Nkvl/0rmAh2gW6DrcsDGzUDsF7qftubjUl/kBkWrGNrgOJjun0xlI+d5o5B9T
+         1j+b9UeG/Ay9f+5aWaa6RZeocYHMmQxs/rjE5bg70WusmqM6lNoSqJtx0m+ITpSPCZ
+         OUnpP53UphAn5lME5grxiLmlD4wVna70FYCD4j3A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94956601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+Subject: Re: [PATCH V3 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated
+ dynamically
+To:     Doug Anderson <dianders@google.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1541073999-11752-1-git-send-email-vbadigan@codeaurora.org>
+ <1541073999-11752-3-git-send-email-vbadigan@codeaurora.org>
+ <CAD=FV=U7FGn0Jt_63SJ0zeU9u4vh5J9EFtbLHGtjGOUV7AceKw@mail.gmail.com>
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Message-ID: <ed0de1bd-d2f5-a1e6-9799-52f3a6ad91f4@codeaurora.org>
+Date:   Tue, 6 Nov 2018 23:21:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAD=FV=U7FGn0Jt_63SJ0zeU9u4vh5J9EFtbLHGtjGOUV7AceKw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-06 at 09:20 -0800, Alexander Duyck wrote:
-+AD4 On Mon, Nov 5, 2018 at 4:32 PM Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4 wrote:
-+AD4 +AD4 
-+AD4 +AD4 On Mon, 2018-11-05 at 16:11 -0800, Alexander Duyck wrote:
-+AD4 +AD4 +AD4 If we really don't care then why even bother with the switch statement
-+AD4 +AD4 +AD4 anyway? It seems like you could just do one ternary operator and be
-+AD4 +AD4 +AD4 done with it. Basically all you need is:
-+AD4 +AD4 +AD4 return (defined(CONFIG+AF8-ZONE+AF8-DMA) +ACYAJg (flags +ACY +AF8AXw-GFP+AF8-DMA)) ? KMALLOC+AF8-DMA :
-+AD4 +AD4 +AD4         (flags +ACY +AF8AXw-GFP+AF8-RECLAIMABLE) ? KMALLOC+AF8-RECLAIM : 0+ADs
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 Why bother with all the extra complexity of the switch statement?
-+AD4 +AD4 
-+AD4 +AD4 I don't think that defined() can be used in a C expression. Hence the
-+AD4 +AD4 IS+AF8-ENABLED() macro. If you fix that, leave out four superfluous parentheses,
-+AD4 +AD4 test your patch, post that patch and cc me then I will add my Reviewed-by.
-+AD4 
-+AD4 Actually the defined macro is used multiple spots in if statements
-+AD4 throughout the kernel.
 
-The only 'if (defined(' matches I found in the kernel tree that are not
-preprocessor statements occur in Perl code. Maybe I overlooked something?
 
-+AD4 The reason for IS+AF8-ENABLED is to address the fact that we can be
-+AD4 dealing with macros that indicate if they are built in or a module
-+AD4 since those end up being two different defines depending on if you
-+AD4 select 'y' or 'm'.
+On 11/2/2018 2:03 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Thu, Nov 1, 2018 at 5:08 AM Veerabhadrarao Badiganti
+> <vbadigan@codeaurora.org> wrote:
+>>   static const struct sdhci_msm_variant_info sdhci_msm_v5_var = {
+>>          .mci_removed = true,
+>> +       .restore_dll_config = false,
+>> +       .var_ops = &v5_var_ops,
+>> +       .offset = &sdhci_msm_v5_offset,
+>> +};
+>> +
+>> +static const struct sdhci_msm_variant_info sdm845_sdhci_var = {
+>> +       .mci_removed = true,
+>> +       .restore_dll_config = true,
+>>          .var_ops = &v5_var_ops,
+>>          .offset = &sdhci_msm_v5_offset,
+>>   };
+> One last thing: are there actually any "v5" controllers that _don't_
+> require restoring the DLL?  Since "sdm845" is currently the only v5
+> controller maybe just set "restore_dll_config = true" for all v5
+> controllers and when there's a new v5 controller that doesn't need it
+> then match off the SoC-specific compatible string.  As per my review
+> of the bindings patch IMO you should include both the "v5" and the
+> SoC-specific string for SDM845 (and all future SoCs) so you could make
+> the generic v5 case do this...
+>
 
-From Documentation/process/coding-style.rst:
+Yes. QCS404 is one of the target which uses "V5" controller and it 
+doesn't need restoring of DLL.
+I checked your comments on bindings patch. Will update it in the next 
+patchset.
 
-Within code, where possible, use the IS+AF8-ENABLED macro to convert a Kconfig
-symbol into a C boolean expression, and use it in a normal C conditional:
+> -Doug
 
-.. code-block:: c
-
-	if (IS+AF8-ENABLED(CONFIG+AF8-SOMETHING)) +AHs
-		...
-	+AH0
-
-Bart.
+Thanks,
+Veera
