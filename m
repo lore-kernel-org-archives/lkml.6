@@ -2,78 +2,204 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53802C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2273BC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25510206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25510206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id B573B206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:49:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B573B206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388373AbeKGGMX (ORCPT
+        id S1730721AbeKGGQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:12:23 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35570 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbeKGGMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:12:23 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2YNsNLw7x0yk; Tue,  6 Nov 2018 21:45:19 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 224C81EC0291;
-        Tue,  6 Nov 2018 21:45:19 +0100 (CET)
-Date:   Tue, 6 Nov 2018 21:45:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181106204511.GO13712@zn.tnic>
-References: <20181015005035.z3xym6nx43hogdge@gabell>
- <20181016151353.punyk7exekut2543@gabell>
- <20181016191113.GI5212@zn.tnic>
- <20181016195429.tovdgqq77gz3eek2@gabell>
- <20181016195902.GK5212@zn.tnic>
- <20181022154204.kagmdb55jtoez4ca@gabell>
- <20181025103345.GF14020@nazgul.tnic>
- <20181025134050.ggiir77ehntikbwg@gabell>
- <20181106184519.GA16391@zn.tnic>
- <20181106193636.svyjwuwrlgnpuyyf@gabell>
+        Wed, 7 Nov 2018 01:16:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59313 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbeKGGQ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:16:59 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6KmrWm951380
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 6 Nov 2018 12:48:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6KmrHo951376;
+        Tue, 6 Nov 2018 12:48:53 -0800
+Date:   Tue, 6 Nov 2018 12:48:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
+Message-ID: <tip-cf8f07269c7182f0e99abd3ac697870ea44d6f47@git.kernel.org>
+Cc:     luto@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        konrad.wilk@oracle.com, dwmw@amazon.co.uk,
+        zhenzhong.duan@oracle.com, srinivas.eeda@oracle.com, hpa@zytor.com,
+        michal.lkml@markovi.net, bp@suse.de, mingo@kernel.org,
+        yamada.masahiro@socionext.com, daniel@iogearbox.net
+Reply-To: yamada.masahiro@socionext.com, daniel@iogearbox.net,
+          mingo@kernel.org, dwmw@amazon.co.uk, bp@suse.de,
+          michal.lkml@markovi.net, hpa@zytor.com, srinivas.eeda@oracle.com,
+          zhenzhong.duan@oracle.com, linux-kernel@vger.kernel.org,
+          luto@kernel.org, peterz@infradead.org, konrad.wilk@oracle.com,
+          tglx@linutronix.de
+In-Reply-To: <cca0cb20-f9e2-4094-840b-fb0f8810cd34@default>
+References: <cca0cb20-f9e2-4094-840b-fb0f8810cd34@default>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/retpoline: Make CONFIG_RETPOLINE depend on
+ compiler support
+Git-Commit-ID: cf8f07269c7182f0e99abd3ac697870ea44d6f47
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181106193636.svyjwuwrlgnpuyyf@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 02:36:38PM -0500, Masayoshi Mizuma wrote:
-> Yes, I think I can see what you are saying. However, I'm not sure how
-> I use the setup_data in legacy BIOS environment.
+Commit-ID:  cf8f07269c7182f0e99abd3ac697870ea44d6f47
+Gitweb:     https://git.kernel.org/tip/cf8f07269c7182f0e99abd3ac697870ea44d6f47
+Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+AuthorDate: Fri, 2 Nov 2018 01:45:41 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 6 Nov 2018 21:46:20 +0100
 
-What is "legacy BIOS environment" and what does that have to do with
-setup_data?
+x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support
 
--- 
-Regards/Gruss,
-    Boris.
+Since retpoline capable compilers are widely available, make
+CONFIG_RETPOLINE hard depend on the compiler capability.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Break the build when CONFIG_RETPOLINE is enabled and the compiler does not
+support it. Emit an error message in that case:
+
+ "arch/x86/Makefile:226: *** You are building kernel with non-retpoline
+  compiler, please update your compiler..  Stop."
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: <srinivas.eeda@oracle.com>
+Link: https://lkml.kernel.org/r/cca0cb20-f9e2-4094-840b-fb0f8810cd34@default
+
+[dwmw@amazon.co.uk: fail the build with non-retpoline compiler]
+---
+ arch/x86/Kconfig                     |  4 ----
+ arch/x86/Makefile                    |  5 +++--
+ arch/x86/include/asm/nospec-branch.h | 10 ++++++----
+ arch/x86/kernel/cpu/bugs.c           |  2 +-
+ scripts/Makefile.build               |  2 --
+ 5 files changed, 10 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index ba7e3464ee92..ea399744a18c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -444,10 +444,6 @@ config RETPOLINE
+ 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
+ 	  support for full protection. The kernel may run slower.
+ 
+-	  Without compiler support, at least indirect branches in assembler
+-	  code are eliminated. Since this includes the syscall entry path,
+-	  it is not entirely pointless.
+-
+ config INTEL_RDT
+ 	bool "Intel Resource Director Technology support"
+ 	depends on X86 && CPU_SUP_INTEL
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 5b562e464009..6d94fe897983 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -222,9 +222,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+ 
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-ifneq ($(RETPOLINE_CFLAGS),)
+-  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
++ifeq ($(RETPOLINE_CFLAGS),)
++  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
+ endif
++  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
+ endif
+ 
+ archscripts: scripts_basic
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 80dc14422495..8b09cbb2d52c 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -162,11 +162,12 @@
+ 	_ASM_PTR " 999b\n\t"					\
+ 	".popsection\n\t"
+ 
+-#if defined(CONFIG_X86_64) && defined(RETPOLINE)
++#ifdef CONFIG_RETPOLINE
++#ifdef CONFIG_X86_64
+ 
+ /*
+- * Since the inline asm uses the %V modifier which is only in newer GCC,
+- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
++ * Inline asm uses the %V modifier which is only in newer GCC
++ * which is ensured when CONFIG_RETPOLINE is defined.
+  */
+ # define CALL_NOSPEC						\
+ 	ANNOTATE_NOSPEC_ALTERNATIVE				\
+@@ -181,7 +182,7 @@
+ 	X86_FEATURE_RETPOLINE_AMD)
+ # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
+ 
+-#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
++#else /* CONFIG_X86_32 */
+ /*
+  * For i386 we use the original ret-equivalent retpoline, because
+  * otherwise we'll run out of registers. We don't care about CET
+@@ -211,6 +212,7 @@
+ 	X86_FEATURE_RETPOLINE_AMD)
+ 
+ # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
++#endif
+ #else /* No retpoline for C / inline asm */
+ # define CALL_NOSPEC "call *%[thunk_target]\n"
+ # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index c37e66e493bf..d0108fb6e4dd 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -252,7 +252,7 @@ static void __init spec2_print_if_secure(const char *reason)
+ 
+ static inline bool retp_compiler(void)
+ {
+-	return __is_defined(RETPOLINE);
++	return __is_defined(CONFIG_RETPOLINE);
+ }
+ 
+ static inline bool match_option(const char *arg, int arglen, const char *opt)
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index a8e7ba9f73e8..6a6be9f440cf 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -236,10 +236,8 @@ ifdef CONFIG_GCOV_KERNEL
+ objtool_args += --no-unreachable
+ endif
+ ifdef CONFIG_RETPOLINE
+-ifneq ($(RETPOLINE_CFLAGS),)
+   objtool_args += --retpoline
+ endif
+-endif
+ 
+ 
+ ifdef CONFIG_MODVERSIONS
