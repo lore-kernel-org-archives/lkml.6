@@ -2,124 +2,158 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D77C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1572C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83FD32081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="smP6Twdj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83FD32081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A40520869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:45:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A40520869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbeKGAJX (ORCPT
+        id S2388784AbeKGAKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:09:23 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45525 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729642AbeKGAJX (ORCPT
+        Tue, 6 Nov 2018 19:10:35 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59736 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729642AbeKGAKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:09:23 -0500
-Received: by mail-qk1-f193.google.com with SMTP id d135so18486668qkc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 06:43:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6NXd9qwMyRlbaHtea73bJTHJH7mHB9FPKqKUB8aptUE=;
-        b=smP6Twdj6W2ehiTrm2WMualq7rTvxtN77grJAXzoN4TYzvBHihLVLU7YMjDT+7ttaM
-         YQNsfcP1CIMMgRKlpkoKTfonbj4XKK13hca6FcS4D1bCw20+o8EWI+qB3bt9APskekGT
-         010QAI5RgeRUtcSRfy4SxClCHTUBUj18oVMkEuWCvg4WUV9d11f2vv1MgMhIPExsqFkH
-         k5QdajDAcFlMkoZiPORw0YzMm/3aczdJROyoXhsdYLcosCncNh5i2lSOdQ7Y3d5YzKND
-         5Peyw8rTbd7vmEbIQZxgMRS5LIcelPcuKYLn4s8Dcnb62dNUJm9CiMXv8BQhTqDsY9Fi
-         xWIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6NXd9qwMyRlbaHtea73bJTHJH7mHB9FPKqKUB8aptUE=;
-        b=EHySLBvJJWovwoAQUCs4QrAx0b1tQnf3QjKtG+17K7t1rteRRZOrnwBkPBpIB9J0CM
-         ZJgia4+81gP0Xk3cDo+uaWmGE+YIHHjRBE4JYtQynm3GLa9PEbivQ1ck8q/zyF/1hGFJ
-         ycrAt/akQAxA+AgFPG35MHWgxN1lk/tvPmFvLZpTR/8DfzxnsdVgRgDF34uR6cVn97Zr
-         Mk4+wYlepubarSoSIWTE0VEFHOKCHT4aY+6jMt6JNsoOg7RzHuc1gJnrVhdiD7glaF9B
-         RG2PLRzRLphiISYv5dkyHVk70uU4RdCD4tZwOBfD1gz8AGZS5RcgCYEFq/qKlMzVUgpQ
-         RkuQ==
-X-Gm-Message-State: AGRZ1gIFtd38pbs7RANLKEPrb6UMuoBmmRs7vp3Isr9BseQvGyv9ZSwj
-        9Ba7EtienftC+l6nG4zkTZ4QK+8LSESf+D5FkrY=
-X-Google-Smtp-Source: AJdET5c0mDvTjFQc7dj9M8etwf6lHrCrNoQGLVd3SQClIYwdcqSxWUtECXH/LPXg0zW+mZJlDUQXPJWTXiVSNfMga6A=
-X-Received: by 2002:a37:3892:: with SMTP id f140mr10261801qka.214.1541515430574;
- Tue, 06 Nov 2018 06:43:50 -0800 (PST)
+        Tue, 6 Nov 2018 19:10:35 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA6EisSd061067;
+        Tue, 6 Nov 2018 08:44:54 -0600
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA6Eis5H087228
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 08:44:54 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 6 Nov
+ 2018 08:44:54 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 6 Nov 2018 08:44:54 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA6EipJS016928;
+        Tue, 6 Nov 2018 08:44:52 -0600
+Subject: Re: [RFC PATCH v1 03/14] usb:cdns3: Driver initialization code.
+To:     Pawel Laszczak <pawell@cadence.com>, <gregkh@linuxfoundation.org>
+References: <1541267487-3664-1-git-send-email-pawell@cadence.com>
+ <1541267487-3664-4-git-send-email-pawell@cadence.com>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <adouglas@cadence.com>, <jbergsagel@ti.com>, <peter.chen@nxp.com>,
+        <pjez@cadence.com>, <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BE1A8E3.6000705@ti.com>
+Date:   Tue, 6 Nov 2018 16:44:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <20181106134630.29591-1-smuchun@gmail.com> <CAJZ5v0ifsQqkoFw2tossFKJAUkqDLdR9NpN3eZTn3t0xUz6K-g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0ifsQqkoFw2tossFKJAUkqDLdR9NpN3eZTn3t0xUz6K-g@mail.gmail.com>
-From:   Muchun Song <smuchun@gmail.com>
-Date:   Tue, 6 Nov 2018 22:43:39 +0800
-Message-ID: <CAPSr9jE8EbWue31LP18eF9+KysZHNRqHNrzif8H4NkCzHHtueQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Add branch prediction hints in really_probe()
-To:     rafael@kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1541267487-3664-4-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
 
-If we want the driver core to test driver remove functions, we can
-enable CONFIG_DEBUG_TEST_DRIVER_REMOVE. This option is
-just for testing it. So, in most cases, the option is disabled and the if
-condition is false. So I think we can add an unlikely() to it.
 
-Rafael J. Wysocki <rafael@kernel.org> =E4=BA=8E2018=E5=B9=B411=E6=9C=886=E6=
-=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=8810:30=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Nov 6, 2018 at 2:47 PM Muchun Song <smuchun@gmail.com> wrote:
-> >
-> > If condition is false in most cases. So, add an unlikely() to the if
-> > condition, so that the optimizer assumes that the condition is false.
-> >
-> > Signed-off-by: Muchun Song <smuchun@gmail.com>
->
-> Have you measured the practical impact of this patch in any way?
->
-> > ---
-> >  drivers/base/dd.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> > index 169412ee4ae8..8eba453c4e5d 100644
-> > --- a/drivers/base/dd.c
-> > +++ b/drivers/base/dd.c
-> > @@ -450,7 +450,7 @@ static int really_probe(struct device *dev, struct =
-device_driver *drv)
-> >         bool test_remove =3D IS_ENABLED(CONFIG_DEBUG_TEST_DRIVER_REMOVE=
-) &&
-> >                            !drv->suppress_bind_attrs;
-> >
-> > -       if (defer_all_probes) {
-> > +       if (unlikely(defer_all_probes)) {
-> >                 /*
-> >                  * Value of defer_all_probes can be set only by
-> >                  * device_defer_all_probes_enable() which, in turn, wil=
-l call
-> > @@ -508,7 +508,7 @@ static int really_probe(struct device *dev, struct =
-device_driver *drv)
-> >                         goto probe_failed;
-> >         }
-> >
-> > -       if (test_remove) {
-> > +       if (unlikely(test_remove)) {
-> >                 test_remove =3D false;
-> >
-> >                 if (dev->bus->remove)
-> > --
-> > 2.17.1
-> >
+On 03/11/18 19:51, Pawel Laszczak wrote:
+> Patch adds core.c and core.h file that implements initialization
+> of platform driver and adds function responsible for selecting,
+> switching and running appropriate Device/Host mode.
+> 
+> Patch also adds gadget.c, host.c, gadget-export.h, host-export.h.
+> These files contains templates functions used during initialization.
+> The implementation will be added in next patches.
+> 
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/cdns3/Kconfig         |  20 ++
+>  drivers/usb/cdns3/Makefile        |   4 +
+>  drivers/usb/cdns3/core.c          | 373 ++++++++++++++++++++++++++++++
+>  drivers/usb/cdns3/core.h          |  88 +++++++
+>  drivers/usb/cdns3/gadget-export.h |  27 +++
+>  drivers/usb/cdns3/gadget.c        |  36 +++
+>  drivers/usb/cdns3/host-export.h   |  30 +++
+>  drivers/usb/cdns3/host.c          |  28 +++
+>  8 files changed, 606 insertions(+)
+>  create mode 100644 drivers/usb/cdns3/core.c
+>  create mode 100644 drivers/usb/cdns3/core.h
+>  create mode 100644 drivers/usb/cdns3/gadget-export.h
+>  create mode 100644 drivers/usb/cdns3/gadget.c
+>  create mode 100644 drivers/usb/cdns3/host-export.h
+>  create mode 100644 drivers/usb/cdns3/host.c
+> 
+
+
+<snip>
+
+> diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+> new file mode 100644
+> index 000000000000..e7159c474308
+> --- /dev/null
+> +++ b/drivers/usb/cdns3/core.h
+> @@ -0,0 +1,88 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Cadence USBSS DRD Driver.
+> + *
+> + * Copyright (C) 2017 NXP
+> + * Copyright (C) 2018 Cadence.
+> + *
+> + * Authors: Peter Chen <peter.chen@nxp.com>
+> + *          Pawel Laszczak <pawell@cadence.com>
+> + */
+> +#include <linux/usb/otg.h>
+> +
+> +#ifndef __LINUX_CDNS3_CORE_H
+> +#define __LINUX_CDNS3_CORE_H
+> +
+> +struct cdns3;
+> +enum cdns3_roles {
+> +	CDNS3_ROLE_HOST = 0,
+> +	CDNS3_ROLE_GADGET,
+> +	CDNS3_ROLE_END,
+> +	CDNS3_ROLE_OTG,
+> +};
+> +
+> +/**
+> + * struct cdns3_role_driver - host/gadget role driver
+> + * @start: start this role
+> + * @stop: stop this role
+> + * @suspend: suspend callback for this role
+> + * @resume: resume callback for this role
+> + * @irq: irq handler for this role
+> + * @name: role name string (host/gadget)
+> + */
+> +struct cdns3_role_driver {
+> +	int (*start)(struct cdns3 *cdns);
+> +	void (*stop)(struct cdns3 *cdns);
+> +	int (*suspend)(struct cdns3 *cdns, bool do_wakeup);
+> +	int (*resume)(struct cdns3 *cdns, bool hibernated);
+> +	irqreturn_t (*irq)(struct cdns3 *cdns);
+
+Why does role driver need hook to irq handler?
+
+Can't each driver host or gadget handle it's respective irq
+on its own? If the same IRQ line is used it could be requested
+as a shared IRQ.
+
+> +	const char *name;
+> +};
+> +
+
+cheers,
+-roger
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
