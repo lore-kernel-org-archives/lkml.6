@@ -2,154 +2,207 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C210C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5842FC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAACD2086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:41:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="cwy1I9TB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAACD2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C6E720685
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:41:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6E720685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389167AbeKGBHS (ORCPT
+        id S2389180AbeKGBHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:07:18 -0500
-Received: from mail-eopbgr820070.outbound.protection.outlook.com ([40.107.82.70]:17680
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389138AbeKGBHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:07:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CLQ9635/cwIrdt15SoYM1O6TdfaS2H3heCSFUrbULGA=;
- b=cwy1I9TBnJgblx2lwAVHw31nPzGcwPRjkvbbMQUpt7gQajIBm9VVeJS91KIEWR9avXnS8u5Et41Xb14FjWMBpdHd3kr+La/h62rnFDr4bRoMoZ+WJbN3OMP+WNDos7oHGbjSUlrMkzKcbM6zLP6TY6gz9xAjga/kpIomGz0g/HQ=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1562.namprd12.prod.outlook.com (10.172.38.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.23; Tue, 6 Nov 2018 15:41:28 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.032; Tue, 6 Nov 2018
- 15:41:28 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "Moger, Babu" <Babu.Moger@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: [PATCH v6 14/14] MAINTAINERS: Update the file and documentation names
- in arch/x86
-Thread-Topic: [PATCH v6 14/14] MAINTAINERS: Update the file and documentation
- names in arch/x86
-Thread-Index: AQHUdecvNVR0j9a6pUSBjjPfjLSFfw==
-Date:   Tue, 6 Nov 2018 15:41:28 +0000
-Message-ID: <20181106154034.15386-15-babu.moger@amd.com>
-References: <20181106154034.15386-1-babu.moger@amd.com>
-In-Reply-To: <20181106154034.15386-1-babu.moger@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0401CA0010.namprd04.prod.outlook.com
- (2603:10b6:803:21::20) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1562;20:z0BobYvllQvklQO9fpZnq8Vno6eKKRw3VGKNzyZxUqgSMuL6vo/emM9rAssflOvnmV5yRQhvkccw4DqBes6Io0YrW99QuD2k23CTytpb4eTb8zToWKE5LEeYSYdZ7kxifKtSsV8PE0cS4MjlNCnw6W6HZf/Y6LvRSmEjzuLNa3+JzjE8EkDwyPcl6cTE2FzXISD4hWtwbZUFIf7EglN1kjvDjUeEN23hSjM6g1epJ8bmPhtePuT5DOgfMT8H7brg
-x-ms-office365-filtering-correlation-id: 64e64727-f630-47e1-5a3f-08d643fe5142
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1562;
-x-ms-traffictypediagnostic: DM5PR12MB1562:
-x-microsoft-antispam-prvs: <DM5PR12MB1562E58A17693050C73F1B8795CB0@DM5PR12MB1562.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699)(104084551191319);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1562;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1562;
-x-forefront-prvs: 0848C1A6AA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(189003)(199004)(99286004)(54906003)(110136005)(2616005)(186003)(386003)(476003)(26005)(486006)(11346002)(6506007)(102836004)(316002)(3846002)(1076002)(71190400001)(71200400001)(6116002)(36756003)(6486002)(52116002)(76176011)(446003)(2906002)(81156014)(105586002)(106356001)(86362001)(2201001)(305945005)(7736002)(8676002)(72206003)(6512007)(8936002)(14444005)(53936002)(2900100001)(68736007)(478600001)(66066001)(6436002)(256004)(81166006)(14454004)(25786009)(97736004)(15650500001)(7406005)(7416002)(5660300001)(2501003)(4326008)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1562;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: R0epVU0sx2+/o2LxBlYID7IICW3T2kfWSvuwXFE0zq7wHDQsNavEARd4DiS8WcMPmcn291OtQjy1RsayWF/aCzFkQEv0dnG/1Mz9ETHo0lOXnUkV3kAKQWFI/CcdV1JwJssW5CgFyr4bLsTFBzdGAfWqRxUDjvzOTzmWaUDs/+HxwobMMV2ETBdtLday8WXSdyFFxS2IAjpvgvdN6ANSA/yjAsYy3EdbbVxXqzA+0IHXtl9P+MP6PODbrhVvUBlkw+gnFXRuwDYKRjIKgveovk5NValH90IPIr/EMzvxIeAzqNPDgjOBw4bFtTiM35eNM+SY3oIAMDUku43E9DPTpvfKQxiBN4Vde553DjIGovc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 6 Nov 2018 20:07:31 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:26296 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389138AbeKGBHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 20:07:31 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wA6FcZj8015673;
+        Tue, 6 Nov 2018 16:41:26 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2nh211ga2q-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 06 Nov 2018 16:41:26 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 442CB34;
+        Tue,  6 Nov 2018 15:41:25 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E0360589D;
+        Tue,  6 Nov 2018 15:41:24 +0000 (GMT)
+Received: from [10.201.23.162] (10.75.127.45) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 6 Nov
+ 2018 16:41:24 +0100
+Subject: Re: [alsa-devel] [PATCH] ASoC: core: Invoke pcm_new() for all
+ DAI-link
+To:     Rohit Kumar <rohitkr@codeaurora.org>, Takashi Iwai <tiwai@suse.de>,
+        <olivier.moysan@st.com>
+CC:     <rohkumar@qti.qualcomm.com>, <alsa-devel@alsa-project.org>,
+        <bgoswami@codeaurora.org>, <lgirdwood@gmail.com>,
+        <plai@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+        <tiwai@suse.com>, <broonie@kernel.org>,
+        <srinivas.kandagatla@linaro.org>
+References: <1541075929-29323-1-git-send-email-rohitkr@codeaurora.org>
+ <s5htvl0exil.wl-tiwai@suse.de>
+ <48c78f67-8178-2d07-e35d-2e4eca51ccbc@codeaurora.org>
+ <791d4587-4db3-3ffa-331a-f79d0993ca8c@st.com>
+ <3616f01f-6a00-6eb1-0bdd-f161b7ce15e6@codeaurora.org>
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=arnaud.pouliquen@st.com; prefer-encrypt=mutual; keydata=
+ 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
+ 8mOik8I/F6EW8XyQAA2P
+Message-ID: <4f22e4e5-84f0-1560-1ba7-5e77d44fd312@st.com>
+Date:   Tue, 6 Nov 2018 16:41:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64e64727-f630-47e1-5a3f-08d643fe5142
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2018 15:41:28.7573
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1562
+In-Reply-To: <3616f01f-6a00-6eb1-0bdd-f161b7ce15e6@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the MAINTAINERS to reflect the changed file(and documentation)
-names in arch/x86/kernel/cpu. The file names have changed from
-intel_rdt* to resctrl*.
+Hello Rohit
 
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 11/5/18 7:14 PM, Rohit Kumar wrote:
+> Hello Arnaud,
+> 
+> 
+> On 11/5/2018 4:43 PM, Arnaud Pouliquen wrote:
+>> Hello Rohit,
+>>
+>> On 11/2/18 1:06 PM, Rohit Kumar wrote:
+>>> On 11/2/2018 1:12 PM, Takashi Iwai wrote:
+>>>> On Thu, 01 Nov 2018 13:38:49 +0100,
+>>>> Rohit kumar wrote:
+>>>>> Remove no_pcm check to invoke pcm_new() for backend dai-links
+>>>>> too. This fixes crash in hdmi codec driver during hdmi_codec_startup()
+>>>>> while accessing chmap_info struct. chmap_info struct memory is
+>>>>> allocated in pcm_new() of hdmi codec driver which is not invoked
+>>>>> in case of DPCM when hdmi codec driver is part of backend dai-link.
+>>>>>
+>>>>> Below is the crash stack:
+>>>>>
+>>>>> [   61.635493] Unable to handle kernel NULL pointer dereference at
+>>>>> virtual address 00000018
+>>>>> ..
+>>>>> [   61.666696]   CM = 0, WnR = 1
+>>>>> [   61.669778] user pgtable: 4k pages, 39-bit VAs, pgd =
+>>>>> ffffffc0d6633000
+>>>>> [   61.676526] [0000000000000018] *pgd=0000000153fc8003,
+>>>>> *pud=0000000153fc8003, *pmd=0000000000000000
+>>>>> [   61.685793] Internal error: Oops: 96000046 [#1] PREEMPT SMP
+>>>>> [   61.722955] CPU: 7 PID: 2238 Comm: aplay Not tainted 4.14.72 #21
+>>>>> ..
+>>>>> [   61.740269] PC is at hdmi_codec_startup+0x124/0x164
+>>>>> [   61.745308] LR is at hdmi_codec_startup+0xe4/0x164
+>>>>>
+>>>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>>>> Did you check whether all drivers have no side-effect by this change?
+>>>> The hdmi-codec isn't the only driver that has pcm_new ops, so we have
+>>>> to make sure that such a fundamental change wouldn't bring any
+>>>> regressions.
+>>>>
+>>> Below are the drivers calling pcm_new() other than hdmi codec driver.
+>>> sound/soc/meson/axg-frddr.c
+>>> sound/soc/meson/axg-toddr.c
+>>> These two drivers are frontend DAI drivers and should not be impacted
+>>> because of this.
+>>>
+>>> Other than this, pcm_new() is called from sound/soc/stm/stm32_sai_sub.c
+>>> I could not get much info about this driver. However, it is just adding
+>>> kcontrols in pcm_new() which uses internal private structs in
+>>> get()/put().
+>>> Olivier Moysan can too confirm on this.
+>> First, i'm answering  for Olivier: no regression identified for the SAI
+>> driver, it is not a DPCM driver.
+>>
+>> Then i have a concern about the call of pcm_new for a no-PCM backend.
+>> Does it make sense? In DPCM concept, the backend is not linked to the
+>> PCM device...
+>>
+>> Instead, I would suggest that you add protection in HDMI_codec on
+>> chmap_info pointer.
+>>
+>> The drawback would be that the control is no more available...do you
+>> need it?
+> I don't need chmap_info, but ELD kcontrol is also defined in pcm_new()
+> which
+> we need. We should probably update the driver to make it compatible with
+> DPCM. Any suggestions?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 48a65c3a4189..7643dba289c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12267,9 +12267,9 @@ M:	Fenghua Yu <fenghua.yu@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
--F:	arch/x86/kernel/cpu/intel_rdt*
--F:	arch/x86/include/asm/intel_rdt_sched.h
--F:	Documentation/x86/intel_rdt*
-+F:	arch/x86/kernel/cpu/resctrl*
-+F:	arch/x86/include/asm/resctrl_sched.h
-+F:	Documentation/x86/resctrl*
-=20
- READ-COPY UPDATE (RCU)
- M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
---=20
-2.17.1
+I would say force device to 0 if no_pcm (need probably to create the
+control in hdmi_of_xlate_dai_id instead of hdmi_codec_pcm_new).
+But keep in mind that solution has to work in case of multi HDMI codec
+instances, perhaps using prefix...
+Anyway, i'm not a DPCM expert so perhaps more elegant solutions exist.
 
+Regards
+Arnaud
+
+>> Regards
+>> Arnaud
+>>
+>>> Thanks,
+>>> Rohit
+>>>> thanks,
+>>>>
+>>>> Takashi
+> Thanks,
+> Rohit
+> 
