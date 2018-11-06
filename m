@@ -2,117 +2,249 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC6AC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D78BC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C76C2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C76C2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2B7112086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADBnp3NF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B7112086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387742AbeKFVbX (ORCPT
+        id S2387818AbeKFVbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:31:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41198 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387515AbeKFVbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:31:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AC9E0B60F;
-        Tue,  6 Nov 2018 12:06:26 +0000 (UTC)
-Subject: Re: [PATCH v3 2/2] mm/page_alloc: use a single function to free page
-To:     Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Yoel Caspersen <yoel@kviknet.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <20181105085820.6341-1-aaron.lu@intel.com>
- <20181105085820.6341-2-aaron.lu@intel.com> <20181106053037.GD6203@intel.com>
- <20181106113149.GC24198@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <806ba56d-3213-bd9a-b52e-b54be19885d7@suse.cz>
-Date:   Tue, 6 Nov 2018 13:06:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181106113149.GC24198@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Nov 2018 16:31:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387745AbeKFVbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:31:25 -0500
+Received: from jouet.infradead.org (unknown [189.40.102.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9EC020869;
+        Tue,  6 Nov 2018 12:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541505991;
+        bh=btg5LkLmStKClLNJMd0pFzPZ7hWRzlCREP8/FBoVML4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ADBnp3NFy6dPnhUC+D3cUepyJ9ZN5RbQwInGMn25YxbniiqTGjtMsHFoaT+1mxWhQ
+         bXa+26whG9fwJIQkhq2eFGc6+sNlb23crXKi8PLs+wijPryKBNyx14ny+W/gb7s3iw
+         o3CSGITKjPyMBPcDfO8voXYWarulB+bmfV1e9Wv4=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 01/18] tools headers barrier: Fix arm64 tools build failure wrt smp_load_{acquire,release}
+Date:   Tue,  6 Nov 2018 09:05:55 -0300
+Message-Id: <20181106120612.8262-2-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181106120612.8262-1-acme@kernel.org>
+References: <20181106120612.8262-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 12:31 PM, Aaron Lu wrote:
-> We have multiple places of freeing a page, most of them doing similar
-> things and a common function can be used to reduce code duplicate.
-> 
-> It also avoids bug fixed in one function but left in another.
-> 
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cheers for reporting this. I managed to reproduce the build failure with
+gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1).
 
-Thanks!
+The code in question is the arm64 versions of smp_load_acquire() and
+smp_store_release(). Unlike other architectures, these are not built
+around READ_ONCE() and WRITE_ONCE() since we have instructions we can
+use instead of fences. Bringing our macros up-to-date with those (i.e.
+tweaking the union initialisation and using the special "uXX_alias_t"
+types) appears to fix the issue for me.
 
-> ---
-> v3: Vlastimil mentioned the possible performance loss by using
->     page_ref_sub_and_test(page, 1) for put_page_testzero(page), since
->     we aren't sure so be safe by keeping page ref decreasing code as
->     is, only move freeing page part to a common function.
+Committer notes:
+
+Testing it in the systems previously failing:
+
+  # time dm android-ndk:r12b-arm \
+         android-ndk:r15c-arm \
+         debian:experimental-x-arm64 \
+         ubuntu:14.04.4-x-linaro-arm64 \
+         ubuntu:16.04-x-arm \
+         ubuntu:16.04-x-arm64 \
+         ubuntu:18.04-x-arm \
+         ubuntu:18.04-x-arm64
+    1 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+    2 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+    3 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 8.2.0-7) 8.2.0
+    4 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.5-2017.10) 5.5.0
+    5 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    6 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    7 ubuntu:18.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
+    8 ubuntu:18.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.3.0-27ubuntu1~18.04) 7.3.0
+
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181031174408.GA27871@arm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/arm64/include/asm/barrier.h | 133 +++++++++++++++++----------------
+ 1 file changed, 67 insertions(+), 66 deletions(-)
+
+diff --git a/tools/arch/arm64/include/asm/barrier.h b/tools/arch/arm64/include/asm/barrier.h
+index 12835ea0e417..378c051fa177 100644
+--- a/tools/arch/arm64/include/asm/barrier.h
++++ b/tools/arch/arm64/include/asm/barrier.h
+@@ -14,74 +14,75 @@
+ #define wmb()		asm volatile("dmb ishst" ::: "memory")
+ #define rmb()		asm volatile("dmb ishld" ::: "memory")
+ 
+-#define smp_store_release(p, v)					\
+-do {								\
+-	union { typeof(*p) __val; char __c[1]; } __u =		\
+-		{ .__val = (__force typeof(*p)) (v) }; 		\
+-								\
+-	switch (sizeof(*p)) {					\
+-	case 1:							\
+-		asm volatile ("stlrb %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u8 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 2:							\
+-		asm volatile ("stlrh %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u16 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 4:							\
+-		asm volatile ("stlr %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u32 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 8:							\
+-		asm volatile ("stlr %1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u64 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	default:						\
+-		/* Only to shut up gcc ... */			\
+-		mb();						\
+-		break;						\
+-	}							\
++#define smp_store_release(p, v)						\
++do {									\
++	union { typeof(*p) __val; char __c[1]; } __u =			\
++		{ .__val = (v) }; 					\
++									\
++	switch (sizeof(*p)) {						\
++	case 1:								\
++		asm volatile ("stlrb %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u8_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 2:								\
++		asm volatile ("stlrh %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u16_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 4:								\
++		asm volatile ("stlr %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u32_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 8:								\
++		asm volatile ("stlr %1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u64_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	default:							\
++		/* Only to shut up gcc ... */				\
++		mb();							\
++		break;							\
++	}								\
+ } while (0)
+ 
+-#define smp_load_acquire(p)					\
+-({								\
+-	union { typeof(*p) __val; char __c[1]; } __u;		\
+-								\
+-	switch (sizeof(*p)) {					\
+-	case 1:							\
+-		asm volatile ("ldarb %w0, %1"			\
+-			: "=r" (*(__u8 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 2:							\
+-		asm volatile ("ldarh %w0, %1"			\
+-			: "=r" (*(__u16 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 4:							\
+-		asm volatile ("ldar %w0, %1"			\
+-			: "=r" (*(__u32 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 8:							\
+-		asm volatile ("ldar %0, %1"			\
+-			: "=r" (*(__u64 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	default:						\
+-		/* Only to shut up gcc ... */			\
+-		mb();						\
+-		break;						\
+-	}							\
+-	__u.__val;						\
++#define smp_load_acquire(p)						\
++({									\
++	union { typeof(*p) __val; char __c[1]; } __u =			\
++		{ .__c = { 0 } };					\
++									\
++	switch (sizeof(*p)) {						\
++	case 1:								\
++		asm volatile ("ldarb %w0, %1"				\
++			: "=r" (*(__u8_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 2:								\
++		asm volatile ("ldarh %w0, %1"				\
++			: "=r" (*(__u16_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 4:								\
++		asm volatile ("ldar %w0, %1"				\
++			: "=r" (*(__u32_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 8:								\
++		asm volatile ("ldar %0, %1"				\
++			: "=r" (*(__u64_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	default:							\
++		/* Only to shut up gcc ... */				\
++		mb();							\
++		break;							\
++	}								\
++	__u.__val;							\
+ })
+ 
+ #endif /* _TOOLS_LINUX_ASM_AARCH64_BARRIER_H */
+-- 
+2.14.4
+
