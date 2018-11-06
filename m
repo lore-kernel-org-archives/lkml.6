@@ -2,94 +2,84 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3410C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D2CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4EE92085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:34:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4EE92085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 928C620883
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:35:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGXxi+fV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928C620883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389832AbeKGDAZ (ORCPT
+        id S2389685AbeKGDCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:00:25 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42558 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730448AbeKGDAZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:00:25 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gK5Et-0003UO-H8; Tue, 06 Nov 2018 17:34:08 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] USB: Disable USB2 LPM at shutdown
-Date:   Wed,  7 Nov 2018 01:34:01 +0800
-Message-Id: <20181106173401.32001-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 6 Nov 2018 22:02:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388987AbeKGDCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:02:08 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDD1E2086A;
+        Tue,  6 Nov 2018 17:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541525751;
+        bh=7GDQwXVsWNVrGABvJr1R1Q76OLK8+sQa7Idl3lxQtlg=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=YGXxi+fVpXPKcGrh8UkomC4gHRKPzbJ1ccCg1X1PX6cE3sn9VssKE6Aci2aH+jdeZ
+         Y2QzmTrDU1oz8o4gKcyJ58D9g+m4mOaf+37A/cNcMxTa+bIyw18xJ3gXItU/myzw2Z
+         ohvfzHHVuByRBHbsnAzexXUjQp66wUB7fKK7QDK4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1539910863-2352-1-git-send-email-Anson.Huang@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1539910863-2352-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <154152575127.88331.11571189328688525045@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH V2] clk: imx7d: remove UART1 clock setting
+Date:   Tue, 06 Nov 2018 09:35:51 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The QCA Rome USB Bluetooth controller has several issues once LPM gets
-enabled:
-- Fails to get enumerated in coldboot. [1]
-- Drains more power (~ 0.2W) when the system is in S5. [2]
-- Disappears after a warmboot. [2]
+Quoting Anson Huang (2018-10-18 18:05:36)
+> There are clock assignments in all i.MX7D dtb files for UART1,
+> below is the example in imx7d-sdb.dts, so setting UART1 clock
+> in clock driver is NOT necessary, actually, module clocks setting
+> should be done in module driver.
+> =
 
-The issue happens because the device lingers at LPM L1 in S5, so device
-can't get enumerated even after a reboot.
+> &uart1 {
+>         pinctrl-names =3D "default";
+>         pinctrl-0 =3D <&pinctrl_uart1>;
+>         assigned-clocks =3D <&clks IMX7D_UART1_ROOT_SRC>;
+>         assigned-clock-parents =3D <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
+>         status =3D "okay";
+> };
+> =
 
-Disalbe LPM at shutdown can solve the issue.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-[1] https://bugs.launchpad.net/bugs/1757218
-[2] https://patchwork.kernel.org/patch/10607097/
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/usb/core/port.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
-index 1a06a4b5fbb1..15f6924a4d84 100644
---- a/drivers/usb/core/port.c
-+++ b/drivers/usb/core/port.c
-@@ -285,6 +285,15 @@ static int usb_port_runtime_suspend(struct device *dev)
- }
- #endif
- 
-+static void usb_port_shutdown(struct device *dev)
-+{
-+	struct usb_port *port_dev = to_usb_port(dev);
-+
-+	if (port_dev->child)
-+		usb_set_usb2_hardware_lpm(port_dev->child, 0);
-+
-+}
-+
- static const struct dev_pm_ops usb_port_pm_ops = {
- #ifdef CONFIG_PM
- 	.runtime_suspend =	usb_port_runtime_suspend,
-@@ -301,6 +310,7 @@ struct device_type usb_port_device_type = {
- static struct device_driver usb_port_driver = {
- 	.name = "usb",
- 	.owner = THIS_MODULE,
-+	.shutdown = usb_port_shutdown,
- };
- 
- static int link_peers(struct usb_port *left, struct usb_port *right)
--- 
-2.19.1
+Applied to clk-next
 
