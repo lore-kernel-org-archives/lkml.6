@@ -2,71 +2,71 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3CAC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9BFC46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404AA204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 603B720883
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t2DiCyxy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404AA204FD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="poQHL6m6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 603B720883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388236AbeKGHfV (ORCPT
+        id S2388360AbeKGHfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:35:21 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37326 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730921AbeKGHfS (ORCPT
+        Wed, 7 Nov 2018 02:35:22 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45061 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727248AbeKGHfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:35:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e5-v6so8809957lja.4;
-        Tue, 06 Nov 2018 14:07:55 -0800 (PST)
+        Wed, 7 Nov 2018 02:35:21 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j4-v6so12920501ljc.12;
+        Tue, 06 Nov 2018 14:07:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0oCYK7L5NJFwm1Z3WalSGQRB9n5Xjvb00dQG1zHWUao=;
-        b=t2DiCyxyMEELY7uYy7oTSD661bD542h53+usdkVvD9sRGLWZ44eb8bbQWxnyZoZZ56
-         V6hArNkPxgmrpzA+XGjGODZbvSxw0FDDUf1W8p7Ik/4wXaFThMMpLDcEnzsvBnokJHwQ
-         PY/jCRFMlHHv+sXxOG9RPlDlsYbXD4Thb7nxU9mqWwH4xpWR3dcGhPbw6gUB5v8c/Yai
-         oFWXHjz21U2OaM5CduVahCI5sFpzmiyZK5qi0NE4C7nZxMTwra72iuVtWtATJAZX4BP8
-         hsHV5gyQNhzM9bImvh9xLN93t2nSNI7m2721HiFI1FKOPqU8J2YBiVaiDU+LGuWAf0zI
-         5kIg==
+        bh=npoevFiPZ0Bu+vUBGGj/WOqwaFjOnNE9lPJR+Z36vME=;
+        b=poQHL6m6LDuoz+XyiOwcBfQn7QdgRSjvF2srG0UAtfL62kOg07p656iSqiNlWXot5h
+         fFxuW9EnO2uahlgr8p/oewCVcJ0KBu4fON8IW+AEZnGFjVuL+7cDY8vj7XQ0z2VYxmFL
+         mHw3WG0ayHTrZaBi0i1Y/o4DLODVDS6BMMjJ6EV8ReAeFHmRDxO61G+p1RKNglTBU32V
+         RuignncwXRINPBLalqPJ6u8Ci2h5jhf/OpNRVPIdX7iwscl40bAkv1lpkdPFY9OM0nz6
+         R3/SiKfwOw9gZ5Nhw3cc4YG/SiDs5R2I9jgIxidVY59wK8U7WU+zsemxY+sLl1cBdUOH
+         RD5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0oCYK7L5NJFwm1Z3WalSGQRB9n5Xjvb00dQG1zHWUao=;
-        b=taY7u7zMX8QNqtz1vlPGLIgGnbCP3hMoWgq+bMkrs5oApQEW7ZFtQUt4JFOG47p7He
-         651dibvx/Wcb4gH+k3DXCzIAkLSNbQPkalRbHVvw/gAy38IS8lHT+pB4pBuO3B58UPgM
-         AC61gRYDm+ggPy4jZs4ATZwBMCmeuJ9vNQXbXUGgVozutcaje5Tk+x+JR/uw61gKJb0n
-         WhZqBuihMvWD0yi2aeNBqQ1s4oGws/4R6afLUIvjXElfSFczTo6OsBEUYA/agFKU+t7y
-         9Dqiq+PYGGCzIGhj8vDHCRjhuqdWnmrlEPCfYPL/E4fYrPjVN1Acxv8b8k5INb6dn0A4
-         xjUA==
-X-Gm-Message-State: AGRZ1gLjUaAcCNkYtRFQcqZuJOG1mi6OiGrytth2NwhJpFImhULg0zts
-        bTECB5sVazL6Z/i29YXCedinMQ0h
-X-Google-Smtp-Source: AJdET5fqj1XZ2nh65gmxUchy91cNGNgrTrkCTtS9GiPHRxqzvtqMbiX6bhvU3/F/sjWnuRWhi0UFyg==
-X-Received: by 2002:a2e:9dd0:: with SMTP id x16-v6mr9415924ljj.164.1541542073899;
-        Tue, 06 Nov 2018 14:07:53 -0800 (PST)
+        bh=npoevFiPZ0Bu+vUBGGj/WOqwaFjOnNE9lPJR+Z36vME=;
+        b=K4Q8Zyz77qZ5W0jfscKI2mr8WSX7vTebU1AxT7DkeZUdxXvLCR9BNtPzl30CN55rmv
+         iWlTeAsmHXlWQ7KKTYqC4DFsLCs0wzxkd1WEXnxKLF/cpNKnv4J4MtgzCK5jN8ng5eEv
+         PpTzDePmc2e/Kw9hmiHeOz3VRsOoky4o5kfvBO5HkGgC59V8sn/tUBKApqlsBBaGl2Ua
+         5PoSl0EKuXxv5k8oguwplB6rJWAxUQlM0/GtudS32OjK1fEf9cwCZ+YfMEFcdOcdhTFR
+         mW6G2HPP0N+DQXEI8Dx3ovH4074vCrgXqNSLjQ+oqrHO+vW4fluOvCdHphSEJL28ZHkP
+         OBSw==
+X-Gm-Message-State: AGRZ1gJtDSG2TzmokQTIZiKcGvu9NZByp1AUk79q058ihVaSqPMhTnLh
+        Rhmaom6I+uzC2If7gvcIbND1QvKp
+X-Google-Smtp-Source: AJdET5douq5GzKYSOqcALbZO37ACTnMTXnebMEQvwXs7HL5a2nAD2lfkhQTAD76LATCANFLTySQQqg==
+X-Received: by 2002:a2e:9e53:: with SMTP id g19-v6mr4719347ljk.39.1541542077306;
+        Tue, 06 Nov 2018 14:07:57 -0800 (PST)
 Received: from i4790k.home (bgp86.neoplus.adsl.tpnet.pl. [83.28.79.86])
-        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.07.52
+        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.07.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 14:07:53 -0800 (PST)
+        Tue, 06 Nov 2018 14:07:56 -0800 (PST)
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 To:     linux-leds@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 05/24] dt-bindings: sc27xx-blt: Add function and color properties
-Date:   Tue,  6 Nov 2018 23:07:13 +0100
-Message-Id: <1541542052-10081-6-git-send-email-jacek.anaszewski@gmail.com>
+        Daniel Mack <daniel@zonque.org>
+Subject: [PATCH 07/24] dt-bindings: lt3593: Add function and color properties
+Date:   Tue,  6 Nov 2018 23:07:15 +0100
+Message-Id: <1541542052-10081-8-git-send-email-jacek.anaszewski@gmail.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -79,46 +79,43 @@ Refer to new "function" and "color" properties and mark "label"
 as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>
+Cc: Daniel Mack <daniel@zonque.org>
 ---
- Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lt3593.txt | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
-index dddf84f..5177479 100644
---- a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
-@@ -14,7 +14,9 @@ Required child properties:
- - reg: Port this LED is connected to.
+diff --git a/Documentation/devicetree/bindings/leds/leds-lt3593.txt b/Documentation/devicetree/bindings/leds/leds-lt3593.txt
+index 6b2cabc..1d87c73 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lt3593.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lt3593.txt
+@@ -9,8 +9,10 @@ The hardware supports only one LED. The properties of this LED are
+ configured in a sub-node in the device node.
  
- Optional child properties:
--- label: See Documentation/devicetree/bindings/leds/common.txt.
-+- function: See Documentation/devicetree/bindings/leds/common.txt.
-+- color: See Documentation/devicetree/bindings/leds/common.txt.
-+- label: See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+ Optional sub-node properties:
+-- label:	A label for the LED. If none is given, the LED will be
+-		named "lt3595::".
++- function:		See Documentation/devicetree/bindings/leds/common.txt
++- color:		See Documentation/devicetree/bindings/leds/common.txt
++- label:		A label for the LED. If none is given, the LED will be
++			named "lt3595::" (deprecated)
+ - linux,default-trigger: The default trigger for the LED.
+ 			See Documentation/devicetree/bindings/leds/common.txt
+ - default-state:	The initial state of the LED.
+@@ -21,12 +23,15 @@ be handled by its own device node.
  
- Examples:
+ Example:
  
-@@ -25,17 +27,17 @@ led-controller@200 {
- 	reg = <0x200>;
++#include <dt-bindings/leds/functions.h>
++
+ led-controller {
+ 	compatible = "lltc,lt3593";
+ 	lltc,ctrl-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
  
- 	led@0 {
--		label = "red";
-+		color = "red";
- 		reg = <0x0>;
- 	};
- 
- 	led@1 {
--		label = "green";
-+		color = "green";
- 		reg = <0x1>;
- 	};
- 
- 	led@2 {
--		label = "blue";
-+		color = "blue";
- 		reg = <0x2>;
+ 	led {
+-		label = "white:backlight";
++		function = LED_FUNCTION_BACKLIGHT;
++		color = "white";
+ 		default-state = "on";
  	};
  };
 -- 
