@@ -2,152 +2,122 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DB2C46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1399C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA0552085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:34:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0552085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 761382086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:35:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNdAIDjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761382086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbeKGCAV (ORCPT
+        id S2389311AbeKGCBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:00:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:36720 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387685AbeKGCAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:00:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 727B1A78;
-        Tue,  6 Nov 2018 08:34:20 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB18F3F5CF;
-        Tue,  6 Nov 2018 08:34:17 -0800 (PST)
-Date:   Tue, 6 Nov 2018 16:34:08 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Thomas Tai <thomas.tai@oracle.com>, poza@codeaurora.org,
-        Lukas Wunner <lukas@wunner.de>, Christoph Hellwig <hch@lst.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/12] error handling and pciehp maintenance
-Message-ID: <20181106163400.GA21193@e107981-ln.cambridge.arm.com>
-References: <20180918235848.26694-1-keith.busch@intel.com>
- <20181004214015.GK120535@bhelgaas-glaptop.roam.corp.google.com>
- <20181004221137.GB21834@localhost.localdomain>
- <20181005173145.GL120535@bhelgaas-glaptop.roam.corp.google.com>
- <20181008161847.GA30971@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181008161847.GA30971@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 6 Nov 2018 21:01:11 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45350 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387685AbeKGCBL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 21:01:11 -0500
+Received: by mail-pl1-f194.google.com with SMTP id o19-v6so6438824pll.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 08:35:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DdzvoSy2h2u5B6dtluZVRVLXIvWmyO3wmCU9GEAMkSM=;
+        b=gNdAIDjUgEk0J/V+ZzUawg2xno7kGvH2+uL520CKi2f+CTfbgdC0TEroPk3naDdk2/
+         GF1uF/hGvZxMv5ARQuLF0YN4UJF0US+ipfg5Qr+9PmBUCmX4VfhqfcmPLbizNiWQUX+X
+         CC22ULHw5tuf+YlPYlf44/+94Ne2jIWwh3RFJ/vIDOsPBEDpBMhEwkPJ4lq/3pkryLXp
+         voKm0+GZ6ZZIF8NgrZLnFgDdFoCCRAD3ymMsIr3c/Fm4oB0AwOdGs2k193WKQomrId/O
+         rgFVC47mon0swj/yf5byAKIVYwyEIh5itShfbeei9b+xGnwL8wlzA+uwqRQVYqhYo+kt
+         S+bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DdzvoSy2h2u5B6dtluZVRVLXIvWmyO3wmCU9GEAMkSM=;
+        b=Rboo8RaV42P1UKz3FkplpmfAVnuqkaF/WF6t5ghogWK5JcCrRqpDRizY33FKXl2xgE
+         vfhmRfkLb+1xJhzB0v+O+8ugh03OFcgWUJwYw5KPkdHSmf2bCQMg+V2pgfLDL3fuxmfx
+         IbLpwzYNgaSZeYOjicUgyTMOtJRNSDUrkNT1ZTc6uxwOzf+STNGbiju1wrh7Y6ArSFfk
+         vADzIETpZTgwzWZnQgZMjkcofjv2BbKLHA71Ssk7LNFKWEBRY47wbMucI8tpaS+4J2IW
+         s+F4z5qn4asK6azr1NCm9BjNkiUnNtFWCeZNWOsZAM6eytkkOKmxJF4Avf0tNp4nhQtR
+         J9hg==
+X-Gm-Message-State: AGRZ1gIRu8TPmpvsIrl+B4H8FLlfnhwsZuXz57tv5cmUA2XAktWlBIyD
+        m/+nntcJCmSVIM6UZ0XfCdU=
+X-Google-Smtp-Source: AJdET5di4dERSI9lLmnFBH8liblMeJocemM2khJbrL6GAMu8EPgjrGUPl7dqryfbKKsyuE/figNeUA==
+X-Received: by 2002:a17:902:b943:: with SMTP id h3-v6mr25557646pls.124.1541522110933;
+        Tue, 06 Nov 2018 08:35:10 -0800 (PST)
+Received: from ubuntu.localdomain ([104.238.150.158])
+        by smtp.gmail.com with ESMTPSA id t77-v6sm39005730pfj.79.2018.11.06.08.35.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 06 Nov 2018 08:35:10 -0800 (PST)
+From:   Kaitao Cheng <pilgrimtao@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org, smuchun@gmail.com,
+        pilgrimtao@163.com, Kaitao cheng <pilgrimtao@gmail.com>
+Subject: [PATCH] driver core: Replace simple_strto{l,ul} by kstrtou{l,ul}
+Date:   Tue,  6 Nov 2018 08:34:54 -0800
+Message-Id: <1541522094-5113-1-git-send-email-pilgrimtao@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 08, 2018 at 10:18:47AM -0600, Keith Busch wrote:
-> On Fri, Oct 05, 2018 at 12:31:45PM -0500, Bjorn Helgaas wrote:
-> > [+cc arm64 folks, LKML: This conversation is about this patch:
-> > 
-> >   https://lore.kernel.org/linux-pci/20180918235848.26694-3-keith.busch@intel.com
-> > 
-> > which fixes some PCIe AER error injection bugs, but also makes the error
-> > injector dependent on DYNAMIC_FTRACE_WITH_REGS, which not all arches
-> > support.  Note that this question is only about the error *injection*
-> > module used for testing.  It doesn't affect AER support itself.]
-> > 
-> > On Thu, Oct 04, 2018 at 04:11:37PM -0600, Keith Busch wrote:
-> > > On Thu, Oct 04, 2018 at 04:40:15PM -0500, Bjorn Helgaas wrote:
-> > > > On Tue, Sep 18, 2018 at 05:58:36PM -0600, Keith Busch wrote:
-> > > > > I ran into a lot of trouble testing error handling, and this series is
-> > > > > just trying to simplify some things. The first 4 fix up aer_inject, and
-> > > > > the rest are cleanup to make better use of kernel APIs.
-> > > > > 
-> > > > > Keith Busch (12):
-> > > > >   PCI: Set PCI bus accessors to noinline
-> > > > >   PCI/AER: Covertly inject errors
-> > > > >   PCI/AER: Reuse existing service device lookup
-> > > > >   PCI/AER: Abstract AER interrupt handling
-> > > > >   PCI/AER: Remove dead code
-> > > > >   PCI/AER: Remove error source from aer struct
-> > > > >   PCI/AER: Use kfifo for tracking events
-> > > > >   PCI/AER: Use kfifo helper inserting locked elements
-> > > > >   PCI/AER: Don't read upstream ports below fatal errors
-> > > > >   PCI/AER: Use threaded IRQ for bottom half
-> > > > >   PCI/AER: Use managed resource allocations
-> > > > >   PCI/pciehp: Use device managed allocations
-> > > > > 
-> > > > >  drivers/pci/access.c              |   4 +-
-> > > > >  drivers/pci/hotplug/pciehp_core.c |  14 +-
-> > > > >  drivers/pci/hotplug/pciehp_hpc.c  |  48 ++----
-> > > > >  drivers/pci/pcie/Kconfig          |   2 +-
-> > > > >  drivers/pci/pcie/aer.c            | 219 ++++++---------------------
-> > > > >  drivers/pci/pcie/aer_inject.c     | 306 ++++++++++++++++++++------------------
-> > > > >  drivers/pci/pcie/portdrv.h        |   4 -
-> > > > >  drivers/pci/pcie/portdrv_core.c   |   1 +
-> > > > >  8 files changed, 227 insertions(+), 371 deletions(-)
-> > > > 
-> > > > Thanks a lot for doing this!  I applied these to pci/hotplug for
-> > > > v4.20, except for "PCI/AER: Don't read upstream ports below fatal
-> > > > errors", which seems to be already there via another posting, and
-> > > > "PCI/pciehp: Use device managed allocations", which needs a few
-> > > > tweaks.
-> > > 
-> > > Sounds good, and thanks for applying!
-> > > 
-> > > In case this went unnoticed, patch 2's aer_inject using ftrace hooks
-> > > to pci config accessors is really cool and fixes several kernel crashes
-> > > I encountered, but it may not work on every architecture. I'm not sure
-> > > how widely aer_inject is used, so maybe there are no concerns with the
-> > > DYNAMIC_FTRACE_WITH_REGS dependency, but I just want to reemphasize that
-> > > dependency in case there are valid objections.
-> > 
-> > Oh, indeed, I hadn't noticed this arch dependency.  AFAICT, the new
-> > DYNAMIC_FTRACE_WITH_REGS dependency means aer_inject will work only
-> > on these arches:
-> > 
-> >   arm		# if (!XIP_KERNEL) && !CPU_ENDIAN_BE32 && MMU
-> >   powerpc	# if PPC64 && CPU_LITTLE_ENDIAN
-> >   riscv		# ARCH_RV64I only
-> >   s390
-> >   x86
-> > 
-> > Notably missing is arm64, which has DYNAMIC_FTRACE but not
-> > DYNAMIC_FTRACE_WITH_REGS.
-> > 
-> > Bjorn
-> 
-> Looks like the kbuild bot found an ARM kernel config that has
-> DYNAMIC_FTRACE_WITH_REGS set, and then the module can't compile
-> there. I'll need to update this patch regardless, and I think the right
-> thing to do is maintain the "old" way with conditional compiling for
-> any arch specific features.
+From: Kaitao cheng <pilgrimtao@gmail.com>
 
-The question is whether we really need to dynamically patch the kernel
-with ftrace to achieve what that patch does.
+The simple_strto{l,ul} are deprecated, use kstrtou{l,ul} instead.
 
-Furthermore, it would also be good to report what bugs we are actually
-fixing, from what you are writing falling back to the current method if
-!DYNAMIC_FTRACE_WITH_REGS is broken in many ways and I would start with
-fixing the current behaviour with something that does not depend on arch
-features that may not even be implemented.
+Signed-off-by: Kaitao cheng <pilgrimtao@gmail.com>
+---
+ drivers/base/core.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-Anyway - please CC me in in the follow up series, I am happy to help you
-test it.
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 04bbcd7..ed145fb 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -794,10 +794,12 @@ ssize_t device_store_ulong(struct device *dev,
+ 			   const char *buf, size_t size)
+ {
+ 	struct dev_ext_attribute *ea = to_ext_attr(attr);
+-	char *end;
+-	unsigned long new = simple_strtoul(buf, &end, 0);
+-	if (end == buf)
+-		return -EINVAL;
++	int ret;
++	unsigned long new;
++
++	ret = kstrtoul(buf, 0, &new);
++	if (ret)
++		return ret;
+ 	*(unsigned long *)(ea->var) = new;
+ 	/* Always return full write size even if we didn't consume all */
+ 	return size;
+@@ -818,9 +820,14 @@ ssize_t device_store_int(struct device *dev,
+ 			 const char *buf, size_t size)
+ {
+ 	struct dev_ext_attribute *ea = to_ext_attr(attr);
+-	char *end;
+-	long new = simple_strtol(buf, &end, 0);
+-	if (end == buf || new > INT_MAX || new < INT_MIN)
++	int ret;
++	long new;
++
++	ret = kstrtol(buf, 0, &new);
++	if (ret)
++		return ret;
++
++	if (new > INT_MAX || new < INT_MIN)
+ 		return -EINVAL;
+ 	*(int *)(ea->var) = new;
+ 	/* Always return full write size even if we didn't consume all */
+-- 
+2.7.4
 
-Thanks,
-Lorenzo
