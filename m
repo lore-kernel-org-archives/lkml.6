@@ -2,184 +2,222 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E12AC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F38CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B3D20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:31:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B3D20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 3EE7120862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:32:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE7120862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbeKFSzv (ORCPT
+        id S1730451AbeKFS41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:55:51 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:50769 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729272AbeKFSzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:55:51 -0500
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6DDD41C0008;
-        Tue,  6 Nov 2018 09:31:27 +0000 (UTC)
-Date:   Tue, 6 Nov 2018 10:31:21 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
-Message-ID: <20181106093121.GA24024@w540>
-References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
- <20181106090756.GP20885@w540>
- <CAMuHMdWbrA1hgh3kw+fvL0x3ciNKHV52uhDX0FNJzU_Grb_+qQ@mail.gmail.com>
+        Tue, 6 Nov 2018 13:56:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42244 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729272AbeKFS40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:56:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 00573B125;
+        Tue,  6 Nov 2018 09:32:00 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] mm/page_alloc: use a single function to free page
+To:     Aaron Lu <aaron.lu@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Yoel Caspersen <yoel@kviknet.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+References: <20181105085820.6341-1-aaron.lu@intel.com>
+ <20181105085820.6341-2-aaron.lu@intel.com> <20181106053037.GD6203@intel.com>
+ <d6b4890c-0def-6114-2dcf-3ed120dea82c@suse.cz>
+ <20181106084746.GA24198@intel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSFWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmNvbT7CwZcEEwEKAEECGwMFCwkIBwMFFQoJCAsFFgIDAQAC
+ HgECF4ACGQEWIQSpQNQ0mSwujpkQPVAiT6fnzIKmZAUCWi/zTwUJBbOLuQAKCRAiT6fnzIKm
+ ZIpED/4jRN/6LKZZIT4R2xoou0nJkBGVA3nfb+mUMgi3uwn/zC+o6jjc3ShmP0LQ0cdeuSt/
+ t2ytstnuARTFVqZT4/IYzZgBsLM8ODFY5vGfPw00tsZMIfFuVPQX3xs0XgLEHw7/1ZCVyJVr
+ mTzYmV3JruwhMdUvIzwoZ/LXjPiEx1MRdUQYHAWwUfsl8lUZeu2QShL3KubR1eH6lUWN2M7t
+ VcokLsnGg4LTajZzZfq2NqCKEQMY3JkAmOu/ooPTrfHCJYMF/5dpi8YF1CkQF/PVbnYbPUuh
+ dRM0m3NzPtn5DdyfFltJ7fobGR039+zoCo6dFF9fPltwcyLlt1gaItfX5yNbOjX3aJSHY2Vc
+ A5T+XAVC2sCwj0lHvgGDz/dTsMM9Ob/6rRJANlJPRWGYk3WVWnbgW8UejCWtn1FkiY/L/4qJ
+ UsqkId8NkkVdVAenCcHQmOGjRQYTpe6Cf4aQ4HGNDeWEm3H8Uq9vmHhXXcPLkxBLRbGDSHyq
+ vUBVaK+dAwAsXn/5PlGxw1cWtur1ep7RDgG3vVQDhIOpAXAg6HULjcbWpBEFaoH720oyGmO5
+ kV+yHciYO3nPzz/CZJzP5Ki7Q1zqBb/U6gib2at5Ycvews+vTueYO+rOb9sfD8BFTK386LUK
+ uce7E38owtgo/V2GV4LMWqVOy1xtCB6OAUfnGDU2EM7ATQRbGTU1AQgAn0H6UrFiWcovkh6E
+ XVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQLa1PQDUi6j00ChlcR66g9/V0sPIcSutacPKf
+ dKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMhFmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCT
+ sTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sfbAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZO
+ rIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq+aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahK
+ tQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4njQARAQABwsF8BBgBCgAmFiEEqUDUNJksLo6Z
+ ED1QIk+n58yCpmQFAlsZNTUCGwwFCQPCZwAACgkQIk+n58yCpmQ83g/9Frg1sRMdGPn98zV+
+ O2eC3h0p5f/oxxQ8MhG5znwHoW4JDG2TuxfcQuz7X7Dd5JWscjlw4VFJ2DD+IrDAGLHwPhCr
+ RyfKalnrbYokvbClM9EuU1oUuh7k+Sg5ECNXEsamW9AiWGCaKWNDdHre3Lf4xl+RJWxghOVW
+ RiUdpLA/a3yDvJNVr6rxkDHQ1P24ZZz/VKDyP+6g8aty2aWEU0YFNjI+rqYZb2OppDx6fdma
+ YnLDcIfDFnkVlDmpznnGCyEqLLyMS3GH52AH13zMT9L9QYgT303+r6QQpKBIxAwn8Jg8dAlV
+ OLhgeHXKr+pOQdFf6iu2sXlUR4MkO/5KWM1K0jFR2ug8Pb3aKOhowVMBT64G0TXhQ/kX4tZ2
+ ZF0QZLUCHU3Cigvbu4AWWVMNDEOGD/4sn9OoHxm6J04jLUHFUpFKDcjab4NRNWoHLsuLGjve
+ Gdbr2RKO2oJ5qZj81K7os0/5vTAA4qHDP2EETAQcunTn6aPlkUnJ8aw6I1Rwyg7/XsU7gQHF
+ IM/cUMuWWm7OUUPtJeR8loxZiZciU7SMvN1/B9ycPMFs/A6EEzyG+2zKryWry8k7G/pcPrFx
+ O2PkDPy3YmN1RfpIX2HEmnCEFTTCsKgYORangFu/qOcXvM83N+2viXxG4mjLAMiIml1o2lKV
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <30aa9d1f-d619-c143-3de6-6876029538bc@suse.cz>
+Date:   Tue, 6 Nov 2018 10:32:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWbrA1hgh3kw+fvL0x3ciNKHV52uhDX0FNJzU_Grb_+qQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181106084746.GA24198@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/6/18 9:47 AM, Aaron Lu wrote:
+> On Tue, Nov 06, 2018 at 09:16:20AM +0100, Vlastimil Babka wrote:
+>> On 11/6/18 6:30 AM, Aaron Lu wrote:
+>>> We have multiple places of freeing a page, most of them doing similar
+>>> things and a common function can be used to reduce code duplicate.
+>>>
+>>> It also avoids bug fixed in one function but left in another.
+>>>
+>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>>
+>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Thanks.
+> 
+>> I assume there's no arch that would run page_ref_sub_and_test(1) slower
+>> than put_page_testzero(), for the critical __free_pages() case?
+> 
+> Good question.
+> 
+> I followed the non-arch specific calls and found that:
+> page_ref_sub_and_test() ends up calling atomic_sub_return(i, v) while
+> put_page_testzero() ends up calling atomic_sub_return(1, v). So they
+> should be same for archs that do not have their own implementations.
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+x86 seems to distinguish between DECL and SUBL, see
+arch/x86/include/asm/atomic.h although I could not figure out where does
+e.g. arch_atomic_dec_and_test become atomic_dec_and_test to override the
+generic implementation.
+I don't know if the CPU e.g. executes DECL faster, but objectively it
+has one parameter less. Maybe it doesn't matter?
 
-Hi Geert,
+> Back to your question: I don't know either.
+> If this is deemed unsafe, we can probably keep the ref modify part in
+> their original functions and only take the free part into a common
+> function.
 
-On Tue, Nov 06, 2018 at 10:24:30AM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Tue, Nov 6, 2018 at 10:08 AM jacopo mondi <jacopo@jmondi.org> wrote:
-> > On Mon, Nov 05, 2018 at 06:19:22PM +0100, Geert Uytterhoeven wrote:
-> > > On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > > >    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
-> > > >
-> > > > On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
-> > > > could appear on different sets of pins, usually the 'a' and 'b' one.
-> > > >
-> > > > With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
-> > > >
-> > > > VIN_DATA_PIN_GROUP(vin4_data_a, 8)
-> > > >
-> > > > which results in the group being named as "vin4_data_a_8" which is
-> > > > un-consistent with the canonical group names (eg. "vin4_data8_a").
-> > > >
-> > > > This series adds a macro that allows to specify the group 'version' along with
-> > > > the pin and mux numbers in patch [1/1]. I haven't been able to find a better
-> > > > term than 'version' as 'group' was already taken. Suggestions welcome.
-> > >
-> > > Yeah, the datasheet also calls these groups :-(
-> > > A possible alternative is to use "variant"?
-> > >
-> > > Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
-> > > macro varargs, and passing the "variant" as the (optional) third parameter?
-> > > That way existing users work as a before, while you can also write e.g.
-> > >
-> > >     VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
-> >
-> > Indeed.
-> >
-> > Would something along the following lines fly for you?
-> >
-> > #define VIN_DATA_PIN_GROUP(n, s, ...)                                   \
-> >         {                                                               \
-> >                 .name = #n#s#__VA_ARGS__,                               \
-> >                 .pins = n##__VA_ARGS__##_pins.data##s,                  \
-> >                 .mux = n##__VA_ARGS__##_mux.data##s,                    \
-> >                 .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
-> >         }
-> >
-> > It can be used as:
-> > VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
-> > VIN_DATA_PIN_GROUP(vin5_data, 8),
-> >
-> > With your ack on this, I'll send v2.
->
-> Thank you, that is exactly what I had in mind.
->
-> > > > As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
-> > > > wired, I made sure the macro creates correct names and fields not only by
-> > > > compile testing it, but with a small C program [1] that replicates the VIN data
-> > > > layout defined in the PFC module and access fields (and has helped me testing
-> > > > more easily the preprocessor stringification/concatenation process).
-> > > >
-> > > > Final note: Simon, you took the E3 patches in your tree, and I expect them to
-> > > > land on v4.20-rc1. They use the old macros, are follow up patches ok?)
-> > >
-> > > Which patches are using these macro names, and are in v4.20-rc1?
-> > >
-> > > BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
-> > > have broken groups names on r8a7792, r8a7795, and r8a7796.
-> > > Fortunately we have no known users of them, so they can be fixed.
-> > >
-> >
-> > On v4.20-rc1 the grep returns none for me :/
-> > git grep v4.20-rc1 "vin._data_[a-z][0-9]" drivers/pinctrl/sh-pfc/
->
-> I grepped the .o files, to make sure it would see the final strings, which
-> obviously works in the build tree only ;-)
+I guess you could also employ  if (__builtin_constant_p(nr)) in
+free_the_page(), but the result will be ugly I guess, and maybe not
+worth it :)
 
-Ah yes, stupid me.
+> Regards,
+> Aaron
+> 
+>>> ---
+>>> v2: move comments close to code as suggested by Dave.
+>>>
+>>>  mm/page_alloc.c | 36 ++++++++++++++++--------------------
+>>>  1 file changed, 16 insertions(+), 20 deletions(-)
+>>>
+>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>> index 91a9a6af41a2..4faf6b7bf225 100644
+>>> --- a/mm/page_alloc.c
+>>> +++ b/mm/page_alloc.c
+>>> @@ -4425,9 +4425,17 @@ unsigned long get_zeroed_page(gfp_t gfp_mask)
+>>>  }
+>>>  EXPORT_SYMBOL(get_zeroed_page);
+>>>  
+>>> -void __free_pages(struct page *page, unsigned int order)
+>>> +static inline void free_the_page(struct page *page, unsigned int order, int nr)
+>>>  {
+>>> -	if (put_page_testzero(page)) {
+>>> +	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
+>>> +
+>>> +	/*
+>>> +	 * Free a page by reducing its ref count by @nr.
+>>> +	 * If its refcount reaches 0, then according to its order:
+>>> +	 * order0: send to PCP;
+>>> +	 * high order: directly send to Buddy.
+>>> +	 */
+>>> +	if (page_ref_sub_and_test(page, nr)) {
+>>>  		if (order == 0)
+>>>  			free_unref_page(page);
+>>>  		else
+>>> @@ -4435,6 +4443,10 @@ void __free_pages(struct page *page, unsigned int order)
+>>>  	}
+>>>  }
+>>>  
+>>> +void __free_pages(struct page *page, unsigned int order)
+>>> +{
+>>> +	free_the_page(page, order, 1);
+>>> +}
+>>>  EXPORT_SYMBOL(__free_pages);
+>>>  
+>>>  void free_pages(unsigned long addr, unsigned int order)
+>>> @@ -4481,16 +4493,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+>>>  
+>>>  void __page_frag_cache_drain(struct page *page, unsigned int count)
+>>>  {
+>>> -	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
+>>> -
+>>> -	if (page_ref_sub_and_test(page, count)) {
+>>> -		unsigned int order = compound_order(page);
+>>> -
+>>> -		if (order == 0)
+>>> -			free_unref_page(page);
+>>> -		else
+>>> -			__free_pages_ok(page, order);
+>>> -	}
+>>> +	free_the_page(page, compound_order(page), count);
+>>>  }
+>>>  EXPORT_SYMBOL(__page_frag_cache_drain);
+>>>  
+>>> @@ -4555,14 +4558,7 @@ void page_frag_free(void *addr)
+>>>  {
+>>>  	struct page *page = virt_to_head_page(addr);
+>>>  
+>>> -	if (unlikely(put_page_testzero(page))) {
+>>> -		unsigned int order = compound_order(page);
+>>> -
+>>> -		if (order == 0)
+>>> -			free_unref_page(page);
+>>> -		else
+>>> -			__free_pages_ok(page, order);
+>>> -	}
+>>> +	free_the_page(page, compound_order(page), 1);
+>>>  }
+>>>  EXPORT_SYMBOL(page_frag_free);
+>>>  
+>>>
+>>
 
->
-> For the source tree, please try:
->
->     git grep -w VIN_DATA_PIN_GROUP.*_[a-z] v4.20-rc1
-
-Argh, there are quite a few of them, but fortunately no users so far.
-
-Is it ok fixing them in v2 of this series with follow-up patches, or
-would you like a single patch that introduces the variadic macro and
-replaces all the occurrences in the per-SoC PFC modules in one go?
-
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb4V9pAAoJEHI0Bo8WoVY8BmIP/3px3dVMrdv/TYIeGwJTQvh5
-sKUbiJzWVwhaRgZ1aunDpqHi7cUCPjOV17YswbrcLDZJkew8Ilyri284sbOd/JSq
-v5ejpa0Cl7fFnfxEisDNyNKV9+D4bySupaZhtyCXbiJrH2zeOdiIoyD8I3V13Evu
-nOGQilirFoPO7VtGq2/kmm+vpS+rIamYCM7AE6V7p/0fT1li3zP0uHKJFGDK21C+
-ut4T0bJVGvmAIAwvMlTZ1imCphPCOuAFAIQCDfbj1JxMvtCMwOtp/yMDqSvDfIUm
-t/r7RDv7SAcVwGyss13fHovatxOqXiGmZPaB/nzl7ZLxeYdUl25Bl+YN9sHAwIMU
-H9fYthkBL+qi48MDjLOmiUP0j+3lo9/Nw6u+zFjQUAmjLFJIkYlgwaBJLDFvZBzF
-gLZLVAc3JaO0kYKN/AqZbhXitZh6mjTbIXz0ic3Rjr3lZpvsDJ2Rb6kK3Az4zeal
-SP3/JM/ahxac3hlGcB2Irfl68FC5d39HOQdJRRCdBHWvPU3dmy4dLWiGDG9iCzdO
-xddGgv7MPdvhl7xT8x+GQDe6A4NacQZUd63rMmftCKhGQ2iwlxulqodlT0+62KVG
-6kSDug+A91artQHbWYjFqdCEC+U4T0MZ8U/8Nuv8+c7QbzCh3/xAzrL+IG4tLx60
-TWici8Mxg2b7spTyrnVl
-=H2RS
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
