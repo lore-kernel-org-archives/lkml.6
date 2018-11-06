@@ -2,119 +2,144 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51299C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC4DC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157CD20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:09:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1369920869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDfPVVTB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157CD20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FrIGheyq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1369920869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbeKFUea (ORCPT
+        id S1730364AbeKFUh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 15:34:30 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33735 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeKFUea (ORCPT
+        Tue, 6 Nov 2018 15:37:57 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36676 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbeKFUh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:34:30 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so2067762qtp.0;
-        Tue, 06 Nov 2018 03:09:48 -0800 (PST)
+        Tue, 6 Nov 2018 15:37:57 -0500
+Received: by mail-ed1-f65.google.com with SMTP id x2-v6so10155916eds.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 03:13:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8KZc47z7i/urlrVRquuSSOL2R8rnnIO7Cshemc+Qki0=;
-        b=CDfPVVTBW+fEnSC9pS4cK8OmICNx+V6x+CyCdcBzQWvaFcjbpICWh52Y4y8dVe3Zqo
-         wHjPll/tYwUSmaR4C9sjb6ln4YkrjMe0PgoNyaCgVAarxjmi2B3viO03XmXNT1mr2tlN
-         t9kMhLur8dPFkum6FplDIOZIjA71hYF/8zGLLN5vEdunc4OIvp7FcEImNa9eqHCG3vn+
-         XhvOoWjVeU2pDoVd965iEAo+r8ct7UyOi5E7OFwKghbNVHWUbSVCaHQps2dlk9TNwlqo
-         NIXrCLkiMCBqaAyZ8s2IjJZEJCUmvSyy4Pli/wEUzJrwyUDWXIP/gMUkKG9gzD+F6P/a
-         +dHA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wI+hRQrHO6ppi4lNw20EE6k+GMmoTPE9RhuGCgvInyw=;
+        b=FrIGheyqOMf040ZcQZMYzCPbbGQPxo5wOgNpV6A2saoSRjLDMtnOGdvU6RugLE/w7e
+         DV922lHE2eZVpIvGk1EGcyQai7uh5n6kU50yosNnQ4sORI6kF+XWu8jdgzeNhAtqNJ9X
+         OQ3gTGFr54fxyozYtbW+q22fe5YqcgD7k0Lz0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=8KZc47z7i/urlrVRquuSSOL2R8rnnIO7Cshemc+Qki0=;
-        b=GSaUe/3MExRjtr3cq393SelsUVf4DH3Pbd8jZO4G5qohQowYqqbEbheOvii2OmrbKJ
-         QhiuFz6aaUx3Npix4WdVkzm0xAosVbxyBjv2hwoitmR6eLjlzl4FOkjvlGuyVHNvK3+C
-         LdnWpyxxrNVRo0zqRnE3IoyANpaHEkAejGDogzzfHTakGkkhw71liWiMXjXjYX2vvOWr
-         QMAEckOeK0o6ScK0Ryb6/5BvlFwgdqSS0eVCYRK0fVFzCe3cxWm4NyHpXboV9wQvB6Gr
-         MVJxt2z5v67g9MlXxxJ2vgpsO3D2/y6XU20dkcnksV18Krx7xxbSJNuSlC7qr37flHaj
-         w8cg==
-X-Gm-Message-State: AGRZ1gIleN5QAyBxE40Hkn1LMJq1nWmdq1QK3dPG8OtHnsZzGL9iRLby
-        1g9T2GXl2oMr9zXFp/W7F1+Mqi0QuzXZdL6wCds=
-X-Google-Smtp-Source: AJdET5fmRHOfX9hxV8MTYiAJBhp6LvZD+asz1iZ9hAvxRxnWmUdPRyDseuU8UCIcSJ9sqiVuUBEro6McowbMIBT4vyQ=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr198923qtr.319.1541502588190;
- Tue, 06 Nov 2018 03:09:48 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=wI+hRQrHO6ppi4lNw20EE6k+GMmoTPE9RhuGCgvInyw=;
+        b=PFwRhss6QF4ncCmZvkROGRrQFO/mawhv4GaevLmOopHqkvxeuoZYScw481nY1IYDTg
+         4yIGTGZxXmdOySmiCGPE71PXWfc4lLI9sm/WI9I+4iDv4P7Jbcjn1fcpxSzyIoKlaY2p
+         LtqXXKpzAPPLmSdQNgQ3yFt/WXW8jQhzb2zOtJIA4NehsogGqwjPcpBz7ChOdFRofO1A
+         fBFnRoRt85bKPGnqDgFdySRv+3QoD36q0Gq+wRacnoo0iPaF21PFkZvEmtcJV0iiNiCZ
+         1Tro4vvN/GnRgMmJfcd3xc8hy7nO4E0O3d/ifODiWOu/7B5C4b6d8jf4vFYhPOdXqixW
+         +F0A==
+X-Gm-Message-State: AGRZ1gLt++NOFsg5gStGu1FhHUWYF7TDZ2LCssbRGbOzMY8F+lp6XStP
+        c+hPNNVL4ye4ql00BGimb7Z7VQp8ACI=
+X-Google-Smtp-Source: AJdET5d6G9P61X2nLvYe8ose+2BEUmG3pIpMaQKB9kWLnt1UmmHk5UWw/52qnxast0G8lbB8i14sMQ==
+X-Received: by 2002:a50:8fa1:: with SMTP id y30-v6mr2667628edy.131.1541502793379;
+        Tue, 06 Nov 2018 03:13:13 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x28-v6sm777253edx.1.2018.11.06.03.13.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 03:13:12 -0800 (PST)
+Date:   Tue, 6 Nov 2018 12:13:10 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] drm/meson: Add support for Overlay and OSD Plane
+ scaling
+Message-ID: <20181106111310.GP21967@phenom.ffwll.local>
+Mail-Followup-To: Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Tue, 6 Nov 2018 03:09:47 -0800 (PST)
-In-Reply-To: <1541453493-34981-7-git-send-email-alcooperx@gmail.com>
-References: <1541453493-34981-1-git-send-email-alcooperx@gmail.com> <1541453493-34981-7-git-send-email-alcooperx@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 6 Nov 2018 12:09:47 +0100
-X-Google-Sender-Auth: vDmIKsgVfNSZ8JYY9D1g74VslZo
-Message-ID: <CAK8P3a0AoHuaiPsMTqhWm3a4X95NpPTPUHkt9vS9Z2ow8NobhA@mail.gmail.com>
-Subject: Re: [PATCH V3 6/6] usb: host: Add ability to build new Broadcom STB
- USB drivers
-To:     Al Cooper <alcooperx@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jianguo Sun <sunjianguo1@huawei.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18, Al Cooper <alcooperx@gmail.com> wrote:
+On Tue, Nov 06, 2018 at 10:39:59AM +0100, Neil Armstrong wrote:
+> This serie adds support for :
+> - Overlay Plane blended with the primary plane, we can describe as "behind"
+> - Primary Plane up-scaling up to 5x factor to support the OSD plane being
+>   upscaled from 1920x1080 when the display mode is set as 3840x2160.
+> 
+> These patches depends on the "drm/meson: Allow using optional canvas provider"
+> patchset from Maxime Jourdan at [1]
+> 
+> [1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=38355
+> 
+> Neil Armstrong (3):
+>   drm/meson: Support Overlay plane for video rendering
+>   drm/meson: move OSD scaler management into plane atomic update
+>   drm/meson: Add primary plane scaling
 
-> +
-> +config USB_BRCM
-> +	tristate "Broadcom STB USB support"
-> +	depends on ARCH_BRCMSTB
-> +	select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
-> +	select USB_EHCI_BRCM if USB_EHCI_HCD
-> +	select USB_XHCI_BRCM if USB_XHCI_HCD
-> +	select USB_XHCI_PLATFORM if USB_XHCI_HCD
-> +	select BRCM_USB_PHY if USB_OHCI_HCD || USB_EHCI_HCD || USB_XHCI_HCD
-> +	select GENERIC_PHY if BRCM_USB_PHY
-> +	default ARCH_BRCMSTB
+Got bored, read a bit your patch series. Two things I've noticed:
+- We need to drop the crtc_state argument from
+  drm_atomic_helper_check_plane_state(), some drivers (not meson) do
+  really funny stuff with this.
 
-Is there a build time dependency on the PHY layer? If not, I would suggest
-dropping the last two 'select' statements. I would also suggest
-making the dependency 'depends on ARCH_BRCMSTB || COMPILE_TEST'
-to allow building it on other architecture for better build testing, and
-dropping the 'default' line. Just add this to the defconfig like the other
-drivers you have.
+- I think your osd1_commit = true update is racy with the interrupt
+  handler checking it. Needs at least a few memory barriers. Since helpers
+  guarantee that you can't overtake a preceending update (you do the
+  vblank handling after the updating) that should be ok, except you arm
+  the vblank before setting up registers, so this might race too.
 
-      Arnd
+Anyway all unrelated, so feel free to smash an
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+on the entire series.
+
+Cheers, Daniel
+
+> 
+>  drivers/gpu/drm/meson/Makefile          |   2 +-
+>  drivers/gpu/drm/meson/meson_canvas.c    |   7 +-
+>  drivers/gpu/drm/meson/meson_canvas.h    |  11 +-
+>  drivers/gpu/drm/meson/meson_crtc.c      | 251 +++++++++++++-
+>  drivers/gpu/drm/meson/meson_drv.c       |  29 +-
+>  drivers/gpu/drm/meson/meson_drv.h       |  62 ++++
+>  drivers/gpu/drm/meson/meson_overlay.c   | 586 ++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/meson/meson_overlay.h   |  14 +
+>  drivers/gpu/drm/meson/meson_plane.c     | 177 ++++++++--
+>  drivers/gpu/drm/meson/meson_registers.h |   3 +
+>  drivers/gpu/drm/meson/meson_viu.c       |  15 +
+>  drivers/gpu/drm/meson/meson_vpp.c       |  90 +++--
+>  12 files changed, 1156 insertions(+), 91 deletions(-)
+>  create mode 100644 drivers/gpu/drm/meson/meson_overlay.c
+>  create mode 100644 drivers/gpu/drm/meson/meson_overlay.h
+> 
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
