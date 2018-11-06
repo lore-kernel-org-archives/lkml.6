@@ -2,128 +2,191 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E776DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17C5C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A07132083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:56:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWp0Y/Yi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A07132083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 866FF20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:58:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866FF20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388783AbeKGGXM (ORCPT
+        id S1730830AbeKGGZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:23:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388208AbeKGGXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:23:12 -0500
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D802A2083D;
-        Tue,  6 Nov 2018 20:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541537766;
-        bh=aL+CTRK4kbTb1vjOMTK4/s7gQmcIosOQr5Iz1wfEd30=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JWp0Y/Yia5yjpTl1lK207lMI2+6fBJhcixhEVRBmCj0SX0kI8bqu3f2V99FRjWcWf
-         Ck8igVihuGyv8Nxlc/zOrFOP+78P6BwDtSqFJEBRW4hDTH8X8LQjJt/w2gSKRYs7Zs
-         mwfGATcrLFAQCxO05KFz7HW310lqvJiwknxw0cNE=
-Received: by mail-qk1-f178.google.com with SMTP id 189so19325946qkj.8;
-        Tue, 06 Nov 2018 12:56:05 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLVJPUtaQNy64jgef9LopYN1NnJBfJiLXLsDevhIzR5NZPPRkDd
-        7PGPoBIyToficW1JXdLuUzOvE2thfCM0DEMy9Q==
-X-Google-Smtp-Source: AJdET5eBrOqMPVIp+eXzvmwFvYiFHRu9pOaiiSci7GPQMHn0EnROG5lPkEPbwoXtbrW+AmY9SFltgOAB5OElCXU81uE=
-X-Received: by 2002:ae9:ef14:: with SMTP id d20mr26655502qkg.147.1541537765086;
- Tue, 06 Nov 2018 12:56:05 -0800 (PST)
+        Wed, 7 Nov 2018 01:25:13 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38685 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbeKGGZN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:25:13 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6KvrVN954061
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 6 Nov 2018 12:57:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6Kvr1c954058;
+        Tue, 6 Nov 2018 12:57:53 -0800
+Date:   Tue, 6 Nov 2018 12:57:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Daniel Vacek <tipbot@zytor.com>
+Message-ID: <tip-a786ef152cdcfebc923a67f63c7815806eefcf81@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        neelx@redhat.com, hpa@zytor.com, bp@alien8.de
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, neelx@redhat.com,
+          tglx@linutronix.de, mingo@kernel.org, bp@alien8.de
+In-Reply-To: <1541437840-29293-1-git-send-email-neelx@redhat.com>
+References: <1541437840-29293-1-git-send-email-neelx@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/tsc: Make calibration refinement more robust
+Git-Commit-ID: a786ef152cdcfebc923a67f63c7815806eefcf81
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181102192616.28291-1-faiz_abbas@ti.com> <20181102192616.28291-3-faiz_abbas@ti.com>
-In-Reply-To: <20181102192616.28291-3-faiz_abbas@ti.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 6 Nov 2018 14:55:54 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+tMKb6e69dfz9B1g3yy+a+sPTM0edJ51x6+hWEMAu8CA@mail.gmail.com>
-Message-ID: <CAL_Jsq+tMKb6e69dfz9B1g3yy+a+sPTM0edJ51x6+hWEMAu8CA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] dt-bindings: phy: phy-of-simple: Document new binding
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        linux-can@vger.kernel.org, Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 2:23 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Add documentation for the generic simple phy implementation.
+Commit-ID:  a786ef152cdcfebc923a67f63c7815806eefcf81
+Gitweb:     https://git.kernel.org/tip/a786ef152cdcfebc923a67f63c7815806eefcf81
+Author:     Daniel Vacek <neelx@redhat.com>
+AuthorDate: Mon, 5 Nov 2018 18:10:40 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 6 Nov 2018 21:53:15 +0100
 
-We don't do 'simple' or 'generic' bindings.
+x86/tsc: Make calibration refinement more robust
 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
->  .../devicetree/bindings/phy/phy-of-simple.txt | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-of-simple.txt
->
-> diff --git a/Documentation/devicetree/bindings/phy/phy-of-simple.txt b/Documentation/devicetree/bindings/phy/phy-of-simple.txt
-> new file mode 100644
-> index 000000000000..696f2763395c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-of-simple.txt
-> @@ -0,0 +1,29 @@
-> +Generic simple phy device tree binding
-> +--------------------------------------
-> +
-> +A good number of phy implementations merely read dts properties,
-> +enable clocks, regulators or do resets without having a dedicated register
-> +map. This binding implements a generic phy driver which can be used for
-> +such simple implementations and avoid boilerplate code duplication.
+The threshold in tsc_read_refs() is constant which may favor slower CPUs
+but may not be optimal for simple reading of reference on faster ones.
 
-Sure, but then latter some needs certain timing/ordering of those
-controls or some other DT additions. 'generic' or 'simple' never work
-out for bindings. By all means though, write a simple/generic phy
-driver. Just make it understand an explicit list of compatible
-strings. Then when a phy turns out to be not so simple, we can write a
-driver for it with changing the DT.
+Hence make it proportional to tsc_khz when available to compensate for
+this. The threshold guards against any disturbance like IRQs, NMIs, SMIs
+or CPU stealing by host on guest systems so rename it accordingly and
+fix comments as well.
 
-> +Required Properties:
-> +-  compatible  : must be "simple-phy"
-> +-  phy-cells    : must be 0
+Also on some systems there is noticeable DMI bus contention at some point
+during boot keeping the readout failing (observed with about one in ~300
+boots when testing). In that case retry also the second readout instead of
+simply bailing out unrefined. Usually the next second the readout returns
+fast just fine without any issues.
 
-#phy-cells
+Signed-off-by: Daniel Vacek <neelx@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/1541437840-29293-1-git-send-email-neelx@redhat.com
 
-> +
-> +Optional Properties:
-> +-  bus-width   : generic bus-width. Must be positive.
-> +-  max-bitrate : generic max-bitrate. Must be positive.
-> +-  pwr         : phandle to phy pwr regulator node.
+---
+ arch/x86/kernel/tsc.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-That's not the regulator binding.
-
-> +
-> +Example:
-> +
-> +The following example is a can transceiver implemented as a generic phy.
-> +It has a max-bitrate property and a pwr regulator.
-> +
-> +
-> +transceiver1: can-transceiver {
-> +       compatible = "simple-phy";
-> +       max-bitrate = <5000000>;
-> +       pwr-supply = <&transceiver1_fixed>;
-> +       #phy-cells = <0>;
-> +};
-> --
-> 2.18.0
->
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index e9f777bfed40..3fae23834069 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -297,15 +297,16 @@ static int __init tsc_setup(char *str)
+ 
+ __setup("tsc=", tsc_setup);
+ 
+-#define MAX_RETRIES     5
+-#define SMI_TRESHOLD    50000
++#define MAX_RETRIES		5
++#define TSC_DEFAULT_THRESHOLD	0x20000
+ 
+ /*
+- * Read TSC and the reference counters. Take care of SMI disturbance
++ * Read TSC and the reference counters. Take care of any disturbances
+  */
+ static u64 tsc_read_refs(u64 *p, int hpet)
+ {
+ 	u64 t1, t2;
++	u64 thresh = tsc_khz ? tsc_khz >> 5 : TSC_DEFAULT_THRESHOLD;
+ 	int i;
+ 
+ 	for (i = 0; i < MAX_RETRIES; i++) {
+@@ -315,7 +316,7 @@ static u64 tsc_read_refs(u64 *p, int hpet)
+ 		else
+ 			*p = acpi_pm_read_early();
+ 		t2 = get_cycles();
+-		if ((t2 - t1) < SMI_TRESHOLD)
++		if ((t2 - t1) < thresh)
+ 			return t2;
+ 	}
+ 	return ULLONG_MAX;
+@@ -703,15 +704,15 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
+ 	 * zero. In each wait loop iteration we read the TSC and check
+ 	 * the delta to the previous read. We keep track of the min
+ 	 * and max values of that delta. The delta is mostly defined
+-	 * by the IO time of the PIT access, so we can detect when a
+-	 * SMI/SMM disturbance happened between the two reads. If the
++	 * by the IO time of the PIT access, so we can detect when
++	 * any disturbance happened between the two reads. If the
+ 	 * maximum time is significantly larger than the minimum time,
+ 	 * then we discard the result and have another try.
+ 	 *
+ 	 * 2) Reference counter. If available we use the HPET or the
+ 	 * PMTIMER as a reference to check the sanity of that value.
+ 	 * We use separate TSC readouts and check inside of the
+-	 * reference read for a SMI/SMM disturbance. We dicard
++	 * reference read for any possible disturbance. We dicard
+ 	 * disturbed values here as well. We do that around the PIT
+ 	 * calibration delay loop as we have to wait for a certain
+ 	 * amount of time anyway.
+@@ -744,7 +745,7 @@ static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
+ 		if (ref1 == ref2)
+ 			continue;
+ 
+-		/* Check, whether the sampling was disturbed by an SMI */
++		/* Check, whether the sampling was disturbed */
+ 		if (tsc1 == ULLONG_MAX || tsc2 == ULLONG_MAX)
+ 			continue;
+ 
+@@ -1268,7 +1269,7 @@ static DECLARE_DELAYED_WORK(tsc_irqwork, tsc_refine_calibration_work);
+  */
+ static void tsc_refine_calibration_work(struct work_struct *work)
+ {
+-	static u64 tsc_start = -1, ref_start;
++	static u64 tsc_start = ULLONG_MAX, ref_start;
+ 	static int hpet;
+ 	u64 tsc_stop, ref_stop, delta;
+ 	unsigned long freq;
+@@ -1283,14 +1284,15 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 	 * delayed the first time we expire. So set the workqueue
+ 	 * again once we know timers are working.
+ 	 */
+-	if (tsc_start == -1) {
++	if (tsc_start == ULLONG_MAX) {
++restart:
+ 		/*
+ 		 * Only set hpet once, to avoid mixing hardware
+ 		 * if the hpet becomes enabled later.
+ 		 */
+ 		hpet = is_hpet_enabled();
+-		schedule_delayed_work(&tsc_irqwork, HZ);
+ 		tsc_start = tsc_read_refs(&ref_start, hpet);
++		schedule_delayed_work(&tsc_irqwork, HZ);
+ 		return;
+ 	}
+ 
+@@ -1300,9 +1302,9 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 	if (ref_start == ref_stop)
+ 		goto out;
+ 
+-	/* Check, whether the sampling was disturbed by an SMI */
+-	if (tsc_start == ULLONG_MAX || tsc_stop == ULLONG_MAX)
+-		goto out;
++	/* Check, whether the sampling was disturbed */
++	if (tsc_stop == ULLONG_MAX)
++		goto restart;
+ 
+ 	delta = tsc_stop - tsc_start;
+ 	delta *= 1000000LL;
