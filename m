@@ -2,158 +2,106 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1572C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE025C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A40520869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:45:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A40520869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id B0DF220869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:45:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DF220869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388784AbeKGAKf (ORCPT
+        id S2388881AbeKGALV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:10:35 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59736 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729642AbeKGAKf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:10:35 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA6EisSd061067;
-        Tue, 6 Nov 2018 08:44:54 -0600
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA6Eis5H087228
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Nov 2018 08:44:54 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 6 Nov
- 2018 08:44:54 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 6 Nov 2018 08:44:54 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA6EipJS016928;
-        Tue, 6 Nov 2018 08:44:52 -0600
-Subject: Re: [RFC PATCH v1 03/14] usb:cdns3: Driver initialization code.
-To:     Pawel Laszczak <pawell@cadence.com>, <gregkh@linuxfoundation.org>
-References: <1541267487-3664-1-git-send-email-pawell@cadence.com>
- <1541267487-3664-4-git-send-email-pawell@cadence.com>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <adouglas@cadence.com>, <jbergsagel@ti.com>, <peter.chen@nxp.com>,
-        <pjez@cadence.com>, <kurahul@cadence.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5BE1A8E3.6000705@ti.com>
-Date:   Tue, 6 Nov 2018 16:44:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Tue, 6 Nov 2018 19:11:21 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49612 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388797AbeKGALV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:11:21 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id fFdOC1UdvOhW; Tue,  6 Nov 2018 15:45:48 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D3F2A1EC02A3;
+        Tue,  6 Nov 2018 15:45:47 +0100 (CET)
+Date:   Tue, 6 Nov 2018 15:45:35 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ernst, Justin" <justin.ernst@hpe.com>,
+        "Luck, Tony" <tony.luck@intel.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aristeu Rozanski Filho <arozansk@redhat.com>
+Subject: Re: [PATCH] EDAC: Don't add devices under /sys/bus/edac
+Message-ID: <20181106144535.GI13712@zn.tnic>
+References: <20180926230257.GA5666@agluck-desk>
+ <20180927045244.GA30912@zn.tnic>
+ <20180927214400.GA2249@agluck-desk>
+ <20180927220355.GF19687@zn.tnic>
+ <20180927221054.580220e5@coco.lan>
+ <20181001124754.GD7269@zn.tnic>
+ <20181001224313.GA9487@agluck-desk>
+ <20181001222257.45e4fd59@coco.lan>
+ <AT5PR8401MB037188B39CB70EB18ADAC11987E80@AT5PR8401MB0371.NAMPRD84.PROD.OUTLOOK.COM>
+ <20181002162608.GC29601@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <1541267487-3664-4-git-send-email-pawell@cadence.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181002162608.GC29601@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03/11/18 19:51, Pawel Laszczak wrote:
-> Patch adds core.c and core.h file that implements initialization
-> of platform driver and adds function responsible for selecting,
-> switching and running appropriate Device/Host mode.
+On Tue, Oct 02, 2018 at 06:26:08PM +0200, Borislav Petkov wrote:
+> On Tue, Oct 02, 2018 at 03:51:41PM +0000, Ernst, Justin wrote:
+> > The combined patches work on a 20 socket system. 
+> > Thanks!
 > 
-> Patch also adds gadget.c, host.c, gadget-export.h, host-export.h.
-> These files contains templates functions used during initialization.
-> The implementation will be added in next patches.
+> Cool, thanks for testing.
 > 
-> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
-> ---
->  drivers/usb/cdns3/Kconfig         |  20 ++
->  drivers/usb/cdns3/Makefile        |   4 +
->  drivers/usb/cdns3/core.c          | 373 ++++++++++++++++++++++++++++++
->  drivers/usb/cdns3/core.h          |  88 +++++++
->  drivers/usb/cdns3/gadget-export.h |  27 +++
->  drivers/usb/cdns3/gadget.c        |  36 +++
->  drivers/usb/cdns3/host-export.h   |  30 +++
->  drivers/usb/cdns3/host.c          |  28 +++
->  8 files changed, 606 insertions(+)
->  create mode 100644 drivers/usb/cdns3/core.c
->  create mode 100644 drivers/usb/cdns3/core.h
->  create mode 100644 drivers/usb/cdns3/gadget-export.h
->  create mode 100644 drivers/usb/cdns3/gadget.c
->  create mode 100644 drivers/usb/cdns3/host-export.h
->  create mode 100644 drivers/usb/cdns3/host.c
-> 
+> Nevertheless, I'll queue them for 4.21 so that we have a full cycle of
+> testing before we really kill the bus thing.
 
+Ok, I've pushed the two patches ontop of EDAC's for-next branch, here:
 
-<snip>
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=edac-for-4.21-bus
 
-> diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
-> new file mode 100644
-> index 000000000000..e7159c474308
-> --- /dev/null
-> +++ b/drivers/usb/cdns3/core.h
-> @@ -0,0 +1,88 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Cadence USBSS DRD Driver.
-> + *
-> + * Copyright (C) 2017 NXP
-> + * Copyright (C) 2018 Cadence.
-> + *
-> + * Authors: Peter Chen <peter.chen@nxp.com>
-> + *          Pawel Laszczak <pawell@cadence.com>
-> + */
-> +#include <linux/usb/otg.h>
-> +
-> +#ifndef __LINUX_CDNS3_CORE_H
-> +#define __LINUX_CDNS3_CORE_H
-> +
-> +struct cdns3;
-> +enum cdns3_roles {
-> +	CDNS3_ROLE_HOST = 0,
-> +	CDNS3_ROLE_GADGET,
-> +	CDNS3_ROLE_END,
-> +	CDNS3_ROLE_OTG,
-> +};
-> +
-> +/**
-> + * struct cdns3_role_driver - host/gadget role driver
-> + * @start: start this role
-> + * @stop: stop this role
-> + * @suspend: suspend callback for this role
-> + * @resume: resume callback for this role
-> + * @irq: irq handler for this role
-> + * @name: role name string (host/gadget)
-> + */
-> +struct cdns3_role_driver {
-> +	int (*start)(struct cdns3 *cdns);
-> +	void (*stop)(struct cdns3 *cdns);
-> +	int (*suspend)(struct cdns3 *cdns, bool do_wakeup);
-> +	int (*resume)(struct cdns3 *cdns, bool hibernated);
-> +	irqreturn_t (*irq)(struct cdns3 *cdns);
+and I'd appreciate testing them one more time on the big boxes you guys have.
 
-Why does role driver need hook to irq handler?
+Diffing sysfs here shows this:
 
-Can't each driver host or gadget handle it's respective irq
-on its own? If the same IRQ line is used it could be requested
-as a shared IRQ.
+--- edac.before	2018-11-06 13:37:37.925448609 +0100
++++ edac.after	2018-11-06 15:36:11.229497795 +0100
+@@ -37,7 +37,6 @@
+ /sys/devices/system/edac/mc/mc0/dimm3/power/control
+ /sys/devices/system/edac/mc/mc0/dimm3/dimm_dev_type
+ /sys/devices/system/edac/mc/mc0/dimm3/size
+-/sys/devices/system/edac/mc/mc0/dimm3/subsystem
+ /sys/devices/system/edac/mc/mc0/dimm3/dimm_ce_count
+ /sys/devices/system/edac/mc/mc0/dimm3/dimm_label
+ /sys/devices/system/edac/mc/mc0/dimm3/dimm_location
 
-> +	const char *name;
-> +};
-> +
+which is the bus symlink:
 
-cheers,
--roger
+subsystem -> ../../../../../../bus/mc0
+
+and I think that's ok as nothing should be using it.
+
+Thx.
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
