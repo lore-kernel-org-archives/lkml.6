@@ -2,128 +2,97 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72461C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334D8C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4235520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:49:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4235520827
+	by mail.kernel.org (Postfix) with ESMTP id EC10F2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC10F2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387501AbeKFRNY (ORCPT
+        id S1729760AbeKFRQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:13:24 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33311 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeKFRNY (ORCPT
+        Tue, 6 Nov 2018 12:16:51 -0500
+Received: from mail-ot1-f51.google.com ([209.85.210.51]:33261 "EHLO
+        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbeKFRQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:13:24 -0500
-Received: by mail-ot1-f65.google.com with SMTP id q1so10622626otk.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 23:49:27 -0800 (PST)
+        Tue, 6 Nov 2018 12:16:50 -0500
+Received: by mail-ot1-f51.google.com with SMTP id q1so10629149otk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 23:52:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TM4UXZCRQ2i5Im90yTxafe3arw7a7mxBy1/Au+6raP8=;
-        b=n/0EBquozKcf82NynTzinRb2ylwkoHpMC9/G0B77Jprff3LzGBVYl71BaU9LJd/Opj
-         a/6JGB9bCqeMHEeivURliOJ80pAD8RR9vVbqHxU01Z3Y59+yFADRYbTfsQ1LbeNCi/Ul
-         3BwmRZC190atYr5g3TPmf7bYWcWaQQUaORudDHFO41Yjtg9ZGrbPWWddblfUd6nu4WVr
-         97dIjBfvnGnjcLVIcyeabdwMRtcgsN4rUoeMRJlJLlkKn53aOgKUMgUG0c0ToJUq2BBI
-         JCRJs9weEEUbS4jBOcY1s6Zg5EIvnEuhk+VhhSQ7FTZu/Nvl9urvuv/HSY9RdPkhwI0/
-         sAcw==
-X-Gm-Message-State: AGRZ1gKYPKTHecr1BjFuI4DqE8ZOTKkgM2xnD7X3kNhhpVDjqUyfuMis
-        RAS9kbUTdILq3vfDIz+k8LLYYhBv93EL/0A/nzUEdw==
-X-Google-Smtp-Source: AJdET5fCm6uB3PWb6UMsuAtngXsrwZ3mcr6xhZNVi7Saz7NA3brNZG5YynA8NwBuleJH2lCH/8gdTnJsL4LLHk3o3mo=
-X-Received: by 2002:a9d:4c84:: with SMTP id m4mr9646695otf.124.1541490567300;
- Mon, 05 Nov 2018 23:49:27 -0800 (PST)
+        bh=Vg2SahNm2lu2I4sKLh6P31dn6BJBlX6qZ0kLLCV+PIk=;
+        b=ay7eSN/zshjrHjC/bPyWf1F1D/p+U+fO5Ze+f3Ged5+fdzEOm5QAbYwSDVW53QW93S
+         N9xztazLFvbgG1/A5owL0mAHKz+JltHYvlquZyurUBnscqyU2OTEFPUSQ4rUxX5IoG+t
+         4G9Xp5tBJ1Cyvu6A8oZo+LdW5v443PO/dpZCAeR7nY4klYyAzBGP9T3zcamc8WpC1l3c
+         4cQggGm6R+9lhAimjedjtmssYrgrc9tDPpJxc6am4eA1mmPJcbVtLDuMWlEJbSDtOdwx
+         kX7km74ViOVSMg3VUK7bpoJuEV28xPbLYQjSAJwyRTfLqI0xCG7Qi35rR727yt+S8A+a
+         kp/w==
+X-Gm-Message-State: AGRZ1gLkxo5FhQonVwa+sbpnoWsIYJtB2Gup+cM25kkJ8rKeKVb6GNYA
+        tCq6/F7olF6eh7vM3Z2I41h5M6oNHlwln2lK3jw=
+X-Google-Smtp-Source: AJdET5d5ylMKvDQ9dt89gG3+/GxrMWx1lIASntrXTzEDkryoeXh66tHwfZlxY0rVyyM7rdeYSVV1g/d/WMKltbTSndQ=
+X-Received: by 2002:a9d:29f2:: with SMTP id g47mr14682473otd.200.1541490773294;
+ Mon, 05 Nov 2018 23:52:53 -0800 (PST)
 MIME-Version: 1.0
-References: <1541472103-6212-1-git-send-email-tsu.yubo@gmail.com>
-In-Reply-To: <1541472103-6212-1-git-send-email-tsu.yubo@gmail.com>
+References: <bfd5f8f6-ff7d-cf85-239f-a9d4826fb2ab@infradead.org>
+In-Reply-To: <bfd5f8f6-ff7d-cf85-239f-a9d4826fb2ab@infradead.org>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 6 Nov 2018 08:49:15 +0100
-Message-ID: <CAJZ5v0gzM+_a+HJa_kjpgaj96iiH3f_x1ZXjK3HE8=E5FvuAPA@mail.gmail.com>
-Subject: Re: [PATCH v2] kobject: to use pr_warn replace KERN_WARNING
-To:     tsu.yubo@gmail.com
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
+Date:   Tue, 6 Nov 2018 08:52:42 +0100
+Message-ID: <CAJZ5v0gHicDbshzv=WJP-sTLfj8Cmt2fyu3uyy+jaQ3OOOBUmA@mail.gmail.com>
+Subject: Re: [PATCH] driver core: fix comments for device_block_probing()
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 3:42 AM Bo YU <tsu.yubo@gmail.com> wrote:
+On Tue, Nov 6, 2018 at 8:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> Fix warning form checkpatch, use pr_warn replace KERN_WARNING
+> From: Randy Dunlap <rdunlap@infradead.org>
 >
-> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+> Correct function name and spelling/typo for device_block_probing()
+> in drivers/base/dd.c.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
 
-First off, IMO, you should not change the existing code just in order
-to make checkpatch happy about it.  That alone is not a good enough
-reason for modifying it.
-
-If the checkpatch warning indicates an issue like broken white space
-(and I mean really broken and not lines longer than 80 chars etc),
-then that may be a reason to modify the existing code, depending.
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
 > ---
-> changes in v2:
-> According to Joe's suggestion,drop newline from msg, otherwise
-> it can be unterminated with newline.
-> ---
->  lib/kobject_uevent.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+>  drivers/base/dd.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-> index 63d0816ab23b..1837765ebf01 100644
-> --- a/lib/kobject_uevent.c
-> +++ b/lib/kobject_uevent.c
-> @@ -195,12 +195,12 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->         enum kobject_action action;
->         const char *action_args;
->         struct kobj_uevent_env *env;
-> -       const char *msg = NULL, *devpath;
-> +       const char *msg = NULL;
->         int r;
+> --- lnx-420-rc1.orig/drivers/base/dd.c
+> +++ lnx-420-rc1/drivers/base/dd.c
+> @@ -179,7 +179,7 @@ static void driver_deferred_probe_trigge
+>  }
 >
->         r = kobject_action_type(buf, count, &action, &action_args);
->         if (r) {
-> -               msg = "unknown uevent action string\n";
-> +               msg = "unknown uevent action string";
->                 goto out;
->         }
+>  /**
+> - * device_block_probing() - Block/defere device's probes
+> + * device_block_probing() - Block/defer device's probes
+>   *
+>   *     It will disable probing of devices and defer their probes instead.
+>   */
+> @@ -453,7 +453,7 @@ static int really_probe(struct device *d
+>         if (defer_all_probes) {
+>                 /*
+>                  * Value of defer_all_probes can be set only by
+> -                * device_defer_all_probes_enable() which, in turn, will call
+> +                * device_block_probing() which, in turn, will call
+>                  * wait_for_device_probe() right after that to avoid any races.
+>                  */
+>                 dev_dbg(dev, "Driver %s force probe deferral\n", drv->name);
 >
-> @@ -212,7 +212,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->         r = kobject_action_args(action_args,
->                                 count - (action_args - buf), &env);
->         if (r == -EINVAL) {
-> -               msg = "incorrect uevent action arguments\n";
-> +               msg = "incorrect uevent action arguments";
-
-Second, this change is not what the changelog of your patch is talking about.
-
->                 goto out;
->         }
->
-> @@ -223,8 +223,9 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
->         kfree(env);
->  out:
->         if (r) {
-> -               devpath = kobject_get_path(kobj, GFP_KERNEL);
-> -               printk(KERN_WARNING "synth uevent: %s: %s",
-> +               char *devpath = kobject_get_path(kobj, GFP_KERNEL);
-> +
-> +               pr_warn("synth uevent: %s: %s\n",
->                        devpath ?: "unknown device",
->                        msg ?: "failed to send uevent");
->                 kfree(devpath);
-> --
-> 2.11.0
 >
