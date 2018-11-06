@@ -2,169 +2,145 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208FEC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15ED3C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE522086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE522086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D36192083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:14:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8ZFnvbx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D36192083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeKGFlN (ORCPT
+        id S2388319AbeKGFln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 00:41:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33394 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbeKGFlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 00:41:13 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0398581DF3;
-        Tue,  6 Nov 2018 20:14:17 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-124-84.rdu2.redhat.com [10.10.124.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D36801948B;
-        Tue,  6 Nov 2018 20:14:15 +0000 (UTC)
-Subject: Re: [PATCH v2] x86/mm/fault: Allow stack access below %rsp
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1541535149-31963-1-git-send-email-longman@redhat.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <7788f826-1217-8f69-3622-c11b6e08efb1@redhat.com>
-Date:   Tue, 6 Nov 2018 15:14:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 7 Nov 2018 00:41:43 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37456 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeKGFlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 00:41:42 -0500
+Received: by mail-pg1-f195.google.com with SMTP id c10-v6so6303772pgq.4;
+        Tue, 06 Nov 2018 12:14:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=tcslFpk0W53zOF+y25Wq/2pkDzrUWGzGbw1NypFVdy4=;
+        b=B8ZFnvbx9NL09YqAqjFS9wFKCdDBQcAW9Wn284fBveFiQ/ae0s4sQm+fmS51Hjiffl
+         lGXy27tkMmLodBJMaC8+W3FwK/+b6b6f7atm7PrKp+qPLx1wtxN+V2Q3xCETn3lKT4JZ
+         c1s1bpCymFeyIrG6hDbH9kgDbA13ThGkGOoHDDxU3CSai38xfdNodMnt5ev372NroPcX
+         J/wF5m9XNAU96YZoZIeA+6npSqjBKlMayfr056nGyouBXe9Gl0URQf8t6fjo9uQ4R0Ae
+         XfLUZlaUDCMqytLbgthaLHE7WEvA7lQqy2yxo+5/e2K8wbZb2B4tNQH9chJ7m5LI2Tc9
+         FZmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tcslFpk0W53zOF+y25Wq/2pkDzrUWGzGbw1NypFVdy4=;
+        b=QubVibwfdoXkpKMb3gg8PKQIlhlbmlvZIHSy2b3e/FaWgBSFeoDEf5zSFyjf+KLIJr
+         0c4B7uUyP64EE0YaUCug+lO0hw2DaYIlThpRujAAJn69MARF4XHEhxTgFPN/4zOCn7Jc
+         jl1uZLxcOxl1BA9b9qc4dKl2xkIBWOfnIUmmH3U71NuxjS9GZH+ecXpJvtZM5UjmVzLs
+         +OdFVw7FWQW0o9QJN5wT27n1ZJ+8YLjXw6psJGr+efik7EriAcgaZbgl5+BX1qkmweh0
+         pGYOVRRep1AY28tDK2FUoPQkYoIwWpNWcfVmocynR0uxVYa/mPKrrvR6zJ+cGiD5AUZc
+         IaTQ==
+X-Gm-Message-State: AGRZ1gKuwY7W4YF+5ItF0aenECDQWvTBBl4CseHTAzxYs0QYizcup9YD
+        hMrpDdtAFy0Rv/RwKdJ6683nhdvVf4dF08sQK5URwUPA
+X-Google-Smtp-Source: AJdET5dzMzogfrPH0pkMv+E6Of0Eq1Q6WFu8e5nSgyIs8DrL8IFsgAy70tv5cky7/Wo+0wEYIBAZA1Ansd2wiqcizRM=
+X-Received: by 2002:a62:682:: with SMTP id 124-v6mr14301379pfg.161.1541535285879;
+ Tue, 06 Nov 2018 12:14:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1541535149-31963-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 06 Nov 2018 20:14:17 +0000 (UTC)
+References: <20181103065732.12134-1-jprvita@endlessm.com> <566af8d6-638e-8c7b-71b4-a7a8d6e71cdb@redhat.com>
+In-Reply-To: <566af8d6-638e-8c7b-71b4-a7a8d6e71cdb@redhat.com>
+From:   =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date:   Tue, 6 Nov 2018 12:14:08 -0800
+Message-ID: <CA+A7VXUBCp3i18bz+LQ+gVpf_UdZALU=UpHXcCQ8V-eTSwOkJQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / battery: Fix reporting "Not charging" when
+ capacity is 100%
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        Daniel Drake <drake@endlessm.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, linux@endlessm.com,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/2018 03:12 PM, Waiman Long wrote:
-> The current x86 page fault handler allows stack access below the stack
-> pointer if it is no more than 64k+256 bytes. Any access beyond the 64k+
-> limit will cause a segmentation fault.
->
-> The gcc -fstack-check option generates code to probe the stack for
-> large stack allocation to see if the stack is accessible. The newer gcc
-> does that while updating the %rsp simultaneously. Older gcc's like gcc4
-> doesn't do that. As a result, an application compiled with an old gcc
-> and the -fstack-check option may fail to start at all.
->
-> % cat test.c
-> int main() {
-> 	char tmp[1024*128];
-> 	printf("### ok\n");
-> 	return 0;
-> }
-> % gcc -fstack-check -g -o test test.c
-> % ./test
-> Segmentation fault
->
-> The old binary was working in older kernels where expand_stack() was
-> somehow called before the check. But it is not working in newer kernels.
-> Besides, the 64k+ limit check is kind of crude and will not catch a
-> lot of mistakes that userspace applications may be misbehaving anyway.
-> I think the kernel isn't the right place for this kind of tests. We
-> should leave it to userspace instrumentation tools to perform them.
->
-> The 64k+ limit check is now removed to just let expand_stack() decide
-> if a segmentation fault should happen, when the RLIMIT_STACK limit is
-> exceeded, for example.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/x86/mm/fault.c | 12 ------------
->  1 file changed, 12 deletions(-)
->
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 71d4b9d..29525cf 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1380,18 +1380,6 @@ void do_user_addr_fault(struct pt_regs *regs,
->  		bad_area(regs, sw_error_code, address);
->  		return;
->  	}
-> -	if (sw_error_code & X86_PF_USER) {
-> -		/*
-> -		 * Accessing the stack below %sp is always a bug.
-> -		 * The large cushion allows instructions like enter
-> -		 * and pusha to work. ("enter $65535, $31" pushes
-> -		 * 32 pointers and then decrements %sp by 65535.)
-> -		 */
-> -		if (unlikely(address + 65536 + 32 * sizeof(unsigned long) < regs->sp)) {
-> -			bad_area(regs, sw_error_code, address);
-> -			return;
-> -		}
-> -	}
->  	if (unlikely(expand_stack(vma, address))) {
->  		bad_area(regs, sw_error_code, address);
->  		return;
+Hello Hans, thanks for your quick response,
 
-This v2 patch has no code change. I just updated the commit log to
-capture some of the conversion that I had with the reviewers.
+On Sat, Nov 3, 2018 at 4:28 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 03-11-18 07:57, Jo=C3=A3o Paulo Rechi Vita wrote:
+> > Commit 19fffc8450d4378580a8f019b195c4617083176f fixed reporting
+> > "Discharging" on some machines when AC was connected but the battery wa=
+s
+> > not charging. But now on these machines the battery status is reported
+> > as "Not charging" even when the battery is fully charged.
+> >
+> > This commit takes the battery capacity into consideration when checking
+> > if "Not charging" should be returned and "Full" is returned when the
+> > capacity is 100%.
+> >
+> > Signed-off-by: Jo=C3=A3o Paulo Rechi Vita <jprvita@endlessm.com>
+>
+> acpi_battery_handle_discharging() only gets called if the ACPI_BATTERY_ST=
+ATE_DISCHARGING
+> bit is set by the firmware in that case if we are not actually dischargin=
+g
+> returning POWER_SUPPLY_STATUS_NOT_CHARGING is the only correct thing to d=
+o,
+> we should never return POWER_SUPPLY_STATUS_FULL when the
+> ACPI_BATTERY_STATE_DISCHARGING bit is set.
+>
 
-Cheers,
-Longman
+I understand the reason behind your original patch, but can you
+elaborate on why would it be wrong to return POWER_SUPPLY_STATUS_FULL
+if the battery is full and we know it is not actually discharging?
+IIUC that is the state returned on hw / firmware that behaves
+correctly when there is AC power and the battery has 100% of charge.
 
+> I was about to point you to the upower bug for upower not
+> handling POWER_SUPPLY_STATUS_NOT_CHARGING as well as it
+> could atm, but I see you've already found that and are working
+> on fixing that. That is great, thank you.
+>
+
+Yes, I'm trying to fix this problem, but it touches different points
+across the stack and there are different possible approaches for how
+to present the "Not charging" state to the user. This patch is not
+necessarily part of, although closely related to, the bigger problem
+of better handling "Not charging". It actually addresses the problem
+that the kernel returns "Not charging" when AC is present and the
+battery is fully charged, which seems wrong to me, despite of "Not
+charging" not being strictly defined anywhere (at least that I know
+of).
+
+> As for this kernel-side fix I do not believe that fixing thus in
+> the kernel is the right thing to do. We try to stay away from
+> heuristics using full_charge_capacity in the kernel since that
+> is not really reliable / deterministic.
+>
+
+At first I thought that returning POWER_SUPPLY_STATUS_FULL when the
+battery is full and AC is present was deterministic enough to have it
+in the kernel. But I don't have any prior experience working with this
+kind of hardware, so I may very well be wrong on this assumption. It
+would be great to get some extra clarification though.
+
+Thanks,
+--
+Jo=C3=A3o Paulo Rechi Vita
+http://about.me/jprvita
