@@ -2,185 +2,117 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4120DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 811BFC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF882083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF882083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3297F2086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:23:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3297F2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbeKFVo4 (ORCPT
+        id S2387844AbeKFVr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:44:56 -0500
-Received: from mga17.intel.com ([192.55.52.151]:10458 "EHLO mga17.intel.com"
+        Tue, 6 Nov 2018 16:47:59 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43506 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbeKFVo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:44:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 04:19:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
-   d="scan'208";a="105824636"
-Received: from kohsamui.iil.intel.com ([10.236.193.12])
-  by orsmga001.jf.intel.com with ESMTP; 06 Nov 2018 04:19:56 -0800
-From:   Alexey Skidanov <alexey.skidanov@intel.com>
-To:     sbates@raithlin.com, logang@deltatee.com, danielmentz@google.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com
-Cc:     linux-kernel@vger.kernel.org, labbott@redhat.com,
-        Alexey Skidanov <alexey.skidanov@intel.com>
-Subject: [PATCH] lib/genaloc: Fix allocation of aligned buffer from non-aligned chunk
-Date:   Tue,  6 Nov 2018 14:20:53 +0200
-Message-Id: <1541506853-10685-1-git-send-email-alexey.skidanov@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S2387568AbeKFVr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:47:59 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id uQbP3KgsmQl0; Tue,  6 Nov 2018 13:23:00 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 202C61EC0758;
+        Tue,  6 Nov 2018 13:23:00 +0100 (CET)
+Date:   Tue, 6 Nov 2018 13:22:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v10 1/7] x86/boot: Introduce cmdline_find_option_arg()to
+ detect if option=arg in cmdline
+Message-ID: <20181106122253.GG13712@zn.tnic>
+References: <20181022093720.21426-1-fanc.fnst@cn.fujitsu.com>
+ <20181022093720.21426-2-fanc.fnst@cn.fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181022093720.21426-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On success, gen_pool_first_fit_align() returns the bit number such that
-chunk_start_addr + (bit << order) is properly aligned. On failure,
-the bitmap size parameter is returned.
+On Mon, Oct 22, 2018 at 05:37:14PM +0800, Chao Fan wrote:
+> Now, there are cmdline_find_option() and cmdline_find_option_bool() in
+> cmdline.c. Sometimes, when detecting such as whether 'acpi=off' is
+> in cmdline, we need to cmdline_find_option() first, then compare
+> the argument. Now splite the operation as a independent function.
+> Introduce a new function cmdline_find_option_arg() to detect whether
+> option is in command line and the value is arg.
 
-When the chunk_start_addr isn't aligned properly, the
-chunk_start_addr + (bit << order) isn't aligned too.
+For all future commit messages you write:
 
-To fix this, gen_pool_first_fit_align() takes into account
-the chunk_start_addr alignment and returns the bit value such that
-chunk_start_addr + (bit << order) is properly aligned
-(exactly as it done in CMA).
+Use passive tone in your commit message: no "we", etc.
 
-Link: https://lkml.kernel.org/lkml/a170cf65-6884-3592-1de9-4c235888cc8a@intel.com
-Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
----
- include/linux/genalloc.h | 13 +++++++------
- lib/genalloc.c           | 20 ++++++++++++--------
- 2 files changed, 19 insertions(+), 14 deletions(-)
+Also, pls read section "2) Describe your changes" in
+Documentation/process/submitting-patches.rst.
 
-diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
-index 872f930..dd0a452 100644
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@ -51,7 +51,8 @@ typedef unsigned long (*genpool_algo_t)(unsigned long *map,
- 			unsigned long size,
- 			unsigned long start,
- 			unsigned int nr,
--			void *data, struct gen_pool *pool);
-+			void *data, struct gen_pool *pool,
-+			unsigned long start_addr);
- 
- /*
-  *  General purpose special memory pool descriptor.
-@@ -131,24 +132,24 @@ extern void gen_pool_set_algo(struct gen_pool *pool, genpool_algo_t algo,
- 
- extern unsigned long gen_pool_first_fit(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
--		struct gen_pool *pool);
-+		struct gen_pool *pool, unsigned long start_addr);
- 
- extern unsigned long gen_pool_fixed_alloc(unsigned long *map,
- 		unsigned long size, unsigned long start, unsigned int nr,
--		void *data, struct gen_pool *pool);
-+		void *data, struct gen_pool *pool, unsigned long start_addr);
- 
- extern unsigned long gen_pool_first_fit_align(unsigned long *map,
- 		unsigned long size, unsigned long start, unsigned int nr,
--		void *data, struct gen_pool *pool);
-+		void *data, struct gen_pool *pool, unsigned long start_addr);
- 
- 
- extern unsigned long gen_pool_first_fit_order_align(unsigned long *map,
- 		unsigned long size, unsigned long start, unsigned int nr,
--		void *data, struct gen_pool *pool);
-+		void *data, struct gen_pool *pool, unsigned long start_addr);
- 
- extern unsigned long gen_pool_best_fit(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
--		struct gen_pool *pool);
-+		struct gen_pool *pool, unsigned long start_addr);
- 
- 
- extern struct gen_pool *devm_gen_pool_create(struct device *dev,
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index ca06adc..033817a 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -311,7 +311,7 @@ unsigned long gen_pool_alloc_algo(struct gen_pool *pool, size_t size,
- 		end_bit = chunk_size(chunk) >> order;
- retry:
- 		start_bit = algo(chunk->bits, end_bit, start_bit,
--				 nbits, data, pool);
-+				 nbits, data, pool, chunk->start_addr);
- 		if (start_bit >= end_bit)
- 			continue;
- 		remain = bitmap_set_ll(chunk->bits, start_bit, nbits);
-@@ -525,7 +525,7 @@ EXPORT_SYMBOL(gen_pool_set_algo);
-  */
- unsigned long gen_pool_first_fit(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
--		struct gen_pool *pool)
-+		struct gen_pool *pool, unsigned long start_add)
- {
- 	return bitmap_find_next_zero_area(map, size, start, nr, 0);
- }
-@@ -543,16 +543,19 @@ EXPORT_SYMBOL(gen_pool_first_fit);
-  */
- unsigned long gen_pool_first_fit_align(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
--		struct gen_pool *pool)
-+		struct gen_pool *pool, unsigned long start_addr)
- {
- 	struct genpool_data_align *alignment;
--	unsigned long align_mask;
-+	unsigned long align_mask, align_off;
- 	int order;
- 
- 	alignment = data;
- 	order = pool->min_alloc_order;
- 	align_mask = ((alignment->align + (1UL << order) - 1) >> order) - 1;
--	return bitmap_find_next_zero_area(map, size, start, nr, align_mask);
-+	align_off = (start_addr & (alignment->align - 1)) >> order;
-+
-+	return bitmap_find_next_zero_area_off(map, size, start, nr,
-+					      align_mask, align_off);
- }
- EXPORT_SYMBOL(gen_pool_first_fit_align);
- 
-@@ -567,7 +570,7 @@ EXPORT_SYMBOL(gen_pool_first_fit_align);
-  */
- unsigned long gen_pool_fixed_alloc(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
--		struct gen_pool *pool)
-+		struct gen_pool *pool, unsigned long start_add)
- {
- 	struct genpool_data_fixed *fixed_data;
- 	int order;
-@@ -601,7 +604,8 @@ EXPORT_SYMBOL(gen_pool_fixed_alloc);
-  */
- unsigned long gen_pool_first_fit_order_align(unsigned long *map,
- 		unsigned long size, unsigned long start,
--		unsigned int nr, void *data, struct gen_pool *pool)
-+		unsigned int nr, void *data, struct gen_pool *pool,
-+		unsigned long start_addr)
- {
- 	unsigned long align_mask = roundup_pow_of_two(nr) - 1;
- 
-@@ -624,7 +628,7 @@ EXPORT_SYMBOL(gen_pool_first_fit_order_align);
-  */
- unsigned long gen_pool_best_fit(unsigned long *map, unsigned long size,
- 		unsigned long start, unsigned int nr, void *data,
--		struct gen_pool *pool)
-+		struct gen_pool *pool, unsigned long start_add)
- {
- 	unsigned long start_bit = size;
- 	unsigned long len = size + 1;
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/cmdline.c | 15 +++++++++++++++
+>  arch/x86/boot/compressed/misc.h    |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+> index af6cda0b7900..61118c69feb8 100644
+> --- a/arch/x86/boot/compressed/cmdline.c
+> +++ b/arch/x86/boot/compressed/cmdline.c
+> @@ -1,5 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include "misc.h"
+> +#define STATIC
+> +#include <linux/decompress/mm.h>
+>  
+>  #if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE || CONFIG_X86_5LEVEL
+>  
+> @@ -30,5 +32,18 @@ int cmdline_find_option_bool(const char *option)
+>  {
+>  	return __cmdline_find_option_bool(get_cmd_line_ptr(), option);
+>  }
+> +bool cmdline_find_option_arg(const char *option, const char *arg, int argsize)
+> +{
+> +	char *buffer = malloc(argsize+1);
+> +	bool find = false;
+> +	int ret;
+> +
+> +	ret = cmdline_find_option(option, buffer, argsize+1);
+> +	if (ret == argsize && !strncmp(buffer, arg, argsize))
+> +		find = true;
+> +
+> +	free(buffer);
+> +	return find;
+> +}
+
+I don't think such wrapper is needed. Simply calling
+cmdline_find_option() and then examining the buffer - like other call
+sites do - is perfectly fine.
+
+Thx.
+
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
