@@ -2,115 +2,100 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89007C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4874DC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37FC52085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FC52085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 0B91B20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B91B20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387747AbeKFTcv convert rfc822-to-8bit (ORCPT
+        id S2387773AbeKFTfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:32:51 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:53788 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387480AbeKFTcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:32:51 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by dkim.mimecast.com with ESMTP id uk-mta-5-pdxC1B2ZMQ-NsC89g71rTA-1;
- Tue, 06 Nov 2018 10:08:20 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 6 Nov 2018 10:08:26 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 6 Nov 2018 10:08:26 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Bart Van Assche' <bvanassche@acm.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Christoph Lameter" <cl@linux.com>, Roman Gushchin <guro@fb.com>
-Subject: RE: [PATCH] slab.h: Avoid using & for logical and of booleans
-Thread-Topic: [PATCH] slab.h: Avoid using & for logical and of booleans
-Thread-Index: AQHUdUfJjxPqMWIPVkCDxWbeIJk+/6VCg0ZQ
-Date:   Tue, 6 Nov 2018 10:08:26 +0000
-Message-ID: <62188a351f2249188ce654ee03c894b1@AcuMS.aculab.com>
-References: <20181105204000.129023-1-bvanassche@acm.org>
-In-Reply-To: <20181105204000.129023-1-bvanassche@acm.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 6 Nov 2018 14:35:33 -0500
+Received: from mga14.intel.com ([192.55.52.115]:52477 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387480AbeKFTfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:35:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 02:11:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
+   d="scan'208";a="89813630"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga008.jf.intel.com with ESMTP; 06 Nov 2018 02:11:00 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gJyK2-0003Vt-Od; Tue, 06 Nov 2018 12:10:58 +0200
+Date:   Tue, 6 Nov 2018 12:10:58 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        guneshwor.o.singh@intel.com, naveen.m@intel.com,
+        pankaj.laxminarayan.bharadiya@intel.com,
+        rakesh.a.ughreja@intel.com, sanyog.r.kale@intel.com,
+        sriramx.periyasamy@intel.com, Mark Brown <broonie@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, liam.r.girdwood@linux.intel.com,
+        yang.jie@linux.intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: skl: always select SND_SOC_HDAC_HDA
+Message-ID: <20181106101058.GQ10650@smile.fi.intel.com>
+References: <20181102112456.780127-1-arnd@arndb.de>
+ <943d10e2-299c-4393-f2f5-4ac8bbe400c3@linux.intel.com>
+ <CAK8P3a1FCVTuB+ydE6syMHYPWnUW0WTCFDuyMmm35VNnpTTGBw@mail.gmail.com>
+ <adc83eaa-b7c0-2c76-a434-f1d5872337f6@linux.intel.com>
+ <20181105133545.GF10650@smile.fi.intel.com>
+ <CAK8P3a0kdUtK_UuSJEPiWPxhdDULmW6RYEzu-Ug7f8VBoeWVog@mail.gmail.com>
+ <s5h1s7z35t8.wl-tiwai@suse.de>
+ <5c21e5d9-6a14-ff4f-04f2-9dbfc8665250@linux.intel.com>
+ <CAHp75Vc8W6sOOOF4WUaoVD2rGijwG_5J083UG1YFgptTkuzk=w@mail.gmail.com>
+ <CAK8P3a3yWJJMqV8mRB9bS0K=+s-nvygCEk+zdSQBU8YjGwx2iQ@mail.gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: pdxC1B2ZMQ-NsC89g71rTA-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3yWJJMqV8mRB9bS0K=+s-nvygCEk+zdSQBU8YjGwx2iQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche
-> Sent: 05 November 2018 20:40
+On Mon, Nov 05, 2018 at 10:19:02PM +0100, Arnd Bergmann wrote:
+> On 11/5/18, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > On Mon, Nov 5, 2018 at 7:19 PM Pierre-Louis Bossart
+> > <pierre-louis.bossart@linux.intel.com> wrote:
+
+> >> >> config SND_SOC_HDAC_HDA_FORCE
+> >> >>           tristate
+> >
+> >> >>           depends on SND_SOC_ALL_CODECS != n
+> >
+> > Forgot to mention that AFAIU above line is no-op in symbols which are
+> > hidden.
+> >
 > 
-> This patch suppresses the following sparse warning:
-> 
-> ./include/linux/slab.h:332:43: warning: dubious: x & !y
-> 
-> Fixes: 1291523f2c1d ("mm, slab/slub: introduce kmalloc-reclaimable caches")
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Roman Gushchin <guro@fb.com>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  include/linux/slab.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 918f374e7156..97d0599ddb7b 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -329,7 +329,7 @@ static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
->  	 * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
->  	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
->  	 */
-> -	return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
-> +	return type_dma + is_reclaimable * !is_dma * KMALLOC_RECLAIM;
+> It's not. In this case, it will prevent SND_SOC_HDAC_HDA_FORCE
+> from being turned on by the 'default ...' line. In other cases, it can
+> generate a warning if you have a hidden symbol that is selected
+> by some other symbol while the dependency is missing.
 
-ISTM that changing is_dma and is_reclaimable from int to bool will stop the bleating.
+Something new to learn.
+Thanks, Arnd, for describing this case.
 
-It is also strange that this code is trying so hard here to avoid conditional instructions
-and then uses several to generate the boolean values in the first place.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-OTOH I'd probably write:
-	int gfp_dma = 0;
-
-#ifdef CONFIG_ZONE_DMA
-	gfp_dma = __GFP_DMA;
-#endif
-
-	return flags & gfp_dma ? KMALLOC_DMA : flags & __GFP_RECLAIMABLE ? KMALLOC_RECLAIM : 0;
-
-That might generate cmovs, but is may be better to put unlikely() around both
-conditional expressions. Or redo as:
-
-	return !unlikely(flags & (dfp_dma | __GFP_RECLAIMABLE)) ? 0 : flags & gfp_dma ? KMALLOC_DMA : KMALLOC_RECLAIM;
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
 
