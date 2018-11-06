@@ -2,166 +2,177 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72941C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D528C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E1C12081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:15:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E1C12081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DDCF52081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:17:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCF52081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389211AbeKGBk7 (ORCPT
+        id S2389213AbeKGBnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:40:59 -0500
-Received: from mga09.intel.com ([134.134.136.24]:64724 "EHLO mga09.intel.com"
+        Tue, 6 Nov 2018 20:43:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55711 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387685AbeKGBk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:40:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 08:15:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="106356382"
-Received: from jlock-mobl.ger.corp.intel.com ([10.252.30.211])
-  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 08:14:59 -0800
-Message-ID: <6c4576c012fca40a08e6db394b4c3620a2879aa8.camel@linux.intel.com>
-Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
-From:   Joshua Lock <joshua.g.lock@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, jejb@linux.ibm.com,
-        Alexander.Levin@microsoft.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org
-Cc:     William Roberts <william.c.roberts@intel.com>
-Date:   Tue, 06 Nov 2018 16:14:58 +0000
-In-Reply-To: <20181106160058.5ov7yhzq6mbrg6yn@cantor>
-References: <20181019101758.1569-1-stefanb@linux.ibm.com>
-         <20181105204215.hw6vme5epxcc3nch@cantor>
-         <20181106160058.5ov7yhzq6mbrg6yn@cantor>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        id S2389149AbeKGBnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 20:43:03 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C89A720741; Tue,  6 Nov 2018 17:17:05 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 426AD2039F;
+        Tue,  6 Nov 2018 17:16:55 +0100 (CET)
+Date:   Tue, 6 Nov 2018 17:16:55 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Liang Yang <liang.yang@amlogic.com>
+Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20181106171655.3808d8eb@bbrezillon>
+In-Reply-To: <99475361-0115-7c16-3b7e-8f0d3a779446@amlogic.com>
+References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
+        <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
+        <20181105165321.7ea2b45f@bbrezillon>
+        <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
+        <20181106102851.61deb97a@bbrezillon>
+        <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
+        <20181106112206.65a70a81@bbrezillon>
+        <99475361-0115-7c16-3b7e-8f0d3a779446@amlogic.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-06 at 09:00 -0700, Jerry Snitselaar wrote:
-> On Mon Nov 05 18, Jerry Snitselaar wrote:
-> > On Fri Oct 19 18, Stefan Berger wrote:
-> > > Extend the documentation for trusted keys with documentation for
-> > > how to
-> > > set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as
-> > > well.
-> > > 
-> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > ---
-> > > .../security/keys/trusted-encrypted.rst       | 31
-> > > ++++++++++++++++++-
-> > > 1 file changed, 30 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/Documentation/security/keys/trusted-encrypted.rst
-> > > b/Documentation/security/keys/trusted-encrypted.rst
-> > > index 3bb24e09a332..6ec6bb2ac497 100644
-> > > --- a/Documentation/security/keys/trusted-encrypted.rst
-> > > +++ b/Documentation/security/keys/trusted-encrypted.rst
-> > > @@ -18,10 +18,33 @@ integrity verifications match.  A loaded
-> > > Trusted Key can be updated with new
-> > > when the kernel and initramfs are updated.  The same key can have
-> > > many saved
-> > > blobs under different PCR values, so multiple boots are easily
-> > > supported.
-> > > 
-> > > +TPM 1.2
-> > > +-------
-> > > +
-> > > By default, trusted keys are sealed under the SRK, which has the
-> > > default
-> > > authorization value (20 zeros).  This can be set at takeownership
-> > > time with the
-> > > trouser's utility: "tpm_takeownership -u -z".
-> > > 
-> > > +TPM 2.0
-> > > +-------
-> > > +
-> > > +The user must first create a storage key and make it persistent,
-> > > so the key is
-> > > +available after reboot. This can be done using the following
-> > > commands.
-> > > +
-> > > +With the IBM TSS 2 stack::
-> > > +
-> > > +  #> tsscreateprimary -hi o -st
-> > > +  Handle 80000000
-> > > +  #> tssevictcontrol -hi o -ho 80000000 -hp 81000001
-> > > +
-> > > +Or with the Intel TSS 2 stack::
-> > > +
-> > > +  #> tpm2_createprimary --hierarchy o -G rsa2048 -o key.ctxt
-> > > +  [...]
-> > > +  handle: 0x800000FF
-> > > +  #> tpm2_evictcontrol -c key.ctxt -p 0x81000001
-> > > +  persistentHandle: 0x81000001
-> > > +
+On Tue, 6 Nov 2018 19:08:27 +0800
+Liang Yang <liang.yang@amlogic.com> wrote:
+
+> On 2018/11/6 18:22, Boris Brezillon wrote:
+> > On Tue, 6 Nov 2018 18:00:37 +0800
+> > Liang Yang <liang.yang@amlogic.com> wrote:
+> >   
+> >> On 2018/11/6 17:28, Boris Brezillon wrote:  
+> >>> On Tue, 6 Nov 2018 17:08:00 +0800
+> >>> Liang Yang <liang.yang@amlogic.com> wrote:
+> >>>      
+> >>>> On 2018/11/5 23:53, Boris Brezillon wrote:  
+> >>>>> On Fri, 2 Nov 2018 00:42:21 +0800
+> >>>>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+> >>>>>         
+> >>>>>> +
+> >>>>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
+> >>>>>> +{
+> >>>>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
+> >>>>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> >>>>>> +	u32 cmd;
+> >>>>>> +
+> >>>>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
+> >>>>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> >>>>>> +
+> >>>>>> +	meson_nfc_drain_cmd(nfc);  
+> >>>>>
+> >>>>> You probably don't want to drain the FIFO every time you read a byte on
+> >>>>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
+> >>>>> FIFO, right? If that's the case, you should queue as much DRD cmd as
+> >>>>> possible and only sync when the user explicitly requests it or when
+> >>>>> the INPUT/READ FIFO is full.
+> >>>>>         
+> >>>> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
+> >>>> nand cycle to read one byte and covers the 1st byte every time reading.
+> >>>> i think nfc controller is faster than nand cycle, but really it is not
+> >>>> high efficiency when reading so many bytes once.
+> >>>> Or use dma command here like read_page and read_page_raw.  
+> >>>
+> >>> Yep, that's also an alternative, though you'll have to make sure the
+> >>> buffer passed through the nand_op_inst is DMA-safe, and use a bounce
+> >>> buffer when that's not the case.
+> >>>      
+> >> ok, i will try dma here.  
 > > 
-> > Is that the correct option for tpm2_evictcontrol? What I'm seeing
-> > in the versions I have is -S or -persistent= for specifying the
-> > persistent handle.
+> > We should probably expose the bounce buf handling as generic helpers at
+> > the rawnand level:
 > > 
-> > Other than that looks good to me.
+> > void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
+> > {
+> > 	void *buf;
+> > 
+> > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
+> > 		return NULL;
+> > 
+> > 	if (virt_addr_valid(instr->data.in) &&
+> > 	    !object_is_on_stack(instr->data.buf.in))
+> > 		return instr->data.buf.in;
+> > 
+> > 	return kzalloc(instr->data.len, GFP_KERNEL);
+> > }
+> > 
+> > void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
+> > 				    void *buf)
+> > {
+> > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
+> > 	    WARN_ON(!buf))
+> > 		return;
+> > 
+> > 	if (buf == instr->data.buf.in)
+> > 		return;
+> > 
+> > 	memcpy(instr->data.buf.in, buf, instr->data.len);
+> > 	kfree(buf);
+> > }
+> > 
+> > const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
+> > {
+> > 	void *buf;
+> > 
+> > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+> > 		return NULL;
+> > 
+> > 	if (virt_addr_valid(instr->data.out) &&
+> > 	    !object_is_on_stack(instr->data.buf.out))
+> > 		return instr->data.buf.out;
+> > 
+> > 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
+> > }
+> > 
+> > void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
+> > 				    void *buf)
+> > {
+> > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
+> > 	    WARN_ON(!buf))
+> > 		return;
+> > 
+> > 	if (buf != instr->data.buf.out)
+> > 		kfree(buf);
+> > }
+> >  
 > 
-> William, is the above correct?
+> that is more convenient.
+> i will use meson_chip->databuf as the bounce mid-buffer now.
 
-We're changing some of the options in master ahead of our next major
-release, the -p/--persistent option is correct for that branch and the
-eventual 4.X series.
+It won't work: the bounce buffer is allocated after the detection, and
+the detection code is calling ->exec_op().
 
-Regards,
-Joshua
-
-> > 
-> > > Usage::
-> > > 
-> > >    keyctl add trusted name "new keylen [options]" ring
-> > > @@ -30,7 +53,9 @@ Usage::
-> > >    keyctl print keyid
-> > > 
-> > >    options:
-> > > -       keyhandle=    ascii hex value of sealing key default
-> > > 0x40000000 (SRK)
-> > > +       keyhandle=    ascii hex value of sealing key
-> > > +                       TPM 1.2: default 0x40000000 (SRK)
-> > > +                       TPM 2.0: no default; must be passed every
-> > > time
-> > >       keyauth=	     ascii hex auth for sealing key default
-> > > 0x00...i
-> > >                     (40 ascii zeros)
-> > >       blobauth=     ascii hex auth for sealed data default
-> > > 0x00...
-> > > @@ -84,6 +109,10 @@ Examples of trusted and encrypted key usage:
-> > > 
-> > > Create and save a trusted key named "kmk" of length 32 bytes::
-> > > 
-> > > +Note: When using a TPM 2.0 with a persistent key with handle
-> > > 0x81000001,
-> > > +append 'keyhandle=0x81000001' to statements between quotes, such
-> > > as
-> > > +"new 32 keyhandle=0x81000001".
-> > > +
-> > >    $ keyctl add trusted kmk "new 32" @u
-> > >    440502848
-> > > 
-> > > -- 
-> > > 2.17.2
-> > > 
-
+Just add a new patch to you series adding these helpers to nand_base.c.
