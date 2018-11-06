@@ -2,84 +2,74 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3E0C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58468C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F06C20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:51:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SRukdNfL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F06C20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C1EA20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C1EA20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389707AbeKGDSO (ORCPT
+        id S2389738AbeKGDS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:18:14 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55864 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730671AbeKGDSO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:18:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CHuw1KmGmf+uPnv6AM4nW3dc0Xygli7B1SC42kWCxrI=; b=SRukdNfLCxm9Iwd0hLlVRogiF
-        Yv6g61774GGIPKM5F1lwT1T79Fki2wwenvCO/IOW3WfmrAnikQ90izDu5r8NVsKJvmO/f6t6rYQl5
-        vFRUWszUMszdcfNSf6zZvny5Pmy4caHvQh3nnOp7io9gRYfKhyE+zA6VNvDlXh/mcUnzs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gK5W0-0002qJ-JJ; Tue, 06 Nov 2018 17:51:48 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 347CF112266B; Tue,  6 Nov 2018 17:51:48 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     arnd@arndb.de, akpm@linux-foundation.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [PATCH] sh: Provide prototypes for PCI I/O mapping in asm/io.h
-Date:   Tue,  6 Nov 2018 17:51:42 +0000
-Message-Id: <20181106175142.27988-1-broonie@kernel.org>
-X-Mailer: git-send-email 2.19.0.rc2
+        Tue, 6 Nov 2018 22:18:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:38782 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730688AbeKGDS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:18:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA489A78;
+        Tue,  6 Nov 2018 09:52:37 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EE9F3F5C0;
+        Tue,  6 Nov 2018 09:52:35 -0800 (PST)
+Subject: Re: [PATCH v2 00/10] steal tasks to improve CPU utilization
+To:     Steve Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, quentin.perret@arm.com,
+        linux-kernel@vger.kernel.org
+References: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <ed3d1b90-8473-0f81-9f78-2652adb047df@arm.com>
+Date:   Tue, 6 Nov 2018 17:52:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1541448489-19692-1-git-send-email-steven.sistare@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most architectures provide prototypes for the PCI I/O mapping operations
-when asm/io.h is included but SH doesn't currently do that, leading to
-for example warnings in sound/pci/hda/patch_ca0132.c when pci_iomap() is
-used on current -next.  Make SH more consistent with other architectures
-by including asm-generic/pci_iomap.h in asm/io.h.
+Hi Steve,
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/sh/include/asm/io.h | 1 +
- 1 file changed, 1 insertion(+)
+On 05/11/2018 20:07, Steve Sistare wrote:
+[...]
+> The patch series is based on kernel 4.19.0-rc7.  It compiles, boots, and
+> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
+> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
+> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
+> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
+> bandwidth control were tested.
+> 
 
-diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
-index 98cb8c802b1a..4f7f235f15f8 100644
---- a/arch/sh/include/asm/io.h
-+++ b/arch/sh/include/asm/io.h
-@@ -24,6 +24,7 @@
- #define __IO_PREFIX     generic
- #include <asm/io_generic.h>
- #include <asm/io_trapped.h>
-+#include <asm-generic/pci_iomap.h>
- #include <mach/mangle-port.h>
- 
- #define __raw_writeb(v,a)	(__chk_io_ptr(a), *(volatile u8  __force *)(a) = (v))
--- 
-2.19.0.rc2
+There are some conflicts with misfit on 4.20-rc1 (nothing major, just that
+misfit logic appeared where the stealing logic wants to land), and git
+gets lost after a few conflict resolutions.
 
+It's fine for testing on 4.19 - I just apply the misfit series then merge
+a branch with the steal patches to fix it all at once - but it makes
+playing around with 4.20-rc* more tedious.
+
+[...]
