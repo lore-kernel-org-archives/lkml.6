@@ -2,111 +2,88 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30913C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 03:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB82C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 03:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB6772083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 03:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC2C2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 03:35:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRG6yWX5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB6772083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="on6pdnVr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC2C2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387409AbeKFM5A (ORCPT
+        id S1729482AbeKFM64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 07:57:00 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45904 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbeKFM5A (ORCPT
+        Tue, 6 Nov 2018 07:58:56 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47736 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727481AbeKFM64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 07:57:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o19-v6so5466564pll.12;
-        Mon, 05 Nov 2018 19:33:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/B9c0Siz2cQq+Qlpwp7SPzLyhwUuiU2x/Fb4412Cyko=;
-        b=WRG6yWX5Z/OUR89dfsuuY11uJL+1J+ZsaI6bwkea2MrBNZeZwDH7T7CXcrob8AltTZ
-         aTl9/kl1CdUUizyXYGp4WpwLRPZYQTHR1sJRrJBQfXw2TUBK9Y2FYt/faourJbLn/don
-         fK2uHt39gPKX+UagJaOqq0DnKkOBRP4ZnHaIUi/pYlAddYU73bqkgGRq/n4HfOegnedu
-         BufAGn3F8HzLACayRyNU+D+8IfAyToMr+XWbk8X4BX2jsQnfmdeRAmQMAxm/a29ALUQk
-         2fiWSUO+Zqy1lpq1R8uNyw4zsxwRycz/3T/tMu81LEgacb83BdaoSw3Tx/e7m4p1yPL3
-         YN9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/B9c0Siz2cQq+Qlpwp7SPzLyhwUuiU2x/Fb4412Cyko=;
-        b=ZLCoM3vsA/19R7UsgSTCSLLCd3bEVGxhgKi6g6eqZnZ5amQbqbNtzY/5Gi73So8CxC
-         haqW5GGA0O6DHdeswpM+SaUsyWqNVdMXY/FVEaS5Xta59SAYU2WMuNtMUbNUJ4PJUEjp
-         Xa9CitLXBAIM01Cmh6nM3cX4L3H9KymP/JxDQ6RWzRwWpoGi2gDHshYZQvTRCwImLegH
-         JBwYLXQl93aBfFJz0fKiKjTU139v2DbO+wzNrSQfYmYpnWqz8LHKJGvwQjs+Li8AGS8r
-         MdWuzYabIHQCUUSyR35TtauK1YraAcW/ZRE2iByeOcIhwsh5Es6NdBcTFCLec1j9XiBY
-         RmRg==
-X-Gm-Message-State: AGRZ1gK/eDvDh0/04LGfnVvcx4x0/HD34bbTb9hW1Q1QJHdPoaHf6cCi
-        ZACWJ0vm+uSCt/c00/PzIYw=
-X-Google-Smtp-Source: AJdET5c8NM7ilNUKMZtcj9QYMf9VpwIJxA+CAomEca2+tNR2zo38H+oCG7vQv1JoxwNsSXg21OdCxQ==
-X-Received: by 2002:a17:902:b789:: with SMTP id e9-v6mr4823856pls.338.1541475236274;
-        Mon, 05 Nov 2018 19:33:56 -0800 (PST)
-Received: from localhost.localdomain ([2402:f000:1:4414:1815:546f:dfdc:5850])
-        by smtp.gmail.com with ESMTPSA id i88-v6sm40639651pfi.66.2018.11.05.19.33.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Nov 2018 19:33:55 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     linus.walleij@linaro.org, vkoul@kernel.org,
-        dan.j.williams@intel.com
-Cc:     linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] dma: coh901318: Fix a double-lock bug
-Date:   Tue,  6 Nov 2018 11:33:48 +0800
-Message-Id: <20181106033348.27361-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 6 Nov 2018 07:58:56 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA63YUwW008458;
+        Tue, 6 Nov 2018 03:35:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=juFiGWanSVZqSIbogM774/bNu2za/LeUTpOhoedJIY0=;
+ b=on6pdnVr68VSqVaFkMSRW94FwT3u/edrq6G9h90YRNEXYwiW2w/8d5MMplbCWxpiTFFI
+ sYZ87v1rw3vVoyr4GF4Ji3zPTpDEjPTSoVey0SCiD1qq4gwgD06ZE/q1lD+A0DnE9jGn
+ BJocB1KhalZa9gKKO1dzrmluSlSrnVO6FVxcdi5Ja8OHkpIRwwNll43VmgwXvQ96Bomc
+ a8B+dx3Md81+ufNvnsN8TC8gTODotgsTz7QEzZcNKXTgY+i/fUkApwKDhttNLGeKyWZA
+ AaddxQVakwBjGLJQvk/73rjui6NSKBU6ZZeJIBvPWWMsYyxf0eaarsaaOawGeLpaiu7u ew== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2nh33ttsdc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 06 Nov 2018 03:35:46 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA63ZeGD014779
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 6 Nov 2018 03:35:41 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA63Zekj001330;
+        Tue, 6 Nov 2018 03:35:40 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Nov 2018 19:35:39 -0800
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Hannes Reinecke <hare@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: myrb: fix sprintf buffer overflow warning
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20181102153458.1567593-1-arnd@arndb.de>
+Date:   Mon, 05 Nov 2018 22:35:37 -0500
+In-Reply-To: <20181102153458.1567593-1-arnd@arndb.de> (Arnd Bergmann's message
+        of "Fri, 2 Nov 2018 16:34:49 +0100")
+Message-ID: <yq1h8gu7u9i.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=831
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811060028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function coh901318_alloc_chan_resources() calls spin_lock_irqsave() 
-before calling coh901318_config().
-But coh901318_config() calls spin_lock_irqsave() again in its
-definition, which may cause a double-lock bug.
 
-Because coh901318_config() is only called by
-coh901318_alloc_chan_resources(), the bug fix is to remove the
-calls to spin-lock and -unlock functions in coh901318_config().
+Arnd,
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/dma/coh901318.c | 4 ----
- 1 file changed, 4 deletions(-)
+> gcc warns that the 12 byte fw_version field might not be long enough to
+> contain the generated firmware name string:
 
-diff --git a/drivers/dma/coh901318.c b/drivers/dma/coh901318.c
-index eebaba3d9e78..fd862a478738 100644
---- a/drivers/dma/coh901318.c
-+++ b/drivers/dma/coh901318.c
-@@ -1807,8 +1807,6 @@ static int coh901318_config(struct coh901318_chan *cohc,
- 	int channel = cohc->id;
- 	void __iomem *virtbase = cohc->base->virtbase;
- 
--	spin_lock_irqsave(&cohc->lock, flags);
--
- 	if (param)
- 		p = param;
- 	else
-@@ -1828,8 +1826,6 @@ static int coh901318_config(struct coh901318_chan *cohc,
- 	coh901318_set_conf(cohc, p->config);
- 	coh901318_set_ctrl(cohc, p->ctrl_lli_last);
- 
--	spin_unlock_irqrestore(&cohc->lock, flags);
--
- 	return 0;
- }
- 
+Applied to 4.20/scsi-fixes, thanks!
+
 -- 
-2.17.0
-
+Martin K. Petersen	Oracle Linux Engineering
