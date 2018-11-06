@@ -2,150 +2,164 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAF5C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC804C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F47F2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F47F2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 70C2E2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:57:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UUbLi7tr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C2E2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbeKFSTD (ORCPT
+        id S1730194AbeKFSWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:19:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35580 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729416AbeKFSTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:19:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A355B0C8;
-        Tue,  6 Nov 2018 08:54:51 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: remove unnecessary unlikely()
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181104125028.3572-1-tiny.windzz@gmail.com>
- <2c42ba08-f78a-36f6-5a5d-21dd00861872@suse.cz>
- <CACT4Y+a+7gqs+gdfePuVGZ-bDGvb8ieE8ugA-pK1AZ8HwfecQg@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <a16bb44b-5231-97fe-920d-20cd92b5f3b2@suse.cz>
-Date:   Tue, 6 Nov 2018 09:54:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 13:22:08 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42211 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729416AbeKFSWH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:22:07 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y15-v6so12494618wru.9
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 00:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=npu6f52scOaswph7S3xG5VI0stM9qgkrpmiNFYq66BE=;
+        b=UUbLi7trCZYfFstMsNWjDdL5358z4tivmV/zZqUa7Nn11EaPnqlVxkDDksGcZgO4Ed
+         mgp4cbKtL3wAPP/lBPLgp8BkxuDCVROkHwWQGUxTw/HEtbU1GJ+nBuI//ezom5dLsG09
+         b/4GakvmMIDD0uvyseNj3Ab0IFgx9ITjYvf5k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=npu6f52scOaswph7S3xG5VI0stM9qgkrpmiNFYq66BE=;
+        b=bxfSz/iNUF6KHY+rfGhdqyF+VwWWIv1unzYVr295VDMREwFjynBjIyEp8m8rlV/ddF
+         O/yYz10eSxh8aQgUYJdt/JJp21wtR8nZatYKMwycpgH+4K+T6EJNzEv3jF/6Cm7tC52c
+         ceHNkplf/Udva82rpX5vAuZYUpdFqRTqUT98q1rY/ghL53Ay01v2RvjJun1E2fB1RcNB
+         gb0PCU4zNLfGxMp9H97I9BwyxCWL43IxmIlMjWC3bQaWd/wW/ZppV6pJTySZRx6PfVhh
+         VyKlZ648JGa1b2n7XZQZj46vUzWKo3cx+AfnWVWqDg4XmcbopEZThjvG0HZAK7cTEU1s
+         DLRA==
+X-Gm-Message-State: AGRZ1gKLaDCPesKHcwtvoZPHSGno0jqSlkboWaSpUiC4Y9VXRQvyAJnw
+        55H/Q84wgdaJ4OQ1fnsPoGnLxw==
+X-Google-Smtp-Source: AJdET5ctOWmd2/UvDSpOIlMRCdbJwkP7Ez46yKDKlA8NsT604u6DUiuFDFA3jljo42MYmX55+PaICg==
+X-Received: by 2002:adf:e28c:: with SMTP id v12-v6mr4260409wri.26.1541494674669;
+        Tue, 06 Nov 2018 00:57:54 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id x8-v6sm108736952wrd.54.2018.11.06.00.57.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 00:57:53 -0800 (PST)
+Date:   Tue, 6 Nov 2018 08:57:51 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/arm64 : fix error in dump_backtrace
+Message-ID: <20181106085751.hrp7qkp53cftgew6@holly.lan>
+References: <1541488775-29610-1-git-send-email-huangzhaoyang@gmail.com>
+ <20181106083901.erezwtcomiijvdrk@salmiak>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+a+7gqs+gdfePuVGZ-bDGvb8ieE8ugA-pK1AZ8HwfecQg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106083901.erezwtcomiijvdrk@salmiak>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 6:38 AM, Dmitry Vyukov wrote:
-> On Mon, Nov 5, 2018 at 11:18 AM, Vlastimil Babka <vbabka@suse.cz> wrote:
->> +CC Dmitry
->>
->> On 11/4/18 1:50 PM, Yangtao Li wrote:
->>> WARN_ON() already contains an unlikely(), so it's not necessary to use
->>> unlikely.
->>>
->>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->>
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->>
->> Maybe also change it back to WARN_ON_ONCE? I already considered it while
->> reviewing Dmitry's patch and wasn't sure. Now I think that what can
->> happen is that either a kernel bug is introduced that _ONCE is enough to
->> catch (two separate bugs introduced to both hit this would be rare, and
->> in that case the second one will be reported after the first one is
->> fixed), or this gets called with a user-supplied value, and then we want
->> to avoid spamming dmesg with multiple warnings that the user could
->> trigger at will.
+On Tue, Nov 06, 2018 at 08:39:01AM +0000, Mark Rutland wrote:
+> On Tue, Nov 06, 2018 at 03:19:35PM +0800, Zhaoyang Huang wrote:
+> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > 
+> > In some cases, the instruction of "bl foo1" will be the last one of the
+> > foo2[1], which will cause the lr be the first instruction of the adjacent
+> > foo3[2]. Hence, the backtrace will show the weird result as bellow[3].
+> > The patch will fix it by miner 4 of the lr when dump_backtrace
 > 
+> This has come up in the past (and a similar patch has been applied, then
+> reverted).
 > 
-> If you asking me, I am fine both changes.
-> I was mainly interested in removing the bogus warnings that actually fire.
-
-OK thanks. Andrew can you update the patch to WARN_ON_ONCE?
-
-Changelog addition:
-Also change WARN_ON() back to WARN_ON_ONCE() to avoid potentially
-spamming dmesg with user-triggerable large allocations.
-
+> In general, we don't know that a function call was made via BL, and therefore
+> cannot know that LR - 4 is the address of the caller. The caller could set up
+> the LR as it likes, then B or BR to the callee, and depending on how the basic
+> blocks get laid out in memory, LR - 4 might point at something completely
+> different.
 > 
->>> ---
->>>  mm/slab_common.c | 4 +---
->>>  1 file changed, 1 insertion(+), 3 deletions(-)
->>>
->>> diff --git a/mm/slab_common.c b/mm/slab_common.c
->>> index 7eb8dc136c1c..4f54684f5435 100644
->>> --- a/mm/slab_common.c
->>> +++ b/mm/slab_common.c
->>> @@ -1029,10 +1029,8 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
->>>
->>>               index = size_index[size_index_elem(size)];
->>>       } else {
->>> -             if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
->>> -                     WARN_ON(1);
->>> +             if (WARN_ON(size > KMALLOC_MAX_CACHE_SIZE))
->>>                       return NULL;
->>> -             }
->>>               index = fls(size - 1);
->>>       }
->>>
->>>
->>
+> More ideally, the compiler wouldn't end a function with a BL. When does that
+> happen, and is there some way we could arrange for that to not happen? e.g.
+> somehow pad a NOP after the BL.
 
+It's a consequence of having __noreturn isn't it? __noreturn frees the
+compiler from the burden of having to produce a valid return stack... so
+it doesn't and unwinding becomes hard.
+
+
+Daniel.
+
+
+> > [1]
+> > 0xffffff80081e6b04 <handle_mm_fault+3996>:      adrp    x0, 0xffffff8008ca8000
+> > 0xffffff80081e6b08 <handle_mm_fault+4000>:      add     x0, x0, #0x5a8
+> > 0xffffff80081e6b0c <handle_mm_fault+4004>:      bl      0xffffff80081b0ca0 <panic>
+> > 0xffffff80081e6b10 <access_remote_vm>:  stp     x29, x30, [sp,#-64]!
+> > 0xffffff80081e6b14 <access_remote_vm+4>:        mov     x29, sp
+> > 
+> > [2]
+> > crash_arm64> rd ffffffc02eec3bd0 2
+> > ffffffc02eec3bd0:  ffffffc02eec3cb0 ffffff80081e6b10
+> > 
+> > [3]
+> > wrong:
+> > [<ffffff80081b0d90>] panic+0xf0/0x24c
+> > [<ffffff80081e6b10>] access_remote_vm+0x0/0x5c
+> > [<ffffff800809d7b0>] do_page_fault+0x290/0x3b8
+> > [<ffffff8008081570>] do_mem_abort+0x64/0xdc
+> > 
+> > correct:
+> > [ffffffc02eec3bd0] panic at ffffff80081b0da4
+> > [ffffffc02eec3cb0] handle_mm_fault at ffffff80081e6b0c
+> > [ffffffc02eec3d80] do_page_fault at ffffff800809d7ac
+> > [ffffffc02eec3df0] do_mem_abort at ffffff800808156c
+> > 
+> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > ---
+> >  arch/arm64/kernel/traps.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> > index d399d45..7a097cc 100644
+> > --- a/arch/arm64/kernel/traps.c
+> > +++ b/arch/arm64/kernel/traps.c
+> > @@ -113,7 +113,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+> >  
+> >  	if (tsk == current) {
+> >  		frame.fp = (unsigned long)__builtin_frame_address(0);
+> > -		frame.pc = (unsigned long)dump_backtrace;
+> > +		frame.pc = (unsigned long)dump_backtrace + 4;
+> >  	} else {
+> >  		/*
+> >  		 * task blocked in __switch_to
+> > @@ -130,7 +130,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+> >  	do {
+> >  		/* skip until specified stack frame */
+> >  		if (!skip) {
+> > -			dump_backtrace_entry(frame.pc);
+> > +			dump_backtrace_entry(frame.pc - 4);
+> >  		} else if (frame.fp == regs->regs[29]) {
+> >  			skip = 0;
+> >  			/*
+> > -- 
+> > 1.9.1
+> > 
