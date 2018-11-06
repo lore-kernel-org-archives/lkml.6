@@ -2,134 +2,109 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB34C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9DEC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C58E2083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B6BE2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:30:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MVfGqJde"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C58E2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R5bSWIBU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6BE2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeKFKwK (ORCPT
+        id S1729079AbeKFKxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 05:52:10 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46011 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbeKFKwK (ORCPT
+        Tue, 6 Nov 2018 05:53:06 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44578 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbeKFKxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 05:52:10 -0500
-Received: by mail-lf1-f67.google.com with SMTP id b20so7602069lfa.12
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 17:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=1e3I/KDnanvN9kwto57/PKEf+Ws+74tzdDp4sUDSZN8=;
-        b=MVfGqJdeyXJoIVT0PZ1gVIewHUjg77kUJNNYFPLWx502B/3kHWbdb7jcxEOab6iUgV
-         v700n82DYM1EroUcjoTO7vU33H8Zq0nYsm3UctCUtNR6bF24pJMmgHLWHlYMZDTaHvbS
-         QpUl3IM8jUpwFqcEbWe1zfC+WVqqgSnSk+vis=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=1e3I/KDnanvN9kwto57/PKEf+Ws+74tzdDp4sUDSZN8=;
-        b=DRfleRnPt2kSetmhMiYI6hBBOOAriRSdZwSQ9tkdMCCvPb91qBHNRZFp4NprQBX142
-         xQN8rsm9NJW2U7EThGGePxg+l6dbeF7y1MTalWd7VpNYHpAXI0cQgHw4wYz0A3clCU+0
-         Fjz9gJvzIj0L+0ht4Ewpkhqoj7cSAjq0JOspftvOqOEu6RbbkvlUjfGvwW/1Ff6K2imp
-         wVPoDnhsmhDSNTkw5jk9uDIYO+r0dpW6RrMHinkaLJ5YKmbg6TrcRDavrupgAz6ZOG1+
-         Vsw+T9lPJiYXFYp6SlqapjnRlLJL9lsLZaTJFMsCyE3QwYoiwo8+dkBs3xlqF6f+tjqN
-         L4Kg==
-X-Gm-Message-State: AGRZ1gJyYen4ALHerh86pL2R1tMz9zgm6N7W/5RBDGXspcydx1HpHdKn
-        Xy3dcoAvHKuhO4YTF0jnk20b9g==
-X-Google-Smtp-Source: AJdET5cjdnpGsVdaEI8EwDqy3Z4IMDSmz9lqo9i/suMIdrqKiTkrwaLwURJB/1iYAxogBwf4HuFUaA==
-X-Received: by 2002:a19:982:: with SMTP id 124mr8008351lfj.138.1541467771494;
-        Mon, 05 Nov 2018 17:29:31 -0800 (PST)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id j126sm519697lfe.10.2018.11.05.17.29.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 17:29:30 -0800 (PST)
-Date:   Tue, 6 Nov 2018 02:29:28 +0100
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     bgolaszewski@baylibre.com
-Cc:     srinivas.kandagatla@linaro.org, viresh.kumar@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: [regression 4.20-rc1, bisected] cpufreq fails to register on db820c
-Message-ID: <20181106012928.GA32044@centauri.lan>
+        Tue, 6 Nov 2018 05:53:06 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA61TFwP074569;
+        Tue, 6 Nov 2018 01:29:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=8nfYdVa5jWpYK80znAydvS4IVis1w3ImQRBB2skTJIk=;
+ b=R5bSWIBUzAVzAnCzC4gwKnYOu74y2ymzbZ/qcxLmPmYUNNP9EOxAuJwhtRj8ecFFEVME
+ Nk6cCxTbE5azdp/5g0W56B566jP/Zs83Qy2jJsCRutoMfXkTX8P+vmSP2RJty2jjFino
+ 8Oj2nn/BLdMP9SsDeULVzf0ZUs6LOddWTOqH1OvcMnQfz5EwT6PN69simLAO/tKzw4NL
+ Cd/p81EP/lWKcxZYSfCD8uKzQO070Fosb8DUFPh8ThXnUQlg/ts/eGVzQ/b+p9D4GlGW
+ EtopRWIwrd0mluFP9GWJ5fTRkEhszKiHSUTBicC1xBCxIyFD3jlzqJhhcYdnK1xc8nun mQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nh4aqjb7u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 06 Nov 2018 01:29:56 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA61Tn8A021976
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 6 Nov 2018 01:29:50 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA61Tmia001738;
+        Tue, 6 Nov 2018 01:29:48 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Nov 2018 17:29:48 -0800
+Date:   Mon, 5 Nov 2018 17:29:55 -0800
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
+        alex.williamson@redhat.com, bsd@redhat.com,
+        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
+        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
+        mike.kravetz@oracle.com, Pavel.Tatashin@microsoft.com,
+        prasad.singamsetty@oracle.com, rdunlap@infradead.org,
+        steven.sistare@oracle.com, tim.c.chen@intel.com, tj@kernel.org,
+        vbabka@suse.cz
+Subject: Re: [RFC PATCH v4 00/13] ktask: multithread CPU-intensive kernel work
+Message-ID: <20181106012955.br5swua3ykvolyjq@ca-dmjordan1.us.oracle.com>
+References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
+ <20181105172931.GP4361@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181105172931.GP4361@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=717
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811060010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Bartosz,
+On Mon, Nov 05, 2018 at 06:29:31PM +0100, Michal Hocko wrote:
+> On Mon 05-11-18 11:55:45, Daniel Jordan wrote:
+> > Michal, you mentioned that ktask should be sensitive to CPU utilization[1].
+> > ktask threads now run at the lowest priority on the system to avoid disturbing
+> > busy CPUs (more details in patches 4 and 5).  Does this address your concern?
+> > The plan to address your other comments is explained below.
+> 
+> I have only glanced through the documentation patch and it looks like it
+> will be much less disruptive than the previous attempts. Now the obvious
+> question is how does this behave on a moderately or even busy system
+> when you compare that to a single threaded execution. Some numbers about
+> best/worst case execution would be really helpful.
 
-I've run into a regression on v4.20-rc1, where cpufreq on dragonboard 820c
-fails to register.
+Patches 4 and 5 have some numbers where a ktask and non-ktask workload compete
+against each other.  Those show either 8 ktask threads on 8 CPUs (worst case) or no ktask threads (best case).
 
-I've bisected the issue to:
-e888d445ac33 ("nvmem: resolve cells from DT at registration time")
+By single threaded execution, I guess you mean 1 ktask thread.  I'll run the
+experiments that way too and post the numbers.
 
-If I revert that patch, cpufreq starts working on dragonboard 820c again.
+> I will look closer later.
 
+Great!  Thanks for your comment.
 
-Before your patch:
-[    5.052985] qcom_cpufreq_kryo_probe:110 speedbin_nvmem: ffff8000d4d51e00
-[    5.053133] qcom_cpufreq_kryo_probe:120 speedbin: ffff8000d4d51d00
-[    5.058895] qcom_cpufreq_kryo_probe:121 *speedbin: 0
-
-
-After your patch:
-[    4.791664] qcom_cpufreq_kryo_probe:110 speedbin_nvmem: ffff8000d472ed00
-[    4.791815] qcom_cpufreq_kryo_probe:120 speedbin: ffff8000d451b300
-[    4.797575] qcom_cpufreq_kryo_probe:121 *speedbin: 12
-
-
-The prints are debug prints that I've added locally:
-
---- a/drivers/cpufreq/qcom-cpufreq-kryo.c
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -107,6 +107,7 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
-        }
- 
-        speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+       pr_err("%s:%d speedbin_nvmem: %lx\n", __func__, __LINE__, speedbin_nvmem);
-        of_node_put(np);
-        if (IS_ERR(speedbin_nvmem)) {
-                if (PTR_ERR(speedbin_nvmem) != -EPROBE_DEFER)
-@@ -116,6 +117,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
-        }
- 
-        speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+       pr_err("%s:%d speedbin: %lx\n", __func__, __LINE__, speedbin);
-+       pr_err("%s:%d *speedbin: %u\n", __func__, __LINE__, (unsigned int)(*speedbin));
-        nvmem_cell_put(speedbin_nvmem);
-        if (IS_ERR(speedbin))
-                return PTR_ERR(speedbin);
-
-
-So it appears that the read from nvmem_cell_read()
-gets another value after your commit.
-
-This value is then given to dev_pm_opp_set_supported_hw(),
-however, since this new value (12) from nvmem_cell_read()
-doesn't have any matching opp-supported-hw in device tree,
-cpufreq fails to register.
-
-This error only happens when we read this new incorrect value
-(12 instead of 0).
-Any idea why nvmem_cell_read() returns a new value for the
-same efuse?
-
-
-Kind regards,
-Niklas
+Daniel
