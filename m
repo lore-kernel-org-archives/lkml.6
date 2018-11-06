@@ -8,65 +8,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B27C9C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4629DC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BBFE20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 081F720862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q7LKCWXq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BBFE20862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qZ1Qb7+k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081F720862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388981AbeKGHfp (ORCPT
+        id S2389007AbeKGHfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:35:45 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34823 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388627AbeKGHfo (ORCPT
+        Wed, 7 Nov 2018 02:35:47 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35082 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388363AbeKGHfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:35:44 -0500
-Received: by mail-lf1-f68.google.com with SMTP id d7-v6so10064230lfi.2;
-        Tue, 06 Nov 2018 14:08:21 -0800 (PST)
+        Wed, 7 Nov 2018 02:35:46 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so12959290ljb.2;
+        Tue, 06 Nov 2018 14:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bfRbCJQAtwCjLAbsjnCZsOWeAPcIfNc2DWqBi/np9so=;
-        b=q7LKCWXqtMWPz/myvyMGQyuoTGfF3Rx9qfLoy8A8I7bQGl6rzqWOFa1MO9B7Untebe
-         JJ0MXvxCRi6eXJJEeXa086ut2j2Eol8fKuUrYcMeTyXVFGYJCpIONWAIBxIQ35CDqm2t
-         Rsq76hxNY9bJdxFWgQCVo1c8bOy5TwsIBA4NH6CRRNs4JIPbMteLTkgaGQVVYndS6piV
-         uendnFfrQ7yUgzW1yFOmpVdz6WWgUdVCISXdPVTQEJJHJcbfaq2BJAI2B45Nbs4s0Nzb
-         juHVo0Si6P6ZBVFOg3BcfxPHWkW+hEthIytWrFX8QvjNnDXWEUX7I8l1dkg5pFQ+gTki
-         JgcQ==
+        bh=A3JiDjreYluC5kjA2GvN1/ZGgxpDa7yPtmulPJNyof0=;
+        b=qZ1Qb7+k6VJM5it2Vp+yBUAoCcmoFCIF0/jHAbzl3Dsi8d3FKRL10yYp0fRljvuENB
+         3I1BM50OXjUcS8uuvFCrwEVZCHn7ov5QXcwWjIY7WlT3aRJ2HMmZaTwbO/SMfccUfUwj
+         rKgu1koR5FGjeEuPo8WX4gqjpLgf3iWCrfBDFINUY6gx/vZJIMgfuc0HXLaD5crEUF0+
+         +DfbZWPr9BQqIs8Ovlk5N6Wgh4wyb5+Fyi46fkrpTTlICzphR+0Oea9kB1leGCmUWLJj
+         jyJd7fcd38FfB6PSg8n5Rk+09gxX1oqFQsLzQ/JU6QR9tB1d+Fe8kt8WAYUzpLewj1cW
+         1YyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bfRbCJQAtwCjLAbsjnCZsOWeAPcIfNc2DWqBi/np9so=;
-        b=WvGV2qSXnpg902z62wehSWDym7WyaiXwL+3OOcNdNbDczAbc8wBuSQCkpmQeuprnA6
-         SqjglbpvX+bQSBoRlqYBJ4/txEPlwDiUot2rZOMsmrfwPPjLoL5Tn1nJH6ZN0wrl4h6h
-         GqzVkDZUniuqWfiTu5mN8rZxyHcp1bG4B4thnzOJgMqlhWP5IdE7Qc4w4cXL38BHyUY1
-         0a2TsJddZsx/6o3E7aahLomDTLSvQY7aSI9M14LrzJcLvZWirG2d9E0oJZuyKMrupwpL
-         i8YpNUulqz4tJ5QSi48IlQEFFF+A7fBq8vmMCMGGRhT2HBGNEkmU+0m6A2Wm5Hm8vEoP
-         h+FA==
-X-Gm-Message-State: AGRZ1gKBiVegFq2yVXnKs/ZfAWT26WHm7zq50wXdqyNeMOFFe+D6c8eu
-        XHBAqWfo1hk3PP+jVYwfML3v6lIASj0=
-X-Google-Smtp-Source: AJdET5dqp6I61QXdOpTeXZUxx2DUK6YDUIv+HkVeuBoE6mHokXJYcpVLh5+Y5BUWGNUoMg/2AiYTow==
-X-Received: by 2002:a19:9b50:: with SMTP id d77mr16646985lfe.137.1541542100045;
-        Tue, 06 Nov 2018 14:08:20 -0800 (PST)
+        bh=A3JiDjreYluC5kjA2GvN1/ZGgxpDa7yPtmulPJNyof0=;
+        b=YO1sma0eyPimvub/gSSaO/TLt+KchULspHcUVogZMXJl8VJ9n0yV0tqdzVqKzeyOzu
+         jSJTOWaYpAJSPoLHlh7B4qr1rDvkOxr6obaJ3Zr99Qy+U8Nu5R6XWvJWwWaDawFYkbss
+         LiP6DzuMGbPQ3ZPvF4xDIS+IyoMP0RCgWYT9kU7KsyhB6HI6Hro0MQSwC8in5k1yV47P
+         HonBdjYhEtSGatvKe7p/R9tSEZwA/u9h0spTB9Rx1cgOZOuYQtYp9roIq+XFX3stlMha
+         Gwmz6lKtG88+vg4+mrE+jT2jhr0cbPpf+2ynDhpsZXg/17rK9bIy3O4C2hJf9I4f/OjF
+         NcyA==
+X-Gm-Message-State: AGRZ1gKXJvlfAXzF0TVoLo+LW4icSXJQbzY3/QrG2Q83RyCrTdEiZEsm
+        N7X1o9tVToHMACpVnSFWMX5/r5pZFiU=
+X-Google-Smtp-Source: AJdET5cCELBNwxyUGNJgsqayi2+HIsE1C4Tz5efbcFXC0VkQuoyK3cfApHK1fJHSMv7dUyw+eNruyQ==
+X-Received: by 2002:a2e:a202:: with SMTP id h2-v6mr18248916ljm.72.1541542102161;
+        Tue, 06 Nov 2018 14:08:22 -0800 (PST)
 Received: from i4790k.home (bgp86.neoplus.adsl.tpnet.pl. [83.28.79.86])
-        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.08.18
+        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.08.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 14:08:19 -0800 (PST)
+        Tue, 06 Nov 2018 14:08:21 -0800 (PST)
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 To:     linux-leds@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH 20/24] leds: as3645a: Use led_compose_name()
-Date:   Tue,  6 Nov 2018 23:07:28 +0100
-Message-Id: <1541542052-10081-21-git-send-email-jacek.anaszewski@gmail.com>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 21/24] dt-bindings: leds-gpio: Add function and color properties
+Date:   Tue,  6 Nov 2018 23:07:29 +0100
+Message-Id: <1541542052-10081-22-git-send-email-jacek.anaszewski@gmail.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -75,170 +75,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to using generic LED support for composing LED class
-device name.
+Refer to new "function" and "color" properties and mark "label"
+as deprecated.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/leds/leds-as3645a.c | 65 ++++++++++++++++++++-------------------------
- 1 file changed, 29 insertions(+), 36 deletions(-)
+ .../devicetree/bindings/leds/leds-gpio.txt         | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-index 98a69b1..d7f6037 100644
---- a/drivers/leds/leds-as3645a.c
-+++ b/drivers/leds/leds-as3645a.c
-@@ -132,11 +132,6 @@ struct as3645a_config {
- 	u32 peak;
+diff --git a/Documentation/devicetree/bindings/leds/leds-gpio.txt b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+index a48dda2..c34cb64 100644
+--- a/Documentation/devicetree/bindings/leds/leds-gpio.txt
++++ b/Documentation/devicetree/bindings/leds/leds-gpio.txt
+@@ -10,8 +10,12 @@ LED sub-node properties:
+ - gpios :  Should specify the LED's GPIO, see "gpios property" in
+   Documentation/devicetree/bindings/gpio/gpio.txt.  Active low LEDs should be
+   indicated using flags in the GPIO specifier.
+-- label :  (optional)
++- function :  (optional)
++  see Documentation/devicetree/bindings/leds/common.txt
++- color :  (optional)
+   see Documentation/devicetree/bindings/leds/common.txt
++- label :  (optional)
++  see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+ - linux,default-trigger :  (optional)
+   see Documentation/devicetree/bindings/leds/common.txt
+ - default-state:  (optional) The initial state of the LED.
+@@ -30,27 +34,30 @@ Examples:
+ 
+ leds {
+ 	compatible = "gpio-leds";
+-	hdd {
+-		label = "Disk Activity";
++	led@0 {
+ 		gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
+ 		linux,default-trigger = "disk-activity";
++		function = LED_FUNCTION_HDD;
+ 	};
+ 
+-	fault {
++	led@1 {
+ 		gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
+ 		/* Keep LED on if BIOS detected hardware fault */
+ 		default-state = "keep";
++		function = LED_FUNCTION_FAULT;
+ 	};
  };
  
--struct as3645a_names {
--	char flash[32];
--	char indicator[32];
--};
--
- struct as3645a {
- 	struct i2c_client *client;
+ run-control {
+ 	compatible = "gpio-leds";
+-	red {
++	led@0 {
+ 		gpios = <&mpc8572 6 GPIO_ACTIVE_HIGH>;
++		color = "red";
+ 		default-state = "off";
+ 	};
+-	green {
++	led@1 {
+ 		gpios = <&mpc8572 7 GPIO_ACTIVE_HIGH>;
++		color = "green";
+ 		default-state = "on";
+ 	};
+ };
+@@ -58,9 +65,10 @@ run-control {
+ leds {
+ 	compatible = "gpio-leds";
  
-@@ -492,12 +487,10 @@ static int as3645a_detect(struct as3645a *flash)
- }
- 
- static int as3645a_parse_node(struct as3645a *flash,
--			      struct as3645a_names *names,
- 			      struct device_node *node)
- {
- 	struct as3645a_config *cfg = &flash->cfg;
- 	struct device_node *child;
--	const char *name;
- 	int rval;
- 
- 	for_each_child_of_node(node, child) {
-@@ -524,13 +517,6 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		return -ENODEV;
- 	}
- 
--	rval = of_property_read_string(flash->flash_node, "label", &name);
--	if (!rval)
--		strlcpy(names->flash, name, sizeof(names->flash));
--	else
--		snprintf(names->flash, sizeof(names->flash),
--			 "%pOFn:flash", node);
--
- 	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
- 				    &cfg->flash_timeout_us);
- 	if (rval < 0) {
-@@ -568,13 +554,6 @@ static int as3645a_parse_node(struct as3645a *flash,
- 		goto out_err;
- 	}
- 
--	rval = of_property_read_string(flash->indicator_node, "label", &name);
--	if (!rval)
--		strlcpy(names->indicator, name, sizeof(names->indicator));
--	else
--		snprintf(names->indicator, sizeof(names->indicator),
--			 "%pOFn:indicator", node);
--
- 	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
- 				    &cfg->indicator_max_ua);
- 	if (rval < 0) {
-@@ -592,21 +571,27 @@ static int as3645a_parse_node(struct as3645a *flash,
- 	return rval;
- }
- 
--static int as3645a_led_class_setup(struct as3645a *flash,
--				   struct as3645a_names *names)
-+static int as3645a_led_class_setup(struct as3645a *flash)
- {
- 	struct led_classdev *fled_cdev = &flash->fled.led_cdev;
- 	struct led_classdev *iled_cdev = &flash->iled_cdev;
-+	struct led_init_data init_data;
- 	struct led_flash_setting *cfg;
- 	int rval;
- 
--	iled_cdev->name = names->indicator;
-+	init_data.fwnode = of_fwnode_handle(flash->indicator_node);
-+	rval = led_compose_name(init_data.fwnode, AS_NAME, "indicator",
-+				init_data.name);
-+	if (rval < 0)
-+		return rval;
-+
- 	iled_cdev->brightness_set_blocking = as3645a_set_indicator_brightness;
- 	iled_cdev->max_brightness =
- 		flash->cfg.indicator_max_ua / AS_INDICATOR_INTENSITY_STEP;
- 	iled_cdev->flags = LED_CORE_SUSPENDRESUME;
- 
--	rval = led_classdev_register(&flash->client->dev, iled_cdev);
-+	rval = led_classdev_register_ext(&flash->client->dev, iled_cdev,
-+					 &init_data);
- 	if (rval < 0)
- 		return rval;
- 
-@@ -624,7 +609,12 @@ static int as3645a_led_class_setup(struct as3645a *flash,
- 
- 	flash->fled.ops = &as3645a_led_flash_ops;
- 
--	fled_cdev->name = names->flash;
-+	init_data.fwnode = of_fwnode_handle(flash->flash_node);
-+	rval = led_compose_name(init_data.fwnode, AS_NAME, "flash",
-+				init_data.name);
-+	if (rval < 0)
-+		goto out_err;
-+
- 	fled_cdev->brightness_set_blocking = as3645a_set_assist_brightness;
- 	/* Value 0 is off in LED class. */
- 	fled_cdev->max_brightness =
-@@ -632,14 +622,18 @@ static int as3645a_led_class_setup(struct as3645a *flash,
- 				       flash->cfg.assist_max_ua) + 1;
- 	fled_cdev->flags = LED_DEV_CAP_FLASH | LED_CORE_SUSPENDRESUME;
- 
--	rval = led_classdev_flash_register(&flash->client->dev, &flash->fled);
--	if (rval) {
--		led_classdev_unregister(iled_cdev);
--		dev_err(&flash->client->dev,
--			"led_classdev_flash_register() failed, error %d\n",
--			rval);
--	}
-+	rval = led_classdev_flash_register_ext(&flash->client->dev,
-+					       &flash->fled, &init_data);
-+	if (rval)
-+		goto out_err;
-+
-+	return rval;
- 
-+out_err:
-+	led_classdev_unregister(iled_cdev);
-+	dev_err(&flash->client->dev,
-+		"led_classdev_flash_register() failed, error %d\n",
-+		rval);
- 	return rval;
- }
- 
-@@ -686,7 +680,6 @@ static int as3645a_v4l2_setup(struct as3645a *flash)
- 
- static int as3645a_probe(struct i2c_client *client)
- {
--	struct as3645a_names names;
- 	struct as3645a *flash;
- 	int rval;
- 
-@@ -699,7 +692,7 @@ static int as3645a_probe(struct i2c_client *client)
- 
- 	flash->client = client;
- 
--	rval = as3645a_parse_node(flash, &names, client->dev.of_node);
-+	rval = as3645a_parse_node(flash, client->dev.of_node);
- 	if (rval < 0)
- 		return rval;
- 
-@@ -714,7 +707,7 @@ static int as3645a_probe(struct i2c_client *client)
- 	if (rval)
- 		goto out_mutex_destroy;
- 
--	rval = as3645a_led_class_setup(flash, &names);
-+	rval = as3645a_led_class_setup(flash);
- 	if (rval)
- 		goto out_mutex_destroy;
- 
+-	charger-led {
++	led@0 {
+ 		gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+ 		linux,default-trigger = "max8903-charger-charging";
+ 		retain-state-suspended;
++		function = LED_FUNCTION_CHRG;
+ 	};
+ };
 -- 
 2.1.4
 
