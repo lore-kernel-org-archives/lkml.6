@@ -2,182 +2,125 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C2C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2723C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D4EF2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 660652085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:14:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hO1CfC7N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D4EF2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="SW7tLj8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660652085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbeKFJed (ORCPT
+        id S1727366AbeKFJg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 04:34:33 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:55865 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbeKFJed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 04:34:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1541463133; x=1572999133;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=8a1aL70reaGLohkAFR3PuOjUHcIqIcEdntS639e0iiE=;
-  b=hO1CfC7NA2vmAruNVAodJ9XDPoOgYt6ogpSakrY0t47HZ4Rp8XxxclsU
-   72+JUlt4BjX8/AteVwWG7x8/Zx0sMVuRCt3zTu7mEVDQLBP3OMiGmsSMa
-   d20p/rMDecCYKuBt/N40himc6s832fy5IQn0r0+W8LtMt1jcSvENZB3jx
-   eD6gfq5KdLyZCKn1iYUhLzUh3ec9vr4odV0r71BvHCHRJkCRU+Jem17+O
-   XOy+Q2uVvW2nS86XCVp57WWk76g8342KyplVWEyky6rAtpJiSrCmfNYVT
-   A7yBWkLyAHKK5CDijEFsnWMly1w89IcUNoQwl35m5TDOws4dJw6ienjEU
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.54,469,1534780800"; 
-   d="scan'208";a="95274834"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Nov 2018 08:12:12 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 05 Nov 2018 15:55:50 -0800
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.69.187]) ([10.111.69.187])
-  by uls-op-cesaip02.wdc.com with ESMTP; 05 Nov 2018 16:12:12 -0800
-Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
-To:     Rob Herring <robh+dt@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "alankao@andestech.com" <alankao@andestech.com>,
-        Zong Li <zong@andestech.com>
-References: <CAL_Jsq+wProNynprMjQnrz1jmbZT9TmmA-_=vPUxCEED_8xONg@mail.gmail.com>
- <mhng-799bd6f4-e4af-481e-90d8-bdc0e30f2530@palmer-si-x1c4>
- <CAL_JsqJOxdE=gD4MyKuL5XZ57Z6UdM4_SU4qs26BNz6YcqM76A@mail.gmail.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <8b502dca-bf5f-50b8-e1b2-997c6e2ca260@wdc.com>
-Date:   Mon, 5 Nov 2018 16:12:11 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 6 Nov 2018 04:36:58 -0500
+Received: from ozlabs.org ([203.11.71.1]:35759 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbeKFJg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 04:36:58 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 42pqmX0wmNz9sN9; Tue,  6 Nov 2018 11:14:36 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1541463276;
+        bh=1Lz08PXRQPdO0WtOwYG8tFdcAkgnk64lf/qcpgcmvco=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SW7tLj8cqxw4/JyAAaYI1Kx8e7qDDvx3rlBAv8Uw2hvIXy3z+BlRD9RF8IGmDF27G
+         f/6hQM3G3GXiUWFQQiynUQLKTu7TFPOMGt8gVqlP/0tGF8hun14wazJoRTH6QENVhb
+         exm0WJOP0qBfe1MG/7dSeeqIJCY/Tje36z49kQMg=
+Date:   Tue, 6 Nov 2018 11:07:00 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        hbathini@linux.ibm.com, mahesh@linux.vnet.ibm.com,
+        msuchanek@suse.de, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/fadump: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Message-ID: <20181106000700.GJ24365@umbus.hotspot.internet-for-guests.com>
+References: <20181105150119.6452-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJOxdE=gD4MyKuL5XZ57Z6UdM4_SU4qs26BNz6YcqM76A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x0KprKst+ZOYEj2z"
+Content-Disposition: inline
+In-Reply-To: <20181105150119.6452-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18 12:11 PM, Rob Herring wrote:
-> On Mon, Nov 5, 2018 at 1:39 PM Palmer Dabbelt <palmer@sifive.com> wrote:
->>
->> On Fri, 02 Nov 2018 06:09:39 PDT (-0700), robh+dt@kernel.org wrote:
->>> On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com> wrote:
->>>>
->>>> Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
->>>> But it doesn't need a separate thread node for defining SMT systems.
->>>> Multiple cpu phandle properties can be parsed to identify the sibling
->>>> hardware threads. Moreover, we do not have cluster concept in RISC-V.
->>>> So package is a better word choice than cluster for RISC-V.
->>>
->>> There was a proposal to add package info for ARM recently. Not sure
->>> what happened to that, but we don't need 2 different ways.
->>>
->>> There's never going to be clusters for RISC-V? What prevents that?
->>> Seems shortsighted to me.
->>>
->>>>
->>>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->>>> ---
->>>>   .../devicetree/bindings/riscv/topology.txt         | 154 +++++++++++++++++++++
->>>>   1 file changed, 154 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/riscv/topology.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/riscv/topology.txt b/Documentation/devicetree/bindings/riscv/topology.txt
->>>> new file mode 100644
->>>> index 00000000..96039ed3
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/riscv/topology.txt
->>>> @@ -0,0 +1,154 @@
->>>> +===========================================
->>>> +RISC-V cpu topology binding description
->>>> +===========================================
->>>> +
->>>> +===========================================
->>>> +1 - Introduction
->>>> +===========================================
->>>> +
->>>> +In a RISC-V system, the hierarchy of CPUs can be defined through following nodes that
->>>> +are used to describe the layout of physical CPUs in the system:
->>>> +
->>>> +- packages
->>>> +- core
->>>> +
->>>> +The cpu nodes (bindings defined in [1]) represent the devices that
->>>> +correspond to physical CPUs and are to be mapped to the hierarchy levels.
->>>> +Simultaneous multi-threading (SMT) systems can also represent their topology
->>>> +by defining multiple cpu phandles inside core node. The details are explained
->>>> +in paragraph 3.
->>>
->>> I don't see a reason to do this differently than ARM. That said, I
->>> don't think the thread part is in use on ARM, so it could possibly be
->>> changed.
->>>
->>>> +
->>>> +The remainder of this document provides the topology bindings for ARM, based
->>>
->>> for ARM?
->>>
->>>> +on the Devicetree Specification, available from:
->>>> +
->>>> +https://www.devicetree.org/specifications/
->>>> +
->>>> +If not stated otherwise, whenever a reference to a cpu node phandle is made its
->>>> +value must point to a cpu node compliant with the cpu node bindings as
->>>> +documented in [1].
->>>> +A topology description containing phandles to cpu nodes that are not compliant
->>>> +with bindings standardized in [1] is therefore considered invalid.
->>>> +
->>>> +This cpu topology binding description is mostly based on the topology defined
->>>> +in ARM [2].
->>>> +===========================================
->>>> +2 - cpu-topology node
->>>
->>> cpu-map. Why change this?
->>>
->>> What I would like to see is the ARM topology binding reworked to be
->>> common or some good reasons why it doesn't work for RISC-V as-is.
->>
->> I think it would be great if CPU topologies were not a RISC-V specific thing.
->> We don't really do anything different than anyone else, so it'd be great if we
->> could all share the same spec and code.  Looking quickly at the ARM cpu-map
->> bindings, I don't see any reason why we can't just use the same thing on RISC-V
->> -- it's not quite how I'd do it, but I don't think the differences are worth
->> having another implementation.  Mechanically I'm not sure how to do this:
->> should there just be a "Documentation/devicetree/bindings/cpu-map.txt"?
-> 
-> Yes, but ".../bindings/cpu/cpu-topology.txt".
-> 
-> And if we need $arch extensions, they can be moved there. (Really, I'd
-> like to get rid of /bindings/$arch/* except for maybe a few things.)
-> 
->> If everyone is OK with that then I vote we just go ahead and genericise the ARM
->> "cpu-map" stuff for CPU topology.  Sharing the implementation looks fairly
->> straight-forward as well.
-> 
-+1 for a common code base. I am happy to take it up if nobody else has 
-not already started working on it.
 
-Is there a ARM hardware test farm that can be used to test such changes?
+--x0KprKst+ZOYEj2z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Atish
+On Mon, Nov 05, 2018 at 10:01:19AM -0500, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+
+> ---
+>  arch/powerpc/kernel/fadump.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
+>=20
+> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+> index a711d22339ea..2df5e04b5afc 100644
+> --- a/arch/powerpc/kernel/fadump.c
+> +++ b/arch/powerpc/kernel/fadump.c
+> @@ -1531,17 +1531,7 @@ static struct kobj_attribute fadump_register_attr =
+=3D __ATTR(fadump_registered,
+>  						0644, fadump_register_show,
+>  						fadump_register_store);
+> =20
+> -static int fadump_region_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, fadump_region_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations fadump_region_fops =3D {
+> -	.open    =3D fadump_region_open,
+> -	.read    =3D seq_read,
+> -	.llseek  =3D seq_lseek,
+> -	.release =3D single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(fadump_region);
+> =20
+>  static void fadump_init_files(void)
+>  {
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--x0KprKst+ZOYEj2z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlvg2yIACgkQbDjKyiDZ
+s5I0CxAAz4+1Mnh247XBLVKNEg6EUstffA89208Hl1942kHQmMPIyXzMNTNFm3DQ
+0VcTSB/KX7ZSdJxeYfoiFAg5XPdgnyc8dLX983S9Iye7Ih7kp6sJBaByRg0/svoM
+yduQ08EyTQ4kmVHehQfayUqUx1EJR+GFpI8INM3tYrEhf2WvjaKLcR+qDvorJkoX
+Q/EPvthNqPBAjeuG08OWRfdX3TbocXk4BpWKYq4K4u7vqxyY4GTTJ1fbcTIqQVFM
+S68C9iImTn8mUhGXoBOqP5zv4sPjv+Qp2lhCjdCN32440aAsk4NzsLHvsNH9YxAj
+sHeawgsYRvRahzwVPnV10rApXBwWosvOS2UiQyZU28lAxTzzZOO+5j1yA4owrzY2
+qTqQJ1shnHhXR7exyJcx7wslgDqPq+zDoXJQ8glN1wau4k6Im9ZsDFw3cFbstORy
+Brv7xeVMy4HWC9zLuNhZ4vvrx9J1+bsgq4X44nBDrM4Ww0dUbi3coYg8cEpxOKc9
+1ClZooX95hrwGmYufc5hlalWeeDhGzJI8O08AqDM9dwUevJ5eXQCDfTfbwURvCFG
+MOFGaQS6qeDTpJcds6kwH3/iSh/8tJFmq5s79CnbicAM4cqPUbUJ9WcyJcNZhYk6
+kt6sxo9jyttk6G+8gMB2VMIe0pBpYyJ7C2XPc+NWppIDuDarBtY=
+=Zj3C
+-----END PGP SIGNATURE-----
+
+--x0KprKst+ZOYEj2z--
