@@ -2,138 +2,115 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6388EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4722C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 271BF20830
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8351720830
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:18:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNifF26O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271BF20830
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wDqdUhOq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8351720830
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388194AbeKGDoR (ORCPT
+        id S2388346AbeKGDoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:44:17 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34064 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388158AbeKGDoR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:44:17 -0500
-Received: by mail-it1-f194.google.com with SMTP id t189-v6so11050204itf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 10:17:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oLO1X+nqAa14kF/ox2hW7N4LJ2zLmtf2ThCzUCMiwdU=;
-        b=mNifF26OprBlTgZK9McZye3mV2U4hCEeRWsOkrLwyuGpugIK6i5eAardKowb7JCZuD
-         mIg138Z0Kia/FWIA/hoDRRVgLiFqRFExulLsEyR+WVvuTPRUFBcI0Y3gy6WzVJb3j3Vt
-         rPdUVgVtWIdJrW+AU+ecoFSP+2tI+bnAx5GDU9hs8d0N8128wlno5+dCjCa27a5kXA1h
-         Zil4ijpse5oIUJH/pf9fy1ZlCvKUF79tXlWtt9lRJrGkV0u5Em5n5ifircmz++7TGKa+
-         Ask5nNNLLv25reSfDfAZ3xBhHDwfWbdxDPjD7gLsm7iVe+nb+JCAjQoIrBMOnWAZz62M
-         5ZPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oLO1X+nqAa14kF/ox2hW7N4LJ2zLmtf2ThCzUCMiwdU=;
-        b=am4KO0z2mW+xDl+wTewwa0g5ljYiMNP//3w//NRer7fxW1SfIoO6tBJps8dVxhTxCl
-         FEGDdfYvp59DWOStjHLGQlbt8qOaNZOCS9a6qnfFHt1vUrVZTr2JTsGJiEHxPU6Oylqe
-         4qOKkOp7qTI08sXUBgrtJ6hgzl3ZnsMVTB77dMcDeDzz8ATF6Js0x4oIq/08eOI2ULfB
-         hlp4av/r4v73a9HJIqRMYSUHdPLi8hf+sUKguhQ2CjispTz4t2r5FGOpkTpk1/Ug2SUK
-         EtKBCvVsDbp4BNyytQJK/LcxLVCxI9H2rAc7CVgbmRdoGIGLB3NGqfDzM1rsQeswoJsj
-         dcOQ==
-X-Gm-Message-State: AGRZ1gIETG4MtcnqEUJ6K3awRydI59uCJQ048m5gZYTkIJ+CbhzcfCkr
-        ZsfZ/9C7vYzC3MGyUZPwdtouAghe5ya7G3nZqsY=
-X-Google-Smtp-Source: AJdET5cOjiSPpJVxAZIai/A5s7y327p1+hgTaThDttOrt5IoQ8GduRbIUUJDdxufPb7+juvpIGo+xX8wZIlJ203oNaU=
-X-Received: by 2002:a24:5308:: with SMTP id n8-v6mr2957155itb.146.1541528268278;
- Tue, 06 Nov 2018 10:17:48 -0800 (PST)
+        Tue, 6 Nov 2018 22:44:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388158AbeKGDoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:44:34 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2DA720830;
+        Tue,  6 Nov 2018 18:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541528284;
+        bh=YWWZgmcGxKYNe7DmkRdqukUX4PMUIEMe4HgfT/6Fyzs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wDqdUhOqOWVQK15vc+vhGOw4Q40rEoH5SHMG1LK7+3I+WXY521PCvrECalXaj7Sbr
+         csoWd0X6t3DUhwQ9PpZFhlaFLgV8/ZN8Nkfy1LmbLUKhrstpTMjbk9qu1ZXugzyk+z
+         rbIFJNxBvagRXu6UUyGWVAGvD+OGrSZ8IAeWCu0w=
+Received: by mail-qt1-f181.google.com with SMTP id r14so3722004qtp.1;
+        Tue, 06 Nov 2018 10:18:04 -0800 (PST)
+X-Gm-Message-State: AGRZ1gIIYsRamcpZlsop2/IExAlRc/XH7v5m9m5Ae9gGE8nH0h8JpLI+
+        TGMswwLTqx6xrOho4nHO+HbqGDjDMLpi9TZDgA==
+X-Google-Smtp-Source: AJdET5cet2rDlpEuyZfxu/BZH9vxJ0YiTxgyx/WjE0F4Ik8sg87nIBpquXBWDE79spU1/gbmvXpUZt3BVWCMls9JVKo=
+X-Received: by 2002:ac8:173d:: with SMTP id w58mr26055606qtj.76.1541528284005;
+ Tue, 06 Nov 2018 10:18:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20181105204000.129023-1-bvanassche@acm.org> <20181105131305.574d85469f08a4b76592feb6@linux-foundation.org>
- <1541454489.196084.157.camel@acm.org> <ce6faf63-1661-abe5-16a6-8c19cc9f6689@rasmusvillemoes.dk>
- <1541457654.196084.159.camel@acm.org> <CAKgT0Udci4Ai4OD20NSRuDckE_G4RHma3Bg6H1Um6N9Se_zPew@mail.gmail.com>
- <1541462466.196084.163.camel@acm.org> <CAKgT0Ue59US_f-cZtoA=yVbFJ03ca5OMce2opUdQcsvgd8LWMw@mail.gmail.com>
- <1541464370.196084.166.camel@acm.org> <CAKgT0UekDV4euPHs-wrZixGN1ryhZBq_42XdK6BapYke_xomJg@mail.gmail.com>
- <1541526521.196084.184.camel@acm.org>
-In-Reply-To: <1541526521.196084.184.camel@acm.org>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Tue, 6 Nov 2018 10:17:36 -0800
-Message-ID: <CAKgT0UfbLH07Dqgk0HnhcoPbmQnoykbXLYzkdqTXkafh952Ceg@mail.gmail.com>
-Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
-To:     bvanassche@acm.org
-Cc:     linux@rasmusvillemoes.dk,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Lameter <cl@linux.com>, guro@fb.com,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        linux-mm <linux-mm@kvack.org>
+References: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
+ <20181105091727.25544-4-heikki.krogerus@linux.intel.com> <CAL_Jsq+aRAv+9gDKwVi9xYQPYzXK4NMPjzfkuYB08+K6KTYXFg@mail.gmail.com>
+ <20181106105803.GS10650@smile.fi.intel.com> <20181106122734.GC13048@kuha.fi.intel.com>
+ <CAL_Jsq+kspp1GYrMjG1cC=CyCa2_jO1suFdD9fn+gOwKRYdhtw@mail.gmail.com> <20181106142810.GX10650@smile.fi.intel.com>
+In-Reply-To: <20181106142810.GX10650@smile.fi.intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 6 Nov 2018 12:17:52 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKOC40uEHCrFDMkj_yGDG5VOSOymmJNQ5aSPv9K_W0=3w@mail.gmail.com>
+Message-ID: <CAL_JsqKOC40uEHCrFDMkj_yGDG5VOSOymmJNQ5aSPv9K_W0=3w@mail.gmail.com>
+Subject: Re: [PATCH 3/4] of/property: Introduce of_fwnode_name()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 9:48 AM Bart Van Assche <bvanassche@acm.org> wrote:
+On Tue, Nov 6, 2018 at 8:28 AM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> On Tue, 2018-11-06 at 09:20 -0800, Alexander Duyck wrote:
-> > On Mon, Nov 5, 2018 at 4:32 PM Bart Van Assche <bvanassche@acm.org> wrote:
+> On Tue, Nov 06, 2018 at 07:18:14AM -0600, Rob Herring wrote:
+> > On Tue, Nov 6, 2018 at 6:27 AM Heikki Krogerus
+> > <heikki.krogerus@linux.intel.com> wrote:
 > > >
-> > > On Mon, 2018-11-05 at 16:11 -0800, Alexander Duyck wrote:
-> > > > If we really don't care then why even bother with the switch statement
-> > > > anyway? It seems like you could just do one ternary operator and be
-> > > > done with it. Basically all you need is:
-> > > > return (defined(CONFIG_ZONE_DMA) && (flags & __GFP_DMA)) ? KMALLOC_DMA :
-> > > >         (flags & __GFP_RECLAIMABLE) ? KMALLOC_RECLAIM : 0;
+> > > On Tue, Nov 06, 2018 at 12:58:03PM +0200, Andy Shevchenko wrote:
+> > > > On Mon, Nov 05, 2018 at 12:50:02PM -0600, Rob Herring wrote:
+> > > > > On Mon, Nov 5, 2018 at 3:17 AM Heikki Krogerus
+> > > > > <heikki.krogerus@linux.intel.com> wrote:
 > > > >
-> > > > Why bother with all the extra complexity of the switch statement?
-> > >
-> > > I don't think that defined() can be used in a C expression. Hence the
-> > > IS_ENABLED() macro. If you fix that, leave out four superfluous parentheses,
-> > > test your patch, post that patch and cc me then I will add my Reviewed-by.
+> > > > > > +static const char *of_fwnode_name(const struct fwnode_handle *fwnode)
+> > > > > > +{
+> > > > > > +       return to_of_node(fwnode)->name;
+> > > > >
+> > > > > I'm trying to get rid of the DT name ptr, so please don't add one. You
+> > > > > can use of_node_full_name() here instead if "<name>@<unit-address>"
+> > > > > instead of <name> is fine. Otherwise, you've got to allocate your own
+> > > > > storage and use "%pOFn" printf specifier.
+> > > >
+> > > > If we do this here, we will change a behaviour of the entire set of
+> > > > of_fwnode_get_named_child_node() users.
+> > > >
+> > > > I think this is out of scope of the series.
 > >
-> > Actually the defined macro is used multiple spots in if statements
-> > throughout the kernel.
+> > No, because you are adding a firmware op for something that's going away.
 >
-> The only 'if (defined(' matches I found in the kernel tree that are not
-> preprocessor statements occur in Perl code. Maybe I overlooked something?
+> W/o your below explanation it wasn't obvious.
+>
+> >
+> > > You have a point. We must use the same member that was used in
+> > > of_fwnode_get_named_child_node().
+> > >
+> > > The goal of this series if most likely not clear from this patch
+> > > alone, so I'll send a second version and make sure to CC the DT list
+> > > and Rob.
+> >
+> > Looking at patch 4, if matching the name is what you want to do, then
+> > use the DT name matching functions. They were added in 4.19.
+>
+> Do you mean of_node_name_eq()?
 
-You may be right. I think I was thinking of "__is_defined", not "defined".
+Yes or maybe move further up and just retrieve child nodes by name.
+There's a recent function Johan added for that too.
+of_find_child_node_by_name IIRC.
 
-> > The reason for IS_ENABLED is to address the fact that we can be
-> > dealing with macros that indicate if they are built in or a module
-> > since those end up being two different defines depending on if you
-> > select 'y' or 'm'.
->
-> From Documentation/process/coding-style.rst:
->
-> Within code, where possible, use the IS_ENABLED macro to convert a Kconfig
-> symbol into a C boolean expression, and use it in a normal C conditional:
->
-> .. code-block:: c
->
->         if (IS_ENABLED(CONFIG_SOMETHING)) {
->                 ...
->         }
->
-> Bart.
-
-Right. Part of the reason for suggesting that is that depending on how
-you define "CONFIG_SOMETHING" it can actually be defined as
-"CONFIG_SOMETHING" or "CONFIG_SOMETHING_MODULE".  I was operating
-under the assumption that CONFIG_ZONE_DMA wasn't ever going to be
-built as a module.
-
-Thanks.
-
-- Alex
+Rob
