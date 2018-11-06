@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33619C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696F6C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85ED20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30F632086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVnmd2rx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85ED20862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2ln65ULr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F632086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388059AbeKFVbp (ORCPT
+        id S2388087AbeKFVbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:31:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33594 "EHLO mail.kernel.org"
+        Tue, 6 Nov 2018 16:31:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388034AbeKFVbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:31:45 -0500
+        id S2387612AbeKFVbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:31:47 -0500
 Received: from jouet.infradead.org (unknown [189.40.102.97])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6474C20862;
-        Tue,  6 Nov 2018 12:06:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4722F2086A;
+        Tue,  6 Nov 2018 12:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541506010;
-        bh=C+CjcnvyebvbqffpR6Re98JDGkTpts6d3KNWGjrAF+M=;
+        s=default; t=1541506013;
+        bh=RCrIL9Kw1r92OFqMRr3bjtfeqYJhjEhDqmZbgqjvZXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SVnmd2rx3fq73zg1y183dm4za1RjmgJ1pYjRgwFBmY0+LfYU8OC4BxC1I7PNqvAD8
-         tW0r11pqhAh9cht9O56jATGV0nNSyEL93JWOpF1Q3/Nqjt3psahYBTBmCsCCphEU5R
-         GDWlu8m5G1UsBkIs5meHsRt7Ms+DcaOpwpZS5bts=
+        b=2ln65ULrViLxyE+6StQTD53E8/00AOTJfSI9nVlJ/nImlmlhyzhuabwXpJBr5SS+4
+         ULkRgsG8fQrbuTs+79HQmI6QAtOoBL9/xt3gfy7JXvq+o89SAAtWkQGFbS8wXft+R3
+         bNmryCWFEJc50IJh8pVj2ikAshdyOurJgyUjGLfA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 06/18] perf evlist: Move perf_evsel__reset_weak_group into evlist
-Date:   Tue,  6 Nov 2018 09:06:00 -0300
-Message-Id: <20181106120612.8262-7-acme@kernel.org>
+Subject: [PATCH 07/18] perf record: Support weak groups
+Date:   Tue,  6 Nov 2018 09:06:01 -0300
+Message-Id: <20181106120612.8262-8-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181106120612.8262-1-acme@kernel.org>
 References: <20181106120612.8262-1-acme@kernel.org>
@@ -55,114 +55,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-- Move the function from builtin-stat to evlist for reuse
-- Rename to evlist to match purpose better
-- Pass the evlist as first argument.
-- No functional changes
+Implement a weak group fallback for 'perf record', similar to the
+existing 'perf stat' support.  This allows to use groups that might be
+longer than the available counters without failing.
+
+Before:
+
+  $ perf record  -e '{cycles,cache-misses,cache-references,cpu_clk_unhalted.thread,cycles,cycles,cycles}' -a sleep 1
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cycles).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+After:
+
+  $ ./perf record  -e '{cycles,cache-misses,cache-references,cpu_clk_unhalted.thread,cycles,cycles,cycles}:W' -a sleep 1
+  WARNING: No sample_id_all support, falling back to unordered processing
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 8.136 MB perf.data (134069 samples) ]
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20181001195927.14211-1-andi@firstfloor.org
+Link: http://lkml.kernel.org/r/20181001195927.14211-2-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 28 +---------------------------
- tools/perf/util/evlist.c  | 27 +++++++++++++++++++++++++++
- tools/perf/util/evlist.h  |  3 +++
- 3 files changed, 31 insertions(+), 27 deletions(-)
+ tools/perf/Documentation/perf-list.txt | 1 -
+ tools/perf/builtin-record.c            | 7 ++++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index d1028d7755bb..a635abfa77b6 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -383,32 +383,6 @@ static bool perf_evsel__should_store_id(struct perf_evsel *counter)
- 	return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
- }
+diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
+index 236b9b97dfdb..667c14e56031 100644
+--- a/tools/perf/Documentation/perf-list.txt
++++ b/tools/perf/Documentation/perf-list.txt
+@@ -55,7 +55,6 @@ counted. The following modifiers exist:
+  S - read sample value (PERF_SAMPLE_READ)
+  D - pin the event to the PMU
+  W - group is weak and will fallback to non-group if not schedulable,
+-     only supported in 'perf stat' for now.
  
--static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
--{
--	struct perf_evsel *c2, *leader;
--	bool is_open = true;
--
--	leader = evsel->leader;
--	pr_debug("Weak group for %s/%d failed\n",
--			leader->name, leader->nr_members);
--
--	/*
--	 * for_each_group_member doesn't work here because it doesn't
--	 * include the first entry.
--	 */
--	evlist__for_each_entry(evsel_list, c2) {
--		if (c2 == evsel)
--			is_open = false;
--		if (c2->leader == leader) {
--			if (is_open)
--				perf_evsel__close(c2);
--			c2->leader = c2;
--			c2->nr_members = 0;
--		}
--	}
--	return leader;
--}
--
- static bool is_target_alive(struct target *_target,
- 			    struct thread_map *threads)
- {
-@@ -477,7 +451,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 			if ((errno == EINVAL || errno == EBADF) &&
- 			    counter->leader != counter &&
- 			    counter->weak_group) {
--				counter = perf_evsel__reset_weak_group(counter);
-+				counter = perf_evlist__reset_weak_group(evsel_list, counter);
+ The 'p' modifier can be used for specifying how precise the instruction
+ address should be. The 'p' modifier can be specified multiple times:
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 10cf889c6d75..488779bc4c8d 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -391,7 +391,12 @@ static int record__open(struct record *rec)
+ 					ui__warning("%s\n", msg);
  				goto try_again;
  			}
- 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e88e6f9b1463..668d2a9ef0f4 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1810,3 +1810,30 @@ void perf_evlist__force_leader(struct perf_evlist *evlist)
- 		leader->forced_leader = true;
- 	}
- }
-+
-+struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evsel_list,
-+						 struct perf_evsel *evsel)
-+{
-+	struct perf_evsel *c2, *leader;
-+	bool is_open = true;
-+
-+	leader = evsel->leader;
-+	pr_debug("Weak group for %s/%d failed\n",
-+			leader->name, leader->nr_members);
-+
-+	/*
-+	 * for_each_group_member doesn't work here because it doesn't
-+	 * include the first entry.
-+	 */
-+	evlist__for_each_entry(evsel_list, c2) {
-+		if (c2 == evsel)
-+			is_open = false;
-+		if (c2->leader == leader) {
-+			if (is_open)
-+				perf_evsel__close(c2);
-+			c2->leader = c2;
-+			c2->nr_members = 0;
-+		}
-+	}
-+	return leader;
-+}
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index dc66436add98..9919eed6d15b 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -312,4 +312,7 @@ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist);
- 
- void perf_evlist__force_leader(struct perf_evlist *evlist);
- 
-+struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
-+						 struct perf_evsel *evsel);
-+
- #endif /* __PERF_EVLIST_H */
+-
++			if ((errno == EINVAL || errno == EBADF) &&
++			    pos->leader != pos &&
++			    pos->weak_group) {
++			        pos = perf_evlist__reset_weak_group(evlist, pos);
++				goto try_again;
++			}
+ 			rc = -errno;
+ 			perf_evsel__open_strerror(pos, &opts->target,
+ 						  errno, msg, sizeof(msg));
 -- 
 2.14.4
 
