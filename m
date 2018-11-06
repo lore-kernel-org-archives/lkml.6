@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA95C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D864C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1467D20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:28:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1467D20827
+	by mail.kernel.org (Postfix) with ESMTP id 560FC20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:30:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560FC20827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbeKFOwE (ORCPT
+        id S1729730AbeKFOyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 09:52:04 -0500
-Received: from mga07.intel.com ([134.134.136.100]:2379 "EHLO mga07.intel.com"
+        Tue, 6 Nov 2018 09:54:08 -0500
+Received: from mga07.intel.com ([134.134.136.100]:2531 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729016AbeKFOwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 09:52:04 -0500
+        id S1729016AbeKFOyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 09:54:07 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 21:28:37 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 21:30:40 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="106230163"
+   d="scan'208";a="88880351"
 Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
-  by orsmga002.jf.intel.com with ESMTP; 05 Nov 2018 21:28:34 -0800
-Date:   Tue, 6 Nov 2018 13:28:33 +0800
+  by orsmga006.jf.intel.com with ESMTP; 05 Nov 2018 21:30:36 -0800
+Date:   Tue, 6 Nov 2018 13:30:37 +0800
 From:   Aaron Lu <aaron.lu@intel.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org
@@ -48,114 +48,98 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Vlastimil Babka <vbabka@suse.cz>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: [PATCH v2 1/2] mm/page_alloc: free order-0 pages through PCP in
- page_frag_free()
-Message-ID: <20181106052833.GC6203@intel.com>
+Subject: [PATCH v2 2/2] mm/page_alloc: use a single function to free page
+Message-ID: <20181106053037.GD6203@intel.com>
 References: <20181105085820.6341-1-aaron.lu@intel.com>
+ <20181105085820.6341-2-aaron.lu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181105085820.6341-1-aaron.lu@intel.com>
+In-Reply-To: <20181105085820.6341-2-aaron.lu@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-page_frag_free() calls __free_pages_ok() to free the page back to
-Buddy. This is OK for high order page, but for order-0 pages, it
-misses the optimization opportunity of using Per-Cpu-Pages and can
-cause zone lock contention when called frequently.
+We have multiple places of freeing a page, most of them doing similar
+things and a common function can be used to reduce code duplicate.
 
-Paweł Staszewski recently shared his result of 'how Linux kernel
-handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
-found the lock contention comes from page allocator:
+It also avoids bug fixed in one function but left in another.
 
-  mlx5e_poll_tx_cq
-  |
-   --16.34%--napi_consume_skb
-             |
-             |--12.65%--__free_pages_ok
-             |          |
-             |           --11.86%--free_one_page
-             |                     |
-             |                     |--10.10%--queued_spin_lock_slowpath
-             |                     |
-             |                      --0.65%--_raw_spin_lock
-             |
-             |--1.55%--page_frag_free
-             |
-              --1.44%--skb_release_data
-
-Jesper explained how it happened: mlx5 driver RX-page recycle
-mechanism is not effective in this workload and pages have to go
-through the page allocator. The lock contention happens during
-mlx5 DMA TX completion cycle. And the page allocator cannot keep
-up at these speeds.[2]
-
-I thought that __free_pages_ok() are mostly freeing high order
-pages and thought this is an lock contention for high order pages
-but Jesper explained in detail that __free_pages_ok() here are
-actually freeing order-0 pages because mlx5 is using order-0 pages
-to satisfy its page pool allocation request.[3]
-
-The free path as pointed out by Jesper is:
-skb_free_head()
-  -> skb_free_frag()
-    -> page_frag_free()
-And the pages being freed on this path are order-0 pages.
-
-Fix this by doing similar things as in __page_frag_cache_drain() -
-send the being freed page to PCP if it's an order-0 page, or
-directly to Buddy if it is a high order page.
-
-With this change, Paweł hasn't noticed lock contention yet in
-his workload and Jesper has noticed a 7% performance improvement
-using a micro benchmark and lock contention is gone. Ilias' test
-on a 'low' speed 1Gbit interface on an cortex-a53 shows ~11%
-performance boost testing with 64byte packets and __free_pages_ok()
-disappeared from perf top.
-
-[1]: https://www.spinics.net/lists/netdev/msg531362.html
-[2]: https://www.spinics.net/lists/netdev/msg531421.html
-[3]: https://www.spinics.net/lists/netdev/msg531556.html
-Reported-by: Paweł Staszewski <pstaszewski@itcare.pl>
-Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Tested-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 ---
-v2: only changelog changes:
-    - remove the duplicated skb_free_frag() as pointed by Jesper;
-    - add Ilias' test result;
-    - add people's ack/test tag.
+v2: move comments close to code as suggested by Dave.
 
- mm/page_alloc.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ mm/page_alloc.c | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
 
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ae31839874b8..91a9a6af41a2 100644
+index 91a9a6af41a2..4faf6b7bf225 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
+@@ -4425,9 +4425,17 @@ unsigned long get_zeroed_page(gfp_t gfp_mask)
+ }
+ EXPORT_SYMBOL(get_zeroed_page);
+ 
+-void __free_pages(struct page *page, unsigned int order)
++static inline void free_the_page(struct page *page, unsigned int order, int nr)
+ {
+-	if (put_page_testzero(page)) {
++	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
++
++	/*
++	 * Free a page by reducing its ref count by @nr.
++	 * If its refcount reaches 0, then according to its order:
++	 * order0: send to PCP;
++	 * high order: directly send to Buddy.
++	 */
++	if (page_ref_sub_and_test(page, nr)) {
+ 		if (order == 0)
+ 			free_unref_page(page);
+ 		else
+@@ -4435,6 +4443,10 @@ void __free_pages(struct page *page, unsigned int order)
+ 	}
+ }
+ 
++void __free_pages(struct page *page, unsigned int order)
++{
++	free_the_page(page, order, 1);
++}
+ EXPORT_SYMBOL(__free_pages);
+ 
+ void free_pages(unsigned long addr, unsigned int order)
+@@ -4481,16 +4493,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
+ 
+ void __page_frag_cache_drain(struct page *page, unsigned int count)
+ {
+-	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
+-
+-	if (page_ref_sub_and_test(page, count)) {
+-		unsigned int order = compound_order(page);
+-
+-		if (order == 0)
+-			free_unref_page(page);
+-		else
+-			__free_pages_ok(page, order);
+-	}
++	free_the_page(page, compound_order(page), count);
+ }
+ EXPORT_SYMBOL(__page_frag_cache_drain);
+ 
+@@ -4555,14 +4558,7 @@ void page_frag_free(void *addr)
  {
  	struct page *page = virt_to_head_page(addr);
  
--	if (unlikely(put_page_testzero(page)))
--		__free_pages_ok(page, compound_order(page));
-+	if (unlikely(put_page_testzero(page))) {
-+		unsigned int order = compound_order(page);
-+
-+		if (order == 0)
-+			free_unref_page(page);
-+		else
-+			__free_pages_ok(page, order);
-+	}
+-	if (unlikely(put_page_testzero(page))) {
+-		unsigned int order = compound_order(page);
+-
+-		if (order == 0)
+-			free_unref_page(page);
+-		else
+-			__free_pages_ok(page, order);
+-	}
++	free_the_page(page, compound_order(page), 1);
  }
  EXPORT_SYMBOL(page_frag_free);
  
