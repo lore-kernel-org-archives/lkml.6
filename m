@@ -2,145 +2,120 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522BDC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB31C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 246BA2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246BA2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B53192086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:22:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rUShrcVO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53192086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389302AbeKGBqx (ORCPT
+        id S2389257AbeKGBsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:46:53 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36482 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389159AbeKGBqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:46:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A92AEBD;
-        Tue,  6 Nov 2018 08:20:56 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 114B13F5CF;
-        Tue,  6 Nov 2018 08:20:53 -0800 (PST)
-Date:   Tue, 6 Nov 2018 16:20:51 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Nick Kossifidis <mick@ics.forth.gr>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Damien.LeMoal@wdc.com, alankao@andestech.com, zong@andestech.com,
-        anup@brainfault.org, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, hch@infradead.org,
-        robh+dt@kernel.org, tglx@linutronix.de
-Subject: Re: [RFC 0/2] Add RISC-V cpu topology
-Message-ID: <20181106162051.w7fyweuxrl7ujzuz@lakrids.cambridge.arm.com>
-References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
- <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
- <20181106141331.GA28458@e107155-lin>
- <969fc2a5198984e0dfe8c3f585dc65f9@mailhost.ics.forth.gr>
+        Tue, 6 Nov 2018 20:48:46 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36904 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389159AbeKGBsq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 20:48:46 -0500
+Received: by mail-qt1-f194.google.com with SMTP id p35so3244991qtc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 08:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=PNnk4vwsDBIehwNzIbuyDGRO7VJ7ihL999Lrg531tkw=;
+        b=rUShrcVORcA/rTeufimKWFsm1vJBVLz7ScUwOpf1FIgsAuT1Z498MLqeHLgeIznwRy
+         IsMtBW5ML1LL6vF8uKCX9Q8VmVLt0+rDGJH8w1eTO0ldg49Ctq0rjrdby3d3k8DDhT7F
+         ABq/yBElF1jEMN9L1kCEyuAcPTHhu9WKAd1ZmGv6DXoZXBplNQS+MJ7H4CPrFkrXCjYI
+         dfN8cUH2HwVYnAKKAXdvN60WNsm86lfV+RuC6QgtZQSiUzGdnp/fy3hGR11IKChvHF22
+         1cNz7fy4xC0Kx8MjPk8dQMiCHNXIooGigxmt6Bp2RrmpaM27UPB8LiA+4kr539wXoV05
+         Dyuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PNnk4vwsDBIehwNzIbuyDGRO7VJ7ihL999Lrg531tkw=;
+        b=MX/151yQ8GaaCOo2OUAq5zStcmBX8U9ubW4h6xXGQpNBqnVPzCjHgnIfUIhD4LtLY6
+         ln5cKzmBBFKoo76zck0BdmLYkKjLUhbL1NwChFQW6vBgjqof7TH6Qe+ircSS9qWZJ9VI
+         0bhS0PhX5mHYPIwH7wy1j+nSJsRPBBWPt2+u+Vw2Ys/jtxUJSlrfiq/LXizY9TZyctTh
+         NPTuogZkQa8J9IDoBaVmMuJWRskfDPFe2FsioJ6WRa/OuZLfh8Or0XUbyh4dLdKKFRb5
+         o3Ziu1nNzcKdTB0YRNnIHOxdRInnNnUi67AxxszHULBXzpx0/dblX0dRhd707PFceDn5
+         gVvQ==
+X-Gm-Message-State: AGRZ1gIfqTdsed1R4h43Jthg4gwFM3y4MxiuN+QNhzPuZ3PJUS73XKLb
+        1IQGGXNhNeN9xiC7pnl3RpPjog==
+X-Google-Smtp-Source: AJdET5eN0ByA+xjMa1wq92nFD77BiXJAYp/fKX4pdQjb5wpR17a5SAgMiQgBaDTzdjkk+Klaz3tRJw==
+X-Received: by 2002:a0c:b3da:: with SMTP id b26mr14516354qvf.138.1541521367849;
+        Tue, 06 Nov 2018 08:22:47 -0800 (PST)
+Received: from brho.roam.corp.google.com (c-66-30-119-151.hsd1.ma.comcast.net. [66.30.119.151])
+        by smtp.gmail.com with ESMTPSA id u11sm6530624qtc.61.2018.11.06.08.22.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 08:22:47 -0800 (PST)
+Date:   Tue, 6 Nov 2018 11:22:43 -0500
+From:   Barret Rhoden <brho@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        rkrcmar@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>
+Subject: Re: [RFC PATCH] kvm: Use huge pages for DAX-backed files
+Message-ID: <20181106112243.6fabdb0f@brho.roam.corp.google.com>
+In-Reply-To: <876d5a71-8dda-4728-5329-4e169777ba4a@redhat.com>
+References: <20181029210716.212159-1-brho@google.com>
+        <CAPcyv4gJUjuSKwy7i2wuKR=Vz-AkDrxnGya5qkg7XTFxuXbtzw@mail.gmail.com>
+        <20181029202854.7c924fd3@gnomeregan.cam.corp.google.com>
+        <CAPcyv4gQztHrJ3--rhU4ZpaZyyqdqE0=gx50CRArHKiXwfYC+A@mail.gmail.com>
+        <20181030154524.181b8236@gnomeregan.cam.corp.google.com>
+        <71d52e0f-ec40-d423-4dd4-e3aeb3730166@redhat.com>
+        <20181102163254.04be68b5@gnomeregan.cam.corp.google.com>
+        <876d5a71-8dda-4728-5329-4e169777ba4a@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <969fc2a5198984e0dfe8c3f585dc65f9@mailhost.ics.forth.gr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 05:26:01PM +0200, Nick Kossifidis wrote:
-> Στις 2018-11-06 16:13, Sudeep Holla έγραψε:
-> > On Fri, Nov 02, 2018 at 08:58:39PM +0200, Nick Kossifidis wrote:
-> > > Στις 2018-11-02 01:04, Atish Patra έγραψε:
-> > > > This patch series adds the cpu topology for RISC-V. It contains
-> > > > both the DT binding and actual source code. It has been tested on
-> > > > QEMU & Unleashed board.
-> > > >
-> > > > The idea is based on cpu-map in ARM with changes related to how
-> > > > we define SMT systems. The reason for adopting a similar approach
-> > > > to ARM as I feel it provides a very clear way of defining the
-> > > > topology compared to parsing cache nodes to figure out which cpus
-> > > > share the same package or core.  I am open to any other idea to
-> > > > implement cpu-topology as well.
-> > > 
-> > > I was also about to start a discussion about CPU topology on RISC-V
-> > > after the last swtools group meeting. The goal is to provide the
-> > > scheduler with hints on how to distribute tasks more efficiently
-> > > between harts, by populating the scheduling domain topology levels
-> > > (https://elixir.bootlin.com/linux/v4.19/ident/sched_domain_topology_level).
-> > > What we want to do is define cpu groups and assign them to
-> > > scheduling domains with the appropriate SD_ flags
-> > > (https://github.com/torvalds/linux/blob/master/include/linux/sched/topology.h#L16).
+On 2018-11-06 at 11:19 Paolo Bonzini <pbonzini@redhat.com> wrote:
+> > void kvm_set_pfn_dirty(kvm_pfn_t pfn)
+> > {
+> >         if (!kvm_is_reserved_pfn(pfn)) {
+> >                 struct page *page = pfn_to_page(pfn);
 > > 
-> > OK are we defining a CPU topology binding for Linux scheduler ?
-> > NACK for all the approaches that assumes any knowledge of OS scheduler.
-> 
-> Is there any standard regarding CPU topology on the device tree spec ?
-> As far as I know there is none. We are talking about a Linux-specific
-> Device Tree binding so I don't see why defining a binding for the
-> Linux scheduler is out of scope.
-
-Speaking as a DT binding maintainer, please avoid OS-specific DT
-bindings wherever possible.
-
-While DT bindings live in the kernel tree, they are not intended to be
-Linux-specific, and other OSs (e.g. FreeBSD, zephyr) are aiming to
-support the same bindings.
-
-In general, targeting a specific OS is a bad idea, because the
-implementation details of that OS change over time, or the bindings end
-up being tailored to one specific use-case. Exposing details to the OS
-such that the OS can make decisions at runtime is typically better.
-
-> Do you have cpu-map on other OSes as well ?
-
-There is nothing OS-specific about cpu-map, and it may be of use to
-other OSs.
-
-> > > So the cores that belong to a scheduling domain may share:
-> > > CPU capacity (SD_SHARE_CPUCAPACITY / SD_ASYM_CPUCAPACITY)
-> > > Package resources -e.g. caches, units etc- (SD_SHARE_PKG_RESOURCES)
-> > > Power domain (SD_SHARE_POWERDOMAIN)
-> > > 
+> >                 if (!PageReserved(page))
+> >                         SetPageDirty(page);
+> >         }
+> > }
 > > 
-> > Too Linux kernel/scheduler specific to be part of $subject
+> > I think we want to SetPageDirty for DAX, so making PageReserved be true
+> > for DAX seems like the way to go, or we'll need more KVM-specific
+> > changes.  Apologies is this was discussed in the previous thread on this
+> > topic and is redundant.  
 > 
-> All lists on the cc list are Linux specific, again I don't see your
-> point here are we talking about defining a standard CPU topology
-> scheme for the device tree spec or a Linux-specific CPU topology
-> binding such as cpu-map ?
+> Isn't it the opposite?  We want SetPageDirty, so PageReserved must _not_
+> be true.
 
-The cpu-map binding is not intended to be Linux specific, and avoids
-Linux-specific terminology.
-
-While the cpu-map binding documentation is in the Linux source tree, the
-binding itseld is not intended to be Linux-specific, and it deliberately
-avoids Linux implementation details.
-
-> Even on this case your point is not valid, the information of two
-> harts sharing a common power domain or having the same or not
-> capacity/max frequency (or maybe capabilities/extensions in the
-> future), is not Linux specific. I just used the Linux specific macros
-> used by the Linux scheduler to point out the code path.  Even on other
-> OSes we still need a way to include this information on the CPU
-> topology, and currently cpu-map doesn't. Also the Linux implementation
-> of cpu-map ignores multiple levels of shared resources, we only get
-> one level for SMT and one level for MC last time I checked.
-
-Given clusters can be nested, as in the very first example, I don't see
-what prevents multiple levels of shared resources.
-
-Can you please given an example of the topology your considering? Does
-that share some resources across clusters at some level?
-
-We are certainly open to improving the cpu-map binding.
+You're right on that, I had it backwards.  The other DAX work is making
+it so that DAX pages are not reserved, so the only extra '!' was in my
+head.  
 
 Thanks,
-Mark.
+
+Barret
+
