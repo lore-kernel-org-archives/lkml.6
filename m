@@ -2,236 +2,94 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8B2C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4861C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7D2420869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:35:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pmL2zpVS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7D2420869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 845EE20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:36:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 845EE20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbeKFS7h (ORCPT
+        id S1730281AbeKFTAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:59:37 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40057 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729272AbeKFS7g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:59:36 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b203-v6so10852864wme.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:35:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=KDqEXZM3w+csIzjnxMmBHNHjfzIeqE3gI4KtCaOk0j0=;
-        b=pmL2zpVSBnifTkFiTyK0yKRJgTnXFpjBNNd9GuNRtJnRm/Ch+WKVL0MjkqavlwRsdG
-         JQtF+IRmfG52hD/yF+1JFgVXZPHLIIzZXe9HlpZbT6tAk8AQOYWSXu/ZneeSwV/rVPww
-         kr38RvhQ2soCdEye1zDgCz8wEm6M5hAVTQgfjjsIlFQ9DbDqbRrWWIbMV0LciLdpUV3W
-         hTCXIiF7C8xcjwDXPI0Cn8/aVMQhacKX2qNxphvEfj4trnFhV74qpfRT5A1MIfm6XBPz
-         eZw3edX6O2EqM0CAoTN77k7s8cnJhfB0RGRcVVcsGkjECjB9oTNlEs0zgip0nKTi5Ufo
-         /H4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KDqEXZM3w+csIzjnxMmBHNHjfzIeqE3gI4KtCaOk0j0=;
-        b=uDf//x3y6M7kp6QwMKF/LfVhtgWVmZ2t5BEgtjKji3BFHUnhKvun8hDH23PR9PMH/z
-         cFQG6fxMPp/cIsAiv9EyxhRMGxqe/nbhpSHPntCAx89RlcLRlU2ND2Tl/qC72b1uo1Np
-         gRVkuaAW7DeNXSQPiJyND/PeJR19IxcEHqx6R+m1qrQnGbXrmjBPbYrjvysDB06fPRmW
-         YXC38t4JDjB8Y8usPkfK8YN46/aaGqddI3KzFf8O+P1ahYzBVeaO/Yy1xwxm0nAXtsBJ
-         9k+Ukzk/NeupmJbUT6yxUaCKw5aXLhz6SOZ7gYHLf3BGux2xYM1vdLsqxHQb1Hb1i0tq
-         ellA==
-X-Gm-Message-State: AGRZ1gJ3ezJKEsUhupXgtGc8y9LU3tICuFI24ubzz7lq1SA8RPn0zKXI
-        yOpyMt6QlXRPHXuOfNLiMrYtUg==
-X-Google-Smtp-Source: AJdET5fYQDCGzUdu6yYhAH94fgRAic9dgYaaAIU4Tn64F/9XiuSEdmi7PCn2tMvASakC5cCfXl0HdA==
-X-Received: by 2002:a1c:ef15:: with SMTP id n21-v6mr1235921wmh.151.1541496913807;
-        Tue, 06 Nov 2018 01:35:13 -0800 (PST)
-Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm70402183wrb.30.2018.11.06.01.35.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 01:35:13 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/meson: Add HDMI 1.4 4k modes
-Date:   Tue,  6 Nov 2018 10:35:09 +0100
-Message-Id: <1541496909-19625-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 6 Nov 2018 14:00:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43148 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729241AbeKFTAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 14:00:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BEA1CAD3F;
+        Tue,  6 Nov 2018 09:36:15 +0000 (UTC)
+Subject: Re: [PATCH] xen/grant-table: Fix incorrect gnttab_dma_free_pages()
+ pr_debug message
+To:     Liam Merwick <Liam.Merwick@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     boris.ostrovsky@oracle.com
+References: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8ef30c47-ca0f-0a43-e05d-e7360ecbe4af@suse.com>
+Date:   Tue, 6 Nov 2018 10:36:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1541167463-32024-1-git-send-email-Liam.Merwick@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the timings for the HDMI 1.4 4K modes support :
-- 3840x2160@30
-- 3840x2160@25
-- 3840x2160@24
+On 02/11/2018 15:04, Liam Merwick wrote:
+> If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
+> fails it triggers a message "Failed to decrease reservation..." which
+> should be "Failed to increase reservation..."
+> 
+> Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
+> Reported-by: Ross Philipson <ross.philipson@oracle.com>
+> Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
+> Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
 
-Since the 297000Hz pixel clock is already managed and the modes are
-compatible with the HDMI 1.4 current HDMI PHY+Controller support, only
-the missing timings values needs to be added.
+Pushed to xen.git for-linus-4.20a
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/gpu/drm/meson/meson_venc.c | 129 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
 
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index 514245e..bcffe8e 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -697,6 +697,132 @@ union meson_hdmi_venc_mode meson_hdmi_encp_mode_1080p60 = {
- 	},
- };
- 
-+union meson_hdmi_venc_mode meson_hdmi_encp_mode_2160p24 = {
-+	.encp = {
-+		.dvi_settings = 0x1,
-+		.video_mode = 0x4040,
-+		.video_mode_adv = 0x8,
-+		/* video_sync_mode */
-+		/* video_yc_dly */
-+		/* video_rgb_ctrl */
-+		.video_filt_ctrl = 0x1000,
-+		.video_filt_ctrl_present = true,
-+		/* video_ofld_voav_ofst */
-+		.yfp1_htime = 140,
-+		.yfp2_htime = 140+3840,
-+		.max_pxcnt = 3840+1660-1,
-+		.hspuls_begin = 2156+1920,
-+		.hspuls_end = 44,
-+		.hspuls_switch = 44,
-+		.vspuls_begin = 140,
-+		.vspuls_end = 2059+1920,
-+		.vspuls_bline = 0,
-+		.vspuls_eline = 4,
-+		.havon_begin = 148,
-+		.havon_end = 3987,
-+		.vavon_bline = 89,
-+		.vavon_eline = 2248,
-+		/* eqpuls_begin */
-+		/* eqpuls_end */
-+		/* eqpuls_bline */
-+		/* eqpuls_eline */
-+		.hso_begin = 44,
-+		.hso_end = 2156+1920,
-+		.vso_begin = 2100+1920,
-+		.vso_end = 2164+1920,
-+		.vso_bline = 51,
-+		.vso_eline = 53,
-+		.vso_eline_present = true,
-+		/* sy_val */
-+		/* sy2_val */
-+		.max_lncnt = 2249,
-+	},
-+};
-+
-+union meson_hdmi_venc_mode meson_hdmi_encp_mode_2160p25 = {
-+	.encp = {
-+		.dvi_settings = 0x1,
-+		.video_mode = 0x4040,
-+		.video_mode_adv = 0x8,
-+		/* video_sync_mode */
-+		/* video_yc_dly */
-+		/* video_rgb_ctrl */
-+		.video_filt_ctrl = 0x1000,
-+		.video_filt_ctrl_present = true,
-+		/* video_ofld_voav_ofst */
-+		.yfp1_htime = 140,
-+		.yfp2_htime = 140+3840,
-+		.max_pxcnt = 3840+1440-1,
-+		.hspuls_begin = 2156+1920,
-+		.hspuls_end = 44,
-+		.hspuls_switch = 44,
-+		.vspuls_begin = 140,
-+		.vspuls_end = 2059+1920,
-+		.vspuls_bline = 0,
-+		.vspuls_eline = 4,
-+		.havon_begin = 148,
-+		.havon_end = 3987,
-+		.vavon_bline = 89,
-+		.vavon_eline = 2248,
-+		/* eqpuls_begin */
-+		/* eqpuls_end */
-+		/* eqpuls_bline */
-+		/* eqpuls_eline */
-+		.hso_begin = 44,
-+		.hso_end = 2156+1920,
-+		.vso_begin = 2100+1920,
-+		.vso_end = 2164+1920,
-+		.vso_bline = 51,
-+		.vso_eline = 53,
-+		.vso_eline_present = true,
-+		/* sy_val */
-+		/* sy2_val */
-+		.max_lncnt = 2249,
-+	},
-+};
-+
-+union meson_hdmi_venc_mode meson_hdmi_encp_mode_2160p30 = {
-+	.encp = {
-+		.dvi_settings = 0x1,
-+		.video_mode = 0x4040,
-+		.video_mode_adv = 0x8,
-+		/* video_sync_mode */
-+		/* video_yc_dly */
-+		/* video_rgb_ctrl */
-+		.video_filt_ctrl = 0x1000,
-+		.video_filt_ctrl_present = true,
-+		/* video_ofld_voav_ofst */
-+		.yfp1_htime = 140,
-+		.yfp2_htime = 140+3840,
-+		.max_pxcnt = 3840+560-1,
-+		.hspuls_begin = 2156+1920,
-+		.hspuls_end = 44,
-+		.hspuls_switch = 44,
-+		.vspuls_begin = 140,
-+		.vspuls_end = 2059+1920,
-+		.vspuls_bline = 0,
-+		.vspuls_eline = 4,
-+		.havon_begin = 148,
-+		.havon_end = 3987,
-+		.vavon_bline = 89,
-+		.vavon_eline = 2248,
-+		/* eqpuls_begin */
-+		/* eqpuls_end */
-+		/* eqpuls_bline */
-+		/* eqpuls_eline */
-+		.hso_begin = 44,
-+		.hso_end = 2156+1920,
-+		.vso_begin = 2100+1920,
-+		.vso_end = 2164+1920,
-+		.vso_bline = 51,
-+		.vso_eline = 53,
-+		.vso_eline_present = true,
-+		/* sy_val */
-+		/* sy2_val */
-+		.max_lncnt = 2249,
-+	},
-+};
-+
- struct meson_hdmi_venc_vic_mode {
- 	unsigned int vic;
- 	union meson_hdmi_venc_mode *mode;
-@@ -717,6 +843,9 @@ struct meson_hdmi_venc_vic_mode {
- 	{ 34, &meson_hdmi_encp_mode_1080p30 },
- 	{ 31, &meson_hdmi_encp_mode_1080p50 },
- 	{ 16, &meson_hdmi_encp_mode_1080p60 },
-+	{ 93, &meson_hdmi_encp_mode_2160p24 },
-+	{ 94, &meson_hdmi_encp_mode_2160p25 },
-+	{ 95, &meson_hdmi_encp_mode_2160p30 },
- 	{ 0, NULL}, /* sentinel */
- };
- 
--- 
-2.7.4
-
+Juergen
