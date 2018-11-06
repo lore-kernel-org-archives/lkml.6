@@ -2,117 +2,178 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A61C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595CFC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59EC2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:03:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59EC2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0909620869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:05:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHZVHAID"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0909620869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387552AbeKFV2o (ORCPT
+        id S1730710AbeKFVaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:28:44 -0500
-Received: from mga05.intel.com ([192.55.52.43]:37789 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbeKFV2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:28:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 04:03:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
-   d="scan'208";a="278729922"
-Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.134])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Nov 2018 04:03:42 -0800
-Date:   Tue, 6 Nov 2018 14:03:41 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 15/23] x86/sgx: Add wrappers for ENCLS leaf functions
-Message-ID: <20181106120341.GA11465@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-16-jarkko.sakkinen@linux.intel.com>
- <CAHp75VdhSwy8zzf64PZnHhZVikJEzasu-=a+UOz4cLAxEJW-YA@mail.gmail.com>
- <20181105173038.GD4502@linux.intel.com>
- <CAHp75Vfa2jvjOtvERB_Td1zCrfKyJp24Prd+foYz02kUCjNr-g@mail.gmail.com>
+        Tue, 6 Nov 2018 16:30:06 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51094 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbeKFVaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:30:06 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 124-v6so6232012wmw.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 04:05:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ihD/hM2HTxE7M0zg9lTRAfTdRdJCN/VBGoL4XIWGUJQ=;
+        b=FHZVHAIDyB5duNWne9eSqLBR75F/VQpg0kQPBaqhRKTOUSRdUSqGJunYZX4EyFzXH1
+         dvbRjZIk13svtE6okubWTUsDcfd5QUunomC3CT8H0FHoWIGV5//2ovfVVaZs3DA0VUKi
+         iGm78lZSHTuEI0YfItzop6iT25En/RZM7TZVw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ihD/hM2HTxE7M0zg9lTRAfTdRdJCN/VBGoL4XIWGUJQ=;
+        b=mUk/h0XegNmpZiSGfpvneczbhW0yJmJ9XoeJifzA7Gr2Dp7mR0aIci2PWmIqEC6MlP
+         j3kL3pJIsH7R6MPxjdzXjqj7smNvjU2md5F4reDg8wdsIgMzsamXgIVrBDEtYRbNSigY
+         pKTOctnYuIPH6VsMAvkNpH31ANB8iEnPEnI+E6XnzA4gp1F090Pwrv86cAu8vjeN0RRm
+         1Ro+FyFR82PLueJXoCxm9nAjDFs8PNbK8B7AZZmP/M/rDagVARHWvOiys5xeA+fcc45U
+         a6AB0VK9ta9TZjDLuSThDOtCVY8PtOZkD2G+vf2egtDYFCsF+muDK6hDP3JEPpzRBbT+
+         dLvw==
+X-Gm-Message-State: AGRZ1gKjZl6/eYoyfHjHsd1bb85aRMZpwopR11+VoSm2LeqA4terLJnE
+        ng2eGrBBa2ocpi5GnNjawwS8gyjg5+OPVw==
+X-Google-Smtp-Source: AJdET5crV07b+35fKJ/UBrZzvbNPF7b4vPe2q1gZsP9Rsekbaj44O7uT8j+H1KpGnknzxawzicCUyw==
+X-Received: by 2002:a1c:1b91:: with SMTP id b139-v6mr1803955wmb.37.1541505911199;
+        Tue, 06 Nov 2018 04:05:11 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id m13-v6sm8111796wrw.14.2018.11.06.04.05.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 04:05:10 -0800 (PST)
+Date:   Tue, 6 Nov 2018 12:05:08 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/arm64 : fix error in dump_backtrace
+Message-ID: <20181106120508.hftgyoj47qygt7b2@holly.lan>
+References: <1541488775-29610-1-git-send-email-huangzhaoyang@gmail.com>
+ <20181106083901.erezwtcomiijvdrk@salmiak>
+ <20181106085751.hrp7qkp53cftgew6@holly.lan>
+ <20181106110019.36ps3tyakvocwst4@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vfa2jvjOtvERB_Td1zCrfKyJp24Prd+foYz02kUCjNr-g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181106110019.36ps3tyakvocwst4@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 10:39:46PM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 5, 2018 at 7:30 PM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Sat, Nov 03, 2018 at 03:17:35PM +0200, Andy Shevchenko wrote:
-> > > On Sat, Nov 3, 2018 at 1:18 AM Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > >
-> > > > ENCLS is an umbrella instruction for a variety of cpl0 SGX functions.
-> > > > The ENCLS function that is executed is specified in EAX, with each
-> > > > function potentially having more leaf-specific operands beyond EAX.
-> > > > ENCLS introduces its own (positive value) error codes that (some)
-> > > > leafs use to return failure information in EAX.  Leafs that return
-> > > > an error code also modify RFLAGS.  And finally, ENCLS generates
-> > > > ENCLS-specific non-fatal #GPs and #PFs, i.e. a bug-free kernel may
-> > > > encounter faults on ENCLS that must be handled gracefully.
-> > > >
-> > > > Because of the complexity involved in encoding ENCLS and handling its
-> > > > assortment of failure paths, executing any given leaf is not a simple
-> > > > matter of emitting ENCLS.
-> > > >
-> > > > To enable adding support for ENCLS leafs with minimal fuss, add a
-> > > > two-layer macro system along with an encoding scheme to allow wrappers
-> > > > to return trap numbers along ENCLS-specific error codes.  The bottom
-> > > > layer of the macro system splits between the leafs that return an
-> > > > error code and those that do not.  The second layer generates the
-> > > > correct input/output annotations based on the number of operands for
-> > > > each leaf function.
-> > >
-> > > > +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> > >
-> > > > +/**
-> > >
-> > > I dunno if kernel-doc script still complains about this.
-> >
-> > Is there a way to ask for make htmldocs to do only a subset of docs?
-> > Still kind of trying to figure out what would be  a good flow for
-> > working with Sphinx.
+On Tue, Nov 06, 2018 at 11:00:19AM +0000, Mark Rutland wrote:
+> On Tue, Nov 06, 2018 at 08:57:51AM +0000, Daniel Thompson wrote:
+> > On Tue, Nov 06, 2018 at 08:39:01AM +0000, Mark Rutland wrote:
+> > > On Tue, Nov 06, 2018 at 03:19:35PM +0800, Zhaoyang Huang wrote:
+> > > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > > > 
+> > > > In some cases, the instruction of "bl foo1" will be the last one of the
+> > > > foo2[1], which will cause the lr be the first instruction of the adjacent
+> > > > foo3[2]. Hence, the backtrace will show the weird result as bellow[3].
+> > > > The patch will fix it by miner 4 of the lr when dump_backtrace
+> > > 
+> > > This has come up in the past (and a similar patch has been applied, then
+> > > reverted).
+> > > 
+> > > In general, we don't know that a function call was made via BL, and therefore
+> > > cannot know that LR - 4 is the address of the caller. The caller could set up
+> > > the LR as it likes, then B or BR to the callee, and depending on how the basic
+> > > blocks get laid out in memory, LR - 4 might point at something completely
+> > > different.
+> > > 
+> > > More ideally, the compiler wouldn't end a function with a BL. When does that
+> > > happen, and is there some way we could arrange for that to not happen? e.g.
+> > > somehow pad a NOP after the BL.
+> > 
+> > It's a consequence of having __noreturn isn't it? __noreturn frees the
+> > compiler from the burden of having to produce a valid return stack... so
+> > it doesn't and unwinding becomes hard.
 > 
-> What I'm telling here is about Copyright notice, which in my
-> understanding is not a part of kernel-doc formatting. Though I might
-> be mistaken.
-> I remember some USB code has that and I saw a warning.
+> In that case, the compiler could equally just use B rather than BL,
+> which this patch doesn't solve.
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+> The documentation for the GCC noreturn attribute [1] says:
+> 
+> | In order to preserve backtraces, GCC will never turn calls to noreturn
+> | functions into tail calls. 
+> 
+> ... so clearly it's not intended to mess up backtracing.
 
-I'll remove it because I don't find it in other headers under arch/x86.
+I guess that explains why the compiler chooses BL over B (since B would
+be a tail call).
 
-/Jarkko
+
+> IIUC we mostly use noreturn to prevent warings about uninitialised
+> variables and such after a call to a noreturn function. I think
+> optimization is a secondary concern.
+> 
+> We could ask the GCC folk if they can ensure that a noreturn function
+> call leave thes LR pointing into the caller, e.g. by padding with a NOP:
+> 
+> 	BL	<noreturn function>
+> 	NOP
+> 
+> That seems cheap enough, and would keep backtraces reliable.
+
+It might be worth discussing. One related question though... is there
+any other case there the symbol name other than __noreturn where the
+symbol can change between LR and LR-1?
+
+If not can't we just switch over to %pB which is designed for this case
+(and in case you ask: no... I didn't know about %pB until this morning
+when I started trying to implement the heuristic it uses by hand and
+then discovering it by accident).
+
+Something like:
+
+From 70a2c9ffc962a650ff894d40b775f8310190bf86 Mon Sep 17 00:00:00 2001
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Date: Tue, 6 Nov 2018 11:59:56 +0000
+Subject: [PATCH] arm64: Use %pB to print backtrace symbols
+
+Currently arm64 uses %pS to print backtrace symbols but %pB (which takes
+into consideration the effect of compiler optimisations which may occur
+when tail-calls are used and marked with the noreturn GCC attribute)
+is a better alternative.
+
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
+ arch/arm64/kernel/traps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 5f4d9acb32f5..ea571d3a1373 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -62,7 +62,7 @@ int show_unhandled_signals = 0;
+ 
+ static void dump_backtrace_entry(unsigned long where)
+ {
+-	printk(" %pS\n", (void *)where);
++	printk(" %pB\n", (void *)where);
+ }
+ 
+ static void __dump_instr(const char *lvl, struct pt_regs *regs)
+-- 
+2.19.1
+
