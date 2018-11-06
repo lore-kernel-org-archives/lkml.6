@@ -2,222 +2,94 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F38CC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF9CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE7120862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE7120862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9E0FD20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:33:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fn6xUZwD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E0FD20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbeKFS41 (ORCPT
+        id S1730272AbeKFS5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:56:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42244 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729272AbeKFS40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:56:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 00573B125;
-        Tue,  6 Nov 2018 09:32:00 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] mm/page_alloc: use a single function to free page
-To:     Aaron Lu <aaron.lu@intel.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Yoel Caspersen <yoel@kviknet.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <20181105085820.6341-1-aaron.lu@intel.com>
- <20181105085820.6341-2-aaron.lu@intel.com> <20181106053037.GD6203@intel.com>
- <d6b4890c-0def-6114-2dcf-3ed120dea82c@suse.cz>
- <20181106084746.GA24198@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <30aa9d1f-d619-c143-3de6-6876029538bc@suse.cz>
-Date:   Tue, 6 Nov 2018 10:32:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 13:57:53 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:34984 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729701AbeKFS5x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:57:53 -0500
+Received: by mail-it1-f193.google.com with SMTP id v11so10595498itj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:33:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LS3VgS399YjVSBtEaN4z6eXZYGLCroDqDOQ0mDqlM2Y=;
+        b=fn6xUZwDFN1Y7zQBrVcAVIeCfLzEvUil03V59M33yB3znyuPpNvxuohjAWNjfZMUop
+         P+f5ulxJAxq2/tOgRdfeCT0xdGjgpB8j9mQfWjuR09+Tvfw4eIzDSc8y2v5dMvnmiuZg
+         RTxjhSimRqc5JDdm1k5fXXwZDZ0hPqG0TQIfs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LS3VgS399YjVSBtEaN4z6eXZYGLCroDqDOQ0mDqlM2Y=;
+        b=onilh/GFIQsucVo3JJ+wkoDVU+apfRf/NXSFo+ulDrBPnxRTC8jfHOe7nRRr9+pHVw
+         5qw5fnOEYjpcZxYWbtMWKzYdh0AaO8A/0u/h/vrocq3sZTr8iSmaR2nGC4KmQzOln4FO
+         w9D1g60HcTycfMoB2E+zBHQPS1ZhKGwtXrIb9xOMkzl9BqVpMNYQ/e/iuYNmBFH8Q3Nu
+         rPgTPbAusUYX2uDNDiMX83b28pSiGN1Z32PBXjSsmVPOyokqBnL9uKgUg5V05yTDLCPh
+         9iZNbAB7XJ3N9684wynysraPt4kVu2h9Sd84JMARBNHyRoFuJlbswK0t8J9VpNQdrqEz
+         3MCQ==
+X-Gm-Message-State: AGRZ1gIHOTh8vhHZEg66lT9uaTjhcCr2pxdbeModKucrc1MNl8yMNfRy
+        pb1NRhFHaKMNZnlKkS50Pem8UgF6t0Uf1VAUcfca7w==
+X-Google-Smtp-Source: AJdET5clSK7YpCOVsgPFLpu7cSHRDz8PxF3mrCxZpXzOuBjQjeGMcK+g/A6ThEX0rkB13m6WHqkNaCVdIyITGzUmWGo=
+X-Received: by 2002:a24:fe88:: with SMTP id w130-v6mr1244258ith.69.1541496812272;
+ Tue, 06 Nov 2018 01:33:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181106084746.GA24198@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Tue, 6 Nov 2018 01:33:31 -0800 (PST)
+X-Originating-IP: [94.21.144.184]
+In-Reply-To: <b3162ccb-f6d8-b0d4-5cfe-313e89c49a1d@virtuozzo.com>
+References: <154149557692.17196.12607896696117775780.stgit@localhost.localdomain>
+ <CAJfpegtMmrvnZE3xtMDNTmF=pSmqFROtehamivbLeAh2E_qZ6Q@mail.gmail.com> <b3162ccb-f6d8-b0d4-5cfe-313e89c49a1d@virtuozzo.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 6 Nov 2018 10:33:31 +0100
+Message-ID: <CAJfpegs+kbFqChz0wKEW+nDBH=M+S+UsDW1w7hyvj3yLmHnuWw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Put leaked request on error path of fuse_retrieve()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 9:47 AM, Aaron Lu wrote:
-> On Tue, Nov 06, 2018 at 09:16:20AM +0100, Vlastimil Babka wrote:
->> On 11/6/18 6:30 AM, Aaron Lu wrote:
->>> We have multiple places of freeing a page, most of them doing similar
->>> things and a common function can be used to reduce code duplicate.
+On Tue, Nov 6, 2018 at 10:25 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> On 06.11.2018 12:23, Miklos Szeredi wrote:
+>> On Tue, Nov 6, 2018 at 10:13 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>> fuse_request_send_notify_reply() may fail, and this case
+>>> it remains leaked (fuse_retrieve_end(), which is called
+>>> on error path, does not do that). Also, fc->num_waiting,
+>>> will never be decremented, and fuse_wait_aborted() will
+>>> never finish. So, put the request patently.
 >>>
->>> It also avoids bug fixed in one function but left in another.
->>>
->>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 >>
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Thanks.
-> 
->> I assume there's no arch that would run page_ref_sub_and_test(1) slower
->> than put_page_testzero(), for the critical __free_pages() case?
-> 
-> Good question.
-> 
-> I followed the non-arch specific calls and found that:
-> page_ref_sub_and_test() ends up calling atomic_sub_return(i, v) while
-> put_page_testzero() ends up calling atomic_sub_return(1, v). So they
-> should be same for archs that do not have their own implementations.
+>> Posted same patch yesterday for a syzbot report.   How did you notice this?
+>
+> I've found this by code review. I did this last week and I have 10 patches more
+> on different theme. I was waiting for when the merge window opens.
 
-x86 seems to distinguish between DECL and SUBL, see
-arch/x86/include/asm/atomic.h although I could not figure out where does
-e.g. arch_atomic_dec_and_test become atomic_dec_and_test to override the
-generic implementation.
-I don't know if the CPU e.g. executes DECL faster, but objectively it
-has one parameter less. Maybe it doesn't matter?
+Well, the merge window just closed.  But never worry, bugfixes can go
+in at anytime.
 
-> Back to your question: I don't know either.
-> If this is deemed unsafe, we can probably keep the ref modify part in
-> their original functions and only take the free part into a common
-> function.
+If you notice a bug, such as this, you don't need to hold back until
+any particular time, the sooner it's known, the better.
 
-I guess you could also employ  if (__builtin_constant_p(nr)) in
-free_the_page(), but the result will be ugly I guess, and maybe not
-worth it :)
-
-> Regards,
-> Aaron
-> 
->>> ---
->>> v2: move comments close to code as suggested by Dave.
->>>
->>>  mm/page_alloc.c | 36 ++++++++++++++++--------------------
->>>  1 file changed, 16 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->>> index 91a9a6af41a2..4faf6b7bf225 100644
->>> --- a/mm/page_alloc.c
->>> +++ b/mm/page_alloc.c
->>> @@ -4425,9 +4425,17 @@ unsigned long get_zeroed_page(gfp_t gfp_mask)
->>>  }
->>>  EXPORT_SYMBOL(get_zeroed_page);
->>>  
->>> -void __free_pages(struct page *page, unsigned int order)
->>> +static inline void free_the_page(struct page *page, unsigned int order, int nr)
->>>  {
->>> -	if (put_page_testzero(page)) {
->>> +	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
->>> +
->>> +	/*
->>> +	 * Free a page by reducing its ref count by @nr.
->>> +	 * If its refcount reaches 0, then according to its order:
->>> +	 * order0: send to PCP;
->>> +	 * high order: directly send to Buddy.
->>> +	 */
->>> +	if (page_ref_sub_and_test(page, nr)) {
->>>  		if (order == 0)
->>>  			free_unref_page(page);
->>>  		else
->>> @@ -4435,6 +4443,10 @@ void __free_pages(struct page *page, unsigned int order)
->>>  	}
->>>  }
->>>  
->>> +void __free_pages(struct page *page, unsigned int order)
->>> +{
->>> +	free_the_page(page, order, 1);
->>> +}
->>>  EXPORT_SYMBOL(__free_pages);
->>>  
->>>  void free_pages(unsigned long addr, unsigned int order)
->>> @@ -4481,16 +4493,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>  
->>>  void __page_frag_cache_drain(struct page *page, unsigned int count)
->>>  {
->>> -	VM_BUG_ON_PAGE(page_ref_count(page) == 0, page);
->>> -
->>> -	if (page_ref_sub_and_test(page, count)) {
->>> -		unsigned int order = compound_order(page);
->>> -
->>> -		if (order == 0)
->>> -			free_unref_page(page);
->>> -		else
->>> -			__free_pages_ok(page, order);
->>> -	}
->>> +	free_the_page(page, compound_order(page), count);
->>>  }
->>>  EXPORT_SYMBOL(__page_frag_cache_drain);
->>>  
->>> @@ -4555,14 +4558,7 @@ void page_frag_free(void *addr)
->>>  {
->>>  	struct page *page = virt_to_head_page(addr);
->>>  
->>> -	if (unlikely(put_page_testzero(page))) {
->>> -		unsigned int order = compound_order(page);
->>> -
->>> -		if (order == 0)
->>> -			free_unref_page(page);
->>> -		else
->>> -			__free_pages_ok(page, order);
->>> -	}
->>> +	free_the_page(page, compound_order(page), 1);
->>>  }
->>>  EXPORT_SYMBOL(page_frag_free);
->>>  
->>>
->>
-
+Thanks,
+Miklos
