@@ -3,73 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7357DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52337C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E0820869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 10:58:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E0820869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 1A86E2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:00:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A86E2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730245AbeKFUXg (ORCPT
+        id S1730360AbeKFUYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 15:23:36 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40264 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729605AbeKFUXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:23:36 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 4AHZrLFt-Dz5; Tue,  6 Nov 2018 11:58:56 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 740DD1EC0402;
-        Tue,  6 Nov 2018 11:58:56 +0100 (CET)
-Date:   Tue, 6 Nov 2018 11:58:55 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <MNARANI@xilinx.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Michal Simek <michals@xilinx.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH v10 0/6] EDAC: Enhancements to Synopsys EDAC driver
-Message-ID: <20181106105855.GD13712@zn.tnic>
-References: <1540447621-22870-1-git-send-email-manish.narani@xilinx.com>
- <20181106100329.GC13712@zn.tnic>
- <DM6PR02MB52278C1B02960DD084D5A25BC1CB0@DM6PR02MB5227.namprd02.prod.outlook.com>
+        Tue, 6 Nov 2018 15:24:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57832 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729816AbeKFUYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 15:24:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 767E6B180;
+        Tue,  6 Nov 2018 11:00:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B754D1E07AB; Tue,  6 Nov 2018 12:00:06 +0100 (CET)
+Date:   Tue, 6 Nov 2018 12:00:06 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
+Message-ID: <20181106110006.GE25414@quack2.suse.cz>
+References: <20181012060014.10242-1-jhubbard@nvidia.com>
+ <20181012060014.10242-5-jhubbard@nvidia.com>
+ <20181013035516.GA18822@dastard>
+ <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
+ <20181013164740.GA6593@infradead.org>
+ <84811b54-60bf-2bc3-a58d-6a7925c24aad@nvidia.com>
+ <20181105095447.GE6953@quack2.suse.cz>
+ <f5ad7210-05e0-3dc4-02df-01ce5346e198@nvidia.com>
+ <20181106024715.GU6311@dastard>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM6PR02MB52278C1B02960DD084D5A25BC1CB0@DM6PR02MB5227.namprd02.prod.outlook.com>
+In-Reply-To: <20181106024715.GU6311@dastard>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 10:42:09AM +0000, Manish Narani wrote:
-> I have tested this and verified as working fine on hardware. You can
-> go ahead and queue it for linux-next.
+On Tue 06-11-18 13:47:15, Dave Chinner wrote:
+> On Mon, Nov 05, 2018 at 04:26:04PM -0800, John Hubbard wrote:
+> > On 11/5/18 1:54 AM, Jan Kara wrote:
+> > > Hmm, have you tried larger buffer sizes? Because synchronous 8k IO isn't
+> > > going to max-out NVME iops by far. Can I suggest you install fio [1] (it
+> > > has the advantage that it is pretty much standard for a test like this so
+> > > everyone knows what the test does from a glimpse) and run with it something
+> > > like the following workfile:
+> > > 
+> > > [reader]
+> > > direct=1
+> > > ioengine=libaio
+> > > blocksize=4096
+> > > size=1g
+> > > numjobs=1
+> > > rw=read
+> > > iodepth=64
+> > > 
+> > > And see how the numbers with and without your patches compare?
+> > > 
+> > > 								Honza
+> > > 
+> > > [1] https://github.com/axboe/fio
+> > 
+> > That program is *very* good to have. Whew. Anyway, it looks like read bandwidth 
+> > is approximately 74 MiB/s with my patch (it varies a bit, run to run),
+> > as compared to around 85 without the patch, so still showing about a 20%
+> > performance degradation, assuming I'm reading this correctly.
+> > 
+> > Raw data follows, using the fio options you listed above:
+> > 
+> > Baseline (without my patch):
+> > ---------------------------- 
+> ....
+> >      lat (usec): min=179, max=14003, avg=2913.65, stdev=1241.75
+> >     clat percentiles (usec):
+> >      |  1.00th=[ 2311],  5.00th=[ 2343], 10.00th=[ 2343], 20.00th=[ 2343],
+> >      | 30.00th=[ 2343], 40.00th=[ 2376], 50.00th=[ 2376], 60.00th=[ 2376],
+> >      | 70.00th=[ 2409], 80.00th=[ 2933], 90.00th=[ 4359], 95.00th=[ 5276],
+> >      | 99.00th=[ 8291], 99.50th=[ 9110], 99.90th=[10945], 99.95th=[11469],
+> >      | 99.99th=[12256]
+> .....
+> > Modified (with my patch):
+> > ---------------------------- 
+> .....
+> >      lat (usec): min=81, max=15766, avg=3496.57, stdev=1450.21
+> >     clat percentiles (usec):
+> >      |  1.00th=[ 2835],  5.00th=[ 2835], 10.00th=[ 2835], 20.00th=[ 2868],
+> >      | 30.00th=[ 2868], 40.00th=[ 2868], 50.00th=[ 2868], 60.00th=[ 2900],
+> >      | 70.00th=[ 2933], 80.00th=[ 3425], 90.00th=[ 5080], 95.00th=[ 6259],
+> >      | 99.00th=[10159], 99.50th=[11076], 99.90th=[12649], 99.95th=[13435],
+> >      | 99.99th=[14484]
+> 
+> So it's adding at least 500us of completion latency to every IO?
+> I'd argue that the IO latency impact is far worse than the a 20%
+> throughput drop.
 
-Pushed,
-Thanks.
+Hum, right. So for each IO we have to remove the page from LRU on submit
+and then put it back on IO completion (which is going to race with new
+submits so LRU lock contention might be an issue). Spending 500 us on that
+is not unthinkable when the lock is contended but it is more expensive than
+I'd have thought. John, could you perhaps profile where the time is spent?
 
+								Honza
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
