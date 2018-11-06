@@ -2,81 +2,97 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92BEC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC901C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 807732084F
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:54:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807732084F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 81D812084F
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 02:56:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jt584VDe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D812084F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbeKFMR2 convert rfc822-to-8bit (ORCPT
+        id S1729535AbeKFMTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 07:17:28 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53578 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeKFMR2 (ORCPT
+        Tue, 6 Nov 2018 07:19:45 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36567 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbeKFMTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 07:17:28 -0500
-Received: from mail-wm1-f72.google.com ([209.85.128.72])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <chia-lin.kao@canonical.com>)
-        id 1gJrVf-0001Es-NS
-        for linux-kernel@vger.kernel.org; Tue, 06 Nov 2018 02:54:31 +0000
-Received: by mail-wm1-f72.google.com with SMTP id h67-v6so9526773wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 18:54:31 -0800 (PST)
+        Tue, 6 Nov 2018 07:19:45 -0500
+Received: by mail-qk1-f195.google.com with SMTP id o125so17641420qkf.3;
+        Mon, 05 Nov 2018 18:56:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BYEScDKH7H5C2FE8RXTZoURjDyAeUU3j9UnmtL89pAI=;
+        b=jt584VDe95pxHkRZ7xxIAFvFmcG5NzDh+TKLewRZD+V0f5cNSBh4or+em8GMwCuJJ4
+         2jwmDzUIzZHykjcyEUfOrNTwmiEqZP1F+U8fXizhDmIE/UD+q91oxXPpE/bhtrFkJ8ve
+         b9uLqrBvysLqkBrEnmiRIFQfM4bjmo9SzQCGRDr1et8TRA2A+xnYs6dnTJ1X2X4gft7q
+         bJvL5hGwsg8RdAw7YjKiQtu8qIJRE8Nx0unmvGpb7tpHkyw4eM/KopP6N6/pyiRLUB38
+         l6bmosqExCLCmc1klWbhsFJ7JBvAAZv5XbYf90PRxhfMXwKAx1eYqbV/N2Qg2SHhCVpj
+         Vt3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xNOsWxgn4zw7OJBbph1j4tCIxnQJdW3RPTNLp9mD2LY=;
-        b=cI+/PS7yehldsDYhjsrKJUbEAUw24SU7BjjoNN2loVU+4IS9VEtGV1jgKJc+XIdoM3
-         EdN1CQWV8nnWIvj/QjSofe16+kqehlO9bnlo5BIWZyyXKMd39panY69xI8iD16gpbzR5
-         3n6EFwdRaJjKl4IC9tnHgFLw0dYQorhMeI2JH4bDbj3ZlHgGx6u19ARgqm1d1Ai4yJHK
-         qP+7357Yvoqm+mRcWMsWPv1JwlAnnPHKBMNxAu2RwJbqYM8/5UbkoMzsffP3iBBqIDRf
-         UGwRUVQgS3TsvjErEdwt6giJ6f1VybwK/F4RTzFftX6Y/9NIadtBOj5/czQwGTlJyZM/
-         y6sQ==
-X-Gm-Message-State: AGRZ1gKxH7zAP3ObfmLCmnL/K1z+0LcmWcWLq83GUFcIv6POR1AX/6TQ
-        trurtsXTNuCEmNuzzI2s/noRSSSYgpwKZUiMy7ss/nUZaKGzGcwdtWKI8FQrvh3JK9cu3ABThJr
-        TbMEmJ8CgU5EZRXM3M1rtSO9s7YsidpVQRwNee2+OHcjC8E07GMk8N09owA==
-X-Received: by 2002:a5d:6b0f:: with SMTP id v15-v6mr20460189wrw.53.1541472871359;
-        Mon, 05 Nov 2018 18:54:31 -0800 (PST)
-X-Google-Smtp-Source: AJdET5eiYFU3pSmIs2QfY9hakAGEnNfW2xuqIJn+ML+ruevMsJnxkmz7AGv7JZuK/cMJoblBhKMDoXBUjD7Z5MfJHkw=
-X-Received: by 2002:a5d:6b0f:: with SMTP id v15-v6mr20460178wrw.53.1541472871067;
- Mon, 05 Nov 2018 18:54:31 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=BYEScDKH7H5C2FE8RXTZoURjDyAeUU3j9UnmtL89pAI=;
+        b=HxtaBPTopMTIGKD4DLyvSEnSkcpFnLjgQNy5kN8fan0E96/ZtMNgHeQ7E3/HYivang
+         VwusKVoZfaIINaE9B250jx5ICmNrBRiIepMOkK3YiiKwlqRg7x77vwB9pcXLUysfhhLD
+         9zF0860b2oGgsJ1BHkWMNyfI9EwqGI8AqfgQKLQ5FbEqlsb+We1GLD180M8z56BN0NYQ
+         ql+7aUTRY9h+H6LNhViN686Qhv08A+SqvWKGLrIVgLF1hT6+dPVQTn1AgzTn/9Iqx1w8
+         14gAYN5DghO3vyv631VtViGXm2/JzD8dzCL23yx7xaO8IrVOAyKl31pALdcNuOpvi510
+         nxVw==
+X-Gm-Message-State: AGRZ1gIyRk6g3CPoRAy6TC8WV7B0exsrTG0/4ZvwV4PftwC7aTP3ca1/
+        nDwnQExOYg6iQwmA2s+MTuh/KvUqHuKbcWwGidkREiU+
+X-Google-Smtp-Source: AJdET5dM5n88TZwRBIexFtO3lp0rOWm47BZblNLVIXQDYfc/oT4Gph8LbO96lDhLGhokAjzNoATi+U4EndlmwLOOFkI=
+X-Received: by 2002:a37:24c9:: with SMTP id k70mr23063383qkk.281.1541473008602;
+ Mon, 05 Nov 2018 18:56:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20181106020402.21120-1-acelan.kao@canonical.com>
- <20181106020402.21120-2-acelan.kao@canonical.com> <733fc135-dfef-f70e-b854-3ad553c67e9b@kernel.org>
-In-Reply-To: <733fc135-dfef-f70e-b854-3ad553c67e9b@kernel.org>
-From:   AceLan Kao <acelan.kao@canonical.com>
-Date:   Tue, 6 Nov 2018 10:54:19 +0800
-Message-ID: <CAFv23QnZcwgfKX-i-_ekB=0XbCQ5uNkdFXupNC=-DQwKJP5B9A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] nvme: add quirk to not call disable function when suspending
-To:     okaya@kernel.org
-Cc:     keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-nvme@lists.infradead.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
+References: <20181102182123.29420-1-v.mayatskih@gmail.com> <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
+ <CAGF4SLg6+nt+zV4haXys4Wz2dWPDyx7xHXuA+h01NcQ94j0E1A@mail.gmail.com> <57eefa62-7e66-786d-441c-5dd6b0d451a5@redhat.com>
+In-Reply-To: <57eefa62-7e66-786d-441c-5dd6b0d451a5@redhat.com>
+From:   Vitaly Mayatskih <v.mayatskih@gmail.com>
+Date:   Mon, 5 Nov 2018 21:56:36 -0500
+Message-ID: <CAGF4SLgkgjkLjmPWWJRBo44B+mcR4jRcjQ+PdqJuUGxZVuEECw@mail.gmail.com>
+Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, stefanha@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right, should replace it with SK_HYNIX.
-I'll prepare v2 patch for that.
-Sinan Kaya <okaya@kernel.org> 於 2018年11月6日 週二 上午10:24寫道：
+On Mon, Nov 5, 2018 at 9:45 PM Jason Wang <jasowang@redhat.com> wrote:
+
+> > Storage industry is shifting away from SCSI, which has a scaling
+> > problem.
 >
-> On 11/5/2018 6:04 PM, AceLan Kao wrote:
-> > +     { PCI_DEVICE(0x1c5c, 0x1527),   /* Sk Hynix */
-> > +             .driver_data = NVME_QUIRK_NO_DISABLE, },
 >
-> Now that you added PCI_VENDOR_ID_SK_HYNIX to pci_ids.h, you
-> could use PCI_VENDOR_ID_SK_HYNIX above instead of 0x1c5c.
+> Know little about storage. For scaling, do you mean SCSI protocol
+> itself? If not, it's probably not a real issue for virtio-scsi itself.
+
+Yes,  the protocol.
+
+> >   I can compare vhost-scsi vs vhost-blk if you are curious.
+>
+>
+> It would be very helpful to see the performance comparison.
+
+I will try to find comparable hw with fast enough SAS SSDs. That one
+was done with NVMe's sitting on the very bottom of storage topology.
+
+
+-- 
+wbr, Vitaly
