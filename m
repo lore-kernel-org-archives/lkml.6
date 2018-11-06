@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94830C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7A7C46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BF482081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF482081D
+	by mail.kernel.org (Postfix) with ESMTP id 7E6482081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E6482081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389757AbeKGDDf (ORCPT
+        id S2389770AbeKGDDn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:03:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46758 "EHLO mga18.intel.com"
+        Tue, 6 Nov 2018 22:03:43 -0500
+Received: from mga09.intel.com ([134.134.136.24]:6975 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389275AbeKGDDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:03:35 -0500
+        id S2389275AbeKGDDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:03:43 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:18 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="87127009"
+   d="scan'208";a="87127051"
 Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:37:11 -0800
+  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:37:19 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 02/17] tpm: fix invalid return value in pubek_show()
-Date:   Tue,  6 Nov 2018 19:36:34 +0200
-Message-Id: <20181106173652.31020-3-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v4 03/17] tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+Date:   Tue,  6 Nov 2018 19:36:35 +0200
+Message-Id: <20181106173652.31020-4-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
 References: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
@@ -57,31 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return zero when tpm_buf_init() fails as we do for other functions in
-tpm-sysfs.c.
+Do not print partial list of PCRs when tpm1_pcr_read() fails but instead
+return 0 from pcrs_show(). This is consistent behavior with other sysfs
+functions.
 
-Fixes: da379f3c1db0c ("tpm: migrate pubek_show to struct tpm_buf")
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm-sysfs.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm-sysfs.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index c2769e55cb6c..7ed7eb6f906a 100644
+index 7ed7eb6f906a..928d4e839bb7 100644
 --- a/drivers/char/tpm/tpm-sysfs.c
 +++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -47,9 +47,8 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+@@ -100,22 +100,21 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	cap_t cap;
+ 	u8 digest[TPM_DIGEST_SIZE];
+-	ssize_t rc;
+ 	u32 i, j, num_pcrs;
+ 	char *str = buf;
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
  
- 	memset(&anti_replay, 0, sizeof(anti_replay));
- 
--	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
+-	rc = tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
+-			 "attempting to determine the number of PCRS",
+-			 sizeof(cap.num_pcrs));
 -	if (rc)
--		return rc;
-+	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
-+		return 0;
++	if (tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
++			"attempting to determine the number of PCRS",
++			sizeof(cap.num_pcrs)))
+ 		return 0;
  
- 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
- 
+ 	num_pcrs = be32_to_cpu(cap.num_pcrs);
+ 	for (i = 0; i < num_pcrs; i++) {
+-		rc = tpm1_pcr_read(chip, i, digest);
+-		if (rc)
++		if (tpm1_pcr_read(chip, i, digest)) {
++			str = buf;
+ 			break;
++		}
+ 		str += sprintf(str, "PCR-%02d: ", i);
+ 		for (j = 0; j < TPM_DIGEST_SIZE; j++)
+ 			str += sprintf(str, "%02X ", digest[j]);
 -- 
 2.19.1
 
