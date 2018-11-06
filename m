@@ -6,222 +6,310 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B377C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006A1C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C347720827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D29D20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 00:29:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gSf5M5mv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C347720827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="EDhoIV+Y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QaIhjpeY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D29D20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbeKFJsb (ORCPT
+        id S1729172AbeKFJvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 04:48:31 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2369 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbeKFJsa (ORCPT
+        Tue, 6 Nov 2018 04:51:25 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50235 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726156AbeKFJvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 04:48:30 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5be0df9c0000>; Mon, 05 Nov 2018 16:26:04 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 05 Nov 2018 16:26:05 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 05 Nov 2018 16:26:05 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 6 Nov
- 2018 00:26:04 +0000
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-To:     Jan Kara <jack@suse.cz>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com> <20181013035516.GA18822@dastard>
- <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
- <20181013164740.GA6593@infradead.org>
- <84811b54-60bf-2bc3-a58d-6a7925c24aad@nvidia.com>
- <20181105095447.GE6953@quack2.suse.cz>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <f5ad7210-05e0-3dc4-02df-01ce5346e198@nvidia.com>
-Date:   Mon, 5 Nov 2018 16:26:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181105095447.GE6953@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
+        Tue, 6 Nov 2018 04:51:25 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1AB4322BCC;
+        Mon,  5 Nov 2018 19:29:00 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 05 Nov 2018 19:29:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        mendozajonas.com; h=message-id:subject:from:to:cc:date
+        :in-reply-to:references:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=OkIZBWOJ34PZn7DiZatgYhN7cI
+        2KZw3XynpoGl/ErjU=; b=EDhoIV+Y7YQKwRSbhAJm2XeQqqy+hugAYpTThns4K4
+        R8h6RSGSbj/WoHApoC1tt/tFlgvpLqk2So+j3XHmd49YhG6QomdkKtKyVpG9PsoG
+        IUzWw7Mv/QlSZswfK/pIDYyJFIqb+67YsPjN8+zTOeYVe4Racpzrvh+oa8/9N+d6
+        7gQ1Sm7qnxhzriZpQhLs9RGaRstuGOOCTqj4qSTBf2DlpYjhJpCuY82j9l6RCwUj
+        g8xrdzuNLyuFZmvM3Opr9rGqNy6wxUEZ2OnrBJhAclXyFBCWRixZqiFg3faTNCgj
+        ZiBfa6OLqPUCMECltlLaw6YQ1Y44iXWGJInxS0X/jNUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=OkIZBWOJ34PZn7DiZatgYhN7cI2KZw3XynpoGl/Er
+        jU=; b=QaIhjpeYHSn8Dm0ZYtRGtkgF274SWLGX5n1LdNRLJslyvHnOyGCOvKzwq
+        b4ZY2L+m3X/jVrEIRyclkf/98Z922LFZHy5TFFxWaFZMz7woO2QPlBqLSi/nbsqm
+        +je3TwmAc9cOfXRwrQN0v3t8uygb+p/qXy574VFRWNj+tGenuXrYRjyca3wkzF1b
+        rbbpfwTlAumDK/jsBkgzlHUXaMGj5emLjKEJI6NuweGmMS2EXmASIbXUtTWHQTW7
+        lBD+o3/wa/UPNQcVhTF7mfgKQCSKXwDKWJgufyNKd2p1f6o7nAIh5ooPR/pdXcSm
+        +dIK33Ay9rJhCWWnPOicIz0DPXz7g==
+X-ME-Sender: <xms:S-DgW93TIr8tnx_bDnyc8AKeQPoWzf1AbxN9p8a0K2hg4ic0Kg1NDg>
+X-ME-Proxy: <xmx:S-DgW9MQWpVrxFniDfENKn3nJEadKW72uW82M7_MSc_KzcAnju9Xpw>
+    <xmx:S-DgWx9DZ_4rc6KQTSs4bhsjJAZ-AEXsaZ7CBO5KXZMH90IOygawFg>
+    <xmx:S-DgWwkjFI0digSACdH9A2boI3nzpXWgybVAtM-8ev5rKhKbzsVZjA>
+    <xmx:S-DgWx4dPWUGPmjlZqYBZlmpP-nzGyECpn2Nk9kO7RegPji4JqjvMA>
+    <xmx:S-DgW_IOeKlwfzap_tm8FeND3FIifHIL0w8n-K6tayHafohJc8fB_Q>
+    <xmx:TODgW9R0tStWwjXxn88_YBMQOWn4Rv44FCjhyDv0m6kqmM0ka3z1rw>
+Received: from v4 (unknown [122.99.82.10])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B7371E47C4;
+        Mon,  5 Nov 2018 19:28:56 -0500 (EST)
+Message-ID: <de9816e6c9cb31fdae1bb3d4a38da65b8f3a7694.camel@mendozajonas.com>
+Subject: Re: [PATCH net-next 5/6] net/ncsi: Reset channel state in
+ ncsi_start_dev()
+From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
+To:     Justin.Lee1@Dell.com, netdev@vger.kernel.org
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Date:   Tue, 06 Nov 2018 11:28:53 +1100
+In-Reply-To: <ea740068c02a47e2a5411f84c61e69b3@AUSX13MPS302.AMER.DELL.COM>
+References: <20181018035917.19413-1-sam@mendozajonas.com>
+         <20181018035917.19413-6-sam@mendozajonas.com>
+         <96158616f0774e3d9fae0e99bb16e605@AUSX13MPS306.AMER.DELL.COM>
+         <c4f0fdcc971ca258539899a8b15755b96b2353f5.camel@mendozajonas.com>
+         <ea740068c02a47e2a5411f84c61e69b3@AUSX13MPS302.AMER.DELL.COM>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1541463964; bh=XVJ8N1h/XPuk6xjmWjEkDZyBeZ4qPfxW5GnbFyEwrTc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=gSf5M5mvthWDqAn1siquoUzSFkeDYiiBu5SdS4n94rEXuCMlJSTJeaMwRolRUa0ol
-         H/1qtkLS9h0wUK9qJGq76oBQ0yxkR6gLI/I9KBURBFbwi7wlfAasZYAgWZMimpa54G
-         6jW+qKXdy0+trRMcOnNyTdQPxaa3EHqnbPso5Xl7CQI8yFLWaMicaGPlUzJnYgH37C
-         MipODTCLIfD08nCTm7zZwDSjNWtx015ZcbO5Hl++zTnJ+XM5kv9Jacv5JGf6CNSnjq
-         NdyaMtuMv7fFnRKkm4juFCaDafANX612DKO9mtwOslm6FCLxIk3iq8gwF+BU3QEbab
-         SyY49iLeFC1Ow==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/5/18 1:54 AM, Jan Kara wrote:
-> On Sun 04-11-18 23:10:12, John Hubbard wrote:
->> On 10/13/18 9:47 AM, Christoph Hellwig wrote:
->>> On Sat, Oct 13, 2018 at 12:34:12AM -0700, John Hubbard wrote:
->>>> In patch 6/6, pin_page_for_dma(), which is called at the end of get_user_pages(),
->>>> unceremoniously rips the pages out of the LRU, as a prerequisite to using
->>>> either of the page->dma_pinned_* fields. 
->>>>
->>>> The idea is that LRU is not especially useful for this situation anyway,
->>>> so we'll just make it one or the other: either a page is dma-pinned, and
->>>> just hanging out doing RDMA most likely (and LRU is less meaningful during that
->>>> time), or it's possibly on an LRU list.
->>>
->>> Have you done any benchmarking what this does to direct I/O performance,
->>> especially for small I/O directly to a (fast) block device?
->>>
->>
->> Hi Christoph,
->>
->> I'm seeing about 20% slower in one case: lots of reads and writes of size 8192 B,
->> on a fast NVMe device. My put_page() --> put_user_page() conversions are incomplete 
->> and buggy yet, but I've got enough of them done to briefly run the test.
->>
->> One thing that occurs to me is that jumping on and off the LRU takes time, and
->> if we limited this to 64-bit platforms, maybe we could use a real page flag? I 
->> know that leaves 32-bit out in the cold, but...maybe use this slower approach
->> for 32-bit, and the pure page flag for 64-bit? uggh, we shouldn't slow down anything
->> by 20%. 
->>
->> Test program is below. I hope I didn't overlook something obvious, but it's 
->> definitely possible, given my lack of experience with direct IO. 
->>
->> I'm preparing to send an updated RFC this week, that contains the feedback to date,
->> and also many converted call sites as well, so that everyone can see what the whole
->> (proposed) story would look like in its latest incarnation.
+On Mon, 2018-11-05 at 18:01 +0000, Justin.Lee1@Dell.com wrote:
+> > On Tue, 2018-10-30 at 21:26 +0000, Justin.Lee1@Dell.com wrote:
+> > > > +int ncsi_reset_dev(struct ncsi_dev *nd)
+> > > > +{
+> > > > +	struct ncsi_dev_priv *ndp = TO_NCSI_DEV_PRIV(nd);
+> > > > +	struct ncsi_channel *nc, *active;
+> > > > +	struct ncsi_package *np;
+> > > > +	unsigned long flags;
+> > > > +	bool enabled;
+> > > > +	int state;
+> > > > +
+> > > > +	active = NULL;
+> > > > +	NCSI_FOR_EACH_PACKAGE(ndp, np) {
+> > > > +		NCSI_FOR_EACH_CHANNEL(np, nc) {
+> > > > +			spin_lock_irqsave(&nc->lock, flags);
+> > > > +			enabled = nc->monitor.enabled;
+> > > > +			state = nc->state;
+> > > > +			spin_unlock_irqrestore(&nc->lock, flags);
+> > > > +
+> > > > +			if (enabled)
+> > > > +				ncsi_stop_channel_monitor(nc);
+> > > > +			if (state == NCSI_CHANNEL_ACTIVE) {
+> > > > +				active = nc;
+> > > > +				break;
+> > > 
+> > > Is the original intention to process the channel one by one?
+> > > If it is the case, there are two loops and we might need to use
+> > > "goto found" instead.
+> > 
+> > Yes we'll need to break out of the package loop here as well.
+> > 
+> > > > +			}
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > 
+> > > found: ?
+> > > 
+> > > > +	if (!active) {
+> > > > +		/* Done */
+> > > > +		spin_lock_irqsave(&ndp->lock, flags);
+> > > > +		ndp->flags &= ~NCSI_DEV_RESET;
+> > > > +		spin_unlock_irqrestore(&ndp->lock, flags);
+> > > > +		return ncsi_choose_active_channel(ndp);
+> > > > +	}
+> > > > +
+> > > > +	spin_lock_irqsave(&ndp->lock, flags);
+> > > > +	ndp->flags |= NCSI_DEV_RESET;
+> > > > +	ndp->active_channel = active;
+> > > > +	ndp->active_package = active->package;
+> > > > +	spin_unlock_irqrestore(&ndp->lock, flags);
+> > > > +
+> > > > +	nd->state = ncsi_dev_state_suspend;
+> > > > +	schedule_work(&ndp->work);
+> > > > +	return 0;
+> > > > +}
+> > > 
+> > > Also similar issue in ncsi_choose_active_channel() function below.
+> > > 
+> > > > @@ -916,32 +1045,49 @@ static int ncsi_choose_active_channel(struct ncsi_dev_priv *ndp)
+> > > >  
+> > > >  			ncm = &nc->modes[NCSI_MODE_LINK];
+> > > >  			if (ncm->data[2] & 0x1) {
+> > > > -				spin_unlock_irqrestore(&nc->lock, flags);
+> > > >  				found = nc;
+> > > > -				goto out;
+> > > > +				with_link = true;
+> > > >  			}
+> > > >  
+> > > > -			spin_unlock_irqrestore(&nc->lock, flags);
+> > > > +			/* If multi_channel is enabled configure all valid
+> > > > +			 * channels whether or not they currently have link
+> > > > +			 * so they will have AENs enabled.
+> > > > +			 */
+> > > > +			if (with_link || np->multi_channel) {
+> > > 
+> > > I notice that there is a case that we will misconfigure the interface.
+> > > For example below, multi-channel is not enable for package 1.
+> > > But we enable the channel for ncsi2 below (package 1 channel 0) as that interface is the first
+> > > channel for that package with link.
+> > 
+> > I don't think I see the issue here; multi-channel is not set on package
+> > 1, but both channels are in the channel whitelist. Channel 0 is
+> > configured since it's the first found on package 1, and channel 1 is not
+> > since channel 0 is already found. Are you expecting something different?
+> >  
 > 
-> Hmm, have you tried larger buffer sizes? Because synchronous 8k IO isn't
-> going to max-out NVME iops by far. Can I suggest you install fio [1] (it
-> has the advantage that it is pretty much standard for a test like this so
-> everyone knows what the test does from a glimpse) and run with it something
-> like the following workfile:
+> The setting is that multi-package is enable for both package 0 and 1.
+> Multi-channel is only enabled for package 0.
 > 
-> [reader]
-> direct=1
-> ioengine=libaio
-> blocksize=4096
-> size=1g
-> numjobs=1
-> rw=read
-> iodepth=64
+> > > cat /sys/kernel/debug/ncsi_protocol/ncsi_device_
+> > > IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
+> > > =====================================================================
+> > >   2   eth2   ncsi0  000 000 1  1  1  1  1  1  0  2  1  1  1  1  0  1
+> > >   2   eth2   ncsi1  000 001 1  0  1  1  1  1  0  2  1  1  1  1  0  1
+> > >   2   eth2   ncsi2  001 000 1  0  1  0  1  1  0  2  1  1  1  1  0  1
 > 
-> And see how the numbers with and without your patches compare?
+> I was replying to the wrong old email and it might cause a bit confusion.
+> The first 1 meaning channel is enabled for package 1 channel 0 (ncsi2). 
+> For eth2, we already has ncsi0 as the active channel with TX enable.
+> I would think that package doesn't have the multi-channel enabled and
+> we should not enable the channel for ncsi2. The problem is that package 1 doesn't
+> enable the multi-channel and it believes it needs to enable one channel for its package 
+> but it doesn't aware that the other package already has one active channel.
+
+Ah, maybe the confusion here is that multi_channel is a per-package
+setting; it determines what a package does with its own channels.
+
+So you have package 0 with multi-channel enabled so it enables channels 0
+& 1.
+Then you have package 1 without multi-channel so it enables only channel
+0.
+There is still only one Tx channel (package 0, channel 0).
+
+Does that sound right, or have I missed something?
+
 > 
-> 								Honza
+> > >   2   eth2   ncsi3  001 001 0  0  1  0  1  1  0  1  0  1  1  1  0  1
+> > > =====================================================================
+> > > MP: Multi-mode Package     WP: Whitelist Package
+> > > MC: Multi-mode Channel     WC: Whitelist Channel
+> > > PC: Primary Channel        CS: Channel State IA/A/IV 1/2/3
+> > > PS: Poll Status            LS: Link Status
+> > > RU: Running                CR: Carrier OK
+> > > NQ: Queue Stopped          HA: Hardware Arbitration
+> > > 
+> > > I temporally change to the following to avoid that.
+> > > 			if ((with_link &&
+> > > 			     !np->multi_channel &&
+> > > 			     list_empty(&ndp->channel_queue)) || np->multi_channel) {
+> > > 
+> > > > +				spin_lock_irqsave(&ndp->lock, flags);
+> > > > +				list_add_tail_rcu(&nc->link,
+> > > > +						  &ndp->channel_queue);
+> > > > +				spin_unlock_irqrestore(&ndp->lock, flags);
+> > > > +
+> > > > +				netdev_dbg(ndp->ndev.dev,
+> > > > +					   "NCSI: Channel %u added to queue (link %s)\n",
+> > > > +					   nc->id,
+> > > > +					   ncm->data[2] & 0x1 ? "up" : "down");
+> > > > +			}
+> > > > +
+> > > > +			spin_unlock_irqrestore(&nc->lock, cflags);
+> > > > +
+> > > > +			if (with_link && !np->multi_channel)
+> > > > +				break;
+> > > 
+> > > Similar issue here. As we are using break, so each package will configure one active TX.
+> > > 
+> > 
+> > I believe this is handled properly in ncsi_channel_is_tx() in the most
+> > recent revision.
 > 
-> [1] https://github.com/axboe/fio
+> I saw this issue with the last revision. I was using the wrong email to reply.
+> 
+> > > >  		}
+> > > > +		if (with_link && !ndp->multi_package)
+> > > > +			break;
+> > > >  	}
+> > > >  
+> > > > -	if (!found) {
+> > > > +	if (list_empty(&ndp->channel_queue) && found) {
+> > > > +		netdev_info(ndp->ndev.dev,
+> > > > +			    "NCSI: No channel with link found, configuring channel %u\n",
+> > > > +			    found->id);
+> > > > +		spin_lock_irqsave(&ndp->lock, flags);
+> > > > +		list_add_tail_rcu(&found->link, &ndp->channel_queue);
+> > > > +		spin_unlock_irqrestore(&ndp->lock, flags);
+> > > > +	} else if (!found) {
+> > > >  		netdev_warn(ndp->ndev.dev,
+> > > > -			    "NCSI: No channel found with link\n");
+> > > > +			    "NCSI: No channel found to configure!\n");
+> > > >  		ncsi_report_link(ndp, true);
+> > > >  		return -ENODEV;
+> > > >  	}
+> > > 
+> > > Also, for deselect package handler function, do we want to set to inactive here?
+> > > If we just change the state, the cached data still keeps the old value. If the new 
+> > > ncsi_reset_dev() function is handling one by one, can we skip this part?
+> > 
+> > Technically yes we could skip the state change here since
+> > ncsi_reset_dev() will have already done it. However if we send a DP
+> > command via some other means then it is probably best to ensure we treat
+> > all channels on that package as inactive.
+> 
+> When I tested, if I didn't comment out the state change in response handler,
+> ncsi_reset_dev() function will not handle properly and some channels got into
+> invisible state and at the end we lost those selectable channels.
 
-That program is *very* good to have. Whew. Anyway, it looks like read bandwidth 
-is approximately 74 MiB/s with my patch (it varies a bit, run to run),
-as compared to around 85 without the patch, so still showing about a 20%
-performance degradation, assuming I'm reading this correctly.
+Well that's not good :)
+The deselect package command should only be sent once all channels on a
+package have become inactive, so I wouldn't expect it to interfere with
+ncsi_reset_dev(), but perhaps this gets combined with the issues sending
+netlink commands close together. I'll investigate, if I'm lucky this will
+be resolved with the same fixes.
 
-Raw data follows, using the fio options you listed above:
-
-Baseline (without my patch):
----------------------------- 
-reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
-fio-3.3
-Starting 1 process
-Jobs: 1 (f=1): [R(1)][100.0%][r=87.2MiB/s,w=0KiB/s][r=22.3k,w=0 IOPS][eta 00m:00s]
-reader: (groupid=0, jobs=1): err= 0: pid=1775: Mon Nov  5 12:08:45 2018
-   read: IOPS=21.9k, BW=85.7MiB/s (89.9MB/s)(1024MiB/11945msec)
-    slat (usec): min=13, max=3855, avg=44.17, stdev=61.18
-    clat (usec): min=71, max=13093, avg=2869.40, stdev=1225.23
-     lat (usec): min=179, max=14003, avg=2913.65, stdev=1241.75
-    clat percentiles (usec):
-     |  1.00th=[ 2311],  5.00th=[ 2343], 10.00th=[ 2343], 20.00th=[ 2343],
-     | 30.00th=[ 2343], 40.00th=[ 2376], 50.00th=[ 2376], 60.00th=[ 2376],
-     | 70.00th=[ 2409], 80.00th=[ 2933], 90.00th=[ 4359], 95.00th=[ 5276],
-     | 99.00th=[ 8291], 99.50th=[ 9110], 99.90th=[10945], 99.95th=[11469],
-     | 99.99th=[12256]
-   bw (  KiB/s): min=80648, max=93288, per=99.80%, avg=87608.57, stdev=3201.35, samples=23
-   iops        : min=20162, max=23322, avg=21902.09, stdev=800.37, samples=23
-  lat (usec)   : 100=0.01%, 250=0.01%, 500=0.01%, 750=0.01%, 1000=0.01%
-  lat (msec)   : 2=0.02%, 4=88.47%, 10=11.27%, 20=0.25%
-  cpu          : usr=2.68%, sys=94.68%, ctx=408, majf=0, minf=73
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=100.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
-     issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=64
-
-Run status group 0 (all jobs):
-   READ: bw=85.7MiB/s (89.9MB/s), 85.7MiB/s-85.7MiB/s (89.9MB/s-89.9MB/s), io=1024MiB (1074MB), run=11945-11945msec
-
-Disk stats (read/write):
-  nvme0n1: ios=260906/3, merge=0/1, ticks=14618/4, in_queue=17670, util=100.00%
-
-Modified (with my patch):
----------------------------- 
-
-reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
-fio-3.3
-Starting 1 process
-Jobs: 1 (f=1): [R(1)][100.0%][r=74.1MiB/s,w=0KiB/s][r=18.0k,w=0 IOPS][eta 00m:00s]
-reader: (groupid=0, jobs=1): err= 0: pid=1808: Mon Nov  5 16:11:09 2018
-   read: IOPS=18.3k, BW=71.4MiB/s (74.9MB/s)(1024MiB/14334msec)
-    slat (usec): min=18, max=4378, avg=52.59, stdev=63.66
-    clat (usec): min=31, max=15622, avg=3443.86, stdev=1431.27
-     lat (usec): min=81, max=15766, avg=3496.57, stdev=1450.21
-    clat percentiles (usec):
-     |  1.00th=[ 2835],  5.00th=[ 2835], 10.00th=[ 2835], 20.00th=[ 2868],
-     | 30.00th=[ 2868], 40.00th=[ 2868], 50.00th=[ 2868], 60.00th=[ 2900],
-     | 70.00th=[ 2933], 80.00th=[ 3425], 90.00th=[ 5080], 95.00th=[ 6259],
-     | 99.00th=[10159], 99.50th=[11076], 99.90th=[12649], 99.95th=[13435],
-     | 99.99th=[14484]
-   bw (  KiB/s): min=63142, max=77464, per=99.97%, avg=73128.46, stdev=3383.81, samples=28
-   iops        : min=15785, max=19366, avg=18281.96, stdev=845.95, samples=28
-  lat (usec)   : 50=0.01%, 100=0.01%, 250=0.01%, 500=0.01%, 750=0.01%
-  lat (usec)   : 1000=0.01%
-  lat (msec)   : 2=0.01%, 4=84.77%, 10=14.12%, 20=1.09%
-  cpu          : usr=2.20%, sys=95.72%, ctx=360, majf=0, minf=72
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=100.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
-     issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=64
-
-Run status group 0 (all jobs):
-   READ: bw=71.4MiB/s (74.9MB/s), 71.4MiB/s-71.4MiB/s (74.9MB/s-74.9MB/s), io=1024MiB (1074MB), run=14334-14334msec
-
-Disk stats (read/write):
-  nvme0n1: ios=258235/3, merge=0/1, ticks=12583/10, in_queue=14779, util=100.00%
+> 
+> > > static int ncsi_rsp_handler_dp(struct ncsi_request *nr)
+> > > {
+> > > 	struct ncsi_rsp_pkt *rsp;
+> > > 	struct ncsi_dev_priv *ndp = nr->ndp;
+> > > 	struct ncsi_package *np;
+> > > 	struct ncsi_channel *nc;
+> > > 	unsigned long flags;
+> > > 
+> > > 	/* Find the package */
+> > > 	rsp = (struct ncsi_rsp_pkt *)skb_network_header(nr->rsp);
+> > > 	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
+> > > 				      &np, NULL);
+> > > 	if (!np)
+> > > 		return -ENODEV;
+> > > 
+> > > 	/* Change state of all channels attached to the package */
+> > > 	NCSI_FOR_EACH_CHANNEL(np, nc) {
+> > > 		spin_lock_irqsave(&nc->lock, flags);
+> > > 		nc->state = NCSI_CHANNEL_INACTIVE;
+> > > 
+> > > 		spin_unlock_irqrestore(&nc->lock, flags);
+> > > 	}
+> > > 
+> > > 	return 0;
+> > > }
+> > > 
+> > > 
+> 
+> 
 
 
-
-thanks,
--- 
-John Hubbard
-NVIDIA
