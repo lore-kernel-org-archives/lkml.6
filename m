@@ -2,166 +2,165 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C20CC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112B9C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1348E20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1348E20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D90A020869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 18:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90A020869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388441AbeKGDqG (ORCPT
+        id S2388486AbeKGDq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:46:06 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44945 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730749AbeKGDqG (ORCPT
+        Tue, 6 Nov 2018 22:46:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38115 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388442AbeKGDq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:46:06 -0500
-Received: by mail-ot1-f66.google.com with SMTP id z33so12212640otz.11;
-        Tue, 06 Nov 2018 10:19:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KZ74CHLhK1hxcn/viInaBLWqh2t5W4BGMiFBbDQtMmI=;
-        b=QBXXJgYTtq5WHkX99XU654MEH0t5UKezcHjIcr5euVE65yhzwumvY/kzdLFPHDsOXq
-         gV26cWKhojR4ZbdlWVgRvfo2SQxlLOTcLoUOld/+MXgAZsbzYtRtNwnClj+IHvi3eMta
-         vLGsa8tih0vil7295awnawSpPeEgTB4UYB2oZKTVqKksR+MniD7yj3dfH/2GMngLmBKl
-         b6+uiCDakmiAv15pfNbdOS5+g0FVXvL/ZLLloy8gK7oiFzO1YIPfcvw8gYXGS4ideQD1
-         ZSHHHsOFaK6MROoWYomUalrMmxvcBhrwIqxjqUiLdusdxWO/pVr8bw+GCmhknkSuN5AI
-         wN1Q==
-X-Gm-Message-State: AGRZ1gKoRZXsnBrAiMbJwMZOpL972dbhc5OiAK645Cr3T11Azo94DXLE
-        vj6TT1xL4cC6t+Mu67H6mf4EBQm7FWgBn4sdt4k=
-X-Google-Smtp-Source: AJdET5dvmWAN5zQbsS7cuqI5svyLRFJ7JL7sskdWzPSc+r9oeMOLHA5VU9hoQ/5m79nnhA/tbaFgphWigO70IO4/a0A=
-X-Received: by 2002:a9d:64ce:: with SMTP id n14mr17554673otl.343.1541528375872;
- Tue, 06 Nov 2018 10:19:35 -0800 (PST)
+        Tue, 6 Nov 2018 22:46:26 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6IJP97893930
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 6 Nov 2018 10:19:25 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6IJP2o893927;
+        Tue, 6 Nov 2018 10:19:25 -0800
+Date:   Tue, 6 Nov 2018 10:19:25 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Vishal Verma <tipbot@zytor.com>
+Message-ID: <tip-e8a308e5f47e545e0d41d0686c00f5f5217c5f61@git.kernel.org>
+Cc:     yazen.ghannam@amd.com, bp@suse.de, dan.j.williams@intel.com,
+        mingo@kernel.org, tony.luck@intel.com, mingo@redhat.com,
+        x86@kernel.org, arnd@arndb.de, qiuxu.zhuo@intel.com,
+        rjw@rjwysocki.net, elliott@hpe.com, linux-edac@vger.kernel.org,
+        tglx@linutronix.de, lenb@kernel.org, stable@vger.kernel.org,
+        vishal.l.verma@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, zwisler@kernel.org,
+        dave.jiang@intel.com
+Reply-To: dan.j.williams@intel.com, yazen.ghannam@amd.com, bp@suse.de,
+          tony.luck@intel.com, mingo@kernel.org, mingo@redhat.com,
+          x86@kernel.org, arnd@arndb.de, qiuxu.zhuo@intel.com,
+          rjw@rjwysocki.net, elliott@hpe.com, lenb@kernel.org,
+          stable@vger.kernel.org, vishal.l.verma@intel.com,
+          linux-edac@vger.kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, zwisler@kernel.org,
+          dave.jiang@intel.com, hpa@zytor.com
+In-Reply-To: <20181026003729.8420-2-vishal.l.verma@intel.com>
+References: <20181026003729.8420-2-vishal.l.verma@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] acpi/nfit, x86/mce: Validate a MCE's address
+ before using it
+Git-Commit-ID: e8a308e5f47e545e0d41d0686c00f5f5217c5f61
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1556808.yKVbhZSazi@aspire.rjw.lan> <20181106170442.GC9781@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181106170442.GC9781@hirez.programming.kicks-ass.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 6 Nov 2018 19:19:24 +0100
-Message-ID: <CAJZ5v0hmm2UWRt1j6hQo14nZLgPrE3DZkOznfo2kMxsZ1spo-Q@mail.gmail.com>
-Subject: Re: [RFC/RFT][PATCH v3] cpuidle: New timer events oriented governor
- for tickless systems
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 6:04 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Sun, Nov 04, 2018 at 05:31:20PM +0100, Rafael J. Wysocki wrote:
-> > + * - If there is a pattern of 5 or more recent non-timer wakeups earlier than
-> > + *   the closest timer event, expect one more of them to occur and use the
-> > + *   average of the idle duration values corresponding to them to select an
-> > + *   idle state for the CPU.
->
->
-> > +/**
-> > + * teo_idle_duration - Estimate the duration of the upcoming CPU idle time.
-> > + * @drv: cpuidle driver containing state data.
-> > + * @cpu_data: Governor data for the target CPU.
-> > + * @sleep_length_us: Time till the closest timer event in microseconds.
-> > + */
-> > +unsigned int teo_idle_duration(struct cpuidle_driver *drv,
-> > +                            struct teo_cpu *cpu_data,
-> > +                            unsigned int sleep_length_us)
-> > +{
-> > +     u64 range, max_spread, max, sum;
-> > +     unsigned int count;
-> > +
-> > +     /*
-> > +      * If the sleep length is below the target residency of idle state 1,
-> > +      * the only viable choice is to select the first available (enabled)
-> > +      * idle state, so return immediately in that case.
-> > +      */
-> > +     if (sleep_length_us < drv->states[1].target_residency)
-> > +             return sleep_length_us;
-> > +
-> > +     /*
-> > +      * The purpose of this function is to check if there is a pattern of
-> > +      * wakeups indicating that it would be better to select a state
-> > +      * shallower than the deepest one matching the sleep length or the
-> > +      * deepest one at all if the sleep lenght is long.  Larger idle duration
-> > +      * values are beyond the interesting range.
-> > +      *
-> > +      * Narrowing the range of interesting values down upfront also helps to
-> > +      * avoid overflows during the computation below.
-> > +      */
-> > +     range = drv->states[drv->state_count-1].target_residency;
-> > +     range = min_t(u64, sleep_length_us, range + (range >> 2));
-> > +
-> > +     /*
-> > +      * This is the value to compare with the distance between the average
-> > +      * and the greatest sample to decide whether or not it is small enough.
-> > +      * Take 10 us as the total cap of it.
-> > +      */
-> > +     max_spread = max_t(u64, range >> MAX_SPREAD_SHIFT, 10);
-> > +
-> > +     max = range;
-> > +
-> > +     do {
-> > +             u64 cap = max;
-> > +             int i;
-> > +
-> > +             /*
-> > +              * Compute the sum of the saved intervals below the cap and the
-> > +              * sum of of their squares.  Count them and find the maximum
-> > +              * interval below the cap.
-> > +              */
-> > +             count = 0;
-> > +             sum = 0;
-> > +             max = 0;
-> > +
-> > +             for (i = 0; i < INTERVALS; i++) {
-> > +                     u64 val = cpu_data->intervals[i];
-> > +
-> > +                     if (val >= cap)
-> > +                             continue;
-> > +
-> > +                     count++;
-> > +                     sum += val;
-> > +                     if (max < val)
-> > +                             max = val;
-> > +             }
-> > +
-> > +             /*
-> > +              * Give up if the total number of interesting samples is too
-> > +              * small.
-> > +              */
-> > +             if (cap == range && count <= INTERVALS / 2)
-> > +                     return sleep_length_us;
-> > +
-> > +             /*
-> > +              * If the distance between the max and the average is too large,
-> > +              * discard the max an repeat.
-> > +              */
-> > +     } while (count > 3 && max > max_spread && (max - max_spread) * count > sum);
-> > +
-> > +     return div64_u64(sum, count);
-> > +}
->
-> Instead of this detector; why haven't you used the code from
-> kernel/irq/timings.c ?
+Commit-ID:  e8a308e5f47e545e0d41d0686c00f5f5217c5f61
+Gitweb:     https://git.kernel.org/tip/e8a308e5f47e545e0d41d0686c00f5f5217c5f61
+Author:     Vishal Verma <vishal.l.verma@intel.com>
+AuthorDate: Thu, 25 Oct 2018 18:37:29 -0600
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 6 Nov 2018 19:13:26 +0100
 
-Because it doesn't help much AFAICS.
+acpi/nfit, x86/mce: Validate a MCE's address before using it
 
-Wakeups need not be interrupts in particular and interrupt patterns
-that show up when the CPU is busy may not be relevant for when it is
-idle.
+The NFIT machine check handler uses the physical address from the mce
+structure, and compares it against information in the ACPI NFIT table
+to determine whether that location lies on an NVDIMM. The mce->addr
+field however may not always be valid, and this is indicated by the
+MCI_STATUS_ADDRV bit in the status field.
+
+Export mce_usable_address() which already performs validation for the
+address, and use it in the NFIT handler.
+
+Fixes: 6839a6d96f4e ("nfit: do an ARS scrub on hitting a latent media error")
+Reported-by: Robert Elliott <elliott@hpe.com>
+Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: Arnd Bergmann <arnd@arndb.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>
+CC: elliott@hpe.com
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Len Brown <lenb@kernel.org>
+CC: linux-acpi@vger.kernel.org
+CC: linux-edac <linux-edac@vger.kernel.org>
+CC: linux-nvdimm@lists.01.org
+CC: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Ross Zwisler <zwisler@kernel.org>
+CC: stable <stable@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Tony Luck <tony.luck@intel.com>
+CC: x86-ml <x86@kernel.org>
+CC: Yazen Ghannam <yazen.ghannam@amd.com>
+Link: http://lkml.kernel.org/r/20181026003729.8420-2-vishal.l.verma@intel.com
+---
+ arch/x86/include/asm/mce.h       | 1 +
+ arch/x86/kernel/cpu/mcheck/mce.c | 3 ++-
+ drivers/acpi/nfit/mce.c          | 4 ++++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index dbd9fe2f6163..c1a812bd5a27 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -222,6 +222,7 @@ static inline void mce_hygon_feature_init(struct cpuinfo_x86 *c) { return mce_am
+ int mce_available(struct cpuinfo_x86 *c);
+ bool mce_is_memory_error(struct mce *m);
+ bool mce_is_correctable(struct mce *m);
++int mce_usable_address(struct mce *m);
+ 
+ DECLARE_PER_CPU(unsigned, mce_exception_count);
+ DECLARE_PER_CPU(unsigned, mce_poll_count);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 77527b8ea982..36d2696c9563 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -485,7 +485,7 @@ static void mce_report_event(struct pt_regs *regs)
+  * be somewhat complicated (e.g. segment offset would require an instruction
+  * parser). So only support physical addresses up to page granuality for now.
+  */
+-static int mce_usable_address(struct mce *m)
++int mce_usable_address(struct mce *m)
+ {
+ 	if (!(m->status & MCI_STATUS_ADDRV))
+ 		return 0;
+@@ -505,6 +505,7 @@ static int mce_usable_address(struct mce *m)
+ 
+ 	return 1;
+ }
++EXPORT_SYMBOL_GPL(mce_usable_address);
+ 
+ bool mce_is_memory_error(struct mce *m)
+ {
+diff --git a/drivers/acpi/nfit/mce.c b/drivers/acpi/nfit/mce.c
+index 7a51707f87e9..d6c1b10f6c25 100644
+--- a/drivers/acpi/nfit/mce.c
++++ b/drivers/acpi/nfit/mce.c
+@@ -29,6 +29,10 @@ static int nfit_handle_mce(struct notifier_block *nb, unsigned long val,
+ 	if (!mce_is_memory_error(mce) || mce_is_correctable(mce))
+ 		return NOTIFY_DONE;
+ 
++	/* Verify the address reported in the MCE is valid. */
++	if (!mce_usable_address(mce))
++		return NOTIFY_DONE;
++
+ 	/*
+ 	 * mce->addr contains the physical addr accessed that caused the
+ 	 * machine check. We need to walk through the list of NFITs, and see
