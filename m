@@ -2,136 +2,100 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCB2C46464
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2E0C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A3F20882
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FEC72083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:21:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y5euTXCW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A3F20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sfYCDH4k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEC72083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730974AbeKGIsW (ORCPT
+        id S1730989AbeKGItO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 03:48:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbeKGIsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 03:48:21 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAD912083D;
-        Tue,  6 Nov 2018 23:20:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541546443;
-        bh=QkxJS33/931SZmN8xFiN/errCtyyvefM/HjeAlqTP4I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y5euTXCWe3AT4bT8rf6itq0FNPTBu/9NVtDUGrnRWnKixje8JeKSpn+sfvWn2q7Bv
-         LQtC+C5JJ8ZQuenDXWYcJ3MKExWK32w/iVElmm64Y+44aiyZyzI4CgrWYswKFBolLr
-         NQIO038SXGrDJT9gA9EC8NYSeWOdeDAQI78RK1us=
-Date:   Tue, 6 Nov 2018 17:20:41 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181106232040.GA85755@google.com>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181102195925.GB160487@google.com>
- <20181102232948.GC26770@zn.tnic>
- <20181105214537.GA19420@google.com>
- <20181105215650.GG26868@zn.tnic>
- <20181106214256.GA65443@google.com>
- <20181106220059.GA4139@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106220059.GA4139@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 7 Nov 2018 03:49:14 -0500
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:53500 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbeKGItO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 03:49:14 -0500
+Received: by mail-pl1-f201.google.com with SMTP id bb3-v6so14535349plb.20
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 15:21:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=Xo5G1bNTmgMBccdEV/3AjXg2C0Fxc2edqjMPLqnBids=;
+        b=sfYCDH4k8HrzlyXYFJF1eQFSgOKaJQ4i4LK124kupINX05ajun6DE+LYJOu6WFcd9m
+         MowOpi8RJxbFOEUy4ru/F85sd41zurJUXC8KTCUXQ/0d7bMLgEeeyOgUSW/NvyeceCn6
+         6aHGMAkf9H7jRycpHU1KF0QGHM+M52idiTtHOhnsuEwMI1383HvzmrfsBLpchgsROpyU
+         EaIdVSZC4UQFTav5AmBNim713UaiamS/grJLm0JPn2ZeIyrRUv+lLDKevqPi0jSZUx3O
+         BZKp6kTGw1oM5x/pjmMKBDi0rXEW9k1LbX3tT5S7WmmAdJtu3T5b77lovVQByohdbY5A
+         1Asg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=Xo5G1bNTmgMBccdEV/3AjXg2C0Fxc2edqjMPLqnBids=;
+        b=L56+Z5zsf8sWwHwi2z2i7tP4tWmvZQdiEBw7YSypxRDAlOVy2PENx3bCj0s1dypcku
+         7760KHSyRbgmg8yTApPs1B2KvDSCCo7miEJGZTuYv4Z7LGpFXgKJAVzr4/PD7o7yOuWt
+         J0P0cd3QzgllUTasO3Co7ie/ONUr6KxIiHysXM+0WlCxJoWb06JKjRU6SMow/8J3uT5w
+         rZnnbpIXyHfqhrWh3uZ6Tgj7OlkIe6XPk5YVMgpd+SIAyvUz2W5dSwdWAs++wuhgznbH
+         w8arIkspFMb/Or4IFaEjNPVe0XQpcVdmpxOpbrh9PnbsWyFM1q5ocEkFqFCyJyHDwjKb
+         AN+Q==
+X-Gm-Message-State: AGRZ1gIdxBOLoHNv7UJFsCD7hUxeToIp5R6oH7whAW0gIj/ALkBFyNR6
+        /Z56PVYPKOIkqbDHQ6N3h47W+z9+BOI=
+X-Google-Smtp-Source: AJdET5eeZBZZ8vOJWxlcqLxitFVGzFjy1vfl0oS+s8/uBfJlXhNJZTYO2PCJGycCTgXRA/VoUl0LziYyJpU=
+X-Received: by 2002:a17:902:7281:: with SMTP id d1-v6mr431570pll.54.1541546495692;
+ Tue, 06 Nov 2018 15:21:35 -0800 (PST)
+Date:   Tue,  6 Nov 2018 15:21:30 -0800
+In-Reply-To: <20181022222614.41016-1-mikewu@google.com>
+Message-Id: <20181106232130.33932-1-mikewu@google.com>
+Mime-Version: 1.0
+References: <20181022222614.41016-1-mikewu@google.com>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+Subject: [PATCH v2] modsign: use all trusted keys to verify module signature
+From:   Ke Wu <mikewu@google.com>
+To:     Jessica Yu <jeyu@kernel.org>, David Howells <dhowells@redhat.com>
+Cc:     Ke Wu <mikewu@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Sumeet, Srinivas for INT3401 questions below]
-[Beginning of thread:
-https://lore.kernel.org/linux-pci/20181102181055.130531-1-brian.woods@amd.com/]
+Make mod_verify_sig to use all trusted keys. This allows keys in
+secondary_trusted_keys to be used to verify PKCS#7 signature on a
+kernel module.
 
-On Tue, Nov 06, 2018 at 11:00:59PM +0100, Borislav Petkov wrote:
-> On Tue, Nov 06, 2018 at 03:42:56PM -0600, Bjorn Helgaas wrote:
-> > This isn't some complicated new device where the programming model
-> > changed on the new CPU.  This is a thermometer that was already
-> > supported.  ACPI provides plenty of functionality that could be used
-> > to support this generically, e.g., see drivers/acpi/thermal.c,
-> > drivers/thermal/int340x_thermal/processor_thermal_device.c, etc.
-> 
-> Ok, you say ACPI but how do you envision practically doing that? I mean,
-> this is used by old boxes too - ever since K8. So how do we go and add
-> ACPI functionality to old boxes?
-> 
-> Or do you mean it should simply be converted to do pci_register_driver()
-> with a struct pci_driver pointer which has all those PCI device IDs in a
-> table? I'm looking at the last example
-> drivers/thermal/int340x_thermal/processor_thermal_device.c you gave above.
+Signed-off-by: Ke Wu <mikewu@google.com>
+---
+Changelog since v1:
+- Use VERIFY_USE_SECONDARY_KEYRING rather than (void *)1UL
 
-No, there would be no need to change anything for boxes already in the
-field.  But for *new* systems, you could make devices or thermal zones
-in the ACPI namespace (they might even already be there for use by
-Windows).
+ kernel/module_signing.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-drivers/thermal/int340x_thermal/processor_thermal_device.c claims
-either INT3401 ACPI devices or listed PCI devices.  It looks like it
-tries the platform (INT3401) devices first, and if it finds any, it
-ignores any matching PCI devices.  This *could* be so it uses INT3401
-devices on new platforms and falls back to the PCI devices otherwise,
-although there *are* recent updates that add PCI IDs.
+diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+index f2075ce8e4b3..6b9a926fd86b 100644
+--- a/kernel/module_signing.c
++++ b/kernel/module_signing.c
+@@ -83,6 +83,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
+ 	}
+ 
+ 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+-				      NULL, VERIFYING_MODULE_SIGNATURE,
++				      VERIFY_USE_SECONDARY_KEYRING,
++				      VERIFYING_MODULE_SIGNATURE,
+ 				      NULL, NULL);
+ }
+-- 
+2.19.1.930.g4563a0d9d0-goog
 
-It looks like INT3401 is Intel-specific since it uses a PPCC method
-which isn't defined by the ACPI spec.  But AMD could define a similar
-PNP ID and have new platforms expose ACPI devices with _TMP methods
-that know how to read the sensor on that platform.
-
-Or maybe even drivers/acpi/thermal.c, which claims every Thermal Zone
-(ACPI 6.2, sec 11), would be sufficient.  I don't know what the
-relationship between hwmon and other thermal stuff, e.g.,
-Documentation/thermal/sysfs-api.txt is.  acpi/thermal.c looks tied
-into the drivers/thermal stuff (it registers "thermal_zone" devices),
-but not to hwmon.
-
-> > But maybe there's some real value in the nitty-gritty device-specific
-> > code in amd_nb.c.  If so, I guess you're stuck with updates like this
-> > and negotiating with the distros to do backports and new releases.
-> 
-> Well, even if it is converted to a different registration scheme, you
-> still need to add new PCI device IDs to the table, no? So *some* sort of
-> enablement still needs to happen.
-
-As long as we have a driver that knows how to claim a known PNP ID,
-and every new platform exposes a device compatible with that ID, the
-driver should just work.
-
-Bjorn
