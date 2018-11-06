@@ -2,79 +2,136 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1328EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA55EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A450A20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 668492085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 07:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="oZNwzSMQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A450A20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oRAhz7/T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668492085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387705AbeKFQis (ORCPT
+        id S2387566AbeKFQne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:38:48 -0500
-Received: from plaes.org ([188.166.43.21]:45836 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387428AbeKFQir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 11:38:47 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 0183C403F3;
-        Tue,  6 Nov 2018 07:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1541488497; bh=qfDdA4UHTUPJaAYoagSNH6due7eAUw8WMl7X64J+vz0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oZNwzSMQiGz/dTL/hgPoeYVm0HYKku3jrNJgOuoDQngX4zM5djkSpqwVWok4POCtD
-         mK8nTnKlNcczBdqPE7NwkZGK0nLAT89TnVn6lSLE8Lc3il959LXrkHua3kTGSu9t9F
-         wXx07qmdZPSrBA12xzRI3emzY5zs6R0MZOjqafGFgTsYQD3N93x+UVCSwkud8A9e+t
-         F4vjjFHwAGBUKg9Gs6SM7zMf0Yg1ESbADRY9pSPhyFj8i5WNaPGQ2tvz/uWeXiTsog
-         wQPJE9+mww5piyB0Ts+VSTUFGuKifT2MUPqiWp6hpHeHwK9sf7kYV9us5qPq0Fe1bx
-         6wZn2AZ2iaONg==
-Date:   Tue, 6 Nov 2018 07:14:55 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] lib: cordic: Move cordic macros and defines to
- header file
-Message-ID: <20181106071455.ch6wooqibm76tyjl@plaes.org>
-References: <cover.9ec98292c595a111ae78f31383ff8618c9cb04da.1541446422.git-series.plaes@plaes.org>
- <3be396e01b33905e9ac5c80e7038b7aacf72eaf8.1541446422.git-series.plaes@plaes.org>
- <8eb0e232-d14b-60d9-e3c8-008c46659a30@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8eb0e232-d14b-60d9-e3c8-008c46659a30@broadcom.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 6 Nov 2018 11:43:34 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43128 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387397AbeKFQne (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 11:43:34 -0500
+Received: by mail-pg1-f196.google.com with SMTP id n10-v6so5400125pgv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 23:19:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=VhqwiRJVewsvjrVYgT58Eqm7HsVp4xYXZ9L9ccRvD+s=;
+        b=oRAhz7/T7M1VHZYu71FDZWupZoEIrBV9xXtJgQF2muXgZ5i6ZDu8p1c5Lt17EWv+5y
+         Jbwhz1cSANOyuF8lapVlaHJ8Er0dmZmcD+t6Yh2tf5lMJD82/Pn5JrkBHWnEpqTtdIXS
+         Om8srcjQ1IN3CP/rULsq4m2WcDywEQQqEMj/9ijqCLOsTAwOaqMQDpA2t9VH5DoslVO6
+         NDz99J1lMwHOgvqYkcjSJDzZae7a1xDhmVYGkE/Hc/zSxxG8lz6KHTkt5ht+I8Mk0MvV
+         SRezzTV0QBm4AXb/IW+srz3e0lkI7zLZhJ+LPJPEnOGm2/i9mV7YIjiyiKqL1mSABThX
+         Y91A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=VhqwiRJVewsvjrVYgT58Eqm7HsVp4xYXZ9L9ccRvD+s=;
+        b=cjT2exrtqVeLO2o7TRIMWeUXFYnXyzEn6DBtHjn2xw2pswoZxZHWCrj6kcbelTX0oC
+         6HghQNRnZ+MJYiLpglHbsDp2uYGBgukzeYLmjDdQhRYJPQg7O3SskLSqwODi1+18yL2Y
+         BCh1RKFyPovslL/IJuAG0SndYuixGTwEjzUvWsIeLGRih3F2WinKbJqWHAsm3kFSaQsr
+         jyOJrlL4dySS7i7x2ckLCvgYhHNpd0fJdAOm5SPkWwaw9nxg4LxQSzxoT5vzfCZpj99e
+         ce6Tw8eMYdaqVI2yHZWuHqBDCxX7ws5Ju+1Me1Kw1rqwUNdsLOxyuSJKnz/wdxPxMUun
+         ZaOQ==
+X-Gm-Message-State: AGRZ1gJRiia9gTBMB4uwurhAHDkfHOwcAW7xLY5Q/5Qyog64hcMkP9bE
+        A5pWw7hVM2rjViFxE/wru/PBnYdf
+X-Google-Smtp-Source: AJdET5c/qVse4CtsW5UB+G/TNjIdTXD0+QueFWVF4GtT7yDMHZqnzklluBFLqBtUNDz5r2JFe6NDLA==
+X-Received: by 2002:a62:5e83:: with SMTP id s125-v6mr10679627pfb.232.1541488783752;
+        Mon, 05 Nov 2018 23:19:43 -0800 (PST)
+Received: from bj03382pcu.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id o27-v6sm60832337pfk.85.2018.11.05.23.19.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 05 Nov 2018 23:19:43 -0800 (PST)
+From:   Zhaoyang Huang <huangzhaoyang@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] arch/arm64 : fix error in dump_backtrace
+Date:   Tue,  6 Nov 2018 15:19:35 +0800
+Message-Id: <1541488775-29610-1-git-send-email-huangzhaoyang@gmail.com>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 11:02:35PM +0100, Arend van Spriel wrote:
-> On 11/5/2018 8:37 PM, Priit Laes wrote:
-> > Also append CORDIC_ prefix to nonprefixed macros.
-> 
-> Bit annoying that you made me look at LKML for this patch. Can you just post
-> the entire series to linux-wireless so Kalle can take it all through his
-> tree. Also the commit message is a bit thin. Please explain why these are
-> moved to the header file.
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Sorry, I messed up again while trying to automate the send-email with
-get_maintainers script (dry-run argument did not work .gitconfig :S)
+In some cases, the instruction of "bl foo1" will be the last one of the
+foo2[1], which will cause the lr be the first instruction of the adjacent
+foo3[2]. Hence, the backtrace will show the weird result as bellow[3].
+The patch will fix it by miner 4 of the lr when dump_backtrace
 
-> 
-> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > ---
-> >  include/linux/cordic.h |  9 +++++++++
-> >  lib/cordic.c           | 23 +++++++----------------
-> >  2 files changed, 16 insertions(+), 16 deletions(-)
-> 
+[1]
+0xffffff80081e6b04 <handle_mm_fault+3996>:      adrp    x0, 0xffffff8008ca8000
+0xffffff80081e6b08 <handle_mm_fault+4000>:      add     x0, x0, #0x5a8
+0xffffff80081e6b0c <handle_mm_fault+4004>:      bl      0xffffff80081b0ca0 <panic>
+0xffffff80081e6b10 <access_remote_vm>:  stp     x29, x30, [sp,#-64]!
+0xffffff80081e6b14 <access_remote_vm+4>:        mov     x29, sp
+
+[2]
+crash_arm64> rd ffffffc02eec3bd0 2
+ffffffc02eec3bd0:  ffffffc02eec3cb0 ffffff80081e6b10
+
+[3]
+wrong:
+[<ffffff80081b0d90>] panic+0xf0/0x24c
+[<ffffff80081e6b10>] access_remote_vm+0x0/0x5c
+[<ffffff800809d7b0>] do_page_fault+0x290/0x3b8
+[<ffffff8008081570>] do_mem_abort+0x64/0xdc
+
+correct:
+[ffffffc02eec3bd0] panic at ffffff80081b0da4
+[ffffffc02eec3cb0] handle_mm_fault at ffffff80081e6b0c
+[ffffffc02eec3d80] do_page_fault at ffffff800809d7ac
+[ffffffc02eec3df0] do_mem_abort at ffffff800808156c
+
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+---
+ arch/arm64/kernel/traps.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index d399d45..7a097cc 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -113,7 +113,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+ 
+ 	if (tsk == current) {
+ 		frame.fp = (unsigned long)__builtin_frame_address(0);
+-		frame.pc = (unsigned long)dump_backtrace;
++		frame.pc = (unsigned long)dump_backtrace + 4;
+ 	} else {
+ 		/*
+ 		 * task blocked in __switch_to
+@@ -130,7 +130,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+ 	do {
+ 		/* skip until specified stack frame */
+ 		if (!skip) {
+-			dump_backtrace_entry(frame.pc);
++			dump_backtrace_entry(frame.pc - 4);
+ 		} else if (frame.fp == regs->regs[29]) {
+ 			skip = 0;
+ 			/*
+-- 
+1.9.1
+
