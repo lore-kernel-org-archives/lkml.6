@@ -2,141 +2,158 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FF0C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82B8C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1282081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:39:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vc5em9/n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1282081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BB7952081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:39:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB7952081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388909AbeKGAFE (ORCPT
+        id S2388919AbeKGAFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:05:04 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34998 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388897AbeKGAFE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:05:04 -0500
-Received: by mail-pl1-f196.google.com with SMTP id n4-v6so6308469plp.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 06:39:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=SFU/Z5qoWTfk9A6p33abSYOx6uOlq53OHyZ9STh41bs=;
-        b=Vc5em9/nXIzzjBhEcBnEZR/6i0qu6qCOM+da4aYJXOK+UgmFEYBaIvwx6JxqBJDlBb
-         gxczpqaP/26+MyA0JveRXw0tsLfxMlt1NkjQqT7bEaAzI7Z4sJNHuaotI73DB6aVtZfh
-         gjWf10DTo08E8b6FOui3GjKzXJNgUqad8WC37XlxDXfMzXfLFhAhTXNSJUtGiu84FE5N
-         BmcvNlmiMS6uHHHmIKansTGOLUn/se2nXzffMM2Z7rLqSklsEGDiURZuPFCgd7v3tm5s
-         G2/bjvzEhAsFV3e+CoktW+OEMUMHfHxYwIpl/izb4WiPCn92q2eDQ8HsaND59mB7uRg7
-         9SJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SFU/Z5qoWTfk9A6p33abSYOx6uOlq53OHyZ9STh41bs=;
-        b=ULWn6te6M9p4T1j999/s6bdmdyLzzxi9LoUibuPefUxX7SY0ftp4Vl1ew0VOuUu3YM
-         5zQW4j6l2NPHImECDOBjTUx5qjS7W/zR7+1refoFY5UuV8fwiT1lQg3vueiR6Ioct8nh
-         kmH3LLEivIcV+C4PPieVhoqMa3vt34g+TKrCcen0I9o4Wz+QYJUGaas2Zlfw0bXVbAz1
-         sbbFIxsIvT1he1XAO8ZKuNSLJKojXCfjHyGy0g+VLU68KZ821DDiwy6UQ1IuZmEBiX6k
-         jgNN72VVLnk+uMKt3seNgRZCD/BG0ExWbTf1wvjzPZw+6B4Z8SGpSwsgC4CiYbKDRm+I
-         Z5Mw==
-X-Gm-Message-State: AGRZ1gJAtY8DWOwWl/wYdHChNhUTQb9Z4tapfgpp7OTpvjm6NW7Jr9LZ
-        Ok8/Q1D3A/Rq2k9H6ah4rfw=
-X-Google-Smtp-Source: AJdET5fydtralHS9H673Op+hIecAiP5w6xNVsn/OrsGUAjISukUnOQSIuLRb6n1WmmhD4eiAWUebmg==
-X-Received: by 2002:a17:902:20ca:: with SMTP id v10-v6mr27077351plg.182.1541515172906;
-        Tue, 06 Nov 2018 06:39:32 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id b75-v6sm55261913pfe.148.2018.11.06.06.39.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 06:39:32 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] powerpc/vas: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Tue,  6 Nov 2018 09:39:30 -0500
-Message-Id: <20181106143930.8604-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 6 Nov 2018 19:05:20 -0500
+Received: from mga04.intel.com ([192.55.52.120]:6844 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388754AbeKGAFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:05:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 06:39:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="105851507"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 06 Nov 2018 06:39:48 -0800
+Received: from cjloo-mobl.amr.corp.intel.com (unknown [10.255.84.97])
+        by linux.intel.com (Postfix) with ESMTP id D063A580384;
+        Tue,  6 Nov 2018 06:39:46 -0800 (PST)
+Subject: Re: [alsa-devel] [PATCH] fix the kernel panic due to wrong use the
+ dev memory API
+To:     "He, Bo" <bo.he@intel.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "liam.r.girdwood@linux.intel.com" <liam.r.girdwood@linux.intel.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "Singh, Guneshwor O" <guneshwor.o.singh@intel.com>,
+        "Periyasamy, SriramX" <sriramx.periyasamy@intel.com>,
+        "Kale, Sanyog R" <sanyog.r.kale@intel.com>,
+        "Kesapragada, Pardha Saradhi" <pardha.saradhi.kesapragada@intel.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "Ughreja, Rakesh A" <rakesh.a.ughreja@intel.com>,
+        "Prakash, Divya1" <divya1.prakash@intel.com>,
+        "Diwakar, Praveen" <praveen.diwakar@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>
+References: <CD6925E8781EFD4D8E11882D20FC406D529FE3B6@SHSMSX104.ccr.corp.intel.com>
+ <f2e3ffeb-12bd-d60e-e96a-8fa00a17844f@linux.intel.com>
+ <CD6925E8781EFD4D8E11882D20FC406D529FE5A9@SHSMSX104.ccr.corp.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c57e4dcf-7117-72f4-0e07-350a20120742@linux.intel.com>
+Date:   Tue, 6 Nov 2018 08:39:46 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D529FE5A9@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On 11/5/18 6:58 PM, He, Bo wrote:
+> Hi,
+> 	I submit the patch based on tag v4.19.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- arch/powerpc/platforms/powernv/vas-debug.c | 28 ++++------------------
- 1 file changed, 4 insertions(+), 24 deletions(-)
+Please don't post on mailing lists.
 
-diff --git a/arch/powerpc/platforms/powernv/vas-debug.c b/arch/powerpc/platforms/powernv/vas-debug.c
-index 4f7276ebdf9c..4d3929fbc08f 100644
---- a/arch/powerpc/platforms/powernv/vas-debug.c
-+++ b/arch/powerpc/platforms/powernv/vas-debug.c
-@@ -30,7 +30,7 @@ static char *cop_to_str(int cop)
- 	}
- }
- 
--static int info_dbg_show(struct seq_file *s, void *private)
-+static int info_show(struct seq_file *s, void *private)
- {
- 	struct vas_window *window = s->private;
- 
-@@ -49,17 +49,7 @@ static int info_dbg_show(struct seq_file *s, void *private)
- 	return 0;
- }
- 
--static int info_dbg_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, info_dbg_show, inode->i_private);
--}
--
--static const struct file_operations info_fops = {
--	.open		= info_dbg_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(info);
- 
- static inline void print_reg(struct seq_file *s, struct vas_window *win,
- 			char *name, u32 reg)
-@@ -67,7 +57,7 @@ static inline void print_reg(struct seq_file *s, struct vas_window *win,
- 	seq_printf(s, "0x%016llx %s\n", read_hvwc_reg(win, name, reg), name);
- }
- 
--static int hvwc_dbg_show(struct seq_file *s, void *private)
-+static int hvwc_show(struct seq_file *s, void *private)
- {
- 	struct vas_window *window = s->private;
- 
-@@ -115,17 +105,7 @@ static int hvwc_dbg_show(struct seq_file *s, void *private)
- 	return 0;
- }
- 
--static int hvwc_dbg_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, hvwc_dbg_show, inode->i_private);
--}
--
--static const struct file_operations hvwc_fops = {
--	.open		= hvwc_dbg_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(hvwc);
- 
- void vas_window_free_dbgdir(struct vas_window *window)
- {
--- 
-2.17.0
+> 
+> -----Original Message-----
+> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Sent: Tuesday, November 6, 2018 1:02 AM
+> To: He, Bo <bo.he@intel.com>; alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org
+> Cc: liam.r.girdwood@linux.intel.com; perex@perex.cz; tiwai@suse.com; Singh, Guneshwor O <guneshwor.o.singh@intel.com>; Periyasamy, SriramX <sriramx.periyasamy@intel.com>; Kale, Sanyog R <sanyog.r.kale@intel.com>; Kesapragada, Pardha Saradhi <pardha.saradhi.kesapragada@intel.com>; kuninori.morimoto.gx@renesas.com; guruprasadx.pawse@intel.com; Ughreja, Rakesh A <rakesh.a.ughreja@intel.com>; Prakash, Divya1 <divya1.prakash@intel.com>; Diwakar, Praveen <praveen.diwakar@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>
+> Subject: Re: [alsa-devel] [PATCH] fix the kernel panic due to wrong use the dev memory API
+> 
+> 
+> On 11/5/18 2:29 AM, He, Bo wrote:
+>> skl->dais is allocated with devm_kcalloc, can't free with
+>> the krealloc. Memory allocated with devm API is automatically freed on
+>> driver detach, Like all other devres resources.
+>>
+>> Refer to drivers/base/devres.c devm_kmalloc for more details.
+> 
+> What code are you looking at?
+> 
+> I see this in the Mark's tree
+> 
+> int skl_platform_register(struct device *dev) {
+>       int ret;
+>       struct snd_soc_dai_driver *dais;
+>       int num_dais = ARRAY_SIZE(skl_platform_dai);
+>       struct hdac_bus *bus = dev_get_drvdata(dev);
+>       struct skl *skl = bus_to_skl(bus);
+> 
+>       INIT_LIST_HEAD(&skl->ppl_list);
+>       INIT_LIST_HEAD(&skl->bind_list);
+> 
+>       skl->dais = kmemdup(skl_platform_dai, sizeof(skl_platform_dai),
+>                   GFP_KERNEL);
+>       if (!skl->dais) {
+>           ret = -ENOMEM;
+>           goto err;
+>       }
+> 
+>       if (!skl->use_tplg_pcm) {
+>           dais = krealloc(skl->dais, sizeof(skl_fe_dai) +
+>                   sizeof(skl_platform_dai), GFP_KERNEL);
+> 
+> 
+> No trace of devm as you mention it? I checked the Chrome tree as well and it's not there.
+> 
+> What am I missing?
+
+The code is completely identical in v4.19. skl->dais is allocated with 
+kmemdup, which is a kmalloc+memcpy, i just don't understand what you are 
+trying to fix.
+
+> 
+> 
+>>
+>> Signed-off-by: he, bo <bo.he@intel.com>
+>> ---
+>>    sound/soc/intel/skylake/skl-pcm.c | 5 ++---
+>>    1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/sound/soc/intel/skylake/skl-pcm.c
+>> b/sound/soc/intel/skylake/skl-pcm.c
+>> index 823e391..928d314 100644
+>> --- a/sound/soc/intel/skylake/skl-pcm.c
+>> +++ b/sound/soc/intel/skylake/skl-pcm.c
+>> @@ -1438,7 +1438,8 @@ int skl_platform_register(struct device *dev)
+>>    	}
+>>    
+>>    	if (!skl->use_tplg_pcm) {
+>> -		dais = krealloc(skl->dais, sizeof(skl_fe_dai) +
+>> +		devm_kfree(dev, skl->dais);
+>> +		dais = devm_kcalloc(dev, skl->dais, sizeof(skl_fe_dai) +
+>>    				sizeof(skl_platform_dai), GFP_KERNEL);
+>>    		if (!dais) {
+>>    			ret = -ENOMEM;
+>> @@ -1472,7 +1473,5 @@ int skl_platform_unregister(struct device *dev)
+>>    		}
+>>    	}
+>>    
+>> -	kfree(skl->dais);
+>> -
+>>    	return 0;
+>>    }
 
