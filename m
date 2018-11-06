@@ -2,131 +2,106 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52337C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF8CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A86E2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A86E2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5FC7C2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:00:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC7C2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbeKFUYs (ORCPT
+        id S1730389AbeKFUZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 15:24:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57832 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729816AbeKFUYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 15:24:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 767E6B180;
-        Tue,  6 Nov 2018 11:00:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B754D1E07AB; Tue,  6 Nov 2018 12:00:06 +0100 (CET)
-Date:   Tue, 6 Nov 2018 12:00:06 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] mm: introduce page->dma_pinned_flags, _count
-Message-ID: <20181106110006.GE25414@quack2.suse.cz>
-References: <20181012060014.10242-1-jhubbard@nvidia.com>
- <20181012060014.10242-5-jhubbard@nvidia.com>
- <20181013035516.GA18822@dastard>
- <7c2e3b54-0b1d-6726-a508-804ef8620cfd@nvidia.com>
- <20181013164740.GA6593@infradead.org>
- <84811b54-60bf-2bc3-a58d-6a7925c24aad@nvidia.com>
- <20181105095447.GE6953@quack2.suse.cz>
- <f5ad7210-05e0-3dc4-02df-01ce5346e198@nvidia.com>
- <20181106024715.GU6311@dastard>
+        Tue, 6 Nov 2018 15:25:07 -0500
+Received: from foss.arm.com ([217.140.101.70]:59046 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729816AbeKFUZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 15:25:07 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20C0BA78;
+        Tue,  6 Nov 2018 03:00:28 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C5A43F5CF;
+        Tue,  6 Nov 2018 03:00:26 -0800 (PST)
+Date:   Tue, 6 Nov 2018 11:00:19 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/arm64 : fix error in dump_backtrace
+Message-ID: <20181106110019.36ps3tyakvocwst4@lakrids.cambridge.arm.com>
+References: <1541488775-29610-1-git-send-email-huangzhaoyang@gmail.com>
+ <20181106083901.erezwtcomiijvdrk@salmiak>
+ <20181106085751.hrp7qkp53cftgew6@holly.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106024715.GU6311@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181106085751.hrp7qkp53cftgew6@holly.lan>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 06-11-18 13:47:15, Dave Chinner wrote:
-> On Mon, Nov 05, 2018 at 04:26:04PM -0800, John Hubbard wrote:
-> > On 11/5/18 1:54 AM, Jan Kara wrote:
-> > > Hmm, have you tried larger buffer sizes? Because synchronous 8k IO isn't
-> > > going to max-out NVME iops by far. Can I suggest you install fio [1] (it
-> > > has the advantage that it is pretty much standard for a test like this so
-> > > everyone knows what the test does from a glimpse) and run with it something
-> > > like the following workfile:
+On Tue, Nov 06, 2018 at 08:57:51AM +0000, Daniel Thompson wrote:
+> On Tue, Nov 06, 2018 at 08:39:01AM +0000, Mark Rutland wrote:
+> > On Tue, Nov 06, 2018 at 03:19:35PM +0800, Zhaoyang Huang wrote:
+> > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 > > > 
-> > > [reader]
-> > > direct=1
-> > > ioengine=libaio
-> > > blocksize=4096
-> > > size=1g
-> > > numjobs=1
-> > > rw=read
-> > > iodepth=64
-> > > 
-> > > And see how the numbers with and without your patches compare?
-> > > 
-> > > 								Honza
-> > > 
-> > > [1] https://github.com/axboe/fio
+> > > In some cases, the instruction of "bl foo1" will be the last one of the
+> > > foo2[1], which will cause the lr be the first instruction of the adjacent
+> > > foo3[2]. Hence, the backtrace will show the weird result as bellow[3].
+> > > The patch will fix it by miner 4 of the lr when dump_backtrace
 > > 
-> > That program is *very* good to have. Whew. Anyway, it looks like read bandwidth 
-> > is approximately 74 MiB/s with my patch (it varies a bit, run to run),
-> > as compared to around 85 without the patch, so still showing about a 20%
-> > performance degradation, assuming I'm reading this correctly.
+> > This has come up in the past (and a similar patch has been applied, then
+> > reverted).
 > > 
-> > Raw data follows, using the fio options you listed above:
+> > In general, we don't know that a function call was made via BL, and therefore
+> > cannot know that LR - 4 is the address of the caller. The caller could set up
+> > the LR as it likes, then B or BR to the callee, and depending on how the basic
+> > blocks get laid out in memory, LR - 4 might point at something completely
+> > different.
 > > 
-> > Baseline (without my patch):
-> > ---------------------------- 
-> ....
-> >      lat (usec): min=179, max=14003, avg=2913.65, stdev=1241.75
-> >     clat percentiles (usec):
-> >      |  1.00th=[ 2311],  5.00th=[ 2343], 10.00th=[ 2343], 20.00th=[ 2343],
-> >      | 30.00th=[ 2343], 40.00th=[ 2376], 50.00th=[ 2376], 60.00th=[ 2376],
-> >      | 70.00th=[ 2409], 80.00th=[ 2933], 90.00th=[ 4359], 95.00th=[ 5276],
-> >      | 99.00th=[ 8291], 99.50th=[ 9110], 99.90th=[10945], 99.95th=[11469],
-> >      | 99.99th=[12256]
-> .....
-> > Modified (with my patch):
-> > ---------------------------- 
-> .....
-> >      lat (usec): min=81, max=15766, avg=3496.57, stdev=1450.21
-> >     clat percentiles (usec):
-> >      |  1.00th=[ 2835],  5.00th=[ 2835], 10.00th=[ 2835], 20.00th=[ 2868],
-> >      | 30.00th=[ 2868], 40.00th=[ 2868], 50.00th=[ 2868], 60.00th=[ 2900],
-> >      | 70.00th=[ 2933], 80.00th=[ 3425], 90.00th=[ 5080], 95.00th=[ 6259],
-> >      | 99.00th=[10159], 99.50th=[11076], 99.90th=[12649], 99.95th=[13435],
-> >      | 99.99th=[14484]
+> > More ideally, the compiler wouldn't end a function with a BL. When does that
+> > happen, and is there some way we could arrange for that to not happen? e.g.
+> > somehow pad a NOP after the BL.
 > 
-> So it's adding at least 500us of completion latency to every IO?
-> I'd argue that the IO latency impact is far worse than the a 20%
-> throughput drop.
+> It's a consequence of having __noreturn isn't it? __noreturn frees the
+> compiler from the burden of having to produce a valid return stack... so
+> it doesn't and unwinding becomes hard.
 
-Hum, right. So for each IO we have to remove the page from LRU on submit
-and then put it back on IO completion (which is going to race with new
-submits so LRU lock contention might be an issue). Spending 500 us on that
-is not unthinkable when the lock is contended but it is more expensive than
-I'd have thought. John, could you perhaps profile where the time is spent?
+In that case, the compiler could equally just use B rather than BL,
+which this patch doesn't solve.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The documentation for the GCC noreturn attribute [1] says:
+
+| In order to preserve backtraces, GCC will never turn calls to noreturn
+| functions into tail calls. 
+
+... so clearly it's not intended to mess up backtracing.
+
+IIUC we mostly use noreturn to prevent warings about uninitialised
+variables and such after a call to a noreturn function. I think
+optimization is a secondary concern.
+
+We could ask the GCC folk if they can ensure that a noreturn function
+call leave thes LR pointing into the caller, e.g. by padding with a NOP:
+
+	BL	<noreturn function>
+	NOP
+
+That seems cheap enough, and would keep backtraces reliable.
+
+Thanks,
+Mark.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noreturn-function-attribute
