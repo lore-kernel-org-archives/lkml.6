@@ -2,56 +2,55 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B67C32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F85C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98BA720844
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BA720844
+	by mail.kernel.org (Postfix) with ESMTP id 3590E20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:40:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3590E20844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389197AbeKGLIc (ORCPT
+        id S2389289AbeKGLId (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 06:08:32 -0500
+        Wed, 7 Nov 2018 06:08:33 -0500
 Received: from mga03.intel.com ([134.134.136.65]:51975 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389019AbeKGLIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 06:08:32 -0500
+        id S2389019AbeKGLId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 06:08:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 17:40:23 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 17:40:24 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
-   d="scan'208";a="84529817"
+   d="scan'208";a="84529823"
 Received: from aubrey-skl.sh.intel.com ([10.239.53.9])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Nov 2018 17:40:20 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 06 Nov 2018 17:40:23 -0800
 From:   Aubrey Li <aubrey.li@intel.com>
 To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
         hpa@zytor.com
 Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
         arjan@linux.intel.com, aubrey.li@intel.com,
         linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-Subject: [RFC PATCH v1 1/2] x86/fpu: detect AVX task
-Date:   Wed,  7 Nov 2018 02:23:09 +0800
-Message-Id: <1541528590-30296-1-git-send-email-aubrey.li@intel.com>
+Subject: [RFC PATCH v1 2/2] proc: add /proc/<pid>/thread_state
+Date:   Wed,  7 Nov 2018 02:23:10 +0800
+Message-Id: <1541528590-30296-2-git-send-email-aubrey.li@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1541528590-30296-1-git-send-email-aubrey.li@intel.com>
+References: <1541528590-30296-1-git-send-email-aubrey.li@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-XSAVES and its variants use init optimization to reduce the amount of
-data that they save to memory during context switch. Init optimization
-uses the state component bitmap to denote if a component is in its init
-configuration. We use this information to detect if a task contains AVX
-instructions.
+Expose the per-task cpu specific thread state value, it's helpful
+for userland to classify and schedule the tasks by different policies
 
 Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -59,180 +58,76 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 ---
- arch/x86/include/asm/fpu/internal.h | 97 +++++++++++++++++++++++++++----------
- arch/x86/include/asm/fpu/types.h    | 17 +++++++
- 2 files changed, 88 insertions(+), 26 deletions(-)
+ arch/x86/kernel/fpu/xstate.c | 13 +++++++++++++
+ fs/proc/base.c               | 13 +++++++++++++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index a38bf5a..5054a7d 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -74,6 +74,12 @@ static __always_inline __pure bool use_fxsr(void)
- 	return static_cpu_has(X86_FEATURE_FXSR);
- }
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 87a57b7..5a4a1d5 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -7,6 +7,7 @@
+ #include <linux/cpu.h>
+ #include <linux/mman.h>
+ #include <linux/pkeys.h>
++#include <linux/seq_file.h>
  
-+static __always_inline __pure bool use_xgetbv1(void)
+ #include <asm/fpu/api.h>
+ #include <asm/fpu/internal.h>
+@@ -1245,3 +1246,15 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
+ 
+ 	return 0;
+ }
++
++/*
++ * report AVX state
++ */
++void arch_thread_state(struct seq_file *m, struct task_struct *task)
 +{
-+	return static_cpu_has(X86_FEATURE_OSXSAVE) &&
-+		static_cpu_has(X86_FEATURE_XGETBV1);
++	if (task->thread.fpu.avx.state)
++		seq_putc(m, '1');
++	else
++		seq_putc(m, '0');
++	seq_putc(m, '\n');
++}
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index aaffc0c..be24327 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2893,6 +2893,17 @@ static int proc_pid_patch_state(struct seq_file *m, struct pid_namespace *ns,
+ }
+ #endif /* CONFIG_LIVEPATCH */
+ 
++void __weak arch_thread_state(struct seq_file *m, struct task_struct *task)
++{
++}
++
++static int proc_pid_thread_state(struct seq_file *m, struct pid_namespace *ns,
++				 struct pid *pid, struct task_struct *task)
++{
++	arch_thread_state(m, task);
++	return 0;
 +}
 +
  /*
-  * fpstate handling functions:
+  * Thread groups
   */
-@@ -103,6 +109,34 @@ static inline void fpstate_init_fxstate(struct fxregs_state *fx)
- }
- extern void fpstate_sanitize_xstate(struct fpu *fpu);
- 
-+/*
-+ * MXCSR and XCR definitions:
-+ */
-+
-+extern unsigned int mxcsr_feature_mask;
-+
-+#define	XCR_XFEATURE_ENABLED_MASK	0x00000000
-+#define	XINUSE_STATE_BITMAP_INDEX	0x00000001
-+
-+static inline u64 xgetbv(u32 index)
-+{
-+	u32 eax, edx;
-+
-+	asm volatile(".byte 0x0f,0x01,0xd0" /* xgetbv */
-+		     : "=a" (eax), "=d" (edx)
-+		     : "c" (index));
-+	return eax + ((u64)edx << 32);
-+}
-+
-+static inline void xsetbv(u32 index, u64 value)
-+{
-+	u32 eax = value;
-+	u32 edx = value >> 32;
-+
-+	asm volatile(".byte 0x0f,0x01,0xd1" /* xsetbv */
-+		     : : "a" (eax), "d" (edx), "c" (index));
-+}
-+
- #define user_insn(insn, output, input...)				\
- ({									\
- 	int err;							\
-@@ -275,6 +309,42 @@ static inline void copy_fxregs_to_kernel(struct fpu *fpu)
- 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
- 
-+#define	AVX_STATE_DECAY_COUNT	3
-+
-+/*
-+ * This function is called during context switch to update AVX component state
-+ */
-+static inline void update_avx_state(struct avx_state *avx)
-+{
-+	/*
-+	 * Check if XGETBV with ECX = 1 supported. XGETBV with ECX = 1
-+	 * returns the logical-AND of XCR0 and XINUSE. XINUSE is a bitmap
-+	 * by which the processor tracks the status of various components.
-+	 */
-+	if (!use_xgetbv1()) {
-+		avx->state = 0;
-+		return;
-+	}
-+	/*
-+	 * XINUSE is dynamic to track component state because VZEROUPPER
-+	 * happens on every function end and reset the bitmap to the
-+	 * initial configuration.
-+	 *
-+	 * State decay is introduced to solve the race condition between
-+	 * context switch and a function end. State is aggressively set
-+	 * once it's detected but need to be cleared by decay 3 context
-+	 * switches
-+	 */
-+	if (xgetbv(XINUSE_STATE_BITMAP_INDEX) & XFEATURE_MASK_Hi16_ZMM) {
-+		avx->state = 1;
-+		avx->decay_count = AVX_STATE_DECAY_COUNT;
-+	} else {
-+		if (!avx->decay_count)
-+			avx->decay_count--;
-+		else
-+			avx->state = 0;
-+	}
-+}
- /*
-  * This function is called only during boot time when x86 caps are not set
-  * up and alternative can not be used yet.
-@@ -411,6 +481,7 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
- {
- 	if (likely(use_xsave())) {
- 		copy_xregs_to_kernel(&fpu->state.xsave);
-+		update_avx_state(&fpu->avx);
- 		return 1;
- 	}
- 
-@@ -577,31 +648,5 @@ static inline void user_fpu_begin(void)
- 	preempt_enable();
- }
- 
--/*
-- * MXCSR and XCR definitions:
-- */
--
--extern unsigned int mxcsr_feature_mask;
--
--#define XCR_XFEATURE_ENABLED_MASK	0x00000000
--
--static inline u64 xgetbv(u32 index)
--{
--	u32 eax, edx;
--
--	asm volatile(".byte 0x0f,0x01,0xd0" /* xgetbv */
--		     : "=a" (eax), "=d" (edx)
--		     : "c" (index));
--	return eax + ((u64)edx << 32);
--}
--
--static inline void xsetbv(u32 index, u64 value)
--{
--	u32 eax = value;
--	u32 edx = value >> 32;
--
--	asm volatile(".byte 0x0f,0x01,0xd1" /* xsetbv */
--		     : : "a" (eax), "d" (edx), "c" (index));
--}
- 
- #endif /* _ASM_X86_FPU_INTERNAL_H */
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index 202c539..39d5bc2 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -274,6 +274,15 @@ union fpregs_state {
+@@ -2994,6 +3005,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_LIVEPATCH
+ 	ONE("patch_state",  S_IRUSR, proc_pid_patch_state),
+ #endif
++	ONE("thread_state",  S_IRUSR, proc_pid_thread_state),
  };
  
- /*
-+ * This is per task AVX state data structure that indicates
-+ * whether the task uses AVX instructions.
-+ */
-+struct avx_state {
-+	unsigned int			state;
-+	unsigned int			decay_count;
-+};
-+
-+/*
-  * Highest level per task FPU state data structure that
-  * contains the FPU register state plus various FPU
-  * state fields:
-@@ -303,6 +312,14 @@ struct fpu {
- 	unsigned char			initialized;
+ static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
+@@ -3372,6 +3384,7 @@ static const struct pid_entry tid_base_stuff[] = {
+ #ifdef CONFIG_LIVEPATCH
+ 	ONE("patch_state",  S_IRUSR, proc_pid_patch_state),
+ #endif
++	ONE("thread_state",  S_IRUSR, proc_pid_thread_state),
+ };
  
- 	/*
-+	 * @avx_state:
-+	 *
-+	 * This data structure indicates whether this context
-+	 * contains AVX states
-+	 */
-+	struct avx_state		avx;
-+
-+	/*
- 	 * @state:
- 	 *
- 	 * In-memory copy of all FPU registers that we save/restore
+ static int proc_tid_base_readdir(struct file *file, struct dir_context *ctx)
 -- 
 2.7.4
 
