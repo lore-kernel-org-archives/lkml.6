@@ -2,124 +2,74 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF99C46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D613C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC4F2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:58:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC4F2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 60ED52081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60ED52081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbeKFPWX (ORCPT
+        id S1729874AbeKFPYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:22:23 -0500
-Received: from mga12.intel.com ([192.55.52.136]:6563 "EHLO mga12.intel.com"
+        Tue, 6 Nov 2018 10:24:55 -0500
+Received: from mga04.intel.com ([192.55.52.120]:36463 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729326AbeKFPWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:22:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1729326AbeKFPYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 10:24:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 21:58:50 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:01:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="97945897"
-Received: from unknown (HELO localhost) ([10.249.254.149])
-  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2018 21:58:44 -0800
-Date:   Tue, 6 Nov 2018 07:58:43 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 05/16] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
-Message-ID: <20181106055843.GE15575@linux.intel.com>
-References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-6-jarkko.sakkinen@linux.intel.com>
- <3a9f9abe-525a-9101-3c25-7bd50029f305@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3a9f9abe-525a-9101-3c25-7bd50029f305@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+   d="scan'208";a="271698783"
+Received: from optiplex-7050.sh.intel.com ([10.239.161.26])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 22:01:20 -0800
+From:   Liu Jingqi <jingqi.liu@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com
+Cc:     bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tao3.xu@intel.com,
+        Liu Jingqi <jingqi.liu@intel.com>
+Subject: [PATCH v2 0/2] KVM: x86: expose direct stores instructions into VM.
+Date:   Tue,  6 Nov 2018 13:55:26 +0800
+Message-Id: <1541483728-7826-1-git-send-email-jingqi.liu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 05:04:46PM -0500, Stefan Berger wrote:
-> On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> > The error logging for tpm2_commit_space() is in a wrong place. This
-> > commit moves it inside that function.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >   drivers/char/tpm/tpm2-space.c | 9 ++++++---
-> >   1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> > index d53c882268ff..3d5f9577e5de 100644
-> > --- a/drivers/char/tpm/tpm2-space.c
-> > +++ b/drivers/char/tpm/tpm2-space.c
-> > @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> >   	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> > -		return rc;
-> > +		goto out;
-> >   	}
-> > 
-> >   	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> > -		return rc;
-> > +		goto out;
-> >   	}
-> > 
-> >   	rc = tpm2_save_space(chip);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> > -		return rc;
-> > +		goto out;
-> >   	}
-> > 
-> >   	*bufsiz = be32_to_cpu(header->length);
-> > @@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> >   	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
-> > 
-> >   	return 0;
-> > +out:
-> > +	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-> > +	return rc;
-> >   }
-> 
-> 
-> This is in tpm-interface.c:
-> 
->     rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
->     if (rc)
->         dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-> 
-> I suppose you will remove if(rc) ... ?
+Direct stores instructions MOVDIRI and MOVDIR64B will be available in
+Tremont and other future x86 processors,
+and need to be exposed to guest VM.
 
-That removal must have gone at some point when rebasing fixups.
-Thanks.
+The release document ref below link:
+https://software.intel.com/sites/default/files/managed/c5/15/\
+architecture-instruction-set-extensions-programming-reference.pdf
 
-/Jarkko
+This series expose movdiri and movdir64b features to guest VM.
+
+Changelog:
+v2:
+	Separated from the series https://lkml.org/lkml/2018/7/10/160
+	since umonitor/umwait/tpause instructions patches are not ready yet.
+v1:
+	Sent out with umonitor/umwait/tpause instructions patches.
+
+Liu Jingqi (2):
+  KVM: x86: expose MOVDIRI CPU feature into VM.
+  KVM: x86: expose MOVDIR64B CPU feature into VM.
+
+ arch/x86/kvm/cpuid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.7.4
+
