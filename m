@@ -2,178 +2,130 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595CFC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE66C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0909620869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:05:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHZVHAID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0909620869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1342B20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1342B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbeKFVaG (ORCPT
+        id S1730734AbeKFVa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:30:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51094 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeKFVaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:30:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 124-v6so6232012wmw.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 04:05:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ihD/hM2HTxE7M0zg9lTRAfTdRdJCN/VBGoL4XIWGUJQ=;
-        b=FHZVHAIDyB5duNWne9eSqLBR75F/VQpg0kQPBaqhRKTOUSRdUSqGJunYZX4EyFzXH1
-         dvbRjZIk13svtE6okubWTUsDcfd5QUunomC3CT8H0FHoWIGV5//2ovfVVaZs3DA0VUKi
-         iGm78lZSHTuEI0YfItzop6iT25En/RZM7TZVw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ihD/hM2HTxE7M0zg9lTRAfTdRdJCN/VBGoL4XIWGUJQ=;
-        b=mUk/h0XegNmpZiSGfpvneczbhW0yJmJ9XoeJifzA7Gr2Dp7mR0aIci2PWmIqEC6MlP
-         j3kL3pJIsH7R6MPxjdzXjqj7smNvjU2md5F4reDg8wdsIgMzsamXgIVrBDEtYRbNSigY
-         pKTOctnYuIPH6VsMAvkNpH31ANB8iEnPEnI+E6XnzA4gp1F090Pwrv86cAu8vjeN0RRm
-         1Ro+FyFR82PLueJXoCxm9nAjDFs8PNbK8B7AZZmP/M/rDagVARHWvOiys5xeA+fcc45U
-         a6AB0VK9ta9TZjDLuSThDOtCVY8PtOZkD2G+vf2egtDYFCsF+muDK6hDP3JEPpzRBbT+
-         dLvw==
-X-Gm-Message-State: AGRZ1gKjZl6/eYoyfHjHsd1bb85aRMZpwopR11+VoSm2LeqA4terLJnE
-        ng2eGrBBa2ocpi5GnNjawwS8gyjg5+OPVw==
-X-Google-Smtp-Source: AJdET5crV07b+35fKJ/UBrZzvbNPF7b4vPe2q1gZsP9Rsekbaj44O7uT8j+H1KpGnknzxawzicCUyw==
-X-Received: by 2002:a1c:1b91:: with SMTP id b139-v6mr1803955wmb.37.1541505911199;
-        Tue, 06 Nov 2018 04:05:11 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id m13-v6sm8111796wrw.14.2018.11.06.04.05.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 04:05:10 -0800 (PST)
-Date:   Tue, 6 Nov 2018 12:05:08 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Michael Weiser <michael.weiser@gmx.de>,
-        James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/arm64 : fix error in dump_backtrace
-Message-ID: <20181106120508.hftgyoj47qygt7b2@holly.lan>
-References: <1541488775-29610-1-git-send-email-huangzhaoyang@gmail.com>
- <20181106083901.erezwtcomiijvdrk@salmiak>
- <20181106085751.hrp7qkp53cftgew6@holly.lan>
- <20181106110019.36ps3tyakvocwst4@lakrids.cambridge.arm.com>
+        Tue, 6 Nov 2018 16:30:26 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56335 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726976AbeKFVa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:30:26 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1F05C3BCD9377;
+        Tue,  6 Nov 2018 20:05:30 +0800 (CST)
+Received: from [127.0.0.1] (10.177.21.79) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Tue, 6 Nov 2018
+ 20:05:24 +0800
+To:     <stable@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        "Leizhen (ThunderTown, Euler)" <thunder.leizhen@huawei.com>,
+        "Libin (Huawei)" <huawei.libin@huawei.com>
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+Subject: [Question] A UBSAN problem in stable-4.4
+Message-ID: <5BE18383.9040806@huawei.com>
+Date:   Tue, 6 Nov 2018 20:05:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106110019.36ps3tyakvocwst4@lakrids.cambridge.arm.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.21.79]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 11:00:19AM +0000, Mark Rutland wrote:
-> On Tue, Nov 06, 2018 at 08:57:51AM +0000, Daniel Thompson wrote:
-> > On Tue, Nov 06, 2018 at 08:39:01AM +0000, Mark Rutland wrote:
-> > > On Tue, Nov 06, 2018 at 03:19:35PM +0800, Zhaoyang Huang wrote:
-> > > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > > > 
-> > > > In some cases, the instruction of "bl foo1" will be the last one of the
-> > > > foo2[1], which will cause the lr be the first instruction of the adjacent
-> > > > foo3[2]. Hence, the backtrace will show the weird result as bellow[3].
-> > > > The patch will fix it by miner 4 of the lr when dump_backtrace
-> > > 
-> > > This has come up in the past (and a similar patch has been applied, then
-> > > reverted).
-> > > 
-> > > In general, we don't know that a function call was made via BL, and therefore
-> > > cannot know that LR - 4 is the address of the caller. The caller could set up
-> > > the LR as it likes, then B or BR to the callee, and depending on how the basic
-> > > blocks get laid out in memory, LR - 4 might point at something completely
-> > > different.
-> > > 
-> > > More ideally, the compiler wouldn't end a function with a BL. When does that
-> > > happen, and is there some way we could arrange for that to not happen? e.g.
-> > > somehow pad a NOP after the BL.
-> > 
-> > It's a consequence of having __noreturn isn't it? __noreturn frees the
-> > compiler from the burden of having to produce a valid return stack... so
-> > it doesn't and unwinding becomes hard.
-> 
-> In that case, the compiler could equally just use B rather than BL,
-> which this patch doesn't solve.
-> 
-> The documentation for the GCC noreturn attribute [1] says:
-> 
-> | In order to preserve backtraces, GCC will never turn calls to noreturn
-> | functions into tail calls. 
-> 
-> ... so clearly it's not intended to mess up backtracing.
+Hi, all,
 
-I guess that explains why the compiler chooses BL over B (since B would
-be a tail call).
+I found the following problem (attached to the end) when testing stable-4.4 with
+Syzkaller. This is not an easy-to-trigger problem, so the tool does not generate
+code for recurring problems.
+
+From the call stack, it is because the first parameter in ktime_sub is large, and
+the second parameter offset is a negative number, causing the final result to
+overflow into the sign bit and become a large negative number.
+
+--------------
+...
+ktime_t expires = ktime_sub(hrtimer_get_expires(timer), base->offset);
+...
+--------------
+
+But I don't know how to fix this problem. The mainline code is also different from
+stable-4.4, and I have not found a patch to fix this problem in the mainline
+repository.
+
+So I am a bit confused about how to fix it. Can anyone give me some advice?
+
+Thanks.
+Xiaojun.
+
+================================================================================
+UBSAN: Undefined behaviour in kernel/time/hrtimer.c:615:20
+signed integer overflow:
+9223372036854775807 - -495588161 cannot be represented in type 'long long int'
+CPU: 0 PID: 4542 Comm: syz-executor0 Not tainted 4.4.156-514.55.6.9.x86_64+ #8
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+ 1ffff100391dbf45 ad071d3307b76e03 ffff8801c8edfab0 ffffffff81c9f586
+ 0000000041b58ab3 ffffffff831fd4e6 ffffffff81c9f478 ffff8801c8edfad8
+ ffff8801c8edfa78 00000000000014a9 ad071d3307b76e03 ffffffff837fd660
+Call Trace:
+ [<ffffffff81c9f586>] __dump_stack lib/dump_stack.c:15 [inline]
+ [<ffffffff81c9f586>] dump_stack+0x10e/0x1a8 lib/dump_stack.c:51
+ [<ffffffff81d814a6>] ubsan_epilogue+0x12/0x8f lib/ubsan.c:164
+ [<ffffffff81d830a1>] handle_overflow+0x23e/0x299 lib/ubsan.c:195
+ [<ffffffff81d83157>] __ubsan_handle_sub_overflow+0x2a/0x31 lib/ubsan.c:211
+ [<ffffffff813d8c33>] hrtimer_reprogram kernel/time/hrtimer.c:615 [inline]
+ [<ffffffff813d8c33>] hrtimer_start_range_ns+0x1083/0x1580 kernel/time/hrtimer.c:1024
+ [<ffffffff813fde1f>] hrtimer_start include/linux/hrtimer.h:393 [inline]
+ [<ffffffff813fde1f>] alarm_start+0xcf/0x130 kernel/time/alarmtimer.c:328
+ [<ffffffff813fed66>] alarm_timer_set+0x296/0x4a0 kernel/time/alarmtimer.c:632
+ [<ffffffff813e1a3e>] SYSC_timer_settime kernel/time/posix-timers.c:914 [inline]
+ [<ffffffff813e1a3e>] SyS_timer_settime+0x2be/0x3d0 kernel/time/posix-timers.c:885
+ [<ffffffff82c2fb61>] entry_SYSCALL_64_fastpath+0x1e/0x9e
+================================================================================
+================================================================================
+UBSAN: Undefined behaviour in kernel/time/hrtimer.c:490:13
+signed integer overflow:
+9223372036854775807 - -495588161 cannot be represented in type 'long long int'
+CPU: 0 PID: 4542 Comm: syz-executor0 Not tainted 4.4.156-514.55.6.9.x86_64+ #8
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+ 1ffff1003ed40f8b ad071d3307b76e03 ffff8801f6a07ce0 ffffffff81c9f586
+ 0000000041b58ab3 ffffffff831fd4e6 ffffffff81c9f478 ffff8801f6a07d08
+ ffff8801f6a07ca8 000000000000000a ad071d3307b76e03 ffffffff837fd660
+Call Trace:
+ <IRQ>  [<ffffffff81c9f586>] __dump_stack lib/dump_stack.c:15 [inline]
+ <IRQ>  [<ffffffff81c9f586>] dump_stack+0x10e/0x1a8 lib/dump_stack.c:51
+ [<ffffffff81d814a6>] ubsan_epilogue+0x12/0x8f lib/ubsan.c:164
+ [<ffffffff81d830a1>] handle_overflow+0x23e/0x299 lib/ubsan.c:195
+ [<ffffffff81d83157>] __ubsan_handle_sub_overflow+0x2a/0x31 lib/ubsan.c:211
+ [<ffffffff813d43ea>] __hrtimer_get_next_event+0x1da/0x2b0 kernel/time/hrtimer.c:490
+ [<ffffffff813d9532>] hrtimer_interrupt+0x202/0x580 kernel/time/hrtimer.c:1361
+ [<ffffffff8113e7ad>] local_apic_timer_interrupt+0x9d/0x150 arch/x86/kernel/apic/apic.c:901
+ [<ffffffff82c32ea0>] smp_apic_timer_interrupt+0x80/0xb0 arch/x86/kernel/apic/apic.c:925
+ [<ffffffff82c30ac5>] apic_timer_interrupt+0xa5/0xb0 arch/x86/entry/entry_64.S:563
+ <EOI>  [<ffffffff82c2f0fb>] ? arch_local_irq_restore arch/x86/include/asm/paravirt.h:812 [inline]
+ <EOI>  [<ffffffff82c2f0fb>] ? __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:162 [inline]
+ <EOI>  [<ffffffff82c2f0fb>] ? _raw_spin_unlock_irqrestore+0x3b/0x60 kernel/locking/spinlock.c:191
+ [<ffffffff813e1a4f>] unlock_timer include/linux/spinlock.h:362 [inline]
+ [<ffffffff813e1a4f>] SYSC_timer_settime kernel/time/posix-timers.c:916 [inline]
+ [<ffffffff813e1a4f>] SyS_timer_settime+0x2cf/0x3d0 kernel/time/posix-timers.c:885
+ [<ffffffff82c2fb61>] entry_SYSCALL_64_fastpath+0x1e/0x9e
+================================================================================
 
 
-> IIUC we mostly use noreturn to prevent warings about uninitialised
-> variables and such after a call to a noreturn function. I think
-> optimization is a secondary concern.
-> 
-> We could ask the GCC folk if they can ensure that a noreturn function
-> call leave thes LR pointing into the caller, e.g. by padding with a NOP:
-> 
-> 	BL	<noreturn function>
-> 	NOP
-> 
-> That seems cheap enough, and would keep backtraces reliable.
 
-It might be worth discussing. One related question though... is there
-any other case there the symbol name other than __noreturn where the
-symbol can change between LR and LR-1?
-
-If not can't we just switch over to %pB which is designed for this case
-(and in case you ask: no... I didn't know about %pB until this morning
-when I started trying to implement the heuristic it uses by hand and
-then discovering it by accident).
-
-Something like:
-
-From 70a2c9ffc962a650ff894d40b775f8310190bf86 Mon Sep 17 00:00:00 2001
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Date: Tue, 6 Nov 2018 11:59:56 +0000
-Subject: [PATCH] arm64: Use %pB to print backtrace symbols
-
-Currently arm64 uses %pS to print backtrace symbols but %pB (which takes
-into consideration the effect of compiler optimisations which may occur
-when tail-calls are used and marked with the noreturn GCC attribute)
-is a better alternative.
-
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
----
- arch/arm64/kernel/traps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 5f4d9acb32f5..ea571d3a1373 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -62,7 +62,7 @@ int show_unhandled_signals = 0;
- 
- static void dump_backtrace_entry(unsigned long where)
- {
--	printk(" %pS\n", (void *)where);
-+	printk(" %pB\n", (void *)where);
- }
- 
- static void __dump_instr(const char *lvl, struct pt_regs *regs)
--- 
-2.19.1
 
