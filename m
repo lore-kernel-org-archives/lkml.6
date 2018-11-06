@@ -2,229 +2,123 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54689C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D36AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A8B20830
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 410B520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:07:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ak/zl0Tl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A8B20830
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRnIspXo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410B520827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388287AbeKGEdQ (ORCPT
+        id S1730679AbeKGEeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 23:33:16 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:32961 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730532AbeKGEdQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:33:16 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u9-v6so4450323wrr.0;
-        Tue, 06 Nov 2018 11:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O+6IqHD72gV5Bf0OBmE2esPiaBMOKaAjbiWqp1XWQhM=;
-        b=ak/zl0Tlkvgv5UvAUQjfpVkrn3Bxi/4AqYrVnkvpXRU6VQi5Rs/PP3gdEMc0j19MQs
-         sSHNG+MsVmvqBabPHQTX8muMaBytPgMwh/jxxZAK53DnrNnaEUVSmJfelVuU77euaO5u
-         adnZhZTfdV0aauA0f0hSWtNtZC6uoUSMbINaMu8hHKuFZxdvQNiUfPGjeYzpYgWuW+jx
-         tomeRA9jogKbdE4A/kS7EHBgksvVo1VvclyNubLHoIHH/TbZhuZjf0Qa8tFHNFYACoxM
-         KzkIrn8o3k1galpRV1KsF1oipKgN6d0rxDxTIMJYd/czZRqNHXWX+5zUz55P98YVCLVz
-         XVQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O+6IqHD72gV5Bf0OBmE2esPiaBMOKaAjbiWqp1XWQhM=;
-        b=TnUs61pCwPdr/vQlEpFM29WkoZ0kMUMvJdpsz1NlQVGgzVp9sfSZ+Tj4e/3MvXJl0b
-         I86/s8xQXlz7eVIreEpSe6J8b/vykL8FyQrUMGD2PgDC9MKomoYcj3d4ZTF6nXrZIdGt
-         zWP+SiEoi+hll/XRvdIX6DGClwJ0dsi+HGOO1edoYjVtR0RzcV5gt2QKakoDudbg5d8A
-         0uifnwHBt58aD9kXqe5hu0dnaE2TWLclwkJg9RA51ZSfQ2d0tsl6QO+kEZMn9BdPBQTa
-         68BkVsUeCT0PYb8kRwQmh8EQQqTiez2ryupWHorI3aww8N0I1gFnjn7uFaz3EZfFe8kF
-         VHWg==
-X-Gm-Message-State: AGRZ1gKGhtevuFCFZVqS3JgM5rc2q5ibNBlMqjIVjSsfjDbs0R9lQGjJ
-        qDN2XTSuyBMItX70KnzXaUg=
-X-Google-Smtp-Source: AJdET5dinIjR335JKLT/ADkmmmpBDe2x1AAreAu18J6w6eSPthhE6KJZDUdqLSLAw9jz0ph87ie+FA==
-X-Received: by 2002:a5d:4dc2:: with SMTP id f2-v6mr26365147wru.45.1541531194388;
-        Tue, 06 Nov 2018 11:06:34 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id r198-v6sm3190123wmg.0.2018.11.06.11.06.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 11:06:33 -0800 (PST)
-Date:   Tue, 6 Nov 2018 20:06:30 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Ahern <dsahern@gmail.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastien Boisvert <sboisvert@gydle.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Will Deacon <will.deacon@arm.com>, Yonghong Song <yhs@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 00/18] perf/urgent improvements and fixes
-Message-ID: <20181106190630.GA39226@gmail.com>
-References: <20181106120612.8262-1-acme@kernel.org>
+        Tue, 6 Nov 2018 23:34:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730529AbeKGEeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 23:34:12 -0500
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96B2621019
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Nov 2018 19:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541530945;
+        bh=OWckdEQFOYA4cQI4pvxJmjEMWkomeSWDwDzW0sSXU3I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BRnIspXorYhZ52GkKqjKwcn+s0kJVwoICdJ5dFN1rG7cxprt17FJWg1Q8O4mSlYY7
+         49LaD3Bwyzi1SVRXWVzs4Vod6wFcIhhnevbGCWh8Vi/PzCqhc7xKk+85VE2u1t5D3I
+         iqgEOsMYulPu/7RWws9FqcZBLQ02ha+r2otWcw8A=
+Received: by mail-wr1-f41.google.com with SMTP id y15-v6so14770486wru.9
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 11:02:25 -0800 (PST)
+X-Gm-Message-State: AGRZ1gINIzYTIJCkvU/zEtmq8yfsnlzMWM5uH2o9rNLWHIhERtTqpiti
+        u2jhkqRLZRM3G9qVGv+lJWUHFW5h9U0md41+5FGfKg==
+X-Google-Smtp-Source: AJdET5cY5VvCpEhjQsROy7auLcaoVPiGC/i10wYYKxTYu/qGLWJ1I1Yxc/0Zf1kEyhRGZ6QhltvmT9CYBzUzNbunCVc=
+X-Received: by 2002:adf:82c9:: with SMTP id 67-v6mr23365080wrc.131.1541530943892;
+ Tue, 06 Nov 2018 11:02:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106120612.8262-1-acme@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <CALCETrWe4+apXJNswHAKVVqajGS3jTEKxdd2r3iu-MzGK1v0DA@mail.gmail.com>
+ <20181102163034.GB7393@linux.intel.com> <7050972d-a874-dc08-3214-93e81181da60@intel.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+In-Reply-To: <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 6 Nov 2018 11:02:11 -0800
+X-Gmail-Original-Message-ID: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+Message-ID: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 11/6/18 10:20 AM, Andy Lutomirski wrote:
+> > I almost feel like the right solution is to call into SGX on its own
+> > private stack or maybe even its own private address space.
+>
+> Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
+> enclave like its own "thread" with its own stack and its own set of
+> registers and context?  That seems like a much more workable model than
+> trying to weave it together with the EENTER context.
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+So maybe the API should be, roughly
 
-> Hi Ingo,
-> 
-> 	Please consider pulling, mostly fixes, some late coming
-> improvements in non-core areas,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 29995d296e3e9ce4f9767963ecbef143ade26c36:
-> 
->   Merge tag 'perf-urgent-for-mingo-4.20-20181031' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-10-31 22:53:40 +0100)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.20-20181106
-> 
-> for you to fetch changes up to 8e88c29b351ed4e09dd63f825f1c8260b0cb0ab3:
-> 
->   perf tools: Do not zero sample_id_all for group members (2018-11-06 08:29:56 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent improvements and fixes:
-> 
-> Intel PT sql viewer: (Adrian Hunter)
-> 
-> - Fall back to /usr/local/lib/libxed.so
-> - Add Selected branches report
-> - Add help window
-> - Fix table find when table re-ordered
-> 
-> Intel PT debug log (Adrian Hunter)
-> 
-> - Add more event information
-> - Add MTC and CYC timestamps
-> 
-> perf record: (Andi Kleen)
-> 
-> - Support weak groups, just like with 'perf stat'
-> 
-> perf trace: (Arnaldo Carvalho de Melo)
-> 
-> - Start augmenting raw_syscalls:{sys_enter,sys_exit}: goal is to have a
->   generic, arch independent eBPF kernel component that is programmed with
->   syscall table details, what to copy, how many bytes, pid, arg filters from the
->   userspace via eBPF maps by the 'perf trace' tool that continues to use all its
->   argument beautifiers, just taking advantage of the extra pointer contents.
-> 
-> JVMTI: (Gustavo Romero)
-> 
-> - Fix undefined symbol scnprintf in libperf-jvmti.so
-> 
-> perf top: (Jin Yao)
-> 
-> - Display the LBR stats in callchain entries
-> 
-> perf stat: (Thomas Richter)
-> 
-> - Handle different PMU names with common prefix
-> 
-> arm64: Will (Deacon)
-> 
-> - Fix arm64 tools build failure wrt smp_load_{acquire,release}.
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Adrian Hunter (6):
->       perf scripts python: exported-sql-viewer.py: Fall back to /usr/local/lib/libxed.so
->       perf scripts python: exported-sql-viewer.py: Add Selected branches report
->       perf scripts python: exported-sql-viewer.py: Add help window
->       perf scripts python: exported-sql-viewer.py: Fix table find when table re-ordered
->       perf intel-pt: Add more event information to debug log
->       perf intel-pt: Add MTC and CYC timestamps to debug log
-> 
-> Andi Kleen (2):
->       perf evlist: Move perf_evsel__reset_weak_group into evlist
->       perf record: Support weak groups
-> 
-> Arnaldo Carvalho de Melo (5):
->       perf examples bpf: Start augmenting raw_syscalls:sys_{start,exit}
->       perf trace: When augmenting raw_syscalls plug raw_syscalls:sys_exit too
->       perf trace: Fix setting of augmented payload when using eBPF + raw_syscalls
->       perf augmented_syscalls: Start collecting pathnames in the BPF program
->       perf beauty: Use SRCARCH, ARCH=x86_64 must map to "x86" to find the headers
-> 
-> Gustavo Romero (1):
->       perf tools: Fix undefined symbol scnprintf in libperf-jvmti.so
-> 
-> Jin Yao (1):
->       perf top: Display the LBR stats in callchain entry
-> 
-> Jiri Olsa (1):
->       perf tools: Do not zero sample_id_all for group members
-> 
-> Thomas Richter (1):
->       perf stat: Handle different PMU names with common prefix
-> 
-> Will Deacon (1):
->       tools headers barrier: Fix arm64 tools build failure wrt smp_load_{acquire,release}
-> 
->  tools/arch/arm64/include/asm/barrier.h             | 133 +++---
->  tools/perf/Documentation/perf-list.txt             |   1 -
->  tools/perf/Makefile.perf                           |   2 +-
->  tools/perf/builtin-record.c                        |   7 +-
->  tools/perf/builtin-stat.c                          |  28 +-
->  tools/perf/builtin-top.c                           |   3 +
->  tools/perf/builtin-trace.c                         |  34 +-
->  tools/perf/examples/bpf/augmented_raw_syscalls.c   | 131 ++++++
->  tools/perf/jvmti/jvmti_agent.c                     |  49 +-
->  tools/perf/scripts/python/exported-sql-viewer.py   | 493 ++++++++++++++++++++-
->  tools/perf/tests/attr/test-record-group-sampling   |   1 -
->  tools/perf/util/evlist.c                           |  27 ++
->  tools/perf/util/evlist.h                           |   3 +
->  tools/perf/util/evsel.c                            |   1 -
->  .../perf/util/intel-pt-decoder/intel-pt-decoder.c  |   4 +
->  tools/perf/util/intel-pt-decoder/intel-pt-log.c    |   5 +
->  tools/perf/util/intel-pt-decoder/intel-pt-log.h    |   1 +
->  tools/perf/util/intel-pt.c                         |  16 +-
->  tools/perf/util/pmu.c                              |   2 +-
->  19 files changed, 820 insertions(+), 121 deletions(-)
->  create mode 100644 tools/perf/examples/bpf/augmented_raw_syscalls.c
+sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
+host_state *state);
+sgx_exit_reason_t sgx_resume_enclave(same args);
 
-Pulled, thanks a lot Arnaldo!
+where host_state is something like:
 
-	Ingo
+struct host_state {
+  unsigned long bp, sp, ax, bx, cx, dx, si, di;
+};
+
+and the values in host_state explicitly have nothing to do with the
+actual host registers.  So, if you want to use the outcall mechanism,
+you'd allocate some memory, point sp to that memory, call
+sgx_enter_enclave(), and then read that memory to do the outcall.
+
+Actually implementing this would be distinctly nontrivial, and would
+almost certainly need some degree of kernel help to avoid an explosion
+when a signal gets delivered while we have host_state.sp loaded into
+the actual SP register.  Maybe rseq could help with this?
+
+The ISA here is IMO not well thought through.
