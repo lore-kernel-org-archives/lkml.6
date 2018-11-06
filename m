@@ -4,34 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A02C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCCBC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D576820866
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D576820866
+	by mail.kernel.org (Postfix) with ESMTP id 2D1BA20866
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1BA20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbeKFQHE (ORCPT
+        id S2387953AbeKFQHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 6 Nov 2018 11:07:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56427 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387649AbeKFQGN (ORCPT
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34954 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387664AbeKFQGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Nov 2018 11:06:13 -0500
-X-UUID: cf2fd36573ad455298853a169057e97b-20181106
-X-UUID: cf2fd36573ad455298853a169057e97b-20181106
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+X-UUID: fc6f19e270dc40a194f4aabcabbca711-20181106
+X-UUID: fc6f19e270dc40a194f4aabcabbca711-20181106
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1874491118; Tue, 06 Nov 2018 14:42:24 +0800
+        with ESMTP id 151291692; Tue, 06 Nov 2018 14:42:23 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 6 Nov 2018 14:42:22 +0800
 Received: from mtkslt210.mediatek.inc (10.21.14.14) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -47,9 +46,9 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
         Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v1 02/11] clk: mediatek: add new member to mtk_pll_data
-Date:   Tue, 6 Nov 2018 14:41:57 +0800
-Message-ID: <20181106064206.17535-4-weiyi.lu@mediatek.com>
+Subject: [PATCH v1 03/11] clk: mediatek: Disable tuner_en before change PLL rate
+Date:   Tue, 6 Nov 2018 14:41:58 +0800
+Message-ID: <20181106064206.17535-5-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181106064206.17535-1-weiyi.lu@mediatek.com>
 References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
@@ -63,73 +62,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Owen Chen <owen.chen@mediatek.com>
 
-1. pcwibits: The integer bits of pcw for plls is extend to 8 bits,
-   add a variable to indicate this change and
-   backward-compatible.
-2. fmin: The pll freqency lower-bound is vary from 1GMhz to
-   1.5Ghz, add a variable to indicate platform-dependent.
+PLLs with tuner_en bit, such as APLL1, need to disable
+tuner_en before apply new frequency settings, or the new frequency
+settings (pcw) will not be applied.
+The tuner_en bit will be disabled during changing PLL rate
+and be restored after new settings applied.
 
 Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 ---
- drivers/clk/mediatek/clk-mtk.h |  2 ++
- drivers/clk/mediatek/clk-pll.c | 10 +++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f83c2bbb677e..1882221fe994 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -215,7 +215,9 @@ struct mtk_pll_data {
- 	const struct clk_ops *ops;
- 	u32 rst_bar_mask;
- 	unsigned long fmax;
-+	unsigned long fmin;
- 	int pcwbits;
-+	int pcwibits;
- 	uint32_t pcw_reg;
- 	int pcw_shift;
- 	const struct mtk_pll_div_table *div_table;
 diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index f54e4015b0b1..0ec2c62d9383 100644
+index 0ec2c62d9383..cca9002de91b 100644
 --- a/drivers/clk/mediatek/clk-pll.c
 +++ b/drivers/clk/mediatek/clk-pll.c
-@@ -69,11 +69,13 @@ static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
+@@ -27,7 +27,7 @@
+ #define CON0_BASE_EN		BIT(0)
+ #define CON0_PWR_ON		BIT(0)
+ #define CON0_ISO_EN		BIT(1)
+-#define CON0_PCW_CHG		BIT(31)
++#define CON1_PCW_CHG		BIT(31)
+ 
+ #define AUDPLL_TUNER_EN		BIT(31)
+ 
+@@ -95,9 +95,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
  {
- 	int pcwbits = pll->data->pcwbits;
- 	int pcwfbits;
-+	int ibits;
- 	u64 vco;
- 	u8 c = 0;
+ 	u32 con1, val;
+ 	int pll_en;
++	u32 tuner_en = 0;
++	u32 tuner_en_mask;
++	void __iomem *tuner_en_addr = NULL;
  
- 	/* The fractional part of the PLL divider. */
--	pcwfbits = pcwbits > INTEGER_BITS ? pcwbits - INTEGER_BITS : 0;
-+	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
-+	pcwfbits = pcwbits > ibits ? pcwbits - ibits : 0;
+ 	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
  
- 	vco = (u64)fin * pcw;
++	/* disable tuner */
++	if (pll->tuner_en_addr) {
++		tuner_en_addr = pll->tuner_en_addr;
++		tuner_en_mask = BIT(pll->data->tuner_en_bit);
++	} else if (pll->tuner_addr) {
++		tuner_en_addr = pll->tuner_addr;
++		tuner_en_mask = AUDPLL_TUNER_EN;
++	}
++
++	if (tuner_en_addr) {
++		val = readl(tuner_en_addr);
++		tuner_en = val & tuner_en_mask;
++
++		if (tuner_en) {
++			val &= ~tuner_en_mask;
++			writel(val, tuner_en_addr);
++		}
++	}
++
+ 	/* set postdiv */
+ 	val = readl(pll->pd_addr);
+ 	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
+@@ -118,12 +140,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ 	con1 = readl(pll->base_addr + REG_CON1);
  
-@@ -138,9 +140,10 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
- static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
- 		u32 freq, u32 fin)
- {
--	unsigned long fmin = 1000 * MHZ;
-+	unsigned long fmin = pll->data->fmin ? pll->data->fmin : 1000 * MHZ;
- 	const struct mtk_pll_div_table *div_table = pll->data->div_table;
- 	u64 _pcw;
-+	int ibits;
- 	u32 val;
+ 	if (pll_en)
+-		con1 |= CON0_PCW_CHG;
++		con1 |= CON1_PCW_CHG;
  
- 	if (freq > pll->data->fmax)
-@@ -164,7 +167,8 @@ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
- 	}
+ 	writel(con1, pll->base_addr + REG_CON1);
+ 	if (pll->tuner_addr)
+ 		writel(con1 + 1, pll->tuner_addr);
  
- 	/* _pcw = freq * postdiv / fin * 2^pcwfbits */
--	_pcw = ((u64)freq << val) << (pll->data->pcwbits - INTEGER_BITS);
-+	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
-+	_pcw = ((u64)freq << val) << (pll->data->pcwbits - ibits);
- 	do_div(_pcw, fin);
- 
- 	*pcw = (u32)_pcw;
++	/* restore tuner_en */
++	if (tuner_en_addr && tuner_en) {
++		val = readl(tuner_en_addr);
++		val |= tuner_en_mask;
++		writel(val, tuner_en_addr);
++	}
++
+ 	if (pll_en)
+ 		udelay(20);
+ }
 -- 
 2.18.0
 
