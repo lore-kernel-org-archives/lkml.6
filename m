@@ -2,85 +2,91 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C753C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AE2C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C562086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:35:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yQydLxYt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C562086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 89B7D20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:38:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B7D20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387936AbeKFWAq (ORCPT
+        id S2387965AbeKFWDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 17:00:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387704AbeKFWAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:00:46 -0500
-Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D60962085B;
-        Tue,  6 Nov 2018 12:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541507745;
-        bh=D5eiSkrbMck53qRKWNhEaa5TUUz6vLOwfR5xPG4uIl8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yQydLxYtJmDJ4WX2iT8AdRNHLam421ebq/r6z4wrGEzZqAXzTbE1d0PnPdQLZsk5x
-         iiDMptXzUk+r9JCwoRgobzBwwrvVb8JXwwqIhmVqG13l66wEbcMDhPIJhkNpgAAJ+t
-         emOLsgciLIXEnl6fwaDTYmAhvTbTN6ELLsDqeaUw=
-Date:   Tue, 6 Nov 2018 13:35:40 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Ke Wu <mikewu@google.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] modsign: use all trusted keys to verify module signature
-Message-ID: <20181106123540.GA20115@linux-8ccs>
-References: <20181022222614.41016-1-mikewu@google.com>
+        Tue, 6 Nov 2018 17:03:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387454AbeKFWDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 17:03:24 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 799112151093A;
+        Tue,  6 Nov 2018 20:38:17 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
+ 20:38:11 +0800
+Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        Chao Yu <chao@kernel.org>
+References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
+ <20181030060441.16107-1-gaoxiang25@huawei.com>
+ <20181105224654.GA25864@brain-police>
+ <20181106090642.GH22431@hirez.programming.kicks-ass.net>
+ <5eb42b84-5195-69f2-e7a7-97568f360506@huawei.com>
+ <20181106110026.GJ22431@hirez.programming.kicks-ass.net>
+ <dedbc211-082b-be4a-1bce-2593084d4ca3@huawei.com>
+ <20181106122713.GR22431@hirez.programming.kicks-ass.net>
+ <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
+Message-ID: <44213253-d108-cd63-db64-7d41fcd8af66@huawei.com>
+Date:   Tue, 6 Nov 2018 20:38:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181022222614.41016-1-mikewu@google.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Ke Wu [22/10/18 15:26 -0700]:
->Make mod_verify_sig to use all trusted keys. This allows keys in
->secondary_trusted_keys to be used to verify PKCS#7 signature on a
->kernel module.
->
->Signed-off-by: Ke Wu <mikewu@google.com>
->---
-> kernel/module_signing.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/kernel/module_signing.c b/kernel/module_signing.c
->index f2075ce8e4b3..a8b923ba1a39 100644
->--- a/kernel/module_signing.c
->+++ b/kernel/module_signing.c
->@@ -83,6 +83,6 @@ int mod_verify_sig(const void *mod, struct load_info *info)
-> 	}
->
-> 	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
->-				      NULL, VERIFYING_MODULE_SIGNATURE,
->+				      (void *)1UL, VERIFYING_MODULE_SIGNATURE,
-> 				      NULL, NULL);
-> }
+Hi Peter,
 
-I've just stumbled on commit 817aef260037f ("Replace magic for trusting
-the secondary keyring with #define"), so we should probably use
-VERIFY_USE_SECONDARY_KEYRING in place of (void *)1UL.
+OK, I think I understand your point. If you think the performance of bit_spinlock
+doesn't matter, Let's keep the current status.
 
 Thanks,
+Gao Xiang
 
-Jessica
+On 2018/11/6 20:33, Gao Xiang wrote:
+> Hi Peter,
+> 
+> On 2018/11/6 20:27, Peter Zijlstra wrote:
+>> On Tue, Nov 06, 2018 at 07:36:41PM +0800, Gao Xiang wrote:
+>>> IMO, to use wrapped up function for the detailed scenario could be better than
+>>> open-coded all the time (eg. do cpu_relax(); while(...)) since it could be
+>>> optimizated even more for the specific architecture...
+>> That's the whole point though; if this actually matters, you're doing it
+>> wrong.
+> 
+> I cannot fully understand your point...Sorry about my English...
+> 
+> To the point, you mean it is much better to fix it as Will suggested before or
+> leave the matter as it is since the performance of bit_spinlock itself doesn't matter?
+> 
+> Thanks in advance.
+> 
+> Thanks,
+> Gao Xiang
+> 
