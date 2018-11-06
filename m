@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BC2C46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF199C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB20920866
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB20920866
+	by mail.kernel.org (Postfix) with ESMTP id B1CC62081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:42:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1CC62081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387810AbeKFQGR (ORCPT
+        id S2387840AbeKFQGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 6 Nov 2018 11:06:17 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3631 "EHLO
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29947 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387657AbeKFQGQ (ORCPT
+        with ESMTP id S2387725AbeKFQGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Nov 2018 11:06:16 -0500
-X-UUID: 48f14d03013f4988a640cfeddd2d675a-20181106
-X-UUID: 48f14d03013f4988a640cfeddd2d675a-20181106
+X-UUID: d3233966d40749e9acaf074ac6fa254c-20181106
+X-UUID: d3233966d40749e9acaf074ac6fa254c-20181106
 Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2026433330; Tue, 06 Nov 2018 14:42:25 +0800
+        with ESMTP id 1571821500; Tue, 06 Nov 2018 14:42:26 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 6 Nov 2018 14:42:23 +0800
 Received: from mtkslt210.mediatek.inc (10.21.14.14) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -45,9 +45,9 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v1 09/11] dt-bindings: soc: fix typo of MT8173 power dt-bindings
-Date:   Tue, 6 Nov 2018 14:42:04 +0800
-Message-ID: <20181106064206.17535-11-weiyi.lu@mediatek.com>
+Subject: [PATCH v1 10/11] dt-bindings: soc: Add MT8183 power dt-bindings
+Date:   Tue, 6 Nov 2018 14:42:05 +0800
+Message-ID: <20181106064206.17535-12-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181106064206.17535-1-weiyi.lu@mediatek.com>
 References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
@@ -59,32 +59,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix incorrect IC name that will affect the MT8183 power dt-bindings
+Add power dt-bindings for MT8183.
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- include/dt-bindings/power/mt8173-power.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../bindings/soc/mediatek/scpsys.txt          | 14 ++++++++++
+ include/dt-bindings/power/mt8183-power.h      | 26 +++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+ create mode 100644 include/dt-bindings/power/mt8183-power.h
 
-diff --git a/include/dt-bindings/power/mt8173-power.h b/include/dt-bindings/power/mt8173-power.h
-index 15d531aa6e78..ef4a7f944848 100644
---- a/include/dt-bindings/power/mt8173-power.h
-+++ b/include/dt-bindings/power/mt8173-power.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _DT_BINDINGS_POWER_MT8183_POWER_H
--#define _DT_BINDINGS_POWER_MT8183_POWER_H
-+#ifndef _DT_BINDINGS_POWER_MT8173_POWER_H
-+#define _DT_BINDINGS_POWER_MT8173_POWER_H
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index d6fe16f094af..b4728ce81c43 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -14,6 +14,7 @@ power/power_domain.txt. It provides the power domains defined in
+ - include/dt-bindings/power/mt2701-power.h
+ - include/dt-bindings/power/mt2712-power.h
+ - include/dt-bindings/power/mt7622-power.h
++- include/dt-bindings/power/mt8183-power.h
  
- #define MT8173_POWER_DOMAIN_VDEC	0
- #define MT8173_POWER_DOMAIN_VENC	1
-@@ -13,4 +13,4 @@
- #define MT8173_POWER_DOMAIN_MFG_2D	8
- #define MT8173_POWER_DOMAIN_MFG		9
+ Required properties:
+ - compatible: Should be one of:
+@@ -24,18 +25,31 @@ Required properties:
+ 	- "mediatek,mt7623-scpsys", "mediatek,mt2701-scpsys": For MT7623 SoC
+ 	- "mediatek,mt7623a-scpsys": For MT7623A SoC
+ 	- "mediatek,mt8173-scpsys"
++	- "mediatek,mt8183-scpsys"
+ - #power-domain-cells: Must be 1
+ - reg: Address range of the SCPSYS unit
+ - infracfg: must contain a phandle to the infracfg controller
+ - clock, clock-names: clocks according to the common clock binding.
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
++                      The new clock type "BASIC" belongs to the type above.
++                      As to the new clock type "SUBSYS" needs to be
++                      enabled before releasing bus protection.
+ 	Required clocks for MT2701 or MT7623: "mm", "mfg", "ethif"
+ 	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
+ 	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT7622: "hif_sel"
+ 	Required clocks for MT7622A: "ethif"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
++	Required clocks for MT8183: BASIC: "audio", "mfg", "mm", "cam", "isp",
++					   "vpu", "vpu1", "vpu2", "vpu3"
++				    SUBSYS: "mm-0", "mm-1", "mm-2", "mm-3",
++					    "mm-4", "mm-5", "mm-6", "mm-7",
++					    "mm-8", "mm-9", "isp-0", "isp-1",
++					    "cam-0", "cam-1", "cam-2", "cam-3",
++					    "cam-4", "cam-5", "cam-6", "vpu-0",
++					    "vpu-1", "vpu-2", "vpu-3", "vpu-4",
++					    "vpu-5"
  
--#endif /* _DT_BINDINGS_POWER_MT8183_POWER_H */
-+#endif /* _DT_BINDINGS_POWER_MT8173_POWER_H */
+ Optional properties:
+ - vdec-supply: Power supply for the vdec power domain
+diff --git a/include/dt-bindings/power/mt8183-power.h b/include/dt-bindings/power/mt8183-power.h
+new file mode 100644
+index 000000000000..5c0c8c7e3cd0
+--- /dev/null
++++ b/include/dt-bindings/power/mt8183-power.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ */
++
++#ifndef _DT_BINDINGS_POWER_MT8183_POWER_H
++#define _DT_BINDINGS_POWER_MT8183_POWER_H
++
++#define MT8183_POWER_DOMAIN_AUDIO	0
++#define MT8183_POWER_DOMAIN_CONN	1
++#define MT8183_POWER_DOMAIN_MFG_ASYNC	2
++#define MT8183_POWER_DOMAIN_MFG		3
++#define MT8183_POWER_DOMAIN_MFG_CORE0	4
++#define MT8183_POWER_DOMAIN_MFG_CORE1	5
++#define MT8183_POWER_DOMAIN_MFG_2D	6
++#define MT8183_POWER_DOMAIN_DISP	7
++#define MT8183_POWER_DOMAIN_CAM		8
++#define MT8183_POWER_DOMAIN_ISP		9
++#define MT8183_POWER_DOMAIN_VDEC	10
++#define MT8183_POWER_DOMAIN_VENC	11
++#define MT8183_POWER_DOMAIN_VPU_TOP	12
++#define MT8183_POWER_DOMAIN_VPU_CORE0	13
++#define MT8183_POWER_DOMAIN_VPU_CORE1	14
++
++#endif /* _DT_BINDINGS_POWER_MT8183_POWER_H */
 -- 
 2.18.0
 
