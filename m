@@ -2,80 +2,95 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08505C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C10C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6AA62086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AA62086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C04F920869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C04F920869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbeKFV7I (ORCPT
+        id S2387846AbeKFV7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:59:08 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14180 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729711AbeKFV7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:59:07 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CB839656FF311;
-        Tue,  6 Nov 2018 20:34:03 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
- 20:33:59 +0800
-Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Will Deacon <will.deacon@arm.com>,
+        Tue, 6 Nov 2018 16:59:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46214 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730520AbeKFV7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:59:46 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3978A207B0; Tue,  6 Nov 2018 13:34:44 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D41B820790;
+        Tue,  6 Nov 2018 13:34:24 +0100 (CET)
+Date:   Tue, 6 Nov 2018 13:34:24 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     kbuild test robot <fengguang.wu@intel.com>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <m.chehab@samsung.com>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Chao Yu <chao@kernel.org>
-References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
- <20181030060441.16107-1-gaoxiang25@huawei.com>
- <20181105224654.GA25864@brain-police>
- <20181106090642.GH22431@hirez.programming.kicks-ass.net>
- <5eb42b84-5195-69f2-e7a7-97568f360506@huawei.com>
- <20181106110026.GJ22431@hirez.programming.kicks-ass.net>
- <dedbc211-082b-be4a-1bce-2593084d4ca3@huawei.com>
- <20181106122713.GR22431@hirez.programming.kicks-ass.net>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
-Date:   Tue, 6 Nov 2018 20:33:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Chen-Yu Tsai <wens@csie.org>, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] media: platform: fix platform_no_drv_owner.cocci warnings
+Message-ID: <20181106123424.wrgg3zmlc6zsipd4@flea>
+References: <201811061917.7LMfScZW%fengguang.wu@intel.com>
+ <20181106113319.GA17755@lkp-sb05>
 MIME-Version: 1.0
-In-Reply-To: <20181106122713.GR22431@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3kxqbu35hoyltt2e"
+Content-Disposition: inline
+In-Reply-To: <20181106113319.GA17755@lkp-sb05>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
 
-On 2018/11/6 20:27, Peter Zijlstra wrote:
-> On Tue, Nov 06, 2018 at 07:36:41PM +0800, Gao Xiang wrote:
->> IMO, to use wrapped up function for the detailed scenario could be better than
->> open-coded all the time (eg. do cpu_relax(); while(...)) since it could be
->> optimizated even more for the specific architecture...
-> That's the whole point though; if this actually matters, you're doing it
-> wrong.
+--3kxqbu35hoyltt2e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I cannot fully understand your point...Sorry about my English...
+On Tue, Nov 06, 2018 at 07:33:19PM +0800, kbuild test robot wrote:
+> From: kbuild test robot <fengguang.wu@intel.com>
+>=20
+> drivers/staging/media/sunxi/cedrus/cedrus.c:421:3-8: No need to set .owne=
+r here. The core will do it.
+>=20
+>  Remove .owner field if calls are used which set it automatically
+>=20
+> Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
+>=20
+> Fixes: 50e761516f2b ("media: platform: Add Cedrus VPU decoder driver")
+> CC: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 
-To the point, you mean it is much better to fix it as Will suggested before or
-leave the matter as it is since the performance of bit_spinlock itself doesn't matter?
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Thanks in advance.
+Thanks!
+Maxime
 
-Thanks,
-Gao Xiang
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--3kxqbu35hoyltt2e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+GKUAAKCRDj7w1vZxhR
+xQALAQCdUsbSwW2U87Q/p4k/alU242F8CHMdU+/ODLXXyqK69QD+ImBMiqcJPU0Q
+o2ya/XxIXe9mWq93TVWLiJTgJW8JWwk=
+=uYsL
+-----END PGP SIGNATURE-----
+
+--3kxqbu35hoyltt2e--
