@@ -6,136 +6,131 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DEEC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F075C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCB4A2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:45:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB4A2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1486B2081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 01:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1486B2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbeKFLIh (ORCPT
+        id S1729158AbeKFLKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 06:08:37 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46178 "EHLO huawei.com"
+        Tue, 6 Nov 2018 06:10:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42154 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726368AbeKFLIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 06:08:37 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F00E164CB5B28;
-        Tue,  6 Nov 2018 09:45:52 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
- 09:45:47 +0800
-Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
-To:     Will Deacon <will.deacon@arm.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Chao Yu <chao@kernel.org>, <peterz@infradead.org>
-References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
- <20181030060441.16107-1-gaoxiang25@huawei.com>
- <20181105224654.GA25864@brain-police>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <e31a6864-823b-ac6e-2223-88fa3888502e@huawei.com>
-Date:   Tue, 6 Nov 2018 09:45:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1726368AbeKFLKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 06:10:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2D1B6ACBF;
+        Tue,  6 Nov 2018 01:48:12 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Tue, 06 Nov 2018 12:48:02 +1100
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] gfs2: properly initial file_lock used for unlock.
+In-Reply-To: <efbaeb736e4738bb7a0e2f8529bf1db8459bbe56.camel@kernel.org>
+References: <154138128401.31651.1381177427603557514.stgit@noble> <154138144777.31651.4516223215037533891.stgit@noble> <efbaeb736e4738bb7a0e2f8529bf1db8459bbe56.camel@kernel.org>
+Message-ID: <875zxbyo19.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <20181105224654.GA25864@brain-police>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/11/6 6:49, Will Deacon wrote:
-> Hi Gao,
-> 
-> On Tue, Oct 30, 2018 at 02:04:41PM +0800, Gao Xiang wrote:
->> It is better to use wrapped smp_cond_load_relaxed
->> instead of open-coded busy waiting for bit_spinlock.
->>
->> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+On Mon, Nov 05 2018, Jeff Layton wrote:
+
+> On Mon, 2018-11-05 at 12:30 +1100, NeilBrown wrote:
+>> Rather than assuming all-zeros is sufficient, use the available API to
+>> initialize the file_lock structure use for unlock.
+>> VFS-level changes will soon make it important that the
+>> list_heads in file_lock are always properly initialized.
+>>=20
+>> Signed-off-by: NeilBrown <neilb@suse.com>
 >> ---
->>
->> change log v2:
->>  - fix the incorrect expression !(VAL >> (bitnum & (BITS_PER_LONG-1)))
->>  - the test result is described in the following reply.
-> Please include the results in the commit message, so that this change is
-> justified.
+>>  fs/gfs2/file.c |   10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>=20
+>> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+>> index 45a17b770d97..271f847705e3 100644
+>> --- a/fs/gfs2/file.c
+>> +++ b/fs/gfs2/file.c
+>> @@ -1199,13 +1199,13 @@ static int do_flock(struct file *file, int cmd, =
+struct file_lock *fl)
+>>  	mutex_lock(&fp->f_fl_mutex);
+>>=20=20
+>>  	if (gfs2_holder_initialized(fl_gh)) {
+>> +		struct file_lock request;
+>>  		if (fl_gh->gh_state =3D=3D state)
+>>  			goto out;
+>> -		locks_lock_file_wait(file,
+>> -				     &(struct file_lock) {
+>> -					     .fl_type =3D F_UNLCK,
+>> -					     .fl_flags =3D FL_FLOCK
+>> -				     });
+>> +		locks_init_lock(&request);
+>> +		request.fl_type =3D F_UNLOCK;
+>
+> F_UNLCK ?
+>
+> The ocfs2 patch has the same bug.
 
-Will add in the next version...
+Anyone would think that I hadn't even compile tested.....
 
-> 
-> This appears to introduce a bunch of overhead for the uncontended fastpath.
-> How about the much-simpler-but-completely-untested (tm) patch below?
+This is true for OCFS2 :-( but I had actually compile-tested with GFS2
+enabled.
+But CONFIG_DLM *wasn't* enabled, so GFS2 was compiled without locking
+support.
+I guess there is a good reason that GFS2 doesn't require DLM.
 
-Actually I thought to do like the following (much simpler indeed) at first...
+Do you want me to resend the series, to will you just update those
+patches.
 
-But the current implementation of smp_cond_load_relaxed will do a judgement immediately
-which seems unnecessary (right after the test_and_set_bit_lock rather than after
-__cmpwait_relaxed...)
-        for (;;) {							\
-		VAL = READ_ONCE(*__PTR);				\
-		if (cond_expr)						\
-			break;						\
-		__cmpwait_relaxed(__PTR, VAL);				\
-	}								\
-
-p.s. I have no idea the original uncontended fastpath really works effectively...
-some idea about this? Thanks in advance...
+Sorry about that,
+NeilBrown
 
 
-Thanks,
-Gao Xiang
+>
+>> +		request.fl_flags =3D FL_FLOCK;
+>> +		locks_lock_file_wait(file, &request);
+>>  		gfs2_glock_dq(fl_gh);
+>>  		gfs2_holder_reinit(state, flags, fl_gh);
+>>  	} else {
+>>=20
+>>=20
+>
+> --=20
+> Jeff Layton <jlayton@kernel.org>
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Will
-> 
-> --->8
-> 
-> diff --git a/include/asm-generic/bitops/lock.h b/include/asm-generic/bitops/lock.h
-> index 3ae021368f48..9de8d3544630 100644
-> --- a/include/asm-generic/bitops/lock.h
-> +++ b/include/asm-generic/bitops/lock.h
-> @@ -6,6 +6,15 @@
->  #include <linux/compiler.h>
->  #include <asm/barrier.h>
->  
-> +static inline void spin_until_bit_unlock(unsigned int nr,
-> +					 volatile unsigned long *p)
-> +{
-> +	unsigned long mask = BIT_MASK(bitnum);
-> +
-> +	p += BIT_WORD(nr);
-> +	smp_cond_load_relaxed(p, VAL & mask);
-> +}
-> +
->  /**
->   * test_and_set_bit_lock - Set a bit and return its old value, for lock
->   * @nr: Bit to set
-> diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
-> index bbc4730a6505..d711c62e718c 100644
-> --- a/include/linux/bit_spinlock.h
-> +++ b/include/linux/bit_spinlock.h
-> @@ -26,9 +26,7 @@ static inline void bit_spin_lock(int bitnum, unsigned long *addr)
->  #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
->  	while (unlikely(test_and_set_bit_lock(bitnum, addr))) {
->  		preempt_enable();
-> -		do {
-> -			cpu_relax();
-> -		} while (test_bit(bitnum, addr));
-> +		spin_until_bit_unlock(bitnum, addr);
->  		preempt_disable();
->  	}
->  #endif
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvg8tMACgkQOeye3VZi
+gbkhQQ//eLcB4n71oQCYnQWrs7I2oUvPruxuNIr3QboGNlUEGSgdFPTkgKB4vCwr
+AY2uL/Vj0DBj/nO7dPLwP5kSX9CsKZj/VbmXu9ovTPAQSvfHhfufi7y7Z58I7lV8
+5jf3g0LE23eFyuQtS+eBkt9mcAhNSGKPxNKWrwyNCxYUgCejYtLpOrV2rkN/vEAU
+gloWPJ1Mtirf0gYrHLgTa7lSgtrNFgCMwgIrQzb/8xwNXfEGE76Y0gg/1T+synXy
+4vJafaF+sM6Od8YZ4zUpT/oQdwUDqyJsCa0CjFyFXVXi60MfI8UFStagxKnx2Ta9
+jJ09tPwLllHfHT3UVLaycybbKpXcXU95TWKOX008F8jKduVMkLApscZc0BLrEUjN
+5DtRKl8skmfUMvJuVKJcPVTZ0seaUNmQD2LaXTcnxfJAlZaqIYYshLUAH7d2FSEO
+cU7W4rsJqzosQaS5yTEpehwQubwDd012uBRhG0MzPfVWVBGHwXTimATZ8tVuxYOT
+pLRbDL6/XwIOzrunoEeZoGYQid0ZJ8FewukWfjtItwP+k7B66mx0yTIUCcOx72vK
+SFhVawad3UzS7e4MXO4yfnTvM6vD82hAVDhHkC3Bh2aMemXwZKwfuCqwUpXDZuTW
+I6A1Swnxh+CaL0d8gaTm78MQD5hNTtJ/wEnlk3seF1KDQ1pzAco=
+=jAnm
+-----END PGP SIGNATURE-----
+--=-=-=--
