@@ -2,94 +2,94 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 523B6C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E6BC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137DE20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:19:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IqmxIbmk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137DE20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id DBCBB20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCBB20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbeKGApG (ORCPT
+        id S2387930AbeKGAri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:45:06 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35074 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729574AbeKGApG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:45:06 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 81so11750712otj.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 07:19:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=CT7v4DQ09v3qvwbCogv4FsUWAqnPJyTXp0JhFTTMed4=;
-        b=IqmxIbmkn9dUfkcnvsYUEFL4EldPsXQ5y4nzzMeUYmy5KJTVFBx8OktDujcvringmR
-         zX7Kc+jzfXKkLN3tHu5OorqFJvU+gWKiSuc0gZvqFI70IG4VNmKbYOUPUr6P1Pdvaznv
-         EzoqpE0LeRTCMq1Jn0pjqTVjVNEqp6wk5Jd9o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=CT7v4DQ09v3qvwbCogv4FsUWAqnPJyTXp0JhFTTMed4=;
-        b=MPJnrAgwBpClGAS4JAnoGYJTgKTsbwJB+74Ir0Mqcm/gscwlOZBjIb9Zd0uyzU8DOL
-         rVaVOMitpGLE2ld6rBJKIxzil1vXdZpzjQuH65kg7XkFcaNZbHBAXpnQySDfpXeX5Xt7
-         Aliy1Q4x9aiSUZS50aYCJZtbZdz8nH6/1ly2R8AdB4TjMOjnViNmj5G2x+EONSz2lGZs
-         5Svg5XNxwCNBO/WU6TasUeWrGdoE0lIYJoxmNWkauVn0YM+cytqXkQufNVW7PFJcnnFJ
-         iPX7rhK1BOo4maSFvXgDzbJT86xExdaH+JI+N0uj2N6v2D6HXAWIgRFVgy1XhC0frcSy
-         Jf3A==
-X-Gm-Message-State: AGRZ1gJBrLkxra+kbUlZiT8DRhAxB0esVr+ty8b2I9JSL5egnGj13o7M
-        IuH4qY6t8RDXLvjHc1kX/pCZPoLCB4cKNleBswiCRF4=
-X-Google-Smtp-Source: AJdET5fTF5FICeFF0t2QZF+yAnlzGpMfds1QlQ3d1zJu1dF61Hxc3Uj8q+kTZOeJ22ObXjMjQF7Cl1e2cN9o+ViuH6E=
-X-Received: by 2002:a9d:738a:: with SMTP id j10mr16742980otk.188.1541517563761;
- Tue, 06 Nov 2018 07:19:23 -0800 (PST)
+        Tue, 6 Nov 2018 19:47:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52038 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730495AbeKGAri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:47:38 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A0289308212C;
+        Tue,  6 Nov 2018 15:21:56 +0000 (UTC)
+Received: from localhost (ovpn-117-210.ams2.redhat.com [10.36.117.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A3BF5D9C8;
+        Tue,  6 Nov 2018 15:21:55 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 15:21:55 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vitaly Mayatskih <v.mayatskih@gmail.com>
+Cc:     borntraeger@de.ibm.com, Jason Wang <jasowang@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
+Message-ID: <20181106152155.GA31579@stefanha-x1.localdomain>
+References: <20181102182123.29420-1-v.mayatskih@gmail.com>
+ <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
+ <c042686f-db95-514d-8bd8-92b72e4e087a@de.ibm.com>
+ <CAGF4SLjC5Gs33k1XzK8vFF5FWE0pwHvB56iQ--DJ_4ADw5yuGg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181106093100.71829-1-vovoy@chromium.org> <20181106105406.GO21967@phenom.ffwll.local>
-In-Reply-To: <20181106105406.GO21967@phenom.ffwll.local>
-From:   Kuo-Hsin Yang <vovoy@chromium.org>
-Date:   Tue, 6 Nov 2018 23:19:12 +0800
-Message-ID: <CAEHM+4oLesko3TPGDm2+FTCJT=gYw4fy0YmCQGuT1CTHFZgmkg@mail.gmail.com>
-Subject: Re: [PATCH v6] mm, drm/i915: mark pinned shmemfs pages as unevictable
-To:     linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mm@kvack.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Content-Disposition: inline
+In-Reply-To: <CAGF4SLjC5Gs33k1XzK8vFF5FWE0pwHvB56iQ--DJ_4ADw5yuGg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 06 Nov 2018 15:21:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 6:54 PM Daniel Vetter <daniel@ffwll.ch> wrote:
-> There was ages ago some planes to have our own i915fs, so that we could
-> overwrite the address_space hooks for page migration and eviction and tha=
-t
-> sort of thing, which would make all these pages evictable. Atm you have t=
-o
-> =C4=A5ope our shrinker drops them on the floor, which I think is fairly
-> confusing to core mm code (it's kinda like page eviction worked way back
-> before rmaps).
->
 
-Thanks for the explanation. Your blog posts helped a lot to get me
-started on hacking drm/i915 driver.
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Just an side really.
-> -Daniel
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+On Mon, Nov 05, 2018 at 11:15:04AM -0500, Vitaly Mayatskih wrote:
+> On Mon, Nov 5, 2018 at 10:48 AM Christian Borntraeger
+> <borntraeger@de.ibm.com> wrote:
+>=20
+> > For the record, we still do use virtio-blk a lot. As we see new things =
+like discard/write zero
+> > support it seems that others do as well.
+>=20
+> Yes, trim/discard and writesame support is planned, at least for
+> submit_bio path (not in this patch).
+
+I agree, virtio_blk is quite popular and not deprecated/frozen.
+
+Stefan
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJb4bGTAAoJEJykq7OBq3PINHAH/RMVu0n4qzOEyEky9DGqqMzA
+03ZEJGv9GOSA9R/BywE6uDHWcFvn80MOx52U91O9Cz1wDwZsjVwujBLW/BXOQKGR
+ZansMQbTdlEYLGtrmNV5y/O/Von2/FZuhHhhbACgMKM3VifByI3yYQgfyoItql+X
+hZDRlaNFr59u9Ib8lOswPoXvMF/HiM3QsRKvYdd0QTGtItUuBRMaYuZgG40dsgdh
+o8+9bk/FkmhY8QT6qx26vPp0Qc02A+6Opvf/MYBRDqbaHPqmL+gmIEYG6BGfyxaV
+NdYjXPzOCve0OcvHtd2fmboYrlGeoduN/q0guVZgp6XC0cEvcw+HhH7IP56zirA=
+=fSFj
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
