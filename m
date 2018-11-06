@@ -2,84 +2,74 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39884C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C19C46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6182081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6182081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 978C02081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978C02081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbeKFPZF (ORCPT
+        id S1730161AbeKFPZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:25:05 -0500
-Received: from mga04.intel.com ([192.55.52.120]:36469 "EHLO mga04.intel.com"
+        Tue, 6 Nov 2018 10:25:15 -0500
+Received: from mga11.intel.com ([192.55.52.93]:9530 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729326AbeKFPZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:25:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1729326AbeKFPZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 10:25:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:01:32 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:01:41 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="271698846"
-Received: from optiplex-7050.sh.intel.com ([10.239.161.26])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 22:01:30 -0800
-From:   Liu Jingqi <jingqi.liu@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com
-Cc:     bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tao3.xu@intel.com,
-        Liu Jingqi <jingqi.liu@intel.com>
-Subject: [PATCH v2 2/2] KVM: x86: expose MOVDIR64B CPU feature into VM.
-Date:   Tue,  6 Nov 2018 13:55:28 +0800
-Message-Id: <1541483728-7826-3-git-send-email-jingqi.liu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541483728-7826-1-git-send-email-jingqi.liu@intel.com>
-References: <1541483728-7826-1-git-send-email-jingqi.liu@intel.com>
+   d="scan'208";a="97946633"
+Received: from unknown (HELO localhost) ([10.249.254.149])
+  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2018 22:01:35 -0800
+Date:   Tue, 6 Nov 2018 08:01:33 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 06/16] tpm: clean up tpm_try_transmit() error handling
+ flow
+Message-ID: <20181106060133.GF15575@linux.intel.com>
+References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-7-jarkko.sakkinen@linux.intel.com>
+ <b64dc22e-b7c5-edaf-7836-d99e51a0c724@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b64dc22e-b7c5-edaf-7836-d99e51a0c724@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MOVDIR64B moves 64-bytes as direct-store with 64-bytes write atomicity.
-Direct store is implemented by using write combining (WC) for writing
-data directly into memory without caching the data.
+On Mon, Nov 05, 2018 at 05:20:33PM -0500, Stefan Berger wrote:
+> > +out_locality:
+> > +		if (has_locality)
+> > +			tpm_relinquish_locality(chip, flags);
+> 
+> Safer to also put has_locality = false here ?
 
-Availability of the MOVDIR64B instruction is indicated by the presence
-of the CPUID feature flag MOVDIR64B (CPUID.0x07.0x0:ECX[bit 28]).
+Not really sure why?
 
-This patch exposes the movdir64b feature to the guest.
-
-The release document ref below link:
-https://software.intel.com/sites/default/files/managed/c5/15/\
-architecture-instruction-set-extensions-programming-reference.pdf
-
-Signed-off-by: Liu Jingqi <jingqi.liu@intel.com>
-Cc: Xu Tao <tao3.xu@intel.com>
----
- arch/x86/kvm/cpuid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index cbfeaa7..721893a 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -406,7 +406,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
- 		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
- 		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
--		F(CLDEMOTE) | F(MOVDIRI);
-+		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B);
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
--- 
-2.7.4
-
+/Jarkko
