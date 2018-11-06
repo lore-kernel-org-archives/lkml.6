@@ -2,330 +2,128 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A98C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E776DC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 949F02083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A07132083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Vy0KMKAn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 949F02083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWp0Y/Yi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A07132083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388762AbeKGGV4 (ORCPT
+        id S2388783AbeKGGXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:21:56 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:34216 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388626AbeKGGV4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:21:56 -0500
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA6Kqvkj013303
-        for <linux-kernel@vger.kernel.org>; Tue, 6 Nov 2018 12:54:50 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=L+78ismNklnMX++hAilB7RHF+v2xn524zShaqiut6cg=;
- b=Vy0KMKAnZOWebt+/4sFuVjYztEAnaqdkPq6RwnGD8U/fUAI8bSn+Bw1S2Er66FoQN6sF
- xpStKCGobzjBLie9QZ5QOJCromRJ1hbGo6GHLAitakX+kshFD17nzth+U5CHmjibPLbi
- ewHOIMDdsmL7TZmUZ6jmWMyNRoxIwBS5/GY= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2nkdwggyhg-18
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 12:54:50 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Tue, 6 Nov 2018 12:53:26 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 182BD62E1CAE; Tue,  6 Nov 2018 12:53:25 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
-        <ast@kernel.org>, <daniel@iogearbox.net>, <peterz@infradead.org>,
-        <acme@kernel.org>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [RFC perf,bpf 1/5] perf, bpf: Introduce PERF_RECORD_BPF_EVENT
-Date:   Tue, 6 Nov 2018 12:52:42 -0800
-Message-ID: <20181106205246.567448-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181106205246.567448-1-songliubraving@fb.com>
-References: <20181106205246.567448-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Wed, 7 Nov 2018 01:23:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388208AbeKGGXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:23:12 -0500
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D802A2083D;
+        Tue,  6 Nov 2018 20:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541537766;
+        bh=aL+CTRK4kbTb1vjOMTK4/s7gQmcIosOQr5Iz1wfEd30=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JWp0Y/Yia5yjpTl1lK207lMI2+6fBJhcixhEVRBmCj0SX0kI8bqu3f2V99FRjWcWf
+         Ck8igVihuGyv8Nxlc/zOrFOP+78P6BwDtSqFJEBRW4hDTH8X8LQjJt/w2gSKRYs7Zs
+         mwfGATcrLFAQCxO05KFz7HW310lqvJiwknxw0cNE=
+Received: by mail-qk1-f178.google.com with SMTP id 189so19325946qkj.8;
+        Tue, 06 Nov 2018 12:56:05 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLVJPUtaQNy64jgef9LopYN1NnJBfJiLXLsDevhIzR5NZPPRkDd
+        7PGPoBIyToficW1JXdLuUzOvE2thfCM0DEMy9Q==
+X-Google-Smtp-Source: AJdET5eBrOqMPVIp+eXzvmwFvYiFHRu9pOaiiSci7GPQMHn0EnROG5lPkEPbwoXtbrW+AmY9SFltgOAB5OElCXU81uE=
+X-Received: by 2002:ae9:ef14:: with SMTP id d20mr26655502qkg.147.1541537765086;
+ Tue, 06 Nov 2018 12:56:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20181102192616.28291-1-faiz_abbas@ti.com> <20181102192616.28291-3-faiz_abbas@ti.com>
+In-Reply-To: <20181102192616.28291-3-faiz_abbas@ti.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 6 Nov 2018 14:55:54 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+tMKb6e69dfz9B1g3yy+a+sPTM0edJ51x6+hWEMAu8CA@mail.gmail.com>
+Message-ID: <CAL_Jsq+tMKb6e69dfz9B1g3yy+a+sPTM0edJ51x6+hWEMAu8CA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dt-bindings: phy: phy-of-simple: Document new binding
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        linux-can@vger.kernel.org, Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For better performance analysis of BPF programs, this patch introduces
-PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
-load/unload information to user space.
+On Fri, Nov 2, 2018 at 2:23 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Add documentation for the generic simple phy implementation.
 
-        /*
-         * Record different types of bpf events:
-         *   enum perf_bpf_event_type {
-         *      PERF_BPF_EVENT_UNKNOWN          = 0,
-         *      PERF_BPF_EVENT_PROG_LOAD        = 1,
-         *      PERF_BPF_EVENT_PROG_UNLOAD      = 2,
-         *   };
-         *
-         * struct {
-         *      struct perf_event_header header;
-         *      u16 type;
-         *      u16 flags;
-         *      u32 id;  // prog_id or map_id
-         * };
-         */
-        PERF_RECORD_BPF_EVENT                   = 17,
+We don't do 'simple' or 'generic' bindings.
 
-PERF_RECORD_BPF_EVENT contains minimal information about the BPF program.
-Perf utility (or other user space tools) should listen to this event and
-fetch more details about the event via BPF syscalls
-(BPF_PROG_GET_FD_BY_ID, BPF_OBJ_GET_INFO_BY_FD, etc.).
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  .../devicetree/bindings/phy/phy-of-simple.txt | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-of-simple.txt
+>
+> diff --git a/Documentation/devicetree/bindings/phy/phy-of-simple.txt b/Documentation/devicetree/bindings/phy/phy-of-simple.txt
+> new file mode 100644
+> index 000000000000..696f2763395c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-of-simple.txt
+> @@ -0,0 +1,29 @@
+> +Generic simple phy device tree binding
+> +--------------------------------------
+> +
+> +A good number of phy implementations merely read dts properties,
+> +enable clocks, regulators or do resets without having a dedicated register
+> +map. This binding implements a generic phy driver which can be used for
+> +such simple implementations and avoid boilerplate code duplication.
 
-Currently, PERF_RECORD_BPF_EVENT only support two events:
-PERF_BPF_EVENT_PROG_LOAD and PERF_BPF_EVENT_PROG_UNLOAD. But it can be
-easily extended to support more events.
+Sure, but then latter some needs certain timing/ordering of those
+controls or some other DT additions. 'generic' or 'simple' never work
+out for bindings. By all means though, write a simple/generic phy
+driver. Just make it understand an explicit list of compatible
+strings. Then when a phy turns out to be not so simple, we can write a
+driver for it with changing the DT.
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- include/linux/perf_event.h      |  5 ++
- include/uapi/linux/perf_event.h | 27 ++++++++++-
- kernel/bpf/syscall.c            |  4 ++
- kernel/events/core.c            | 82 ++++++++++++++++++++++++++++++++-
- 4 files changed, 116 insertions(+), 2 deletions(-)
+> +Required Properties:
+> +-  compatible  : must be "simple-phy"
+> +-  phy-cells    : must be 0
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..a3126fd5b7f1 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1113,6 +1113,9 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
- }
- 
- extern void perf_event_mmap(struct vm_area_struct *vma);
-+extern void perf_event_bpf_event(enum perf_bpf_event_type type,
-+				 u16 flags, u32 id);
-+
- extern struct perf_guest_info_callbacks *perf_guest_cbs;
- extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
- extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1333,6 +1336,8 @@ static inline int perf_unregister_guest_info_callbacks
- (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
- 
- static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
-+static inline void perf_event_bpf_event(enum perf_bpf_event_type type,
-+					u16 flags, u32 id)		{ }
- static inline void perf_event_exec(void)				{ }
- static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
- static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index f35eb72739c0..d51cacb3077a 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				bpf_event      :  1, /* include bpf events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -963,9 +964,33 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record different types of bpf events:
-+	 *  enum perf_bpf_event_type {
-+	 *     PERF_BPF_EVENT_UNKNOWN		= 0,
-+	 *     PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	 *     PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	 *  };
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header header;
-+	 *	u16 type;
-+	 *	u16 flags;
-+	 *	u32 id;  // prog_id or map_id
-+	 * };
-+	 */
-+	PERF_RECORD_BPF_EVENT			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_bpf_event_type {
-+	PERF_BPF_EVENT_UNKNOWN		= 0,
-+	PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	PERF_BPF_EVENT_MAX,		/* non-ABI */
-+};
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 18e3be193a05..b37051a13be6 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1101,9 +1101,12 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
- static void __bpf_prog_put(struct bpf_prog *prog, bool do_idr_lock)
- {
- 	if (atomic_dec_and_test(&prog->aux->refcnt)) {
-+		int prog_id = prog->aux->id;
-+
- 		/* bpf_prog_free_id() must be called first */
- 		bpf_prog_free_id(prog, do_idr_lock);
- 		bpf_prog_kallsyms_del_all(prog);
-+		perf_event_bpf_event(PERF_BPF_EVENT_PROG_UNLOAD, 0, prog_id);
- 
- 		call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
- 	}
-@@ -1441,6 +1444,7 @@ static int bpf_prog_load(union bpf_attr *attr)
- 	}
- 
- 	bpf_prog_kallsyms_add(prog);
-+	perf_event_bpf_event(PERF_BPF_EVENT_PROG_LOAD, 0, prog->aux->id);
- 	return err;
- 
- free_used_maps:
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5a97f34bc14c..54667be6669b 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
- static atomic_t nr_task_events __read_mostly;
- static atomic_t nr_freq_events __read_mostly;
- static atomic_t nr_switch_events __read_mostly;
-+static atomic_t nr_bpf_events __read_mostly;
- 
- static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
-@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
- 
- 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
- 	    attr->comm || attr->comm_exec ||
--	    attr->task ||
-+	    attr->task || attr->bpf_event ||
- 	    attr->context_switch)
- 		return true;
- 	return false;
-@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
- 		dec = true;
- 	if (has_branch_stack(event))
- 		dec = true;
-+	if (event->attr.bpf_event)
-+		atomic_dec(&nr_bpf_events);
- 
- 	if (dec) {
- 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
-@@ -7650,6 +7653,81 @@ static void perf_log_throttle(struct perf_event *event, int enable)
- 	perf_output_end(&handle);
- }
- 
-+/*
-+ * bpf load/unload tracking
-+ */
-+
-+struct perf_bpf_event {
-+	struct {
-+		struct perf_event_header        header;
-+		u16 type;
-+		u16 flags;
-+		u32 id;
-+	} event_id;
-+};
-+
-+static int perf_event_bpf_match(struct perf_event *event)
-+{
-+	return event->attr.bpf_event;
-+}
-+
-+static void perf_event_bpf_output(struct perf_event *event,
-+				   void *data)
-+{
-+	struct perf_bpf_event *bpf_event = data;
-+	struct perf_output_handle handle;
-+	struct perf_sample_data sample;
-+	int size = bpf_event->event_id.header.size;
-+	int ret;
-+
-+	if (!perf_event_bpf_match(event))
-+		return;
-+
-+	perf_event_header__init_id(&bpf_event->event_id.header, &sample, event);
-+	ret = perf_output_begin(&handle, event,
-+				bpf_event->event_id.header.size);
-+	if (ret)
-+		goto out;
-+
-+	perf_output_put(&handle, bpf_event->event_id);
-+	perf_event__output_id_sample(event, &handle, &sample);
-+
-+	perf_output_end(&handle);
-+out:
-+	bpf_event->event_id.header.size = size;
-+}
-+
-+static void perf_event_bpf(struct perf_bpf_event *bpf_event)
-+{
-+	perf_iterate_sb(perf_event_bpf_output,
-+		       bpf_event,
-+		       NULL);
-+}
-+
-+void perf_event_bpf_event(enum perf_bpf_event_type type, u16 flags, u32 id)
-+{
-+	struct perf_bpf_event bpf_event;
-+
-+	if (!atomic_read(&nr_bpf_events))
-+		return;
-+
-+	if (type <= PERF_BPF_EVENT_UNKNOWN || type >= PERF_BPF_EVENT_MAX)
-+		return;
-+
-+	bpf_event = (struct perf_bpf_event){
-+		.event_id = {
-+			.header = {
-+				.type = PERF_RECORD_BPF_EVENT,
-+				.size = sizeof(bpf_event.event_id),
-+			},
-+			.type = type,
-+			.flags = flags,
-+			.id = id,
-+		},
-+	};
-+	perf_event_bpf(&bpf_event);
-+}
-+
- void perf_event_itrace_started(struct perf_event *event)
- {
- 	event->attach_state |= PERF_ATTACH_ITRACE;
-@@ -9871,6 +9949,8 @@ static void account_event(struct perf_event *event)
- 		inc = true;
- 	if (is_cgroup_event(event))
- 		inc = true;
-+	if (event->attr.bpf_event)
-+		atomic_inc(&nr_bpf_events);
- 
- 	if (inc) {
- 		/*
--- 
-2.17.1
+#phy-cells
 
+> +
+> +Optional Properties:
+> +-  bus-width   : generic bus-width. Must be positive.
+> +-  max-bitrate : generic max-bitrate. Must be positive.
+> +-  pwr         : phandle to phy pwr regulator node.
+
+That's not the regulator binding.
+
+> +
+> +Example:
+> +
+> +The following example is a can transceiver implemented as a generic phy.
+> +It has a max-bitrate property and a pwr regulator.
+> +
+> +
+> +transceiver1: can-transceiver {
+> +       compatible = "simple-phy";
+> +       max-bitrate = <5000000>;
+> +       pwr-supply = <&transceiver1_fixed>;
+> +       #phy-cells = <0>;
+> +};
+> --
+> 2.18.0
+>
