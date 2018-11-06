@@ -2,126 +2,105 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB4FC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C3FC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203B42085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:45:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203B42085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 2F7A22085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:45:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0qDA3veG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7A22085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387650AbeKFTJa (ORCPT
+        id S2387660AbeKFTKP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:09:30 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:64869 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387484AbeKFTJa (ORCPT
+        Tue, 6 Nov 2018 14:10:15 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50526 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729241AbeKFTKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:09:30 -0500
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA69iqnq012495;
-        Tue, 6 Nov 2018 18:44:52 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Tue, 06 Nov 2018 18:44:52 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA69ijWm012405
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 6 Nov 2018 18:44:52 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-mm@kvack.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181022071323.9550-1-mhocko@kernel.org>
- <20181022071323.9550-3-mhocko@kernel.org>
- <20181026142531.GA27370@cmpxchg.org> <20181026192551.GC18839@dhcp22.suse.cz>
- <20181026193304.GD18839@dhcp22.suse.cz>
- <dfafc626-2233-db9b-49fa-9d4bae16d4aa@i-love.sakura.ne.jp>
-Message-ID: <c38e352a-dd23-a5e4-ac50-75b557506479@i-love.sakura.ne.jp>
-Date:   Tue, 6 Nov 2018 18:44:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <dfafc626-2233-db9b-49fa-9d4bae16d4aa@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Nov 2018 14:10:15 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA69hwmF085680;
+        Tue, 6 Nov 2018 09:45:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=tD7ZJ7tOM4z9u8Iruq0Ff71UI5ebhD1tLfBiF5eP3JY=;
+ b=0qDA3veGgv1Kqe4yS3BF59iOnqzM9ooJMsgFdDbdCmamUfUmgLYFTidfW1wm83pxhl34
+ dGHIsx5j7iccBSMYk7UcysGc669oU72y6AMeT/y7daluLzYX45Hq0l8neFABAeVVDDbC
+ FFrZcGvw7XQAFNrr4q2sYe9cMrQcEJs6clgIiA15spaYCxzbqFNDSRv904UIkPomieZH
+ S5KNJSFEkThAvshIZfbMFfqVDtBAB74D1ioTmYDp3M9xl389ZHPCuZzUJakbNTPY4vO1
+ ki6tMY/LT68P0rTjy4OIzbQEXXNH+6MhrfzPYHr4qdLb09RcNONl0AhlkNbNpt3m/qr/ zw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2nh33tv4j1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 06 Nov 2018 09:45:33 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA69jWbd013770
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 6 Nov 2018 09:45:32 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA69jUXC001617;
+        Tue, 6 Nov 2018 09:45:30 GMT
+Received: from [192.168.0.191] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 06 Nov 2018 01:45:30 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
+From:   William Kucharski <william.kucharski@oracle.com>
+X-Mailer: iPad Mail (16C5036c)
+In-Reply-To: <20181105131305.574d85469f08a4b76592feb6@linux-foundation.org>
+Date:   Tue, 6 Nov 2018 02:45:28 -0700
+Cc:     Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <210D9DA6-67F2-4CF3-94FC-883AA890F53A@oracle.com>
+References: <20181105204000.129023-1-bvanassche@acm.org> <20181105131305.574d85469f08a4b76592feb6@linux-foundation.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9068 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811060086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From dc0d9ec3205a28680dcf2213c0ffe8820e8b5913 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 6 Nov 2018 12:27:36 +0900
-Subject: [PATCH] memcg: killed threads should not invoke memcg OOM killer
 
-It is possible that a single process group memcg easily swamps the log
-with no-eligible OOM victim messages after current thread was OOM-killed,
-due to race between the memcg charge and the OOM reaper [1].
 
-Thread-1                 Thread-2                       OOM reaper
-try_charge()
-  mem_cgroup_out_of_memory()
-    mutex_lock(oom_lock)
-                        try_charge()
-                          mem_cgroup_out_of_memory()
-                            mutex_lock(oom_lock)
-    out_of_memory()
-      select_bad_process()
-      oom_kill_process(current)
-      wake_oom_reaper()
-                                                        oom_reap_task()
-                                                        # sets MMF_OOM_SKIP
-    mutex_unlock(oom_lock)
-                            out_of_memory()
-                              select_bad_process() # no task
-                            mutex_unlock(oom_lock)
+> On Nov 5, 2018, at 14:13, Andrew Morton <akpm@linux-foundation.org> wrote:=
 
-We don't need to invoke the memcg OOM killer if current thread was killed
-when waiting for oom_lock, for mem_cgroup_oom_synchronize(true) and
-memory_max_write() can bail out upon SIGKILL, and try_charge() allows
-already killed/exiting threads to make forward progress.
+>=20
+>> On Mon,  5 Nov 2018 12:40:00 -0800 Bart Van Assche <bvanassche@acm.org> w=
+rote:
+>> -    return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
+>> +    return type_dma + is_reclaimable * !is_dma * KMALLOC_RECLAIM;
+>> }
+>>=20
+>> /*
+>=20
+> I suppose so.
+>=20
+> That function seems too clever for its own good :(.  I wonder if these
+> branch-avoiding tricks are really worthwhile.
 
-[1] https://lkml.kernel.org/r/ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp
+At the very least I'd like to see some comments added as to why that approac=
+h was taken for the sake of future maintainers.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- mm/memcontrol.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+William Kucharski
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 6e1469b..a97648a 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1382,8 +1382,13 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	};
- 	bool ret;
- 
--	mutex_lock(&oom_lock);
--	ret = out_of_memory(&oc);
-+	if (mutex_lock_killable(&oom_lock))
-+		return true;
-+	/*
-+	 * A few threads which were not waiting at mutex_lock_killable() can
-+	 * fail to bail out. Therefore, check again after holding oom_lock.
-+	 */
-+	ret = fatal_signal_pending(current) || out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
- }
--- 
-1.8.3.1
 
