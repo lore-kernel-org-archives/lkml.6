@@ -2,223 +2,318 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C7DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04205C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9757020827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YJrST7B/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jbLnU8JR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9757020827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B58C120827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B58C120827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387465AbeKFPeD (ORCPT
+        id S2387503AbeKFPeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 6 Nov 2018 10:34:07 -0500
+Received: from mga03.intel.com ([134.134.136.65]:30587 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730148AbeKFPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Nov 2018 10:34:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57624 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729342AbeKFPeC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:34:02 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 13B0260ADB; Tue,  6 Nov 2018 06:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541484627;
-        bh=Cn3HO29ZZ1PWta/JA8C2cL6tD/wzqk1MvMJZ30dT5bk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YJrST7B/VE61p/ifamGYdJyYKDFoTD4YTEHJAFv3UD+mncXsBQTqMmbfFZnCMDr3P
-         YGFHXl2pqM7b3Uw1YmwelBWe5siISoiK3R+EEXDrSNeJdAtzLnKVehgp4mP7r15Cbd
-         NQOiQoXpuznF7z4iDR7X0oVi7RMoUo7m4l/fbg/E=
-Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: smasetty@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 428C360A9B;
-        Tue,  6 Nov 2018 06:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541484626;
-        bh=Cn3HO29ZZ1PWta/JA8C2cL6tD/wzqk1MvMJZ30dT5bk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jbLnU8JR1Z5joEXHE0GJ04EA+cIHsZ2mttks74EpJLES46dxnBmHLMj3v88EZINFU
-         bMRyJEBs4l3WRQoPadz0M2P7f3MNcwBn9Y+zNOkBR/Uvt46L2kUeLu4DIc8VV5xlFN
-         Wn2z7xnFWn/q6+MifejKrCiJHEltC3jMQHCTi8jw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 428C360A9B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
-From:   Sharat Masetty <smasetty@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        chris@chris-wilson.co.uk, jcrouse@codeaurora.org,
-        robdclark@gmail.com, linux-kernel@vger.kernel.org,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: [PATCH 3/3] drm/msm: Optimize adreno_show_object()
-Date:   Tue,  6 Nov 2018 11:40:06 +0530
-Message-Id: <1541484606-20813-3-git-send-email-smasetty@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1541484606-20813-1-git-send-email-smasetty@codeaurora.org>
-References: <1541484606-20813-1-git-send-email-smasetty@codeaurora.org>
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:10:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
+   d="scan'208";a="271701586"
+Received: from unknown (HELO localhost) ([10.249.254.149])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 22:10:22 -0800
+Date:   Tue, 6 Nov 2018 08:10:20 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 08/16] tpm: move tpm_validate_commmand() to
+ tpm2-space.c
+Message-ID: <20181106061020.GH15575@linux.intel.com>
+References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-9-jarkko.sakkinen@linux.intel.com>
+ <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the userspace tries to read the crashstate dump, the read side
-implementation in the driver currently ascii85 encodes all the binary
-buffers and it does this each time the read system call is called.
-A userspace tool like cat typically does a page by page read and the
-number of read calls depends on the size of the data captured by the
-driver. This is certainly not desirable and does not scale well with
-large captures.
+On Mon, Nov 05, 2018 at 05:36:03PM -0500, Stefan Berger wrote:
+> On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
+> > Move tpm_validate_command() to tpm2-space.c and make it part of the
+> > tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
+> > functionality in order to detach it from rest of the tpm_transmit()
+> > flow.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >   drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
+> >   drivers/char/tpm/tpm.h           |  9 ++--
+> >   drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
+> >   3 files changed, 68 insertions(+), 67 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > index 422e3bb0bd3d..3bf0c51b7b4f 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> >   }
+> >   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+> > 
+> > -static int tpm_validate_command(struct tpm_chip *chip,
+> > -				 struct tpm_space *space,
+> > -				 const u8 *cmd,
+> > -				 size_t len)
+> > -{
+> > -	const struct tpm_input_header *header = (const void *)cmd;
+> > -	int i;
+> > -	u32 cc;
+> > -	u32 attrs;
+> > -	unsigned int nr_handles;
+> > -
+> > -	if (len < TPM_HEADER_SIZE)
+> > -		return -EINVAL;
+> > -
+> > -	if (!space)
+> > -		return 0;
+> > -
+> > -	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+> > -		cc = be32_to_cpu(header->ordinal);
+> > -
+> > -		i = tpm2_find_cc(chip, cc);
+> > -		if (i < 0) {
+> > -			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+> > -				cc);
+> > -			return -EOPNOTSUPP;
+> > -		}
+> > -
+> > -		attrs = chip->cc_attrs_tbl[i];
+> > -		nr_handles =
+> > -			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
+> > -		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+> > -			goto err_len;
+> > -	}
+> > -
+> > -	return 0;
+> > -err_len:
+> > -	dev_dbg(&chip->dev,
+> > -		"%s: insufficient command length %zu", __func__, len);
+> > -	return -EINVAL;
+> > -}
+> > -
+> >   static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+> >   {
+> >   	int rc;
+> > @@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> >   	u32 count, ordinal;
+> >   	unsigned long stop;
+> > 
+> > -	rc = tpm_validate_command(chip, space, buf, bufsiz);
+> > -	if (rc == -EINVAL)
+> > -		return rc;
+> > -	/*
+> > -	 * If the command is not implemented by the TPM, synthesize a
+> > -	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> > -	 */
+> > -	if (rc == -EOPNOTSUPP) {
+> > -		header->length = cpu_to_be32(sizeof(*header));
+> > -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> > -		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> > -						  TSS2_RESMGR_TPM_RC_LAYER);
+> > -		return sizeof(*header);
+> > -	}
+> > +	if (bufsiz < TPM_HEADER_SIZE)
+> > +		return -EINVAL;
+> > 
+> >   	if (bufsiz > TPM_BUFSIZE)
+> >   		bufsiz = TPM_BUFSIZE;
+> > @@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> >   		return -E2BIG;
+> >   	}
+> > 
+> > -	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+> > +	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
+> > +	/*
+> > +	 * If the command is not implemented by the TPM, synthesize a
+> > +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> > +	 */
+> > +	if (rc == -EOPNOTSUPP) {
+> > +		header->length = cpu_to_be32(sizeof(*header));
+> > +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> > +		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> > +						  TSS2_RESMGR_TPM_RC_LAYER);
+> > +		return sizeof(*header);
+> > +	}
+> >   	if (rc)
+> >   		return rc;
+> > 
+> > @@ -251,7 +209,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> >   	if (rc)
+> >   		tpm2_flush_space(chip);
+> >   	else
+> > -		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> > +		rc = tpm2_commit_space(chip, space, buf, &len);
+> > 
+> >   	return rc ? rc : len;
+> >   }
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > index 229ac42b644e..8503dd261897 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -264,6 +264,7 @@ struct tpm_chip {
+> >   #endif /* CONFIG_ACPI */
+> > 
+> >   	struct tpm_space work_space;
+> > +	u32 last_cc;
+> >   	u32 nr_commands;
+> >   	u32 *cc_attrs_tbl;
+> > 
+> > @@ -580,10 +581,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+> >   int tpm2_init_space(struct tpm_space *space);
+> >   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
+> >   void tpm2_flush_space(struct tpm_chip *chip);
+> > -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+> > -		       u8 *cmd);
+> > -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> > -		      u32 cc, u8 *buf, size_t *bufsiz);
+> > +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
+> > +		       size_t cmdsiz);
+> > +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
+> > +		       size_t *bufsiz);
+> > 
+> >   int tpm_bios_log_setup(struct tpm_chip *chip);
+> >   void tpm_bios_log_teardown(struct tpm_chip *chip);
+> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> > index 3d5f9577e5de..20c295fadd50 100644
+> > --- a/drivers/char/tpm/tpm2-space.c
+> > +++ b/drivers/char/tpm/tpm2-space.c
+> > @@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
+> >   	return 0;
+> >   }
+> > 
+> > -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+> > -		       u8 *cmd)
+> > +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
+> > +				const u8 *cmd, size_t len)
+> 
+> 
+> Nit: len -> cmdsiz (like below)
+> 
+> 
+> > +{
+> > +	const struct tpm_input_header *header = (const void *)cmd;
+> > +	int i;
+> > +	u32 cc;
+> > +	u32 attrs;
+> > +	unsigned int nr_handles;
+> > +
+> > +	if (len < TPM_HEADER_SIZE)
+> > +		return -EINVAL;
+> > +
+> > +	if (chip->nr_commands) {
+> > +		cc = be32_to_cpu(header->ordinal);
+> > +
+> > +		i = tpm2_find_cc(chip, cc);
+> > +		if (i < 0) {
+> > +			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+> > +				cc);
+> > +			return -EOPNOTSUPP;
+> > +		}
+> > +
+> > +		attrs = chip->cc_attrs_tbl[i];
+> > +		nr_handles =
+> > +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
+> > +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+> > +			goto err_len;
+> > +	}
+> > +
+> > +	return cc;
+> > +err_len:
+> > +	dev_dbg(&chip->dev, "%s: insufficient command length %zu", __func__,
+> > +		len);
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
+> > +		       size_t cmdsiz)
+> >   {
+> >   	int rc;
+> > +	int cc;
+> > 
+> >   	if (!space)
+> >   		return 0;
+> > 
+> > +	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
+> > +	if (cc < 0)
+> > +		return cc;
+> > +
+> >   	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
+> >   	       sizeof(space->context_tbl));
+> >   	memcpy(&chip->work_space.session_tbl, &space->session_tbl,
+> > @@ -291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+> >   		return rc;
+> >   	}
+> > 
+> > +	chip->last_cc = cc;
+> >   	return 0;
+> >   }
+> > 
+> > @@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
+> >   	return 0;
+> >   }
+> > 
+> > -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> > -		      u32 cc, u8 *buf, size_t *bufsiz)
+> > +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
+> > +		      size_t *bufsiz)
+> >   {
+> >   	struct tpm_output_header *header = (void *)buf;
+> >   	int rc;
+> > @@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> >   	if (!space)
+> >   		return 0;
+> > 
+> > -	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+> > +	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
+> >   	if (rc) {
+> >   		tpm2_flush_space(chip);
+> >   		goto out;
+> >   	}
+> > 
+> > -	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+> > +	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
+> >   	if (rc) {
+> >   		tpm2_flush_space(chip);
+> >   		goto out;
+> 
+> Rest looks good.
+> 
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-This patch encodes the buffer only once in the read path. With this there
-is an immediate >10X speed improvement in crashstate save time.
+Great, awesome, thank you for all your reviews!
 
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
----
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 76 ++++++++++++++++++++++++---------
- drivers/gpu/drm/msm/msm_gpu.h           |  2 +
- 2 files changed, 58 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index c93702d..e29093e 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -475,34 +475,70 @@ int adreno_gpu_state_put(struct msm_gpu_state *state)
- 
- #if defined(CONFIG_DEBUG_FS) || defined(CONFIG_DEV_COREDUMP)
- 
--static void adreno_show_object(struct drm_printer *p, u32 *ptr, int len)
-+static char *adreno_gpu_ascii85_encode(u32 *src, size_t len)
- {
--	char out[ASCII85_BUFSZ];
--	long l, datalen, i;
-+	void *buf;
-+	size_t buf_itr = 0;
-+	long i, l;
- 
--	if (!ptr || !len)
--		return;
-+	if (!len)
-+		return NULL;
-+
-+	l = ascii85_encode_len(len);
- 
- 	/*
--	 * Only dump the non-zero part of the buffer - rarely will any data
--	 * completely fill the entire allocated size of the buffer
-+	 * ascii85 outputs either a 5 byte string or a 1 byte string. So we
-+	 * account for the worst case of 5 bytes per dword plus the 1 for '\0'
- 	 */
--	for (datalen = 0, i = 0; i < len >> 2; i++) {
--		if (ptr[i])
--			datalen = (i << 2) + 1;
--	}
-+	buf = kvmalloc((l * 5) + 1, GFP_KERNEL);
-+	if (!buf)
-+		return NULL;
- 
--	/* Skip printing the object if it is empty */
--	if (datalen == 0)
-+	for (i = 0; i < l; i++)
-+		buf_itr += ascii85_encode_to_buf(src[i], buf + buf_itr);
-+
-+	return buf;
-+}
-+
-+/* len is expected to be in bytes */
-+static void adreno_show_object(struct drm_printer *p, void **ptr, int len,
-+		bool *encoded)
-+{
-+	if (!*ptr || !len)
- 		return;
- 
--	l = ascii85_encode_len(datalen);
-+	if (!*encoded) {
-+		long datalen, i;
-+		u32 *buf = *ptr;
-+
-+		/*
-+		 * Only dump the non-zero part of the buffer - rarely will
-+		 * any data completely fill the entire allocated size of
-+		 * the buffer.
-+		 */
-+		for (datalen = 0, i = 0; i < len >> 2; i++) {
-+			if (buf[i])
-+				datalen = ((i + 1) << 2);
-+		}
-+
-+		/*
-+		 * If we reach here, then the originally captured binary buffer
-+		 * will be replaced with the ascii85 encoded string
-+		 */
-+		*ptr = adreno_gpu_ascii85_encode(buf, datalen);
-+
-+		kvfree(buf);
-+
-+		*encoded = true;
-+	}
-+
-+	if (!*ptr)
-+		return;
- 
- 	drm_puts(p, "    data: !!ascii85 |\n");
- 	drm_puts(p, "     ");
- 
--	for (i = 0; i < l; i++)
--		drm_puts(p, ascii85_encode(ptr[i], out));
-+	drm_puts(p, *ptr);
- 
- 	drm_puts(p, "\n");
- }
-@@ -534,8 +570,8 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 		drm_printf(p, "    wptr: %d\n", state->ring[i].wptr);
- 		drm_printf(p, "    size: %d\n", MSM_GPU_RINGBUFFER_SZ);
- 
--		adreno_show_object(p, state->ring[i].data,
--			state->ring[i].data_size);
-+		adreno_show_object(p, &state->ring[i].data,
-+			state->ring[i].data_size, &state->ring[i].encoded);
- 	}
- 
- 	if (state->bos) {
-@@ -546,8 +582,8 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 				state->bos[i].iova);
- 			drm_printf(p, "    size: %zd\n", state->bos[i].size);
- 
--			adreno_show_object(p, state->bos[i].data,
--				state->bos[i].size);
-+			adreno_show_object(p, &state->bos[i].data,
-+				state->bos[i].size, &state->bos[i].encoded);
- 		}
- 	}
- 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index f82bac0..efb49bb 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -187,6 +187,7 @@ struct msm_gpu_state_bo {
- 	u64 iova;
- 	size_t size;
- 	void *data;
-+	bool encoded;
- };
- 
- struct msm_gpu_state {
-@@ -201,6 +202,7 @@ struct msm_gpu_state {
- 		u32 wptr;
- 		void *data;
- 		int data_size;
-+		bool encoded;
- 	} ring[MSM_GPU_MAX_RINGS];
- 
- 	int nr_registers;
--- 
-1.9.1
-
+/Jarkko
