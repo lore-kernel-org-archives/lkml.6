@@ -2,86 +2,113 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94099C46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 218BCC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 648E020827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648E020827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id E6FEF20866
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:28:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6FEF20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387533AbeKFRwL (ORCPT
+        id S1730010AbeKFRwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:52:11 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33964 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbeKFRwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:52:11 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LwX-uHJxuqY5; Tue,  6 Nov 2018 09:28:06 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 482691EC026E;
-        Tue,  6 Nov 2018 09:28:06 +0100 (CET)
-Date:   Tue, 6 Nov 2018 09:27:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Woods, Brian" <Brian.Woods@amd.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Helgaas <bhelgaas@google.com>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181106082759.GA13712@zn.tnic>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181105193840.GA26868@zn.tnic>
- <20181105203330.GB27399@amd.com>
- <20181105214233.GF26868@zn.tnic>
- <20181105233212.GC27399@amd.com>
+        Tue, 6 Nov 2018 12:52:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59714 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728133AbeKFRwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 12:52:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5C783ACA9;
+        Tue,  6 Nov 2018 08:28:27 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 09:28:26 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH] mm, memory_hotplug: teach has_unmovable_pages about of
+ LRU migrateable pages
+Message-ID: <20181106082826.GC27423@dhcp22.suse.cz>
+References: <20181101091055.GA15166@MiWiFi-R3L-srv>
+ <20181102155528.20358-1-mhocko@kernel.org>
+ <20181105002009.GF27491@MiWiFi-R3L-srv>
+ <20181105091407.GB4361@dhcp22.suse.cz>
+ <20181105092851.GD4361@dhcp22.suse.cz>
+ <20181105102520.GB22011@MiWiFi-R3L-srv>
+ <20181105123837.GH4361@dhcp22.suse.cz>
+ <20181105142308.GJ27491@MiWiFi-R3L-srv>
+ <20181105171002.GO4361@dhcp22.suse.cz>
+ <20181106002216.GK27491@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105233212.GC27399@amd.com>
+In-Reply-To: <20181106002216.GK27491@MiWiFi-R3L-srv>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 11:32:16PM +0000, Woods, Brian wrote:
-> Your understanding is correct.  It's more so that the following DF/SMN
-> interface gets mapped correctly.
-> 		/*
-> 		 * If there are more PCI root devices than data fabric/
-> 		 * system management network interfaces, then the (N)
-> 		 * PCI roots per DF/SMN interface are functionally the
-> 		 * same (for DF/SMN access) and N-1 are redundant.  N-1
-> 		 * PCI roots should be skipped per DF/SMN interface so
-> 		 * the following DF/SMN interfaces get mapped to
-> 		 * correct PCI roots.
-> 		 */
-> Does that read clearer?
+On Tue 06-11-18 08:22:16, Baoquan He wrote:
+> On 11/05/18 at 06:10pm, Michal Hocko wrote:
+> > On Mon 05-11-18 22:23:08, Baoquan He wrote:
+> > > On 11/05/18 at 01:38pm, Michal Hocko wrote:
+> > > > On Mon 05-11-18 18:25:20, Baoquan He wrote:
+> > > > > Hi Michal,
+> > > > > 
+> > > > > On 11/05/18 at 10:28am, Michal Hocko wrote:
+> > > > > > 
+> > > > > > Or something like this. Ugly as hell, no question about that. I also
+> > > > > > have to think about this some more to convince myself this will not
+> > > > > > result in an endless loop under some situations.
+> > > > > 
+> > > > > It failed. Paste the log and patch diff here, please help check if I made
+> > > > > any mistake on manual code change. The log is at bottom.
+> > > > 
+> > > > The retry patch is obviously still racy, it just makes the race window
+> > > > slightly smaller and I hoped it would catch most of those races but this
+> > > > is obviously not the case.
+> > > > 
+> > > > I was thinking about your MIGRATE_MOVABLE check some more and I still do
+> > > > not like it much, we just change migrate type at many places and I have
+> > > > hard time to actually see this is always safe wrt. to what we need here.
+> > > > 
+> > > > We should be able to restore the zone type check though. The
+> > > > primary problem fixed by 15c30bc09085 ("mm, memory_hotplug: make
+> > > > has_unmovable_pages more robust") was that early allocations made it to
+> > > > the zone_movable range. If we add the check _after_ the PageReserved()
+> > > > check then we should be able to rule all bootmem allocation out.
+> > > > 
+> > > > So what about the following (on top of the previous patch which makes
+> > > > sense on its own I believe).
+> > > 
+> > > Yes, I think this looks very reasonable and should be robust.
+> > > 
+> > > Have tested it, hot removing 4 hotpluggable nodes continusously
+> > > succeeds, and then hot adding them back, still works well.
+> > > 
+> > > So please feel free to add my Tested-by or Acked-by.
+> > > 
+> > > Tested-by: Baoquan He <bhe@redhat.com>
+> > > or
+> > > Acked-by: Baoquan He <bhe@redhat.com>
+> > 
+> > Thanks for retesting! Does this apply to both patches?
+> 
+> Sorry, don't get it. I just applied this on top of linus's tree and
+> tested. Do you mean applying it on top of previous code change?
 
-Yap, thanks!
+Yes. While the first patch will obviously not help for movable zone
+because the movable check will override any later check it
+seems still useful to reduce false positives on normal zones.
+
+Or do you think this is not worth it?
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Michal Hocko
+SUSE Labs
