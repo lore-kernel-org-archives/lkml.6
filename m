@@ -2,107 +2,102 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935B9C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03079C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4962C20830
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:19:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="thWwudPE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4962C20830
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id B5D8320830
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D8320830
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeKGHqd (ORCPT
+        id S1730733AbeKGHqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:46:33 -0500
-Received: from imap.thunk.org ([74.207.234.97]:46204 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbeKGHqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:46:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=fJrIqHkC9A2YKvga1stdgo7VXOejR7UQozFrZWblXuU=; b=thWwudPEZoiWTejvvxr2+DTtyP
-        meMnCq5eU7dU2yDWgJFs3nibpicow7Q/TXJziCh0GGKU6uz6A5iKeDGuiSBCMOlNqXYoZhs7uHNal
-        NEkceeAs/Zz/gOnadhnhhy9sPGJtmLzlyd/eUgKbqMXt0jwMPxuE50Ul0M03fLy2X0kg=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gK9gh-0006CQ-A4; Tue, 06 Nov 2018 22:19:07 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 1CF457A7C2F; Tue,  6 Nov 2018 17:19:06 -0500 (EST)
-Date:   Tue, 6 Nov 2018 17:19:05 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] ext4: iloc.bh cleanup in add_new_gdb()
-Message-ID: <20181106221905.GH2570@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org
-References: <cover.1540935522.git.vvs@virtuozzo.com>
- <eb58c8ca-8456-7b5f-9c12-99f03e3057af@virtuozzo.com>
+        Wed, 7 Nov 2018 02:46:53 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39738 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbeKGHqx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:46:53 -0500
+Received: by mail-vs1-f67.google.com with SMTP id h78so8315309vsi.6
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 14:19:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lQqBvSf2K+0TeJcISEsQOASNwwNH/SfmS+R8MJdBLMo=;
+        b=l+ZH/cmDQkcWLkzzgJM1ixhwOjXePhH6FuymoLL0f6Ig5SCqiQpQw1yYuBxUJULenj
+         eE0KrlYF1yPvWNiTByfg5Kk6k2WuCaBSdR7Ix24KzVFR7vPby7YJxwnAJCh1667b2aoK
+         4mg/HLD1McFrtoPkUFoExnV6O9e16F6z/O0ofcUXxwygUKwP8RTqEq2dXRSphwdtQm23
+         kAEDVLpo+tohbUJfgCrAfeaIGOIXYgcQawgTuTQbzu0HsJdG7Q+/trOh+qTeNrD9PFCN
+         jV+kgGGu7rWlSavW9Rj2BYcve4vyH09WlVpemrq+gcKtyxYSDw965diV5ni5OszvArQ7
+         Icmg==
+X-Gm-Message-State: AGRZ1gKP+J1w0ne2lcvblLBCGH7yaXjSuhbnb2MW4yJb9iyiFZVBKyjB
+        5myW35qMpg5qz/cLF2Aij/qsfi2Mlv4uwg9mcCk=
+X-Google-Smtp-Source: AJdET5d//gNbsRFPyV2otQsL4wBpytotw6ctYjhuVEQMpgM3OhHZPbiEzN1eBsWflm6kpKh1rawVckku9NHvWC4qF1Y=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr10962178vsj.11.1541542767169;
+ Tue, 06 Nov 2018 14:19:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb58c8ca-8456-7b5f-9c12-99f03e3057af@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20181106214416.11342-1-geert@linux-m68k.org> <20181106225829.5ecbe19e@bbrezillon>
+In-Reply-To: <20181106225829.5ecbe19e@bbrezillon>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 6 Nov 2018 23:19:14 +0100
+Message-ID: <CAMuHMdUQhsikcBzRFAvrCwZwzFK_Coh=fqpSihFP6jEtugCMQw@mail.gmail.com>
+Subject: Re: [PATCH next] mtd: maps: physmap: Fix infinite loop crash in ROM
+ type probing
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 12:58:38AM +0300, Vasily Averin wrote:
-> iloc.bh was taken in ext4_reserve_inode_write() and released
-> in ext4_mark_iloc_dirty(). It should not be released 2nd time
-> in rollback after failed ext4_handle_dirty_metadata(gdb_bh)
-> 
-> Fixes b40971426a83 ("ext4: add error checking to calls to ...") # 2.6.38
-> 
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Hi Boris,
 
-I fixed this in a simpler way:
+On Tue, Nov 6, 2018 at 10:58 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Tue,  6 Nov 2018 22:44:16 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Toshiba RBTX4927, where map_probe is supposed to fail:
+> >
+> >     Creating 2 MTD partitions on "physmap-flash.0":
+> >     0x000000c00000-0x000001000000 : "boot"
+> >     0x000000000000-0x000000c00000 : "user"
+> >     physmap-flash physmap-flash.1: physmap platform flash device: [mem 0x1e000000-0x1effffff]
+> >     CPU 0 Unable to handle kernel paging request at virtual address 00000000, epc == 80320f40, ra == 80321004
+> >     ...
+> >     Call Trace:
+> >     [<80320f40>] get_mtd_chip_driver+0x30/0x8c
+> >     [<80321004>] do_map_probe+0x20/0x90
+> >     [<80328448>] physmap_flash_probe+0x484/0x4ec
+> >
+> > The access to rom_probe_types[] was changed from a sentinel-based loop
+> > to an infinite loop, causing a crash when reaching the sentinel.
+>
+> Oops. Do you mind if I fix that in-place (squash your changes in
+> Ricardo's original commit)?
 
-From 6a91a2eb1c5af1381caebfb4c1c91dc175351f6f Mon Sep 17 00:00:00 2001
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Tue, 6 Nov 2018 17:18:17 -0500
-Subject: [PATCH] ext4: avoid possible double brelse() in add_new_gdb() on
- error path
+No problem. Thanks!
 
-Fixes: b40971426a83 ("ext4: add error checking to calls to ...")
-Reported-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org # 2.6.38
----
- fs/ext4/resize.c | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-index 85158e9de7c2..a5efee34415f 100644
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -871,6 +871,7 @@ static int add_new_gdb(handle_t *handle, struct inode *inode,
- 	err = ext4_handle_dirty_metadata(handle, NULL, gdb_bh);
- 	if (unlikely(err)) {
- 		ext4_std_error(sb, err);
-+		iloc.bh = NULL;
- 		goto exit_inode;
- 	}
- 	brelse(dind);
+                        Geert
+
 -- 
-2.18.0.rc0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
