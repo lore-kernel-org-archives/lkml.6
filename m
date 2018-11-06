@@ -2,188 +2,122 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDBCC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68799C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561032083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:51:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561032083D
+	by mail.kernel.org (Postfix) with ESMTP id 3A9582083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:51:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A9582083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbeKFXQ1 (ORCPT
+        id S2388648AbeKFXQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:16:27 -0500
-Received: from mga05.intel.com ([192.55.52.43]:44664 "EHLO mga05.intel.com"
+        Tue, 6 Nov 2018 18:16:31 -0500
+Received: from mga17.intel.com ([192.55.52.151]:16294 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388065AbeKFXQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:16:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S2388065AbeKFXQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 18:16:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 05:51:07 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 05:51:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="106322736"
-Received: from fhoeg-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.66])
-  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 05:51:00 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [PATCH v16 10/22] x86/sgx: Add ENCLS architectural error codes
-Date:   Tue,  6 Nov 2018 15:45:49 +0200
-Message-Id: <20181106134758.10572-11-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+   d="scan'208";a="89852466"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga008.jf.intel.com with SMTP; 06 Nov 2018 05:51:07 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 06 Nov 2018 15:51:07 +0200
+Date:   Tue, 6 Nov 2018 15:51:07 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] drm/i915: Clarify flow for disabling IRQs on
+ storms
+Message-ID: <20181106135107.GT9144@intel.com>
+References: <20181105222011.2913-1-lyude@redhat.com>
+ <20181105222011.2913-5-lyude@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181105222011.2913-5-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SGX architecture defines an extensive set of error codes that are
-used by ENCL{S,U,V} instructions to provide software with (somewhat)
-precise error information.  Though they are architectural, define the
-known error codes in a separate file from sgx_arch.h so that they can
-be exposed to userspace.  For some ENCLS leafs, e.g. EINIT, returning
-the exact error code on failure can enable userspace to make informed
-decisions when an operation fails.
+On Mon, Nov 05, 2018 at 05:20:10PM -0500, Lyude Paul wrote:
+> This is rather confusing to look at as-is:
+> dev_priv->display.hpd_irq_setup(dev_priv); in intel_hpd_irq_handler()
+> handles disabling the actual HPD IRQ, while
+> intel_hpd_irq_storm_disable() handles moving the HPD pin state over from
+> MARK_DISABLED to DISABLED along with enabling polling for it.
+> 
+> Changes since v3:
+> - Rename i915_hpd_irq_storm_disable() to
+>   i915_hpd_irq_storm_switch_to_polling() - Rodrigo Vivi
+> 
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/sgx_arch.h       |  2 +
- arch/x86/include/uapi/asm/sgx_errno.h | 91 +++++++++++++++++++++++++++
- 2 files changed, 93 insertions(+)
- create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
-index e068db46835e..6cd572fa95fa 100644
---- a/arch/x86/include/asm/sgx_arch.h
-+++ b/arch/x86/include/asm/sgx_arch.h
-@@ -8,6 +8,8 @@
- #ifndef _ASM_X86_SGX_ARCH_H
- #define _ASM_X86_SGX_ARCH_H
- 
-+#include <uapi/asm/sgx_errno.h>
-+
- /**
-  * enum sgx_encls_leaves - ENCLS leaf functions
-  * %SGX_ECREATE:	Create an enclave.
-diff --git a/arch/x86/include/uapi/asm/sgx_errno.h b/arch/x86/include/uapi/asm/sgx_errno.h
-new file mode 100644
-index 000000000000..48b87aed58d7
---- /dev/null
-+++ b/arch/x86/include/uapi/asm/sgx_errno.h
-@@ -0,0 +1,91 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
-+/*
-+ * Copyright(c) 2018 Intel Corporation.
-+ *
-+ * Contains the architecturally defined error codes that are returned by SGX
-+ * instructions, e.g. ENCLS, and may be propagated to userspace via errno.
-+ */
-+
-+#ifndef _UAPI_ASM_X86_SGX_ERRNO_H
-+#define _UAPI_ASM_X86_SGX_ERRNO_H
-+
-+/**
-+ * enum sgx_encls_leaves - return codes for ENCLS, ENCLU and ENCLV
-+ * %SGX_SUCCESS:		No error.
-+ * %SGX_INVALID_SIG_STRUCT:	SIGSTRUCT contains an invalid value.
-+ * %SGX_INVALID_ATTRIBUTE:	Enclave is not attempting to access a resource
-+ *				for which it is not authorized.
-+ * %SGX_BLKSTATE:		EPC page is already blocked.
-+ * %SGX_INVALID_MEASUREMENT:	SIGSTRUCT or EINITTOKEN contains an incorrect
-+ *				measurement.
-+ * %SGX_NOTBLOCKABLE:		EPC page type is not one which can be blocked.
-+ * %SGX_PG_INVLD:		EPC page is invalid (and cannot be blocked).
-+ * %SGX_EPC_PAGE_CONFLICT:	EPC page in use by another SGX instruction.
-+ * %SGX_INVALID_SIGNATURE:	Enclave's signature does not validate with
-+ *				public key enclosed in SIGSTRUCT.
-+ * %SGX_MAC_COMPARE_FAIL:	MAC check failed when reloading EPC page.
-+ * %SGX_PAGE_NOT_BLOCKED:	EPC page is not marked as blocked.
-+ * %SGX_NOT_TRACKED:		ETRACK has not been completed on the EPC page.
-+ * %SGX_VA_SLOT_OCCUPIED:	Version array slot contains a valid entry.
-+ * %SGX_CHILD_PRESENT:		Enclave has child pages present in the EPC.
-+ * %SGX_ENCLAVE_ACT:		Logical processors are currently executing
-+ *				inside the enclave.
-+ * %SGX_ENTRYEPOCH_LOCKED:	SECS locked for EPOCH update, i.e. an ETRACK is
-+ *				currently executing on the SECS.
-+ * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-+ *				public key does not match IA32_SGXLEPUBKEYHASH.
-+ * %SGX_PREV_TRK_INCMPL:	All processors did not complete the previous
-+ *				tracking sequence.
-+ * %SGX_PG_IS_SECS:		Target EPC page is an SECS and cannot be
-+ *				blocked.
-+ * %SGX_PAGE_ATTRIBUTES_MISMATCH:	Attributes of the EPC page do not match
-+ *					the expected values.
-+ * %SGX_PAGE_NOT_MODIFIABLE:	EPC page cannot be modified because it is in
-+ *				the PENDING or MODIFIED state.
-+ * %SGX_PAGE_NOT_DEBUGGABLE:	EPC page cannot be modified because it is in
-+ *				the PENDING or MODIFIED state.
-+ * %SGX_INVALID_COUNTER:	{In,De}crementing a counter would cause it to
-+ *				{over,under}flow.
-+ * %SGX_PG_NONEPC:		Target page is not an EPC page.
-+ * %SGX_TRACK_NOT_REQUIRED:	Target page type does not require tracking.
-+ * %SGX_INVALID_CPUSVN:		Security version number reported by CPU is less
-+ *				than what is required by the enclave.
-+ * %SGX_INVALID_ISVSVN:		Security version number of enclave is less than
-+ *				what is required by the KEYREQUEST struct.
-+ * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-+ *				while the instruction was executing.
-+ * %SGX_INVALID_KEYNAME:	Requested key is not supported by hardware.
-+ */
-+enum sgx_return_codes {
-+	SGX_SUCCESS			= 0,
-+	SGX_INVALID_SIG_STRUCT		= 1,
-+	SGX_INVALID_ATTRIBUTE		= 2,
-+	SGX_BLKSTATE			= 3,
-+	SGX_INVALID_MEASUREMENT		= 4,
-+	SGX_NOTBLOCKABLE		= 5,
-+	SGX_PG_INVLD			= 6,
-+	SGX_EPC_PAGE_CONFLICT		= 7,
-+	SGX_INVALID_SIGNATURE		= 8,
-+	SGX_MAC_COMPARE_FAIL		= 9,
-+	SGX_PAGE_NOT_BLOCKED		= 10,
-+	SGX_NOT_TRACKED			= 11,
-+	SGX_VA_SLOT_OCCUPIED		= 12,
-+	SGX_CHILD_PRESENT		= 13,
-+	SGX_ENCLAVE_ACT			= 14,
-+	SGX_ENTRYEPOCH_LOCKED		= 15,
-+	SGX_INVALID_EINITTOKEN		= 16,
-+	SGX_PREV_TRK_INCMPL		= 17,
-+	SGX_PG_IS_SECS			= 18,
-+	SGX_PAGE_ATTRIBUTES_MISMATCH	= 19,
-+	SGX_PAGE_NOT_MODIFIABLE		= 20,
-+	SGX_PAGE_NOT_DEBUGGABLE		= 21,
-+	SGX_INVALID_COUNTER		= 25,
-+	SGX_PG_NONEPC			= 26,
-+	SGX_TRACK_NOT_REQUIRED		= 27,
-+	SGX_INVALID_CPUSVN		= 32,
-+	SGX_INVALID_ISVSVN		= 64,
-+	SGX_UNMASKED_EVENT		= 128,
-+	SGX_INVALID_KEYNAME		= 256,
-+};
-+
-+#endif /* _UAPI_ASM_X86_SGX_ERRNO_H */
+> ---
+>  drivers/gpu/drm/i915/intel_hotplug.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+> index c11d73de16f2..d642c0795452 100644
+> --- a/drivers/gpu/drm/i915/intel_hotplug.c
+> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
+> @@ -161,7 +161,8 @@ static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
+>  	return storm;
+>  }
+>  
+> -static void intel_hpd_irq_storm_disable(struct drm_i915_private *dev_priv)
+> +static void
+> +intel_hpd_irq_storm_switch_to_polling(struct drm_i915_private *dev_priv)
+>  {
+>  	struct drm_device *dev = &dev_priv->drm;
+>  	struct intel_connector *intel_connector;
+> @@ -351,8 +352,8 @@ static void i915_hotplug_work_func(struct work_struct *work)
+>  	hpd_event_bits = dev_priv->hotplug.event_bits;
+>  	dev_priv->hotplug.event_bits = 0;
+>  
+> -	/* Disable hotplug on connectors that hit an irq storm. */
+> -	intel_hpd_irq_storm_disable(dev_priv);
+> +	/* Enable polling for connectors which had HPD IRQ storms */
+> +	intel_hpd_irq_storm_switch_to_polling(dev_priv);
+>  
+>  	spin_unlock_irq(&dev_priv->irq_lock);
+>  
+> @@ -458,6 +459,10 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * Disable any IRQs that storms were detected on. Polling enablement
+> +	 * happens later in our hotplug work.
+> +	 */
+>  	if (storm_detected && dev_priv->display_irqs_enabled)
+>  		dev_priv->display.hpd_irq_setup(dev_priv);
+>  	spin_unlock(&dev_priv->irq_lock);
+> -- 
+> 2.19.1
+
 -- 
-2.19.1
-
+Ville Syrjälä
+Intel
