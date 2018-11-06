@@ -4,192 +4,297 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D7AC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 616A1C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BADB120844
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D6CB20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:56:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="n2aF9W7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADB120844
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="nK5DONc8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6CB20844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388429AbeKGJXh (ORCPT
+        id S2388527AbeKGJYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 04:23:37 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36162 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727292AbeKGJXg (ORCPT
+        Wed, 7 Nov 2018 04:24:30 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44004 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388314AbeKGJYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 04:23:36 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w24-v6so6977753plq.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 15:55:50 -0800 (PST)
+        Wed, 7 Nov 2018 04:24:30 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g7-v6so4596924pfo.10
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 15:56:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=La2xAe9jd3uC28Fhz2DfVrF3HqHgtVXfdg5RQNp/Bkw=;
-        b=n2aF9W7y4wYMFQYWfd/NikkJ2CPl2/+c+jpmUpwLyL5SPpiEcyAblE96uC18H/O/Mi
-         9M0h26n4NsXxznUy2gDIC0gYRjUFDv7jTp0PnQKRBoUiLIwqf22BXy8hYUwM94BWNJX/
-         cVuuObOz17c18PDZ3aJ7d/yMnURFha6zqg+W8MLLt7bEysFMOhUcLevzIuOclwyKMGlf
-         cs96p7/9r+tlTfBGEzVxrIvThS6RRYW3iliVqRnd/3Fw+q9r3CnU5kkgczyd85u+DLkP
-         f494vWHy5gP4wSzgWMPZZnSVFOeu6K3gZLCVaCXG7crqApNPH70Mohrttxlo/gTe2u1N
-         kPQA==
+        bh=MW+Lb3lJKNBTsSKOuVal+Omb+8x0mHVzL+lq/HjJq7A=;
+        b=nK5DONc8Xs09FCmLPVM+8CJQJkRYTmmzT3NbsDgOunm7lUC7C2SaZOmEcEO6uhxh+z
+         IoyAu8OboxCx/pR2WYYeM6DCy8qoyxaWmCZ/gtSAlmvRkNrwjNd3yag4RBfVCPBQpWRl
+         2T9WJ8TE3grHnlfHA3MZE1Z1xtRkIw4oo6gcYzTnI2jZQ8FfWAYggyfWgGypZWxFsiZu
+         tPisFf2UHO5fHPDd5gn4M7pdLF6p2vdDKVHAnVYVTZCyv5tYQe/Br1g6051LakqGgwxc
+         AYYxMcmB6pW6nrW9rxETwkAg11HYFGl6EQE9NAjt6Q2eEyJacTdLTCMco5cSVjFmZtOc
+         eA2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=La2xAe9jd3uC28Fhz2DfVrF3HqHgtVXfdg5RQNp/Bkw=;
-        b=gdqyhHjy/dSvncD4TVg0QTTW3TU5de0glZrA/0cOXoQvd/6zmH3Yg0aZIjZFraUj/J
-         YbKUVfCEGPgpS+XvhABQGsVU4CXq6aZ8UHRs89OdgX2GassIokCNBuUZGtxvEL23Vw6f
-         eukW5iuj07XhLUPA6Yi4fQBk7SVYOTJgT2Ldtw+JkZT70xHn3EBqyYqiqaEJ+B9/I25T
-         z2MPPtb86MtsxAJoWvIUhblAT+xBIkVxhSTv4o2S9X8NBjFjYty2nbpJFmVrI4vOGDSH
-         YjIuiMmWn5tB5a2HNiz7jVDiyx7HsRiV354hlRnB4R8SVby6FVBwj9H3FxXm1JaJb4Hh
-         dzbg==
-X-Gm-Message-State: AGRZ1gKiuwrPQpVQtDGNWGJcIhvAWH5sIeaSrrQgLV3Fiz1zMxPww0/M
-        rENVq354qkICIEWUfWd15lGluA==
-X-Google-Smtp-Source: AJdET5fSiNvy1o0+MD2B3EZ8Rc2mLbyg3S84t+CElnCC43FqPfzRKM8t1MfyWhO5NOSvaZm8XL+xEQ==
-X-Received: by 2002:a17:902:be07:: with SMTP id r7-v6mr20093798pls.137.1541548550077;
-        Tue, 06 Nov 2018 15:55:50 -0800 (PST)
+        bh=MW+Lb3lJKNBTsSKOuVal+Omb+8x0mHVzL+lq/HjJq7A=;
+        b=YeftWmAU9M4O2WgqOUgiOf+kCjWY4ws04cxNclmJYcXBX2sDlOlFgV0TXYERiLgtt6
+         xwro60iPQDI8N7cqIUvsKFEJwS9IkJb+fnU4MSprURYoO8vVQPDnb2JxVyvWoGj5PW7T
+         Vu6mwfgSR08Ia/i1HbIH5PzHf4kOhUuaM2cztBez8wpfvWl0N0GBOFfzElF/ZWrP/kFd
+         FlwSVKqQ0h3khXBwoOHj4sRan/rH3KTHFHqd680ZP55CydP8o7gisplzB96oeEuuS1Qz
+         u5R/ac+ahlCnI911eRl5TedmYtllrEuVIRUfFLvymJC2bj1GywnADFfPj/mRNlY3JjZN
+         oMDw==
+X-Gm-Message-State: AGRZ1gJIXFIw84t7jeD61Bjs2QFSc4QsYoQqxJABnVV9G4zw9F0q/Ce9
+        qkddBD3BC722gTySDJyjnQpFdw==
+X-Google-Smtp-Source: AJdET5cqEe/H848cXRP8yQwoHVXW4G+oP2V4P7rhyYbqSpd8WFaqeiipR6wkfRw8AiA3nscw9MEtsw==
+X-Received: by 2002:a63:1765:: with SMTP id 37-v6mr25860243pgx.131.1541548603247;
+        Tue, 06 Nov 2018 15:56:43 -0800 (PST)
 Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:f5a1:2b8d:9c84:99b])
-        by smtp.googlemail.com with ESMTPSA id p62-v6sm67287329pfp.111.2018.11.06.15.55.49
+        by smtp.googlemail.com with ESMTPSA id d16sm15708322pgj.21.2018.11.06.15.56.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 15:55:49 -0800 (PST)
+        Tue, 06 Nov 2018 15:56:42 -0800 (PST)
 From:   Todd Kjos <tkjos@android.com>
 X-Google-Original-From: Todd Kjos <tkjos@google.com>
 To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com, stable@vger.kernel.org
+        maco@google.com
 Cc:     kernel-team@android.com
-Subject: [PATCH] binder: fix race that allows malicious free of live buffer
-Date:   Tue,  6 Nov 2018 15:55:32 -0800
-Message-Id: <20181106235532.171646-1-tkjos@google.com>
+Subject: [PATCH] binder: fix sparse warnings on locking context
+Date:   Tue,  6 Nov 2018 15:56:31 -0800
+Message-Id: <20181106235631.171910-1-tkjos@google.com>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Malicious code can attempt to free buffers using the
-BC_FREE_BUFFER ioctl to binder. There are protections
-against a user freeing a buffer while in use by the
-kernel, however there was a window where BC_FREE_BUFFER
-could be used to free a recently allocated buffer that
-was not completely initialized. This resulted in a
-use-after-free detected by KASAN with a malicious
-test program.
+Add __acquire()/__release() annnotations to fix warnings
+in sparse context checking
 
-This window is closed by setting the buffer's
-allow_user_free attribute to 0 when the buffer
-is allocated or when the user has previously
-freed it instead of waiting for the caller
-to set it. The problem was that when the struct
-buffer was recycled, allow_user_free was stale
-and set to 1 allowing a free to go through.
+There is one case where the warning was due to a lack of
+a "default:" case in a switch statement where a lock was
+being released in each of the cases, so the default
+case was added.
 
 Signed-off-by: Todd Kjos <tkjos@google.com>
-Acked-by: Arve Hjønnevåg <arve@android.com>
 ---
- drivers/android/binder.c       | 21 ++++++++++++---------
- drivers/android/binder_alloc.c | 16 ++++++----------
- drivers/android/binder_alloc.h |  3 +--
- 3 files changed, 19 insertions(+), 21 deletions(-)
+ drivers/android/binder.c       | 43 +++++++++++++++++++++++++++++++++-
+ drivers/android/binder_alloc.c |  1 +
+ 2 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index cb30a524d16d8..9f1000d2a40c7 100644
+index 9f1000d2a40c7..9f2059d24ae2d 100644
 --- a/drivers/android/binder.c
 +++ b/drivers/android/binder.c
-@@ -2974,7 +2974,6 @@ static void binder_transaction(struct binder_proc *proc,
- 		t->buffer = NULL;
- 		goto err_binder_alloc_buf_failed;
- 	}
--	t->buffer->allow_user_free = 0;
- 	t->buffer->debug_id = t->debug_id;
- 	t->buffer->transaction = t;
- 	t->buffer->target_node = target_node;
-@@ -3510,14 +3509,18 @@ static int binder_thread_write(struct binder_proc *proc,
+@@ -660,6 +660,7 @@ struct binder_transaction {
+ #define binder_proc_lock(proc) _binder_proc_lock(proc, __LINE__)
+ static void
+ _binder_proc_lock(struct binder_proc *proc, int line)
++	__acquires(&proc->outer_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -675,6 +676,7 @@ _binder_proc_lock(struct binder_proc *proc, int line)
+ #define binder_proc_unlock(_proc) _binder_proc_unlock(_proc, __LINE__)
+ static void
+ _binder_proc_unlock(struct binder_proc *proc, int line)
++	__releases(&proc->outer_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -690,6 +692,7 @@ _binder_proc_unlock(struct binder_proc *proc, int line)
+ #define binder_inner_proc_lock(proc) _binder_inner_proc_lock(proc, __LINE__)
+ static void
+ _binder_inner_proc_lock(struct binder_proc *proc, int line)
++	__acquires(&proc->inner_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -705,6 +708,7 @@ _binder_inner_proc_lock(struct binder_proc *proc, int line)
+ #define binder_inner_proc_unlock(proc) _binder_inner_proc_unlock(proc, __LINE__)
+ static void
+ _binder_inner_proc_unlock(struct binder_proc *proc, int line)
++	__releases(&proc->inner_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -720,6 +724,7 @@ _binder_inner_proc_unlock(struct binder_proc *proc, int line)
+ #define binder_node_lock(node) _binder_node_lock(node, __LINE__)
+ static void
+ _binder_node_lock(struct binder_node *node, int line)
++	__acquires(&node->lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -735,6 +740,7 @@ _binder_node_lock(struct binder_node *node, int line)
+ #define binder_node_unlock(node) _binder_node_unlock(node, __LINE__)
+ static void
+ _binder_node_unlock(struct binder_node *node, int line)
++	__releases(&node->lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -751,12 +757,16 @@ _binder_node_unlock(struct binder_node *node, int line)
+ #define binder_node_inner_lock(node) _binder_node_inner_lock(node, __LINE__)
+ static void
+ _binder_node_inner_lock(struct binder_node *node, int line)
++	__acquires(&node->lock) __acquires(&node->proc->inner_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+ 	spin_lock(&node->lock);
+ 	if (node->proc)
+ 		binder_inner_proc_lock(node->proc);
++	else
++		/* annotation for sparse */
++		__acquire(&node->proc->inner_lock);
+ }
  
- 			buffer = binder_alloc_prepare_to_free(&proc->alloc,
- 							      data_ptr);
--			if (buffer == NULL) {
--				binder_user_error("%d:%d BC_FREE_BUFFER u%016llx no match\n",
--					proc->pid, thread->pid, (u64)data_ptr);
--				break;
--			}
--			if (!buffer->allow_user_free) {
--				binder_user_error("%d:%d BC_FREE_BUFFER u%016llx matched unreturned buffer\n",
--					proc->pid, thread->pid, (u64)data_ptr);
-+			if (IS_ERR_OR_NULL(buffer)) {
-+				if (PTR_ERR(buffer) == -EPERM) {
-+					binder_user_error(
-+						"%d:%d BC_FREE_BUFFER u%016llx matched unreturned or currently freeing buffer\n",
-+						proc->pid, thread->pid,
-+						(u64)data_ptr);
-+				} else {
-+					binder_user_error(
-+						"%d:%d BC_FREE_BUFFER u%016llx no match\n",
-+						proc->pid, thread->pid,
-+						(u64)data_ptr);
-+				}
- 				break;
- 			}
- 			binder_debug(BINDER_DEBUG_FREE_BUFFER,
+ /**
+@@ -768,6 +778,7 @@ _binder_node_inner_lock(struct binder_node *node, int line)
+ #define binder_node_inner_unlock(node) _binder_node_inner_unlock(node, __LINE__)
+ static void
+ _binder_node_inner_unlock(struct binder_node *node, int line)
++	__releases(&node->lock) __releases(&node->proc->inner_lock)
+ {
+ 	struct binder_proc *proc = node->proc;
+ 
+@@ -775,6 +786,9 @@ _binder_node_inner_unlock(struct binder_node *node, int line)
+ 		     "%s: line=%d\n", __func__, line);
+ 	if (proc)
+ 		binder_inner_proc_unlock(proc);
++	else
++		/* annotation for sparse */
++		__release(&node->proc->inner_lock);
+ 	spin_unlock(&node->lock);
+ }
+ 
+@@ -1384,10 +1398,14 @@ static void binder_dec_node_tmpref(struct binder_node *node)
+ 	binder_node_inner_lock(node);
+ 	if (!node->proc)
+ 		spin_lock(&binder_dead_nodes_lock);
++	else
++		__acquire(&binder_dead_nodes_lock);
+ 	node->tmp_refs--;
+ 	BUG_ON(node->tmp_refs < 0);
+ 	if (!node->proc)
+ 		spin_unlock(&binder_dead_nodes_lock);
++	else
++		__release(&binder_dead_nodes_lock);
+ 	/*
+ 	 * Call binder_dec_node() to check if all refcounts are 0
+ 	 * and cleanup is needed. Calling with strong=0 and internal=1
+@@ -1890,18 +1908,22 @@ static struct binder_thread *binder_get_txn_from(
+  */
+ static struct binder_thread *binder_get_txn_from_and_acq_inner(
+ 		struct binder_transaction *t)
++	__acquires(&t->from->proc->inner_lock)
+ {
+ 	struct binder_thread *from;
+ 
+ 	from = binder_get_txn_from(t);
+-	if (!from)
++	if (!from) {
++		__acquire(&from->proc->inner_lock);
+ 		return NULL;
++	}
+ 	binder_inner_proc_lock(from->proc);
+ 	if (t->from) {
+ 		BUG_ON(from != t->from);
+ 		return from;
+ 	}
+ 	binder_inner_proc_unlock(from->proc);
++	__acquire(&from->proc->inner_lock);
+ 	binder_thread_dec_tmpref(from);
+ 	return NULL;
+ }
+@@ -1973,6 +1995,8 @@ static void binder_send_failed_reply(struct binder_transaction *t,
+ 			binder_thread_dec_tmpref(target_thread);
+ 			binder_free_transaction(t);
+ 			return;
++		} else {
++			__release(&target_thread->proc->inner_lock);
+ 		}
+ 		next = t->from_parent;
+ 
+@@ -2394,11 +2418,15 @@ static int binder_translate_handle(struct flat_binder_object *fp,
+ 		fp->cookie = node->cookie;
+ 		if (node->proc)
+ 			binder_inner_proc_lock(node->proc);
++		else
++			__acquire(&node->proc->inner_lock);
+ 		binder_inc_node_nilocked(node,
+ 					 fp->hdr.type == BINDER_TYPE_BINDER,
+ 					 0, NULL);
+ 		if (node->proc)
+ 			binder_inner_proc_unlock(node->proc);
++		else
++			__release(&node->proc->inner_lock);
+ 		trace_binder_transaction_ref_to_node(t, node, &src_rdata);
+ 		binder_debug(BINDER_DEBUG_TRANSACTION,
+ 			     "        ref %d desc %d -> node %d u%016llx\n",
+@@ -2762,6 +2790,8 @@ static void binder_transaction(struct binder_proc *proc,
+ 		binder_set_nice(in_reply_to->saved_priority);
+ 		target_thread = binder_get_txn_from_and_acq_inner(in_reply_to);
+ 		if (target_thread == NULL) {
++			/* annotation for sparse */
++			__release(&target_thread->proc->inner_lock);
+ 			return_error = BR_DEAD_REPLY;
+ 			return_error_line = __LINE__;
+ 			goto err_dead_binder;
+@@ -4164,6 +4194,11 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			if (cmd == BR_DEAD_BINDER)
+ 				goto done; /* DEAD_BINDER notifications can cause transactions */
+ 		} break;
++		default:
++			binder_inner_proc_unlock(proc);
++			pr_err("%d:%d: bad work type %d\n",
++			       proc->pid, thread->pid, w->type);
++			break;
+ 		}
+ 
+ 		if (!t)
+@@ -4467,6 +4502,8 @@ static int binder_thread_release(struct binder_proc *proc,
+ 		spin_lock(&t->lock);
+ 		if (t->to_thread == thread)
+ 			send_reply = t;
++	} else {
++		__acquire(&t->lock);
+ 	}
+ 	thread->is_dead = true;
+ 
+@@ -4495,7 +4532,11 @@ static int binder_thread_release(struct binder_proc *proc,
+ 		spin_unlock(&last_t->lock);
+ 		if (t)
+ 			spin_lock(&t->lock);
++		else
++			__acquire(&t->lock);
+ 	}
++	/* annotation for sparse, lock not acquired in last iteration above */
++	__release(&t->lock);
+ 
+ 	/*
+ 	 * If this thread used poll, make sure we remove the waitqueue
 diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 64fd96eada31f..030c98f35cca7 100644
+index 030c98f35cca7..022cd80e80cc3 100644
 --- a/drivers/android/binder_alloc.c
 +++ b/drivers/android/binder_alloc.c
-@@ -151,16 +151,12 @@ static struct binder_buffer *binder_alloc_prepare_to_free_locked(
- 		else {
- 			/*
- 			 * Guard against user threads attempting to
--			 * free the buffer twice
-+			 * free the buffer when in use by kernel or
-+			 * after it's already been freed.
- 			 */
--			if (buffer->free_in_progress) {
--				binder_alloc_debug(BINDER_DEBUG_USER_ERROR,
--						   "%d:%d FREE_BUFFER u%016llx user freed buffer twice\n",
--						   alloc->pid, current->pid,
--						   (u64)user_ptr);
--				return NULL;
--			}
--			buffer->free_in_progress = 1;
-+			if (!buffer->allow_user_free)
-+				return ERR_PTR(-EPERM);
-+			buffer->allow_user_free = 0;
- 			return buffer;
- 		}
- 	}
-@@ -500,7 +496,7 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
- 
- 	rb_erase(best_fit, &alloc->free_buffers);
- 	buffer->free = 0;
--	buffer->free_in_progress = 0;
-+	buffer->allow_user_free = 0;
- 	binder_insert_allocated_buffer_locked(alloc, buffer);
- 	binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
- 		     "%d: binder_alloc_buf size %zd got %pK\n",
-diff --git a/drivers/android/binder_alloc.h b/drivers/android/binder_alloc.h
-index 9ef64e5638566..fb3238c74c8a8 100644
---- a/drivers/android/binder_alloc.h
-+++ b/drivers/android/binder_alloc.h
-@@ -50,8 +50,7 @@ struct binder_buffer {
- 	unsigned free:1;
- 	unsigned allow_user_free:1;
- 	unsigned async_transaction:1;
--	unsigned free_in_progress:1;
--	unsigned debug_id:28;
-+	unsigned debug_id:29;
- 
- 	struct binder_transaction *transaction;
- 
+@@ -939,6 +939,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 				       struct list_lru_one *lru,
+ 				       spinlock_t *lock,
+ 				       void *cb_arg)
++	__must_hold(lock)
+ {
+ 	struct mm_struct *mm = NULL;
+ 	struct binder_lru_page *page = container_of(item,
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
