@@ -8,65 +8,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69319C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F34C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C61320862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA99220862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:08:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLCDjvJ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C61320862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fl13HKrZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA99220862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388712AbeKGHfc (ORCPT
+        id S2388791AbeKGHff (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:35:32 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45050 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388363AbeKGHf3 (ORCPT
+        Wed, 7 Nov 2018 02:35:35 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40987 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388627AbeKGHfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:35:29 -0500
-Received: by mail-lf1-f65.google.com with SMTP id z13so47943lfe.11;
-        Tue, 06 Nov 2018 14:08:05 -0800 (PST)
+        Wed, 7 Nov 2018 02:35:33 -0500
+Received: by mail-lf1-f67.google.com with SMTP id c16so10045252lfj.8;
+        Tue, 06 Nov 2018 14:08:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xcEBeFn++VHxoUCbcVgPLiFLzW1/27zspx1+gAZ6bs4=;
-        b=VLCDjvJ8JYfHA1+EdtDtrMioBU1qXiVyuwlLhGUu1ZN46HGbPgKI7RG7gMglOgTPqO
-         8K9hkoZUqyX371zGgyLcM+SxoPWzAyr5nzrYTLGB+kl34rK2WRpubwdbp6QcG361Ug6P
-         8+zdGql5owY6Olg+waKK93NPCpfZSOtOX+YnpaQxlyTWXRAsV5o1OAfqR/gmFLO9YvWa
-         w0ary76oQhporq8/CUbE62jbA9i1JyKVKeU8plx8kEd/ZVT5qiQYdmV7C3UTzneE1cdE
-         tCMJhBkgfOndi3c1SW2v1QoSN4Z5MMjT0CsA2sbjTsSKFm5OB0pj8T6HWiT2z0l/s9OD
-         XuRg==
+        bh=a5/XatnvJgk+qLor8+MD8ZHsRQrQHpLnOnNg0BE/dvY=;
+        b=Fl13HKrZ/Ss4vHwZlB72atL3TNOUefOpJXhCG38AASgxt9l1U75betHPYRUGva0NGc
+         uzZKnEfvhFUvJdmNDtc6SIs/NdAoRCVCOgQCE0ZmLkJNPWPGEjKoCVzqzLmeRamrnvNS
+         gBWX6zrXvyNvIRKpZIknVNRR1UBtHmxP4oTSN8di1J0abJ8OWx5U2H3MBw/2ON31toTf
+         4H5xYyeWi7s51HSvXgxVJGj+9x+5TuC7D4GvzonEXS75/u+UG26Yhtv7Zur01PHZHBdy
+         oGpgCrX2B1Ct3e3r4TZ8tMQb1KzFA5C9xCPprcjXwukrNeoRKmasgazJPRMuctJxzCWN
+         sJ/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xcEBeFn++VHxoUCbcVgPLiFLzW1/27zspx1+gAZ6bs4=;
-        b=itSnFtTrQ0q7+4qaXHfPQ1Jcyel6/0C/6PeCpn7MQYnMWLEllDpYWD8flEXxYK23Dr
-         wZeJU8ojM/iZB2O6fR0xKsO27GGVaIDWC4hYKloiNv9+U+aAZqjht4tzkiNa48fi+EH8
-         xb4g0dWsGputV+SnRm8jLX1PBwq4yPYPOYUtaZdVUWw9FHAH8yYRp6Xekb0x8Q9gKmPi
-         mHGxJt7CRYOof6+k2rhMKCveqXHAhuDxeTi8/E42LVjYIC7xoD/ESzEcMoOwyF/9Ynqe
-         bEkOKhkYrzT1m9oamS4iYaXNwcqG9V58Gki+l4YKVwvHjhwxpPf2WHw+bAOLBiEu0I9d
-         EemA==
-X-Gm-Message-State: AGRZ1gKKzAZVquzodKcjtqMW8NaJrnJMZIBREMXGmvLXb2Bux2Xnwa+c
-        lZ0EXbpjDX56QbXu5cU65yStRyCy0S8=
-X-Google-Smtp-Source: AJdET5dZDjGST2rS43BftMS7QhvPysJ2pikDJ4M4+gfK7ZOYyJlylYx3KfgiL6x4ij0zd8PrD+PBLw==
-X-Received: by 2002:a19:d9d6:: with SMTP id s83mr2716755lfi.57.1541542084493;
-        Tue, 06 Nov 2018 14:08:04 -0800 (PST)
+        bh=a5/XatnvJgk+qLor8+MD8ZHsRQrQHpLnOnNg0BE/dvY=;
+        b=sQRfSZ5AxF3ly4GTNRa0oUhS1yHD2R4Fz0lE2xuSpI4FnYF8fQbSPtqddz5OPJiG+Y
+         86e3s0bWDbpgYhAqQzDWZHmG/2cWI37SRslYwCLbtenVaUj8wJlIDlJYSKYBeSQUyZSd
+         YATxiVF47Eg46wh5zOWXwHNZ6pv9ZaKS71oo656VKxi8izm5/Q1hZOMewfJWyLHHzWp0
+         0IRMw2T3vHmWq++aNI1U6SFYuj5YPcxIo7SnoFbr+YtHypJqlmWaS4RP4qRoY8Z2MHWm
+         3F1udC12GS0VQ/BjY3+EtuHRDVoGZoFeaAtj2jRJSbNhx+yd2hFCVZ0xtCp0/ConRoLE
+         OhDg==
+X-Gm-Message-State: AGRZ1gJPd0LnPhsjg+AHOm5+NlbdCg1IxSjIy/7I85C3TnSeWAtgI39D
+        206pdt51MTD66mzOp3vqMzbrEqiaMds=
+X-Google-Smtp-Source: AJdET5eMCLcZ58fGRPXKIdPsBD5GmdR0xE1EjGpb8QaepQ1EJo3VdtD945eaaf9yzDx9Z86JvA1AAA==
+X-Received: by 2002:a19:41c4:: with SMTP id o187mr16934158lfa.32.1541542088002;
+        Tue, 06 Nov 2018 14:08:08 -0800 (PST)
 Received: from i4790k.home (bgp86.neoplus.adsl.tpnet.pl. [83.28.79.86])
-        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.08.02
+        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.08.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 14:08:03 -0800 (PST)
+        Tue, 06 Nov 2018 14:08:07 -0800 (PST)
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 To:     linux-leds@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com,
         Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 11/24] dt-bindings: lm3692x: Add function and color properties
-Date:   Tue,  6 Nov 2018 23:07:19 +0100
-Message-Id: <1541542052-10081-12-git-send-email-jacek.anaszewski@gmail.com>
+Subject: [PATCH 13/24] dt-bindings: lm36010: Add function and color properties
+Date:   Tue,  6 Nov 2018 23:07:21 +0100
+Message-Id: <1541542052-10081-14-git-send-email-jacek.anaszewski@gmail.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -81,41 +81,39 @@ as deprecated.
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc: Dan Murphy <dmurphy@ti.com>
 ---
- Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-lm3601x.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-index 08b3528..62c8fe5 100644
---- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
-@@ -26,12 +26,16 @@ Required child properties:
- 		3 - Will enable the LED3 sync (LM36923 only)
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+index a88b2c4..aaffc68 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
++++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+@@ -22,9 +22,14 @@ Required properties for flash LED child nodes:
+ 	- led-max-microamp : Range from 2.4mA - 376mA
  
  Optional child properties:
 -	- label : see Documentation/devicetree/bindings/leds/common.txt
 +	- function : see Documentation/devicetree/bindings/leds/common.txt
 +	- color : see Documentation/devicetree/bindings/leds/common.txt
 +	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
- 	- linux,default-trigger :
- 	   see Documentation/devicetree/bindings/leds/common.txt
  
  Example:
- 
++
 +#include <dt-bindings/leds/functions.h>
 +
- led-controller@36 {
- 	compatible = "ti,lm3692x";
- 	reg = <0x36>;
-@@ -43,7 +47,8 @@ led-controller@36 {
+ led-controller@64 {
+ 	compatible = "ti,lm36010";
+ 	#address-cells = <1>;
+@@ -33,7 +38,8 @@ led-controller@64 {
  
  	led@0 {
- 		reg = <0>;
--		label = "white:backlight_cluster";
-+		function = LED_BACKLIGHT_CLUSTER;
+ 		reg = <1>;
+-		label = "white:torch";
++		function = LED_FUNCTION_TORCH;
 +		color = "white";
- 		linux,default-trigger = "backlight";
- 	};
- }
+ 		led-max-microamp = <376000>;
+ 		flash-max-microamp = <1500000>;
+ 		flash-max-timeout-us = <1600000>;
 -- 
 2.1.4
 
