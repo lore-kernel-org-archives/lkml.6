@@ -2,106 +2,107 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E80C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DD1C46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8CC20685
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8CC20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 10E0420869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E0420869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387842AbeKGAap (ORCPT
+        id S2388090AbeKGAbY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:30:45 -0500
-Received: from mga03.intel.com ([134.134.136.65]:3507 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729711AbeKGAap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:30:45 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 07:05:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="105724667"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 06 Nov 2018 07:05:04 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 06 Nov 2018 17:05:03 +0200
-Date:   Tue, 6 Nov 2018 17:05:03 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] of/property: Introduce of_fwnode_name()
-Message-ID: <20181106150503.GE13048@kuha.fi.intel.com>
-References: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
- <20181105091727.25544-4-heikki.krogerus@linux.intel.com>
- <CAL_Jsq+aRAv+9gDKwVi9xYQPYzXK4NMPjzfkuYB08+K6KTYXFg@mail.gmail.com>
- <20181106105803.GS10650@smile.fi.intel.com>
- <20181106122734.GC13048@kuha.fi.intel.com>
- <CAL_Jsq+kspp1GYrMjG1cC=CyCa2_jO1suFdD9fn+gOwKRYdhtw@mail.gmail.com>
- <20181106144037.GD13048@kuha.fi.intel.com>
- <20181106145537.GB10650@smile.fi.intel.com>
+        Tue, 6 Nov 2018 19:31:24 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32714 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387593AbeKGAbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:31:24 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id BBB034F3D9EA2;
+        Tue,  6 Nov 2018 15:05:42 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.35) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 6 Nov 2018 15:05:35 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 0/6] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Tue, 6 Nov 2018 16:01:53 +0100
+Message-ID: <20181106150159.1136-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106145537.GB10650@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 04:55:37PM +0200, Andy Shevchenko wrote:
-> On Tue, Nov 06, 2018 at 04:40:37PM +0200, Heikki Krogerus wrote:
-> > On Tue, Nov 06, 2018 at 07:18:14AM -0600, Rob Herring wrote:
-> 
-> > > Looking at patch 4, if matching the name is what you want to do, then
-> > > use the DT name matching functions. They were added in 4.19.
-> > 
-> > That is something that the of_fwnode_get_named_child_node() needs
-> > to use (would have needed).
-> > 
-> > Regardless of what we do with that callback, fwnode_name() needs to
-> > return the name in from that for example of_node_name_eq() takes as
-> > the second parameter. So "node-name@unit-address" is not OK. Sorry for
-> > not realizeing that before.
-> > 
-> > So I guess we need to either get the "node-name" from that full_name
-> > member in of_fwnode_name() (Andy, are you OK with that?), or is there
-> > already a helper that does it for us?
-> 
-> Looking into existing API I think we need something like
-> 
-> of_node_name_extract()
-> 
-> of_node_name_eq()
-> {
-> 	name = of_node_name_extract();
-> 	return strlen()...strncmp()...;
-> }
-> 
-> The question is who is going to allocate and free memory for the name out of it.
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-Maybe it would be best to just read the "name" device property in
-fwnode_name() and not have of_fwnode_name at all.
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
 
-> OTOH, of_fwnode_get_named_child_node() might need to copy that code which
-> brings the consistency issue (several places to maintain the same set of rules,
-> i.e. how we extract name out of full_name).
-> 
-> So, removal of name field shouldn't be done until we resolve the issue with
-> of_fwnode_get_named_child_node().
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
 
-thanks,
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (6):
+  tpm: dynamically allocate active_banks array
+  tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: ensure that the output of PCR read contains the correct digest
+    size
+
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  34 +++++---
+ drivers/char/tpm/tpm.h              |  19 ++---
+ drivers/char/tpm/tpm2-cmd.c         | 115 ++++++++++++++++++++--------
+ include/linux/tpm.h                 |  30 +++++++-
+ include/linux/tpm_eventlog.h        |  12 +--
+ security/integrity/ima/ima_crypto.c |  10 +--
+ 7 files changed, 145 insertions(+), 76 deletions(-)
 
 -- 
-heikki
+2.17.1
+
