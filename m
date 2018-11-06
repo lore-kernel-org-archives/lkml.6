@@ -2,137 +2,273 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C31C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09856C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4A02086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:26:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="M2WfIDc9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4A02086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id BD70F2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:28:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD70F2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbeKGHyH (ORCPT
+        id S1730980AbeKGHz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:54:07 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35691 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbeKGHyG (ORCPT
+        Wed, 7 Nov 2018 02:55:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37821 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbeKGHz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:54:06 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e18-v6so474444eds.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 14:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iSgntf/ex8PW0DAiqc3ukD9GaUJfZ+xXcJuBJuPvczU=;
-        b=M2WfIDc9j3K/1aITjHkERO5pPqsL+ftKKa5o+x2IZW2x8hOOeV7S9kqCDRj/uVzbWb
-         9D649DNo9/21hqOav/HUzCbrlPZH5lK+VQ+oJ7JrSNKUS70NupsQRTOOucgQPFo1+J7C
-         UcOX/hd8ji7lb8X++lb1tr1rLR9Z248BEfKRU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=iSgntf/ex8PW0DAiqc3ukD9GaUJfZ+xXcJuBJuPvczU=;
-        b=NdrAAq1SMLmE2ETFkA+LSNTvxwkeHNLB0DQlYbmOc+QBxiPkId/hvduPy5nv7xby/6
-         sJmi8VAMh8c8uU1Csqk7yM+m13EIgnUTO9tRMD8qmP4x5TqJDniVZxdkv7kdkfHttDAM
-         tVuDZLNin5utVu8ONaY7ndDEDwbsYrnkA1eUcaO4lksVISB35ctbsliXfpli2ec6XRJa
-         SZ3KhUCin1mqCXBaXKa//2hSapHhwc2r3iJ5eoMRamQsbuedu1CXQRVzokRU4Uiw1MuB
-         vSuYYkU2ozHK0n859NfwiQhR06eznKcm/lXwTaVvhAMe+GaOFe33v2UOv0SoEsfA8zda
-         ThkA==
-X-Gm-Message-State: AGRZ1gKw1V/6YpoD700Xmyjs8SX7cB7Gux2Hyl+Qd7/DCwZn+SFo89h/
-        gyFJB5hRyHC8z0XgylONNCKKtA==
-X-Google-Smtp-Source: AJdET5c1MwieNk7ehoCo3rJWIXRamHNXAM4PzgunLj5uz1twDCajWH0FdW6B7dz+cP0XDD8GzZYejA==
-X-Received: by 2002:a17:906:828b:: with SMTP id h11-v6mr17940701ejx.115.1541543198450;
-        Tue, 06 Nov 2018 14:26:38 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id r17-v6sm2325133ejr.41.2018.11.06.14.26.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 14:26:37 -0800 (PST)
-Date:   Tue, 6 Nov 2018 23:26:35 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sean Paul <sean@poorly.run>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2] drm: Convert to using %pOFn instead of
- device_node.name
-Message-ID: <20181106222635.GU21967@phenom.ffwll.local>
-Mail-Followup-To: Rob Herring <robh@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-References: <20180928225044.20132-1-robh@kernel.org>
- <20181001081659.GW11082@phenom.ffwll.local>
- <CAL_JsqJaoXd5xhhi1kvLHrRiMh1BTbnQ=p8Oz9893uVMJ1UpEQ@mail.gmail.com>
+        Wed, 7 Nov 2018 02:55:28 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6MRr1H986470
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 6 Nov 2018 14:27:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6MRrGc986467;
+        Tue, 6 Nov 2018 14:27:53 -0800
+Date:   Tue, 6 Nov 2018 14:27:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Long Li <tipbot@zytor.com>
+Message-ID: <tip-e8da8794a7fd9eef1ec9a07f0d4897c68581c72b@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, longli@microsoft.com, mikelley@microsoft.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, mikelley@microsoft.com,
+          longli@microsoft.com
+In-Reply-To: <20181106040000.27316-1-longli@linuxonhyperv.com>
+References: <20181106040000.27316-1-longli@linuxonhyperv.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq/matrix: Improve target CPU selection for
+ managed interrupts.
+Git-Commit-ID: e8da8794a7fd9eef1ec9a07f0d4897c68581c72b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJaoXd5xhhi1kvLHrRiMh1BTbnQ=p8Oz9893uVMJ1UpEQ@mail.gmail.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 03:57:16PM -0600, Rob Herring wrote:
-> On Mon, Oct 1, 2018 at 3:17 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Fri, Sep 28, 2018 at 05:50:44PM -0500, Rob Herring wrote:
-> > > In preparation to remove the node name pointer from struct device_node,
-> > > convert printf users to use the %pOFn format specifier.
-> > >
-> > > For drm_modes.c, the full node path is already printed out, so printing
-> > > just the node name a 2nd time is redundant and can be removed.
-> > >
-> > > Cc: Gustavo Padovan <gustavo@padovan.org>
-> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > Cc: Sean Paul <sean@poorly.run>
-> > > Cc: David Airlie <airlied@linux.ie>
-> > > Acked-by: Rob Clark <robdclark@gmail.com>
-> > > Cc: dri-devel@lists.freedesktop.org
-> > > Cc: linux-arm-msm@vger.kernel.org
-> > > Cc: freedreno@lists.freedesktop.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > > v2:
-> > > - Add to commit msg that we're dropping redundant printing of node name.
-> >
-> > Applied, thanks for the patch.
-> 
-> It appears this hasn't been.
+Commit-ID:  e8da8794a7fd9eef1ec9a07f0d4897c68581c72b
+Gitweb:     https://git.kernel.org/tip/e8da8794a7fd9eef1ec9a07f0d4897c68581c72b
+Author:     Long Li <longli@microsoft.com>
+AuthorDate: Tue, 6 Nov 2018 04:00:00 +0000
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 6 Nov 2018 23:20:13 +0100
 
-It is, just not yet in linux-next. I'll kick the drm-misc maintainers to
-roll the trees forward.
--Daniel
+genirq/matrix: Improve target CPU selection for managed interrupts.
 
-> 
-> > Aside, still don't want drm-misc commit rights so you can offload these
-> > yourself?
-> 
-> No thanks.
-> 
-> Rob
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+On large systems with multiple devices of the same class (e.g. NVMe disks,
+using managed interrupts), the kernel can affinitize these interrupts to a
+small subset of CPUs instead of spreading them out evenly.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+irq_matrix_alloc_managed() tries to select the CPU in the supplied cpumask
+of possible target CPUs which has the lowest number of interrupt vectors
+allocated.
+
+This is done by searching the CPU with the highest number of available
+vectors. While this is correct for non-managed CPUs it can select the wrong
+CPU for managed interrupts. Under certain constellations this results in
+affinitizing the managed interrupts of several devices to a single CPU in
+a set.
+
+The book keeping of available vectors works the following way:
+
+ 1) Non-managed interrupts:
+
+    available is decremented when the interrupt is actually requested by
+    the device driver and a vector is assigned. It's incremented when the
+    interrupt and the vector are freed.
+
+ 2) Managed interrupts:
+
+    Managed interrupts guarantee vector reservation when the MSI/MSI-X
+    functionality of a device is enabled, which is achieved by reserving
+    vectors in the bitmaps of the possible target CPUs. This reservation
+    decrements the available count on each possible target CPU.
+
+    When the interrupt is requested by the device driver then a vector is
+    allocated from the reserved region. The operation is reversed when the
+    interrupt is freed by the device driver. Neither of these operations
+    affect the available count.
+
+    The reservation persist up to the point where the MSI/MSI-X
+    functionality is disabled and only this operation increments the
+    available count again.
+
+For non-managed interrupts the available count is the correct selection
+criterion because the guaranteed reservations need to be taken into
+account. Using the allocated counter could lead to a failing allocation in
+the following situation (total vector space of 10 assumed):
+
+		 CPU0	CPU1
+ available:	    2	   0
+ allocated:	    5	   3   <--- CPU1 is selected, but available space = 0
+ managed reserved:  3	   7
+
+ while available yields the correct result.
+
+For managed interrupts the available count is not the appropriate
+selection criterion because as explained above the available count is not
+affected by the actual vector allocation.
+
+The following example illustrates that. Total vector space of 10
+assumed. The starting point is:
+
+		 CPU0	CPU1
+ available:	    5	   4
+ allocated:	    2	   3
+ managed reserved:  3	   3
+
+ Allocating vectors for three non-managed interrupts will result in
+ affinitizing the first two to CPU0 and the third one to CPU1 because the
+ available count is adjusted with each allocation:
+
+		  CPU0	CPU1
+ available:	     5	   4	<- Select CPU0 for 1st allocation
+ --> allocated:	     3	   3
+
+ available:	     4	   4	<- Select CPU0 for 2nd allocation
+ --> allocated:	     4	   3
+
+ available:	     3	   4	<- Select CPU1 for 3rd allocation
+ --> allocated:	     4	   4
+
+ But the allocation of three managed interrupts starting from the same
+ point will affinitize all of them to CPU0 because the available count is
+ not affected by the allocation (see above). So the end result is:
+
+		  CPU0	CPU1
+ available:	     5	   4
+ allocated:	     5	   3
+
+Introduce a "managed_allocated" field in struct cpumap to track the vector
+allocation for managed interrupts separately. Use this information to
+select the target CPU when a vector is allocated for a managed interrupt,
+which results in more evenly distributed vector assignments. The above
+example results in the following allocations:
+
+		 CPU0	CPU1
+ managed_allocated: 0	   0	<- Select CPU0 for 1st allocation
+ --> allocated:	    3	   3
+
+ managed_allocated: 1	   0	<- Select CPU1 for 2nd allocation
+ --> allocated:	    3	   4
+
+ managed_allocated: 1	   1	<- Select CPU0 for 3rd allocation
+ --> allocated:	    4	   4
+
+The allocation of non-managed interrupts is not affected by this change and
+is still evaluating the available count.
+
+The overall distribution of interrupt vectors for both types of interrupts
+might still not be perfectly even depending on the number of non-managed
+and managed interrupts in a system, but due to the reservation guarantee
+for managed interrupts this cannot be avoided.
+
+Expose the new field in debugfs as well.
+
+[ tglx: Clarified the background of the problem in the changelog and
+  	described it independent of NVME ]
+
+Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Michael Kelley <mikelley@microsoft.com>
+Link: https://lkml.kernel.org/r/20181106040000.27316-1-longli@linuxonhyperv.com
+---
+ kernel/irq/matrix.c | 34 ++++++++++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
+index 1f0985adf193..30cc217b8631 100644
+--- a/kernel/irq/matrix.c
++++ b/kernel/irq/matrix.c
+@@ -14,6 +14,7 @@ struct cpumap {
+ 	unsigned int		available;
+ 	unsigned int		allocated;
+ 	unsigned int		managed;
++	unsigned int		managed_allocated;
+ 	bool			initialized;
+ 	bool			online;
+ 	unsigned long		alloc_map[IRQ_MATRIX_SIZE];
+@@ -145,6 +146,27 @@ static unsigned int matrix_find_best_cpu(struct irq_matrix *m,
+ 	return best_cpu;
+ }
+ 
++/* Find the best CPU which has the lowest number of managed IRQs allocated */
++static unsigned int matrix_find_best_cpu_managed(struct irq_matrix *m,
++						const struct cpumask *msk)
++{
++	unsigned int cpu, best_cpu, allocated = UINT_MAX;
++	struct cpumap *cm;
++
++	best_cpu = UINT_MAX;
++
++	for_each_cpu(cpu, msk) {
++		cm = per_cpu_ptr(m->maps, cpu);
++
++		if (!cm->online || cm->managed_allocated > allocated)
++			continue;
++
++		best_cpu = cpu;
++		allocated = cm->managed_allocated;
++	}
++	return best_cpu;
++}
++
+ /**
+  * irq_matrix_assign_system - Assign system wide entry in the matrix
+  * @m:		Matrix pointer
+@@ -269,7 +291,7 @@ int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
+ 	if (cpumask_empty(msk))
+ 		return -EINVAL;
+ 
+-	cpu = matrix_find_best_cpu(m, msk);
++	cpu = matrix_find_best_cpu_managed(m, msk);
+ 	if (cpu == UINT_MAX)
+ 		return -ENOSPC;
+ 
+@@ -282,6 +304,7 @@ int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
+ 		return -ENOSPC;
+ 	set_bit(bit, cm->alloc_map);
+ 	cm->allocated++;
++	cm->managed_allocated++;
+ 	m->total_allocated++;
+ 	*mapped_cpu = cpu;
+ 	trace_irq_matrix_alloc_managed(bit, cpu, m, cm);
+@@ -395,6 +418,8 @@ void irq_matrix_free(struct irq_matrix *m, unsigned int cpu,
+ 
+ 	clear_bit(bit, cm->alloc_map);
+ 	cm->allocated--;
++	if(managed)
++		cm->managed_allocated--;
+ 
+ 	if (cm->online)
+ 		m->total_allocated--;
+@@ -464,13 +489,14 @@ void irq_matrix_debug_show(struct seq_file *sf, struct irq_matrix *m, int ind)
+ 	seq_printf(sf, "Total allocated:  %6u\n", m->total_allocated);
+ 	seq_printf(sf, "System: %u: %*pbl\n", nsys, m->matrix_bits,
+ 		   m->system_map);
+-	seq_printf(sf, "%*s| CPU | avl | man | act | vectors\n", ind, " ");
++	seq_printf(sf, "%*s| CPU | avl | man | mac | act | vectors\n", ind, " ");
+ 	cpus_read_lock();
+ 	for_each_online_cpu(cpu) {
+ 		struct cpumap *cm = per_cpu_ptr(m->maps, cpu);
+ 
+-		seq_printf(sf, "%*s %4d  %4u  %4u  %4u  %*pbl\n", ind, " ",
+-			   cpu, cm->available, cm->managed, cm->allocated,
++		seq_printf(sf, "%*s %4d  %4u  %4u  %4u %4u  %*pbl\n", ind, " ",
++			   cpu, cm->available, cm->managed,
++			   cm->managed_allocated, cm->allocated,
+ 			   m->matrix_bits, cm->alloc_map);
+ 	}
+ 	cpus_read_unlock();
