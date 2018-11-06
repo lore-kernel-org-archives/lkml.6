@@ -8,65 +8,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F99C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D685C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A98F620862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:09:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F30F206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwk/tUsZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A98F620862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUFjFp3k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F30F206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388675AbeKGHfc (ORCPT
+        id S2388067AbeKGHfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:35:32 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35888 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388240AbeKGHfa (ORCPT
+        Wed, 7 Nov 2018 02:35:21 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43372 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730927AbeKGHfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:35:30 -0500
-Received: by mail-lf1-f66.google.com with SMTP id h192so10059873lfg.3;
-        Tue, 06 Nov 2018 14:08:07 -0800 (PST)
+        Wed, 7 Nov 2018 02:35:20 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g26-v6so12919378lja.10;
+        Tue, 06 Nov 2018 14:07:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pQ3RqqPBhFl7F5HnXPaRV0SJnc5UQSH91FFkBID0Mo4=;
-        b=bwk/tUsZAPeLbEMf8uScIs3rCMHbAfJEV1E/QMdLpZSg+5a+C0YM7X8s5RFQV4ZycU
-         a+/h6XH/DviBezZN95pm6clNNg6qY/KiLzD9UPD/h9Khaj0EkkLkT9sOFORXSUjR4RR/
-         rRnIYseaMV6Me4Jd6zVtOuPa1+VoFuOgg0p2NRQfA4I75L4vWZLaeVAmfhxu98yET4mf
-         9qYFsgXXT0z2vTMYO5dj5vKu0ZDJcoVhylxUn8ysrlG5Q0pkLogZh2/hA+rajdPAly7Q
-         mIPawwIqGWeDfgGGzx3whneG9vZGfBZPITb4c10/tox/nd6o6ZeXV733hMbJHmZVhuea
-         ZBjQ==
+        bh=+aYPUQtT/PUbh74u9dlmEfw7mrapm0u94rZngJrruH8=;
+        b=MUFjFp3kTXWyIVMJzu+yELXbh+N4AK4H0Zb0waE8YtFs6BcFhHn2vigUxuqYncEC71
+         o9AnCgF2n8ekK+yGyXO80XTQoJafMntUQxZdifX+hFZRsb0PpBEdhdKYhdl+soScaQ/d
+         +Nja5T/bB0VdlBlddqdhky17SivA5huIYkaLq+5UxCf/Ny72millmcJe3oxUR61uC0G8
+         cIfELKJskcbpqjVBRaPe5p+2WqKt37T4BVFkCcuCDkf7hHmi44McWwPypYdkdLbKidS1
+         RuI6vxintUh/64V3vgJKZvfLvIVDt8oAznuyf4azbeNRv5eSZNxF/WcxPOANmipeCviw
+         LZqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pQ3RqqPBhFl7F5HnXPaRV0SJnc5UQSH91FFkBID0Mo4=;
-        b=Q+8a9nIqHLaomAq7qhaXVbAaoD5qN/V6hhJxSGVqxe3+stc2dQYT0aepRjO1HtNh4I
-         c4ay0KFxR7rA4A8j5KCha84oSUQ3ydr/j/eKp+1Lc5V3fLr8nPrezGOAyQelMTYtcqBI
-         DeWew1xFEjGFyD8L1xQOuFsM6pj4OTRtArNi6sc4ooxcAQEIIpC2B/9zk5TVItdExcQD
-         H4ETfVkF1jq4iSGvFpPKTPrsx5QsNkzOBpY+bnJINPfn3sCzIQPOD0UnVQu1AvM4ZPZC
-         U4KTyxEJDEHba5I/n0v26yvwMZhKS5Sy8j1VBXrthsQTh+evwyEhLrBdTw+iGBcoPFoX
-         R66Q==
-X-Gm-Message-State: AGRZ1gJ4QA/bdX12998xr5zGC+u74LMx5MGvqv2I/4ZYT+zdAI6+d6FE
-        OeOpZcN6RVrS5gJi3wkT/C3YbsW/g9o=
-X-Google-Smtp-Source: AJdET5c+vXsbCBN9CtKQiIktw51ZlX9eTRmU3anxseLk69X2EW4L+NyR70rBTQQsSLzL20gk2PdjvQ==
-X-Received: by 2002:a19:914b:: with SMTP id y11mr15455296lfj.98.1541542086251;
-        Tue, 06 Nov 2018 14:08:06 -0800 (PST)
+        bh=+aYPUQtT/PUbh74u9dlmEfw7mrapm0u94rZngJrruH8=;
+        b=CzDtzC7jVwXY6e08Vcg7/w2a3D7qIt8UhPxDdgQJuMOGUXjHA8MSTpH/rjgsVKvbPG
+         lFX+1p3bfKnkf5stee4FmNtGMU2gHqaOrJC8fed+zqyCCX83N3YIYleUfnMHx8Frgt1T
+         ex8sjw4lrl4Ju7aKokcoGC8/Kty/n6mxOCAicJFWhR41qz0WwhC0LTarA90ItowbyQlu
+         duG2ImxnweM1Yz4ptds6HEy8wxxgKbQPvuN2ONQxL+QE8CRDG9W6PrPBHohLe/IGijsL
+         DsGrmopNPuZluksCNtyp19szTO3dy7mhIBXhsFiBXVuZCpRU0zbN3WZnZEPgUStUHjS8
+         3RbA==
+X-Gm-Message-State: AGRZ1gLKV8X13FTZMHsFnJSZ4Rhp0dRs3HamA3zsnmdnGZIKLJviXWV2
+        YfgPOvKjtotr2jUbKhvaSStkvisZ
+X-Google-Smtp-Source: AJdET5edTp+k0ph7g6vCKXMCG+XKqf59yjs6imx6BBXgrUj6/tiY+z0ZpKaoKCeUrBGn4CPtBVVP9w==
+X-Received: by 2002:a2e:5703:: with SMTP id l3-v6mr17002565ljb.106.1541542075650;
+        Tue, 06 Nov 2018 14:07:55 -0800 (PST)
 Received: from i4790k.home (bgp86.neoplus.adsl.tpnet.pl. [83.28.79.86])
-        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.08.04
+        by smtp.gmail.com with ESMTPSA id c20sm3185654lfj.67.2018.11.06.14.07.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 14:08:05 -0800 (PST)
+        Tue, 06 Nov 2018 14:07:55 -0800 (PST)
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 To:     linux-leds@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         pavel@ucw.cz, robh@kernel.org, jacek.anaszewski@gmail.com,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
-Date:   Tue,  6 Nov 2018 23:07:20 +0100
-Message-Id: <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 06/24] leds: sc27xx-blt: Use led_compose_name()
+Date:   Tue,  6 Nov 2018 23:07:14 +0100
+Message-Id: <1541542052-10081-7-git-send-email-jacek.anaszewski@gmail.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
@@ -79,118 +80,83 @@ Switch to using generic LED support for composing LED class
 device name.
 
 Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Dan Murphy <dmurphy@ti.com>
+Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ drivers/leds/leds-sc27xx-bltc.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index 4f413a7..9dfc0f2 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -13,7 +13,6 @@
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index 9d9b7aa..9fe7cb1 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -6,7 +6,6 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
  #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
 -#include <uapi/linux/uleds.h>
  
- #define LM36922_MODEL	0
- #define LM36923_MODEL	1
-@@ -95,6 +94,9 @@
- #define LM3692X_FAULT_FLAG_SHRT BIT(3)
- #define LM3692X_FAULT_FLAG_OPEN BIT(4)
+ /* PMIC global control register definition */
+ #define SC27XX_MODULE_EN0	0xc08
+@@ -36,7 +35,7 @@
+ #define SC27XX_LEDS_MAX		3
  
-+#define LM36922_NAME "lm36922"
-+#define LM36923_NAME "lm36923"
+ struct sc27xx_led {
+-	char name[LED_MAX_NAME_SIZE];
++	struct fwnode_handle *fwnode;
+ 	struct led_classdev ldev;
+ 	struct sc27xx_led_priv *priv;
+ 	u8 line;
+@@ -132,16 +131,22 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
+ 
+ 	for (i = 0; i < SC27XX_LEDS_MAX; i++) {
+ 		struct sc27xx_led *led = &priv->leds[i];
++		struct led_init_data init_data = { led->fwnode };
+ 
+ 		if (!led->active)
+ 			continue;
+ 
++		err = led_compose_name(led->fwnode, "sc27xx", ":",
++				       init_data.name);
++		if (err)
++			return err;
 +
- /**
-  * struct lm3692x_led -
-  * @lock - Lock for reading/writing the device
-@@ -103,7 +105,6 @@
-  * @regmap - Devices register map
-  * @enable_gpio - VDDIO/EN gpio to enable communication interface
-  * @regulator - LED supply regulator pointer
-- * @label - LED label
-  * @led_enable - LED sync to be enabled
-  * @model_id - Current device model ID enumerated
-  */
-@@ -114,7 +115,6 @@ struct lm3692x_led {
- 	struct regmap *regmap;
- 	struct gpio_desc *enable_gpio;
- 	struct regulator *regulator;
--	char label[LED_MAX_NAME_SIZE];
- 	int led_enable;
- 	int model_id;
- };
-@@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
- static int lm3692x_probe_dt(struct lm3692x_led *led)
- {
- 	struct fwnode_handle *child = NULL;
--	const char *name;
-+	struct led_init_data init_data;
-+	char *model_name;
- 	int ret;
+ 		led->line = i;
+ 		led->priv = priv;
+-		led->ldev.name = led->name;
+ 		led->ldev.brightness_set_blocking = sc27xx_led_set;
  
- 	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-@@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		dev_err(&led->client->dev, "No LED Child node\n");
- 		return -ENODEV;
+-		err = devm_led_classdev_register(dev, &led->ldev);
++		err = devm_led_classdev_register_ext(dev, &led->ldev,
++						     &init_data);
+ 		if (err)
+ 			return err;
  	}
-+	init_data.fwnode = child;
+@@ -154,7 +159,6 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node, *child;
+ 	struct sc27xx_led_priv *priv;
+-	const char *str;
+ 	u32 base, count, reg;
+ 	int err;
  
--	fwnode_property_read_string(child, "linux,default-trigger",
--				    &led->led_dev.default_trigger);
-+	if (led->model_id == LM36922_MODEL)
-+		model_name =  LM36922_NAME;
-+	else
-+		model_name =  LM36923_NAME;
+@@ -196,15 +200,8 @@ static int sc27xx_led_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
  
--	ret = fwnode_property_read_string(child, "label", &name);
-+	ret = led_compose_name(child, model_name, ":backlight_cluster",
-+			       init_data.name);
- 	if (ret)
--		snprintf(led->label, sizeof(led->label),
--			"%s::", led->client->name);
--	else
--		snprintf(led->label, sizeof(led->label),
--			 "%s:%s", led->client->name, name);
-+		return ret;
-+
-+	fwnode_property_read_string(child, "linux,default-trigger",
-+				    &led->led_dev.default_trigger);
- 
- 	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
- 	if (ret) {
-@@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
- 		return ret;
- 	}
- 
--	led->led_dev.name = led->label;
++		priv->leds[reg].fwnode = of_fwnode_handle(child);
+ 		priv->leds[reg].active = true;
 -
--	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
-+	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
-+					     &init_data);
- 	if (ret) {
- 		dev_err(&led->client->dev, "led register err: %d\n", ret);
- 		return ret;
+-		err = of_property_read_string(child, "label", &str);
+-		if (err)
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx::");
+-		else
+-			snprintf(priv->leds[reg].name, LED_MAX_NAME_SIZE,
+-				 "sc27xx:%s", str);
  	}
  
--	led->led_dev.dev->of_node = to_of_node(child);
--
- 	return 0;
- }
- 
-@@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id lm3692x_id[] = {
--	{ "lm36922", LM36922_MODEL },
--	{ "lm36923", LM36923_MODEL },
-+	{ LM36922_NAME, LM36922_MODEL },
-+	{ LM36923_NAME, LM36923_MODEL },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, lm3692x_id);
+ 	err = sc27xx_led_register(dev, priv);
 -- 
 2.1.4
 
