@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18C4C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10AFC46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAEF2086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAEF2086C
+	by mail.kernel.org (Postfix) with ESMTP id 9FCC320869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:28:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FCC320869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389391AbeKGBy3 (ORCPT
+        id S2389420AbeKGByc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:54:29 -0500
+        Tue, 6 Nov 2018 20:54:32 -0500
 Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:22830 "EHLO
         alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389348AbeKGBy2 (ORCPT
+        by vger.kernel.org with ESMTP id S2389375AbeKGBya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:54:28 -0500
+        Tue, 6 Nov 2018 20:54:30 -0500
 X-Greylist: delayed 374 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Nov 2018 20:54:22 EST
 X-IronPort-AV: E=Sophos;i="5.54,472,1534789800"; 
-   d="scan'208";a="277244"
+   d="scan'208";a="277259"
 Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Nov 2018 21:52:13 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,9069"; a="1957397"
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Nov 2018 21:52:16 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9069"; a="1957400"
 Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
-  by ironmsg03-blr.qualcomm.com with ESMTP; 06 Nov 2018 21:52:13 +0530
+  by ironmsg03-blr.qualcomm.com with ESMTP; 06 Nov 2018 21:52:17 +0530
 Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
-        id 36C4931D5; Tue,  6 Nov 2018 21:52:12 +0530 (IST)
+        id C859531D5; Tue,  6 Nov 2018 21:52:15 +0530 (IST)
 From:   Arun KS <arunks@codeaurora.org>
 To:     akpm@linux-foundation.org, keescook@chromium.org,
         khlebnikov@yandex-team.ru, minchan@kernel.org, mhocko@kernel.org,
         vbabka@suse.cz, osalvador@suse.de, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
 Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
-Subject: [PATCH v2 1/4] mm: Fix multiple evaluvations of totalram_pages and managed_pages
-Date:   Tue,  6 Nov 2018 21:51:47 +0530
-Message-Id: <1541521310-28739-2-git-send-email-arunks@codeaurora.org>
+Subject: [PATCH v2 4/4] mm: Remove managed_page_count spinlock
+Date:   Tue,  6 Nov 2018 21:51:50 +0530
+Message-Id: <1541521310-28739-5-git-send-email-arunks@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1541521310-28739-1-git-send-email-arunks@codeaurora.org>
 References: <1541521310-28739-1-git-send-email-arunks@codeaurora.org>
@@ -50,304 +50,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is in preparation to a later patch which converts totalram_pages
-and zone->managed_pages to atomic variables. This patch does not introduce
-any functional changes.
+Now totalram_pages and managed_pages are atomic varibles. No need
+of managed_page_count spinlock.
 
 Signed-off-by: Arun KS <arunks@codeaurora.org>
 Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Acked-by: Michal Hocko <mhocko@suse.com>
 ---
- arch/um/kernel/mem.c                 |  3 +--
- arch/x86/kernel/cpu/microcode/core.c |  5 +++--
- drivers/hv/hv_balloon.c              | 19 ++++++++++---------
- fs/file_table.c                      |  7 ++++---
- kernel/fork.c                        |  5 +++--
- kernel/kexec_core.c                  |  5 +++--
- mm/page_alloc.c                      |  5 +++--
- mm/shmem.c                           |  3 ++-
- net/dccp/proto.c                     |  7 ++++---
- net/netfilter/nf_conntrack_core.c    |  7 ++++---
- net/netfilter/xt_hashlimit.c         |  5 +++--
- net/sctp/protocol.c                  |  7 ++++---
- 12 files changed, 44 insertions(+), 34 deletions(-)
+ include/linux/mmzone.h | 6 ------
+ mm/page_alloc.c        | 5 -----
+ 2 files changed, 11 deletions(-)
 
-diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-index 1067469..134d3fd 100644
---- a/arch/um/kernel/mem.c
-+++ b/arch/um/kernel/mem.c
-@@ -51,8 +51,7 @@ void __init mem_init(void)
- 
- 	/* this will put all low memory onto the freelists */
- 	memblock_free_all();
--	max_low_pfn = totalram_pages;
--	max_pfn = totalram_pages;
-+	max_pfn = max_low_pfn = totalram_pages;
- 	mem_init_print_info(NULL);
- 	kmalloc_ok = 1;
- }
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 2637ff0..99c67ca 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -434,9 +434,10 @@ static ssize_t microcode_write(struct file *file, const char __user *buf,
- 			       size_t len, loff_t *ppos)
- {
- 	ssize_t ret = -EINVAL;
-+	unsigned long totalram_pgs = totalram_pages;
- 
--	if ((len >> PAGE_SHIFT) > totalram_pages) {
--		pr_err("too much data (max %ld pages)\n", totalram_pages);
-+	if ((len >> PAGE_SHIFT) > totalram_pgs) {
-+		pr_err("too much data (max %ld pages)\n", totalram_pgs);
- 		return ret;
- 	}
- 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index 4163151..cac4945 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -1090,6 +1090,7 @@ static void process_info(struct hv_dynmem_device *dm, struct dm_info_msg *msg)
- static unsigned long compute_balloon_floor(void)
- {
- 	unsigned long min_pages;
-+	unsigned long totalram_pgs = totalram_pages;
- #define MB2PAGES(mb) ((mb) << (20 - PAGE_SHIFT))
- 	/* Simple continuous piecewiese linear function:
- 	 *  max MiB -> min MiB  gradient
-@@ -1102,16 +1103,16 @@ static unsigned long compute_balloon_floor(void)
- 	 *    8192       744    (1/16)
- 	 *   32768      1512	(1/32)
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index e73dc31..c71b4d9 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -428,12 +428,6 @@ struct zone {
+ 	 * Write access to present_pages at runtime should be protected by
+ 	 * mem_hotplug_begin/end(). Any reader who can't tolerant drift of
+ 	 * present_pages should get_online_mems() to get a stable value.
+-	 *
+-	 * Read access to managed_pages should be safe because it's unsigned
+-	 * long. Write access to zone->managed_pages and totalram_pages are
+-	 * protected by managed_page_count_lock at runtime. Idealy only
+-	 * adjust_managed_page_count() should be used instead of directly
+-	 * touching zone->managed_pages and totalram_pages.
  	 */
--	if (totalram_pages < MB2PAGES(128))
--		min_pages = MB2PAGES(8) + (totalram_pages >> 1);
--	else if (totalram_pages < MB2PAGES(512))
--		min_pages = MB2PAGES(40) + (totalram_pages >> 2);
--	else if (totalram_pages < MB2PAGES(2048))
--		min_pages = MB2PAGES(104) + (totalram_pages >> 3);
--	else if (totalram_pages < MB2PAGES(8192))
--		min_pages = MB2PAGES(232) + (totalram_pages >> 4);
-+	if (totalram_pgs < MB2PAGES(128))
-+		min_pages = MB2PAGES(8) + (totalram_pgs >> 1);
-+	else if (totalram_pgs < MB2PAGES(512))
-+		min_pages = MB2PAGES(40) + (totalram_pgs >> 2);
-+	else if (totalram_pgs < MB2PAGES(2048))
-+		min_pages = MB2PAGES(104) + (totalram_pgs >> 3);
-+	else if (totalram_pgs < MB2PAGES(8192))
-+		min_pages = MB2PAGES(232) + (totalram_pgs >> 4);
- 	else
--		min_pages = MB2PAGES(488) + (totalram_pages >> 5);
-+		min_pages = MB2PAGES(488) + (totalram_pgs >> 5);
- #undef MB2PAGES
- 	return min_pages;
- }
-diff --git a/fs/file_table.c b/fs/file_table.c
-index e49af4c..6e3c088 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -380,10 +380,11 @@ void __init files_init(void)
- void __init files_maxfiles_init(void)
- {
- 	unsigned long n;
--	unsigned long memreserve = (totalram_pages - nr_free_pages()) * 3/2;
-+	unsigned long totalram_pgs = totalram_pages;
-+	unsigned long memreserve = (totalram_pgs - nr_free_pages()) * 3/2;
- 
--	memreserve = min(memreserve, totalram_pages - 1);
--	n = ((totalram_pages - memreserve) * (PAGE_SIZE / 1024)) / 10;
-+	memreserve = min(memreserve, totalram_pgs - 1);
-+	n = ((totalram_pgs - memreserve) * (PAGE_SIZE / 1024)) / 10;
- 
- 	files_stat.max_files = max_t(unsigned long, n, NR_FILE);
- }
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 07cddff..7823f31 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -739,15 +739,16 @@ void __init __weak arch_task_cache_init(void) { }
- static void set_max_threads(unsigned int max_threads_suggested)
- {
- 	u64 threads;
-+	unsigned long totalram_pgs = totalram_pages;
- 
- 	/*
- 	 * The number of threads shall be limited such that the thread
- 	 * structures may only consume a small part of the available memory.
- 	 */
--	if (fls64(totalram_pages) + fls64(PAGE_SIZE) > 64)
-+	if (fls64(totalram_pgs) + fls64(PAGE_SIZE) > 64)
- 		threads = MAX_THREADS;
- 	else
--		threads = div64_u64((u64) totalram_pages * (u64) PAGE_SIZE,
-+		threads = div64_u64((u64) totalram_pgs * (u64) PAGE_SIZE,
- 				    (u64) THREAD_SIZE * 8UL);
- 
- 	if (threads > max_threads_suggested)
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 86ef06d..dff217c 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -152,6 +152,7 @@ int sanity_check_segment_list(struct kimage *image)
- 	int i;
- 	unsigned long nr_segments = image->nr_segments;
- 	unsigned long total_pages = 0;
-+	unsigned long totalram_pgs = totalram_pages;
- 
- 	/*
- 	 * Verify we have good destination addresses.  The caller is
-@@ -217,13 +218,13 @@ int sanity_check_segment_list(struct kimage *image)
- 	 * wasted allocating pages, which can cause a soft lockup.
- 	 */
- 	for (i = 0; i < nr_segments; i++) {
--		if (PAGE_COUNT(image->segment[i].memsz) > totalram_pages / 2)
-+		if (PAGE_COUNT(image->segment[i].memsz) > totalram_pgs / 2)
- 			return -EINVAL;
- 
- 		total_pages += PAGE_COUNT(image->segment[i].memsz);
- 	}
- 
--	if (total_pages > totalram_pages / 2)
-+	if (total_pages > totalram_pgs / 2)
- 		return -EINVAL;
- 
- 	/*
+ 	atomic_long_t		managed_pages;
+ 	unsigned long		spanned_pages;
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a919ba5..173312b 100644
+index 2a42c3f..4d78bde 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -7245,6 +7245,7 @@ static void calculate_totalreserve_pages(void)
- 		for (i = 0; i < MAX_NR_ZONES; i++) {
- 			struct zone *zone = pgdat->node_zones + i;
- 			long max = 0;
-+			unsigned long managed_pages = zone->managed_pages;
+@@ -122,9 +122,6 @@
+ };
+ EXPORT_SYMBOL(node_states);
  
- 			/* Find valid and maximum lowmem_reserve in the zone */
- 			for (j = i; j < MAX_NR_ZONES; j++) {
-@@ -7255,8 +7256,8 @@ static void calculate_totalreserve_pages(void)
- 			/* we treat the high watermark as reserved pages. */
- 			max += high_wmark_pages(zone);
+-/* Protect totalram_pages and zone->managed_pages */
+-static DEFINE_SPINLOCK(managed_page_count_lock);
+-
+ atomic_long_t _totalram_pages __read_mostly;
+ unsigned long totalreserve_pages __read_mostly;
+ unsigned long totalcma_pages __read_mostly;
+@@ -7064,14 +7061,12 @@ static int __init cmdline_parse_movablecore(char *p)
  
--			if (max > zone->managed_pages)
--				max = zone->managed_pages;
-+			if (max > managed_pages)
-+				max = managed_pages;
- 
- 			pgdat->totalreserve_pages += max;
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index ea26d7a..6b91eab 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -114,7 +114,8 @@ static unsigned long shmem_default_max_blocks(void)
- 
- static unsigned long shmem_default_max_inodes(void)
+ void adjust_managed_page_count(struct page *page, long count)
  {
--	return min(totalram_pages - totalhigh_pages, totalram_pages / 2);
-+	unsigned long totalram_pgs = totalram_pages;
-+	return min(totalram_pgs - totalhigh_pages, totalram_pgs / 2);
- }
+-	spin_lock(&managed_page_count_lock);
+ 	atomic_long_add(count, &page_zone(page)->managed_pages);
+ 	totalram_pages_add(count);
+ #ifdef CONFIG_HIGHMEM
+ 	if (PageHighMem(page))
+ 		totalhigh_pages_add(count);
  #endif
+-	spin_unlock(&managed_page_count_lock);
+ }
+ EXPORT_SYMBOL(adjust_managed_page_count);
  
-diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index 43733ac..f27daa1 100644
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -1131,6 +1131,7 @@ static inline void dccp_mib_exit(void)
- static int __init dccp_init(void)
- {
- 	unsigned long goal;
-+	unsigned long totalram_pgs = totalram_pages;
- 	int ehash_order, bhash_order, i;
- 	int rc;
- 
-@@ -1154,10 +1155,10 @@ static int __init dccp_init(void)
- 	 *
- 	 * The methodology is similar to that of the buffer cache.
- 	 */
--	if (totalram_pages >= (128 * 1024))
--		goal = totalram_pages >> (21 - PAGE_SHIFT);
-+	if (totalram_pgs >= (128 * 1024))
-+		goal = totalram_pgs >> (21 - PAGE_SHIFT);
- 	else
--		goal = totalram_pages >> (23 - PAGE_SHIFT);
-+		goal = totalram_pgs >> (23 - PAGE_SHIFT);
- 
- 	if (thash_entries)
- 		goal = (thash_entries *
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index ca1168d..0b1801e 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -2248,6 +2248,7 @@ static __always_inline unsigned int total_extension_size(void)
- 
- int nf_conntrack_init_start(void)
- {
-+	unsigned long totalram_pgs = totalram_pages;
- 	int max_factor = 8;
- 	int ret = -ENOMEM;
- 	int i;
-@@ -2267,11 +2268,11 @@ int nf_conntrack_init_start(void)
- 		 * >= 4GB machines have 65536 buckets.
- 		 */
- 		nf_conntrack_htable_size
--			= (((totalram_pages << PAGE_SHIFT) / 16384)
-+			= (((totalram_pgs << PAGE_SHIFT) / 16384)
- 			   / sizeof(struct hlist_head));
--		if (totalram_pages > (4 * (1024 * 1024 * 1024 / PAGE_SIZE)))
-+		if (totalram_pgs > (4 * (1024 * 1024 * 1024 / PAGE_SIZE)))
- 			nf_conntrack_htable_size = 65536;
--		else if (totalram_pages > (1024 * 1024 * 1024 / PAGE_SIZE))
-+		else if (totalram_pgs > (1024 * 1024 * 1024 / PAGE_SIZE))
- 			nf_conntrack_htable_size = 16384;
- 		if (nf_conntrack_htable_size < 32)
- 			nf_conntrack_htable_size = 32;
-diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-index 3e7d259..6cb9a74 100644
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -274,14 +274,15 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
- 	struct xt_hashlimit_htable *hinfo;
- 	const struct seq_operations *ops;
- 	unsigned int size, i;
-+	unsigned long totalram_pgs = totalram_pages;
- 	int ret;
- 
- 	if (cfg->size) {
- 		size = cfg->size;
- 	} else {
--		size = (totalram_pages << PAGE_SHIFT) / 16384 /
-+		size = (totalram_pgs << PAGE_SHIFT) / 16384 /
- 		       sizeof(struct hlist_head);
--		if (totalram_pages > 1024 * 1024 * 1024 / PAGE_SIZE)
-+		if (totalram_pgs > 1024 * 1024 * 1024 / PAGE_SIZE)
- 			size = 8192;
- 		if (size < 16)
- 			size = 16;
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index 9b277bd..7128f85 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -1368,6 +1368,7 @@ static __init int sctp_init(void)
- 	int status = -EINVAL;
- 	unsigned long goal;
- 	unsigned long limit;
-+	unsigned long totalram_pages;
- 	int max_share;
- 	int order;
- 	int num_entries;
-@@ -1426,10 +1427,10 @@ static __init int sctp_init(void)
- 	 * The methodology is similar to that of the tcp hash tables.
- 	 * Though not identical.  Start by getting a goal size
- 	 */
--	if (totalram_pages >= (128 * 1024))
--		goal = totalram_pages >> (22 - PAGE_SHIFT);
-+	if (totalram_pgs >= (128 * 1024))
-+		goal = totalram_pgs >> (22 - PAGE_SHIFT);
- 	else
--		goal = totalram_pages >> (24 - PAGE_SHIFT);
-+		goal = totalram_pgs >> (24 - PAGE_SHIFT);
- 
- 	/* Then compute the page order for said goal */
- 	order = get_order(goal);
 -- 
 1.9.1
 
