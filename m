@@ -2,201 +2,95 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166DDC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD5CC46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC74020827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC74020827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id D886A20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:20:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D886A20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387486AbeKFPhk (ORCPT
+        id S1729993AbeKFPnu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:37:40 -0500
-Received: from relay.sw.ru ([185.231.240.75]:53096 "EHLO relay.sw.ru"
+        Tue, 6 Nov 2018 10:43:50 -0500
+Received: from mga04.intel.com ([192.55.52.120]:37725 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387393AbeKFPhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:37:40 -0500
-Received: from [172.16.24.21]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1gJuch-0002Eb-4m; Tue, 06 Nov 2018 09:13:59 +0300
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH] ext4: remove code duplication in free_ind_block()
-To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-kernel@vger.kernel.org
-Message-ID: <f1ec9378-6b0f-fdee-392c-bb97187fae12@virtuozzo.com>
-Date:   Tue, 6 Nov 2018 09:13:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1729416AbeKFPnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 10:43:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:20:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
+   d="scan'208";a="271702801"
+Received: from unknown (HELO localhost) ([10.249.254.149])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 22:20:03 -0800
+Date:   Tue, 6 Nov 2018 08:20:02 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181106062002.GA18360@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106054911.GA15575@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-free_ind_block(), free_dind_blocks() and free_tind_blocks() are replaced
-by a single recursive function.
+On Tue, Nov 06, 2018 at 07:49:11AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
+> > The ABI seems entirely undocumented and rather lightly designed, which
+> > seems like something we should fix before this is merged.
+> 
+> ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
+> documentation is included to intel_sgx.rst. I'm not saying that there is
+> no space refine it but it is neither undocumented.
+> 
+> > Also, for a feature as massive and complicated as this one, it seems
+> > irresponsible to not have a selftest.  Is that not feasible for some reason?
+> 
+> I do have the in-kernel launch enclave stuff backed up here:
+> 
+> https://github.com/jsakkine-intel/sgx-le-host
+> https://github.com/jsakkine-intel/sgx-le
+> 
+> This is about as simple as it gets without any type of run-time.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- fs/ext4/migrate.c | 115 +++++++++++++---------------------------------
- 1 file changed, 32 insertions(+), 83 deletions(-)
+Of course the enclave could be simplified considerably since now it has
+full code for EINITTOKEN generation, which is probably an overkill for a
+selftest.
 
-diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
-index 224e136d1c10..754f172b18d4 100644
---- a/fs/ext4/migrate.c
-+++ b/fs/ext4/migrate.c
-@@ -157,100 +157,43 @@ static int extend_credit_for_blkdel(handle_t *handle, struct inode *inode)
- 	return retval;
- }
- 
--static int free_dind_blocks(handle_t *handle,
--				struct inode *inode, __le32 i_data)
-+static int free_ind_blocks(handle_t *handle,
-+				struct inode *inode, __le32 i_data, int ind)
- {
--	int i;
--	__le32 *tmp_idata;
--	struct buffer_head *bh;
--	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
--
--	bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
--	if (!bh)
--		return -EIO;
--
--	tmp_idata = (__le32 *)bh->b_data;
--	for (i = 0; i < max_entries; i++) {
--		if (tmp_idata[i]) {
--			extend_credit_for_blkdel(handle, inode);
--			ext4_free_blocks(handle, inode, NULL,
--					 le32_to_cpu(tmp_idata[i]), 1,
--					 EXT4_FREE_BLOCKS_METADATA |
--					 EXT4_FREE_BLOCKS_FORGET);
--		}
--	}
--	put_bh(bh);
--	extend_credit_for_blkdel(handle, inode);
--	ext4_free_blocks(handle, inode, NULL, le32_to_cpu(i_data), 1,
--			 EXT4_FREE_BLOCKS_METADATA |
--			 EXT4_FREE_BLOCKS_FORGET);
--	return 0;
--}
--
--static int free_tind_blocks(handle_t *handle,
--				struct inode *inode, __le32 i_data)
--{
--	int i, retval = 0;
--	__le32 *tmp_idata;
--	struct buffer_head *bh;
--	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
--
--	bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
--	if (!bh)
--		return -EIO;
--
--	tmp_idata = (__le32 *)bh->b_data;
--	for (i = 0; i < max_entries; i++) {
--		if (tmp_idata[i]) {
--			retval = free_dind_blocks(handle,
--					inode, tmp_idata[i]);
--			if (retval) {
--				put_bh(bh);
--				return retval;
-+	if (ind > 0) {
-+		int retval = 0;
-+		__le32 *tmp_idata;
-+		ext4_lblk_t i, max_entries;
-+		struct buffer_head *bh;
-+
-+		bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
-+		if (!bh)
-+			return -EIO;
-+
-+		tmp_idata = (__le32 *)bh->b_data;
-+		max_entries = inode->i_sb->s_blocksize >> 2;
-+		for (i = 0; i < max_entries; i++) {
-+			if (tmp_idata[i]) {
-+				retval = free_ind_blocks(handle,
-+						inode, tmp_idata[i], ind - 1);
-+				if (retval) {
-+					put_bh(bh);
-+					return retval;
-+				}
- 			}
- 		}
-+		put_bh(bh);
- 	}
--	put_bh(bh);
- 	extend_credit_for_blkdel(handle, inode);
- 	ext4_free_blocks(handle, inode, NULL, le32_to_cpu(i_data), 1,
--			 EXT4_FREE_BLOCKS_METADATA |
--			 EXT4_FREE_BLOCKS_FORGET);
--	return 0;
--}
--
--static int free_ind_block(handle_t *handle, struct inode *inode, __le32 *i_data)
--{
--	int retval;
--
--	/* ei->i_data[EXT4_IND_BLOCK] */
--	if (i_data[0]) {
--		extend_credit_for_blkdel(handle, inode);
--		ext4_free_blocks(handle, inode, NULL,
--				le32_to_cpu(i_data[0]), 1,
--				 EXT4_FREE_BLOCKS_METADATA |
--				 EXT4_FREE_BLOCKS_FORGET);
--	}
--
--	/* ei->i_data[EXT4_DIND_BLOCK] */
--	if (i_data[1]) {
--		retval = free_dind_blocks(handle, inode, i_data[1]);
--		if (retval)
--			return retval;
--	}
--
--	/* ei->i_data[EXT4_TIND_BLOCK] */
--	if (i_data[2]) {
--		retval = free_tind_blocks(handle, inode, i_data[2]);
--		if (retval)
--			return retval;
--	}
-+			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
- 	return 0;
- }
- 
- static int ext4_ext_swap_inode_data(handle_t *handle, struct inode *inode,
- 						struct inode *tmp_inode)
- {
--	int retval;
-+	int i, retval;
- 	__le32	i_data[3];
- 	struct ext4_inode_info *ei = EXT4_I(inode);
- 	struct ext4_inode_info *tmp_ei = EXT4_I(tmp_inode);
-@@ -307,7 +250,13 @@ static int ext4_ext_swap_inode_data(handle_t *handle, struct inode *inode,
- 	 * We mark the inode dirty after, because we decrement the
- 	 * i_blocks when freeing the indirect meta-data blocks
- 	 */
--	retval = free_ind_block(handle, inode, i_data);
-+	for (i = 0; i < ARRAY_SIZE(i_data); i++) {
-+		if (i_data[i]) {
-+			retval = free_ind_blocks(handle, inode, i_data[i], i);
-+			if (retval)
-+				break;
-+		}
-+	}
- 	ext4_mark_inode_dirty(handle, inode);
- 
- err_out:
--- 
-2.17.1
+It could be simple as just enter and return to and from enclave or
+something in-between in terms of complexity.
 
+Even for the simplest enclave you need a signing tool (see sgxsign.c in
+my sgx-le repository), a custom linker script and a sophisticated
+makefile.
+
+/Jarkko
