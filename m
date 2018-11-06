@@ -2,92 +2,127 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324DCC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CF7C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B8F20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36AB820862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L+/Q3Gqg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B8F20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OW7sRjVJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OW7sRjVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36AB820862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388058AbeKFWIS (ORCPT
+        id S2388086AbeKFWJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 17:08:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45994 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387905AbeKFWIS (ORCPT
+        Tue, 6 Nov 2018 17:09:46 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47464 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387704AbeKFWJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:08:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=J35X0MYi+boCXUX5xxpI/O4WWQjlRZ8NVgfT02OTDiU=; b=L+/Q3GqguYHqeqZDvZCbOed/d
-        WB4T0+TslVXFiavtjJLUyYt8LUZCaL1/DO7Br/WJnYc9S3q+SpX5D/AbZIJhsXq2Y4DqY7UKu3kqx
-        jDA5ePxUIv6ZhrftV+ydPYAX9vZk88BwLtwDvfmn6bElIDH6TY79S+M2NFjs+KZ2cVBU23JgmcAtO
-        9EPaRdm0qsaA/wChMPhUb/8zBtIhvFKalUwT53Z99kpet5Z6DqklAe9Hoaolc7Ky4WZN3Qx0GBiPo
-        PPvEAzVhS7RupF0jBcf0xtelAuR+AK16f9nHKFk8BvMMjyoVh68bwktbujWUcFcqcCXDlo2icPvr9
-        5jm1Tdn1w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gK0hK-00023Y-Ni; Tue, 06 Nov 2018 12:43:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 47E4B2029F9FF; Tue,  6 Nov 2018 13:43:08 +0100 (CET)
-Date:   Tue, 6 Nov 2018 13:43:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
-        Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
-Message-ID: <20181106124308.GE22467@hirez.programming.kicks-ass.net>
-References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
- <20181030060441.16107-1-gaoxiang25@huawei.com>
- <20181105224654.GA25864@brain-police>
- <20181106090642.GH22431@hirez.programming.kicks-ass.net>
- <5eb42b84-5195-69f2-e7a7-97568f360506@huawei.com>
- <20181106110026.GJ22431@hirez.programming.kicks-ass.net>
- <dedbc211-082b-be4a-1bce-2593084d4ca3@huawei.com>
- <20181106122713.GR22431@hirez.programming.kicks-ass.net>
- <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
+        Tue, 6 Nov 2018 17:09:46 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A2DAA6038E; Tue,  6 Nov 2018 12:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541508282;
+        bh=H7k2718FlCiAqf+cl1gUDgKIAkUYsMI7izgXsc+9Q/o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OW7sRjVJtA43Gs2Jt9VYLkuZP0FasG9eONjdDisM52B+hPPZBFJSl8h8n1Cbo47VB
+         grBg4uPaOWR2C/f285mVmmbhJYOg456ebdMc9lfZtA4NVDr+Z2dX/k36bkBC/4fsqj
+         my92HdAfLVIsgR5qd4EidhKEuuDCyTZBeirCcev8=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id E589B6038E;
+        Tue,  6 Nov 2018 12:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541508282;
+        bh=H7k2718FlCiAqf+cl1gUDgKIAkUYsMI7izgXsc+9Q/o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OW7sRjVJtA43Gs2Jt9VYLkuZP0FasG9eONjdDisM52B+hPPZBFJSl8h8n1Cbo47VB
+         grBg4uPaOWR2C/f285mVmmbhJYOg456ebdMc9lfZtA4NVDr+Z2dX/k36bkBC/4fsqj
+         my92HdAfLVIsgR5qd4EidhKEuuDCyTZBeirCcev8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd305483-97f3-6935-65d6-d5de47cdfcd7@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 06 Nov 2018 18:14:41 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] Bluetooth: hci_qca: clear HCI_QUIRK_RESET_ON_CLOSE
+ flag
+In-Reply-To: <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
+References: <20181106120528.30342-1-bgodavar@codeaurora.org>
+ <20181106120528.30342-4-bgodavar@codeaurora.org>
+ <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
+Message-ID: <170e0419929840109d349b5df5e38364@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 08:33:56PM +0800, Gao Xiang wrote:
-> Hi Peter,
-> 
-> On 2018/11/6 20:27, Peter Zijlstra wrote:
-> > On Tue, Nov 06, 2018 at 07:36:41PM +0800, Gao Xiang wrote:
-> >> IMO, to use wrapped up function for the detailed scenario could be better than
-> >> open-coded all the time (eg. do cpu_relax(); while(...)) since it could be
-> >> optimizated even more for the specific architecture...
-> > That's the whole point though; if this actually matters, you're doing it
-> > wrong.
-> 
-> I cannot fully understand your point...Sorry about my English...
-> 
-> To the point, you mean it is much better to fix it as Will suggested before or
-> leave the matter as it is since the performance of bit_spinlock itself doesn't matter?
+Hi Marcel,
 
-Right, bit-spinlocks are terrible when contended. If the contended
-behaviour of bit-spinlocks start to matter, you've lost already.
+On 2018-11-06 18:03, Marcel Holtmann wrote:
+> Hi Balakrishna,
+> 
+>> During hci down we are sending reset command to chip, which
+>> is not required for wcn3990, as hdev->shutdown() will turn off the
+>> regulators.
+>> 
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> ---
+>> drivers/bluetooth/hci_qca.c | 1 +
+>> 1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 8301663f0004..97b57e0f4725 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -1190,6 +1190,7 @@ static int qca_setup(struct hci_uart *hu)
+>> 		 */
+>> 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+>> 		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+>> +		clear_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
+>> 		hu->hdev->shutdown = qca_power_off;
+>> 		ret = qca_wcn3990_init(hu);
+>> 		if (ret)
+> 
+> I am pretty certain that you didn’t want this quirk:
+> 
+>         /* When this quirk is set, the HCI Reset command is send when
+> 
+>          * closing the transport instead of when opening it.
+> 
+> This quirk is for Bluetooth 1.0b devices where the HCI_Reset behavior
+> was not clear or for devices that actually misbehave with the initial
+> HCI_Reset.
+> 
+> In addition, you commit message is totally misleading. That is not
+> what is happening with this quirk.
+> 
+> Regards
+> 
+> Marcel
+
+My intention was reset command is not required when we do an hci down.
+this is because of hdev->shutdown will turn off the regulators.
+It is like turning off the chip. sending reset command after turning off 
+the chip is not required.
+
+I understand the usage of the quirk, will update the commit text.
+
+
+-- 
+Regards
+Balakrishna.
