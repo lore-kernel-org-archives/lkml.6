@@ -2,112 +2,63 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A83F1C46464
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B11C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708C320862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:01:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708C320862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 49DA42086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 22:03:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49DA42086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeKGH2e (ORCPT
+        id S1730646AbeKGHbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:28:34 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38324 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeKGH2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:28:34 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id HPvrOi1BGsgt; Tue,  6 Nov 2018 23:01:12 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2D101EC0266;
-        Tue,  6 Nov 2018 23:01:11 +0100 (CET)
-Date:   Tue, 6 Nov 2018 23:00:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181106220059.GA4139@zn.tnic>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181102195925.GB160487@google.com>
- <20181102232948.GC26770@zn.tnic>
- <20181105214537.GA19420@google.com>
- <20181105215650.GG26868@zn.tnic>
- <20181106214256.GA65443@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181106214256.GA65443@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 7 Nov 2018 02:31:06 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:53826 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbeKGHbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:31:06 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A502F13E2C632;
+        Tue,  6 Nov 2018 14:03:44 -0800 (PST)
+Date:   Tue, 06 Nov 2018 14:03:42 -0800 (PST)
+Message-Id: <20181106.140342.2112465101629771510.davem@davemloft.net>
+To:     adrian.hunter@intel.com
+Cc:     acme@kernel.org, jolsa@redhat.com, ak@linux.intel.com,
+        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        mathieu.poirier@linaro.org
+Subject: Re: [PATCH V2 1/3] perf tools: Add fallback functions for cases
+ where cpumode is insufficient
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181106210712.12098-2-adrian.hunter@intel.com>
+References: <20181106210712.12098-1-adrian.hunter@intel.com>
+        <20181106210712.12098-2-adrian.hunter@intel.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 06 Nov 2018 14:03:44 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 03:42:56PM -0600, Bjorn Helgaas wrote:
-> This isn't some complicated new device where the programming model
-> changed on the new CPU.  This is a thermometer that was already
-> supported.  ACPI provides plenty of functionality that could be used
-> to support this generically, e.g., see drivers/acpi/thermal.c,
-> drivers/thermal/int340x_thermal/processor_thermal_device.c, etc.
+From: Adrian Hunter <adrian.hunter@intel.com>
+Date: Tue,  6 Nov 2018 23:07:10 +0200
 
-Ok, you say ACPI but how do you envision practically doing that? I mean,
-this is used by old boxes too - ever since K8. So how do we go and add
-ACPI functionality to old boxes?
+> For branch stacks or branch samples, the sample cpumode might not be
+> correct because it applies only to the sample 'ip' and not necessary to
+> 'addr' or branch stack addresses. Add fallback functions that can be used
+> to deal with those cases
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Or do you mean it should simply be converted to do pci_register_driver()
-with a struct pci_driver pointer which has all those PCI device IDs in a
-table? I'm looking at the last example
-drivers/thermal/int340x_thermal/processor_thermal_device.c you gave above.
-
-> But maybe there's some real value in the nitty-gritty device-specific
-> code in amd_nb.c.  If so, I guess you're stuck with updates like this
-> and negotiating with the distros to do backports and new releases.
-
-Well, even if it is converted to a different registration scheme, you
-still need to add new PCI device IDs to the table, no? So *some* sort of
-enablement still needs to happen.
-
-And then the argument about needing enablement for distros is moot
-because it still needs enablement/backporting - regardless of the
-registration scheme.
-
-Or do you mean something else?
-
-I mean, don't get me wrong, I don't mind if it gets converted to
-pci_register_driver() if you think it fits better this way with the
-drivers registering with PCI devices - I'm just trying to understand the
-reasoning for it.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Acked-by: David S. Miller <davem@davemloft.net>
