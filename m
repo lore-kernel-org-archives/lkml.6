@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BBCC46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E86CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5D9D20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20F8520869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:40:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bHKufhl8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D9D20869
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jig0AcOR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F8520869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbeKFTEe (ORCPT
+        id S1730417AbeKFTEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 14:04:34 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39554 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730160AbeKFTEd (ORCPT
+        Tue, 6 Nov 2018 14:04:45 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45349 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730140AbeKFTEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 14:04:33 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10-v6so12653279wrv.6
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:40:09 -0800 (PST)
+        Tue, 6 Nov 2018 14:04:32 -0500
+Received: by mail-wr1-f68.google.com with SMTP id k15-v6so9686441wre.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:40:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8JiROxiO15xoghzW/LXrGRjO7cHBnT3Yw+XkDwFkkJ8=;
-        b=bHKufhl8SlBjBKrOXP5/E541PjW9fBJrt0I9o4/aMCkijA5OFRkckv3Jp78iVHTxkr
-         KLa8HIbPwtvRX448KLtq8r6VoSDg9jB31nBkooEp4bVu0i2I0g2g99yYNC4mNcmDvdjp
-         2Z7YgJFsQNGlJIyoQcHlIMKZWf55JIOD4+DOrCx7a8GRYAzu8dqPg5qrO7Lz+f12VJNL
-         sJ+LF0z1hqP6bDg4mmzAAl50hZXSJAQzsMUDFqA0gUB3bBLj/B54dCCB1xljiCCGhWJN
-         WqwLeq4G4PFuPzrriqwzUrzQZNKAvcLtrN90iNolaDyVIN2u0+tuH5P0fT57sImeDcx0
-         5maw==
+        bh=YMPZQne4wUan7df4g8gFxVwUrGV9bfUR3u22/xGaIzs=;
+        b=jig0AcORLDHNX//PV/6pIZypy01PeaqMqM/OdUgmpbx3dalzH6Emzs+kJt88bJ8Lhi
+         A6dOYJidT7tf3EtVexmK/VfzAP1ww+FsIhtImyd4+T/s6WD4Aph5uFjyrg1tMr0JNrbo
+         5/y74PnFoSjDD4m8Giy1iQfHKbimhzTcbvYNCC4l8sIQlb4UoJmJVcX0v8ct7PCePGKh
+         wAVuyztT+/RXrC1axHDAZNu/4M3/SVMaPh5jm+VrKlLskjIX615gaUdSsCfDjmLav0Wu
+         aN+RqtCS3OTM9tdFq5nhMnlCCQGBufgC++RVbatITqJZbMZ8bWV+pUjGOx/NrAxrsqW8
+         UrNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8JiROxiO15xoghzW/LXrGRjO7cHBnT3Yw+XkDwFkkJ8=;
-        b=mW9y7rGGaU5jV/YJcCP7xwxymQCo/P0cXW+/nown+j3StzThe03TE9rG1OaEDFrl6H
-         MspJGGxf9McwM3l4EX8WXmyR7WEVUbjGN0mZYL3J3NO59rN3IIh7tlBWUegct27Rx5hH
-         wiKk+9SPD1ajrMgyR1qJTgwjL11JF+NrpNcSA+qZyuGvsHx6LZQhcmmElUQiMZVJ7RWi
-         gFq8vF1DQC0mQIvuml1I4hcF6+mbIQyvMvp0A6KgWJGZv1lTBz+0KU8FS5mlJnXC+NS/
-         hYVlubwhgOl8AinVoAdIvmuCvp0Mhv+q37nSDEJ/pjtxi+j9+H5kfZlyi07vcoYxax8c
-         PGJg==
-X-Gm-Message-State: AGRZ1gLmWJ5rXnnk4sYnnPwayEPYaZxbC5wYERA96HdbrdnTVBn89QTD
-        tAtOZRJpzft+StBjDpLdMIVx5g==
-X-Google-Smtp-Source: AJdET5d77FDQTi6cvr6ideuhaLeTPQzqUr8Bd1W5ZvsDCx9+2htNFGQwcZH2jKubQlExuRGnQBPzWg==
-X-Received: by 2002:adf:80ab:: with SMTP id 40-v6mr5143856wrl.158.1541497208840;
-        Tue, 06 Nov 2018 01:40:08 -0800 (PST)
+        bh=YMPZQne4wUan7df4g8gFxVwUrGV9bfUR3u22/xGaIzs=;
+        b=jnYDlAUQUKCpNK8PMS2JFJ2VdTN4Wf8L0hXcfBjHmLRTNyP4/sR2YqirCz91FD+gDo
+         sHc8TOHSzXWyYlZj2CX731zO22AFZo8bWda10PH5AfIxd9uB6jvg951PLG7Xmj+ibhbk
+         77lOY2hGlGnjJxbCmU1OwzR1r0BPIQBpbrwpJ1OxhEgfOgoLBLgXf0J1aSGuu2GeWtex
+         H7sp1JBiL9QTS4M7B2e69zZVN7hPzjvIUwUy/03c8zIHzd+PEBG0v3n3O4kUDzzZ1ekD
+         rHS1LinfsfPxZKVGRxpLWAKt9d04rTjxjQkHVBolhQKK3V+HbMjepvhNIibeW1FunAcj
+         kzng==
+X-Gm-Message-State: AGRZ1gJz2hLlTL1lZQUceuK2ypG89wGAqsnv9ngh1IWPW6BUrGgQTO2X
+        GNBL6ulY1PizzTnvNKI7DdQH5w==
+X-Google-Smtp-Source: AJdET5dZxww1M2Jo2Xzo6VIk0mlrVfd1dm59JUFo/Syhy0ZuKfTjZSjzgbeJklKtw4NQ6D7tKaht6w==
+X-Received: by 2002:adf:c752:: with SMTP id b18-v6mr20580131wrh.197.1541497207668;
+        Tue, 06 Nov 2018 01:40:07 -0800 (PST)
 Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm29682434wrn.11.2018.11.06.01.40.07
+        by smtp.gmail.com with ESMTPSA id u13-v6sm29682434wrn.11.2018.11.06.01.40.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 01:40:08 -0800 (PST)
+        Tue, 06 Nov 2018 01:40:07 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/meson: Add primary plane scaling
-Date:   Tue,  6 Nov 2018 10:40:02 +0100
-Message-Id: <1541497202-20570-4-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH 2/3] drm/meson: move OSD scaler management into plane atomic update
+Date:   Tue,  6 Nov 2018 10:40:01 +0100
+Message-Id: <1541497202-20570-3-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
 References: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
@@ -74,287 +74,199 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the Primary Plane scaling.
-
-On the Amlogic GX SoCs, the primary plane is used as On-Screen-Display
-layer on top of video, and it's needed to keep the OSD layer to a lower
-size as the physical display size to :
-- lower the memory bandwidth
-- lower the OSD rendering
-- lower the memory usage
-
-This use-case is used when setting the display mode to 3840x2160 and the
-OSD layer is rendered using the GPU. In this case, the GXBB & GXL cannot
-work on more than 2000x2000 buffer, thus needing the OSD layer to be kept
-at 1920x1080 and upscaled to 3840x2160 in hardware.
-
-The primary plane atomic check still allow 1:1 scaling, allowing native
-3840x2160 if needed by user-space applications.
+In preparation to support the Primary Plane scaling, move the basic
+OSD Interlace-Only scaler setup code into the primary plane atomic
+update callback and handle the vsync scaler update like the overlay
+plane scaling registers update.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/meson/meson_plane.c | 186 +++++++++++++++++++++++++++---------
- 1 file changed, 141 insertions(+), 45 deletions(-)
+ drivers/gpu/drm/meson/meson_crtc.c  | 35 ++++++++++++++++------------
+ drivers/gpu/drm/meson/meson_drv.h   | 10 ++++++++
+ drivers/gpu/drm/meson/meson_plane.c | 39 ++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/meson/meson_vpp.c   | 46 -------------------------------------
+ 4 files changed, 68 insertions(+), 62 deletions(-)
 
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index 38686c9..d78168f 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -189,21 +189,26 @@ void meson_crtc_irq(struct meson_drm *priv)
+ 				priv->io_base + _REG(VIU_OSD1_BLK0_CFG_W3));
+ 		writel_relaxed(priv->viu.osd1_blk0_cfg[4],
+ 				priv->io_base + _REG(VIU_OSD1_BLK0_CFG_W4));
+-
+-		/* If output is interlace, make use of the Scaler */
+-		if (priv->viu.osd1_interlace) {
+-			struct drm_plane *plane = priv->primary_plane;
+-			struct drm_plane_state *state = plane->state;
+-			struct drm_rect dest = {
+-				.x1 = state->crtc_x,
+-				.y1 = state->crtc_y,
+-				.x2 = state->crtc_x + state->crtc_w,
+-				.y2 = state->crtc_y + state->crtc_h,
+-			};
+-
+-			meson_vpp_setup_interlace_vscaler_osd1(priv, &dest);
+-		} else
+-			meson_vpp_disable_interlace_vscaler_osd1(priv);
++		writel_relaxed(priv->viu.osd_sc_ctrl0,
++				priv->io_base + _REG(VPP_OSD_SC_CTRL0));
++		writel_relaxed(priv->viu.osd_sc_i_wh_m1,
++				priv->io_base + _REG(VPP_OSD_SCI_WH_M1));
++		writel_relaxed(priv->viu.osd_sc_o_h_start_end,
++				priv->io_base + _REG(VPP_OSD_SCO_H_START_END));
++		writel_relaxed(priv->viu.osd_sc_o_v_start_end,
++				priv->io_base + _REG(VPP_OSD_SCO_V_START_END));
++		writel_relaxed(priv->viu.osd_sc_v_ini_phase,
++				priv->io_base + _REG(VPP_OSD_VSC_INI_PHASE));
++		writel_relaxed(priv->viu.osd_sc_v_phase_step,
++				priv->io_base + _REG(VPP_OSD_VSC_PHASE_STEP));
++		writel_relaxed(priv->viu.osd_sc_h_ini_phase,
++				priv->io_base + _REG(VPP_OSD_HSC_INI_PHASE));
++		writel_relaxed(priv->viu.osd_sc_h_phase_step,
++				priv->io_base + _REG(VPP_OSD_HSC_PHASE_STEP));
++		writel_relaxed(priv->viu.osd_sc_h_ctrl0,
++				priv->io_base + _REG(VPP_OSD_HSC_CTRL0));
++		writel_relaxed(priv->viu.osd_sc_v_ctrl0,
++				priv->io_base + _REG(VPP_OSD_VSC_CTRL0));
+ 
+ 		if (priv->canvas)
+ 			meson_canvas_config(priv->canvas, priv->canvas_id_osd1,
+diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
+index c971557..a955354 100644
+--- a/drivers/gpu/drm/meson/meson_drv.h
++++ b/drivers/gpu/drm/meson/meson_drv.h
+@@ -54,6 +54,16 @@ struct meson_drm {
+ 		uint32_t osd1_addr;
+ 		uint32_t osd1_stride;
+ 		uint32_t osd1_height;
++		uint32_t osd_sc_ctrl0;
++		uint32_t osd_sc_i_wh_m1;
++		uint32_t osd_sc_o_h_start_end;
++		uint32_t osd_sc_o_v_start_end;
++		uint32_t osd_sc_v_ini_phase;
++		uint32_t osd_sc_v_phase_step;
++		uint32_t osd_sc_h_ini_phase;
++		uint32_t osd_sc_h_phase_step;
++		uint32_t osd_sc_h_ctrl0;
++		uint32_t osd_sc_v_ctrl0;
+ 
+ 		bool vd1_enabled;
+ 		bool vd1_commit;
 diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
-index f915a79..12a47b4 100644
+index 51bec8e..f915a79 100644
 --- a/drivers/gpu/drm/meson/meson_plane.c
 +++ b/drivers/gpu/drm/meson/meson_plane.c
-@@ -24,6 +24,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/bitfield.h>
- #include <linux/platform_device.h>
- #include <drm/drmP.h>
- #include <drm/drm_atomic.h>
-@@ -39,12 +40,50 @@
- #include "meson_canvas.h"
- #include "meson_registers.h"
- 
-+/* OSD_SCI_WH_M1 */
-+#define SCI_WH_M1_W(w)			FIELD_PREP(GENMASK(28, 16), w)
-+#define SCI_WH_M1_H(h)			FIELD_PREP(GENMASK(12, 0), h)
-+
-+/* OSD_SCO_H_START_END */
-+/* OSD_SCO_V_START_END */
-+#define SCO_HV_START(start)		FIELD_PREP(GENMASK(27, 16), start)
-+#define SCO_HV_END(end)			FIELD_PREP(GENMASK(11, 0), end)
-+
-+/* OSD_SC_CTRL0 */
-+#define SC_CTRL0_PATH_EN		BIT(3)
-+#define SC_CTRL0_SEL_OSD1		BIT(2)
-+
-+/* OSD_VSC_CTRL0 */
-+#define VSC_BANK_LEN(value)		FIELD_PREP(GENMASK(2, 0), value)
-+#define VSC_TOP_INI_RCV_NUM(value)	FIELD_PREP(GENMASK(6, 3), value)
-+#define VSC_TOP_RPT_L0_NUM(value)	FIELD_PREP(GENMASK(9, 8), value)
-+#define VSC_BOT_INI_RCV_NUM(value)	FIELD_PREP(GENMASK(14, 11), value)
-+#define VSC_BOT_RPT_L0_NUM(value)	FIELD_PREP(GENMASK(17, 16), value)
-+#define VSC_PROG_INTERLACE		BIT(23)
-+#define VSC_VERTICAL_SCALER_EN		BIT(24)
-+
-+/* OSD_VSC_INI_PHASE */
-+#define VSC_INI_PHASE_BOT(bottom)	FIELD_PREP(GENMASK(31, 16), bottom)
-+#define VSC_INI_PHASE_TOP(top)		FIELD_PREP(GENMASK(15, 0), top)
-+
-+/* OSD_HSC_CTRL0 */
-+#define HSC_BANK_LENGTH(value)		FIELD_PREP(GENMASK(2, 0), value)
-+#define HSC_INI_RCV_NUM0(value)		FIELD_PREP(GENMASK(6, 3), value)
-+#define HSC_RPT_P0_NUM0(value)		FIELD_PREP(GENMASK(9, 8), value)
-+#define HSC_HORIZ_SCALER_EN		BIT(22)
-+
-+/* VPP_OSD_VSC_PHASE_STEP */
-+/* VPP_OSD_HSC_PHASE_STEP */
-+#define SC_PHASE_STEP(value)		FIELD_PREP(GENMASK(27, 0), value)
-+
- struct meson_plane {
- 	struct drm_plane base;
- 	struct meson_drm *priv;
- };
- #define to_meson_plane(x) container_of(x, struct meson_plane, base)
- 
-+#define FRAC_16_16(mult, div)    (((mult) << 16) / (div))
-+
- static int meson_plane_atomic_check(struct drm_plane *plane,
- 				    struct drm_plane_state *state)
- {
-@@ -57,10 +96,15 @@ static int meson_plane_atomic_check(struct drm_plane *plane,
- 	if (IS_ERR(crtc_state))
- 		return PTR_ERR(crtc_state);
- 
-+	/*
-+	 * Only allow :
-+	 * - Upscaling up to 5x, vertical and horizontal
-+	 * - Final coordinates must match crtc size
-+	 */
- 	return drm_atomic_helper_check_plane_state(state, crtc_state,
-+						   FRAC_16_16(1, 5),
- 						   DRM_PLANE_HELPER_NO_SCALING,
--						   DRM_PLANE_HELPER_NO_SCALING,
--						   true, true);
-+						   false, true);
- }
- 
- /* Takes a fixed 16.16 number and converts it to integer. */
-@@ -74,22 +118,19 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
- {
- 	struct meson_plane *meson_plane = to_meson_plane(plane);
- 	struct drm_plane_state *state = plane->state;
--	struct drm_framebuffer *fb = state->fb;
-+	struct drm_rect dest = drm_plane_state_dest(state);
- 	struct meson_drm *priv = meson_plane->priv;
-+	struct drm_framebuffer *fb = state->fb;
- 	struct drm_gem_cma_object *gem;
--	struct drm_rect src = {
--		.x1 = (state->src_x),
--		.y1 = (state->src_y),
--		.x2 = (state->src_x + state->src_w),
--		.y2 = (state->src_y + state->src_h),
--	};
--	struct drm_rect dest = {
--		.x1 = state->crtc_x,
--		.y1 = state->crtc_y,
--		.x2 = state->crtc_x + state->crtc_w,
--		.y2 = state->crtc_y + state->crtc_h,
--	};
- 	unsigned long flags;
-+	int vsc_ini_rcv_num, vsc_ini_rpt_p0_num;
-+	int vsc_bot_rcv_num, vsc_bot_rpt_p0_num;
-+	int hsc_ini_rcv_num, hsc_ini_rpt_p0_num;
-+	int hf_phase_step, vf_phase_step;
-+	int src_w, src_h, dst_w, dst_h;
-+	int bot_ini_phase;
-+	int hf_bank_len;
-+	int vf_bank_len;
- 	u8 canvas_id_osd1;
- 
- 	/*
-@@ -143,6 +184,27 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+@@ -143,13 +143,50 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
  		break;
  	};
  
-+	/* Default scaler parameters */
-+	vsc_bot_rcv_num = 0;
-+	vsc_bot_rpt_p0_num = 0;
-+	hf_bank_len = 4;
-+	vf_bank_len = 4;
-+
-+	if (state->crtc->mode.flags & DRM_MODE_FLAG_INTERLACE) {
-+		vsc_bot_rcv_num = 6;
-+		vsc_bot_rpt_p0_num = 2;
-+	}
-+
-+	hsc_ini_rcv_num = hf_bank_len;
-+	vsc_ini_rcv_num = vf_bank_len;
-+	hsc_ini_rpt_p0_num = (hf_bank_len / 2) - 1;
-+	vsc_ini_rpt_p0_num = (vf_bank_len / 2) - 1;
-+
-+	src_w = fixed16_to_int(state->src_w);
-+	src_h = fixed16_to_int(state->src_h);
-+	dst_w = state->crtc_w;
-+	dst_h = state->crtc_h;
-+
- 	/*
- 	 * When the output is interlaced, the OSD must switch between
- 	 * each field using the INTERLACE_SEL_ODD (0) of VIU_OSD1_BLK0_CFG_W0
-@@ -151,41 +213,73 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
- 	 * is configured for 2:1 scaling with interlace options enabled.
- 	 */
++	/*
++	 * When the output is interlaced, the OSD must switch between
++	 * each field using the INTERLACE_SEL_ODD (0) of VIU_OSD1_BLK0_CFG_W0
++	 * at each vsync.
++	 * But the vertical scaler can provide such funtionnality if
++	 * is configured for 2:1 scaling with interlace options enabled.
++	 */
  	if (state->crtc->mode.flags & DRM_MODE_FLAG_INTERLACE) {
--		priv->viu.osd1_interlace = true;
--
+ 		priv->viu.osd1_interlace = true;
+ 
  		dest.y1 /= 2;
  		dest.y2 /= 2;
-+		dst_h /= 2;
-+	}
- 
--		priv->viu.osd_sc_ctrl0 = BIT(3)| /* Enable scaler */
--					 BIT(2); /* Select OSD1 */
-+	hf_phase_step = ((src_w << 18) / dst_w) << 6;
-+	vf_phase_step = (src_h << 20) / dst_h;
- 
--		/* 2:1 scaling */
--		priv->viu.osd_sc_i_wh_m1 = ((drm_rect_width(&dest) - 1) << 16) |
--					   (drm_rect_height(&dest) - 1);
--		priv->viu.osd_sc_o_h_start_end = (dest.x1 << 16) | dest.x2;
--		priv->viu.osd_sc_o_v_start_end = (dest.y1 << 16) | dest.y2;
-+	if (state->crtc->mode.flags & DRM_MODE_FLAG_INTERLACE)
-+		bot_ini_phase = ((vf_phase_step / 2) >> 4);
-+	else
-+		bot_ini_phase = 0;
+-	} else
 +
-+	vf_phase_step = (vf_phase_step << 4);
++		priv->viu.osd_sc_ctrl0 = BIT(3) | /* Enable scaler */
++					 BIT(2); /* Select OSD1 */
 +
-+	/* In interlaced mode, scaler is always active */
-+	if (src_h != dst_h || src_w != dst_w) {
-+		priv->viu.osd_sc_i_wh_m1 = SCI_WH_M1_W(src_w - 1) |
-+					   SCI_WH_M1_H(src_h - 1);
-+		priv->viu.osd_sc_o_h_start_end = SCO_HV_START(dest.x1) |
-+						 SCO_HV_END(dest.x2 - 1);
-+		priv->viu.osd_sc_o_v_start_end = SCO_HV_START(dest.y1) |
-+						 SCO_HV_END(dest.y2 - 1);
-+		/* Enable OSD Scaler */
-+		priv->viu.osd_sc_ctrl0 = SC_CTRL0_PATH_EN | SC_CTRL0_SEL_OSD1;
-+	} else {
-+		priv->viu.osd_sc_i_wh_m1 = 0;
-+		priv->viu.osd_sc_o_h_start_end = 0;
-+		priv->viu.osd_sc_o_v_start_end = 0;
-+		priv->viu.osd_sc_ctrl0 = 0;
-+	}
- 
--		/* 2:1 vertical scaling values */
--		priv->viu.osd_sc_v_ini_phase = BIT(16);
--		priv->viu.osd_sc_v_phase_step = BIT(25);
-+	/* In interlaced mode, vertical scaler is always active */
-+	if (src_h != dst_h) {
- 		priv->viu.osd_sc_v_ctrl0 =
--			(4 << 0) | /* osd_vsc_bank_length */
--			(4 << 3) | /* osd_vsc_top_ini_rcv_num0 */
--			(1 << 8) | /* osd_vsc_top_rpt_p0_num0 */
--			(6 << 11) | /* osd_vsc_bot_ini_rcv_num0 */
--			(2 << 16) | /* osd_vsc_bot_rpt_p0_num0 */
--			BIT(23)	| /* osd_prog_interlace */
--			BIT(24); /* Enable vertical scaler */
--
--		/* No horizontal scaling */
-+					VSC_BANK_LEN(vf_bank_len) |
-+					VSC_TOP_INI_RCV_NUM(vsc_ini_rcv_num) |
-+					VSC_TOP_RPT_L0_NUM(vsc_ini_rpt_p0_num) |
-+					VSC_VERTICAL_SCALER_EN;
++		/* 2:1 scaling */
++		priv->viu.osd_sc_i_wh_m1 = ((drm_rect_width(&dest) - 1) << 16) |
++					   (drm_rect_height(&dest) - 1);
++		priv->viu.osd_sc_o_h_start_end = (dest.x1 << 16) | dest.x2;
++		priv->viu.osd_sc_o_v_start_end = (dest.y1 << 16) | dest.y2;
 +
-+		if (state->crtc->mode.flags & DRM_MODE_FLAG_INTERLACE)
-+			priv->viu.osd_sc_v_ctrl0 |=
-+					VSC_BOT_INI_RCV_NUM(vsc_bot_rcv_num) |
-+					VSC_BOT_RPT_L0_NUM(vsc_bot_rpt_p0_num) |
-+					VSC_PROG_INTERLACE;
++		/* 2:1 vertical scaling values */
++		priv->viu.osd_sc_v_ini_phase = BIT(16);
++		priv->viu.osd_sc_v_phase_step = BIT(25);
++		priv->viu.osd_sc_v_ctrl0 =
++			(4 << 0) | /* osd_vsc_bank_length */
++			(4 << 3) | /* osd_vsc_top_ini_rcv_num0 */
++			(1 << 8) | /* osd_vsc_top_rpt_p0_num0 */
++			(6 << 11) | /* osd_vsc_bot_ini_rcv_num0 */
++			(2 << 16) | /* osd_vsc_bot_rpt_p0_num0 */
++			BIT(23)	| /* osd_prog_interlace */
++			BIT(24); /* Enable vertical scaler */
 +
-+		priv->viu.osd_sc_v_phase_step = SC_PHASE_STEP(vf_phase_step);
-+		priv->viu.osd_sc_v_ini_phase = VSC_INI_PHASE_BOT(bot_ini_phase);
-+	} else {
-+		priv->viu.osd_sc_v_ctrl0 = 0;
-+		priv->viu.osd_sc_v_phase_step = 0;
-+		priv->viu.osd_sc_v_ini_phase = 0;
-+	}
-+
-+	/* Horizontal scaler is only used if width does not match */
-+	if (src_w != dst_w) {
-+		priv->viu.osd_sc_h_ctrl0 =
-+					HSC_BANK_LENGTH(hf_bank_len) |
-+					HSC_INI_RCV_NUM0(hsc_ini_rcv_num) |
-+					HSC_RPT_P0_NUM0(hsc_ini_rpt_p0_num) |
-+					HSC_HORIZ_SCALER_EN;
-+		priv->viu.osd_sc_h_phase_step = SC_PHASE_STEP(hf_phase_step);
- 		priv->viu.osd_sc_h_ini_phase = 0;
--		priv->viu.osd_sc_h_phase_step = 0;
--		priv->viu.osd_sc_h_ctrl0 = 0;
- 	} else {
--		priv->viu.osd1_interlace = false;
--		priv->viu.osd_sc_ctrl0 = 0;
- 		priv->viu.osd_sc_h_ctrl0 = 0;
--		priv->viu.osd_sc_v_ctrl0 = 0;
-+		priv->viu.osd_sc_h_phase_step = 0;
++		/* No horizontal scaling */
 +		priv->viu.osd_sc_h_ini_phase = 0;
- 	}
++		priv->viu.osd_sc_h_phase_step = 0;
++		priv->viu.osd_sc_h_ctrl0 = 0;
++	} else {
+ 		priv->viu.osd1_interlace = false;
++		priv->viu.osd_sc_ctrl0 = 0;
++		priv->viu.osd_sc_h_ctrl0 = 0;
++		priv->viu.osd_sc_v_ctrl0 = 0;
++	}
  
  	/*
-@@ -193,10 +287,12 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
- 	 * where x2 is exclusive.
- 	 * e.g. +30x1920 would be (1919 << 16) | 30
- 	 */
--	priv->viu.osd1_blk0_cfg[1] = ((fixed16_to_int(src.x2) - 1) << 16) |
--					fixed16_to_int(src.x1);
--	priv->viu.osd1_blk0_cfg[2] = ((fixed16_to_int(src.y2) - 1) << 16) |
--					fixed16_to_int(src.y1);
-+	priv->viu.osd1_blk0_cfg[1] =
-+				((fixed16_to_int(state->src.x2) - 1) << 16) |
-+				fixed16_to_int(state->src.x1);
-+	priv->viu.osd1_blk0_cfg[2] =
-+				((fixed16_to_int(state->src.y2) - 1) << 16) |
-+				fixed16_to_int(state->src.y1);
- 	priv->viu.osd1_blk0_cfg[3] = ((dest.x2 - 1) << 16) | dest.x1;
- 	priv->viu.osd1_blk0_cfg[4] = ((dest.y2 - 1) << 16) | dest.y1;
+ 	 * The format of these registers is (x2 << 16 | x1),
+diff --git a/drivers/gpu/drm/meson/meson_vpp.c b/drivers/gpu/drm/meson/meson_vpp.c
+index 5dc24a9..f9efb43 100644
+--- a/drivers/gpu/drm/meson/meson_vpp.c
++++ b/drivers/gpu/drm/meson/meson_vpp.c
+@@ -51,52 +51,6 @@ void meson_vpp_setup_mux(struct meson_drm *priv, unsigned int mux)
+ 	writel(mux, priv->io_base + _REG(VPU_VIU_VENC_MUX_CTRL));
+ }
  
+-/*
+- * When the output is interlaced, the OSD must switch between
+- * each field using the INTERLACE_SEL_ODD (0) of VIU_OSD1_BLK0_CFG_W0
+- * at each vsync.
+- * But the vertical scaler can provide such funtionnality if
+- * is configured for 2:1 scaling with interlace options enabled.
+- */
+-void meson_vpp_setup_interlace_vscaler_osd1(struct meson_drm *priv,
+-					    struct drm_rect *input)
+-{
+-	writel_relaxed(BIT(3) /* Enable scaler */ |
+-		       BIT(2), /* Select OSD1 */
+-			priv->io_base + _REG(VPP_OSD_SC_CTRL0));
+-
+-	writel_relaxed(((drm_rect_width(input) - 1) << 16) |
+-		       (drm_rect_height(input) - 1),
+-			priv->io_base + _REG(VPP_OSD_SCI_WH_M1));
+-	/* 2:1 scaling */
+-	writel_relaxed(((input->x1) << 16) | (input->x2),
+-			priv->io_base + _REG(VPP_OSD_SCO_H_START_END));
+-	writel_relaxed(((input->y1 >> 1) << 16) | (input->y2 >> 1),
+-			priv->io_base + _REG(VPP_OSD_SCO_V_START_END));
+-
+-	/* 2:1 scaling values */
+-	writel_relaxed(BIT(16), priv->io_base + _REG(VPP_OSD_VSC_INI_PHASE));
+-	writel_relaxed(BIT(25), priv->io_base + _REG(VPP_OSD_VSC_PHASE_STEP));
+-
+-	writel_relaxed(0, priv->io_base + _REG(VPP_OSD_HSC_CTRL0));
+-
+-	writel_relaxed((4 << 0) /* osd_vsc_bank_length */ |
+-		       (4 << 3) /* osd_vsc_top_ini_rcv_num0 */ |
+-		       (1 << 8) /* osd_vsc_top_rpt_p0_num0 */ |
+-		       (6 << 11) /* osd_vsc_bot_ini_rcv_num0 */ |
+-		       (2 << 16) /* osd_vsc_bot_rpt_p0_num0 */ |
+-		       BIT(23)	/* osd_prog_interlace */ |
+-		       BIT(24), /* Enable vertical scaler */
+-			priv->io_base + _REG(VPP_OSD_VSC_CTRL0));
+-}
+-
+-void meson_vpp_disable_interlace_vscaler_osd1(struct meson_drm *priv)
+-{
+-	writel_relaxed(0, priv->io_base + _REG(VPP_OSD_SC_CTRL0));
+-	writel_relaxed(0, priv->io_base + _REG(VPP_OSD_VSC_CTRL0));
+-	writel_relaxed(0, priv->io_base + _REG(VPP_OSD_HSC_CTRL0));
+-}
+-
+ static unsigned int vpp_filter_coefs_4point_bspline[] = {
+ 	0x15561500, 0x14561600, 0x13561700, 0x12561800,
+ 	0x11551a00, 0x11541b00, 0x10541c00, 0x0f541d00,
 -- 
 2.7.4
 
