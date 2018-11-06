@@ -6,88 +6,95 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1820AC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D7EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D990B2083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:00:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D990B2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E9DAA2083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:02:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9DAA2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388145AbeKFWZY convert rfc822-to-8bit (ORCPT
+        id S2388150AbeKFW1M convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 17:25:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53432 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387596AbeKFWZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:25:24 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 14A008AE5A;
-        Tue,  6 Nov 2018 13:00:18 +0000 (UTC)
-Received: from ovpn-12-92.pek2.redhat.com (ovpn-12-92.pek2.redhat.com [10.72.12.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 455C41710E;
-        Tue,  6 Nov 2018 13:00:14 +0000 (UTC)
+        Tue, 6 Nov 2018 17:27:12 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:45206 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730164AbeKFW1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 17:27:11 -0500
+Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
+        by mail.holtmann.org (Postfix) with ESMTPSA id A8304CF2A2;
+        Tue,  6 Nov 2018 14:09:31 +0100 (CET)
 Content-Type: text/plain;
-        charset=us-ascii
+        charset=utf-8
 Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH] ceph: quota: fix null pointer dereference in quota check
-From:   "Yan, Zheng" <zyan@redhat.com>
-In-Reply-To: <20181105110052.31759-1-lhenriques@suse.com>
-Date:   Tue, 6 Nov 2018 21:00:09 +0800
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] Bluetooth: hci_qca: clear HCI_QUIRK_RESET_ON_CLOSE
+ flag
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <170e0419929840109d349b5df5e38364@codeaurora.org>
+Date:   Tue, 6 Nov 2018 14:02:03 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
 Content-Transfer-Encoding: 8BIT
-Message-Id: <3AD4F375-E9DE-485D-B2DA-A938AC4A3F0C@redhat.com>
-References: <20181101065318.2cylxol6d444nzeu@kili.mountain>
- <20181105110052.31759-1-lhenriques@suse.com>
-To:     Luis Henriques <lhenriques@suse.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 06 Nov 2018 13:00:18 +0000 (UTC)
+Message-Id: <0CE81F0B-B122-4793-817F-F0F4738C44E0@holtmann.org>
+References: <20181106120528.30342-1-bgodavar@codeaurora.org>
+ <20181106120528.30342-4-bgodavar@codeaurora.org>
+ <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
+ <170e0419929840109d349b5df5e38364@codeaurora.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Balakrishna,
 
+>>> During hci down we are sending reset command to chip, which
+>>> is not required for wcn3990, as hdev->shutdown() will turn off the
+>>> regulators.
+>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>>> ---
+>>> drivers/bluetooth/hci_qca.c | 1 +
+>>> 1 file changed, 1 insertion(+)
+>>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>>> index 8301663f0004..97b57e0f4725 100644
+>>> --- a/drivers/bluetooth/hci_qca.c
+>>> +++ b/drivers/bluetooth/hci_qca.c
+>>> @@ -1190,6 +1190,7 @@ static int qca_setup(struct hci_uart *hu)
+>>> 		 */
+>>> 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+>>> 		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+>>> +		clear_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
+>>> 		hu->hdev->shutdown = qca_power_off;
+>>> 		ret = qca_wcn3990_init(hu);
+>>> 		if (ret)
+>> I am pretty certain that you didn’t want this quirk:
+>>        /* When this quirk is set, the HCI Reset command is send when
+>>         * closing the transport instead of when opening it.
+>> This quirk is for Bluetooth 1.0b devices where the HCI_Reset behavior
+>> was not clear or for devices that actually misbehave with the initial
+>> HCI_Reset.
+>> In addition, you commit message is totally misleading. That is not
+>> what is happening with this quirk.
+>> Regards
+>> Marcel
+> 
+> My intention was reset command is not required when we do an hci down.
+> this is because of hdev->shutdown will turn off the regulators.
+> It is like turning off the chip. sending reset command after turning off the chip is not required.
+> 
+> I understand the usage of the quirk, will update the commit text.
 
-> On Nov 5, 2018, at 19:00, Luis Henriques <lhenriques@suse.com> wrote:
-> 
-> This patch fixes a possible null pointer dereference in
-> check_quota_exceeded, detected by the static checker smatch, with the
-> following warning:
-> 
->    fs/ceph/quota.c:240 check_quota_exceeded()
->     error: we previously assumed 'realm' could be null (see line 188)
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Link: https://lkml.kernel.org/n/20181101065318.2cylxol6d444nzeu@kili.mountain
-> Fixes: b7a2921765cf ("ceph: quota: support for ceph.quota.max_files")
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
-> fs/ceph/quota.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> index 32d4f13784ba..03f4d24db8fe 100644
-> --- a/fs/ceph/quota.c
-> +++ b/fs/ceph/quota.c
-> @@ -237,7 +237,8 @@ static bool check_quota_exceeded(struct inode *inode, enum quota_check_op op,
-> 		ceph_put_snap_realm(mdsc, realm);
-> 		realm = next;
-> 	}
-> -	ceph_put_snap_realm(mdsc, realm);
-> +	if (realm)
-> +		ceph_put_snap_realm(mdsc, realm);
-> 	up_read(&mdsc->snap_rwsem);
-> 
-> 	return exceeded;
+you are papering over the issue. Actually hci_serdev.c:hci_uart_register_device() is the culprit with the legacy code copied over from hci_ldisc.c:hci_uart_register_dev(). I think there is no point doing all this legacy line discipline quirk handling until it is really needed. The serdev drivers are all for recent hardware.
 
-Applied, thanks.
+That said, having moved over to a btuart.c approach and killed the whole hci_serdev.c thing would have been a lot better here. You will keep running in weird situations where 18 year old code keeps surprising you.
 
-Yan, Zheng
+Regards
 
+Marcel
 
