@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF2BC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A778DC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E02632085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E6CA2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:31:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ui/K++Kd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02632085B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e9NIR9oz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6CA2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389959AbeKGC5g (ORCPT
+        id S2389867AbeKGC5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:57:36 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38638 "EHLO
+        Tue, 6 Nov 2018 21:57:25 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40545 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389928AbeKGC5f (ORCPT
+        with ESMTP id S2389812AbeKGC5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:57:35 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d10-v6so14478815wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:31:17 -0800 (PST)
+        Tue, 6 Nov 2018 21:57:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id i17-v6so14468293wre.7
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:31:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Hwymx1eY66CSEa1IRo3idGCRJraHeTFvcCQT19yjRsI=;
-        b=Ui/K++Kd/6um/cgK/an5Gp4OdPgYdT3J5Bs8OAR2uHuSGrMyL0XeW+kODasC6CRS4B
-         41IyPMwkdMxtGd6bXCD+ejoeWNWS41Xb24MjBhaWm6Fz9J07+X+lMt7MWg50e+uSKZrN
-         tZiWkKU9Ij+oP0yoqGfFCIgGT//MR0NwlxE+gNF6bTbwPybO39cm+jZh6gubgO7agsU6
-         hrO9n3tbs6Rnj606q/rybSBjxFKghBehPHFIJIGTOHJQ6fdvpVnNNFo4VxU570ljj9aB
-         ueQV6q3fdxdFCFAK1RhY+rReXve0NhK5DsBUuaaPXmDlUtguL+1s1OYCjPoQOhFzmxSU
-         OaQQ==
+        bh=PqZ4W4abhuiWrYBf7dbVlb6J0CRQ5VwTcMgO0APUlT4=;
+        b=e9NIR9ozLa1hZiKs+YKqZ6JfopiH2CQLRj0DtzXk9rGh9eC5tEoHQMpt6odCi502Cb
+         yJa7wWAhVx1XTUQNl2jST/MXE7EQSq9OggekRcJAaTxYKxCZI6Ql89+UTOOMBoWh9q47
+         +3vL/lw05/Hnw80UmllX6OFiVE/hWaB4257zLGTAO7by+xk3wEze8BLJF+9ZUEH4ooRY
+         u6Qd6mPCbR2mrFto/v9H8OLXtsga5a6tDNO9fO0ZXQYVV84jGfMELJmtNL35eIwsoIfK
+         6scEgS18N4s195E1kRfIb+N5FpQnr1wRyXZujecm1KRELMwzNuIgG9YTdLBIxZp+Sh2T
+         qQ8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Hwymx1eY66CSEa1IRo3idGCRJraHeTFvcCQT19yjRsI=;
-        b=QpuOUHRHf1IR84H0aTaMAIJDFoCja2dSLMuicrhdgTgZB26xPOAoPR7Pn0gR01Ushx
-         fcdeaS7hGSWWg3zEp0rLruMti+a9Co0OVRSRbixP0YunWnHAnuDaCOZ5MQtAJWR6D0k3
-         001HdE3SRcwH8lwPvrAMA7v2yLa9FQLjuUE0zZid8y4ABqotLPi9hxsNTtu7ShW6m285
-         tpYe1ZHjBh1FnmqLlul1jDIZDVkVqjmOrO0TTwM490uv6zFM6N4hwbWt7e93x8dn2zKY
-         dazQK7ok9GRqlHOQJ8Ru/JCYQoMlhkDaEk3gbnW2azwzkxPazF+UkzFGJ7PkqBbqeB+o
-         r3SA==
-X-Gm-Message-State: AGRZ1gJaH8xOOGLaYfqrN60yiV9GxrsjXhaSFnwk+LOpoGRFt90pwiTk
-        JxdMldm7jm36SsK5EA30nSoDOw==
-X-Google-Smtp-Source: AJdET5eKrMDNQKavrE9GjLOkKpGsflW3P015WGYJa4zopxFK5MKjuPzC7YFr4fb7kEhzuUTU6Rg6Qg==
-X-Received: by 2002:adf:fb89:: with SMTP id a9-v6mr22849343wrr.219.1541525476510;
-        Tue, 06 Nov 2018 09:31:16 -0800 (PST)
+        bh=PqZ4W4abhuiWrYBf7dbVlb6J0CRQ5VwTcMgO0APUlT4=;
+        b=QUep71eUsC0zGnmvODS8OXsfvm+ohvV1VOboiTevhPBY1gkQ1EUu6vr2PlO0EtAIFf
+         Twq/zAlmlv/FLg6dtLbPdUH17gCBfq0qspocRqk0pIvZTuj5B5ATJ0h7BQxhY6qb2Vfb
+         0exqowF6pVQgkFubxwMMdjEDFip96YKMK5P1B0WFCqgXSuoqAgtlJR6/Gjjy0xHt6wGf
+         QKXQR9yi/0tj670sCY81mevxYm+MPmX3F6+PTGKY9QP2GTT5JW0F+Kgz7f6UtitQOBeB
+         x7JVhv3vulhN2TzwAqluZTpBfh0CQgSlri3jv2WdFAj8wQ8leaFDQApEN7sz+9gx1SOl
+         k2zQ==
+X-Gm-Message-State: AGRZ1gLn+ZhwQw9XTHFg6yLKES21lbgT5hlSR/s35S0Wu9Xy9t8/ksbQ
+        M+z+13fLRdZC993rM+sTshWpQQ==
+X-Google-Smtp-Source: AJdET5fvwZJYEj2YXgKRWAOEHHdvBWsS4JO9Y0Zaa7TtohiWchaSF3ehPThS3UYqVY/8GH0sO1tDVQ==
+X-Received: by 2002:adf:f542:: with SMTP id j2-v6mr15247056wrp.70.1541525468219;
+        Tue, 06 Nov 2018 09:31:08 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.31.14
+        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.31.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 09:31:15 -0800 (PST)
+        Tue, 06 Nov 2018 09:31:07 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v10 21/22] kasan: update documentation
-Date:   Tue,  6 Nov 2018 18:30:36 +0100
-Message-Id: <30ab7eb70ec3ea58d060a950f9a0efc773b1ee7f.1541525354.git.andreyknvl@google.com>
+Subject: [PATCH v10 16/22] kasan: add bug reporting routines for tag-based mode
+Date:   Tue,  6 Nov 2018 18:30:31 +0100
+Message-Id: <a24f90a4158d6957a27f3dbbab53ad2e94d56502.1541525354.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <cover.1541525354.git.andreyknvl@google.com>
 References: <cover.1541525354.git.andreyknvl@google.com>
@@ -109,305 +109,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates KASAN documentation to reflect the addition of the new
-tag-based mode.
+This commit adds rountines, that print tag-based KASAN error reports.
+Those are quite similar to generic KASAN, the difference is:
+
+1. The way tag-based KASAN finds the first bad shadow cell (with a
+   mismatching tag). Tag-based KASAN compares memory tags from the shadow
+   memory to the pointer tag.
+
+2. Tag-based KASAN reports all bugs with the "KASAN: invalid-access"
+   header.
+
+Also simplify generic KASAN find_first_bad_addr.
 
 Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- Documentation/dev-tools/kasan.rst | 232 ++++++++++++++++++------------
- 1 file changed, 138 insertions(+), 94 deletions(-)
+ mm/kasan/generic_report.c | 16 ++++-------
+ mm/kasan/kasan.h          |  5 ++++
+ mm/kasan/report.c         | 57 +++++++++++++++++++++------------------
+ mm/kasan/tags_report.c    | 18 +++++++++++++
+ 4 files changed, 59 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index aabc8738b3d8..33ea45932786 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -4,15 +4,25 @@ The Kernel Address Sanitizer (KASAN)
- Overview
- --------
+diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+index 5201d1770700..a4604cceae59 100644
+--- a/mm/kasan/generic_report.c
++++ b/mm/kasan/generic_report.c
+@@ -33,16 +33,13 @@
+ #include "kasan.h"
+ #include "../slab.h"
  
--KernelAddressSANitizer (KASAN) is a dynamic memory error detector. It provides
--a fast and comprehensive solution for finding use-after-free and out-of-bounds
--bugs.
-+KernelAddressSANitizer (KASAN) is a dynamic memory error detector designed to
-+find out-of-bound and use-after-free bugs. KASAN has two modes: generic KASAN
-+(similar to userspace ASan) and software tag-based KASAN (similar to userspace
-+HWASan).
+-static const void *find_first_bad_addr(const void *addr, size_t size)
++void *find_first_bad_addr(void *addr, size_t size)
+ {
+-	u8 shadow_val = *(u8 *)kasan_mem_to_shadow(addr);
+-	const void *first_bad_addr = addr;
++	void *p = addr;
  
--KASAN uses compile-time instrumentation for checking every memory access,
--therefore you will need a GCC version 4.9.2 or later. GCC 5.0 or later is
--required for detection of out-of-bounds accesses to stack or global variables.
-+KASAN uses compile-time instrumentation to insert validity checks before every
-+memory access, and therefore requires a compiler version that supports that.
+-	while (!shadow_val && first_bad_addr < addr + size) {
+-		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
+-		shadow_val = *(u8 *)kasan_mem_to_shadow(first_bad_addr);
+-	}
+-	return first_bad_addr;
++	while (p < addr + size && !(*(u8 *)kasan_mem_to_shadow(p)))
++		p += KASAN_SHADOW_SCALE_SIZE;
++	return p;
+ }
  
--Currently KASAN is supported only for the x86_64 and arm64 architectures.
-+Generic KASAN is supported in both GCC and Clang. With GCC it requires version
-+4.9.2 or later for basic support and version 5.0 or later for detection of
-+out-of-bounds accesses for stack and global variables and for inline
-+instrumentation mode (see the Usage section). With Clang it requires version
-+7.0.0 or later and it doesn't support detection of out-of-bounds accesses for
-+global variables yet.
-+
-+Tag-based KASAN is only supported in Clang and requires version 7.0.0 or later.
-+
-+Currently generic KASAN is supported for the x86_64, arm64 and xtensa
-+architectures, and tag-based KASAN is supported only for arm64.
+ static const char *get_shadow_bug_type(struct kasan_access_info *info)
+@@ -50,9 +47,6 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
+ 	const char *bug_type = "unknown-crash";
+ 	u8 *shadow_addr;
  
- Usage
- -----
-@@ -21,12 +31,14 @@ To enable KASAN configure kernel with::
- 
- 	  CONFIG_KASAN = y
- 
--and choose between CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE. Outline and
--inline are compiler instrumentation types. The former produces smaller binary
--the latter is 1.1 - 2 times faster. Inline instrumentation requires a GCC
--version 5.0 or later.
-+and choose between CONFIG_KASAN_GENERIC (to enable generic KASAN) and
-+CONFIG_KASAN_SW_TAGS (to enable software tag-based KASAN).
- 
--KASAN works with both SLUB and SLAB memory allocators.
-+You also need to choose between CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE.
-+Outline and inline are compiler instrumentation types. The former produces
-+smaller binary while the latter is 1.1 - 2 times faster.
-+
-+Both KASAN modes work with both SLUB and SLAB memory allocators.
- For better bug detection and nicer reporting, enable CONFIG_STACKTRACE.
- 
- To disable instrumentation for specific files or directories, add a line
-@@ -43,85 +55,85 @@ similar to the following to the respective kernel Makefile:
- Error reports
- ~~~~~~~~~~~~~
- 
--A typical out of bounds access report looks like this::
-+A typical out-of-bounds access generic KASAN report looks like this::
- 
-     ==================================================================
--    BUG: AddressSanitizer: out of bounds access in kmalloc_oob_right+0x65/0x75 [test_kasan] at addr ffff8800693bc5d3
--    Write of size 1 by task modprobe/1689
--    =============================================================================
--    BUG kmalloc-128 (Not tainted): kasan error
--    -----------------------------------------------------------------------------
+-	info->first_bad_addr = find_first_bad_addr(info->access_addr,
+-						info->access_size);
 -
--    Disabling lock debugging due to kernel taint
--    INFO: Allocated in kmalloc_oob_right+0x3d/0x75 [test_kasan] age=0 cpu=0 pid=1689
--     __slab_alloc+0x4b4/0x4f0
--     kmem_cache_alloc_trace+0x10b/0x190
--     kmalloc_oob_right+0x3d/0x75 [test_kasan]
--     init_module+0x9/0x47 [test_kasan]
--     do_one_initcall+0x99/0x200
--     load_module+0x2cb3/0x3b20
--     SyS_finit_module+0x76/0x80
--     system_call_fastpath+0x12/0x17
--    INFO: Slab 0xffffea0001a4ef00 objects=17 used=7 fp=0xffff8800693bd728 flags=0x100000000004080
--    INFO: Object 0xffff8800693bc558 @offset=1368 fp=0xffff8800693bc720
+ 	shadow_addr = (u8 *)kasan_mem_to_shadow(info->first_bad_addr);
+ 
+ 	/*
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index 50adcab463f2..9b567f742539 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -119,6 +119,7 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value);
+ void check_memory_region(unsigned long addr, size_t size, bool write,
+ 				unsigned long ret_ip);
+ 
++void *find_first_bad_addr(void *addr, size_t size);
+ const char *get_bug_type(struct kasan_access_info *info);
+ 
+ void kasan_report(unsigned long addr, size_t size,
+@@ -139,6 +140,8 @@ static inline void quarantine_remove_cache(struct kmem_cache *cache) { }
+ 
+ #ifdef CONFIG_KASAN_SW_TAGS
+ 
++void print_tags(u8 addr_tag, const void *addr);
++
+ #define KASAN_PTR_TAG_SHIFT 56
+ #define KASAN_PTR_TAG_MASK (0xFFUL << KASAN_PTR_TAG_SHIFT)
+ 
+@@ -166,6 +169,8 @@ static inline void *reset_tag(const void *addr)
+ 
+ #else /* CONFIG_KASAN_SW_TAGS */
+ 
++static inline void print_tags(u8 addr_tag, const void *addr) { }
++
+ static inline u8 random_tag(void)
+ {
+ 	return 0;
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 64a74f334c45..214d85035f99 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -64,11 +64,10 @@ static int __init kasan_set_multi_shot(char *str)
+ }
+ __setup("kasan_multi_shot", kasan_set_multi_shot);
+ 
+-static void print_error_description(struct kasan_access_info *info,
+-					const char *bug_type)
++static void print_error_description(struct kasan_access_info *info)
+ {
+ 	pr_err("BUG: KASAN: %s in %pS\n",
+-		bug_type, (void *)info->ip);
++		get_bug_type(info), (void *)info->ip);
+ 	pr_err("%s of size %zu at addr %px by task %s/%d\n",
+ 		info->is_write ? "Write" : "Read", info->access_size,
+ 		info->access_addr, current->comm, task_pid_nr(current));
+@@ -272,6 +271,8 @@ void kasan_report_invalid_free(void *object, unsigned long ip)
+ 
+ 	start_report(&flags);
+ 	pr_err("BUG: KASAN: double-free or invalid-free in %pS\n", (void *)ip);
++	print_tags(get_tag(object), reset_tag(object));
++	object = reset_tag(object);
+ 	pr_err("\n");
+ 	print_address_description(object);
+ 	pr_err("\n");
+@@ -279,41 +280,45 @@ void kasan_report_invalid_free(void *object, unsigned long ip)
+ 	end_report(&flags);
+ }
+ 
+-static void kasan_report_error(struct kasan_access_info *info)
+-{
+-	unsigned long flags;
 -
--    Bytes b4 ffff8800693bc548: 00 00 00 00 00 00 00 00 5a 5a 5a 5a 5a 5a 5a 5a  ........ZZZZZZZZ
--    Object ffff8800693bc558: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc568: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc578: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc588: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc598: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5a8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5b8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5c8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  kkkkkkkkkkkkkkk.
--    Redzone ffff8800693bc5d8: cc cc cc cc cc cc cc cc                          ........
--    Padding ffff8800693bc718: 5a 5a 5a 5a 5a 5a 5a 5a                          ZZZZZZZZ
--    CPU: 0 PID: 1689 Comm: modprobe Tainted: G    B          3.18.0-rc1-mm1+ #98
--    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
--     ffff8800693bc000 0000000000000000 ffff8800693bc558 ffff88006923bb78
--     ffffffff81cc68ae 00000000000000f3 ffff88006d407600 ffff88006923bba8
--     ffffffff811fd848 ffff88006d407600 ffffea0001a4ef00 ffff8800693bc558
-+    BUG: KASAN: slab-out-of-bounds in kmalloc_oob_right+0xa8/0xbc [test_kasan]
-+    Write of size 1 at addr ffff8801f44ec37b by task insmod/2760
-+    
-+    CPU: 1 PID: 2760 Comm: insmod Not tainted 4.19.0-rc3+ #698
-+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-     Call Trace:
--     [<ffffffff81cc68ae>] dump_stack+0x46/0x58
--     [<ffffffff811fd848>] print_trailer+0xf8/0x160
--     [<ffffffffa00026a7>] ? kmem_cache_oob+0xc3/0xc3 [test_kasan]
--     [<ffffffff811ff0f5>] object_err+0x35/0x40
--     [<ffffffffa0002065>] ? kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffff8120b9fa>] kasan_report_error+0x38a/0x3f0
--     [<ffffffff8120a79f>] ? kasan_poison_shadow+0x2f/0x40
--     [<ffffffff8120b344>] ? kasan_unpoison_shadow+0x14/0x40
--     [<ffffffff8120a79f>] ? kasan_poison_shadow+0x2f/0x40
--     [<ffffffffa00026a7>] ? kmem_cache_oob+0xc3/0xc3 [test_kasan]
--     [<ffffffff8120a995>] __asan_store1+0x75/0xb0
--     [<ffffffffa0002601>] ? kmem_cache_oob+0x1d/0xc3 [test_kasan]
--     [<ffffffffa0002065>] ? kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffffa0002065>] kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffffa00026b0>] init_module+0x9/0x47 [test_kasan]
--     [<ffffffff810002d9>] do_one_initcall+0x99/0x200
--     [<ffffffff811e4e5c>] ? __vunmap+0xec/0x160
--     [<ffffffff81114f63>] load_module+0x2cb3/0x3b20
--     [<ffffffff8110fd70>] ? m_show+0x240/0x240
--     [<ffffffff81115f06>] SyS_finit_module+0x76/0x80
--     [<ffffffff81cd3129>] system_call_fastpath+0x12/0x17
-+     dump_stack+0x94/0xd8
-+     print_address_description+0x73/0x280
-+     kasan_report+0x144/0x187
-+     __asan_report_store1_noabort+0x17/0x20
-+     kmalloc_oob_right+0xa8/0xbc [test_kasan]
-+     kmalloc_tests_init+0x16/0x700 [test_kasan]
-+     do_one_initcall+0xa5/0x3ae
-+     do_init_module+0x1b6/0x547
-+     load_module+0x75df/0x8070
-+     __do_sys_init_module+0x1c6/0x200
-+     __x64_sys_init_module+0x6e/0xb0
-+     do_syscall_64+0x9f/0x2c0
-+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-+    RIP: 0033:0x7f96443109da
-+    RSP: 002b:00007ffcf0b51b08 EFLAGS: 00000202 ORIG_RAX: 00000000000000af
-+    RAX: ffffffffffffffda RBX: 000055dc3ee521a0 RCX: 00007f96443109da
-+    RDX: 00007f96445cff88 RSI: 0000000000057a50 RDI: 00007f9644992000
-+    RBP: 000055dc3ee510b0 R08: 0000000000000003 R09: 0000000000000000
-+    R10: 00007f964430cd0a R11: 0000000000000202 R12: 00007f96445cff88
-+    R13: 000055dc3ee51090 R14: 0000000000000000 R15: 0000000000000000
-+    
-+    Allocated by task 2760:
-+     save_stack+0x43/0xd0
-+     kasan_kmalloc+0xa7/0xd0
-+     kmem_cache_alloc_trace+0xe1/0x1b0
-+     kmalloc_oob_right+0x56/0xbc [test_kasan]
-+     kmalloc_tests_init+0x16/0x700 [test_kasan]
-+     do_one_initcall+0xa5/0x3ae
-+     do_init_module+0x1b6/0x547
-+     load_module+0x75df/0x8070
-+     __do_sys_init_module+0x1c6/0x200
-+     __x64_sys_init_module+0x6e/0xb0
-+     do_syscall_64+0x9f/0x2c0
-+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-+    
-+    Freed by task 815:
-+     save_stack+0x43/0xd0
-+     __kasan_slab_free+0x135/0x190
-+     kasan_slab_free+0xe/0x10
-+     kfree+0x93/0x1a0
-+     umh_complete+0x6a/0xa0
-+     call_usermodehelper_exec_async+0x4c3/0x640
-+     ret_from_fork+0x35/0x40
-+    
-+    The buggy address belongs to the object at ffff8801f44ec300
-+     which belongs to the cache kmalloc-128 of size 128
-+    The buggy address is located 123 bytes inside of
-+     128-byte region [ffff8801f44ec300, ffff8801f44ec380)
-+    The buggy address belongs to the page:
-+    page:ffffea0007d13b00 count:1 mapcount:0 mapping:ffff8801f7001640 index:0x0
-+    flags: 0x200000000000100(slab)
-+    raw: 0200000000000100 ffffea0007d11dc0 0000001a0000001a ffff8801f7001640
-+    raw: 0000000000000000 0000000080150015 00000001ffffffff 0000000000000000
-+    page dumped because: kasan: bad access detected
-+    
-     Memory state around the buggy address:
--     ffff8800693bc300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc380: fc fc 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
--     ffff8800693bc400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc500: fc fc fc fc fc fc fc fc fc fc fc 00 00 00 00 00
--    >ffff8800693bc580: 00 00 00 00 00 00 00 00 00 00 03 fc fc fc fc fc
--                                                 ^
--     ffff8800693bc600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc700: fc fc fc fc fb fb fb fb fb fb fb fb fb fb fb fb
--     ffff8800693bc780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
--     ffff8800693bc800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-+     ffff8801f44ec200: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-+     ffff8801f44ec280: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-+    >ffff8801f44ec300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03
-+                                                                    ^
-+     ffff8801f44ec380: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-+     ffff8801f44ec400: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-     ==================================================================
+-	start_report(&flags);
+-
+-	print_error_description(info, get_bug_type(info));
+-	pr_err("\n");
+-
+-	if (!addr_has_shadow(info->access_addr)) {
+-		dump_stack();
+-	} else {
+-		print_address_description((void *)info->access_addr);
+-		pr_err("\n");
+-		print_shadow_for_address(info->first_bad_addr);
+-	}
+-
+-	end_report(&flags);
+-}
+-
+ void kasan_report(unsigned long addr, size_t size,
+ 		bool is_write, unsigned long ip)
+ {
+ 	struct kasan_access_info info;
++	void *tagged_addr;
++	void *untagged_addr;
++	unsigned long flags;
  
--The header of the report discribe what kind of bug happened and what kind of
--access caused it. It's followed by the description of the accessed slub object
--(see 'SLUB Debug output' section in Documentation/vm/slub.rst for details) and
--the description of the accessed memory page.
-+The header of the report provides a short summary of what kind of bug happened
-+and what kind of access caused it. It's followed by a stack trace of the bad
-+access, a stack trace of where the accessed memory was allocated (in case bad
-+access happens on a slab object), and a stack trace of where the object was
-+freed (in case of a use-after-free bug report). Next comes a description of
-+the accessed slab object and information about the accessed memory page.
+ 	if (likely(!report_enabled()))
+ 		return;
  
- In the last section the report shows memory state around the accessed address.
- Reading this part requires some understanding of how KASAN works.
-@@ -138,18 +150,24 @@ inaccessible memory like redzones or freed memory (see mm/kasan/kasan.h).
- In the report above the arrows point to the shadow byte 03, which means that
- the accessed address is partially accessible.
+ 	disable_trace_on_warning();
  
-+For tag-based KASAN this last report section shows the memory tags around the
-+accessed address (see Implementation details section).
+-	info.access_addr = (void *)addr;
+-	info.first_bad_addr = (void *)addr;
++	tagged_addr = (void *)addr;
++	untagged_addr = reset_tag(tagged_addr);
 +
++	info.access_addr = tagged_addr;
++	if (addr_has_shadow(untagged_addr))
++		info.first_bad_addr = find_first_bad_addr(tagged_addr, size);
++	else
++		info.first_bad_addr = untagged_addr;
+ 	info.access_size = size;
+ 	info.is_write = is_write;
+ 	info.ip = ip;
  
- Implementation details
- ----------------------
- 
-+Generic KASAN
-+~~~~~~~~~~~~~
+-	kasan_report_error(&info);
++	start_report(&flags);
 +
- From a high level, our approach to memory error detection is similar to that
- of kmemcheck: use shadow memory to record whether each byte of memory is safe
--to access, and use compile-time instrumentation to check shadow memory on each
--memory access.
-+to access, and use compile-time instrumentation to insert checks of shadow
-+memory on each memory access.
- 
--AddressSanitizer dedicates 1/8 of kernel memory to its shadow memory
--(e.g. 16TB to cover 128TB on x86_64) and uses direct mapping with a scale and
--offset to translate a memory address to its corresponding shadow address.
-+Generic KASAN dedicates 1/8th of kernel memory to its shadow memory (e.g. 16TB
-+to cover 128TB on x86_64) and uses direct mapping with a scale and offset to
-+translate a memory address to its corresponding shadow address.
- 
- Here is the function which translates an address to its corresponding shadow
- address::
-@@ -162,12 +180,38 @@ address::
- 
- where ``KASAN_SHADOW_SCALE_SHIFT = 3``.
- 
--Compile-time instrumentation used for checking memory accesses. Compiler inserts
--function calls (__asan_load*(addr), __asan_store*(addr)) before each memory
--access of size 1, 2, 4, 8 or 16. These functions check whether memory access is
--valid or not by checking corresponding shadow memory.
-+Compile-time instrumentation is used to insert memory access checks. Compiler
-+inserts function calls (__asan_load*(addr), __asan_store*(addr)) before each
-+memory access of size 1, 2, 4, 8 or 16. These functions check whether memory
-+access is valid or not by checking corresponding shadow memory.
- 
- GCC 5.0 has possibility to perform inline instrumentation. Instead of making
- function calls GCC directly inserts the code to check the shadow memory.
- This option significantly enlarges kernel but it gives x1.1-x2 performance
- boost over outline instrumented kernel.
++	print_error_description(&info);
++	if (addr_has_shadow(untagged_addr))
++		print_tags(get_tag(tagged_addr), info.first_bad_addr);
++	pr_err("\n");
 +
-+Software tag-based KASAN
-+~~~~~~~~~~~~~~~~~~~~~~~~
++	if (addr_has_shadow(untagged_addr)) {
++		print_address_description(untagged_addr);
++		pr_err("\n");
++		print_shadow_for_address(info.first_bad_addr);
++	} else {
++		dump_stack();
++	}
 +
-+Tag-based KASAN uses the Top Byte Ignore (TBI) feature of modern arm64 CPUs to
-+store a pointer tag in the top byte of kernel pointers. Like generic KASAN it
-+uses shadow memory to store memory tags associated with each 16-byte memory
-+cell (therefore it dedicates 1/16th of the kernel memory for shadow memory).
++	end_report(&flags);
+ }
+diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
+index 8af15e87d3bc..573c51d20d09 100644
+--- a/mm/kasan/tags_report.c
++++ b/mm/kasan/tags_report.c
+@@ -37,3 +37,21 @@ const char *get_bug_type(struct kasan_access_info *info)
+ {
+ 	return "invalid-access";
+ }
 +
-+On each memory allocation tag-based KASAN generates a random tag, tags the
-+allocated memory with this tag, and embeds this tag into the returned pointer.
-+Software tag-based KASAN uses compile-time instrumentation to insert checks
-+before each memory access. These checks make sure that tag of the memory that
-+is being accessed is equal to tag of the pointer that is used to access this
-+memory. In case of a tag mismatch tag-based KASAN prints a bug report.
++void *find_first_bad_addr(void *addr, size_t size)
++{
++	u8 tag = get_tag(addr);
++	void *p = reset_tag(addr);
++	void *end = p + size;
 +
-+Software tag-based KASAN also has two instrumentation modes (outline, that
-+emits callbacks to check memory accesses; and inline, that performs the shadow
-+memory checks inline). With outline instrumentation mode, a bug report is
-+simply printed from the function that performs the access check. With inline
-+instrumentation a brk instruction is emitted by the compiler, and a dedicated
-+brk handler is used to print bug reports.
++	while (p < end && tag == *(u8 *)kasan_mem_to_shadow(p))
++		p += KASAN_SHADOW_SCALE_SIZE;
++	return p;
++}
 +
-+A potential expansion of this mode is a hardware tag-based mode, which would
-+use hardware memory tagging support instead of compiler instrumentation and
-+manual shadow memory manipulation.
++void print_tags(u8 addr_tag, const void *addr)
++{
++	u8 *shadow = (u8 *)kasan_mem_to_shadow(addr);
++
++	pr_err("Pointer tag: [%02x], memory tag: [%02x]\n", addr_tag, *shadow);
++}
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
