@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5890C46464
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E17C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69BCC2086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A694C20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 17:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y+JaKNNg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69BCC2086B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ml3obd1u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A694C20869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389691AbeKGC5D (ORCPT
+        id S2389724AbeKGC5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:57:03 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55355 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730818AbeKGC5B (ORCPT
+        Tue, 6 Nov 2018 21:57:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41517 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389692AbeKGC5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:57:01 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s10-v6so11868817wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:30:44 -0800 (PST)
+        Tue, 6 Nov 2018 21:57:05 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x12-v6so14471376wrw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 09:30:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bOEKal8RBRTtWSpTxNA94ZGJWCyGRWdgsr1BoKcGe9Y=;
-        b=Y+JaKNNgXBgr6Jwh77JFn54Ud9LeC25orGV/QEwMUJVZJOpZMlBYwv++U+CYCLelPU
-         vj0qUgYsRe3ImvGiWtzR0lfkqoNrpLrIeBHcuByNoVKslQJ9vxAUJSnYAr0poPt78I7D
-         mWqMTMtiao+3C5hZyPLfjow9DWPjGjEwY2dy7x8MPT46QXCjUDa+fOuywqKiokAeQM1j
-         qgoRzxOd08r7H/xMb2tEYutlTFK3SS/4M8LhMUTq2wa29hMVBvGFDu5SYN5Z0r+gF0mW
-         rRw9MzJ+cNMEN8kqmxC1y7d0T7MalzIruz+SoiVY1SLeX4wVbktJFPzOHahQPV5d7jBd
-         pxBQ==
+        bh=uFXbDXBBL0TkI32ZOkP12VFoaipD/tLiCoQgwqz5odA=;
+        b=Ml3obd1uR8RA+9+kPyhYpuUlNKibYa2CRfEbIgyyBjJQQsxI6O4jyB2v5aISRpt4Fb
+         rj4kSRubmtB2gfIcZerb9slf7GTBlw5Tbp5c6iugUfnuzQC3XsITzLENuD6X3Z/YVueS
+         bl9A1RcdoBcA5tpBEPGGsPvphoq47rYDLEthUDE1Hiqg/OBDYoq+iQomOZZipqa6qEqA
+         gh6W9WBQf63nRue+Lp+Lr0m7GGRxT+OuaVzn4d2W9CtavCwPeOK+zHxnbC181eLpQfwB
+         irf9RttaDlwEot1Pj/F6sKVqzuewyv/+3sbuY8ZQkS5ntsRoTJp/p4MtvWOF16tdHpIJ
+         9hKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bOEKal8RBRTtWSpTxNA94ZGJWCyGRWdgsr1BoKcGe9Y=;
-        b=fi26nZUF85Wx1PaLDPmVLHkfxTuZiRSHDmD6C8Hz2ujWAJ+qDtm9Bv6xJ9nAAOj0vQ
-         C8AnOIgAOQ/TtXFTFc9pSFH5M2AuOss5WoSbeuyox006i/ZfVyN1Yk8f2688R91u2Ifd
-         FdsziPPlgc/d9z1ByGN87i94gKMI9iaGlgZiJX7ElpSKtSiRT0FucJiNoK+m1lqP+Sq8
-         2WomU4o/UqJTlY320pxkER5p5nQgOLQJhfUAQ1LmjcqxRUSqzOH4TAxtOohf8A7RQcnr
-         76F9px6T1zy7EH6bTPRBIQilHQW9TmAboiMc+HV3fVcBbC19OE9oVmG+/5s1bfiecx5q
-         JxoA==
-X-Gm-Message-State: AGRZ1gJdClhDczhwcxaXjOU6z5/8nSRt7w6JrgUXEj76yAOFjVAiVjbI
-        HkkAe/ajFbDBPOQLjjlPr0twaA==
-X-Google-Smtp-Source: AJdET5dBD0E5xJ40vEso8U5nzyUsyOPliGVN3y8L7pt7/Ig65473+BQawanYnU0kxpouZIDmv1Cubw==
-X-Received: by 2002:a1c:2dd0:: with SMTP id t199-v6mr2801475wmt.50.1541525444008;
-        Tue, 06 Nov 2018 09:30:44 -0800 (PST)
+        bh=uFXbDXBBL0TkI32ZOkP12VFoaipD/tLiCoQgwqz5odA=;
+        b=KZfz9lle7DS0QyTkKD70xvvE+/TBmoYcopkSo5iQSU7TtoN/XuVnaJEMryAScJRqpQ
+         W0skmlrj9EvPAjRSQi8zbHQ3k28iXts3J0gZu5ok7WHuTlAe4yv6xoyUD+m7BSy9ZgAV
+         OxuHm/yi+p3X7rJvyp4Rdy6kFVg2bPB3abh1/kGxUq4BF0jZ0MLMdmpyZpQxGYkF9Cv9
+         P3j2zJas4DA/ti46FRSVJF19eqHLr6zb72zYAsENxp/Lg9jlZZAcLYV54qbCu7olG7Yc
+         PE8Voa1iMYLn2YarDkGCBXDOTG0gKOgYA9mfMsXFCIfImTqmwPza9tWFhj8ZI2N6V5Mk
+         lPtA==
+X-Gm-Message-State: AGRZ1gLkA2CW63Bkh1y3uHNFuTpUo8DOtoBw9dlgc5YjxqtyoUS9UAoB
+        ypnXjrHjiNRu26fS3HkkXcxbDQ==
+X-Google-Smtp-Source: AJdET5c+bHFl6qHCJUo73l2cQqmAl8DcYcsx+G0rN/ISh1Rrs2TxDP7+TGu2bV1DVX4z9B3j3X+3mQ==
+X-Received: by 2002:adf:a31c:: with SMTP id c28-v6mr24695147wrb.195.1541525447608;
+        Tue, 06 Nov 2018 09:30:47 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.30.42
+        by smtp.gmail.com with ESMTPSA id z17-v6sm16328416wrm.65.2018.11.06.09.30.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 09:30:43 -0800 (PST)
+        Tue, 06 Nov 2018 09:30:46 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v10 02/22] kasan, slub: handle pointer tags in early_kmem_cache_node_alloc
-Date:   Tue,  6 Nov 2018 18:30:17 +0100
-Message-Id: <76e40ec9137224352051f1e3ebcd8e8ee95044e1.1541525354.git.andreyknvl@google.com>
+Subject: [PATCH v10 04/22] kasan: rename source files to reflect the new naming scheme
+Date:   Tue,  6 Nov 2018 18:30:19 +0100
+Message-Id: <05fbfe73d79159af71bfded4d3b46f8055329e1a.1541525354.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <cover.1541525354.git.andreyknvl@google.com>
 References: <cover.1541525354.git.andreyknvl@google.com>
@@ -109,43 +109,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous patch updated KASAN hooks signatures and their usage in SLAB
-and SLUB code, except for the early_kmem_cache_node_alloc function. This
-patch handles that function separately, as it requires to reorder some of
-the initialization code to correctly propagate a tagged pointer in case a
-tag is assigned by kasan_kmalloc.
+We now have two KASAN modes: generic KASAN and tag-based KASAN. Rename
+kasan.c to generic.c to reflect that. Also rename kasan_init.c to init.c
+as it contains initialization code for both KASAN modes.
 
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/slub.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ mm/kasan/Makefile                 | 8 ++++----
+ mm/kasan/{kasan.c => generic.c}   | 0
+ mm/kasan/{kasan_init.c => init.c} | 0
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+ rename mm/kasan/{kasan.c => generic.c} (100%)
+ rename mm/kasan/{kasan_init.c => init.c} (100%)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index fdd4a86aa882..8561a32910dd 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3364,16 +3364,16 @@ static void early_kmem_cache_node_alloc(int node)
+diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
+index a6df14bffb6b..d643530b24aa 100644
+--- a/mm/kasan/Makefile
++++ b/mm/kasan/Makefile
+@@ -1,14 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0
+ KASAN_SANITIZE := n
+ UBSAN_SANITIZE_common.o := n
+-UBSAN_SANITIZE_kasan.o := n
++UBSAN_SANITIZE_generic.o := n
+ KCOV_INSTRUMENT := n
  
- 	n = page->freelist;
- 	BUG_ON(!n);
--	page->freelist = get_freepointer(kmem_cache_node, n);
--	page->inuse = 1;
--	page->frozen = 0;
--	kmem_cache_node->node[node] = n;
- #ifdef CONFIG_SLUB_DEBUG
- 	init_object(kmem_cache_node, n, SLUB_RED_ACTIVE);
- 	init_tracking(kmem_cache_node, n);
- #endif
--	kasan_kmalloc(kmem_cache_node, n, sizeof(struct kmem_cache_node),
-+	n = kasan_kmalloc(kmem_cache_node, n, sizeof(struct kmem_cache_node),
- 		      GFP_KERNEL);
-+	page->freelist = get_freepointer(kmem_cache_node, n);
-+	page->inuse = 1;
-+	page->frozen = 0;
-+	kmem_cache_node->node[node] = n;
- 	init_kmem_cache_node(n);
- 	inc_slabs_node(kmem_cache_node, node, page->objects);
+-CFLAGS_REMOVE_kasan.o = -pg
++CFLAGS_REMOVE_generic.o = -pg
+ # Function splitter causes unnecessary splits in __asan_load1/__asan_store1
+ # see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63533
  
+ CFLAGS_common.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+-CFLAGS_kasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
++CFLAGS_generic.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+ 
+-obj-y := common.o kasan.o report.o kasan_init.o quarantine.o
++obj-y := common.o generic.o report.o init.o quarantine.o
+diff --git a/mm/kasan/kasan.c b/mm/kasan/generic.c
+similarity index 100%
+rename from mm/kasan/kasan.c
+rename to mm/kasan/generic.c
+diff --git a/mm/kasan/kasan_init.c b/mm/kasan/init.c
+similarity index 100%
+rename from mm/kasan/kasan_init.c
+rename to mm/kasan/init.c
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
