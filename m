@@ -2,111 +2,228 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB254C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2596C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FEB22086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:46:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5gdAdiW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FEB22086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FED920830
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 23:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FED920830
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731082AbeKGJOY (ORCPT
+        id S2388227AbeKGJQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 04:14:24 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42206 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbeKGJOY (ORCPT
+        Wed, 7 Nov 2018 04:16:22 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35564 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387726AbeKGJQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 04:14:24 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t6-v6so6966378plo.9
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 15:46:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q+CEES5h0JL0Tuv/sb8uQK8wxR455Qy9YIh0JD58t9A=;
-        b=f5gdAdiW7Z7128rh1bo9mCtdQ3PH4OeWhl+9HCktQkTLMAOtGVSKHAqL34wFqPku2b
-         GYViIb5ZFtf+DXjlSE5ehH9X0f5pF/kax11LQlnxUIaBLwuHYcunJvWfJjoOr0DpQup3
-         z7ashTpL+l3KCxh1iYbix20tKTp5Gvjv5uFSeQxLs/hzfVvxF68W6NVju9k372p4wdcl
-         yaV4xrGWP878LQHhy0/ZANTtV1Jv0rYD2P1KMeELcbip9EMBrXrJVCVs77bNWswii/Ud
-         9xZeVmEiNnSGF5QU7Wxv/tyJR1F/CjzLxbXvBp8mx7RznKRXHUowJoBG00HP3Wje1Ozd
-         lDdw==
+        Wed, 7 Nov 2018 04:16:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 32-v6so6531854pgu.2;
+        Tue, 06 Nov 2018 15:48:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q+CEES5h0JL0Tuv/sb8uQK8wxR455Qy9YIh0JD58t9A=;
-        b=IwgRow5On3uBKKzyz8yc3O6T/3h/laguiwqkgp1cY+MYTHWDfB77vc1PySu2FYvuKc
-         VM+PArqBxREZLN564uUuWKAUB5+/qTW9hdojY6xuAXtHoN89Bvs0Zd8cl8dbbAMUVEy0
-         /dCmIDg1c2wpvCou9gOANvOY9PVR3zcKfhRos1f0CeI58879kvx/nnJ5CzWT3Ps7ZaY4
-         YO93Qsd1AN0CYI6HmmVWs9faqNYSFFfaEMyclkcmspBT6CyzFfkFic1jfvkCbwk7iBw9
-         J2tidF7Jk9SzyjxFb248MEdKm+AxaaAxdht7zxS1wDNl+bxONFylKHg6qlpeyd9xgmUn
-         8FiA==
-X-Gm-Message-State: AGRZ1gKCe2w9IraXzOm2cDlMmUZF57EQMgXK3xED0L+qcnT6Z1+6OMvG
-        ue/GXZfpQQ8kTNzNqfDgqJ+tXBTC
-X-Google-Smtp-Source: AJdET5eFET5FIYZFquIfEJAPsiXBtSNO/GX2Gr/CVEmoLxR+FHrxyRt/umu7yhnoenJ2bHfwZBf1cQ==
-X-Received: by 2002:a17:902:654a:: with SMTP id d10-v6mr27217536pln.302.1541547999399;
-        Tue, 06 Nov 2018 15:46:39 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm45830648pgq.35.2018.11.06.15.46.38
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hPcRdl+fVZ7K/XmxsWrM9/WvMiO+cdHK6C26sWAH0Yg=;
+        b=r0v+zjDkUl3WbVBd9EakFBXzT4sWLky/Y3JmS4axYD16YpIlV1xO0602Yz2ds4rcLX
+         Ky+gcdAoOKDJiL3c6xmRNEQmoj20JrBISGbM3r4kXqpY7ZG42VRK0TgoZns8cOLZViNR
+         +9gvWjpS/SVAR4E9fNJjG6A/7MLcUSWrZ/S/ycTxcwpAM2RqXZGON3UEP4HyDGhr1q8K
+         /G8YQ0rcTiRy/rrDk7r8KMWvMOU13M5Wpfi0Eh4HzO1OB8l8Obl5I01mXjwcrsBj7dDq
+         bjkJOE3fJy+6wLyM1vDvPbwNu0cyM8KI4nnflNDmIvssUMu+yhA8GH0eyDAc54ZEB111
+         eDPA==
+X-Gm-Message-State: AGRZ1gLTdqWkkc03tGUjbDrMGJhbC0r6/6DY/ITpQtIuSkyZbtniIqE2
+        oKXYxXkuSz4NT0esJIHsiu8=
+X-Google-Smtp-Source: AJdET5fiOvIbGLYrd6uOouTcHn9SiNCrwGM4VnJKiB2pHVsUKANh6DEz6vt/lSCTFMpA7SvMsOWZ5w==
+X-Received: by 2002:a65:4b82:: with SMTP id t2mr11328591pgq.189.1541548116412;
+        Tue, 06 Nov 2018 15:48:36 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id 62sm44385819pgc.61.2018.11.06.15.48.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 15:46:38 -0800 (PST)
-Date:   Tue, 6 Nov 2018 15:46:35 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     joro@8bytes.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/dma: Zero pages manually in a length of scatterlist
-Message-ID: <20181106234633.GA11429@Asurada-Nvidia.nvidia.com>
-References: <20181101213500.21800-1-nicoleotsuka@gmail.com>
- <20181104155001.GA25794@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181104155001.GA25794@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 06 Nov 2018 15:48:35 -0800 (PST)
+Message-ID: <1541548114.196084.195.camel@acm.org>
+Subject: Re: [driver-core PATCH v5 5/9] driver core: Establish clear order
+ of operations for deferred probe and remove
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com
+Date:   Tue, 06 Nov 2018 15:48:34 -0800
+In-Reply-To: <154145232484.29224.1635232599636954462.stgit@ahduyck-desk1.jf.intel.com>
+References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
+         <154145232484.29224.1635232599636954462.stgit@ahduyck-desk1.jf.intel.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Mon, 2018-11-05 at 13:12 -0800, Alexander Duyck wrote:
++AD4 One change I made in addition is I replaced the use of +ACI-bool X:1+ACI to define
++AD4 the bitfield to a +ACI-u8 X:1+ACI setup in order to resolve some checkpatch
++AD4 warnings.
 
-On Sun, Nov 04, 2018 at 07:50:01AM -0800, Christoph Hellwig wrote:
-> On Thu, Nov 01, 2018 at 02:35:00PM -0700, Nicolin Chen wrote:
-> > The __GFP_ZERO will be passed down to the generic page allocation
-> > routine which zeros everything page by page. This is safe to be a
-> > generic way but not efficient for iommu allocation that organizes
-> > contiguous pages using scatterlist.
-> > 
-> > So this changes drops __GFP_ZERO from the flag, and adds a manual
-> > memset after page/sg allocations, using the length of scatterlist.
-> > 
-> > My test result of a 2.5MB size allocation shows iommu_dma_alloc()
-> > takes 46% less time, reduced from averagely 925 usec to 500 usec.
-> 
-> And in what case does dma_alloc_* performance even matter?
+Please use +ACI-bool X:1+ACI instead of +ACI-u8 X:1+ACI. I think it was a bad idea to make
+checkpatch complain about +ACI-bool X:1+ACI since +ACI-bool X:1+ACI should only be avoided
+in structures for which alignment must be architecture-independent. For struct
+device it is fine if member alignment differs per architecture. Additionally,
+changing +ACI-bool X:1+ACI into +ACI-u8 X:1+ACI will reduce performance on architectures that
+cannot do byte addressing.
 
-Honestly, this was amplified by running a local iommu benchmark
-test. Practically dma_alloc/free() should not be that stressful,
-but we cannot say the performance doesn't matter at all, right?
-Though many device drivers pre-allocte memory for DMA usage, it
-could matter where a driver dynamically allocates and releases.
++AD4  static void +AF8AXw-device+AF8-release+AF8-driver(struct device +ACo-dev, struct device +ACo-parent)
++AD4  +AHs
++AD4 -	struct device+AF8-driver +ACo-drv+ADs
++AD4 +-	struct device+AF8-driver +ACo-drv +AD0 dev-+AD4-driver+ADs
++AD4  
++AD4 -	drv +AD0 dev-+AD4-driver+ADs
++AD4 -	if (drv) +AHs
++AD4 -		while (device+AF8-links+AF8-busy(dev)) +AHs
++AD4 -			+AF8AXw-device+AF8-driver+AF8-unlock(dev, parent)+ADs
++AD4 +-	/+ACo
++AD4 +-	 +ACo In the event that we are asked to release the driver on an
++AD4 +-	 +ACo interface that is still waiting on a probe we can just terminate
++AD4 +-	 +ACo the probe by setting async+AF8-probe to false. When the async call
++AD4 +-	 +ACo is finally completed it will see this state and just exit.
++AD4 +-	 +ACo-/
++AD4 +-	dev-+AD4-async+AF8-probe +AD0 false+ADs
++AD4 +-	if (+ACE-drv)
++AD4 +-		return+ADs
++AD4  
++AD4 -			device+AF8-links+AF8-unbind+AF8-consumers(dev)+ADs
++AD4 +-	while (device+AF8-links+AF8-busy(dev)) +AHs
++AD4 +-		+AF8AXw-device+AF8-driver+AF8-unlock(dev, parent)+ADs
++AD4  
++AD4 -			+AF8AXw-device+AF8-driver+AF8-lock(dev, parent)+ADs
++AD4 -			/+ACo
++AD4 -			 +ACo A concurrent invocation of the same function might
++AD4 -			 +ACo have released the driver successfully while this one
++AD4 -			 +ACo was waiting, so check for that.
++AD4 -			 +ACo-/
++AD4 -			if (dev-+AD4-driver +ACEAPQ drv)
++AD4 -				return+ADs
++AD4 -		+AH0
++AD4 +-		device+AF8-links+AF8-unbind+AF8-consumers(dev)+ADs
++AD4  
++AD4 -		pm+AF8-runtime+AF8-get+AF8-sync(dev)+ADs
++AD4 -		pm+AF8-runtime+AF8-clean+AF8-up+AF8-links(dev)+ADs
++AD4 +-		+AF8AXw-device+AF8-driver+AF8-lock(dev, parent)+ADs
++AD4 +-		/+ACo
++AD4 +-		 +ACo A concurrent invocation of the same function might
++AD4 +-		 +ACo have released the driver successfully while this one
++AD4 +-		 +ACo was waiting, so check for that.
++AD4 +-		 +ACo-/
++AD4 +-		if (dev-+AD4-driver +ACEAPQ drv)
++AD4 +-			return+ADs
++AD4 +-	+AH0
++AD4  
++AD4 -		driver+AF8-sysfs+AF8-remove(dev)+ADs
++AD4 +-	pm+AF8-runtime+AF8-get+AF8-sync(dev)+ADs
++AD4 +-	pm+AF8-runtime+AF8-clean+AF8-up+AF8-links(dev)+ADs
++AD4  
++AD4 -		if (dev-+AD4-bus)
++AD4 -			blocking+AF8-notifier+AF8-call+AF8-chain(+ACY-dev-+AD4-bus-+AD4-p-+AD4-bus+AF8-notifier,
++AD4 -						     BUS+AF8-NOTIFY+AF8-UNBIND+AF8-DRIVER,
++AD4 -						     dev)+ADs
++AD4 +-	driver+AF8-sysfs+AF8-remove(dev)+ADs
++AD4  
++AD4 -		pm+AF8-runtime+AF8-put+AF8-sync(dev)+ADs
++AD4 +-	if (dev-+AD4-bus)
++AD4 +-		blocking+AF8-notifier+AF8-call+AF8-chain(+ACY-dev-+AD4-bus-+AD4-p-+AD4-bus+AF8-notifier,
++AD4 +-					     BUS+AF8-NOTIFY+AF8-UNBIND+AF8-DRIVER,
++AD4 +-					     dev)+ADs
++AD4  
++AD4 -		if (dev-+AD4-bus +ACYAJg dev-+AD4-bus-+AD4-remove)
++AD4 -			dev-+AD4-bus-+AD4-remove(dev)+ADs
++AD4 -		else if (drv-+AD4-remove)
++AD4 -			drv-+AD4-remove(dev)+ADs
++AD4 +-	pm+AF8-runtime+AF8-put+AF8-sync(dev)+ADs
++AD4  
++AD4 -		device+AF8-links+AF8-driver+AF8-cleanup(dev)+ADs
++AD4 -		arch+AF8-teardown+AF8-dma+AF8-ops(dev)+ADs
++AD4 +-	if (dev-+AD4-bus +ACYAJg dev-+AD4-bus-+AD4-remove)
++AD4 +-		dev-+AD4-bus-+AD4-remove(dev)+ADs
++AD4 +-	else if (drv-+AD4-remove)
++AD4 +-		drv-+AD4-remove(dev)+ADs
++AD4  
++AD4 -		devres+AF8-release+AF8-all(dev)+ADs
++AD4 -		dev-+AD4-driver +AD0 NULL+ADs
++AD4 -		dev+AF8-set+AF8-drvdata(dev, NULL)+ADs
++AD4 -		if (dev-+AD4-pm+AF8-domain +ACYAJg dev-+AD4-pm+AF8-domain-+AD4-dismiss)
++AD4 -			dev-+AD4-pm+AF8-domain-+AD4-dismiss(dev)+ADs
++AD4 -		pm+AF8-runtime+AF8-reinit(dev)+ADs
++AD4 -		dev+AF8-pm+AF8-set+AF8-driver+AF8-flags(dev, 0)+ADs
++AD4 +-	device+AF8-links+AF8-driver+AF8-cleanup(dev)+ADs
++AD4 +-	arch+AF8-teardown+AF8-dma+AF8-ops(dev)+ADs
++AD4 +-
++AD4 +-	devres+AF8-release+AF8-all(dev)+ADs
++AD4 +-	dev-+AD4-driver +AD0 NULL+ADs
++AD4 +-	dev+AF8-set+AF8-drvdata(dev, NULL)+ADs
++AD4 +-	if (dev-+AD4-pm+AF8-domain +ACYAJg dev-+AD4-pm+AF8-domain-+AD4-dismiss)
++AD4 +-		dev-+AD4-pm+AF8-domain-+AD4-dismiss(dev)+ADs
++AD4 +-	pm+AF8-runtime+AF8-reinit(dev)+ADs
++AD4 +-	dev+AF8-pm+AF8-set+AF8-driver+AF8-flags(dev, 0)+ADs
++AD4  
++AD4 -		klist+AF8-remove(+ACY-dev-+AD4-p-+AD4-knode+AF8-driver)+ADs
++AD4 -		device+AF8-pm+AF8-check+AF8-callbacks(dev)+ADs
++AD4 -		if (dev-+AD4-bus)
++AD4 -			blocking+AF8-notifier+AF8-call+AF8-chain(+ACY-dev-+AD4-bus-+AD4-p-+AD4-bus+AF8-notifier,
++AD4 -						     BUS+AF8-NOTIFY+AF8-UNBOUND+AF8-DRIVER,
++AD4 -						     dev)+ADs
++AD4 +-	klist+AF8-remove(+ACY-dev-+AD4-p-+AD4-knode+AF8-driver)+ADs
++AD4 +-	device+AF8-pm+AF8-check+AF8-callbacks(dev)+ADs
++AD4 +-	if (dev-+AD4-bus)
++AD4 +-		blocking+AF8-notifier+AF8-call+AF8-chain(+ACY-dev-+AD4-bus-+AD4-p-+AD4-bus+AF8-notifier,
++AD4 +-					     BUS+AF8-NOTIFY+AF8-UNBOUND+AF8-DRIVER,
++AD4 +-					     dev)+ADs
++AD4  
++AD4 -		kobject+AF8-uevent(+ACY-dev-+AD4-kobj, KOBJ+AF8-UNBIND)+ADs
++AD4 -	+AH0
++AD4 +-	kobject+AF8-uevent(+ACY-dev-+AD4-kobj, KOBJ+AF8-UNBIND)+ADs
++AD4  +AH0
 
-And actually I have a related question for you: I saw that the
-dma_direct_alloc() cancels the __GFP_ZERO flag and does manual
-memset() after allocation. Might that be possibly related to a
-performance concern? Though I don't see any performance keyword
-for that part of code, especially seems that memset() was there
-from the beginning.
+This patch mixes functional changes with whitespace changes. Please move the
+whitespace changes into a separate patch such that this patch becomes easier
+to read.
+ 
++AD4  void device+AF8-release+AF8-driver+AF8-internal(struct device +ACo-dev,
++AD4 diff --git a/include/linux/device.h b/include/linux/device.h
++AD4 index 1b25c7a43f4c..fc7091d436c2 100644
++AD4 --- a/include/linux/device.h
++AD4 +-+-+- b/include/linux/device.h
++AD4 +AEAAQA -1043,14 +-1043,15 +AEAAQA struct device +AHs
++AD4  	struct iommu+AF8-group	+ACo-iommu+AF8-group+ADs
++AD4  	struct iommu+AF8-fwspec	+ACo-iommu+AF8-fwspec+ADs
++AD4  
++AD4 -	bool			offline+AF8-disabled:1+ADs
++AD4 -	bool			offline:1+ADs
++AD4 -	bool			of+AF8-node+AF8-reused:1+ADs
++AD4 +-	u8			offline+AF8-disabled:1+ADs
++AD4 +-	u8			offline:1+ADs
++AD4 +-	u8			of+AF8-node+AF8-reused:1+ADs
++AD4  +ACM-if defined(CONFIG+AF8-ARCH+AF8-HAS+AF8-SYNC+AF8-DMA+AF8-FOR+AF8-DEVICE) +AHwAfA +AFw
++AD4      defined(CONFIG+AF8-ARCH+AF8-HAS+AF8-SYNC+AF8-DMA+AF8-FOR+AF8-CPU) +AHwAfA +AFw
++AD4      defined(CONFIG+AF8-ARCH+AF8-HAS+AF8-SYNC+AF8-DMA+AF8-FOR+AF8-CPU+AF8-ALL)
++AD4 -	bool			dma+AF8-coherent:1+ADs
++AD4 +-	u8			dma+AF8-coherent:1+ADs
++AD4  +ACM-endif
++AD4 +-	u8			async+AF8-probe:1+ADs
 
-Thanks
-Nicolin
+The new async+AF8-probe field can be changed from multiple threads. Concurrent
+changes of a bitfield are only safe if these are serialized in some way.
+Please document the locking requirements for the async+AF8-probe bitfield in
+device.h.
+
+Thanks,
+
+Bart.
