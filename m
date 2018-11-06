@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1055CC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691D4C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBAAE20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:11:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAAE20827
+	by mail.kernel.org (Postfix) with ESMTP id 3C5BA20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 19:13:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5BA20827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbeKGEih (ORCPT
+        id S2388189AbeKGEjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 23:38:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44927 "EHLO
+        Tue, 6 Nov 2018 23:39:46 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42199 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387804AbeKGEih (ORCPT
+        with ESMTP id S2387537AbeKGEjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:38:37 -0500
+        Tue, 6 Nov 2018 23:39:46 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6JBlDV910319
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA6JCweA910750
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 6 Nov 2018 11:11:47 -0800
+        Tue, 6 Nov 2018 11:12:58 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6JBlD2910316;
-        Tue, 6 Nov 2018 11:11:47 -0800
-Date:   Tue, 6 Nov 2018 11:11:47 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA6JCvYP910746;
+        Tue, 6 Nov 2018 11:12:57 -0800
+Date:   Tue, 6 Nov 2018 11:12:57 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-nlslrg8apxdsobt4pwl3n7ur@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, wangnan0@huawei.com, acme@redhat.com,
-        mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        dsahern@gmail.com, jolsa@kernel.org, namhyung@kernel.org,
-        adrian.hunter@intel.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, dsahern@gmail.com,
-          jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
-          wangnan0@huawei.com, linux-kernel@vger.kernel.org,
-          acme@redhat.com, mingo@kernel.org
+From:   tip-bot for Andi Kleen <tipbot@zytor.com>
+Message-ID: <tip-c3537fc251503af18085b8f84126d13743663970@git.kernel.org>
+Cc:     hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        acme@redhat.com, tglx@linutronix.de, jolsa@kernel.org,
+        ak@linux.intel.com
+Reply-To: tglx@linutronix.de, acme@redhat.com, hpa@zytor.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          ak@linux.intel.com, jolsa@kernel.org
+In-Reply-To: <20181001195927.14211-1-andi@firstfloor.org>
+References: <20181001195927.14211-1-andi@firstfloor.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf trace: Fix setting of augmented payload when
- using eBPF + raw_syscalls
-Git-Commit-ID: cd26ea6d50a207ee37e0364ecc2d196d6c9671e8
+Subject: [tip:perf/urgent] perf evlist: Move perf_evsel__reset_weak_group
+ into evlist
+Git-Commit-ID: c3537fc251503af18085b8f84126d13743663970
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,115 +59,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cd26ea6d50a207ee37e0364ecc2d196d6c9671e8
-Gitweb:     https://git.kernel.org/tip/cd26ea6d50a207ee37e0364ecc2d196d6c9671e8
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Sat, 3 Nov 2018 08:19:56 -0300
+Commit-ID:  c3537fc251503af18085b8f84126d13743663970
+Gitweb:     https://git.kernel.org/tip/c3537fc251503af18085b8f84126d13743663970
+Author:     Andi Kleen <ak@linux.intel.com>
+AuthorDate: Mon, 1 Oct 2018 12:59:26 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Sat, 3 Nov 2018 08:19:56 -0300
+CommitDate: Mon, 5 Nov 2018 14:37:09 -0300
 
-perf trace: Fix setting of augmented payload when using eBPF + raw_syscalls
+perf evlist: Move perf_evsel__reset_weak_group into evlist
 
-For now with BPF raw_augmented we hook into raw_syscalls:sys_enter and
-there we get all 6 syscall args plus the tracepoint common fields
-(sizeof(long)) and the syscall_nr (another long). So we check if that is
-the case and if so don't look after the sc->args_size, but always after
-the full raw_syscalls:sys_enter payload, which is fixed.
+- Move the function from builtin-stat to evlist for reuse
+- Rename to evlist to match purpose better
+- Pass the evlist as first argument.
+- No functional changes
 
-We'll revisit this later to pass s->args_size to the BPF augmenter (now
-tools/perf/examples/bpf/augmented_raw_syscalls.c, so that it copies only
-what we need for each syscall, like what happens when we use
-syscalls:sys_enter_NAME, so that we reduce the kernel/userspace traffic
-to just what is needed for each syscall.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-nlslrg8apxdsobt4pwl3n7ur@git.kernel.org
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20181001195927.14211-1-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
+ tools/perf/builtin-stat.c | 28 +---------------------------
+ tools/perf/util/evlist.c  | 27 +++++++++++++++++++++++++++
+ tools/perf/util/evlist.h  |  3 +++
+ 3 files changed, 31 insertions(+), 27 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index f582ca575883..835619476370 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -108,6 +108,7 @@ struct trace {
- 	} stats;
- 	unsigned int		max_stack;
- 	unsigned int		min_stack;
-+	bool			raw_augmented_syscalls;
- 	bool			not_ev_qualifier;
- 	bool			live;
- 	bool			full_time;
-@@ -1724,13 +1725,28 @@ static int trace__fprintf_sample(struct trace *trace, struct perf_evsel *evsel,
- 	return printed;
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index d1028d7755bb..a635abfa77b6 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -383,32 +383,6 @@ static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+ 	return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
  }
  
--static void *syscall__augmented_args(struct syscall *sc, struct perf_sample *sample, int *augmented_args_size)
-+static void *syscall__augmented_args(struct syscall *sc, struct perf_sample *sample, int *augmented_args_size, bool raw_augmented)
+-static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
+-{
+-	struct perf_evsel *c2, *leader;
+-	bool is_open = true;
+-
+-	leader = evsel->leader;
+-	pr_debug("Weak group for %s/%d failed\n",
+-			leader->name, leader->nr_members);
+-
+-	/*
+-	 * for_each_group_member doesn't work here because it doesn't
+-	 * include the first entry.
+-	 */
+-	evlist__for_each_entry(evsel_list, c2) {
+-		if (c2 == evsel)
+-			is_open = false;
+-		if (c2->leader == leader) {
+-			if (is_open)
+-				perf_evsel__close(c2);
+-			c2->leader = c2;
+-			c2->nr_members = 0;
+-		}
+-	}
+-	return leader;
+-}
+-
+ static bool is_target_alive(struct target *_target,
+ 			    struct thread_map *threads)
  {
- 	void *augmented_args = NULL;
-+	/*
-+	 * For now with BPF raw_augmented we hook into raw_syscalls:sys_enter
-+	 * and there we get all 6 syscall args plus the tracepoint common
-+	 * fields (sizeof(long)) and the syscall_nr (another long). So we check
-+	 * if that is the case and if so don't look after the sc->args_size,
-+	 * but always after the full raw_syscalls:sys_enter payload, which is
-+	 * fixed.
-+	 *
-+	 * We'll revisit this later to pass s->args_size to the BPF augmenter
-+	 * (now tools/perf/examples/bpf/augmented_raw_syscalls.c, so that it
-+	 * copies only what we need for each syscall, like what happens when we
-+	 * use syscalls:sys_enter_NAME, so that we reduce the kernel/userspace
-+	 * traffic to just what is needed for each syscall.
-+	 */
-+	int args_size = raw_augmented ? (8 * (int)sizeof(long)) : sc->args_size;
+@@ -477,7 +451,7 @@ try_again:
+ 			if ((errno == EINVAL || errno == EBADF) &&
+ 			    counter->leader != counter &&
+ 			    counter->weak_group) {
+-				counter = perf_evsel__reset_weak_group(counter);
++				counter = perf_evlist__reset_weak_group(evsel_list, counter);
+ 				goto try_again;
+ 			}
  
--	*augmented_args_size = sample->raw_size - sc->args_size;
-+	*augmented_args_size = sample->raw_size - args_size;
- 	if (*augmented_args_size > 0)
--		augmented_args = sample->raw_data + sc->args_size;
-+		augmented_args = sample->raw_data + args_size;
- 
- 	return augmented_args;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e88e6f9b1463..668d2a9ef0f4 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1810,3 +1810,30 @@ void perf_evlist__force_leader(struct perf_evlist *evlist)
+ 		leader->forced_leader = true;
+ 	}
  }
-@@ -1780,7 +1796,7 @@ static int trace__sys_enter(struct trace *trace, struct perf_evsel *evsel,
- 	 * here and avoid using augmented syscalls when the evsel is the raw_syscalls one.
- 	 */
- 	if (evsel != trace->syscalls.events.sys_enter)
--		augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size);
-+		augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size, trace->raw_augmented_syscalls);
- 	ttrace->entry_time = sample->time;
- 	msg = ttrace->entry_str;
- 	printed += scnprintf(msg + printed, trace__entry_str_size - printed, "%s(", sc->name);
-@@ -1833,7 +1849,7 @@ static int trace__fprintf_sys_enter(struct trace *trace, struct perf_evsel *evse
- 		goto out_put;
- 
- 	args = perf_evsel__sc_tp_ptr(evsel, args, sample);
--	augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size);
-+	augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size, trace->raw_augmented_syscalls);
- 	syscall__scnprintf_args(sc, msg, sizeof(msg), args, augmented_args, augmented_args_size, trace, thread);
- 	fprintf(trace->output, "%s", msg);
- 	err = 0;
-@@ -3501,8 +3517,15 @@ int cmd_trace(int argc, const char **argv)
- 		evsel->handler = trace__sys_enter;
- 
- 		evlist__for_each_entry(trace.evlist, evsel) {
--			if (strstarts(perf_evsel__name(evsel), "syscalls:sys_exit_") ||
--			    strcmp(perf_evsel__name(evsel), "raw_syscalls:sys_exit") == 0) {
-+			bool raw_syscalls_sys_exit = strcmp(perf_evsel__name(evsel), "raw_syscalls:sys_exit") == 0;
 +
-+			if (raw_syscalls_sys_exit) {
-+				trace.raw_augmented_syscalls = true;
-+				goto init_augmented_syscall_tp;
-+			}
++struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evsel_list,
++						 struct perf_evsel *evsel)
++{
++	struct perf_evsel *c2, *leader;
++	bool is_open = true;
 +
-+			if (strstarts(perf_evsel__name(evsel), "syscalls:sys_exit_")) {
-+init_augmented_syscall_tp:
- 				perf_evsel__init_augmented_syscall_tp(evsel);
- 				perf_evsel__init_augmented_syscall_tp_ret(evsel);
- 				evsel->handler = trace__sys_exit;
++	leader = evsel->leader;
++	pr_debug("Weak group for %s/%d failed\n",
++			leader->name, leader->nr_members);
++
++	/*
++	 * for_each_group_member doesn't work here because it doesn't
++	 * include the first entry.
++	 */
++	evlist__for_each_entry(evsel_list, c2) {
++		if (c2 == evsel)
++			is_open = false;
++		if (c2->leader == leader) {
++			if (is_open)
++				perf_evsel__close(c2);
++			c2->leader = c2;
++			c2->nr_members = 0;
++		}
++	}
++	return leader;
++}
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..9919eed6d15b 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -312,4 +312,7 @@ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist);
+ 
+ void perf_evlist__force_leader(struct perf_evlist *evlist);
+ 
++struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
++						 struct perf_evsel *evsel);
++
+ #endif /* __PERF_EVLIST_H */
