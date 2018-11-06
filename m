@@ -2,113 +2,137 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DB0C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EC5C46464
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F572086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:41:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F572086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 47FB12083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:42:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2jw2xbR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FB12083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730605AbeKGHIf (ORCPT
+        id S1730725AbeKGHJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 02:08:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35552 "EHLO mx1.redhat.com"
+        Wed, 7 Nov 2018 02:09:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbeKGHIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 02:08:35 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726261AbeKGHJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 02:09:23 -0500
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 639FB3082126;
-        Tue,  6 Nov 2018 21:41:19 +0000 (UTC)
-Received: from [10.36.112.70] (ovpn-112-70.ams2.redhat.com [10.36.112.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6217060C46;
-        Tue,  6 Nov 2018 21:41:10 +0000 (UTC)
-Subject: Re: [PATCH 0/1] vhost: add vhost_blk driver
-To:     Christoph Hellwig <hch@infradead.org>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     Vitaly Mayatskih <v.mayatskih@gmail.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, stefanha@redhat.com
-References: <20181102182123.29420-1-v.mayatskih@gmail.com>
- <6a7f1668-bf2d-0caa-2efd-c8fab5f1db24@redhat.com>
- <CAGF4SLg6+nt+zV4haXys4Wz2dWPDyx7xHXuA+h01NcQ94j0E1A@mail.gmail.com>
- <57eefa62-7e66-786d-441c-5dd6b0d451a5@redhat.com>
- <20181106071349.GA5526@infradead.org>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b547d195-4b4a-1b1d-8219-22a6a1b3b21a@redhat.com>
-Date:   Tue, 6 Nov 2018 22:41:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        by mail.kernel.org (Postfix) with ESMTPSA id CED8A2083D
+        for <linux-kernel@vger.kernel.org>; Tue,  6 Nov 2018 21:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541540527;
+        bh=ZLGkX2/fHbuTlmD8ZeECMFUn49KO4EBC58hjYDf9KcA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=b2jw2xbRZRGQCjAwxzxyeX8sn4EodFrMDjIm5BinxRgOrWkFgz9RHiEVqScoFpnhQ
+         jRxqmmk1hcOouqMSQxMiSor7rjp9I0/O+vSgm+iD8OZ7XHZyFjzwf2ajxwgBvpw7le
+         mZIrMbOZHbIfWPI3fCxLwGK2pOmfsN98rGCLUmY8=
+Received: by mail-wr1-f41.google.com with SMTP id z16-v6so15237564wrv.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 13:42:06 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKJvGkSFMzyra2e3P9TJz4PtjY2azIeqJpFRqYQadzsbcMIAYgO
+        wf8tkLkFBBQuYcn6kzKLqqd+g5fFebO8K+iGNShqKQ==
+X-Google-Smtp-Source: AJdET5fh4kf8macwnRGOooVWINWbfhYcFzYwCKEd4bVAsTQ7vbWB+ZrUDsY7Swh2aDpR4eXNyl0tL2lWPt0YAyljYx8=
+X-Received: by 2002:adf:b1db:: with SMTP id r27-v6mr25013353wra.95.1541540525308;
+ Tue, 06 Nov 2018 13:42:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181106071349.GA5526@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 06 Nov 2018 21:41:19 +0000 (UTC)
+References: <CAHk-=wiYSpmDOfpi9n7ETsxK2UrUKfT4kM=Y3yqRSaZuFFPY1A@mail.gmail.com>
+ <20181102170627.GD7393@linux.intel.com> <a4d2b3ec-43ec-f062-e180-c6e5a0d9fab8@intel.com>
+ <20181102173350.GF7393@linux.intel.com> <CALCETrUQVPN0LSEz+5aNsbfFc=rQ33JHiOoRXVbvEEb9is9DDQ@mail.gmail.com>
+ <20181102182712.GG7393@linux.intel.com> <CAG48ez0x7ZPcKvLt01WS-VrLm59WfvYE3nE1xbnyn3Qsp5T2rA@mail.gmail.com>
+ <20181102220437.GI7393@linux.intel.com> <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
+ <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com> <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com> <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+In-Reply-To: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 6 Nov 2018 13:41:53 -0800
+X-Gmail-Original-Message-ID: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+Message-ID: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 08:13, Christoph Hellwig wrote:
-> On Tue, Nov 06, 2018 at 10:45:08AM +0800, Jason Wang wrote:
->>> Storage industry is shifting away from SCSI, which has a scaling
->>> problem.
->>
->> Know little about storage. For scaling, do you mean SCSI protocol itself? If
->> not, it's probably not a real issue for virtio-scsi itself.
-> 
-> The above is utter bullshit.  There is a big NVMe hype, but it is not
-> because "SCSI has a scaling problem", but because the industry can sell
-> a new thing, and the standardization body seems easier to work with.
+On Tue, Nov 6, 2018 at 1:07 PM Andy Lutomirski <luto@amacapital.net> wrote:
+>
+>
+>
+> > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> >
+> >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> >> True, but what if we have a nasty enclave that writes to memory just
+> >> below SP *before* decrementing SP?
+> >
+> > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> >
+> >    1. EENTER
+> >    2. Hardware sets eenter_hwframe->sp =3D %sp
+> >    3. Enclave runs... wants to do out-call
+> >    4. Enclave sets up parameters:
+> >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> >        ...
+> >    5. Enclave sets eenter_hwframe->sp -=3D offset
+> >
+> > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' tha=
+t
+> > was on the stack.  The enclave could easily fix this by moving ->sp fir=
+st.
+> >
+> > But, this is one of those "fun" parts of the ABI that I think we need t=
+o
+> > talk about.  If we do this, we also basically require that the code
+> > which handles asynchronous exits must *not* write to the stack.  That's
+> > not hard because it's typically just a single ERESUME instruction, but
+> > it *is* a requirement.
+> >
+>
+> I was assuming that the async exit stuff was completely hidden by the API=
+. The AEP code would decide whether the exit got fixed up by the kernel (wh=
+ich may or may not be easy to tell =E2=80=94 can the code even tell without=
+ kernel help whether it was, say, an IRQ vs #UD?) and then either do ERESUM=
+E or cause sgx_enter_enclave() to return with an appropriate return value.
+>
+>
 
-In the case of Linux, there is indeed some performance to be gained by
-skipping the SCSI layer in the guest and to a lesser extent in QEMU,
-which is why virtio-blk is still in use.  But there's no scaling
-problem, it's just extra constant overhead.
-
-Paolo
+Sean, how does the current SDK AEX handler decide whether to do
+EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
+like the *CPU* could give a big hint, but I don't see where there is
+any architectural indication of why the AEX code got called or any
+obvious way for the user code to know whether the exit was fixed up by
+the kernel?
