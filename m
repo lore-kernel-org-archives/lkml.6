@@ -2,133 +2,98 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14082C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0EFC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C3A20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E821520862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 15:13:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aeIzkEbV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C3A20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rsZvZC7d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E821520862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388247AbeKGAiQ (ORCPT
+        id S1730770AbeKGAio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:38:16 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52039 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387444AbeKGAiQ (ORCPT
+        Tue, 6 Nov 2018 19:38:44 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35588 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729574AbeKGAio (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:38:16 -0500
-Received: by mail-it1-f194.google.com with SMTP id h13so18293257itl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 07:12:35 -0800 (PST)
+        Tue, 6 Nov 2018 19:38:44 -0500
+Received: by mail-qt1-f193.google.com with SMTP id v11so2939082qtc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 07:13:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=s94cYqaaFFfBnXRtY031JH5D4ASSC/WcmOvmo6Jeb5o=;
-        b=aeIzkEbVb/pvPfegE44bxzQn2a0R0dQVzY+vmokgwijDURhvHFIVPfNYrSDKnISOad
-         IeE8zE0fErnsi60MjDWy9k5HDwQDp0Yy7+ZsoK134l1T/aiTRHzWK7Uow+baRbpU4ezZ
-         dQwUxKDvt5YRv9vaPSYWZMtJ4QqVc31N30LbU=
+        bh=I8QaQfaVRc6jFfZnnn+6lgjFF336Oeto4DpPOMWWZcY=;
+        b=rsZvZC7daApWrrU6BSyo5z7Kp2TBe11K1Cgc+UpZXQUQwVitRGtERAJJb9GbDJpeb0
+         Ah7JlHOnYJFWTQUDMmZRABocDWh2+3CdwJGod8hSil313C2byLO8MOoq6MZ9YtVCRNCT
+         diHCe1WhU1eCWMHl17iQUqW5/pT2nvOA+X0l0AlvnyTDYZt5DimKJQwBmmp7jhhsuTYN
+         nQBO/+SX4pPhFQrKAuN6CdaCg96b4/Cbm3u6EATSUkj1jgwj69x0fzEfeh1CJvoiJwQC
+         s3guCy8AucH9ww6VaQWOx3iEvAKbAUevj5vc3UNZdJ1U3s+PbdGLiXfIoeuGJi6NNXR5
+         rx+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=s94cYqaaFFfBnXRtY031JH5D4ASSC/WcmOvmo6Jeb5o=;
-        b=laFwuoGXslOU683YOb0o2FXG3b/GGwy5kP+9f8mvr5Vcw57SFnOcXsw1d/T+ni6zJI
-         eLVbn+TGR5qBIhOlsrqN80ji9TRW/kFD8yycjFn2GkMZ9VnAKJyT2RunuHiy2/VcDOV0
-         8Hl2YusYlLGHP4i8PBoAQVaI9cdYkj/x96FhTFS+fEtMFHDGwnU+AtPJTW2eSBk8nv5I
-         2w9C3C924J65RGBt92tdY38WTPwJKSEsJUQV3OnYSrU6aoMuuo56+3ZgsOHr+OQU49XL
-         vab9jNrWvHbxXlMWBDXXuByyqVou+0lS51Y8lzcit2G+y9eKi0VGNqXO9CzCzP/szhAd
-         xJFQ==
-X-Gm-Message-State: AGRZ1gIyRj0mqOrFFtn32GzGpzsx3p3eq1+xmPFXPlHpShfkCaRZBzkL
-        FlSrSa/vvDeosfj/QqJCrxnfdC1R1cLumppCWO3SDA==
-X-Google-Smtp-Source: AJdET5c6rycmWGu4Q3jfSeRjxX3BLEY9NM0jxYqZXJvPSrP+7sZ9OTZfv8P+Bhx2S40TuPXR/MiVBIqWsrSkou4Go+Y=
-X-Received: by 2002:a24:430e:: with SMTP id s14-v6mr2239742itb.83.1541517155139;
- Tue, 06 Nov 2018 07:12:35 -0800 (PST)
+        bh=I8QaQfaVRc6jFfZnnn+6lgjFF336Oeto4DpPOMWWZcY=;
+        b=FndJFCtuMTsAVihpazOWwdZdQ3NAoIq9GkLMRtvHJqVLq9gSI9WTjCdVTtq0RfVj0I
+         uxJs7uFWAPJ7eRl7fhcHHT6J++PM3lc2TMozv7Rii4rL9RaQuDkpvBZhgcu1RHiJTscM
+         zUmyLRVPiRmPDTDVMDR+W32lUV1Jayg3QR089sLW0w7PTmb6Md/1nGh4WHufZegSFyN1
+         SM7/L5jNx137zozvFog8ckLjNN0o7ZhjWQHVkUFBPMc17kTCo9Iu6n1hU0bpcvDQK6Il
+         3M4SGRJ4ncznAKLlKBPyAHn7On9rjMrH1+DOc/Ke/Pw/Pk3+VhhqoDwc09HboYLhWYX8
+         mDuA==
+X-Gm-Message-State: AGRZ1gIQ0ZDdx3uyUGO/IJ8sYmkZxbi5GagjiXkYkpidHnBEQDLpwi6M
+        FlB7zE24x4rJgzfIJ+eEsSBSou+d9r78TT4WPX76OF1Q
+X-Google-Smtp-Source: AJdET5d5W+hkDsMhCA9pqSDqpCk1XsMR4OhQbuz7OhFkMJfoHcd3XUZJx3YcqNr4kAqKrIkye+Fo9zKBXFnF1rYQ9+Y=
+X-Received: by 2002:ac8:240a:: with SMTP id c10mr14640681qtc.93.1541517183329;
+ Tue, 06 Nov 2018 07:13:03 -0800 (PST)
 MIME-Version: 1.0
-References: <1541080581-4072-1-git-send-email-firoz.khan@linaro.org>
- <1541080581-4072-5-git-send-email-firoz.khan@linaro.org> <CAMo8BfKaSUTMT0h2jRg2ysRnc2yvVT-3=-gq6pH-XpKm1iydQQ@mail.gmail.com>
- <CAK8P3a07Qtr3h0R83ec_7p6_tDxWtQ6qzUnAM=uR5RkGTkRkGQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a07Qtr3h0R83ec_7p6_tDxWtQ6qzUnAM=uR5RkGTkRkGQ@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 6 Nov 2018 20:42:24 +0530
-Message-ID: <CALxhOnhN=erC=KpE55PHPx9u45QiAU+yxhGHZXGJ_7pV0a_=NQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] xtensa: generate uapi header and syscall table
- header files
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Max Filippov <jcmvbkbc@gmail.com>, Chris Zankel <chris@zankel.net>,
-        linux-xtensa@linux-xtensa.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+References: <20181106134630.29591-1-smuchun@gmail.com> <CAJZ5v0ifsQqkoFw2tossFKJAUkqDLdR9NpN3eZTn3t0xUz6K-g@mail.gmail.com>
+ <CAPSr9jE8EbWue31LP18eF9+KysZHNRqHNrzif8H4NkCzHHtueQ@mail.gmail.com> <CAJZ5v0iZo95ssiu3JcGJMgP+QrKLy0wu9vshk212FE3aY_kwoQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iZo95ssiu3JcGJMgP+QrKLy0wu9vshk212FE3aY_kwoQ@mail.gmail.com>
+From:   Muchun Song <smuchun@gmail.com>
+Date:   Tue, 6 Nov 2018 23:12:51 +0800
+Message-ID: <CAPSr9jG0X9x7=krPf1OS_N2LndWcfHkREgiaQwAgY=sBQgXijg@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Add branch prediction hints in really_probe()
+To:     rafael@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Hi Rafael,
 
-On Tue, 6 Nov 2018 at 19:04, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Mon, Nov 5, 2018 at 10:44 PM Max Filippov <jcmvbkbc@gmail.com> wrote:
-> > On Thu, Nov 1, 2018 at 6:57 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > > index 82c75643..b35d2e6 100644
-> > > --- a/arch/xtensa/include/asm/Kbuild
-> > > +++ b/arch/xtensa/include/asm/Kbuild
-> > > @@ -28,3 +28,4 @@ generic-y += topology.h
-> > >  generic-y += trace_clock.h
-> > >  generic-y += word-at-a-time.h
-> > >  generic-y += xor.h
-> > > +generic-y += syscall_table.h
+> On Tue, Nov 6, 2018 at 3:43 PM Muchun Song <smuchun@gmail.com> wrote:
 > >
-> > This doesn't look right: syscall_table.h is not asm-generic header.
+> > Hi Rafael,
 > >
-> > > diff --git a/arch/xtensa/include/uapi/asm/Kbuild b/arch/xtensa/include/uapi/asm/Kbuild
-> > > index 837d4dd..f826d52 100644
-> > > --- a/arch/xtensa/include/uapi/asm/Kbuild
-> > > +++ b/arch/xtensa/include/uapi/asm/Kbuild
-> > > @@ -11,3 +11,4 @@ generic-y += resource.h
-> > >  generic-y += siginfo.h
-> > >  generic-y += statfs.h
-> > >  generic-y += termios.h
-> > > +generic-y += unistd_32.h
-> >
-> > Ditto: unistd32_.h is not asm-generic header.
+> > If we want the driver core to test driver remove functions, we can
+> > enable CONFIG_DEBUG_TEST_DRIVER_REMOVE. This option is
+> > just for testing it. So, in most cases, the option is disabled and the if
+> > condition is false. So I think we can add an unlikely() to it.
 >
-> I think the correct syntax here would be
+> Yes, it can be added there, but does it really need to be added?
 >
-> generated-y += unistd_32.h
+> If the conditions are false all the time, the branch predictor in the
+> processor should be able to deal with it just fine.
 >
-> Firoz, if I remember correctly, this came up before, maybe you just did
-> not update all architectures together?
+> And if they are false already at build time, the compiler should just
+> optimize them away.
 
-My initial patches does have generated-y += unistd_32.h instead of
-generic-y += unistd_32.h.
-If I remember someone pointed out that this implementation doesn't
-look good. So I
-replaced to generic-y += unistd_32.h.
+Thank you for your explanation. I really didn't take into account the
+situation you said. Yeah, the compiler can optimize them away or
+the processor can deal with it.
 
-Sure, I'll change to generated-y += unistd_32.h instead of generic-y
-+= unistd_32.h.
-
-Max, this looks ok. right?
-
-Thanks
-Firoz
-
-
->
->         Arnd
+So,  we don't need to add unlikely() to it. The patch does't make sense.
+Thanks.
