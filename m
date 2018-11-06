@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F55C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52436C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09FC20685
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:54:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09FC20685
+	by mail.kernel.org (Postfix) with ESMTP id 1955720685
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:54:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1955720685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388979AbeKGAUM (ORCPT
+        id S2389009AbeKGAUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:20:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51778 "EHLO mail.bootlin.com"
+        Tue, 6 Nov 2018 19:20:14 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51788 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388813AbeKGAUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:20:12 -0500
+        id S2388852AbeKGAUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:20:13 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3972120885; Tue,  6 Nov 2018 15:54:36 +0100 (CET)
+        id DD27A20789; Tue,  6 Nov 2018 15:54:36 +0100 (CET)
 Received: from localhost (unknown [185.94.189.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F1DC520789;
-        Tue,  6 Nov 2018 15:54:25 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 98239206A1;
+        Tue,  6 Nov 2018 15:54:26 +0100 (CET)
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>
@@ -41,9 +41,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Krzysztof Witos <kwitos@cadence.com>,
         Rafal Ciepiela <rafalc@cadence.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH v2 1/9] phy: Add MIPI D-PHY mode
-Date:   Tue,  6 Nov 2018 15:54:13 +0100
-Message-Id: <74b2dfd695a5d28f9a07634cea17acec0a6aaa49.1541516029.git-series.maxime.ripard@bootlin.com>
+Subject: [PATCH v2 2/9] phy: Add configuration interface
+Date:   Tue,  6 Nov 2018 15:54:14 +0100
+Message-Id: <4d0506aa0a61d234610b42a268a8326d9ea18466.1541516029.git-series.maxime.ripard@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
 References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
@@ -54,26 +54,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MIPI D-PHY is a MIPI standard meant mostly for display and cameras in
-embedded systems. Add a mode for it.
+The phy framework is only allowing to configure the power state of the PHY
+using the init and power_on hooks, and their power_off and exit
+counterparts.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+While it works for most, simple, PHYs supported so far, some more advanced
+PHYs need some configuration depending on runtime parameters. These PHYs
+have been supported by a number of means already, often by using ad-hoc
+drivers in their consumer drivers.
+
+That doesn't work too well however, when a consumer device needs to deal
+with multiple PHYs, or when multiple consumers need to deal with the same
+PHY (a DSI driver and a CSI driver for example).
+
+So we'll add a new interface, through two funtions, phy_validate and
+phy_configure. The first one will allow to check that a current
+configuration, for a given mode, is applicable. It will also allow the PHY
+driver to tune the settings given as parameters as it sees fit.
+
+phy_configure will actually apply that configuration in the phy itself.
+
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/linux/phy/phy.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/phy-core.c  | 61 ++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/phy/phy.h | 58 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 119 insertions(+)
 
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 35fd38c5a4a1..7bd3ed65c708 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -408,6 +408,67 @@ int phy_calibrate(struct phy *phy)
+ EXPORT_SYMBOL_GPL(phy_calibrate);
+ 
+ /**
++ * phy_configure() - Changes the phy parameters
++ * @phy: the phy returned by phy_get()
++ * @opts: New configuration to apply
++ *
++ * Used to change the PHY parameters. phy_init() must have been called
++ * on the phy. The configuration will be applied on the current phy
++ * mode, that can be changed using phy_set_mode().
++ *
++ * Returns: 0 if successful, an negative error code otherwise
++ */
++int phy_configure(struct phy *phy, union phy_configure_opts *opts)
++{
++	int ret;
++
++	if (!phy)
++		return -EINVAL;
++
++	if (!phy->ops->configure)
++		return -EOPNOTSUPP;
++
++	mutex_lock(&phy->mutex);
++	ret = phy->ops->configure(phy, opts);
++	mutex_unlock(&phy->mutex);
++
++	return ret;
++}
++
++/**
++ * phy_validate() - Checks the phy parameters
++ * @phy: the phy returned by phy_get()
++ * @mode: phy_mode the configuration is applicable to.
++ * @opts: Configuration to check
++ *
++ * Used to check that the current set of parameters can be handled by
++ * the phy. Implementations are free to tune the parameters passed as
++ * arguments if needed by some implementation detail or
++ * constraints. It will not change any actual configuration of the
++ * PHY, so calling it as many times as deemed fit will have no side
++ * effect.
++ *
++ * Returns: 0 if successful, an negative error code otherwise
++ */
++int phy_validate(struct phy *phy, enum phy_mode mode,
++		  union phy_configure_opts *opts)
++{
++	int ret;
++
++	if (!phy)
++		return -EINVAL;
++
++	if (!phy->ops->validate)
++		return -EOPNOTSUPP;
++
++	mutex_lock(&phy->mutex);
++	ret = phy->ops->validate(phy, mode, opts);
++	mutex_unlock(&phy->mutex);
++
++	return ret;
++}
++
++/**
+  * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+  * @np: device_node for which to get the phy
+  * @index: the index of the phy
 diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 03b319f89a34..d5c2ac7369f2 100644
+index d5c2ac7369f2..89cf8b685546 100644
 --- a/include/linux/phy/phy.h
 +++ b/include/linux/phy/phy.h
-@@ -42,6 +42,7 @@ enum phy_mode {
- 	PHY_MODE_UFS_HS_A,
- 	PHY_MODE_UFS_HS_B,
- 	PHY_MODE_PCIE,
-+	PHY_MODE_MIPI_DPHY,
+@@ -46,6 +46,12 @@ enum phy_mode {
  };
  
  /**
++ * union phy_configure_opts - Opaque generic phy configuration
++ */
++union phy_configure_opts {
++};
++
++/**
+  * struct phy_ops - set of function pointers for performing phy operations
+  * @init: operation to be performed for initializing phy
+  * @exit: operation to be performed while exiting
+@@ -62,6 +68,37 @@ struct phy_ops {
+ 	int	(*power_on)(struct phy *phy);
+ 	int	(*power_off)(struct phy *phy);
+ 	int	(*set_mode)(struct phy *phy, enum phy_mode mode);
++
++	/**
++	 * @configure:
++	 *
++	 * Optional.
++	 *
++	 * Used to change the PHY parameters. phy_init() must have
++	 * been called on the phy.
++	 *
++	 * Returns: 0 if successful, an negative error code otherwise
++	 */
++	int	(*configure)(struct phy *phy, union phy_configure_opts *opts);
++
++	/**
++	 * @validate:
++	 *
++	 * Optional.
++	 *
++	 * Used to check that the current set of parameters can be
++	 * handled by the phy. Implementations are free to tune the
++	 * parameters passed as arguments if needed by some
++	 * implementation detail or constraints. It must not change
++	 * any actual configuration of the PHY, so calling it as many
++	 * times as deemed fit by the consumer must have no side
++	 * effect.
++	 *
++	 * Returns: 0 if the configuration can be applied, an negative
++	 * error code otherwise
++	 */
++	int	(*validate)(struct phy *phy, enum phy_mode mode,
++			    union phy_configure_opts *opts);
+ 	int	(*reset)(struct phy *phy);
+ 	int	(*calibrate)(struct phy *phy);
+ 	struct module *owner;
+@@ -166,6 +203,9 @@ int phy_exit(struct phy *phy);
+ int phy_power_on(struct phy *phy);
+ int phy_power_off(struct phy *phy);
+ int phy_set_mode(struct phy *phy, enum phy_mode mode);
++int phy_configure(struct phy *phy, union phy_configure_opts *opts);
++int phy_validate(struct phy *phy, enum phy_mode mode,
++		 union phy_configure_opts *opts);
+ static inline enum phy_mode phy_get_mode(struct phy *phy)
+ {
+ 	return phy->attrs.mode;
+@@ -305,6 +345,24 @@ static inline int phy_calibrate(struct phy *phy)
+ 	return -ENOSYS;
+ }
+ 
++static inline int phy_configure(struct phy *phy,
++				union phy_configure_opts *opts)
++{
++	if (!phy)
++		return 0;
++
++	return -ENOSYS;
++}
++
++static inline int phy_validate(struct phy *phy, enum phy_mode mode,
++			       union phy_configure_opts *opts)
++{
++	if (!phy)
++		return 0;
++
++	return -ENOSYS;
++}
++
+ static inline int phy_get_bus_width(struct phy *phy)
+ {
+ 	return -ENOSYS;
 -- 
 git-series 0.9.1
