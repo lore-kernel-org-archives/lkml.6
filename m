@@ -2,94 +2,283 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE53C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B657DC46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7E120862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:31:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrSSx+G7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7E120862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C41B20896
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C41B20896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387545AbeKFPzT (ORCPT
+        id S2387695AbeKFQGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:55:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387399AbeKFPzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:55:19 -0500
-Received: from localhost (mobile-107-77-164-72.mobile.att.net [107.77.164.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6E5E2085B;
-        Tue,  6 Nov 2018 06:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541485900;
-        bh=eF6cwO8zlD/mSxh7N+j3Ypm/59NGLUjfmUSB4Nx+VD0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lrSSx+G7U4wevt/5W0e7xH3zY7yMuV+uFX0f2nsiizUkp7AVkDEpzNdNnSp5CZkNP
-         /hl8Npc1QgIEIjwSIDoUCNTHdqEeHsQFokvdGnL2C3auxUf8nJ6bmK/hWKRPAa6MZL
-         rtG1HKR2LFMLiPZHqa0PZwEiTWQ5Mbi3o/zqEXeI=
-Date:   Tue, 6 Nov 2018 01:31:38 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "digetx@gmail.com" <digetx@gmail.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "treding@nvidia.com" <treding@nvidia.com>
-Subject: Re: [PATCH 4.14 069/143] ARM: tegra: Fix ULPI regression on Tegra20
-Message-ID: <20181106063138.GB151445@sasha-vm>
-References: <20181102182857.064326086@linuxfoundation.org>
- <20181102182902.797148907@linuxfoundation.org>
- <CADVatmOX9FfVGZhFgAZ1sVvnigucFD9DuUu+K8444mTN=Qr+6w@mail.gmail.com>
- <20181103020224.GK194472@sasha-vm>
- <1541426747.7086.15.camel@toradex.com>
+        Tue, 6 Nov 2018 11:06:12 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:1679 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387656AbeKFQGM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 11:06:12 -0500
+X-UUID: 900e86a930e64befa337d4bc9315b203-20181106
+X-UUID: 900e86a930e64befa337d4bc9315b203-20181106
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1831487603; Tue, 06 Nov 2018 14:42:24 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 6 Nov 2018 14:42:23 +0800
+Received: from mtkslt210.mediatek.inc (10.21.14.14) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 6 Nov 2018 14:42:23 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v1 05/11] dt-bindings: ARM: Mediatek: Document bindings for MT8183
+Date:   Tue, 6 Nov 2018 14:42:00 +0800
+Message-ID: <20181106064206.17535-7-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181106064206.17535-1-weiyi.lu@mediatek.com>
+References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1541426747.7086.15.camel@toradex.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 02:05:49PM +0000, Marcel Ziswiler wrote:
->On Fri, 2018-11-02 at 22:02 -0400, Sasha Levin wrote:
->> On Fri, Nov 02, 2018 at 07:56:57PM +0000, Sudip Mukherjee wrote:
->> > Hi Greg,
->> >
->> > On Fri, Nov 2, 2018 at 6:53 PM Greg Kroah-Hartman
->> > <gregkh@linuxfoundation.org> wrote:
->> > >
->> > > 4.14-stable review patch.  If anyone has any objections, please
->> > > let me know.
->> >
->> > It seems this has already been reverted upstream:
->> > 9bf4e370048d ("ARM: dts: tegra20: Revert "Fix ULPI regression on
->> > Tegra20"")
->>
->> The commit log of 9bf4e370048d suggests that this issue was fixed
->> somewhere else which made 9bf4e370048d unnecessary. Can someone point
->> to
->> that fix?
->
->Yes, sorry. That got fixed properly by Dmitry in 5d797111afe1 ("clk:
->tegra: Add quirk for getting CDEV1/2 clocks on Tegra20").
+This patch adds the binding documentation for apmixedsys, audiosys,
+camsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, topckgen, vdecsys,
+vencsys and ipu for Mediatek MT8183.
 
-Thank you. I've replaced it for 4.14, but for 4.9 it seems there are
-quite a few dependencies to pick 5d797111afe1 so I only removed
-4c9a27a6c66d. If you have a backport for 4.9 I'll be happy to take it.
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../arm/mediatek/mediatek,apmixedsys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt |  1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt | 22 ++++++++++
+ .../bindings/arm/mediatek/mediatek,imgsys.txt |  1 +
+ .../arm/mediatek/mediatek,infracfg.txt        |  1 +
+ .../bindings/arm/mediatek/mediatek,ipu.txt    | 43 +++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,mcucfg.txt |  1 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt |  1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |  1 +
+ .../arm/mediatek/mediatek,topckgen.txt        |  1 +
+ .../arm/mediatek/mediatek,vdecsys.txt         |  1 +
+ .../arm/mediatek/mediatek,vencsys.txt         |  1 +
+ 12 files changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
 
---
-Thanks,
-Sasha
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index 4e4a3c0ab9ab..641f19e036a2 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -13,6 +13,7 @@ Required Properties:
+ 	- "mediatek,mt7623-apmixedsys", "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8173-apmixedsys"
++	- "mediatek,mt8183-apmixedsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The apmixedsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index d1606b2c3e63..f3cef1a6d95c 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- "mediatek,mt2701-audsys", "syscon"
+ 	- "mediatek,mt7622-audsys", "syscon"
+ 	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
++	- "mediatek,mt8183-audiosys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The AUDSYS controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+new file mode 100644
+index 000000000000..d8930f64aa98
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+@@ -0,0 +1,22 @@
++MediaTek CAMSYS controller
++============================
++
++The MediaTek camsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt8183-camsys", "syscon"
++- #clock-cells: Must be 1
++
++The camsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++camsys: camsys@1a000000  {
++	compatible = "mediatek,mt8183-camsys", "syscon";
++	reg = <0 0x1a000000  0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index 3f99672163e3..e3bc4a1e7a6e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 	- "mediatek,mt6797-imgsys", "syscon"
+ 	- "mediatek,mt7623-imgsys", "mediatek,mt2701-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
++	- "mediatek,mt8183-imgsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The imgsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index 89f4272a1441..44b2f3281c34 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -14,6 +14,7 @@ Required Properties:
+ 	- "mediatek,mt7623-infracfg", "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
++	- "mediatek,mt8183-infracfg", "syscon"
+ - #clock-cells: Must be 1
+ - #reset-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
+new file mode 100644
+index 000000000000..aabc8c5c8ed2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
+@@ -0,0 +1,43 @@
++Mediatek IPU controller
++============================
++
++The Mediatek ipu controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt8183-ipu_conn", "syscon"
++	- "mediatek,mt8183-ipu_adl", "syscon"
++	- "mediatek,mt8183-ipu_core0", "syscon"
++	- "mediatek,mt8183-ipu_core1", "syscon"
++- #clock-cells: Must be 1
++
++The ipu controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++ipu_conn: syscon@19000000 {
++	compatible = "mediatek,mt8183-ipu_conn", "syscon";
++	reg = <0 0x19000000 0 0x1000>;
++	#clock-cells = <1>;
++};
++
++ipu_adl: syscon@19010000 {
++	compatible = "mediatek,mt8183-ipu_adl", "syscon";
++	reg = <0 0x19010000 0 0x1000>;
++	#clock-cells = <1>;
++};
++
++ipu_core0: syscon@19180000 {
++	compatible = "mediatek,mt8183-ipu_core0", "syscon";
++	reg = <0 0x19180000 0 0x1000>;
++	#clock-cells = <1>;
++};
++
++ipu_core1: syscon@19280000 {
++	compatible = "mediatek,mt8183-ipu_core1", "syscon";
++	reg = <0 0x19280000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+index b8fb03f3613e..2b882b7ca72e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2712-mcucfg", "syscon"
++	- "mediatek,mt8183-mcucfg", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The mcucfg controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+index 859e67b416d5..72787e7dd227 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2712-mfgcfg", "syscon"
++	- "mediatek,mt8183-mfgcfg", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The mfgcfg controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 15d977afad31..545eab717c96 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 	- "mediatek,mt6797-mmsys", "syscon"
+ 	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
++	- "mediatek,mt8183-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The mmsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index d849465b8c99..08bbd37190ad 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -13,6 +13,7 @@ Required Properties:
+ 	- "mediatek,mt7623-topckgen", "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8173-topckgen"
++	- "mediatek,mt8183-topckgen", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The topckgen controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index 3212afc753c8..57176bb8dbb5 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 	- "mediatek,mt6797-vdecsys", "syscon"
+ 	- "mediatek,mt7623-vdecsys", "mediatek,mt2701-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
++	- "mediatek,mt8183-vdecsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The vdecsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+index 851545357e94..c9faa6269087 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- "mediatek,mt2712-vencsys", "syscon"
+ 	- "mediatek,mt6797-vencsys", "syscon"
+ 	- "mediatek,mt8173-vencsys", "syscon"
++	- "mediatek,mt8183-vencsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The vencsys controller uses the common clk binding from
+-- 
+2.18.0
+
