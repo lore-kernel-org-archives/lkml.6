@@ -2,123 +2,97 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3250DC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E30C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B082085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B082085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id EC1A42085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:29:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC1A42085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389407AbeKGByc (ORCPT
+        id S2389265AbeKGBz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:54:32 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:36352 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389324AbeKGBya (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:54:30 -0500
-X-IronPort-AV: E=Sophos;i="5.54,472,1534789800"; 
-   d="scan'208";a="277241"
-Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Nov 2018 21:52:10 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,9069"; a="1957396"
-Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
-  by ironmsg03-blr.qualcomm.com with ESMTP; 06 Nov 2018 21:52:10 +0530
-Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
-        id 81EE431D5; Tue,  6 Nov 2018 21:52:09 +0530 (IST)
-From:   Arun KS <arunks@codeaurora.org>
-To:     akpm@linux-foundation.org, keescook@chromium.org,
-        khlebnikov@yandex-team.ru, minchan@kernel.org, mhocko@kernel.org,
-        vbabka@suse.cz, osalvador@suse.de, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
-Subject: [PATCH v2 0/4] mm: convert totalram_pages, totalhigh_pages and managed pages to atomic
-Date:   Tue,  6 Nov 2018 21:51:46 +0530
-Message-Id: <1541521310-28739-1-git-send-email-arunks@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 6 Nov 2018 20:55:56 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36634 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388658AbeKGBzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 20:55:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5EB8EBD;
+        Tue,  6 Nov 2018 08:29:56 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0173F5CF;
+        Tue,  6 Nov 2018 08:29:55 -0800 (PST)
+Subject: Re: linux-4.20-rc1/arch/arm/vfp/vfpmodule.c:576: possible cut'n'paste
+ error
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        David Binderman <dcb314@hotmail.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <VI1PR08MB3342D4ADBFBC43F2BE2FD34D9CCA0@VI1PR08MB3342.eurprd08.prod.outlook.com>
+ <VI1PR08MB33420789A2AA1096D3F5FC9D9CCA0@VI1PR08MB3342.eurprd08.prod.outlook.com>
+ <20181106162014.GH30658@n2100.armlinux.org.uk>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <77f6e853-2d6d-1149-f2f2-d23ddad6c611@arm.com>
+Date:   Tue, 6 Nov 2018 16:29:54 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20181106162014.GH30658@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series convert totalram_pages, totalhigh_pages and
-zone->managed_pages to atomic variables.
+Hi Russel, David,
 
-The patch was comiple tested on x86(x86_64_defconfig & i386_defconfig)
-on 4.20-rc1. And memory hotplug tested on arm64, but on an older version
-of kernel.
+On 06/11/18 16:20, Russell King - ARM Linux wrote:
+> On Mon, Nov 05, 2018 at 01:53:13PM +0000, David Binderman wrote:
+>> Hello there,
+>>
+>> 2nd try. Plain text might help.
+> 
+> Yep, Linux kernel development generally doesn't like wasteful html
+> emails, sorry.
+> 
+>> linux-4.20-rc1/arch/arm/vfp/vfpmodule.c:576]: (warning) Redundant assignment of 'ufp_exc->fpinst2' to itself.
+>>
+>> Source code is
+>>
+>>         ufp_exc->fpexc = hwstate->fpexc;
+>>         ufp_exc->fpinst = hwstate->fpinst;
+>>         ufp_exc->fpinst2 = ufp_exc->fpinst2;
+> 
+> Thanks for the report - it most certainly is a bug introduced by
+> Julien's patches, but I don't get your warning here.  Which compiler
+> produces that warning?
+> 
 
-Arun KS (4):
-  mm: Fix multiple evaluvations of totalram_pages and managed_pages
-  mm: Convert zone->managed_pages to atomic variable
-  mm: convert totalram_pages and totalhigh_pages variables to atomic
-  mm: Remove managed_page_count spinlock
+Hmmm, silly typo/copy-paste from my end. Last line should be:
 
- arch/csky/mm/init.c                           |  4 +-
- arch/powerpc/platforms/pseries/cmm.c          | 10 ++--
- arch/s390/mm/init.c                           |  2 +-
- arch/um/kernel/mem.c                          |  3 +-
- arch/x86/kernel/cpu/microcode/core.c          |  5 +-
- drivers/char/agp/backend.c                    |  4 +-
- drivers/gpu/drm/amd/amdkfd/kfd_crat.c         |  2 +-
- drivers/gpu/drm/i915/i915_gem.c               |  2 +-
- drivers/gpu/drm/i915/selftests/i915_gem_gtt.c |  4 +-
- drivers/hv/hv_balloon.c                       | 19 +++----
- drivers/md/dm-bufio.c                         |  2 +-
- drivers/md/dm-crypt.c                         |  2 +-
- drivers/md/dm-integrity.c                     |  2 +-
- drivers/md/dm-stats.c                         |  2 +-
- drivers/media/platform/mtk-vpu/mtk_vpu.c      |  2 +-
- drivers/misc/vmw_balloon.c                    |  2 +-
- drivers/parisc/ccio-dma.c                     |  4 +-
- drivers/parisc/sba_iommu.c                    |  4 +-
- drivers/staging/android/ion/ion_system_heap.c |  2 +-
- drivers/xen/xen-selfballoon.c                 |  6 +--
- fs/ceph/super.h                               |  2 +-
- fs/file_table.c                               |  7 +--
- fs/fuse/inode.c                               |  2 +-
- fs/nfs/write.c                                |  2 +-
- fs/nfsd/nfscache.c                            |  2 +-
- fs/ntfs/malloc.h                              |  2 +-
- fs/proc/base.c                                |  2 +-
- include/linux/highmem.h                       | 28 ++++++++++-
- include/linux/mm.h                            | 27 +++++++++-
- include/linux/mmzone.h                        | 15 +++---
- include/linux/swap.h                          |  1 -
- kernel/fork.c                                 |  5 +-
- kernel/kexec_core.c                           |  5 +-
- kernel/power/snapshot.c                       |  2 +-
- lib/show_mem.c                                |  2 +-
- mm/highmem.c                                  |  4 +-
- mm/huge_memory.c                              |  2 +-
- mm/kasan/quarantine.c                         |  2 +-
- mm/memblock.c                                 |  6 +--
- mm/mm_init.c                                  |  2 +-
- mm/oom_kill.c                                 |  2 +-
- mm/page_alloc.c                               | 71 +++++++++++++--------------
- mm/shmem.c                                    |  7 +--
- mm/slab.c                                     |  2 +-
- mm/swap.c                                     |  2 +-
- mm/util.c                                     |  2 +-
- mm/vmalloc.c                                  |  4 +-
- mm/vmstat.c                                   |  4 +-
- mm/workingset.c                               |  2 +-
- mm/zswap.c                                    |  4 +-
- net/dccp/proto.c                              |  7 +--
- net/decnet/dn_route.c                         |  2 +-
- net/ipv4/tcp_metrics.c                        |  2 +-
- net/netfilter/nf_conntrack_core.c             |  7 +--
- net/netfilter/xt_hashlimit.c                  |  5 +-
- net/sctp/protocol.c                           |  7 +--
- security/integrity/ima/ima_kexec.c            |  2 +-
- 57 files changed, 193 insertions(+), 142 deletions(-)
+	ufp_exc->fpinst2 = hwstate->fpinst2;
+
+Sorry about that.
+
+> Julien - unfortunately, I've just asked Linus to take another fix
+> for Spectre, so we're going to have to wait a bit before I can
+> submit something for this.
+> 
+
+It is just a one line fix, should I submit a patch to the LAKML or patch 
+system?
+Otherwise let me know when is it best for you to receive the fix then to 
+send to Linus.
+
+Thanks,
 
 -- 
-1.9.1
-
+Julien Thierry
