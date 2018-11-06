@@ -2,89 +2,188 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0F7C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0521C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4452085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B4452085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 95A1E2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 11:37:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A1E2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbeKFVBm (ORCPT
+        id S1730586AbeKFVCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:01:42 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14597 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730553AbeKFVBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:01:41 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 26491777AB24D;
-        Tue,  6 Nov 2018 19:36:51 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
- 19:36:46 +0800
-Subject: Re: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Chao Yu <chao@kernel.org>
-References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
- <20181030060441.16107-1-gaoxiang25@huawei.com>
- <20181105224654.GA25864@brain-police>
- <20181106090642.GH22431@hirez.programming.kicks-ass.net>
- <5eb42b84-5195-69f2-e7a7-97568f360506@huawei.com>
- <20181106110026.GJ22431@hirez.programming.kicks-ass.net>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <dedbc211-082b-be4a-1bce-2593084d4ca3@huawei.com>
-Date:   Tue, 6 Nov 2018 19:36:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 6 Nov 2018 16:02:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59510 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730262AbeKFVCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:02:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82838A78;
+        Tue,  6 Nov 2018 03:37:28 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CEAA3F5CF;
+        Tue,  6 Nov 2018 03:37:26 -0800 (PST)
+Date:   Tue, 6 Nov 2018 11:37:23 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Nick Kossifidis <mick@ics.forth.gr>
+Cc:     Palmer Dabbelt <palmer@sifive.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, Damien.LeMoal@wdc.com,
+        alankao@andestech.com, zong@andestech.com, anup@brainfault.org,
+        linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, atish.patra@wdc.com,
+        linux-riscv@lists.infradead.org, tglx@linutronix.de
+Subject: Re: [RFC 1/2] dt-bindings: topology: Add RISC-V cpu topology.
+Message-ID: <20181106113723.j5k5f7ovehiupyid@lakrids.cambridge.arm.com>
+References: <mhng-799bd6f4-e4af-481e-90d8-bdc0e30f2530@palmer-si-x1c4>
+ <9e77989d6b868d914bc328401cd64557@mailhost.ics.forth.gr>
 MIME-Version: 1.0
-In-Reply-To: <20181106110026.GJ22431@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e77989d6b868d914bc328401cd64557@mailhost.ics.forth.gr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Tue, Nov 06, 2018 at 12:03:17PM +0200, Nick Kossifidis wrote:
+> Στις 2018-11-05 21:38, Palmer Dabbelt έγραψε:
+> > On Fri, 02 Nov 2018 06:09:39 PDT (-0700), robh+dt@kernel.org wrote:
+> > > On Thu, Nov 1, 2018 at 6:04 PM Atish Patra <atish.patra@wdc.com>
+> > > wrote:
+> > > > 
+> > > > Define a RISC-V cpu topology. This is based on cpu-map in ARM world.
+> > > > But it doesn't need a separate thread node for defining SMT systems.
+> > > > Multiple cpu phandle properties can be parsed to identify the sibling
+> > > > hardware threads. Moreover, we do not have cluster concept in RISC-V.
+> > > > So package is a better word choice than cluster for RISC-V.
+> > > 
+> > > There was a proposal to add package info for ARM recently. Not sure
+> > > what happened to that, but we don't need 2 different ways.
+> > > 
+> > > There's never going to be clusters for RISC-V? What prevents that?
+> > > Seems shortsighted to me.
+> > > 
+> > > > 
+> > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > > > ---
+> > > >  .../devicetree/bindings/riscv/topology.txt         | 154
+> > > > +++++++++++++++++++++
+> > > >  1 file changed, 154 insertions(+)
+> > > >  create mode 100644
+> > > > Documentation/devicetree/bindings/riscv/topology.txt
+> > > > 
+> > > > diff --git
+> > > > a/Documentation/devicetree/bindings/riscv/topology.txt
+> > > > b/Documentation/devicetree/bindings/riscv/topology.txt
+> > > > new file mode 100644
+> > > > index 00000000..96039ed3
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/riscv/topology.txt
+> > > > @@ -0,0 +1,154 @@
+> > > > +===========================================
+> > > > +RISC-V cpu topology binding description
+> > > > +===========================================
+> > > > +
+> > > > +===========================================
+> > > > +1 - Introduction
+> > > > +===========================================
+> > > > +
+> > > > +In a RISC-V system, the hierarchy of CPUs can be defined
+> > > > through following nodes that
+> > > > +are used to describe the layout of physical CPUs in the system:
+> > > > +
+> > > > +- packages
+> > > > +- core
+> > > > +
+> > > > +The cpu nodes (bindings defined in [1]) represent the devices that
+> > > > +correspond to physical CPUs and are to be mapped to the
+> > > > hierarchy levels.
+> > > > +Simultaneous multi-threading (SMT) systems can also represent
+> > > > their topology
+> > > > +by defining multiple cpu phandles inside core node. The details
+> > > > are explained
+> > > > +in paragraph 3.
+> > > 
+> > > I don't see a reason to do this differently than ARM. That said, I
+> > > don't think the thread part is in use on ARM, so it could possibly be
+> > > changed.
+> > > 
+> > > > +
+> > > > +The remainder of this document provides the topology bindings
+> > > > for ARM, based
+> > > 
+> > > for ARM?
+> > > 
+> > > > +on the Devicetree Specification, available from:
+> > > > +
+> > > > +https://www.devicetree.org/specifications/
+> > > > +
+> > > > +If not stated otherwise, whenever a reference to a cpu node
+> > > > phandle is made its
+> > > > +value must point to a cpu node compliant with the cpu node
+> > > > bindings as
+> > > > +documented in [1].
+> > > > +A topology description containing phandles to cpu nodes that
+> > > > are not compliant
+> > > > +with bindings standardized in [1] is therefore considered invalid.
+> > > > +
+> > > > +This cpu topology binding description is mostly based on the
+> > > > topology defined
+> > > > +in ARM [2].
+> > > > +===========================================
+> > > > +2 - cpu-topology node
+> > > 
+> > > cpu-map. Why change this?
+> > > 
+> > > What I would like to see is the ARM topology binding reworked to be
+> > > common or some good reasons why it doesn't work for RISC-V as-is.
+> > 
+> > I think it would be great if CPU topologies were not a RISC-V specific
+> > thing.  We don't really do anything different than anyone else, so
+> > it'd be great if we could all share the same spec and code.  Looking
+> > quickly at the ARM cpu-map bindings, I don't see any reason why we
+> > can't just use the same thing on RISC-V -- it's not quite how I'd do
+> > it, but I don't think the differences are worth having another
+> > implementation.  Mechanically I'm not sure how to do this: should
+> > there just be a "Documentation/devicetree/bindings/cpu-map.txt"?
+> > 
+> > If everyone is OK with that then I vote we just go ahead and
+> > genericise the ARM "cpu-map" stuff for CPU topology.  Sharing the
+> > implementation looks fairly straight-forward as well.
+> > 
+> 
+> Please check this out...
+> https://lkml.org/lkml/2018/11/3/99
+> 
+> It's also non arch-dependent and it can handle the scheduler's capabilities
+> better than cpu-map.
 
-On 2018/11/6 19:00, Peter Zijlstra wrote:
->>> Yes, that's much better. Ideally though, we'd get rid of bit spinlocks
->>> that have significant enough contention for this to matter.
->> OK, I will send v3 to fix like the above.
-> That's not answering the full question though. What bit spinlocks did
-> you find where this matters? And can't we convert them to proper
-> spinlocks instead?
+Could you elaborate on what this does better than cpu-map? I'd be
+curious to see if we could/should augment cpu-map to cater for those
+details.
 
-I just misunderstood your question and I get your point now.
+Generally, we deliberately avoid placing software abstractions in the DT
+(e.g. scheduler domains), because the design of these abstractions are
+specific to a given software stack rather than the hardware, and even in
+the context of that specific software stack these abstractions change
+over time.
 
-"What bit spinlocks did you find where this matters?" nope..I said the original
-background to Greg before, that is I tried to use smp_cond_load_relaxed instead
-of busy spining in the development of erofs file system and I saw this bit_spinlock
-implementation by chance...This is not a big modification but since I raised the
-question before and I want to trace to the end...
+Placing software abstractions in the DT may seem simpler initially, but
+longer term it ends up requiring translation anyway as abstractions
+change, and typically it involves placing some policy in the DT, which
+restricts the ability of software to do something better.
 
-"And can't we convert them to proper spinlocks instead?" I think bit_spinlock is
-sometime preferred since it requires little memory and can be integrated into some
-fields(eg. flags)...It is selectable for spinlocks don't have to many users
-at the same time, so I think it depends on the detailed real use scenerio...
-It is just a tool for user code to select case by case... That is my personal idea...
-
-IMO, to use wrapped up function for the detailed scenario could be better than
-open-coded all the time (eg. do cpu_relax(); while(...)) since it could be
-optimizated even more for the specific architecture...
+Having some translation between the DT and the Linux-internal
+abstraction is how we expect things to work generally, and allows for a
+more natural representation in the DT (which may be more or less
+powerful than the current Linux abstraction).
 
 Thanks,
-Gao Xiang
+Mark.
