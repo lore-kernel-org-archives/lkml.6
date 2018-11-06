@@ -2,214 +2,147 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DB3C46464
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D43FC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6B5E2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:24:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B5E2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id C2E4C2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:26:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ysupdr93"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E4C2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387488AbeKFPsV (ORCPT
+        id S2387510AbeKFPtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:48:21 -0500
-Received: from relay.sw.ru ([185.231.240.75]:53434 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729416AbeKFPsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:48:20 -0500
-Received: from [172.16.24.21]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1gJun1-0002Fh-QF; Tue, 06 Nov 2018 09:24:39 +0300
-Subject: Re: [PATCH] ext4: remove code duplication in free_ind_block()
-To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-kernel@vger.kernel.org
-References: <f1ec9378-6b0f-fdee-392c-bb97187fae12@virtuozzo.com>
-From:   Vasily Averin <vvs@virtuozzo.com>
-Message-ID: <8248d9f2-b758-21cb-5cd8-30bba2bb9137@virtuozzo.com>
-Date:   Tue, 6 Nov 2018 09:24:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 10:49:46 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45202 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387393AbeKFPtp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 10:49:45 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j4-v6so10334118ljc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Nov 2018 22:26:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AC0OUJ+NWBL3ykIA9xzGAB3BIH24eZ02gEAm06OECmk=;
+        b=Ysupdr93/wn7TlFoJUQs9H+mZGkalU3IlRoVXBshgBcqsdKPqxMMup1zTSYZaRgsdG
+         Nsk8iY9fuRyQjP1G+iAaPN2dpg4WVNWXFDRg9QZQSaC5F78mcfFzNaiPQQCZGZ0rU3uP
+         1Rg8kBl/zoCVIQte3ls482I0der1OgtNtn/31rHme32yJrnNCpVCsIskTuOEd5gsjApj
+         J6NBm9BnLC/j+gKMu6+gAHavCpKU8UGrfuXU2zJXFKtc3PeRAIFhex4qPueQiwjHpIEs
+         l/AKQNE9D81YtlRAuB73tjlk71u59dYxV5240NdZmltpDA0USdagkAQZFXPjxXcNN0pw
+         E0RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AC0OUJ+NWBL3ykIA9xzGAB3BIH24eZ02gEAm06OECmk=;
+        b=tJoslchPEzhpTfqA0WjEuix6HfZ6ONjE6Kh9y4WKBNf9sHd8FsyN7neA1f9CoXx3+p
+         Mi8esFO6asDtIVNuUTzeRalCSuc0oPgvq2FCHlPTfHjdYpLEk18XKhwRElmBE6Eiddp2
+         DFQ/0+VjkVs6nMUdiYmRZxvtK/82NtxV4otSmqMcmfj6DFJ/zyt2nxZigf5VOLx6GKPz
+         Kba3ZFNEpvjHqszIcfb8y7Z3qFXsEI0+tNVY7vrpoF++k7DFI24GRQmTokgzQUgnLLma
+         xwhGCjpzrRQ4rOSRhW4QSTe0F0oofxphRZtSrO3F0E5ebdsVvA3aVBhnnv7UDTguJPiX
+         oSkg==
+X-Gm-Message-State: AGRZ1gLSikpUTOJFCKFZlgU5eYbggXbku5UxaHN8JuBB4N7aA0IWSpUN
+        3PzBguuoLcrEgwgwd5hniO+0KEW3NDCsaVLz3Yw=
+X-Google-Smtp-Source: AJdET5czS3cDDCS6JDz0I4cz3rl8+8URxXhTk+N+4VhatFtzEfdN7g3G8IiT9da6qIRT+DoroXlCqS0BmbFL6CIzJ5U=
+X-Received: by 2002:a2e:630a:: with SMTP id x10-v6mr15219004ljb.11.1541485565898;
+ Mon, 05 Nov 2018 22:26:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f1ec9378-6b0f-fdee-392c-bb97187fae12@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181103050504.GA3049@jordon-HP-15-Notebook-PC>
+ <20181103120235.GA10491@bombadil.infradead.org> <20181104083611.GB7829@rapoport-lnx>
+ <CAFqt6zaVUT0RGpz+jE4c7rb5prOtDhnxOy-NAiFM9G6jMwofVg@mail.gmail.com>
+ <20181105091302.GA3713@rapoport-lnx> <CAFqt6zYbb9xpnOhhoESq3BbF4aD0_UKzh=MrwJ-i+NiUqNh7+Q@mail.gmail.com>
+ <20181106062133.GB4499@rapoport-lnx>
+In-Reply-To: <20181106062133.GB4499@rapoport-lnx>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 6 Nov 2018 11:59:27 +0530
+Message-ID: <CAFqt6zYEB5=rpo6sGZW3Regwd9F7T0+Y_UpjQVBndR_-DYaHZA@mail.gmail.com>
+Subject: Re: [PATCH] mm: Create the new vm_fault_t type
+To:     rppt@linux.ibm.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, riel@redhat.com, Linux-MM <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-btw I have few related questions:
-1) extend_credit_for_blkdel() can return error but its return code is not checked, 
-neither here nor in all other places. Could somebody clarify, is it normal?
+On Tue, Nov 6, 2018 at 11:51 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Mon, Nov 05, 2018 at 07:23:55PM +0530, Souptick Joarder wrote:
+> > On Mon, Nov 5, 2018 at 2:43 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > >
+> > > On Mon, Nov 05, 2018 at 11:14:17AM +0530, Souptick Joarder wrote:
+> > > > Hi Matthew,
+> > > >
+> > > > On Sun, Nov 4, 2018 at 2:06 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > > > >
+> > > > > On Sat, Nov 03, 2018 at 05:02:36AM -0700, Matthew Wilcox wrote:
+> > > > > > On Sat, Nov 03, 2018 at 10:35:04AM +0530, Souptick Joarder wrote:
+>
+> > > > > > > +typedef __bitwise unsigned int vm_fault_t;
+> > > > > > > +
+> > > > > > > +/**
+> > > > > > > + * enum - VM_FAULT code
+> > > > > >
+> > > > > > Can you document an anonymous enum?  I've never tried.  Did you run this
+> > > > > > through 'make htmldocs'?
+> > > > >
+> > > > > You cannot document an anonymous enum.
+> > > >
+> > > > I assume, you are pointing to Document folder and I don't know if this
+> > > > enum need to be documented or not.
+> > >
+> > > The enum should be documented, even if it's documentation is (yet) not
+> > > linked anywhere in the Documentation/
+> > >
+> > > > I didn't run 'make htmldocs' as there is no document related changes.
+> > >
+> > > You can verify that kernel-doc can parse your documentation by running
+> > >
+> > > scripts/kernel-doc -none -v <filename>
+> >
+> > I run "scripts/kernel-doc -none -v include/linux/mm_types.h" and it is showing
+> > below error and warning which is linked to enum in discussion.
+> >
+> > include/linux/mm_types.h:612: info: Scanning doc for typedef vm_fault_t
+> > include/linux/mm_types.h:623: info: Scanning doc for enum
+> > include/linux/mm_types.h:628: warning: contents before sections
+> > include/linux/mm_types.h:660: error: Cannot parse enum!
+> > 1 errors
+> > 1 warnings
+> >
+> > Shall I keep the documentation for enum or remove it from this patch ?
+>
+> The documentation should be there, you just need to add a name for the
+> enum. Then kernel-doc will be able to parse it.
+>
+> > > > >
+> > > > > > > + * This enum is used to track the VM_FAULT code return by page
+> > > > > > > + * fault handlers.
+> > > > > >
+>
+> I think that the enum description should also include the text from the
+> comment that described VM_FAULT_* defines:
+>
+> /*
+>  * Different kinds of faults, as returned by handle_mm_fault().
+>  * Used to decide whether a process gets delivered SIGBUS or
+>  * just gets major/minor fault counters bumped up.
+>  */
+>
 
-2) there is similar function free_ext_idx(). After internal failures  it calls 
-extend_credit_for_blkdel() and ext4_free_blocks().
-In the same situation free_ind_blocks() returns without calling of these functions.
-Is it OK?
-
-Thank you,
-	Vasily Averin
-
-On 11/6/18 9:13 AM, Vasily Averin wrote:
-> free_ind_block(), free_dind_blocks() and free_tind_blocks() are replaced
-> by a single recursive function.
-> 
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-> ---
->  fs/ext4/migrate.c | 115 +++++++++++++---------------------------------
->  1 file changed, 32 insertions(+), 83 deletions(-)
-> 
-> diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
-> index 224e136d1c10..754f172b18d4 100644
-> --- a/fs/ext4/migrate.c
-> +++ b/fs/ext4/migrate.c
-> @@ -157,100 +157,43 @@ static int extend_credit_for_blkdel(handle_t *handle, struct inode *inode)
->  	return retval;
->  }
->  
-> -static int free_dind_blocks(handle_t *handle,
-> -				struct inode *inode, __le32 i_data)
-> +static int free_ind_blocks(handle_t *handle,
-> +				struct inode *inode, __le32 i_data, int ind)
->  {
-> -	int i;
-> -	__le32 *tmp_idata;
-> -	struct buffer_head *bh;
-> -	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
-> -
-> -	bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
-> -	if (!bh)
-> -		return -EIO;
-> -
-> -	tmp_idata = (__le32 *)bh->b_data;
-> -	for (i = 0; i < max_entries; i++) {
-> -		if (tmp_idata[i]) {
-> -			extend_credit_for_blkdel(handle, inode);
-> -			ext4_free_blocks(handle, inode, NULL,
-> -					 le32_to_cpu(tmp_idata[i]), 1,
-> -					 EXT4_FREE_BLOCKS_METADATA |
-> -					 EXT4_FREE_BLOCKS_FORGET);
-> -		}
-> -	}
-> -	put_bh(bh);
-> -	extend_credit_for_blkdel(handle, inode);
-> -	ext4_free_blocks(handle, inode, NULL, le32_to_cpu(i_data), 1,
-> -			 EXT4_FREE_BLOCKS_METADATA |
-> -			 EXT4_FREE_BLOCKS_FORGET);
-> -	return 0;
-> -}
-> -
-> -static int free_tind_blocks(handle_t *handle,
-> -				struct inode *inode, __le32 i_data)
-> -{
-> -	int i, retval = 0;
-> -	__le32 *tmp_idata;
-> -	struct buffer_head *bh;
-> -	unsigned long max_entries = inode->i_sb->s_blocksize >> 2;
-> -
-> -	bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
-> -	if (!bh)
-> -		return -EIO;
-> -
-> -	tmp_idata = (__le32 *)bh->b_data;
-> -	for (i = 0; i < max_entries; i++) {
-> -		if (tmp_idata[i]) {
-> -			retval = free_dind_blocks(handle,
-> -					inode, tmp_idata[i]);
-> -			if (retval) {
-> -				put_bh(bh);
-> -				return retval;
-> +	if (ind > 0) {
-> +		int retval = 0;
-> +		__le32 *tmp_idata;
-> +		ext4_lblk_t i, max_entries;
-> +		struct buffer_head *bh;
-> +
-> +		bh = sb_bread(inode->i_sb, le32_to_cpu(i_data));
-> +		if (!bh)
-> +			return -EIO;
-> +
-> +		tmp_idata = (__le32 *)bh->b_data;
-> +		max_entries = inode->i_sb->s_blocksize >> 2;
-> +		for (i = 0; i < max_entries; i++) {
-> +			if (tmp_idata[i]) {
-> +				retval = free_ind_blocks(handle,
-> +						inode, tmp_idata[i], ind - 1);
-> +				if (retval) {
-> +					put_bh(bh);
-> +					return retval;
-> +				}
->  			}
->  		}
-> +		put_bh(bh);
->  	}
-> -	put_bh(bh);
->  	extend_credit_for_blkdel(handle, inode);
->  	ext4_free_blocks(handle, inode, NULL, le32_to_cpu(i_data), 1,
-> -			 EXT4_FREE_BLOCKS_METADATA |
-> -			 EXT4_FREE_BLOCKS_FORGET);
-> -	return 0;
-> -}
-> -
-> -static int free_ind_block(handle_t *handle, struct inode *inode, __le32 *i_data)
-> -{
-> -	int retval;
-> -
-> -	/* ei->i_data[EXT4_IND_BLOCK] */
-> -	if (i_data[0]) {
-> -		extend_credit_for_blkdel(handle, inode);
-> -		ext4_free_blocks(handle, inode, NULL,
-> -				le32_to_cpu(i_data[0]), 1,
-> -				 EXT4_FREE_BLOCKS_METADATA |
-> -				 EXT4_FREE_BLOCKS_FORGET);
-> -	}
-> -
-> -	/* ei->i_data[EXT4_DIND_BLOCK] */
-> -	if (i_data[1]) {
-> -		retval = free_dind_blocks(handle, inode, i_data[1]);
-> -		if (retval)
-> -			return retval;
-> -	}
-> -
-> -	/* ei->i_data[EXT4_TIND_BLOCK] */
-> -	if (i_data[2]) {
-> -		retval = free_tind_blocks(handle, inode, i_data[2]);
-> -		if (retval)
-> -			return retval;
-> -	}
-> +			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
->  	return 0;
->  }
->  
->  static int ext4_ext_swap_inode_data(handle_t *handle, struct inode *inode,
->  						struct inode *tmp_inode)
->  {
-> -	int retval;
-> +	int i, retval;
->  	__le32	i_data[3];
->  	struct ext4_inode_info *ei = EXT4_I(inode);
->  	struct ext4_inode_info *tmp_ei = EXT4_I(tmp_inode);
-> @@ -307,7 +250,13 @@ static int ext4_ext_swap_inode_data(handle_t *handle, struct inode *inode,
->  	 * We mark the inode dirty after, because we decrement the
->  	 * i_blocks when freeing the indirect meta-data blocks
->  	 */
-> -	retval = free_ind_block(handle, inode, i_data);
-> +	for (i = 0; i < ARRAY_SIZE(i_data); i++) {
-> +		if (i_data[i]) {
-> +			retval = free_ind_blocks(handle, inode, i_data[i], i);
-> +			if (retval)
-> +				break;
-> +		}
-> +	}
->  	ext4_mark_inode_dirty(handle, inode);
->  
->  err_out:
-> 
+Ok, will add  both in v2. Thanks.
