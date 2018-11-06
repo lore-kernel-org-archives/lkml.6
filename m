@@ -2,398 +2,169 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714CAC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A27F3C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F5820827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:07:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F5820827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 74FCD20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 09:08:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74FCD20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730210AbeKFSbg (ORCPT
+        id S1730270AbeKFScP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 13:31:36 -0500
-Received: from mga04.intel.com ([192.55.52.120]:49057 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729160AbeKFSbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 13:31:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 01:07:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
-   d="scan'208";a="88924757"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 06 Nov 2018 01:07:22 -0800
-Received: from [10.125.252.37] (abudanko-mobl.ccr.corp.intel.com [10.125.252.37])
-        by linux.intel.com (Postfix) with ESMTP id A73B358014B;
-        Tue,  6 Nov 2018 01:07:20 -0800 (PST)
-Subject: [PATCH v15 3/3]: perf record: extend trace writing to multi AIO
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <050bb053-e7f3-aa83-fde7-f27ff90be7f6@linux.intel.com>
-Date:   Tue, 6 Nov 2018 12:07:19 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 6 Nov 2018 13:32:15 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:43461 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbeKFScP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 13:32:15 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id C739B1C001D;
+        Tue,  6 Nov 2018 09:07:57 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 10:07:56 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
+Message-ID: <20181106090756.GP20885@w540>
+References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4ECF1u7dKBoUGhe3"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Multi AIO trace writing allows caching more kernel data into userspace 
-memory postponing trace writing for the sake of overall profiling data 
-thruput increase. It could be seen as kernel data buffer extension into
-userspace memory.
+--4ECF1u7dKBoUGhe3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-With aio option value different from 0, default value is 1, 
-tool has capability to cache more and more data into user space
-along with delegating spill to AIO.
+Hi Geert,
 
-That allows avoiding suspend at record__aio_sync() between calls of 
-record__mmap_read_evlist() and increase profiling data thruput for 
-the cost of userspace memory.
+On Mon, Nov 05, 2018 at 06:19:22PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> >    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
+> >
+> > On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
+> > could appear on different sets of pins, usually the 'a' and 'b' one.
+> >
+> > With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
+> >
+> > VIN_DATA_PIN_GROUP(vin4_data_a, 8)
+> >
+> > which results in the group being named as "vin4_data_a_8" which is
+> > un-consistent with the canonical group names (eg. "vin4_data8_a").
+> >
+> > This series adds a macro that allows to specify the group 'version' along with
+> > the pin and mux numbers in patch [1/1]. I haven't been able to find a better
+> > term than 'version' as 'group' was already taken. Suggestions welcome.
+>
+> Yeah, the datasheet also calls these groups :-(
+> A possible alternative is to use "variant"?
+>
+> Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
+> macro varargs, and passing the "variant" as the (optional) third parameter?
+> That way existing users work as a before, while you can also write e.g.
+>
+>     VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v15:
-- implemented nr_cblocks_max variable similar to nr_cblocks_default
-Changes in v14:
-- fix --aio option handling
-Changes in v13:
-- preserved --aio option name avoiding complication
-Changes in v12:
-- extended --aio option to --aio-cblocks=<n>
-Changes in v10:
-- added description of aio-cblocks option into perf-record.tx
----
- tools/perf/Documentation/perf-record.txt |  4 +-
- tools/perf/builtin-record.c              | 67 +++++++++++++++++++++++++-------
- tools/perf/util/mmap.c                   | 64 ++++++++++++++++++++----------
- tools/perf/util/mmap.h                   |  9 +++--
- 4 files changed, 102 insertions(+), 42 deletions(-)
+Indeed.
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 7efb4af88a68..d232b13ea713 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -435,8 +435,8 @@ Specify vmlinux path which has debuginfo.
- --buildid-all::
- Record build-id of all DSOs regardless whether it's actually hit or not.
- 
----aio::
--Enable asynchronous (Posix AIO) trace writing mode.
-+--aio[=n]::
-+Use <n> control blocks in asynchronous (Posix AIO) trace writing mode (default: 1, max: 4).
- Asynchronous mode is supported only when linking Perf tool with libc library
- providing implementation for Posix AIO API.
- 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0c6105860123..8482e379a44f 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -196,16 +196,35 @@ static int record__aio_complete(struct perf_mmap *md, struct aiocb *cblock)
- 	return rc;
- }
- 
--static void record__aio_sync(struct perf_mmap *md)
-+static int record__aio_sync(struct perf_mmap *md, bool sync_all)
- {
--	struct aiocb *cblock = &md->aio.cblock;
-+	struct aiocb **aiocb = md->aio.aiocb;
-+	struct aiocb *cblocks = md->aio.cblocks;
- 	struct timespec timeout = { 0, 1000 * 1000  * 1 }; /* 1ms */
-+	int i, do_suspend;
- 
- 	do {
--		if (cblock->aio_fildes == -1 || record__aio_complete(md, cblock))
--			return;
-+		do_suspend = 0;
-+		for (i = 0; i < md->aio.nr_cblocks; ++i) {
-+			if (cblocks[i].aio_fildes == -1 || record__aio_complete(md, &cblocks[i])) {
-+				if (sync_all)
-+					aiocb[i] = NULL;
-+				else
-+					return i;
-+			} else {
-+				/*
-+				 * Started aio write is not complete yet
-+				 * so it has to be waited before the
-+				 * next allocation.
-+				 */
-+				aiocb[i] = &cblocks[i];
-+				do_suspend = 1;
-+			}
-+		}
-+		if (!do_suspend)
-+			return -1;
- 
--		while (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
-+		while (aio_suspend((const struct aiocb **)aiocb, md->aio.nr_cblocks, &timeout)) {
- 			if (!(errno == EAGAIN || errno == EINTR))
- 				pr_err("failed to sync perf data, error: %m\n");
- 		}
-@@ -252,28 +271,36 @@ static void record__aio_mmap_read_sync(struct record *rec)
- 		struct perf_mmap *map = &maps[i];
- 
- 		if (map->base)
--			record__aio_sync(map);
-+			record__aio_sync(map, true);
- 	}
- }
- 
- static int nr_cblocks_default = 1;
-+static int nr_cblocks_max = 4;
- 
- static int record__aio_parse(const struct option *opt,
--			     const char *str __maybe_unused,
-+			     const char *str,
- 			     int unset)
- {
- 	struct record_opts *opts = (struct record_opts *)opt->value;
- 
--	if (unset)
-+	if (unset) {
- 		opts->nr_cblocks = 0;
--	else
--		opts->nr_cblocks = nr_cblocks_default;
-+	} else {
-+		if (str)
-+			opts->nr_cblocks = strtol(str, NULL, 0);
-+		if (!opts->nr_cblocks)
-+			opts->nr_cblocks = nr_cblocks_default;
-+	}
- 
- 	return 0;
- }
- #else /* HAVE_AIO_SUPPORT */
--static void record__aio_sync(struct perf_mmap *md __maybe_unused)
-+static int nr_cblocks_max = 0;
-+
-+static int record__aio_sync(struct perf_mmap *md __maybe_unused, bool sync_all __maybe_unused)
- {
-+	return -1;
- }
- 
- static int record__aio_pushfn(void *to __maybe_unused, struct aiocb *cblock __maybe_unused,
-@@ -723,12 +750,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 					goto out;
- 				}
- 			} else {
-+				int idx;
- 				/*
- 				 * Call record__aio_sync() to wait till map->data buffer
- 				 * becomes available after previous aio write request.
- 				 */
--				record__aio_sync(map);
--				if (perf_mmap__aio_push(map, rec, record__aio_pushfn, &off) != 0) {
-+				idx = record__aio_sync(map, false);
-+				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn, &off) != 0) {
- 					record__aio_set_pos(trace_fd, off);
- 					rc = -1;
- 					goto out;
-@@ -1492,6 +1520,13 @@ static int perf_record_config(const char *var, const char *value, void *cb)
- 		var = "call-graph.record-mode";
- 		return perf_default_config(var, value, cb);
- 	}
-+#ifdef HAVE_AIO_SUPPORT
-+	if (!strcmp(var, "record.aio")) {
-+		rec->opts.nr_cblocks = strtol(value, NULL, 0);
-+		if (!rec->opts.nr_cblocks)
-+			rec->opts.nr_cblocks = nr_cblocks_default;
-+	}
-+#endif
- 
- 	return 0;
- }
-@@ -1884,8 +1919,8 @@ static struct option __record_options[] = {
- 	OPT_BOOLEAN(0, "dry-run", &dry_run,
- 		    "Parse options then exit"),
- #ifdef HAVE_AIO_SUPPORT
--	OPT_CALLBACK_NOOPT(0, "aio", &record.opts,
--		     NULL, "Enable asynchronous trace writing mode",
-+	OPT_CALLBACK_OPTARG(0, "aio", &record.opts,
-+		     &nr_cblocks_default, "n", "Use <n> control blocks in asynchronous trace writing mode (default: 1, max: 4)",
- 		     record__aio_parse),
- #endif
- 	OPT_END()
-@@ -2080,6 +2115,8 @@ int cmd_record(int argc, const char **argv)
- 		goto out;
- 	}
- 
-+	if (rec->opts.nr_cblocks > nr_cblocks_max)
-+		rec->opts.nr_cblocks = nr_cblocks_max;
- 	if (verbose > 0)
- 		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 61aa381d05d0..ab30555d2afc 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -156,28 +156,50 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- #ifdef HAVE_AIO_SUPPORT
- static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- {
--	int delta_max;
-+	int delta_max, i, prio;
- 
- 	map->aio.nr_cblocks = mp->nr_cblocks;
- 	if (map->aio.nr_cblocks) {
--		map->aio.data = malloc(perf_mmap__mmap_len(map));
-+		map->aio.aiocb = calloc(map->aio.nr_cblocks, sizeof(struct aiocb *));
-+		if (!map->aio.aiocb) {
-+			pr_debug2("failed to allocate aiocb for data buffer, error %m\n");
-+			return -1;
-+		}
-+		map->aio.cblocks = calloc(map->aio.nr_cblocks, sizeof(struct aiocb));
-+		if (!map->aio.cblocks) {
-+			pr_debug2("failed to allocate cblocks for data buffer, error %m\n");
-+			return -1;
-+		}
-+		map->aio.data = calloc(map->aio.nr_cblocks, sizeof(void *));
- 		if (!map->aio.data) {
- 			pr_debug2("failed to allocate data buffer, error %m\n");
- 			return -1;
- 		}
--		/*
--		 * Use cblock.aio_fildes value different from -1
--		 * to denote started aio write operation on the
--		 * cblock so it requires explicit record__aio_sync()
--		 * call prior the cblock may be reused again.
--		 */
--		map->aio.cblock.aio_fildes = -1;
--		/*
--		 * Allocate cblock with max priority delta to
--		 * have faster aio write system calls.
--		 */
- 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
--		map->aio.cblock.aio_reqprio = delta_max;
-+		for (i = 0; i < map->aio.nr_cblocks; ++i) {
-+			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
-+			if (!map->aio.data[i]) {
-+				pr_debug2("failed to allocate data buffer area, error %m");
-+				return -1;
-+			}
-+			/*
-+			 * Use cblock.aio_fildes value different from -1
-+			 * to denote started aio write operation on the
-+			 * cblock so it requires explicit record__aio_sync()
-+			 * call prior the cblock may be reused again.
-+			 */
-+			map->aio.cblocks[i].aio_fildes = -1;
-+			/*
-+			 * Allocate cblocks with priority delta to have
-+			 * faster aio write system calls because queued requests
-+			 * are kept in separate per-prio queues and adding
-+			 * a new request will iterate thru shorter per-prio
-+			 * list. Blocks with numbers higher than
-+			 *  _SC_AIO_PRIO_DELTA_MAX go with priority 0.
-+			 */
-+			prio = delta_max - i;
-+			map->aio.cblocks[i].aio_reqprio = prio >= 0 ? prio : 0;
-+		}
- 	}
- 
- 	return 0;
-@@ -189,7 +211,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
- 		zfree(&map->aio.data);
- }
- 
--int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-+int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off)
- {
-@@ -204,7 +226,7 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 		return (rc == -EAGAIN) ? 0 : -1;
- 
- 	/*
--	 * md->base data is copied into md->data buffer to
-+	 * md->base data is copied into md->data[idx] buffer to
- 	 * release space in the kernel buffer as fast as possible,
- 	 * thru perf_mmap__consume() below.
- 	 *
-@@ -226,20 +248,20 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 		buf = &data[md->start & md->mask];
- 		size = md->mask + 1 - (md->start & md->mask);
- 		md->start += size;
--		memcpy(md->aio.data, buf, size);
-+		memcpy(md->aio.data[idx], buf, size);
- 		size0 = size;
- 	}
- 
- 	buf = &data[md->start & md->mask];
- 	size = md->end - md->start;
- 	md->start += size;
--	memcpy(md->aio.data + size0, buf, size);
-+	memcpy(md->aio.data[idx] + size0, buf, size);
- 
- 	/*
--	 * Increment md->refcount to guard md->data buffer
-+	 * Increment md->refcount to guard md->data[idx] buffer
- 	 * from premature deallocation because md object can be
- 	 * released earlier than aio write request started
--	 * on mmap->data is complete.
-+	 * on mmap->data[idx] is complete.
- 	 *
- 	 * perf_mmap__put() is done at record__aio_complete()
- 	 * after started request completion.
-@@ -249,7 +271,7 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to,
- 	md->prev = head;
- 	perf_mmap__consume(md);
- 
--	rc = push(to, &md->aio.cblock, md->aio.data, size0 + size, *off);
-+	rc = push(to, &md->aio.cblocks[idx], md->aio.data[idx], size0 + size, *off);
- 	if (!rc) {
- 		*off += size0 + size;
- 	} else {
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 9be06f18f17a..cb63d357a248 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -32,8 +32,9 @@ struct perf_mmap {
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
- #ifdef HAVE_AIO_SUPPORT
- 	struct {
--		void 		 *data;
--		struct aiocb	 cblock;
-+		void		 **data;
-+		struct aiocb	 *cblocks;
-+		struct aiocb	 **aiocb;
- 		int		 nr_cblocks;
- 	} aio;
- #endif
-@@ -106,11 +107,11 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- int perf_mmap__push(struct perf_mmap *md, void *to,
- 		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
- #ifdef HAVE_AIO_SUPPORT
--int perf_mmap__aio_push(struct perf_mmap *md, void *to,
-+int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off);
- #else
--static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused,
-+static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused, int idx __maybe_unused,
- 	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
- 	off_t *off __maybe_unused)
- {
+Would something along the following lines fly for you?
+
+#define VIN_DATA_PIN_GROUP(n, s, ...)					\
+	{								\
+		.name = #n#s#__VA_ARGS__,				\
+		.pins = n##__VA_ARGS__##_pins.data##s,			\
+		.mux = n##__VA_ARGS__##_mux.data##s,			\
+		.nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),	\
+	}
+
+It can be used as:
+VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
+VIN_DATA_PIN_GROUP(vin5_data, 8),
+
+With your ack on this, I'll send v2.
+
+Thanks
+  j
+>
+> > As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
+> > wired, I made sure the macro creates correct names and fields not only by
+> > compile testing it, but with a small C program [1] that replicates the VIN data
+> > layout defined in the PFC module and access fields (and has helped me testing
+> > more easily the preprocessor stringification/concatenation process).
+> >
+> > Final note: Simon, you took the E3 patches in your tree, and I expect them to
+> > land on v4.20-rc1. They use the old macros, are follow up patches ok?)
+>
+> Which patches are using these macro names, and are in v4.20-rc1?
+>
+> BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
+> have broken groups names on r8a7792, r8a7795, and r8a7796.
+> Fortunately we have no known users of them, so they can be fixed.
+>
+
+On v4.20-rc1 the grep returns none for me :/
+git grep v4.20-rc1 "vin._data_[a-z][0-9]" drivers/pinctrl/sh-pfc/
+
+Thanks
+   j
+
+> Thanks!
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+--4ECF1u7dKBoUGhe3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJb4VnsAAoJEHI0Bo8WoVY8k48P/1kM1SvF1uJqnu7GdAkYEbNP
+42luyW2+tG45b0QGnsSUaHdrSdVAEXC5wiAmIPzSIPiK5z30a5TELGHXigjHtDH/
+zgusVGXevyzPBiwiKZKSHsq7KZdoRwm5K+agQrAdxButprpzFOQGT2bh280waaEj
+8eAlGo+iJZG3758w4vZxmc0UiiqNvXAmYRH1pPf6Na1u/G+fpX2u6J2vt5vR6UhH
+51K67yojluSoX9em+YU3dooHt68A7aRoyczHkWbOaSIeyVnwt+s8RCsSO9GhiQDY
+Y/yY+D4PF20VpdTXhW66JqhaURR3rhCrv+csk7B1uHKexnT0KAPkXRm93nHN9lY4
+4vyMWJzj/bbPys/iG/WfoNk3R7quJb1sW6KhQtYBUC8rp+IM1EqUcFt/qd7n26me
+vckl6aweQNLSxifs9qlfXd4ttFtvwlfzt7WbvxGLJ0FZC+Njjpn4TsPMrakIMofu
+C3JCeeG82BvSq3W+2xC/pgjyMMS6gkdie86WS8kcrPHrJ+eqEhoEOodfN+at/Bvk
+3ilVBQ5tZ9ILgpcOUXvVNzXYgRG4li8i37rVdpfJeuSs+4IfUEb+GNyIp9uigBen
+xyVNSkjUpod76Ez1tOGjDXPotlumJaZ2wq6pKAA+g1KJ545FGRT766mkmDFaHYCn
+tQmhaLlAXWO4S17zwNp/
+=qSyo
+-----END PGP SIGNATURE-----
+
+--4ECF1u7dKBoUGhe3--
