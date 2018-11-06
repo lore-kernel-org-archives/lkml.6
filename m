@@ -2,85 +2,207 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04213C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B989C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE4020862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C8520862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:03:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RDRQh52F";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fPv3ZjaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE4020862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k057e+rd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C8520862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389141AbeKGB1H (ORCPT
+        id S2389151AbeKGB3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 20:27:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34444 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388346AbeKGB1H (ORCPT
+        Tue, 6 Nov 2018 20:29:14 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41839 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388773AbeKGB3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 20:27:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CDC1760767; Tue,  6 Nov 2018 16:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541520074;
-        bh=qFX/oxqrdi4Z9gLVqUmiHbFvrr1vEfSyeAxFV0YvZUk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=RDRQh52FBnUNLxg4SBd9yYD8Win/s3g1vtQqRv6ROQ1YH7t8VZaC2Vh7MBtdKbAR2
-         E71F9WvtmALdxB5sghGV6wZpZ0KsFrXs0pG2R96dpvoFwEVssBoTpadrBeG7uCL4IY
-         21twDfYhHJv4ZrnPkCWgjwS9Dg6JRK9BM8U/qOxM=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0CF54601DA;
-        Tue,  6 Nov 2018 16:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541520074;
-        bh=qFX/oxqrdi4Z9gLVqUmiHbFvrr1vEfSyeAxFV0YvZUk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=fPv3ZjaS3WoNkiTEzFx/yTIZHWPcm/f7rgTp3ycZQ192bT8M+pgtuR9yNsdu5SDhN
-         Opk3wfJTzRhaTLwl/cxAtWHXZ+iM49WecLleYmP/IEKAxKzW4thPuor6kyOeTVLLKV
-         4Z7L39i/fbuPZWHETMW8JaUiLYzwcf2yXleYJHxc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0CF54601DA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 6 Nov 2018 20:29:13 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x12-v6so14121852wrw.8;
+        Tue, 06 Nov 2018 08:03:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yzNS/VoZoijLZqRXpszGM65p4sDQhWJxQZbfQ7B9CHs=;
+        b=k057e+rdJg4UHuUSUsUZuMbspFbpUEK2SfR8EGJYmVWiCIIhR7Voz8BszwZM00jb70
+         uubKygP2SnStDhwwZ5dU6hYQmwL055MbEuC2OJKSqeb4C5HxOYFY50ysDlqrZXQFmJDV
+         kiQ5I0GwWKZ0CjndnYX5nCpSTOgPtR2r2PEu1hIC0OLcQcuxn08iiXlWMnok7mYCW/r5
+         f7QHsU+pspGCYyMSuLDFB7jk1Qjl647ah4Cv9EPF7MOvj6kWNSi/7i2OuoTme+B4Cew/
+         fawubp1puFOVntS+EqGnKa4E/xHhtXxzPpDGTnXEqL/MkvH3g8HDnurv0S9cdbxx/xz7
+         Ix0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yzNS/VoZoijLZqRXpszGM65p4sDQhWJxQZbfQ7B9CHs=;
+        b=OmWQJ5vvuBiLQVP9P4Y2SNsFQoG6666xjUwTgzxLU5DQmvGbVqV82VtP9ZliDnYCkk
+         NSFWLq1M5mCV17j6ryZT0Z2NEFYm1b9GNZ7LLGe8nqHvx5/US55JfSB651B7+oN+sdHM
+         HWQt4KRFmzWgC0kGtGuAxhFwHZ/ybK2sGM8vF1jzLU6ZVr9uDAZK1liRNIj9Xcu62DTE
+         kI/kueKNxLp+3jrOITdx/Rw/Bac29zWmY7Rw26tRgzCQGIUSaMOV6Xc0tRH+NjQuIcMH
+         I+Y1e+ui/+h96DWO/vTOUEJ0VIWq41RZCGIDn7hILjS2Tlx2pGubOBL9tfsPQxKlk9Q4
+         vDJA==
+X-Gm-Message-State: AGRZ1gJ/NIWieKapP5taMPlqieK9ZWh22Ii8sjmk7Tlr1oo0bpMx/Hh3
+        /nb4jH/OwSV87MUo+Bx5PT4=
+X-Google-Smtp-Source: AJdET5dG/hMFNvGDMr/TUwkBMeXtuzw/Xbzs8duq6A2bDwRF8MH8cYI3yd4iXXyRi76Zt/b6hLSamw==
+X-Received: by 2002:adf:8444:: with SMTP id 62-v6mr22814396wrf.251.1541520198615;
+        Tue, 06 Nov 2018 08:03:18 -0800 (PST)
+Received: from localhost ([51.15.41.238])
+        by smtp.gmail.com with ESMTPSA id y76-v6sm3369015wmd.37.2018.11.06.08.03.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 08:03:17 -0800 (PST)
+Date:   Tue, 6 Nov 2018 16:03:16 +0000
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+To:     Vitaly Mayatskikh <v.mayatskih@gmail.com>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] Add vhost_blk driver
+Message-ID: <20181106160316.GC31579@stefanha-x1.localdomain>
+References: <20181102182123.29420-1-v.mayatskih@gmail.com>
+ <20181102182123.29420-2-v.mayatskih@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath10k: fix some typo
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181101152932.22684-1-tiny.windzz@gmail.com>
-References: <20181101152932.22684-1-tiny.windzz@gmail.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     davem@davemloft.net, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181106160114.CDC1760767@smtp.codeaurora.org>
-Date:   Tue,  6 Nov 2018 16:01:14 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
+Content-Disposition: inline
+In-Reply-To: <20181102182123.29420-2-v.mayatskih@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yangtao Li <tiny.windzz@gmail.com> wrote:
 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+--adJ1OR3c6QgCpb/j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patch applied to ath-next branch of ath.git, thanks.
+On Fri, Nov 02, 2018 at 06:21:23PM +0000, Vitaly Mayatskikh wrote:
+> This driver accelerates host side of virtio-blk.
 
-c8cb09644c6c ath10k: fix some typo
+Did you look at vhost-user-blk?  It does things slightly differently:
+more of the virtio-blk device model is handled by the vhost-user device
+(e.g. config space).  That might be necessary to implement
+virtio_blk_config.writeback properly.
 
--- 
-https://patchwork.kernel.org/patch/10664139/
+> +#define VHOST_BLK_SET_BACKEND _IOW(VHOST_VIRTIO, 0x50, int)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Needs to be in the uapi header so userspace can use it.
 
+> +
+> +enum {
+> +	VHOST_BLK_VQ_MAX = 16,
+> +	VHOST_BLK_VQ_MAX_REQS = 128,
+> +};
+
+These limits seem arbitrary and probably too low.
+
+> +
+> +struct vhost_blk_req {
+> +	struct llist_node list;
+> +	int index;
+> +	struct vhost_blk_queue *q;
+> +	struct virtio_blk_outhdr hdr;
+> +	struct iovec *out_iov;
+> +	struct iovec *in_iov;
+> +	u8 out_num;
+> +	u8 in_num;
+> +	long len;
+> +	struct kiocb iocb;
+> +	struct iov_iter i;
+> +	int res;
+> +	void __user *status;
+> +};
+> +
+> +struct vhost_blk_queue {
+> +	int index;
+> +	struct vhost_blk *blk;
+> +	struct vhost_virtqueue vq;
+> +	struct vhost_work w;
+> +	struct llist_head wl;
+
+What is this?  Please use clear names and comments. :)
+
+> +static int vhost_blk_req_handle(struct vhost_blk_req *req)
+> +{
+> +	struct vhost_blk *blk = req->q->blk;
+> +	struct vhost_virtqueue *vq = &req->q->vq;
+> +	int type = le32_to_cpu(req->hdr.type);
+> +	int ret;
+> +	u8 status;
+> +
+> +	if ((type == VIRTIO_BLK_T_IN) || (type == VIRTIO_BLK_T_OUT)) {
+> +		bool write = (type == VIRTIO_BLK_T_OUT);
+> +		int nr_seg = (write ? req->out_num : req->in_num) - 1;
+> +		unsigned long sector = le64_to_cpu(req->hdr.sector);
+
+Using little-endian instead of the virtio types means that only VIRTIO
+1.0 modern devices are supported (older devices may not be
+little-endian!).  In that case you'd need to put the VIRTIO_1 feature
+bit into the features mask.
+
+> +		req = &q->req[head];
+> +		req->index = head;
+> +		req->out_num = out;
+> +		req->in_num = in;
+> +		req->out_iov = &vq->iov[1];
+> +		req->in_iov = &vq->iov[out];
+> +		req->status = vq->iov[out + in - 1].iov_base;
+
+The VIRTIO spec explicitly requires that devices support arbitrary
+descriptor layouts, so you cannot assume a particular iov[] layout.
+
+> +static long vhost_blk_ioctl(struct file *f, unsigned int ioctl,
+> +			    unsigned long arg)
+> +{
+> +	struct vhost_blk *blk = f->private_data;
+> +	void __user *argp = (void __user *)arg;
+> +	int fd;
+> +	u64 __user *featurep = argp;
+> +	u64 features;
+> +	long ret;
+> +	struct vhost_vring_state s;
+> +
+> +	switch (ioctl) {
+> +	case VHOST_SET_MEM_TABLE:
+> +		vhost_blk_stop(blk);
+> +		ret = vhost_blk_pass_ioctl(blk, ioctl, argp);
+> +		break;
+
+Why is this necessary?  Existing vhost devices pass the ioctl through
+without an explicit case for it.
+
+> +	case VHOST_SET_VRING_NUM:
+> +		if (copy_from_user(&s, argp, sizeof(s)))
+> +			return -EFAULT;
+> +		ret = vhost_blk_pass_ioctl(blk, ioctl, argp);
+> +		if (!ret)
+> +			blk->num_queues = s.index + 1;
+
+Where is this input checked against ARRAY_SIZE(blk->queue)?
+
+--adJ1OR3c6QgCpb/j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJb4btEAAoJEJykq7OBq3PI18kIAIWRNjdZlTZigFtAV0woY7NN
+RQ9Kc0frAJv1XpbDemdbA41L7y2resmg4dcMIEFtd0qRbNjoXi8e8yRqF9RbBaqG
+R9EUKz6cTYVlBURJp9zMYyEFbVR1tbo3J7Wid1Z1uRY9QAiB6FbmCu8cYWFVWL+S
+8GA/rjcuqvoz19VnfVtH0IZbjD1/GH4boK0Y+fwH5WjC7jrnZSnjrXKSiFOeTm+9
+3Mzgelzw/hKQePNvTO1B+W/C2+Se6q0Jfwb9i8pmtnyv4hl63IDkqnOqvDZ8L/qO
+ypdaqmXAIGRZzUH5sn7yqZQX7mFNy8IdGk7RAazczZfsrKexHMD+YIS1OSfdmfY=
+=eZZY
+-----END PGP SIGNATURE-----
+
+--adJ1OR3c6QgCpb/j--
