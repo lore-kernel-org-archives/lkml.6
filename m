@@ -2,135 +2,105 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8A1C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B22C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4F820685
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4F820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 246FB20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:55:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246FB20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388965AbeKGAUM (ORCPT
+        id S2389113AbeKGAVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:20:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51761 "EHLO mail.bootlin.com"
+        Tue, 6 Nov 2018 19:21:17 -0500
+Received: from mga18.intel.com ([134.134.136.126]:33615 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388428AbeKGAUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:20:12 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4D95D20886; Tue,  6 Nov 2018 15:54:35 +0100 (CET)
-Received: from localhost (unknown [185.94.189.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 080AB20741;
-        Tue,  6 Nov 2018 15:54:24 +0100 (CET)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH v2 0/9] phy: Add configuration interface for MIPI D-PHY devices
-Date:   Tue,  6 Nov 2018 15:54:12 +0100
-Message-Id: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.19.1
+        id S2388890AbeKGAVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 19:21:16 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 06:55:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="94073411"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by FMSMGA003.fm.intel.com with ESMTP; 06 Nov 2018 06:55:38 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gK2lV-0005DB-Re; Tue, 06 Nov 2018 16:55:37 +0200
+Date:   Tue, 6 Nov 2018 16:55:37 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] of/property: Introduce of_fwnode_name()
+Message-ID: <20181106145537.GB10650@smile.fi.intel.com>
+References: <20181105091727.25544-1-heikki.krogerus@linux.intel.com>
+ <20181105091727.25544-4-heikki.krogerus@linux.intel.com>
+ <CAL_Jsq+aRAv+9gDKwVi9xYQPYzXK4NMPjzfkuYB08+K6KTYXFg@mail.gmail.com>
+ <20181106105803.GS10650@smile.fi.intel.com>
+ <20181106122734.GC13048@kuha.fi.intel.com>
+ <CAL_Jsq+kspp1GYrMjG1cC=CyCa2_jO1suFdD9fn+gOwKRYdhtw@mail.gmail.com>
+ <20181106144037.GD13048@kuha.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106144037.GD13048@kuha.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Nov 06, 2018 at 04:40:37PM +0200, Heikki Krogerus wrote:
+> On Tue, Nov 06, 2018 at 07:18:14AM -0600, Rob Herring wrote:
 
-Here is a set of patches to allow the phy framework consumers to test and
-apply runtime configurations.
+> > Looking at patch 4, if matching the name is what you want to do, then
+> > use the DT name matching functions. They were added in 4.19.
+> 
+> That is something that the of_fwnode_get_named_child_node() needs
+> to use (would have needed).
+> 
+> Regardless of what we do with that callback, fwnode_name() needs to
+> return the name in from that for example of_node_name_eq() takes as
+> the second parameter. So "node-name@unit-address" is not OK. Sorry for
+> not realizeing that before.
+> 
+> So I guess we need to either get the "node-name" from that full_name
+> member in of_fwnode_name() (Andy, are you OK with that?), or is there
+> already a helper that does it for us?
 
-This is needed to support more phy classes that require tuning based on
-parameters depending on the current use case of the device, in addition to
-the power state management already provided by the current functions.
+Looking into existing API I think we need something like
 
-A first test bed for that API are the MIPI D-PHY devices. There's a number
-of solutions that have been used so far to support these phy, most of the
-time being an ad-hoc driver in the consumer.
+of_node_name_extract()
 
-That approach has a big shortcoming though, which is that this is quite
-difficult to deal with consumers integrated with multiple variants of phy,
-of multiple consumers integrated with the same phy.
+of_node_name_eq()
+{
+	name = of_node_name_extract();
+	return strlen()...strncmp()...;
+}
 
-The latter case can be found in the Cadence DSI bridge, and the CSI
-transceiver and receivers. All of them are integrated with the same phy, or
-can be integrated with different phy, depending on the implementation.
+The question is who is going to allocate and free memory for the name out of it.
 
-I've looked at all the MIPI DSI drivers I could find, and gathered all the
-parameters I could find. The interface should be complete, and most of the
-drivers can be converted in the future. The current set converts two of
-them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
-use them, and the Allwinner MIPI-DSI driver.
+OTOH, of_fwnode_get_named_child_node() might need to copy that code which
+brings the consistency issue (several places to maintain the same set of rules,
+i.e. how we extract name out of full_name).
 
-Let me know what you think,
-Maxime
+So, removal of name field shouldn't be done until we resolve the issue with
+of_fwnode_get_named_child_node().
 
-Changes from v1:
-  - Rebased on top of 4.20-rc1
-  - Removed the bus mode and timings parameters from the MIPI D-PHY
-    parameters, since that shouldn't have any impact on the PHY itself.
-  - Reworked the Cadence DSI and D-PHY drivers to take this into account.
-  - Remove the mode parameter from phy_configure
-  - Added phy_configure and phy_validate stubs
-  - Return -EOPNOTSUPP in phy_configure and phy_validate when the operation
-    is not implemented
-
-Maxime Ripard (9):
-  phy: Add MIPI D-PHY mode
-  phy: Add configuration interface
-  phy: Add MIPI D-PHY configuration options
-  phy: dphy: Add configuration helpers
-  sun6i: dsi: Convert to generic phy handling
-  phy: Move Allwinner A31 D-PHY driver to drivers/phy/
-  drm/bridge: cdns: Separate DSI and D-PHY configuration
-  phy: Add Cadence D-PHY support
-  drm/bridge: cdns: Convert to phy framework
-
- Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt |  21 +-
- Documentation/devicetree/bindings/phy/cdns,dphy.txt           |  20 +-
- drivers/gpu/drm/bridge/cdns-dsi.c                             | 535 +------
- drivers/gpu/drm/sun4i/Kconfig                                 |   3 +-
- drivers/gpu/drm/sun4i/Makefile                                |   5 +-
- drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                       | 292 +----
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                        |  31 +-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                        |  17 +-
- drivers/phy/Kconfig                                           |   8 +-
- drivers/phy/Makefile                                          |   1 +-
- drivers/phy/allwinner/Kconfig                                 |  12 +-
- drivers/phy/allwinner/Makefile                                |   1 +-
- drivers/phy/allwinner/phy-sun6i-mipi-dphy.c                   | 318 ++++-
- drivers/phy/cadence/Kconfig                                   |  13 +-
- drivers/phy/cadence/Makefile                                  |   1 +-
- drivers/phy/cadence/cdns-dphy.c                               | 459 ++++++-
- drivers/phy/phy-core-mipi-dphy.c                              | 160 ++-
- drivers/phy/phy-core.c                                        |  61 +-
- include/linux/phy/phy-mipi-dphy.h                             | 238 +++-
- include/linux/phy/phy.h                                       |  65 +-
- 20 files changed, 1482 insertions(+), 779 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
- delete mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
- create mode 100644 drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
- create mode 100644 drivers/phy/cadence/cdns-dphy.c
- create mode 100644 drivers/phy/phy-core-mipi-dphy.c
- create mode 100644 include/linux/phy/phy-mipi-dphy.h
-
-base-commit: 651022382c7f8da46cb4872a545ee1da6d097d2a
 -- 
-git-series 0.9.1
+With Best Regards,
+Andy Shevchenko
+
+
