@@ -2,235 +2,162 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C22C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064BFC32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05852083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05852083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B7B842083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:21:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B842083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388353AbeKGFri (ORCPT
+        id S2388415AbeKGFsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 00:47:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40688 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbeKGFri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 00:47:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30D91EBD;
-        Tue,  6 Nov 2018 12:20:41 -0800 (PST)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CFB93F718;
-        Tue,  6 Nov 2018 12:20:38 -0800 (PST)
-Subject: Re: IOMMU breakage on arm64
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>
-References: <git-mailbomb-linux-master-b4ebe6063204da58e48600b810a97c29ae9e5d12@kernel.org>
- <CAMuHMdUosqWTn5yDjGMWrLpWEyZfxtGWYfqmenYVqE8g7HEt7Q@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <44b77976-0efe-02d0-3c4e-4e54f91c4fe7@arm.com>
-Date:   Tue, 6 Nov 2018 20:20:35 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+        Wed, 7 Nov 2018 00:48:21 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727248AbeKGFsV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 00:48:21 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA6KIi1X008965
+        for <linux-kernel@vger.kernel.org>; Tue, 6 Nov 2018 15:21:23 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nkh07jfdu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 15:21:22 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 6 Nov 2018 20:21:21 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 6 Nov 2018 20:21:19 -0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA6KLFlw29294708
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 20:21:15 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 516D52805C;
+        Tue,  6 Nov 2018 20:21:15 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBDB728064;
+        Tue,  6 Nov 2018 20:21:14 +0000 (GMT)
+Received: from [9.60.85.3] (unknown [9.60.85.3])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  6 Nov 2018 20:21:14 +0000 (GMT)
+Subject: Re: [PATCH v1 6/7] vfio: ap: register guest ISC with GISA and GIB
+To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1541009577-29656-1-git-send-email-pmorel@linux.ibm.com>
+ <1541009577-29656-7-git-send-email-pmorel@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 6 Nov 2018 15:21:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUosqWTn5yDjGMWrLpWEyZfxtGWYfqmenYVqE8g7HEt7Q@mail.gmail.com>
+In-Reply-To: <1541009577-29656-7-git-send-email-pmorel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110620-0060-0000-0000-000002CE588A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009998; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01113636; UDB=6.00577302; IPR=6.00893736;
+ MB=3.00024049; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-06 20:21:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110620-0061-0000-0000-0000471C3931
+Message-Id: <382fe325-e12d-8be8-7f30-c3c64bd37505@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811060172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
-
-On 2018-11-06 7:44 pm, Geert Uytterhoeven wrote:
-> Hi Christoph et al,
+On 10/31/18 2:12 PM, Pierre Morel wrote:
+> Register to the GIB Alert list and retrieve the GAL_ISC
+> to pass to the GISA registration.
 > 
-> On Tue, Oct 23, 2018 at 1:40 AM Linux Kernel Mailing List
-> <linux-kernel@vger.kernel.org> wrote:
->> Commit:     b4ebe6063204da58e48600b810a97c29ae9e5d12
->> Parent:     7d21ee4c719f00896767ce19c4c01a56374c2ced
->> Refname:    refs/heads/master
->> Web:        https://git.kernel.org/torvalds/c/b4ebe6063204da58e48600b810a97c29ae9e5d12
->> Author:     Christoph Hellwig <hch@lst.de>
->> AuthorDate: Thu Sep 20 14:04:08 2018 +0200
->> Committer:  Christoph Hellwig <hch@lst.de>
->> CommitDate: Mon Oct 1 07:28:03 2018 -0700
->>
->>      dma-direct: implement complete bus_dma_mask handling
->>
->>      Instead of rejecting devices with a too small bus_dma_mask we can handle
->>      by taking the bus dma_mask into account for allocations and bounce
->>      buffering decisions.
->>
->>      Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Unregister on error and when clearing the interrupt.
 > 
-> I  have bisected the following crash to the above commit:
-
-I think that commit mostly just changes the presentation of my 
-underlying cockup - see here for what should fix it: 
-https://patchwork.kernel.org/patch/10670177/
-
-I have a feeling we've ironed out crash-on-early-domain-free bugs in the 
-SMMU drivers already - arm-smmu certainly has an early return in 
-arm_smmu_destroy_domain_context() which should behave exactly like your 
-diff below, while I think arm-smmu-v3 gets away with it by virtue of 
-smmu_domain->cfg being unset, but I'll double-check that when I'm fresh 
-tomorrow (Jean-Philippe reported SMMUv3 hitting the DMA thing to me 
-internally, but didn't mention any crash).
-
-Thanks for the report,
-Robin.
-
->      ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for
-> IOMMU page tables
->      sata_rcar ee300000.sata: Unable to initialize IPMMU context
->      iommu: Failed to add device ee300000.sata to group 0: -22
->      Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000038
->      Mem abort info:
->        ESR = 0x96000004
->        Exception class = DABT (current EL), IL = 32 bits
->        SET = 0, FnV = 0
->        EA = 0, S1PTW = 0
->      Data abort info:
->        ISV = 0, ISS = 0x00000004
->        CM = 0, WnR = 0
->      [0000000000000038] user address but active_mm is swapper
->      Internal error: Oops: 96000004 [#1] PREEMPT SMP
->      CPU: 2 PID: 51 Comm: kworker/2:1 Not tainted
-> 4.20.0-rc1-arm64-renesas-dirty #74
->      Hardware name: Renesas Salvator-X 2nd version board based on
-> r8a7795 ES2.0+ (DT)
->      Workqueue: events deferred_probe_work_func
->      pstate: 60000005 (nZCv daif -PAN -UAO)
->      pc : ipmmu_domain_free+0x1c/0xa0
->      lr : ipmmu_domain_free+0x14/0xa0
->      sp : ffff000009c9b990
->      x29: ffff000009c9b990 x28: 0000000000000000
->      x27: ffff000008dff000 x26: 0000000000000000
->      x25: ffff000008dd9000 x24: 0000000000000014
->      x23: ffff8006fffdbb20 x22: ffff000008dff000
->      x21: ffff8006f898e680 x20: ffff8006f8fa6c00
->      x19: ffff8006f8fa6c08 x18: 0000000000000037
->      x17: 0000000000000020 x16: ffff000008a8f780
->      x15: ffff8006fb096f10 x14: ffff8006f93731c8
->      x13: 0000000000000000 x12: ffff8006fb096f10
->      x11: ffff8006f9372fe8 x10: ffff000008dff708
->      x9 : ffff8006fb096f50 x8 : ffff000008dff708
->      x7 : ffff0000089f1858 x6 : 0000000000000000
->      x5 : 0000000000000000 x4 : ffff8006f89a3000
->      x3 : 00008006f7131000 x2 : ffff8006fb2b5700
->      x1 : 0000000000000000 x0 : 0000000000000028
->      Process kworker/2:1 (pid: 51, stack limit = 0x(____ptrval____))
->      Call trace:
->       ipmmu_domain_free+0x1c/0xa0
->       iommu_group_release+0x48/0x68
->       kobject_put+0x74/0xe8
->       kobject_del.part.0+0x3c/0x50
->       kobject_put+0x60/0xe8
->       iommu_group_get_for_dev+0xa8/0x1f0
->       ipmmu_add_device+0x1c/0x40
->       of_iommu_configure+0x118/0x190
->       of_dma_configure+0xcc/0x1f0
->       platform_dma_configure+0x18/0x28
->       really_probe+0x94/0x2a8
->       driver_probe_device+0x58/0x100
->       __device_attach_driver+0x90/0xd0
->       bus_for_each_drv+0x64/0xc8
->       __device_attach+0xd8/0x130
->       device_initial_probe+0x10/0x18
->       bus_probe_device+0x98/0xa0
->       deferred_probe_work_func+0x74/0xb0
->       process_one_work+0x294/0x6f0
->       worker_thread+0x238/0x460
->       kthread+0x120/0x128
->       ret_from_fork+0x10/0x1c
->      Code: aa0003f3 97ffeb1a d1002274 f85f8261 (f9401c20)
->      ---[ end trace 4c46c7fd7cd07245 ]---
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> ---
+>   drivers/s390/crypto/vfio_ap_ops.c | 16 +++++++++++++---
+>   1 file changed, 13 insertions(+), 3 deletions(-)
 > 
-> Reproducing on v4.20-rc1 requires CONFIG_IPMMU_VMSA=y, and whitelisting
-> SATA for IOMMU use (https://patchwork.kernel.org/patch/10544059/).
-> For older versions you also have to backport commit 3a0832d093693ede ("arm64:
-> dts: renesas: salvator-xs: enable SATA").
-> 
-> Actually there are two issues at hand:
-> 
-> 1) drivers/iommu/io-pgtable-arm.c:__arm_lpae_alloc_pages() allocates
->     memory (above 4 GiB) and maps it for DMA use, but it is rejected due
->     to:
-> 
->         dma_map_single(dev, pages, size, DMA_TO_DEVICE) != virt_to_phys(pages)
-> 
->> --- a/include/linux/dma-direct.h
->> +++ b/include/linux/dma-direct.h
->> @@ -27,7 +27,8 @@ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
->>          if (!dev->dma_mask)
->>                  return false;
->>
->> -       return addr + size - 1 <= *dev->dma_mask;
->> +       return addr + size - 1 <=
->> +               min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
-> 
->         *dev->dma_mask = 0xffffffffff (40-bit)
->         dev->bus_dma_mask = 0xffffffff (32-bit)
-> 
->     Hence before, we had (in __arm_lpae_alloc_pages()):
-> 
->         arm-lpae io-pgtable: pages = ffff8006f88f3000
->         arm-lpae io-pgtable: dma = 0x00000007388f3000
->         arm-lpae io-pgtable: virt_to_phys(pages) = 0x00000007388f3000
-> 
->     After this change, we have:
-> 
->         arm-lpae io-pgtable: pages = ffff8006f882b000
->         arm-lpae io-pgtable: dma = 0x0000000074009000
->         arm-lpae io-pgtable: virt_to_phys(pages) = 0x000000073882b000
-> 
->     And SATA runs without using the IOMMU.
-> 
-> 2) The Renesas IPMMU driver doesn't handle the above failure well,
->     leading to a NULL pointer dereference.
->     This can be fixed using the (gmail-whitespace-damaged) patch below:
-> 
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -635,7 +635,8 @@ static void ipmmu_domain_free(struct iommu_domain
-> *io_domain)
->           * been detached.
->           */
->          iommu_put_dma_cookie(io_domain);
-> -       ipmmu_domain_destroy_context(domain);
-> +       if (domain->mmu)
-> +               ipmmu_domain_destroy_context(domain);
->          free_io_pgtable_ops(domain->iop);
->          kfree(domain);
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index f68102163bf4..232168797fb8 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -903,16 +903,20 @@ static int ap_ioctl_setirq(struct ap_matrix_mdev *matrix_mdev,
+>   	struct ap_status ap_status = reg2status(0);
+>   	unsigned long p;
+>   	int ret = -1;
+> -	int apqn;
+> +	int apqn, gal_isc;
+>   	uint32_t gd;
+>   
+> +	gal_isc = kvm_s390_gisc_register(matrix_mdev->kvm, matrix_mdev->gisc);
+> +	if (gal_isc < 0)
+> +		return -EIO;
+> +
+>   	apqn = (int)(parm->cmd & 0xffff);
+>   
+>   	gd = matrix_mdev->kvm->vcpus[0]->arch.sie_block->gd;
+>   	if (gd & 0x01)
+>   		aqic_gisa.f = 1;
+>   	aqic_gisa.gisc = matrix_mdev->gisc;
+> -	aqic_gisa.isc = GAL_ISC;
+> +	aqic_gisa.isc = gal_isc;
+>   	aqic_gisa.ir = 1;
+>   	aqic_gisa.gisao = gisa->next_alert >> 4;
+>   
+> @@ -923,7 +927,11 @@ static int ap_ioctl_setirq(struct ap_matrix_mdev *matrix_mdev,
+>   	parm->status = ret;
+>   
+>   	ap_status = reg2status(ret);
+> -	return (ap_status.rc) ? -EIO : 0;
+> +	if (ap_status.rc) {
+> +		kvm_s390_gisc_unregister(matrix_mdev->kvm, matrix_mdev->gisc);
+> +		return -EIO;
+> +	}
+> +	return 0;
 >   }
+>   
+>   static int ap_ioctl_clrirq(struct ap_matrix_mdev *matrix_mdev,
+> @@ -946,6 +954,8 @@ static int ap_ioctl_clrirq(struct ap_matrix_mdev *matrix_mdev,
+>   	parm->status = retval;
+>   
+>   	ap_status = reg2status(retval);
+> +	/* unregister the IAM from the GIB anyway! */
+> +	kvm_s390_gisc_unregister(matrix_mdev->kvm, matrix_mdev->gisc);
+
+The case statement in patch 4 does not set mdev->gisc, so the
+presumption here is that VFIO_AP_SET_IRQ has been previously called and
+has set the value for matrix_mdev->gisc. Is it possible for
+VFIO_AP_CLEAR_IRQ to get invoked without a prior call to
+VFIO_AP_SET_IRQ? In any case, shouldn't the GISC value be taken from
+bits 61-63 of 'parm'?
+
+>   	return (ap_status.rc) ? -EIO : 0;
+>   }
+>   
 > 
->     I expect drivers/iommu/arm-smmu-v3.c and drivers/iommu/arm-smmu.c
->     need similar fixes.
->     I didn't check all drivers, but e.g. drivers/iommu/amd_iommu.c has
-> a similar check.
-> 
-> Does the IOMMU work on other arm64 platforms in v4.20-rc1?
-> 
-> Thanks for your comments!
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+
