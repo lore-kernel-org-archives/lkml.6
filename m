@@ -2,167 +2,191 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE41C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C226C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33DE52086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:25:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euAJIe9M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33DE52086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C2489206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 21:29:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2489206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbeKGGwp (ORCPT
+        id S1727300AbeKGG45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:52:45 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45949 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbeKGGwp (ORCPT
+        Wed, 7 Nov 2018 01:56:57 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43350 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbeKGG44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:52:45 -0500
-Received: by mail-ot1-f67.google.com with SMTP id g10so12851466otl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 13:25:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Fuve3pXzZ2+HQbAzrYsq43N10dVgg4dVpwsKvp6UQw=;
-        b=euAJIe9MTPuRD+2ksa5bVtfQuxADI2Z26U8PWtLUrLf2U/JHm5kW+XBbn1oCo7aw8I
-         ECiyQmNeY+xy3keAQlz0lzh1mAvZl92pshsQ1X5UJszj0uz+hphkpP1Tr63lGguW5cYP
-         VdmzIKFg4X58fQI+icUh1eYjnSwZ3K4zGbtkcIQz56NlffDyProJW1X7of0L8nCmn3oY
-         hPC0b2bYgHp8DnIHLdpfiTZecvT8Z/MWbCsmjFsG9c20ZxrCZSstlG2+6Jak4Xz1X/aH
-         NPwTKPuajXemwQ2Y14Z8ORi46Mxgpoe3/E2voYlbp+hR9XjSRxpiReZLLArc+dBYkjk2
-         a6HQ==
+        Wed, 7 Nov 2018 01:56:56 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k9so12861287otl.10;
+        Tue, 06 Nov 2018 13:29:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Fuve3pXzZ2+HQbAzrYsq43N10dVgg4dVpwsKvp6UQw=;
-        b=PGJgJ0/zktMaOdtVq1guoiEwshObqGGfoy1XEajG8RIucqMaeDcsgpiRkMDUN8k7GV
-         +XSPHpeT/TueVLiTyFDLH/W/7LMruCxeHZPejHM9QXhhBSyWzJseeIZrAf8KVIGzDjCv
-         gjNhEfPNLw/yvB54SDdXknVqt0W6qjARjj1wmsJI/u2r5svNF95bK6r9T3TKwz/bta2g
-         w5KCDH+/fgjAd3KF45a9AkFNhqnJwSwWqscjccXEM/x60ohxaXT3+qt4LMEIvzmivNbf
-         RHEiVjfrjUs3OIj7jioqQ3ZypNqwatn8373tIhU4W3sQWfyNqbgxNb5QgvsRCRe2D4KJ
-         RAQA==
-X-Gm-Message-State: AGRZ1gLRQ+U3K2pBg2ZB5cEPdEaRj9l7Nl7L5HC6G1WQCOA1oq6B7T2w
-        cyZutPbYSJ/B146c5GUCbTDdtd5+HaOT9VK3lo8=
-X-Google-Smtp-Source: AJdET5fO81U8WFWLm1XEpwNJ0RkiqNhf+rJDVjIfTFMv13mlhdRVywiILE82AydBZGGXYh3Cwj29So4+EZxDVRgxcZc=
-X-Received: by 2002:a9d:dc3:: with SMTP id 61mr8355261ots.345.1541539532360;
- Tue, 06 Nov 2018 13:25:32 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Shi2t19x1/l9pWw+PJ4j1szVE7v45jhITMf+OngfgF4=;
+        b=KMC93DtJ6rMmynA29ql/shAJgBiJ4yokzGy3vsxORk0BjCsJElMostnIys96/pDAEw
+         mE+XpVRMoPNSfjOEHaOoaFE5J6lQgdq/4w1QCI1C3Sw9Eph/OWd7uSMne8awQ25EEjC8
+         2Qg2Dd9XUfpdH0I0wgkOrR1hJcvURM/t++RMu7xisMbjAnMMzeM+jg7T87pIm+VMIPAA
+         e3M6cmjenKfJcWT48SFjDR1fDhsiRTx6xR1UUPLJ0NByUmw2HgkWPKJJ7cYTuDCdy/+f
+         PNMKoUXlMJMmcwMCiiG1JKZRX35T1q+E+4d/rSsSjb9DzIjMbbKvOR35e9eTVIXVpk2l
+         1cWw==
+X-Gm-Message-State: AGRZ1gIO9N3igTf2VWYwVrcYT5R9YJPwJWRHpHJY1eUf3Yiz0eJ6QRmY
+        rljcoSAfsCXVpVEPkJSwug==
+X-Google-Smtp-Source: AJdET5dH19pXZPXlNbsf+jGV1TWcsKTOpVyvbwL4PZRwDd6HE9d0nfDXQISqaxMMvlGkYyOx2GnOpg==
+X-Received: by 2002:a9d:7097:: with SMTP id l23mr12064352otj.49.1541539782951;
+        Tue, 06 Nov 2018 13:29:42 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e24sm3635608otd.63.2018.11.06.13.29.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 13:29:42 -0800 (PST)
+Date:   Tue, 6 Nov 2018 15:29:40 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Carlos Iglesias <carlos.iglesias@emutex.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Dan O'Donovan <dan.odonovan@emutex.com>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: pressure: Add support for
+ Honeywell HSC SPI sensors
+Message-ID: <20181106212940.GA13434@bogus>
+References: <20181026181406.14545-1-carlos.iglesias@emutex.com>
+ <20181026181406.14545-2-carlos.iglesias@emutex.com>
 MIME-Version: 1.0
-References: <20181029104854.17432-1-david.abdurachmanov@gmail.com> <CAHC9VhSaGo0BmX5AsTcnppiVz2Lz8BFkjRA0jg_uuPix3Ziiog@mail.gmail.com>
-In-Reply-To: <CAHC9VhSaGo0BmX5AsTcnppiVz2Lz8BFkjRA0jg_uuPix3Ziiog@mail.gmail.com>
-From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
-Date:   Tue, 6 Nov 2018 22:25:20 +0100
-Message-ID: <CAEn-LTqQgQkA1XyihEg0MpADLPQADf3Ej2noUp29UtbcEaf0RA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] riscv: add audit support
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181026181406.14545-2-carlos.iglesias@emutex.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 9:06 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Oct 29, 2018 at 6:49 AM David Abdurachmanov
-> <david.abdurachmanov@gmail.com> wrote:
-> > This patchset adds system call audit support on riscv (riscv32 &
-> > riscv64).
-> >
-> > The pachset was prepared on top of v4.19 tag.
-> >
-> > audit-userspace changes were submitted. See:
-> > https://github.com/linux-audit/audit-userspace/pull/73
-> >
-> > Tested the following manually:
-> > - auditctl (checked several different example rules from internet)
-> > - aulast
-> > - aulastlog
-> > - ausearch
-> > - ausyscall
-> > - aureport
-> > - autrace (compared some syscalls to strace: order and return
-> >   value/input arguments seem to be correct)
-> > - /proc/self/loginuid (required by DNF [package manager])
-> >
-> > I looked into audit-testsuite and with some adjustments results are:
-> >
-> > Failed 4/14 test programs. 19/88 subtests failed.
->
-> I realize that the test suite failures are likely not due to your
-> code, but rather shortcomings in the test suite itself, but I think it
-> is important to resolve these problems before we commit the kernel
-> changes.
->
-> You mention Fedora 29/RISCV below, is that the distro you are using
-> for testing?  Also, are you using a stock kernel config from the
-> distro or your own?
->
-> > The failing tests were due to missing CONFIG_IP_NF_MANGLE ...
->
-> Assuming a general purpose like Fedora, that seems like an odd
-> omission.  Any chance you can rebuild your kernel with the mangle
-> table?
+On Fri, Oct 26, 2018 at 06:14:36PM +0000, Carlos Iglesias wrote:
+> Add device tree bindings for the HSC pressure sensors.
+> 
+> Signed-off-by: Carlos Iglesias <carlos.iglesias@emutex.com>
+> ---
+>  .../bindings/iio/pressure/hsc_spi.txt         | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt b/Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt
+> new file mode 100644
+> index 000000000000..2302d6eef7c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt
+> @@ -0,0 +1,85 @@
+> +Honeywell HSC Series of Pressure Sensors
+> +
+> +Pressure sensors from Honeywell with analog, I2C and SPI interfaces
 
-When we build Fedora, the kernel is not built in a standard way. It's only
-build statically and contains minimal setup. We also don't do loadable
-kernel modules, because there wasn't support for it months ago. It's
-not tested yet by us.
+But you named the file with 'spi'. You expect 
+> +
+> +Required properties:
+> +- compatible: selects the sensor model; must be one of the following
+> +	"honeywell,hsc001baa"
+> +	"honeywell,hsc001bab"
+> +	"honeywell,hsc001bac"
+> +	"honeywell,hsc001baf"
 
-I did rebuild with CONFIG_IP_NF_MANGLE, but I think, there was more
-stuff missing. Have to look again.
+I normally tell people to imply things from compatible strings, but this 
+may be a good case where some properties make sense. The last letter 
+appears to be 'transfer function'. Maybe even the pressure range should 
+be a property. I think it depends if there's any other s/w visible 
+differences.
 
-I am experimenting on building kernel in normal Fedora way, but there
-are some issues right now. It also takes 12-24 hours for a single attempt.
+Plus this list doesn't even include the differential or gage parts and 
+those lists are longer.
 
->
-> > ... 'id -Z' not printing categories (don't know why) ...
->
-> Are you seeing the MLS/MCS sensitivity level, s0, or are you not
-> seeing any of the MLS/MCS fields?
+> +	"honeywell,hsc1_6baa"
+> +	"honeywell,hsc1_6bab"
+> +	"honeywell,hsc1_6bac"
+> +	"honeywell,hsc1_6baf"
+> +	"honeywell,hsc2_5baa"
+> +	"honeywell,hsc2_5bab"
+> +	"honeywell,hsc2_5bac"
+> +	"honeywell,hsc2_5baf"
+> +	"honeywell,hsc004baa"
+> +	"honeywell,hsc004bab"
+> +	"honeywell,hsc004bac"
+> +	"honeywell,hsc004baf"
+> +	"honeywell,hsc006baa"
+> +	"honeywell,hsc006bab"
+> +	"honeywell,hsc006bac"
+> +	"honeywell,hsc006baf"
+> +	"honeywell,hsc010baa"
+> +	"honeywell,hsc010bab"
+> +	"honeywell,hsc010bac"
+> +	"honeywell,hsc010baf"
+> +	"honeywell,hsc100kaa"
+> +	"honeywell,hsc100kab"
+> +	"honeywell,hsc100kac"
+> +	"honeywell,hsc100kaf"
+> +	"honeywell,hsc160kaa"
+> +	"honeywell,hsc160kab"
+> +	"honeywell,hsc160kac"
+> +	"honeywell,hsc160kaf"
+> +	"honeywell,hsc250kaa"
+> +	"honeywell,hsc250kab"
+> +	"honeywell,hsc250kac"
+> +	"honeywell,hsc250kaf"
+> +	"honeywell,hsc400kaa"
+> +	"honeywell,hsc400kab"
+> +	"honeywell,hsc400kac"
+> +	"honeywell,hsc400kaf"
+> +	"honeywell,hsc600kaa"
+> +	"honeywell,hsc600kab"
+> +	"honeywell,hsc600kac"
+> +	"honeywell,hsc600kaf"
+> +	"honeywell,hsc001gaa"
+> +	"honeywell,hsc001gab"
+> +	"honeywell,hsc001gac"
+> +	"honeywell,hsc001gaf"
+> +	"honeywell,hsc015paa"
+> +	"honeywell,hsc015pab"
+> +	"honeywell,hsc015pac"
+> +	"honeywell,hsc015paf"
+> +	"honeywell,hsc030paa"
+> +	"honeywell,hsc030pab"
+> +	"honeywell,hsc030pac"
+> +	"honeywell,hsc030paf"
+> +	"honeywell,hsc060paa"
+> +	"honeywell,hsc060pab"
+> +	"honeywell,hsc060pac"
+> +	"honeywell,hsc060paf"
+> +	"honeywell,hsc100paa"
+> +	"honeywell,hsc100pab"
+> +	"honeywell,hsc100pac"
+> +	"honeywell,hsc100paf"
+> +	"honeywell,hsc150paa"
+> +	"honeywell,hsc150pab"
+> +	"honeywell,hsc150pac"
+> +	"honeywell,hsc150paf"
+> +- reg: the SPI chip select number used by the sensor.
+> +- spi-max-frequency: maximum clock frequency (Hz) used for the SPI bus.
+> +  The maximum value supported by the sensors is 400000.
+> +
+> +Example:
+> +
+> +	hsc_spi0: hsc@0 {
 
-I boot my VM "selinux=1 enforcing=0".
+pressure-sensor@0
 
-[root@fedora-riscv ~]# semanage login -l
-
-Login Name           SELinux User         MLS/MCS Range        Service
-
-__default__          unconfined_u         s0-s0:c0.c1023       *
-root                 unconfined_u         s0-s0:c0.c1023       *
-[root@fedora-riscv ~]# id -Z
-unconfined_u:unconfined_r:unconfined_t:s0
-
->
-> > ... not having loadable kernel module support enablled ...
->
-> Much like the netfilter config, any chance you can enable this in your kernel?
-
-Experimenting, not sure if it works yet.
-
->
-> > ... and syscall_socketcall not being relevant for new arches.
->
-> We will probably need to make that ABI dependent in the test suite.
->
-> > audit-testsuite with adjustments:
-> > https://github.com/davidlt/audit-testsuite/tree/riscv64
-> >
-> > Depends on:
-> > [PATCH 1/2] Move EM_RISCV into elf-em.h
-> > http://lists.infradead.org/pipermail/linux-riscv/2018-October/001885.html
-> >
-> > This should solve DNF issues in Fedora 29/RISCV.
->
-> --
-> paul moore
-> www.paul-moore.com
+> +		compatible = "honeywell,hsc010baa";
+> +		reg = <0>;
+> +		spi-max-frequency = <400000>;
+> +	};
+> -- 
+> 2.19.1
+> 
