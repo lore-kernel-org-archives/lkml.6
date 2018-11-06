@@ -6,217 +6,129 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C45C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20A9C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBBAE2081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:02:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBAE2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id C2BE52081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 14:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2BE52081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbeKFX1v (ORCPT
+        id S2388622AbeKFX2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:27:51 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52424 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730634AbeKFX1v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:27:51 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA6E1t0m048115;
-        Tue, 6 Nov 2018 08:01:55 -0600
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA6E1tdr042697
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Nov 2018 08:01:55 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 6 Nov
- 2018 08:01:54 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 6 Nov 2018 08:01:54 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA6E1oT1021945;
-        Tue, 6 Nov 2018 08:01:51 -0600
-Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
-To:     Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        <linux-mmc@vger.kernel.org>
-CC:     <kernel@collabora.com>, <linux-kernel@vger.kernel.org>,
-        Hongjie Fang <hongjiefang@asrmicro.com>,
-        Bastian Stender <bst@pengutronix.de>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
-Date:   Tue, 6 Nov 2018 19:34:28 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 6 Nov 2018 18:28:24 -0500
+Received: from relay.sw.ru ([185.231.240.75]:41724 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388509AbeKFX2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 18:28:23 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.90_1)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gK1wY-00053v-3B; Tue, 06 Nov 2018 17:02:58 +0300
+Subject: [PATCH RFC] fuse: Prevent background write requests increase inode
+ size
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     miklos@szeredi.hu, ktkhai@virtuozzo.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 06 Nov 2018 17:02:57 +0300
+Message-ID: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sjoerd,
+Hi, Miklos,
 
-On Tuesday 06 November 2018 07:00 PM, Sjoerd Simons wrote:
-> On some of our boards containing Micron eMMC chips compatible with
-> the eMMC 5.0 specification we starting seeing boot failures due to
-> timeouts:
->   mmc1: error -110 whilst initialising MMC card
-> 
-> It turns out that switching the cache on after a power loss event can
-> take quite long. In some simple testing thusfar we've seen values up to
-> 700ms, which is far longer then the GENERIC_CMD6_TIME of the chip
-> (250ms).
-> 
-> Looking at both the eMMC 4.51 and 5.0 specification there doesn't seem
-> to be a defined upper bound for the CACHE_CTRL ON command. For both
-> CACHE_CTRL OFF and FLUSH_CACHE it is documented that they can take
-> essentially unbounded time, but CACHE_CTRL ON i get the impression that
-> it's assumed to be "fast". Unfortunately this is not true in reality.
-> 
-> To resolve this, simply drop the timeout from CACHE_CTRL ON and assume
-> it might take an unbounded time similar to the FLUSH_CACHE command.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> 
+this is not a well-tested patch, this is a concept,
+showing the places, where it looks we have a problem.
 
-I have the exact same problem with micron cards. Specifically with CID: 
-R1J56L
+Commit 7879c4e58b7c made io->async careless about inode size,
+and this is wrong. Asyncronuos background requests may be sent
+to userspace after inode becomes unlocked, when background
+queue is throttled. In this case we execute a write request
+extending inode size without any protection, and this ruines
+everything. Fix that.
 
-The correct way to solve this would be to add a quirk for the specific 
-card. Does this patch solve your issue?
+Also, some write background requests do not increment fi->writectr,
+e.g.:
+	fuse_direct_IO()
+	  fuse_direct_io()
+	    fuse_send_write()
+	      fuse_async_req_send()
+	        fuse_request_send_background()
 
----8<---
-From 9d470be59acd82859beb4c965a620c9a32858bb4 Mon Sep 17 00:00:00 2001
-From: Faiz Abbas <faiz_abbas@ti.com>
-Date: Wed, 20 Jun 2018 20:36:38 +0530
-Subject: [PATCH] mmc: core: Add QUIRK for eMMC CMD6 timeout for some Micron
- cards
+This is a reason fuse_sync_writes() does not work as expected.
+Fix that too.
 
-It seems that on some Micron eMMC cards present on TI's AM654 EVM
-the CACHE_CTRL_ENABLE function in CMD6 takes longer (~750 ms) than
-the specified timeout in the GENERIC_CMD6_TIMEOUT byte of the
-Extended CSD (~250 ms).
-
-Therefore, add a quirk to detect this card and use a value of 1 sec for
-timeout.
-
-Reported-by: Andreas Dannenberg <dannenberg@ti.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- drivers/mmc/core/card.h   |  7 +++++++
- drivers/mmc/core/mmc.c    | 14 +++++++++++++-
- drivers/mmc/core/quirks.h |  8 ++++++++
- include/linux/mmc/card.h  |  1 +
- 4 files changed, 29 insertions(+), 1 deletion(-)
+ fs/fuse/file.c |   20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
-index 9c821eedd156..6b5e3c6253f5 100644
---- a/drivers/mmc/core/card.h
-+++ b/drivers/mmc/core/card.h
-@@ -84,6 +84,8 @@ struct mmc_fixup {
- #define CID_MANFID_HYNIX	0x90
- #define CID_MANFID_NUMONYX	0xFE
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index cc2121b37bf5..0b71a3c96168 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -610,6 +610,9 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
+ static void fuse_aio_complete_req(struct fuse_conn *fc, struct fuse_req *req)
+ {
+ 	struct fuse_io_priv *io = req->io;
++	struct kiocb *iocb = io->iocb;
++	struct file *file = iocb->ki_filp;
++	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
+ 	ssize_t pos = -1;
  
-+#define CID_NAME_R1J56L	"R1J56L"
+ 	fuse_release_user_pages(req, io->should_dirty);
+@@ -625,6 +628,12 @@ static void fuse_aio_complete_req(struct fuse_conn *fc, struct fuse_req *req)
+ 	}
+ 
+ 	fuse_aio_complete(io, req->out.h.error, pos);
 +
- #define END_FIXUP { NULL }
- 
- #define _FIXUP_EXT(_name, _manfid, _oemid, _rev_start, _rev_end,	\
-@@ -221,4 +223,9 @@ static inline int mmc_card_broken_hpi(const struct mmc_card *c)
- 	return c->quirks & MMC_QUIRK_BROKEN_HPI;
++	if (io->write) {
++		spin_lock(&fc->lock);
++		fi->writectr--;
++		spin_unlock(&fc->lock);
++	}
  }
  
-+static inline int mmc_card_long_cache_ctrl(const struct mmc_card *c)
-+{
-+	return c->quirks & MMC_QUIRK_LONG_CACHE_ENABLE_TIME;
-+}
-+
- #endif
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index bad5c1bf4ed9..667caeb640a3 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1522,6 +1522,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 	struct mmc_card *oldcard)
+ static size_t fuse_async_req_send(struct fuse_conn *fc, struct fuse_req *req,
+@@ -966,6 +975,7 @@ static size_t fuse_send_write(struct fuse_req *req, struct fuse_io_priv *io,
  {
- 	struct mmc_card *card;
-+	unsigned int cache_ctrl_timeout;
- 	int err;
- 	u32 cid[4];
- 	u32 rocr;
-@@ -1766,9 +1767,20 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	struct kiocb *iocb = io->iocb;
+ 	struct file *file = iocb->ki_filp;
++	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
+ 	struct fuse_file *ff = file->private_data;
+ 	struct fuse_conn *fc = ff->fc;
+ 	struct fuse_write_in *inarg = &req->misc.write.in;
+@@ -981,8 +991,12 @@ static size_t fuse_send_write(struct fuse_req *req, struct fuse_io_priv *io,
+ 		inarg->lock_owner = fuse_lock_owner_id(fc, owner);
+ 	}
+ 
+-	if (io->async)
++	if (io->async) {
++		spin_lock(&fc->lock);
++		fi->writectr++;
++		spin_unlock(&fc->lock);
+ 		return fuse_async_req_send(fc, req, count, io);
++	}
+ 
+ 	fuse_request_send(fc, req);
+ 	return req->misc.write.out.size;
+@@ -2904,8 +2918,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	 * We cannot asynchronously extend the size of a file.
+ 	 * In such case the aio will behave exactly like sync io.
  	 */
- 	if (!mmc_card_broken_hpi(card) &&
- 	    card->ext_csd.cache_size > 0) {
-+
-+		/*
-+		 * Some cards require a longer timeout than given in CSD.
-+		 * Use a one second timeout here which can be increased
-+		 * further if more cards needing larger timeouts are found
-+		 */
-+		if (mmc_card_long_cache_ctrl(card))
-+			cache_ctrl_timeout = 1000;
-+		else
-+			cache_ctrl_timeout = card->ext_csd.generic_cmd6_time;
-+
- 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
- 				EXT_CSD_CACHE_CTRL, 1,
--				card->ext_csd.generic_cmd6_time);
-+				cache_ctrl_timeout);
- 		if (err && err != -EBADMSG)
- 			goto free_card;
+-	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
++	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE) {
+ 		io->blocking = true;
++		io->async = false;
++	}
  
-diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
-index 5153577754f0..934ca72ef2b1 100644
---- a/drivers/mmc/core/quirks.h
-+++ b/drivers/mmc/core/quirks.h
-@@ -116,6 +116,14 @@ static const struct mmc_fixup mmc_ext_csd_fixups[] = {
- 	MMC_FIXUP_EXT_CSD_REV(CID_NAME_ANY, CID_MANFID_NUMONYX,
- 			      0x014e, add_quirk, MMC_QUIRK_BROKEN_HPI, 6),
- 
-+	/*
-+	 * Certain Micron eMMC cards need a longer CMD6:CACHE_CTRL timeout
-+	 * than indicated in CSD
-+	 */
-+	MMC_FIXUP_EXT_CSD_REV(CID_NAME_R1J56L, CID_MANFID_MICRON,
-+			      0x14e, add_quirk,
-+			      MMC_QUIRK_LONG_CACHE_ENABLE_TIME, 7),
-+
- 	END_FIXUP
- };
- 
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 279b39008a33..5a8ce0bb222e 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -268,6 +268,7 @@ struct mmc_card {
- #define MMC_QUIRK_BROKEN_IRQ_POLLING	(1<<11)	/* Polling SDIO_CCCR_INTx could create a fake interrupt */
- #define MMC_QUIRK_TRIM_BROKEN	(1<<12)		/* Skip trim */
- #define MMC_QUIRK_BROKEN_HPI	(1<<13)		/* Disable broken HPI support */
-+#define MMC_QUIRK_LONG_CACHE_ENABLE_TIME	(1 << 14) /* CACHE_CTRL enable time > CSD says */
- 
- 	bool			reenable_cmdq;	/* Re-enable Command Queue */
- 
--- 
-2.18.0
+ 	if (io->async && io->blocking) {
+ 		/*
 
-
-Thanks,
-Faiz
