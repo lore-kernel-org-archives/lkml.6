@@ -2,83 +2,78 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFCCC46465
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53802C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CE120882
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdW8oIYp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CE120882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 25510206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25510206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbeKGGMJ (ORCPT
+        id S2388373AbeKGGMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 01:12:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        Wed, 7 Nov 2018 01:12:23 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35570 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbeKGGMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 01:12:09 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726157AbeKGGMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:12:23 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2YNsNLw7x0yk; Tue,  6 Nov 2018 21:45:19 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC25C20892;
-        Tue,  6 Nov 2018 20:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541537106;
-        bh=Xoirapa1MKGkHouc2tMrbGHwQCok2cUCTd4hAEb4Npk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DdW8oIYpYR5olMDAZGaOjIGLnbEQ+LBo5jKN6SwO2PmJO9pJiuhroHNAcyeKTIWHP
-         TuFBqu82INd48eSBzsnJGwIja1u7adAa8te/ayg2nMXsvb4HLsAUBFh+bjk8cv2XmO
-         Mfoe+VURa9ma3X6ejM8IxSHVmJ7k/qjIo1PskR2c=
-Received: by mail-qt1-f170.google.com with SMTP id k12so4266984qtf.7;
-        Tue, 06 Nov 2018 12:45:05 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLnN7ghowXsxSslnsjbJYuUUmk1xqBkfzd/NrVbiH43qDH9kAHW
-        wxxLL+Azq1A/sV6ztIsTc1QdGx9xd2I4QhBvNA==
-X-Google-Smtp-Source: AJdET5dw+CfR2bqwM6ZIRZ32h9oGRpbl1UHEcgcMlzAgl6nFIML32gV06cFqKltejf+4kh6fx3srM17Ln6OAeRMIGOg=
-X-Received: by 2002:ac8:2d35:: with SMTP id n50mr26151215qta.38.1541537104981;
- Tue, 06 Nov 2018 12:45:04 -0800 (PST)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 224C81EC0291;
+        Tue,  6 Nov 2018 21:45:19 +0100 (CET)
+Date:   Tue, 6 Nov 2018 21:45:11 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181106204511.GO13712@zn.tnic>
+References: <20181015005035.z3xym6nx43hogdge@gabell>
+ <20181016151353.punyk7exekut2543@gabell>
+ <20181016191113.GI5212@zn.tnic>
+ <20181016195429.tovdgqq77gz3eek2@gabell>
+ <20181016195902.GK5212@zn.tnic>
+ <20181022154204.kagmdb55jtoez4ca@gabell>
+ <20181025103345.GF14020@nazgul.tnic>
+ <20181025134050.ggiir77ehntikbwg@gabell>
+ <20181106184519.GA16391@zn.tnic>
+ <20181106193636.svyjwuwrlgnpuyyf@gabell>
 MIME-Version: 1.0
-References: <20181106183609.207702-1-sboyd@kernel.org> <20181106183609.207702-2-sboyd@kernel.org>
-In-Reply-To: <20181106183609.207702-2-sboyd@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 6 Nov 2018 14:44:52 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
-Message-ID: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181106193636.svyjwuwrlgnpuyyf@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> We have a handful of clk drivers that have a collection of slightly
-> variant device support keyed off of the compatible string. In each of
-> these drivers, we demux the variant and then call the "real" probe
-> function based on whatever is stored in the match data for that
-> compatible string. Let's generalize this function so that it can be
-> re-used as the platform_driver probe function directly.
+On Tue, Nov 06, 2018 at 02:36:38PM -0500, Masayoshi Mizuma wrote:
+> Yes, I think I can see what you are saying. However, I'm not sure how
+> I use the setup_data in legacy BIOS environment.
 
-This looks really hacky to me. It sounds kind of general, but really
-only works if we have match data that's a single function and we lose
-any type checking on the function. What about things other than
-platform devices?
+What is "legacy BIOS environment" and what does that have to do with
+setup_data?
 
-Rob
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
