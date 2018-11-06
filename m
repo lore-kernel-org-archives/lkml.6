@@ -2,160 +2,148 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56532C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37120C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A6E20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:45:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c4PwY4ZY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h3REE8j6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A6E20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B7AA2085B
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 16:45:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7AA2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389383AbeKGCLT (ORCPT
+        id S2389399AbeKGCLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:11:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59284 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389363AbeKGCLT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:11:19 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2213961317; Tue,  6 Nov 2018 16:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541522716;
-        bh=L+pKLhnyXLFCka8h6ZexQVomZaN6hc22NQdmXQ8cGbI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=c4PwY4ZYT0zeUUXQfCap/5pS0nXVhYXL8MmttkHAIOIVb81sD0zQ4VtHfYfPFt0Ci
-         imbaiaxo+w7PMV6FXzBa37S/QNv30bbdJS2+6kDcKXJn1Rg7H6KS2a+ZieSWF9yF+/
-         MwCqBJvGEVaTRbj6z/mdxzL76QVswTEaDA9ZAvzw=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 542D261341;
-        Tue,  6 Nov 2018 16:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541522713;
-        bh=L+pKLhnyXLFCka8h6ZexQVomZaN6hc22NQdmXQ8cGbI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=h3REE8j6GjEk3093ngCeGbih4OZBu8/wkWzj5i6wUHqXeSsgCIQVNqFi+lVLVwHgH
-         vp/cZff+XaAiXk7zQ+rQW6IjrAK416S5b5HnXdcIx52K+xB5IInGo1tJi5ddaSrVkQ
-         hCAt59JKlxelxWE1PFn2swOEUJYaBnenLjpIAOM8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 542D261341
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 6 Nov 2018 21:11:41 -0500
+Received: from mga02.intel.com ([134.134.136.20]:39133 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389239AbeKGCLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 21:11:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 08:45:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
+   d="scan'208";a="106363336"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 08:45:37 -0800
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+Date:   Tue, 6 Nov 2018 08:45:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [RFC][PATCH] wlcore: Fixup "Add support for optional wakeirq"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
-References: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        linux-wireless@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181106164516.2213961317@smtp.codeaurora.org>
-Date:   Tue,  6 Nov 2018 16:45:14 +0000 (UTC)
+In-Reply-To: <20181106054911.GA15575@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John Stultz <john.stultz@linaro.org> wrote:
-
-> After commit 3c83dd577c7f ("wlcore: Add support for optional
-> wakeirq") landed upstream, I started seeing the following oops
-> on my HiKey board:
+On 11/5/18 9:49 PM, Jarkko Sakkinen wrote:
+> On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
+>> The ABI seems entirely undocumented and rather lightly designed, which
+>> seems like something we should fix before this is merged.
 > 
-> [    1.870279] Unable to handle kernel read from unreadable memory at virtual address 0000000000000010
-> [    1.870283] Mem abort info:
-> [    1.870287]   ESR = 0x96000005
-> [    1.870292]   Exception class = DABT (current EL), IL = 32 bits
-> [    1.870296]   SET = 0, FnV = 0
-> [    1.870299]   EA = 0, S1PTW = 0
-> [    1.870302] Data abort info:
-> [    1.870306]   ISV = 0, ISS = 0x00000005
-> [    1.870309]   CM = 0, WnR = 0
-> [    1.870312] [0000000000000010] user address but active_mm is swapper
-> [    1.870318] Internal error: Oops: 96000005 [#1] PREEMPT SMP
-> [    1.870327] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-05129-gb3d1e8e #48
-> [    1.870331] Hardware name: HiKey Development Board (DT)
-> [    1.870350] Workqueue: events_freezable mmc_rescan
-> [    1.870358] pstate: 60400005 (nZCv daif +PAN -UAO)
-> [    1.870366] pc : wl1271_probe+0x210/0x350
-> [    1.870371] lr : wl1271_probe+0x210/0x350
-> [    1.870374] sp : ffffff80080739b0
-> [    1.870377] x29: ffffff80080739b0 x28: 0000000000000000
-> [    1.870384] x27: 0000000000000000 x26: 0000000000000000
-> [    1.870391] x25: 0000000000000036 x24: ffffffc074ecb598
-> [    1.870398] x23: ffffffc07ffdce78 x22: ffffffc0744ed808
-> [    1.870404] x21: ffffffc074ecbb98 x20: ffffff8008ff9000
-> [    1.870411] x19: ffffffc0744ed800 x18: ffffff8008ff9a48
-> [    1.870418] x17: 0000000000000000 x16: 0000000000000000
-> [    1.870425] x15: ffffffc074ecb503 x14: ffffffffffffffff
-> [    1.870431] x13: ffffffc074ecb502 x12: 0000000000000030
-> [    1.870438] x11: 0101010101010101 x10: 0000000000000040
-> [    1.870444] x9 : ffffffc075400248 x8 : ffffffc075400270
-> [    1.870451] x7 : 0000000000000000 x6 : 0000000000000000
-> [    1.870457] x5 : 0000000000000000 x4 : 0000000000000000
-> [    1.870463] x3 : 0000000000000000 x2 : 0000000000000000
-> [    1.870469] x1 : 0000000000000028 x0 : 0000000000000000
-> [    1.870477] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
-> [    1.870480] Call trace:
-> [    1.870485]  wl1271_probe+0x210/0x350
-> [    1.870491]  sdio_bus_probe+0x100/0x128
-> [    1.870500]  really_probe+0x1a8/0x2b8
-> [    1.870506]  driver_probe_device+0x58/0x100
-> [    1.870511]  __device_attach_driver+0x94/0xd8
-> [    1.870517]  bus_for_each_drv+0x70/0xc8
-> [    1.870522]  __device_attach+0xe0/0x140
-> [    1.870527]  device_initial_probe+0x10/0x18
-> [    1.870532]  bus_probe_device+0x94/0xa0
-> [    1.870537]  device_add+0x374/0x5b8
-> [    1.870542]  sdio_add_func+0x60/0x88
-> [    1.870546]  mmc_attach_sdio+0x1b0/0x358
-> [    1.870551]  mmc_rescan+0x2cc/0x390
-> [    1.870558]  process_one_work+0x12c/0x320
-> [    1.870563]  worker_thread+0x48/0x458
-> [    1.870569]  kthread+0xf8/0x128
-> [    1.870575]  ret_from_fork+0x10/0x18
-> [    1.870583] Code: 92400c21 b2760021 a90687a2 97e95bf9 (f9400803)
-> [    1.870587] ---[ end trace 1e15f81d3c139ca9 ]---
+> ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
+> documentation is included to intel_sgx.rst. I'm not saying that there is
+> no space refine it but it is neither undocumented.
+
+I specifically mean the instruction flow around asynchronous exits or
+explicit enclave exit calls via EEXIT.  Signals are part of the ABI but
+go unmentioned in the documentation.
+
+It's also worth noting that EENTER *can* act (from the kernel's
+perspective) like an instruction that both jumps and sets a bunch of
+registers (including %rsp).  It's certainly abnormal in that regard.
+
+In fact, in the docs:
+
+> +Enclave can only execute code inside the ELRANGE. Instructions that may cause
+> +VMEXIT, IO instructions and instructions that require a privilege change are
+> +prohibited inside the enclave. Interrupts and exceptions always cause enclave
+> +to exit and jump to an address outside the enclave given when the enclave is
+> +entered by using the leaf instruction ENCLS(EENTER).
+
+it's probably a really good idea to explain that the address outside of
+the enclave is enclave-provided, and is not, for instance, just the next
+instruction after EENTER.
+
+>> Also, for a feature as massive and complicated as this one, it seems
+>> irresponsible to not have a selftest.  Is that not feasible for some reason?
 > 
-> It seems since we don't have a wakeirq value in the dts, the wakeirq
-> value in wl1271_probe() is zero, which then causes trouble in
-> irqd_get_trigger_type(irq_get_irq_data(wakeirq)).
+> I do have the in-kernel launch enclave stuff backed up here:
 > 
-> This patch tries to address this by checking if wakeirq is zero,
-> and not trying to add it to the resources if that is the case.
+> https://github.com/jsakkine-intel/sgx-le-host
+> https://github.com/jsakkine-intel/sgx-le
 > 
-> Fixes: 3c83dd577c7f ("wlcore: Add support for optional wakeirq")
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Eyal Reizer <eyalr@ti.com>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: linux-wireless@vger.kernel.org
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> Tested-by: Anders Roxell <anders.roxell@linaro.org>
+> This is about as simple as it gets without any type of run-time.
 
-Patch applied to wireless-drivers.git, thanks.
-
-b630806d7ce2 wlcore: Fixup "Add support for optional wakeirq"
-
--- 
-https://patchwork.kernel.org/patch/10656319/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Does this code run when I type "make kselftest"?  If not, I think we
+should rectify that.
