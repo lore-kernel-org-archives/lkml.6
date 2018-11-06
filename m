@@ -2,145 +2,191 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15ED3C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DC0C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D36192083D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38CF12086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 20:18:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8ZFnvbx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D36192083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="dKEgim7c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CF12086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388319AbeKGFln (ORCPT
+        id S1730532AbeKGFoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 00:41:43 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37456 "EHLO
+        Wed, 7 Nov 2018 00:44:55 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45074 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeKGFlm (ORCPT
+        with ESMTP id S1726516AbeKGFoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 00:41:42 -0500
-Received: by mail-pg1-f195.google.com with SMTP id c10-v6so6303772pgq.4;
-        Tue, 06 Nov 2018 12:14:46 -0800 (PST)
+        Wed, 7 Nov 2018 00:44:55 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so5861036pgc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 12:17:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=tcslFpk0W53zOF+y25Wq/2pkDzrUWGzGbw1NypFVdy4=;
-        b=B8ZFnvbx9NL09YqAqjFS9wFKCdDBQcAW9Wn284fBveFiQ/ae0s4sQm+fmS51Hjiffl
-         lGXy27tkMmLodBJMaC8+W3FwK/+b6b6f7atm7PrKp+qPLx1wtxN+V2Q3xCETn3lKT4JZ
-         c1s1bpCymFeyIrG6hDbH9kgDbA13ThGkGOoHDDxU3CSai38xfdNodMnt5ev372NroPcX
-         J/wF5m9XNAU96YZoZIeA+6npSqjBKlMayfr056nGyouBXe9Gl0URQf8t6fjo9uQ4R0Ae
-         XfLUZlaUDCMqytLbgthaLHE7WEvA7lQqy2yxo+5/e2K8wbZb2B4tNQH9chJ7m5LI2Tc9
-         FZmg==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xay21Culhf9gw/VcFbDi2scwuLDFA32F3Y+oMl5aZ4M=;
+        b=dKEgim7c8gKqxD0iST+daiFK7DRerOoPm6scfY3rqG1S37LAWiFjXK145kEBpEw4+3
+         nf2bc4hadF+F2SKTa4zyrYx6vTLrgLNlUR3ymi3McfiC1GtjIl52GzYJwzLwTwTP1Wed
+         TMdPmyNlxuRrcBySRnlPS/M/U9CJGSZ5xxlXs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tcslFpk0W53zOF+y25Wq/2pkDzrUWGzGbw1NypFVdy4=;
-        b=QubVibwfdoXkpKMb3gg8PKQIlhlbmlvZIHSy2b3e/FaWgBSFeoDEf5zSFyjf+KLIJr
-         0c4B7uUyP64EE0YaUCug+lO0hw2DaYIlThpRujAAJn69MARF4XHEhxTgFPN/4zOCn7Jc
-         jl1uZLxcOxl1BA9b9qc4dKl2xkIBWOfnIUmmH3U71NuxjS9GZH+ecXpJvtZM5UjmVzLs
-         +OdFVw7FWQW0o9QJN5wT27n1ZJ+8YLjXw6psJGr+efik7EriAcgaZbgl5+BX1qkmweh0
-         pGYOVRRep1AY28tDK2FUoPQkYoIwWpNWcfVmocynR0uxVYa/mPKrrvR6zJ+cGiD5AUZc
-         IaTQ==
-X-Gm-Message-State: AGRZ1gKuwY7W4YF+5ItF0aenECDQWvTBBl4CseHTAzxYs0QYizcup9YD
-        hMrpDdtAFy0Rv/RwKdJ6683nhdvVf4dF08sQK5URwUPA
-X-Google-Smtp-Source: AJdET5dzMzogfrPH0pkMv+E6Of0Eq1Q6WFu8e5nSgyIs8DrL8IFsgAy70tv5cky7/Wo+0wEYIBAZA1Ansd2wiqcizRM=
-X-Received: by 2002:a62:682:: with SMTP id 124-v6mr14301379pfg.161.1541535285879;
- Tue, 06 Nov 2018 12:14:45 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xay21Culhf9gw/VcFbDi2scwuLDFA32F3Y+oMl5aZ4M=;
+        b=JyHvA8pjYkApasSceIQxlBF4TchBweEV73xyhi7Cu+v56u4Q2L9YjqIDSnMzGK3HOW
+         OllswFbXIFF9Rv9nJ2g4EvI41D+jM7U7XrvR/ezxEbdaJd8CVmbS2U+qdmuXlnwcF9p3
+         TU3YtggEt/ccT3UYrPmTIZC4NFvbiNZeNCJSWIjudyKwTvQ/yRFOhN1wSFVP7OKYAqet
+         ad/nYFK5V2HvHZv/t7JFKoAF7sfx9qKprVyL4VoUxEUk+hivIwTKNhsXuAqsuhU+hL/z
+         I7CyYn12g1embvzp2v3TA3j+nwzYAJ9ySFSl+/AoGewrvdgvlbXwPsnr16q0qV6kDf1o
+         GNsQ==
+X-Gm-Message-State: AGRZ1gL08x4nA3OLBHVKrF/fDWKH5T/ufsuOPSYAODhKWx04GKm56oqM
+        n5rpX3Qhd1wqBawciku86Nqfrw==
+X-Google-Smtp-Source: AJdET5c7je2v3ICZntwbAGM9cQ8KmGGwcxi46S9jJfEsEZY0rdbC/m48wNEV3l3HgXUYRlyGQMEEzw==
+X-Received: by 2002:a63:8549:: with SMTP id u70mr25012757pgd.401.1541535477288;
+        Tue, 06 Nov 2018 12:17:57 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id z63-v6sm54099913pfz.31.2018.11.06.12.17.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 12:17:56 -0800 (PST)
+Date:   Tue, 6 Nov 2018 12:17:55 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Jerry Lin <wahahab11@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>, ghartman@google.com,
+        astrachan@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] driver-staging: vsoc.c: Add sysfs support for
+ examining the permissions of regions.
+Message-ID: <20181106201755.GA204219@google.com>
+References: <20181106052116.GA25953@ubuntu>
 MIME-Version: 1.0
-References: <20181103065732.12134-1-jprvita@endlessm.com> <566af8d6-638e-8c7b-71b4-a7a8d6e71cdb@redhat.com>
-In-Reply-To: <566af8d6-638e-8c7b-71b4-a7a8d6e71cdb@redhat.com>
-From:   =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
-Date:   Tue, 6 Nov 2018 12:14:08 -0800
-Message-ID: <CA+A7VXUBCp3i18bz+LQ+gVpf_UdZALU=UpHXcCQ8V-eTSwOkJQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI / battery: Fix reporting "Not charging" when
- capacity is 100%
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        Daniel Drake <drake@endlessm.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>, linux@endlessm.com,
-        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106052116.GA25953@ubuntu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Hans, thanks for your quick response,
+On Tue, Nov 06, 2018 at 01:21:16PM +0800, Jerry Lin wrote:
+> Add a attribute called permissions under vsoc device node for examining
+> current granted permissions in vsoc_device.
+> 
+> This file will display permissions in following format:
+>   begin_offset  end_offset  owner_offset  owned_value
+>             %x          %x            %x           %x
+> 
+> Signed-off-by: Jerry Lin <wahahab11@gmail.com>
 
-On Sat, Nov 3, 2018 at 4:28 AM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 03-11-18 07:57, Jo=C3=A3o Paulo Rechi Vita wrote:
-> > Commit 19fffc8450d4378580a8f019b195c4617083176f fixed reporting
-> > "Discharging" on some machines when AC was connected but the battery wa=
-s
-> > not charging. But now on these machines the battery status is reported
-> > as "Not charging" even when the battery is fully charged.
-> >
-> > This commit takes the battery capacity into consideration when checking
-> > if "Not charging" should be returned and "Full" is returned when the
-> > capacity is 100%.
-> >
-> > Signed-off-by: Jo=C3=A3o Paulo Rechi Vita <jprvita@endlessm.com>
->
-> acpi_battery_handle_discharging() only gets called if the ACPI_BATTERY_ST=
-ATE_DISCHARGING
-> bit is set by the firmware in that case if we are not actually dischargin=
-g
-> returning POWER_SUPPLY_STATUS_NOT_CHARGING is the only correct thing to d=
-o,
-> we should never return POWER_SUPPLY_STATUS_FULL when the
-> ACPI_BATTERY_STATE_DISCHARGING bit is set.
->
+Please always post patches to the list with reviewers on CC. Also CC the
+following addresses in addition:
+astrachan@google.com
+ghartman@google.com (infact you deleted a TODO he added so)
 
-I understand the reason behind your original patch, but can you
-elaborate on why would it be wrong to return POWER_SUPPLY_STATUS_FULL
-if the battery is full and we know it is not actually discharging?
-IIUC that is the state returned on hw / firmware that behaves
-correctly when there is AC power and the battery has 100% of charge.
+And just one more minor nit below, otherwise LGTM.
 
-> I was about to point you to the upower bug for upower not
-> handling POWER_SUPPLY_STATUS_NOT_CHARGING as well as it
-> could atm, but I see you've already found that and are working
-> on fixing that. That is great, thank you.
->
+thanks,
 
-Yes, I'm trying to fix this problem, but it touches different points
-across the stack and there are different possible approaches for how
-to present the "Not charging" state to the user. This patch is not
-necessarily part of, although closely related to, the bigger problem
-of better handling "Not charging". It actually addresses the problem
-that the kernel returns "Not charging" when AC is present and the
-battery is fully charged, which seems wrong to me, despite of "Not
-charging" not being strictly defined anywhere (at least that I know
-of).
+- Joel
 
-> As for this kernel-side fix I do not believe that fixing thus in
-> the kernel is the right thing to do. We try to stay away from
-> heuristics using full_charge_capacity in the kernel since that
-> is not really reliable / deterministic.
->
+> ---
+>  drivers/staging/android/vsoc.c | 49 +++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 46 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/android/vsoc.c b/drivers/staging/android/vsoc.c
+> index 22571ab..481554a 100644
+> --- a/drivers/staging/android/vsoc.c
+> +++ b/drivers/staging/android/vsoc.c
+> @@ -128,9 +128,10 @@ struct vsoc_device {
+>  
+>  static struct vsoc_device vsoc_dev;
+>  
+> -/*
+> - * TODO(ghartman): Add a /sys filesystem entry that summarizes the permissions.
+> - */
+> +static ssize_t permissions_show(struct device *dev,
+> +				struct device_attribute *attr,
+> +				char *buf);
+> +static DEVICE_ATTR_RO(permissions);
+>  
+>  struct fd_scoped_permission_node {
+>  	struct fd_scoped_permission permission;
+> @@ -718,6 +719,38 @@ static ssize_t vsoc_write(struct file *filp, const char __user *buffer,
+>  	return len;
+>  }
+>  
+> +static ssize_t permissions_show(struct device *dev,
+> +				struct device_attribute *attr,
+> +				char *buffer)
+> +{
+> +	struct fd_scoped_permission_node *node;
+> +	char *row;
+> +	int ret;
+> +	ssize_t written = 0;
+> +
+> +	row = kzalloc(sizeof(char) * 128, GFP_KERNEL);
+> +	if (!row)
+> +		return 0;
+> +	mutex_lock(&vsoc_dev.mtx);
+> +	list_for_each_entry(node, &vsoc_dev.permissions, list) {
+> +		ret = snprintf(row, 128, "%x\t%x\t%x\t%x\n",
+> +			       node->permission.begin_offset,
+> +			       node->permission.end_offset,
+> +			       node->permission.owner_offset,
+> +			       node->permission.owned_value);
+> +		if (ret < 0)
+> +			goto done;
+> +		row[ret] = '\0';
 
-At first I thought that returning POWER_SUPPLY_STATUS_FULL when the
-battery is full and AC is present was deterministic enough to have it
-in the kernel. But I don't have any prior experience working with this
-kind of hardware, so I may very well be wrong on this assumption. It
-would be great to get some extra clarification though.
+Do you really need null termination after snprintf?
 
-Thanks,
---
-Jo=C3=A3o Paulo Rechi Vita
-http://about.me/jprvita
+> +		memcpy(buffer + written, row, ret);
+> +		written += ret;
+> +	}
+> +
+> +done:
+> +	mutex_unlock(&vsoc_dev.mtx);
+> +	kfree(row);
+> +	return written;
+> +}
+> +
+>  static irqreturn_t vsoc_interrupt(int irq, void *region_data_v)
+>  {
+>  	struct vsoc_region_data *region_data =
+> @@ -942,6 +975,15 @@ static int vsoc_probe_device(struct pci_dev *pdev,
+>  		}
+>  		vsoc_dev.regions_data[i].device_created = true;
+>  	}
+> +	/*
+> +	 * Create permission attribute on device node.
+> +	 */
+> +	result = device_create_file(&pdev->dev, &dev_attr_permissions);
+> +	if (result) {
+> +		dev_err(&vsoc_dev.dev->dev, "device_create_file failed\n");
+> +		vsoc_remove_device(pdev);
+> +		return -EFAULT;
+> +	}
+>  	return 0;
+>  }
+>  
+> @@ -967,6 +1009,7 @@ static void vsoc_remove_device(struct pci_dev *pdev)
+>  	if (!pdev || !vsoc_dev.dev)
+>  		return;
+>  	dev_info(&pdev->dev, "remove_device\n");
+> +	device_remove_file(&pdev->dev, &dev_attr_permissions);
+>  	if (vsoc_dev.regions_data) {
+>  		for (i = 0; i < vsoc_dev.layout->region_count; ++i) {
+>  			if (vsoc_dev.regions_data[i].device_created) {
+> -- 
+> 2.7.4
+> 
