@@ -2,127 +2,114 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CF7C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57495C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36AB820862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:44:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OW7sRjVJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OW7sRjVJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36AB820862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 29BD520862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:44:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BD520862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388086AbeKFWJq (ORCPT
+        id S2388123AbeKFWJ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 17:09:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47464 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387704AbeKFWJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 17:09:46 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A2DAA6038E; Tue,  6 Nov 2018 12:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541508282;
-        bh=H7k2718FlCiAqf+cl1gUDgKIAkUYsMI7izgXsc+9Q/o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OW7sRjVJtA43Gs2Jt9VYLkuZP0FasG9eONjdDisM52B+hPPZBFJSl8h8n1Cbo47VB
-         grBg4uPaOWR2C/f285mVmmbhJYOg456ebdMc9lfZtA4NVDr+Z2dX/k36bkBC/4fsqj
-         my92HdAfLVIsgR5qd4EidhKEuuDCyTZBeirCcev8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id E589B6038E;
-        Tue,  6 Nov 2018 12:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541508282;
-        bh=H7k2718FlCiAqf+cl1gUDgKIAkUYsMI7izgXsc+9Q/o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OW7sRjVJtA43Gs2Jt9VYLkuZP0FasG9eONjdDisM52B+hPPZBFJSl8h8n1Cbo47VB
-         grBg4uPaOWR2C/f285mVmmbhJYOg456ebdMc9lfZtA4NVDr+Z2dX/k36bkBC/4fsqj
-         my92HdAfLVIsgR5qd4EidhKEuuDCyTZBeirCcev8=
+        Tue, 6 Nov 2018 17:09:59 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47597 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387704AbeKFWJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 17:09:59 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 19DE1D1928E0C;
+        Tue,  6 Nov 2018 20:44:53 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 6 Nov 2018 20:44:44 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <robh+dt@kernel.org>, <frowand.list@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <will.deacon@arm.com>,
+        <anshuman.khandual@arm.com>, <peterz@infradead.org>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] of, numa: Validate some distance map rules
+Date:   Tue, 6 Nov 2018 20:39:33 +0800
+Message-ID: <1541507973-149965-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 06 Nov 2018 18:14:41 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v1 3/4] Bluetooth: hci_qca: clear HCI_QUIRK_RESET_ON_CLOSE
- flag
-In-Reply-To: <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
-References: <20181106120528.30342-1-bgodavar@codeaurora.org>
- <20181106120528.30342-4-bgodavar@codeaurora.org>
- <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
-Message-ID: <170e0419929840109d349b5df5e38364@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
+Currently the NUMA distance map parsing does not validate the distance
+table for the distance-matrix rules 1-2 in [1].
 
-On 2018-11-06 18:03, Marcel Holtmann wrote:
-> Hi Balakrishna,
-> 
->> During hci down we are sending reset command to chip, which
->> is not required for wcn3990, as hdev->shutdown() will turn off the
->> regulators.
->> 
->> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> ---
->> drivers/bluetooth/hci_qca.c | 1 +
->> 1 file changed, 1 insertion(+)
->> 
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index 8301663f0004..97b57e0f4725 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -1190,6 +1190,7 @@ static int qca_setup(struct hci_uart *hu)
->> 		 */
->> 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
->> 		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
->> +		clear_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
->> 		hu->hdev->shutdown = qca_power_off;
->> 		ret = qca_wcn3990_init(hu);
->> 		if (ret)
-> 
-> I am pretty certain that you didn’t want this quirk:
-> 
->         /* When this quirk is set, the HCI Reset command is send when
-> 
->          * closing the transport instead of when opening it.
-> 
-> This quirk is for Bluetooth 1.0b devices where the HCI_Reset behavior
-> was not clear or for devices that actually misbehave with the initial
-> HCI_Reset.
-> 
-> In addition, you commit message is totally misleading. That is not
-> what is happening with this quirk.
-> 
-> Regards
-> 
-> Marcel
+However the arch NUMA code may enforce some of these rules, but not all.
+Such is the case for the arm64 port, which does not enforce the rule that
+the distance between separates nodes cannot equal LOCAL_DISTANCE.
 
-My intention was reset command is not required when we do an hci down.
-this is because of hdev->shutdown will turn off the regulators.
-It is like turning off the chip. sending reset command after turning off 
-the chip is not required.
+The patch adds the following rules validation:
+- distance of node to self equals LOCAL_DISTANCE
+- distance of separate nodes > LOCAL_DISTANCE
 
-I understand the usage of the quirk, will update the commit text.
+A note on dealing with symmetrical distances between nodes:
 
+Validating symmetrical distances between nodes is difficult. If it were
+mandated in the bindings that every distance must be recorded in the
+table, validating symmetrical distances would be straightforward. However,
+it isn't.
 
+In addition to this, it is also possible to record [b, a] distance only
+(and not [a, b]). So, when processing the table for [b, a], we cannot
+assert that current distance of [a, b] != [b, a] as invalid, as [a, b]
+distance may not be present in the table and current distance would be
+default at REMOTE_DISTANCE.
+
+As such, we maintain the policy that we overwrite distance [a, b] = [b, a]
+for b > a. This policy is different to kernel ACPI SLIT validation, which
+allows non-symmetrical distances (ACPI spec SLIT rules allow it). However,
+the debug message is dropped as it may be misleading (for a distance which
+is later overwritten).
+
+Some final notes on semantics:
+
+- It is implied that it is the responsibility of the arch NUMA code to
+  reset the NUMA distance map for an error in distance map parsing.
+
+- It is the responsibility of the FW NUMA topology parsing (whether OF or
+  ACPI) to enforce NUMA distance rules, and not arch NUMA code.
+
+[1] Documents/devicetree/bindings/numa.txt
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+
+diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
+index 35c64a4295e0..fe6b13608e51 100644
+--- a/drivers/of/of_numa.c
++++ b/drivers/of/of_numa.c
+@@ -104,9 +104,14 @@ static int __init of_numa_parse_distance_map_v1(struct device_node *map)
+ 		distance = of_read_number(matrix, 1);
+ 		matrix++;
+ 
++		if ((nodea == nodeb && distance != LOCAL_DISTANCE) ||
++		    (nodea != nodeb && distance <= LOCAL_DISTANCE)) {
++			pr_err("Invalid distance[node%d -> node%d] = %d\n",
++			       nodea, nodeb, distance);
++			return -EINVAL;
++		}
++
+ 		numa_set_distance(nodea, nodeb, distance);
+-		pr_debug("distance[node%d -> node%d] = %d\n",
+-			 nodea, nodeb, distance);
+ 
+ 		/* Set default distance of node B->A same as A->B */
+ 		if (nodeb > nodea)
 -- 
-Regards
-Balakrishna.
+1.9.1
+
