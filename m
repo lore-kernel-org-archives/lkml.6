@@ -2,192 +2,263 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B6CC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263A6C46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45722081D
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:49:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Q6TpUgJA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45722081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id C9A932081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 06:50:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A932081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbeKFQMz (ORCPT
+        id S2387655AbeKFQN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:12:55 -0500
-Received: from mail-dm3nam03on0070.outbound.protection.outlook.com ([104.47.41.70]:33684
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387397AbeKFQMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 11:12:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSFzNCMyeQUznMgHgAAtvQhVQ7702wriQJzRfiweF28=;
- b=Q6TpUgJA5QqXG39TWavzNgVVHCKsfv/UkkN63FoxdtKCuJMi3hnywXaWdX4g5vMwHVXgYmLleoP5vQxx1EsZiNBiCiYxp6w8/DZWn/bOwznXw7MJxNKrxQaW6F6UfvxjZ6CTCKvdUNMRgfrCwCbDYE6s+8yasZhUiS+D1H2vCOY=
-Received: from MWHPR02CA0059.namprd02.prod.outlook.com (2603:10b6:301:60::48)
- by DM6PR02MB4458.namprd02.prod.outlook.com (2603:10b6:5:29::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.26; Tue, 6 Nov
- 2018 06:47:16 +0000
-Received: from BL2NAM02FT025.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::201) by MWHPR02CA0059.outlook.office365.com
- (2603:10b6:301:60::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.21 via Frontend
- Transport; Tue, 6 Nov 2018 06:47:15 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
- smtp.mailfrom=xilinx.com; alien8.de; dkim=none (message not signed)
- header.d=none;alien8.de; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- BL2NAM02FT025.mail.protection.outlook.com (10.152.77.151) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1294.14
- via Frontend Transport; Tue, 6 Nov 2018 06:47:14 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:44524 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1gJv8s-00053Y-9M; Mon, 05 Nov 2018 22:47:14 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1gJv8n-0002gl-5q; Mon, 05 Nov 2018 22:47:09 -0800
-Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wA66kxQo029409;
-        Mon, 5 Nov 2018 22:46:59 -0800
-Received: from [172.30.17.111]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1gJv8d-0002cx-B9; Mon, 05 Nov 2018 22:46:59 -0800
-Subject: Re: [PATCH v10 5/6] arm64: zynqmp: Add DDRC node
-To:     Borislav Petkov <bp@alien8.de>, Olof Johansson <olof@lixom.net>
-CC:     Michal Simek <michal.simek@xilinx.com>,
-        Arnd Bergmann <arnd@arndb.de>, <manish.narani@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-edac@vger.kernel.org>
-References: <1540447621-22870-1-git-send-email-manish.narani@xilinx.com>
- <1540447621-22870-6-git-send-email-manish.narani@xilinx.com>
- <20181105125644.GA7937@zn.tnic>
- <41c5ca53-ed4b-38d0-c612-e1229004293e@xilinx.com>
- <20181105132007.GB7937@zn.tnic>
- <a81f47e0-1778-a6ac-4cd8-634502661d6f@xilinx.com>
- <20181105134218.GD7937@zn.tnic>
- <CAOesGMj=EbWgcYF2Mhh6TFMCdn1ub1Ze6fbXJnFFdsttWByXYg@mail.gmail.com>
- <20181105194721.GB26868@zn.tnic>
- <CAOesGMjsPWeRZEeBH37uLQFBKwAWNMh5yCvuKNYrOUDfRSSYog@mail.gmail.com>
- <20181105204322.GE26868@zn.tnic>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <38dc38b6-25f4-194c-9ba9-577d35e92700@xilinx.com>
-Date:   Tue, 6 Nov 2018 07:46:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 6 Nov 2018 11:13:57 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387424AbeKFQN5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 11:13:57 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA66iK16089787
+        for <linux-kernel@vger.kernel.org>; Tue, 6 Nov 2018 01:50:12 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nk4kgty4e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 01:50:12 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
+        Tue, 6 Nov 2018 06:50:10 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 6 Nov 2018 06:50:07 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA66o6wt4391178
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 06:50:06 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C9CAA4053;
+        Tue,  6 Nov 2018 06:50:06 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB8BBA4055;
+        Tue,  6 Nov 2018 06:50:05 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.69.98])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  6 Nov 2018 06:50:05 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: Re: [PATCH v2 10/12] ext4: add basic fs-verity support
+Date:   Tue, 06 Nov 2018 12:22:39 +0530
+In-Reply-To: <20181106012503.GB28490@gmail.com>
+References: <20181101225230.88058-1-ebiggers@kernel.org> <2168901.PE78DCQIza@localhost.localdomain> <20181106012503.GB28490@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181105204322.GE26868@zn.tnic>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(346002)(2980300002)(438002)(199004)(189003)(486006)(476003)(316002)(2616005)(4326008)(2906002)(7416002)(31686004)(54906003)(2486003)(356004)(6666004)(110136005)(58126008)(478600001)(426003)(336012)(93886005)(76176011)(11346002)(44832011)(126002)(446003)(23676004)(31696002)(966005)(47776003)(50466002)(65956001)(65806001)(229853002)(65826007)(81156014)(81166006)(9786002)(6246003)(8676002)(5660300001)(230700001)(106002)(6306002)(8936002)(36756003)(63266004)(36386004)(26005)(77096007)(106466001)(64126003)(186003)(305945005)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4458;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT025;1:CuOpdoAlQw3N7bcKxMzxiqj7+sb5m86jZsPWhi7hrz0fJjFluvJuLgu7DOSgwJObeDpeRi8k0bj2sDhf/qRoFJpm0hJOZzoI5eT0QYQzFLqQX7vRrsAMYXP/pS1onik+
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8543f367-eb46-4def-fb2f-08d643b3b00b
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:DM6PR02MB4458;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;3:cChXuoVRcQNTUCGGfYG8LECmn1bHc4luusF1M+JJ7ss0xY4KAN6wEnwVZo7zqpl8R07Kgzu17VUA29xb+i+fpnwlt+RlWnYMnu67ZmvfCGSH1ILCCUaAx1KdBcvrwb/Y4j/rojTWfKTX7KkwxWgoF5cCPTAlt/bC0I7XHxrwONR4otxiliiqibui7+/e85jESVL68m/SjMvK0HsW+QjWWLozmFiVwB9y++oWgOux37hk6n/lhzd9d9NRDXzQm5OchICukX4M8BTvY4iCC5WgPc+pqNdr6IOV3A4caoskOfXuAt83K7VqDsHc5wTmbEbb3WbqB5SGaXNko5sAPJZldN60OX8z17fvmkKOCN5+5QY=;25:AEsB+FPZrU9dTiBio0quFrA/IPILAa/lv/VgC0QrmPHj8q2r0mfnLRGDYl3FSGeO2YvkPz1fdl8NN0htYcWgPG5NEmY0kvPeyNugujXGh5xIlGN1Lhggv5vl2bPVU44Wp57XjggM3WF5fOxXcq5zk1FjfvbK6rXBkzBlpohoLcHi5KLBCs4Ib6gR5pwZqKu/rId/Nro/PM8l0IpOFmREbq3uZMiud57ecIYD6ZogYhDQFAEdxZJ2rH0G1/mmZgygU+rt4H2GaMJebcXSl8lPrMY8GazeTzliqqJQeCjHGehpcVP3gVCQ97I+8GyPJvzAlAZGmBxSJVO/gvZEo7NJSw==
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4458:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;31:JM/5fD1jCrofYZqU4etX41GqLf46he4LI/Xvl3E7oL/5Gc/NPEcxvfJN934hRcDt10I16Uauo49O7IxUV2vkS9N7Dz9RbXQjoMAZVPZU0fACTc5YkzIaslauB7wVQoSnamBgur6hGULVGepf6ZFu3KhmZvL/qZFwdJ5g1R74g/zyLaQGdiNc/YazU3jK6P2Pa/3OYWqvreVbRjge+XNpWXRI5XIRMDo1Xa9geJPMfKU=;20:Cs9zAQNSMJhp3UkB/sN1WJxaIIawcAKO7aUjbB76YI5I8ZztSTqoXE3CCSgVI5Snlk713v3301ZdiEZ4X947wbu2XpwFLf5zcizlXIdgIHx1xunbpyWpV8HdmJU/iWuuhdFzUEuz4gW2Q0M4ldIE1DEjaBdXDmzlGsPwiYNvjPjv8TpfLDQdvrzKSmF55k1uwycyPU7cQuMWxiM2VkzKHxIzBhaAYy1KoQyhq8Kh4O6ixQmZhMujJyMBJ7FDnq0AmXiV5bh9+MsYSnwnZ6CuCtGwUsXAa5pnlGIKd58hVoU8uP9Czz9SjFH0TDg+Gnl2cGaPWy+ZCXyTed+laixBbJ3Q0jAZ2SdDyjo4wp+TDl/5qHvOEvNTfIvxA4EQBWTrvYC5p7k6LouslOjyvB2owfXmIwIJ2w4WanAFuqvZykrHFsq+nBt+d4AqvGisgY0snlT/iczHRY/WC+14zSf9p5XW9kvYhW/Vsbi3qb+GdUu0jQIvJ09kr84PHRNhmrCn
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <DM6PR02MB44581FB7491ED220BE34422FC6CB0@DM6PR02MB4458.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(42068640409301)(192813158149592);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93004095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM6PR02MB4458;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4458;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;4:P9EvN7KLMmoIFzYOiiZCjkEistUhRwkXLnxUgZJ8qq1JRStTgG/uCefLQS8ygFfGHJSx2lfSSgVeWrdi0OU3rrMRt8KKInGnq7/VBJZUIi3TL9nvJiEsYh657XiwuZxM7hyD7CVZbsz6zP+6EcnetgsrX9FZhak7RYuMmkvbX43Hze681qOOnuRJURRNAzsyntxREn0bYmp2FjZ44czWKsOyDx+9FCFaU+XIAiR+poebkf4hU3HfMQ/K32lwWJ8KyDtimiT9tY2D2vzjpJM9HnIGy30r7SrttWdYJY0KzMR1F1LIBdxOO0wpVmxLE3W/ndAOcgXi6FUdBqkg8fzgSOjhXpWGcbBD/wkDt7L97Dk=
-X-Forefront-PRVS: 0848C1A6AA
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTZQUjAyTUI0NDU4OzIzOmpRNHAwS0duc201M1ZUWG5VYXFCYlVwUFZs?=
- =?utf-8?B?L0hFM1RYMEY5dHZrVjhuTDE3QzZleUVXbEZkeFZGbWlZd0x0YVc4Y1BSUVA2?=
- =?utf-8?B?ZDF1RzNUZ1M0N2Z6cVFWSDhNZndrRTZIQmFuTFBrSjdybTZZQTVoSUZYeFRp?=
- =?utf-8?B?U0YvOTZFMWRJU2lsWVFvTytKTk5yMFZYNmpyMXRNYWpsa3M2Y0JZL0loU2VM?=
- =?utf-8?B?MmxIMGpTRGJSazVCK1JaSms3NmpzRDJlRDNwY1ZmM1BYVHFtNWs3UkQxbGVm?=
- =?utf-8?B?bVZwUDZjeTlzTjNJNDZWK0w4b0U2S0RJTnhJZmM3WllmNjVNOVNKbExHSXhH?=
- =?utf-8?B?VkV4cnE3L0cybldCb2VxaHZUdkFYTm0raHhEdEpBcTV4TVBmQ09WQTNPanZs?=
- =?utf-8?B?RlhNRXlVOWRtYU1Vam1TWmc2cDlGRDdMTm83d21mZXNLT3hrKzByMmczUS9N?=
- =?utf-8?B?RWhNLzFhYnQwUHN6bXM0bkMzMHJtQXI4ZnBuN3BSTU0vbFhiRUdYZ1U2VS8y?=
- =?utf-8?B?NC8wZmtHSmV6b1U1L3lKMStjREc1enNIRVJLb0lPbVJ2aDZteDMxZnIvck1o?=
- =?utf-8?B?Q2UrdVBCdHQwUTF0SGR0ZDNuNlJ0NmErd043ZXhtYnN3cThKcU4xMURLbllN?=
- =?utf-8?B?SExPU1FyTVpseDlTaFFJdXlzdGVzMmZNSHF2U3ZodHJabDE4bzc4RStGN1lZ?=
- =?utf-8?B?M3A1aC81VkJxY1pLYWhxU2Vpa3lMc2d6UCtpZzBxSUk2RlFMRFNTY2RtbVdj?=
- =?utf-8?B?dWQ5Q2IzYzEzR0RIdEpQL3lYWVpHc24rSGV6LzRubExIUytnWENFMm1DZThX?=
- =?utf-8?B?a3BFQnF1Uk5kaTVQODU4QWJHZFZSMWYwaVNPSXhWK1FGNW9sL29ad1Z5emlv?=
- =?utf-8?B?WVhIWHBicDNoRVh2SFZBYm01Z2lIYzhjQTJBQkEveHRzdVIvUk1mU1AxM3lK?=
- =?utf-8?B?WVJqMWZORE9mNGVMWm5CakxZeUJiNElEeTgzYy84WW53K045Nmw0OTAxT3lG?=
- =?utf-8?B?NG9hcWZqTVFZTVZETkNFZnVMcldxTzMyZjFJWlV3bFZZSGZ5V0YwMnRSQ1dO?=
- =?utf-8?B?ZkNtQy9LOU9iNGhuSkpkSFVYOVdZSlVjckdRczlqQzVpeWtxZXpQNXJWN0Zx?=
- =?utf-8?B?K3pPNFpIalQzUjB0VW9LWjEzMVFNQkxjd2ovRUZtU2lmcFZWa3V0bWE4bjFI?=
- =?utf-8?B?R0F4K0hDdDV3YjJoVnZHb3Yvb0tUOEhIbEo5N0RWVUJLTXVRL0wvRmVFM2cr?=
- =?utf-8?B?WjlReVh2Q0ZGdVRQd0pqT3ZwOC8vQ2lEaXNrN0VWUjBQZVZsdjFQekZGSEgw?=
- =?utf-8?B?K2lBMjlkYU9xbnloZWw4elRRalVreDM5Wnp1RzhHakpHWXdzYkZHYUppWWQ4?=
- =?utf-8?B?M1NQVWdXNEJtd1Bjd3ArS1FuaUxST0luYnp3QnhyTGV1bTNOZkN0Y3Q1S3FU?=
- =?utf-8?B?bzd4Zi8rV0Z0WDYwWHlSdEY0Mk5YQXpQd0N0OFB0NytrR2xORkh5ZklaMVNq?=
- =?utf-8?B?eVBSL0xyak55clppbDh0OE5JdFdJM3BNdnNiNkxLY2lwWExYMGpUbVVQZ0JR?=
- =?utf-8?B?UHoyNkZHM3FNTWpxeHU2SktRZWFWbkltV2pEc1p4N2piemF4QkFFYkxEN1dJ?=
- =?utf-8?B?K2pGZ0QrV0k0WSswUE12SmdwNUg5NnFzNnhORkRXcmpFUDlKSzhER1FBK1Jn?=
- =?utf-8?B?UXAxSGR1T0plNkl4c0s4c3Q5MHE4cmg0ZkkvNXc0YWVwSDJlREd1dTRQYVo0?=
- =?utf-8?B?TWtZODh4MkFlTjJ4bEp2K0hnQ0l1NEJXMzR0ZUppUzVEVkoza09aNEx4aHYy?=
- =?utf-8?B?eXVHUmgxUG81UWFhdkpyWnFHZHFyKzI1UGdBeXBTdHoyVWc9PQ==?=
-X-Microsoft-Antispam-Message-Info: BOF/avFS//AbzwTqXsYl/OeRAHNLrcVcb2PtxZB27k7ZHiQQnGIG6hXNzyhTfRwDk8KmnDMj2iOk7DeQ47wmRo3s3UNTPhSAj4k7/VEvHr5fAWTXkJTOAJvLuv74kfWuGIOc+lQXjXp9HcmhNCOpHS6wv1T54m2+Q6nTGrpPOYmdEuBD+UXnyr1WUlrO71hIQX2Hk6qKkUop2ZrLuo8LtSC1vdJFQfiaKx39x2Ug/SNawST7H69Z6HGiht7YbTOGyBNeC60SC6uv/286OJoe165AeiwuHG1MWtpSavAsjWw/RwVIpbDXAqQE72dEU4IxF3gv03nu80I//Ao8iyQfD7eEUszYYZr5mgE/4DUF9L0=
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4458;6:ujQZ6WatQw2/w88l7Wm2Z31GVHlGsyeZFY1PgA2eX+vjaRb/IVMoYWKQIfwk+/9Linl+M/T8SBUGlF7reyn8z8s5dnf3ktsBsNg+U7Cd3r0sPwfE+845OFSzPPnejHIlq47pm8sWGlUeZdOGHLceNiqr45fDvR9v2WIvbUWJ/EYhyox7zeMlrNQbOTlIGAASX9id1vz3ZjXHTvk1Fw9+oLplFMZJzIo9gPAw8WVUWwTri6LKueE6NZKk/yePu68ZZPNOoY7ZTQfy17a0ZxCI7hYy/MxA+eT4lh4KNEuQ64ruSsZEbtW/D46szE+sNjhaQakXoAy19t11nsegOZbsGKd10DzYtcXpkb6DwgPomganU3X7Ck83kRPkjRG41WPsy5qPpaRhEuyVkiA+yFDIXtAW2GBHUK3+u9a8DgSFiznSaBkoTY2LVtEeWPLRa/XmUQTIVJbPAtzyzurCpAoG5g==;5:szmGCBxhRuiYV/4Msi5BDk2W9NJnS7mqqr7Xzs6SMsVjpcmNFPbLSaOdOwJsp4200MVQ0afB9U1gPXLNiF+d+dF+nivaK6yzoXSFeU46sYEeFR52/jv8aOWlOx39dEZeO/6XVX90VeLAJGu/sAx6+KAPRCMn8OQWo+hAG0E2FhM=;7:C7fF3Y2bcyDQXvLadfXgGhZLsphz7seXom/ZxtzARKhBVyUgbNOIu4Xs9eXkVAJlHPs0S/04AJGdq7tg3id+CJoXH4cGbvqabt+Gm7MXu5i09k2pHvfluuWg+69XL9u+2oyLplLi0QZDhVPoqR57Xw==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2018 06:47:14.9567
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8543f367-eb46-4def-fb2f-08d643b3b00b
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4458
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 18110606-4275-0000-0000-000002D9FEDB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110606-4276-0000-0000-000037E7196B
+Message-Id: <3113392.yxf3e5PHVf@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811060059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05. 11. 18 21:43, Borislav Petkov wrote:
-> On Mon, Nov 05, 2018 at 12:38:05PM -0800, Olof Johansson wrote:
->> Yeah, that's the way we've been trying to do for various subsystems
->> and it's been working pretty well. Of course, if there's need to
->> coordinate more closely for something in the future we'll be happy to
->> do so.
+On Tuesday, November 6, 2018 6:55:03 AM IST Eric Biggers wrote:
+> Hi Chandan,
 > 
-> Goodie. Let's do that for now and we can always revisit when there's
-> real need.
+> On Fri, Nov 02, 2018 at 03:13:14PM +0530, Chandan Rajendra wrote:
+> > On Friday, November 2, 2018 4:22:28 AM IST Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+> > > 
+> > > Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
+> > > that enables transparent integrity protection and authentication of
+> > > read-only files.  It uses a dm-verity like mechanism at the file level:
+> > > a Merkle tree is used to verify any block in the file in log(filesize)
+> > > time.  It is implemented mainly by helper functions in fs/verity/.
+> > > See Documentation/filesystems/fsverity.rst for details.
+> > > 
+> > > This patch adds everything except the data verification hooks that will
+> > > needed in ->readpages().
+> > > 
+> > > On ext4, enabling fs-verity on a file requires that the filesystem has
+> > > the 'verity' feature, e.g. that it was formatted with
+> > > 'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
+> > > This requires e2fsprogs 1.44.4-2 or later.
+> > > 
+> > > In ext4, we choose to retain the fs-verity metadata past the end of the
+> > > file rather than trying to move it into an external inode xattr, since
+> > > in practice keeping the metadata in-line actually results in the
+> > > simplest and most efficient implementation.  One non-obvious advantage
+> > > of keeping the verity metadata in-line is that when fs-verity is
+> > > combined with fscrypt, the verity metadata naturally gets encrypted too;
+> > > this is actually necessary because it contains hashes of the plaintext.
+> > > 
+> > > We also choose to keep the on-disk i_size equal to the original file
+> > > size, in order to make the 'verity' feature a RO_COMPAT feature.  Thus,
+> > > ext4 has to find the fsverity_footer by looking in the last extent.
+> > > 
+> > > Co-developed-by: Theodore Ts'o <tytso@mit.edu>
+> > > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > > ---
+> > >  fs/ext4/Kconfig | 20 +++++++++++
+> > >  fs/ext4/ext4.h  | 20 ++++++++++-
+> > >  fs/ext4/file.c  |  6 ++++
+> > >  fs/ext4/inode.c |  8 +++++
+> > >  fs/ext4/ioctl.c | 12 +++++++
+> > >  fs/ext4/super.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  fs/ext4/sysfs.c |  6 ++++
+> > >  7 files changed, 162 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> > > index a453cc87082b5..5a76125ac0f8a 100644
+> > > --- a/fs/ext4/Kconfig
+> > > +++ b/fs/ext4/Kconfig
+> > > @@ -111,6 +111,26 @@ config EXT4_FS_ENCRYPTION
+> > >  	default y
+> > >  	depends on EXT4_ENCRYPTION
+> > > 
+> > > +config EXT4_FS_VERITY
+> > > +	bool "Ext4 Verity"
+> > > +	depends on EXT4_FS
+> > > +	select FS_VERITY
+> > > +	help
+> > > +	  This option enables fs-verity for ext4.  fs-verity is the
+> > > +	  dm-verity mechanism implemented at the file level.  Userspace
+> > > +	  can append a Merkle tree (hash tree) to a file, then enable
+> > > +	  fs-verity on the file.  ext4 will then transparently verify
+> > > +	  any data read from the file against the Merkle tree.  The file
+> > > +	  is also made read-only.
+> > > +
+> > > +	  This serves as an integrity check, but the availability of the
+> > > +	  Merkle tree root hash also allows efficiently supporting
+> > > +	  various use cases where normally the whole file would need to
+> > > +	  be hashed at once, such as auditing and authenticity
+> > > +	  verification (appraisal).
+> > > +
+> > > +	  If unsure, say N.
+> > > +
+> > >  config EXT4_DEBUG
+> > >  	bool "EXT4 debugging support"
+> > >  	depends on EXT4_FS
+> > > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > > index 12f90d48ba613..e5475a629ed80 100644
+> > > --- a/fs/ext4/ext4.h
+> > > +++ b/fs/ext4/ext4.h
+> > > @@ -43,6 +43,9 @@
+> > >  #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
+> > >  #include <linux/fscrypt.h>
+> > > 
+> > > +#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
+> > > +#include <linux/fsverity.h>
+> > > +
+> > >  #include <linux/compiler.h>
+> > > 
+> > >  /* Until this gets included into linux/compiler-gcc.h */
+> > > @@ -405,6 +408,7 @@ struct flex_groups {
+> > >  #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+> > >  #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
+> > >  #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
+> > > +#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+> > >  #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+> > >  #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
+> > >  #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+> > > @@ -472,6 +476,7 @@ enum {
+> > >  	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
+> > >  	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
+> > >  	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
+> > > +	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
+> > >  	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
+> > >  	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
+> > >  	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
+> > > @@ -517,6 +522,7 @@ static inline void ext4_check_flag_values(void)
+> > >  	CHECK_FLAG_VALUE(TOPDIR);
+> > >  	CHECK_FLAG_VALUE(HUGE_FILE);
+> > >  	CHECK_FLAG_VALUE(EXTENTS);
+> > > +	CHECK_FLAG_VALUE(VERITY);
+> > >  	CHECK_FLAG_VALUE(EA_INODE);
+> > >  	CHECK_FLAG_VALUE(EOFBLOCKS);
+> > >  	CHECK_FLAG_VALUE(INLINE_DATA);
+> > > @@ -1654,6 +1660,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
+> > >  #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
+> > >  #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
+> > >  #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
+> > > +#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+> > > 
+> > >  #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
+> > >  #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
+> > > @@ -1742,6 +1749,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
+> > >  EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
+> > >  EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
+> > >  EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
+> > > +EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
+> > > 
+> > >  EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
+> > >  EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
+> > > @@ -1797,7 +1805,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		ENCRYPT)
+> > >  					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
+> > >  					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
+> > >  					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
+> > > -					 EXT4_FEATURE_RO_COMPAT_PROJECT)
+> > > +					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
+> > > +					 EXT4_FEATURE_RO_COMPAT_VERITY)
+> > > 
+> > >  #define EXTN_FEATURE_FUNCS(ver) \
+> > >  static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
+> > > @@ -2293,6 +2302,15 @@ static inline bool ext4_encrypted_inode(struct inode *inode)
+> > >  	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
+> > >  }
+> > > 
+> > > +static inline bool ext4_verity_inode(struct inode *inode)
+> > > +{
+> > > +#ifdef CONFIG_EXT4_FS_VERITY
+> > > +	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
+> > > +#else
+> > > +	return false;
+> > > +#endif
+> > > +}
+> > > +
+> > 
+> > Hi Eric,
+> > 
+> > Can you please explain as to why we check for the presence of
+> > EXT4_INODE_VERITY flag only when fsverity is enabled during kernel build?
+> > 
+> 
+> Good question, this might not be the best approach actually; I think this was
+> originally copied from the f2fs version.  It does reduce the overhead introduced
+> by the fs-verity changes in the !CONFIG_EXT4_FS_VERITY case.  But it will allow
+> opening verity files, even for writing which will corrupt them.
+> 
+> Probably we should make ext4_verity_inode() work regardless of
+> CONFIG_EXT4_FS_VERITY, so open(), truncate(), etc. will fail with EOPNOTSUPP on
+> verity files when !CONFIG_EXT4_FS_VERITY, like how ext4 encryption works.
+> 
 
-I think Boris should take also this one (dt binding doc change) because
-it is aligned with changes in the driver.
-https://lkml.kernel.org/r/1538667328-9465-7-git-send-email-manish.narani@xilinx.com
+Yes, I agree with what you say. I have followed the above explained logic when
+implementing S_VERITY and IS_VERITY() for Ext4 and will extend that to F2FS as 
+well.
 
-And I will take this one.
-https://lkml.kernel.org/r/1540447621-22870-6-git-send-email-manish.narani@xilinx.com
+-- 
+chandan
 
-But not a problem with taking both if you like but this make more sense
-to me.
-
-Thanks,
-Michal
