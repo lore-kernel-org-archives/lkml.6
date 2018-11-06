@@ -3,107 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6F8C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40787C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C7282086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C7282086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 131832083D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:10:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 131832083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388073AbeKFVfW (ORCPT
+        id S2388122AbeKFVf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 16:35:22 -0500
-Received: from mga02.intel.com ([134.134.136.20]:62411 "EHLO mga02.intel.com"
+        Tue, 6 Nov 2018 16:35:26 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42970 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387454AbeKFVfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:35:22 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 04:10:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,471,1534834800"; 
-   d="scan'208";a="247391838"
-Received: from btyborox-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.134])
-  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2018 04:10:17 -0800
-Date:   Tue, 6 Nov 2018 14:10:16 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        suresh.b.siddha@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 16/23] x86/sgx: Enumerate and track EPC sections
-Message-ID: <20181106121016.GA12789@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-17-jarkko.sakkinen@linux.intel.com>
- <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
+        id S2387963AbeKFVfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:35:25 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ohYYp2TqE8Hw; Tue,  6 Nov 2018 13:10:29 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 117AB1EC0979;
+        Tue,  6 Nov 2018 13:10:29 +0100 (CET)
+Date:   Tue, 6 Nov 2018 13:10:23 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181106121023.GF13712@zn.tnic>
+References: <20181013214550.ag5qzokhkrkwnzsy@gabell>
+ <20181013220541.GI31650@zn.tnic>
+ <20181015005035.z3xym6nx43hogdge@gabell>
+ <20181016151353.punyk7exekut2543@gabell>
+ <20181016191113.GI5212@zn.tnic>
+ <20181016195429.tovdgqq77gz3eek2@gabell>
+ <20181016195902.GK5212@zn.tnic>
+ <20181022154204.kagmdb55jtoez4ca@gabell>
+ <20181025103345.GF14020@nazgul.tnic>
+ <20181025134050.ggiir77ehntikbwg@gabell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vcq_L5RYSEDcBSd-q09onp6O6_JU1_2MrZ3sAmyX7XgLQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181025134050.ggiir77ehntikbwg@gabell>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 03, 2018 at 03:22:34PM +0200, Andy Shevchenko wrote:
-> On Sat, Nov 3, 2018 at 1:17 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > From: Sean Christopherson <sean.j.christopherson@intel.com>
-> >
-> > Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
-> > structures necessary to track EPC pages so that they can be allocated,
-> > freed and managed.  As a system may have multiple EPC sections, invoke
-> > CPUID on SGX sub-leafs until an invalid leaf is encountered.
-> >
-> > On NUMA systems, a node can have at most one bank. A bank can be at
-> > most part of two nodes.  SGX supports both nodes with a single memory
-> > controller and also sub-cluster nodes with severals memory controllers
-> > on a single die.
-> >
-> > For simplicity, support a maximum of eight EPC sections.  Current
-> > client hardware supports only a single section, while upcoming server
-> > hardware will support at most eight sections.  Bounding the number of
-> > sections also allows the section ID to be embedded along with a page's
-> > offset in a single unsigned long, enabling easy retrieval of both the
-> > VA and PA for a given page.
-> 
-> > +       iounmap(section->va);
-> 
-> > +       section->va = ioremap_cache(addr, size);
-> > +       if (!section->va)
-> > +               return -ENOMEM;
-> 
-> I forgot if it's a place in code on which we discussed ioremap() vs.
-> memremap() call.
-> And I forgot why the conclusion is to leave ioremap().
-> 
-> Sorry, if I'm mistaken.
+On Thu, Oct 25, 2018 at 09:40:51AM -0400, Masayoshi Mizuma wrote:
+> My actual use case is for EFI boxes, however, I think it's better to useful
+> for legacy BIOS as well because memory hot-plug affinity in SRAT and KASLR
+> are available on legacy BIOS.
+> Actually, we can create such environment in qemu.
 
-As far as I can tell you are not mistaken. It happened that in the patch
-set version that you gave this comment I first the fixed missing __iomem
-annotations because I like to do other changes on top of code that has
-no known regressions. Then I guess I simply forgot to replace it with
-memremap(). I will do it for the next version.
+Ah, right, qemu. :)
 
-/Jarkko
+> I have another idea to solve this issue. Adding a SRAT parsing code
+> to arch/x86/mm/kaslr.c. It is useful for both EFI and BIOS and
+> also we don't need a new kernel parameter...
+> Dose the idea make sense?
+
+The more automatic stuff we do and we don't have to involve the user,
+the better.
+
+However, lemme look at Chao's current patchset first - we should not go
+nuts by putting SRAT parsing everywhere :)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
