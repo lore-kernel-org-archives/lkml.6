@@ -3,158 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889A1C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94099C46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F71C20862
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:27:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F71C20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 648E020827
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:28:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648E020827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387450AbeKFRvh (ORCPT
+        id S2387533AbeKFRwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:51:37 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53589 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbeKFRvg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:51:36 -0500
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id EC1A7E0003;
-        Tue,  6 Nov 2018 08:27:28 +0000 (UTC)
-Date:   Tue, 6 Nov 2018 09:27:27 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Fabio Estevam <festevam@gmail.com>, steve_longerbeam@mentor.com,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-Message-ID: <20181106082727.GW15991@w540>
-References: <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
- <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
- <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
- <20181023230259.GA3766@w540>
- <CAHCN7xJaY_916OLHvaN_q1FwM2vqH5UXzVxLAS4DuEV0icPUXg@mail.gmail.com>
- <20181024140820.GB3766@w540>
- <CAHCN7xKbAuTmic+L-a2o1NreSCmYBKzzvmHuUTGZtVHELFoirg@mail.gmail.com>
- <CAHCN7xLP13PDT_VhV_iQzRB+VS7N4AxY+BObtLpz4bJ6RfxfWg@mail.gmail.com>
- <CAOMZO5Dkwrv4k=KGit+4wFFSr=ec94OpjUW56_D_aamjNPQH6g@mail.gmail.com>
- <CAHCN7xKs=wO9dxVAo=yxjWm10jH6TmAfgYwAfAd=J2uBT3rK1w@mail.gmail.com>
+        Tue, 6 Nov 2018 12:52:11 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33964 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728133AbeKFRwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 12:52:11 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id LwX-uHJxuqY5; Tue,  6 Nov 2018 09:28:06 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD1C800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:c800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 482691EC026E;
+        Tue,  6 Nov 2018 09:28:06 +0100 (CET)
+Date:   Tue, 6 Nov 2018 09:27:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Woods, Brian" <Brian.Woods@amd.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Helgaas <bhelgaas@google.com>, Pu Wen <puwen@hygon.cn>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
+Message-ID: <20181106082759.GA13712@zn.tnic>
+References: <20181102181055.130531-1-brian.woods@amd.com>
+ <20181102181055.130531-3-brian.woods@amd.com>
+ <20181105193840.GA26868@zn.tnic>
+ <20181105203330.GB27399@amd.com>
+ <20181105214233.GF26868@zn.tnic>
+ <20181105233212.GC27399@amd.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aHyShe78FfJzbeER"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHCN7xKs=wO9dxVAo=yxjWm10jH6TmAfgYwAfAd=J2uBT3rK1w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181105233212.GC27399@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 05, 2018 at 11:32:16PM +0000, Woods, Brian wrote:
+> Your understanding is correct.  It's more so that the following DF/SMN
+> interface gets mapped correctly.
+> 		/*
+> 		 * If there are more PCI root devices than data fabric/
+> 		 * system management network interfaces, then the (N)
+> 		 * PCI roots per DF/SMN interface are functionally the
+> 		 * same (for DF/SMN access) and N-1 are redundant.  N-1
+> 		 * PCI roots should be skipped per DF/SMN interface so
+> 		 * the following DF/SMN interfaces get mapped to
+> 		 * correct PCI roots.
+> 		 */
+> Does that read clearer?
 
---aHyShe78FfJzbeER
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Yap, thanks!
 
-Hi Adam,
+-- 
+Regards/Gruss,
+    Boris.
 
-On Mon, Nov 05, 2018 at 04:32:33PM -0600, Adam Ford wrote:
-> On Mon, Oct 29, 2018 at 8:49 AM Fabio Estevam <festevam@gmail.com> wrote:
-> >
-> > Hi Adam,
-> >
-> > On Sun, Oct 28, 2018 at 3:58 PM Adam Ford <aford173@gmail.com> wrote:
-> >
-> > > Does anyone know when the media branch get's merged into the mainline
-> > > kernel?  I assume we're in the merge window with 4.19 just having been
-> > > released.  Once these have been merged into the mainline, I'll go
-> > > through and start requesting they get pulled into 4.19 and/or 4.14
-> > > if/when appropriate.
-> >
-> > This should happen in 4.20-rc1, which will probably be out next  Sunday.
-> I sent an e-mail to stable with a list of a variety of patches for the
-> ov5640 to be applied to 4.19.y  So far all looks pretty good, but I
-> think I found on minor bug:
-
-Thanks!
-
->
-> If I attempt to change just the resolution, it doesn't take.
->
-> Initial read
-> media-ctl --get-v4l2 "'ov5640 2-0010':0"
-> [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb xfer:srgb
-> ycbcr:601 quantization:full-range]
->
-> Change resolution
-> # media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/720x480 field:none]"
->
-> Read it back
-> # media-ctl --get-v4l2 "'ov5640 2-0010':0"
-> [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb xfer:srgb
-> ycbcr:601 quantization:full-range]
->
-> However, if I change the resolution AND the format to something other
-> than UYVY2x8, the resolution changes. I can then change the format
-> back to UYVY and capture and stream video at 1080p and 720x480.
-> I can work around this, but I thought I'd mention it.  I was trying to
-> figure out a patch to apply to the mailing list myself, but I wasn't
-> able to fix it quickly.
-
-Thanks, you are right, this is a known issue :(
-
-There have been patches to address this issue floating around the
-mailing list, none of them has yet made it up to inclusion.
-
-Sam has sent a patch to fix this:
-https://patchwork.linuxtv.org/patch/52489/
-
-Hugues had something similar I cannot find, if I'm not wrong, and I
-carry myself the patch I posted in the patchwork discussion in my
-trees.
-
-Feel free to go through the media list and comment. One more report on
-this would help to increase chances to have one of those patches
-re-sent and then included.
-
-Also, bug reports are always very welcome, but to maximize the chances
-they receive the required attention, could you make a new email thread
-next time and drop this one please?
-
-Thanks
-  j
-
->
-> adam
-> adam
-
---aHyShe78FfJzbeER
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb4VBvAAoJEHI0Bo8WoVY89u8QAKTJtiKq5vUKEk2WmDfyjb/p
-8/m+NgtmK44q6o0NgLC0IRoL7BpTZeMS14wKs6nX+YFqYJiZrlmzZf21Y1WNJ8XN
-P2yqAsVTqKcf9rRyikbebxkC7BpFNyIRAoM1PrIcYZRdGMgiyl7XCnQ3/IShdaz0
-WWILE7C1Pao8TF1a5aj7vcUxHHtaN8mrzTJ1yV1RZHVUd5xyQTL5aY2jEPowuRWH
-x0Bljl3eu0uNHTZ5606aKDfFZavYjmK+cMnIfdVhtGay4Mp50RHEgWyEUPDJVXdc
-taG1srOWF5xZNb0IMda/N6G5ATagXZnOOcl4cYgEBfCIVMEU1SNbHOSFWsWhoFHo
-+WVydTkSoh2cvkWh0IS6hH+niteX7khC4zFJ+hxoGB/fBSXKEn2MVyp8GnWJUgfO
-MxY+ub4lMumtFe4aWMYig2p7YcfaOlcJZkfxjKadQoSGMWveGcA/ZiA0qM4d1hEj
-tv3THpF4nT62pSJVyskmjVFWWOSXW9qg7xGQs7OsJZXWENdF3Qaa2htfN+bzYFX2
-YVhNS2govC/rhmhCXokR+Sw58tOpqFqQN0UromKB256D6eeo3iKLHf2BA//fXe80
-d1SHg+WXslqUjdMNgHzGniPfdE4DJWdmzUu/IKs9VhVHpgjHqJERwIsyo8ZG910k
-GLinMZzGgR6vwdtVMNWn
-=m7tn
------END PGP SIGNATURE-----
-
---aHyShe78FfJzbeER--
+Good mailing practices for 400: avoid top-posting and trim the reply.
