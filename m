@@ -3,58 +3,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22BEC32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B25BC46465
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CCBB2085B
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CCBB2085B
+	by mail.kernel.org (Postfix) with ESMTP id E6E332081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 05:53:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E332081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387429AbeKFPMx (ORCPT
+        id S1729829AbeKFPQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:12:53 -0500
-Received: from mga12.intel.com ([192.55.52.136]:6015 "EHLO mga12.intel.com"
+        Tue, 6 Nov 2018 10:16:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:12894 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbeKFPMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:12:53 -0500
+        id S1729342AbeKFPQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 10:16:30 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 21:49:22 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 21:52:59 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="271694568"
+   d="scan'208";a="97944827"
 Received: from unknown (HELO localhost) ([10.249.254.149])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 21:49:13 -0800
-Date:   Tue, 6 Nov 2018 07:49:11 +0200
+  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2018 21:52:51 -0800
+Date:   Tue, 6 Nov 2018 07:52:50 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-Message-ID: <20181106054911.GA15575@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+Subject: Re: [PATCH v3 01/16] tpm: use tpm_buf in tpm_transmit_cmd() as the
+ IO parameter
+Message-ID: <20181106055250.GB15575@linux.intel.com>
+References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-2-jarkko.sakkinen@linux.intel.com>
+ <3b462772-c9a6-648c-fb05-b45bbff98a84@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+In-Reply-To: <3b462772-c9a6-648c-fb05-b45bbff98a84@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,22 +63,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
-> The ABI seems entirely undocumented and rather lightly designed, which
-> seems like something we should fix before this is merged.
+On Mon, Nov 05, 2018 at 04:48:13PM -0500, Stefan Berger wrote:
+> >   int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+> >   {
+> > +	struct tpm_buf buf;
+> >   	int rc;
+> > 
+> >   	chip = tpm_find_get_ops(chip);
+> >   	if (!chip)
+> >   		return -ENODEV;
+> > 
+> > -	rc = tpm_transmit_cmd(chip, NULL, cmd, buflen, 0, 0,
+> > +	rc = tpm_buf_init(&buf, 0, 0);
+> > +	if (rc)
+> > +		goto out;
+> > +
+> > +	memcpy(buf.data, cmd, buflen);
+> 
+> 
+> Nit: buflen -> cmd_len
 
-ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
-documentation is included to intel_sgx.rst. I'm not saying that there is
-no space refine it but it is neither undocumented.
+Agreed that it should but I try to keep the patch as minimal and
+mechanical as I can.
 
-> Also, for a feature as massive and complicated as this one, it seems
-> irresponsible to not have a selftest.  Is that not feasible for some reason?
-
-I do have the in-kernel launch enclave stuff backed up here:
-
-https://github.com/jsakkine-intel/sgx-le-host
-https://github.com/jsakkine-intel/sgx-le
-
-This is about as simple as it gets without any type of run-time.
+Thank you.
 
 /Jarkko
