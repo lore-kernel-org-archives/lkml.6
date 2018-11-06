@@ -2,96 +2,117 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A8FC32789
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F171C46465
 	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB0F2086C
+	by mail.kernel.org (Postfix) with ESMTP id 477E52086B
 	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 12:07:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrjQ14Ce"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB0F2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477E52086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388230AbeKFVcL (ORCPT
+        id S2388245AbeKFVcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 6 Nov 2018 16:32:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388204AbeKFVcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 16:32:09 -0500
-Received: from jouet.infradead.org (unknown [189.40.102.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A848D2083D;
-        Tue,  6 Nov 2018 12:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541506035;
-        bh=beBFKsOA1/LtW5vToKwq5Lz7+SIhItcAFg3TKZ0BrhU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PrjQ14CeLrXc2SFOl+555y/o7IDiMGelr5nlBDgr4Q+RN+WlRRw7ry/aRwOPXKyhc
-         71asdAdo19MlvtwuNIBzssY3s7QWlzkouPr4RCkVJJfIzJXA8mKDbY8p1rMcqA8Bnv
-         lLeIoU8VZJX5S09awXmaS3n5obPc65O1YdJtBPEo=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 13/18] perf scripts python: exported-sql-viewer.py: Fix table find when table re-ordered
-Date:   Tue,  6 Nov 2018 09:06:07 -0300
-Message-Id: <20181106120612.8262-14-acme@kernel.org>
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14179 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387612AbeKFVcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 16:32:08 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6CB1179EDFDD3;
+        Tue,  6 Nov 2018 20:07:11 +0800 (CST)
+Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 6 Nov 2018
+ 20:07:04 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Eric Biggers <ebiggers@google.com>
+CC:     <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [RFC PATCH v2 2/2] fscrypt: enable RCU-walk path for .d_revalidate
+Date:   Tue, 6 Nov 2018 20:20:52 +0800
+Message-ID: <20181106122052.18507-2-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181106120612.8262-1-acme@kernel.org>
-References: <20181106120612.8262-1-acme@kernel.org>
+In-Reply-To: <20181106122052.18507-1-gaoxiang25@huawei.com>
+References: <20181106122052.18507-1-gaoxiang25@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+This patch attempts to enable RCU-walk for fscrypt.
+It looks harmless at glance and could have better
+performance than do ref-walk only.
 
-Table rows can be re-ordered by selecting a column to sort by. After
-re-ordering, the "find" operation was highlighting the wrong row, fix
-it.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181104151238.15947-5-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index c2fcf6c5237a..f278ce5ebab7 100755
---- a/tools/perf/scripts/python/exported-sql-viewer.py
-+++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -1975,7 +1975,7 @@ class TableWindow(QMdiSubWindow, ResizeColumnsToContentsBase):
- 	def FindDone(self, row):
- 		self.find_bar.Idle()
- 		if row >= 0:
--			self.view.setCurrentIndex(self.model.index(row, 0, QModelIndex()))
-+			self.view.setCurrentIndex(self.model.mapFromSource(self.data_model.index(row, 0, QModelIndex())))
- 		else:
- 			self.find_bar.NotFound()
+p.s.
+  In my opinion, it is better to retry for the case of
+  READ_ONCE(dentry->d_parent) != dir rather than just
+  return 0; and then do real lookup for ref-walk path...
+  It behaves much like a seqlock and I tend to avoid
+  taking d_lock as well..
+  Please kindly correct me if I am wrong... Thanks in advance.
+
+Thanks,
+Gao Xiang
+
+ fs/crypto/crypto.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index b38c574f70ac..2cc26fe9c43d 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -319,20 +319,29 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	struct dentry *dir;
+ 	int dir_has_key, cached_with_key;
++	struct inode *dir_inode;
  
-@@ -2188,6 +2188,8 @@ For PostgreSQL databases, information_schema.tables/views/columns are included.
- Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
- Refer to Python documentation for the regular expression syntax.
- All columns are searched, but only currently fetched rows are searched.
-+<p>N.B. Results are found in id order, so if the table is re-ordered, find-next and find-previous
-+will go to the next/previous result in id order, instead of display order.
- """
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
++repeat:
++	rcu_read_lock();
++	dir = READ_ONCE(dentry->d_parent);
  
- # Help window
+-	dir = dget_parent(dentry);
+-	if (!IS_ENCRYPTED(d_inode(dir))) {
+-		dput(dir);
++	dir_inode = d_inode_rcu(dir);
++	if (!dir_inode || !IS_ENCRYPTED(dir_inode)) {
++		rcu_read_unlock();
+ 		return 0;
+ 	}
++	dir_has_key = (dir_inode->i_crypt_info != NULL);
++
++	/* original dir becomes invalid after sampling all? */
++	if (unlikely(__lockref_is_dead(&dir->d_lockref) ||
++		     READ_ONCE(dentry->d_parent) != dir)) {
++		rcu_read_unlock();
++		goto repeat;
++	}
++	rcu_read_unlock();
+ 
+ 	cached_with_key = READ_ONCE(dentry->d_flags) &
+ 		DCACHE_ENCRYPTED_WITH_KEY;
+-	dir_has_key = (d_inode(dir)->i_crypt_info != NULL);
+-	dput(dir);
+ 
+ 	/*
+ 	 * If the dentry was cached without the key, and it is a
 -- 
 2.14.4
 
