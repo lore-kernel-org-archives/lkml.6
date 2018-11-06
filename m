@@ -2,265 +2,159 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE27C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 889A1C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F0F220827
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F0F220827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F71C20862
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 08:27:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F71C20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbeKFRu1 (ORCPT
+        id S2387450AbeKFRvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 12:50:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57896 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729021AbeKFRu0 (ORCPT
+        Tue, 6 Nov 2018 12:51:37 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53589 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728133AbeKFRvg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 12:50:26 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA68OlD1074880
-        for <linux-kernel@vger.kernel.org>; Tue, 6 Nov 2018 03:26:22 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nk5t6bjdc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 03:26:21 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 6 Nov 2018 08:26:20 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 6 Nov 2018 08:26:15 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA68QFYO2162956
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Nov 2018 08:26:15 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 010BA4C044;
-        Tue,  6 Nov 2018 08:26:15 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EA51C4C052;
-        Tue,  6 Nov 2018 08:26:13 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.36])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  6 Nov 2018 08:26:13 +0000 (GMT)
-Date:   Tue, 6 Nov 2018 10:26:12 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     willy@infradead.org, akpm@linux-foundation.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        vbabka@suse.cz, riel@redhat.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: Create the new vm_fault_t type
-References: <20181106074934.GA27620@jordon-HP-15-Notebook-PC>
+        Tue, 6 Nov 2018 12:51:36 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id EC1A7E0003;
+        Tue,  6 Nov 2018 08:27:28 +0000 (UTC)
+Date:   Tue, 6 Nov 2018 09:27:27 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Fabio Estevam <festevam@gmail.com>, steve_longerbeam@mentor.com,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+Message-ID: <20181106082727.GW15991@w540>
+References: <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
+ <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com>
+ <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
+ <20181023230259.GA3766@w540>
+ <CAHCN7xJaY_916OLHvaN_q1FwM2vqH5UXzVxLAS4DuEV0icPUXg@mail.gmail.com>
+ <20181024140820.GB3766@w540>
+ <CAHCN7xKbAuTmic+L-a2o1NreSCmYBKzzvmHuUTGZtVHELFoirg@mail.gmail.com>
+ <CAHCN7xLP13PDT_VhV_iQzRB+VS7N4AxY+BObtLpz4bJ6RfxfWg@mail.gmail.com>
+ <CAOMZO5Dkwrv4k=KGit+4wFFSr=ec94OpjUW56_D_aamjNPQH6g@mail.gmail.com>
+ <CAHCN7xKs=wO9dxVAo=yxjWm10jH6TmAfgYwAfAd=J2uBT3rK1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aHyShe78FfJzbeER"
 Content-Disposition: inline
-In-Reply-To: <20181106074934.GA27620@jordon-HP-15-Notebook-PC>
+In-Reply-To: <CAHCN7xKs=wO9dxVAo=yxjWm10jH6TmAfgYwAfAd=J2uBT3rK1w@mail.gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18110608-0016-0000-0000-0000021FEEDA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110608-0017-0000-0000-000032783486
-Message-Id: <20181106082611.GB28505@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811060075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 01:19:34PM +0530, Souptick Joarder wrote:
-> Page fault handlers are supposed to return VM_FAULT codes,
-> but some drivers/file systems mistakenly return error
-> numbers. Now that all drivers/file systems have been converted
-> to use the vm_fault_t return type, change the type definition
-> to no longer be compatible with 'int'. By making it an unsigned
-> int, the function prototype becomes incompatible with a function
-> which returns int. Sparse will detect any attempts to return a
-> value which is not a VM_FAULT code.
-> 
-> VM_FAULT_SET_HINDEX and VM_FAULT_GET_HINDEX values are changed
-> to avoid conflict with other VM_FAULT codes.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
-> v2: Updated the change log and corrected the document part.
->     name added to the enum that kernel-doc able to parse it.
-> 
->  include/linux/mm.h       | 46 ------------------------------
->  include/linux/mm_types.h | 73 +++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 72 insertions(+), 47 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index fcf9cc9..511a3ce 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
->  }
->  
->  /*
-> - * Different kinds of faults, as returned by handle_mm_fault().
-> - * Used to decide whether a process gets delivered SIGBUS or
-> - * just gets major/minor fault counters bumped up.
-> - */
-> -
-> -#define VM_FAULT_OOM	0x0001
-> -#define VM_FAULT_SIGBUS	0x0002
-> -#define VM_FAULT_MAJOR	0x0004
-> -#define VM_FAULT_WRITE	0x0008	/* Special case for get_user_pages */
-> -#define VM_FAULT_HWPOISON 0x0010	/* Hit poisoned small page */
-> -#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
-> -#define VM_FAULT_SIGSEGV 0x0040
-> -
-> -#define VM_FAULT_NOPAGE	0x0100	/* ->fault installed the pte, not return page */
-> -#define VM_FAULT_LOCKED	0x0200	/* ->fault locked the returned page */
-> -#define VM_FAULT_RETRY	0x0400	/* ->fault blocked, must retry */
-> -#define VM_FAULT_FALLBACK 0x0800	/* huge page fault failed, fall back to small */
-> -#define VM_FAULT_DONE_COW   0x1000	/* ->fault has fully handled COW */
-> -#define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
-> -					 * and needs fsync() to complete (for
-> -					 * synchronous page faults in DAX) */
-> -
-> -#define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
-> -			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
-> -			 VM_FAULT_FALLBACK)
-> -
-> -#define VM_FAULT_RESULT_TRACE \
-> -	{ VM_FAULT_OOM,			"OOM" }, \
-> -	{ VM_FAULT_SIGBUS,		"SIGBUS" }, \
-> -	{ VM_FAULT_MAJOR,		"MAJOR" }, \
-> -	{ VM_FAULT_WRITE,		"WRITE" }, \
-> -	{ VM_FAULT_HWPOISON,		"HWPOISON" }, \
-> -	{ VM_FAULT_HWPOISON_LARGE,	"HWPOISON_LARGE" }, \
-> -	{ VM_FAULT_SIGSEGV,		"SIGSEGV" }, \
-> -	{ VM_FAULT_NOPAGE,		"NOPAGE" }, \
-> -	{ VM_FAULT_LOCKED,		"LOCKED" }, \
-> -	{ VM_FAULT_RETRY,		"RETRY" }, \
-> -	{ VM_FAULT_FALLBACK,		"FALLBACK" }, \
-> -	{ VM_FAULT_DONE_COW,		"DONE_COW" }, \
-> -	{ VM_FAULT_NEEDDSYNC,		"NEEDDSYNC" }
-> -
-> -/* Encode hstate index for a hwpoisoned large page */
-> -#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
-> -#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
-> -
-> -/*
->   * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
->   */
->  extern void pagefault_out_of_memory(void);
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 5ed8f62..beee607 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -22,7 +22,6 @@
->  #endif
->  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
->  
-> -typedef int vm_fault_t;
->  
->  struct address_space;
->  struct mem_cgroup;
-> @@ -609,6 +608,78 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
->  
->  struct vm_fault;
->  
-> +/**
-> + * typedef vm_fault_t - Return type for page fault handlers.
-> + *
-> + * Page fault handlers return a bitmask of %VM_FAULT values.
-> + */
-> +typedef __bitwise unsigned int vm_fault_t;
-> +
-> +/**
-> + * enum - VM_FAULT code
 
-It should be 'enum vm_fault_reason' here.
-A more elaborate brief description would also be nice.
+--aHyShe78FfJzbeER
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> + *
-> + * Page fault handlers return a bitmask of these values to tell
-> + * the core VM what happened when handling the fault. Used to decide
-> + * whether a process gets delivered SIGBUS or just gets major/minor
-> + * fault counters bumped up.
-> + *
-> + * @VM_FAULT_OOM:		Out Of Memory
-> + * @VM_FAULT_SIGBUS:		Bad access
-> + * @VM_FAULT_MAJOR:		Page read from storage
-> + * @VM_FAULT_WRITE:		Special case for get_user_pages
-> + * @VM_FAULT_HWPOISON:		Hit poisoned small page
-> + * @VM_FAULT_HWPOISON_LARGE:	Hit poisoned large page. Index encoded
-> + *				in upper bits
-> + * @VM_FAULT_SIGSEGV:		segmentation fault
-> + * @VM_FAULT_NOPAGE:		->fault installed the pte, not return page
-> + * @VM_FAULT_LOCKED:		->fault locked the returned page
-> + * @VM_FAULT_RETRY:		->fault blocked, must retry
-> + * @VM_FAULT_FALLBACK:		huge page fault failed, fall back to small
-> + * @VM_FAULT_DONE_COW:		->fault has fully handled COW
-> + * @VM_FAULT_NEEDDSYNC:		->fault did not modify page tables and needs
-> + *				fsync() to complete (for synchronous page faults
-> + *				in DAX)
-> + */
-> +enum vm_fault_reason {
-> +	VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
-> +	VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
-> +	VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
-> +	VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
-> +	VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
-> +	VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
-> +	VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
-> +	VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
-> +	VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
-> +	VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
-> +	VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
-> +	VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
-> +	VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
-> +	VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
-> +};
-> +
-> +/* Encode hstate index for a hwpoisoned large page */
-> +#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
-> +#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
-> +
-> +#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |	\
-> +			VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |	\
-> +			VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
-> +
-> +#define VM_FAULT_RESULT_TRACE \
-> +	{ VM_FAULT_OOM,                 "OOM" },	\
-> +	{ VM_FAULT_SIGBUS,              "SIGBUS" },	\
-> +	{ VM_FAULT_MAJOR,               "MAJOR" },	\
-> +	{ VM_FAULT_WRITE,               "WRITE" },	\
-> +	{ VM_FAULT_HWPOISON,            "HWPOISON" },	\
-> +	{ VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },	\
-> +	{ VM_FAULT_SIGSEGV,             "SIGSEGV" },	\
-> +	{ VM_FAULT_NOPAGE,              "NOPAGE" },	\
-> +	{ VM_FAULT_LOCKED,              "LOCKED" },	\
-> +	{ VM_FAULT_RETRY,               "RETRY" },	\
-> +	{ VM_FAULT_FALLBACK,            "FALLBACK" },	\
-> +	{ VM_FAULT_DONE_COW,            "DONE_COW" },	\
-> +	{ VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> +
->  struct vm_special_mapping {
->  	const char *name;	/* The name, e.g. "[vdso]". */
->  
-> -- 
-> 1.9.1
-> 
+Hi Adam,
 
--- 
-Sincerely yours,
-Mike.
+On Mon, Nov 05, 2018 at 04:32:33PM -0600, Adam Ford wrote:
+> On Mon, Oct 29, 2018 at 8:49 AM Fabio Estevam <festevam@gmail.com> wrote:
+> >
+> > Hi Adam,
+> >
+> > On Sun, Oct 28, 2018 at 3:58 PM Adam Ford <aford173@gmail.com> wrote:
+> >
+> > > Does anyone know when the media branch get's merged into the mainline
+> > > kernel?  I assume we're in the merge window with 4.19 just having been
+> > > released.  Once these have been merged into the mainline, I'll go
+> > > through and start requesting they get pulled into 4.19 and/or 4.14
+> > > if/when appropriate.
+> >
+> > This should happen in 4.20-rc1, which will probably be out next  Sunday.
+> I sent an e-mail to stable with a list of a variety of patches for the
+> ov5640 to be applied to 4.19.y  So far all looks pretty good, but I
+> think I found on minor bug:
 
+Thanks!
+
+>
+> If I attempt to change just the resolution, it doesn't take.
+>
+> Initial read
+> media-ctl --get-v4l2 "'ov5640 2-0010':0"
+> [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb xfer:srgb
+> ycbcr:601 quantization:full-range]
+>
+> Change resolution
+> # media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/720x480 field:none]"
+>
+> Read it back
+> # media-ctl --get-v4l2 "'ov5640 2-0010':0"
+> [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb xfer:srgb
+> ycbcr:601 quantization:full-range]
+>
+> However, if I change the resolution AND the format to something other
+> than UYVY2x8, the resolution changes. I can then change the format
+> back to UYVY and capture and stream video at 1080p and 720x480.
+> I can work around this, but I thought I'd mention it.  I was trying to
+> figure out a patch to apply to the mailing list myself, but I wasn't
+> able to fix it quickly.
+
+Thanks, you are right, this is a known issue :(
+
+There have been patches to address this issue floating around the
+mailing list, none of them has yet made it up to inclusion.
+
+Sam has sent a patch to fix this:
+https://patchwork.linuxtv.org/patch/52489/
+
+Hugues had something similar I cannot find, if I'm not wrong, and I
+carry myself the patch I posted in the patchwork discussion in my
+trees.
+
+Feel free to go through the media list and comment. One more report on
+this would help to increase chances to have one of those patches
+re-sent and then included.
+
+Also, bug reports are always very welcome, but to maximize the chances
+they receive the required attention, could you make a new email thread
+next time and drop this one please?
+
+Thanks
+  j
+
+>
+> adam
+> adam
+
+--aHyShe78FfJzbeER
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJb4VBvAAoJEHI0Bo8WoVY89u8QAKTJtiKq5vUKEk2WmDfyjb/p
+8/m+NgtmK44q6o0NgLC0IRoL7BpTZeMS14wKs6nX+YFqYJiZrlmzZf21Y1WNJ8XN
+P2yqAsVTqKcf9rRyikbebxkC7BpFNyIRAoM1PrIcYZRdGMgiyl7XCnQ3/IShdaz0
+WWILE7C1Pao8TF1a5aj7vcUxHHtaN8mrzTJ1yV1RZHVUd5xyQTL5aY2jEPowuRWH
+x0Bljl3eu0uNHTZ5606aKDfFZavYjmK+cMnIfdVhtGay4Mp50RHEgWyEUPDJVXdc
+taG1srOWF5xZNb0IMda/N6G5ATagXZnOOcl4cYgEBfCIVMEU1SNbHOSFWsWhoFHo
++WVydTkSoh2cvkWh0IS6hH+niteX7khC4zFJ+hxoGB/fBSXKEn2MVyp8GnWJUgfO
+MxY+ub4lMumtFe4aWMYig2p7YcfaOlcJZkfxjKadQoSGMWveGcA/ZiA0qM4d1hEj
+tv3THpF4nT62pSJVyskmjVFWWOSXW9qg7xGQs7OsJZXWENdF3Qaa2htfN+bzYFX2
+YVhNS2govC/rhmhCXokR+Sw58tOpqFqQN0UromKB256D6eeo3iKLHf2BA//fXe80
+d1SHg+WXslqUjdMNgHzGniPfdE4DJWdmzUu/IKs9VhVHpgjHqJERwIsyo8ZG910k
+GLinMZzGgR6vwdtVMNWn
+=m7tn
+-----END PGP SIGNATURE-----
+
+--aHyShe78FfJzbeER--
