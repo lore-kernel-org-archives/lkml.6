@@ -2,159 +2,116 @@ Return-Path: <SRS0=aqUf=NR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D20C32789
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40836C32789
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40B220869
-	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:58:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40B220869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 091902081D
+	for <linux-kernel@archiver.kernel.org>; Tue,  6 Nov 2018 13:58:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIg/h7IO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091902081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388664AbeKFXXX (ORCPT
+        id S2388681AbeKFXXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:23:23 -0500
-Received: from mga05.intel.com ([192.55.52.43]:45065 "EHLO mga05.intel.com"
+        Tue, 6 Nov 2018 18:23:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388509AbeKFXXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:23:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 05:58:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="277518978"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Nov 2018 05:57:59 -0800
-Message-ID: <1541512681.7839.14.camel@intel.com>
-Subject: Re: [PATCH v16 06/22] x86/cpu/intel: Detect SGX support and update
- caps appropriately
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
-Cc:     dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Wang <davidwang@zhaoxin.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Date:   Tue, 06 Nov 2018 05:58:01 -0800
-In-Reply-To: <20181106134758.10572-7-jarkko.sakkinen@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
-         <20181106134758.10572-7-jarkko.sakkinen@linux.intel.com>
+        id S2388273AbeKFXXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Nov 2018 18:23:51 -0500
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED21821019;
+        Tue,  6 Nov 2018 13:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541512709;
+        bh=10z+PpoOW7vXkeqE8qebmbdxJXgkTqTfvQhET6fCD04=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WIg/h7IOzypff0EfVos1Sjuj6u5ld0wEbqQ+saBLsyH8p9NRkgKkpoCYXX0H6+OQv
+         VpZ8mZHqxLxoaSG1t5nSlHmhxyjtk+l1yYH2cfwu3/gxEA95x+6aOmjb2sD7YnWpzi
+         OBUcG9QJaBaTI+cXO1LAgj+Tt5Kp8+2+BLqiqFeg=
+Received: by mail-qk1-f178.google.com with SMTP id u68so18405335qkg.9;
+        Tue, 06 Nov 2018 05:58:28 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKk6w4/1cbh0eWxRV0JEfiTC2NWd/zA3A+Zbc7y2qH6mPiHgcDM
+        xq9p0NlSfTwwjKdayqAHKrJ3+5QBaFo0y7Balg==
+X-Google-Smtp-Source: AJdET5ehXzdQy9JR1A3rqsq8Ts2vxBMuMFsYxLQDNTT3w0lcOpGXLwuMiUjfgKw8JyV0wwXrPdNu1mCabk5joWp2Ttk=
+X-Received: by 2002:a37:4dc5:: with SMTP id a188-v6mr24703752qkb.326.1541512707990;
+ Tue, 06 Nov 2018 05:58:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20181104155501.14767-1-TheSven73@googlemail.com>
+ <20181104155501.14767-2-TheSven73@googlemail.com> <20181105212049.GA320@bogus>
+ <CAGngYiUZTm-r0KJ07tKsPmgKCUWcqAOx2S82iLPRjkcDiw0R3g@mail.gmail.com>
+In-Reply-To: <CAGngYiUZTm-r0KJ07tKsPmgKCUWcqAOx2S82iLPRjkcDiw0R3g@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 6 Nov 2018 07:58:15 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLgz9Z3J0x+QFU6jHOoHn6A1KASc+HbVLnW1=ow0RHv6w@mail.gmail.com>
+Message-ID: <CAL_JsqLgz9Z3J0x+QFU6jHOoHn6A1KASc+HbVLnW1=ow0RHv6w@mail.gmail.com>
+Subject: Re: [PATCH anybus v3 1/6] misc: support the Arcx anybus bridge
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Garry <john.garry@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> Similar to other large Intel features such as VMX and TXT, SGX must be
-> explicitly enabled in IA32_FEATURE_CONTROL MSR to be truly usable.
-> Clear all SGX related capabilities if SGX is not fully enabled in
-> IA32_FEATURE_CONTROL or if the SGX1 instruction set isn't supported
-> (impossible on bare metal, theoretically possible in a VM if the VMM is
-> doing something weird).
-> 
-> Like SGX itself, SGX Launch Control must be explicitly enabled via a
-> flag in IA32_FEATURE_CONTROL. Clear the SGX_LC capability if Launch
-> Control is not fully enabled (or obviously if SGX itself is disabled).
-> 
-> Note that clearing X86_FEATURE_SGX_LC creates a bit of a conundrum
-> regarding the SGXLEPUBKEYHASH MSRs, as it may be desirable to read the
-> MSRs even if they are not writable, e.g. to query the configured key,
-> but clearing the capability leaves no breadcrum for discerning whether
-> or not the MSRs exist.  But, such usage will be rare (KVM is the only
-> known case at this time) and not performance critical, so it's not
-> unreasonable to require the use of rdmsr_safe().  Clearing the cap bit
-> eliminates the need for an additional flag to track whether or not
-> Launch Control is truly enabled, which is what we care about the vast
-> majority of the time.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/intel.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index fc3c07fe7df5..8a20a193d399 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -596,6 +596,40 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  	c->x86_phys_bits -= keyid_bits;
->  }
->  
-> +static void detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +	unsigned long long fc;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-> +		goto out_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> +		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
-> +		goto out_unsupported;
-> +	}
-> +
-> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> +		pr_err_once("sgx: SGX1 instruction set not supported\n");
-> +		goto out_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+On Mon, Nov 5, 2018 at 3:50 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+>
+> On Mon, Nov 5, 2018 at 4:20 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > bridge vs. host are confusing me as those are often the same thing. But
+> > here bridge is just some auxilliary controls for the bus and the host is
+> > the actual bus with devices? I'm not sure why you split this into 2 DT
+> > nodes? How many devices are connected to the host processor (i.MX) bus?
+> >
+>
+> The anybus can only have a single client card (device) on the bus. I
+> know, we can criticise the name, but that's how HMS Industrial
+> Networks designed it.
+>
+> The anybus-bridge is how we (at arcx / Archronix) physically connect
+> anybus slots to the iMX. It is a CPLD chip connected to the i.MX WEIM
+> bus on the SoC side. On the other side of the CPLD, there are two
+> anybus slots. Each slot may hold an anybus card (profinet, flnet,
+> cc-link, ...)
+>
+> The anybuss-host implements the anybus specification in a
+> platform-independent way. Some other company could attach anybus slots
+> to their CPU through a completely different bus, or spi, and they
+> could still attach the anybuss-host driver onto it. All the driver
+> needs is a regmap providing access to the anybus slot memory, an
+> interrupt, and a reset controller.
 
-FEATURE_CONTROL_SGX_LE_WR isn't added until patch 13/22.  The patch
-can simply be moved earlier in the series if you want to introduce
-the full detect_sgx() in a single patch.  The only reason SGX_LE_WR
-was added later in the series was to bundle the Launch Control stuff
-together.
+It doesn't really sound like the host should be in DT. The bridge
+should register itself as an anybus provider and that should in turn
+enable the anybus host protocol.
 
-> +		pr_info_once("sgx: launch control MSRs are not writable\n");
-> +		goto out_msrs_rdonly;
-> +	}
-> +
-> +	return;
-> +out_unsupported:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> +out_msrs_rdonly:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> +}
-> +
->  static void init_intel_energy_perf(struct cpuinfo_x86 *c)
->  {
->  	u64 epb;
-> @@ -763,6 +797,9 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	if (cpu_has(c, X86_FEATURE_TME))
->  		detect_tme(c);
->  
-> +	if (cpu_has(c, X86_FEATURE_SGX))
-> +		detect_sgx(c);
-> +
->  	init_intel_energy_perf(c);
->  
->  	init_intel_misc_features(c);
+Rob
