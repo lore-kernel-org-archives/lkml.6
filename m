@@ -2,74 +2,97 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A94C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943C6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ADB20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:10:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoNg89Xu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29ADB20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 609DA20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:13:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609DA20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387491AbeKGPjg (ORCPT
+        id S1727397AbeKGPmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 10:39:36 -0500
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:38749 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbeKGPjf (ORCPT
+        Wed, 7 Nov 2018 10:42:46 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:60026 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbeKGPmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 10:39:35 -0500
-Received: by mail-wm1-f41.google.com with SMTP id f2-v6so931301wme.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 22:10:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=4SDD5ShUtI2RKD54FvvKFjyKOP/Qv3YcK3w0i+HF5HU=;
-        b=CoNg89XunBvXGIRcOQe/z3aX+etSzzRjsBV85R9fiI7imIzBFG4X0p6rj0iJM2rRpq
-         fVOBeK3zf1ZDjZ2vClw2dqzlSQ3N4RGSkEkxM9zqcoVEqVIKSKPCEa9bWp3wwcDIqswU
-         fFCE39LpgvEE0W/4ZjLydOygmDvVUfeGaouKlRkd99iMaaXH+ZDuczxOEksbSaY/8TR3
-         yGTS12B/BDH5SKdggDCaN7OoKUywe+DrvxTiSnqQR7n7UO3pKUtB4DynygsIvhLHD3JJ
-         8uBahI4s/woyzvdRd31Z0v0w6SytDBo7Tch9eCoxyKOnC1vJIaGvE4aoBgpOvO+x7RcM
-         k5NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=4SDD5ShUtI2RKD54FvvKFjyKOP/Qv3YcK3w0i+HF5HU=;
-        b=PeEM/M/hbixdLLoFgd9vYFrIs+84xAPQJTW7sxPGFGNvL2qEk7GQ5NA5rkmUFI2K+s
-         iejgMlRfBGNMU8EN2iJ2MVBQVw+V+R4j+Y/BH+VU+b1Aw/mIFalzWC+so214QovC7Id7
-         T7P4TkUsx0n4gDG2BZ76pHS8cLifxZv+//QV7LOdxC84jYJejPYA4n4HIYYa0to+vZDk
-         VIZIriOVVzTnjV9bZJbLLSkUq9pLeEtBNIc1hobBLXygmcndiejl9fgb3oPKf9UwLtCy
-         GnG2c/c0qageOssYbrG0JNMZ04eW2i2cVqTecgFBh+NABLCnK8w0hk6pPKlqQJxG9jWK
-         WHtw==
-X-Gm-Message-State: AGRZ1gL1dCN8VgwjgWatgG78jJJ95sIrv8iCPql9z5jyg5a7BCeeYnMZ
-        gzcZDh9g0bywcEDFvYP+9ULaGnsM8AKePqAwRetJxjIkhQc=
-X-Google-Smtp-Source: AJdET5cDS02I94J9StH0V8/KVk3zMSk7ybKlCUIGUgrvSeYW4Qjzvefgh+zF6OQGvm8jwAyEI6b5vfJOmE3hQPIJTIA=
-X-Received: by 2002:a1c:e40b:: with SMTP id b11-v6mr752216wmh.100.1541571041406;
- Tue, 06 Nov 2018 22:10:41 -0800 (PST)
-MIME-Version: 1.0
-From:   =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>
-Date:   Wed, 7 Nov 2018 07:10:29 +0100
-Message-ID: <CAEXMXLSGoTfEL4ARER80bXMYGmu-mXXOQ4nRwHW-4R4uby5_WA@mail.gmail.com>
-Subject: Target bindeb-pkg no longer install DTBs
-To:     linux-kernel@vger.kernel.org, robh@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 7 Nov 2018 10:42:46 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 67D1513FD10BE;
+        Tue,  6 Nov 2018 22:13:52 -0800 (PST)
+Date:   Tue, 06 Nov 2018 22:13:49 -0800 (PST)
+Message-Id: <20181106.221349.1296959035550004994.davem@davemloft.net>
+To:     jolsa@redhat.com
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        jolsa@kernel.org
+Subject: Re: [PATCH RFC] hist lookups
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181106204255.GB25020@krava>
+References: <20181105.200321.1569039579935458312.davem@davemloft.net>
+        <20181105.205342.1568518551892125916.davem@davemloft.net>
+        <20181106204255.GB25020@krava>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 06 Nov 2018 22:13:52 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Jiri Olsa <jolsa@redhat.com>
+Date: Tue, 6 Nov 2018 21:42:55 +0100
 
-Since 37c8a5fafa3bb7dcdd51774be353be6cb2912b86 [kbuild: consolidate
-Devicetree dtb build rules], the target bindeb-pkg no longer installs
-DTBs in the .deb package.
+> I pushed that fix in perf/fixes branch, but I'm still occasionaly
+> hitting the namespace crash.. working on it ;-)
 
-Thanks,
-Nuno
+Jiri, how can this new scheme work without setting copy_on_queue
+for the queued_events we use here?
+
+I don't see copy_on_queue being set and that means the queued event
+structures reference the event memory directly in the mmaps, after the
+mmap thread has released them back to the queue.
+
+That means new events can come in to the mmap ring and overwrite what
+was there previously, maybe even while deliver_event() is in the
+middle of parsing the event.
+
+Setting copy_on_queue for data[0] and data[1] makes all of the crashes
+go away for me.
+
+I get a lot of "[unknown]" shared objects shortly after perf top
+starts up during a full workload.  I've been wondering about one
+side effect of how the mmap queues are processed, consider the
+following:
+
+	cpu 0			cpu 1
+
+				exec
+				create new mmap2 events
+				scheduled to cpu 0 for whatever reason
+	sample 1
+	sample 2
+
+And let's say that perf top is backlogged processing the mmap ring of
+events generated for cpu 0, and sees sample 1 and sample 2 before
+getting to any of cpu 1's events.
+
+This means the thread and map and symbol objects won't exist and
+we'll get those '[Unknown]' histogram entries, and they won't go
+away.
+
+When it finally stops looping over the mmap ring for cpu 0's events
+it gets to cpu 1's mmap ring and sees the exec and mmap2 events
+but at that point it's far too late.
+
+I surmise from what I see with perf top right now that this happens
+a lot.
