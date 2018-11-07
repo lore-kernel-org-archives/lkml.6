@@ -2,93 +2,77 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBCFC32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 02:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BC5C46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 02:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E211E2086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 02:02:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E211E2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6043F2086A
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 02:07:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6043F2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389153AbeKGLa7 (ORCPT
+        id S2389198AbeKGLf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 06:30:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14185 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388747AbeKGLa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 06:30:59 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0D91150BAE96D
-        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 10:02:43 +0800 (CST)
-Received: from huawei.com (10.175.104.244) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Wed, 7 Nov 2018
- 10:02:33 +0800
-From:   Hui Wang <john.wanghui@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>
-CC:     <guijianfeng@huawei.com>, <wencongyang2@huawei.com>,
-        <douliyang1@huawei.com>, <qiaonuohan@huawei.com>
-Subject: [PATCH] x86/topology: use total_cpus for max logical packages calculation
-Date:   Wed, 7 Nov 2018 10:36:43 +0800
-Message-ID: <20181107023643.22174-1-john.wanghui@huawei.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 7 Nov 2018 06:35:26 -0500
+Received: from utopia.booyaka.com ([74.50.51.50]:53981 "EHLO
+        utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388990AbeKGLf0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 06:35:26 -0500
+Received: (qmail 30180 invoked by uid 1019); 7 Nov 2018 02:00:30 -0000
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 7 Nov 2018 02:00:30 -0000
+Date:   Wed, 7 Nov 2018 02:00:30 +0000 (UTC)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Megan Wachs <megan@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-riscv@lists.infradead.org, paul@pwsan.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: clk: add documentation for the SiFive
+ PRCI driver
+In-Reply-To: <154152561238.88331.13239370518226908068@swboyd.mtv.corp.google.com>
+Message-ID: <alpine.DEB.2.21.999.1811070159350.29982@utopia.booyaka.com>
+References: <20181020135024.28573-1-paul.walmsley@sifive.com> <20181020135024.28573-3-paul.walmsley@sifive.com> <154152561238.88331.13239370518226908068@swboyd.mtv.corp.google.com>
+User-Agent: Alpine 2.21.999 (DEB 260 2018-02-26)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.104.244]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nr_cpu_ids can be limited on the command line via nr_cpus=. This can break the
-logical package management because it results in a smaller number of packages
-while in kdump kernel.
+On Tue, 6 Nov 2018, Stephen Boyd wrote:
 
-Check below case:
-There is a two sockets system, each socket has 8 cores, which has 16 logical
-cpus while HT was turn on.
+> Quoting Paul Walmsley (2018-10-20 06:50:23)
+> > diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+> > new file mode 100644
+> > index 000000000000..d7c1e83fa5ed
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+> > @@ -0,0 +1,43 @@
+> > +SiFive FU540 PRCI bindings
+> > +
+> > +On the FU540 family of SoCs, most system-wide clock and reset integration
+> > +is via the PRCI IP block.
+> > +
+> > +Required properties:
+> > +- compatible: Should be "sifive,<chip>-prci<version>".  As of the time this
+> > +              file was written, only one value is supported:
+> 
+> I don't think we need the "As of the time" sentence. It will become out
+> of date almost immediately so why not just say "The list of supported
+> values is:"?
 
- 0  1  2  3  4  5  6  7     |    16 17 18 19 20 21 22 23
- cores on socket 0               threads on socket 0
- 8  9 10 11 12 13 14 15     |    24 25 26 27 28 29 30 31
- cores on socket 1               threads on socket 1
+Adopted this change.  Thanks for the review.
 
-While start kdump kernel with option nr_cpus=16, and panic was triggered on one
-of the cpus 24-31 eg. 26, then online cpu will be 1-15, 26(cpu 0 was disabled in
-kdump), ncpus will be 16 and __max_logical_packages will be 1, but actually two
-packages were booted on.
 
-This issue can reproduced by set kdump option nr_cpus=<real physical core
-numbers>, and then trigger panic on last socket's thread, for example:
-
-taskset -c 26 echo c > /proc/sysrq-trigger
-
-Use total_cpus which will not be limited by nr_cpus command line to calculate
-the value of __max_logical_packages.
-
-Signed-off-by: Hui Wang <john.wanghui@huawei.com>
----
- arch/x86/kernel/smpboot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index a9134d1910b9..ccd1f2a8e557 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1347,7 +1347,7 @@ void __init calculate_max_logical_packages(void)
- 	 * extrapolate the boot cpu's data to all packages.
- 	 */
- 	ncpus = cpu_data(0).booted_cores * topology_max_smt_threads();
--	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
-+	__max_logical_packages = DIV_ROUND_UP(total_cpus, ncpus);
- 	pr_info("Max logical packages: %u\n", __max_logical_packages);
- }
- 
--- 
-2.17.0
-
+- Paul
