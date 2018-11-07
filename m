@@ -2,155 +2,130 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7238C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA90C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A826E20837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A826E20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BC77520837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC77520837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbeKHFWu (ORCPT
+        id S1727526AbeKHFVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:22:50 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41351 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727366AbeKHFVO (ORCPT
+        Thu, 8 Nov 2018 00:21:12 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41895 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbeKHFVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:14 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 189so22539282qkj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 11:49:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OomASdO+kpEr0msYFMfrGVRhsBEh4KrHwg5PWeSlNUs=;
-        b=U0HHG+nFDSWwiQ6ClPN2Z5E1EkaR8gUPdrsz2OUOTRdCNWxTZboVIvWgWHushLfeLg
-         23mBW4wcgdxQL/0KAu6377ihs4CWkykYYRGfz1fpSg0Rf0P+f349riNAxuxhCCNMupd2
-         uI07dA40priNrX7ZPDRr65yCKwy3IW9W0S4MLK1gNovi6deMNK8wIxyW+QhItFRyieB4
-         HtuAEF7WCui1HYWlpPaiO9jm4AwSVQSFUiBn4X6ikgZXPJ6sjZP+IrCHj2YOTR9/c0DO
-         obY38JixRiaLtgdQ5g1ivGkF87urD6dKGWs5Ko4yvMOPs/yh0e/Yf+wROdSue6qAmJZj
-         8XSw==
-X-Gm-Message-State: AGRZ1gKmtrUcJk6YWebQNATK63YrWvDXFedHV3aHVTuLMW4vQyCI8EqP
-        hgBeNBv3fDcxbW8hg18s9dCbsA==
-X-Google-Smtp-Source: AJdET5d8N8Dv8PBlhBMCRpvMVGNL4qbWpwpqoZfJ1GAgNPmmx0AFLAAcp+i0B4rpjxJ2ogFpbS4Jaw==
-X-Received: by 2002:aed:36a9:: with SMTP id f38mr1651880qtb.367.1541620164356;
-        Wed, 07 Nov 2018 11:49:24 -0800 (PST)
-Received: from dhcp-12-212-173.gsslab.rdu.redhat.com (nat-pool-rdu-t.redhat.com. [66.187.233.202])
-        by smtp.gmail.com with ESMTPSA id i26sm1289863qtc.13.2018.11.07.11.49.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 11:49:23 -0800 (PST)
-Message-ID: <1541620162.4051.5.camel@redhat.com>
-Subject: Re: [Qestion] Lots of memory leaks when mounting and unmounting nfs
- client to server continuously.
-From:   Dave Wysochanski <dwysocha@redhat.com>
-To:     zhong jiang <zhongjiang@huawei.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        herbert@gondor.apana.org.au, trond.myklebust@hammerspace.com,
-        bfields@redhat.com
-Cc:     linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-nfs@vger.kernel.org
-Date:   Wed, 07 Nov 2018 14:49:22 -0500
-In-Reply-To: <5BD86392.7070200@huawei.com>
-References: <5BD85266.6000301@huawei.com>
-         <1DEE371C-69EB-4D92-8F78-535AA5203007@redhat.com>
-         <5BD86392.7070200@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-14.el7) 
-Mime-Version: 1.0
+        Thu, 8 Nov 2018 00:21:12 -0500
+Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gKTpB-00070Q-Ec; Wed, 07 Nov 2018 20:49:13 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 09/23] x86/fpu: Remove user_fpu_begin()
+Date:   Wed,  7 Nov 2018 20:48:44 +0100
+Message-Id: <20181107194858.9380-10-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
+References: <20181107194858.9380-1-bigeasy@linutronix.de>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-30 at 21:58 +0800, zhong jiang wrote:
-> On 2018/10/30 21:06, Benjamin Coddington wrote:
-> > Hi zhong jiang,
-> > 
-> > Try asking in linux-nfs.. but I'll also note that 3.10-stable may
-> > be missing a number of fixes to leaks in the NFS GSS code.
-> > 
-> > I can see a more than a few fixes to memory leaks with:
-> > git log --grep=leak --oneline net/sunrpc/auth_gss/
-> > 
-> 
-> Thanks for your reply.  I has tested some of them in the upsteam as
-> you have said.  but It fails to solve the issue completely.
-> hence, I turn to the relevant experts whether they have happened to
-> the issue or  can give some suggestion or not.
-> 
-> Thanks,
-> zhong jiang
-> > Ben
-> > 
-> > On 30 Oct 2018, at 8:45, zhong jiang wrote:
-> > 
-> > > Hi,   Herbert
-> > > 
-> > > Recently,  I  hit  a memory leak issue when  mounting and
-> > > unmounting nfs with  the way of  krb5.
-> > > The issue happens to the linux-3.10-stable.
-> > > 
-> > > I find that slab-1024 and slab-512 will take up most of the
-> > > memory.  And it can not be freed.
-> > > Meanwhile, it result in rpcsec_gss_krb5 can be unregistered as
-> > > well.
-> > > 
-> > > 
+user_fpu_begin() sets fpu_fpregs_owner_ctx to task's fpu struct. This is
+always the case since there is no lazy FPU anymore.
+fpu_fpregs_owner_ctx is used during context switch to decide if it needs
+to load the saved registers or if the currently loaded registers are
+valid. This field is always updated on context switch so setting it
+manually has no benefit.
+Before the removal of the ->initialized member, fpu_fpregs_owner_ctx
+wouldn't be updated for kernel threads. But kernel threads don't use the
+fpu struct so again, user_fpu_begin() would not make a difference in
+user context (and would be wrong in kernel context).
 
-Are you running the latest 3.10-stable?
+Remove user_fpu_begin(), it does not change fpu_fpregs_owner_ctx's
+content.
 
-This sounds very familiar to something I encountered a while ago and it
-was a sunrpc cache related problem.  The patch that fixed it for me is
-in 3.10.106 though.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ arch/x86/include/asm/fpu/internal.h | 17 -----------------
+ arch/x86/kernel/fpu/core.c          |  4 +---
+ arch/x86/kernel/fpu/signal.c        |  1 -
+ 3 files changed, 1 insertion(+), 21 deletions(-)
 
-Can you check if this cache is growing indefinitely?
-/proc/net/rpc/auth.rpcsec.context
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index d7ef8ac8b17eb..d7f9e14c73c19 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -559,23 +559,6 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+ 	}
+ }
+ 
+-/*
+- * Needs to be preemption-safe.
+- *
+- * NOTE! user_fpu_begin() must be used only immediately before restoring
+- * the save state. It does not do any saving/restoring on its own. In
+- * lazy FPU mode, it is just an optimization to avoid a #NM exception,
+- * the task can lose the FPU right after preempt_enable().
+- */
+-static inline void user_fpu_begin(void)
+-{
+-	struct fpu *fpu = &current->thread.fpu;
+-
+-	preempt_disable();
+-	fpregs_activate(fpu);
+-	preempt_enable();
+-}
+-
+ /*
+  * MXCSR and XCR definitions:
+  */
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 2ed82c6e646b9..02bbd40fe1e95 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -328,10 +328,8 @@ void fpu__clear(struct fpu *fpu)
+ 	 * Make sure fpstate is cleared and initialized.
+ 	 */
+ 	fpu__initialize(fpu);
+-	if (static_cpu_has(X86_FEATURE_FPU)) {
+-		user_fpu_begin();
++	if (static_cpu_has(X86_FEATURE_FPU))
+ 		copy_init_fpstate_to_fpregs();
+-	}
+ }
+ 
+ /*
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 30e65085dc4d9..f61f4d804537a 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -328,7 +328,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		 * For 64-bit frames and 32-bit fsave frames, restore the user
+ 		 * state to the registers directly (with exceptions handled).
+ 		 */
+-		user_fpu_begin();
+ 		if (copy_user_to_fpregs_zeroing(buf_fx, xfeatures, fx_only)) {
+ 			fpu__clear(fpu);
+ 			return -1;
+-- 
+2.19.1
 
-If it is large, try to flush explicitly with:
-date +%s  > /proc/net/rpc/auth.rpcsec.context/flush
-
-If all that checks out, you may need the below upstream fix, but it
-went into v3.10.106 as
-6a4a5fd svcrpc: don't leak contexts on PROC_DESTROY
-
-commit 6a4a5fd4c7bc6a06ca26ad7327d046d8d3c0932a
-Author: J. Bruce Fields <bfields@redhat.com>
-Date:   Mon Jan 9 17:15:18 2017 -0500
-
-    svcrpc: don't leak contexts on PROC_DESTROY
-    
-    commit 78794d1890708cf94e3961261e52dcec2cc34722 upstream.
-    
-    Context expiry times are in units of seconds since boot, not unix time.
-    
-    The use of get_seconds() here therefore sets the expiry time decades in
-    the future.  This prevents timely freeing of contexts destroyed by
-    client RPC_GSS_PROC_DESTROY requests.  We'd still free them eventually
-    (when the module is unloaded or the container shut down), but a lot of
-    contexts could pile up before then.
-    
-    Fixes: c5b29f885afe "sunrpc: use seconds since boot in expiry cache"
-    Reported-by: Andy Adamson <andros@netapp.com>
-    Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-    Signed-off-by: Willy Tarreau <w@1wt.eu>
-
-diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
-index 62663a0..e625efe 100644
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1518,7 +1518,7 @@ static void destroy_use_gss_proxy_proc_entry(struct net *net) {}
-        case RPC_GSS_PROC_DESTROY:
-                if (gss_write_verf(rqstp, rsci->mechctx, gc->gc_seq))
-                        goto auth_err;
--               rsci->h.expiry_time = get_seconds();
-+               rsci->h.expiry_time = seconds_since_boot();
-                set_bit(CACHE_NEGATIVE, &rsci->h.flags);
-                if (resv->iov_len + 4 > PAGE_SIZE)
-                        goto drop;
