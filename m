@@ -2,94 +2,102 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9277CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3568EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 557F62081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:17:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557F62081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id D9A882081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:17:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="cInJvbgv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A882081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731415AbeKHCss (ORCPT
+        id S1731453AbeKHCtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:48:48 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:47468 "EHLO mail.skyhub.de"
+        Wed, 7 Nov 2018 21:49:01 -0500
+Received: from imap.thunk.org ([74.207.234.97]:49854 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727870AbeKHCsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:48:47 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gwmEntzY_Thu; Wed,  7 Nov 2018 18:17:27 +0100 (CET)
-Received: from zn.tnic (p200300EC2BCBE000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:e000:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BCA7C1EC0291;
-        Wed,  7 Nov 2018 18:17:27 +0100 (CET)
-Date:   Wed, 7 Nov 2018 18:17:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181107171721.GC14169@zn.tnic>
-References: <20181102232948.GC26770@zn.tnic>
- <20181105214537.GA19420@google.com>
- <20181105215650.GG26868@zn.tnic>
- <20181106214256.GA65443@google.com>
- <20181106220059.GA4139@zn.tnic>
- <20181106232040.GA85755@google.com>
- <20181107091838.GA10835@zn.tnic>
- <20181107133856.GA238955@google.com>
- <20181107160707.GA14169@zn.tnic>
- <20181107171044.GA261200@google.com>
+        id S1727676AbeKHCtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:49:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=d++4qICwXMiSLvPobLw4Yh063z+8wjCZJsO6om0rAAE=; b=cInJvbgvlYA6MfwxmQy/AvPnoo
+        lbzaiR1ZptEhG4nlbdOr8SsT5lFvRMxTq1buVoeaiVXdrCh/Wntz7PXzQx8cHCf9WbEvDEyn5ogDG
+        jji4ZTS1VSg7l/zpmQDWmoJ7+9JBZhfsIEeSVErV0Z2sHTatJeO/5wZUfduW22NNFSrk=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKRSG-00017i-Rs; Wed, 07 Nov 2018 17:17:24 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 1448D7A7D27; Wed,  7 Nov 2018 12:17:24 -0500 (EST)
+Date:   Wed, 7 Nov 2018 12:17:23 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, rmk@armlinux.org.uk,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [TECH TOPIC] SoC maintainer group
+Message-ID: <20181107171723.GI9919@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Olof Johansson <olof@lixom.net>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>, linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, rmk@armlinux.org.uk,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181107171044.GA261200@google.com>
+In-Reply-To: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 11:10:44AM -0600, Bjorn Helgaas wrote:
-> No, the idea was more that that temp monitoring, e.g., k10temp, could
-> be independent of amd_nb.
+On Tue, Nov 06, 2018 at 02:16:27PM -0800, Olof Johansson wrote:
 > 
-> But I can tell this idea isn't going anywhere, so let's just forget
-> that I stuck my neck out and let it die on the vine :)
+> Olof Johansson (arm-soc)
+> Arnd Bergmann (arm-soc)
+> Kevin Hilman (arm-soc)
+> Mike Turquette (clk)
+> Stephen Boyd (clk)
+> Linus Walleij (pinctrl + more)
+> Mike Brown (gpio/regmap + more)
 
-No no, your idea makes sense. I see the advantage of not having to do
-enablement so that old k10temp can load on new machines. Sure.
+Could the poeple listed on this list please list potential schedule conflicts?
 
-We just need to find out about the PNP ID...
+I'm going to assume we should avoid: Andriod uConf, RISC-V uConf,
+Device Tree uConf.  What are other potential conflicts.  I'm going to
+guess this might be "interesting" to schedule.  :-)
 
-:-)
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+							- Ted
