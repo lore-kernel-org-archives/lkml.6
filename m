@@ -2,131 +2,248 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62276C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEA9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A0420882
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:05:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A0420882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 34F9E20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:06:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cQOy8Mka"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F9E20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeKHHhW convert rfc822-to-8bit (ORCPT
+        id S1727790AbeKHHiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:37:22 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:37812 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727945AbeKHHhW (ORCPT
+        Thu, 8 Nov 2018 02:38:23 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33820 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727404AbeKHHiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:37:22 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 6EAE3180230CE;
-        Wed,  7 Nov 2018 23:04:59 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        stable@vger.kernel.org, Russell Senior <russell@personaltelco.net>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Subject: [PATCH v2] ubifs: Handle re-linking of inodes correctly while recovery
-Date:   Wed,  7 Nov 2018 23:04:43 +0100
-Message-Id: <20181107220443.29573-1-richard@nod.at>
-X-Mailer: git-send-email 2.19.1
+        Thu, 8 Nov 2018 02:38:23 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A752F561;
+        Wed,  7 Nov 2018 23:05:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1541628360;
+        bh=zfp4WSK5tU04IjMUV1PRH3q88EM03S29/LzCuu47vnw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cQOy8MkaL9k8oO6M3t74aRrluKXjqSs1uuO3817j5g74NL1WgzQsNlV61Nce8E/O/
+         ukBmvKLgVUvmNeSXdDQzFwUqyw389pZEFN1KYF2G81Td9Oz3J5nCh7t8I5OwsKFCdI
+         a2dSVkaSwnTxJPujWqvuPa/5vRiTVRRDqGtlZnpw=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Daniel Axtens <dja@axtens.net>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <linux-media@destevenson.freeserve.co.uk>,
+        Greg KH <greg@kroah.com>
+Subject: Re: [PATCH v2] [media] uvcvideo: Refactor teardown of uvc on USB disconnect
+Date:   Thu, 08 Nov 2018 00:06:11 +0200
+Message-ID: <1686453.Z5aelINeFC@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20170423045349.10292-1-dja@axtens.net>
+References: <20170423045349.10292-1-dja@axtens.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UBIFS's recovery code strictly assumes that a deleted inode will never
-come back, therefore it removes all data which belongs to that inode
-as soon it faces an inode with link count 0 in the replay list.
-Before O_TMPFILE this assumption was perfectly fine. With O_TMPFILE
-it can lead to data loss upon a power-cut.
+Hi Daniel,
 
-Consider a journal with entries like:
-0: inode X (nlink = 0) /* O_TMPFILE was created */
-1: data for inode X /* Someone writes to the temp file */
-2: inode X (nlink = 0) /* inode was changed, xattr, chmod, … */
-3: inode X (nlink = 1) /* inode was re-linked via linkat() */
+Thank you for the patch.
 
-Upon replay of entry #2 UBIFS will drop all data that belongs to inode X,
-this will lead to an empty file after mounting.
+On Sunday, 23 April 2017 07:53:49 EET Daniel Axtens wrote:
+> Currently, disconnecting a USB webcam while it is in use prints out a
+> number of warnings, such as:
+> 
+> WARNING: CPU: 2 PID: 3118 at
+> /build/linux-ezBi1T/linux-4.8.0/fs/sysfs/group.c:237
+> sysfs_remove_group+0x8b/0x90 sysfs group ffffffffa7cd0780 not found for
+> kobject 'event13'
+> 
+> This has been noticed before. [0]
+> 
+> This is because of the order in which things are torn down.
+> 
+> If there are no streams active during a USB disconnect:
+> 
+>  - uvc_disconnect() is invoked via device_del() through the bus
+>    notifier mechanism.
+> 
+>  - this calls uvc_unregister_video().
+> 
+>  - uvc_unregister_video() unregisters the video device for each
+>    stream,
+> 
+>  - because there are no streams open, it calls uvc_delete()
+> 
+>  - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+>    input device.
+> 
+>  - uvc_delete() calls media_device_unregister(), which cleans up the
+>    media device
+> 
+>  - uvc_delete(), uvc_unregister_video() and uvc_disconnect() all
+>    return, and we end up back in device_del().
+> 
+>  - device_del() then cleans up the sysfs folder for the camera with
+>    dpm_sysfs_remove(). Because uvc_status_cleanup() and
+>    media_device_unregister() have already been called, this all works
+>    nicely.
+> 
+> If, on the other hand, there *are* streams active during a USB disconnect:
+> 
+>  - uvc_disconnect() is invoked
+> 
+>  - this calls uvc_unregister_video()
+> 
+>  - uvc_unregister_video() unregisters the video device for each
+>    stream,
+> 
+>  - uvc_unregister_video() and uvc_disconnect() return, and we end up
+>    back in device_del().
+> 
+>  - device_del() then cleans up the sysfs folder for the camera with
+>    dpm_sysfs_remove(). Because the status input device and the media
+>    device are children of the USB device, this also deletes their
+>    sysfs folders.
+> 
+>  - Sometime later, the final stream is closed, invoking uvc_release().
+> 
+>  - uvc_release() calls uvc_delete()
+> 
+>  - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+>    input device. Because the sysfs directory has already been removed,
+>    this causes a WARNing.
+> 
+>  - uvc_delete() calls media_device_unregister(), which cleans up the
+>    media device. Because the sysfs directory has already been removed,
+>    this causes another WARNing.
+> 
+> To fix this, we need to make sure the devices are always unregistered
+> before the end of uvc_disconnect(). To this, move the unregistration
+> into the disconnect path:
+> 
+>  - split uvc_status_cleanup() into two parts, one on disconnect that
+>    unregisters and one on delete that frees.
+> 
+>  - move v4l2_device_unregister() and media_device_unregister() into
+>    the disconnect path.
+> 
+> [0]: https://lkml.org/lkml/2016/12/8/657
+> 
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Dave Stevenson <linux-media@destevenson.freeserve.co.uk>
+> Cc: Greg KH <greg@kroah.com>
+> Signed-off-by: Daniel Axtens <dja@axtens.net>
+> 
+> ---
+> 
+> v2: Move v4l2_device_unregister() as well as media_device_unregister(),
+>     thanks Laurent.
+> 
+> Tested with cheese and yavta.
+> 
+> Laurent, I know you were concerned about race conditions so I plugged
+> and unplugged the camera over a dozen times, with lots of debugging
+> turned on.
+> 
+> In particular:
+>  - KASan was enabled and didn't trigger
+>  - If I unplugged while yavta was running, and replugged *while yatva
+>    was still running*, the video camera came up as video2, not video1.
+>    This indicates that yatva was successfully holding a reference to
+>    video1 - as it should.
+>  - No other debugging triggered any warning.
 
-As solution for this problem, scan the replay list for a re-link entry
-before dropping data.
+Thank you for running those tests. I'm still a bit concerned but I'll live 
+with it. The issues are in the MC and V4L2 core anyway, there isn't much we 
+could do here to fix them.
 
-Fixes: 474b93704f32 ("ubifs: Implement O_TMPFILE")
-Cc: stable@vger.kernel.org
-Cc: Russell Senior <russell@personaltelco.net>
-Cc: Rafał Miłecki <zajec5@gmail.com>
-Reported-by: Russell Senior <russell@personaltelco.net>
-Reported-by: Rafał Miłecki <zajec5@gmail.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- fs/ubifs/replay.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 12 ++++++++----
+>  drivers/media/usb/uvc/uvc_status.c |  8 ++++++--
+>  drivers/media/usb/uvc/uvcvideo.h   |  1 +
+>  3 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c
+> b/drivers/media/usb/uvc/uvc_driver.c index 46d6be0bb316..0d0541054ce2
+> 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -1812,11 +1812,7 @@ static void uvc_delete(struct uvc_device *dev)
+>  	usb_put_intf(dev->intf);
+>  	usb_put_dev(dev->udev);
+> 
+> -	if (dev->vdev.dev)
+> -		v4l2_device_unregister(&dev->vdev);
+>  #ifdef CONFIG_MEDIA_CONTROLLER
+> -	if (media_devnode_is_registered(dev->mdev.devnode))
+> -		media_device_unregister(&dev->mdev);
+>  	media_device_cleanup(&dev->mdev);
+>  #endif
+> 
+> @@ -1884,6 +1880,14 @@ static void uvc_unregister_video(struct uvc_device
+> *dev) uvc_debugfs_cleanup_stream(stream);
+>  	}
+> 
+> +	uvc_status_unregister(dev);
+> +	if (dev->vdev.dev)
+> +		v4l2_device_unregister(&dev->vdev);
+> +#ifdef CONFIG_MEDIA_CONTROLLER
+> +	if (media_devnode_is_registered(dev->mdev.devnode))
+> +		media_device_unregister(&dev->mdev);
+> +#endif
+> +
+>  	/* Decrement the stream count and call uvc_delete explicitly if there
+>  	 * are no stream left.
+>  	 */
+> diff --git a/drivers/media/usb/uvc/uvc_status.c
+> b/drivers/media/usb/uvc/uvc_status.c index f552ab997956..95709b23d3b4
+> 100644
+> --- a/drivers/media/usb/uvc/uvc_status.c
+> +++ b/drivers/media/usb/uvc/uvc_status.c
+> @@ -198,12 +198,16 @@ int uvc_status_init(struct uvc_device *dev)
+>  	return 0;
+>  }
+> 
+> -void uvc_status_cleanup(struct uvc_device *dev)
+> +void uvc_status_unregister(struct uvc_device *dev)
+>  {
+>  	usb_kill_urb(dev->int_urb);
+> +	uvc_input_cleanup(dev);
 
-diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
-index 75f961c4c044..cb1f23459553 100644
---- a/fs/ubifs/replay.c
-+++ b/fs/ubifs/replay.c
-@@ -212,6 +212,38 @@ static int trun_remove_range(struct ubifs_info *c, struct replay_entry *r)
- 	return ubifs_tnc_remove_range(c, &min_key, &max_key);
- }
- 
-+/**
-+ * inode_still_linked - check whether inode in question will be re-linked.
-+ * @c: UBIFS file-system description object
-+ * @rino: replay entry to test
-+ *
-+ * O_TMPFILE files can be re-linked, this means link count goes from 0 to 1.
-+ * This case needs special care, otherwise all references to the inode will
-+ * be removed upon the first replay entry of an inode with link count 0
-+ * is found.
-+ */
-+static bool inode_still_linked(struct ubifs_info *c, struct replay_entry *rino)
-+{
-+	struct replay_entry *r;
-+
-+	ubifs_assert(c, rino->deletion);
-+	ubifs_assert(c, key_type(c, &rino->key) == UBIFS_INO_KEY);
-+
-+	/*
-+	 * Find the most recent entry for the inode behind @rino and check
-+	 * whether it is a deletion.
-+	 */
-+	list_for_each_entry_reverse(r, &c->replay_list, list) {
-+		ubifs_assert(c, r->sqnum >= rino->sqnum);
-+		if (key_inum(c, &r->key) == key_inum(c, &rino->key))
-+			return r->deletion == 0;
-+
-+	}
-+
-+	ubifs_assert(c, 0);
-+	return false;
-+}
-+
- /**
-  * apply_replay_entry - apply a replay entry to the TNC.
-  * @c: UBIFS file-system description object
-@@ -239,6 +271,11 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
- 			{
- 				ino_t inum = key_inum(c, &r->key);
- 
-+				if (inode_still_linked(c, r)) {
-+					err = 0;
-+					break;
-+				}
-+
- 				err = ubifs_tnc_remove_ino(c, inum);
- 				break;
- 			}
+I think it would make sense to rename uvc_input_cleanup() to 
+uvc_input_unregister(). I'll make the change locally so there's no need to 
+resubmit this patch.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
+> +}
+> +
+> +void uvc_status_cleanup(struct uvc_device *dev)
+> +{
+>  	usb_free_urb(dev->int_urb);
+>  	kfree(dev->status);
+> -	uvc_input_cleanup(dev);
+>  }
+> 
+>  int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+
+[snip]
+
 -- 
-2.19.1
+Regards,
+
+Laurent Pinchart
+
+
 
