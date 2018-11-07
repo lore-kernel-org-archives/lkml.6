@@ -2,97 +2,110 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA7FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB615C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 751A220827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9914620827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:03:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h80+3mxn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751A220827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fyKei1FQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9914620827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbeKGTae (ORCPT
+        id S1730504AbeKGTcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:30:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbeKGTae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:30:34 -0500
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534652086C;
-        Wed,  7 Nov 2018 10:00:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541584856;
-        bh=OouFcYJmMkmY+cyBU+G9f3cRVEUbCRaRrpDj4jTJf9c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=h80+3mxnic2FmWFHP8cV32XrROk4seQWcDvKMUow/iB17S06bTM/Hifcil7QgjNNQ
-         Zwlizc1IApYq/CMeVhglh55jdckDD+Lgf9fELNDF42l82uV+UTgWck300bWbftbv/H
-         IIoY9H2CfJKlZAwzDMOwfpwPyhk9kXTBtIsEGQ+Y=
-Received: by mail-wr1-f49.google.com with SMTP id r10-v6so16685549wrv.6;
-        Wed, 07 Nov 2018 02:00:56 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKVc/mpatMdEOTj4n/FgFTjQs0af1L5AAj4AFpgAcNZCm4oi+XL
-        v/vXIZ0Tbwipx/3T7iRCswr1XLOn+KwHcDZMHZ0=
-X-Google-Smtp-Source: AJdET5eyW66mzqMrsrX/lEgi0y096zOqpqP03gI8r6LJ/JOtBYomnt7gDI/N2vI5dl3QwcNqM79+wlgRUwQ3T4zYbnc=
-X-Received: by 2002:adf:fac4:: with SMTP id a4-v6mr1276510wrs.202.1541584854771;
- Wed, 07 Nov 2018 02:00:54 -0800 (PST)
+        Wed, 7 Nov 2018 14:32:46 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40117 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeKGTcq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:32:46 -0500
+Received: by mail-io1-f68.google.com with SMTP id a23-v6so11483863iod.7
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:03:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kw3I7EGQTmPKXZQK+S2Uf6SBkCcBvCph0lYiD6RjiSQ=;
+        b=fyKei1FQv0vMdER0iyoH0SQaMhpHjKLKUE0Ti2GH9qogDzh11Uo52jSq7pQplqjKyK
+         1piIUKcBMWIyn1V0Y6m1foV/LeO3wX5k96YwVpHgQgb7tlrSAxtaHDjIJeL86Z3Ffgxz
+         BsTS/GoGxboyvtfNtjyq3l2m7cvEq345USWco=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kw3I7EGQTmPKXZQK+S2Uf6SBkCcBvCph0lYiD6RjiSQ=;
+        b=KnbXQ0HDy++iV4uZNqA3KBJRLSNY4FadIT6/y6HkbAXkrTHzkBoaUE3O1gHAeGxjkg
+         lAfnm+Et/XCSyQpHprNmSit8betjZtflXmqjw70FXsPCozjknGncp2yhqQJgHt/zk1Zd
+         Z70lMFpdvExN+Uxl2dP7ka8epsYIRsZL7G1IlYoaP+lR/sdDfM6CqzMcfeEpYuNoLrIx
+         Wiq6+iT0Sp2zJ9FHT5Jx7PHEWT2BsUuX1JYvU2LfQHhJJgoaJpvKPNnY5N+oAXLd95dA
+         fnbYXPUOLdPP7efQ8f9zYYFgx70xn8hZEcyGrQJtdowCQmYLCfvDXpxRR5fcBArW/zKn
+         TRbQ==
+X-Gm-Message-State: AGRZ1gLcV2ATU2PSvoYw4kLNzH6A61TTXqr+tjA7+RsWguQRKM0dSohF
+        jGVBPGcgcUPYynEJXLbT4esfu5o0TZashpmFD86M6w==
+X-Google-Smtp-Source: AJdET5eB5My8CgAHrIg6a53St5XQ3+I8bJcqyIephoWmJOM99JLVGpBeN2LIUqPNpbSelvpezmpQ9LG6XvPK2qouPmc=
+X-Received: by 2002:a5e:8b42:: with SMTP id z2-v6mr745406iom.144.1541584987760;
+ Wed, 07 Nov 2018 02:03:07 -0800 (PST)
 MIME-Version: 1.0
-References: <20181102025728.963-1-olof@lixom.net>
-In-Reply-To: <20181102025728.963-1-olof@lixom.net>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Wed, 7 Nov 2018 02:00:43 -0800
-X-Gmail-Original-Message-ID: <CAGp9Lzq3rgNs=uuXDVTurwgGrCjDQg=rje0rpetbzeMX7U-XLg@mail.gmail.com>
-Message-ID: <CAGp9Lzq3rgNs=uuXDVTurwgGrCjDQg=rje0rpetbzeMX7U-XLg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: Fix dependencies for EINT_MTK
-To:     olof@lixom.net
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 02:03:06 -0800 (PST)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <20181106154840.3b448356214afa63dc8cb28c@linux-foundation.org>
+References: <20181029192521.23059-1-dave@stgolabs.net> <CAKOZuevx9beEB-KWz0gRNaJQLfzu0cu7nuMYaB5ZT1O_ooQYAA@mail.gmail.com>
+ <20181106154840.3b448356214afa63dc8cb28c@linux-foundation.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 7 Nov 2018 11:03:06 +0100
+Message-ID: <CAJfpegsdFiM6QWt3VBEDvGdKHfvsvUnm06MC-ha7z_WPTP9znA@mail.gmail.com>
+Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, longman@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the catch.
+On Wed, Nov 7, 2018 at 12:48 AM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Mon, 29 Oct 2018 23:04:45 +0000 Daniel Colascione <dancol@google.com> wrote:
+>
+>> On Mon, Oct 29, 2018 at 7:25 PM, Davidlohr Bueso <dave@stgolabs.net> wrote:
+>> > This patch introduces a new /proc/stat2 file that is identical to the
+>> > regular 'stat' except that it zeroes all hard irq statistics. The new
+>> > file is a drop in replacement to stat for users that need performance.
+>>
+>> For a while now, I've been thinking over ways to improve the
+>> performance of collecting various bits of kernel information. I don't
+>> think that a proliferation of special-purpose named bag-of-fields file
+>> variants is the right answer, because even if you add a few info-file
+>> variants, you're still left with a situation where a given file
+>> provides a particular caller with too little or too much information.
+>> I'd much rather move to a model in which userspace *explicitly* tells
+>> the kernel which fields it wants, with the kernel replying with just
+>> those particular fields, maybe in their raw binary representations.
+>> The ASCII-text bag-of-everything files would remain available for
+>> ad-hoc and non-performance critical use, but programs that cared about
+>> performance would have an efficient bypass. One concrete approach is
+>> to let users open up today's proc files and, instead of read(2)ing a
+>> text blob, use an ioctl to retrieve specified and targeted information
+>> of the sort that would normally be encoded in the text blob. Because
+>> callers would open the same file when using either the text or binary
+>> interfaces, little would have to change, and it'd be easy to implement
+>> fallbacks when a particular system doesn't support a particular
+>> fast-path ioctl.
 
-Acked-by: Sean Wang <sean.wang@kernel.org>
+Please.   Sysfs, with the one value per file rule, was created exactly
+for the purpose of eliminating these sort of problems with procfs.  So
+instead of inventing special purpose interfaces for proc, just make
+the info available in sysfs, if not already available.
 
-On Thu, Nov 1, 2018 at 7:57 PM Olof Johansson <olof@lixom.net> wrote:
->
-> Fixes the following config-time warning:
->
-> WARNING: unmet direct dependencies detected for EINT_MTK
->   Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n]) && (PINCTRL_MTK [=n] || PINCTRL_MTK_MOORE [=n] || COMPILE_TEST [=n])
->   Selected by [y]:
->   - PINCTRL_MTK_PARIS [=y] && PINCTRL [=y] && OF [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n])
->
-> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> ---
->  drivers/pinctrl/mediatek/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index 9d142e1da567..50efc9cc8ee7 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -3,7 +3,7 @@ menu "MediaTek pinctrl drivers"
->
->  config EINT_MTK
->         bool "MediaTek External Interrupt Support"
-> -       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
-> +       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
->         select GPIOLIB
->         select IRQ_DOMAIN
->
-> --
-> 2.11.0
->
+Thanks,
+Miklos
