@@ -2,110 +2,202 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC66C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FD0C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D432086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D432086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E62772089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:34:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="si/v+yPn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62772089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbeKHIFA (ORCPT
+        id S1728245AbeKHIHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:05:00 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40293 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbeKHIE0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:04:26 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s5so2401114oth.7;
-        Wed, 07 Nov 2018 14:31:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rxS87lQ3nj/74C5MLjne/ka159Uu8qEX99KCto3gKTo=;
-        b=meWnCiX82bToAzyxv1hdhSSj5jkNJPKu3FtAQRp5Coc7NKO3GPWgM33kGXmifRwQVT
-         bWjJRkElvrKGLd0hN627FdqHX9NcJaHzluEFaYhuziXuTbz7T1cUCbo885LYrsqgbkrb
-         W0V9ZQ9ys0fj5YxxhmPXg1TbCE+dQjWEetAjOHmQQZMhu6Y4PAJEq1Jn9Gr6HMu5bNN9
-         BAmdubRT24GQkAdLbat1PzNAXEgOpfRHMgH91cqnU3eq9s71+aAMmX8SeLvPV3BJuJ38
-         FLmyVFxLWuP7Xy0oHheQ7VhthrzbToosN6cTT58LBjVcQmAp9ryJmlyfihoLhYBtkNpz
-         xCAA==
-X-Gm-Message-State: AGRZ1gIYsjSJJQVST5W6GBl6zFQ9cLbd+jwfgqLoFgjQ0t6g3WfMJroA
-        qiWL281nXF0E1Pme8fHrHJaYA14=
-X-Google-Smtp-Source: AJdET5esAhSyCAWxV89RWPnblBh3W1RfqdDVB4p3WMaH24CBMWYxIlEIBmdRO175RF/Nk7CDVkLL0g==
-X-Received: by 2002:a9d:654c:: with SMTP id q12mr1338592otl.338.1541629918818;
-        Wed, 07 Nov 2018 14:31:58 -0800 (PST)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id f9sm750959oth.17.2018.11.07.14.31.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 14:31:57 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH 5/8] sparc: Convert to using %pOFn instead of device_node.name
-Date:   Wed,  7 Nov 2018 16:31:48 -0600
-Message-Id: <20181107223151.14991-6-robh@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181107223151.14991-1-robh@kernel.org>
-References: <20181107223151.14991-1-robh@kernel.org>
+        Thu, 8 Nov 2018 03:07:12 -0500
+Received: from mail.kdab.com ([176.9.126.58]:60632 "EHLO mail.kdab.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727591AbeKHIHL (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 03:07:11 -0500
+Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
+ reason="pass (just generated,
+ assumed good)" header.d=kdab.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-transfer-encoding:mime-version:message-id:date:date
+ :subject:subject:from:from; s=dkim; t=1541630080; x=1542494081;
+ bh=+St47CVkLCy3scR3OzbCKXkW7eVgZD8rF5Dw+IFH6xM=; b=si/v+yPnTqb/
+ CdetbkLo3UcvWNRqxOlI8hw07GD3w53S4MnuJlCuwpXHwBa0vQPeLUyxyzI2cXY9
+ w6ZIVphcvU5/4kB+MFJFmW3K34OkLxNuZmbsPDUynxOZaagfrRnIwdQljYI5a0we
+ xumhZA1e+8ZAVXr7rd//ltIhVCMZho0=
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     acme@kernel.org, jolsa@kernel.org
+Cc:     Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Milian Wolff <milian.wolff@kdab.com>
+Subject: [PATCH] perf script: share code and output format for uregs and iregs
+ output
+Date:   Wed,  7 Nov 2018 23:34:37 +0100
+Message-Id: <20181107223437.9071-1-milian.wolff@kdab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to remove the node name pointer from struct device_node,
-convert printf users to use the %pOFn format specifier.
+The iregs output was missing the newline at end as well as the leading
+ABI output. This made it hard to compare the iregs and uregs values.
+Instead, use a single function to output the register values and use
+it for both, iregs and uregs, to ensure the output is consistent.
 
-This was originally applied for 4.19, but reverted. The problematic
-changes to prom_{32,64}.c have been dropped.
+Before:
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+```
+perf  7049 [-01]  1343.354347:          1 cycles:ppp:
+        ffffffffa7bc21ce perf_event_exec+0x18e (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7ead3 setup_new_exec+0xf3 (/lib/modules/4.20.0-rc1perf=
+-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7cd7be5 load_elf_binary+0x395 (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7e540 search_binary_handler+0x80 (/lib/modules/4.20.0-=
+rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7f1aa __do_execve_file.isra.13+0x58a (/lib/modules/4.2=
+0.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7f561 do_execve+0x21 (/lib/modules/4.20.0-rc1perf-deve=
+l-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7f596 __x64_sys_execve+0x26 (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7a041cb do_syscall_64+0x5b (/lib/modules/4.20.0-rc1perf-=
+devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa840008c entry_SYSCALL_64+0x7c (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+   AX:0x80000000    BX:0x0    CX:0x0    DX:0x7    SI:0xf    DI:0x286    B=
+P:0xffff95bc8213a460    SP:0xffffacbf0ba97d18    IP:0xffffffffa7bc21cd FL=
+AGS:0x28e    CS:0x10    SS:0x18    R8:0x2    R9:0x21440   R10:0x33816fb3b=
+8c   R11:0x1   R12:0xffff95bc8213a460   R13:0xffff95bc8213a400   R14:0xff=
+ff95bc8213a400   R15:0x1  ABI:2    AX:0xffffffffffffffda    BX:0xffffffff=
+ffffffff    CX:0x7f84ad85798b    DX:0x560209699d50    SI:0x7ffe2c7a6820  =
+  DI:0x7ffe2c7a8c9b    BP:0x7ffe2c7a20d0    SP:0x7ffe2c7a2058    IP:0x7f8=
+4ad85798b FLAGS:0x206    CS:0x33    SS:0x2b    R8:0x7ffe2c7a2030    R9:0x=
+7f84ae55f010   R10:0x8   R11:0x206   R12:0xffffffffffffffff   R13:0xfffff=
+fffffffffff   R14:0xffffffffffffffff   R15:0xffffffffffffffff
+
+perf  7049 [-01]  1343.354363:          1 cycles:ppp:
+        ...
+```
+
+After:
+
+```
+perf  7049 [-01]  1343.354347:          1 cycles:ppp:
+        ffffffffa7bc21ce perf_event_exec+0x18e (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7ead3 setup_new_exec+0xf3 (/lib/modules/4.20.0-rc1perf=
+-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7cd7be5 load_elf_binary+0x395 (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7e540 search_binary_handler+0x80 (/lib/modules/4.20.0-=
+rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7f1aa __do_execve_file.isra.13+0x58a (/lib/modules/4.2=
+0.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7f561 do_execve+0x21 (/lib/modules/4.20.0-rc1perf-deve=
+l-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7c7f596 __x64_sys_execve+0x26 (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa7a041cb do_syscall_64+0x5b (/lib/modules/4.20.0-rc1perf-=
+devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+        ffffffffa840008c entry_SYSCALL_64+0x7c (/lib/modules/4.20.0-rc1pe=
+rf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
+ ABI:2    AX:0x80000000    BX:0x0    CX:0x0    DX:0x7    SI:0xf    DI:0x2=
+86    BP:0xffff95bc8213a460    SP:0xffffacbf0ba97d18    IP:0xffffffffa7bc=
+21cd FLAGS:0x28e    CS:0x10    SS:0x18    R8:0x2    R9:0x21440   R10:0x33=
+816fb3b8c   R11:0x1   R12:0xffff95bc8213a460   R13:0xffff95bc8213a400   R=
+14:0xffff95bc8213a400   R15:0x1
+ ABI:2    AX:0xffffffffffffffda    BX:0xffffffffffffffff    CX:0x7f84ad85=
+798b    DX:0x560209699d50    SI:0x7ffe2c7a6820    DI:0x7ffe2c7a8c9b    BP=
+:0x7ffe2c7a20d0    SP:0x7ffe2c7a2058    IP:0x7f84ad85798b FLAGS:0x206    =
+CS:0x33    SS:0x2b    R8:0x7ffe2c7a2030    R9:0x7f84ae55f010   R10:0x8   =
+R11:0x206   R12:0xffffffffffffffff   R13:0xffffffffffffffff   R14:0xfffff=
+fffffffffff   R15:0xffffffffffffffff
+
+perf  7049 [-01]  1343.354363:          1 cycles:ppp:
+        ...
+```
+
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 ---
- arch/sparc/kernel/auxio_64.c | 4 ++--
- arch/sparc/kernel/power.c    | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/builtin-script.c | 40 ++++++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 23 deletions(-)
 
-diff --git a/arch/sparc/kernel/auxio_64.c b/arch/sparc/kernel/auxio_64.c
-index 6145658d915a..e1b10f88ffb4 100644
---- a/arch/sparc/kernel/auxio_64.c
-+++ b/arch/sparc/kernel/auxio_64.c
-@@ -115,8 +115,8 @@ static int auxio_probe(struct platform_device *dev)
- 		auxio_devtype = AUXIO_TYPE_SBUS;
- 		size = 1;
- 	} else {
--		printk("auxio: Unknown parent bus type [%s]\n",
--		       dp->parent->name);
-+		printk("auxio: Unknown parent bus type [%pOFn]\n",
-+		       dp->parent);
- 		return -ENODEV;
- 	}
- 	auxio_register = of_ioremap(&dev->resource[0], 0, size, "auxio");
-diff --git a/arch/sparc/kernel/power.c b/arch/sparc/kernel/power.c
-index 92627abce311..d941875dd718 100644
---- a/arch/sparc/kernel/power.c
-+++ b/arch/sparc/kernel/power.c
-@@ -41,8 +41,8 @@ static int power_probe(struct platform_device *op)
- 
- 	power_reg = of_ioremap(res, 0, 0x4, "power");
- 
--	printk(KERN_INFO "%s: Control reg at %llx\n",
--	       op->dev.of_node->name, res->start);
-+	printk(KERN_INFO "%pOFn: Control reg at %llx\n",
-+	       op->dev.of_node, res->start);
- 
- 	if (has_button_interrupt(irq, op->dev.of_node)) {
- 		if (request_irq(irq,
--- 
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index daf73832743e..04913136bac9 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -566,30 +566,10 @@ static int perf_session__check_output_opt(struct pe=
+rf_session *session)
+ 	return 0;
+ }
+=20
+-static int perf_sample__fprintf_iregs(struct perf_sample *sample,
+-				      struct perf_event_attr *attr, FILE *fp)
+-{
+-	struct regs_dump *regs =3D &sample->intr_regs;
+-	uint64_t mask =3D attr->sample_regs_intr;
+-	unsigned i =3D 0, r;
+-	int printed =3D 0;
+-
+-	if (!regs)
+-		return 0;
+-
+-	for_each_set_bit(r, (unsigned long *) &mask, sizeof(mask) * 8) {
+-		u64 val =3D regs->regs[i++];
+-		printed +=3D fprintf(fp, "%5s:0x%"PRIx64" ", perf_reg_name(r), val);
+-	}
+-
+-	return printed;
+-}
+-
+-static int perf_sample__fprintf_uregs(struct perf_sample *sample,
+-				      struct perf_event_attr *attr, FILE *fp)
++static int perf_sample__fprintf_regs(struct regs_dump *regs, uint64_t ma=
+sk,
++				     FILE *fp
++)
+ {
+-	struct regs_dump *regs =3D &sample->user_regs;
+-	uint64_t mask =3D attr->sample_regs_user;
+ 	unsigned i =3D 0, r;
+ 	int printed =3D 0;
+=20
+@@ -608,6 +588,20 @@ static int perf_sample__fprintf_uregs(struct perf_sa=
+mple *sample,
+ 	return printed;
+ }
+=20
++static int perf_sample__fprintf_iregs(struct perf_sample *sample,
++				      struct perf_event_attr *attr, FILE *fp)
++{
++	return perf_sample__fprintf_regs(&sample->intr_regs,
++					 attr->sample_regs_intr, fp);
++}
++
++static int perf_sample__fprintf_uregs(struct perf_sample *sample,
++				      struct perf_event_attr *attr, FILE *fp)
++{
++	return perf_sample__fprintf_regs(&sample->user_regs,
++					 attr->sample_regs_user, fp);
++}
++
+ static int perf_sample__fprintf_start(struct perf_sample *sample,
+ 				      struct thread *thread,
+ 				      struct perf_evsel *evsel,
+--=20
 2.19.1
-
