@@ -2,149 +2,151 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45647C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D29EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBA520862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:37:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVw21bB6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBA520862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ED07520818
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:38:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED07520818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbeKHEJJ (ORCPT
+        id S1728203AbeKHEKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:09:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726726AbeKHEJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:09:09 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BEFE20818;
-        Wed,  7 Nov 2018 18:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541615852;
-        bh=eu6uLDaEC4qHMh7z0ygUHSxPL7rvOUOusfO7PYlR++Y=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=WVw21bB6lt9iwhAFJAxfI0GcGgf7+Wrss69BrFaiFiyjEom66qUcR4KL2XRLOK8z+
-         Paei2X3S/DNtr4uE2GOwIqtLlXKzgI4/QrWnC4z0TdVXSozHeN8ylLHJAQSzIKjd0L
-         noH1LH4Ug5zl6ml5esdAVlLBqZdrfxUexZaF5UbM=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Frank Rowand <frowand.list@gmail.com>
-References: <20181106183609.207702-1-sboyd@kernel.org>
- <20181106183609.207702-2-sboyd@kernel.org>
- <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
-Message-ID: <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-Date:   Wed, 07 Nov 2018 10:37:31 -0800
+        Wed, 7 Nov 2018 23:10:02 -0500
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:57623 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726726AbeKHEKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:10:02 -0500
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id E323F1C1E17
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 18:38:23 +0000 (GMT)
+Received: (qmail 19823 invoked from network); 7 Nov 2018 18:38:23 -0000
+Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.69])
+  by 81.17.254.9 with ESMTPA; 7 Nov 2018 18:38:23 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Linux-MM <linux-mm@kvack.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 2/5] mm: Move zone watermark accesses behind an accessor
+Date:   Wed,  7 Nov 2018 18:38:19 +0000
+Message-Id: <20181107183822.15567-3-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20181107183822.15567-1-mgorman@techsingularity.net>
+References: <20181107183822.15567-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2018-11-06 12:44:52)
-> On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > We have a handful of clk drivers that have a collection of slightly
-> > variant device support keyed off of the compatible string. In each of
-> > these drivers, we demux the variant and then call the "real" probe
-> > function based on whatever is stored in the match data for that
-> > compatible string. Let's generalize this function so that it can be
-> > re-used as the platform_driver probe function directly.
-> =
+This is a preparation patch only, no functional change.
 
-> This looks really hacky to me. It sounds kind of general, but really
-> only works if we have match data that's a single function and we lose
-> any type checking on the function.
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ include/linux/mmzone.h |  9 +++++----
+ mm/compaction.c        |  2 +-
+ mm/page_alloc.c        | 12 ++++++------
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
-I don't know what this means. Are you saying that we lose the ability to
-type check the function pointer stored in the data member? I don't have
-a good answer for this besides it's not any worse than the status quo
-for the mediatek drivers.
-
-One alternative is to add a DT only array to the platform_driver struct
-that has the platform driver probe function type and matches the index
-in the of_device_id table. Then we can add some logic into
-platform_drv_probe() to look for this table being set and find the probe
-function to call. Then we still have match data for anything that wants
-that (maybe it could be passed in to the probe function) at the cost of
-having another array. I don't have a use-case for this right now so I'm
-not sure this is a great idea.
-
-  struct of_platform_driver_probe_func {
-  	int (*probe)(struct platform_device *pdev);
-  };
-
-  struct of_platform_driver_probe_func mtk_probes[] =3D {
-  	mtk_probe1,
-	mtk_probe2,
-	mtk_probe3,
-  };
-
-  struct platform_driver mtk_driver =3D {
-  	.of_probes =3D &mtk_probes;
-  	.driver =3D {
-		.name =3D "mtk-foo";
-		.of_match_table =3D mtk_match_table,
-	},
-  };
-
-> What about things other than
-> platform devices?
-> =
-
-
-I suppose those would need similar functions that take the right struct
-type and match the driver probe function signature. To make the above
-more generic we could try to figure out a way to put the 'of_probes'
-array inside struct device_driver. That would require dropping
-platform_device specifically from the probe functions and having those
-take a plain 'struct device' that those probe functions turn into the
-appropriate structure with to_platform_device() or to_i2c_client()?
-
-So the example would become
-
-  struct of_driver_probe_func {
-  	int (*probe)(struct device *dev);
-  };
-
-  struct of_driver_probe_func mtk_probes[] =3D {
-  	mtk_probe1,
-	mtk_probe2,
-	mtk_probe3,
-  };
-
-  struct platform_driver mtk_driver =3D {
-  	.driver =3D {
-		.name =3D "mtk-foo";
-		.of_match_table =3D mtk_match_table,
-		.of_probes =3D &mtk_probes;
-	},
-  };
-
-And the probe functions might need to container_of() the device pointer
-to get the struct they know they need. The probe function could also be
-added to of_device_id and then we would have to look and see if that
-pointer is populated when the device is matched in generic device code.
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 847705a6d0ec..e43e8e79db99 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -269,9 +269,10 @@ enum zone_watermarks {
+ 	NR_WMARK
+ };
+ 
+-#define min_wmark_pages(z) (z->watermark[WMARK_MIN])
+-#define low_wmark_pages(z) (z->watermark[WMARK_LOW])
+-#define high_wmark_pages(z) (z->watermark[WMARK_HIGH])
++#define min_wmark_pages(z) (z->_watermark[WMARK_MIN])
++#define low_wmark_pages(z) (z->_watermark[WMARK_LOW])
++#define high_wmark_pages(z) (z->_watermark[WMARK_HIGH])
++#define wmark_pages(z, i) (z->_watermark[i])
+ 
+ struct per_cpu_pages {
+ 	int count;		/* number of pages in the list */
+@@ -362,7 +363,7 @@ struct zone {
+ 	/* Read-mostly fields */
+ 
+ 	/* zone watermarks, access with *_wmark_pages(zone) macros */
+-	unsigned long watermark[NR_WMARK];
++	unsigned long _watermark[NR_WMARK];
+ 
+ 	unsigned long nr_reserved_highatomic;
+ 
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 7c607479de4a..ef29490b0f46 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1431,7 +1431,7 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
+ 	if (is_via_compact_memory(order))
+ 		return COMPACT_CONTINUE;
+ 
+-	watermark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
++	watermark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK);
+ 	/*
+ 	 * If watermarks for high-order allocation are already met, there
+ 	 * should be no need for compaction at all.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5db746c642df..ad996a769bd5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3370,7 +3370,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 			}
+ 		}
+ 
+-		mark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
++		mark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK);
+ 		if (!zone_watermark_fast(zone, order, mark,
+ 				       ac_classzone_idx(ac), alloc_flags)) {
+ 			int ret;
+@@ -4792,7 +4792,7 @@ long si_mem_available(void)
+ 		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+ 
+ 	for_each_zone(zone)
+-		wmark_low += zone->watermark[WMARK_LOW];
++		wmark_low += low_wmark_pages(zone);
+ 
+ 	/*
+ 	 * Estimate the amount of memory available for userspace allocations,
+@@ -7418,13 +7418,13 @@ static void __setup_per_zone_wmarks(void)
+ 
+ 			min_pages = zone->managed_pages / 1024;
+ 			min_pages = clamp(min_pages, SWAP_CLUSTER_MAX, 128UL);
+-			zone->watermark[WMARK_MIN] = min_pages;
++			zone->_watermark[WMARK_MIN] = min_pages;
+ 		} else {
+ 			/*
+ 			 * If it's a lowmem zone, reserve a number of pages
+ 			 * proportionate to the zone's size.
+ 			 */
+-			zone->watermark[WMARK_MIN] = tmp;
++			zone->_watermark[WMARK_MIN] = tmp;
+ 		}
+ 
+ 		/*
+@@ -7436,8 +7436,8 @@ static void __setup_per_zone_wmarks(void)
+ 			    mult_frac(zone->managed_pages,
+ 				      watermark_scale_factor, 10000));
+ 
+-		zone->watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
+-		zone->watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
++		zone->_watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
++		zone->_watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
+ 
+ 		spin_unlock_irqrestore(&zone->lock, flags);
+ 	}
+-- 
+2.16.4
 
