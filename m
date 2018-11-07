@@ -2,88 +2,95 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D41C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F94C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0C52081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:25:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC0C52081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id C8D582081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D582081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbeKGQy1 (ORCPT
+        id S1730148AbeKGQyt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 11:54:27 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:41576 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728411AbeKGQy0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 11:54:26 -0500
-X-ASG-Debug-ID: 1541575515-093b7e4bb117c50001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id Z4xFG4KDzuWTTTlg (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 07 Nov 2018 15:25:15 +0800 (CST)
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-Received: from y.localdomain (10.5.21.109) by HXTBJIDCEMVIW01.hxtcorp.net
- (10.128.0.14) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 7 Nov
- 2018 15:24:42 +0800
-From:   Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To:     <bhelgaas@google.com>
-CC:     <okaya@kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH v2 2/2] PCI: pciehp: Add HXT quirk for Command Completed errata
-Date:   Wed, 7 Nov 2018 15:25:05 +0800
-X-ASG-Orig-Subj: [PATCH v2 2/2] PCI: pciehp: Add HXT quirk for Command Completed errata
-Message-ID: <5e88860c8426df537c5a5f2d0e6add6df8955a0f.1541574331.git.shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <bcaf1d5d-23a6-d4e6-08e8-587daf6cca06@kernel.org>
-References: <bcaf1d5d-23a6-d4e6-08e8-587daf6cca06@kernel.org>
+        Wed, 7 Nov 2018 11:54:49 -0500
+Received: from mga06.intel.com ([134.134.136.31]:53025 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728411AbeKGQys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 11:54:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 23:25:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,474,1534834800"; 
+   d="scan'208";a="106576017"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 23:25:42 -0800
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 6 Nov 2018 23:25:42 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.117]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.199]) with mapi id 14.03.0415.000;
+ Wed, 7 Nov 2018 15:25:40 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: RE: [PATCH v4 08/12] iommu/vt-d: Pass pasid table to context mapping
+Thread-Topic: [PATCH v4 08/12] iommu/vt-d: Pass pasid table to context
+ mapping
+Thread-Index: AQHUdMlJD4S9hOi96k+vRzHTy+C63KVD6nug
+Date:   Wed, 7 Nov 2018 07:25:40 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C257439D5FB28@SHSMSX104.ccr.corp.intel.com>
+References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
+ <20181105053151.7173-9-baolu.lu@linux.intel.com>
+In-Reply-To: <20181105053151.7173-9-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzQ4YTQ5ZmMtZDQ0OS00ODRjLTgzMWEtOTU2YmNiMjk3OGNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicklrOHZRMGxiUnRUaGJTZnFrVE9wNEQwKzdcL210ZEZSbnNuZzhaNUhSZnB5VXN2V3VVWktOQm0yQmFONGdtNmsifQ==
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1541575515
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5088 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.61351
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HXT SD4800 PCI controller does not set the Command Completed
-bit unless writes to the Slot Command register change "Control"
-bits.
+Hi Baolu,
 
-This patch adds SD4800 to the quirk.
+> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+> Sent: Monday, November 5, 2018 1:32 PM
+> Subject: [PATCH v4 08/12] iommu/vt-d: Pass pasid table to context mapping
+> 
+> So that the pasid related info, such as the pasid table and the
+> maximum of pasid could be used during setting up scalable mode
+> context.
 
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+A little bit refine. Wish it helps. :)
+"This patch passes the pasid related info(e.g. the pasid table and the
+maximum of pasid) to context mapping, so that pasid related fields
+can be setup accordingly in scalable mode context entry."
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 7dd443aea5a5..91db67963aea 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -920,3 +920,5 @@ static void quirk_cmd_compl(struct pci_dev *pdev)
- 			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
- DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_QCOM, 0x0401,
- 			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_HXT, 0x0401,
-+			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
--- 
-1.8.3.1
-
+Regards,
+Yi Liu
