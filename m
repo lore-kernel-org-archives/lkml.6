@@ -2,175 +2,118 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A6BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93721C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7706820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:20:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7706820862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4C04120862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:22:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YC0wMXgD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C04120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbeKHDwR (ORCPT
+        id S1728026AbeKHDxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:52:17 -0500
-Received: from leonov.paulk.fr ([185.233.101.22]:49030 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbeKHDwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:52:17 -0500
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 8EDF6BFCAE;
-        Wed,  7 Nov 2018 19:20:41 +0100 (CET)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id BFA04C1096; Wed,  7 Nov 2018 19:20:40 +0100 (CET)
-Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id 05746C1070;
-        Wed,  7 Nov 2018 19:17:59 +0100 (CET)
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-        Mark Van den Borre <mark@fosdem.org>,
-        Gerry Demaret <gerry@fosdem.org>,
-        Luc Verhaegen <libv@skynet.be>,
-        Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH NOT FOR MERGE v3 8/8] ARM: dts: sun7i-a20-bananapi: Add bindings for the LeMaker 3.5" LCD
-Date:   Wed,  7 Nov 2018 19:18:43 +0100
-Message-Id: <20181107181843.27628-9-contact@paulk.fr>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181107181843.27628-1-contact@paulk.fr>
-References: <20181107181843.27628-1-contact@paulk.fr>
+        Wed, 7 Nov 2018 22:53:36 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:39351 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbeKHDxg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:53:36 -0500
+Received: by mail-ua1-f68.google.com with SMTP id k10so6195335ual.6
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:22:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QYUaHOK8vceZkSPfI0EfEH6FkTI2Ic5ANXg6IXsWYmc=;
+        b=YC0wMXgD/6JkC3eFtRpoY8AcYg/O2fQU6GGWOAJcEVASz0v8EhaDijJ6+tNso/ndaS
+         UhG7ghlec0rccuB/9cE59afXjOFEdgzJds3q2a8S2IkQp1eZWqvinQXoP7XmJTVrfrPa
+         tqANjZ9HyIJVBsi2+8v7bsxVXUbV28aIFgPJmyENX1ExU+YEhkW9N7FwbJgLawr4htz3
+         mN0TSDaCAXmHvCWmg7EMkJGzXZNIOEMNcY2EwIDJ/e+LF7sUsuAlT9BLk9T6yAlIsmNm
+         uIXVob+16SlkjLoysy1drf5UbF/11n2aZXRDeO13wfDI4dbIVPYuj6/lrQKWqm+3XbwH
+         m5uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QYUaHOK8vceZkSPfI0EfEH6FkTI2Ic5ANXg6IXsWYmc=;
+        b=UI3GcoWamyxs30+R9IfLEwqGH5ezPQ6rYXZkwmafI1u8YWt5mx8tB2BT/Bk/Bdr8Gv
+         iWglCZjggRz20vGzLoMMdCAT6FlRxZf3hLMZCxR1FP3zs9sr4/AyFG0leKZp3vRGC/Ut
+         YX5p8TbH6ej35l0zHO17q3NqTvrmbtqyilyg+5Tx8mvjkQZmef6pzW3uVsTULhrkopFm
+         u36NZxbWLK78JPkpr1HM2Ig3ZQhFErbcHZQIZEe+WX/BmaHKOr54AIZ6zXesMjKqAun0
+         H2bb1xWO8OoK3aAdcwpS2xqDx46lptpypXQyaYJAsMJq2qZ7OKrzEg6ugNuRZzFfxsO6
+         kcmA==
+X-Gm-Message-State: AGRZ1gKeivH+pqY66HksH5xES/GSo7tcjjUyL6ZpLiYmyqI7ZYRb5lhs
+        /XZ3Hf2AhLu7HRr+vdsy4jkadNbYeABEHuTyjkh56A==
+X-Google-Smtp-Source: AJdET5cJ3YyoBa9PASXQjwTe9vA/PVGyjKkPxV2fXk1V9ONYIl+QZ2/FeF688dljQcEzH+tE+fEi0Cb6XOcowQeryks=
+X-Received: by 2002:ab0:72a:: with SMTP id h39mr600663uah.11.1541614920550;
+ Wed, 07 Nov 2018 10:22:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 10:21:59 -0800 (PST)
+In-Reply-To: <20181107171644.GK3074@bombadil.infradead.org>
+References: <20181031150625.147369-1-dancol@google.com> <20181105132205.138695-1-dancol@google.com>
+ <20181106060113.GA4499@rapoport-lnx> <20181107171644.GK3074@bombadil.infradead.org>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 7 Nov 2018 10:21:59 -0800
+Message-ID: <CAKOZuet9KGHc9dAyC=-cMZNt39s2m9=YEu3R1-7ExWzaNzLzjA@mail.gmail.com>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the backlight panel, power, pwm and tcon0 device-tree bindings
-required for supporting the 3.5" LCD from LeMaker on the BananaPi M1.
+On Wed, Nov 7, 2018 at 9:16 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, Nov 06, 2018 at 08:01:13AM +0200, Mike Rapoport wrote:
+>> > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+>> > index 12a5e6e693b6..0b14460f721d 100644
+>> > --- a/Documentation/filesystems/proc.txt
+>> > +++ b/Documentation/filesystems/proc.txt
+>> > @@ -125,6 +125,13 @@ process running on the system, which is named after the process ID (PID).
+>> >  The link  self  points  to  the  process reading the file system. Each process
+>> >  subdirectory has the entries listed in Table 1-1.
+>> >
+>> > +Note that an open a file descriptor to /proc/<pid> or to any of its
+>
+> "open file descriptor" (the "a" is unnecessary)
 
-The brightness levels are adjusted with a gamma curve using a 1.8 power,
-with indices from 0 to 100 and values ranging from 0 to 255, such as:
-level = (index / 100)^1.8 * 255
+Thanks for spotting that. I had to re-read that sentence three times
+or so before even seeing that extra "a".
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
----
- arch/arm/boot/dts/sun7i-a20-bananapi.dts | 71 ++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+>> > +contained files or subdirectories does not prevent <pid> being reused
+>> > +for some other process in the event that <pid> exits. Operations on
+>> > +open /proc/<pid> file descriptors corresponding to dead processes
+>> > +never act on any new process that the kernel may, through chance, have
+>> > +also assigned the process ID <pid>. Instead, operations on these FDs
+>> > +usually fail with ESRCH.
+>
+> The paragraph is a bit wordy.  More pithy:
+>
+> An open file descriptor for /proc/<pid> (or any of the files or
+> subdirectories in it) does not prevent <pid> from being reused after
+> the process exits.  Operations on a file descriptor referring to a dead
+> process usually return ESRCH.  They do not act on any new process which
+> has been assigned the same <pid>.
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-bananapi.dts b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-index 70dfc4ac0bb5..ac6c3e988203 100644
---- a/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-@@ -48,6 +48,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "LeMaker Banana Pi";
-@@ -63,6 +64,57 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 0>;
-+		/* This table uses a gamma curve with a 1.8 power. */
-+		brightness-levels = <  0   1   1   1   1   1   2   2
-+				       3   3   4   5   6   6   7   8
-+				       9  11  12  13  14  15  17  18
-+				      20  21  23  24  26  27  29  31
-+				      33  35  37  39  41  43  45  47
-+				      49  51  54  56  58  61  63  66
-+				      68  71  73  76  79  81  84  87
-+				      90  93  96  99 102 105 108 111
-+				     114 117 121 124 127 131 134 138
-+				     141 145 148 152 156 159 163 167
-+				     171 175 178 182 186 190 194 198
-+				     203 207 211 215 219 224 228 233
-+				     237 241 246 250 255>;
-+		default-brightness-level = <50>;
-+		enable-gpios = <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
-+	};
-+
-+	panel: panel {
-+		compatible = "lemaker,bl035-rgb-002";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-supply = <&panel_power>;
-+		backlight = <&backlight>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_panel>;
-+			};
-+		};
-+	};
-+
-+	panel_power: panel_power {
-+		compatible = "regulator-fixed";
-+		regulator-name = "panel-power";
-+		regulator-min-microvolt = <10400000>;
-+		regulator-max-microvolt = <10400000>;
-+		gpio = <&pio 7 12 GPIO_ACTIVE_HIGH>; /* PH12 */
-+		enable-active-high;
-+		regulator-boot-on;
-+	};
-+
- 	hdmi-connector {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -275,6 +327,12 @@
- 	};
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm0_pins_a>;
-+	status = "okay";
-+};
-+
- #include "axp209.dtsi"
- 
- &reg_dcdc2 {
-@@ -322,6 +380,19 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd0_rgb888_pins>;
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_panel: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
--- 
-2.19.1
-
+I'll send a new patch version --- unless we can just tweak the patch
+when we merge it into the tree?
