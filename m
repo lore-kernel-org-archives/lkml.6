@@ -2,148 +2,89 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E538C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E09B1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E0F2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:05:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NeZ+RNpE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E0F2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B25902086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:06:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25902086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeKGWfo (ORCPT
+        id S1727485AbeKGWhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:35:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35732 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeKGWfo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:35:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LX38V2snMzi7Z0f79R9pskMuYEeIMOrNQmAvtTr/MuI=; b=NeZ+RNpE2+HGv4SM4KaPVpwN9
-        +zXcfoatTP9yoIzKvlDn6Ew7jeW4lisfwYYWaW7c+r98+DAdIHtNKnubENg8Xhzi8oiLW031uXEgi
-        iA6/9L/lW/7S2LtwG4T1Ndu/8FGnbamq2J3NCC4lunMrg4pe4zsba44ZZMn7dIMgHNKGwrBIKNzS4
-        NrqDiKI+EK0nu6X2uNo4EKKqsQBTYfSRpt4uY/Y1/fJUwX66o/S/Xorry4U1AwQLSkqxfA1mf0mbq
-        nawLsn/hNg77OuaGkZTBcoWHzZR4oCKVmI13rY+K7Ojw5q4SFJBGzGzHpXM/BZ3s42VR9jPgZpsWV
-        7A9lTOsvQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKNW9-0006X6-GR; Wed, 07 Nov 2018 13:05:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CE85A20284F98; Wed,  7 Nov 2018 14:05:07 +0100 (CET)
-Date:   Wed, 7 Nov 2018 14:05:07 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH] irq/timings: Fix model validity
-Message-ID: <20181107130507.GD9761@hirez.programming.kicks-ass.net>
-References: <1556808.yKVbhZSazi@aspire.rjw.lan>
- <20181106170442.GC9781@hirez.programming.kicks-ass.net>
- <CAJZ5v0hmm2UWRt1j6hQo14nZLgPrE3DZkOznfo2kMxsZ1spo-Q@mail.gmail.com>
- <20181106195127.GD9781@hirez.programming.kicks-ass.net>
- <CAJZ5v0iPs8Wt0PneBVWptqJPP6dEze+=GvxjU=dHBRbmty+kOw@mail.gmail.com>
- <20181107085936.GI9781@hirez.programming.kicks-ass.net>
- <20181107094624.GB9828@hirez.programming.kicks-ass.net>
- <ab9e60d7-e2d3-7d0c-dbf1-c0bed7bdb516@linaro.org>
+        Wed, 7 Nov 2018 17:37:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57616 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726598AbeKGWhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 17:37:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2B366AE61;
+        Wed,  7 Nov 2018 13:06:56 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 14:06:55 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        Oscar Salvador <OSalvador@suse.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, memory_hotplug: check zone_movable in
+ has_unmovable_pages
+Message-ID: <20181107130655.GE27423@dhcp22.suse.cz>
+References: <20181106095524.14629-1-mhocko@kernel.org>
+ <20181106203518.GC9042@350D>
+ <20181107073548.GU27423@dhcp22.suse.cz>
+ <20181107125324.GD9042@350D>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ab9e60d7-e2d3-7d0c-dbf1-c0bed7bdb516@linaro.org>
+In-Reply-To: <20181107125324.GD9042@350D>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 11:52:31AM +0100, Daniel Lezcano wrote:
-> > @@ -146,11 +152,38 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
-> >  	 */
-> >  	diff = interval - irqs->avg;
-> >  
-> > +	/*
-> > +	 * Online average algorithm:
-> > +	 *
-> > +	 *  new_average = average + ((value - average) / count)
-> > +	 *
-> > +	 * The variance computation depends on the new average
-> > +	 * to be computed here first.
-> > +	 *
-> > +	 */
-> > +	irqs->avg = irqs->avg + (diff >> IRQ_TIMINGS_SHIFT);
-> > +
-> > +	/*
-> > +	 * Online variance algorithm:
-> > +	 *
-> > +	 *  new_variance = variance + (value - average) x (value - new_average)
-> > +	 *
-> > +	 * Warning: irqs->avg is updated with the line above, hence
-> > +	 * 'interval - irqs->avg' is no longer equal to 'diff'
-> > +	 */
-> > +	irqs->variance = irqs->variance + (diff * (interval - irqs->avg));
-> > +
-> >  	/*
-> >  	 * Increment the number of samples.
-> >  	 */
-> >  	irqs->nr_samples++;
+On Wed 07-11-18 23:53:24, Balbir Singh wrote:
+> On Wed, Nov 07, 2018 at 08:35:48AM +0100, Michal Hocko wrote:
+> > On Wed 07-11-18 07:35:18, Balbir Singh wrote:
+[...]
+> > > The check seems to be quite aggressive and in a loop that iterates
+> > > pages, but has nothing to do with the page, did you mean to make
+> > > the check
+> > > 
+> > > zone_idx(page_zone(page)) == ZONE_MOVABLE
+> > 
+> > Does it make any difference? Can we actually encounter a page from a
+> > different zone here?
+> > 
+> 
+> Just to avoid page state related issues, do we want to go ahead
+> with the migration if zone_idx(page_zone(page)) != ZONE_MOVABLE.
 
-FWIW, I'm confused on this. The normal (Welford's) online algorithm
-does:
+Could you be more specific what kind of state related issues you have in
+mind?
 
-	count++;
-	delta = value - mean;
-	mean += delta / count;
-	M2 += delta * (value - mean);
+> > > it also skips all checks for pinned pages and other checks
+> > 
+> > Yes, this is intentional and the comment tries to explain why. I wish we
+> > could be add a more specific checks for movable pages - e.g. detect long
+> > term pins that would prevent migration - but we do not have any facility
+> > for that. Please note that the worst case of a false positive is a
+> > repeated migration failure and user has a way to break out of migration
+> > by a signal.
+> >
+> 
+> Basically isolate_pages() will fail as opposed to hotplug failing upfront.
+> The basic assertion this patch makes is that all ZONE_MOVABLE pages that
+> are not reserved are hotpluggable.
 
-But the above uses:
+Yes, that is correct.
 
-	mean += delta / 32;
-
-Which, for count >> 32, over-estimates the mean adjustment. But worse,
-it significantly under-estimates the mean during training.
-
-How is the computed variance still correct with this? I can not find any
-comments that clarifies this. I'm thinking that since the mean will
-slowly wander towards it's actual location (assuming an actual standard
-distribution input) the resulting variance will be far too large, since
-the (value - mean) term will be much larger than 'expected'.
-
-> > @@ -158,16 +191,12 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
-> >  	 * more than 32 and dividing by 32 instead of 31 is enough
-> >  	 * precise.
-> >  	 */
-> > +	variance = irqs->variance >> IRQ_TIMINGS_SHIFT;
-
-Worse; variance is actually (as the comment states):
-
-	s^2 = M2 / (count -1)
-
-But instead you compute:
-
-	s^2 = M2 / 32;
-
-Which is again much larger than the actual result; assuming count >> 32.
-
-So you compute a variance that is inflated in two different ways.
-
-
-I'm not seeing how this thing works reliably.
+-- 
+Michal Hocko
+SUSE Labs
