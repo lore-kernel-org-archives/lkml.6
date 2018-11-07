@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 570FFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8181FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E502086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:16:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E502086C
+	by mail.kernel.org (Postfix) with ESMTP id 50F252086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F252086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeKHItN (ORCPT
+        id S1728473AbeKHItU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:49:13 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:9502 "EHLO smtp4-g21.free.fr"
+        Thu, 8 Nov 2018 03:49:20 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:10372 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727370AbeKHItN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:49:13 -0500
+        id S1727370AbeKHItU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 03:49:20 -0500
 Received: from [192.168.1.42] (unknown [77.207.133.132])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id E0E9319F574;
-        Thu,  8 Nov 2018 00:16:27 +0100 (CET)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 20C2719F57C;
+        Thu,  8 Nov 2018 00:16:35 +0100 (CET)
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v2 8/9] arm64: defconfig: Change SCSI_UFS_HISI=m
+Subject: [PATCH v2 9/9] arm64: defconfig: Drop redundant sound codec options
 To:     arm-soc <arm@kernel.org>
 Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
 References: <898e79a6-092c-d013-d2bb-f6260e761379@free.fr>
-Message-ID: <38ca31d9-bcfe-36dd-a6ab-4fd376e4a12d@free.fr>
-Date:   Wed, 7 Nov 2018 23:40:40 +0100
+Message-ID: <fc8074bf-c0c4-d60f-cb74-d483d2accb11@free.fr>
+Date:   Wed, 7 Nov 2018 23:40:48 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
@@ -45,25 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SCSI_UFS_HISI depends on SCSI_UFSHCD_PLATFORM=m
+SND_SOC_RK3399_GRU_SOUND selects SND_SOC_DA7219, SND_SOC_MAX98357A,
+SND_SOC_RT5514, SND_SOC_RT5514_SPI.
+
+SND_SOC_ROCKCHIP_RT5645 selects SND_SOC_RT5645.
+
+SND_SOC_RL6231 is pulled in for SND_SOC_RT5514 and SND_SOC_RT5645.
 
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- arch/arm64/configs/defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e4957df18f23..75d5ed7ea53d 100644
+index 75d5ed7ea53d..4910b76f1002 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -222,7 +222,7 @@ CONFIG_SCSI_HISI_SAS_PCI=y
- CONFIG_SCSI_UFSHCD=m
- CONFIG_SCSI_UFSHCD_PLATFORM=m
- CONFIG_SCSI_UFS_QCOM=m
--CONFIG_SCSI_UFS_HISI=y
-+CONFIG_SCSI_UFS_HISI=m
- CONFIG_ATA=y
- CONFIG_SATA_AHCI=y
- CONFIG_SATA_AHCI_PLATFORM=y
+@@ -499,12 +499,6 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
+ CONFIG_SND_SOC_SAMSUNG=y
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_AK4613=m
+-CONFIG_SND_SOC_DA7219=m
+-CONFIG_SND_SOC_MAX98357A=m
+-CONFIG_SND_SOC_RL6231=m
+-CONFIG_SND_SOC_RT5514=m
+-CONFIG_SND_SOC_RT5514_SPI=m
+-CONFIG_SND_SOC_RT5645=m
+ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
+ CONFIG_I2C_HID=m
 -- 
 2.17.1
