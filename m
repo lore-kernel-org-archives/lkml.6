@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E831C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301C2C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 169662086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 169662086C
+	by mail.kernel.org (Postfix) with ESMTP id CF5472089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5472089F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbeKHIEZ (ORCPT
+        id S1728253AbeKHIE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:04:25 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35401 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbeKHIEY (ORCPT
+        Thu, 8 Nov 2018 03:04:26 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46635 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728184AbeKHIEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:04:24 -0500
-Received: by mail-oi1-f195.google.com with SMTP id v198-v6so15306520oif.2;
-        Wed, 07 Nov 2018 14:31:57 -0800 (PST)
+        Thu, 8 Nov 2018 03:04:25 -0500
+Received: by mail-ot1-f68.google.com with SMTP id q5so16303343otl.13;
+        Wed, 07 Nov 2018 14:31:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9gl0eGLxWkV78v12QkOZr6gfUapSEn24ksgEQkdeKgY=;
-        b=ic42Ac4SVaU4PG4i28tHTKJcbLiljrAla6Xbq5WoO0KrBWG3ZVMCtdHEEEwJ6BX/yG
-         bQSJpGiGyNPcghVWI3mRIOROsIC+ZuhXcKJMhbNN3w1ucuH2YQnpaNvK1vNUgY/CjPn+
-         4zh0YqdVa0nrFDqyNUR7xG5d7aVkY2gLD3iA/q6jK2YbXEI5A7rEw4gRGkl0+LozEw3I
-         mvlGAU8/K6u1hC3icI35t/oTBj9Z23i5ermvVHHNDxmD1QU8x4/fEAeqnmhYTPeGjpRi
-         LncbmP4OIQ7514+viXZRQozePD3JiRgbczQ28t9c4ofQpEhfsepi6Ta2Qs0egyAsBY/T
-         FC7w==
-X-Gm-Message-State: AGRZ1gI7K/6R5NBs52CbGa6qK3vShq1npVgChBC6bKaerfDBn9oAsXtj
-        UX779siZvy6xHOE8dTXYJw==
-X-Google-Smtp-Source: AJdET5eeBPvFYou99kEqqcXOPe9TYOVBioPXq5XwzUT5jPs9JD6mSu6EUwBS5WHcIx+hXofc7z2bvQ==
-X-Received: by 2002:aca:f40d:: with SMTP id s13-v6mr1335131oih.102.1541629916441;
-        Wed, 07 Nov 2018 14:31:56 -0800 (PST)
+        bh=tMuQiZ4DDHWnQZuvh39rUeWW6dJtn97BpEgcgzHc3cQ=;
+        b=pyNvbcZZ3O0pie/4Je4VG8fKywcJUL3ZxF8BXta7k8WjrgsqJAMbT2w8wD3JJX2HNG
+         UykZEoPmoqUprTAOuXn86XeaJCcU6IvuSXhB8SRvhoY0pn1w1VEL6eBo7Ao7c4N4gYMn
+         GzoMid4VG7v/DiFi0oTefXQw5nX5pga3yE9v5OasnRmliD2buLheqTLipmVFdIWUky7t
+         4fs024jUApXOIoM1SH1N+W6Aq7Gf30cUUG323UorhVIvO16R61FusNCMP4dVYodyfZ0g
+         PUpMjXhtp1uuiqZs9TMkGGJvpWdE5UoPKpMt8McPxAuzjwlaVZJx+nACT+zpobpLKkV5
+         BTPw==
+X-Gm-Message-State: AGRZ1gL+Z91CsRzZRrpe3Z421p4KgF26zVzMjnb6jg7nBBMspcHbPnKt
+        UnyPvwypIcR0ZZKXOd+NrA==
+X-Google-Smtp-Source: AJdET5dQxiyna/l4zazWoJbmDtm2Dlkk+6yqnCNnmBAv7bkyppNjTv4JU5WTde+1mWU/0PaPPEV6fA==
+X-Received: by 2002:a9d:7059:: with SMTP id x25mr1406185otj.35.1541629917621;
+        Wed, 07 Nov 2018 14:31:57 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id f9sm750959oth.17.2018.11.07.14.31.55
+        by smtp.googlemail.com with ESMTPSA id f9sm750959oth.17.2018.11.07.14.31.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 14:31:55 -0800 (PST)
+        Wed, 07 Nov 2018 14:31:56 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Frank Rowand <frowand.list@gmail.com>,
         linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH 3/8] sparc: prom: use property "name" directly to construct node names
-Date:   Wed,  7 Nov 2018 16:31:46 -0600
-Message-Id: <20181107223151.14991-4-robh@kernel.org>
+Subject: [PATCH 4/8] sparc: Convert to using %pOF instead of full_name
+Date:   Wed,  7 Nov 2018 16:31:47 -0600
+Message-Id: <20181107223151.14991-5-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107223151.14991-1-robh@kernel.org>
 References: <20181107223151.14991-1-robh@kernel.org>
@@ -62,350 +62,406 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to remove direct accesses to the device_node.name
-pointer, retrieve the node name from the "name" property instead.
+Now that we have a custom printf format specifier, convert users of
+full_name to use %pOF instead. This is preparation to remove storing
+of the full path string for each node.
 
 Cc: "David S. Miller" <davem@davemloft.net>
 Cc: sparclinux@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- arch/sparc/kernel/prom_32.c | 20 ++++++++++------
- arch/sparc/kernel/prom_64.c | 47 +++++++++++++++++++++++--------------
- 2 files changed, 42 insertions(+), 25 deletions(-)
+ arch/sparc/kernel/auxio_64.c     |  3 +--
+ arch/sparc/kernel/chmc.c         |  8 +++----
+ arch/sparc/kernel/of_device_32.c |  7 +++----
+ arch/sparc/kernel/of_device_64.c | 36 +++++++++++++++-----------------
+ arch/sparc/kernel/pci.c          | 31 +++++++++++++--------------
+ arch/sparc/kernel/prom_32.c      |  4 ++--
+ arch/sparc/kernel/sbus.c         |  4 ++--
+ arch/sparc/kernel/sun4d_irq.c    |  8 +++----
+ arch/sparc/kernel/time_64.c      | 12 +++++------
+ arch/sparc/kernel/vio.c          |  2 +-
+ 10 files changed, 55 insertions(+), 60 deletions(-)
 
+diff --git a/arch/sparc/kernel/auxio_64.c b/arch/sparc/kernel/auxio_64.c
+index 4e8f56c3793c..6145658d915a 100644
+--- a/arch/sparc/kernel/auxio_64.c
++++ b/arch/sparc/kernel/auxio_64.c
+@@ -123,8 +123,7 @@ static int auxio_probe(struct platform_device *dev)
+ 	if (!auxio_register)
+ 		return -ENODEV;
+ 
+-	printk(KERN_INFO "AUXIO: Found device at %s\n",
+-	       dp->full_name);
++	printk(KERN_INFO "AUXIO: Found device at %pOF\n", dp);
+ 
+ 	if (auxio_devtype == AUXIO_TYPE_EBUS)
+ 		auxio_set_led(AUXIO_LED_ON);
+diff --git a/arch/sparc/kernel/chmc.c b/arch/sparc/kernel/chmc.c
+index 0de4bcb8261f..61fe1b951ba3 100644
+--- a/arch/sparc/kernel/chmc.c
++++ b/arch/sparc/kernel/chmc.c
+@@ -464,8 +464,8 @@ static int jbusmc_probe(struct platform_device *op)
+ 
+ 	mc_list_add(&p->list);
+ 
+-	printk(KERN_INFO PFX "UltraSPARC-IIIi memory controller at %s\n",
+-	       op->dev.of_node->full_name);
++	printk(KERN_INFO PFX "UltraSPARC-IIIi memory controller at %pOF\n",
++	       op->dev.of_node);
+ 
+ 	dev_set_drvdata(&op->dev, p);
+ 
+@@ -747,8 +747,8 @@ static int chmc_probe(struct platform_device *op)
+ 
+ 	mc_list_add(&p->list);
+ 
+-	printk(KERN_INFO PFX "UltraSPARC-III memory controller at %s [%s]\n",
+-	       dp->full_name,
++	printk(KERN_INFO PFX "UltraSPARC-III memory controller at %pOF [%s]\n",
++	       dp,
+ 	       (p->layout_size ? "ACTIVE" : "INACTIVE"));
+ 
+ 	dev_set_drvdata(&op->dev, p);
+diff --git a/arch/sparc/kernel/of_device_32.c b/arch/sparc/kernel/of_device_32.c
+index e4abe9b8f97a..ab133e2753ab 100644
+--- a/arch/sparc/kernel/of_device_32.c
++++ b/arch/sparc/kernel/of_device_32.c
+@@ -324,8 +324,8 @@ static void __init build_device_resources(struct platform_device *op,
+ 		memset(r, 0, sizeof(*r));
+ 
+ 		if (of_resource_verbose)
+-			printk("%s reg[%d] -> %llx\n",
+-			       op->dev.of_node->full_name, index,
++			printk("%pOF reg[%d] -> %llx\n",
++			       op->dev.of_node, index,
+ 			       result);
+ 
+ 		if (result != OF_BAD_ADDR) {
+@@ -386,8 +386,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
+ 	op->dev.dma_mask = &op->dev.coherent_dma_mask;
+ 
+ 	if (of_device_register(op)) {
+-		printk("%s: Could not register of device.\n",
+-		       dp->full_name);
++		printk("%pOF: Could not register of device.\n", dp);
+ 		kfree(op);
+ 		op = NULL;
+ 	}
+diff --git a/arch/sparc/kernel/of_device_64.c b/arch/sparc/kernel/of_device_64.c
+index 6df6086968c6..2353cb7bc40f 100644
+--- a/arch/sparc/kernel/of_device_64.c
++++ b/arch/sparc/kernel/of_device_64.c
+@@ -341,9 +341,9 @@ static void __init build_device_resources(struct platform_device *op,
+ 
+ 	/* Prevent overrunning the op->resources[] array.  */
+ 	if (num_reg > PROMREG_MAX) {
+-		printk(KERN_WARNING "%s: Too many regs (%d), "
++		printk(KERN_WARNING "%pOF: Too many regs (%d), "
+ 		       "limiting to %d.\n",
+-		       op->dev.of_node->full_name, num_reg, PROMREG_MAX);
++		       op->dev.of_node, num_reg, PROMREG_MAX);
+ 		num_reg = PROMREG_MAX;
+ 	}
+ 
+@@ -401,8 +401,8 @@ static void __init build_device_resources(struct platform_device *op,
+ 		memset(r, 0, sizeof(*r));
+ 
+ 		if (of_resource_verbose)
+-			printk("%s reg[%d] -> %llx\n",
+-			       op->dev.of_node->full_name, index,
++			printk("%pOF reg[%d] -> %llx\n",
++			       op->dev.of_node, index,
+ 			       result);
+ 
+ 		if (result != OF_BAD_ADDR) {
+@@ -548,8 +548,8 @@ static unsigned int __init build_one_device_irq(struct platform_device *op,
+ 					       dp->irq_trans->data);
+ 
+ 		if (of_irq_verbose)
+-			printk("%s: direct translate %x --> %x\n",
+-			       dp->full_name, orig_irq, irq);
++			printk("%pOF: direct translate %x --> %x\n",
++			       dp, orig_irq, irq);
+ 
+ 		goto out;
+ 	}
+@@ -579,10 +579,9 @@ static unsigned int __init build_one_device_irq(struct platform_device *op,
+ 						   &irq);
+ 
+ 			if (of_irq_verbose)
+-				printk("%s: Apply [%s:%x] imap --> [%s:%x]\n",
+-				       op->dev.of_node->full_name,
+-				       pp->full_name, this_orig_irq,
+-				       of_node_full_name(iret), irq);
++				printk("%pOF: Apply [%pOF:%x] imap --> [%pOF:%x]\n",
++				       op->dev.of_node,
++				       pp, this_orig_irq, iret, irq);
+ 
+ 			if (!iret)
+ 				break;
+@@ -597,10 +596,10 @@ static unsigned int __init build_one_device_irq(struct platform_device *op,
+ 
+ 				irq = pci_irq_swizzle(dp, pp, irq);
+ 				if (of_irq_verbose)
+-					printk("%s: PCI swizzle [%s] "
++					printk("%pOF: PCI swizzle [%pOF] "
+ 					       "%x --> %x\n",
+-					       op->dev.of_node->full_name,
+-					       pp->full_name, this_orig_irq,
++					       op->dev.of_node,
++					       pp, this_orig_irq,
+ 					       irq);
+ 
+ 			}
+@@ -619,8 +618,8 @@ static unsigned int __init build_one_device_irq(struct platform_device *op,
+ 	irq = ip->irq_trans->irq_build(op->dev.of_node, irq,
+ 				       ip->irq_trans->data);
+ 	if (of_irq_verbose)
+-		printk("%s: Apply IRQ trans [%s] %x --> %x\n",
+-		      op->dev.of_node->full_name, ip->full_name, orig_irq, irq);
++		printk("%pOF: Apply IRQ trans [%pOF] %x --> %x\n",
++		      op->dev.of_node, ip, orig_irq, irq);
+ 
+ out:
+ 	nid = of_node_to_nid(dp);
+@@ -656,9 +655,9 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
+ 
+ 		/* Prevent overrunning the op->irqs[] array.  */
+ 		if (op->archdata.num_irqs > PROMINTR_MAX) {
+-			printk(KERN_WARNING "%s: Too many irqs (%d), "
++			printk(KERN_WARNING "%pOF: Too many irqs (%d), "
+ 			       "limiting to %d.\n",
+-			       dp->full_name, op->archdata.num_irqs, PROMINTR_MAX);
++			       dp, op->archdata.num_irqs, PROMINTR_MAX);
+ 			op->archdata.num_irqs = PROMINTR_MAX;
+ 		}
+ 		memcpy(op->archdata.irqs, irq, op->archdata.num_irqs * 4);
+@@ -680,8 +679,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
+ 	op->dev.dma_mask = &op->dev.coherent_dma_mask;
+ 
+ 	if (of_device_register(op)) {
+-		printk("%s: Could not register of device.\n",
+-		       dp->full_name);
++		printk("%pOF: Could not register of device.\n", dp);
+ 		kfree(op);
+ 		op = NULL;
+ 	}
+diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+index 17ea16a1337c..45ba2757a1b9 100644
+--- a/arch/sparc/kernel/pci.c
++++ b/arch/sparc/kernel/pci.c
+@@ -431,13 +431,13 @@ static void of_scan_pci_bridge(struct pci_pbm_info *pbm,
+ 	u64 size;
+ 
+ 	if (ofpci_verbose)
+-		pci_info(dev, "of_scan_pci_bridge(%s)\n", node->full_name);
++		pci_info(dev, "of_scan_pci_bridge(%pOF)\n", node);
+ 
+ 	/* parse bus-range property */
+ 	busrange = of_get_property(node, "bus-range", &len);
+ 	if (busrange == NULL || len != 8) {
+-		pci_info(dev, "Can't get bus-range for PCI-PCI bridge %s\n",
+-		       node->full_name);
++		pci_info(dev, "Can't get bus-range for PCI-PCI bridge %pOF\n",
++		       node);
+ 		return;
+ 	}
+ 
+@@ -455,8 +455,8 @@ static void of_scan_pci_bridge(struct pci_pbm_info *pbm,
+ 
+ 	bus = pci_add_new_bus(dev->bus, dev, busrange[0]);
+ 	if (!bus) {
+-		pci_err(dev, "Failed to create pci bus for %s\n",
+-			node->full_name);
++		pci_err(dev, "Failed to create pci bus for %pOF\n",
++			node);
+ 		return;
+ 	}
+ 
+@@ -512,13 +512,13 @@ static void of_scan_pci_bridge(struct pci_pbm_info *pbm,
+ 			res = bus->resource[0];
+ 			if (res->flags) {
+ 				pci_err(dev, "ignoring extra I/O range"
+-					" for bridge %s\n", node->full_name);
++					" for bridge %pOF\n", node);
+ 				continue;
+ 			}
+ 		} else {
+ 			if (i >= PCI_NUM_RESOURCES - PCI_BRIDGE_RESOURCES) {
+ 				pci_err(dev, "too many memory ranges"
+-					" for bridge %s\n", node->full_name);
++					" for bridge %pOF\n", node);
+ 				continue;
+ 			}
+ 			res = bus->resource[i];
+@@ -554,14 +554,14 @@ static void pci_of_scan_bus(struct pci_pbm_info *pbm,
+ 	struct pci_dev *dev;
+ 
+ 	if (ofpci_verbose)
+-		pci_info(bus, "scan_bus[%s] bus no %d\n",
+-			 node->full_name, bus->number);
++		pci_info(bus, "scan_bus[%pOF] bus no %d\n",
++			 node, bus->number);
+ 
+ 	child = NULL;
+ 	prev_devfn = -1;
+ 	while ((child = of_get_next_child(node, child)) != NULL) {
+ 		if (ofpci_verbose)
+-			pci_info(bus, "  * %s\n", child->full_name);
++			pci_info(bus, "  * %pOF\n", child);
+ 		reg = of_get_property(child, "reg", &reglen);
+ 		if (reg == NULL || reglen < 20)
+ 			continue;
+@@ -598,7 +598,7 @@ show_pciobppath_attr(struct device * dev, struct device_attribute * attr, char *
+ 	pdev = to_pci_dev(dev);
+ 	dp = pdev->dev.of_node;
+ 
+-	return snprintf (buf, PAGE_SIZE, "%s\n", dp->full_name);
++	return snprintf (buf, PAGE_SIZE, "%pOF\n", dp);
+ }
+ 
+ static DEVICE_ATTR(obppath, S_IRUSR | S_IRGRP | S_IROTH, show_pciobppath_attr, NULL);
+@@ -698,7 +698,7 @@ struct pci_bus *pci_scan_one_pbm(struct pci_pbm_info *pbm,
+ 	struct device_node *node = pbm->op->dev.of_node;
+ 	struct pci_bus *bus;
+ 
+-	printk("PCI: Scanning PBM %s\n", node->full_name);
++	printk("PCI: Scanning PBM %pOF\n", node);
+ 
+ 	pci_add_resource_offset(&resources, &pbm->io_space,
+ 				pbm->io_offset);
+@@ -714,8 +714,7 @@ struct pci_bus *pci_scan_one_pbm(struct pci_pbm_info *pbm,
+ 	bus = pci_create_root_bus(parent, pbm->pci_first_busno, pbm->pci_ops,
+ 				  pbm, &resources);
+ 	if (!bus) {
+-		printk(KERN_ERR "Failed to create bus for %s\n",
+-		       node->full_name);
++		printk(KERN_ERR "Failed to create bus for %pOF\n", node);
+ 		pci_free_resource_list(&resources);
+ 		return NULL;
+ 	}
+@@ -1111,8 +1110,8 @@ static void pci_bus_slot_names(struct device_node *node, struct pci_bus *bus)
+ 	sp = prop->names;
+ 
+ 	if (ofpci_verbose)
+-		pci_info(bus, "Making slots for [%s] mask[0x%02x]\n",
+-			 node->full_name, mask);
++		pci_info(bus, "Making slots for [%pOF] mask[0x%02x]\n",
++			 node, mask);
+ 
+ 	i = 0;
+ 	while (mask) {
 diff --git a/arch/sparc/kernel/prom_32.c b/arch/sparc/kernel/prom_32.c
-index d41e2a749c5d..30e33b461970 100644
+index 30e33b461970..f2835cddf362 100644
 --- a/arch/sparc/kernel/prom_32.c
 +++ b/arch/sparc/kernel/prom_32.c
-@@ -60,6 +60,7 @@ void * __init prom_early_alloc(unsigned long size)
-  */
- static void __init sparc32_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom_registers *regs;
- 	struct property *rprop;
+@@ -261,7 +261,7 @@ void __init of_console_init(void)
+ 		}
+ 		of_console_device = dp;
  
-@@ -69,13 +70,14 @@ static void __init sparc32_path_component(struct device_node *dp, char *tmp_buf)
+-		strcpy(of_console_path, dp->full_name);
++		sprintf(of_console_path, "%pOF", dp);
+ 		if (!strcmp(type, "serial")) {
+ 			strcat(of_console_path,
+ 			       (skip ? ":b" : ":a"));
+@@ -301,7 +301,7 @@ void __init of_console_init(void)
+ 		of_console_device = dp;
  
- 	regs = rprop->value;
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name,
-+		name,
- 		regs->which_io, regs->phys_addr);
- }
+ 		if (prom_vers == PROM_V2) {
+-			strcpy(of_console_path, dp->full_name);
++			sprintf(of_console_path, "%pOF", dp);
+ 			switch (*romvec->pv_stdout) {
+ 			case PROMDEV_TTYA:
+ 				strcat(of_console_path, ":a");
+diff --git a/arch/sparc/kernel/sbus.c b/arch/sparc/kernel/sbus.c
+index c133dfc37c5c..41c5deb581b8 100644
+--- a/arch/sparc/kernel/sbus.c
++++ b/arch/sparc/kernel/sbus.c
+@@ -67,8 +67,8 @@ void sbus_set_sbus64(struct device *dev, int bursts)
  
- /* "name@slot,offset"  */
- static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom_registers *regs;
- 	struct property *prop;
- 
-@@ -85,7 +87,7 @@ static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
- 
- 	regs = prop->value;
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name,
-+		name,
- 		regs->which_io,
- 		regs->phys_addr);
- }
-@@ -93,6 +95,7 @@ static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@devnum[,func]" */
- static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom_pci_registers *regs;
- 	struct property *prop;
- 	unsigned int devfn;
-@@ -105,12 +108,12 @@ static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
- 	devfn = (regs->phys_hi >> 8) & 0xff;
- 	if (devfn & 0x07) {
- 		sprintf(tmp_buf, "%s@%x,%x",
--			dp->name,
-+			name,
- 			devfn >> 3,
- 			devfn & 0x07);
- 	} else {
- 		sprintf(tmp_buf, "%s@%x",
--			dp->name,
-+			name,
- 			devfn >> 3);
- 	}
- }
-@@ -118,6 +121,7 @@ static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@addrhi,addrlo" */
- static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom_registers *regs;
- 	struct property *prop;
- 
-@@ -128,13 +132,14 @@ static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
- 	regs = prop->value;
- 
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name,
-+		name,
- 		regs->which_io, regs->phys_addr);
- }
- 
- /* "name:vendor:device@irq,addrlo" */
- static void __init ambapp_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct amba_prom_registers *regs;
- 	unsigned int *intr, *device, *vendor, reg0;
- 	struct property *prop;
-@@ -168,7 +173,7 @@ static void __init ambapp_path_component(struct device_node *dp, char *tmp_buf)
- 	device = prop->value;
- 
- 	sprintf(tmp_buf, "%s:%d:%d@%x,%x",
--		dp->name, *vendor, *device,
-+		name, *vendor, *device,
- 		*intr, reg0);
- }
- 
-@@ -196,12 +201,13 @@ static void __init __build_path_component(struct device_node *dp, char *tmp_buf)
- 
- char * __init build_path_component(struct device_node *dp)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	char tmp_buf[64], *n;
- 
- 	tmp_buf[0] = '\0';
- 	__build_path_component(dp, tmp_buf);
- 	if (tmp_buf[0] == '\0')
--		strcpy(tmp_buf, dp->name);
-+		strcpy(tmp_buf, name);
- 
- 	n = prom_early_alloc(strlen(tmp_buf) + 1);
- 	strcpy(n, tmp_buf);
-diff --git a/arch/sparc/kernel/prom_64.c b/arch/sparc/kernel/prom_64.c
-index c37955d127fe..1667df573f6f 100644
---- a/arch/sparc/kernel/prom_64.c
-+++ b/arch/sparc/kernel/prom_64.c
-@@ -72,6 +72,7 @@ void * __init prom_early_alloc(unsigned long size)
-  */
- static void __init sun4v_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom64_registers *regs;
- 	struct property *rprop;
- 	u32 high_bits, low_bits, type;
-@@ -83,7 +84,7 @@ static void __init sun4v_path_component(struct device_node *dp, char *tmp_buf)
- 	regs = rprop->value;
- 	if (!of_node_is_root(dp->parent)) {
- 		sprintf(tmp_buf, "%s@%x,%x",
--			dp->name,
-+			name,
- 			(unsigned int) (regs->phys_addr >> 32UL),
- 			(unsigned int) (regs->phys_addr & 0xffffffffUL));
+ 	regs = of_get_property(op->dev.of_node, "reg", NULL);
+ 	if (!regs) {
+-		printk(KERN_ERR "sbus_set_sbus64: Cannot find regs for %s\n",
+-		       op->dev.of_node->full_name);
++		printk(KERN_ERR "sbus_set_sbus64: Cannot find regs for %pOF\n",
++		       op->dev.of_node);
  		return;
-@@ -98,21 +99,22 @@ static void __init sun4v_path_component(struct device_node *dp, char *tmp_buf)
- 
- 		if (low_bits)
- 			sprintf(tmp_buf, "%s@%s%x,%x",
--				dp->name, prefix,
-+				name, prefix,
- 				high_bits, low_bits);
- 		else
- 			sprintf(tmp_buf, "%s@%s%x",
--				dp->name,
-+				name,
- 				prefix,
- 				high_bits);
- 	} else if (type == 12) {
- 		sprintf(tmp_buf, "%s@%x",
--			dp->name, high_bits);
-+			name, high_bits);
  	}
- }
- 
- static void __init sun4u_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom64_registers *regs;
- 	struct property *prop;
- 
-@@ -123,7 +125,7 @@ static void __init sun4u_path_component(struct device_node *dp, char *tmp_buf)
- 	regs = prop->value;
- 	if (!of_node_is_root(dp->parent)) {
- 		sprintf(tmp_buf, "%s@%x,%x",
--			dp->name,
-+			name,
- 			(unsigned int) (regs->phys_addr >> 32UL),
- 			(unsigned int) (regs->phys_addr & 0xffffffffUL));
- 		return;
-@@ -139,7 +141,7 @@ static void __init sun4u_path_component(struct device_node *dp, char *tmp_buf)
- 			mask = 0x7fffff;
- 
- 		sprintf(tmp_buf, "%s@%x,%x",
--			dp->name,
-+			name,
- 			*(u32 *)prop->value,
- 			(unsigned int) (regs->phys_addr & mask));
- 	}
-@@ -148,6 +150,7 @@ static void __init sun4u_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@slot,offset"  */
- static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom_registers *regs;
- 	struct property *prop;
- 
-@@ -157,7 +160,7 @@ static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
- 
- 	regs = prop->value;
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name,
-+		name,
- 		regs->which_io,
- 		regs->phys_addr);
- }
-@@ -165,6 +168,7 @@ static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@devnum[,func]" */
- static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom_pci_registers *regs;
- 	struct property *prop;
- 	unsigned int devfn;
-@@ -177,12 +181,12 @@ static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
- 	devfn = (regs->phys_hi >> 8) & 0xff;
- 	if (devfn & 0x07) {
- 		sprintf(tmp_buf, "%s@%x,%x",
--			dp->name,
-+			name,
- 			devfn >> 3,
- 			devfn & 0x07);
- 	} else {
- 		sprintf(tmp_buf, "%s@%x",
--			dp->name,
-+			name,
- 			devfn >> 3);
- 	}
- }
-@@ -190,6 +194,7 @@ static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@UPA_PORTID,offset" */
- static void __init upa_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom64_registers *regs;
- 	struct property *prop;
- 
-@@ -204,7 +209,7 @@ static void __init upa_path_component(struct device_node *dp, char *tmp_buf)
- 		return;
- 
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name,
-+		name,
- 		*(u32 *) prop->value,
- 		(unsigned int) (regs->phys_addr & 0xffffffffUL));
- }
-@@ -212,6 +217,7 @@ static void __init upa_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@reg" */
- static void __init vdev_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct property *prop;
- 	u32 *regs;
- 
-@@ -221,12 +227,13 @@ static void __init vdev_path_component(struct device_node *dp, char *tmp_buf)
- 
- 	regs = prop->value;
- 
--	sprintf(tmp_buf, "%s@%x", dp->name, *regs);
-+	sprintf(tmp_buf, "%s@%x", name, *regs);
- }
- 
- /* "name@addrhi,addrlo" */
- static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct linux_prom64_registers *regs;
- 	struct property *prop;
- 
-@@ -237,7 +244,7 @@ static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
- 	regs = prop->value;
- 
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name,
-+		name,
- 		(unsigned int) (regs->phys_addr >> 32UL),
- 		(unsigned int) (regs->phys_addr & 0xffffffffUL));
- }
-@@ -245,6 +252,7 @@ static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
- /* "name@bus,addr" */
- static void __init i2c_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct property *prop;
- 	u32 *regs;
- 
-@@ -258,12 +266,13 @@ static void __init i2c_path_component(struct device_node *dp, char *tmp_buf)
- 	 * property of the i2c bus node etc. etc.
+ 	slot = regs->which_io;
+diff --git a/arch/sparc/kernel/sun4d_irq.c b/arch/sparc/kernel/sun4d_irq.c
+index d869d409fce6..6d266d7dd2b6 100644
+--- a/arch/sparc/kernel/sun4d_irq.c
++++ b/arch/sparc/kernel/sun4d_irq.c
+@@ -361,15 +361,15 @@ static unsigned int sun4d_build_device_irq(struct platform_device *op,
+ 	 * lacks a "board#" property, something is very wrong.
  	 */
- 	sprintf(tmp_buf, "%s@%x,%x",
--		dp->name, regs[0], regs[1]);
-+		name, regs[0], regs[1]);
- }
- 
- /* "name@reg0[,reg1]" */
- static void __init usb_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct property *prop;
- 	u32 *regs;
- 
-@@ -275,16 +284,17 @@ static void __init usb_path_component(struct device_node *dp, char *tmp_buf)
- 
- 	if (prop->length == sizeof(u32) || regs[1] == 1) {
- 		sprintf(tmp_buf, "%s@%x",
--			dp->name, regs[0]);
-+			name, regs[0]);
- 	} else {
- 		sprintf(tmp_buf, "%s@%x,%x",
--			dp->name, regs[0], regs[1]);
-+			name, regs[0], regs[1]);
+ 	if (!bus->parent || strcmp(bus->parent->name, bus_connection)) {
+-		printk(KERN_ERR "%s: Error, parent is not %s.\n",
+-			bus->full_name, bus_connection);
++		printk(KERN_ERR "%pOF: Error, parent is not %s.\n",
++			bus, bus_connection);
+ 		goto err_out;
  	}
- }
- 
- /* "name@reg0reg1[,reg2reg3]" */
- static void __init ieee1394_path_component(struct device_node *dp, char *tmp_buf)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	struct property *prop;
- 	u32 *regs;
- 
-@@ -296,10 +306,10 @@ static void __init ieee1394_path_component(struct device_node *dp, char *tmp_buf
- 
- 	if (regs[2] || regs[3]) {
- 		sprintf(tmp_buf, "%s@%08x%08x,%04x%08x",
--			dp->name, regs[0], regs[1], regs[2], regs[3]);
-+			name, regs[0], regs[1], regs[2], regs[3]);
- 	} else {
- 		sprintf(tmp_buf, "%s@%08x%08x",
--			dp->name, regs[0], regs[1]);
-+			name, regs[0], regs[1]);
+ 	board_parent = bus->parent;
+ 	board = of_getintprop_default(board_parent, "board#", -1);
+ 	if (board == -1) {
+-		printk(KERN_ERR "%s: Error, lacks board# property.\n",
+-			board_parent->full_name);
++		printk(KERN_ERR "%pOF: Error, lacks board# property.\n",
++			board_parent);
+ 		goto err_out;
  	}
+ 
+diff --git a/arch/sparc/kernel/time_64.c b/arch/sparc/kernel/time_64.c
+index 5f356dc8e178..68a80f9baea7 100644
+--- a/arch/sparc/kernel/time_64.c
++++ b/arch/sparc/kernel/time_64.c
+@@ -445,8 +445,8 @@ static int rtc_probe(struct platform_device *op)
+ {
+ 	struct resource *r;
+ 
+-	printk(KERN_INFO "%s: RTC regs at 0x%llx\n",
+-	       op->dev.of_node->full_name, op->resource[0].start);
++	printk(KERN_INFO "%pOF: RTC regs at 0x%llx\n",
++	       op->dev.of_node, op->resource[0].start);
+ 
+ 	/* The CMOS RTC driver only accepts IORESOURCE_IO, so cons
+ 	 * up a fake resource so that the probe works for all cases.
+@@ -501,8 +501,8 @@ static struct platform_device rtc_bq4802_device = {
+ static int bq4802_probe(struct platform_device *op)
+ {
+ 
+-	printk(KERN_INFO "%s: BQ4802 regs at 0x%llx\n",
+-	       op->dev.of_node->full_name, op->resource[0].start);
++	printk(KERN_INFO "%pOF: BQ4802 regs at 0x%llx\n",
++	       op->dev.of_node, op->resource[0].start);
+ 
+ 	rtc_bq4802_device.resource = &op->resource[0];
+ 	return platform_device_register(&rtc_bq4802_device);
+@@ -565,8 +565,8 @@ static int mostek_probe(struct platform_device *op)
+ 	    strcmp(dp->parent->parent->name, "central") != 0)
+ 		return -ENODEV;
+ 
+-	printk(KERN_INFO "%s: Mostek regs at 0x%llx\n",
+-	       dp->full_name, op->resource[0].start);
++	printk(KERN_INFO "%pOF: Mostek regs at 0x%llx\n",
++	       dp, op->resource[0].start);
+ 
+ 	m48t59_rtc.resource = &op->resource[0];
+ 	return platform_device_register(&m48t59_rtc);
+diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
+index 32bae68e34c1..0b578d03797b 100644
+--- a/arch/sparc/kernel/vio.c
++++ b/arch/sparc/kernel/vio.c
+@@ -193,7 +193,7 @@ show_pciobppath_attr(struct device *dev, struct device_attribute *attr,
+ 	vdev = to_vio_dev(dev);
+ 	dp = vdev->dp;
+ 
+-	return snprintf (buf, PAGE_SIZE, "%s\n", dp->full_name);
++	return snprintf (buf, PAGE_SIZE, "%pOF\n", dp);
  }
  
-@@ -356,12 +366,13 @@ static void __init __build_path_component(struct device_node *dp, char *tmp_buf)
- 
- char * __init build_path_component(struct device_node *dp)
- {
-+	const char *name = of_get_property(dp, "name", NULL);
- 	char tmp_buf[64], *n;
- 
- 	tmp_buf[0] = '\0';
- 	__build_path_component(dp, tmp_buf);
- 	if (tmp_buf[0] == '\0')
--		strcpy(tmp_buf, dp->name);
-+		strcpy(tmp_buf, name);
- 
- 	n = prom_early_alloc(strlen(tmp_buf) + 1);
- 	strcpy(n, tmp_buf);
+ static DEVICE_ATTR(obppath, S_IRUSR | S_IRGRP | S_IROTH,
 -- 
 2.19.1
 
