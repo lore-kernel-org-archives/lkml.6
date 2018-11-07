@@ -2,140 +2,76 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA06C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A022C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFE02086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:36:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="jf8C6CoI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFE02086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 05C082086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C082086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeKHIJA (ORCPT
+        id S1728186AbeKHIKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:09:00 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42122 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbeKHIJA (ORCPT
+        Thu, 8 Nov 2018 03:10:14 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47788 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbeKHIKO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:09:00 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u10-v6so2583533pfn.9
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 14:36:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uhXyLGLoOKp5Huh29/RTwRXsqfSZBbXr8NHx5WWp9EM=;
-        b=jf8C6CoINECukURlsc6L1XmwH5jIF0Kadhse5fZODz8bW2q4cYj9xU0iq7PdACbYzC
-         3kMKJX3w58Vtyr6tuug/qNOfrl/CHxWe8NdLhXbyrCHMXMOftw0B7qepXPB0P8ft8QRv
-         9q3InTYK+y5yR51NOv8Rx2ghsxKMAptXgsaqydNK/eowOi1bMbbcdNFOg28y/1JjEGM9
-         JWkDZqTejlYg0igYsrgyyeFktvd5pc30Smhz6f+4Se8NnA2I01UDAjkIa926W5apbHW9
-         F8uiAUN0zNGOpnNy0hy3WbnsvLo/3p6sbuaazd7EWHCZF5wi+aAHxLUi1Xa+ffWpLm5e
-         5IcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uhXyLGLoOKp5Huh29/RTwRXsqfSZBbXr8NHx5WWp9EM=;
-        b=rfONCHeYbedRSPQtjNBTw8ygtyCcYhXhdSpZRSYJ9T8pbZZWdNdY7h9EwgxRAIHFjt
-         6fC5cG4fFk6ZKTplRi7wYKQl81lopKuQYB1XCBzzthzSbXKo04RCd16prJRpLZzvbylp
-         9YoYYfbF93wQmrl5c6vHrLlsxjvb5WQvr0zvC9c560Z34vgUB9HUoSR9NvBEFa22h4kf
-         zOsICCJzyUL3Zvvid8YRozi3Tjvm0DNHVXtlXrIhq4Oib6DZ7zqdK1SX95uqroD+f6sP
-         ZZyU9+9VNeNuHHc/fnw0pafJXkbpVWJU9bM21QaXV6Ui4L8UvW48sQGBAlb/YbDZStEj
-         +YsQ==
-X-Gm-Message-State: AGRZ1gL9wQ0yws7VJRQp42ndRlABopCy7ZqC1CP3HbbbsyzmJjR9E2+Y
-        0vVvLEMBTaoyxD80fohcV+gTRA==
-X-Google-Smtp-Source: AJdET5cq00ccHXQiPigDw1DUOfsdEVr9cXisKwLFyXwIbd2FkQbAr/QDkGEhcMZvo9Ps03LcMrjQLQ==
-X-Received: by 2002:a62:1196:: with SMTP id 22-v6mr2128846pfr.178.1541630191034;
-        Wed, 07 Nov 2018 14:36:31 -0800 (PST)
-Received: from wvw-pc1.mtv.corp.google.com ([2620:0:1000:1601:b03:46c1:8e31:9255])
-        by smtp.gmail.com with ESMTPSA id s141-v6sm3727778pfc.63.2018.11.07.14.36.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 14:36:29 -0800 (PST)
-From:   Wei Wang <wvw@google.com>
-X-Google-Original-From: Wei Wang < wvw@google.com >
-Cc:     wei.vince.wang@gmail.com, Wei Wang <wvw@google.com>,
-        Kame Wang <kamewang@google.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Thermal: do not clear passive state during system sleep
-Date:   Wed,  7 Nov 2018 14:36:11 -0800
-Message-Id: <20181107223611.61092-1-wvw@google.com>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
-MIME-Version: 1.0
+        Thu, 8 Nov 2018 03:10:14 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71C1F891;
+        Wed,  7 Nov 2018 22:37:45 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 14:37:44 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     =?UTF-8?B?Y2hvdXJ5emhvdQ==?= (=?UTF-8?B?5ZGo5aiB?=) 
+        <chouryzhou@tencent.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arve@android.com" <arve@android.com>,
+        "tkjos@android.com" <tkjos@android.com>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] binder: ipc namespace support for android binder
+Message-Id: <20181107143744.2dd91690aad06ab1d678dfe8@linux-foundation.org>
+In-Reply-To: <5FBCBE569E134E4CA167B91C0A77FD610198F816F8@EXMBX-SZMAIL022.tencent.com>
+References: <5FBCBE569E134E4CA167B91C0A77FD610198F816F8@EXMBX-SZMAIL022.tencent.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <wvw@google.com>
+On Wed, 7 Nov 2018 01:48:12 +0000 chouryzhou(周威) <chouryzhou@tencent.com> wrote:
 
-commit ff140fea847e ("Thermal: handle thermal zone device properly
-during system sleep") added PM hook to call thermal zone reset during
-sleep. However reseting thermal zone will also clear the passive state
-and thus cancel the polling queue which leads the passive cooling device
-state not being cleared properly after sleep.
+> > > --- a/ipc/namespace.c
+> > > +++ b/ipc/namespace.c
+> > > @@ -56,6 +56,9 @@ static struct ipc_namespace *create_ipc_ns(struct
+> > user_namespace *user_ns,
+> > >         ns->ucounts = ucounts;
+> > >
+> > >         err = mq_init_ns(ns);
+> > > +       if (err)
+> > > +               goto fail_put;
+> > > +       err = binder_init_ns(ns);
+> > >         if (err)
+> > >                 goto fail_put;
+> > >
+> > 
+> > Don't we need an mq_put_mnt() if binder_init_ns() fails?
+> > 
+> > free_ipc_ns() seems to have forgotten about that too.  In which case it
+> > must be madly leaking mounts so probably I'm wrong.  Confused.
+> > 
+> 
+> mq_init_ns will do clean job if it failed, and as do binder_init_ns. 
 
-thermal_pm_notify => thermal_zone_device_reset set passive to 0
-thermal_zone_trip_update will skip update passive as `old_target ==
-instance->target'.
-monitor_thermal_zone => thermal_zone_device_set_polling will cancel
-tz->poll_queue, so the cooling device state will not be changed
-afterwards.
-
-Reported-by: Kame Wang <kamewang@google.com>
-Signed-off-by: Wei Wang <wvw@google.com>
----
- drivers/thermal/thermal_core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 6ab982309e6a..29b26b0959e8 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -451,16 +451,20 @@ static void update_temperature(struct thermal_zone_device *tz)
- 			tz->last_temperature, tz->temperature);
- }
- 
--static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+static void thermal_zone_device_init(struct thermal_zone_device *tz)
- {
- 	struct thermal_instance *pos;
--
- 	tz->temperature = THERMAL_TEMP_INVALID;
--	tz->passive = 0;
- 	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
- 		pos->initialized = false;
- }
- 
-+static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+{
-+	tz->passive = 0;
-+	thermal_zone_device_init(tz);
-+}
-+
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
- {
-@@ -1501,7 +1505,7 @@ static int thermal_pm_notify(struct notifier_block *nb,
- 	case PM_POST_SUSPEND:
- 		atomic_set(&in_suspend, 0);
- 		list_for_each_entry(tz, &thermal_tz_list, node) {
--			thermal_zone_device_reset(tz);
-+			thermal_zone_device_init(tz);
- 			thermal_zone_device_update(tz,
- 						   THERMAL_EVENT_UNSPECIFIED);
- 		}
--- 
-2.19.1.930.g4563a0d9d0-goog
-
+My point is that if mq_init_ns() succeeds and binder_init_ns() fails,
+we don't undo the effects of mq_init_ns()?
