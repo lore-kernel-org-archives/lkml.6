@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C3AC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DD3ECDE47
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA5842146E
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5842146E
+	by mail.kernel.org (Postfix) with ESMTP id 9D10521479
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D10521479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbeKHCdw (ORCPT
+        id S1731533AbeKHCdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:33:52 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46544 "EHLO mail.skyhub.de"
+        Wed, 7 Nov 2018 21:33:53 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46566 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731484AbeKHCdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:33:50 -0500
+        id S1728180AbeKHCdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:33:52 -0500
 X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
 Received: from mail.skyhub.de ([127.0.0.1])
         by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id w6oMVgTubGu6; Wed,  7 Nov 2018 18:02:37 +0100 (CET)
+        with ESMTP id vd4qxDqXhDiU; Wed,  7 Nov 2018 18:02:37 +0100 (CET)
 Received: from zn.tnic (p200300EC2BCBE000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:e000:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9BF41EC0291;
-        Wed,  7 Nov 2018 18:02:36 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A7E561EC0291;
+        Wed,  7 Nov 2018 18:02:37 +0100 (CET)
 From:   Borislav Petkov <bp@alien8.de>
 To:     X86 ML <x86@kernel.org>
 Cc:     "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 09/16] x86/microcode/AMD: Move chipset-specific check into verify_patch()
-Date:   Wed,  7 Nov 2018 18:02:11 +0100
-Message-Id: <20181107170218.7596-10-bp@alien8.de>
+Subject: [PATCH 10/16] x86/microcode/AMD: Change verify_patch()'s return value
+Date:   Wed,  7 Nov 2018 18:02:12 +0100
+Message-Id: <20181107170218.7596-11-bp@alien8.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107170218.7596-1-bp@alien8.de>
 References: <20181107170218.7596-1-bp@alien8.de>
@@ -51,45 +51,197 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-... where it belongs.
-
-No functional changes.
+Have it return 0 on success, positive value when the current patch
+should be skipped and negative on error.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 91 ++++++++++++++++-------------
+ 1 file changed, 52 insertions(+), 39 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index be46e1fda77f..ebac82357639 100644
+index ebac82357639..79216cfb9f72 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -249,6 +249,12 @@ verify_patch(u8 family, const u8 *buf, unsigned int buf_size, bool early)
- 	mc_hdr	= (struct microcode_header_amd *)(buf + SECTION_HDR_SIZE);
- 	proc_id	= mc_hdr->processor_rev_id;
+@@ -210,24 +210,32 @@ __verify_patch_size(u8 family, u32 sh_psize, unsigned int buf_size)
+ 		break;
+ 	}
  
-+	if (mc_hdr->nb_dev_id || mc_hdr->sb_dev_id) {
+-	if (sh_psize > min_t(u32, buf_size, max_size)) {
+-		pr_err("patch size mismatch\n");
++	if (sh_psize > min_t(u32, buf_size, max_size))
+ 		return 0;
+-	}
+ 
+ 	return sh_psize;
+ }
+ 
+-static unsigned int
+-verify_patch(u8 family, const u8 *buf, unsigned int buf_size, bool early)
++/*
++ * Verify the patch in @buf.
++ *
++ * Returns:
++ * negative: on error
++ * positive: patch is not for this family, skip it
++ * 0: success
++ */
++static int
++verify_patch(u8 family, const u8 *buf, size_t buf_size, u32 *patch_size, bool early)
+ {
+ 	struct microcode_header_amd *mc_hdr;
++	unsigned int ret;
+ 	u32 sh_psize;
+ 	u16 proc_id;
+ 	u8 patch_fam;
+ 
+ 	if (!__verify_patch_section(buf, buf_size, &sh_psize, early))
+-		return 0;
++		return -1;
++
+ 	/*
+ 	 * The section header length is not included in this indicated size
+ 	 * but is present in the leftover file length so we need to subtract
+@@ -243,23 +251,31 @@ verify_patch(u8 family, const u8 *buf, unsigned int buf_size, bool early)
+ 		if (!early)
+ 			pr_debug("Patch of size %u truncated.\n", sh_psize);
+ 
+-		return 0;
++		return -1;
+ 	}
+ 
+-	mc_hdr	= (struct microcode_header_amd *)(buf + SECTION_HDR_SIZE);
+-	proc_id	= mc_hdr->processor_rev_id;
++	ret = __verify_patch_size(family, sh_psize, buf_size);
++	if (!ret) {
 +		if (!early)
-+			pr_err("Patch-ID 0x%08x: chipset-specific code unsupported.\n", mc_hdr->patch_id);
-+		return 0;
++			pr_debug("Per-family patch size mismatch.\n");
++		return -1;
 +	}
 +
++	*patch_size = sh_psize;
+ 
++	mc_hdr	= (struct microcode_header_amd *)(buf + SECTION_HDR_SIZE);
+ 	if (mc_hdr->nb_dev_id || mc_hdr->sb_dev_id) {
+ 		if (!early)
+ 			pr_err("Patch-ID 0x%08x: chipset-specific code unsupported.\n", mc_hdr->patch_id);
+-		return 0;
++		return -1;
+ 	}
+ 
++	proc_id	= mc_hdr->processor_rev_id;
  	patch_fam = 0xf + (proc_id >> 12);
  	if (patch_fam != family)
- 		return 0;
-@@ -741,12 +747,6 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
- 	proc_id	    = mc_hdr->processor_rev_id;
+-		return 0;
++		return 1;
  
--	if (mc_hdr->nb_dev_id || mc_hdr->sb_dev_id) {
--		pr_err("Patch-ID 0x%08x: chipset-specific code unsupported.\n",
--			mc_hdr->patch_id);
--		return crnt_size;
+-	return __verify_patch_size(family, sh_psize, buf_size);
++	return 0;
+ }
+ 
+ /*
+@@ -729,23 +745,17 @@ static void cleanup(void)
+  * driver cannot continue functioning normally. In such cases, we tear
+  * down everything we've used up so far and exit.
+  */
+-static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
++static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover,
++				unsigned int *patch_size)
+ {
+ 	struct microcode_header_amd *mc_hdr;
+-	unsigned int patch_size, crnt_size;
+ 	struct ucode_patch *patch;
+ 	u16 proc_id;
++	int ret;
+ 
+-	patch_size = verify_patch(family, fw, leftover, false);
+-	if (!patch_size) {
+-		pr_debug("Patch size mismatch.\n");
+-		return 1;
 -	}
 -
+-	/* If initial rough pokes pass, we can start looking at the header. */
+-	crnt_size   = patch_size + SECTION_HDR_SIZE;
+-	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
+-	proc_id	    = mc_hdr->processor_rev_id;
++	ret = verify_patch(family, fw, leftover, patch_size, false);
++	if (ret)
++		return ret;
+ 
  	patch = kzalloc(sizeof(*patch), GFP_KERNEL);
  	if (!patch) {
- 		pr_err("Patch allocation failure.\n");
+@@ -753,13 +763,16 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 		return -EINVAL;
+ 	}
+ 
+-	patch->data = kmemdup(fw + SECTION_HDR_SIZE, patch_size, GFP_KERNEL);
++	patch->data = kmemdup(fw + SECTION_HDR_SIZE, *patch_size, GFP_KERNEL);
+ 	if (!patch->data) {
+ 		pr_err("Patch data allocation failure.\n");
+ 		kfree(patch);
+ 		return -EINVAL;
+ 	}
+ 
++	mc_hdr      = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
++	proc_id     = mc_hdr->processor_rev_id;
++
+ 	INIT_LIST_HEAD(&patch->plist);
+ 	patch->patch_id  = mc_hdr->patch_id;
+ 	patch->equiv_cpu = proc_id;
+@@ -770,39 +783,39 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 	/* ... and add to cache. */
+ 	update_cache(patch);
+ 
+-	return crnt_size;
++	return 0;
+ }
+ 
+ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
+ 					     size_t size)
+ {
+-	enum ucode_state ret = UCODE_ERROR;
+-	unsigned int leftover;
+ 	u8 *fw = (u8 *)data;
+-	int crnt_size = 0;
+ 	int offset;
+ 
+ 	offset = install_equiv_cpu_table(data);
+ 	if (offset < 0) {
+ 		pr_err("failed to create equivalent cpu table\n");
+-		return ret;
++		return UCODE_ERROR;
+ 	}
+-	fw += offset;
+-	leftover = size - offset;
++	fw   += offset;
++	size -= offset;
+ 
+ 	if (*(u32 *)fw != UCODE_UCODE_TYPE) {
+ 		pr_err("invalid type field in container file section header\n");
+ 		free_equiv_cpu_table();
+-		return ret;
++		return UCODE_ERROR;
+ 	}
+ 
+-	while (leftover) {
+-		crnt_size = verify_and_add_patch(family, fw, leftover);
+-		if (crnt_size < 0)
+-			return ret;
++	while (size > 0) {
++		unsigned int crnt_size = 0;
++		int ret;
++
++		ret = verify_and_add_patch(family, fw, size, &crnt_size);
++		if (ret < 0)
++			return UCODE_ERROR;
+ 
+-		fw	 += crnt_size;
+-		leftover -= crnt_size;
++		fw   +=  crnt_size + SECTION_HDR_SIZE;
++		size -= (crnt_size + SECTION_HDR_SIZE);
+ 	}
+ 
+ 	return UCODE_OK;
 -- 
 2.19.1
 
