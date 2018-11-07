@@ -2,120 +2,398 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59319C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73814C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022762086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:47:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="dYm9xICH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022762086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 334FA2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:48:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 334FA2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeKHETR (ORCPT
+        id S1729240AbeKHEU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:19:17 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42095 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbeKHETQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:19:16 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q6-v6so12236857lfh.9
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:47:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=fdhesnwODR1IUqoa62aCJQitJnka6y/M2DWmc07iOSo=;
-        b=dYm9xICHkHRE5lBCEYV2BPKQ56Y2eKahzBo+6ZIwkVzlt1yB3VUs3+brOiFmTk6dIe
-         IL18AFnwXmewlwwqtu0wD3Im1jp4o2NBEPnhw2pYLNZQbnhgd+hN5UdzJNfoept1rKcg
-         zQ0sdLJUcQfMeVKRyj7FJFcT3WexBQdUgiVtVnSr0scn41hljQropzo6w6+bgwomTAh0
-         FvoW8gC+8xTCnEbFmJfLKCiqAKKJpP0AzwyzHjsDcoO+jALG+2IMlp2Fr3wRuhnfKJ+D
-         HF4zt0IA9/qjf/tOkQaIYl0A8FPIAGwkeMvizjP9NTPoxI8uh6N+V9UDoBFQ2B0ss1HR
-         u2Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=fdhesnwODR1IUqoa62aCJQitJnka6y/M2DWmc07iOSo=;
-        b=SyXgQ+8r43m7//78aFUg/Lvdx6COa772DgrDm+JKJvqd9UVOH/qa36mXRTG12D3iLq
-         V+7IwtKJailUV01haYDtvGk/EnGu1j0YdBl79e7V8x8UzX8asssvJQWT/aeuUO+TaC86
-         xgF9CfROJR0EgTGBr/bEO3weCx2NWY9+MlYV8MZ8u7UxfiGdXKN2DicpLWRcfz2NyUQY
-         XjrZg9eWVY4jU1vypH79M6UuILDRoD2BK3I8VVktJ/dzGPLo6mmXbIx5wxnW8oSfud75
-         2EPhuvIMuMxvSZ57gPIWiS/GJz6b5YiK+7JkEBSwH2Xj1iC/Z6IJK9HVvdjKCTqs+CsT
-         vdLA==
-X-Gm-Message-State: AGRZ1gJDmu6UW6XAAv5A2fHVTKwRPJuqvjaeaieU7usu3Db6+tWJd8x7
-        eFo55G710Rtn/8ukBiPsaMzyKLR1tcnwLmkdy2/enA==
-X-Google-Smtp-Source: AJdET5dgEsX+VCUe3E+btA7Zs0MRxvxhzwAPzLR3Sfs6cagOwHfG4mfvPJBb5Rn3w+vGu9/fFrA/0irWawPe158p2qo=
-X-Received: by 2002:a19:1901:: with SMTP id 1mr729485lfz.99.1541616456574;
- Wed, 07 Nov 2018 10:47:36 -0800 (PST)
+        Wed, 7 Nov 2018 23:20:27 -0500
+Received: from mga05.intel.com ([192.55.52.43]:15115 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbeKHEU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:20:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 10:48:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="84100017"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga007.fm.intel.com with SMTP; 07 Nov 2018 10:48:44 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 07 Nov 2018 20:48:43 +0200
+Date:   Wed, 7 Nov 2018 20:48:43 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] drm/i915: Add short HPD IRQ storm detection for
+ non-MST systems
+Message-ID: <20181107184843.GO9144@intel.com>
+References: <20181106213017.14563-1-lyude@redhat.com>
+ <20181106213017.14563-6-lyude@redhat.com>
 MIME-Version: 1.0
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
- <20181107171723.GI9919@thunk.org> <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
-In-Reply-To: <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 7 Nov 2018 10:47:24 -0800
-Message-ID: <CAOesGMg+jW7SN2+E_FYbwi8GdNhc8KrEsahB-Nn+AseO6kLGXA@mail.gmail.com>
-Subject: Re: [TECH TOPIC] SoC maintainer group
-To:     Theodore Tso <tytso@mit.edu>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Russell King <rmk@armlinux.org.uk>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181106213017.14563-6-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 9:35 AM Olof Johansson <olof@lixom.net> wrote:
->
-> On Wed, Nov 7, 2018 at 9:17 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> >
-> > On Tue, Nov 06, 2018 at 02:16:27PM -0800, Olof Johansson wrote:
-> > >
-> > > Olof Johansson (arm-soc)
-> > > Arnd Bergmann (arm-soc)
-> > > Kevin Hilman (arm-soc)
-> > > Mike Turquette (clk)
-> > > Stephen Boyd (clk)
-> > > Linus Walleij (pinctrl + more)
-> > > Mike Brown (gpio/regmap + more)
-> >
-> > Could the poeple listed on this list please list potential schedule conflicts?
-> >
-> > I'm going to assume we should avoid: Andriod uConf, RISC-V uConf,
-> > Device Tree uConf.  What are other potential conflicts.  I'm going to
-> > guess this might be "interesting" to schedule.  :-)
->
-> Yeah, apologies for adding a bunch of cross-coordination this late too.
->
-> It's likely going to be conflict-ridden no matter what we do. RISC-V
-> and DT are the main conflicts, Android probably has a bit less.
->
-> Tuesday afternoon looks least conflict-y when I squint at the
-> schedule, or Thursday afternoon (but ideally not overlapping with
-> Daniel's DRM/gitlab session).
+On Tue, Nov 06, 2018 at 04:30:16PM -0500, Lyude Paul wrote:
+> Unfortunately, it seems that the HPD IRQ storm problem from the early
+> days of Intel GPUs was never entirely solved, only mostly. Within the
+> last couple of days, I got a bug report from one of our customers who
+> had been having issues with their machine suddenly booting up very
+> slowly after having updated. The amount of time it took to boot went
+> from around 30 seconds, to over 6 minutes consistently.
+> 
+> After some investigation, I discovered that i915 was reporting massive
+> amounts of short HPD IRQ spam on this system from the DisplayPort port,
+> despite there not being anything actually connected. The symptoms would
+> start with one "long" HPD IRQ being detected at boot:
+> 
+> [    1.891398] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00440000, dig 0x00440000, pins 0x000000a0
+> [    1.891436] [drm:intel_hpd_irq_handler [i915]] digital hpd port B - long
+> [    1.891472] [drm:intel_hpd_irq_handler [i915]] Received HPD interrupt on PIN 5 - cnt: 0
+> [    1.891508] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - long
+> [    1.891544] [drm:intel_hpd_irq_handler [i915]] Received HPD interrupt on PIN 7 - cnt: 0
+> [    1.891592] [drm:intel_dp_hpd_pulse [i915]] got hpd irq on port B - long
+> [    1.891628] [drm:intel_dp_hpd_pulse [i915]] got hpd irq on port D - long
+> …
+> 
+> followed by constant short IRQs afterwards:
+> 
+> [    1.895091] [drm:intel_encoder_hotplug [i915]] [CONNECTOR:66:DP-1] status updated from unknown to disconnected
+> [    1.895129] [drm:i915_hotplug_work_func [i915]] Connector DP-3 (pin 7) received hotplug event.
+> [    1.895165] [drm:intel_dp_detect [i915]] [CONNECTOR:72:DP-3]
+> [    1.895275] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.895312] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.895762] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.895799] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.896239] [drm:intel_dp_aux_xfer [i915]] dp_aux_ch timeout status 0x71450085
+> [    1.896293] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.896330] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.896781] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.896817] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.897275] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> 
+> The customer's system in question has a GM45 GPU, which is apparently
+> well known for hotplugging storms.
+> 
+> So, workaround this impressively broken hardware by changing the default
+> HPD storm threshold from 5 to 50. Then, make long IRQs count for 10, and
+> short IRQs count for 1. This makes it so that 5 long IRQs will trigger
+> an HPD storm, and on systems with short HPD storm detection 50 short
+> IRQs will trigger an HPD storm. 50 short IRQs amounts to 100ms of
+> constant pulsing, which seems like a good middleground between being too
+> sensitive and not being sensitive enough (which would cause visible
+> stutters in userspace every time a storm occurs).
+> 
+> And just to be extra safe: we don't enable this by default on systems
+> with MST support. There's too high of a chance of MST support triggering
+> storm detection, and systems that are new enough to support MST are a
+> lot less likely to have issues with IRQ storms anyway.
+> 
+> As a note: this patch was tested using a ThinkPad T450s and a Chamelium
+> to simulate the short IRQ storms.
+> 
+> Changes since v1:
+> - Don't use two separate thresholds, just make long IRQs count for 10
+>   each and short IRQs count for 1. This simplifies the code a bit
+>   - Ville Syrjälä
+> Changes since v2:
+> - Document @long_hpd in intel_hpd_irq_storm_detect, no functional
+>   changes
+> Changes since v4:
+> - Remove !! in long_hpd assignment - Ville Syrjälä
+> - queue_hp = true - Ville Syrjälä
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-Ted,
+lgtm
 
-Can we have 3pm-3:30pm on Thursday? It seems relatively low on
-embedded-related conflicts and at 3  people would have time to migrate
-from Daniel Vetter's gitlab talk if needed.
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
+> ---
+>  drivers/gpu/drm/i915/i915_debugfs.c  | 74 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/i915/i915_drv.h      |  5 +-
+>  drivers/gpu/drm/i915/i915_irq.c      |  7 +++
+>  drivers/gpu/drm/i915/intel_hotplug.c | 50 +++++++++++--------
+>  4 files changed, 115 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+> index f60485906f7e..670db5073d70 100644
+> --- a/drivers/gpu/drm/i915/i915_debugfs.c
+> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
+> @@ -4658,6 +4658,79 @@ static const struct file_operations i915_hpd_storm_ctl_fops = {
+>  	.write = i915_hpd_storm_ctl_write
+>  };
+>  
+> +static int i915_hpd_short_storm_ctl_show(struct seq_file *m, void *data)
+> +{
+> +	struct drm_i915_private *dev_priv = m->private;
+> +
+> +	seq_printf(m, "Enabled: %s\n",
+> +		   yesno(dev_priv->hotplug.hpd_short_storm_enabled));
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +i915_hpd_short_storm_ctl_open(struct inode *inode, struct file *file)
+> +{
+> +	return single_open(file, i915_hpd_short_storm_ctl_show,
+> +			   inode->i_private);
+> +}
+> +
+> +static ssize_t i915_hpd_short_storm_ctl_write(struct file *file,
+> +					      const char __user *ubuf,
+> +					      size_t len, loff_t *offp)
+> +{
+> +	struct seq_file *m = file->private_data;
+> +	struct drm_i915_private *dev_priv = m->private;
+> +	struct i915_hotplug *hotplug = &dev_priv->hotplug;
+> +	char *newline;
+> +	char tmp[16];
+> +	int i;
+> +	bool new_state;
+> +
+> +	if (len >= sizeof(tmp))
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(tmp, ubuf, len))
+> +		return -EFAULT;
+> +
+> +	tmp[len] = '\0';
+> +
+> +	/* Strip newline, if any */
+> +	newline = strchr(tmp, '\n');
+> +	if (newline)
+> +		*newline = '\0';
+> +
+> +	/* Reset to the "default" state for this system */
+> +	if (strcmp(tmp, "reset") == 0)
+> +		new_state = !HAS_DP_MST(dev_priv);
+> +	else if (kstrtobool(tmp, &new_state) != 0)
+> +		return -EINVAL;
+> +
+> +	DRM_DEBUG_KMS("%sabling HPD short storm detection\n",
+> +		      new_state ? "En" : "Dis");
+> +
+> +	spin_lock_irq(&dev_priv->irq_lock);
+> +	hotplug->hpd_short_storm_enabled = new_state;
+> +	/* Reset the HPD storm stats so we don't accidentally trigger a storm */
+> +	for_each_hpd_pin(i)
+> +		hotplug->stats[i].count = 0;
+> +	spin_unlock_irq(&dev_priv->irq_lock);
+> +
+> +	/* Re-enable hpd immediately if we were in an irq storm */
+> +	flush_delayed_work(&dev_priv->hotplug.reenable_work);
+> +
+> +	return len;
+> +}
+> +
+> +static const struct file_operations i915_hpd_short_storm_ctl_fops = {
+> +	.owner = THIS_MODULE,
+> +	.open = i915_hpd_short_storm_ctl_open,
+> +	.read = seq_read,
+> +	.llseek = seq_lseek,
+> +	.release = single_release,
+> +	.write = i915_hpd_short_storm_ctl_write,
+> +};
+> +
+>  static int i915_drrs_ctl_set(void *data, u64 val)
+>  {
+>  	struct drm_i915_private *dev_priv = data;
+> @@ -4865,6 +4938,7 @@ static const struct i915_debugfs_files {
+>  	{"i915_guc_log_level", &i915_guc_log_level_fops},
+>  	{"i915_guc_log_relay", &i915_guc_log_relay_fops},
+>  	{"i915_hpd_storm_ctl", &i915_hpd_storm_ctl_fops},
+> +	{"i915_hpd_short_storm_ctl", &i915_hpd_short_storm_ctl_fops},
+>  	{"i915_ipc_status", &i915_ipc_status_fops},
+>  	{"i915_drrs_ctl", &i915_drrs_ctl_fops},
+>  	{"i915_edp_psr_debug", &i915_edp_psr_debug_fops}
+> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+> index 2a88a7eb871b..0c8438de3c1b 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.h
+> +++ b/drivers/gpu/drm/i915/i915_drv.h
+> @@ -283,7 +283,8 @@ enum hpd_pin {
+>  #define for_each_hpd_pin(__pin) \
+>  	for ((__pin) = (HPD_NONE + 1); (__pin) < HPD_NUM_PINS; (__pin)++)
+>  
+> -#define HPD_STORM_DEFAULT_THRESHOLD 5
+> +/* Threshold == 5 for long IRQs, 50 for short */
+> +#define HPD_STORM_DEFAULT_THRESHOLD 50
+>  
+>  struct i915_hotplug {
+>  	struct work_struct hotplug_work;
+> @@ -308,6 +309,8 @@ struct i915_hotplug {
+>  	bool poll_enabled;
+>  
+>  	unsigned int hpd_storm_threshold;
+> +	/* Whether or not to count short HPD IRQs in HPD storms */
+> +	u8 hpd_short_storm_enabled;
+>  
+>  	/*
+>  	 * if we get a HPD irq from DP and a HPD irq from non-DP
+> diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+> index 5d1f53723388..d7e47d6082de 100644
+> --- a/drivers/gpu/drm/i915/i915_irq.c
+> +++ b/drivers/gpu/drm/i915/i915_irq.c
+> @@ -4863,6 +4863,13 @@ void intel_irq_init(struct drm_i915_private *dev_priv)
+>  		dev_priv->display_irqs_enabled = false;
+>  
+>  	dev_priv->hotplug.hpd_storm_threshold = HPD_STORM_DEFAULT_THRESHOLD;
+> +	/* If we have MST support, we want to avoid doing short HPD IRQ storm
+> +	 * detection, as short HPD storms will occur as a natural part of
+> +	 * sideband messaging with MST.
+> +	 * On older platforms however, IRQ storms can occur with both long and
+> +	 * short pulses, as seen on some G4x systems.
+> +	 */
+> +	dev_priv->hotplug.hpd_short_storm_enabled = !HAS_DP_MST(dev_priv);
+>  
+>  	dev->driver->get_vblank_timestamp = drm_calc_vbltimestamp_from_scanoutpos;
+>  	dev->driver->get_scanout_position = i915_get_crtc_scanoutpos;
+> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+> index d642c0795452..42e61e10f517 100644
+> --- a/drivers/gpu/drm/i915/intel_hotplug.c
+> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
+> @@ -114,34 +114,46 @@ enum hpd_pin intel_hpd_pin_default(struct drm_i915_private *dev_priv,
+>  #define HPD_STORM_REENABLE_DELAY	(2 * 60 * 1000)
+>  
+>  /**
+> - * intel_hpd_irq_storm_detect - gather stats and detect HPD irq storm on a pin
+> + * intel_hpd_irq_storm_detect - gather stats and detect HPD IRQ storm on a pin
+>   * @dev_priv: private driver data pointer
+>   * @pin: the pin to gather stats on
+> + * @long_hpd: whether the HPD IRQ was long or short
+>   *
+> - * Gather stats about HPD irqs from the specified @pin, and detect irq
+> + * Gather stats about HPD IRQs from the specified @pin, and detect IRQ
+>   * storms. Only the pin specific stats and state are changed, the caller is
+>   * responsible for further action.
+>   *
+> - * The number of irqs that are allowed within @HPD_STORM_DETECT_PERIOD is
+> + * The number of IRQs that are allowed within @HPD_STORM_DETECT_PERIOD is
+>   * stored in @dev_priv->hotplug.hpd_storm_threshold which defaults to
+> - * @HPD_STORM_DEFAULT_THRESHOLD. If this threshold is exceeded, it's
+> - * considered an irq storm and the irq state is set to @HPD_MARK_DISABLED.
+> + * @HPD_STORM_DEFAULT_THRESHOLD. Long IRQs count as +10 to this threshold, and
+> + * short IRQs count as +1. If this threshold is exceeded, it's considered an
+> + * IRQ storm and the IRQ state is set to @HPD_MARK_DISABLED.
+> + *
+> + * By default, most systems will only count long IRQs towards
+> + * &dev_priv->hotplug.hpd_storm_threshold. However, some older systems also
+> + * suffer from short IRQ storms and must also track these. Because short IRQ
+> + * storms are naturally caused by sideband interactions with DP MST devices,
+> + * short IRQ detection is only enabled for systems without DP MST support.
+> + * Systems which are new enough to support DP MST are far less likely to
+> + * suffer from IRQ storms at all, so this is fine.
+>   *
+>   * The HPD threshold can be controlled through i915_hpd_storm_ctl in debugfs,
+>   * and should only be adjusted for automated hotplug testing.
+>   *
+> - * Return true if an irq storm was detected on @pin.
+> + * Return true if an IRQ storm was detected on @pin.
+>   */
+>  static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
+> -				       enum hpd_pin pin)
+> +				       enum hpd_pin pin, bool long_hpd)
+>  {
+>  	struct i915_hotplug *hpd = &dev_priv->hotplug;
+>  	unsigned long start = hpd->stats[pin].last_jiffies;
+>  	unsigned long end = start + msecs_to_jiffies(HPD_STORM_DETECT_PERIOD);
+> +	const int increment = long_hpd ? 10 : 1;
+>  	const int threshold = hpd->hpd_storm_threshold;
+>  	bool storm = false;
+>  
+> -	if (!threshold)
+> +	if (!threshold ||
+> +	    (!long_hpd && !dev_priv->hotplug.hpd_short_storm_enabled))
+>  		return false;
+>  
+>  	if (!time_in_range(jiffies, start, end)) {
+> @@ -149,7 +161,8 @@ static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
+>  		hpd->stats[pin].count = 0;
+>  	}
+>  
+> -	if (++hpd->stats[pin].count > threshold) {
+> +	hpd->stats[pin].count += increment;
+> +	if (hpd->stats[pin].count > threshold) {
+>  		hpd->stats[pin].state = HPD_MARK_DISABLED;
+>  		DRM_DEBUG_KMS("HPD interrupt storm detected on PIN %d\n", pin);
+>  		storm = true;
+> @@ -409,28 +422,24 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
+>  	for_each_intel_encoder(&dev_priv->drm, encoder) {
+>  		enum hpd_pin pin = encoder->hpd_pin;
+>  		bool has_hpd_pulse = intel_encoder_has_hpd_pulse(encoder);
+> +		bool long_hpd = true;
+>  
+>  		if (!(BIT(pin) & pin_mask))
+>  			continue;
+>  
+>  		if (has_hpd_pulse) {
+> -			bool long_hpd = long_mask & BIT(pin);
+>  			enum port port = encoder->port;
+>  
+> +			long_hpd = long_mask & BIT(pin);
+> +
+>  			DRM_DEBUG_DRIVER("digital hpd port %c - %s\n", port_name(port),
+>  					 long_hpd ? "long" : "short");
+> -			/*
+> -			 * For long HPD pulses we want to have the digital queue happen,
+> -			 * but we still want HPD storm detection to function.
+> -			 */
+>  			queue_dig = true;
+> -			if (long_hpd) {
+> +			if (long_hpd)
+>  				dev_priv->hotplug.long_port_mask |= (1 << port);
+> -			} else {
+> -				/* for short HPD just trigger the digital queue */
+> +			else
+>  				dev_priv->hotplug.short_port_mask |= (1 << port);
+> -				continue;
+> -			}
+> +
+>  		}
+>  
+>  		if (dev_priv->hotplug.stats[pin].state == HPD_DISABLED) {
+> @@ -453,9 +462,10 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
+>  			queue_hp = true;
+>  		}
+>  
+> -		if (intel_hpd_irq_storm_detect(dev_priv, pin)) {
+> +		if (intel_hpd_irq_storm_detect(dev_priv, pin, long_hpd)) {
+>  			dev_priv->hotplug.event_bits &= ~BIT(pin);
+>  			storm_detected = true;
+> +			queue_hp = true;
+>  		}
+>  	}
+>  
+> -- 
+> 2.19.1
 
--Olof
+-- 
+Ville Syrjälä
+Intel
