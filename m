@@ -2,184 +2,188 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D83DC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A57C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389D0208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 389D0208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E26820989
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E26820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbeKHCdo (ORCPT
+        id S1731425AbeKHCdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:33:44 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54594 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbeKHCdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:33:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B58D1A78;
-        Wed,  7 Nov 2018 09:02:29 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD7703F5BD;
-        Wed,  7 Nov 2018 09:02:20 -0800 (PST)
-Date:   Wed, 7 Nov 2018 17:02:16 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        pkondeti@codeaurora.org, Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v8 03/15] PM: Introduce an Energy Model management
- framework
-Message-ID: <20181107170213.yapun7nk5rrjdf55@queper01-lin>
-References: <20181016101513.26919-1-quentin.perret@arm.com>
- <20181016101513.26919-4-quentin.perret@arm.com>
- <CAKfTPtBN3HpNMrztcmAwkGuW9uHaKBi9KoqdvBEHuxf7=078NA@mail.gmail.com>
+        Wed, 7 Nov 2018 21:33:45 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46482 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbeKHCdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:33:45 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id n508EH8XCJfM; Wed,  7 Nov 2018 18:02:30 +0100 (CET)
+Received: from zn.tnic (p200300EC2BCBE000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:e000:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0F0C1EC0291;
+        Wed,  7 Nov 2018 18:02:30 +0100 (CET)
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 02/16] x86/microcode/AMD: Add microcode container verification
+Date:   Wed,  7 Nov 2018 18:02:04 +0100
+Message-Id: <20181107170218.7596-3-bp@alien8.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181107170218.7596-1-bp@alien8.de>
+References: <20181107170218.7596-1-bp@alien8.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBN3HpNMrztcmAwkGuW9uHaKBi9KoqdvBEHuxf7=078NA@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 
-On Wednesday 07 Nov 2018 at 17:32:32 (+0100), Vincent Guittot wrote:
-> Hi Quentin,
-> 
-> On Tue, 16 Oct 2018 at 12:15, Quentin Perret <quentin.perret@arm.com> wrote:
-> >
-> 
-> > +
-> > +/**
-> > + * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
-> > + * @pd         : performance domain for which energy has to be estimated
-> > + * @max_util   : highest utilization among CPUs of the domain
-> > + * @sum_util   : sum of the utilization of all CPUs in the domain
-> > + *
-> > + * Return: the sum of the energy consumed by the CPUs of the domain assuming
-> > + * a capacity state satisfying the max utilization of the domain.
-> > + */
-> > +static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
-> > +                               unsigned long max_util, unsigned long sum_util)
-> > +{
-> > +       unsigned long freq, scale_cpu;
-> > +       struct em_cap_state *cs;
-> > +       int i, cpu;
-> > +
-> > +       /*
-> > +        * In order to predict the capacity state, map the utilization of the
-> > +        * most utilized CPU of the performance domain to a requested frequency,
-> > +        * like schedutil.
-> > +        */
-> > +       cpu = cpumask_first(to_cpumask(pd->cpus));
-> > +       scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-> > +       cs = &pd->table[pd->nr_cap_states - 1];
-> > +       freq = map_util_freq(max_util, cs->frequency, scale_cpu);
-> > +
-> > +       /*
-> > +        * Find the lowest capacity state of the Energy Model above the
-> > +        * requested frequency.
-> > +        */
-> > +       for (i = 0; i < pd->nr_cap_states; i++) {
-> > +               cs = &pd->table[i];
-> > +               if (cs->frequency >= freq)
-> > +                       break;
-> > +       }
-> > +
-> > +       /*
-> > +        * The capacity of a CPU in the domain at that capacity state (cs)
-> > +        * can be computed as:
-> > +        *
-> > +        *             cs->freq * scale_cpu
-> > +        *   cs->cap = --------------------                          (1)
-> > +        *                 cpu_max_freq
-> > +        *
-> > +        * So, ignoring the costs of idle states (which are not available in
-> > +        * the EM), the energy consumed by this CPU at that capacity state is
-> > +        * estimated as:
-> > +        *
-> > +        *             cs->power * cpu_util
-> > +        *   cpu_nrg = --------------------                          (2)
-> > +        *                   cs->cap
-> > +        *
-> > +        * since 'cpu_util / cs->cap' represents its percentage of busy time.
-> > +        *
-> > +        *   NOTE: Although the result of this computation actually is in
-> > +        *         units of power, it can be manipulated as an energy value
-> > +        *         over a scheduling period, since it is assumed to be
-> > +        *         constant during that interval.
-> > +        *
-> > +        * By injecting (1) in (2), 'cpu_nrg' can be re-expressed as a product
-> > +        * of two terms:
-> > +        *
-> > +        *             cs->power * cpu_max_freq   cpu_util
-> > +        *   cpu_nrg = ------------------------ * ---------          (3)
-> > +        *                    cs->freq            scale_cpu
-> > +        *
-> > +        * The first term is static, and is stored in the em_cap_state struct
-> > +        * as 'cs->cost'.
-> > +        *
-> > +        * Since all CPUs of the domain have the same micro-architecture, they
-> > +        * share the same 'cs->cost', and the same CPU capacity. Hence, the
-> > +        * total energy of the domain (which is the simple sum of the energy of
-> > +        * all of its CPUs) can be factorized as:
-> > +        *
-> > +        *            cs->cost * \Sum cpu_util
-> > +        *   pd_nrg = ------------------------                       (4)
-> > +        *                  scale_cpu
-> > +        */
-> > +       return cs->cost * sum_util / scale_cpu;
-> 
-> Why do you need to keep scale_cpu outside the cs->cost ? do you expect
-> arch_scale_cpu_capacity() to change at runtime ?
+Add container and patch verification functions to the AMD microcode
+update driver.
 
-Unfortunately yes, it can. It'll change at least during boot on arm64,
-for example (see drivers/base/arch_topology.c). And also, userspace can
-actually set that value via sysfs ...
+These functions check whether a passed buffer contains the relevant
+structure, whether it isn't truncated and (for actual microcode patches)
+whether the size of a patch is not too large for a particular CPU family.
+By adding these checks as separate functions the actual microcode loading
+code won't get interspersed with a lot of checks and so will be more
+readable.
 
-> If the returned value of arch_scale_cpu_capacity() changes, we will
-> have to rebuild several others things and we can include the update of
-> cs->cost
+ [ bp: Make all pr_err() calls into pr_debug(). ]
 
-Yeah, that was the original approach I had actually. Some of the older
-versions of this patch set were doing just that. The only issue is that,
-in order to make the cs->cost updatable are run time, you need to
-introduce some level of protection around that data structure (RCU or
-something). And that would make it a bit harder for IPA (for example) to
-access the data -- it doesn't need any kind of RCU to access it's EM at
-the moment.
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Cc: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/3014e96c82cd90761b4601bd2cfe59c4119e46a7.1529424596.git.mail@maciej.szmigiero.name
+[ Drop the verify_patch() bits. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 101 ++++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-We can probably do something a bit smarter and introduce RCU protection
-only for the 'cost' field or something, but I was hoping that we could
-keep things simple for now and do that kind of small optimization a bit
-later :-)
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index b44c9029860c..36aeb01b3ae8 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -73,6 +73,107 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
+ 	return 0;
+ }
+ 
++/*
++ * Check whether there is a valid microcode container file at the beginning
++ * of @buf of size @buf_size. Set @early to use this function in the early path.
++ */
++static bool verify_container(const u8 *buf, size_t buf_size, bool early)
++{
++	u32 cont_magic;
++
++	if (buf_size <= CONTAINER_HDR_SZ) {
++		if (!early)
++			pr_debug("Truncated microcode container header.\n");
++
++		return false;
++	}
++
++	cont_magic = *(const u32 *)buf;
++	if (cont_magic != UCODE_MAGIC) {
++		if (!early)
++			pr_debug("Invalid magic value (0x%08x).\n", cont_magic);
++
++		return false;
++	}
++
++	return true;
++}
++
++/*
++ * Check whether there is a valid, non-truncated CPU equivalence table at the
++ * beginning of @buf of size @buf_size. Set @early to use this function in the
++ * early path.
++ */
++static bool verify_equivalence_table(const u8 *buf, size_t buf_size, bool early)
++{
++	const u32 *hdr = (const u32 *)buf;
++	u32 cont_type, equiv_tbl_len;
++
++	if (!verify_container(buf, buf_size, early))
++		return false;
++
++	cont_type = hdr[1];
++	if (cont_type != UCODE_EQUIV_CPU_TABLE_TYPE) {
++		if (!early)
++			pr_debug("Wrong microcode container equivalence table type: %u.\n",
++			       cont_type);
++
++		return false;
++	}
++
++	buf_size -= CONTAINER_HDR_SZ;
++
++	equiv_tbl_len = hdr[2];
++	if (equiv_tbl_len < sizeof(struct equiv_cpu_entry) ||
++	    buf_size < equiv_tbl_len) {
++		if (!early)
++			pr_debug("Truncated equivalence table.\n");
++
++		return false;
++	}
++
++	return true;
++}
++
++/*
++ * Check whether there is a valid, non-truncated microcode patch section at the
++ * beginning of @buf of size @buf_size. Set @early to use this function in the
++ * early path.
++ */
++static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
++{
++	const u32 *hdr;
++	u32 patch_type, patch_size;
++
++	if (buf_size < SECTION_HDR_SIZE) {
++		if (!early)
++			pr_debug("Truncated patch section.\n");
++
++		return false;
++	}
++
++	hdr = (const u32 *)buf;
++	patch_type = hdr[0];
++	patch_size = hdr[1];
++
++	if (patch_type != UCODE_UCODE_TYPE) {
++		if (!early)
++			pr_debug("Invalid type field (0x%x) in container file section header.\n",
++				patch_type);
++
++		return false;
++	}
++
++	if (patch_size < sizeof(struct microcode_header_amd)) {
++		if (!early)
++			pr_debug("Patch of size %u too short.\n", patch_size);
++
++		return false;
++	}
++
++	return true;
++}
++
+ /*
+  * This scans the ucode blob for the proper container as we can have multiple
+  * containers glued together. Returns the equivalence ID from the equivalence
+-- 
+2.19.1
 
-Thanks,
-Quentin
