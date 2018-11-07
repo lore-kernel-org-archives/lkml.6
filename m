@@ -2,131 +2,104 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CD1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D625C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1AC420892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1AC420892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id E6C2C2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:53:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iL0UAfC2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C2C2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731153AbeKHBXS (ORCPT
+        id S1731184AbeKHBYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:23:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51131 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbeKHBXS (ORCPT
+        Wed, 7 Nov 2018 20:24:30 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:45530 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbeKHBYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:23:18 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA7Fpsrj1468338
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 7 Nov 2018 07:51:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA7FprO11468333;
-        Wed, 7 Nov 2018 07:51:53 -0800
-Date:   Wed, 7 Nov 2018 07:51:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-f26621e60b35369bca9228bc936dc723b3e421af@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        bp@suse.de, tglx@linutronix.de, torvalds@linux-foundation.org,
-        mingo@kernel.org
-Reply-To: bp@suse.de, tglx@linutronix.de, torvalds@linux-foundation.org,
-          mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org
-In-Reply-To: <20181105093307.GA12445@zn.tnic>
-References: <20181105093307.GA12445@zn.tnic>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] resource/docs: Complete kernel-doc style function
- documentation
-Git-Commit-ID: f26621e60b35369bca9228bc936dc723b3e421af
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 7 Nov 2018 20:24:30 -0500
+Received: by mail-yb1-f195.google.com with SMTP id 131-v6so6994435ybe.12;
+        Wed, 07 Nov 2018 07:53:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HBsAi1/zcZAhn1DpkP41LMbYfHFLfREhipwh3kGR2xo=;
+        b=iL0UAfC2UGyt6OXwjIQ/5Oaz2YM3Z6r+yDWkZFh9CR4NqgujrVr1N2KU3ImG/Z2Su+
+         JvLXGtsP3GWr3Bj2peJ6/akjTIwlZLkGamlZYu2ONIvkBSHawVd9MefI6idhhkDjZMQ1
+         hkHNtSgG0iqhE8SG55a5B+GvJhYIdLaJhUoviHQTsG9sVX7NRvrUmhtPfqYmVupLGQtc
+         08jj9Oyh+iT1bdJIP+XpTDiO8CJ9wJLlH/mzecWhS78jqB1PVJ1zdzQu/j1GoQPZaS8R
+         uRiJpYgvnzNbNl+5YGvEXdnYeZfxVEHBZ63GEKSTWgpjqDfeDLI9zj2zTqv4DXlfNuh5
+         vdXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HBsAi1/zcZAhn1DpkP41LMbYfHFLfREhipwh3kGR2xo=;
+        b=Wa9ozeDMjwEimyx1vT1U+Vbxdp7T9/jl/jJaolYxG+gkFeQRY9PaNSwzc/9zwMqDpa
+         JjMw6I1ysohUNMnD1AL6+n3uP/mk0x7i7EoK2dtddOer+bppz6R+JQ+VaFm7grT9pSKY
+         vzk3mHVsw7QOQPzagJjbtwIQIvBU/NxQ6MJQL5iaqwE2Q1brEAw5aiZrSdxGeXpcVoWU
+         7pPVsPFeQFBJLnd1in34q6vwXKjaxzyo9cooPIkRW8eYkGHvk6/9txlX08fNUH0rA8KH
+         ftsm+0eERyni1Myafiucy5U5hbFWFNrczvaC38WDqkp0btHgTiZ0IpCYJNHltTkiRhZ1
+         +4Wg==
+X-Gm-Message-State: AGRZ1gI1QlbCBY4WTudZriCiby++7xX5mmgzI+kPIvBcjERq0PJwIjND
+        0PW0tq2iYDj/FVq7MbnEzzA=
+X-Google-Smtp-Source: AJdET5ewwlG+d9ONV5CfpSu55tqe18BPUFIllLoGJHdfNalKsYQ37EZeocFlE+c85JxX0OOdkFLOdw==
+X-Received: by 2002:a25:2bc4:: with SMTP id r187-v6mr775283ybr.25.1541606014051;
+        Wed, 07 Nov 2018 07:53:34 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:5c3c])
+        by smtp.gmail.com with ESMTPSA id v128-v6sm514312ywf.56.2018.11.07.07.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 07:53:32 -0800 (PST)
+Date:   Wed, 7 Nov 2018 07:53:30 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     lizefan@huawei.com, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, cgroups@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
+Subject: Re: [PATCH v5 3/5] cgroup/cpuset: make callback_lock raw
+Message-ID: <20181107155330.GA2509588@devbig004.ftw2.facebook.com>
+References: <20180903142801.20046-1-juri.lelli@redhat.com>
+ <20180903142801.20046-4-juri.lelli@redhat.com>
+ <20180925143416.GD25664@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180925143416.GD25664@localhost.localdomain>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f26621e60b35369bca9228bc936dc723b3e421af
-Gitweb:     https://git.kernel.org/tip/f26621e60b35369bca9228bc936dc723b3e421af
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Mon, 5 Nov 2018 10:33:07 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 7 Nov 2018 16:47:47 +0100
+Hello,
 
-resource/docs: Complete kernel-doc style function documentation
+On Tue, Sep 25, 2018 at 04:34:16PM +0200, Juri Lelli wrote:
+> It would be great if you could please have a look at the proposed change
+> below (and the rest of the set of course :-).
 
-Add the missing kernel-doc style function parameters documentation.
+Yeah, looks good to me.  Please feel free to add
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akpm@linux-foundation.org
-Cc: linux-tip-commits@vger.kernel.org
-Cc: rdunlap@infradead.org
-Fixes: b69c2e20f6e4 ("resource: Clean it up a bit")
-Link: http://lkml.kernel.org/r/20181105093307.GA12445@zn.tnic
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/resource.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ Acked-by: Tejun Heo <tj@kernel.org>
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 17bcb189d530..b0fbf685c77a 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -318,17 +318,24 @@ int release_resource(struct resource *old)
- 
- EXPORT_SYMBOL(release_resource);
- 
--/*
-- * Finds the lowest iomem resource that covers part of [start..end].  The
-- * caller must specify start, end, flags, and desc (which may be
-+/**
-+ * Finds the lowest iomem resource that covers part of [@start..@end].  The
-+ * caller must specify @start, @end, @flags, and @desc (which may be
-  * IORES_DESC_NONE).
-  *
-- * If a resource is found, returns 0 and *res is overwritten with the part
-- * of the resource that's within [start..end]; if none is found, returns
-- * -1. Returns -EINVAL for other invalid parameters.
-+ * If a resource is found, returns 0 and @*res is overwritten with the part
-+ * of the resource that's within [@start..@end]; if none is found, returns
-+ * -1 or -EINVAL for other invalid parameters.
-  *
-  * This function walks the whole tree and not just first level children
-  * unless @first_lvl is true.
-+ *
-+ * @start:	start address of the resource searched for
-+ * @end:	end address of same resource
-+ * @flags:	flags which the resource must have
-+ * @desc:	descriptor the resource must have
-+ * @first_lvl:	walk only the first level children, if set
-+ * @res:	return ptr, if resource found
-  */
- static int find_next_iomem_res(resource_size_t start, resource_size_t end,
- 			       unsigned long flags, unsigned long desc,
-@@ -390,9 +397,7 @@ static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
- }
- 
- /**
-- * walk_iomem_res_desc - walk through iomem resources
-- *
-- * Walks through iomem resources and calls @func() with matching resource
-+ * Walks through iomem resources and calls func() with matching resource
-  * ranges. This walks through whole tree and not just first level children.
-  * All the memory ranges which overlap start,end and also match flags and
-  * desc are valid candidates.
+> Another bit that I'd be more comfortable after hearing your word on it
+> is this one (discussed over 5/5):
+> 
+> https://lore.kernel.org/lkml/20180925130750.GA25664@localhost.localdomain/
+
+Can you please loop Waiman Long <longman@redhat.com> into discussion?
+He's working on cgroup2 cpuset support which might collide.
+
+Thanks.
+
+-- 
+tejun
