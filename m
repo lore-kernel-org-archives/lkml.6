@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD18C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83253C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C372146E
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C372146E
+	by mail.kernel.org (Postfix) with ESMTP id 45AD02146D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45AD02146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731563AbeKHCdy (ORCPT
+        id S1731580AbeKHCdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:33:54 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46566 "EHLO mail.skyhub.de"
+        Wed, 7 Nov 2018 21:33:55 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46638 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbeKHCdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:33:53 -0500
+        id S1728180AbeKHCdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:33:55 -0500
 X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
 Received: from mail.skyhub.de ([127.0.0.1])
         by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 0d0fTUa_rWSW; Wed,  7 Nov 2018 18:02:39 +0100 (CET)
+        with ESMTP id F-F_6045cQq9; Wed,  7 Nov 2018 18:02:40 +0100 (CET)
 Received: from zn.tnic (p200300EC2BCBE000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:e000:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 730761EC0ADD;
-        Wed,  7 Nov 2018 18:02:39 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6BC981EC0AC9;
+        Wed,  7 Nov 2018 18:02:40 +0100 (CET)
 From:   Borislav Petkov <bp@alien8.de>
 To:     X86 ML <x86@kernel.org>
 Cc:     "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 12/16] x86/microcode/AMD: Fix container size's type
-Date:   Wed,  7 Nov 2018 18:02:14 +0100
-Message-Id: <20181107170218.7596-13-bp@alien8.de>
+Subject: [PATCH 13/16] x86/microcode/AMD: Check microcode container data in the late loader
+Date:   Wed,  7 Nov 2018 18:02:15 +0100
+Message-Id: <20181107170218.7596-14-bp@alien8.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107170218.7596-1-bp@alien8.de>
 References: <20181107170218.7596-1-bp@alien8.de>
@@ -49,67 +49,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 
-Make it size_t everywhere as this is what we get from cpio.
+Convert the late loading path to use the newly introduced microcode
+container data checking functions as it was previously done for the
+early loader.
 
-Based on a patch by Maciej S. Szmigiero <mail@maciej.szmigiero.name>.
-
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+[ Keep header length addition in install_equiv_cpu_table() and rediff. ]
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 38 +++++++++++++----------------
+ 1 file changed, 17 insertions(+), 21 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 5775dc996df3..1f9a4b41218e 100644
+index 1f9a4b41218e..5d822ed295b5 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -186,8 +186,7 @@ __verify_patch_section(const u8 *buf, size_t buf_size, u32 *sh_psize, bool early
-  * exceed the per-family maximum). @sh_psize is the size read from the section
-  * header.
-  */
--static unsigned int
--__verify_patch_size(u8 family, u32 sh_psize, unsigned int buf_size)
-+static unsigned int __verify_patch_size(u8 family, u32 sh_psize, size_t buf_size)
- {
- 	u32 max_size;
- 
-@@ -285,10 +284,10 @@ verify_patch(u8 family, const u8 *buf, size_t buf_size, u32 *patch_size, bool ea
-  * Returns the amount of bytes consumed while scanning. @desc contains all the
-  * data we're going to use in later stages of the application.
-  */
--static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
-+static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
- {
- 	struct equiv_cpu_entry *eq;
--	ssize_t orig_size = size;
-+	size_t orig_size = size;
- 	u32 *hdr = (u32 *)ucode;
- 	u16 eq_id;
- 	u8 *buf;
-@@ -366,15 +365,17 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
-  */
- static void scan_containers(u8 *ucode, size_t size, struct cont_desc *desc)
- {
--	ssize_t rem = size;
--
--	while (rem >= 0) {
--		ssize_t s = parse_container(ucode, rem, desc);
-+	while (size >= 0) {
-+		size_t s = parse_container(ucode, size, desc);
- 		if (!s)
- 			return;
- 
--		ucode += s;
--		rem   -= s;
-+		/* catch wraparound */
-+		if (size >= s) {
-+			ucode += s;
-+			size  -= s;
-+		} else
-+			return;
- 	}
+@@ -705,28 +705,27 @@ static enum ucode_state apply_microcode_amd(int cpu)
+ 	return ret;
  }
+ 
+-static int install_equiv_cpu_table(const u8 *buf)
++static size_t install_equiv_cpu_table(const u8 *buf, size_t buf_size)
+ {
+-	unsigned int *ibuf = (unsigned int *)buf;
+-	unsigned int type = ibuf[1];
+-	unsigned int size = ibuf[2];
++	u32 equiv_tbl_len;
++	const u32 *hdr;
+ 
+-	if (type != UCODE_EQUIV_CPU_TABLE_TYPE || !size) {
+-		pr_err("empty section/"
+-		       "invalid type field in container file section header\n");
+-		return -EINVAL;
+-	}
++	if (!verify_equivalence_table(buf, buf_size, false))
++		return 0;
+ 
+-	equiv_cpu_table = vmalloc(size);
++	hdr = (const u32 *)buf;
++	equiv_tbl_len = hdr[2];
++
++	equiv_cpu_table = vmalloc(equiv_tbl_len);
+ 	if (!equiv_cpu_table) {
+ 		pr_err("failed to allocate equivalent CPU table\n");
+-		return -ENOMEM;
++		return 0;
+ 	}
+ 
+-	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, size);
++	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, equiv_tbl_len);
+ 
+ 	/* add header length */
+-	return size + CONTAINER_HDR_SZ;
++	return equiv_tbl_len + CONTAINER_HDR_SZ;
+ }
+ 
+ static void free_equiv_cpu_table(void)
+@@ -793,13 +792,12 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
+ 					     size_t size)
+ {
+ 	u8 *fw = (u8 *)data;
+-	int offset;
++	size_t offset;
+ 
+-	offset = install_equiv_cpu_table(data);
+-	if (offset < 0) {
+-		pr_err("failed to create equivalent cpu table\n");
++	offset = install_equiv_cpu_table(data, size);
++	if (!offset)
+ 		return UCODE_ERROR;
+-	}
++
+ 	fw   += offset;
+ 	size -= offset;
+ 
+@@ -897,10 +895,8 @@ static enum ucode_state request_microcode_amd(int cpu, struct device *device,
+ 	}
+ 
+ 	ret = UCODE_ERROR;
+-	if (*(u32 *)fw->data != UCODE_MAGIC) {
+-		pr_err("invalid magic value (0x%08x)\n", *(u32 *)fw->data);
++	if (!verify_container(fw->data, fw->size, false))
+ 		goto fw_release;
+-	}
+ 
+ 	ret = load_microcode_amd(bsp, c->x86, fw->data, fw->size);
  
 -- 
 2.19.1
