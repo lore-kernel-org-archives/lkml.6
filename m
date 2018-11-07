@@ -2,233 +2,164 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53BBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04368C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860F720827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:07:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860F720827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id BDCBE2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:13:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDCBE2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388866AbeKGNgP (ORCPT
+        id S1730851AbeKGNmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 08:36:15 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14599 "EHLO huawei.com"
+        Wed, 7 Nov 2018 08:42:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56176 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726312AbeKGNeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 08:34:50 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9F888E75BC665;
-        Wed,  7 Nov 2018 12:06:11 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 7 Nov 2018 12:06:06 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>
-Subject: [Patch net-next 06/12] net: hns3: use HNS3_NIC_STATE_RESETTING to indicate resetting
-Date:   Wed, 7 Nov 2018 12:06:12 +0800
-Message-ID: <1541563578-28973-7-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541563578-28973-1-git-send-email-tanhuazhong@huawei.com>
-References: <1541563578-28973-1-git-send-email-tanhuazhong@huawei.com>
+        id S1726671AbeKGNmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 08:42:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7D2F0B176;
+        Wed,  7 Nov 2018 04:13:29 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Date:   Wed, 07 Nov 2018 15:12:30 +1100
+Subject: [PATCH 00/23 - V4] NFS: Remove generic RPC credentials.
+Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Message-ID: <154156285766.24086.14262073575778354276.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While hclge is going to reset, it will notify its client with
-HNAE3_DOWN_CLIENT, so this client should get into a resetting
-status from this moment, other operations from the stack need to
-be blocked as well. And when the reset is finished, the client
-will be notified with HNAE3_UP_CLIENT, so this is the end of
-the resetting status.
+This is an updated version of a series I sent in Feb of this year.
+Since then there have only been minor improvement and updates to sync
+with the changing kernel.
 
-This patch uses HNS3_NIC_STATE_RESETTING flag to implement that,
-and adds hns3_nic_resetting() to indicate which operation is not
-allowed.
+There doesn't seem to be a maintainer for the 'cred' code, so I don't
+know who to ask to approve the first 4 patches.  Maybe if the NFS
+team like them, they can just go to Linus with a note for him to look
+at them if he wants to.
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+The original motivation for this was performance.  In some
+circumstances the cred caches can get big and particularly can get
+long chains.  The hash function has been changed at least once to
+improve the hashing and it still isn't perfect.
+Rather than improving pruning of the cache, or resizing the hashtable
+etc, it is easiest to just get rid of it.
+
+As well as discarding generic credentials completely (using 'struct
+cred' instead), we also stop storing AUTH_UNIX credentials in a hash
+table - that brings no value.  Just allocate as needed and discard
+when finished with.
+So the only hash table will still have is for AUTH_GSS.
+One of the main triggers for hashtable problems was users changing
+groups a lot, so there would be many entries for the one user, each
+with a different set of groups.  That doesn't apply for
+AUTH_GSS as the groupids on the client are ignored.
+
+That was the original motivation, but as I worked on it, I realized
+that it was making a log of code simpler.
+
+ 44 files changed, 550 insertions(+), 925 deletions(-)
+
+That is sufficient motivation in itself I think.
+
+Review comments most welcome.
+
+Thanks,
+NeilBrown
+
+
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_dcbnl.c   | 12 ++++++++++++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 10 ++++++++++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |  7 +++++++
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 19 +++++++++++++++++++
- 4 files changed, 48 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_dcbnl.c b/drivers/net/ethernet/hisilicon/hns3/hns3_dcbnl.c
-index ea5f8a8..b6fabbb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_dcbnl.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_dcbnl.c
-@@ -9,6 +9,9 @@ int hns3_dcbnl_ieee_getets(struct net_device *ndev, struct ieee_ets *ets)
- {
- 	struct hnae3_handle *h = hns3_get_handle(ndev);
- 
-+	if (hns3_nic_resetting(ndev))
-+		return -EBUSY;
-+
- 	if (h->kinfo.dcb_ops->ieee_getets)
- 		return h->kinfo.dcb_ops->ieee_getets(h, ets);
- 
-@@ -20,6 +23,9 @@ int hns3_dcbnl_ieee_setets(struct net_device *ndev, struct ieee_ets *ets)
- {
- 	struct hnae3_handle *h = hns3_get_handle(ndev);
- 
-+	if (hns3_nic_resetting(ndev))
-+		return -EBUSY;
-+
- 	if (h->kinfo.dcb_ops->ieee_setets)
- 		return h->kinfo.dcb_ops->ieee_setets(h, ets);
- 
-@@ -31,6 +37,9 @@ int hns3_dcbnl_ieee_getpfc(struct net_device *ndev, struct ieee_pfc *pfc)
- {
- 	struct hnae3_handle *h = hns3_get_handle(ndev);
- 
-+	if (hns3_nic_resetting(ndev))
-+		return -EBUSY;
-+
- 	if (h->kinfo.dcb_ops->ieee_getpfc)
- 		return h->kinfo.dcb_ops->ieee_getpfc(h, pfc);
- 
-@@ -42,6 +51,9 @@ int hns3_dcbnl_ieee_setpfc(struct net_device *ndev, struct ieee_pfc *pfc)
- {
- 	struct hnae3_handle *h = hns3_get_handle(ndev);
- 
-+	if (hns3_nic_resetting(ndev))
-+		return -EBUSY;
-+
- 	if (h->kinfo.dcb_ops->ieee_setpfc)
- 		return h->kinfo.dcb_ops->ieee_setpfc(h, pfc);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index e4cf3247..d573f5f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -384,6 +384,9 @@ static int hns3_nic_net_open(struct net_device *netdev)
- 	struct hnae3_knic_private_info *kinfo;
- 	int i, ret;
- 
-+	if (hns3_nic_resetting(netdev))
-+		return -EBUSY;
-+
- 	netif_carrier_off(netdev);
- 
- 	ret = hns3_nic_set_real_num_queue(netdev);
-@@ -3749,6 +3752,10 @@ static int hns3_reset_notify_down_enet(struct hnae3_handle *handle)
- 	struct hnae3_ae_dev *ae_dev = pci_get_drvdata(handle->pdev);
- 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
- 	struct net_device *ndev = kinfo->netdev;
-+	struct hns3_nic_priv *priv = netdev_priv(ndev);
-+
-+	if (test_and_set_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
-+		return 0;
- 
- 	/* it is cumbersome for hardware to pick-and-choose entries for deletion
- 	 * from table space. Hence, for function reset software intervention is
-@@ -3768,6 +3775,7 @@ static int hns3_reset_notify_down_enet(struct hnae3_handle *handle)
- static int hns3_reset_notify_up_enet(struct hnae3_handle *handle)
- {
- 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
-+	struct hns3_nic_priv *priv = netdev_priv(kinfo->netdev);
- 	int ret = 0;
- 
- 	if (netif_running(kinfo->netdev)) {
-@@ -3780,6 +3788,8 @@ static int hns3_reset_notify_up_enet(struct hnae3_handle *handle)
- 		handle->last_reset_time = jiffies;
- 	}
- 
-+	clear_bit(HNS3_NIC_STATE_RESETTING, &priv->state);
-+
- 	return ret;
- }
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 3e9db73..cfd6a71 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -599,6 +599,13 @@ static inline bool hns3_dev_ongoing_func_reset(struct hnae3_ae_dev *ae_dev)
- #define hns3_read_dev(a, reg) \
- 	hns3_read_reg((a)->io_base, (reg))
- 
-+static inline bool hns3_nic_resetting(struct net_device *netdev)
-+{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+
-+	return test_bit(HNS3_NIC_STATE_RESETTING, &priv->state);
-+}
-+
- #define hns3_write_dev(a, reg, value) \
- 	hns3_write_reg((a)->io_base, (reg), (value))
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index a4762c2..4563638 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -291,6 +291,11 @@ static void hns3_self_test(struct net_device *ndev,
- 	int test_index = 0;
- 	u32 i;
- 
-+	if (hns3_nic_resetting(ndev)) {
-+		netdev_err(ndev, "dev resetting!");
-+		return;
-+	}
-+
- 	/* Only do offline selftest, or pass by default */
- 	if (eth_test->flags != ETH_TEST_FL_OFFLINE)
- 		return;
-@@ -530,6 +535,11 @@ static void hns3_get_ringparam(struct net_device *netdev,
- 	struct hnae3_handle *h = priv->ae_handle;
- 	int queue_num = h->kinfo.num_tqps;
- 
-+	if (hns3_nic_resetting(netdev)) {
-+		netdev_err(netdev, "dev resetting!");
-+		return;
-+	}
-+
- 	param->tx_max_pending = HNS3_RING_MAX_PENDING;
- 	param->rx_max_pending = HNS3_RING_MAX_PENDING;
- 
-@@ -760,6 +770,9 @@ static int hns3_set_ringparam(struct net_device *ndev,
- 	u32 old_desc_num, new_desc_num;
- 	int ret;
- 
-+	if (hns3_nic_resetting(ndev))
-+		return -EBUSY;
-+
- 	if (param->rx_mini_pending || param->rx_jumbo_pending)
- 		return -EINVAL;
- 
-@@ -872,6 +885,9 @@ static int hns3_get_coalesce_per_queue(struct net_device *netdev, u32 queue,
- 	struct hnae3_handle *h = priv->ae_handle;
- 	u16 queue_num = h->kinfo.num_tqps;
- 
-+	if (hns3_nic_resetting(netdev))
-+		return -EBUSY;
-+
- 	if (queue >= queue_num) {
- 		netdev_err(netdev,
- 			   "Invalid queue value %d! Queue max id=%d\n",
-@@ -1033,6 +1049,9 @@ static int hns3_set_coalesce(struct net_device *netdev,
- 	int ret;
- 	int i;
- 
-+	if (hns3_nic_resetting(netdev))
-+		return -EBUSY;
-+
- 	ret = hns3_check_coalesce_para(netdev, cmd);
- 	if (ret)
- 		return ret;
--- 
-2.7.4
+NeilBrown (23):
+      cred: add cred_fscmp() for comparing creds.
+      cred: add get_cred_rcu()
+      cred: export get_task_cred().
+      cred: allow get_cred() and put_cred() to be given NULL.
+      SUNRPC: add 'struct cred *' to auth_cred and rpc_cred
+      SUNRPC: remove groupinfo from struct auth_cred.
+      SUNRPC: remove uid and gid from struct auth_cred
+      SUNRPC: remove machine_cred field from struct auth_cred
+      NFSv4: add cl_root_cred for use when machine cred is not available.
+      NFSv4: don't require lock for get_renew_cred or get_machine_cred
+      SUNRPC: discard RPC_DO_ROOTOVERRIDE()
+      NFS/SUNRPC: don't lookup machine credential until rpcauth_bindcred().
+      SUNRPC: introduce RPC_TASK_NULLCREDS to request auth_none
+      SUNRPC: add side channel to use non-generic cred for rpc call.
+      NFS: move credential expiry tracking out of SUNRPC into NFS.
+      SUNRPC: remove RPCAUTH_AUTH_NO_CRKEY_TIMEOUT
+      NFS: change access cache to use 'struct cred'.
+      NFS: struct nfs_open_dir_context: convert rpc_cred pointer to cred.
+      NFS/NFSD/SUNRPC: replace generic creds with 'struct cred'.
+      SUNRPC: remove generic cred code.
+      SUNRPC: remove crbind rpc_cred operation
+      SUNRPC: simplify auth_unix.
+      SUNRPC discard cr_uid from struct rpc_cred.
+
+
+ fs/lockd/clntproc.c                       |    6 -
+ fs/nfs/blocklayout/blocklayout.c          |    2 
+ fs/nfs/client.c                           |    9 -
+ fs/nfs/delegation.c                       |   28 +--
+ fs/nfs/delegation.h                       |   10 -
+ fs/nfs/dir.c                              |   59 ++----
+ fs/nfs/flexfilelayout/flexfilelayout.c    |   64 +++---
+ fs/nfs/flexfilelayout/flexfilelayout.h    |    8 -
+ fs/nfs/flexfilelayout/flexfilelayoutdev.c |   16 +-
+ fs/nfs/inode.c                            |   13 +
+ fs/nfs/internal.h                         |    8 -
+ fs/nfs/nfs3proc.c                         |    4 
+ fs/nfs/nfs4_fs.h                          |   65 +++---
+ fs/nfs/nfs4client.c                       |    4 
+ fs/nfs/nfs4proc.c                         |  150 +++++++--------
+ fs/nfs/nfs4renewd.c                       |    9 -
+ fs/nfs/nfs4session.c                      |    5 
+ fs/nfs/nfs4state.c                        |  129 ++++++-------
+ fs/nfs/pagelist.c                         |    2 
+ fs/nfs/pnfs.c                             |   14 +
+ fs/nfs/pnfs.h                             |   10 -
+ fs/nfs/pnfs_dev.c                         |    4 
+ fs/nfs/pnfs_nfs.c                         |    2 
+ fs/nfs/proc.c                             |    2 
+ fs/nfs/unlink.c                           |   15 -
+ fs/nfs/write.c                            |   24 ++
+ fs/nfsd/nfs4callback.c                    |   31 +--
+ fs/nfsd/state.h                           |    2 
+ include/linux/cred.h                      |   26 ++-
+ include/linux/nfs_fs.h                    |   13 +
+ include/linux/nfs_fs_sb.h                 |    2 
+ include/linux/nfs_xdr.h                   |   16 +-
+ include/linux/sunrpc/auth.h               |   51 -----
+ include/linux/sunrpc/clnt.h               |    1 
+ include/linux/sunrpc/sched.h              |    6 -
+ kernel/cred.c                             |   58 ++++++
+ net/sunrpc/Makefile                       |    2 
+ net/sunrpc/auth.c                         |  116 ++++++-----
+ net/sunrpc/auth_generic.c                 |  299 -----------------------------
+ net/sunrpc/auth_gss/auth_gss.c            |   45 +---
+ net/sunrpc/auth_null.c                    |    4 
+ net/sunrpc/auth_unix.c                    |  110 +++--------
+ net/sunrpc/clnt.c                         |   26 +--
+ net/sunrpc/sched.c                        |    5 
+ 44 files changed, 550 insertions(+), 925 deletions(-)
+ delete mode 100644 net/sunrpc/auth_generic.c
+
+--
+Signature
 
