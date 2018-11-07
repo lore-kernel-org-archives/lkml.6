@@ -2,96 +2,73 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986FFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B38C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 560C42085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:22:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560C42085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1220520827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:29:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1220520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbeKGWxR (ORCPT
+        id S1727597AbeKGW7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:53:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:50942 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726635AbeKGWxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:53:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF55180D;
-        Wed,  7 Nov 2018 05:22:55 -0800 (PST)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E28A3F5CF;
-        Wed,  7 Nov 2018 05:22:54 -0800 (PST)
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix crash on early domain free
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181107131850.11584-1-geert+renesas@glider.be>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e4dcd8b2-768e-b11d-b6de-337b7e942050@arm.com>
-Date:   Wed, 7 Nov 2018 13:22:52 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 7 Nov 2018 17:59:52 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:36366 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726411AbeKGW7v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 17:59:51 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id BF12E634C83;
+        Wed,  7 Nov 2018 15:29:27 +0200 (EET)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gKNtf-0002SX-J0; Wed, 07 Nov 2018 15:29:27 +0200
+Date:   Wed, 7 Nov 2018 15:29:27 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH v2 1/9] phy: Add MIPI D-PHY mode
+Message-ID: <20181107132927.k4vkbznie3ryogqn@valkosipuli.retiisi.org.uk>
+References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
+ <74b2dfd695a5d28f9a07634cea17acec0a6aaa49.1541516029.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20181107131850.11584-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74b2dfd695a5d28f9a07634cea17acec0a6aaa49.1541516029.git-series.maxime.ripard@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-07 1:18 pm, Geert Uytterhoeven wrote:
-> If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
-> called, leading to a crash, as the domain was only partially
-> initialized:
+On Tue, Nov 06, 2018 at 03:54:13PM +0100, Maxime Ripard wrote:
+> MIPI D-PHY is a MIPI standard meant mostly for display and cameras in
+> embedded systems. Add a mode for it.
 > 
->      ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
->      sata_rcar ee300000.sata: Unable to initialize IPMMU context
->      iommu: Failed to add device ee300000.sata to group 0: -22
->      Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
->      ...
->      Call trace:
->       ipmmu_domain_free+0x1c/0xa0
->       iommu_group_release+0x48/0x68
->       kobject_put+0x74/0xe8
->       kobject_del.part.0+0x3c/0x50
->       kobject_put+0x60/0xe8
->       iommu_group_get_for_dev+0xa8/0x1f0
->       ipmmu_add_device+0x1c/0x40
->       of_iommu_configure+0x118/0x190
-> 
-> Fix this by checking if the domain's context already exists, before
-> trying to destroy it.
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->   drivers/iommu/ipmmu-vmsa.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index c4114b92652eb0c9..a8b2c649c1d1f1b9 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -498,6 +498,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
->   
->   static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
->   {
-> +	if (!domain->mmu)
-> +		return;
-> +
->   	/*
->   	 * Disable the context. Flush the TLB as required when modifying the
->   	 * context registers.
-> 
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
