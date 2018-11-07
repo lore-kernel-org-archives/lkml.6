@@ -2,109 +2,80 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DF6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3BCC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 767F52085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:10:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 767F52085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A94DC20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:11:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94DC20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeKGXkn (ORCPT
+        id S1727666AbeKGXmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:40:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726635AbeKGXkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:40:43 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7F5FD31256B1;
-        Wed,  7 Nov 2018 14:10:11 +0000 (UTC)
-Received: from krava (unknown [10.40.205.37])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 32451662F3;
-        Wed,  7 Nov 2018 14:10:07 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 15:10:06 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     leo.yan@linaro.org
-Cc:     acme@redhat.com, Jiri Olsa <jolsa@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Coresight ML <coresight@lists.linaro.org>,
+        Wed, 7 Nov 2018 18:42:25 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48531 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbeKGXmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:42:25 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 09EBE80746; Wed,  7 Nov 2018 15:11:47 +0100 (CET)
+Date:   Wed, 7 Nov 2018 15:11:49 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Jiri Kosina <trivial@kernel.org>, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: Question: perf dso support for /proc/kallsyms
-Message-ID: <20181107141006.GD12870@krava>
-References: <20181102025516.GA25374@leoy-ThinkPad-X240s>
+Subject: Re: [PATCH trivial] Documentation: ABI: led-trigger-pattern: Fix
+ typos
+Message-ID: <20181107141149.GA17276@amd>
+References: <20181107134524.13989-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
 Content-Disposition: inline
-In-Reply-To: <20181102025516.GA25374@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 07 Nov 2018 14:10:11 +0000 (UTC)
+In-Reply-To: <20181107134524.13989-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 10:55:16AM +0800, leo.yan@linaro.org wrote:
-> Hi all,
-> 
-> Now I found that if use the command 'perf script' for Arm CoreSight trace
-> data, it fails to parse kernel symbols if we don't specify kernel vmlinux
-> file.   So when we don't specify kernel symbol files then perf tool will
-> roll back to use /proc/kallsyms for kernel symbols parsing, as result it will
-> run into below flow:
 
-yep, AFAIK if there's no vmlinux found we fallback to /proc/kallsyms
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->   thread__find_addr_map(thread, cpumode, MAP__FUNCTION, address, &al);
->   map__load(al.map);
->   dso__data_read_offset(al.map->dso, machine, offset, buffer, size);
->     `-> data_read_offset()
+On Wed 2018-11-07 14:45:24, Geert Uytterhoeven wrote:
+>   - Spelling s/brigntess/brightness/,
+>   - Double "use".
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-so what is the actual error you see in the perf script?
-unresolved samples? could you please describe your config
-and workload?
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-thanks,
-jirka
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> 
-> I can observe the function data_read_offset() returns failure, this is caused
-> by checking the offset sanity "if (offset > dso->data.file_size)"  (I pasted
-> the whole function code at below in case you want to get more context for it),
-> but if perf use "/proc/kallsyms" to load kernel symbols, the variable
-> 'dso->data.file_size' will be set to zero thus the sanity checking always
-> thinks the offset is out of the file size bound.
-> 
-> Now I still don't understand how the dso/map support "/proc/kallsyms" and
-> have no idea to fix this issue, though I spent some time to look into it.
-> 
-> Could you give some suggestion for this?  Or even better if you have fixing
-> for this, I am glad to test at my side.
-> 
-> static ssize_t data_read_offset(struct dso *dso, struct machine *machine,
->                                 u64 offset, u8 *data, ssize_t size)
-> {
->         if (data_file_size(dso, machine))
->                 return -1;
-> 
->         /* Check the offset sanity. */
->         if (offset > dso->data.file_size)
->                 return -1;
-> 
->         if (offset + size < offset)
->                 return -1;
-> 
->         return cached_read(dso, machine, offset, data, size);
-> }
-> 
-> Thanks,
-> Leo Yan
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvi8qUACgkQMOfwapXb+vK2iwCfXYwrKkf+gjzK53oEitCqzggF
+f80AoKsnSdqOM7EGK6Rm2GNuSczCUthI
+=W5YQ
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
