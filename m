@@ -2,109 +2,103 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E978FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14D1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A402086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A90242086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:46:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lu/abGNY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A402086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dcuVhSLf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90242086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeKGWPm (ORCPT
+        id S1727115AbeKGWQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:15:42 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39875 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbeKGWPl (ORCPT
+        Wed, 7 Nov 2018 17:16:29 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35869 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeKGWQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:15:41 -0500
-Received: by mail-it1-f196.google.com with SMTP id m15so22463418itl.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 04:45:27 -0800 (PST)
+        Wed, 7 Nov 2018 17:16:29 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z17-v6so7297259pgv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 04:46:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nwes3/5X+l7FBPnP8N7guJ9b8/Oh2apJCRFWHwwsQN8=;
-        b=lu/abGNYMDGkHubbzrEbumyAlZZxpPro7GtVVOpMBkNk5aYKwCRi5gfRE4sLoN6zWA
-         XfEQ6SZs2Zc5Hamu4I7qYYzVg9lD0cXd+H+H6VWZLq0kglSiqJLNFhj/U8FRnKvhMkrn
-         7ZS+6lRrOAGIu8FOQKckT0QP71dSjXcsu5X34=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mlpGnthCumwwml9wvbukE3fDDjhbz2+cW9Pvq9KKRG4=;
+        b=dcuVhSLfIeSWLWy4NP71vh2VG/AFdHMBC5DMDBN4mvC1kO3jWhPmlYk2kBHj0eNJlA
+         n8xdQGqkAewTjp9GxWQz78FepTidnpMn8J051nY6AR9pvcX5kDF4At9tDcqgXYxpHuZ+
+         5bjOqgB1qsKE9xE3y/E8IGrdlJKFdW0X5JPXLvOWjhGxMQctRlWeTLSDP0VOAjgaDCOO
+         pR7gMp/8KSf23Tlgg+la1MQamb3vpNXfA0Msyh1hTj6twjah4JnxO6tnNO9iGarVdtGv
+         4UTmKCy4oIZFB3gigLXjjIJf/9MhYnxZkrhZLryJF0hEzadfETs8eMLwaY+Z6AeEAZ0z
+         tAqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nwes3/5X+l7FBPnP8N7guJ9b8/Oh2apJCRFWHwwsQN8=;
-        b=t4WlpS+TEXiBJ8OxokTjcrxyz9/q8YOhxb8UeWu3HEpC9MZ6rE7coyfUC8n+aWs8Um
-         fJTK+AEvxUUO8dlePkheDfJpjcdrCCeGxwqnhWxVE9Ij/ajgeyZzONus2SBLep0qbbi2
-         75b2B/+DSMXVe6NX9AyVW+7tjqzGOiOk29bWO+u482ndri9DO5uJG9GIqLqZgSJSEZAT
-         AyWNQle2IfRyYY9sayjzz32MOOsMi2fUyCjBDW0qUbSyzKliDm8mpwhvS4oiFJBhZARI
-         nMOIzEyPP0of1MhRrXvtO4fC3TT3zAp3yZftCOyby4hEzoINu4b4ykupGzqPQrywa4fz
-         NrrQ==
-X-Gm-Message-State: AGRZ1gIy5dh7xJ6K4U6D2on0aWLFMuDRWrS5HlsjgDOYBXRlLWGmwu2S
-        YFTR6VEIldIu67pfEw9qSOwJ1RlYucRU6pTBRR91ag==
-X-Google-Smtp-Source: AJdET5ddhvaN2fN8vRUz/ILxgyZKnvxy6LTgeB/hWCD17ir4OEL6T4AZYGclQmizoa5Mz/PpqxWntfJwb0LIKHG+Dpg=
-X-Received: by 2002:a24:fe88:: with SMTP id w130-v6mr41880ith.69.1541594727008;
- Wed, 07 Nov 2018 04:45:27 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mlpGnthCumwwml9wvbukE3fDDjhbz2+cW9Pvq9KKRG4=;
+        b=rfNtagP6JNlmg0Dq4xhkTYbnyato7BcQXfsa1/Rb+H0u1i/+QZrV1ubZ76/UrWlWVG
+         Kvpfv9eXt05K48Nvb82iyeI+LBg1RoV9i5n3xc7em95tOXQzoR01ZbU9ecwHomYL/Obd
+         uM/o38HQ7cxatyheftsP50ZXxnGeQW9ZtUJVJXn/gHTxjWM0FFdg0Vv3dpbHJL9Ytc7D
+         XvYeV9GY+wk8wLK6RuDwOUNbj2sOduQ1fxQSdGFBQub+x3aQi7CpTFfkPocuiWUSVqL2
+         Vv62yZ0Ao43VUmsa/CtLU1lBXgIcDVwkfthKjZqXVZnvqbZiorhf/G8qe78+trsrixB8
+         8+lw==
+X-Gm-Message-State: AGRZ1gKtKWrdyrhRT+zbPDuF+3bmebq77Rtao0yq29Cx9XvwiZbIJedO
+        6P4nLwdBluxeNZvnkskWYwo=
+X-Google-Smtp-Source: AJdET5fkezzwV/kjXnquA2tw4bANdi4L7AGc82ngmtzU8C2cmpywXc4xwF8Ekvtg+/HOCTbT6ZcOhA==
+X-Received: by 2002:a62:2681:: with SMTP id m123-v6mr52287pfm.131.1541594774196;
+        Wed, 07 Nov 2018 04:46:14 -0800 (PST)
+Received: from nishad ([2401:4900:1880:5d72:7998:219b:665e:21b1])
+        by smtp.gmail.com with ESMTPSA id v37sm733397pgn.5.2018.11.07.04.46.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 04:46:13 -0800 (PST)
+Date:   Wed, 7 Nov 2018 18:16:04 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jens Frederich <jfrederich@gmail.com>,
+        Daniel Drake <dsd@laptop.org>,
+        Jon Nettleton <jon.nettleton@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] staging: olpc_dcon: olpc_dcon_xo_1.c: Switch to the
+ gpio descriptor interface
+Message-ID: <20181107124601.GA21698@nishad>
+References: <20181106074314.GA11430@nishad>
+ <20181107113652.GA16124@kroah.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 04:45:26 -0800 (PST)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <154149663324.17764.5859568987168525822.stgit@localhost.localdomain>
-References: <154149586524.17764.5252013294539109287.stgit@localhost.localdomain>
- <154149663324.17764.5859568987168525822.stgit@localhost.localdomain>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 7 Nov 2018 13:45:26 +0100
-Message-ID: <CAJfpegtCYsA3zn121AZr+kF+GSNCCz=AjhJrZZMvydT9=w_SUA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fuse: Kill fasync only if interrupt is queued in queue_interrupt()
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107113652.GA16124@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 10:30 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> We should sent signal only in case of interrupt is really queued.
-> Not a real problem, but this makes the code clearer and intuitive.
->
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  fs/fuse/dev.c |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index fb2530ed84b3..7705f75c77a3 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -468,6 +468,8 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
->
->  static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
->  {
-> +       bool kill = false;
-> +
->         spin_lock(&fiq->waitq.lock);
->         if (test_bit(FR_FINISHED, &req->flags)) {
->                 spin_unlock(&fiq->waitq.lock);
-> @@ -476,9 +478,11 @@ static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
->         if (list_empty(&req->intr_entry)) {
->                 list_add_tail(&req->intr_entry, &fiq->interrupts);
->                 wake_up_locked(&fiq->waitq);
-> +               kill = true;
->         }
->         spin_unlock(&fiq->waitq.lock);
-> -       kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
-> +       if (kill)
-> +               kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
+On Wed, Nov 07, 2018 at 12:36:52PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Nov 06, 2018 at 01:13:19PM +0530, Nishad Kamdar wrote:
+> > Use the gpiod interface instead of the deprecated old non-descriptor
+> > interface in olpc_dcon_xo_1.c.
+> > ---
+> > Changes in v3:
+> >  - Resolve a few compilation errors.
+> > Changes in v2:
+> >  - Resolve a few compilation errors.
+> >  - Add a level of indirection to read and write gpios.
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> 
+> The signed-off-by has to be above the --- line otherwise it will get
+> stripped off by git when the patch is applied :(
+> 
+Ok, I'll change it.
 
-All other cases just do the kill_fasync() inside the fiq->waitq.lock
-locked region.  That seems the simpler and more readable solution to
-this.
+Thanks for the review.
 
-Thanks,
-Miklos
+regards,
+Nishad
