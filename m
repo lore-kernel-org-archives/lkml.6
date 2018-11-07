@@ -2,93 +2,110 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CDCC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631F7C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 046222081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 046222081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 20A9820837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:36:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A9820837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbeKHGIM (ORCPT
+        id S1726996AbeKHGIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:08:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44597 "EHLO mail.bootlin.com"
+        Thu, 8 Nov 2018 01:08:48 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:49686 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726517AbeKHGIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:08:11 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A91A2207B8; Wed,  7 Nov 2018 21:36:08 +0100 (CET)
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 768D020712;
-        Wed,  7 Nov 2018 21:36:08 +0100 (CET)
-Date:   Wed, 7 Nov 2018 21:36:08 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-sunxi@googlegroups.com,
-        Loic Poulain <loic.poulain@gmail.com>,
-        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/15] Bluetooth: hci_bcm: Add BCM20702A1 variant
-Message-ID: <20181107203608.ff32gmb4u54kcvep@flea>
-References: <20181107101308.7626-1-wens@csie.org>
- <20181107101308.7626-12-wens@csie.org>
+        id S1726611AbeKHGIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 01:08:48 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gKUZ1-0005qg-46; Wed, 07 Nov 2018 13:36:35 -0700
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>
+References: <20181107173859.24096-1-logang@deltatee.com>
+ <20181107173859.24096-3-logang@deltatee.com>
+ <20181107121207.62cb37cf58484b7cc80a8fd8@linux-foundation.org>
+ <724be9bb-59b6-33f3-7b59-3ca644d59bf7@deltatee.com>
+ <alpine.DEB.2.21.1811072125280.1666@nanos.tec.linutronix.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <b1cc442e-7314-4a8e-3eec-9adc200d7582@deltatee.com>
+Date:   Wed, 7 Nov 2018 13:36:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mf6se6s5b6tdxb5f"
-Content-Disposition: inline
-In-Reply-To: <20181107101308.7626-12-wens@csie.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <alpine.DEB.2.21.1811072125280.1666@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: osalvador@suse.de, vbabka@suse.cz, mhocko@suse.com, arnd@arndb.de, hch@lst.de, aou@eecs.berkeley.edu, palmer@sifive.com, sbates@raithlin.com, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, tglx@linutronix.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/2] mm/sparse: add common helper to mark all memblocks
+ present
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---mf6se6s5b6tdxb5f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 2018-11-07 1:26 p.m., Thomas Gleixner wrote:
+> Logan,
+> 
+> On Wed, 7 Nov 2018, Logan Gunthorpe wrote:
+>> On 2018-11-07 1:12 p.m., Andrew Morton wrote:
+>>>> +void __init memblocks_present(void)
+>>>> +{
+>>>> +	struct memblock_region *reg;
+>>>> +
+>>>> +	for_each_memblock(memory, reg) {
+>>>> +		memory_present(memblock_get_region_node(reg),
+>>>> +			       memblock_region_memory_base_pfn(reg),
+>>>> +			       memblock_region_memory_end_pfn(reg));
+>>>> +	}
+>>>> +}
+>>>> +
+>>>
+>>> I don't like the name much.  To me, memblocks_present means "are
+>>> memblocks present" whereas this actually means "memblocks are present".
+>>> But whatever.  A little covering comment which describes what this
+>>> does and why it does it would be nice.
+>>
+>> The same argument can be made about the existing memory_present()
+>> function and I think it's worth keeping the naming consistent. I'll add
+>> a comment and resend shortly.
+> 
+> Actually if both names suck, then there also is the option to rename both
+> instead of adding a comment to explain the suckage.
 
-On Wed, Nov 07, 2018 at 06:13:04PM +0800, Chen-Yu Tsai wrote:
-> From: Maxime Ripard <maxime.ripard@free-electrons.com>
->=20
-> The BCM20702A1 chip is a single-chip Bluetooth 4.0 controller and
-> transceiver. It is found in the AMPAK AP6210 WiFi+BT package.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Ok, well, I wasn't expecting to take on a big rename like that as it
+would create a patch touching a bunch of arches and mm files... But if
+we can come to some agreement on a better name and someone is willing to
+take that patch without significant delay then I'd be happy to create
+the patch and add it to the start of my series.
 
-if you resubmit it, could you do s/free-electrons/bootlin/ ?
+Some ideas for new names:
 
-Thanks!
-Maxime
+mark_memory_present() / mark_memblocks_present()
+set_memory_present() / set_memblocks_present()
+memory_register() / memblocks_register()
+register_memory() / register_memblocks()
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---mf6se6s5b6tdxb5f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+NMuAAKCRDj7w1vZxhR
-xZ9TAP0XC5cSi5OLifkzszkxT84RBo2POjE1FhBS++2wQWay/gEA0MR7BCtk6Lgp
-6H2yoSMYiB0AQzDrmt7nKTzJX5PrmAI=
-=mfGb
------END PGP SIGNATURE-----
-
---mf6se6s5b6tdxb5f--
+Logan
