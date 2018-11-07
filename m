@@ -2,100 +2,77 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D56C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A00DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC9E20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:18:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC9E20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id CD31B20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:19:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD31B20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeKGSsQ (ORCPT
+        id S1730453AbeKGSs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:48:16 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59176 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbeKGSsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:48:16 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 864YaK1TYQND; Wed,  7 Nov 2018 10:18:45 +0100 (CET)
-Received: from zn.tnic (p200300EC2BCBE000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:e000:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 718891EC032D;
-        Wed,  7 Nov 2018 10:18:45 +0100 (CET)
-Date:   Wed, 7 Nov 2018 10:18:38 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181107091838.GA10835@zn.tnic>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181102195925.GB160487@google.com>
- <20181102232948.GC26770@zn.tnic>
- <20181105214537.GA19420@google.com>
- <20181105215650.GG26868@zn.tnic>
- <20181106214256.GA65443@google.com>
- <20181106220059.GA4139@zn.tnic>
- <20181106232040.GA85755@google.com>
+        Wed, 7 Nov 2018 13:48:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47196 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726257AbeKGSs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 13:48:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8593A78;
+        Wed,  7 Nov 2018 01:18:58 -0800 (PST)
+Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6571A3F718;
+        Wed,  7 Nov 2018 01:18:58 -0800 (PST)
+Received: from cmarinas by mbp with local (Exim 4.89)
+        (envelope-from <catalin.marinas@arm.com>)
+        id 1gKJzD-0001Qu-A4; Wed, 07 Nov 2018 09:18:55 +0000
+Date:   Wed, 7 Nov 2018 09:18:55 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     will.deacon@arm.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH]  arm64: fix commit style in the comments
+Message-ID: <20181107091855.ps5pumxp7djtfz3k@localhost>
+References: <1541605151-6757-1-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106232040.GA85755@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1541605151-6757-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 05:20:41PM -0600, Bjorn Helgaas wrote:
-> Or maybe even drivers/acpi/thermal.c, which claims every Thermal Zone
-> (ACPI 6.2, sec 11), would be sufficient.  I don't know what the
-> relationship between hwmon and other thermal stuff, e.g.,
-> Documentation/thermal/sysfs-api.txt is.  acpi/thermal.c looks tied
-> into the drivers/thermal stuff (it registers "thermal_zone" devices),
-> but not to hwmon.
+On Wed, Nov 07, 2018 at 11:39:11PM +0800, Peng Hao wrote:
+> Use git commit description style 'commit <12+ chars of sha1>
+> ("<title line>")' in the comments.
+> 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  arch/arm64/kernel/sys32.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
+> index 0f8bcb7..8317a5a 100644
+> --- a/arch/arm64/kernel/sys32.c
+> +++ b/arch/arm64/kernel/sys32.c
+> @@ -40,8 +40,8 @@
+>  	 * arbitrary binaries may rely upon it, so we must do the same.
+>  	 * For more details, see commit:
+>  	 *
+> -	 * 713c481519f19df9 ("[ARM] 3108/2: old ABI compat: statfs64 and
+> -	 * fstatfs64")
+> +	 * commit 713c481519f19df9 ("[ARM] 3108/2: old ABI compat: statfs64
+> +	 * and fstatfs64")
 
-Err, I still don't think I'm catching your drift but let me stop you
-right there: amd_nb is not there only for hwmon/k10temp. It is a small
-interface glue if you will, which exports the CPU functionality in PCI
-config space to other consumers.
-
-So it is not really a driver - it is used by drivers to talk/query CPU
-settings through it.
-
-With that said, I don't think I understand all that talk about PNP IDs
-and ACPI methods. But maybe I'm missing something...
-
-So what's up?
+Seriously, how does this help? It already states "see commit:" on the
+previous line.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Catalin
