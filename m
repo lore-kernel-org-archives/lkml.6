@@ -2,142 +2,131 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95FCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62276C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A653D20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:04:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A653D20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 77A0420882
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:05:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A0420882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbeKHHgp (ORCPT
+        id S1728346AbeKHHhW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:36:45 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45572 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727945AbeKHHgf (ORCPT
+        Thu, 8 Nov 2018 02:37:22 -0500
+Received: from lilium.sigma-star.at ([109.75.188.150]:37812 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727945AbeKHHhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:36:35 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B76EFB09;
-        Wed,  7 Nov 2018 22:04:14 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 14:04:13 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     <linux-mm@kvack.org>, Oscar Salvador <OSalvador@suse.com>,
-        Baoquan He <bhe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [RFC PATCH 4/5] mm, memory_hotplug: print reason for the
- offlining failure
-Message-Id: <20181107140413.2c0061e440123be76bf419bf@linux-foundation.org>
-In-Reply-To: <20181107101830.17405-5-mhocko@kernel.org>
-References: <20181107101830.17405-1-mhocko@kernel.org>
-        <20181107101830.17405-5-mhocko@kernel.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 02:37:22 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lilium.sigma-star.at (Postfix) with ESMTP id 6EAE3180230CE;
+        Wed,  7 Nov 2018 23:04:59 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Russell Senior <russell@personaltelco.net>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH v2] ubifs: Handle re-linking of inodes correctly while recovery
+Date:   Wed,  7 Nov 2018 23:04:43 +0100
+Message-Id: <20181107220443.29573-1-richard@nod.at>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  7 Nov 2018 11:18:29 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+UBIFS's recovery code strictly assumes that a deleted inode will never
+come back, therefore it removes all data which belongs to that inode
+as soon it faces an inode with link count 0 in the replay list.
+Before O_TMPFILE this assumption was perfectly fine. With O_TMPFILE
+it can lead to data loss upon a power-cut.
 
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> The memory offlining failure reporting is inconsistent and insufficient.
-> Some error paths simply do not report the failure to the log at all.
-> When we do report there are no details about the reason of the failure
-> and there are several of them which makes memory offlining failures
-> hard to debug.
-> 
-> Make sure that the
-> 	memory offlining [mem %#010llx-%#010llx] failed
-> message is printed for all failures and also provide a short textual
-> reason for the failure e.g.
-> 
-> [ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed due to signal backoff
-> 
-> this tells us that the offlining has failed because of a signal pending
-> aka user intervention.
-> 
-> ...
+Consider a journal with entries like:
+0: inode X (nlink = 0) /* O_TMPFILE was created */
+1: data for inode X /* Someone writes to the temp file */
+2: inode X (nlink = 0) /* inode was changed, xattr, chmod, … */
+3: inode X (nlink = 1) /* inode was re-linked via linkat() */
 
-Some of these messages will come out looking a bit odd.
+Upon replay of entry #2 UBIFS will drop all data that belongs to inode X,
+this will lead to an empty file after mounting.
 
-> @@ -1573,7 +1576,8 @@ static int __ref __offline_pages(unsigned long start_pfn,
->  				       MIGRATE_MOVABLE, true);
->  	if (ret) {
->  		mem_hotplug_done();
-> -		return ret;
-> +		reason = "failed to isolate range";
+As solution for this problem, scan the replay list for a re-link entry
+before dropping data.
 
-"memory offlining [mem ...] failed due to failed to isolate range"
+Fixes: 474b93704f32 ("ubifs: Implement O_TMPFILE")
+Cc: stable@vger.kernel.org
+Cc: Russell Senior <russell@personaltelco.net>
+Cc: Rafał Miłecki <zajec5@gmail.com>
+Reported-by: Russell Senior <russell@personaltelco.net>
+Reported-by: Rafał Miłecki <zajec5@gmail.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ fs/ubifs/replay.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-> +		goto failed_removal
->  	}
->  
->  	arg.start_pfn = start_pfn;
-> @@ -1582,15 +1586,19 @@ static int __ref __offline_pages(unsigned long start_pfn,
->  
->  	ret = memory_notify(MEM_GOING_OFFLINE, &arg);
->  	ret = notifier_to_errno(ret);
-> -	if (ret)
-> -		goto failed_removal;
-> +	if (ret) {
-> +		reason = "notifiers failure";
-
-"memory offlining [mem ...] failed due to notifiers failure"
-
-> @@ -1607,8 +1615,10 @@ static int __ref __offline_pages(unsigned long start_pfn,
->  	 * actually in order to make hugetlbfs's object counting consistent.
->  	 */
->  	ret = dissolve_free_huge_pages(start_pfn, end_pfn);
-> -	if (ret)
-> -		goto failed_removal;
-> +	if (ret) {
-> +		reason = "fails to disolve hugetlb pages";
-
-"memory offlining [mem ...] failed due to fails to disolve hugetlb pages"
-
-
-Fix:
-
---- a/mm/memory_hotplug.c~mm-memory_hotplug-print-reason-for-the-offlining-failure-fix
-+++ a/mm/memory_hotplug.c
-@@ -1576,7 +1576,7 @@ static int __ref __offline_pages(unsigne
- 				       MIGRATE_MOVABLE, true);
- 	if (ret) {
- 		mem_hotplug_done();
--		reason = "failed to isolate range";
-+		reason = "failure to isolate range";
- 		goto failed_removal
- 	}
+diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
+index 75f961c4c044..cb1f23459553 100644
+--- a/fs/ubifs/replay.c
++++ b/fs/ubifs/replay.c
+@@ -212,6 +212,38 @@ static int trun_remove_range(struct ubifs_info *c, struct replay_entry *r)
+ 	return ubifs_tnc_remove_range(c, &min_key, &max_key);
+ }
  
-@@ -1587,7 +1587,7 @@ static int __ref __offline_pages(unsigne
- 	ret = memory_notify(MEM_GOING_OFFLINE, &arg);
- 	ret = notifier_to_errno(ret);
- 	if (ret) {
--		reason = "notifiers failure";
-+		reason = "notifier failure";
- 		goto failed_removal_isolated;
- 	}
++/**
++ * inode_still_linked - check whether inode in question will be re-linked.
++ * @c: UBIFS file-system description object
++ * @rino: replay entry to test
++ *
++ * O_TMPFILE files can be re-linked, this means link count goes from 0 to 1.
++ * This case needs special care, otherwise all references to the inode will
++ * be removed upon the first replay entry of an inode with link count 0
++ * is found.
++ */
++static bool inode_still_linked(struct ubifs_info *c, struct replay_entry *rino)
++{
++	struct replay_entry *r;
++
++	ubifs_assert(c, rino->deletion);
++	ubifs_assert(c, key_type(c, &rino->key) == UBIFS_INO_KEY);
++
++	/*
++	 * Find the most recent entry for the inode behind @rino and check
++	 * whether it is a deletion.
++	 */
++	list_for_each_entry_reverse(r, &c->replay_list, list) {
++		ubifs_assert(c, r->sqnum >= rino->sqnum);
++		if (key_inum(c, &r->key) == key_inum(c, &rino->key))
++			return r->deletion == 0;
++
++	}
++
++	ubifs_assert(c, 0);
++	return false;
++}
++
+ /**
+  * apply_replay_entry - apply a replay entry to the TNC.
+  * @c: UBIFS file-system description object
+@@ -239,6 +271,11 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
+ 			{
+ 				ino_t inum = key_inum(c, &r->key);
  
-@@ -1616,7 +1616,7 @@ repeat:
- 	 */
- 	ret = dissolve_free_huge_pages(start_pfn, end_pfn);
- 	if (ret) {
--		reason = "fails to disolve hugetlb pages";
-+		reason = "failure to dissolve huge pages";
- 		goto failed_removal_isolated;
- 	}
- 	/* check again */
-_
++				if (inode_still_linked(c, r)) {
++					err = 0;
++					break;
++				}
++
+ 				err = ubifs_tnc_remove_ino(c, inum);
+ 				break;
+ 			}
+-- 
+2.19.1
 
