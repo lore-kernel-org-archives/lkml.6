@@ -2,58 +2,62 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735D9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C29FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 341582081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341582081D
+	by mail.kernel.org (Postfix) with ESMTP id 5B5972081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:18:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5972081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbeKGTs0 (ORCPT
+        id S1730115AbeKGTs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:48:26 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45883 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbeKGTsZ (ORCPT
+        Wed, 7 Nov 2018 14:48:28 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35903 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbeKGTs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:48:25 -0500
-Received: by mail-wr1-f67.google.com with SMTP id k15-v6so13776131wre.12
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:18:43 -0800 (PST)
+        Wed, 7 Nov 2018 14:48:27 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a8-v6so15163246wmf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:18:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sxkTZHicSbXm+D7X6j1gdenRf/8OtsBZxrvgNV+3/Pg=;
-        b=NZ/HNQKfXFk87vSx7WKyzfkP11KUm/XJu19ZWms8uWnX/vASH8gvGlj+XuPGIBXcHa
-         yy9LNPP1Pb5R4shDnaGpmNLeFCn/cIMjjD6MGFA2094YlGC8EiI95s6RXp8kSbkPuy2V
-         vu0h8AsG/7ZX3gsIld7E5seHgxdWj6Gu0kQb5j3mTxQ9Nr/YrsYf/8TQ4YC1eM7PJUzm
-         TD8L1T5OP1vdN8zJQI+VpguARwfnctfyVMEqpQFICdwqBmdEH9OX0dksebXBnQ3/Lhnb
-         P4x2zohFYV411r8aJYY/JKkzG+66qp8LuBzeD+Jd3pJ9fdHeRDlt3ogFfYIWhuOyvXW5
-         OT/w==
-X-Gm-Message-State: AGRZ1gI7nfgTtLJQV05Oi2ekTttvFr1mq8VaaJhPFPA9Bjgj1IsCgYx5
-        JhqKdt2YMBAIJic3CDn/s1M=
-X-Google-Smtp-Source: AJdET5da/PJmeqaS7uG3tevVjQEiAicJwUhwTYG/DXJZBvyXu+4NAQE6fmMLtBUfV9NkYzZKD8BCcg==
-X-Received: by 2002:a05:6000:1048:: with SMTP id c8mr1278377wrx.171.1541585922651;
-        Wed, 07 Nov 2018 02:18:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kntFfEclka7mr+wFcmXDsLg76irP2LElxuloHHO2sP0=;
+        b=RWBvmdk0Wff4ix52eqRgte2hPUhrzAZMKjH6qU+Xe+YIFGn7rnIdvb6i+gTVF121Gp
+         /8xUgq1mp4iKV+l8vnilaUIhtawhQMahRDZsn6hz5e8zGfk0ouujJljnlRV7wUgyrKkK
+         ea5xC6eJO4csvyt763CdBtGV3B5cNQmB8GVcGJWNjTkijK7FiPOMqSYozkLSTPGgxX/D
+         iKDUZlDjHUqb60zCf7T15hoPJfExT7oMRJDa0TWSqurk5XA64kbXrOi3y1fq9tN2jWaW
+         OAkJN4eM4PrToqX+I8hiE2/3czTXSEybq+fBbM7amebGwzrVblrJXUQwCEmhg4aKV5mz
+         sXNw==
+X-Gm-Message-State: AGRZ1gJ9VbhDC0w6pkxqOYxGydKYKgi6ILi/AwhaXnrseXqhP6KNLdp/
+        WtrDVeaETwb2WOKjrb2zH2jYmnIh
+X-Google-Smtp-Source: AJdET5dR6WUz/KIbvc4O5dgbexkLTMFjMGHXCSeQv1Bflzz/RwXz/1Eu9NQEUmyJmMP30SHDzyMfsA==
+X-Received: by 2002:a1c:992:: with SMTP id 140-v6mr1448126wmj.136.1541585924255;
+        Wed, 07 Nov 2018 02:18:44 -0800 (PST)
 Received: from tiehlicka.suse.cz (ip-37-188-140-85.eurotel.cz. [37.188.140.85])
-        by smtp.gmail.com with ESMTPSA id w18-v6sm217527wrn.66.2018.11.07.02.18.41
+        by smtp.gmail.com with ESMTPSA id w18-v6sm217527wrn.66.2018.11.07.02.18.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 02:18:42 -0800 (PST)
+        Wed, 07 Nov 2018 02:18:43 -0800 (PST)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     <linux-mm@kvack.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Oscar Salvador <OSalvador@suse.com>,
         Baoquan He <bhe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 0/5] mm, memory_hotplug: improve memory offlining failures debugging
-Date:   Wed,  7 Nov 2018 11:18:25 +0100
-Message-Id: <20181107101830.17405-1-mhocko@kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [RFC PATCH 1/5] mm: print more information about mapping in __dump_page
+Date:   Wed,  7 Nov 2018 11:18:26 +0100
+Message-Id: <20181107101830.17405-2-mhocko@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181107101830.17405-1-mhocko@kernel.org>
+References: <20181107101830.17405-1-mhocko@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,40 +65,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-I have been promissing to improve memory offlining failures debugging
-for quite some time. As things stand now we get only very limited
-information in the kernel log when the offlining fails. It is usually
-only
-[ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed
-without no further details. We do not know what exactly fails and for
-what reason. Whenever I was forced to debug such a failure I've always
-had to do a debugging patch to tell me more. We can enable some
-tracepoints but it would be much better to get a better picture without
-using them.
+From: Michal Hocko <mhocko@suse.com>
 
-This patch series does 2 things. The first one is to make dump_page
-more usable by printing more information about the mapping patch 1.
-Then it reduces the log level from emerg to warning so that this
-function is usable from less critical context patch 2. Then I have
-added more detailed information about the offlining failure patch 4
-and finally add dump_page to isolation and offlining migration paths.
-Patch 3 is a trivial cleanup.
+__dump_page prints the mapping pointer but that is quite unhelpful
+for many reports because the pointer itself only helps to distinguish
+anon/ksm mappings from other ones (because of lowest bits
+set). Sometimes it would be much more helpful to know what kind of
+mapping that is actually and if we know this is a file mapping then also
+try to resolve the dentry name.
 
-Does this look go to you?
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ mm/debug.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Shortlog
-Michal Hocko (5):
-      mm: print more information about mapping in __dump_page
-      mm: lower the printk loglevel for __dump_page messages
-      mm, memory_hotplug: drop pointless block alignment checks from __offline_pages
-      mm, memory_hotplug: print reason for the offlining failure
-      mm, memory_hotplug: be more verbose for memory offline failures
-
-Diffstat:
- mm/debug.c          | 23 ++++++++++++++++++-----
- mm/memory_hotplug.c | 52 +++++++++++++++++++++++++++++++---------------------
- mm/page_alloc.c     |  1 +
- 3 files changed, 50 insertions(+), 26 deletions(-)
-
+diff --git a/mm/debug.c b/mm/debug.c
+index cdacba12e09a..a33177bfc856 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -44,6 +44,7 @@ const struct trace_print_flags vmaflag_names[] = {
+ 
+ void __dump_page(struct page *page, const char *reason)
+ {
++	struct address_space *mapping = page_mapping(page);
+ 	bool page_poisoned = PagePoisoned(page);
+ 	int mapcount;
+ 
+@@ -70,6 +71,18 @@ void __dump_page(struct page *page, const char *reason)
+ 	if (PageCompound(page))
+ 		pr_cont(" compound_mapcount: %d", compound_mapcount(page));
+ 	pr_cont("\n");
++	if (PageAnon(page))
++		pr_emerg("anon ");
++	else if (PageKsm(page))
++		pr_emerg("ksm ");
++	else if (mapping) {
++		pr_emerg("%ps ", mapping->a_ops);
++		if (mapping->host->i_dentry.first) {
++			struct dentry *dentry;
++			dentry = container_of(mapping->host->i_dentry.first, struct dentry, d_u.d_alias);
++			pr_emerg("name:\"%*s\" ", dentry->d_name.len, dentry->d_name.name);
++		}
++	}
+ 	BUILD_BUG_ON(ARRAY_SIZE(pageflag_names) != __NR_PAGEFLAGS + 1);
+ 
+ 	pr_emerg("flags: %#lx(%pGp)\n", page->flags, &page->flags);
+-- 
+2.19.1
 
