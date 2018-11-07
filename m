@@ -2,412 +2,148 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105F9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52009C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE2B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:51:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PgJ2KUQr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V7HPyD2Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE2B20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1D49A20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D49A20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeKGQUV (ORCPT
+        id S1729969AbeKGQWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 11:20:21 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42054 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeKGQUV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 11:20:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 92892607CA; Wed,  7 Nov 2018 06:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541573481;
-        bh=SXz6B9UAdWeyKnbyu7o1N2P1HBXl4kQBoDJU3bwqPAI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PgJ2KUQrxkat+iF8hC/1tY7SlUphf9AEVA8zpHYFpRdxoWAurmNOgkuJkUyscAiZB
-         d1av97mgK1PEk3/uUkdYN7ulN9isoPN+VngfBflNFceqdRb+F9GSJmaUa+UvYh0Yxj
-         eAXX5G9ouj9B6Ykju++o+i8S65oFHdwKzak5gCn4=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D82AF603D2;
-        Wed,  7 Nov 2018 06:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541573479;
-        bh=SXz6B9UAdWeyKnbyu7o1N2P1HBXl4kQBoDJU3bwqPAI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V7HPyD2YmnQ3+QkGKYyNpkCIFE9CMNK3V3UZk7BkVT85bQGJhaPfCN56z1LfEnup8
-         itmujvvjE9g40YsO6jnGAROswbr8K8Sf5cQTPaX3IXGsoTL6ervxw/wvPE/GQ0uoga
-         ua21yUcrNyjI+kL4+BFJTSvg0wvCgRhpwynmzKho=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D82AF603D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: qdsp6: q6afe-dai: Fix the dai
- widgets
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org, alsa-devel@alsa-project.org
-Cc:     bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, tiwai@suse.com
-References: <20181106113857.19737-1-srinivas.kandagatla@linaro.org>
- <20181106113857.19737-3-srinivas.kandagatla@linaro.org>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <571aaf69-6975-09bc-1d0f-ade5c3e2d019@codeaurora.org>
-Date:   Wed, 7 Nov 2018 12:21:14 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 7 Nov 2018 11:22:50 -0500
+Received: from mga12.intel.com ([192.55.52.136]:44374 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbeKGQWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 11:22:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 22:53:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,474,1534834800"; 
+   d="asc'?scan'208";a="247663066"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.128])
+  by orsmga004.jf.intel.com with ESMTP; 06 Nov 2018 22:53:47 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
+        Bin Liu <b-liu@ti.com>, kieran.bingham@ideasonboard.com,
+        gregkh@linuxfoundation.org, USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        rogerq@ti.com
+Subject: Re: [PATCH 4/6] usb: gadget: add functions to signal udc driver to delay status stage
+In-Reply-To: <Pine.LNX.4.44L0.1811060951100.1450-100000@iolanthe.rowland.org>
+References: <Pine.LNX.4.44L0.1811060951100.1450-100000@iolanthe.rowland.org>
+Date:   Wed, 07 Nov 2018 08:53:43 +0200
+Message-ID: <87tvkttm2w.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181106113857.19737-3-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Srinivas for the fix.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-On 11/6/2018 5:08 PM, Srinivas Kandagatla wrote:
-> For some reason the dapm widgets are incorrectly defined from the start,
-> Not sure how we ended up with such thing. Fix them now!
+Hi,
+
+Alan Stern <stern@rowland.harvard.edu> writes:
+>> Alan Stern <stern@rowland.harvard.edu> writes:
+>> > There's a similar race at the hardware level.  What happens if the
+>> > controller receives a new SETUP packet and concurrently the driver is
+>> > setting up the controller registers for a response to an earlier
+>> > SETUP?  I don't know how real controllers handle this.
+>>=20
+>> That's HW implementation detail. DWC3, for instance, will ignore the
+>> TRBs and return me the status "setup packet pending". Then I just start
+>> a new SETUP TRB.
 >
-> Without this fix the backend dais are always powered up even if there
-> is no active stream.
->
-> Reported-by: Jimmy Cheng-Yi Chiang <cychiang@google.com>
-> Reported-by: Rohit kumar <rohitkr@codeaurora.org>
-Tested-by: Rohit kumar <rohitkr@codeaurora.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   sound/soc/qcom/qdsp6/q6afe-dai.c | 208 +++++++++++++++----------------
->   1 file changed, 104 insertions(+), 104 deletions(-)
->
-> diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-> index 60ff4a2d3577..8f6c8fc073a9 100644
-> --- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-> @@ -1112,204 +1112,204 @@ static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
->   }
->   
->   static const struct snd_soc_dapm_widget q6afe_dai_widgets[] = {
-> -	SND_SOC_DAPM_AIF_OUT("HDMI_RX", "HDMI Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_RX", "Slimbus Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_RX", "Slimbus1 Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_RX", "Slimbus2 Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_RX", "Slimbus3 Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_RX", "Slimbus4 Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_RX", "Slimbus5 Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_RX", "Slimbus6 Playback", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_0_TX", "Slimbus Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_1_TX", "Slimbus1 Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_2_TX", "Slimbus2 Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_3_TX", "Slimbus3 Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_4_TX", "Slimbus4 Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_5_TX", "Slimbus5 Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_6_TX", "Slimbus6 Capture", 0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_RX", "Quaternary MI2S Playback",
-> +	SND_SOC_DAPM_AIF_IN("HDMI_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_0_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_1_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_2_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_3_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_4_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_5_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_6_RX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_TX", NULL, 0, 0, 0, 0),
-> +	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_RX", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_TX", "Quaternary MI2S Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_TX", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_RX", "Tertiary MI2S Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_MI2S_RX", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_MI2S_TX", "Tertiary MI2S Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_TX", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX", "Secondary MI2S Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_MI2S_RX", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_MI2S_TX", "Secondary MI2S Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_TX", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX_SD1",
-> +	SND_SOC_DAPM_AIF_IN("SEC_MI2S_RX_SD1",
->   			"Secondary MI2S Playback SD1",
->   			0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_RX", "Primary MI2S Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRI_MI2S_RX", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRI_MI2S_TX", "Primary MI2S Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_TX", NULL,
->   						0, 0, 0, 0),
->   
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_0", "Primary TDM0 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_0", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_1", "Primary TDM1 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_1", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_2", "Primary TDM2 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_2", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_3", "Primary TDM3 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_3", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_4", "Primary TDM4 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_4", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_5", "Primary TDM5 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_5", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_6", "Primary TDM6 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_6", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_7", "Primary TDM7 Playback",
-> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_7", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_0", "Primary TDM0 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_0", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_1", "Primary TDM1 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_1", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_2", "Primary TDM2 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_2", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_3", "Primary TDM3 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_3", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_4", "Primary TDM4 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_4", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_5", "Primary TDM5 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_5", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_6", "Primary TDM6 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_6", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_7", "Primary TDM7 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_7", NULL,
->   						0, 0, 0, 0),
->   
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_0", "Secondary TDM0 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_0", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_1", "Secondary TDM1 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_1", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_2", "Secondary TDM2 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_2", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_3", "Secondary TDM3 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_3", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_4", "Secondary TDM4 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_4", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_5", "Secondary TDM5 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_5", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_6", "Secondary TDM6 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_6", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_7", "Secondary TDM7 Playback",
-> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_7", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_0", "Secondary TDM0 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_0", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_1", "Secondary TDM1 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_1", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_2", "Secondary TDM2 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_2", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_3", "Secondary TDM3 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_3", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_4", "Secondary TDM4 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_4", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_5", "Secondary TDM5 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_5", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_6", "Secondary TDM6 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_6", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_7", "Secondary TDM7 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_7", NULL,
->   						0, 0, 0, 0),
->   
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_0", "Tertiary TDM0 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_0", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_1", "Tertiary TDM1 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_1", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_2", "Tertiary TDM2 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_2", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_3", "Tertiary TDM3 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_3", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_4", "Tertiary TDM4 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_4", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_5", "Tertiary TDM5 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_5", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_6", "Tertiary TDM6 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_6", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_7", "Tertiary TDM7 Playback",
-> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_7", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_0", "Tertiary TDM0 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_0", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_1", "Tertiary TDM1 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_1", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_2", "Tertiary TDM2 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_2", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_3", "Tertiary TDM3 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_3", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_4", "Tertiary TDM4 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_4", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_5", "Tertiary TDM5 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_5", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_6", "Tertiary TDM6 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_6", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_7", "Tertiary TDM7 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_7", NULL,
->   						0, 0, 0, 0),
->   
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_0", "Quaternary TDM0 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_0", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_1", "Quaternary TDM1 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_1", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_2", "Quaternary TDM2 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_2", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_3", "Quaternary TDM3 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_3", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_4", "Quaternary TDM4 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_4", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_5", "Quaternary TDM5 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_5", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_6", "Quaternary TDM6 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_6", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_7", "Quaternary TDM7 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_7", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_0", "Quaternary TDM0 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_0", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_1", "Quaternary TDM1 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_1", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_2", "Quaternary TDM2 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_2", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_3", "Quaternary TDM3 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_3", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_4", "Quaternary TDM4 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_4", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_5", "Quaternary TDM5 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_5", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_6", "Quaternary TDM6 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_6", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_7", "Quaternary TDM7 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_7", NULL,
->   						0, 0, 0, 0),
->   
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_0", "Quinary TDM0 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_0", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_1", "Quinary TDM1 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_1", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_2", "Quinary TDM2 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_2", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_3", "Quinary TDM3 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_3", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_4", "Quinary TDM4 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_4", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_5", "Quinary TDM5 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_5", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_6", "Quinary TDM6 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_6", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_7", "Quinary TDM7 Playback",
-> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_7", NULL,
->   			     0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_0", "Quinary TDM0 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_0", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_1", "Quinary TDM1 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_1", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_2", "Quinary TDM2 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_2", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_3", "Quinary TDM3 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_3", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_4", "Quinary TDM4 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_4", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_5", "Quinary TDM5 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_5", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_6", "Quinary TDM6 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_6", NULL,
->   						0, 0, 0, 0),
-> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_7", "Quinary TDM7 Capture",
-> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_7", NULL,
->   						0, 0, 0, 0),
->   };
->   
+> You mean the UDC hardware sets a "setup pending" flag in some register,
+> and then ignores any attempts to do anything with ep0 until the driver
+> clears this flag?
 
--- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the Linux Foundation.
+Yes, except that the "flag" is a status on the TRB itself (TRB is dwc3's
+DMA transfer descriptor).
 
+>> > You mean, should we allow function drivers to queue the data-stage
+>> > request after the setup handler has returned?  I don't see any reason
+>>=20
+>> that's already done:
+>>=20
+>> static void dwc3_ep0_xfer_complete(struct dwc3 *dwc,
+>> 			const struct dwc3_event_depevt *event)
+>> {
+>> 	struct dwc3_ep		*dep =3D dwc->eps[event->endpoint_number];
+>>=20
+>> 	dep->flags &=3D ~DWC3_EP_TRANSFER_STARTED;
+>> 	dep->resource_index =3D 0;
+>> 	dwc->setup_packet_pending =3D false;
+>>=20
+>> 	switch (dwc->ep0state) {
+>> 	case EP0_SETUP_PHASE:
+>> 		dwc3_ep0_inspect_setup(dwc, event);
+>> 		break;
+>> [...]
+>> }
+>
+> ...
+>
+> You mean, it's already done in DWC3.  What about other UDC drivers?
+
+if they're not implementing this possibility, then that's a bug on
+those UDC drivers :)
+
+>> > why not.  After all, some drivers may require this.  Likewise for the=
+=20
+>> > data stage of a control-IN.
+>> >
+>> > Another thing we should do is give function drivers a way to send a
+>> > STALL response for the status stage.  Currently there's no way to do
+>> > it, if a data stage is present.
+>>=20
+>> Status stage can only be stalled if host tries to move data on the wrong
+>> direction.
+>
+> The USB-2 spec disagrees.  See Table 8-7 in section 8.5.3.1 and the
+> following paragraphs.  (Although, I can't see why a function would ever
+> fail to complete the command sequence for a control-IN transfer after
+> the data had already been sent.)
+
+I can't see how we could ever STALL after returning the data requested
+by the host. Seems like that wasn't well thought out.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlvii/cACgkQzL64meEa
+mQYKvQ/8CCBf3FwaXqIL/mvCQqt1ze3zs8mcp1rxg7hVqSt6y7uQ5xknxV8/QGZ4
+P9kj3C5FyV9ezFNK0eyWyaZ8EK/juEiLR2QIGy8gaa4UifNO7HU3o8L9cUIIZNy3
+biWQmTuj8ZUUt2CIQI2Yh1AzVFvNwbthtAA3AKtiid977VGJgxA7HUZlzk/0ZHxG
+MxqdwHPmjxP3IQAVj1SxNQn3XQKDeUMBmaYmMBMDSlYQghIQXJKEzfp1P0oGJKkx
+YYG9VgK7YQYoMMU6jWvClod9pCucyRibokmMzVoOdo0Iik8vpmDQhQEHR/9UeNu6
+aP70k0kkSKSSq57JtmagOdzysmlKEQ6LNaybwtOv2VHwiCKB2P/yss77LI61eIhp
+/pmvUGg6xNfz6F9dMf3FCp3XAIvVW2ZFdYN8znjA2hltkh8FuKYHa09NGbilEbk1
+MJ4gKsxmYazFiM0QkDHjzw7bTEHtVOwmnWGDdo+F794Rr2JNbKmKD2OM6FxuecTg
+xZq+ByUc02hANHKw7yHJNachaCYxaj5urZTzkHPCh57aLeO3WGVfmHaEZPI3GcMF
+1T8BTK53FJKVY1VBCc7KciBuCIA4Zdphw3pSu9I4XkprztOvRtm/MbxEHt7Z/QIy
+USUteLY7V+GNPjf6a3SXtxupxDr3+QdSWYJHU8sgforaYYZK5LA=
+=bVC5
+-----END PGP SIGNATURE-----
+--=-=-=--
