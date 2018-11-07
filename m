@@ -2,422 +2,225 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39375C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2541BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E28452081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:54:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="K4dWQVT8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E28452081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id CF1DD2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:55:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF1DD2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbeKGVYz (ORCPT
+        id S1727212AbeKGVZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:24:55 -0500
-Received: from mail-eopbgr50080.outbound.protection.outlook.com ([40.107.5.80]:19038
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726241AbeKGVYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:24:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aT/TKKZ9ENNdffasifzbf6FXOgqw7XmcVmhhkgEbp8E=;
- b=K4dWQVT8PlDNcIFUD1QGitGj38ykeL7AKf+3mrVTxID4BJ9QFeMN5wcpsBsC39peWCBstPe3Q6SQoMZw3p5S3+7yjiHo8V+mmZBoFirhNaUYpCQB768nymnHSJje9cbYpM9HVbdpLc+rLzhxY8oCU8jj2/fX5tsl3q9BKRL21T8=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3798.eurprd04.prod.outlook.com (52.133.29.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Wed, 7 Nov 2018 11:54:45 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::5195:5e4c:be83:408b]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::5195:5e4c:be83:408b%4]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 11:54:45 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Thread-Topic: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Thread-Index: AQHUU/MOgX3H5GYYv0SLPnYITk0b36Uj/uoAgCB6iAA=
-Date:   Wed, 7 Nov 2018 11:54:45 +0000
-Message-ID: <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
- <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
-In-Reply-To: <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3798;6:HYqtyKAGukVuEUxitdZ+m/MLmNBihYIFLj6vqja6laE/+MQftuoM7btPwuy6TPLEL/ZX4Kiz0Xgg4zOoQbU2BQaWXGlGqrO36TAlsO3x6Zo0YfIxY52r+xTZ6S1zDY+BgGD1I84bKEj2eU2gluyOwQ+j5sG1lUaCqVztVTYJ4JjQufjpPcVVXnol1nfCggLzJOPSbEbV64vQNqIjhZGGvv1DZQ3ten7vEIIW79gpBFALfmXmI8kek6YtBdkc+lUQkgoOB5wd2hf4BmA+YfmfdxJzYS6ECH70tvhoHeO+DT0pk2h2N1hifl5U6dwb5rojFJSnEGFE2OoLO0v4oucBKToeH5FdirG3aIIZ9A0SYtd5EatvSQJyTkzcakE6qe9qGl96sjmiCrcxb13VouzEWMcyGyJqI83ee5RAdxEKhzFJybhUWPIyJvwi9O0qrzksNuym1Gw2/i8Wvke18UTOCQ==;5:n8YvqtL+5qEU4IjAD1eFAL6g+RuQtSo6w2Uyx15if3cLOynIVKg3PDvGBOzSlx/5OJ7VhNhPNtz0QcoZTWat39P2Tjczt/G8Qut0y6+GOFl0/kfEj1ol2CG9VHjH6eTNXSIwu/Ib4D6M4g+YnUVA/l3sqaB3p7HlBv7RPh2iSb0=;7:FHN5+5r3laknvp3DO3WMLP3uqhI8BSfeTnkWOjqv8se5sT/M+QAtBv+Lq3QV+AG0LJZwNrsSdP7VJ4UwQl79vu2gbgCpixlZRdN49YrulOGzDQpYDyZ1/2/YgHi/zRKb4/qJ6j0qRwPDIp8bvutZ8w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: eef3c737-88aa-4ab2-e2f6-08d644a7cfd4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3798;
-x-ms-traffictypediagnostic: AM6PR0402MB3798:
-x-microsoft-antispam-prvs: <AM6PR0402MB37981775B856730862204C3AF6C40@AM6PR0402MB3798.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(264314650089876)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3798;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3798;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(376002)(396003)(366004)(346002)(39860400002)(199004)(189003)(14454004)(4326008)(11346002)(6116002)(3846002)(6436002)(486006)(68736007)(6246003)(53936002)(966005)(7736002)(97736004)(54906003)(6306002)(8936002)(86362001)(81166006)(2900100001)(9686003)(44832011)(1076002)(6512007)(229853002)(14444005)(217873002)(8676002)(81156014)(305945005)(25786009)(6486002)(105586002)(26005)(106356001)(2906002)(66066001)(71200400001)(71190400001)(256004)(7416002)(33896004)(76176011)(478600001)(102836004)(6506007)(5660300001)(99286004)(476003)(6916009)(446003)(316002)(186003)(39060400002)(33716001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3798;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7cRaHnvF2tM7oobCQOOnbH4FRtUn1BfWPQF1W/0TCbK9zSvAEmH8AdpFj2u3RkG1v6jyJ4OKyOeS1CxuDSKKxX1g51EUJ7WVBGdtUURskCX2d3HfavgiJJeQgG58GcSXNWbVumHxhSDn1c7GbEmfxgHiuPAdrrx1hOHskAIub2b7gFIVuyVu32zHt5woswC43ZDWZ9IksK/RZY6dhBZBU0C2jNWFJROTMPsHxVopVsztvqp1j703R2p7AUmcVlZbszzeXjZmjOz/4E0kpQOANfajXa4re3g9Zji+ZxaWp/VCBSKI877CjLb61nkuSJoW0kZh0SyhsC8URLJGp25CMYaaWUn98eaIDlVsHKNlVxM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <927F875D285A1B4AAD3E822314D23B7F@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 7 Nov 2018 16:25:46 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:2406 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeKGVZq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 16:25:46 -0500
+X-IronPort-AV: E=Sophos;i="5.54,475,1534809600"; 
+   d="scan'208";a="81521354"
+Subject: Re: [Xen-devel] [PATCH] x86/xen: fix pv boot
+To:     Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <xen-devel@lists.xenproject.org>, <x86@kernel.org>
+CC:     <sstabellini@kernel.org>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <boris.ostrovsky@oracle.com>, <tglx@linutronix.de>
+References: <20181107113017.30090-1-jgross@suse.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <f95cf3fb-fb49-8211-0c54-f6c7382ac455@citrix.com>
+Date:   Wed, 7 Nov 2018 11:55:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eef3c737-88aa-4ab2-e2f6-08d644a7cfd4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 11:54:45.5435
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3798
+In-Reply-To: <20181107113017.30090-1-jgross@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 12:55:52PM -0700, Stephen Boyd wrote:
-> Quoting Abel Vesa (2018-09-24 03:39:55)
-> > diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-=
-pll.c
-> > new file mode 100644
-> > index 0000000..a9837fa
-> > --- /dev/null
-> > +++ b/drivers/clk/imx/clk-sccg-pll.c
-> > @@ -0,0 +1,237 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +/*
-> > + * Copyright 2018 NXP.
-> > + */
-> > +
-> > +#include <linux/clk.h>
->=20
-> Is this include used? Otherwise should see clk-provider.h included here.
->=20
+On 07/11/18 11:30, Juergen Gross wrote:
+> Commit 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on
+> kernel addresses") introduced a regression for booting Xen PV guests.
+>
+> Xen PV guests are using __put_user() and __get_user() for accessing the
+> p2m map (physical to machine frame number map) as accesses might fail
+> in case of not populated areas of the map.
+>
+> With above commit using __put_user() and __get_user() for accessing
+> kernel pages is no longer valid. So replace the Xen hack by adding
+> appropriate p2m access functions using the default fixup handler.
+>
+> Fixes: 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  arch/x86/include/asm/xen/page.h | 39 ++++++++++++++++++++++++++++++++++++---
+>  arch/x86/xen/p2m.c              |  3 +--
+>  2 files changed, 37 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/xen/page.h b/arch/x86/include/asm/xen/page.h
+> index 123e669bf363..a39015cb2f3f 100644
+> --- a/arch/x86/include/asm/xen/page.h
+> +++ b/arch/x86/include/asm/xen/page.h
+> @@ -9,7 +9,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/device.h>
+>  
+> -#include <linux/uaccess.h>
+> +#include <asm/extable.h>
+>  #include <asm/page.h>
+>  #include <asm/pgtable.h>
+>  
+> @@ -91,15 +91,48 @@ clear_foreign_p2m_mapping(struct gnttab_unmap_grant_ref *unmap_ops,
+>   * Helper functions to write or read unsigned long values to/from
+>   * memory, when the access may fault.
+>   */
+> +#ifdef CONFIG_X86_32
+> +#define __i "l"
+> +#define __r "k"
+> +#else
+> +#define __i "q"
+> +#define __r ""
+> +#endif
 
-Fixed in the next version.
+You don't need any of these.  GCC and Clang can derive the correct
+encoding from the type passed in, and will DTRT given unsigned long's.
 
-> > +#include <linux/err.h>
-> > +#include <linux/io.h>
-> > +#include <linux/iopoll.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/bitfield.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +/* PLL CFGs */
-> > +#define PLL_CFG0               0x0
-> > +#define PLL_CFG1               0x4
-> > +#define PLL_CFG2               0x8
-> > +
-> > +#define PLL_DIVF1_MASK         GENMASK(18, 13)
-> > +#define PLL_DIVF2_MASK         GENMASK(12, 7)
-> > +#define PLL_DIVR1_MASK         GENMASK(27, 25)
-> > +#define PLL_DIVR2_MASK         GENMASK(24, 19)
-> > +#define PLL_REF_MASK           GENMASK(2, 0)
-> > +
-> > +#define PLL_LOCK_MASK          BIT(31)
-> > +#define PLL_PD_MASK            BIT(7)
-> > +
-> > +#define OSC_25M                        25000000
-> > +#define OSC_27M                        27000000
-> > +
-> > +#define PLL_SCCG_LOCK_TIMEOUT  70
-> > +
-> > +struct clk_sccg_pll {
-> > +       struct clk_hw   hw;
-> > +       void __iomem    *base;
-> > +};
-> > +
-> > +#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw=
-)
-> > +
-> > +static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
-> > +{
-> > +       u32 val;
-> > +
-> > +       return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, =
-0,
-> > +                                       PLL_SCCG_LOCK_TIMEOUT);
-> > +}
-> > +
-> > +static int clk_pll1_is_prepared(struct clk_hw *hw)
-> > +{
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +       u32 val;
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> > +       return (val & PLL_PD_MASK) ? 0 : 1;
-> > +}
-> > +
-> > +static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-> > +                                        unsigned long parent_rate)
-> > +{
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +       u32 val, divf;
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> > +       divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
-> > +
-> > +       return parent_rate * 2 * (divf + 1);
-> > +}
-> > +
-> > +static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +                              unsigned long *prate)
-> > +{
-> > +       unsigned long parent_rate =3D *prate;
-> > +       u32 div;
-> > +
-> > +       div =3D rate / (parent_rate * 2);
->=20
-> Can parent_rate be 0?
->=20
+Furthermore, it makes the asm easier to read.
 
-Fixed in the next version.
+>  static inline int xen_safe_write_ulong(unsigned long *addr, unsigned long val)
+>  {
+> -	return __put_user(val, (unsigned long __user *)addr);
+> +	int ret = 0;
+> +
+> +	asm volatile("1: mov"__i" %"__r"1,%2\n"
+> +		     "2:\n"
+> +		     ".section .fixup,\"ax\"\n"
+> +		     "3: mov %3,%0\n"
+> +		     "   jmp 2b\n"
+> +		     ".previous\n"
+> +		     _ASM_EXTABLE(1b, 3b)
+> +		     : "=r"(ret)
+> +		     : "r" (val), "m" (*addr), "i" (-1), "0" (ret));
 
-> > +
-> > +       return parent_rate * div * 2;
-> > +}
-> > +
-> > +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +                           unsigned long parent_rate)
-> > +{
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +       u32 val;
-> > +       u32 divf;
-> > +
-> > +       divf =3D rate / (parent_rate * 2);
->=20
-> Can parent_rate be 0?
->=20
+This constraint hides the write to addr.
 
-Fixed in the next version.
+> +	return ret;
+>  }
+>  
+>  static inline int xen_safe_read_ulong(unsigned long *addr, unsigned long *val)
+>  {
+> -	return __get_user(*val, (unsigned long __user *)addr);
+> +	int ret = 0;
+> +	unsigned long rval;
+> +
+> +	asm volatile("1: mov"__i" %2,%"__r"1\n"
+> +		     "2:\n"
+> +		     ".section .fixup,\"ax\"\n"
+> +		     "3: mov %3,%0\n"
+> +		     "   jmp 2b\n"
+> +		     ".previous\n"
+> +		     _ASM_EXTABLE(1b, 3b)
+> +		     : "=r" (ret), "=r" (rval)
+> +		     : "m" (*addr), "i" (-1), "0" (ret));
+> +	*val = rval;
+> +	return ret;
 
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> > +       val &=3D ~PLL_DIVF1_MASK;
-> > +       val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
-> > +       writel_relaxed(val, pll->base + PLL_CFG2);
-> > +
-> > +       return clk_pll_wait_lock(pll);
-> > +}
-> > +
-> > +static int clk_pll1_prepare(struct clk_hw *hw)
-> > +{
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +       u32 val;
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> > +       val &=3D ~PLL_PD_MASK;
-> > +       writel_relaxed(val, pll->base + PLL_CFG0);
-> > +
-> > +       return clk_pll_wait_lock(pll);
-> > +}
-> > +
-> > +static void clk_pll1_unprepare(struct clk_hw *hw)
-> > +{
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +       u32 val;
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> > +       val |=3D PLL_PD_MASK;
-> > +       writel_relaxed(val, pll->base + PLL_CFG0);
-> > +
-> > +}
-> > +
-> > +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-> > +                                        unsigned long parent_rate)
-> > +{
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +       u32 val, ref, divr1, divf1, divr2, divf2;
-> > +       u64 temp64;
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> > +       switch (FIELD_GET(PLL_REF_MASK, val)) {
-> > +       case 0:
-> > +               ref =3D OSC_25M;
-> > +               break;
-> > +       case 1:
-> > +               ref =3D OSC_27M;
-> > +               break;
-> > +       default:
-> > +               ref =3D OSC_25M;
->=20
-> Does this information not come through 'parent_rate'?
->=20
+This also uses rval uninitialised if a fault occurs.
 
-No. So basically both pll1 and pll2 and the divider after it form together =
-this SCCG:
+Overall, how about:
 
-https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
+static inline int xen_safe_write_ulong(unsigned long *addr, unsigned
+long val)
+{
+    int ret = 0;
 
-See: Figure 5-8. SSCG PLL Block Diagram
+    asm volatile("1: mov %[val], %[ptr]\n"
+                 "2:\n"
+                 ".section .fixup, \"ax\"\n"
+                 "3: mov %[err], %[ret]\n"
+                 "   jmp 2b\n"
+                 ".previous\n"
+                 _ASM_EXTABLE(1b, 3b)
+                 : [ret] "+r" (ret), [ptr] "=m" (*addr),
+                 : [val] "r" (val), [err] "i" (-1));
 
-We're basically reading the input of the pll 1 in order to compute the outp=
-ut of the entire SCCG.
+    return ret;
+}
 
-I know it's a mess. I'm working on cleaning it up, but for now we need this=
- in in order to boot up.
+static inline int xen_safe_read_ulong(const unsigned long *addr,
+                                      unsigned long *val)
+{
+    int ret = 0;
+    unsigned long rval = ~0ul;
 
-> > +               break;
-> > +       }
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> > +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
-> > +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
-> > +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
-> > +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
-> > +
-> > +       temp64 =3D ref * 2;
-> > +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
-> > +
-> > +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
->=20
-> Nitpicks: A comment with the equation may be helpful to newcomers.
+    asm volatile("1: mov %[ptr], %[rval]\n"
+                 "2:\n"
+                 ".section .fixup, \"ax\"\n"
+                 "3: mov %[err], %[ret]\n"
+                 "   jmp 2b\n"
+                 ".previous\n"
+                 _ASM_EXTABLE(1b, 3b)
+                 : [ret] "+r" (ret), [rval] "+r" (rval)
+                 : [ptr] "=m" (*addr), [err] "i" (-1));
+    *val = rval;
 
-Since the SCCG is contructed by multiple different types of clocks here, th=
-e equation doesn't help
-since it is spread in all constructing blocks.
+    return ret;
+}
 
->=20
-> > +
-> > +       return (unsigned long)temp64;
->=20
-> Drop useless cast please.
->=20
+?
 
-Fixed in the next version.
-
-> > +}
-> > +
-> > +static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +                              unsigned long *prate)
-> > +{
-> > +       u32 div;
-> > +       unsigned long parent_rate =3D *prate;
-> > +
-> > +       div =3D rate / (parent_rate);
-> > +
-> > +       return parent_rate * div;
-> > +}
-> > +
-> > +static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +                           unsigned long parent_rate)
-> > +{
-> > +       u32 val;
-> > +       u32 divf;
-> > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +
-> > +       divf =3D rate / (parent_rate);
->=20
-> Drop useless parenthesis please.
->=20
-
-Fixed in the next version.
-
-> > +
-> > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> > +       val &=3D ~PLL_DIVF2_MASK;
-> > +       val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
-> > +       writel_relaxed(val, pll->base + PLL_CFG2);
-> > +
-> > +       return clk_pll_wait_lock(pll);
-> > +}
-> > +
-> > +static const struct clk_ops clk_sccg_pll1_ops =3D {
-> > +       .is_prepared    =3D clk_pll1_is_prepared,
-> > +       .recalc_rate    =3D clk_pll1_recalc_rate,
-> > +       .round_rate     =3D clk_pll1_round_rate,
-> > +       .set_rate       =3D clk_pll1_set_rate,
-> > +};
-> > +
-> > +static const struct clk_ops clk_sccg_pll2_ops =3D {
-> > +       .prepare        =3D clk_pll1_prepare,
-> > +       .unprepare      =3D clk_pll1_unprepare,
-> > +       .recalc_rate    =3D clk_pll2_recalc_rate,
-> > +       .round_rate     =3D clk_pll2_round_rate,
-> > +       .set_rate       =3D clk_pll2_set_rate,
-> > +};
-> > +
-> > +struct clk *imx_clk_sccg_pll(const char *name,
-> > +                               const char *parent_name,
-> > +                               void __iomem *base,
-> > +                               enum imx_sccg_pll_type pll_type)
-> > +{
-> > +       struct clk_sccg_pll *pll;
-> > +       struct clk *clk;
-> > +       struct clk_init_data init;
-> > +
-> > +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> > +       if (!pll)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       pll->base =3D base;
-> > +       init.name =3D name;
-> > +       switch (pll_type) {
-> > +       case SCCG_PLL1:
-> > +               init.ops =3D &clk_sccg_pll1_ops;
-> > +               break;
-> > +       case SCCG_PLL2:
-> > +               init.ops =3D &clk_sccg_pll2_ops;
-> > +               break;
-> > +       default:
-> > +               kfree(pll);
-> > +               return ERR_PTR(-EINVAL);
->=20
-> Do this case statement before allocating? So that kfree() isn't required
-> here?
->=20
-
-Fixed in the next version.
-
-> > +       }
-> > +
-> > +       init.flags =3D 0;
-> > +       init.parent_names =3D &parent_name;
-> > +       init.num_parents =3D 1;
-> > +
-> > +       pll->hw.init =3D &init;
-> > +
-> > +       clk =3D clk_register(NULL, &pll->hw);
->=20
-> Any chance to use clk_hw based registration APIs?
->=20
-
-Fixed in the next version.
-
-> > +       if (IS_ERR(clk))
-> > +               kfree(pll);
-> > +
-> > +       return clk;
-
--- =
+~Andrew
