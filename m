@@ -2,161 +2,99 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253CEC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735D9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19B12081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:13:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4uLwq8d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19B12081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 341582081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341582081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730419AbeKGTnU (ORCPT
+        id S1726682AbeKGTs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:43:20 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39282 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeKGTnT (ORCPT
+        Wed, 7 Nov 2018 14:48:26 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45883 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbeKGTsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:43:19 -0500
-Received: by mail-wm1-f67.google.com with SMTP id u13-v6so15237253wmc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:13:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9fXbxF/K4BVxiGE+fJXIKE7FeF9SJqFRvs4QHVh+Cgg=;
-        b=P4uLwq8d5Bp4zxpD1RkvYf37e5z8HR4kT2m6zKRyEPsJEzLJZdo+AKOfhZYRTjCEXc
-         xrNDhYnVnqP+sMBR5J97+HLY1b7y5ZZ6n9h8eINGmwrAil0cdd4+VvlrgAAQCjas4FUB
-         nje4zE8DQFTnYQD2jxoCI35us3QnGx5E6lLFg=
+        Wed, 7 Nov 2018 14:48:25 -0500
+Received: by mail-wr1-f67.google.com with SMTP id k15-v6so13776131wre.12
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:18:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9fXbxF/K4BVxiGE+fJXIKE7FeF9SJqFRvs4QHVh+Cgg=;
-        b=SPj8sbZq5voVL0ZXe1H0qDraHHlyzMsM8vmspyqWGq0zjTo78XqGw0ESjVptqglbK8
-         3cwXHkUpivuI1Sp5RotmA8YwV/NUFmovjLVRycy/V3gtOi08HrroS2aPJh0zDSDImnen
-         ftB91D8L6HvpJHIfulC41oOmGdjgidncPMiV7wMEXoHTXqT4TITCGyg3WnEwujM5tf82
-         6hpsPZLdIm8igHPy0ksiJqikiCJJaHXiSyUDSemBp+vWZftXwXVkigHmqYMwT/IiPHPp
-         5UzlGatPQPVJOebNNKeN+5rHRFfILYow9Tv1CT8wvv2lyKjBJLHW9L5DKhSJjFdn78o/
-         7KpQ==
-X-Gm-Message-State: AGRZ1gJVD6YZVfTgQ++RNFR5u/oOKw9KtkT14seBVSfTy0WukCfQWJ4m
-        9O/HoLlNzk8+aaEJ3we+N3Ozig==
-X-Google-Smtp-Source: AJdET5e323+NvvkRz7GTghVZ6jNtEZTgrF1vCvWKhiTuwu7YqkGnnQZJbsyiiqFOE2XfqpnS4Btcxg==
-X-Received: by 2002:a1c:38c5:: with SMTP id f188-v6mr1368848wma.19.1541585616972;
-        Wed, 07 Nov 2018 02:13:36 -0800 (PST)
-Received: from [192.168.0.40] (161.230.136.77.rev.sfr.net. [77.136.230.161])
-        by smtp.googlemail.com with ESMTPSA id j18-v6sm1047784wmf.39.2018.11.07.02.13.35
+        bh=sxkTZHicSbXm+D7X6j1gdenRf/8OtsBZxrvgNV+3/Pg=;
+        b=NZ/HNQKfXFk87vSx7WKyzfkP11KUm/XJu19ZWms8uWnX/vASH8gvGlj+XuPGIBXcHa
+         yy9LNPP1Pb5R4shDnaGpmNLeFCn/cIMjjD6MGFA2094YlGC8EiI95s6RXp8kSbkPuy2V
+         vu0h8AsG/7ZX3gsIld7E5seHgxdWj6Gu0kQb5j3mTxQ9Nr/YrsYf/8TQ4YC1eM7PJUzm
+         TD8L1T5OP1vdN8zJQI+VpguARwfnctfyVMEqpQFICdwqBmdEH9OX0dksebXBnQ3/Lhnb
+         P4x2zohFYV411r8aJYY/JKkzG+66qp8LuBzeD+Jd3pJ9fdHeRDlt3ogFfYIWhuOyvXW5
+         OT/w==
+X-Gm-Message-State: AGRZ1gI7nfgTtLJQV05Oi2ekTttvFr1mq8VaaJhPFPA9Bjgj1IsCgYx5
+        JhqKdt2YMBAIJic3CDn/s1M=
+X-Google-Smtp-Source: AJdET5da/PJmeqaS7uG3tevVjQEiAicJwUhwTYG/DXJZBvyXu+4NAQE6fmMLtBUfV9NkYzZKD8BCcg==
+X-Received: by 2002:a05:6000:1048:: with SMTP id c8mr1278377wrx.171.1541585922651;
+        Wed, 07 Nov 2018 02:18:42 -0800 (PST)
+Received: from tiehlicka.suse.cz (ip-37-188-140-85.eurotel.cz. [37.188.140.85])
+        by smtp.gmail.com with ESMTPSA id w18-v6sm217527wrn.66.2018.11.07.02.18.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 02:13:36 -0800 (PST)
-Subject: Re: [RFC/RFT][PATCH v3] cpuidle: New timer events oriented governor
- for tickless systems
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>
-References: <1556808.yKVbhZSazi@aspire.rjw.lan>
- <20181106170442.GC9781@hirez.programming.kicks-ass.net>
- <CAJZ5v0hmm2UWRt1j6hQo14nZLgPrE3DZkOznfo2kMxsZ1spo-Q@mail.gmail.com>
- <20181106195127.GD9781@hirez.programming.kicks-ass.net>
- <CAJZ5v0iPs8Wt0PneBVWptqJPP6dEze+=GvxjU=dHBRbmty+kOw@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <8a2240ab-92e2-e402-a086-1b39d04d5581@linaro.org>
-Date:   Wed, 7 Nov 2018 11:13:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 07 Nov 2018 02:18:42 -0800 (PST)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     <linux-mm@kvack.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Baoquan He <bhe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 0/5] mm, memory_hotplug: improve memory offlining failures debugging
+Date:   Wed,  7 Nov 2018 11:18:25 +0100
+Message-Id: <20181107101830.17405-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0iPs8Wt0PneBVWptqJPP6dEze+=GvxjU=dHBRbmty+kOw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 00:39, Rafael J. Wysocki wrote:
-> On Tue, Nov 6, 2018 at 8:51 PM Peter Zijlstra <peterz@infradead.org> wrote:
->>
->> On Tue, Nov 06, 2018 at 07:19:24PM +0100, Rafael J. Wysocki wrote:
->>> On Tue, Nov 6, 2018 at 6:04 PM Peter Zijlstra <peterz@infradead.org> wrote:
->>
->>>> Instead of this detector; why haven't you used the code from
->>>> kernel/irq/timings.c ?
->>>
->>> Because it doesn't help much AFAICS.
->>>
->>> Wakeups need not be interrupts in particular
->>
->> You're alluding to the MWAIT wakeup through the MONITOR address ?
-> 
-> Yes.
-> 
->>> and interrupt patterns that show up when the CPU is busy may not be
->>> relevant for when it is idle.
->>
->> I think that is not always true; consider things like the periodic
->> interrupt from frame rendering or audio; if there is nothing more going
->> on in the system than say playing your favourite tune, it gets the
->> 'need more data soon' interrupt from the audio card, wakes up, does a little
->> mp3/flac/ogg/whatever decode to fill up the buffer and goes back to
->> sleep. Same for video playback I assume, the vsync interrupt for buffer
->> flips is fairly predictable.
->>
->> The interrupt predictor we have in kernel/irq/timings.c should be very
->> accurate in predicting those interrupts.
-> 
-> In the above case the interrupts should produce a detectable pattern
-> of wakeups anyway.
-> 
-> In general, however, I need to be convinced that interrupts that
-> didn't wake up the CPU from idle are relevant for next wakeup
-> prediction.  I see that this may be the case, but to what extent is
-> rather unclear to me and it looks like calling
-> irq_timings_next_event() would add considerable overhead.
+Hi,
+I have been promissing to improve memory offlining failures debugging
+for quite some time. As things stand now we get only very limited
+information in the kernel log when the offlining fails. It is usually
+only
+[ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed
+without no further details. We do not know what exactly fails and for
+what reason. Whenever I was forced to debug such a failure I've always
+had to do a debugging patch to tell me more. We can enable some
+tracepoints but it would be much better to get a better picture without
+using them.
 
-I agree the current irq next event can add an overhead and actually it
-works well if there are interrupts with regular interrupts but with
-irregular timings interval we need to search a pattern.
+This patch series does 2 things. The first one is to make dump_page
+more usable by printing more information about the mapping patch 1.
+Then it reduces the log level from emerg to warning so that this
+function is usable from less critical context patch 2. Then I have
+added more detailed information about the offlining failure patch 4
+and finally add dump_page to isolation and offlining migration paths.
+Patch 3 is a trivial cleanup.
 
-The first version called 'anova' I shared with you (Peter and Rafael)
-privately is pretty good to detect such intervals but the algorithm has
-a cost in terms of computation in the self-learning phase. I dropped
-this approach as it could be overkill.
+Does this look go to you?
 
-I'm working on a different algorithm to detect such patterns which
-should be faster.
+Shortlog
+Michal Hocko (5):
+      mm: print more information about mapping in __dump_page
+      mm: lower the printk loglevel for __dump_page messages
+      mm, memory_hotplug: drop pointless block alignment checks from __offline_pages
+      mm, memory_hotplug: print reason for the offlining failure
+      mm, memory_hotplug: be more verbose for memory offline failures
 
-That said, the pattern detection process shouldn't be happening every
-time we enter idle but when the pattern is invalidated. Until the
-pattern gives a successful prediction, we keep it and the repeating
-period is used to give the next event.
+Diffstat:
+ mm/debug.c          | 23 ++++++++++++++++++-----
+ mm/memory_hotplug.c | 52 +++++++++++++++++++++++++++++++---------------------
+ mm/page_alloc.c     |  1 +
+ 3 files changed, 50 insertions(+), 26 deletions(-)
 
-So IMO, the cost to detect the pattern should be compensated by the
-computation saving we do if the pattern is found successfully.
-
-These are all assumptions, hopefully I can provide a patch series and
-numbers in January ...
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
