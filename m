@@ -2,181 +2,92 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5E2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46DEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B470220827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:39:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B470220827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 8139F20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:41:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gTCDgFBF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8139F20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730261AbeKGSJI (ORCPT
+        id S1730384AbeKGSKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:09:08 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36560 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbeKGSJI (ORCPT
+        Wed, 7 Nov 2018 13:10:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35106 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeKGSKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:09:08 -0500
-Received: by mail-vs1-f68.google.com with SMTP id v205so8989578vsc.3;
-        Wed, 07 Nov 2018 00:39:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZFTtJn0e12aMuFN/NK2Fwvdbn+D3VzC033GvZhFZ66o=;
-        b=dKc2ttnltoda7Cgf5ei5gp/M8puAMmTKDTQXdEcWegFnvmkmUm7pdNJHHtMGU1URlL
-         p6AgMdRP4zM+Qnu36+ADC56FJT39qqPMxWzAi9Pa/7wVWPunt/HotiPHQAbNTYGVFQUM
-         y6r8XoSEklIUfkCd8jWUAOutcxaxMNmP3YQxdr1GsrFHhqqfm/gbJ/DQKKbc8cNySAfJ
-         Ac8FC3VALfheFGCDNhAQgHK1dM74kZcW9pNscZetPySK7R4RRgOCtWLGTKg4AmblRiyA
-         t/hT54PQ0wYV/rmnh06PMvwRSqYXYh8tft7en4tEgJRinqNiGOet6oaR+N5C65qL7XuI
-         QbTw==
-X-Gm-Message-State: AGRZ1gI+SvtQMtpyUHnStQ8mbS7iQz1D1jcFANXQ/ehFpV92siafWYYu
-        sgFrAYGJ+axV7K3OlQC7KfQzP/DR9z+qJa2eosg=
-X-Google-Smtp-Source: AJdET5ew6c4Jv80yWOkeTRDg1m9WWK6V7/P7n+MvyejDYiplmbIGbvb0OxdmXLMB+m/7AoggoyAjk8gjU7iesPOu6Xs=
-X-Received: by 2002:a67:b404:: with SMTP id x4mr380152vsl.152.1541579986970;
- Wed, 07 Nov 2018 00:39:46 -0800 (PST)
+        Wed, 7 Nov 2018 13:10:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K9/KClUuX3eCznPYQdg2PQEdTsgVCy0aiW7Z/qIwSzc=; b=gTCDgFBF3duIYB/1FthKUoVdu
+        IHAcyswF74scm45gGICbzzQ6Q/+c1WeFNnEMj983KHjElgbu3oHTWyvswSg7A2Nm5XH9EHsJwktHH
+        JBDXev+F4uU3XevPQ9XCZwESPPBBAyVeQmT6gko3kjRcp6emaNytemJz9vdju2UFdvlRshVvcWBjZ
+        ZR7Y/Qh02kunF0ISZ/lOlB/87L7+iUIsL1mV/SmEuZynCXE9mLRqsX7q7dYV3K4oR8z6Ix8nGnWra
+        Ar3o6rVrQgEBfYRGFVmrlLYAzMGr2LTBkN4NI0pHvN2ZWvyOuX38ipxrU+oWGdFitEN4cPvZ+XGVq
+        9jZxPSsyA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKJOV-0001vh-Hg; Wed, 07 Nov 2018 08:40:59 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C203E2029F883; Wed,  7 Nov 2018 09:40:57 +0100 (CET)
+Date:   Wed, 7 Nov 2018 09:40:57 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, ast@kernel.org, daniel@iogearbox.net,
+        acme@kernel.org
+Subject: Re: [RFC perf,bpf 1/5] perf, bpf: Introduce PERF_RECORD_BPF_EVENT
+Message-ID: <20181107084057.GG9781@hirez.programming.kicks-ass.net>
+References: <20181106205246.567448-1-songliubraving@fb.com>
+ <20181106205246.567448-2-songliubraving@fb.com>
 MIME-Version: 1.0
-References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
- <20181106090756.GP20885@w540> <CAMuHMdWbrA1hgh3kw+fvL0x3ciNKHV52uhDX0FNJzU_Grb_+qQ@mail.gmail.com>
- <20181106093121.GA24024@w540>
-In-Reply-To: <20181106093121.GA24024@w540>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 7 Nov 2018 09:39:35 +0100
-Message-ID: <CAMuHMdUd=bYrKu4v0OssWPA=ZAYuiUANahy8x8xNGUoUoXmLCA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106205246.567448-2-songliubraving@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Tue, Nov 06, 2018 at 12:52:42PM -0800, Song Liu wrote:
+> For better performance analysis of BPF programs, this patch introduces
+> PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
+> load/unload information to user space.
+> 
+>         /*
+>          * Record different types of bpf events:
+>          *   enum perf_bpf_event_type {
+>          *      PERF_BPF_EVENT_UNKNOWN          = 0,
+>          *      PERF_BPF_EVENT_PROG_LOAD        = 1,
+>          *      PERF_BPF_EVENT_PROG_UNLOAD      = 2,
+>          *   };
+>          *
+>          * struct {
+>          *      struct perf_event_header header;
+>          *      u16 type;
+>          *      u16 flags;
+>          *      u32 id;  // prog_id or map_id
+>          * };
+>          */
+>         PERF_RECORD_BPF_EVENT                   = 17,
+> 
+> PERF_RECORD_BPF_EVENT contains minimal information about the BPF program.
+> Perf utility (or other user space tools) should listen to this event and
+> fetch more details about the event via BPF syscalls
+> (BPF_PROG_GET_FD_BY_ID, BPF_OBJ_GET_INFO_BY_FD, etc.).
 
-(sorry, seems I prepared a reply, but forgot to press "Send")
-
-On Tue, Nov 6, 2018 at 10:31 AM jacopo mondi <jacopo@jmondi.org> wrote:
-> On Tue, Nov 06, 2018 at 10:24:30AM +0100, Geert Uytterhoeven wrote:
-> > On Tue, Nov 6, 2018 at 10:08 AM jacopo mondi <jacopo@jmondi.org> wrote:
-> > > On Mon, Nov 05, 2018 at 06:19:22PM +0100, Geert Uytterhoeven wrote:
-> > > > On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > > > >    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
-> > > > >
-> > > > > On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
-> > > > > could appear on different sets of pins, usually the 'a' and 'b' one.
-> > > > >
-> > > > > With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
-> > > > >
-> > > > > VIN_DATA_PIN_GROUP(vin4_data_a, 8)
-> > > > >
-> > > > > which results in the group being named as "vin4_data_a_8" which is
-> > > > > un-consistent with the canonical group names (eg. "vin4_data8_a").
-> > > > >
-> > > > > This series adds a macro that allows to specify the group 'version' along with
-> > > > > the pin and mux numbers in patch [1/1]. I haven't been able to find a better
-> > > > > term than 'version' as 'group' was already taken. Suggestions welcome.
-> > > >
-> > > > Yeah, the datasheet also calls these groups :-(
-> > > > A possible alternative is to use "variant"?
-> > > >
-> > > > Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
-> > > > macro varargs, and passing the "variant" as the (optional) third parameter?
-> > > > That way existing users work as a before, while you can also write e.g.
-> > > >
-> > > >     VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
-> > >
-> > > Indeed.
-> > >
-> > > Would something along the following lines fly for you?
-> > >
-> > > #define VIN_DATA_PIN_GROUP(n, s, ...)                                   \
-> > >         {                                                               \
-> > >                 .name = #n#s#__VA_ARGS__,                               \
-> > >                 .pins = n##__VA_ARGS__##_pins.data##s,                  \
-> > >                 .mux = n##__VA_ARGS__##_mux.data##s,                    \
-> > >                 .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
-> > >         }
-> > >
-> > > It can be used as:
-> > > VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
-> > > VIN_DATA_PIN_GROUP(vin5_data, 8),
-> > >
-> > > With your ack on this, I'll send v2.
-> >
-> > Thank you, that is exactly what I had in mind.
-> >
-> > > > > As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
-> > > > > wired, I made sure the macro creates correct names and fields not only by
-> > > > > compile testing it, but with a small C program [1] that replicates the VIN data
-> > > > > layout defined in the PFC module and access fields (and has helped me testing
-> > > > > more easily the preprocessor stringification/concatenation process).
-> > > > >
-> > > > > Final note: Simon, you took the E3 patches in your tree, and I expect them to
-> > > > > land on v4.20-rc1. They use the old macros, are follow up patches ok?)
-> > > >
-> > > > Which patches are using these macro names, and are in v4.20-rc1?
-> > > >
-> > > > BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
-> > > > have broken groups names on r8a7792, r8a7795, and r8a7796.
-> > > > Fortunately we have no known users of them, so they can be fixed.
-> > > >
-> > >
-> > > On v4.20-rc1 the grep returns none for me :/
-> > > git grep v4.20-rc1 "vin._data_[a-z][0-9]" drivers/pinctrl/sh-pfc/
-> >
-> > I grepped the .o files, to make sure it would see the final strings, which
-> > obviously works in the build tree only ;-)
->
-> Ah yes, stupid me.
->
-> >
-> > For the source tree, please try:
-> >
-> >     git grep -w VIN_DATA_PIN_GROUP.*_[a-z] v4.20-rc1
->
-> Argh, there are quite a few of them, but fortunately no users so far.
->
-> Is it ok fixing them in v2 of this series with follow-up patches, or
-> would you like a single patch that introduces the variadic macro and
-> replaces all the occurrences in the per-SoC PFC modules in one go?
-
-Given the r8a7795 and r8a7796 issues were introduced in v4.17:
-
-    a5c2949ff7bd9e04 ("pinctrl: sh-pfc: r8a7796: Deduplicate VIN4 pin
-definitions")
-    9942a5b52990b8d5 ("pinctrl: sh-pfc: r8a7795: Deduplicate VIN4 pin
-definitions")
-
-while the r8a7792 issue date back to v4.9:
-
-    7dd74bb1f058786e ("pinctrl: sh-pfc: r8a7792: Add VIN pin groups")
-
-I think separate patches are easier for backporting.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Why !? You're failing to explain why it cannot provide the full
+information there.
