@@ -2,203 +2,531 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0D7C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003D8C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E39E120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:07:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E39E120862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B0C8120862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:07:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C8120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbeKGPgJ convert rfc822-to-8bit (ORCPT
+        id S1730410AbeKGPgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 10:36:09 -0500
-Received: from mga03.intel.com ([134.134.136.65]:3828 "EHLO mga03.intel.com"
+        Wed, 7 Nov 2018 10:36:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50380 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726470AbeKGPgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 10:36:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 22:07:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,474,1534834800"; 
-   d="scan'208";a="106562587"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 22:07:16 -0800
-Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 6 Nov 2018 22:07:15 -0800
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- fmsmsx115.amr.corp.intel.com (10.18.116.19) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 6 Nov 2018 22:07:15 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.117]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.84]) with mapi id 14.03.0415.000;
- Wed, 7 Nov 2018 14:07:08 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [PATCH v4 04/12] iommu/vt-d: Add 256-bit invalidation
- descriptor support
-Thread-Topic: [PATCH v4 04/12] iommu/vt-d: Add 256-bit invalidation
- descriptor support
-Thread-Index: AQHUdMlDcnwPlQkmSk2wysYaWtdoaqVDpZEQ
-Date:   Wed, 7 Nov 2018 06:07:07 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C257439D5FAA2@SHSMSX104.ccr.corp.intel.com>
-References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
- <20181105053151.7173-5-baolu.lu@linux.intel.com>
-In-Reply-To: <20181105053151.7173-5-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjFkZjUyNjYtMTc4OC00MWJlLWJmZWYtY2ZkMWUzNzhjMjI3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNFVoT3RHWExUMmxrdHRzOUQwUWxmZVJYOVE5RHhydEd0TzFRWGZoYno0TWF6dm11MDRWVEJpWXBKOU5VbmZcL2oifQ==
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1726470AbeKGPgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 10:36:12 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 750A337E87;
+        Wed,  7 Nov 2018 06:07:19 +0000 (UTC)
+Received: from xz-x1.nay.redhat.com (dhcp-14-128.nay.redhat.com [10.66.14.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 676E7104C529;
+        Wed,  7 Nov 2018 06:07:07 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        peterx@redhat.com, Dan Williams <dan.j.williams@intel.com>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH RFC v2 2/4] mm: userfault: return VM_FAULT_RETRY on signals
+Date:   Wed,  7 Nov 2018 14:06:41 +0800
+Message-Id: <20181107060643.10950-3-peterx@redhat.com>
+In-Reply-To: <20181107060643.10950-1-peterx@redhat.com>
+References: <20181107060643.10950-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 07 Nov 2018 06:07:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolu,
+There was a special path in handle_userfault() in the past that we'll
+return a VM_FAULT_NOPAGE when we detected non-fatal signals when waiting
+for userfault handling.  We did that by reacquiring the mmap_sem before
+returning.  However that brings a risk in that the vmas might have
+changed when we retake the mmap_sem and even we could be holding an
+invalid vma structure.  The problem was reported by syzbot.
 
-> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
-> Sent: Monday, November 5, 2018 1:32 PM
+This patch removes the special path and we'll return a VM_FAULT_RETRY
+with the common path even if we have got such signals.  Then for all the
+architectures that is passing in VM_FAULT_ALLOW_RETRY into
+handle_mm_fault(), we check not only for SIGKILL but for all the rest of
+userspace pending signals right after we returned from
+handle_mm_fault().
 
-[...]
+The idea comes from the upstream discussion between Linus and Andrea:
 
-> ---
->  drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
->  drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
->  drivers/iommu/intel_irq_remapping.c |  6 ++-
->  include/linux/intel-iommu.h         |  9 +++-
->  4 files changed, 115 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> index d9c748b6f9e4..ec10427b98ac 100644
-> --- a/drivers/iommu/dmar.c
-> +++ b/drivers/iommu/dmar.c
-> @@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu *iommu, int
-> index)
->  	int head, tail;
->  	struct q_inval *qi = iommu->qi;
->  	int wait_index = (index + 1) % QI_LENGTH;
-> +	int shift = qi_shift(iommu);
-> 
->  	if (qi->desc_status[wait_index] == QI_ABORT)
->  		return -EAGAIN;
-> @@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu *iommu,
-> int index)
->  	 */
->  	if (fault & DMA_FSTS_IQE) {
->  		head = readl(iommu->reg + DMAR_IQH_REG);
-> -		if ((head >> DMAR_IQ_SHIFT) == index) {
-> +		if ((head >> shift) == index) {
-> +			struct qi_desc *desc = qi->desc + head;
-> +
->  			pr_err("VT-d detected invalid descriptor: "
->  				"low=%llx, high=%llx\n",
-> -				(unsigned long long)qi->desc[index].low,
-> -				(unsigned long long)qi->desc[index].high);
-> -			memcpy(&qi->desc[index], &qi->desc[wait_index],
-> -					sizeof(struct qi_desc));
-> +				(unsigned long long)desc->qw0,
-> +				(unsigned long long)desc->qw1);
+  https://lkml.org/lkml/2017/10/30/560
 
-Still missing qw2 and qw3. May make the print differ based on if smts is configed.
+(This patch contains a potential fix for a double-free of mmap_sem on
+ ARC architecture; please see https://lkml.org/lkml/2018/11/1/723 for
+ more information)
 
-> +			memcpy(desc, qi->desc + (wait_index << shift),
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ arch/alpha/mm/fault.c      |  2 +-
+ arch/arc/mm/fault.c        | 11 +++++++----
+ arch/arm/mm/fault.c        | 14 ++++++++++----
+ arch/arm64/mm/fault.c      |  6 +++---
+ arch/hexagon/mm/vm_fault.c |  2 +-
+ arch/ia64/mm/fault.c       |  2 +-
+ arch/m68k/mm/fault.c       |  2 +-
+ arch/microblaze/mm/fault.c |  2 +-
+ arch/mips/mm/fault.c       |  2 +-
+ arch/nds32/mm/fault.c      |  6 +++---
+ arch/nios2/mm/fault.c      |  2 +-
+ arch/openrisc/mm/fault.c   |  2 +-
+ arch/parisc/mm/fault.c     |  2 +-
+ arch/powerpc/mm/fault.c    |  4 +++-
+ arch/riscv/mm/fault.c      |  4 ++--
+ arch/s390/mm/fault.c       |  9 ++++++---
+ arch/sh/mm/fault.c         |  4 ++++
+ arch/sparc/mm/fault_32.c   |  3 +++
+ arch/sparc/mm/fault_64.c   |  3 +++
+ arch/um/kernel/trap.c      |  5 ++++-
+ arch/unicore32/mm/fault.c  |  4 ++--
+ arch/x86/mm/fault.c        | 12 +++++++++++-
+ arch/xtensa/mm/fault.c     |  3 +++
+ fs/userfaultfd.c           | 24 ------------------------
+ 24 files changed, 73 insertions(+), 57 deletions(-)
 
-Would "memcpy(desc, (unsigned long long) (qi->desc +  (wait_index << shift)," be
-more safe?
-
-> +			       1 << shift);
->  			writel(DMA_FSTS_IQE, iommu->reg + DMAR_FSTS_REG);
->  			return -EINVAL;
->  		}
-> @@ -1191,10 +1194,10 @@ static int qi_check_fault(struct intel_iommu *iommu,
-> int index)
->  	 */
->  	if (fault & DMA_FSTS_ITE) {
->  		head = readl(iommu->reg + DMAR_IQH_REG);
-> -		head = ((head >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) % QI_LENGTH;
-> +		head = ((head >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
->  		head |= 1;
->  		tail = readl(iommu->reg + DMAR_IQT_REG);
-> -		tail = ((tail >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) % QI_LENGTH;
-> +		tail = ((tail >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
-> 
->  		writel(DMA_FSTS_ITE, iommu->reg + DMAR_FSTS_REG);
-> 
-> @@ -1222,15 +1225,14 @@ int qi_submit_sync(struct qi_desc *desc, struct
-> intel_iommu *iommu)
->  {
->  	int rc;
->  	struct q_inval *qi = iommu->qi;
-> -	struct qi_desc *hw, wait_desc;
-> +	int offset, shift, length;
-> +	struct qi_desc wait_desc;
->  	int wait_index, index;
->  	unsigned long flags;
-> 
->  	if (!qi)
->  		return 0;
-> 
-> -	hw = qi->desc;
-> -
->  restart:
->  	rc = 0;
-> 
-> @@ -1243,16 +1245,21 @@ int qi_submit_sync(struct qi_desc *desc, struct
-> intel_iommu *iommu)
-> 
->  	index = qi->free_head;
->  	wait_index = (index + 1) % QI_LENGTH;
-> +	shift = qi_shift(iommu);
-> +	length = 1 << shift;
-> 
->  	qi->desc_status[index] = qi->desc_status[wait_index] = QI_IN_USE;
-> 
-> -	hw[index] = *desc;
-> -
-> -	wait_desc.low = QI_IWD_STATUS_DATA(QI_DONE) |
-> +	offset = index << shift;
-> +	memcpy(qi->desc + offset, desc, length);
-> +	wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
->  			QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
-> -	wait_desc.high = virt_to_phys(&qi->desc_status[wait_index]);
-> +	wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
-> +	wait_desc.qw2 = 0;
-> +	wait_desc.qw3 = 0;
-> 
-> -	hw[wait_index] = wait_desc;
-> +	offset = wait_index << shift;
-> +	memcpy(qi->desc + offset, &wait_desc, length);
-
-same question with above one.
-
-Thanks,
-Yi Liu
+diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
+index d73dc473fbb9..46e5e420ad2a 100644
+--- a/arch/alpha/mm/fault.c
++++ b/arch/alpha/mm/fault.c
+@@ -150,7 +150,7 @@ do_page_fault(unsigned long address, unsigned long mmcsr,
+ 	   the fault.  */
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index c9da6102eb4f..52b6b71b74e2 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -142,11 +142,14 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+ 	/* If Pagefault was interrupted by SIGKILL, exit page fault "early" */
+-	if (unlikely(fatal_signal_pending(current))) {
+-		if ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY))
++	if (unlikely(fatal_signal_pending(current) && user_mode(regs))) {
++		/*
++		 * VM_FAULT_RETRY means we have released the mmap_sem,
++		 * otherwise we need to drop it before leaving
++		 */
++		if (!(fault & VM_FAULT_RETRY))
+ 			up_read(&mm->mmap_sem);
+-		if (user_mode(regs))
+-			return;
++		return;
+ 	}
+ 
+ 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index f4ea4c62c613..743077d19669 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -308,14 +308,20 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	fault = __do_page_fault(mm, addr, fsr, flags, tsk);
+ 
+-	/* If we need to retry but a fatal signal is pending, handle the
++	/* If we need to retry but a signal is pending, handle the
+ 	 * signal first. We do not need to release the mmap_sem because
+ 	 * it would already be released in __lock_page_or_retry in
+ 	 * mm/filemap.c. */
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+-		if (!user_mode(regs))
++	if (fault & VM_FAULT_RETRY) {
++		if (fatal_signal_pending(current) && !user_mode(regs))
+ 			goto no_context;
+-		return 0;
++		else if (signal_pending(current))
++			/*
++			 * It's either a common signal, or a fatal
++			 * signal but for the userspace, we return
++			 * immediately.
++			 */
++			return 0;
+ 	}
+ 
+ 	/*
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 7d9571f4ae3d..744d6451ea83 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -499,13 +499,13 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
+ 
+ 	if (fault & VM_FAULT_RETRY) {
+ 		/*
+-		 * If we need to retry but a fatal signal is pending,
++		 * If we need to retry but a signal is pending,
+ 		 * handle the signal first. We do not need to release
+ 		 * the mmap_sem because it would already be released
+ 		 * in __lock_page_or_retry in mm/filemap.c.
+ 		 */
+-		if (fatal_signal_pending(current)) {
+-			if (!user_mode(regs))
++		if (signal_pending(current)) {
++			if (fatal_signal_pending(current) && !user_mode(regs))
+ 				goto no_context;
+ 			return 0;
+ 		}
+diff --git a/arch/hexagon/mm/vm_fault.c b/arch/hexagon/mm/vm_fault.c
+index eb263e61daf4..be10b441d9cc 100644
+--- a/arch/hexagon/mm/vm_fault.c
++++ b/arch/hexagon/mm/vm_fault.c
+@@ -104,7 +104,7 @@ void do_page_fault(unsigned long address, long cause, struct pt_regs *regs)
+ 
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	/* The most common case -- we are done. */
+diff --git a/arch/ia64/mm/fault.c b/arch/ia64/mm/fault.c
+index 5baeb022f474..62c2d39d2bed 100644
+--- a/arch/ia64/mm/fault.c
++++ b/arch/ia64/mm/fault.c
+@@ -163,7 +163,7 @@ ia64_do_page_fault (unsigned long address, unsigned long isr, struct pt_regs *re
+ 	 */
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/m68k/mm/fault.c b/arch/m68k/mm/fault.c
+index 9b6163c05a75..d9808a807ab8 100644
+--- a/arch/m68k/mm/fault.c
++++ b/arch/m68k/mm/fault.c
+@@ -138,7 +138,7 @@ int do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	fault = handle_mm_fault(vma, address, flags);
+ 	pr_debug("handle_mm_fault returns %x\n", fault);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return 0;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/microblaze/mm/fault.c b/arch/microblaze/mm/fault.c
+index 202ad6a494f5..4fd2dbd0c5ca 100644
+--- a/arch/microblaze/mm/fault.c
++++ b/arch/microblaze/mm/fault.c
+@@ -217,7 +217,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	 */
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
+index 73d8a0f0b810..92374fd091d2 100644
+--- a/arch/mips/mm/fault.c
++++ b/arch/mips/mm/fault.c
+@@ -154,7 +154,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+ 	 */
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+diff --git a/arch/nds32/mm/fault.c b/arch/nds32/mm/fault.c
+index b740534b152c..72461745d3e1 100644
+--- a/arch/nds32/mm/fault.c
++++ b/arch/nds32/mm/fault.c
+@@ -207,12 +207,12 @@ void do_page_fault(unsigned long entry, unsigned long addr,
+ 	fault = handle_mm_fault(vma, addr, flags);
+ 
+ 	/*
+-	 * If we need to retry but a fatal signal is pending, handle the
++	 * If we need to retry but a signal is pending, handle the
+ 	 * signal first. We do not need to release the mmap_sem because it
+ 	 * would already be released in __lock_page_or_retry in mm/filemap.c.
+ 	 */
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+-		if (!user_mode(regs))
++	if (fault & VM_FAULT_RETRY && signal_pending(current)) {
++		if (fatal_signal_pending(current) && !user_mode(regs))
+ 			goto no_context;
+ 		return;
+ 	}
+diff --git a/arch/nios2/mm/fault.c b/arch/nios2/mm/fault.c
+index 24fd84cf6006..5939434a31ae 100644
+--- a/arch/nios2/mm/fault.c
++++ b/arch/nios2/mm/fault.c
+@@ -134,7 +134,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long cause,
+ 	 */
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/openrisc/mm/fault.c b/arch/openrisc/mm/fault.c
+index dc4dbafc1d83..873ecb5d82d7 100644
+--- a/arch/openrisc/mm/fault.c
++++ b/arch/openrisc/mm/fault.c
+@@ -165,7 +165,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
+ 
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
+index c8e8b7c05558..29422eec329d 100644
+--- a/arch/parisc/mm/fault.c
++++ b/arch/parisc/mm/fault.c
+@@ -303,7 +303,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
+ 
+ 	fault = handle_mm_fault(vma, address, flags);
+ 
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index 1697e903bbf2..ef5b0cf0a902 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -575,8 +575,10 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+ 			 */
+ 			flags &= ~FAULT_FLAG_ALLOW_RETRY;
+ 			flags |= FAULT_FLAG_TRIED;
+-			if (!fatal_signal_pending(current))
++			if (!signal_pending(current))
+ 				goto retry;
++			else if (!fatal_signal_pending(current) && is_user)
++				return;
+ 		}
+ 
+ 		/*
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 88401d5125bc..4fc8d746bec3 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -123,11 +123,11 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 	fault = handle_mm_fault(vma, addr, flags);
+ 
+ 	/*
+-	 * If we need to retry but a fatal signal is pending, handle the
++	 * If we need to retry but a signal is pending, handle the
+ 	 * signal first. We do not need to release the mmap_sem because it
+ 	 * would already be released in __lock_page_or_retry in mm/filemap.c.
+ 	 */
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(tsk))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(tsk))
+ 		return;
+ 
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+index 2b8f32f56e0c..19b4fb2fafab 100644
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -500,9 +500,12 @@ static inline vm_fault_t do_exception(struct pt_regs *regs, int access)
+ 	 * the fault.
+ 	 */
+ 	fault = handle_mm_fault(vma, address, flags);
+-	/* No reason to continue if interrupted by SIGKILL. */
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+-		fault = VM_FAULT_SIGNAL;
++	/* Do not continue if interrupted by signals. */
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current)) {
++		if (fatal_signal_pending(current))
++			fault = VM_FAULT_SIGNAL;
++		else
++			fault = 0;
+ 		if (flags & FAULT_FLAG_RETRY_NOWAIT)
+ 			goto out_up;
+ 		goto out;
+diff --git a/arch/sh/mm/fault.c b/arch/sh/mm/fault.c
+index 6defd2c6d9b1..baf5d73df40c 100644
+--- a/arch/sh/mm/fault.c
++++ b/arch/sh/mm/fault.c
+@@ -506,6 +506,10 @@ asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
+ 			 * have already released it in __lock_page_or_retry
+ 			 * in mm/filemap.c.
+ 			 */
++
++			if (user_mode(regs) && signal_pending(tsk))
++				return;
++
+ 			goto retry;
+ 		}
+ 	}
+diff --git a/arch/sparc/mm/fault_32.c b/arch/sparc/mm/fault_32.c
+index b0440b0edd97..a2c83104fe35 100644
+--- a/arch/sparc/mm/fault_32.c
++++ b/arch/sparc/mm/fault_32.c
+@@ -269,6 +269,9 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
+ 			 * in mm/filemap.c.
+ 			 */
+ 
++			if (user_mode(regs) && signal_pending(tsk))
++				return;
++
+ 			goto retry;
+ 		}
+ 	}
+diff --git a/arch/sparc/mm/fault_64.c b/arch/sparc/mm/fault_64.c
+index 8f8a604c1300..3345fa7234e2 100644
+--- a/arch/sparc/mm/fault_64.c
++++ b/arch/sparc/mm/fault_64.c
+@@ -467,6 +467,9 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
+ 			 * in mm/filemap.c.
+ 			 */
+ 
++			if (user_mode(regs) && signal_pending(tsk))
++				return;
++
+ 			goto retry;
+ 		}
+ 	}
+diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
+index cced82946042..bf12032f703d 100644
+--- a/arch/um/kernel/trap.c
++++ b/arch/um/kernel/trap.c
+@@ -76,8 +76,11 @@ int handle_page_fault(unsigned long address, unsigned long ip,
+ 
+ 		fault = handle_mm_fault(vma, address, flags);
+ 
+-		if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++		if (fault & VM_FAULT_RETRY && signal_pending(current)) {
++			if (is_user && !fatal_signal_pending(current))
++				err = 0;
+ 			goto out_nosemaphore;
++		}
+ 
+ 		if (unlikely(fault & VM_FAULT_ERROR)) {
+ 			if (fault & VM_FAULT_OOM) {
+diff --git a/arch/unicore32/mm/fault.c b/arch/unicore32/mm/fault.c
+index b9a3a50644c1..3611f19234a1 100644
+--- a/arch/unicore32/mm/fault.c
++++ b/arch/unicore32/mm/fault.c
+@@ -248,11 +248,11 @@ static int do_pf(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	fault = __do_pf(mm, addr, fsr, flags, tsk);
+ 
+-	/* If we need to retry but a fatal signal is pending, handle the
++	/* If we need to retry but a signal is pending, handle the
+ 	 * signal first. We do not need to release the mmap_sem because
+ 	 * it would already be released in __lock_page_or_retry in
+ 	 * mm/filemap.c. */
+-	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
++	if ((fault & VM_FAULT_RETRY) && signal_pending(current))
+ 		return 0;
+ 
+ 	if (!(fault & VM_FAULT_ERROR) && (flags & FAULT_FLAG_ALLOW_RETRY)) {
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index b24eb4eb9984..e05bdc2602d6 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1433,8 +1433,18 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 		if (flags & FAULT_FLAG_ALLOW_RETRY) {
+ 			flags &= ~FAULT_FLAG_ALLOW_RETRY;
+ 			flags |= FAULT_FLAG_TRIED;
+-			if (!fatal_signal_pending(tsk))
++			if (!signal_pending(tsk))
+ 				goto retry;
++			else if (!fatal_signal_pending(tsk))
++				/*
++				 * There is a signal for the task but
++				 * it's not fatal, let's return
++				 * directly to the userspace.  This
++				 * gives chance for signals like
++				 * SIGSTOP/SIGCONT to be handled
++				 * faster, e.g., with GDB.
++				 */
++				return;
+ 		}
+ 
+ 		/* User mode? Just return to handle the fatal exception */
+diff --git a/arch/xtensa/mm/fault.c b/arch/xtensa/mm/fault.c
+index 2ab0e0dcd166..792dad5e2f12 100644
+--- a/arch/xtensa/mm/fault.c
++++ b/arch/xtensa/mm/fault.c
+@@ -136,6 +136,9 @@ void do_page_fault(struct pt_regs *regs)
+ 			 * in mm/filemap.c.
+ 			 */
+ 
++			if (user_mode(regs) && signal_pending(current))
++				return;
++
+ 			goto retry;
+ 		}
+ 	}
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 356d2b8568c1..249c9211b2ed 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -515,30 +515,6 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 
+ 	__set_current_state(TASK_RUNNING);
+ 
+-	if (return_to_userland) {
+-		if (signal_pending(current) &&
+-		    !fatal_signal_pending(current)) {
+-			/*
+-			 * If we got a SIGSTOP or SIGCONT and this is
+-			 * a normal userland page fault, just let
+-			 * userland return so the signal will be
+-			 * handled and gdb debugging works.  The page
+-			 * fault code immediately after we return from
+-			 * this function is going to release the
+-			 * mmap_sem and it's not depending on it
+-			 * (unlike gup would if we were not to return
+-			 * VM_FAULT_RETRY).
+-			 *
+-			 * If a fatal signal is pending we still take
+-			 * the streamlined VM_FAULT_RETRY failure path
+-			 * and there's no need to retake the mmap_sem
+-			 * in such case.
+-			 */
+-			down_read(&mm->mmap_sem);
+-			ret = VM_FAULT_NOPAGE;
+-		}
+-	}
+-
+ 	/*
+ 	 * Here we race with the list_del; list_add in
+ 	 * userfaultfd_ctx_read(), however because we don't ever run
+-- 
+2.17.1
 
