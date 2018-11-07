@@ -2,168 +2,215 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4BDC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E12C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 099BD20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:58:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iaW6txQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 099BD20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 89E6920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89E6920862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbeKHEaY (ORCPT
+        id S1729974AbeKHEao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:30:24 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45160 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeKHEaY (ORCPT
+        Wed, 7 Nov 2018 23:30:44 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:43780 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbeKHEan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:30:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id k15-v6so15582379wre.12
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:58:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Bvz4tB1LNY/gc/mjCYlvIM7t6UGBtFaayf4QdhN8Rjc=;
-        b=iaW6txQeDuffTLORs44F6bMvZqmeYv2VJt1/SC6lfHm3rNiQfQR9OUZ1wgImwx3s27
-         SzuAkC0hfOrBvsyGiaImclcRYA6jhLLr5dgOCUHJdUnK4s0PWHmPIYgOlI8L18uIXKdW
-         ORJUxEuvjt1UVf13QQCQYrjJK5M83ew4FSEBShV+ruM6m7h6MhtxNql5lf7zcbFfBkQB
-         38K/3pjjy28McxgsVQ55NIwDolmBsnX9RE8XGGbzzyfREfBcvt/VOOQbHSsauP/70N15
-         /OLhJwMaMetps+pkseFGTMLJUjlKubDesi1uOmd6icJyl5GvN5p/gvsA42QtpUHTbd+g
-         orjw==
+        Wed, 7 Nov 2018 23:30:43 -0500
+Received: by mail-io1-f71.google.com with SMTP id d12-v6so20406970iof.10
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:59:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Bvz4tB1LNY/gc/mjCYlvIM7t6UGBtFaayf4QdhN8Rjc=;
-        b=XG40Q+Q8KDHhpvASDKeT7n3SzRSsrWSU9iB2FEAv7jOFHw6Qf5uRFqLwkBIgOLddMR
-         MNCNz+LV1/bFOBOUgXb3G8wzAOEKDr7XrpiqOTaeX4unHRY9XN/4g+i/PckxoXQQH0Sn
-         gzBuXtAI3aLXoVYu/LSE8da+Ipw080s9A5qnJaMPxw1v1qp4Hj6RkQor5NsjimWFhU+R
-         ev2taZ6m9mwiAM5ujvmFqGg49QRn9z9tMnGngaDiaHqGPcAR3Wilv2c3dNv3xOwSKsED
-         WMVDoUsat0iZ4zkUlgnhAslETj3G+3QTccMRdW6f1YeYMFqXR2nHlmSMY9q3Ai86r8AJ
-         ahSA==
-X-Gm-Message-State: AGRZ1gJyBRGhEnELDW28jToGO0Db9wABx1RcpXWmBMAP49HnhcZs1TGe
-        ur5c81rdNUfLIEEm9dvoHs2Xzg==
-X-Google-Smtp-Source: AJdET5cDf8An+6w2imVC3+OY8FKCg0jfbaSZw/s4lOU14UwVgom0NgyFJbOOAQB/RXOV8vC4BGvzmg==
-X-Received: by 2002:adf:dcd1:: with SMTP id x17-v6mr1334145wrm.212.1541617123692;
-        Wed, 07 Nov 2018 10:58:43 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id u8-v6sm1797881wrr.33.2018.11.07.10.58.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 10:58:42 -0800 (PST)
-Date:   Wed, 7 Nov 2018 19:58:40 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] crypto: crypto_user_stat: convert all stats from u32
- to u64
-Message-ID: <20181107185840.GC5133@Red>
-References: <1541422274-40060-1-git-send-email-clabbe@baylibre.com>
- <1541422274-40060-3-git-send-email-clabbe@baylibre.com>
- <20181106014242.GD28490@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ssRO9LbeYI8juIi5fycqJEfprJWrukQMnDUOcgTPXOA=;
+        b=QjXhq2cBlIvkhxT1L2JuFsvRhFhPur4G6hppzX1tGjJ2W4zYp4XuR9GRESr3cVN0r1
+         NuSIQgcVxZZxZ66Vzsp+61ux+9ofxd55qm0XOmWM1tjEyhm4GlnnnQDTNzSKDHeo4MmP
+         l+KKgFkrbV3ujXs6kzq0Bj6QyIRAtRgMdkje/wekwkOyLt9gw1Km55hsqD5xdObRJLy7
+         9RAGNRcjr5Rv/tVZdlmjDeTnXRFrntF0tszaI/aKDzUn4SVXu9VSN6SBi2Ic2KuWR8vM
+         flZiYNv93uDLxmvsqeMCz004hmVUzcnLjnUEmZCM/lNueIRRu9QtmFQFbSkJQtvwrUlm
+         uJ7Q==
+X-Gm-Message-State: AGRZ1gIUggk4G64oiDySFMmuRONP4mXOH3h95pRFvX6RvZc8tDpCiCRt
+        7Hpzn+9Ip2KFcmAiV5cvge4T/O62Rmc65uOapFF1Z08Cg352
+X-Google-Smtp-Source: AJdET5fWqkFOYCpspzs7QiMb2qyBmCrX14Ug/WjaT/zvaF0EM+dySuPRGaiqQGvvzG9dTSTysXhNNiqasUc5oVC7gWh44y1ttgCv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106014242.GD28490@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:6908:: with SMTP id e8-v6mr1038854itc.7.1541617143602;
+ Wed, 07 Nov 2018 10:59:03 -0800 (PST)
+Date:   Wed, 07 Nov 2018 10:59:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000396c09057a17b6fd@google.com>
+Subject: general protection fault in rdma_listen (2)
+From:   syzbot <syzbot+6b46b135602a3f3ac99e@syzkaller.appspotmail.com>
+To:     danielj@mellanox.com, dledford@redhat.com, jgg@ziepe.ca,
+        leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, parav@mellanox.com,
+        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 05:42:42PM -0800, Eric Biggers wrote:
-> Hi Corentin,
-> 
-> On Mon, Nov 05, 2018 at 12:51:11PM +0000, Corentin Labbe wrote:
-> > All the 32-bit fields need to be 64-bit.  In some cases, UINT32_MAX crypto
-> > operations can be done in seconds.
-> > 
-> > Reported-by: Eric Biggers <ebiggers@kernel.org>
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >  crypto/algapi.c                 |  10 +--
-> >  crypto/crypto_user_stat.c       | 114 +++++++++++++++-----------------
-> >  include/crypto/acompress.h      |   8 +--
-> >  include/crypto/aead.h           |   8 +--
-> >  include/crypto/akcipher.h       |  16 ++---
-> >  include/crypto/hash.h           |   6 +-
-> >  include/crypto/kpp.h            |  12 ++--
-> >  include/crypto/rng.h            |   8 +--
-> >  include/crypto/skcipher.h       |   8 +--
-> >  include/linux/crypto.h          |  46 ++++++-------
-> >  include/uapi/linux/cryptouser.h |  38 +++++------
-> >  11 files changed, 133 insertions(+), 141 deletions(-)
-> > 
-> > diff --git a/crypto/algapi.c b/crypto/algapi.c
-> > index f5396c88e8cd..42fe316f80ee 100644
-> > --- a/crypto/algapi.c
-> > +++ b/crypto/algapi.c
-> > @@ -259,13 +259,13 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
-> >  	list_add(&larval->alg.cra_list, &crypto_alg_list);
-> >  
-> >  #ifdef CONFIG_CRYPTO_STATS
-> > -	atomic_set(&alg->encrypt_cnt, 0);
-> > -	atomic_set(&alg->decrypt_cnt, 0);
-> > +	atomic64_set(&alg->encrypt_cnt, 0);
-> > +	atomic64_set(&alg->decrypt_cnt, 0);
-> >  	atomic64_set(&alg->encrypt_tlen, 0);
-> >  	atomic64_set(&alg->decrypt_tlen, 0);
-> > -	atomic_set(&alg->verify_cnt, 0);
-> > -	atomic_set(&alg->cipher_err_cnt, 0);
-> > -	atomic_set(&alg->sign_cnt, 0);
-> > +	atomic64_set(&alg->verify_cnt, 0);
-> > +	atomic64_set(&alg->cipher_err_cnt, 0);
-> > +	atomic64_set(&alg->sign_cnt, 0);
-> >  #endif
-> >  
-> >  out:
-> > diff --git a/crypto/crypto_user_stat.c b/crypto/crypto_user_stat.c
-> > index a6fb2e6f618d..352569f378a0 100644
-> > --- a/crypto/crypto_user_stat.c
-> > +++ b/crypto/crypto_user_stat.c
-> > @@ -35,22 +35,21 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
-> >  {
-> >  	struct crypto_stat raead;
-> >  	u64 v64;
-> > -	u32 v32;
-> >  
-> >  	memset(&raead, 0, sizeof(raead));
-> >  
-> >  	strscpy(raead.type, "aead", sizeof(raead.type));
-> >  
-> > -	v32 = atomic_read(&alg->encrypt_cnt);
-> > -	raead.stat_encrypt_cnt = v32;
-> > +	v64 = atomic64_read(&alg->encrypt_cnt);
-> > +	raead.stat_encrypt_cnt = v64;
-> >  	v64 = atomic64_read(&alg->encrypt_tlen);
-> >  	raead.stat_encrypt_tlen = v64;
-> > -	v32 = atomic_read(&alg->decrypt_cnt);
-> > -	raead.stat_decrypt_cnt = v32;
-> > +	v64 = atomic64_read(&alg->decrypt_cnt);
-> > +	raead.stat_decrypt_cnt = v64;
-> >  	v64 = atomic64_read(&alg->decrypt_tlen);
-> >  	raead.stat_decrypt_tlen = v64;
-> > -	v32 = atomic_read(&alg->aead_err_cnt);
-> > -	raead.stat_aead_err_cnt = v32;
-> > +	v64 = atomic64_read(&alg->aead_err_cnt);
-> > +	raead.stat_aead_err_cnt = v64;
-> >  
-> >  	return nla_put(skb, CRYPTOCFGA_STAT_AEAD, sizeof(raead), &raead);
-> >  }
-> 
-> Why not assign the result of atomic64_read() directly?
-> I don't see the point of the 'v64' variable.
-> 
+Hello,
 
-Yes it will be more compact and easier to read
+syzbot found the following crash on:
 
-Thanks
+HEAD commit:    8053e5b93eca Merge tag 'trace-v4.20-rc1' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1539246d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f559fee2fc3375a
+dashboard link: https://syzkaller.appspot.com/bug?extid=6b46b135602a3f3ac99e
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6b46b135602a3f3ac99e@syzkaller.appspotmail.com
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 10185 Comm: syz-executor1 Not tainted 4.20.0-rc1+ #101
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:cma_bind_listen drivers/infiniband/core/cma.c:3355 [inline]
+RIP: 0010:rdma_listen+0x357/0x990 drivers/infiniband/core/cma.c:3469
+Code: 4c 8b ab c8 01 00 00 31 f6 48 c7 c7 a0 dc d9 89 e8 ae e9 25 02 48 b8  
+00 00 00 00 00 fc ff df 49 8d 7d 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 64 05 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff8801871df970 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8801bc114200 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000008
+RBP: ffff8801871dfa10 R08: fffffbfff13b3b9d R09: fffffbfff13b3b9c
+R10: ffff8801871df960 R11: ffffffff89d9dce3 R12: 1ffff10030e3bf31
+R13: 0000000000000000 R14: 00000000000003ff R15: ffff8801bca00a40
+FS:  00007f99bde19700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffcd3fbba88 CR3: 00000001bed0c000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ucma_listen+0x1a4/0x260 drivers/infiniband/core/ucma.c:1100
+  ucma_write+0x365/0x460 drivers/infiniband/core/ucma.c:1689
+  __vfs_write+0x119/0x9f0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f99bde18c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000000000010 RSI: 0000000020000140 RDI: 0000000000000005
+RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f99bde196d4
+R13: 00000000004c5637 R14: 00000000004d9130 R15: 00000000ffffffff
+Modules linked in:
+kobject: 'loop4' (00000000b75a0f1d): kobject_uevent_env
+kobject: 'loop4' (00000000b75a0f1d): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+---[ end trace 4cb66db176b8dee1 ]---
+hfs: can't find a HFS filesystem on dev loop5
+RIP: 0010:cma_bind_listen drivers/infiniband/core/cma.c:3355 [inline]
+RIP: 0010:rdma_listen+0x357/0x990 drivers/infiniband/core/cma.c:3469
+kobject: 'loop0' (00000000d690b7fc): kobject_uevent_env
+kobject: 'loop0' (00000000d690b7fc): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000b75a0f1d): kobject_uevent_env
+kobject: 'loop4' (00000000b75a0f1d): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (000000006d980c29): kobject_uevent_env
+kobject: 'loop2' (000000006d980c29): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+Code: 4c 8b ab c8 01 00 00 31 f6 48 c7 c7 a0 dc d9 89 e8 ae e9 25 02 48 b8  
+00 00 00 00 00 fc ff df 49 8d 7d 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 64 05 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+kobject: 'loop4' (00000000b75a0f1d): kobject_uevent_env
+RSP: 0018:ffff8801871df970 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8801bc114200 RCX: 0000000000000000
+kobject: 'loop4' (00000000b75a0f1d): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: 0000000000000008
+RBP: ffff8801871dfa10 R08: fffffbfff13b3b9d R09: fffffbfff13b3b9c
+kobject: 'loop0' (00000000d690b7fc): kobject_uevent_env
+kobject: 'loop0' (00000000d690b7fc): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (000000003dffde6d): kobject_uevent_env
+kobject: 'loop3' (000000003dffde6d): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+hfs: can't find a HFS filesystem on dev loop3
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000d690b7fc): kobject_uevent_env
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000d690b7fc): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (000000006d980c29): kobject_uevent_env
+kobject: 'loop4' (00000000b75a0f1d): kobject_uevent_env
+kobject: 'loop2' (000000006d980c29): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (00000000b75a0f1d): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+hfs: can't find a HFS filesystem on dev loop5
+kobject: 'loop3' (000000003dffde6d): kobject_uevent_env
+R10: ffff8801871df960 R11: ffffffff89d9dce3 R12: 1ffff10030e3bf31
+kobject: 'loop3' (000000003dffde6d): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+R13: 0000000000000000 R14: 00000000000003ff R15: ffff8801bca00a40
+kobject: 'loop3' (000000003dffde6d): kobject_uevent_env
+hfs: can't find a HFS filesystem on dev loop2
+kobject: 'loop3' (000000003dffde6d): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+FS:  00007f99bde19700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+kobject: 'loop0' (00000000d690b7fc): kobject_uevent_env
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kobject: 'loop2' (000000006d980c29): kobject_uevent_env
+kobject: 'loop0' (00000000d690b7fc): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop2' (000000006d980c29): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+CR2: 00000000004c4d0a CR3: 00000001bed0c000 CR4: 00000000001406e0
+kobject: 'loop3' (000000003dffde6d): kobject_uevent_env
+kobject: 'loop3' (000000003dffde6d): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kobject: 'loop5' (000000003fdcc2a7): kobject_uevent_env
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kobject: 'loop5' (000000003fdcc2a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
