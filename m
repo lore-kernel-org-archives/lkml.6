@@ -2,100 +2,84 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14BCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8668EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D7AC20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:23:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Zc3CsACo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D7AC20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 570FB20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:23:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 570FB20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731380AbeKHBy4 (ORCPT
+        id S1731399AbeKHBzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:54:56 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38488 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbeKHByz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:54:55 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q186-v6so15268851ljb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 08:23:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SfqKMeqoPfXjyVhqROAYvGYhkqC401xIrTMJMJp/Svw=;
-        b=Zc3CsACoDNWsCeeqrk6Hb4Hrfhn+oPeA5JExHi9dL1JQ4Xzeg4INE5uoaaot4MNeVh
-         H2v/qrDNVfu2jS+fIH8azS5/eEicjg3yu9ldy1h1JAmJ4cpRepX0CQi8Lr2BYlGMxhkR
-         dmyADIpp5XCBPg4PP297/Sv23HoS3x1neDsQvgbWfvX+HmMvbshULq3NRVGTIo2iwaOK
-         Lq13wpeOVaO8OdtO/ZQ30M5OeHvACz/YR8V2ERTOxtJKttyat8TJ0TJBqQUKjYmpWd40
-         g67W2pcBKRbmTeJ5N4QyHwyOHf3lwWX8qB4UudkJ8mMSVnndrky4bLiZIm84CpDc6q+q
-         V90g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SfqKMeqoPfXjyVhqROAYvGYhkqC401xIrTMJMJp/Svw=;
-        b=KNHZYOzgjPYUbzR2sD7l/Y5jTp7jYKRWCHv3Ilv7DykUiezCgjVQ7MMurTkysrD0B3
-         q2qWi1u+v6pzP6N52gKgqWcSdXS1uwdgsDU4HcSJrXbtv1IiOsqCvyDD2dpbd6zc0yoX
-         i56qrEl9FwedwaGgRJzURHmB7yvRNinEoNZ/ruPrjMxYwIrQ1F/D8FCExRfXhUr+GzL+
-         CCwSVKPpHgfH58x/7mWffBOYviuVxHmKjIgukDIqjinYkHvey15po9DGIyQMENyvZ7l+
-         ckH+W0W5/Q8WKqXPrfr7gwveNr+PIh+czWEhy3Vx46PE2behOBrgBH9XsW9K0DFD0X3q
-         Fy6A==
-X-Gm-Message-State: AGRZ1gL+u+1q10yRkoPYtdUtkPSGN0POu7kJ+emn1Auk9T0RI9LeQKmO
-        hTp5w+fRBFj1tsq8/8oYLFGij76D8u7FnEuq3EmKgw==
-X-Google-Smtp-Source: AJdET5ejDC75lp+dS4hvFc2qbbHH1e7+Mm5otyzgjoEU9JTXpPqn0NmtpwsVR4w1zaItjNy5p9+z34OY/Wfn7uEcdPo=
-X-Received: by 2002:a2e:350e:: with SMTP id z14-v6mr549125ljz.49.1541607830569;
- Wed, 07 Nov 2018 08:23:50 -0800 (PST)
+        Wed, 7 Nov 2018 20:55:00 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35209 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727546AbeKHBzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 20:55:00 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1C910224CD; Wed,  7 Nov 2018 17:23:55 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E6DEF20712;
+        Wed,  7 Nov 2018 17:23:54 +0100 (CET)
+Date:   Wed, 7 Nov 2018 17:23:54 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Xulin Sun <xulin.sun@windriver.com>
+Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xulinsun@gmail.com
+Subject: Re: [PATCH] rtc: pcf2127: fix a kmemleak caused in
+ pcf2127_i2c_gather_write
+Message-ID: <20181107162354.GE21694@piout.net>
+References: <1541493739-85733-1-git-send-email-xulin.sun@windriver.com>
 MIME-Version: 1.0
-References: <CAOesGMi-vkYPDrL2drJ70zf3_xTMWrsfPoW68TkiRJCj8uWBLg@mail.gmail.com>
- <20181107144516.4587-1-aryabinin@virtuozzo.com>
-In-Reply-To: <20181107144516.4587-1-aryabinin@virtuozzo.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 7 Nov 2018 08:23:38 -0800
-Message-ID: <CAOesGMgHxsgRcc6BvWFztZ6ypK6bxrh8CNsXRUusx=iL7TH0vA@mail.gmail.com>
-Subject: Re: [PATCH v2] ubsan: don't mark __ubsan_handle_builtin_unreachable
- as noreturn
-To:     aryabinin@virtuozzo.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541493739-85733-1-git-send-email-xulin.sun@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 6:45 AM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> gcc-8 complains about the prototype for this function:
->
-> lib/ubsan.c:432:1: error: ignoring attribute 'noreturn' in declaration of a built-in function '__ubsan_handle_builtin_unreachable' because it conflicts with attribute 'const' [-Werror=attributes]
->
-> This is actually a GCC's bug. In GCC internals
-> __ubsan_handle_builtin_unreachable() declared with both 'noreturn' and
-> 'const' attributes instead of only 'noreturn':
->    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84210
->
-> Workaround this by removing the noreturn attribute.
->
-> [aryabinin: Add information about GCC bug in changelog]
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+On 06/11/2018 16:42:19+0800, Xulin Sun wrote:
+> pcf2127_i2c_gather_write() allocates memory as local variable
+> for i2c_master_send(), after finishing the master transfer,
+> the allocated memory should be freed. The kmemleak is reported:
+> 
+> unreferenced object 0xffff80231e7dba80 (size 64):
+>   comm "hwclock", pid 27762, jiffies 4296880075 (age 356.944s)
+>   hex dump (first 32 bytes):
+>     03 00 12 03 19 02 11 13 00 80 98 18 00 00 ff ff ................
+>     00 50 00 00 00 00 00 00 02 00 00 00 00 00 00 00 .P..............
+>   backtrace:
+>     [<ffff000008221398>] create_object+0xf8/0x278
+>     [<ffff000008a96264>] kmemleak_alloc+0x74/0xa0
+>     [<ffff00000821070c>] __kmalloc+0x1ac/0x348
+>     [<ffff0000087ed1dc>] pcf2127_i2c_gather_write+0x54/0xf8
+>     [<ffff0000085fd9d4>] _regmap_raw_write+0x464/0x850
+>     [<ffff0000085fe3f4>] regmap_bulk_write+0x1a4/0x348
+>     [<ffff0000087ed32c>] pcf2127_rtc_set_time+0xac/0xe8
+>     [<ffff0000087eaad8>] rtc_set_time+0x80/0x138
+>     [<ffff0000087ebfb0>] rtc_dev_ioctl+0x398/0x610
+>     [<ffff00000823f2c0>] do_vfs_ioctl+0xb0/0x848
+>     [<ffff00000823fae4>] SyS_ioctl+0x8c/0xa8
+>     [<ffff000008083ac0>] el0_svc_naked+0x34/0x38
+>     [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
+> ---
+>  drivers/rtc/rtc-pcf2127.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Acked-by: Olof Johansson <olof@lixom.net>
+Applied, thanks.
 
-While it's a GCC bug, it's there in official releases now and it makes
-warnings noisy so we'd rather silence it.
-
-
--Olof
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
