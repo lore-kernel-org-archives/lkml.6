@@ -2,157 +2,136 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422BFC46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977FDC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A49521019
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:33:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy3JG1yB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A49521019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4AA9E21019
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA9E21019
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dustymabe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbeKHHFx (ORCPT
+        id S1727681AbeKHHGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:05:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbeKHHFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:05:53 -0500
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63429214ED
-        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 21:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541626418;
-        bh=hvLBQpJ2OwXKnAmpdMVYLj6GfhGWq9W9fxjGiXCAvJE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hy3JG1yBbo4AP9kEOWHEhb74PNmsQN6/3y6ONHnDu9iTujazePlXCP5Rt+6x1unyw
-         1WSN9zFwut2woXHeOKAe/SG8Bk7N3trT+BpunucHHe8ASaCOBmvrUK8FSuerL1xpJz
-         THcv5Q7koP6zvGQAIg0Ahzx/vMPijFiC6iqdDPII=
-Received: by mail-wm1-f41.google.com with SMTP id t15-v6so9255221wmt.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 13:33:38 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLdIwuCdcDyVwXXtwFvb161R117aIGtuaubgkDMIOS1W17HSJYR
-        /JpFdEzWO8DSQSMX9foOrwqi/ZRhxa72zF17v+k5sQ==
-X-Google-Smtp-Source: AJdET5cNhoBuXZl0Bt9qfaABBFsghLShww0atZ1WUB54WhnqPg1bHR7yR70zshinqwRdaGhe2jlb2CoHvK1LfsNG0wI=
-X-Received: by 2002:a1c:2b45:: with SMTP id r66-v6mr1535101wmr.128.1541626416636;
- Wed, 07 Nov 2018 13:33:36 -0800 (PST)
+        Thu, 8 Nov 2018 02:06:21 -0500
+Received: from p3plsmtpa11-08.prod.phx3.secureserver.net ([68.178.252.109]:35007
+        "EHLO p3plsmtpa11-08.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727162AbeKHHGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 02:06:21 -0500
+Received: from [10.13.137.180] ([66.187.233.202])
+        by :SMTPAUTH: with ESMTPSA
+        id KVSfgymtq2ievKVSfg6e60; Wed, 07 Nov 2018 14:34:06 -0700
+Subject: Re: multiplexing /dev/console to all console= entries
+To:     Jiri Slaby <jslaby@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+References: <46b26403-395b-6a3c-ea6e-c3c811fdc400@dustymabe.com>
+ <955a0492-bab0-59d3-d01d-bea096c6e40f@suse.cz>
+From:   Dusty Mabe <dusty@dustymabe.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dusty@dustymabe.com; prefer-encrypt=mutual; keydata=
+ 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
+ Kty3FMtMZAdKH0x1RSq0iXM=
+Message-ID: <81094a73-c277-99cd-190b-37c25db5f7ab@dustymabe.com>
+Date:   Wed, 7 Nov 2018 16:34:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <20181106231730.GR5150@brightrain.aerifal.cx> <20181106232616.GA11101@linux.intel.com>
- <20181107212758.GU5150@brightrain.aerifal.cx>
-In-Reply-To: <20181107212758.GU5150@brightrain.aerifal.cx>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 7 Nov 2018 13:33:24 -0800
-X-Gmail-Original-Message-ID: <CALCETrUh4TkgTPjoaLaT-TjD9JuPhPrLbpGdB8C95R0a+rexww@mail.gmail.com>
-Message-ID: <CALCETrUh4TkgTPjoaLaT-TjD9JuPhPrLbpGdB8C95R0a+rexww@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To:     Rich Felker <dalias@libc.org>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <955a0492-bab0-59d3-d01d-bea096c6e40f@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfL/UnXKPBTLaAm8RZWRstRpI/yfWb5XexbzTt8c53JSKY3+o6L7SMsWj74vlqdux3MNQJGWYNc1HnwSQbCdh09goZUYcICH759oDg6NK7Kp/jywYq4C/
+ 8UnlzFrPGwqdEdyg01uhLrQvg08q11B47+mD29Cet17Si7vSxmIDxFiSy1G0Ptbx8sR+k1ewvHLf8xJOZS8XCz9ZvVkkA62OxlIUr8zTR5bqyy2WwoD6bt6s
+ 9WTVARyzlp6onHeaIUo/yg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 1:28 PM Rich Felker <dalias@libc.org> wrote:
->
-> On Tue, Nov 06, 2018 at 03:26:16PM -0800, Sean Christopherson wrote:
-> > On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
-> > > On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
-> > > > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
-> > > > >
-> > > > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > > > > > I almost feel like the right solution is to call into SGX on its own
-> > > > > > private stack or maybe even its own private address space.
-> > > > >
-> > > > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> > > > > enclave like its own "thread" with its own stack and its own set of
-> > > > > registers and context?  That seems like a much more workable model than
-> > > > > trying to weave it together with the EENTER context.
-> > > >
-> > > > So maybe the API should be, roughly
-> > > >
-> > > > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-> > > > host_state *state);
-> > > > sgx_exit_reason_t sgx_resume_enclave(same args);
-> > > >
-> > > > where host_state is something like:
-> > > >
-> > > > struct host_state {
-> > > >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
-> > > > };
-> > > >
-> > > > and the values in host_state explicitly have nothing to do with the
-> > > > actual host registers.  So, if you want to use the outcall mechanism,
-> > > > you'd allocate some memory, point sp to that memory, call
-> > > > sgx_enter_enclave(), and then read that memory to do the outcall.
-> > > >
-> > > > Actually implementing this would be distinctly nontrivial, and would
-> > > > almost certainly need some degree of kernel help to avoid an explosion
-> > > > when a signal gets delivered while we have host_state.sp loaded into
-> > > > the actual SP register.  Maybe rseq could help with this?
-> > > >
-> > > > The ISA here is IMO not well thought through.
-> > >
-> > > Maybe I'm mistaken about some fundamentals here, but my understanding
-> > > of SGX is that the whole point is that the host application and the
-> > > code running in the enclave are mutually adversarial towards one
-> > > another. Do any or all of the proposed protocols here account for this
-> > > and fully protect the host application from malicious code in the
-> > > enclave? It seems that having control over the register file on exit
-> > > from the enclave is fundamentally problematic but I assume there must
-> > > be some way I'm missing that this is fixed up.
-> >
-> > SGX provides protections for the enclave but not the other way around.
-> > The kernel has all of its normal non-SGX protections in place, but the
-> > enclave can certainly wreak havoc on its userspace process.  The basic
-> > design idea is that the enclave is a specialized .so that gets extra
-> > security protections but is still effectively part of the overall
-> > application, e.g. it has full access to its host userspace process'
-> > virtual memory.
->
-> In that case it seems like the only way to use SGX that's not a gaping
-> security hole is to run the SGX enclave in its own fully-seccomp (or
-> equivalent) process, with no host application in the same address
-> space. Since the host application can't see the contents of the
-> enclave to make any determination of whether it's safe to run, running
-> it in the same address space only makes sense if the cpu provides
-> protection against unwanted accesses to the host's memory from the
-> enclave -- and according to you, it doesn't.
->
 
-I think the theory is that the enclave is shipped with the host application.
 
-That being said, a way to run the enclave in an address space that has
-basically nothing else (except an ENCLU instruction as a trampoline)
-would be quite nice.
+On 11/7/18 4:03 AM, Jiri Slaby wrote:
+> On 05. 11. 18, 2:45, Dusty Mabe wrote:
+>> If a patch were submitted to enable this type of behavior would such a
+>> patch be acceptable? Maybe it could be a compile time option and also
+>> have a kernel arg option to enable/disable it.
+> 
+> Hi,
+> 
+> it might kill the system on some setups where people specify more serial
+> (or similarly slow consoles). Output to some console is so slow that the
+> system does nothing else than writing to the consoles. What might work
+> as the first step to check it out is adding a flag to the console=
+> option which would mark a console as a /dev/console device too and
+> multiplex only those specified by the user. Then let's see how it goes
+> with userspace logging out in the wild...
+> 
+
+Thanks Jiri!
+
+I think that seems reasonable. Do you have a good idea of what you'd like it
+to look like? Some options
+
+- console=ttyS0,primary
+- console=ttyS0,mux
+- console=ttyS0+
+- consolex=ttyS0
+
+These are ideas. Bad ones, probably. But just throwing out ideas. 
+
+Dusty
