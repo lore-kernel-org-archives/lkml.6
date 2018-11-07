@@ -2,87 +2,131 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFDCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8052C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B2320883
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DDAC20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:12:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pbzZO34k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B2320883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="eUjygNn9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DDAC20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbeKGVlk (ORCPT
+        id S1727579AbeKGVnE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:41:40 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58946 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeKGVlj (ORCPT
+        Wed, 7 Nov 2018 16:43:04 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:39538 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeKGVnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:41:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FsAUNDwhbnLrJJRn1c3CpMgWLoumr1Q/EjqsG1h7o2A=; b=pbzZO34k4T1rQz3XiCdyPu39N
-        IWC7rDmIcIvZyaLTU97ocefO6hzf+UbJ3UF/FOMGdYxCzPp0T/K2vqotQlmn5eBC/1ClNqwqnj9eW
-        KBLcKZjWdcBERlUq5mNw0TTRJVZgFP/f+R0Xih7hkQ43DpfH98itZYB+pNeevNc36+8DPsrUJf0cw
-        aQqCOV9RI4KkrTSg99zyEXMwBHlHWR4iZM2y8N29fB6Cut3vgqgmOHgiVk7Tobb8wLtJDmKWrkQDT
-        K+ohBT9uRaN17Ny2VUKlR9HxhBMWgu41zKK1cl/bSKZAn65Jj9uqU/GCzjbMSS5gZ8izlaQKW3zDH
-        1cID3+u0w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKMgC-0005UR-17; Wed, 07 Nov 2018 12:11:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2ABEA20284F94; Wed,  7 Nov 2018 13:11:26 +0100 (CET)
-Date:   Wed, 7 Nov 2018 13:11:26 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v5 02/15] sched/core: make sched_setattr able to tune the
- current policy
-Message-ID: <20181107121126.GN9781@hirez.programming.kicks-ass.net>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-3-patrick.bellasi@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029183311.29175-3-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 7 Nov 2018 16:43:04 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6AD6624E08C0;
+        Wed,  7 Nov 2018 04:12:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1541592777; bh=yR843m6vL0pXhhayWnDu07VSpOEDMWpoF12HcchvL1k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eUjygNn9uBfN4I07ttFrd2Z+hpRhLSyfSygkcREKcfamFZeVoUMdiasE4IkYeHys7
+         Ya/D9LNLzyQRG67ra+VC3rysO6E+wFE+UgfKDqNLgBDAX22JrHPEO91QMlSnIso2li
+         L5Qg7b7k3Nz1nzpPd1cEDP4plP0p1spDP29CeEFTXSe5jMS7LcZvMwDwOfOCOG1Wvr
+         qVQ9HMy6SDQjdyh3taqjKooEtP56AQI5IKnpdQk/hnnLWn1kZVWpDYu1DXFFjZm7eZ
+         qGEKYRBPX4K6tFV9DMrBETHOehkzk4+Pe2Zq+Q0ejz5aIfYl7un8ON4q8ZAJbL+/iO
+         4xuK+3ldB0MBw==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A9E163AB5;
+        Wed,  7 Nov 2018 04:12:53 -0800 (PST)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-arch@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] ARC: MM: fix UB and kernel resourse leak in do_page_fault
+Date:   Wed,  7 Nov 2018 15:12:49 +0300
+Message-Id: <20181107121249.6657-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 06:32:56PM +0000, Patrick Bellasi wrote:
+Commit 15773ae938d8 ("signal/arc: Use force_sig_fault where
+appropriate") adds undefined behaviour and kernel resource leak
+to userspace in ARC do_page_fault() implementation.
 
-> @@ -50,11 +52,13 @@
->  #define SCHED_FLAG_RESET_ON_FORK	0x01
->  #define SCHED_FLAG_RECLAIM		0x02
->  #define SCHED_FLAG_DL_OVERRUN		0x04
-> -#define SCHED_FLAG_UTIL_CLAMP		0x08
-> +#define SCHED_FLAG_TUNE_POLICY		0x08
-> +#define SCHED_FLAG_UTIL_CLAMP		0x10
+This happens because we don't initialize si_code variable after we
+switch to force_sig_fault using. si_code (as a part of siginfo_t
+structure) was previously initialized by clear_siginfo(&info) call
+which was removed.
 
-That seems to suggest you want to do this patch first, but you didn't..
+Undefined behaviour path:
+-------------------->8---------------------------
+}}} a/arch/arc/mm/fault.c
+!! -67,6 +67,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+        struct task_struct *tsk = current;
+        struct mm_struct *mm = tsk->mm;
++       /// >>> si_code - uninitialized
+        int si_code;
+        int ret;
+        vm_fault_t fault;
+        int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+!! -81,8 +82,10 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+         * only copy the information from the master page table,
+         * nothing more.
+         */
++       /// >>> take true branch
+        if (address >= VMALLOC_START) {
+                ret = handle_kernel_vaddr_fault(address);
++               /// >>> take true branch
+                if (unlikely(ret))
++                       /// >>> jump to label "bad_area_nosemaphore"
+                        goto bad_area_nosemaphore;
+                else
+!! -193,10 +196,13 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ bad_area:
+        up_read(&mm->mmap_sem);
+
++       /// >>> reach label "bad_area_nosemaphore"
+ bad_area_nosemaphore:
+        /* User mode accesses just cause a SIGSEGV */
++       /// >>> take true branch
+        if (user_mode(regs)) {
+                tsk->thread.fault_address = address;
++               /// >>> Ooops:
++               /// >>> use uninitialized value "si_code"
++               /// >>> when calling "force_sig_fault"
+                force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
+                return;
+        }
+-------------------->8---------------------------
+
+Fixes: 15773ae938d8 ("signal/arc: Use force_sig_fault where appropriate")
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index c9da6102eb4f..e2d9fc3fea01 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	struct vm_area_struct *vma = NULL;
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+-	int si_code;
++	int si_code = 0;
+ 	int ret;
+ 	vm_fault_t fault;
+ 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+-- 
+2.14.5
+
