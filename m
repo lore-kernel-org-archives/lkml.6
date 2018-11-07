@@ -2,330 +2,254 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBE6C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 069C4C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7C92086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oLcckoRa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7C92086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F03F2086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:12:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F03F2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeKGTji (ORCPT
+        id S1728502AbeKGTmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:39:38 -0500
-Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:4671
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726411AbeKGTjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:39:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2U9bTI06bt+YUlAqIRHbFrMn8xSfemDHPNYsvSM4Il0=;
- b=oLcckoRab2RsyFciBHHO8ZMMbbvvx9l6ZULRQIGRzO4AeHZ29N3yrAzzrRbS+CEPSkXLcaX6kaXuhCuxlwFn/epDt5KMTcgYkgxr1nYXQPSRf9pnPiRNjjK2KZXflc4vybRMDtNR8z6OdhWmSyaiQ8+Yz+QC9nYbast1qh62J8Y=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
- AM6PR04MB5224.eurprd04.prod.outlook.com (20.177.35.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 7 Nov 2018 10:09:21 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::7d93:8053:57fd:1a00]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::7d93:8053:57fd:1a00%3]) with mapi id 15.20.1273.035; Wed, 7 Nov 2018
- 10:09:21 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
-CC:     Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv2 4/4] PCI: dwc: add prefetchable memory range support
-Thread-Topic: [PATCHv2 4/4] PCI: dwc: add prefetchable memory range support
-Thread-Index: AQHUdoHzO92qDxmIZkykN3HwHZxeDg==
-Date:   Wed, 7 Nov 2018 10:09:21 +0000
-Message-ID: <20181107100854.28389-5-Zhiqiang.Hou@nxp.com>
-References: <20181107100854.28389-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181107100854.28389-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR04CA0023.apcprd04.prod.outlook.com
- (2603:1096:203:36::35) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:aa::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB5224;6:apE9Sd9R3v87v81SY+ZBMv4f/xYIAssvGz8KUCBV80URINUosd8GyrkhpLFtd0FGUYslgJYxV29h3bBgpiJUZoWW7Km3ABX7RAXwYGwdAi2JtwEVIVwS2wehKAglDEnmY9AZuBLDM2wPPIur4dMirA+japOZtd4rDE9WYNss6PwlRXtSDnUXw92l0q4yvX2xwGvDZqMC2cSnpk+zg2yKoePLzfjvPiIX5b/kdeXh9w4x7c7P92rVGhxElT4atGJQiHJiw/SdG1huLmRDeVsSAG1p8OJZximvYeis6angZnKLX/GxU38Yjrig3nlQv/v+xtsHj0bK+HpGNikMTVHHqQp8lg4U21eYip0hhYdE0zuSWY+Sm/DZjHa6p8lZH17L+bT7pPDzzSIYcVU3RGrJ9MCJZz1lwoZ35wCK3W1G36+Whf2DuCnHy4M4n4IevK87rQk4eM4TG17yUnSb7nBwfA==;5:PCqbum8TRHPub+l1TI52AbWOB0V7wLyPNtnoolO1l4ychpVr9D5Nl55zial83Q7+C48NTuhGqK3v1Zn7EhQwdZcWIQZ2D4n4yXJs1NqoZd1MSrMhgjlTzpRxMJ2hJFYHjj8PDBzDHpwBFtesRU8V2qdloi7Io/LKu1uwqQFJ31w=;7:dwOdsYHqgZFr9NHqomjbutqZ9A2GVtfjIKC4pS1CzlHOKMniveUBLaA9W7r9dKayMARpBf9X2F6HTzdkLlDAxRI75IBuJCwqgojEuHZKfW1jrIlG5al7J0bafWXHegvdNJlv3QuqXYo5gqnOJWjRkA==
-x-ms-office365-filtering-correlation-id: 32705812-5318-4915-c0ee-08d644991607
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5224;
-x-ms-traffictypediagnostic: AM6PR04MB5224:
-x-microsoft-antispam-prvs: <AM6PR04MB5224A0827F2C9216CCE7881884C40@AM6PR04MB5224.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5224;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5224;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39860400002)(376002)(346002)(189003)(199004)(71200400001)(71190400001)(39060400002)(5660300001)(305945005)(2501003)(25786009)(386003)(6506007)(6116002)(3846002)(102836004)(1076002)(8936002)(68736007)(81166006)(97736004)(81156014)(256004)(14444005)(2906002)(99286004)(186003)(66066001)(76176011)(52116002)(26005)(86362001)(54906003)(2201001)(6436002)(316002)(2900100001)(8676002)(446003)(53936002)(2616005)(486006)(11346002)(105586002)(478600001)(36756003)(106356001)(476003)(14454004)(7736002)(6512007)(110136005)(4326008)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5224;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 2YjS3ID+xvPQCwTPsdRWANl2sHSZtfwvl7FcqSWSM6Ui3vvyypkoFlLErDySbM5axd3RvkRM0/eDKkw53rijE3Pk7j4d85i4uB0rH9j7nH0wHRuZgjQVGn/dcH17Y/4DroRltrwPPAKc4pToT1JfQRer9YYgIr7JVxosDzbxAixDitQjJT0EHjR43gyHBkvSfZbLtlKMGl7q5Sap00BcaBrgBU57p/Zc4ugHhz8rC4Jv05xLixOAGmUXF1zszHM8n1/yFpPemCcUr3ZPNzSH27GITV9pph8i7YKtOwYLcz1f6611xzmKIHiefbHaVjmrOb6/3xtM/93NVTl0RY8YPsY+/kuMZQ5eMkZeH5+LISU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 7 Nov 2018 14:42:04 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33065 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeKGTmD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:42:03 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f19-v6so11019978wmb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:12:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4OgvPrY1caCfnNCJvRr2OXxnlIinYS+l/rgyw+UWyTw=;
+        b=OLye7cS5oq04PTBKAZ+t/nWtGXBg2ytO6uyOeqV5096Pvwhlhzk7cxl/FTBauV8kim
+         1ehqZvlUE7rjrVUkhZESbRqWLKimNoz1sXPs9TE74lhMjwcwfIxfgHdnVRZTEuJUwK9G
+         MgMKTewZihwgaZoHCOFvfUibP13e9NnWL+jLU8YISUaGq+sgA3ZbeK+aQ/R1HL16rmbh
+         ynrIwBXtwrxhuvUbKsdDFcnBypnrXg377uMElR7vtADv8LGQ3H8XFIzsVWoIzRogwwE/
+         9M/AFN4KFW1OgcG4ixE54/Pj+Q2NXn7gDy1kFdy8/kb06ebALAOAgTMdGlHdl2Q52qbi
+         347w==
+X-Gm-Message-State: AGRZ1gJUQbiu+rVjmJe3AiNsHjIkMLB5J0unZE2CPybd50Us0CzfXpUK
+        gdBLOPdpzWvzUcUJYbV6ciQWkg==
+X-Google-Smtp-Source: AJdET5ezyxD/JLzpPRr0jclNHr1BjVMJWLpXreVxoKkygfNKNFxuNLreKZ8sHa6SZjdYV2jwlvKzrg==
+X-Received: by 2002:a1c:a8c:: with SMTP id 134-v6mr1431182wmk.81.1541585539776;
+        Wed, 07 Nov 2018 02:12:19 -0800 (PST)
+Received: from t460s.bristot.redhat.com ([87.18.205.191])
+        by smtp.gmail.com with ESMTPSA id g1-v6sm876118wmg.2.2018.11.07.02.12.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 02:12:19 -0800 (PST)
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: INFO: rcu detected stall in do_idle
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     luca abeni <luca.abeni@santannapisa.it>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juri Lelli <juri.lelli@gmail.com>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com, henrik@austad.us,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>
+References: <20181019113942.GH3121@hirez.programming.kicks-ass.net>
+ <20181019225005.61707c64@nowhere>
+ <20181024120335.GE29272@localhost.localdomain>
+ <20181030104554.GB8177@hirez.programming.kicks-ass.net>
+ <20181030120804.2f30c2da@sweethome>
+ <2942706f-db18-6d38-02f7-ef21205173ca@redhat.com>
+ <20181031164009.GM18091@localhost.localdomain>
+ <027899c5-c5ca-b214-2a87-abe17579724a@redhat.com>
+ <20181101055512.GO18091@localhost.localdomain>
+ <1bf857dc-d6ac-e505-82bd-dd28449d3a60@redhat.com>
+ <20181105105538.GQ18091@localhost.localdomain>
+Message-ID: <340703c1-56ae-cd13-60ec-9f727ac28705@redhat.com>
+Date:   Wed, 7 Nov 2018 11:12:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32705812-5318-4915-c0ee-08d644991607
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 10:09:21.3178
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5224
+In-Reply-To: <20181105105538.GQ18091@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On 11/5/18 11:55 AM, Juri Lelli wrote:
+> On 02/11/18 11:00, Daniel Bristot de Oliveira wrote:
+>> On 11/1/18 6:55 AM, Juri Lelli wrote:
+>>>> I meant, I am not against the/a fix, i just think that... it is more complicated
+>>>> that it seems.
+>>>>
+>>>> For example: Let's assume that we have a non-rt bad thread A in CPU 0 generating
+>>>> IPIs because of static key update, and a good dl thread B in the CPU 1.
+>>>>
+>>>> In this case, the thread B could run less than what was reserved for it, but it
+>>>> was not causing the interrupts. It is not fair to put a penalty in the thread B.
+>>>>
+>>>> The same is valid for a dl thread running in the same CPU that is receiving a
+>>>> lot of network packets to another application, and other legit cases.
+>>>>
+>>>> In the end, if we want to avoid non-rt threads starving, we need to prioritize
+>>>> them some time, but in this case, we return to the DL server for non-rt threads.
+>>>>
+>>>> Thoughts?
+>>> And I see your point. :-)
+>>>
+>>> I'd also add (maybe you mentioned this as well) that it seems the same
+>>> could happen with RT throttling safety measure, as we are using
+>>> clock_task there as well to account runtime and throttle stuff.
+>>
+>> Yes! The same problem can happen with rt scheduler as well! I saw this problem
+>> first with the rt throttling mechanism when I was trying to make it work in the
+>> microseconds granularity (it is only enforced in the schedule tick, so it is in
+>> an ms granularity in practice). After using hr timers to do the enforcement in
+>> the microseconds granularity, I was trying to let just fewer us for the non-rt.
+>> But as the IRQ runtime was higher than these fewer us, the rt_rq was never
+>> throttled. It is the same/similar behavior we see here.
+>>
+>> As we think in the rt throttling as "avoiding rt workload to consume more than
+>> rt_runtime/rt_period", and considering that IRQs are a level of task with a
+>> fixed priority higher than all the real-time related schedulers, i.e., deadline
+>> and rt, we can safely argue that we can consider the IRQ time into the pool of
+>> rt workload and account it in the rt_runtime. The easiest way to do it is to use
+>> the rq_clock() in the measurement. I agree.
+>>
+>> The point is that the CBS has a dual goal: it avoids a task running for more
+>> than its runtime (a throttling behavior), but it also is used as a guarantee of
+>> runtime for the case in which the task behaves, and the system is not
+>> overloaded. Considering we can have more load than we can schedule in a
+>> multiprocessor - but that is another story.
+>>
+>> The the obvious reasoning here is: Ok boy, but the system IS overloaded in this
+>> case, we have a RCU stall! And that is true if you look at the processor
+>> starving RCU. But if the system has mode than one CPU, it could have CPU time
+>> available in another CPU. So, we could just move the dl task from one CPU to
+>> another.
+> 
+> Mmm, only that in this particular case I believe IRQ load will move
+> together with the migrating task and problem won't really be solved. :-/
 
-The current code only support non-prefetchable memory range,
-as the non-prefetchable memory range must not be greater than
-4GiB, one viewport can cover it, which supports upto 4GiB.
+The thread would move to another CPU. Allowing the (pinned) non-rt tasks to have
+time to run. Later, the bad dl task would be able to return, to avoid the
+problem of the deadline task doing the wrong thing in the other CPU. In this
+way, non-rt threads would be able to run, avoiding RCU stall/softlockup.
 
-To support prefetchable memory range, which is upto 64-bit
-memory space and can be greater than 4GiB, so we need multiple
-viewports. And added separate vars to store prefetchable memory
-range info to prevent overriding the non-prefetchable memory
-range info.
+That is the idea of the rt throttling.
 
-And this patch explicitly assigned the last (if there are only
-2 viewports) or last 2 viewports for CFG and I/O windows and the
-rests for MEM windows.
+>> Btw, that is another point. We have the AC with the sum of the utilization of
+>> all CPUs. But we do no enforcement for per-cpu utilization. If one set a single
+>> thread with runtime=deadline=period  (in a system with more than one CPU), and
+>> run in a busy-loop, we will eventually have an RCU stall as well (I just did on
+>> my box, I got a soft lockup). I know this is a different problem. But, maybe,
+>> there is a general solution for both issues:
+> 
+> This is true. However, the single 100% bandwidth task problem can be
+> solved by limiting the maximum bandwidth a single entity can ask for. Of
+> course we can get again to a similar sort of problem if multiple
+> entities are then co-scheduled on the same CPU, for which we would need
+> (residual) capacity awareness. This should happen less likely though, as
+> there is a general tendency to spread tasks.
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
----
-V2:
- - Reworded the subject and commit description.
- - Fix the prefetchable memory range overriding non-perfetchable
-   memory range issue by adding vars to store prefetchable memory
-   range info.
+Limiting the U of a task does not solve the problem. Moreover, a U = 1 task is
+not exactly a problem, if the proper way to avoid the starvation of non-rt
+thread exists. A U = 1 task can exist without causing damage by moving the
+thread between two CPUs, for instance. I know this is very controversial, but
+there are many use cases for it. For instance, NFV polling to NIC,
+high-frequency trading -rt-users use polling mechanism as well (the discussion
+of whether it is right or wrong is another chapter). In practice, these cases
+are a significant part of -rt-users.
 
- .../pci/controller/dwc/pcie-designware-host.c | 107 ++++++++++++++----
- drivers/pci/controller/dwc/pcie-designware.h  |   7 ++
- 2 files changed, 95 insertions(+), 19 deletions(-)
+Still, the problem can happen even if you limit the U per task. You just need
+two U = 0.5 tasks to fulfill the CPU. The global scheduler tends to spread the
+load (because it migrates the threads very often), I agree. But the problem can
+happen, and it will, sooner or later it always happens.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pc=
-i/controller/dwc/pcie-designware-host.c
-index ecacce016489..328aa40a6609 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -346,6 +346,35 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		dev_err(dev, "Missing *config* reg space\n");
- 	}
-=20
-+	/*
-+	 * If vendor's platform driver has set the num_viewport and it is
-+	 * not less than 2, skip getting the num_viewport from DT here.
-+	 */
-+	if (pci->num_viewport < 2) {
-+		ret =3D of_property_read_u32(np, "num-viewport",
-+					   &pci->num_viewport);
-+		if (ret || pci->num_viewport < 2)
-+			pci->num_viewport =3D 2;
-+	}
-+
-+	/*
-+	 * if there are only 2 viewports, assign the last viewport for
-+	 * both CFG and IO window, otherwise assign the last 2 viewport
-+	 * for CFG and IO window specific. And the rest viewports are
-+	 * assigned to MEM windows.
-+	 */
-+	if (pci->num_viewport =3D=3D 2) {
-+		pp->cfg_idx =3D pp->io_idx =3D PCIE_ATU_REGION_INDEX1;
-+		pp->mem_wins =3D 1;
-+	} else {
-+		pp->cfg_idx =3D pci->num_viewport - 1;
-+		pp->io_idx =3D pci->num_viewport - 2;
-+		pp->mem_wins =3D pci->num_viewport - 2;
-+	}
-+
-+	dev_dbg(dev, "CFG win id: %d, I/O win id: %d, Total MEM win: %d\n",
-+		pp->cfg_idx, pp->io_idx, pp->mem_wins);
-+
- 	bridge =3D pci_alloc_host_bridge(0);
- 	if (!bridge)
- 		return -ENOMEM;
-@@ -377,10 +406,20 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 			}
- 			break;
- 		case IORESOURCE_MEM:
--			pp->mem =3D win->res;
--			pp->mem->name =3D "MEM";
--			pp->mem_size =3D resource_size(pp->mem);
--			pp->mem_bus_addr =3D pp->mem->start - win->offset;
-+			if (win->res->flags & IORESOURCE_PREFETCH) {
-+				pp->mem_perf =3D win->res;
-+				pp->mem_perf->name =3D "MEM perf";
-+				pp->mem_perf_size =3D resource_size(pp->mem_perf);
-+				pp->mem_perf_bus_addr =3D pp->mem_perf->start -
-+							win->offset;
-+				pp->mem_perf_base =3D pp->mem_perf->start;
-+			} else {
-+				pp->mem =3D win->res;
-+				pp->mem->name =3D "MEM";
-+				pp->mem_size =3D resource_size(pp->mem);
-+				pp->mem_bus_addr =3D pp->mem->start - win->offset;
-+				pp->mem_base =3D pp->mem->start;
-+			}
- 			break;
- 		case 0:
- 			pp->cfg =3D win->res;
-@@ -406,8 +445,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		}
- 	}
-=20
--	pp->mem_base =3D pp->mem->start;
--
- 	if (!pp->va_cfg0_base) {
- 		pp->va_cfg0_base =3D devm_pci_remap_cfgspace(dev,
- 					pp->cfg0_base, pp->cfg0_size);
-@@ -534,12 +571,12 @@ static int dw_pcie_rd_other_conf(struct pcie_port *pp=
-, struct pci_bus *bus,
- 		va_cfg_base =3D pp->va_cfg1_base;
- 	}
-=20
--	dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
-+	dw_pcie_prog_outbound_atu(pci, pp->cfg_idx,
- 				  type, cpu_addr,
- 				  busdev, cfg_size);
- 	ret =3D dw_pcie_read(va_cfg_base + where, size, val);
--	if (pci->num_viewport <=3D 2)
--		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
-+	if (pp->cfg_idx =3D=3D pp->io_idx)
-+		dw_pcie_prog_outbound_atu(pci, pp->io_idx,
- 					  PCIE_ATU_TYPE_IO, pp->io_base,
- 					  pp->io_bus_addr, pp->io_size);
-=20
-@@ -573,12 +610,12 @@ static int dw_pcie_wr_other_conf(struct pcie_port *pp=
-, struct pci_bus *bus,
- 		va_cfg_base =3D pp->va_cfg1_base;
- 	}
-=20
--	dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
-+	dw_pcie_prog_outbound_atu(pci, pp->cfg_idx,
- 				  type, cpu_addr,
- 				  busdev, cfg_size);
- 	ret =3D dw_pcie_write(va_cfg_base + where, size, val);
--	if (pci->num_viewport <=3D 2)
--		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX1,
-+	if (pp->cfg_idx =3D=3D pp->io_idx)
-+		dw_pcie_prog_outbound_atu(pci, pp->io_idx,
- 					  PCIE_ATU_TYPE_IO, pp->io_base,
- 					  pp->io_bus_addr, pp->io_size);
-=20
-@@ -652,6 +689,9 @@ static u8 dw_pcie_iatu_unroll_enabled(struct dw_pcie *p=
-ci)
- void dw_pcie_setup_rc(struct pcie_port *pp)
- {
- 	u32 val, ctrl, num_ctrls;
-+	u64 remain_size, base, win_size;
-+	phys_addr_t bus_addr;
-+	int i;
- 	struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
-=20
- 	dw_pcie_setup(pci);
-@@ -700,13 +740,42 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 		dev_dbg(pci->dev, "iATU unroll: %s\n",
- 			pci->iatu_unroll_enabled ? "enabled" : "disabled");
-=20
--		dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX0,
--					  PCIE_ATU_TYPE_MEM, pp->mem_base,
--					  pp->mem_bus_addr, pp->mem_size);
--		if (pci->num_viewport > 2)
--			dw_pcie_prog_outbound_atu(pci, PCIE_ATU_REGION_INDEX2,
--						  PCIE_ATU_TYPE_IO, pp->io_base,
--						  pp->io_bus_addr, pp->io_size);
-+		/*
-+		 * The maximum region size is 4 GB, and a region
-+		 * must not cross a 4 GB boundary.
-+		 */
-+		win_size =3D SZ_4G - (pp->mem_base & (SZ_4G - 1));
-+		win_size =3D min(win_size, pp->mem_size);
-+		dw_pcie_prog_outbound_atu(pci, 0, PCIE_ATU_TYPE_MEM,
-+					  pp->mem_base, pp->mem_bus_addr,
-+					  win_size);
-+		dev_dbg(pci->dev,
-+			"iATU: non-pref MEM: win =3D %d: base =3D %llx, bus_addr =3D %pa, size =
-=3D %llx\n",
-+			0, pp->mem_base, &pp->mem_bus_addr, win_size);
-+
-+		/* Prefetchable range can be 64bit space */
-+		remain_size =3D pp->mem_perf_size;
-+		base =3D pp->mem_perf_base;
-+		bus_addr =3D pp->mem_perf_bus_addr;
-+		for (i =3D 1; remain_size > 0 && i < pp->mem_wins; i++) {
-+			win_size =3D SZ_4G - (base & (SZ_4G - 1));
-+			win_size =3D min(win_size, remain_size);
-+			dw_pcie_prog_outbound_atu(pci, i, PCIE_ATU_TYPE_MEM,
-+						  base, bus_addr, win_size);
-+			dev_dbg(pci->dev, "iATU: pref MEM: win =3D %d: base =3D %llx, bus_addr =
-=3D %pa, size =3D %llx\n",
-+				i, base, &bus_addr, win_size);
-+
-+			base +=3D win_size;
-+			bus_addr +=3D win_size;
-+			remain_size -=3D win_size;
-+		}
-+
-+		if (remain_size > 0)
-+			dev_info(pci->dev, "iATU: MEM window isn't enough\n");
-+
-+		dw_pcie_prog_outbound_atu(pci, pp->io_idx, PCIE_ATU_TYPE_IO,
-+					  pp->io_base, pp->io_bus_addr,
-+					  pp->io_size);
- 	}
-=20
- 	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/con=
-troller/dwc/pcie-designware.h
-index a438c3879aa9..0197f67f82b7 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -148,15 +148,22 @@ struct pcie_port {
- 	u64			cfg1_base;
- 	void __iomem		*va_cfg1_base;
- 	u32			cfg1_size;
-+	u32			cfg_idx;
- 	resource_size_t		io_base;
- 	phys_addr_t		io_bus_addr;
- 	u32			io_size;
-+	u32			io_idx;
- 	u64			mem_base;
- 	phys_addr_t		mem_bus_addr;
- 	u64			mem_size;
-+	u64			mem_perf_base;
-+	phys_addr_t		mem_perf_bus_addr;
-+	u64			mem_perf_size;
-+	u32			mem_wins;
- 	struct resource		*cfg;
- 	struct resource		*io;
- 	struct resource		*mem;
-+	struct resource		*mem_perf;
- 	struct resource		*busn;
- 	int			irq;
- 	const struct dw_pcie_host_ops *ops;
---=20
-2.17.1
+>> For instance, if the sum of the execution time of all "task" with priority
+>> higher than the OTHER class (rt, dl, stop_machine, IRQs, NMIs, Hypervisor?) in a
+>> CPU is higher than rt_runtime in the rt_period, we need to avoid what is
+>> "avoidable" by trying to move rt and dl threads away from that CPU. Another
+>> possibility is to bump the priority of the OTHER class (and we are back to the
+>> DL server).
+> 
+> Kind of weird though having to migrate RT (everything higher than OTHER)
+> only to make some room for non-RT stuff.
 
+It is not. That is the idea of the RT throttling. The rq is throttle, to avoid
+starving (per-cpu) non-rt threads that need to run. One can prevent migrating rt
+threads, but this is not correct for a global scheduler, as it would break the
+working conserving properties.
+
+> Also because one can introduce
+> unwanted side effects on high prio workloads (cache related overheads,
+> etc.).
+
+Considering one thread will have to migrate once per rt_period (1ms by default),
+only if an rq becomes overloaded, we can say that this is barely insignificant,
+given the amount of migrations we have in the global scheduler. Well, global has
+a tendency to spread tasks by migrating them anyway.
+
+> OTHER has also already have some knowledge about higher prio
+> activities (rt,dl,irq PELT). So this seems to really leave us with
+> affined tasks, of all priorities and kinds (real vs. irq).
+
+I am not an expert in PELT, how does PELT deal with RT throttling?
+
+>>
+>> - Dude, would not be easy just changing the CBS?
+>>
+>> Yeah, but by changing the CBS, we may end up breaking the algorithms/properties
+>> that rely on CBS... like GRUB, user-space/kernel-space synchronization...
+>>
+>>> OTOH, when something like you describe happens, guarantees are probably
+>>> already out of the window and we should just do our best to at least
+>>> keep the system "working"? (maybe only to warn the user that something
+>>> bad has happened)
+>>
+>> Btw, don't get me wrong, I am not against changing CBS: I am just trying to
+>> raise other viewpoints to avoid touching in the base of the DL scheduler, and
+>> avoid punishing a thread that behaves well.
+>>
+>> Anyway, notifying that dl+rt+IRQ time is higher than the rt_runtime is another
+>> good thing to do as well. We will be notified anyway, either by RCU or
+>> softlockup... but they are side effects warning. By notifying that we have an
+>> overload of rt or higher workload we will be pointing to the cause.
+> 
+> Right. It doesn't solve the problem, but I guess it could help debugging.
+I did not say it was a solution.
+
+I was having a look at the reproducer, and... well, a good part of the problem
+can be bounded in the other part of the equation. The reproducer enables perf
+sampling, and it is known that perf sampling can cause problems, and that is why
+we have limits for it.
+
+The limits point to a 25 percent of CPU time for perf sampling... considering
+throttling imprecision because of HZ... we can clearly see that the system is
+with > 100% of CPU usage for dl + IRQ.
+
+Again: don't get me wrong, I am aware and agree that there is another problem,
+about the "readjustment of the period/runtime considering the drift in the
+execution of the task caused by IRQs." What I am pointing here is that there are
+more general problems w.r.t. the possibility of causing starvation of per-cpu
+housekeeping threads needed by the system (for instance, RCU).
+
+There are many open issues w.r.t the throttling mechanism, for instance:
+
+1) We need to take the imprecision in the account of runtime in the AC.
+2) The throttling needs to be designed in such a way that we try not to starve
+non-rt threads in a CPU/rq - rather than the system (accounting per CPU).
+3) We need to consider the IRQ workload as well to avoid RT+DL+IRQ to use all
+the CPU time.
+
+... among other things.
+
+-- Daniel
