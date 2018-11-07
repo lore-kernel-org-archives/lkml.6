@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E655C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBA9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7229A2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7229A2081D
+	by mail.kernel.org (Postfix) with ESMTP id 5E28F2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:20:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E28F2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbeKGTtj (ORCPT
+        id S1731140AbeKGTtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:49:39 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:45550 "EHLO
+        Wed, 7 Nov 2018 14:49:46 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:45544 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387520AbeKGTsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730971AbeKGTsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Nov 2018 14:48:54 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id B5DA05FD9E; Wed,  7 Nov 2018 18:13:16 +0800 (CST)
+        id 5BCAB5FCA8; Wed,  7 Nov 2018 18:13:16 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -34,9 +34,9 @@ Cc:     linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
         Loic Poulain <loic.poulain@gmail.com>,
         linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 12/15] Bluetooth: hci_bcm: Add compatible string for BCM4330
-Date:   Wed,  7 Nov 2018 18:13:05 +0800
-Message-Id: <20181107101308.7626-13-wens@csie.org>
+Subject: [PATCH 03/15] dt-bindings: net: broadcom-bluetooth: Add BCM20702A1 compatible string
+Date:   Wed,  7 Nov 2018 18:12:56 +0800
+Message-Id: <20181107101308.7626-4-wens@csie.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107101308.7626-1-wens@csie.org>
 References: <20181107101308.7626-1-wens@csie.org>
@@ -47,27 +47,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BCM4330 chip is a 802.11 a/b/g/n + Bluetooth 4.0 + HS controller.
-This patch adds a compatible string match to the serdev driver for the
-Bluetooth part of the chip.
+The BCM20702A1 is a Bluetooth 4.0 chip from Broadcom. It is found in the
+Ampak AP6210 WiFi+BT module, identified from the read verbose config info
+command response. However the Bluetooth firmware provided by vendors uses
+the name BCM20710. This patch elects to use the chip ID returned by the
+chip for the compatible string.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/bluetooth/hci_bcm.c | 1 +
+ Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 73b520622a24..b6b0b2139892 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -1397,6 +1397,7 @@ static void bcm_serdev_remove(struct serdev_device *serdev)
- #ifdef CONFIG_OF
- static const struct of_device_id bcm_bluetooth_of_match[] = {
- 	{ .compatible = "brcm,bcm20702a1" },
-+	{ .compatible = "brcm,bcm4330-bt" },
- 	{ .compatible = "brcm,bcm43438-bt" },
- 	{ },
- };
+diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+index f6ff1a60ab3e..cb50931a6506 100644
+--- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
++++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+@@ -10,6 +10,7 @@ device the slave device is attached to.
+ Required properties:
+ 
+  - compatible: should contain one of the following:
++   * "brcm,bcm20702a1"
+    * "brcm,bcm43438-bt"
+ 
+ Optional properties:
 -- 
 2.19.1
 
