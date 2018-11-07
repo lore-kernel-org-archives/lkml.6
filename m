@@ -2,97 +2,120 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE4BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160AEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088B420883
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:00:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088B420883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D039020883
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:00:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VKZaGcot"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D039020883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbeKHIcm (ORCPT
+        id S1728267AbeKHId0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:32:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43340 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726896AbeKHIcm (ORCPT
+        Thu, 8 Nov 2018 03:33:26 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34952 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727744AbeKHId0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:32:42 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA7MspP2088270
-        for <linux-kernel@vger.kernel.org>; Wed, 7 Nov 2018 18:00:08 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nm4mybb20-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 18:00:07 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 7 Nov 2018 23:00:06 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 7 Nov 2018 23:00:04 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA7N03vb18481222
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 7 Nov 2018 23:00:03 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 22FEAB2076;
-        Wed,  7 Nov 2018 23:00:03 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0B458B2074;
-        Wed,  7 Nov 2018 23:00:03 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.190.52])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  7 Nov 2018 23:00:02 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0556D16C5D23; Wed,  7 Nov 2018 15:00:03 -0800 (PST)
-Date:   Wed, 7 Nov 2018 15:00:02 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: Question on comment header for for_each_domain()
-Reply-To: paulmck@linux.ibm.com
+        Thu, 8 Nov 2018 03:33:26 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 32-v6so7962362pgu.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 15:00:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hErWVvVfq+l1Lhw6i7dkgVe6YlWD+RYolV83NWx0t70=;
+        b=VKZaGcotsoGjvMj3TTBlz4HOcEtdPNnWZgeUM3aWlowfVqaTmhi9siniUiaW1p+8rb
+         nogd0jDNBS1Oyq0kfvToYf7x8Q7UaId0TmSOLB+KhgIhHk2VKeONqLrb6AMvEsRuyV1z
+         UdxVfZ4G3DYdQBb8pXufEvCCOXLllwOReh/7o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hErWVvVfq+l1Lhw6i7dkgVe6YlWD+RYolV83NWx0t70=;
+        b=JO9aJvoshHe6fIl5fux9Y1aHP58v+UUF1a6aFqYbsj87nBebrFoTO8fQcvBlBeBjFV
+         by4IesXwgVKg9X0O6+5pBCbmGWi+SFnHl7dd0X/bSkfVUc6Vj+k5DATW0rpSqHzdnKhE
+         Q4B28sZn8ZPb4BKcllSBi9u0NnyI6IBGPv8yhazPu4HtiwadjtjGWV+jXyIauYjtGlFR
+         Y9JYwoFjcQ7l/HyciUBO7Z4UlwFNdNB4y05Y3Hs0Ptq+TyXuSVZQlWC/kkSazMoCdj38
+         CtdNJ8KWL8ncIQ3WyX6h7uMyzKwH1u5VORBBkM3Sa3h1jHqVR0948dMlfaUhMawOCVA/
+         wEbA==
+X-Gm-Message-State: AGRZ1gLZxeqhXBWm+2FcUzEl5ksVXv9dx9pszlyivm0yHQj8GO8lPhH+
+        7KMkTZAvgPNULV94No5RT5mweQ==
+X-Google-Smtp-Source: AJdET5df/vDiTif4GAJe3NhMKhJNqL9pfeH+3yC/10dh90FbtYvUKszmt9FbhEyL/HjcCuQ1YwWAQg==
+X-Received: by 2002:a62:ce8e:: with SMTP id y136-v6mr2188499pfg.201.1541631652192;
+        Wed, 07 Nov 2018 15:00:52 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id d126-v6sm1802327pgc.32.2018.11.07.15.00.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 15:00:50 -0800 (PST)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] input: cros_ec_keyb: fix button/switch capability reports
+Date:   Wed,  7 Nov 2018 14:38:13 -0800
+Message-Id: <20181107223813.178462-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110723-0052-0000-0000-000003523404
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010004; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01114169; UDB=6.00577622; IPR=6.00894269;
- MB=3.00024066; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-07 23:00:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110723-0053-0000-0000-00005EB0B9D4
-Message-Id: <20181107230002.GA15577@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-07_19:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=602 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811070203
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+The cros_ec_keyb_bs array lists buttons and switches together, expecting
+that its users will match the appropriate type and bit fields. But
+cros_ec_keyb_register_bs() only checks the 'bit' field, which causes
+misreported input capabilities in some cases. For example, tablets
+(e.g., Scarlet -- a.k.a. Acer Chromebook Tab 10) were reporting a SW_LID
+capability, because EC_MKBP_POWER_BUTTON and EC_MKBP_LID_OPEN happen to
+share the same bit.
 
-The header comment for for_each_domain() talks about a call to
-synchronize_sched() within detach_destroy_domains(), but I am not
-seeing any such call.  Because synchronize_sched() is now folded into
-synchronize_rcu(), I have a patch that edits the comment, but it looks
-like a larger change is needed.
+(This has comedic effect on a tablet, in which a power-management daemon
+then thinks this "lid" is closed, and so puts the system to sleep as
+soon as it boots!)
 
-Or am I blind today?
+To fix this, check both the 'ev_type' and 'bit' fields before reporting
+the capability.
 
-							Thanx, Paul
+Tested with a lid (Kevin / Samsung Chromebook Plus) and without a lid
+(Scarlet / Acer Chromebook Tab 10).
+
+This error got introduced when porting the feature from the downstream
+Chromium OS kernel to be upstreamed.
+
+Fixes: cdd7950e7aa4 ("input: cros_ec_keyb: Add non-matrix buttons and switches")
+Cc: <stable@vger.kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/input/keyboard/cros_ec_keyb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+index 81be6f781f0b..d56001181598 100644
+--- a/drivers/input/keyboard/cros_ec_keyb.c
++++ b/drivers/input/keyboard/cros_ec_keyb.c
+@@ -493,7 +493,8 @@ static int cros_ec_keyb_register_bs(struct cros_ec_keyb *ckdev)
+ 	for (i = 0; i < ARRAY_SIZE(cros_ec_keyb_bs); i++) {
+ 		const struct cros_ec_bs_map *map = &cros_ec_keyb_bs[i];
+ 
+-		if (buttons & BIT(map->bit))
++		if ((map->ev_type == EV_KEY && (buttons & BIT(map->bit))) ||
++		    (map->ev_type == EV_SW && (switches & BIT(map->bit))))
+ 			input_set_capability(idev, map->ev_type, map->code);
+ 	}
+ 
+-- 
+2.19.1.930.g4563a0d9d0-goog
 
