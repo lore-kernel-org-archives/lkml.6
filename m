@@ -2,126 +2,122 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F19C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A43C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC28E2086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:39:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGIhduY6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC28E2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 057B520827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057B520827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbeKGXJY (ORCPT
+        id S1727462AbeKGXMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:09:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726688AbeKGXJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:09:23 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D3FE20827;
-        Wed,  7 Nov 2018 13:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541597938;
-        bh=plqyVMmwSeRWeNQCuL+ZxiUUW6gHULnNniL/ZqnXyDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UGIhduY6vYBRJrj7VVkLKqSWNwH4hXN9WCvG+nXStAKQUNrmjcmrXL6q65WUMP2O/
-         N9oAgDIz3TL6eQs+nAyrPG0/VrQ1nSDzWc/w1XbGrdZ5w0GnuON7NDn/r6NL8UB89d
-         ei6TNOpqlEQBu+vBE8p22eqGbqXbZ/igjBoI6e9U=
-Date:   Wed, 7 Nov 2018 07:38:56 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-Message-ID: <20181107133856.GA238955@google.com>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181102195925.GB160487@google.com>
- <20181102232948.GC26770@zn.tnic>
- <20181105214537.GA19420@google.com>
- <20181105215650.GG26868@zn.tnic>
- <20181106214256.GA65443@google.com>
- <20181106220059.GA4139@zn.tnic>
- <20181106232040.GA85755@google.com>
- <20181107091838.GA10835@zn.tnic>
+        Wed, 7 Nov 2018 18:12:02 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43093 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeKGXMC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:12:02 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so11470777lff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 05:41:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=hUw/f3pfAWGmgfsftKGiw4xWCDUlJ7/A3a2ZWIb2gf4=;
+        b=krJ6uk3Py7dntmGFBwnSrBs7brrgZ8UXbEKRuL2gKC57poESOu95cYxMYegt3oRooF
+         qn4sbjqspcXufyctbZx9S1eR16nIEeacLhl62Gfjm986+YjvzB1BNbYXZIa7YiY/Pyt7
+         1yrTXDBT7IZ4EbZmKCKgTZVjvx0ozklkIXh0ZVSLJNwbf39ocHEL5AyQnKaVgjXO+bDU
+         wKE7RXm1kNQtySH6pT2/1d29s33OlxDkFCsZ50wNmhpQ+Szoln3AjhJ0yl8zNjpYiZvf
+         cBIqQWHa/zst61ZW3JROsXABTtETSNnQ/wXuNAOjox4bKNVmdMgxdDgFa2qcBVhFngkB
+         gtQA==
+X-Gm-Message-State: AGRZ1gJPEP3b3CgYFukZJZy/mWo+ySeGd8K/5+9uyUAJ1d8UAwuEyONL
+        5VwacX/TerpVzRQJLm2GnlY=
+X-Google-Smtp-Source: AJdET5c/ScgRVXcZ+q9N2UCIlXKUKJ1zys4fZ/OSLdnhOpTrS6pQFfAPG8imxPRGWVcVUyg8Hqt5Eg==
+X-Received: by 2002:a19:9904:: with SMTP id b4mr143476lfe.95.1541598095317;
+        Wed, 07 Nov 2018 05:41:35 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id c5-v6sm120753lja.62.2018.11.07.05.41.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 05:41:34 -0800 (PST)
+Date:   Wed, 7 Nov 2018 15:41:26 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com
+Cc:     linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH] regulator: bd718x7: Change next state after poweroff to ready
+Message-ID: <20181107134126.GA4030@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181107091838.GA10835@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 10:18:38AM +0100, Borislav Petkov wrote:
-> On Tue, Nov 06, 2018 at 05:20:41PM -0600, Bjorn Helgaas wrote:
-> > Or maybe even drivers/acpi/thermal.c, which claims every Thermal Zone
-> > (ACPI 6.2, sec 11), would be sufficient.  I don't know what the
-> > relationship between hwmon and other thermal stuff, e.g.,
-> > Documentation/thermal/sysfs-api.txt is.  acpi/thermal.c looks tied
-> > into the drivers/thermal stuff (it registers "thermal_zone" devices),
-> > but not to hwmon.
-> 
-> Err, I still don't think I'm catching your drift but let me stop you
-> right there: amd_nb is not there only for hwmon/k10temp. It is a small
-> interface glue if you will, which exports the CPU functionality in PCI
-> config space to other consumers.
-> 
-> So it is not really a driver - it is used by drivers to talk/query CPU
-> settings through it.
-> 
-> With that said, I don't think I understand all that talk about PNP IDs
-> and ACPI methods. But maybe I'm missing something...
+BD71837 and BD71847 have a HW functionality which leave power
+rails OFF after powerof state:
+- if they have been controlled by SW.
+- if state transition from poweroff is done to SNVS
 
-Firmware supplies ACPI namespace.  The namespace contains an abstract
-description of the platform, including devices.  Devices are
-identified by PNP IDs, which are analogous to PCI vendor/device IDs,
-except that a device may have several generic "compatible device IDs"
-in addition to an ID unique to the device.  Devices may also contain
-methods (supplied by firmware as part of the namespace), which are
-essentially bytecode that can be executed by the ACPI interpreter in
-the kernel.  Linux drivers claim ACPI devices based on PNP ID and
-operate them using either ACPI methods (which can decouple the driver
-from device specifics) or the usual direct MMIO/IO port/MSR style.
+BD71837 can after reset transition from power-off to SNVS or
+READY state depending on reset reason. By default only wathcdog
+reset changes state from poweroff to ready. Change PMIC
+configuration to always transition to READY in order to avoid
+crucial power rails being OFF after reset.
 
-Here's an outline of how it *could* work:
+If SNVS is required the crucial power rails should not be
+controlled by SW - eg corresponding regulator control register
+should have SEL bit kept zero. Currently the driver assumes all
+regulators to be controlled by SW so it sets all SEL bits to 1.
 
-  - AMD defines "AMD0001" device ID for the CPU temp sensor
-  - BIOS supplies AMD0001 devices in the ACPI namespace
-  - Each AMD0001 device has a _TMP method (supplied by BIOS and
-    specific to the CPU)
-  - Linux driver claims AMD0001 devices
-  - Driver reads temp sensors by executing _TMP methods (Linux ACPI
-    interpreter runs the bytecode)
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/regulator/bd718x7-regulator.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-That way when you release a new platform with different temp sensors,
-you update the BIOS AMD0001 devices and _TMP methods to know about
-them, and the old Linux driver works unchanged.
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 3a47e0372e77..63669f9038cc 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1053,6 +1053,29 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 			BD718XX_REG_REGLOCK);
+ 	}
+ 
++	/* At poweroff transition PMIC HW disables EN bit for regulators but
++	 * leaves SEL bit untouched. So if state transition from POWEROFF
++	 * is done to SNVS - then all power rails controlled by SW (having
++	 * SEL bit set) stay disabled as EN is cleared. This may result boot
++	 * failure if any crucial systems are powered by these rails.
++	 *
++	 * Change the next stage from poweroff to be READY instead of SNVS
++	 * for all reset types because OTP loading at READY will clear SEL
++	 * bit allowing HW defaults for power rails to be used
++	 */
++	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
++				 BD718XX_ON_REQ_POWEROFF_MASK |
++				 BD718XX_SWRESET_POWEROFF_MASK |
++				 BD718XX_WDOG_POWEROFF_MASK |
++				 BD718XX_KEY_L_POWEROFF_MASK,
++				 BD718XX_POWOFF_TO_RDY);
++	if (err) {
++		dev_err(&pdev->dev, "Failed to change reset target\n");
++		goto err;
++	} else {
++		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
++	}
++
+ 	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+-- 
+2.14.3
 
-Bjorn
+
