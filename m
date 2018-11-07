@@ -2,106 +2,106 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95063C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5536C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56BAD20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FD020827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:25:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mo0zyB3S";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mo0zyB3S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56BAD20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJtOtHnU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FD020827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbeKGPuH (ORCPT
+        id S1727488AbeKGPyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 10:50:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34858 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728231AbeKGPuH (ORCPT
+        Wed, 7 Nov 2018 10:54:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37562 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbeKGPyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 10:50:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E382060A9B; Wed,  7 Nov 2018 06:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541571672;
-        bh=hpuARF5Ld5ls4wve5IbIhIkQPc219aUgwsVT4sSlYMg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Mo0zyB3SyKC2RBs+A7NCmWI+8/KK+F+K3FM8hMhKgnWlTm+fDiEP+qza6asDM9BRa
-         c44UPcwQwGtPV513bsFhqDkti284i1AmILe5fCpGHkM5kANnkqsSkrp3tJX433MYPC
-         1iL2ITWTnIeOX7dUL7isDUqvNjfbupyNdyeDgB48=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 35854601D4;
-        Wed,  7 Nov 2018 06:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541571672;
-        bh=hpuARF5Ld5ls4wve5IbIhIkQPc219aUgwsVT4sSlYMg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Mo0zyB3SyKC2RBs+A7NCmWI+8/KK+F+K3FM8hMhKgnWlTm+fDiEP+qza6asDM9BRa
-         c44UPcwQwGtPV513bsFhqDkti284i1AmILe5fCpGHkM5kANnkqsSkrp3tJX433MYPC
-         1iL2ITWTnIeOX7dUL7isDUqvNjfbupyNdyeDgB48=
+        Wed, 7 Nov 2018 10:54:35 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p2-v6so14518947wmc.2;
+        Tue, 06 Nov 2018 22:25:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aR49N8yjTibP5fGwJiI0weDQN1eLl7ZUPmm8Gnaamls=;
+        b=UJtOtHnU3j/wWHB8hT2V0JrU9Y6A161as69O0J0PdpesufJq+pIkZT31ae666lAF8z
+         1Ayk4yEs85cAEfs7qunshh50vMI2PgqIpBhj6wckKu1I3TwxOTFZrwUrnEWazSGSFe7+
+         FDDHEzBuexaJQh3uc1IroOfL/eKJHhicSuemgSrSIR7T4L1ACYwOwE+r5UnBSpNFWlGP
+         eKg5E9lJfeXQjbBo5LbfHv4fyBWe0PcgaNc+GhrnCHB5MA4SjNn0MSQSady+XyZJbzGg
+         oZKL0BzThCJ72pmbA/6UfjXSlLPS5yNRu1fHye9Bca4Ib1cVRAMXABPZMhYgeJrkQfz5
+         jhKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aR49N8yjTibP5fGwJiI0weDQN1eLl7ZUPmm8Gnaamls=;
+        b=ZQ8/7AFQoACeKfDaF0CrHbUk/OH6PoHQroemhM/4X+geUj3UmMk1yZVAlICj+IGyM1
+         ctr6lK9dW2DPmpYE9QNgEIcaabkTVRag38L3PMyLPCCd4wGf1+FB7TYGfhLYuaZ+vlav
+         svNxmyYXI7KjMsfFm/SVV2ew5J24FyN0heq355vr3NPLo/rN6H9wqdb8t+jM/RhIX5ys
+         rUuRPzW2XwufX05IKekByav8ZV78xpVIlkBpN5t9fdiXVatnWeNlnKhd7GBiuojqURDR
+         vEzd3Q3HWWzaqLQb6YKas1eWtKiVnwyM1w249UkBKden5SnxWPTrD604MrciCv5SWADe
+         4/pg==
+X-Gm-Message-State: AGRZ1gLxfNITh7vfRY25lrkJ4+VhceR4VPlV2+pA904gK+HaA80Dg+zl
+        5c8vAbCSbvvuCA3qAhIHPfY=
+X-Google-Smtp-Source: AJdET5d1xR15tmyY+MQ5TCTAuJvAKVXWIyZF2mVqR2UObGa8gkHSox7LV+IedJgLZox69yFraTrYvA==
+X-Received: by 2002:a1c:39c1:: with SMTP id g184-v6mr712244wma.93.1541571938242;
+        Tue, 06 Nov 2018 22:25:38 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id y2-v6sm21657752wrh.53.2018.11.06.22.25.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 22:25:37 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] media: imx214: Remove unnecessary self assignment in for loop
+Date:   Tue,  6 Nov 2018 23:24:50 -0700
+Message-Id: <20181107062450.5511-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 07 Nov 2018 11:51:12 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     arunks.linux@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
-        osalvador@suse.de, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, getarunks@gmail.com
-Subject: Re: [PATCH v6 1/2] memory_hotplug: Free pages as higher order
-In-Reply-To: <20181106200823.GT27423@dhcp22.suse.cz>
-References: <1541484194-1493-1-git-send-email-arunks@codeaurora.org>
- <20181106140638.GN27423@dhcp22.suse.cz>
- <542cd3516b54d88d1bffede02c6045b8@codeaurora.org>
- <20181106200823.GT27423@dhcp22.suse.cz>
-Message-ID: <5e55c6e64a2bfd6eed855ea17a34788b@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-07 01:38, Michal Hocko wrote:
-> On Tue 06-11-18 21:01:29, Arun KS wrote:
->> On 2018-11-06 19:36, Michal Hocko wrote:
->> > On Tue 06-11-18 11:33:13, Arun KS wrote:
->> > > When free pages are done with higher order, time spend on
->> > > coalescing pages by buddy allocator can be reduced. With
->> > > section size of 256MB, hot add latency of a single section
->> > > shows improvement from 50-60 ms to less than 1 ms, hence
->> > > improving the hot add latency by 60%. Modify external
->> > > providers of online callback to align with the change.
->> > >
->> > > This patch modifies totalram_pages, zone->managed_pages and
->> > > totalhigh_pages outside managed_page_count_lock. A follow up
->> > > series will be send to convert these variable to atomic to
->> > > avoid readers potentially seeing a store tear.
->> >
->> > Is there any reason to rush this through rather than wait for counters
->> > conversion first?
->> 
->> Sure Michal.
->> 
->> Conversion patch, https://patchwork.kernel.org/cover/10657217/ is 
->> currently
->> incremental to this patch.
-> 
-> The ordering should be other way around. Because as things stand with
-> this patch first it is possible to introduce a subtle race prone
-> updates. As I've said I am skeptical the race would matter, really, but
-> there is no real reason to risk for that. Especially when you have the
-> other (first) half ready.
+Clang warns when a variable is assigned to itself:
 
-Makes sense. I have rebased the preparatory patch on top of -rc1.
-https://patchwork.kernel.org/patch/10670787/
+drivers/media/i2c/imx214.c:695:13: error: explicitly assigning value of
+variable of type 'const struct reg_8 *' to itself
+[-Werror,-Wself-assign]
+        for (table = table; table->addr != IMX214_TABLE_END ; table++) {
+             ~~~~~ ^ ~~~~~
+1 error generated.
 
-Regards,
-Arun
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/media/i2c/imx214.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+index 284b9b49ebde..ec3d1b855f62 100644
+--- a/drivers/media/i2c/imx214.c
++++ b/drivers/media/i2c/imx214.c
+@@ -692,7 +692,7 @@ static int imx214_write_table(struct imx214 *imx214,
+ 	int i;
+ 	int ret;
+ 
+-	for (table = table; table->addr != IMX214_TABLE_END ; table++) {
++	for (; table->addr != IMX214_TABLE_END ; table++) {
+ 		if (table->addr == IMX214_TABLE_WAIT_MS) {
+ 			usleep_range(table->val * 1000,
+ 				     table->val * 1000 + 500);
+-- 
+2.19.1
+
