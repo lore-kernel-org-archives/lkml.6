@@ -2,433 +2,119 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FC6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9FEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C31B20817
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="N3ql24AE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C31B20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 9314C20817
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:40:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9314C20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731099AbeKGWIq (ORCPT
+        id S1730964AbeKGWKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:08:46 -0500
-Received: from mail-eopbgr60057.outbound.protection.outlook.com ([40.107.6.57]:21504
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726602AbeKGWI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:08:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qZmnwFUaqJLDVMS/hTwjucTd905DYQlzJUDIq/3+b8U=;
- b=N3ql24AEXdSB3PwehlbdwTjDdWDsE0Ckg/uVEFDtWiP4M3hE+LGZvw91myG0jnlDHk21PaJ6jTQSP0M2PuR0MHZbBjgASmEHhCIrwrtao0PglyOD3eUlb9bleAxaa42Bx0ttcDSl9eRPJ41sv9vWvg0qQUXiK8ns8W+ma4jGT7o=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3734.eurprd04.prod.outlook.com (52.133.29.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 7 Nov 2018 12:38:08 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::5195:5e4c:be83:408b]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::5195:5e4c:be83:408b%4]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 12:38:08 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v12 3/5] clk: imx: Add SCCG PLL type
-Thread-Topic: [PATCH v12 3/5] clk: imx: Add SCCG PLL type
-Thread-Index: AQHUdpa84fu8GQFV80S9xvVD5Pfisg==
-Date:   Wed, 7 Nov 2018 12:38:08 +0000
-Message-ID: <1541594266-16712-4-git-send-email-abel.vesa@nxp.com>
-References: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR06CA0009.eurprd06.prod.outlook.com
- (2603:10a6:20b:14::22) To AM6PR0402MB3654.eurprd04.prod.outlook.com
- (2603:10a6:209:19::17)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3734;6:m3ld42p0smf4bEcussFG/3/QapzH6NOUhnwt/OD+lU6tmKyfIdWOWPt2Y9B+/WmYy6eqddHA5/+VL8a7cHRWUqW+Sk0DaTt3ob0FxH8z+od38j6R6Es/UzeoGzkzzTfAKq4hxAWZ0HxkV4lyEYqsA0e0l7yspc+3bpU92I3j6U5M+e2OSZudgSIzpqy22uXSGl8XIvj5hxxVUin478TigyptcZD1ZdWc53XwqGgVnkT3IWNRb6pu1Z7/W8j3E62MgEcTRfsdbcd5fnwpXTDyKjeMZ9gEal78ze1keNMlrrcIsxRzTMzUXU3WTvyoFf4ZaCkWrnWe2sZMVRyGp1o1/BK9YMnEJxR+bouIqeukd13rnGLpGrEGneYmh19FJeal9jpn17TgzqfY9qmXLJy2LGt0aeFaBnWK2yLpci9sIoVS6Dw6b8OTqfROHRM1mGzQ8etHPM+svlH2jwRnjhVbEQ==;5:Ph42ntXfnMCyHUWHgPxxLQHs7DhfvoYsNNNMAe5Qfs9Wzqfq2PGaeaAE3ouOWymmF1fTSx8FwZmEzmw8Rv37aY+/8W8l+ZwKAuTkyvQfrEZhGDC88ISS0ysnfx9aJZO1eCsTi+GeJmRUY9EOX79fGwbWH/VLnsrIOYTrgazh9mk=;7:EYG48+Bp0XiTO45nzgumC820ZlbkQTwnSzIbN35Tgz03Qfqv8cUpdQhz7Ehp2WuX7M4QBUt4/Rv40+eyRdzaugnoV6+9CYvIoqB7F7xZiMul2A6pvmo+KXFyQOe8RynruDdJ78GQCbkGaiI7xkeRAA==
-x-ms-office365-filtering-correlation-id: 77bf78bc-dd02-4c2a-85cc-08d644addefe
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3734;
-x-ms-traffictypediagnostic: AM6PR0402MB3734:
-x-microsoft-antispam-prvs: <AM6PR0402MB3734EFD0A871DE9CB7A65829F6C40@AM6PR0402MB3734.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(264314650089876)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3734;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3734;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(39860400002)(346002)(199004)(189003)(25786009)(6116002)(316002)(6506007)(81166006)(81156014)(52116002)(8676002)(3846002)(105586002)(386003)(54906003)(97736004)(6512007)(6306002)(106356001)(6636002)(7416002)(6436002)(76176011)(6486002)(478600001)(186003)(5660300001)(4326008)(2900100001)(486006)(86362001)(217873002)(110136005)(53936002)(44832011)(26005)(14444005)(66066001)(966005)(68736007)(256004)(8936002)(2906002)(14454004)(71190400001)(305945005)(71200400001)(102836004)(446003)(2616005)(36756003)(476003)(7736002)(99286004)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3734;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1WBl8RROo9B5+v4sDv92xlnD1JXqKPELYEv/W/9hWRRDDsOt4zAZ22Kd+u4EhicQUS9ZTrkQyWwa5f1sXVNfcGY2GojkeKbP5+4Xs6hBEo4ZnSq0jvTdBXpmwGl9SzYaF+AFc4iA8ukAay+dZa0NzXX08Bh8BIOTaKQAzNrA1r0yeuarHuykYenjRUaCAKACkaVRI4Jm0MVM7IeSAu3gKHPq6cHQoKhg4Au9C9MaIDVGzOvVgWXpVl4tCk+iTWTYTO+5LjQD9byARtJ+SwdqOImPTgtiD4CnHDxgsLmUp8Y36iBcJvP86YwxpgUXAs+Zqo25DMFxHLwD2x4GXuYOwvr+0T2AphaA3ntisKpF5NI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 7 Nov 2018 17:10:16 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37961 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeKGWKQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 17:10:16 -0500
+Received: by mail-ed1-f65.google.com with SMTP id a2-v6so8700166edi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 04:40:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n2vey61mauEgB8Bos0irlzpX4C+U/tQvb6hV36sZRbg=;
+        b=VIOe2pYG721Uteu84fcGDM3Kpy8nMIYA/pG+46LS3wYQ136eRMHJ0SvKw087vOBt12
+         joOKJHdn7AxlxP0oclpcjIO35ML2EGOzPYXoXDdJ3pxOdD4IxHnOki11Ocd/T9/u+zLy
+         Yk5z2JjHo+g1RjO3LCSyv/Dl3DqKUDxNeKlu90pHO4jTmHttdtwEEu7g5IhO6wWasjb5
+         V2WBxkkvv7FH0F70o/GBoenaSqnkZMp5BY06wyAhs04Hefmi4rJO1CvHF+w/ufrcnkg2
+         LLj1DGoJ4iXW82zST2PNgkKlThs0CRexqG7okr6caYz/2nKIW/A6TnwOtKfvOFZPXh9S
+         VEAw==
+X-Gm-Message-State: AGRZ1gIBbMLMnNl9mHb62t5EKeambuqiO8soQYcmGvKse/GBolvL8Rj9
+        Z3+I2lvMtKG0sItZmWx4WtlH3bBiVWc=
+X-Google-Smtp-Source: AJdET5e9j5ikcairMZQmBnTvUSLzMFP1PSP6RJ2aD6DwX9BswYD/zAx0r5HNrPaNmw8DeTX1iOepwg==
+X-Received: by 2002:a50:b4bb:: with SMTP id w56-v6mr30936edd.179.1541594401111;
+        Wed, 07 Nov 2018 04:40:01 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id m1-v6sm224803edb.10.2018.11.07.04.40.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 04:40:00 -0800 (PST)
+Subject: Re: [PATCH] ACPI / PMIC: xpower: fix IOSF_MBI dependency
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181102110653.118257-1-arnd@arndb.de>
+ <CAJZ5v0grpLSh=QAO3iwwrX0MPzJVxFenFo3j7V+JpeYEu63CjA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <74d77804-bc05-4060-3182-a7cdecba3c53@redhat.com>
+Date:   Wed, 7 Nov 2018 13:39:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77bf78bc-dd02-4c2a-85cc-08d644addefe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 12:38:08.3479
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3734
+In-Reply-To: <CAJZ5v0grpLSh=QAO3iwwrX0MPzJVxFenFo3j7V+JpeYEu63CjA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Hi,
 
-The SCCG is a new PLL type introduced on i.MX8.
+On 07-11-18 13:22, Rafael J. Wysocki wrote:
+> On Fri, Nov 2, 2018 at 12:07 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> We still get a link failure with IOSF_MBI=m when the xpower driver
+>> is built-in:
+>>
+>> drivers/acpi/pmic/intel_pmic_xpower.o: In function `intel_xpower_pmic_update_power':
+>> intel_pmic_xpower.c:(.text+0x4f2): undefined reference to `iosf_mbi_block_punit_i2c_access'
+>> intel_pmic_xpower.c:(.text+0x5e2): undefined reference to `iosf_mbi_unblock_punit_i2c_access'
+>>
+>> This makes the dependency stronger, so we can only build when IOSF_MBI
+>> is built-in.
+>>
+>> Fixes: 6a9b593d4b6f ("ACPI / PMIC: xpower: Add depends on IOSF_MBI to Kconfig entry")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/acpi/Kconfig | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+>> index 18851e7eedd5..31a3c4a03f61 100644
+>> --- a/drivers/acpi/Kconfig
+>> +++ b/drivers/acpi/Kconfig
+>> @@ -514,7 +514,7 @@ config CRC_PMIC_OPREGION
+>>
+>>   config XPOWER_PMIC_OPREGION
+>>          bool "ACPI operation region support for XPower AXP288 PMIC"
+>> -       depends on MFD_AXP20X_I2C && IOSF_MBI
+>> +       depends on MFD_AXP20X_I2C && IOSF_MBI=y
+>>          help
+>>            This config adds ACPI operation region support for XPower AXP288 PMIC.
+>>
+>> --
+> 
+> At this point I'm inclined to apply the patch as is as a short-term
+> fix and improvements can be made on top of it.
+> 
+> Any objections?
 
-The description of this SCCG clock can be found here:
+Not from me, go for it :)
 
-https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
+Regards,
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/clk/imx/Makefile       |   3 +-
- drivers/clk/imx/clk-sccg-pll.c | 256 +++++++++++++++++++++++++++++++++++++=
-++++
- drivers/clk/imx/clk.h          |   9 ++
- 3 files changed, 267 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
-
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 4893c1f..b87513c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y +=3D \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-sccg-pll.o
-=20
- obj-$(CONFIG_SOC_IMX1)   +=3D clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  +=3D clk-imx21.o
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.=
-c
-new file mode 100644
-index 0000000..4666b96
---- /dev/null
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -0,0 +1,256 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2018 NXP.
-+ *
-+ * This driver supports the SCCG plls found in the imx8m SOCs
-+ *
-+ * Documentation for this SCCG pll can be found at:
-+ *   https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D8=
-34
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+#include <linux/bitfield.h>
-+
-+#include "clk.h"
-+
-+/* PLL CFGs */
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+#define PLL_CFG2		0x8
-+
-+#define PLL_DIVF1_MASK		GENMASK(18, 13)
-+#define PLL_DIVF2_MASK		GENMASK(12, 7)
-+#define PLL_DIVR1_MASK		GENMASK(27, 25)
-+#define PLL_DIVR2_MASK		GENMASK(24, 19)
-+#define PLL_REF_MASK		GENMASK(2, 0)
-+
-+#define PLL_LOCK_MASK		BIT(31)
-+#define PLL_PD_MASK		BIT(7)
-+
-+#define OSC_25M			25000000
-+#define OSC_27M			27000000
-+
-+#define PLL_SCCG_LOCK_TIMEOUT	70
-+
-+struct clk_sccg_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
-+
-+static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
-+					PLL_SCCG_LOCK_TIMEOUT);
-+}
-+
-+static int clk_pll1_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val, divf;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
-+
-+	return parent_rate * 2 * (divf + 1);
-+}
-+
-+static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate =3D *prate;
-+	u32 div;
-+
-+	if (!parent_rate)
-+		return 0;
-+
-+	div =3D rate / (parent_rate * 2);
-+
-+	return parent_rate * div * 2;
-+}
-+
-+static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+	u32 divf;
-+
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	divf =3D rate / (parent_rate * 2);
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	val &=3D ~PLL_DIVF1_MASK;
-+	val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static int clk_pll1_prepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static void clk_pll1_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val |=3D PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+}
-+
-+static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val, ref, divr1, divf1, divr2, divf2;
-+	u64 temp64;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	switch (FIELD_GET(PLL_REF_MASK, val)) {
-+	case 0:
-+		ref =3D OSC_25M;
-+		break;
-+	case 1:
-+		ref =3D OSC_27M;
-+		break;
-+	default:
-+		ref =3D OSC_25M;
-+		break;
-+	}
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
-+	divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
-+	divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
-+	divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
-+
-+	temp64 =3D ref * 2;
-+	temp64 *=3D (divf1 + 1) * (divf2 + 1);
-+
-+	do_div(temp64, (divr1 + 1) * (divr2 + 1));
-+
-+	return temp64;
-+}
-+
-+static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	u32 div;
-+	unsigned long parent_rate =3D *prate;
-+
-+	if (!parent_rate)
-+		return 0;
-+
-+	div =3D rate / parent_rate;
-+
-+	return parent_rate * div;
-+}
-+
-+static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	u32 val;
-+	u32 divf;
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	divf =3D rate / parent_rate;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	val &=3D ~PLL_DIVF2_MASK;
-+	val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static const struct clk_ops clk_sccg_pll1_ops =3D {
-+	.is_prepared	=3D clk_pll1_is_prepared,
-+	.recalc_rate	=3D clk_pll1_recalc_rate,
-+	.round_rate	=3D clk_pll1_round_rate,
-+	.set_rate	=3D clk_pll1_set_rate,
-+};
-+
-+static const struct clk_ops clk_sccg_pll2_ops =3D {
-+	.prepare	=3D clk_pll1_prepare,
-+	.unprepare	=3D clk_pll1_unprepare,
-+	.recalc_rate	=3D clk_pll2_recalc_rate,
-+	.round_rate	=3D clk_pll2_round_rate,
-+	.set_rate	=3D clk_pll2_set_rate,
-+};
-+
-+struct clk *imx_clk_sccg_pll(const char *name,
-+				const char *parent_name,
-+				void __iomem *base,
-+				enum imx_sccg_pll_type pll_type)
-+{
-+	struct clk_sccg_pll *pll;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	switch (pll_type) {
-+	case SCCG_PLL1:
-+		init.ops =3D &clk_sccg_pll1_ops;
-+		break;
-+	case SCCG_PLL2:
-+		init.ops =3D &clk_sccg_pll2_ops;
-+		break;
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name =3D name;
-+	init.flags =3D 0;
-+	init.parent_names =3D &parent_name;
-+	init.num_parents =3D 1;
-+
-+	pll->base =3D base;
-+	pll->hw.init =3D &init;
-+
-+	hw =3D &pll->hw;
-+
-+	ret =3D clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pll);
-+		return ERR_CAST(hw);
-+	}
-+
-+	return hw->clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 44a1f14..864cd8a 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -21,6 +21,11 @@ enum imx_pllv1_type {
- 	IMX_PLLV1_IMX35,
- };
-=20
-+enum imx_sccg_pll_type {
-+	SCCG_PLL1,
-+	SCCG_PLL2,
-+};
-+
- struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
-=20
-@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *=
-parent,
- struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
- 			     void __iomem *base);
-=20
-+struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
-+			     void __iomem *base,
-+			     enum imx_sccg_pll_type pll_type);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
---=20
-2.7.4
+Hans
 
