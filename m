@@ -2,171 +2,315 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18072C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03852C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03A820818
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDEDC2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:13:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="aofnDKkU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03A820818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="uQrwD7lG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDEDC2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbeKHEot (ORCPT
+        id S1729624AbeKHEo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:44:49 -0500
-Received: from mail-eopbgr740079.outbound.protection.outlook.com ([40.107.74.79]:40667
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726453AbeKHEot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:44:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rAD6FOZ4wzUb+lntkSX/2IdZUzzMpONTBbDLXzof6eg=;
- b=aofnDKkUHZGt0m99pyR5MYkHVyA0+DMMpLILlCMRBjNXqOxpmsZbF6cKOF8RtZ7TPjT0W7o2b8cxac0RYW7pR0HCYVqsAsXiuUsdT6oqXzigDJGkFaprKKWTG36f6G7a+B5+2vA/kgeFZw8fTM6F3w0yvKp66GcXMaoZLy/wZ7g=
-Received: from SN6PR05MB4783.namprd05.prod.outlook.com (52.135.115.17) by
- SN6PR05MB5069.namprd05.prod.outlook.com (20.177.248.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.14; Wed, 7 Nov 2018 19:13:04 +0000
-Received: from SN6PR05MB4783.namprd05.prod.outlook.com
- ([fe80::c964:38d3:a19b:6091]) by SN6PR05MB4783.namprd05.prod.outlook.com
- ([fe80::c964:38d3:a19b:6091%3]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 19:13:04 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during
- early_init
-Thread-Topic: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during
- early_init
-Thread-Index: AQHUcwQ37jX8+phTpkyCnxi097WrnaVBPEeAgAN5fgA=
-Date:   Wed, 7 Nov 2018 19:13:03 +0000
-Message-ID: <9A69025F-5B49-4A26-AB95-F6D36908983B@vmware.com>
-References: <20181102232946.98461-1-namit@vmware.com>
- <20181102232946.98461-3-namit@vmware.com>
- <20181105140925.GD22467@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181105140925.GD22467@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR05MB5069;20:sQK9b1FLk7qmwHR5ucGWhj/B6/bi6sU+MXtkkMKnNHPo+1H9GYxYCGum5Bl7m4BeaYfVnUcMRJaJ5Rp0Zcv9W4brQQCkFTQ3LS8QRDkQQQyTV09ljD+epep8fTql4bVT8zC+RzjR1fwiqBQIiB1L/I008rk17PyHUQFZl/L2Yy4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7db3e9d9-7836-41bd-f28b-08d644e50ae3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR05MB5069;
-x-ms-traffictypediagnostic: SN6PR05MB5069:
-x-microsoft-antispam-prvs: <SN6PR05MB50692D1CDBA61583CCCD621ED0C40@SN6PR05MB5069.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(61668805478150)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN6PR05MB5069;BCL:0;PCL:0;RULEID:;SRVR:SN6PR05MB5069;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39860400002)(136003)(366004)(189003)(199004)(8936002)(229853002)(6486002)(68736007)(575784001)(5660300001)(4326008)(86362001)(6246003)(53936002)(6512007)(6916009)(6436002)(478600001)(25786009)(316002)(14454004)(54906003)(36756003)(186003)(2906002)(2900100001)(6116002)(3846002)(8676002)(81156014)(81166006)(99286004)(7416002)(256004)(486006)(476003)(2616005)(7736002)(305945005)(83716004)(71200400001)(71190400001)(82746002)(14444005)(11346002)(446003)(66066001)(97736004)(76176011)(102836004)(26005)(106356001)(53546011)(33656002)(105586002)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR05MB5069;H:SN6PR05MB4783.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: buWGavrxXzH/svAl0BcGblhJKSy+7sRMHo2Euoir6y0sp6gbZAzCDXo6KNLHVMaonPbSQ93fCMXMqmF8T+tJVoddh2eNhplQq0Oyr3gxrnPWcMeDyOvvMbCIuRHYwJVMh9XD9nluVEzUmkzOHYL0aiyrLMKTeW3uMLV2kLPIVXApkH2UoiEBV212cB9yLWjSmXCOoWQG1jGtV68LbA40LzUW0+69U55txUjAbr3B6iZXAh0iWMYJ8B5m7BOHZKPVDJacJ40ZdWDdshZVRlAVr/DrTjcNPb51cI1X97uFCuGL9efNFK98MD5kL3aDHshvl3stXCMqY8AWBdtkekKZvKKNfhgjGWAmxxSQJUf9taQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <09600D2BC6A5424EB817014D1DDA04B0@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 7 Nov 2018 23:44:56 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38441 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeKHEoz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:44:55 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d10-v6so18613296wrs.5
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 11:13:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p5Lw+4jChNndEjetsb1d1aMcOGAqFHMxBB+/5N3ESBM=;
+        b=uQrwD7lGFHOoX2HWT9Y2R+0K/5iKTYGImuLTnA6brJgu6jgzvulW+eQhCVpQVC1Q13
+         gZh1nGIj5sndZDumu2ybDUEKAN6StmdvhLClDYHxvaYYioQ8ByjogNRVHNLBuE9HGxr7
+         RKzA106a0gBFFFbg+TgG1ekCGF9bVjCno0cmBmrfUELBR08oKZvBrfAl0OL14ItsDLoc
+         k5QM4lwwH5PNoNFskrTJJJ8aPeP3+GR9SPP8UB/CMZjaXMM3RXXR6ye+fUZK9tjFe+4o
+         nL+YmkJupfdShFPbTcPUpfisDuYgSHGj1GZjlGmb0XVJzqAyKR7D333GWP1huuIi6U37
+         i7LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p5Lw+4jChNndEjetsb1d1aMcOGAqFHMxBB+/5N3ESBM=;
+        b=owAgYRGgrnXf6UBSZYfN3lxr9099hw2gHEPh8G6z5pQuX+gjtYYLqTvRWXvV8e7Itt
+         UjwWYlfcHW4NCvbYNCihvkS943fM/gKLXyjtSlzZwFJ9s9mMSrDHE0bp5xFSz3JcR+eT
+         natgW1j9hFf10ImGFulxN3rhmYfeXVpeGz9y2EOn4YMCv5yzh+ENEWiCgNrFL3j3LkCa
+         HGa5DEczGosy9+CeZ0eqxdS6m3k/IsVLvge8EEBtd01/w1Rz/4gATk8tQIYs1w8C2VXl
+         R5S64mLdMmKg23X+UfSMzQiiAB4GV8xaSnqgBDe1z0NJSqqnUYRWnQ/6HLljgHM4ktHW
+         HkWA==
+X-Gm-Message-State: AGRZ1gJTtOkvsetASgVzoHrml68ybg4mC0EKm7HwxKyeEEtC6vTNkrnp
+        0++aDcAcbwy21f/zShgChyC/pg==
+X-Google-Smtp-Source: AJdET5fTPUotZb2tiVw0vsZ3O7Lp1jmeK8CMkEkY7RJA88P8BmloEbJYTWbp2a4cKzeflhECBNxNkQ==
+X-Received: by 2002:adf:c7d1:: with SMTP id y17-v6mr1377153wrg.230.1541617991609;
+        Wed, 07 Nov 2018 11:13:11 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id e14-v6sm747167wrv.93.2018.11.07.11.13.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 11:13:10 -0800 (PST)
+Date:   Wed, 7 Nov 2018 20:13:08 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] crypto: crypto_user_stat: split user space crypto
+ stat structures
+Message-ID: <20181107191308.GD5133@Red>
+References: <1541422274-40060-1-git-send-email-clabbe@baylibre.com>
+ <1541422274-40060-4-git-send-email-clabbe@baylibre.com>
+ <20181106014419.GE28490@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7db3e9d9-7836-41bd-f28b-08d644e50ae3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 19:13:03.9320
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR05MB5069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106014419.GE28490@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra
-Sent: November 5, 2018 at 2:09:25 PM GMT
-> To: Nadav Amit <namit@vmware.com>
-> Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, x86@ker=
-nel.org, H. Peter Anvin <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.d=
-e>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.co=
-m>, Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>, D=
-ave Hansen <dave.hansen@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
-> Subject: Re: [PATCH v3 2/7] x86/jump_label: Use text_poke_early() during =
-early_init
->=20
->=20
-> On Fri, Nov 02, 2018 at 04:29:41PM -0700, Nadav Amit wrote:
->> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
->> index aac0c1f7e354..367c1d0c20a3 100644
->> --- a/arch/x86/kernel/jump_label.c
->> +++ b/arch/x86/kernel/jump_label.c
->> @@ -52,7 +52,13 @@ static void __ref __jump_label_transform(struct jump_=
-entry *entry,
->> 	jmp.offset =3D jump_entry_target(entry) -
->> 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
->>=20
->> -	if (early_boot_irqs_disabled)
->> +	/*
->> +	 * As long as we are in early boot, we can use text_poke_early(), whic=
-h
->> +	 * is more efficient: the memory was still not marked as read-only (it
->> +	 * is only marked after poking_init()). This also prevents us from usi=
-ng
->> +	 * text_poke() before poking_init() is called.
->> +	 */
->> +	if (!early_boot_done)
->> 		poker =3D text_poke_early;
->>=20
->> 	if (type =3D=3D JUMP_LABEL_JMP) {
->=20
-> It took me a while to untangle init/maze^H^Hin.c... but I think this
-> is all we need:
->=20
-> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> index aac0c1f7e354..ed5fe274a7d8 100644
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_e=
-ntry *entry,
-> 	jmp.offset =3D jump_entry_target(entry) -
-> 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
->=20
-> -	if (early_boot_irqs_disabled)
-> +	/*
-> +	 * As long as we're UP and not yet marked RO, we can use
-> +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-> +	 * SYSTEM_SCHEDULING before going either.
-> +	 */
-> +	if (system_state =3D=3D SYSTEM_BOOTING)
-> 		poker =3D text_poke_early;
->=20
-> 	if (type =3D=3D JUMP_LABEL_JMP) {
+On Mon, Nov 05, 2018 at 05:44:19PM -0800, Eric Biggers wrote:
+> Hi Corentin,
+> 
+> On Mon, Nov 05, 2018 at 12:51:12PM +0000, Corentin Labbe wrote:
+> > It is cleaner to have each stat in their own structures.
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  crypto/crypto_user_stat.c       |  20 +++----
+> >  include/uapi/linux/cryptouser.h | 101 ++++++++++++++++++++------------
+> >  2 files changed, 73 insertions(+), 48 deletions(-)
+> > 
+> > diff --git a/crypto/crypto_user_stat.c b/crypto/crypto_user_stat.c
+> > index 352569f378a0..3c14be2f7a1b 100644
+> > --- a/crypto/crypto_user_stat.c
+> > +++ b/crypto/crypto_user_stat.c
+> > @@ -33,7 +33,7 @@ struct crypto_dump_info {
+> >  
+> >  static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat raead;
+> > +	struct crypto_stat_aead raead;
+> >  	u64 v64;
+> >  
+> >  	memset(&raead, 0, sizeof(raead));
+> > @@ -56,7 +56,7 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rcipher;
+> > +	struct crypto_stat_cipher rcipher;
+> >  	u64 v64;
+> >  
+> >  	memset(&rcipher, 0, sizeof(rcipher));
+> > @@ -79,7 +79,7 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rcomp;
+> > +	struct crypto_stat_compress rcomp;
+> >  	u64 v64;
+> >  
+> >  	memset(&rcomp, 0, sizeof(rcomp));
+> > @@ -101,7 +101,7 @@ static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat racomp;
+> > +	struct crypto_stat_compress racomp;
+> >  	u64 v64;
+> >  
+> >  	memset(&racomp, 0, sizeof(racomp));
+> > @@ -123,7 +123,7 @@ static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rakcipher;
+> > +	struct crypto_stat_akcipher rakcipher;
+> >  	u64 v64;
+> >  
+> >  	memset(&rakcipher, 0, sizeof(rakcipher));
+> > @@ -150,7 +150,7 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rkpp;
+> > +	struct crypto_stat_kpp rkpp;
+> >  	u64 v;
+> >  
+> >  	memset(&rkpp, 0, sizeof(rkpp));
+> > @@ -171,7 +171,7 @@ static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rhash;
+> > +	struct crypto_stat_hash rhash;
+> >  	u64 v64;
+> >  
+> >  	memset(&rhash, 0, sizeof(rhash));
+> > @@ -190,7 +190,7 @@ static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rhash;
+> > +	struct crypto_stat_hash rhash;
+> >  	u64 v64;
+> >  
+> >  	memset(&rhash, 0, sizeof(rhash));
+> > @@ -209,7 +209,7 @@ static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
+> >  
+> >  static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> > -	struct crypto_stat rrng;
+> > +	struct crypto_stat_rng rrng;
+> >  	u64 v64;
+> >  
+> >  	memset(&rrng, 0, sizeof(rrng));
+> > @@ -248,7 +248,7 @@ static int crypto_reportstat_one(struct crypto_alg *alg,
+> >  	if (nla_put_u32(skb, CRYPTOCFGA_PRIORITY_VAL, alg->cra_priority))
+> >  		goto nla_put_failure;
+> >  	if (alg->cra_flags & CRYPTO_ALG_LARVAL) {
+> > -		struct crypto_stat rl;
+> > +		struct crypto_stat_larval rl;
+> >  
+> >  		memset(&rl, 0, sizeof(rl));
+> >  		strscpy(rl.type, "larval", sizeof(rl.type));
+> > diff --git a/include/uapi/linux/cryptouser.h b/include/uapi/linux/cryptouser.h
+> > index 9f8187077ce4..790b5c6511e5 100644
+> > --- a/include/uapi/linux/cryptouser.h
+> > +++ b/include/uapi/linux/cryptouser.h
+> > @@ -76,47 +76,72 @@ struct crypto_user_alg {
+> >  	__u32 cru_flags;
+> >  };
+> >  
+> > -struct crypto_stat {
+> > -	char type[CRYPTO_MAX_NAME];
+> > -	union {
+> > -		__u64 stat_encrypt_cnt;
+> > -		__u64 stat_compress_cnt;
+> > -		__u64 stat_generate_cnt;
+> > -		__u64 stat_hash_cnt;
+> > -		__u64 stat_setsecret_cnt;
+> > -	};
+> > -	union {
+> > -		__u64 stat_encrypt_tlen;
+> > -		__u64 stat_compress_tlen;
+> > -		__u64 stat_generate_tlen;
+> > -		__u64 stat_hash_tlen;
+> > -	};
+> > -	union {
+> > -		__u64 stat_akcipher_err_cnt;
+> > -		__u64 stat_cipher_err_cnt;
+> > -		__u64 stat_compress_err_cnt;
+> > -		__u64 stat_aead_err_cnt;
+> > -		__u64 stat_hash_err_cnt;
+> > -		__u64 stat_rng_err_cnt;
+> > -		__u64 stat_kpp_err_cnt;
+> > -	};
+> > -	union {
+> > -		__u64 stat_decrypt_cnt;
+> > -		__u64 stat_decompress_cnt;
+> > -		__u64 stat_seed_cnt;
+> > -		__u64 stat_generate_public_key_cnt;
+> > -	};
+> > -	union {
+> > -		__u64 stat_decrypt_tlen;
+> > -		__u64 stat_decompress_tlen;
+> > -	};
+> > -	union {
+> > -		__u64 stat_verify_cnt;
+> > -		__u64 stat_compute_shared_secret_cnt;
+> > -	};
+> > +struct crypto_stat_cipher {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_encrypt_cnt;
+> > +	__u64 stat_encrypt_tlen;
+> > +	__u64 stat_decrypt_cnt;
+> > +	__u64 stat_decrypt_tlen;
+> > +	__u64 stat_cipher_err_cnt;
+> > +};
+> > +
+> > +struct crypto_stat_aead {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_encrypt_cnt;
+> > +	__u64 stat_encrypt_tlen;
+> > +	__u64 stat_decrypt_cnt;
+> > +	__u64 stat_decrypt_tlen;
+> > +	__u64 stat_cipher_err_cnt;
+> > +	__u64 stat_aead_err_cnt;
+> > +};
+> > +
+> > +struct crypto_stat_akcipher {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_encrypt_cnt;
+> > +	__u64 stat_encrypt_tlen;
+> > +	__u64 stat_decrypt_cnt;
+> > +	__u64 stat_decrypt_tlen;
+> > +	__u64 stat_akcipher_err_cnt;
+> > +	__u64 stat_verify_cnt;
+> >  	__u64 stat_sign_cnt;
+> >  };
+> >  
+> > +struct crypto_stat_compress {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_compress_cnt;
+> > +	__u64 stat_compress_tlen;
+> > +	__u64 stat_decompress_cnt;
+> > +	__u64 stat_decompress_tlen;
+> > +	__u64 stat_compress_err_cnt;
+> > +};
+> > +
+> > +struct crypto_stat_rng {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_generate_cnt;
+> > +	__u64 stat_generate_tlen;
+> > +	__u64 stat_rng_err_cnt;
+> > +	__u64 stat_seed_cnt;
+> > +};
+> > +
+> > +struct crypto_stat_hash {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_hash_cnt;
+> > +	__u64 stat_hash_tlen;
+> > +	__u64 stat_hash_err_cnt;
+> > +};
+> > +
+> > +struct crypto_stat_kpp {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +	__u64 stat_setsecret_cnt;
+> > +	__u64 stat_kpp_err_cnt;
+> > +	__u64 stat_generate_public_key_cnt;
+> > +	__u64 stat_compute_shared_secret_cnt;
+> > +};
+> > +
+> > +struct crypto_stat_larval {
+> > +	char type[CRYPTO_MAX_NAME];
+> > +};
+> > +
+> >  struct crypto_report_larval {
+> >  	char type[CRYPTO_MAX_NAME];
+> >  };
+> > -- 
+> > 2.18.1
+> > 
+> 
+> Is there any particular reason this patch only changes the UAPI structures, 
+> not the internal structures in 'struct crypto_alg'?
+> 
 
-Thanks for this change, I will incorporate it.
+While changing it for user space will be clearly better, I didnt see any benefit for the internal ones.
+But perhaps it is cleaner to have the sames.
+I will do it.
 
-I wanted to point a small difference from my version. Although this version
-ensures we are UP and the kernel is still RW, preemption is possible with
-this version. I presume that it should not affect jump-labels, since it
-switches between JMP and multi-byte NOPs.
-
-Thanks,
-Nadav=
+Regards
