@@ -2,74 +2,75 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 608F0C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3FFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0521920882
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:10:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0521920882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 272C020882
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:11:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="HvAFcmDx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272C020882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeKHHm5 (ORCPT
+        id S1727805AbeKHHnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:42:57 -0500
-Received: from mga12.intel.com ([192.55.52.136]:15550 "EHLO mga12.intel.com"
+        Thu, 8 Nov 2018 02:43:55 -0500
+Received: from imap.thunk.org ([74.207.234.97]:51138 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726653AbeKHHm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:42:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 14:10:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,477,1534834800"; 
-   d="scan'208";a="106774744"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 07 Nov 2018 14:10:34 -0800
-Date:   Wed, 7 Nov 2018 14:12:25 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2] iommu/vt-d: respect max guest address width in agaw
-Message-ID: <20181107141225.2339ca4f@jacob-builder>
-In-Reply-To: <20181107160428.awgpvo73mp3lbdro@8bytes.org>
-References: <1541544435-52624-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20181107160428.awgpvo73mp3lbdro@8bytes.org>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726653AbeKHHnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 02:43:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=sgZ1l7rK+Y1HF5OboBpqxkFDGNOrU8rnXILzm/F0vjM=; b=HvAFcmDxlxnXXrd+ruQGjm1L3q
+        Aza3wzewLBhlvFM56Hg+ZazNOhopBwgPTgct7Fw6ZOE87Z3pz8BYPGKeKsAW5RC3y70sQAk3yzQ7d
+        K3IM/wuxMZjZXLPC9g4uV2EsUF4IugZGGoFy9oOzs0CA976vpprexfCrtYHq83h5+H8Q=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKW2r-0003jU-IG; Wed, 07 Nov 2018 22:11:29 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C8B117A7D27; Wed,  7 Nov 2018 17:11:28 -0500 (EST)
+Date:   Wed, 7 Nov 2018 17:11:28 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drivers/char/random.c: constify poolinfo_table
+Message-ID: <20181107221128.GA17171@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20181102110447.23121-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102110447.23121-1-linux@rasmusvillemoes.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Nov 2018 17:04:28 +0100
-Joerg Roedel <joro@8bytes.org> wrote:
-
-> On Tue, Nov 06, 2018 at 02:47:15PM -0800, Jacob Pan wrote:
-> >  drivers/iommu/intel-iommu.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)  
+On Fri, Nov 02, 2018 at 12:04:45PM +0100, Rasmus Villemoes wrote:
+> Never modified, might as well be put in .rodata.
 > 
-> Applied, thanks.
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-Hi Joerg,
-We have found some issues with this patch on some platforms. Please
-disregard this patch.
+Thanks, applied.
 
-The intent of this patch was to fix some IOMMU with max address of 48
-but SAGAW of both 48 and 57 bits. Need to do more investigation in the
-page table level calculation and context address width setup. Sorry
-about that.
-
-Jacob
+					- Ted
