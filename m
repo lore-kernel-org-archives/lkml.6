@@ -2,104 +2,99 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2B7C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3FBC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE11C2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F5772081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:34:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="YINaKpXz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE11C2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="e3Bw94/e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5772081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeKHFDC (ORCPT
+        id S1726814AbeKHFGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:03:02 -0500
-Received: from rcdn-iport-3.cisco.com ([173.37.86.74]:44652 "EHLO
-        rcdn-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeKHFDB (ORCPT
+        Thu, 8 Nov 2018 00:06:20 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:40067 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbeKHFGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:03:01 -0500
-X-Greylist: delayed 564 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Nov 2018 00:03:01 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1129; q=dns/txt; s=iport;
-  t=1541619077; x=1542828677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YtTpBgtZRpjibu3ozBjEhrBp7YUvBYaF//UwXAhT5UM=;
-  b=YINaKpXzbossjU4Z/mI52diafcG9VgHU34XtTYAYkd6KyV2bJxRTG+T9
-   P5VgGggmJZ4goGK/jFIBlh2/glbfiD5Ssi70ERJQugAfy/PlBRj2Q/txv
-   BB63RAPI6Bt1Jb+mpsMbrglHDQzwUFL1G+ktC+Lw+bJ4Ta+tRH+brwOD5
-   s=;
-X-IronPort-AV: E=Sophos;i="5.54,476,1534809600"; 
-   d="scan'208";a="467851184"
-Received: from alln-core-6.cisco.com ([173.36.13.139])
-  by rcdn-iport-3.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 19:21:54 +0000
-Received: from zorba ([10.156.154.31])
-        by alln-core-6.cisco.com (8.15.2/8.15.2) with ESMTPS id wA7JLkP2009626
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 7 Nov 2018 19:21:54 GMT
-Date:   Wed, 7 Nov 2018 11:21:45 -0800
-From:   Daniel Walker <danielwa@cisco.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Joakim Tjernlund <joakim.tjernlund@infinera.com>,
-        "nkela@cisco.com" <nkela@cisco.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>
-Subject: Re: [PATCH] jffs2: implement mount option to configure endianness
-Message-ID: <20181107192131.tf5ptjiccne3tzmq@zorba>
-References: <20181106214928.40020-1-nkela@cisco.com>
- <921b0f78cf67d7307a0555e1fd6f2c2976310adc.camel@infradead.org>
- <1e4c066d1896e2a0b8b146253d34d05cc4f9ab36.camel@infinera.com>
- <8b08e8b992093453bb2b9caff8cff08c.squirrel@twosheds.infradead.org>
- <20181107173303.slnb3i2d6ufaonp7@zorba>
- <df9cdf1753ec7e6e20c12aa096b98453.squirrel@twosheds.infradead.org>
+        Thu, 8 Nov 2018 00:06:20 -0500
+Received: by mail-ot1-f44.google.com with SMTP id s5so1924147oth.7
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 11:34:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rNRFqy2e53r3+iZ5AdP9DFE+PFMWD5guz89RGBZhZBA=;
+        b=e3Bw94/eqs/7TyWmAxEfOChsYWwOvUNcbYGY7rWLm+6Mw8Un4fSnl/FgZnyZd8WkT/
+         FSah9yxXjjeIjHWwZKsxPLCVrp4LOMVUrJl25hRahV/aFad6RDsWt2FY/ctOlmMmwydu
+         m49skXtpTE2Fk1MLhW6UcbUTnzICcqEEall6QwO69IZSsglmUZJs78PIabLkjqpvMjj+
+         aUmCTMR52s3pXCzf/mGtkpuYkuLwnqLOl3GvXhhpsPMFGh/j5khS1vUrPXleHEV8aEnc
+         XIqDQ9ZuRnHj7Q0DfGt51Vz67Bj1vJBy61F9JAz9S8S2mIkfCS5/c27rbHKjAa7im1oJ
+         ndJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rNRFqy2e53r3+iZ5AdP9DFE+PFMWD5guz89RGBZhZBA=;
+        b=t1uCj0e3ha5s9JH3K+144rgtYyNJ38cW7X4tR1Boo9cU5+hkyb6AySY9iU73911iFj
+         1TQuvmc7QUQuUqC2cxNhQrcysgIqvUPVxFW/TGOt3ytC6Rt4hIhbC0ePQfauiqy6c1dT
+         3JsNCtiQzWt6jm9aHjhPH6+VLXqRpTqDs7OWJRi8CTL8UjZZW2tUGWLuWr2gAbDhXmYy
+         fqjUI0jlW4yXsOuTcK7Sp57Ls450ZDp3hyvYAzaEBPLIRNbN66cW4SEeKCMe5tSCMFc+
+         g7VQtQ4Y/01mRiBE0xLm3ZmaUpTcAIUkTlR4zCG4n6O9+PJ5itliZSWdH5XzOTEKTYVZ
+         JFnA==
+X-Gm-Message-State: AGRZ1gJWCU8gmLm4f9J9YTakMFn3lIfsbJmVkiiqIF3zPpb1DNlKcMsZ
+        T8pKlbmG9Tshc7QHwjF1ZRoBStWOMpXEFDUjfKrPlA==
+X-Google-Smtp-Source: AJdET5dvEEyDC9TGhztqDyVtjYNtiI2T1J+dHHGnBJvPfVO+x47FRGqi9E8ZKvn0nWBP08BK7gEAOVOdkiR/GIoHerc=
+X-Received: by 2002:a9d:f07:: with SMTP id 7mr939783ott.353.1541619273769;
+ Wed, 07 Nov 2018 11:34:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df9cdf1753ec7e6e20c12aa096b98453.squirrel@twosheds.infradead.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.156.154.31, [10.156.154.31]
-X-Outbound-Node: alln-core-6.cisco.com
+References: <20181107185241.26982-1-toshi.kani@hpe.com>
+In-Reply-To: <20181107185241.26982-1-toshi.kani@hpe.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 7 Nov 2018 11:34:22 -0800
+Message-ID: <CAPcyv4hE49JiFdaM_L0+KPQayZ0qRYokNRPxD5YuwCCp4fzkqQ@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm: Fix __nd_ioctl() to check error in cmd_rc
+To:     Toshi Kani <toshi.kani@hpe.com>
+Cc:     Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 05:58:53PM -0000, David Woodhouse wrote:
-> 
-> > On Wed, Nov 07, 2018 at 04:12:14PM -0000, David Woodhouse wrote:
-> >>
-> >> > Yes, this may slow things down. I am not sure I agree with the impl.
-> >> > either.
-> >> > Could one not make cpu_to_je_X/jeX_to_cpu a function ptr which is set
-> >> to
-> >> > a func. with the correct endian?
-> >>
-> >> On x86 retpoline would make that quite slow.
-> >
-> > Is x86 the largest consumer of jffs2 ?
-> 
-> Certainly not. I'm not sure which architectures do have Spectre V2
-> mitigations which make indirect branches expensive now... perhaps there is
-> no intersection with the cases where we really care about JFFS2 being
-> CPU-bound?
+On Wed, Nov 7, 2018 at 10:52 AM Toshi Kani <toshi.kani@hpe.com> wrote:
+>
+> ndctl zero-labels completes with a large number of zeroed nmems when
+> it fails to do zeroing on a protected NVDIMM.
+>
+>   # ndctl zero-labels nmem1
+>   zeroed 65504 nmems
+>
+> When an ACPI call completes with error, xlat_status() called from
+> acpi_nfit_ctl() sets error to *cmd_rc.  __nd_ioctl(), however, does
+> not check this error and returns with success.
+>
+> Fix __nd_ioctl() to check this error in cmd_rc.
 
+So this arrangement is by design and the bug is in the ndctl utility.
 
-How about we add the Kconfig option to enable the mount option. So if you enable
-to mount option your accepting the performance impact and we'll note that in the
-Kconfig description. Then we can do the performance testing in time, and maybe
-make this always on at some later time when the performance impact is better
-understood ?
-
-We could also add likely()/unlikely() cause that's easy enough.
-
-Daniel
+A successful return code from the ioctl means that the command was
+successfully submitted to firmware. It's then up to userspace to parse
+if there was a command specific error returned in the response
+payload. Automatically returning cmd_rc removes the ability for
+userspace tooling to do its own command specific error handling. With
+this change userspace could no longer be sure if the failure is in the
+submission or the execution of the command, or determine if the
+command response payload is valid.
