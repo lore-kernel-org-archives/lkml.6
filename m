@@ -2,99 +2,105 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF76FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77144C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7EA42086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:22:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7EA42086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 43FA12089A
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:23:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43FA12089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbeKGVw4 (ORCPT
+        id S1730837AbeKGVxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:52:56 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36503 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbeKGVwz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:52:55 -0500
-Received: by mail-ot1-f66.google.com with SMTP id k98so4352262otk.3;
-        Wed, 07 Nov 2018 04:22:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5pno4t+SJk+xSPz+MEHryyP72JoQu+JF1pHNOTwLtJo=;
-        b=RB7NMTIMST0L8oxGRjchbMxjLqWHqg0ktpbLlj9F2hrkyZvJ665tGbSqLKHWIIjBQt
-         sXgi4IK56KDO9LbZESA0K9CJey3xpw8+abOGwrSbutiHP1JFj7IWKpuspPyB0ip7jSvp
-         MkU4qdndv6o3OTBDo5G0JtWqluZHDL2FyUEZSXoha5DUyvzBCzdit+BtRNzl7fw6k7lx
-         /eG+v6YzhyaDYlhRDDE+iYlWHzLTWlAFnKcnmsRh6kmBukyeyA12A8JizI017zFTkY82
-         97NcWLsbVaO2HYBwSi0mChbz3s8GbZ2Z8GuntncSikwrPAbSiihgbXl2h82xtBzT7pCF
-         FBnQ==
-X-Gm-Message-State: AGRZ1gIOwXNWCPDiFCx9xvSmzCSPxrClZmrW3vzlYj4YUrBUU5FTBHJU
-        gUWwTo+OtaFbnOf6rhjleO25BnjRCODZkmBgK0Zuhw==
-X-Google-Smtp-Source: AJdET5e4cVppaFc8mejKuyPv9vtVfnMZwiQ54sv3H7tFsOHv3a/GODuSh+pd9ZHhWh2Qm3D7NJkSY8FMORCf+LQTjWc=
-X-Received: by 2002:a9d:42c7:: with SMTP id c7mr816018otj.119.1541593366399;
- Wed, 07 Nov 2018 04:22:46 -0800 (PST)
+        Wed, 7 Nov 2018 16:53:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:51285 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726248AbeKGVxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 16:53:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42qlv50QSPz9sCw;
+        Wed,  7 Nov 2018 23:23:29 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     frowand.list@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH v6 04/18] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+In-Reply-To: <1541431515-25197-5-git-send-email-frowand.list@gmail.com>
+References: <1541431515-25197-1-git-send-email-frowand.list@gmail.com> <1541431515-25197-5-git-send-email-frowand.list@gmail.com>
+Date:   Wed, 07 Nov 2018 23:23:27 +1100
+Message-ID: <87muqlqdog.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-References: <20181102110653.118257-1-arnd@arndb.de>
-In-Reply-To: <20181102110653.118257-1-arnd@arndb.de>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 7 Nov 2018 13:22:35 +0100
-Message-ID: <CAJZ5v0grpLSh=QAO3iwwrX0MPzJVxFenFo3j7V+JpeYEu63CjA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI / PMIC: xpower: fix IOSF_MBI dependency
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 12:07 PM Arnd Bergmann <arnd@arndb.de> wrote:
+frowand.list@gmail.com writes:
+
+> From: Frank Rowand <frank.rowand@sony.com>
 >
-> We still get a link failure with IOSF_MBI=m when the xpower driver
-> is built-in:
+> "of: overlay: add missing of_node_get() in __of_attach_node_sysfs"
+
+It would be clearer if you said 'The previous commit "of: overlay ..."
+
+> added a missing of_node_get() to __of_attach_node_sysfs().  This
+> results in a refcount imbalance for nodes attached with
+> dlpar_attach_node().  The calling sequence from dlpar_attach_node()
+> to __of_attach_node_sysfs() is:
 >
-> drivers/acpi/pmic/intel_pmic_xpower.o: In function `intel_xpower_pmic_update_power':
-> intel_pmic_xpower.c:(.text+0x4f2): undefined reference to `iosf_mbi_block_punit_i2c_access'
-> intel_pmic_xpower.c:(.text+0x5e2): undefined reference to `iosf_mbi_unblock_punit_i2c_access'
+>    dlpar_attach_node()
+>       of_attach_node()
+>          __of_attach_node_sysfs()
 >
-> This makes the dependency stronger, so we can only build when IOSF_MBI
-> is built-in.
->
-> Fixes: 6a9b593d4b6f ("ACPI / PMIC: xpower: Add depends on IOSF_MBI to Kconfig entry")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Tested-by: Alan Tull <atull@kernel.org>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 > ---
->  drivers/acpi/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index 18851e7eedd5..31a3c4a03f61 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -514,7 +514,7 @@ config CRC_PMIC_OPREGION
->
->  config XPOWER_PMIC_OPREGION
->         bool "ACPI operation region support for XPower AXP288 PMIC"
-> -       depends on MFD_AXP20X_I2C && IOSF_MBI
-> +       depends on MFD_AXP20X_I2C && IOSF_MBI=y
->         help
->           This config adds ACPI operation region support for XPower AXP288 PMIC.
->
-> --
+> ***** UNTESTED.  I need people with the affected PowerPC systems
+> *****            (systems that dynamically allocate and deallocate
+> *****            devicetree nodes) to test this patch.
 
-At this point I'm inclined to apply the patch as is as a short-term
-fix and improvements can be made on top of it.
+This looks OK to me in light of the previous patch.
 
-Any objections?
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+
+It also means dlpar_detach_node() is again behaving as described in the
+comment to of_detach_node().
+
+It would be good to make mention of:
+
+  Fixes: 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow during DLPAR remove")
+
+Which removed an of_node_put() in the exact same place for different
+reasons.
+
+cheers
+
+> diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+> index 7625546caefd..17958043e7f7 100644
+> --- a/arch/powerpc/platforms/pseries/dlpar.c
+> +++ b/arch/powerpc/platforms/pseries/dlpar.c
+> @@ -270,6 +270,8 @@ int dlpar_detach_node(struct device_node *dn)
+>  	if (rc)
+>  		return rc;
+>  
+> +	of_node_put(dn);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> Frank Rowand <frank.rowand@sony.com>
