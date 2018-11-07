@@ -2,158 +2,120 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11209C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BC8C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAAD820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A9620827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:41:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bX47vfvC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAAD820862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EdKGgPm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A9620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388937AbeKGOJa (ORCPT
+        id S1730746AbeKGOKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 09:09:30 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38564 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388409AbeKGOJa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 09:09:30 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA74crkR024444;
-        Wed, 7 Nov 2018 04:39:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2018-07-02; bh=+iJL2K5UeOdPaT22rDfI3woY5U7/mbN5vf6/IigiSZU=;
- b=bX47vfvCxyc35pMgCvMH5K+Fh1S5gpupQvsxa4v2KiFntyhYlb118MzZ+OCS/U2FFNK6
- eNk1lJSxMU2n8pMgM1AkHr/zw66ZTqimo0saJx6mWXGnHGrFCrC07CIlxRr7LrVW9D2S
- Vv5Js0M63HCAIf/7NfJ/pvO7M7gPi0fudu/pRFNMwcXrK/nPN6oiGOZ3sDk1/sPhzj3v
- P3OSOO9pDOch5ggct9WEQptKptFwmThq1UOGpDSGugR2fW9xRyhZ1c+Ou7B9vs/hw71V
- X/GyElYUQTqd9cDq4uNPvwnj9/NvB5m87LSem0KhUBNckfwvs3ZJ+xsVuGnz9EABwdde NQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nh33u18t9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Nov 2018 04:39:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA74dais025673
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 7 Nov 2018 04:39:37 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA74daLm014367;
-        Wed, 7 Nov 2018 04:39:36 GMT
-Received: from mwanda (/73.241.165.91)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 06 Nov 2018 20:39:35 -0800
-Date:   Wed, 7 Nov 2018 07:39:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbuild@01.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     kbuild-all@01.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 4/6] drivers: base: Introducing software nodes to the
- firmware node framework
-Message-ID: <20181107043933.wqszrfajrfy6hv7u@mwanda>
+        Wed, 7 Nov 2018 09:10:34 -0500
+Received: from mail-ve1eur01on0062.outbound.protection.outlook.com ([104.47.1.62]:26976
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726558AbeKGOKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 09:10:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SB85xXmFlRXf3+Ab0wFBT0KYmpDmGoGHV7zVuyRgDD8=;
+ b=EdKGgPm95BYKqc3UtfJFBbAGcH4k3xfM0LkUUl1C5tPeFIj0E1/0lTaetNTTNoiNXtJf7inHTvGA+IFfLK0rxu/U49aj+aggiCBmHkWibQutDuiSEV0hrDHgTEioxGz2nBOzwdc0Y9tln2G9roV4f7RIocLkI20ff7k6L4rJa9M=
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
+ AM6PR04MB4056.eurprd04.prod.outlook.com (52.135.167.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.25; Wed, 7 Nov 2018 04:41:49 +0000
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::7d93:8053:57fd:1a00]) by AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::7d93:8053:57fd:1a00%3]) with mapi id 15.20.1273.035; Wed, 7 Nov 2018
+ 04:41:49 +0000
+From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>
+Subject: RE: [PATCH] PCI/Layerscape: fix wrongly invoking of outbound window
+ disable accessor
+Thread-Topic: [PATCH] PCI/Layerscape: fix wrongly invoking of outbound window
+ disable accessor
+Thread-Index: AQHUbEA3bQ9DeLR/KUmsy7zvrJJQ86Uv+XIAgADQnOCABacBAIANXmFg
+Date:   Wed, 7 Nov 2018 04:41:49 +0000
+Message-ID: <AM6PR04MB5781A39406AC16F7CE5D727D84C40@AM6PR04MB5781.eurprd04.prod.outlook.com>
+References: <20181025085323.8819-1-Zhiqiang.Hou@nxp.com>
+ <20181025134522.GE214775@bhelgaas-glaptop.roam.corp.google.com>
+ <AM3PR04MB121709BD837D4E5EA3E28B1A84F00@AM3PR04MB1217.eurprd04.prod.outlook.com>
+ <20181029163102.GA13681@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20181029163102.GA13681@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB4056;6:aZ81gGqpNx7vQ+4KUwe7ojOgTu5JlZdGTkuMJux+jR1DICINdz5p7YKTXwhDqeXLYNbg+q4vKzkggWaHpRfGer7p40FmStnRsCvZV5vGHT90oTQtKBzAyj5XOHw9o4ADxFqz32ogzyBOiPNvzjek2LBcnJvKVJtON54XovB5bF08/jydgVsSbWlsu7DrvLZ/5Z4EGveY8iJy3HfiKRPrXyHsK5cUF8B/RcnGeFCVDgkrKReTacUR19198aNPmM+FVlUn866QW8VVAknxqaMxJvEiaKHenjgxz9tpHsI9rA6QQZVH4ie2dI2zS5A8uOXr1rfGxvrG0cTl83Dvs5ZrrDojF8Vb6YUsUai0FDqBf1xcxtcdc1D+/znLcMoou2jTbnTe+srMqbNRgnH6FJB6BjAsqw+EOd2RmYPi909aLM92VVlZgbBrnvCQZFKR4pbKyme1ZonAOrM2I5wolhHTYg==;5:w2eM99iM/qwDbgAhRCMvVcE74kKweMGydLW/33hB/7JmptmSkzm4kHPPjmJE0XRPCHDyRY5VywKN2ALXcQfE2EIK8EXVDqm8FrBtTAGV8UXap7tUh1DhdEFMspngBDMAcp9ht/Cpx2YB8IdXOHT1/etz2hzeu0EkcL3R0KT3KnA=;7:Ps8qxtHHVMdtnM8T5bgY7cAlkfecYBk8xQQq8NH+H2fHC3RLMd8eIow7SqdqTQAGMZhic8iMHxkVaYB/Pr04oxW1J2Wec7rO0CXGKQoKZMFjKz9t+fS6ulp0RLJ4nlEN4nvMFdfXv6WlNaAAB56x0Q==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 415bd389-96f9-40f8-ea48-08d6446b54ee
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4056;
+x-ms-traffictypediagnostic: AM6PR04MB4056:
+x-microsoft-antispam-prvs: <AM6PR04MB40561E94AD3D99ACD3DC3F2A84C40@AM6PR04MB4056.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(211936372134217)(180628864354917)(45079756050767)(189930954265078)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4056;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4056;
+x-forefront-prvs: 08497C3D99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(136003)(376002)(346002)(199004)(13464003)(189003)(5660300001)(26005)(54906003)(99286004)(256004)(476003)(316002)(55016002)(486006)(186003)(4326008)(6306002)(9686003)(105586002)(6916009)(6436002)(106356001)(71190400001)(71200400001)(93886005)(97736004)(2900100001)(446003)(11346002)(86362001)(6506007)(53546011)(76176011)(7696005)(102836004)(45080400002)(81166006)(2906002)(81156014)(478600001)(66066001)(33656002)(966005)(229853002)(68736007)(8676002)(3846002)(6116002)(7736002)(8936002)(14454004)(6246003)(25786009)(53936002)(74316002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4056;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: pmMUBdreihrPLtzEYLr/DuRuo9f3wqFxjYXcHFhMKxg53d3Oh0TFmzXpNDg4nwXEQSubuHZlppKMLpb4NYBU6dzYZArE2rqp7N9fDeBUpstuijp+6MHfBJnRDDYel5KW9FbU3RdzlClSx/Thwb6kJIXPKFE6eIZ1flg44WKFBBXfdipr7mm42Issxtedr1O3v6xmSB3Fg54Z7wUO7Yhwoiy2fQ9HCsIZSexc/8VitqWald8Znn7rsvbrTSFjZO2+XUut00jMz9UQ8ul8vMCfgHBQiE+nst/Bfg81QpWwacD45Ley6eu9covAAg8AlcPYcolpJghmSKuj6kADQMK7188o2H/NNSL0aazCejsUdjA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181105145928.46819-5-heikki.krogerus@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9069 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811070041
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 415bd389-96f9-40f8-ea48-08d6446b54ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 04:41:49.5996
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki,
-
-url:    https://github.com/0day-ci/linux/commits/Heikki-Krogerus/device-property-Introducing-software-nodes/20181106-031310
-
-smatch warnings:
-drivers/base/swnode.c:391 fwnode_create_software_node() error: dereferencing freed memory 'swnode'
-
-# https://github.com/0day-ci/linux/commit/a8c9678ea46a0171baed68e4ec355a9b3f967458
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout a8c9678ea46a0171baed68e4ec355a9b3f967458
-vim +/swnode +391 drivers/base/swnode.c
-
-a8c9678e Heikki Krogerus 2018-11-05  365  
-a8c9678e Heikki Krogerus 2018-11-05  366  struct fwnode_handle *
-a8c9678e Heikki Krogerus 2018-11-05  367  fwnode_create_software_node(const struct property_entry *properties,
-a8c9678e Heikki Krogerus 2018-11-05  368  			    const struct fwnode_handle *parent)
-a8c9678e Heikki Krogerus 2018-11-05  369  {
-a8c9678e Heikki Krogerus 2018-11-05  370  	struct software_node *p = NULL;
-a8c9678e Heikki Krogerus 2018-11-05  371  	struct software_node *swnode;
-a8c9678e Heikki Krogerus 2018-11-05  372  	char node_name[20];
-a8c9678e Heikki Krogerus 2018-11-05  373  	int ret;
-a8c9678e Heikki Krogerus 2018-11-05  374  
-a8c9678e Heikki Krogerus 2018-11-05  375  	if (parent) {
-a8c9678e Heikki Krogerus 2018-11-05  376  		if (IS_ERR(parent))
-a8c9678e Heikki Krogerus 2018-11-05  377  			return ERR_CAST(parent);
-a8c9678e Heikki Krogerus 2018-11-05  378  		if (!is_software_node(parent))
-a8c9678e Heikki Krogerus 2018-11-05  379  			return ERR_PTR(-EINVAL);
-a8c9678e Heikki Krogerus 2018-11-05  380  		p = to_software_node(parent);
-a8c9678e Heikki Krogerus 2018-11-05  381  	}
-a8c9678e Heikki Krogerus 2018-11-05  382  
-a8c9678e Heikki Krogerus 2018-11-05  383  	swnode = kzalloc(sizeof(*swnode), GFP_KERNEL);
-a8c9678e Heikki Krogerus 2018-11-05  384  	if (!swnode)
-a8c9678e Heikki Krogerus 2018-11-05  385  		return ERR_PTR(-ENOMEM);
-a8c9678e Heikki Krogerus 2018-11-05  386  
-a8c9678e Heikki Krogerus 2018-11-05  387  	swnode->id = ida_simple_get(p ? &p->child_ids : &swnode_root_ids, 0, 0,
-a8c9678e Heikki Krogerus 2018-11-05  388  				    GFP_KERNEL);
-a8c9678e Heikki Krogerus 2018-11-05  389  	if (swnode->id < 0) {
-a8c9678e Heikki Krogerus 2018-11-05  390  		kfree(swnode);
-                                                              ^^^^^^
-a8c9678e Heikki Krogerus 2018-11-05 @391  		return ERR_PTR(swnode->id);
-                                                                       ^^^^^^^^^^
-a8c9678e Heikki Krogerus 2018-11-05  392  	}
-a8c9678e Heikki Krogerus 2018-11-05  393  
-a8c9678e Heikki Krogerus 2018-11-05  394  	sprintf(node_name, "node%d", swnode->id);
-a8c9678e Heikki Krogerus 2018-11-05  395  
-a8c9678e Heikki Krogerus 2018-11-05  396  	swnode->kobj.kset = swnode_kset;
-a8c9678e Heikki Krogerus 2018-11-05  397  	swnode->fwnode.ops = &software_node_ops;
-a8c9678e Heikki Krogerus 2018-11-05  398  
-a8c9678e Heikki Krogerus 2018-11-05  399  	ida_init(&swnode->child_ids);
-a8c9678e Heikki Krogerus 2018-11-05  400  	INIT_LIST_HEAD(&swnode->entry);
-a8c9678e Heikki Krogerus 2018-11-05  401  	INIT_LIST_HEAD(&swnode->children);
-a8c9678e Heikki Krogerus 2018-11-05  402  	swnode->parent = p;
-a8c9678e Heikki Krogerus 2018-11-05  403  
-a8c9678e Heikki Krogerus 2018-11-05  404  	if (p)
-a8c9678e Heikki Krogerus 2018-11-05  405  		list_add_tail(&swnode->entry, &p->children);
-a8c9678e Heikki Krogerus 2018-11-05  406  
-a8c9678e Heikki Krogerus 2018-11-05  407  	ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
-a8c9678e Heikki Krogerus 2018-11-05  408  				   p ? &p->kobj : NULL, node_name);
-a8c9678e Heikki Krogerus 2018-11-05  409  	if (ret) {
-a8c9678e Heikki Krogerus 2018-11-05  410  		kobject_put(&swnode->kobj);
-a8c9678e Heikki Krogerus 2018-11-05  411  		return ERR_PTR(ret);
-a8c9678e Heikki Krogerus 2018-11-05  412  	}
-a8c9678e Heikki Krogerus 2018-11-05  413  
-a8c9678e Heikki Krogerus 2018-11-05  414  	ret = software_node_register_properties(swnode, properties);
-a8c9678e Heikki Krogerus 2018-11-05  415  	if (ret) {
-a8c9678e Heikki Krogerus 2018-11-05  416  		kobject_put(&swnode->kobj);
-a8c9678e Heikki Krogerus 2018-11-05  417  		return ERR_PTR(ret);
-a8c9678e Heikki Krogerus 2018-11-05  418  	}
-a8c9678e Heikki Krogerus 2018-11-05  419  
-a8c9678e Heikki Krogerus 2018-11-05  420  	kobject_uevent(&swnode->kobj, KOBJ_ADD);
-a8c9678e Heikki Krogerus 2018-11-05  421  	return &swnode->fwnode;
-a8c9678e Heikki Krogerus 2018-11-05  422  }
-a8c9678e Heikki Krogerus 2018-11-05  423  EXPORT_SYMBOL_GPL(fwnode_create_software_node);
-a8c9678e Heikki Krogerus 2018-11-05  424  
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+SGkgQmpvcm4sDQoNClRoYW5rcyBhIGxvdCBmb3IgeW91ciBndWlkZSENCkknbGwgdGFnIGl0IGZv
+ciBzdGFibGUgaW4gdjIuDQoNClRoYW5rcywNClpoaXFpYW5nDQoNCj4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCj4gRnJvbTogQmpvcm4gSGVsZ2FhcyA8aGVsZ2Fhc0BrZXJuZWwub3JnPg0K
+PiBTZW50OiAyMDE4xOoxMNTCMzDI1SAwOjMxDQo+IFRvOiBaLnEuIEhvdSA8emhpcWlhbmcuaG91
+QG54cC5jb20+DQo+IENjOiBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnOw0KPiBiaGVsZ2Fhc0Bnb29nbGUuY29tOyBsb3JlbnpvLnBpZXJhbGlz
+aUBhcm0uY29tOyBSb3kgWmFuZw0KPiA8cm95LnphbmdAbnhwLmNvbT47IE0uaC4gTGlhbiA8bWlu
+Z2h1YW4ubGlhbkBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBQQ0kvTGF5ZXJzY2Fw
+ZTogZml4IHdyb25nbHkgaW52b2tpbmcgb2Ygb3V0Ym91bmQNCj4gd2luZG93IGRpc2FibGUgYWNj
+ZXNzb3INCj4gDQo+IE9uIEZyaSwgT2N0IDI2LCAyMDE4IGF0IDAyOjIwOjIxQU0gKzAwMDAsIFou
+cS4gSG91IHdyb3RlOg0KPiA+ID4gRnJvbTogQmpvcm4gSGVsZ2FhcyA8aGVsZ2Fhc0BrZXJuZWwu
+b3JnPg0KPiANCj4gPiA+IEhvbHkgY293LCB0aGlzIGhhcyBiZWVuIGJyb2tlbiBzaW5jZSB2NC4x
+NC4gIElmIGZpeGluZyB0aGlzIG1ha2VzIGENCj4gPiA+IGRpZmZlcmVuY2UsIHlvdSBtaWdodCB3
+YW50IHRvIHRhZyBpdCBmb3Igc3RhYmxlLg0KPiA+DQo+ID4gSG93IGNhbiBJIHRhZyBpdCBmb3Ig
+c3RhYmxlPw0KPiANCj4gaHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9v
+ay5jb20vP3VybD1odHRwcyUzQSUyRiUyRmdpdC5rDQo+IGVybmVsLm9yZyUyRmNnaXQlMkZsaW51
+eCUyRmtlcm5lbCUyRmdpdCUyRnRvcnZhbGRzJTJGbGludXguZ2l0JTJGdHJlZSUNCj4gMkZEb2N1
+bWVudGF0aW9uJTJGcHJvY2VzcyUyRnN0YWJsZS1rZXJuZWwtcnVsZXMucnN0JmFtcDtkYXRhPTAy
+JTdDMDENCj4gJTdDemhpcWlhbmcuaG91JTQwbnhwLmNvbSU3Q2QzYmI2ZTI2ZTJiZDRkYzA2YzY4
+MDhkNjNkYmJlZTA2JTcNCj4gQzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdDMCU3
+QzAlN0M2MzY3NjQyNzQ2OTczMjE4Mw0KPiAwJmFtcDtzZGF0YT1rNkRGMlUyUCUyRng1aWF5bDI5
+cWhDM2xscUlFbyUyQm5PcTFkTmRoUmdGbEFzZyUzRCYNCj4gYW1wO3Jlc2VydmVkPTANCg==
