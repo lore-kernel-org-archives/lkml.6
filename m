@@ -2,158 +2,289 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40E7C32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C29FAC32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F19C2086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:14:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="e6PaRm8B";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="jBVYjOQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F19C2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 7343A20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:19:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7343A20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731102AbeKGJmq (ORCPT
+        id S1731086AbeKGJrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 04:42:46 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43406 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726530AbeKGJmq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 04:42:46 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA708qj2030419;
-        Tue, 6 Nov 2018 16:14:15 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=3KVrX5JeYRJjncfddEyhTfKK7oER0n7MU5/KXpWZX6A=;
- b=e6PaRm8Bf2aWg3GeSUarOvQkmYusz1Q8yWZFdZjM+sNEMRJ6oDrRlmBJJtmKg4urlGm9
- w6ExWi65bSuOZZVL1Msfr2CZz55BFaHioG/FaaKezEI6GwLJKH4HDOEi0imtMKxwsUSC
- IguAo2+sOhMfhGetw8dx2WPSR4S6Hd0HHPY= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2nkkqg09y1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 06 Nov 2018 16:14:15 -0800
-Received: from frc-hub04.TheFacebook.com (2620:10d:c021:18::174) by
- frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 6 Nov 2018 16:14:14 -0800
-Received: from FRC-CHUB13.TheFacebook.com (2620:10d:c021:18::32) by
- frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
- (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
- via Frontend Transport; Tue, 6 Nov 2018 16:14:14 -0800
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.33) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Tue, 6 Nov 2018 19:14:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3KVrX5JeYRJjncfddEyhTfKK7oER0n7MU5/KXpWZX6A=;
- b=jBVYjOQKlzaFlrDTZI0wtIB2Q/qimCZB7bmo30HLoqwRlazaotow1gOJ4n0dzaHfe4t/iaqLi5sXn3oArXS+Y/80mnwOZKCTqpakobds8P1XFZlQl/Tt0RdF01zBn/QVBZajgZhJiVJOPgj6HN5rjvuSQDlVMa2hJNC2dOKN+Uk=
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com (52.135.196.11) by
- BYAPR15MB2392.namprd15.prod.outlook.com (52.135.198.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.20; Wed, 7 Nov 2018 00:13:56 +0000
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::ed40:7ac9:3043:5bc1]) by BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::ed40:7ac9:3043:5bc1%2]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 00:13:56 +0000
-From:   Alexei Starovoitov <ast@fb.com>
-To:     David Miller <davem@davemloft.net>
-CC:     Song Liu <songliubraving@fb.com>,
-        "dsahern@gmail.com" <dsahern@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "acme@kernel.org" <acme@kernel.org>
-Subject: Re: [RFC perf,bpf 5/5] perf util: generate bpf_prog_info_event for
- short living bpf programs
-Thread-Topic: [RFC perf,bpf 5/5] perf util: generate bpf_prog_info_event for
- short living bpf programs
-Thread-Index: AQHUdhL1gT1g6kXc4U+H9DJqSIZu3qVDSleAgAAXY4CAAAMiAIAAAiiAgAAKXoA=
-Date:   Wed, 7 Nov 2018 00:13:56 +0000
-Message-ID: <39fe6abc-5c3e-bac3-0c0b-cf68bea23ab0@fb.com>
-References: <b984776a-ce69-ab16-ed87-1cea89c9d79a@gmail.com>
- <6C5A9FBD-F50D-444C-9038-E9557EC850D2@fb.com>
- <27fc8327-3390-ba5a-6063-89c9e7165e7b@fb.com>
- <20181106.153647.1701013551426767213.davem@davemloft.net>
-In-Reply-To: <20181106.153647.1701013551426767213.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR10CA0005.namprd10.prod.outlook.com (2603:10b6:301::15)
- To BYAPR15MB2501.namprd15.prod.outlook.com (2603:10b6:a02:88::11)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::7:62d8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2392;20:wOK3PaVoOvmQqU9U0NEXYdlR0FpohzIAZJerW1nrgDFX8ho+PKihkVfazKOEDEKXC261Zp/KMGp8cXHWCSWcD9rDjRJCG4wIGxOONi1PZ8gK2h3JUCeUEEbIMK0b3KXPOD5QYNcOQcqFtN0Q+idvMga8wJ135F0CyOXXzBVts9w=
-x-ms-office365-filtering-correlation-id: 48ecffdf-eca3-402a-98aa-08d64445e847
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2392;
-x-ms-traffictypediagnostic: BYAPR15MB2392:
-x-microsoft-antispam-prvs: <BYAPR15MB23928377DC5D7AC4905A7220D7C40@BYAPR15MB2392.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(67672495146484);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(10201501046)(3002001)(3231382)(11241501184)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB2392;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB2392;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(136003)(39860400002)(396003)(346002)(199004)(189003)(6486002)(81156014)(53936002)(229853002)(6916009)(6116002)(316002)(6436002)(36756003)(81166006)(8676002)(6246003)(6512007)(8936002)(2906002)(97736004)(99286004)(54906003)(39060400002)(5660300001)(305945005)(7736002)(93886005)(106356001)(186003)(46003)(105586002)(52116002)(14454004)(53546011)(6506007)(386003)(68736007)(76176011)(256004)(478600001)(2616005)(102836004)(2900100001)(86362001)(11346002)(446003)(476003)(486006)(31696002)(71190400001)(31686004)(4326008)(25786009)(71200400001)(142933001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2392;H:BYAPR15MB2501.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: YdKUTkuHh8esfMdwFEUg3INHsyeiH+p9+S3AudoVkMKIuLyVaNCTQafwWVF1TWx+d9tvsRadirNTk9BDEaygrcgqmGILRnMPDYV7FGcSUimvSNqLrgfvYtcX362dtGC4Yi8EK3V4EjPECouygjkQUuQRyW01Fzl+/oMf4KdgrSRMMvrwPnCdHZpPe35j9cOm+hGOdwLHRjroTiJOMd1qXB0XLCfpojq/F1i0jzuqERzXO8RUpKmTm5A1hGbpqHCkZpFj0e4TW0kgJ6q+APkDH5wlD/hcaukwnOTOjvM7E3XgdLVmSb5+bkRNnzjLnu8rUm9AznKwrMjYqwUd7/hK/Fr74dfd5VQnwjMrTHTVoxE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7F2F4D50ED54244AA3E8765E7C7B727E@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 7 Nov 2018 04:47:12 -0500
+Received: from mga17.intel.com ([192.55.52.151]:63820 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727270AbeKGJrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 04:47:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 16:18:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,473,1534834800"; 
+   d="scan'208";a="106487280"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga002.jf.intel.com with ESMTP; 06 Nov 2018 16:18:18 -0800
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
+ <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
+ <alpine.DEB.2.21.1811042042060.10744@nanos.tec.linutronix.de>
+ <ea646842-bd32-3615-bf38-27b568a2d81e@linux.intel.com>
+ <alpine.DEB.2.21.1811052326040.1659@nanos.tec.linutronix.de>
+ <81398b26-e1c3-aac3-b44a-2a0982ae74e0@linux.intel.com>
+ <alpine.DEB.2.21.1811060139090.1659@nanos.tec.linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote
+ CPUs
+Message-ID: <e41a9d15-f667-ebb5-3fbb-91f14ae034a3@linux.intel.com>
+Date:   Tue, 6 Nov 2018 16:18:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48ecffdf-eca3-402a-98aa-08d64445e847
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 00:13:56.5105
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2392
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_13:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <alpine.DEB.2.21.1811060139090.1659@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvNi8xOCAzOjM2IFBNLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+IEZyb206IEFsZXhlaSBT
-dGFyb3ZvaXRvdiA8YXN0QGZiLmNvbT4NCj4gRGF0ZTogVHVlLCA2IE5vdiAyMDE4IDIzOjI5OjA3
-ICswMDAwDQo+IA0KPj4gSSB0aGluayBjb25jZXJucyB3aXRoIHBlcmYgb3ZlcmhlYWQgZnJvbSBj
-b2xsZWN0aW5nIGJwZiBldmVudHMNCj4+IGFyZSB1bmZvdW5kZWQuDQo+PiBJIHdvdWxkIHByZWZl
-ciBmb3IgdGhpcyBmbGFnIHRvIGJlIG9uIGJ5IGRlZmF1bHQuDQo+IA0KPiBJIHdpbGwgc2l0IGlu
-IHVzZXJzcGFjZSBsb29waW5nIG92ZXIgYnBmIGxvYWQvdW5sb2FkIGFuZCBzZWUgaG93IHRoZQ0K
-PiBwZXJzb24gdHJ5aW5nIHRvIG1vbml0b3Igc29tZXRoaW5nIGVsc2Ugd2l0aCBwZXJmIGZlZWxz
-IGFib3V0IHRoYXQuDQo+IA0KPiBSZWFsbHksIGl0IGlzIGluYXBwcm9wcmlhdGUgdG8gdHVybiB0
-aGlzIG9uIGJ5IGRlZmF1bHQsIEkgY29tcGxldGVseQ0KPiBhZ3JlZSB3aXRoIERhdmlkIEFoZXJu
-Lg0KPiANCj4gSXQncyBoYXJkIGVub3VnaCwgX0FTIElTXywgZm9yIG1lIHRvIGZpZ2h0IGJhY2sg
-YWxsIG9mIHRoZSBibG9hdCB0aGF0DQo+IGlzIGluIHBlcmYgcmlnaHQgbm93IGFuZCBnZXQgaXQg
-YmFjayB0byBiZWluZyBhYmxlIHRvIGhhbmRsZSBzaW1wbGUNCj4gZnVsbCB3b3JrbG9hZHMgd2l0
-aG91dCBkcm9wcGluZyBldmVudHMuLg0KDQpJdCdzIGEgc2VwYXJhdGUgcGVyZiB0aHJlYWQgYW5k
-IHNlcGFyYXRlIGV2ZW50IHdpdGggaXRzIG93biBlcG9sbC4NCkkgZG9uJ3Qgc2VlIGhvdyBpdCBj
-YW4gYWZmZWN0IG1haW4gZXZlbnQgY29sbGVjdGlvbi4NCkxldCdzIHB1dCBpdCB0aGlzIHdheS4g
-SWYgaXQgZG9lcyBhZmZlY3Qgc29tZWhvdywgdGhlbiB5ZXMsDQppdCBzaG91bGQgbm90IGJlIG9u
-LiBJZiBpdCBpcyBub3QsIHRoZXJlIGlzIG5vIGRvd25zaWRlIHRvIGtlZXAgaXQgb24uDQpUeXBp
-Y2FsIHVzZXIgZXhwZWN0cyB0byB0eXBlICdwZXJmIHJlY29yZCcgYW5kIHNlZSBldmVyeXRoaW5n
-IHRoYXQNCmlzIGhhcHBlbmluZyBvbiB0aGUgc3lzdGVtLiBSaWdodCBub3cgc2hvcnQgbGl2ZWQg
-YnBmIHByb2dyYW1zDQp3aWxsIG5vdCBiZSBzZWVuLiBIb3cgdXNlciBzdXBwb3NlIHRvIGV2ZW4g
-a25vdyB3aGVuIHRvIHVzZSB0aGUgZmxhZz8NClRoZSBvbmx5IG9wdGlvbiBpcyB0byBhbHdheXMg
-cGFzcyB0aGUgZmxhZyAnanVzdCBpbiBjYXNlJw0Kd2hpY2ggaXMgdW5uZWNlc3NhcnkgYnVyZGVu
-Lg0KVGhlIHByb2JsZW0gb2YgZHJvcHBlZCBldmVudHMgaXMgY2VydGFpbmx5IHZhbGlkLCBidXQg
-aXQncw0KYSBzZXBhcmF0ZSBpc3N1ZS4gVGhlIGFpbyBzdHVmZiB0aGF0IEFsZXhleSBCdWRhbmtv
-diBpcyB3b3JraW5nIG9uDQpzdXBwb3NlIHRvIGFkZHJlc3MgdGhhdC4NCg==
+Thomas,
+
+> 
+>>> 2) Add _TIF_UPDATE_SPEC_CTRL to the SYSCALL_EXIT_WORK_FLAGS and handle it
+>>>    in the slow work path.
+>>
+>> There can be tasks that don't do any syscalls, and it seems like we can
+>> have MSRs getting out of sync?
+> 
+> Setting the TIF flag directly in a remote task is wrong. It needs to be
+> handled when the _TIF_UPDATE_SPEC_CTRL is evaluated, i.e. the information
+> needs to be stored process wide e.g. in task->mm.
+> 
+> But yes, if the remote task runs in user space forever, it won't
+> help. Though the point is that dumpable is usually set when the process
+> starts, so it's probably mostly a theoretical issue.
+> 
+
+I took a crack to implement what you suggested to update
+remote task's flag and remote SPEC_CTRL MSR on the syscall exit slow path.
+
+This looks reasobale?
+
+Tim
+
+
+------------
+
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 3b2490b..614594a 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -216,7 +216,7 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
+ 
+ #define SYSCALL_EXIT_WORK_FLAGS				\
+ 	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT |	\
+-	 _TIF_SINGLESTEP | _TIF_SYSCALL_TRACEPOINT)
++	 _TIF_SINGLESTEP | _TIF_SYSCALL_TRACEPOINT | _TIF_UPDATE_SPEC_CTRL)
+ 
+ static void syscall_slow_exit_work(struct pt_regs *regs, u32 cached_flags)
+ {
+@@ -227,6 +227,8 @@ static void syscall_slow_exit_work(struct pt_regs *regs, u32 cached_flags)
+ 	if (cached_flags & _TIF_SYSCALL_TRACEPOINT)
+ 		trace_sys_exit(regs, regs->ax);
+ 
++	if (cached_flags & _TIF_UPDATE_SPEC_CTRL)
++		spec_ctrl_do_pending_update();
+ 	/*
+ 	 * If TIF_SYSCALL_EMU is set, we only get here because of
+ 	 * TIF_SINGLESTEP (i.e. this is PTRACE_SYSEMU_SINGLESTEP).
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index c59a6c4..f124597 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -276,6 +276,8 @@ static inline void indirect_branch_prediction_barrier(void)
+ 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
+ }
+ 
++void spec_ctrl_do_pending_update(void);
++
+ /* The Intel SPEC CTRL MSR base value cache */
+ extern u64 x86_spec_ctrl_base;
+ 
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 4f6a7a9..b78db59 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -97,6 +97,7 @@ struct thread_info {
+ #define TIF_USER_RETURN_NOTIFY	14	/* Notify kernel of userspace return */
+ #define TIF_PATCH_PENDING	15	/* Pending live patching update */
+ #define TIF_FSCHECK		16	/* Check FS is USER_DS on return */
++#define TIF_UPDATE_SPEC_CTRL	17	/* Pending update of speculation control */
+ 
+ /* Task status */
+ #define TIF_UPROBE		18	/* Breakpointed or singlestepping */
+@@ -131,6 +132,7 @@ struct thread_info {
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+ #define _TIF_FSCHECK		(1 << TIF_FSCHECK)
++#define _TIF_UPDATE_SPEC_CTRL	(1 << TIF_UPDATE_SPEC_CTRL)
+ 
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_MEMDIE		(1 << TIF_MEMDIE)
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 4c15c86..d82d3f8 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -14,6 +14,8 @@
+ #include <linux/module.h>
+ #include <linux/nospec.h>
+ #include <linux/prctl.h>
++#include <linux/sched/coredump.h>
++#include <linux/sched/signal.h>
+ 
+ #include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+@@ -770,6 +772,69 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
+ 	return 0;
+ }
+ 
++static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
++{
++	bool update = false;
++
++	if (stibp_on)
++		update = !test_and_set_tsk_thread_flag(tsk, TIF_STIBP);
++	else
++		update = test_and_clear_tsk_thread_flag(tsk, TIF_STIBP);
++
++	if (tsk == current && update)
++		speculation_ctrl_update_current();
++}
++
++void spec_ctrl_do_pending_update(void)
++{
++	if (!static_branch_unlikely(&spectre_v2_app_lite))
++		return;
++
++	if (!current->mm)
++		return;
++
++	if (get_dumpable(current->mm) != SUID_DUMP_USER)
++		set_tsk_thread_flag(current, TIF_STIBP);
++	else
++		clear_tsk_thread_flag(current, TIF_STIBP);
++
++	clear_tsk_thread_flag(current, TIF_UPDATE_SPEC_CTRL);
++	speculation_ctrl_update_current();
++}
++ 
++int arch_update_spec_ctrl_restriction(struct task_struct *task)
++{
++	unsigned long flags;
++	struct task_struct *t;
++	bool stibp_on = false;
++
++	if (!static_branch_unlikely(&spectre_v2_app_lite))
++		return 0;
++
++	if (!task->mm)
++		return -EINVAL;
++
++	if (!lock_task_sighand(task, &flags))
++		return -ESRCH;
++
++	if (get_dumpable(task->mm) != SUID_DUMP_USER)
++		stibp_on = true;
++
++	for_each_thread(task, t) {
++		if (task_cpu(task) == smp_processor_id())
++			set_task_stibp(task, stibp_on);
++		else if (test_tsk_thread_flag(task, TIF_STIBP) != stibp_on) 
++			set_tsk_thread_flag(task, TIF_UPDATE_SPEC_CTRL);
++	}
++
++	unlock_task_sighand(task, &flags);
++	return 0;
++}
++
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl)
+ {
