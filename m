@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA90C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB046C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC77520837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC77520837
+	by mail.kernel.org (Postfix) with ESMTP id BD65E20837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:51:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD65E20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeKHFVM (ORCPT
+        id S1727391AbeKHFVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:12 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41895 "EHLO
+        Thu, 8 Nov 2018 00:21:11 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41888 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbeKHFVM (ORCPT
+        with ESMTP id S1725953AbeKHFVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:12 -0500
+        Thu, 8 Nov 2018 00:21:10 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTpB-00070Q-Ec; Wed, 07 Nov 2018 20:49:13 +0100
+        id 1gKTpC-00070Q-Dx; Wed, 07 Nov 2018 20:49:14 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 09/23] x86/fpu: Remove user_fpu_begin()
-Date:   Wed,  7 Nov 2018 20:48:44 +0100
-Message-Id: <20181107194858.9380-10-bigeasy@linutronix.de>
+Subject: [PATCH 10/23] x86/entry: Remove _TIF_ALLWORK_MASK
+Date:   Wed,  7 Nov 2018 20:48:45 +0100
+Message-Id: <20181107194858.9380-11-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
 References: <20181107194858.9380-1-bigeasy@linutronix.de>
@@ -49,83 +49,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-user_fpu_begin() sets fpu_fpregs_owner_ctx to task's fpu struct. This is
-always the case since there is no lazy FPU anymore.
-fpu_fpregs_owner_ctx is used during context switch to decide if it needs
-to load the saved registers or if the currently loaded registers are
-valid. This field is always updated on context switch so setting it
-manually has no benefit.
-Before the removal of the ->initialized member, fpu_fpregs_owner_ctx
-wouldn't be updated for kernel threads. But kernel threads don't use the
-fpu struct so again, user_fpu_begin() would not make a difference in
-user context (and would be wrong in kernel context).
+There is no user of _TIF_ALLWORK_MASK since commit 21d375b6b34ff
+("x86/entry/64: Remove the SYSCALL64 fast path").
+Remove unused define _TIF_ALLWORK_MASK.
 
-Remove user_fpu_begin(), it does not change fpu_fpregs_owner_ctx's
-content.
-
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/fpu/internal.h | 17 -----------------
- arch/x86/kernel/fpu/core.c          |  4 +---
- arch/x86/kernel/fpu/signal.c        |  1 -
- 3 files changed, 1 insertion(+), 21 deletions(-)
+ arch/x86/include/asm/thread_info.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index d7ef8ac8b17eb..d7f9e14c73c19 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -559,23 +559,6 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
- 	}
- }
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 2ff2a30a264f4..cd6920674b905 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -136,14 +136,6 @@ struct thread_info {
+ 	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT |	\
+ 	 _TIF_NOHZ)
  
--/*
-- * Needs to be preemption-safe.
-- *
-- * NOTE! user_fpu_begin() must be used only immediately before restoring
-- * the save state. It does not do any saving/restoring on its own. In
-- * lazy FPU mode, it is just an optimization to avoid a #NM exception,
-- * the task can lose the FPU right after preempt_enable().
-- */
--static inline void user_fpu_begin(void)
--{
--	struct fpu *fpu = &current->thread.fpu;
+-/* work to do on any return to user space */
+-#define _TIF_ALLWORK_MASK						\
+-	(_TIF_SYSCALL_TRACE | _TIF_NOTIFY_RESUME | _TIF_SIGPENDING |	\
+-	 _TIF_NEED_RESCHED | _TIF_SINGLESTEP | _TIF_SYSCALL_EMU |	\
+-	 _TIF_SYSCALL_AUDIT | _TIF_USER_RETURN_NOTIFY | _TIF_UPROBE |	\
+-	 _TIF_PATCH_PENDING | _TIF_NOHZ | _TIF_SYSCALL_TRACEPOINT |	\
+-	 _TIF_FSCHECK)
 -
--	preempt_disable();
--	fpregs_activate(fpu);
--	preempt_enable();
--}
--
- /*
-  * MXCSR and XCR definitions:
-  */
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 2ed82c6e646b9..02bbd40fe1e95 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -328,10 +328,8 @@ void fpu__clear(struct fpu *fpu)
- 	 * Make sure fpstate is cleared and initialized.
- 	 */
- 	fpu__initialize(fpu);
--	if (static_cpu_has(X86_FEATURE_FPU)) {
--		user_fpu_begin();
-+	if (static_cpu_has(X86_FEATURE_FPU))
- 		copy_init_fpstate_to_fpregs();
--	}
- }
- 
- /*
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 30e65085dc4d9..f61f4d804537a 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -328,7 +328,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 		 * For 64-bit frames and 32-bit fsave frames, restore the user
- 		 * state to the registers directly (with exceptions handled).
- 		 */
--		user_fpu_begin();
- 		if (copy_user_to_fpregs_zeroing(buf_fx, xfeatures, fx_only)) {
- 			fpu__clear(fpu);
- 			return -1;
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW							\
+ 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
 -- 
 2.19.1
 
