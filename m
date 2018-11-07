@@ -2,105 +2,201 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 171E9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33FCC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F00A52086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:37:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="gUF9WNXZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F00A52086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	by mail.kernel.org (Postfix) with ESMTP id A20E320862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20E320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbeKGTGn (ORCPT
+        id S1727245AbeKGTLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:06:43 -0500
-Received: from mail.kdab.com ([176.9.126.58]:50178 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbeKGTGn (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:06:43 -0500
-Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
- reason="pass (just generated,
- assumed good)" header.d=kdab.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-transfer-encoding:mime-version:message-id:date:date
- :subject:subject:from:from; s=dkim; t=1541583428; x=1542447429;
- bh=7Qg2K5UFKCyPWm0FKNjN5FXBD5ZhHFZJEpVwYDpaxkQ=; b=gUF9WNXZnTlT
- cyuqj+r52VDZMS2NAHqHue7y6HZo51fIoqVm52y4E0DxIqG2GM/4OVfLW9prVbAA
- sKXZFzX09M+iTtQPi99fVzgcKs1s745GtTyxfRCaPMOrNt+WmKAZlsV7FMsb44kI
- EFJHEIuNyRCuYvVKuP9SR8vV/ggRf8M=
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     acme@kernel.org, jolsa@kernel.org
-Cc:     Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Milian Wolff <milian.wolff@kdab.com>
-Subject: [PATCH] perf script: add newline after uregs output
-Date:   Wed,  7 Nov 2018 10:37:05 +0100
-Message-Id: <20181107093705.16346-1-milian.wolff@kdab.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        Wed, 7 Nov 2018 14:11:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49872 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726097AbeKGTLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:11:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9BD35B15C;
+        Wed,  7 Nov 2018 09:41:35 +0000 (UTC)
+Date:   Wed, 07 Nov 2018 10:41:35 +0100
+Message-ID: <s5hftwdw7g0.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [alsa-devel] Build regressions/improvements in v4.20-rc1 (sound/pci/hda/patch_ca0132.c)
+In-Reply-To: <CAMuHMdUc6hcPp+Ca9tnWyHGWw-heKRJ82FTabDed5oqtbm7mjQ@mail.gmail.com>
+References: <20181105220559.27458-1-geert@linux-m68k.org>
+        <CAMuHMdWGpjvwunNWgFujPO9_j+=QiNsi346s4-xBF1g4DT5xZw@mail.gmail.com>
+        <80f2f98b-9ab1-2a1c-0962-63e3be1dd742@infradead.org>
+        <s5h36seyyae.wl-tiwai@suse.de>
+        <CAMuHMdUc6hcPp+Ca9tnWyHGWw-heKRJ82FTabDed5oqtbm7mjQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes it much easier to easily distinguish
-between consecutive samples by keeping the empty line
-between them, like we see when we do not enable uregs
-output.
+On Wed, 07 Nov 2018 09:44:25 +0100,
+Geert Uytterhoeven wrote:
+> 
+> Hi Iwai-san,
+> 
+> On Tue, Nov 6, 2018 at 5:18 PM Takashi Iwai <tiwai@suse.de> wrote:
+> > On Tue, 06 Nov 2018 02:04:47 +0100,
+> > Randy Dunlap wrote:
+> > >
+> > > On 11/5/18 2:12 PM, Geert Uytterhoeven wrote:
+> > > > On Mon, Nov 5, 2018 at 11:07 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > >> Below is the list of build error/warning regressions/improvements in
+> > > >> v4.20-rc1[1] compared to v4.19[2].
+> > > >>
+> > > >> Summarized:
+> > > >>   - build errors: +3/-0
+> > > >>   - build warnings: +449/-2712
+> > > >>
+> > > >> Happy fixing! ;-)
+> > > >>
+> > > >> Thanks to the linux-next team for providing the build service.
+> > > >>
+> > > >> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/651022382c7f8da46cb4872a545ee1da6d097d2a/ (all 240 configs)
+> > > >> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d/ (all 240 configs)
+> > > >>
+> > > >>
+> > > >> *** ERRORS ***
+> > > >>
+> > > >>   + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]:  => 8799:3
+> > > >
+> > > > sh4-all{mod,yes}config
+> > > >
+> > > > Looks like d9b84a15892c0233 ("ALSA: hda: Fix implicit definition of
+> > > > pci_iomap() on SH")
+> > > > is not sufficient?
+> > >
+> > > Different problem.  This is about "select":
+> > >
+> > > config SND_SOC_ALL_CODECS
+> > >       tristate "Build all ASoC CODEC drivers"
+> > >
+> > > That enables (sets):
+> > >       select SND_SOC_HDAC_HDA
+> > > which selects SND_HDA even though CONFIG_PCI is not enabled.
+> >
+> > Actually it is OK to enable CONFIG_SND_HDA_CODEC_CA0132 without
+> > CONFIG_PCI.  IIRC, there was a system like that, too.
+> > The commit above should have covered the build failure on SH, but
+> > apparently isn't enough for some arch setups, as it seems.
+> >
+> > The cause is clear now: pci_iomap() is defined in
+> > asm-generic/pci_iomap.h only when CONFIG_GENERIC_PCI_IOMAP is
+> > defined.  Including asm/io.h doesn't help unless CONFIG_PCI is set.
+> >
+> > Below is a quick fix for this.
+> >
+> >
+> > thanks,
+> >
+> > Takashi
+> >
+> > -- 8< --
+> >
+> > From: Takashi Iwai <tiwai@suse.de>
+> > Subject: [PATCH] ALSA: hda/ca0132 - Yet more fix on build breakage without PCI
+> >  support
+> >
+> > The recent change in CA0132 codec driver for supporting more
+> > Creative boards includes the pci_iomap() call to get the extra
+> > register accesses.  This is supposed to work on all archs and setups,
+> > by the implicit assumption that every arch would provide a dummy
+> > function returning NULL when no PCI is available.  But the reality
+> > bites, of course; as Geert's regular build test shows, some configs
+> > (at least SH4 without CONFIG_PCI) leads to a build error due to the
+> > implicit function declaration.
+> >
+> > So this is another attempt to fix the issue: now we add an ifdef
+> > CONFIG_PCI line, so that pci_iomap() won't be called unless PCI is
+> > really usable.  This should fall back to the standard quirk again with
+> > a warning.
+> >
+> > Fixes: d9b84a15892c0233 ("ALSA: hda: Fix implicit definition of pci_iomap() on SH")
+> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> 
+> Thanks for your patch!
+> 
+> > --- a/sound/pci/hda/patch_ca0132.c
+> > +++ b/sound/pci/hda/patch_ca0132.c
+> > @@ -8796,7 +8796,13 @@ static int patch_ca0132(struct hda_codec *codec)
+> >         }
+> >
+> >         if (spec->use_pci_mmio) {
+> > +               /*
+> > +                * ifdef below needed due to lack of pci_iomap() decleration
+> > +                * for some archs when no PCI is defined
+> > +                */
+> > +#ifdef CONFIG_PCI
+> >                 spec->mem_base = pci_iomap(codec->bus->pci, 2, 0xC20);
+> > +#endif
+> 
+> I'm sorry, but that is not a proper fix.
+> This should be fixed in the SH-specific code, to behave like other
+> architectures.
 
-Before:
+OK, this is the thing I didn't want to go deeply, as the problem is
+messy...
 
-```
-cpp-inlining 28298 [-01] 54837.342780:    3068085 cycles:pp:
-            7ffff7c96709 __hypot_finite+0xa9 (/usr/lib/libm-2.28.so)
-            ...
- ABI:2    AX:0x0    BX:0x40f56cf6    CX:0x294a3ae7    ...
-cpp-inlining 28298 [-01] 54837.344493:    2881929 cycles:pp:
-            7ffff7c96696 __hypot_finite+0x36 (/usr/lib/libm-2.28.so)
-            ...
- ABI:2    AX:0x40d440c7    BX:0x40d440c7    CX:0x4d45e5da    ...
-```
+The top of iceberg is that asm/pci_iomap.h defines the dummy function
+of pci_iomap() only when CONFIG_PCI=n && CONFIG_GENERIC_PCI_IOMAP=y.
+This has been so for long time since the commit 97a29d59fc22
+    [PARISC] fix compile break caused by iomap: make IOPORT/PCI
+    mapping function s conditional
 
-After:
+Before that point, the header defined pci_iomap() and pci_ioumap()
+whenever CONFIG_PCi=n.
 
-```
-cpp-inlining 28298 [-01] 54837.342780:    3068085 cycles:pp:
-            7ffff7c96709 __hypot_finite+0xa9 (/usr/lib/libm-2.28.so)
-            ...
- ABI:2    AX:0x0    BX:0x40f56cf6    CX:0x294a3ae7    ...
+And, looking at other arch codes, most of them define
+CONFIG_GENERIC_PCI_IOMAP no matter whether CONFIG_PCI is set or not.
+Actually this is supposedly OK, as the generic code (lib/pci_iomap.c)
+contains a large ifdef CONFIG_PCI in it, so essentially it's empty
+when CONFIG_PCI=n.
 
-cpp-inlining 28298 [-01] 54837.344493:    2881929 cycles:pp:
-            7ffff7c96696 __hypot_finite+0x36 (/usr/lib/libm-2.28.so)
-            ...
- ABI:2    AX:0x40d440c7    BX:0x40d440c7    CX:0x4d45e5da    ...
-```
+So, one possible fix would be to convert all fallout archs (alpha,
+powerpc and sh) to define always CONFIG_GENERIC_PCI_IOMAP.  I'm not
+100% sure whether this is safe, but we may try.
 
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
----
- tools/perf/builtin-script.c | 2 ++
- 1 file changed, 2 insertions(+)
+Another fix would be to revert the commit 97a29d59fc22, and let
+asm/pci_iomap.h providing the dummy functions whenever CONFIG_PCi=n.
+Along with it, we need to fix the arch side, the duplicated (and
+useless) definitions in arch/parisc/lib/iomap.c.  Through a quick
+look, arch/sparc also has the pci_iounmap() definition without
+CONFIG_PCI check, so this needs to be fixed as well.
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index b5bc85bd0bbe..daf73832743e 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -603,6 +603,8 @@ static int perf_sample__fprintf_uregs(struct perf_sam=
-ple *sample,
- 		printed +=3D fprintf(fp, "%5s:0x%"PRIx64" ", perf_reg_name(r), val);
- 	}
-=20
-+	fprintf(fp, "\n");
-+
- 	return printed;
- }
-=20
---=20
-2.19.1
+And, what makes the situation messy is that the handling of
+pci_iounmap() is totally different from pci_iomap().  pci_iomap() is
+covered by CONFIG_GENERIC_PCI_IOMAP while pci_iounmap() is by
+CONFIG_GENERIC_IOMAP.  And, yet there are multiple dummy function
+definitions of pci_iounmap().  Once in include/asm-generic/iomap.h,
+and once in include/asm-generic/io.h.
+
+Overall, there are a few rooms of cleanups / fixes, yeah.
+
+
+thanks,
+
+Takashi
