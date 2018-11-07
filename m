@@ -2,322 +2,74 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB9FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653B3C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47EAF2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:40:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47EAF2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FAF920818
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAF920818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeKHGM7 (ORCPT
+        id S1726982AbeKHGOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:12:59 -0500
-Received: from mga18.intel.com ([134.134.136.126]:51151 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbeKHGM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:12:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 12:40:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
-   d="scan'208";a="84123687"
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Nov 2018 12:40:54 -0800
-Subject: Re: [PATCHv10 8/8] firmware: add remote status update client support
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, atull@kernel.org, arnd@arndb.de,
-        corbet@lwn.net, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-doc@vger.kernel.org,
-        todd.riffel@intel.com, richard.gong@intel.com
-References: <1541523172-5171-1-git-send-email-richard.gong@linux.intel.com>
- <1541523172-5171-9-git-send-email-richard.gong@linux.intel.com>
- <20181106172202.GA4042@archbook>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <f9657cd4-faea-8a5e-2c2a-35320ba3c72a@linux.intel.com>
-Date:   Wed, 7 Nov 2018 14:49:50 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 01:14:14 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42402 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726517AbeKHGON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 01:14:13 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gKUeP-0000GJ-91; Wed, 07 Nov 2018 20:42:09 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-i3c@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][i3c-next] i3c: fix incorrect update to max_read_ds
+Date:   Wed,  7 Nov 2018 20:42:08 +0000
+Message-Id: <20181107204208.7411-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181106172202.GA4042@archbook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Moritz,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 11/6/18 11:22 AM, Moritz Fischer wrote:
-> Hi Richard,
-> 
-> On Tue, Nov 06, 2018 at 10:52:52AM -0600, richard.gong@linux.intel.com wrote:
->> From: Richard Gong <richard.gong@intel.com>
->>
->> Extend Intel Stratix10 service layer to support the second service layer
->> client, Remote Status Update (RSU).
->>
->> RSU is used to provide our customers with protection against loading bas
-> Nit: 'bas' -> 'bad'
->> bitstreams onto their devices when those device are booting from flash.
->>
+Currently max_read_ds is being updated twice, which is incorrect.
+The second assignment should be to max_write_ds instead. Fix this.
 
-I will correct that in the next submission.
+Detected by CoverityScan, CID#1475379 ("Unused value")
 
->> Signed-off-by: Richard Gong <richard.gong@intel.com>
->> Signed-off-by: Alan Tull <atull@kernel.org>
->> ---
->> v7: this patch is added in patch set version 7
->> v8: no change
->> v9: add case for COMMAND_RSU_UPDATE at svc_thread_recv_status_ok() at
->>      stratix10-svc.c file
->>      add RSU related definitions at stratix10-smc.h file
->> v10: s/misc/firmware at commit header
->> ---
->>   drivers/firmware/stratix10-svc.c                   | 35 +++++++++++++++-
->>   include/linux/firmware/intel/stratix10-smc.h       | 47 ++++++++++++++++++++++
->>   .../linux/firmware/intel/stratix10-svc-client.h    | 20 ++++++++-
->>   3 files changed, 98 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
->> index 898e588..ae99221 100644
->> --- a/drivers/firmware/stratix10-svc.c
->> +++ b/drivers/firmware/stratix10-svc.c
->> @@ -34,7 +34,7 @@
->>    * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
->>    */
->>   #define SVC_NUM_DATA_IN_FIFO			32
->> -#define SVC_NUM_CHANNEL				1
->> +#define SVC_NUM_CHANNEL				2
->>   #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
->>   #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
->>   
->> @@ -271,7 +271,7 @@ static void svc_thread_cmd_config_status(struct stratix10_svc_controller *ctrl,
->>    * @cb_data: pointer to callback data structure to service client
->>    * @res: result from SMC or HVC call
->>    *
->> - * Send back the correspond status to the service client (FPGA manager etc).
->> + * Send back the correspond status to the service clients.
->>    */
->>   static void svc_thread_recv_status_ok(struct stratix10_svc_data *p_data,
->>   				      struct stratix10_svc_cb_data *cb_data,
->> @@ -295,6 +295,9 @@ static void svc_thread_recv_status_ok(struct stratix10_svc_data *p_data,
->>   	case COMMAND_RECONFIG_STATUS:
->>   		cb_data->status = BIT(SVC_STATUS_RECONFIG_COMPLETED);
->>   		break;
->> +	case COMMAND_RSU_UPDATE:
->> +		cb_data->status = BIT(SVC_STATUS_RSU_OK);
->> +		break;
->>   	default:
->>   		pr_warn("it shouldn't happen\n");
->>   		break;
->> @@ -373,6 +376,16 @@ static int svc_normal_to_secure_thread(void *data)
->>   			a1 = 0;
->>   			a2 = 0;
->>   			break;
->> +		case COMMAND_RSU_STATUS:
->> +			a0 = INTEL_SIP_SMC_RSU_STATUS;
->> +			a1 = 0;
->> +			a2 = 0;
->> +			break;
->> +		case COMMAND_RSU_UPDATE:
->> +			a0 = INTEL_SIP_SMC_RSU_UPDATE;
->> +			a1 = pdata->arg[0];
->> +			a2 = 0;
->> +			break;
->>   		default:
->>   			pr_warn("it shouldn't happen\n");
->>   			break;
->> @@ -389,6 +402,19 @@ static int svc_normal_to_secure_thread(void *data)
->>   			 (unsigned int)res.a1, (unsigned int)res.a2);
->>   		pr_debug(" res.a3=0x%016x\n", (unsigned int)res.a3);
->>   
->> +		if (pdata->command == COMMAND_RSU_STATUS) {
->> +			if (res.a0 == INTEL_SIP_SMC_RSU_ERROR)
->> +				cbdata->status = BIT(SVC_STATUS_RSU_ERROR);
->> +			else
->> +				cbdata->status = BIT(SVC_STATUS_RSU_OK);
->> +
->> +			cbdata->kaddr1 = &res;
->> +			cbdata->kaddr2 = NULL;
->> +			cbdata->kaddr3 = NULL;
->> +			pdata->chan->scl->receive_cb(pdata->chan->scl, cbdata);
->> +			continue;
->> +		}
->> +
->>   		switch (res.a0) {
->>   		case INTEL_SIP_SMC_STATUS_OK:
->>   			svc_thread_recv_status_ok(pdata, cbdata, res);
->> @@ -941,6 +967,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
->>   	chans[0].name = SVC_CLIENT_FPGA;
->>   	spin_lock_init(&chans[0].lock);
->>   
->> +	chans[1].scl = NULL;
->> +	chans[1].ctrl = controller;
->> +	chans[1].name = SVC_CLIENT_RSU;
->> +	spin_lock_init(&chans[1].lock);
->> +
->>   	list_add_tail(&controller->node, &svc_ctrl);
->>   	platform_set_drvdata(pdev, controller);
->>   
->> diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
->> index a109e4c..5be5dab 100644
->> --- a/include/linux/firmware/intel/stratix10-smc.h
->> +++ b/include/linux/firmware/intel/stratix10-smc.h
->> @@ -67,6 +67,12 @@
->>    *
->>    * INTEL_SIP_SMC_FPGA_CONFIG_STATUS_ERROR:
->>    * There is error during the FPGA configuration process.
->> + *
->> + * INTEL_SIP_SMC_REG_ERROR:
->> + * There is error during a read or write operation of the protected registers.
->> + *
->> + * INTEL_SIP_SMC_RSU_ERROR:
->> + * There is error during a remote status update.
->>    */
->>   #define INTEL_SIP_SMC_RETURN_UNKNOWN_FUNCTION		0xFFFFFFFF
->>   #define INTEL_SIP_SMC_STATUS_OK				0x0
->> @@ -74,6 +80,7 @@
->>   #define INTEL_SIP_SMC_FPGA_CONFIG_STATUS_REJECTED       0x2
->>   #define INTEL_SIP_SMC_FPGA_CONFIG_STATUS_ERROR		0x4
->>   #define INTEL_SIP_SMC_REG_ERROR				0x5
->> +#define INTEL_SIP_SMC_RSU_ERROR				0x7
->>   
->>   /**
->>    * Request INTEL_SIP_SMC_FPGA_CONFIG_START
->> @@ -262,4 +269,44 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
->>   #define INTEL_SIP_SMC_REG_UPDATE \
->>   	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_REG_UPDATE)
->>   
->> +/*
->> + * Request INTEL_SIP_SMC_RSU_STATUS
->> + *
->> + * Request remote status update boot log, call is synchronous.
->> + *
->> + * Call register usage:
->> + * a0 INTEL_SIP_SMC_RSU_STATUS
->> + * a1-7 not used
->> + *
->> + * Return status
->> + * a0: Current Image
->> + * a1: Last Failing Image
->> + * a2: Version | State
->> + * a3: Error details | Error location
->> + *
->> + * Or
->> + *
->> + * a0: INTEL_SIP_SMC_RSU_ERROR
->> + */
->> +#define INTEL_SIP_SMC_FUNCID_RSU_STATUS 11
->> +#define INTEL_SIP_SMC_RSU_STATUS \
->> +	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_RSU_STATUS)
->> +
->> +/*
->> + * Request INTEL_SIP_SMC_RSU_UPDATE
->> + *
->> + * Request to set the offset of the bitstream to boot after reboot, call
->> + * is synchronous.
->> + *
->> + * Call register usage:
->> + * a0 INTEL_SIP_SMC_RSU_UPDATE
->> + * a1 64bit physical address of the configuration data memory in flash
->> + * a2-7 not used
->> + *
->> + * Return status
->> + * a0 INTEL_SIP_SMC_STATUS_OK
->> + */
->> +#define INTEL_SIP_SMC_FUNCID_RSU_UPDATE 12
->> +#define INTEL_SIP_SMC_RSU_UPDATE \
->> +	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_RSU_UPDATE)
->>   #endif
->> diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
->> index f2fda7e..e521f17 100644
->> --- a/include/linux/firmware/intel/stratix10-svc-client.h
->> +++ b/include/linux/firmware/intel/stratix10-svc-client.h
->> @@ -10,8 +10,10 @@
->>    * Service layer driver supports client names
->>    *
->>    * fpga: for FPGA configuration
->> + * rsu: for remote status update
->>    */
->>   #define SVC_CLIENT_FPGA			"fpga"
->> +#define SVC_CLIENT_RSU			"rsu"
->>   
->>   /**
->>    * Status of the sent command, in bit number
->> @@ -36,6 +38,9 @@
->>    *
->>    * SVC_COMMAND_STATUS_RECONFIG_ERROR:
->>    * Error encountered during FPGA configuration.
->> + *
->> + * SVC_STATUS_RSU_OK:
->> + * Secure firmware accepts the request of remote status update (RSU).
->>    */
->>   #define SVC_STATUS_RECONFIG_REQUEST_OK		0
->>   #define SVC_STATUS_RECONFIG_BUFFER_SUBMITTED	1
->> @@ -43,7 +48,8 @@
->>   #define SVC_STATUS_RECONFIG_COMPLETED		3
->>   #define SVC_STATUS_RECONFIG_BUSY		4
->>   #define SVC_STATUS_RECONFIG_ERROR		5
->> -
->> +#define SVC_STATUS_RSU_OK			6
->> +#define SVC_STATUS_RSU_ERROR			7
->>   /**
->>    * Flag bit for COMMAND_RECONFIG
->>    *
->> @@ -56,9 +62,11 @@
->>   /**
->>    * Timeout settings for service clients:
->>    * timeout value used in Stratix10 FPGA manager driver.
->> + * timeout value used in RSU driver
->>    */
->>   #define SVC_RECONFIG_REQUEST_TIMEOUT_MS         100
->>   #define SVC_RECONFIG_BUFFER_TIMEOUT_MS          240
->> +#define SVC_RSU_REQUEST_TIMEOUT_MS              300
->>   
->>   struct stratix10_svc_chan;
->>   
->> @@ -81,13 +89,21 @@ struct stratix10_svc_chan;
->>    * @COMMAND_RECONFIG_STATUS: check the status of the configuration, return
->>    * status is SVC_STATUS_RECONFIG_COMPLETED, or  SVC_STATUS_RECONFIG_BUSY, or
->>    * SVC_STATUS_RECONFIG_ERROR
->> + *
->> + * @COMMAND_RSU_STATUS: request remote system update boot log, return status
->> + * is log data or SVC_STATUS_RSU_ERROR
->> + *
->> + * @COMMAND_RSU_UPDATE: set the offset of the bitstream to boot after reboot,
->> + * return status is SVC_STATUS_RSU_OK or SVC_STATUS_RSU_ERROR
->>    */
->>   enum stratix10_svc_command_code {
->>   	COMMAND_NOOP = 0,
->>   	COMMAND_RECONFIG,
->>   	COMMAND_RECONFIG_DATA_SUBMIT,
->>   	COMMAND_RECONFIG_DATA_CLAIM,
->> -	COMMAND_RECONFIG_STATUS
->> +	COMMAND_RECONFIG_STATUS,
->> +	COMMAND_RSU_STATUS,
->> +	COMMAND_RSU_UPDATE
->>   };
->>   
->>   /**
->> -- 
->> 2.7.4
->>
-> 
-> Thanks,
-> Moritz
-> 
-Regards,
-Richard
+Fixes: 50cacdabeae1 ("i3c: Add core I3C infrastructure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/i3c/master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 68d6553dbd75..0ea7bb045fad 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -1093,7 +1093,7 @@ static int i3c_master_getmxds_locked(struct i3c_master_controller *master,
+ 	}
+ 
+ 	info->max_read_ds = getmaxds->maxrd;
+-	info->max_read_ds = getmaxds->maxwr;
++	info->max_write_ds = getmaxds->maxwr;
+ 	if (dest.payload.len == 5)
+ 		info->max_read_turnaround = getmaxds->maxrdturn[0] |
+ 					    ((u32)getmaxds->maxrdturn[1] << 8) |
+-- 
+2.19.1
+
