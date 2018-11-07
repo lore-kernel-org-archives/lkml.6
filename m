@@ -2,191 +2,149 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D15C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4AFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6F920827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:47:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="In5Z78tV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6F920827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id B1C3820827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C3820827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbeKGWRV (ORCPT
+        id S1727598AbeKGWSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:17:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39322 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbeKGWRV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:17:21 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10-v6so17248263wrv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 04:47:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=dabjdtAH3uYSr1byjY4hPEot3YFqQg2gR9qaYXaRVQA=;
-        b=In5Z78tVCHDL8D7jFhyn/eAgCBxQ3V1Y+ntyOcqOI2XqcGIypKzS+oKTZhm4orAscN
-         qUdaUFZR6wa76OMpCVjzNf3V7PmQoMrzK9BiAp40FhuNGi+KlMEK3xgTb9cc1PELbVtK
-         sFQxIA4Gmh3AHa/iOAV8lJi6k60fMWRRc6KKtmKbGMEYvbesLHW7zd43v8D0KythCF32
-         GiPgvtEE1bM9Fq2wTlYVyyuewHtYPgrBRB62elHUmfTeCD1BMU0A3RrEjN6vQJ7ZHq0Q
-         jke+LjQqcn8+h5DwZIEhnJxegZxVepOqa2m1dZY6RCV9aXfW3m9bzhcoo5PvZ85tZcpO
-         0/tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=dabjdtAH3uYSr1byjY4hPEot3YFqQg2gR9qaYXaRVQA=;
-        b=EwsM6L5ZP6ezi47gqU7Oh4j/ue/vxpNpq3n0e3u7WGBRDEdGr5ur0nGMTUE2hQoxLH
-         kxl7i5QfDJInHdWT0IPLEWLMPviA66U9wZP6AdZijt+tIvynqygrETygnWSpe3YxeT29
-         si/wgZHezioQ915xI32f3rNuIzZ+GAaR914MzCXXR4l2/3WIrDqb6q+6DRYirakwjlIO
-         ocRk2V8pJeaOo3go3KPn4gZqA7zoCeiLhG023KQddtSqTJuI6L1KzgaCkM/16sunzhwF
-         OmXiqjY3isgf+ykdcXnJlU7BWQMJNcyW1jLO3ur5Q2ES9gCxMt+V1xWYynr8MYKwBZ0B
-         TqtQ==
-X-Gm-Message-State: AGRZ1gJZLeJWzpm9NmbbegDNalZP6f1icTE7OnYRCO2QBzqDIrlisBgN
-        7RRDqd3HYm6vaLRfRb6j96fYpg==
-X-Google-Smtp-Source: AJdET5fM4Ea1E/P4KXYw63hCej6kH9G1sVURxSkFTEPelpIkVngSBAUcoO1bw6jrRl7Di0tVtMaHYg==
-X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr87391wrc.188.1541594824698;
-        Wed, 07 Nov 2018 04:47:04 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o130-v6sm1578952wmd.11.2018.11.07.04.47.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 04:47:03 -0800 (PST)
-Subject: Re: [PATCH] arm64: dts: meson-gx: Add hdmi_5v regulator as hdmi tx
- supply
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1541434917-18126-1-git-send-email-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
+        Wed, 7 Nov 2018 17:18:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54046 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbeKGWSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 17:18:18 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7F39E3082B23;
+        Wed,  7 Nov 2018 12:48:03 +0000 (UTC)
+Received: from [10.36.112.47] (ovpn-112-47.ams2.redhat.com [10.36.112.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A00CC18660;
+        Wed,  7 Nov 2018 12:48:01 +0000 (UTC)
+Subject: Re: KMSAN: kernel-infoleak in kvm_vcpu_write_guest_page
+To:     Alexander Potapenko <glider@google.com>,
+        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+Cc:     kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        rkrcmar@redhat.com, syzkaller-bugs@googlegroups.com
+References: <0000000000005de8da057a092ba2@google.com>
+ <CAG_fn=Wmc+YU8BMcY_RXxAvVTpAMez5QUFyQSH3UsRg4Y-ZwMQ@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <1b209a7e-e69a-079c-51e1-67b18410e5a0@baylibre.com>
-Date:   Wed, 7 Nov 2018 13:47:03 +0100
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <9d2e26fb-1d2a-248f-5451-ee95d8a6c017@redhat.com>
+Date:   Wed, 7 Nov 2018 13:47:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1541434917-18126-1-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <CAG_fn=Wmc+YU8BMcY_RXxAvVTpAMez5QUFyQSH3UsRg4Y-ZwMQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 07 Nov 2018 12:48:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 17:21, Neil Armstrong wrote:
-> The hdmi_5v regulator must be enabled to provide power to the physical HDMI
-> PHY and enables the HDMI 5V presence loopback for the monitor.
-> 
-> Fixes: b409f625a6d5 ("ARM64: dts: meson-gx: Add HDMI_5V regulator on selected boards")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi          | 1 +
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts   | 1 +
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 1 +
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts         | 1 +
->  arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts        | 1 +
->  5 files changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-> index 765247b..eb8eec8 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-> @@ -125,6 +125,7 @@
->  	status = "okay";
->  	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
->  	pinctrl-names = "default";
-> +	phy-supply = <&hdmi_5v>;
->  };
->  
->  &hdmi_tx_tmds_port {
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-> index d32cf38..69c28c4 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-> @@ -78,6 +78,7 @@
->  	status = "okay";
->  	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
->  	pinctrl-names = "default";
-> +	phy-supply = <&hdmi_5v>;
->  };
->  
->  &hdmi_tx_tmds_port {
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-> index 90a56af..86a7be8 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-> @@ -155,6 +155,7 @@
->  	status = "okay";
->  	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
->  	pinctrl-names = "default";
-> +	phy-supply = <&hdmi_5v>;
->  };
->  
->  &hdmi_tx_tmds_port {
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
-> index 5896e8a..8a39d95 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
-> @@ -51,6 +51,7 @@
->  	status = "okay";
->  	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
->  	pinctrl-names = "default";
-> +	phy-supply = <&hdmi_5v>;
->  };
->  
->  &hdmi_tx_tmds_port {
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> index 313f88f..50d2be1 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> @@ -271,6 +271,7 @@
->  	status = "okay";
->  	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
->  	pinctrl-names = "default";
-> +	phy-supply = <&hdmi_5v>;
->  };
->  
->  &hdmi_tx_tmds_port {
-> 
+On 07/11/2018 13:10, Alexander Potapenko wrote:
+> This appears to be a real bug in KVM.
+> Please see a simplified reproducer attached.
 
+Thanks, I agree it's a reael bug.  The basic issue is that the
+kvm_state->size member is too small (1040) in the KVM_SET_NESTED_STATE
+ioctl, aka 0x4080aebf.
 
-Oops, it should be hdmi_supply...
+One way to fix it would be to just change kmalloc to kzalloc when
+allocating cached_vmcs12 and cached_shadow_vmcs12, but really the ioctl
+is wrong and should be rejected.  And the case where a shadow VMCS has
+to be loaded is even more wrong, and we have to fix it anyway, so I
+don't really like the idea of papering over the bug in the allocation.
 
-I'll resend..
+I'll test this patch and submit it formally:
 
-neil
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index c645f777b425..c546f0b1f3e0 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -14888,10 +14888,13 @@ static int vmx_set_nested_state(struct
+kvm_vcpu *vcpu,
+ 	if (ret)
+ 		return ret;
+
+-	/* Empty 'VMXON' state is permitted */
+-	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
++	/* Empty 'VMXON' state is permitted.  A partial VMCS12 is not.  */
++	if (kvm_state->size == sizeof(kvm_state))
+ 		return 0;
+
++	if (kvm_state->size < sizeof(kvm_state) + VMCS12_SIZE)
++		return -EINVAL;
++
+ 	if (kvm_state->vmx.vmcs_pa != -1ull) {
+ 		if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
+ 		    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
+@@ -14917,6 +14920,7 @@ static int vmx_set_nested_state(struct kvm_vcpu
+*vcpu,
+ 	}
+
+ 	vmcs12 = get_vmcs12(vcpu);
++	BUILD_BUG_ON(sizeof(*vmcs12) > VMCS12_SIZE);
+ 	if (copy_from_user(vmcs12, user_kvm_nested_state->data, sizeof(*vmcs12)))
+ 		return -EFAULT;
+
+@@ -14932,7 +14936,7 @@ static int vmx_set_nested_state(struct kvm_vcpu
+*vcpu,
+ 	if (nested_cpu_has_shadow_vmcs(vmcs12) &&
+ 	    vmcs12->vmcs_link_pointer != -1ull) {
+ 		struct vmcs12 *shadow_vmcs12 = get_shadow_vmcs12(vcpu);
+-		if (kvm_state->size < sizeof(kvm_state) + 2 * sizeof(*vmcs12))
++		if (kvm_state->size < sizeof(kvm_state) + 2 * VMCS12_SIZE)
+ 			return -EINVAL;
+
+ 		if (copy_from_user(shadow_vmcs12,
+
+Paolo
