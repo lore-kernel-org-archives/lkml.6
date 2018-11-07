@@ -2,143 +2,158 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68306C32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40E7C32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C5E20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F19C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjlGccw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C5E20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="e6PaRm8B";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="jBVYjOQK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F19C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeKGJjm (ORCPT
+        id S1731102AbeKGJmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 04:39:42 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41297 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730872AbeKGJjm (ORCPT
+        Wed, 7 Nov 2018 04:42:46 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43406 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726530AbeKGJmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 04:39:42 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 70so967880pgh.8
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:11:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cJCu+7aUf0R/Rv0CKQYOpWyS4v76zOkUkD/Ri1hUY3I=;
-        b=fjlGccw5DvIZYAVAMXqzitItrIt4fULoX+E6RLf+YBOw/t+zJ1dIHNce9B5eW3aKLI
-         eIKXoQkeyH8mqdpZ6MwRcKr/82KgPJhlhqh0CAync32QSnOmxFQ3uEniD3TCqNoUP3F7
-         yAp2ph1FaRMqMjdK2IYWRzwcbdedJNTo0ybKQ8alcV3UIwN2MpVXFre0xQSWeqzkdFfw
-         NW/7jb75maE7FF/9XtZTVk6Ns58e9higAoNzCsFOqXhsmXI5XGl3lo+myebQQNb4ACCW
-         /3RiKePxMacuX7q7DQx66YYHNBPjFFKSM0AqRJdPZjWDWfk9v64I9SAqMCuyBABpN/L5
-         HIqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cJCu+7aUf0R/Rv0CKQYOpWyS4v76zOkUkD/Ri1hUY3I=;
-        b=tLEKHNK7I8q0yU1FKD/WEWZ9jmnLcxyF8rh5BtZwZ756iT1bf2hChYY6u2vguyPWbw
-         Zbh/cdC7zLN0Y7MVOK/Vr7VSrO2jOCX+ICwYxM1AV9BiCNOAyvsz/MOshHnF0K8OiF3y
-         znv7FdR2grw90c1DyBl97JreHbakamY7JGJSAOpVNNtvbqYu+qo/xr8YzEfVj6uQfLx0
-         l8IVDAkn4SY8jY8dVjfA7j0F6NCZy7xM1BDgny4LXs6x2tK4VuLnYURPh2blJvwUo1+z
-         DqysCMXRc8YWCMZWCSc2mxax7Pg6ti3x8t6yGtb6BAiQBZkFuynO+B36Vsf/MB8qfnD5
-         YYuw==
-X-Gm-Message-State: AGRZ1gKfGuYt28jWjJzWMB121/Lj41AxAEIEKdAtI2sWrMXIxxNL3Elw
-        X+h+pnllhEYYtFVjDbpkmGZlzoLQ
-X-Google-Smtp-Source: AJdET5ciL/4adM/vQDA/GcYlVEUWzPnCAzevAjpMnZb7fPISeFZqWdMj0qQCvbDifflw+ObyOCNrZQ==
-X-Received: by 2002:a63:dc54:: with SMTP id f20mr25943710pgj.410.1541549511958;
-        Tue, 06 Nov 2018 16:11:51 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id m5-v6sm59093996pfc.188.2018.11.06.16.11.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 16:11:51 -0800 (PST)
-Date:   Tue, 6 Nov 2018 16:11:49 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     joro@8bytes.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/dma: Zero pages manually in a length of scatterlist
-Message-ID: <20181107001148.GB11429@Asurada-Nvidia.nvidia.com>
-References: <20181101213500.21800-1-nicoleotsuka@gmail.com>
- <63184c22-4587-be2b-8089-d2e4e0b5482d@arm.com>
- <20181102233613.GA26856@Asurada-Nvidia.nvidia.com>
- <d232ee7a-40de-5b32-39ab-222b773e9bb2@arm.com>
+        Wed, 7 Nov 2018 04:42:46 -0500
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA708qj2030419;
+        Tue, 6 Nov 2018 16:14:15 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=3KVrX5JeYRJjncfddEyhTfKK7oER0n7MU5/KXpWZX6A=;
+ b=e6PaRm8Bf2aWg3GeSUarOvQkmYusz1Q8yWZFdZjM+sNEMRJ6oDrRlmBJJtmKg4urlGm9
+ w6ExWi65bSuOZZVL1Msfr2CZz55BFaHioG/FaaKezEI6GwLJKH4HDOEi0imtMKxwsUSC
+ IguAo2+sOhMfhGetw8dx2WPSR4S6Hd0HHPY= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nkkqg09y1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 06 Nov 2018 16:14:15 -0800
+Received: from frc-hub04.TheFacebook.com (2620:10d:c021:18::174) by
+ frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 6 Nov 2018 16:14:14 -0800
+Received: from FRC-CHUB13.TheFacebook.com (2620:10d:c021:18::32) by
+ frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
+ via Frontend Transport; Tue, 6 Nov 2018 16:14:14 -0800
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.33) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 6 Nov 2018 19:14:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3KVrX5JeYRJjncfddEyhTfKK7oER0n7MU5/KXpWZX6A=;
+ b=jBVYjOQKlzaFlrDTZI0wtIB2Q/qimCZB7bmo30HLoqwRlazaotow1gOJ4n0dzaHfe4t/iaqLi5sXn3oArXS+Y/80mnwOZKCTqpakobds8P1XFZlQl/Tt0RdF01zBn/QVBZajgZhJiVJOPgj6HN5rjvuSQDlVMa2hJNC2dOKN+Uk=
+Received: from BYAPR15MB2501.namprd15.prod.outlook.com (52.135.196.11) by
+ BYAPR15MB2392.namprd15.prod.outlook.com (52.135.198.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Wed, 7 Nov 2018 00:13:56 +0000
+Received: from BYAPR15MB2501.namprd15.prod.outlook.com
+ ([fe80::ed40:7ac9:3043:5bc1]) by BYAPR15MB2501.namprd15.prod.outlook.com
+ ([fe80::ed40:7ac9:3043:5bc1%2]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
+ 00:13:56 +0000
+From:   Alexei Starovoitov <ast@fb.com>
+To:     David Miller <davem@davemloft.net>
+CC:     Song Liu <songliubraving@fb.com>,
+        "dsahern@gmail.com" <dsahern@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "acme@kernel.org" <acme@kernel.org>
+Subject: Re: [RFC perf,bpf 5/5] perf util: generate bpf_prog_info_event for
+ short living bpf programs
+Thread-Topic: [RFC perf,bpf 5/5] perf util: generate bpf_prog_info_event for
+ short living bpf programs
+Thread-Index: AQHUdhL1gT1g6kXc4U+H9DJqSIZu3qVDSleAgAAXY4CAAAMiAIAAAiiAgAAKXoA=
+Date:   Wed, 7 Nov 2018 00:13:56 +0000
+Message-ID: <39fe6abc-5c3e-bac3-0c0b-cf68bea23ab0@fb.com>
+References: <b984776a-ce69-ab16-ed87-1cea89c9d79a@gmail.com>
+ <6C5A9FBD-F50D-444C-9038-E9557EC850D2@fb.com>
+ <27fc8327-3390-ba5a-6063-89c9e7165e7b@fb.com>
+ <20181106.153647.1701013551426767213.davem@davemloft.net>
+In-Reply-To: <20181106.153647.1701013551426767213.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR10CA0005.namprd10.prod.outlook.com (2603:10b6:301::15)
+ To BYAPR15MB2501.namprd15.prod.outlook.com (2603:10b6:a02:88::11)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::7:62d8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB2392;20:wOK3PaVoOvmQqU9U0NEXYdlR0FpohzIAZJerW1nrgDFX8ho+PKihkVfazKOEDEKXC261Zp/KMGp8cXHWCSWcD9rDjRJCG4wIGxOONi1PZ8gK2h3JUCeUEEbIMK0b3KXPOD5QYNcOQcqFtN0Q+idvMga8wJ135F0CyOXXzBVts9w=
+x-ms-office365-filtering-correlation-id: 48ecffdf-eca3-402a-98aa-08d64445e847
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2392;
+x-ms-traffictypediagnostic: BYAPR15MB2392:
+x-microsoft-antispam-prvs: <BYAPR15MB23928377DC5D7AC4905A7220D7C40@BYAPR15MB2392.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(67672495146484);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(10201501046)(3002001)(3231382)(11241501184)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB2392;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB2392;
+x-forefront-prvs: 08497C3D99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(136003)(39860400002)(396003)(346002)(199004)(189003)(6486002)(81156014)(53936002)(229853002)(6916009)(6116002)(316002)(6436002)(36756003)(81166006)(8676002)(6246003)(6512007)(8936002)(2906002)(97736004)(99286004)(54906003)(39060400002)(5660300001)(305945005)(7736002)(93886005)(106356001)(186003)(46003)(105586002)(52116002)(14454004)(53546011)(6506007)(386003)(68736007)(76176011)(256004)(478600001)(2616005)(102836004)(2900100001)(86362001)(11346002)(446003)(476003)(486006)(31696002)(71190400001)(31686004)(4326008)(25786009)(71200400001)(142933001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2392;H:BYAPR15MB2501.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: YdKUTkuHh8esfMdwFEUg3INHsyeiH+p9+S3AudoVkMKIuLyVaNCTQafwWVF1TWx+d9tvsRadirNTk9BDEaygrcgqmGILRnMPDYV7FGcSUimvSNqLrgfvYtcX362dtGC4Yi8EK3V4EjPECouygjkQUuQRyW01Fzl+/oMf4KdgrSRMMvrwPnCdHZpPe35j9cOm+hGOdwLHRjroTiJOMd1qXB0XLCfpojq/F1i0jzuqERzXO8RUpKmTm5A1hGbpqHCkZpFj0e4TW0kgJ6q+APkDH5wlD/hcaukwnOTOjvM7E3XgdLVmSb5+bkRNnzjLnu8rUm9AznKwrMjYqwUd7/hK/Fr74dfd5VQnwjMrTHTVoxE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7F2F4D50ED54244AA3E8765E7C7B727E@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d232ee7a-40de-5b32-39ab-222b773e9bb2@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48ecffdf-eca3-402a-98aa-08d64445e847
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 00:13:56.5105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2392
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_13:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
-
-On Tue, Nov 06, 2018 at 06:27:39PM +0000, Robin Murphy wrote:
-> > I re-ran the test to get some accuracy within the function and got:
-> > 1) pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
-> >     // reduced from 422 usec to 56 usec == 366 usec less
-> > 2) if (!(prot & IOMMU_CACHE)) {...}	//flush routine
-> >     // reduced from 439 usec to 236 usec == 203 usec less
-> > Note: new memset takes about 164 usec, resulting in 400 usec diff
-> >        for the entire iommu_dma_alloc() function call.
-> > 
-> > It looks like this might be more than the diff between clear_page
-> > and memset, and might be related to mapping and cache. Any idea?
-> 
-> Hmm, I guess it might not be so much clear_page() itself as all the gubbins
-> involved in getting there from prep_new_page(). I could perhaps make some
-> vague guesses about how the A57 cores might get tickled by the different
-> code patterns, but the Denver cores are well beyond my ability to reason
-> about. Out of even further curiosity, how does the quick hack below compare?
-
-I tried out that change. And the results are as followings:
-a. Routine (1) reduced from 422 usec to 55 usec
-b. Routine (2) increased from 441 usec to 833 usec
-c. Overall, it seems to remain the same: 900+ usec
-
-> > > > @@ -581,6 +593,12 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
-> > > >    	if (sg_alloc_table_from_pages(&sgt, pages, count, 0, size, GFP_KERNEL))
-> > > >    		goto out_free_iova;
-> > > > +	if (gfp_zero) {
-> > > > +		/* Now zero all the pages in the scatterlist */
-> > > > +		for_each_sg(sgt.sgl, s, sgt.orig_nents, i)
-> > > > +			memset(sg_virt(s), 0, s->length);
-> > > 
-> > > What if the pages came from highmem? I know that doesn't happen on arm64
-> > > today, but the point of this code *is* to be generic, and other users will
-> > > arrive eventually.
-> > 
-> > Hmm, so it probably should use sg_miter_start/stop() too? Looking
-> > at the flush routine doing in PAGE_SIZE for each iteration, would
-> > be possible to map and memset contiguous pages together? Actually
-> > the flush routine might be also optimized if we can map contiguous
-> > pages.
-> 
-> I suppose the ideal point at which to do it would be after the remapping
-> when we have the entire buffer contiguous in vmalloc space and can make best
-> use of prefetchers etc. - DMA_ATTR_NO_KERNEL_MAPPING is a bit of a spanner
-> in the works, but we could probably accommodate a special case for that. As
-> Christoph points out, this isn't really the place to be looking for
-> performance anyway (unless it's pathologically bad as per the
-
-I would understand the point. So probably it'd be more plausible
-to have the change if it reflects on some practical benchmark. I
-might need to re-run some tests with heavier use cases.
-
-> DMA_ATTR_ALLOC_SINGLE_PAGES fun), but if we're looking at pulling the
-> remapping out of the arch code, maybe we could aim to rework the zeroing
-> completely as part of that.
-
-That'd be nice. I believe it'd be good to have.
-
-Thanks
-Nicolin
+T24gMTEvNi8xOCAzOjM2IFBNLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+IEZyb206IEFsZXhlaSBT
+dGFyb3ZvaXRvdiA8YXN0QGZiLmNvbT4NCj4gRGF0ZTogVHVlLCA2IE5vdiAyMDE4IDIzOjI5OjA3
+ICswMDAwDQo+IA0KPj4gSSB0aGluayBjb25jZXJucyB3aXRoIHBlcmYgb3ZlcmhlYWQgZnJvbSBj
+b2xsZWN0aW5nIGJwZiBldmVudHMNCj4+IGFyZSB1bmZvdW5kZWQuDQo+PiBJIHdvdWxkIHByZWZl
+ciBmb3IgdGhpcyBmbGFnIHRvIGJlIG9uIGJ5IGRlZmF1bHQuDQo+IA0KPiBJIHdpbGwgc2l0IGlu
+IHVzZXJzcGFjZSBsb29waW5nIG92ZXIgYnBmIGxvYWQvdW5sb2FkIGFuZCBzZWUgaG93IHRoZQ0K
+PiBwZXJzb24gdHJ5aW5nIHRvIG1vbml0b3Igc29tZXRoaW5nIGVsc2Ugd2l0aCBwZXJmIGZlZWxz
+IGFib3V0IHRoYXQuDQo+IA0KPiBSZWFsbHksIGl0IGlzIGluYXBwcm9wcmlhdGUgdG8gdHVybiB0
+aGlzIG9uIGJ5IGRlZmF1bHQsIEkgY29tcGxldGVseQ0KPiBhZ3JlZSB3aXRoIERhdmlkIEFoZXJu
+Lg0KPiANCj4gSXQncyBoYXJkIGVub3VnaCwgX0FTIElTXywgZm9yIG1lIHRvIGZpZ2h0IGJhY2sg
+YWxsIG9mIHRoZSBibG9hdCB0aGF0DQo+IGlzIGluIHBlcmYgcmlnaHQgbm93IGFuZCBnZXQgaXQg
+YmFjayB0byBiZWluZyBhYmxlIHRvIGhhbmRsZSBzaW1wbGUNCj4gZnVsbCB3b3JrbG9hZHMgd2l0
+aG91dCBkcm9wcGluZyBldmVudHMuLg0KDQpJdCdzIGEgc2VwYXJhdGUgcGVyZiB0aHJlYWQgYW5k
+IHNlcGFyYXRlIGV2ZW50IHdpdGggaXRzIG93biBlcG9sbC4NCkkgZG9uJ3Qgc2VlIGhvdyBpdCBj
+YW4gYWZmZWN0IG1haW4gZXZlbnQgY29sbGVjdGlvbi4NCkxldCdzIHB1dCBpdCB0aGlzIHdheS4g
+SWYgaXQgZG9lcyBhZmZlY3Qgc29tZWhvdywgdGhlbiB5ZXMsDQppdCBzaG91bGQgbm90IGJlIG9u
+LiBJZiBpdCBpcyBub3QsIHRoZXJlIGlzIG5vIGRvd25zaWRlIHRvIGtlZXAgaXQgb24uDQpUeXBp
+Y2FsIHVzZXIgZXhwZWN0cyB0byB0eXBlICdwZXJmIHJlY29yZCcgYW5kIHNlZSBldmVyeXRoaW5n
+IHRoYXQNCmlzIGhhcHBlbmluZyBvbiB0aGUgc3lzdGVtLiBSaWdodCBub3cgc2hvcnQgbGl2ZWQg
+YnBmIHByb2dyYW1zDQp3aWxsIG5vdCBiZSBzZWVuLiBIb3cgdXNlciBzdXBwb3NlIHRvIGV2ZW4g
+a25vdyB3aGVuIHRvIHVzZSB0aGUgZmxhZz8NClRoZSBvbmx5IG9wdGlvbiBpcyB0byBhbHdheXMg
+cGFzcyB0aGUgZmxhZyAnanVzdCBpbiBjYXNlJw0Kd2hpY2ggaXMgdW5uZWNlc3NhcnkgYnVyZGVu
+Lg0KVGhlIHByb2JsZW0gb2YgZHJvcHBlZCBldmVudHMgaXMgY2VydGFpbmx5IHZhbGlkLCBidXQg
+aXQncw0KYSBzZXBhcmF0ZSBpc3N1ZS4gVGhlIGFpbyBzdHVmZiB0aGF0IEFsZXhleSBCdWRhbmtv
+diBpcyB3b3JraW5nIG9uDQpzdXBwb3NlIHRvIGFkZHJlc3MgdGhhdC4NCg==
