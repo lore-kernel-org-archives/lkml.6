@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C75C32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B210FC32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A13182086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 262B02086A
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TXtKPJI9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A13182086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B+I/lpBw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262B02086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389146AbeKGKB0 (ORCPT
+        id S2389186AbeKGKBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 05:01:26 -0500
-Received: from mail-it1-f180.google.com ([209.85.166.180]:55012 "EHLO
-        mail-it1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389089AbeKGKBZ (ORCPT
+        Wed, 7 Nov 2018 05:01:31 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54433 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389157AbeKGKBa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 05:01:25 -0500
-Received: by mail-it1-f180.google.com with SMTP id d6so20624412itl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:33:29 -0800 (PST)
+        Wed, 7 Nov 2018 05:01:30 -0500
+Received: by mail-it1-f193.google.com with SMTP id d6so20624738itl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:33:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0GKhDEf7lvJjOn0Dlwq9iV8xpscxCdWsFGeeRB9JznA=;
-        b=TXtKPJI9STO3svOaiaZbfwbDrvbGqsboQxdvt/yr3wLmbwvvwuNydSmFfSoqY3TlTH
-         3M30AAAUVjo/z4YCkwa1YIvFtPp6LdULhzjpqSQdL+/8kJOa6XDqC85WRYsZYOWAQefI
-         ZG3eoxdpRb2kTkgMapNRiEM5CC1L8gbsXtvak=
+        bh=rm6BjHEXusVWBGxEjuC7GQ9PchSD/mzf8dk/SJxKBMo=;
+        b=B+I/lpBw9R76MAEw334UbJ8LaufKX3FILhXZDvt/AZB1Ohs6DucKmouC6YtBrqhJZu
+         3qvdxrYCClFcxmSkHVyT8FszR3ixkTNNfKf9vfCxEafq2pP621gGO+A21UBh/g+Bq3RI
+         Qz2ldqgdQU6oEq/XxOgZ3AV0FLS+tgDNBJJ5c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0GKhDEf7lvJjOn0Dlwq9iV8xpscxCdWsFGeeRB9JznA=;
-        b=QGfURD9UIIpjFuu9qkWpXQct7Z+dHmi+ucItBxJvJ1fNSc5n2xAUHCRZRVeb2rkN+B
-         cFkPvHoDuG9g9zHBCos0eOvse8fRmlaVTOI2aEEkP23kG/+k3Hb/AyR28zyO1xEDVo+2
-         58xAdgqsv7fN/mK5lvdw3dXGVhBDvEU7qM2+qIRhgHEI4rjjFrZalF3nqPyKslxhV5WT
-         yIhm3KamqgOGjyx7C/L5jPal0BVReslUDE4lECbaIMJ8MBtjdIq2rFpdmsJDKBiczobH
-         NZCZy3mdCaG6EJOmx8ulGOjGKocH0CdG9w+Htx1Ue3MSnTknkGb6XDqre1wNKQZ7qtHF
-         3kCQ==
-X-Gm-Message-State: AGRZ1gJ/yvao0kg1MmD9HMAdEKtcPUe15ZjFCZwSmN/c5I9kTB3FwbLK
-        UU5kliY+6T902Z3M4qfCrnxc1Q==
-X-Google-Smtp-Source: AJdET5evu0sOLfFKb8HLcCdTWnO7zCosLY0uz3Okg53UT4vilLHeJXX1AEu2GOiAyz0DowXa2FAoFg==
-X-Received: by 2002:a24:ac02:: with SMTP id s2-v6mr104992ite.105.1541550808480;
-        Tue, 06 Nov 2018 16:33:28 -0800 (PST)
+        bh=rm6BjHEXusVWBGxEjuC7GQ9PchSD/mzf8dk/SJxKBMo=;
+        b=XkTDOu+kqp6yIZs3VV4JLNUre/BP4e0/SDMHxfGaPZ3/tRVOxGo1PoLEI9avujUuSV
+         UniTkaPYRI4x/HyNuYQTt7WosEpPPtmdRFrELyheFUbqGq1P0zyemEJB84Lnt+UBGUiP
+         zHkzCqOK8ggabVmZ6D2AgmBvgpAAB42u1nZX28ynZajmpXP2kUwljPB6HQIZ1cqxP41Q
+         Hkfkjm7d0QSiSNS5uK9BJY/fjXypLn1c/clWyQkTaXW/+jOPAazc1dGAuGnvjGhrfmdx
+         NgdMXjwvzvutGVEzjTgCgVbs2py7t7iEfn/KkqSD9yEst0TvKBzSSPaMMuLWEdeZRv8c
+         Y6JQ==
+X-Gm-Message-State: AGRZ1gLw2+FYyILJQ4THlGboNJVAAr3HEp6OXf9PM/UrMjLtjXFu5cia
+        AFomllU89h3MBmfX3rOk+7/Liw==
+X-Google-Smtp-Source: AJdET5fs877bDU1BoH5m0bxTkXasMutzdXkqG85RyZd0rL2G3tfZQCGUtN0gdD0wey1cTRo3kYRwow==
+X-Received: by 2002:a02:5f18:: with SMTP id r24-v6mr27485590jab.10.1541550813948;
+        Tue, 06 Nov 2018 16:33:33 -0800 (PST)
 Received: from shibby.gateway.innflux.com ([66.228.239.218])
-        by smtp.gmail.com with ESMTPSA id e184-v6sm1061128ite.9.2018.11.06.16.33.25
+        by smtp.gmail.com with ESMTPSA id e184-v6sm1061128ite.9.2018.11.06.16.33.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 16:33:27 -0800 (PST)
+        Tue, 06 Nov 2018 16:33:33 -0800 (PST)
 From:   Alex Elder <elder@linaro.org>
 To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
         ilias.apalodimas@linaro.org
@@ -63,9 +63,9 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         syadagir@codeaurora.org, mjavid@codeaurora.org, robh+dt@kernel.org,
         mark.rutland@arm.com
-Subject: [RFC PATCH 07/12] soc: qcom: ipa: IPA register abstraction
-Date:   Tue,  6 Nov 2018 18:32:45 -0600
-Message-Id: <20181107003250.5832-8-elder@linaro.org>
+Subject: [RFC PATCH 09/12] soc: qcom: ipa: main IPA source file
+Date:   Tue,  6 Nov 2018 18:32:47 -0600
+Message-Id: <20181107003250.5832-10-elder@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181107003250.5832-1-elder@linaro.org>
 References: <20181107003250.5832-1-elder@linaro.org>
@@ -74,46 +74,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Much of the following is copied from text in "ipa_reg.c".  Please
-see that for the more complete explanation.)
+This patch includes "ipa_main.c", which consists mostly of the
+initialization code.
 
-The IPA code abstracts the details of its 32-bit registers, allowing
-access to them to be done generically.  The original motivation for
-this was that the field width and/or position for values stored in
-some registers differed for different versions of IPA hardware.
-Abstracting access this way allows code that uses such registers to
-be simpler, describing how register fields are used without
-proliferating special-case code that is dependent on hardware
-version.
+The IPA is a hardware resource shared by multiple independent
+execution environments (currently, the AP and the modem).  In some
+cases, initialization must be performed by only one of these.  As an
+example, the AP must initialize some filter table data structures
+that are only used by the modem.  (And in general, some initialization
+of IPA hardware is required regardless of whether it will be used.)
 
-Each IPA register has a name, which is one of the values in the
-"ipa_reg" enumerated type (e.g., IPA_ENABLED_PIPES).  The offset
-(memory address) of the register having a given name is maintained
-internal to the "ipa_reg" module.
+There are two phases of IPA initialization.  The first phase is
+triggered by the probe of the driver.  It involves setting up
+operating system resources, and doing some basic initialization
+of IPA memory resources using register and DMA access.
 
-Some registers hold one or more fields that are less than 32 bits
-wide.  Each of these registers has a data structure that breaks out
-those fields into individual (32-bit) values.  These field structures
-allow the register contents to be defined in a hardware independent
-way.  Such registers have a pair of functions associated with them
-to "construct" (when writing) and "parse" (when reading) the fields
-found within them, using the register's fields structure.  This
-allows the content of these registers to be read in a generic way.
+The second phase involves configuration of enpoints used, and this
+phase requires access to the GSI layer.  However the GSI layer is
+requires some firmware to be loaded before it can be used.  So
+the second stage (in ipa_post_init()) only occurs after it is known
+firmware is loaded.
+
+The GSI firmware can be loaded in two ways:  the modem can load it;
+or Trust Zone code running on the AP can load it.  If the modem
+loads the firmware, it will send an SMP2P interrupt to the AP to
+signal that GSI firmware is loaded and the AP can proceed with its
+second stage IPA initialization.  If Trust Zone is responsible for
+loading the firmware, the IPA driver requests the firmware blob
+from the file system and passes the result via an SMC to Trust Zone
+to load and activate the GSI firmware.  When that has completed
+successfully, the second stage of initialization can proceed.
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- drivers/net/ipa/ipa_reg.c | 972 ++++++++++++++++++++++++++++++++++++++
- drivers/net/ipa/ipa_reg.h | 614 ++++++++++++++++++++++++
- 2 files changed, 1586 insertions(+)
- create mode 100644 drivers/net/ipa/ipa_reg.c
- create mode 100644 drivers/net/ipa/ipa_reg.h
+ drivers/net/ipa/ipa_main.c | 1400 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1400 insertions(+)
+ create mode 100644 drivers/net/ipa/ipa_main.c
 
-diff --git a/drivers/net/ipa/ipa_reg.c b/drivers/net/ipa/ipa_reg.c
+diff --git a/drivers/net/ipa/ipa_main.c b/drivers/net/ipa/ipa_main.c
 new file mode 100644
-index 000000000000..5e0aa6163235
+index 000000000000..3d7c59177388
 --- /dev/null
-+++ b/drivers/net/ipa/ipa_reg.c
-@@ -0,0 +1,972 @@
++++ b/drivers/net/ipa/ipa_main.c
+@@ -0,0 +1,1400 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
@@ -121,1591 +124,1399 @@ index 000000000000..5e0aa6163235
 + */
 +
 +#include <linux/types.h>
++#include <linux/atomic.h>
++#include <linux/spinlock.h>
++#include <linux/mutex.h>
++#include <linux/device.h>
++#include <linux/firmware.h>
++#include <linux/workqueue.h>
++#include <linux/bug.h>
 +#include <linux/io.h>
-+#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/interrupt.h>
++#include <linux/notifier.h>
++#include <linux/remoteproc.h>
++#include <linux/pm_wakeup.h>
++#include <linux/kconfig.h>
++#include <linux/qcom_scm.h>
++#include <linux/soc/qcom/mdt_loader.h>
++#include <linux/soc/qcom/smem.h>
++#include <linux/soc/qcom/smem_state.h>
++#include <linux/module.h>
 +
-+#include "ipa_reg.h"
++#include "ipa_i.h"
++#include "ipa_dma.h"
++#include "ipahal.h"
 +
-+/* I/O remapped base address of IPA register space */
-+static void __iomem *ipa_reg_virt;
++#define	IPA_CORE_CLOCK_RATE	(75UL * 1000 * 1000)
 +
-+/* struct ipa_reg_desc - descriptor for an abstracted hardware register
-+ *
-+ * @construct - fn to construct the register value from its field structure
-+ * @parse - function to parse register field values into its field structure
-+ * @offset - register offset relative to base address
-+ * @n_ofst - size multiplier for "N-parameterized" registers
++/* The name of the main firmware file relative to /lib/firmware */
++#define IPA_FWS_PATH		"ipa_fws.mdt"
++#define IPA_PAS_ID		15
++
++#define IPA_APPS_CMD_PROD_RING_COUNT	256
++#define IPA_APPS_LAN_CONS_RING_COUNT	256
++
++/* Details of the initialization sequence are determined by who is
++ * responsible for doing some early IPA hardware initialization.
++ * The Device Tree compatible string defines what to expect.
 + */
-+struct ipa_reg_desc {
-+	u32 (*construct)(enum ipa_reg reg, const void *fields);
-+	void (*parse)(enum ipa_reg reg, void *fields, u32 val);
-+	u32 offset;
-+	u16 n_ofst;
++enum ipa_init_type {
++	ipa_undefined_init = 0,
++	ipa_tz_init,
++	ipa_modem_init,
 +};
 +
-+/* IPA_ROUTE register */
++struct ipa_match_data {
++	enum ipa_init_type init_type;
++};
 +
-+void ipa_reg_route(struct ipa_reg_route *route, u32 ep_id)
++static void ipa_client_remove_deferred(struct work_struct *work);
++static DECLARE_WORK(ipa_client_remove_work, ipa_client_remove_deferred);
++
++static struct ipa_context ipa_ctx_struct;
++struct ipa_context *ipa_ctx = &ipa_ctx_struct;
++
++static int hdr_init_local_cmd(u32 offset, u32 size)
 +{
-+	route->route_dis = 0;
-+	route->route_def_pipe = ep_id;
-+	route->route_def_hdr_table = 1;
-+	route->route_def_hdr_ofst = 0;
-+	route->route_frag_def_pipe = ep_id;
-+	route->route_def_retain_hdr = 1;
-+}
-+
-+#define ROUTE_DIS_FMASK			0x00000001
-+#define ROUTE_DEF_PIPE_FMASK		0x0000003e
-+#define ROUTE_DEF_HDR_TABLE_FMASK	0x00000040
-+#define ROUTE_DEF_HDR_OFST_FMASK	0x0001ff80
-+#define ROUTE_FRAG_DEF_PIPE_FMASK	0x003e0000
-+#define ROUTE_DEF_RETAIN_HDR_FMASK	0x01000000
-+
-+static u32 ipa_reg_construct_route(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_route *route = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(ROUTE_DIS_FMASK, route->route_dis);
-+	val |= FIELD_PREP(ROUTE_DEF_PIPE_FMASK, route->route_def_pipe);
-+	val |= FIELD_PREP(ROUTE_DEF_HDR_TABLE_FMASK,
-+			  route->route_def_hdr_table);
-+	val |= FIELD_PREP(ROUTE_DEF_HDR_OFST_FMASK, route->route_def_hdr_ofst);
-+	val |= FIELD_PREP(ROUTE_FRAG_DEF_PIPE_FMASK,
-+			  route->route_frag_def_pipe);
-+	val |= FIELD_PREP(ROUTE_DEF_RETAIN_HDR_FMASK,
-+			  route->route_def_retain_hdr);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_HDR_N register */
-+
-+static void
-+ipa_reg_endp_init_hdr_common(struct ipa_reg_endp_init_hdr *init_hdr)
-+{
-+	init_hdr->hdr_additional_const_len = 0;	/* XXX description? */
-+	init_hdr->hdr_a5_mux = 0;		/* XXX description? */
-+	init_hdr->hdr_len_inc_deagg_hdr = 0;	/* XXX description? */
-+	init_hdr->hdr_metadata_reg_valid = 0;	/* XXX description? */
-+}
-+
-+void ipa_reg_endp_init_hdr_cons(struct ipa_reg_endp_init_hdr *init_hdr,
-+				u32 header_size, u32 metadata_offset,
-+				u32 length_offset)
-+{
-+	init_hdr->hdr_len = header_size;
-+	init_hdr->hdr_ofst_metadata_valid = 1;
-+	init_hdr->hdr_ofst_metadata = metadata_offset;	/* XXX ignored */
-+	init_hdr->hdr_ofst_pkt_size_valid = 1;
-+	init_hdr->hdr_ofst_pkt_size = length_offset;
-+
-+	ipa_reg_endp_init_hdr_common(init_hdr);
-+}
-+
-+void ipa_reg_endp_init_hdr_prod(struct ipa_reg_endp_init_hdr *init_hdr,
-+				u32 header_size, u32 metadata_offset,
-+				u32 length_offset)
-+{
-+	init_hdr->hdr_len = header_size;
-+	init_hdr->hdr_ofst_metadata_valid = 1;
-+	init_hdr->hdr_ofst_metadata = metadata_offset;
-+	init_hdr->hdr_ofst_pkt_size_valid = 1;
-+	init_hdr->hdr_ofst_pkt_size = length_offset;	/* XXX ignored */
-+
-+	ipa_reg_endp_init_hdr_common(init_hdr);
-+}
-+
-+#define HDR_LEN_FMASK			0x0000003f
-+#define HDR_OFST_METADATA_VALID_FMASK	0x00000040
-+#define HDR_OFST_METADATA_FMASK		0x00001f80
-+#define HDR_ADDITIONAL_CONST_LEN_FMASK	0x0007e000
-+#define HDR_OFST_PKT_SIZE_VALID_FMASK	0x00080000
-+#define HDR_OFST_PKT_SIZE_FMASK		0x03f00000
-+#define HDR_A5_MUX_FMASK		0x04000000
-+#define HDR_LEN_INC_DEAGG_HDR_FMASK	0x08000000
-+#define HDR_METADATA_REG_VALID_FMASK	0x10000000
-+
-+static u32
-+ipa_reg_construct_endp_init_hdr_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_hdr *init_hdr = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(HDR_LEN_FMASK, init_hdr->hdr_len);
-+	val |= FIELD_PREP(HDR_OFST_METADATA_VALID_FMASK,
-+			  init_hdr->hdr_ofst_metadata_valid);
-+	val |= FIELD_PREP(HDR_OFST_METADATA_FMASK, init_hdr->hdr_ofst_metadata);
-+	val |= FIELD_PREP(HDR_ADDITIONAL_CONST_LEN_FMASK,
-+			  init_hdr->hdr_additional_const_len);
-+	val |= FIELD_PREP(HDR_OFST_PKT_SIZE_VALID_FMASK,
-+			  init_hdr->hdr_ofst_pkt_size_valid);
-+	val |= FIELD_PREP(HDR_OFST_PKT_SIZE_FMASK,
-+			  init_hdr->hdr_ofst_pkt_size);
-+	val |= FIELD_PREP(HDR_A5_MUX_FMASK, init_hdr->hdr_a5_mux);
-+	val |= FIELD_PREP(HDR_LEN_INC_DEAGG_HDR_FMASK,
-+			  init_hdr->hdr_len_inc_deagg_hdr);
-+	val |= FIELD_PREP(HDR_METADATA_REG_VALID_FMASK,
-+			  init_hdr->hdr_metadata_reg_valid);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_HDR_EXT_N register */
-+
-+void ipa_reg_endp_init_hdr_ext_common(struct ipa_reg_endp_init_hdr_ext *hdr_ext)
-+{
-+	hdr_ext->hdr_endianness = 1;			/* big endian */
-+	hdr_ext->hdr_total_len_or_pad_valid = 1;
-+	hdr_ext->hdr_total_len_or_pad = 0;		/* pad */
-+	hdr_ext->hdr_total_len_or_pad_offset = 0;	/* XXX description? */
-+}
-+
-+void ipa_reg_endp_init_hdr_ext_cons(struct ipa_reg_endp_init_hdr_ext *hdr_ext,
-+				    u32 pad_align, bool pad_included)
-+{
-+	hdr_ext->hdr_payload_len_inc_padding = pad_included ? 1 : 0;
-+	hdr_ext->hdr_pad_to_alignment = pad_align;
-+
-+	ipa_reg_endp_init_hdr_ext_common(hdr_ext);
-+}
-+
-+void ipa_reg_endp_init_hdr_ext_prod(struct ipa_reg_endp_init_hdr_ext *hdr_ext,
-+				    u32 pad_align)
-+{
-+	hdr_ext->hdr_payload_len_inc_padding = 0;
-+	hdr_ext->hdr_pad_to_alignment = pad_align;	/* XXX ignored */
-+
-+	ipa_reg_endp_init_hdr_ext_common(hdr_ext);
-+}
-+
-+#define HDR_ENDIANNESS_FMASK			0x00000001
-+#define HDR_TOTAL_LEN_OR_PAD_VALID_FMASK	0x00000002
-+#define HDR_TOTAL_LEN_OR_PAD_FMASK		0x00000004
-+#define HDR_PAYLOAD_LEN_INC_PADDING_FMASK	0x00000008
-+#define HDR_TOTAL_LEN_OR_PAD_OFFSET_FMASK	0x000003f0
-+#define HDR_PAD_TO_ALIGNMENT_FMASK		0x00003c00
-+
-+static u32
-+ipa_reg_construct_endp_init_hdr_ext_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_hdr_ext *init_hdr_ext = fields;
-+	u32 val;
-+
-+	/* 0 = little endian; 1 = big endian */
-+	val = FIELD_PREP(HDR_ENDIANNESS_FMASK, 1);
-+	val |= FIELD_PREP(HDR_TOTAL_LEN_OR_PAD_VALID_FMASK,
-+			  init_hdr_ext->hdr_total_len_or_pad_valid);
-+	val |= FIELD_PREP(HDR_TOTAL_LEN_OR_PAD_FMASK,
-+			  init_hdr_ext->hdr_total_len_or_pad);
-+	val |= FIELD_PREP(HDR_PAYLOAD_LEN_INC_PADDING_FMASK,
-+			  init_hdr_ext->hdr_payload_len_inc_padding);
-+	val |= FIELD_PREP(HDR_TOTAL_LEN_OR_PAD_OFFSET_FMASK, 0);
-+	val |= FIELD_PREP(HDR_PAD_TO_ALIGNMENT_FMASK,
-+			  init_hdr_ext->hdr_pad_to_alignment);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_AGGR_N register */
-+
-+static void
-+ipa_reg_endp_init_aggr_common(struct ipa_reg_endp_init_aggr *init_aggr)
-+{
-+	init_aggr->aggr_force_close = 0;	/* XXX description?  */
-+	init_aggr->aggr_hard_byte_limit_en = 0;	/* XXX ignored for PROD? */
-+}
-+
-+void ipa_reg_endp_init_aggr_cons(struct ipa_reg_endp_init_aggr *init_aggr,
-+				 u32 byte_limit, u32 packet_limit,
-+				 bool close_on_eof)
-+{
-+	init_aggr->aggr_en = IPA_ENABLE_AGGR;
-+	init_aggr->aggr_type = IPA_GENERIC;
-+	init_aggr->aggr_byte_limit = byte_limit;
-+	init_aggr->aggr_time_limit = IPA_AGGR_TIME_LIMIT_DEFAULT;
-+	init_aggr->aggr_pkt_limit = packet_limit;
-+	init_aggr->aggr_sw_eof_active = close_on_eof ? 1 : 0;
-+
-+	ipa_reg_endp_init_aggr_common(init_aggr);
-+}
-+
-+void ipa_reg_endp_init_aggr_prod(struct ipa_reg_endp_init_aggr *init_aggr,
-+				 enum ipa_aggr_en aggr_en,
-+				 enum ipa_aggr_type aggr_type)
-+{
-+	init_aggr->aggr_en = (u32)aggr_en;
-+	init_aggr->aggr_type = aggr_en == IPA_BYPASS_AGGR ? 0 : (u32)aggr_type;
-+	init_aggr->aggr_byte_limit = 0;		/* ignored */
-+	init_aggr->aggr_time_limit = 0;		/* ignored */
-+	init_aggr->aggr_pkt_limit = 0;		/* ignored */
-+	init_aggr->aggr_sw_eof_active = 0;	/* ignored */
-+
-+	ipa_reg_endp_init_aggr_common(init_aggr);
-+}
-+
-+#define AGGR_EN_FMASK				0x00000003
-+#define AGGR_TYPE_FMASK				0x0000001c
-+#define AGGR_BYTE_LIMIT_FMASK			0x000003e0
-+#define AGGR_TIME_LIMIT_FMASK			0x00007c00
-+#define AGGR_PKT_LIMIT_FMASK			0x001f8000
-+#define AGGR_SW_EOF_ACTIVE_FMASK		0x00200000
-+#define AGGR_FORCE_CLOSE_FMASK			0x00400000
-+#define AGGR_HARD_BYTE_LIMIT_ENABLE_FMASK	0x01000000
-+
-+static u32
-+ipa_reg_construct_endp_init_aggr_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_aggr *init_aggr = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(AGGR_EN_FMASK, init_aggr->aggr_en);
-+	val |= FIELD_PREP(AGGR_TYPE_FMASK, init_aggr->aggr_type);
-+	val |= FIELD_PREP(AGGR_BYTE_LIMIT_FMASK, init_aggr->aggr_byte_limit);
-+	val |= FIELD_PREP(AGGR_TIME_LIMIT_FMASK, init_aggr->aggr_time_limit);
-+	val |= FIELD_PREP(AGGR_PKT_LIMIT_FMASK, init_aggr->aggr_pkt_limit);
-+	val |= FIELD_PREP(AGGR_SW_EOF_ACTIVE_FMASK,
-+			  init_aggr->aggr_sw_eof_active);
-+	val |= FIELD_PREP(AGGR_FORCE_CLOSE_FMASK, init_aggr->aggr_force_close);
-+	val |= FIELD_PREP(AGGR_HARD_BYTE_LIMIT_ENABLE_FMASK,
-+			  init_aggr->aggr_hard_byte_limit_en);
-+
-+	return val;
-+}
-+
-+static void
-+ipa_reg_parse_endp_init_aggr_n(enum ipa_reg reg, void *fields, u32 val)
-+{
-+	struct ipa_reg_endp_init_aggr *init_aggr = fields;
-+
-+	memset(init_aggr, 0, sizeof(*init_aggr));
-+
-+	init_aggr->aggr_en = FIELD_GET(AGGR_EN_FMASK, val);
-+	init_aggr->aggr_type = FIELD_GET(AGGR_TYPE_FMASK, val);
-+	init_aggr->aggr_byte_limit = FIELD_GET(AGGR_BYTE_LIMIT_FMASK, val);
-+	init_aggr->aggr_time_limit = FIELD_GET(AGGR_TIME_LIMIT_FMASK, val);
-+	init_aggr->aggr_pkt_limit = FIELD_GET(AGGR_PKT_LIMIT_FMASK, val);
-+	init_aggr->aggr_sw_eof_active =
-+			FIELD_GET(AGGR_SW_EOF_ACTIVE_FMASK, val);
-+	init_aggr->aggr_force_close = FIELD_GET(AGGR_SW_EOF_ACTIVE_FMASK, val);
-+	init_aggr->aggr_hard_byte_limit_en =
-+			FIELD_GET(AGGR_HARD_BYTE_LIMIT_ENABLE_FMASK, val);
-+}
-+
-+/* IPA_AGGR_FORCE_CLOSE register */
-+
-+void ipa_reg_aggr_force_close(struct ipa_reg_aggr_force_close *force_close,
-+			      u32 pipe_bitmap)
-+{
-+	force_close->pipe_bitmap = pipe_bitmap;
-+}
-+
-+#define PIPE_BITMAP_FMASK	0x000fffff
-+
-+static u32
-+ipa_reg_construct_aggr_force_close(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_aggr_force_close *force_close = fields;
-+
-+	return FIELD_PREP(PIPE_BITMAP_FMASK, force_close->pipe_bitmap);
-+}
-+
-+/* IPA_ENDP_INIT_MODE_N register */
-+
-+static void
-+ipa_reg_endp_init_mode_common(struct ipa_reg_endp_init_mode *init_mode)
-+{
-+	init_mode->byte_threshold = 0;		/* XXX description? */
-+	init_mode->pipe_replication_en = 0;	/* XXX description? */
-+	init_mode->pad_en = 0;			/* XXX description? */
-+	init_mode->hdr_ftch_disable = 0;	/* XXX description? */
-+}
-+
-+/* IPA_ENDP_INIT_MODE is not valid for consumer pipes */
-+void ipa_reg_endp_init_mode_cons(struct ipa_reg_endp_init_mode *init_mode)
-+{
-+	init_mode->mode = 0;            /* ignored */
-+	init_mode->dest_pipe_index = 0; /* ignored */
-+
-+	ipa_reg_endp_init_mode_common(init_mode);
-+}
-+
-+void ipa_reg_endp_init_mode_prod(struct ipa_reg_endp_init_mode *init_mode,
-+				 enum ipa_mode mode, u32 dest_endp)
-+{
-+	init_mode->mode = mode;
-+	init_mode->dest_pipe_index = mode == IPA_DMA ? dest_endp : 0;
-+
-+	ipa_reg_endp_init_mode_common(init_mode);
-+}
-+
-+#define MODE_FMASK			0x00000007
-+#define DEST_PIPE_INDEX_FMASK		0x000001f0
-+#define BYTE_THRESHOLD_FMASK		0x0ffff000
-+#define PIPE_REPLICATION_EN_FMASK	0x10000000
-+#define PAD_EN_FMASK			0x20000000
-+#define HDR_FTCH_DISABLE_FMASK		0x40000000
-+
-+static u32
-+ipa_reg_construct_endp_init_mode_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_mode *init_mode = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(MODE_FMASK, init_mode->mode);
-+	val |= FIELD_PREP(DEST_PIPE_INDEX_FMASK, init_mode->dest_pipe_index);
-+	val |= FIELD_PREP(BYTE_THRESHOLD_FMASK, init_mode->byte_threshold);
-+	val |= FIELD_PREP(PIPE_REPLICATION_EN_FMASK,
-+			  init_mode->pipe_replication_en);
-+	val |= FIELD_PREP(PAD_EN_FMASK, init_mode->pad_en);
-+	val |= FIELD_PREP(HDR_FTCH_DISABLE_FMASK, init_mode->hdr_ftch_disable);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_CTRL_N register */
-+
-+void
-+ipa_reg_endp_init_ctrl(struct ipa_reg_endp_init_ctrl *init_ctrl, bool suspend)
-+{
-+	init_ctrl->endp_suspend = suspend ? 1 : 0;
-+	init_ctrl->endp_delay = 0;
-+}
-+
-+#define ENDP_SUSPEND_FMASK	0x00000001
-+#define ENDP_DELAY_FMASK	0x00000002
-+
-+static u32
-+ipa_reg_construct_endp_init_ctrl_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_ctrl *init_ctrl = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(ENDP_SUSPEND_FMASK, init_ctrl->endp_suspend);
-+	val |= FIELD_PREP(ENDP_DELAY_FMASK, init_ctrl->endp_delay);
-+
-+	return val;
-+}
-+
-+static void
-+ipa_reg_parse_endp_init_ctrl_n(enum ipa_reg reg, void *fields, u32 val)
-+{
-+	struct ipa_reg_endp_init_ctrl *init_ctrl = fields;
-+
-+	memset(init_ctrl, 0, sizeof(*init_ctrl));
-+
-+	init_ctrl->endp_suspend = FIELD_GET(ENDP_SUSPEND_FMASK, val);
-+	init_ctrl->endp_delay = FIELD_GET(ENDP_DELAY_FMASK, val);
-+}
-+
-+/* IPA_ENDP_INIT_DEAGGR_N register */
-+
-+static void
-+ipa_reg_endp_init_deaggr_common(struct ipa_reg_endp_init_deaggr *init_deaggr)
-+{
-+	init_deaggr->deaggr_hdr_len = 0;		/* XXX description? */
-+	init_deaggr->packet_offset_valid = 0;		/* XXX description? */
-+	init_deaggr->packet_offset_location = 0;	/* XXX description? */
-+	init_deaggr->max_packet_len = 0;		/* XXX description? */
-+}
-+
-+/* XXX The deaggr setting seems not to be valid for consumer endpoints */
-+void
-+ipa_reg_endp_init_deaggr_cons(struct ipa_reg_endp_init_deaggr *init_deaggr)
-+{
-+	ipa_reg_endp_init_deaggr_common(init_deaggr);
-+}
-+
-+void
-+ipa_reg_endp_init_deaggr_prod(struct ipa_reg_endp_init_deaggr *init_deaggr)
-+{
-+	ipa_reg_endp_init_deaggr_common(init_deaggr);
-+}
-+
-+#define DEAGGR_HDR_LEN_FMASK		0x0000003f
-+#define PACKET_OFFSET_VALID_FMASK	0x00000080
-+#define PACKET_OFFSET_LOCATION_FMASK	0x00003f00
-+#define MAX_PACKET_LEN_FMASK		0xffff0000
-+
-+static u32
-+ipa_reg_construct_endp_init_deaggr_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_deaggr *init_deaggr = fields;
-+	u32 val;
-+
-+	/* fields value is completely ignored (can be NULL) */
-+	val = FIELD_PREP(DEAGGR_HDR_LEN_FMASK, init_deaggr->deaggr_hdr_len);
-+	val |= FIELD_PREP(PACKET_OFFSET_VALID_FMASK,
-+			  init_deaggr->packet_offset_valid);
-+	val |= FIELD_PREP(PACKET_OFFSET_LOCATION_FMASK,
-+			  init_deaggr->packet_offset_location);
-+	val |= FIELD_PREP(MAX_PACKET_LEN_FMASK,
-+			  init_deaggr->max_packet_len);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_SEQ_N register */
-+
-+static void
-+ipa_reg_endp_init_seq_common(struct ipa_reg_endp_init_seq *init_seq)
-+{
-+	init_seq->dps_seq_type = 0;	/* XXX description? */
-+	init_seq->hps_rep_seq_type = 0;	/* XXX description? */
-+	init_seq->dps_rep_seq_type = 0;	/* XXX description? */
-+}
-+
-+void ipa_reg_endp_init_seq_cons(struct ipa_reg_endp_init_seq *init_seq)
-+{
-+	init_seq->hps_seq_type = 0;	/* ignored */
-+
-+	ipa_reg_endp_init_seq_common(init_seq);
-+}
-+
-+void ipa_reg_endp_init_seq_prod(struct ipa_reg_endp_init_seq *init_seq,
-+				enum ipa_seq_type seq_type)
-+{
-+	init_seq->hps_seq_type = (u32)seq_type;
-+
-+	ipa_reg_endp_init_seq_common(init_seq);
-+}
-+
-+#define HPS_SEQ_TYPE_FMASK	0x0000000f
-+#define DPS_SEQ_TYPE_FMASK	0x000000f0
-+#define HPS_REP_SEQ_TYPE_FMASK	0x00000f00
-+#define DPS_REP_SEQ_TYPE_FMASK	0x0000f000
-+
-+static u32
-+ipa_reg_construct_endp_init_seq_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_seq *init_seq = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(HPS_SEQ_TYPE_FMASK, init_seq->hps_seq_type);
-+	val |= FIELD_PREP(DPS_SEQ_TYPE_FMASK, init_seq->dps_seq_type);
-+	val |= FIELD_PREP(HPS_REP_SEQ_TYPE_FMASK, init_seq->hps_rep_seq_type);
-+	val |= FIELD_PREP(DPS_REP_SEQ_TYPE_FMASK, init_seq->dps_rep_seq_type);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_CFG_N register */
-+
-+static void
-+ipa_reg_endp_init_cfg_common(struct ipa_reg_endp_init_cfg *init_cfg)
-+{
-+	init_cfg->frag_offload_en = 0;		/* XXX description?  */
-+	init_cfg->cs_gen_qmb_master_sel = 0;	/* XXX description?  */
-+}
-+
-+void ipa_reg_endp_init_cfg_cons(struct ipa_reg_endp_init_cfg *init_cfg,
-+				enum ipa_cs_offload_en offload_type)
-+{
-+	init_cfg->cs_offload_en = offload_type;
-+	init_cfg->cs_metadata_hdr_offset = 0;	/* ignored */
-+
-+	ipa_reg_endp_init_cfg_common(init_cfg);
-+}
-+
-+void ipa_reg_endp_init_cfg_prod(struct ipa_reg_endp_init_cfg *init_cfg,
-+				enum ipa_cs_offload_en offload_type,
-+				u32 metadata_offset)
-+{
-+	init_cfg->cs_offload_en = offload_type;
-+	init_cfg->cs_metadata_hdr_offset = metadata_offset;
-+
-+	ipa_reg_endp_init_cfg_common(init_cfg);
-+}
-+
-+#define FRAG_OFFLOAD_EN_FMASK		0x00000001
-+#define CS_OFFLOAD_EN_FMASK		0x00000006
-+#define CS_METADATA_HDR_OFFSET_FMASK	0x00000078
-+#define CS_GEN_QMB_MASTER_SEL_FMASK	0x00000100
-+
-+static u32
-+ipa_reg_construct_endp_init_cfg_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_init_cfg *init_cfg = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(FRAG_OFFLOAD_EN_FMASK, init_cfg->frag_offload_en);
-+	val |= FIELD_PREP(CS_OFFLOAD_EN_FMASK, init_cfg->cs_offload_en);
-+	val |= FIELD_PREP(CS_METADATA_HDR_OFFSET_FMASK,
-+			  init_cfg->cs_metadata_hdr_offset);
-+	val |= FIELD_PREP(CS_GEN_QMB_MASTER_SEL_FMASK,
-+			  init_cfg->cs_gen_qmb_master_sel);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_INIT_HDR_METADATA_MASK_N register */
-+
-+void ipa_reg_endp_init_hdr_metadata_mask_cons(
-+		struct ipa_reg_endp_init_hdr_metadata_mask *metadata_mask,
-+		u32 mask)
-+{
-+	metadata_mask->metadata_mask = mask;
-+}
-+
-+/* IPA_ENDP_INIT_HDR_METADATA_MASK is not valid for producer pipes */
-+void ipa_reg_endp_init_hdr_metadata_mask_prod(
-+		struct ipa_reg_endp_init_hdr_metadata_mask *metadata_mask)
-+{
-+	metadata_mask->metadata_mask = 0;	/* ignored */
-+}
-+
-+
-+#define METADATA_MASK_FMASK	0xffffffff
-+
-+static u32 ipa_reg_construct_endp_init_hdr_metadata_mask_n(enum ipa_reg reg,
-+							  const void *fields)
-+{
-+	const struct ipa_reg_endp_init_hdr_metadata_mask *metadata_mask;
-+
-+	metadata_mask = fields;
-+
-+	return FIELD_PREP(METADATA_MASK_FMASK, metadata_mask->metadata_mask);
-+}
-+
-+/* IPA_SHARED_MEM_SIZE register (read-only) */
-+
-+#define SHARED_MEM_SIZE_FMASK	0x0000ffff
-+#define SHARED_MEM_BADDR_FMASK	0xffff0000
-+
-+static void
-+ipa_reg_parse_shared_mem_size(enum ipa_reg reg, void *fields, u32 val)
-+{
-+	struct ipa_reg_shared_mem_size *mem_size = fields;
-+
-+	memset(mem_size, 0, sizeof(*mem_size));
-+
-+	mem_size->shared_mem_size = FIELD_GET(SHARED_MEM_SIZE_FMASK, val);
-+	mem_size->shared_mem_baddr = FIELD_GET(SHARED_MEM_BADDR_FMASK, val);
-+}
-+
-+/* IPA_ENDP_STATUS_N register */
-+
-+static void ipa_reg_endp_status_common(struct ipa_reg_endp_status *endp_status)
-+{
-+	endp_status->status_pkt_suppress = 0;	/* XXX description?  */
-+}
-+
-+void ipa_reg_endp_status_cons(struct ipa_reg_endp_status *endp_status,
-+			      bool enable)
-+{
-+	endp_status->status_en = enable ? 1 : 0;
-+	endp_status->status_endp = 0;		/* ignored */
-+	endp_status->status_location = 0;	/* before packet data */
-+
-+	ipa_reg_endp_status_common(endp_status);
-+}
-+
-+void ipa_reg_endp_status_prod(struct ipa_reg_endp_status *endp_status,
-+			      bool enable, u32 endp)
-+{
-+	endp_status->status_en = enable ? 1 : 0;
-+	endp_status->status_endp = endp;
-+	endp_status->status_location = 0;	/* ignored */
-+
-+	ipa_reg_endp_status_common(endp_status);
-+}
-+
-+#define STATUS_EN_FMASK			0x00000001
-+#define STATUS_ENDP_FMASK		0x0000003e
-+#define STATUS_LOCATION_FMASK		0x00000100
-+#define STATUS_PKT_SUPPRESS_FMASK	0x00000200
-+
-+static u32 ipa_reg_construct_endp_status_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_endp_status *endp_status = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(STATUS_EN_FMASK, endp_status->status_en);
-+	val |= FIELD_PREP(STATUS_ENDP_FMASK, endp_status->status_endp);
-+	val |= FIELD_PREP(STATUS_LOCATION_FMASK, endp_status->status_location);
-+	val |= FIELD_PREP(STATUS_PKT_SUPPRESS_FMASK, 0);
-+
-+	return val;
-+}
-+
-+/* IPA_ENDP_FILTER_ROUTER_HSH_CFG_N register */
-+
-+void ipa_reg_hash_tuple(struct ipa_reg_hash_tuple *tuple)
-+{
-+	tuple->src_id = 0;	/* pipe number in flt, table index in rt */
-+	tuple->src_ip = 0;
-+	tuple->dst_ip = 0;
-+	tuple->src_port = 0;
-+	tuple->dst_port = 0;
-+	tuple->protocol = 0;
-+	tuple->metadata = 0;
-+	tuple->undefined = 0;
-+}
-+
-+#define FILTER_HASH_MSK_SRC_ID_FMASK	0x00000001
-+#define FILTER_HASH_MSK_SRC_IP_FMASK	0x00000002
-+#define FILTER_HASH_MSK_DST_IP_FMASK	0x00000004
-+#define FILTER_HASH_MSK_SRC_PORT_FMASK	0x00000008
-+#define FILTER_HASH_MSK_DST_PORT_FMASK	0x00000010
-+#define FILTER_HASH_MSK_PROTOCOL_FMASK	0x00000020
-+#define FILTER_HASH_MSK_METADATA_FMASK	0x00000040
-+#define FILTER_HASH_UNDEFINED1_FMASK	0x0000ff80
-+
-+#define ROUTER_HASH_MSK_SRC_ID_FMASK	0x00010000
-+#define ROUTER_HASH_MSK_SRC_IP_FMASK	0x00020000
-+#define ROUTER_HASH_MSK_DST_IP_FMASK	0x00040000
-+#define ROUTER_HASH_MSK_SRC_PORT_FMASK	0x00080000
-+#define ROUTER_HASH_MSK_DST_PORT_FMASK	0x00100000
-+#define ROUTER_HASH_MSK_PROTOCOL_FMASK	0x00200000
-+#define ROUTER_HASH_MSK_METADATA_FMASK	0x00400000
-+#define ROUTER_HASH_UNDEFINED2_FMASK	0xff800000
-+
-+static u32 ipa_reg_construct_hash_cfg_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_ep_filter_router_hsh_cfg *hsh_cfg = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(FILTER_HASH_MSK_SRC_ID_FMASK, hsh_cfg->flt.src_id);
-+	val |= FIELD_PREP(FILTER_HASH_MSK_SRC_IP_FMASK, hsh_cfg->flt.src_ip);
-+	val |= FIELD_PREP(FILTER_HASH_MSK_DST_IP_FMASK, hsh_cfg->flt.dst_ip);
-+	val |= FIELD_PREP(FILTER_HASH_MSK_SRC_PORT_FMASK,
-+			  hsh_cfg->flt.src_port);
-+	val |= FIELD_PREP(FILTER_HASH_MSK_DST_PORT_FMASK,
-+			  hsh_cfg->flt.dst_port);
-+	val |= FIELD_PREP(FILTER_HASH_MSK_PROTOCOL_FMASK,
-+			  hsh_cfg->flt.protocol);
-+	val |= FIELD_PREP(FILTER_HASH_MSK_METADATA_FMASK,
-+			  hsh_cfg->flt.metadata);
-+	val |= FIELD_PREP(FILTER_HASH_UNDEFINED1_FMASK, hsh_cfg->flt.undefined);
-+
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_SRC_ID_FMASK, hsh_cfg->rt.src_id);
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_SRC_IP_FMASK, hsh_cfg->rt.src_ip);
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_DST_IP_FMASK, hsh_cfg->rt.dst_ip);
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_SRC_PORT_FMASK, hsh_cfg->rt.src_port);
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_DST_PORT_FMASK, hsh_cfg->rt.dst_port);
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_PROTOCOL_FMASK, hsh_cfg->rt.protocol);
-+	val |= FIELD_PREP(ROUTER_HASH_MSK_METADATA_FMASK, hsh_cfg->rt.metadata);
-+	val |= FIELD_PREP(FILTER_HASH_UNDEFINED1_FMASK, hsh_cfg->rt.undefined);
-+
-+	return val;
-+}
-+
-+static void ipa_reg_parse_hash_cfg_n(enum ipa_reg reg, void *fields, u32 val)
-+{
-+	struct ipa_ep_filter_router_hsh_cfg *hsh_cfg = fields;
-+
-+	memset(hsh_cfg, 0, sizeof(*hsh_cfg));
-+
-+	hsh_cfg->flt.src_id = FIELD_GET(FILTER_HASH_MSK_SRC_ID_FMASK, val);
-+	hsh_cfg->flt.src_ip = FIELD_GET(FILTER_HASH_MSK_SRC_IP_FMASK, val);
-+	hsh_cfg->flt.dst_ip = FIELD_GET(FILTER_HASH_MSK_DST_IP_FMASK, val);
-+	hsh_cfg->flt.src_port = FIELD_GET(FILTER_HASH_MSK_SRC_PORT_FMASK, val);
-+	hsh_cfg->flt.dst_port = FIELD_GET(FILTER_HASH_MSK_DST_PORT_FMASK, val);
-+	hsh_cfg->flt.protocol = FIELD_GET(FILTER_HASH_MSK_PROTOCOL_FMASK, val);
-+	hsh_cfg->flt.metadata = FIELD_GET(FILTER_HASH_MSK_METADATA_FMASK, val);
-+	hsh_cfg->flt.undefined = FIELD_GET(FILTER_HASH_UNDEFINED1_FMASK, val);
-+
-+	hsh_cfg->rt.src_id = FIELD_GET(ROUTER_HASH_MSK_SRC_ID_FMASK, val);
-+	hsh_cfg->rt.src_ip = FIELD_GET(ROUTER_HASH_MSK_SRC_IP_FMASK, val);
-+	hsh_cfg->rt.dst_ip = FIELD_GET(ROUTER_HASH_MSK_DST_IP_FMASK, val);
-+	hsh_cfg->rt.src_port = FIELD_GET(ROUTER_HASH_MSK_SRC_PORT_FMASK, val);
-+	hsh_cfg->rt.dst_port = FIELD_GET(ROUTER_HASH_MSK_DST_PORT_FMASK, val);
-+	hsh_cfg->rt.protocol = FIELD_GET(ROUTER_HASH_MSK_PROTOCOL_FMASK, val);
-+	hsh_cfg->rt.metadata = FIELD_GET(ROUTER_HASH_MSK_METADATA_FMASK, val);
-+	hsh_cfg->rt.undefined = FIELD_GET(ROUTER_HASH_UNDEFINED2_FMASK, val);
-+}
-+
-+/* IPA_RSRC_GRP_XY_RSRC_TYPE_N register(s) */
-+
-+void
-+ipa_reg_rsrc_grp_xy_rsrc_type_n(struct ipa_reg_rsrc_grp_xy_rsrc_type_n *limits,
-+				 u32 x_min, u32 x_max, u32 y_min, u32 y_max)
-+{
-+	limits->x_min = x_min;
-+	limits->x_max = x_max;
-+	limits->y_min = y_min;
-+	limits->y_max = y_max;
-+}
-+
-+#define X_MIN_LIM_FMASK	0x0000003f
-+#define X_MAX_LIM_FMASK	0x00003f00
-+#define Y_MIN_LIM_FMASK	0x003f0000
-+#define Y_MAX_LIM_FMASK	0x3f000000
-+
-+static u32
-+ipa_reg_construct_rsrg_grp_xy_rsrc_type_n(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_rsrc_grp_xy_rsrc_type_n *limits = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(X_MIN_LIM_FMASK, limits->x_min);
-+	val |= FIELD_PREP(X_MAX_LIM_FMASK, limits->x_max);
-+
-+	/* DST_23 register has only X fields at ipa V3_5 */
-+	if (reg == IPA_DST_RSRC_GRP_23_RSRC_TYPE_N)
-+		return val;
-+
-+	val |= FIELD_PREP(Y_MIN_LIM_FMASK, limits->y_min);
-+	val |= FIELD_PREP(Y_MAX_LIM_FMASK, limits->y_max);
-+
-+	return val;
-+}
-+
-+/* IPA_QSB_MAX_WRITES register */
-+
-+void ipa_reg_qsb_max_writes(struct ipa_reg_qsb_max_writes *max_writes,
-+			    u32 qmb_0_max_writes, u32 qmb_1_max_writes)
-+{
-+	max_writes->qmb_0_max_writes = qmb_0_max_writes;
-+	max_writes->qmb_1_max_writes = qmb_1_max_writes;
-+}
-+
-+#define GEN_QMB_0_MAX_WRITES_FMASK	0x0000000f
-+#define GEN_QMB_1_MAX_WRITES_FMASK	0x000000f0
-+
-+static u32
-+ipa_reg_construct_qsb_max_writes(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_qsb_max_writes *max_writes = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(GEN_QMB_0_MAX_WRITES_FMASK,
-+			  max_writes->qmb_0_max_writes);
-+	val |= FIELD_PREP(GEN_QMB_1_MAX_WRITES_FMASK,
-+			  max_writes->qmb_1_max_writes);
-+
-+	return val;
-+}
-+
-+/* IPA_QSB_MAX_READS register */
-+
-+void ipa_reg_qsb_max_reads(struct ipa_reg_qsb_max_reads *max_reads,
-+			   u32 qmb_0_max_reads, u32 qmb_1_max_reads)
-+{
-+	max_reads->qmb_0_max_reads = qmb_0_max_reads;
-+	max_reads->qmb_1_max_reads = qmb_1_max_reads;
-+}
-+
-+#define GEN_QMB_0_MAX_READS_FMASK	0x0000000f
-+#define GEN_QMB_1_MAX_READS_FMASK	0x000000f0
-+
-+static u32 ipa_reg_construct_qsb_max_reads(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_qsb_max_reads *max_reads = fields;
-+	u32 val;
-+
-+	val = FIELD_PREP(GEN_QMB_0_MAX_READS_FMASK, max_reads->qmb_0_max_reads);
-+	val |= FIELD_PREP(GEN_QMB_1_MAX_READS_FMASK,
-+			  max_reads->qmb_1_max_reads);
-+
-+	return val;
-+}
-+
-+/* IPA_IDLE_INDICATION_CFG register */
-+
-+void ipa_reg_idle_indication_cfg(struct ipa_reg_idle_indication_cfg *indication,
-+				 u32 debounce_thresh, bool non_idle_enable)
-+{
-+	indication->enter_idle_debounce_thresh = debounce_thresh;
-+	indication->const_non_idle_enable = non_idle_enable;
-+}
-+
-+#define ENTER_IDLE_DEBOUNCE_THRESH_FMASK	0x0000ffff
-+#define CONST_NON_IDLE_ENABLE_FMASK		0x00010000
-+
-+static u32
-+ipa_reg_construct_idle_indication_cfg(enum ipa_reg reg, const void *fields)
-+{
-+	const struct ipa_reg_idle_indication_cfg *indication_cfg;
-+	u32 val;
-+
-+	indication_cfg = fields;
-+
-+	val = FIELD_PREP(ENTER_IDLE_DEBOUNCE_THRESH_FMASK,
-+			  indication_cfg->enter_idle_debounce_thresh);
-+	val |= FIELD_PREP(CONST_NON_IDLE_ENABLE_FMASK,
-+			  indication_cfg->const_non_idle_enable);
-+
-+	return val;
-+}
-+
-+/* The entries in the following table have the following constraints:
-+ * - 0 is not a valid offset (it represents an unused entry).  It is
-+ *   a bug for code to attempt to access a register which has an
-+ *   undefined (zero) offset value.
-+ * - If a construct function is supplied, the register must be
-+ *   written using ipa_write_reg_n_fields() (or its wrapper
-+ *   function ipa_write_reg_fields()).
-+ * - Generally, if a parse function is supplied, the register should
-+ *   read using ipa_read_reg_n_fields() (or ipa_read_reg_fields()).
-+ *   (Currently some debug code reads some registers directly, without
-+ *   parsing.)
-+ */
-+#define cfunc(f)	ipa_reg_construct_ ## f
-+#define pfunc(f)	ipa_reg_parse_ ## f
-+#define reg_obj_common(id, cf, pf, o, n)	\
-+	[id] = {				\
-+		.construct = cf,		\
-+		.parse = pf,			\
-+		.offset = o,			\
-+		.n_ofst = n,			\
++	struct ipa_desc desc = { };
++	struct ipa_dma_mem mem;
++	void *payload;
++	int ret;
++
++	if (ipa_dma_alloc(&mem, size, GFP_KERNEL))
++		return -ENOMEM;
++
++	offset += ipa_ctx->smem_offset;
++
++	payload = ipahal_hdr_init_local_pyld(&mem, offset);
++	if (!payload) {
++		ret = -ENOMEM;
++		goto err_dma_free;
 +	}
-+#define reg_obj_cfunc(id, f, o, n)		\
-+	reg_obj_common(id, cfunc(f), NULL, o, n)
-+#define reg_obj_pfunc(id, f, o, n)		\
-+	reg_obj_common(id, NULL, pfunc(f), o, n)
-+#define reg_obj_both(id, f, o, n)		\
-+	reg_obj_common(id, cfunc(f), pfunc(f), o, n)
-+#define reg_obj_nofunc(id, o, n)		\
-+	reg_obj_common(id, NULL, NULL, o, n)
 +
-+/* IPAv3.5.1 */
-+static const struct ipa_reg_desc ipa_reg[] = {
-+	reg_obj_cfunc(IPA_ROUTE, route,			0x00000048,	0x0000),
-+	reg_obj_nofunc(IPA_IRQ_STTS_EE_N,		0x00003008,	0x1000),
-+	reg_obj_nofunc(IPA_IRQ_EN_EE_N,			0x0000300c,	0x1000),
-+	reg_obj_nofunc(IPA_IRQ_CLR_EE_N,		0x00003010,	0x1000),
-+	reg_obj_nofunc(IPA_IRQ_SUSPEND_INFO_EE_N,	0x00003030,	0x1000),
-+	reg_obj_nofunc(IPA_SUSPEND_IRQ_EN_EE_N,		0x00003034,	0x1000),
-+	reg_obj_nofunc(IPA_SUSPEND_IRQ_CLR_EE_N,	0x00003038,	0x1000),
-+	reg_obj_nofunc(IPA_BCR,				0x000001d0,	0x0000),
-+	reg_obj_nofunc(IPA_ENABLED_PIPES,		0x00000038,	0x0000),
-+	reg_obj_nofunc(IPA_TAG_TIMER,			0x00000060,	0x0000),
-+	reg_obj_nofunc(IPA_STATE_AGGR_ACTIVE,		0x0000010c,	0x0000),
-+	reg_obj_cfunc(IPA_ENDP_INIT_HDR_N,
-+		      endp_init_hdr_n,			0x00000810,	0x0070),
-+	reg_obj_cfunc(IPA_ENDP_INIT_HDR_EXT_N,
-+		      endp_init_hdr_ext_n,		0x00000814,	0x0070),
-+	reg_obj_both(IPA_ENDP_INIT_AGGR_N,
-+		     endp_init_aggr_n,			0x00000824,	0x0070),
-+	reg_obj_cfunc(IPA_AGGR_FORCE_CLOSE,
-+		     aggr_force_close,			0x000001ec,	0x0000),
-+	reg_obj_cfunc(IPA_ENDP_INIT_MODE_N,
-+		      endp_init_mode_n,			0x00000820,	0x0070),
-+	reg_obj_both(IPA_ENDP_INIT_CTRL_N,
-+		     endp_init_ctrl_n,			0x00000800,	0x0070),
-+	reg_obj_cfunc(IPA_ENDP_INIT_DEAGGR_N,
-+		      endp_init_deaggr_n,		0x00000834,	0x0070),
-+	reg_obj_cfunc(IPA_ENDP_INIT_SEQ_N,
-+		      endp_init_seq_n,			0x0000083c,	0x0070),
-+	reg_obj_cfunc(IPA_ENDP_INIT_CFG_N,
-+		      endp_init_cfg_n,			0x00000808,	0x0070),
-+	reg_obj_nofunc(IPA_IRQ_EE_UC_N,			0x0000301c,	0x1000),
-+	reg_obj_cfunc(IPA_ENDP_INIT_HDR_METADATA_MASK_N,
-+		      endp_init_hdr_metadata_mask_n,	0x00000818,	0x0070),
-+	reg_obj_pfunc(IPA_SHARED_MEM_SIZE,
-+		      shared_mem_size,			0x00000054,	0x0000),
-+	reg_obj_nofunc(IPA_SRAM_DIRECT_ACCESS_N,	0x00007000,	0x0004),
-+	reg_obj_nofunc(IPA_LOCAL_PKT_PROC_CNTXT_BASE,	0x000001e8,	0x0000),
-+	reg_obj_cfunc(IPA_ENDP_STATUS_N,
-+		      endp_status_n,			0x00000840,	0x0070),
-+	reg_obj_both(IPA_ENDP_FILTER_ROUTER_HSH_CFG_N,
-+		     hash_cfg_n,			0x0000085c,	0x0070),
-+	reg_obj_cfunc(IPA_SRC_RSRC_GRP_01_RSRC_TYPE_N,
-+		      rsrg_grp_xy_rsrc_type_n,		0x00000400,	0x0020),
-+	reg_obj_cfunc(IPA_SRC_RSRC_GRP_23_RSRC_TYPE_N,
-+		      rsrg_grp_xy_rsrc_type_n,		0x00000404,	0x0020),
-+	reg_obj_cfunc(IPA_DST_RSRC_GRP_01_RSRC_TYPE_N,
-+		      rsrg_grp_xy_rsrc_type_n,		0x00000500,	0x0020),
-+	reg_obj_cfunc(IPA_DST_RSRC_GRP_23_RSRC_TYPE_N,
-+		      rsrg_grp_xy_rsrc_type_n,		0x00000504,	0x0020),
-+	reg_obj_cfunc(IPA_QSB_MAX_WRITES,
-+		      qsb_max_writes,			0x00000074,	0x0000),
-+	reg_obj_cfunc(IPA_QSB_MAX_READS,
-+		      qsb_max_reads,			0x00000078,	0x0000),
-+	reg_obj_cfunc(IPA_IDLE_INDICATION_CFG,
-+		      idle_indication_cfg,		0x00000220,	0x0000),
-+};
++	desc.type = IPA_IMM_CMD_DESC;
++	desc.len_opcode = IPA_IMM_CMD_HDR_INIT_LOCAL;
++	desc.payload = payload;
 +
-+#undef reg_obj_nofunc
-+#undef reg_obj_both
-+#undef reg_obj_pfunc
-+#undef reg_obj_cfunc
-+#undef reg_obj_common
-+#undef pfunc
-+#undef cfunc
++	ret = ipa_send_cmd(&desc);
 +
-+int ipa_reg_init(phys_addr_t phys_addr, size_t size)
-+{
-+	ipa_reg_virt = ioremap(phys_addr, size);
++	ipahal_payload_free(payload);
++err_dma_free:
++	ipa_dma_free(&mem);
 +
-+	return ipa_reg_virt ? 0 : -ENOMEM;
++	return ret;
 +}
 +
-+void ipa_reg_exit(void)
++static int dma_shared_mem_zero_cmd(u32 offset, u32 size)
 +{
-+	iounmap(ipa_reg_virt);
-+	ipa_reg_virt = NULL;
++	struct ipa_desc desc = { };
++	struct ipa_dma_mem mem;
++	void *payload;
++	int ret;
++
++	ipa_assert(size > 0);
++
++	if (ipa_dma_alloc(&mem, size, GFP_KERNEL))
++		return -ENOMEM;
++
++	offset += ipa_ctx->smem_offset;
++
++	payload = ipahal_dma_shared_mem_write_pyld(&mem, offset);
++	if (!payload) {
++		ret = -ENOMEM;
++		goto err_dma_free;
++	}
++
++	desc.type = IPA_IMM_CMD_DESC;
++	desc.len_opcode = IPA_IMM_CMD_DMA_SHARED_MEM;
++	desc.payload = payload;
++
++	ret = ipa_send_cmd(&desc);
++
++	ipahal_payload_free(payload);
++err_dma_free:
++	ipa_dma_free(&mem);
++
++	return ret;
 +}
 +
-+/* Get the offset of an "n parameterized" register */
-+u32 ipa_reg_n_offset(enum ipa_reg reg, u32 n)
++/**
++ * ipa_modem_smem_init() - Initialize modem general memory and header memory
++ */
++int ipa_modem_smem_init(void)
 +{
-+	return ipa_reg[reg].offset + n * ipa_reg[reg].n_ofst;
++	int ret;
++
++	ret = dma_shared_mem_zero_cmd(IPA_MEM_MODEM_OFST, IPA_MEM_MODEM_SIZE);
++	if (ret)
++		return ret;
++
++	ret = dma_shared_mem_zero_cmd(IPA_MEM_MODEM_HDR_OFST,
++				      IPA_MEM_MODEM_HDR_SIZE);
++	if (ret)
++		return ret;
++
++	return dma_shared_mem_zero_cmd(IPA_MEM_MODEM_HDR_PROC_CTX_OFST,
++				       IPA_MEM_MODEM_HDR_PROC_CTX_SIZE);
 +}
 +
-+/* ipa_read_reg_n() - Get an "n parameterized" register's value */
-+u32 ipa_read_reg_n(enum ipa_reg reg, u32 n)
++static int ipa_ep_apps_cmd_prod_setup(void)
 +{
-+	return ioread32(ipa_reg_virt + ipa_reg_n_offset(reg, n));
++	enum ipa_client_type dst_client;
++	enum ipa_client_type client;
++	u32 channel_count;
++	u32 ep_id;
++	int ret;
++
++	if (ipa_ctx->cmd_prod_ep_id != IPA_EP_ID_BAD)
++		ret = -EBUSY;
++
++	client = IPA_CLIENT_APPS_CMD_PROD;
++	dst_client = IPA_CLIENT_APPS_LAN_CONS;
++	channel_count = IPA_APPS_CMD_PROD_RING_COUNT;
++
++	ret = ipa_ep_alloc(client);
++	if (ret < 0)
++		return ret;
++	ep_id = ret;
++
++
++	ipa_endp_init_mode_prod(ep_id, IPA_DMA, dst_client);
++	ipa_endp_init_seq_prod(ep_id);
++	ipa_endp_init_deaggr_prod(ep_id);
++
++	ret = ipa_ep_setup(ep_id, channel_count, 2, 0, NULL, NULL);
++	if (ret)
++		ipa_ep_free(ep_id);
++	else
++		ipa_ctx->cmd_prod_ep_id = ep_id;
++
++	return ret;
 +}
 +
-+/* ipa_write_reg_n() - Write a raw value to an "n parameterized" register */
-+void ipa_write_reg_n(enum ipa_reg reg, u32 n, u32 val)
++/* Only used for IPA_MEM_UC_EVENT_RING_OFST, which must be 1KB aligned */
++static __always_inline void sram_set_canary(u32 *sram_mmio, u32 offset)
 +{
-+	iowrite32(val, ipa_reg_virt + ipa_reg_n_offset(reg, n));
++	BUILD_BUG_ON(offset < sizeof(*sram_mmio));
++	BUILD_BUG_ON(offset % 1024);
++
++	sram_mmio += offset / sizeof(*sram_mmio);
++	*--sram_mmio = IPA_MEM_CANARY_VAL;
 +}
 +
-+/* ipa_read_reg_n_fields() - Parse value of an "n parameterized" register */
-+void ipa_read_reg_n_fields(enum ipa_reg reg, u32 n, void *fields)
++static __always_inline void sram_set_canaries(u32 *sram_mmio, u32 offset)
 +{
-+	u32 val = ipa_read_reg_n(reg, n);
++	BUILD_BUG_ON(offset < 2 * sizeof(*sram_mmio));
++	BUILD_BUG_ON(offset % 8);
 +
-+	ipa_reg[reg].parse(reg, fields, val);
++	sram_mmio += offset / sizeof(*sram_mmio);
++	*--sram_mmio = IPA_MEM_CANARY_VAL;
++	*--sram_mmio = IPA_MEM_CANARY_VAL;
 +}
 +
-+/* ipa_write_reg_n_fields() - Construct a vlaue to write to an "n
-+ * parameterized" register
++/**
++ * ipa_init_sram() - Initialize IPA local SRAM.
++ *
++ * Return:	0 if successful, or a negative error code
 + */
-+void ipa_write_reg_n_fields(enum ipa_reg reg, u32 n, const void *fields)
++static int ipa_init_sram(void)
 +{
-+	u32 val = ipa_reg[reg].construct(reg, fields);
++	phys_addr_t phys_addr;
++	u32 *ipa_sram_mmio;
 +
-+	ipa_write_reg_n(reg, n, val);
++	phys_addr = ipa_ctx->ipa_phys;
++	phys_addr += ipa_reg_n_offset(IPA_SRAM_DIRECT_ACCESS_N, 0);
++	phys_addr += ipa_ctx->smem_offset;
++
++	ipa_sram_mmio = ioremap(phys_addr, ipa_ctx->smem_size);
++	if (!ipa_sram_mmio) {
++		ipa_err("fail to ioremap IPA SRAM\n");
++		return -ENOMEM;
++	}
++
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V4_FLT_HASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V4_FLT_NHASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V6_FLT_HASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V6_FLT_NHASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V4_RT_HASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V4_RT_NHASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V6_RT_HASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_V6_RT_NHASH_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_MODEM_HDR_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_MODEM_HDR_PROC_CTX_OFST);
++	sram_set_canaries(ipa_sram_mmio, IPA_MEM_MODEM_OFST);
++
++	/* Only one canary precedes the microcontroller ring */
++	sram_set_canary(ipa_sram_mmio, IPA_MEM_UC_EVENT_RING_OFST);
++
++	iounmap(ipa_sram_mmio);
++
++	return 0;
 +}
 +
-+/* Maximum representable aggregation byte limit value (in bytes) */
-+u32 ipa_reg_aggr_max_byte_limit(void)
++/**
++ * ipa_init_hdr() - Initialize IPA header block.
++ *
++ * Return:	0 if successful, or a negative error code
++ */
++static int ipa_init_hdr(void)
 +{
-+	return FIELD_MAX(AGGR_BYTE_LIMIT_FMASK) * SZ_1K;
++	int ret;
++
++	if (IPA_MEM_MODEM_HDR_SIZE) {
++		ret = hdr_init_local_cmd(IPA_MEM_MODEM_HDR_OFST,
++					 IPA_MEM_MODEM_HDR_SIZE);
++		if (ret)
++			return ret;
++	}
++
++	if (IPA_MEM_APPS_HDR_SIZE) {
++		BUILD_BUG_ON(IPA_MEM_APPS_HDR_OFST % 8);
++		ret = hdr_init_local_cmd(IPA_MEM_APPS_HDR_OFST,
++					 IPA_MEM_APPS_HDR_SIZE);
++		if (ret)
++			return ret;
++	}
++
++	if (IPA_MEM_MODEM_HDR_PROC_CTX_SIZE) {
++		ret = dma_shared_mem_zero_cmd(IPA_MEM_MODEM_HDR_PROC_CTX_OFST,
++					      IPA_MEM_MODEM_HDR_PROC_CTX_SIZE);
++		if (ret)
++			return ret;
++	}
++
++	if (IPA_MEM_APPS_HDR_PROC_CTX_SIZE) {
++		BUILD_BUG_ON(IPA_MEM_APPS_HDR_PROC_CTX_OFST % 8);
++		ret = dma_shared_mem_zero_cmd(IPA_MEM_APPS_HDR_PROC_CTX_OFST,
++					      IPA_MEM_APPS_HDR_PROC_CTX_SIZE);
++		if (ret)
++			return ret;
++	}
++
++	ipa_write_reg(IPA_LOCAL_PKT_PROC_CNTXT_BASE,
++		      ipa_ctx->smem_offset + IPA_MEM_MODEM_HDR_PROC_CTX_OFST);
++
++	return 0;
 +}
 +
-+/* Maximum representable aggregation packet limit value */
-+u32 ipa_reg_aggr_max_packet_limit(void)
++/**
++ * ipa_init_rt4() - Initialize IPA routing block for IPv4.
++ *
++ * Return:	0 if successful, or a negative error code
++ */
++static int ipa_init_rt4(struct ipa_dma_mem *mem)
 +{
-+	return FIELD_MAX(AGGR_PKT_LIMIT_FMASK);
-+}
-diff --git a/drivers/net/ipa/ipa_reg.h b/drivers/net/ipa/ipa_reg.h
-new file mode 100644
-index 000000000000..fb7c1ab6408c
---- /dev/null
-+++ b/drivers/net/ipa/ipa_reg.h
-@@ -0,0 +1,614 @@
-+// SPDX-License-Identifier: GPL-2.0
++	struct ipa_desc desc = { };
++	u32 nhash_offset;
++	u32 hash_offset;
++	void *payload;
++	int ret;
 +
-+/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
-+ * Copyright (C) 2018 Linaro Ltd.
-+ */
-+#ifndef _IPA_REG_H_
-+#define _IPA_REG_H_
++	hash_offset = ipa_ctx->smem_offset + IPA_MEM_V4_RT_HASH_OFST;
++	nhash_offset = ipa_ctx->smem_offset + IPA_MEM_V4_RT_NHASH_OFST;
++	payload = ipahal_ip_v4_routing_init_pyld(mem, hash_offset,
++						 nhash_offset);
++	if (!payload)
++		return -ENOMEM;
 +
-+/**
-+ * DOC: The IPA Register Abstraction
-+ *
-+ * The IPA code abstracts the details of its 32-bit registers, allowing access
-+ * to them to be done generically.  The original motivation for this was that
-+ * the field width and/or position for values stored in some registers differed
-+ * for different versions of IPA hardware.  Abstracting access this way allows
-+ * code that uses such registers to be simpler, describing how register fields
-+ * are used without proliferating special-case code that is dependent on
-+ * hardware version.
-+ *
-+ * Each IPA register has a name, which is one of the values in the "ipa_reg"
-+ * enumerated type (e.g., IPA_ENABLED_PIPES).  The offset (memory address) of
-+ * the register having a given name is maintained internal to the "ipa_reg"
-+ * module.
-+ *
-+ * For simple registers that hold a single 32-bit value, two functions provide
-+ * access to the register:
-+ *	u32 ipa_read_reg(enum ipa_reg reg);
-+ *	void ipa_write_reg(enum ipa_reg reg, u32 val);
-+ *
-+ * Some registers are "N-parameterized."  This means there is a set of
-+ * registers having identical format, and each is accessed by supplying
-+ * the "N" value to select which register is intended.  The names for
-+ * N-parameterized registers have an "_N" suffix (e.g. IPA_IRQ_STTS_EE_N).
-+ * Details of computing the offset for such registers are maintained internal
-+ * to the "ipa_reg" module.  For simple registers holding a single 32-bit
-+ * value, these functions provide access to N-parameterized registers:
-+ *	u32 ipa_read_reg_n(enum ipa_reg reg, u32 n);
-+ *	void ipa_write_reg_n(enum ipa_reg reg, u32 n, u32 val);
-+ *
-+ * Some registers contain fields less than 32 bits wide (call these "field
-+ * registers").  For each such register a "field structure" is defined to
-+ * represent the values of the individual fields within the register.  The
-+ * name of the structure matches the name of the register (in lower case).
-+ * For example, the individual fields in the IPA_ROUTE register are represented
-+ * by the field structure named ipa_reg_route.
-+ *
-+ * Each field register has a function used to fill in its corresponding
-+ * field structure with particular values.  Parameters to this function
-+ * supply values to assign.  In many cases only a few such parameters
-+ * are required, because some field values are invariant.  The name of
-+ * this sort of function is derived from the structure name, so for example
-+ * ipa_reg_route() is used to initialize an ipa_reg_route structure.
-+ * Field registers associated with endpoints often use different fields
-+ * or different values dependent on whether the endpoint is a producer or
-+ * consumer.  In these cases separate functions are used to initialize
-+ * the field structure (for example ipa_reg_endp_init_hdr_cons() and
-+ * ipa_reg_endp_init_hdr_prod()).
-+ *
-+ * The position and width of fields within a register are defined (in
-+ * "ipa_reg.c") using field masks, and the names of the members in the field
-+ * structure associated with such registers match the names of the bit masks
-+ * that define the fields.  (E.g., ipa_reg_route->route_dis is used to
-+ * represent the field defined by the ROUTE_DIS field mask.)
-+ *
-+ * "Field registers" are accessed using these functions:
-+ *	void ipa_read_reg_fields(enum ipa_reg reg, void *fields);
-+ *	void ipa_write_reg_fields(enum ipa_reg reg, const void *fields);
-+ * The "fields" parameter in both cases is the address of the "field structure"
-+ * associated with the register being accessed.  When reading, the structure
-+ * is filled by ipa_read_reg_fields() with values found in the register's
-+ * fields.  (All fields will be filled; there is no need for the caller to
-+ * initialize the passed-in structure before the call.)  When writing, the
-+ * caller initializes the structure with all values that should be written to
-+ * the fields in the register.
-+ *
-+ * "Field registers" can also be N-parameterized, in which case they are
-+ * accessed using these functions:
-+ *	void ipa_read_reg_n_fields(enum ipa_reg reg, u32 n, void *fields);
-+ *	void ipa_write_reg_n_fields(enum ipa_reg reg, u32 n,
-+ *				    const void *fields);
-+ */
++	desc.type = IPA_IMM_CMD_DESC;
++	desc.len_opcode = IPA_IMM_CMD_IP_V4_ROUTING_INIT;
++	desc.payload = payload;
 +
-+/* Register names */
-+enum ipa_reg {
-+	IPA_ROUTE,
-+	IPA_IRQ_STTS_EE_N,
-+	IPA_IRQ_EN_EE_N,
-+	IPA_IRQ_CLR_EE_N,
-+	IPA_IRQ_SUSPEND_INFO_EE_N,
-+	IPA_SUSPEND_IRQ_EN_EE_N,
-+	IPA_SUSPEND_IRQ_CLR_EE_N,
-+	IPA_BCR,
-+	IPA_ENABLED_PIPES,
-+	IPA_TAG_TIMER,
-+	IPA_STATE_AGGR_ACTIVE,
-+	IPA_ENDP_INIT_HDR_N,
-+	IPA_ENDP_INIT_HDR_EXT_N,
-+	IPA_ENDP_INIT_AGGR_N,
-+	IPA_AGGR_FORCE_CLOSE,
-+	IPA_ENDP_INIT_MODE_N,
-+	IPA_ENDP_INIT_CTRL_N,
-+	IPA_ENDP_INIT_DEAGGR_N,
-+	IPA_ENDP_INIT_SEQ_N,
-+	IPA_ENDP_INIT_CFG_N,
-+	IPA_IRQ_EE_UC_N,
-+	IPA_ENDP_INIT_HDR_METADATA_MASK_N,
-+	IPA_SHARED_MEM_SIZE,
-+	IPA_SRAM_DIRECT_ACCESS_N,
-+	IPA_LOCAL_PKT_PROC_CNTXT_BASE,
-+	IPA_ENDP_STATUS_N,
-+	IPA_ENDP_FILTER_ROUTER_HSH_CFG_N,
-+	IPA_SRC_RSRC_GRP_01_RSRC_TYPE_N,
-+	IPA_SRC_RSRC_GRP_23_RSRC_TYPE_N,
-+	IPA_DST_RSRC_GRP_01_RSRC_TYPE_N,
-+	IPA_DST_RSRC_GRP_23_RSRC_TYPE_N,
-+	IPA_QSB_MAX_WRITES,
-+	IPA_QSB_MAX_READS,
-+	IPA_IDLE_INDICATION_CFG,
-+};
++	ret = ipa_send_cmd(&desc);
 +
-+/**
-+ * struct ipa_reg_route - IPA_ROUTE field structure
-+ * @route_dis: route disable
-+ * @route_def_pipe: route default pipe
-+ * @route_def_hdr_table: route default header table
-+ * @route_def_hdr_ofst: route default header offset table
-+ * @route_frag_def_pipe: Default pipe to route fragmented exception
-+ *    packets and frag new rule statues, if source pipe does not have
-+ *    a notification status pipe defined.
-+ * @route_def_retain_hdr: default value of retain header. It is used
-+ *    when no rule was hit
-+ */
-+struct ipa_reg_route {
-+	u32 route_dis;
-+	u32 route_def_pipe;
-+	u32 route_def_hdr_table;
-+	u32 route_def_hdr_ofst;
-+	u32 route_frag_def_pipe;
-+	u32 route_def_retain_hdr;
-+};
++	ipahal_payload_free(payload);
 +
-+/**
-+ * ipa_reg_endp_init_hdr - ENDP_INIT_HDR_N field structure
-+ *
-+ * @hdr_len:
-+ * @hdr_ofst_metadata_valid:
-+ * @hdr_ofst_metadata:
-+ * @hdr_additional_const_len:
-+ * @hdr_ofst_pkt_size_valid:
-+ * @hdr_ofst_pkt_size:
-+ * @hdr_a5_mux:
-+ * @hdr_len_inc_deagg_hdr:
-+ * @hdr_metadata_reg_valid:
-+*/
-+struct ipa_reg_endp_init_hdr {
-+	u32 hdr_len;
-+	u32 hdr_ofst_metadata_valid;
-+	u32 hdr_ofst_metadata;
-+	u32 hdr_additional_const_len;
-+	u32 hdr_ofst_pkt_size_valid;
-+	u32 hdr_ofst_pkt_size;
-+	u32 hdr_a5_mux;
-+	u32 hdr_len_inc_deagg_hdr;
-+	u32 hdr_metadata_reg_valid;
-+};
-+
-+/**
-+ * ipa_reg_endp_init_hdr_ext - IPA_ENDP_INIT_HDR_EXT_N field structure
-+ *
-+ * @hdr_endianness:
-+ * @hdr_total_len_or_pad_valid:
-+ * @hdr_total_len_or_pad:
-+ * @hdr_payload_len_inc_padding:
-+ * @hdr_total_len_or_pad_offset:
-+ * @hdr_pad_to_alignment:
-+ */
-+struct ipa_reg_endp_init_hdr_ext {
-+	u32 hdr_endianness;		/* 0 = little endian; 1 = big endian */
-+	u32 hdr_total_len_or_pad_valid;
-+	u32 hdr_total_len_or_pad;	/* 0 = pad; 1 = total_len */
-+	u32 hdr_payload_len_inc_padding;
-+	u32 hdr_total_len_or_pad_offset;
-+	u32 hdr_pad_to_alignment;
-+};
-+
-+/**
-+ * enum ipa_aggr_en - aggregation setting type in IPA end-point
-+ */
-+enum ipa_aggr_en {
-+	IPA_BYPASS_AGGR		= 0,
-+	IPA_ENABLE_AGGR		= 1,
-+	IPA_ENABLE_DEAGGR	= 2,
-+};
-+
-+/**
-+ * enum ipa_aggr_type - type of aggregation in IPA end-point
-+ */
-+enum ipa_aggr_type {
-+	IPA_MBIM_16 = 0,
-+	IPA_HDLC    = 1,
-+	IPA_TLP	    = 2,
-+	IPA_RNDIS   = 3,
-+	IPA_GENERIC = 4,
-+	IPA_QCMAP   = 6,
-+};
-+
-+#define IPA_AGGR_TIME_LIMIT_DEFAULT	1	/* XXX units? */
-+
-+/**
-+ * struct ipa_reg_endp_init_aggr - IPA_ENDP_INIT_AGGR_N field structure
-+ * @aggr_en: bypass aggregation, enable aggregation, or deaggregation
-+ *	     (enum ipa_aggr_en)
-+ * @aggr_type: type of aggregation (enum ipa_aggr_type aggr)
-+ * @aggr_byte_limit: aggregated byte limit in KB, or no limit if 0
-+ *		     (producer pipes only)
-+ * @aggr_time_limit: time limit before close of aggregation, or
-+ *		     aggregation disabled if 0 (producer pipes only)
-+ * @aggr_pkt_limit: packet limit before closing aggregation, or no
-+ *		    limit if 0 (producer pipes only) XXX units
-+ * @aggr_sw_eof_active: whether EOF closes aggregation--in addition to
-+ *			hardware aggregation configuration (producer
-+ *			pipes configured for generic aggregation only)
-+ * @aggr_force_close: whether to force a close XXX verify/when
-+ * @aggr_hard_byte_limit_en: whether aggregation frames close *before*
-+ * 			     byte count has crossed limit, rather than
-+ * 			     after XXX producer only?
-+ */
-+struct ipa_reg_endp_init_aggr {
-+	u32 aggr_en;		/* enum ipa_aggr_en */
-+	u32 aggr_type;		/* enum ipa_aggr_type */
-+	u32 aggr_byte_limit;
-+	u32 aggr_time_limit;
-+	u32 aggr_pkt_limit;
-+	u32 aggr_sw_eof_active;
-+	u32 aggr_force_close;
-+	u32 aggr_hard_byte_limit_en;
-+};
-+
-+/**
-+ * struct ipa_aggr_force_close - IPA_AGGR_FORCE_CLOSE field structure
-+ * @pipe_bitmap: bitmap of pipes on which aggregation should be closed
-+ */
-+struct ipa_reg_aggr_force_close {
-+	u32 pipe_bitmap;
-+};
-+
-+/**
-+ * enum ipa_mode - mode setting type in IPA end-point
-+ * @BASIC: basic mode
-+ * @ENABLE_FRAMING_HDLC: not currently supported
-+ * @ENABLE_DEFRAMING_HDLC: not currently supported
-+ * @DMA: all data arriving IPA will not go through IPA logic blocks, this
-+ *  allows IPA to work as DMA for specific pipes.
-+ */
-+enum ipa_mode {
-+	IPA_BASIC			= 0,
-+	IPA_ENABLE_FRAMING_HDLC		= 1,
-+	IPA_ENABLE_DEFRAMING_HDLC	= 2,
-+	IPA_DMA				= 3,
-+};
-+
-+/**
-+ * struct ipa_reg_endp_init_mode - IPA_ENDP_INIT_MODE_N field structure
-+ *
-+ * @mode: endpoint mode setting (enum ipa_mode_type)
-+ * @dst_pipe_index: This parameter specifies destination output-pipe-packets
-+ *	will be routed to. Valid for DMA mode only and for Input
-+ *	Pipes only (IPA Consumer)
-+ * @byte_threshold:
-+ * @pipe_replication_en:
-+ * @pad_en:
-+ * @hdr_ftch_disable:
-+ */
-+struct ipa_reg_endp_init_mode {
-+	u32 mode;		/* enum ipa_mode */
-+	u32 dest_pipe_index;
-+	u32 byte_threshold;
-+	u32 pipe_replication_en;
-+	u32 pad_en;
-+	u32 hdr_ftch_disable;
-+};
-+
-+/**
-+ * struct ipa_ep_init_ctrl - IPA_ENDP_INIT_CTRL_N field structure
-+ *
-+ * @ipa_ep_suspend: 0 - ENDP is enabled, 1 - ENDP is suspended (disabled).
-+ *			Valid for PROD Endpoints
-+ * @ipa_ep_delay:   0 - ENDP is free-running, 1 - ENDP is delayed.
-+ *			SW controls the data flow of an endpoint usind this bit.
-+ *			Valid for CONS Endpoints
-+ */
-+struct ipa_reg_endp_init_ctrl {
-+	u32 endp_suspend;
-+	u32 endp_delay;
-+};
-+
-+/**
-+ * struct ipa_reg_endp_init_deaggr - IPA_ENDP_INIT_DEAGGR_N field structure
-+ *
-+ * @deaggr_hdr_len:
-+ * @packet_offset_valid:
-+ * @packet_offset_location:
-+ * @max_packet_len:
-+ */
-+struct ipa_reg_endp_init_deaggr {
-+	u32 deaggr_hdr_len;
-+	u32 packet_offset_valid;
-+	u32 packet_offset_location;
-+	u32 max_packet_len;
-+};
-+
-+/* HPS, DPS sequencers types */
-+enum ipa_seq_type {
-+	IPA_SEQ_DMA_ONLY			= 0x00,
-+	/* Packet Processing + no decipher + uCP (for Ethernet Bridging) */
-+	IPA_SEQ_PKT_PROCESS_NO_DEC_UCP		= 0x02,
-+	/* 2 Packet Processing pass + no decipher + uCP */
-+	IPA_SEQ_2ND_PKT_PROCESS_PASS_NO_DEC_UCP	= 0x04,
-+	/* DMA + DECIPHER/CIPHER */
-+	IPA_SEQ_DMA_DEC				= 0x11,
-+	/* COMP/DECOMP */
-+	IPA_SEQ_DMA_COMP_DECOMP			= 0x20,
-+	/* Invalid sequencer type */
-+	IPA_SEQ_INVALID				= 0xff,
-+};
-+
-+/**
-+ * struct ipa_ep_init_seq - IPA_ENDP_INIT_SEQ_N field structure
-+ * @hps_seq_type: type of HPS sequencer (enum ipa_hps_dps_sequencer_type)
-+ * @dps_seq_type: type of DPS sequencer (enum ipa_hps_dps_sequencer_type)
-+ */
-+struct ipa_reg_endp_init_seq {
-+	u32 hps_seq_type;
-+	u32 dps_seq_type;
-+	u32 hps_rep_seq_type;
-+	u32 dps_rep_seq_type;
-+};
-+
-+/**
-+ * enum ipa_cs_offload_en - checksum offload setting
-+ */
-+enum ipa_cs_offload_en {
-+	IPA_CS_OFFLOAD_NONE	= 0,
-+	IPA_CS_OFFLOAD_UL	= 1,
-+	IPA_CS_OFFLOAD_DL	= 2,
-+	IPA_CS_RSVD
-+};
-+
-+/**
-+ * struct ipa_reg_endp_init_cfg - IPA_ENDP_INIT_CFG_N field structure
-+ * @frag_offload_en:
-+ * @cs_offload_en: type of offloading (enum ipa_cs_offload)
-+ * @cs_metadata_hdr_offset: offload (in 4-byte words) within header
-+ * where 4-byte checksum metadata begins.  Valid only for consumer
-+ * pipes.
-+ * @cs_gen_qmb_master_sel:
-+ */
-+struct ipa_reg_endp_init_cfg {
-+	u32 frag_offload_en;
-+	u32 cs_offload_en;		/* enum ipa_cs_offload_en */
-+	u32 cs_metadata_hdr_offset;
-+	u32 cs_gen_qmb_master_sel;
-+};
-+
-+/**
-+ * struct ipa_reg_endp_init_hdr_metadata_mask -
-+ *	IPA_ENDP_INIT_HDR_METADATA_MASK_N field structure
-+ * @metadata_mask: mask specifying metadata bits to write
-+ *
-+ * Valid for producer pipes only.
-+ */
-+struct ipa_reg_endp_init_hdr_metadata_mask {
-+	u32 metadata_mask;
-+};
-+
-+/**
-+ * struct ipa_reg_shared_mem_size - SHARED_MEM_SIZE field structure
-+ * @shared_mem_size: Available size [in 8Bytes] of SW partition within
-+ *	IPA shared memory.
-+ * @shared_mem_baddr: Offset of SW partition within IPA
-+ *	shared memory[in 8Bytes]. To get absolute address of SW partition,
-+ *	add this offset to IPA_SRAM_DIRECT_ACCESS_N baddr.
-+ */
-+struct ipa_reg_shared_mem_size {
-+	u32 shared_mem_size;
-+	u32 shared_mem_baddr;
-+};
-+
-+/**
-+ * struct ipa_reg_endp_status - IPA_ENDP_STATUS_N field structure
-+ * @status_en: Determines if end point supports Status Indications. SW should
-+ *	set this bit in order to enable Statuses. Output Pipe - send
-+ *	Status indications only if bit is set. Input Pipe - forward Status
-+ *	indication to STATUS_ENDP only if bit is set. Valid for Input
-+ *	and Output Pipes (IPA Consumer and Producer)
-+ * @status_endp: Statuses generated for this endpoint will be forwarded to the
-+ *	specified Status End Point. Status endpoint needs to be
-+ *	configured with STATUS_EN=1 Valid only for Input Pipes (IPA
-+ *	Consumer)
-+ * @status_location: Location of PKT-STATUS on destination pipe.
-+ *	If set to 0 (default), PKT-STATUS will be appended before the packet
-+ *	for this endpoint. If set to 1, PKT-STATUS will be appended after the
-+ *	packet for this endpoint. Valid only for Output Pipes (IPA Producer)
-+ * @status_pkt_suppress:
-+ */
-+struct ipa_reg_endp_status {
-+	u32 status_en;
-+	u32 status_endp;
-+	u32 status_location;
-+	u32 status_pkt_suppress;
-+};
-+
-+/**
-+ * struct ipa_hash_tuple - structure used to group filter and route fields in
-+ *			   struct ipa_ep_filter_router_hsh_cfg
-+ * @src_id: pipe number for flt, table index for rt
-+ * @src_ip_addr: IP source address
-+ * @dst_ip_addr: IP destination address
-+ * @src_port: L4 source port
-+ * @dst_port: L4 destination port
-+ * @protocol: IP protocol field
-+ * @meta_data: packet meta-data
-+ *
-+ * Each field is a Boolean value, indicating whether that particular value
-+ * should be used for filtering or routing.
-+ *
-+ */
-+struct ipa_reg_hash_tuple {
-+	u32 src_id;	/* pipe number in flt, table index in rt */
-+	u32 src_ip;
-+	u32 dst_ip;
-+	u32 src_port;
-+	u32 dst_port;
-+	u32 protocol;
-+	u32 metadata;
-+	u32 undefined;
-+};
-+
-+/**
-+ * struct ipa_ep_filter_router_hsh_cfg - IPA_ENDP_FILTER_ROUTER_HSH_CFG_N
-+ * 					 field structure
-+ * @flt: Hash tuple info for filtering
-+ * @undefined1:
-+ * @rt: Hash tuple info for routing
-+ * @undefined2:
-+ * @undefinedX: Undefined/Unused bit fields set of the register
-+ */
-+struct ipa_ep_filter_router_hsh_cfg {
-+	struct ipa_reg_hash_tuple flt;
-+	struct ipa_reg_hash_tuple rt;
-+};
-+
-+/**
-+ * struct ipa_reg_rsrc_grp_xy_rsrc_type_n -
-+ *    IPA_{SRC,DST}_RSRC_GRP_{02}{13}Y_RSRC_TYPE_N field structure
-+ * @x_min - first group min value
-+ * @x_max - first group max value
-+ * @y_min - second group min value
-+ * @y_max - second group max value
-+ *
-+ * This field structure is used for accessing the following registers:
-+ *	IPA_SRC_RSRC_GRP_01_RSRC_TYPE_N IPA_SRC_RSRC_GRP_23_RSRC_TYPE_N
-+ *	IPA_DST_RSRC_GRP_01_RSRC_TYPE_N IPA_DST_RSRC_GRP_23_RSRC_TYPE_N
-+ *
-+ */
-+struct ipa_reg_rsrc_grp_xy_rsrc_type_n {
-+	u32 x_min;
-+	u32 x_max;
-+	u32 y_min;
-+	u32 y_max;
-+};
-+
-+/**
-+ * struct ipa_reg_qsb_max_writes - IPA_QSB_MAX_WRITES field register
-+ * @qmb_0_max_writes: Max number of outstanding writes for GEN_QMB_0
-+ * @qmb_1_max_writes: Max number of outstanding writes for GEN_QMB_1
-+ */
-+struct ipa_reg_qsb_max_writes {
-+	u32 qmb_0_max_writes;
-+	u32 qmb_1_max_writes;
-+};
-+
-+/**
-+ * struct ipa_reg_qsb_max_reads - IPA_QSB_MAX_READS field register
-+ * @qmb_0_max_reads: Max number of outstanding reads for GEN_QMB_0
-+ * @qmb_1_max_reads: Max number of outstanding reads for GEN_QMB_1
-+ */
-+struct ipa_reg_qsb_max_reads {
-+	u32 qmb_0_max_reads;
-+	u32 qmb_1_max_reads;
-+};
-+
-+/** struct ipa_reg_idle_indication_cfg - IPA_IDLE_INDICATION_CFG field register
-+ * @enter_idle_debounce_thresh:	 configure the debounce threshold
-+ * @const_non_idle_enable: enable the asserting of the IDLE value and DCD
-+ */
-+struct ipa_reg_idle_indication_cfg {
-+	u32 enter_idle_debounce_thresh;
-+	u32 const_non_idle_enable;
-+};
-+
-+/* Initialize the IPA register subsystem */
-+int ipa_reg_init(phys_addr_t phys_addr, size_t size);
-+void ipa_reg_exit(void);
-+
-+void ipa_reg_route(struct ipa_reg_route *route, u32 ep_id);
-+void ipa_reg_endp_init_hdr_cons(struct ipa_reg_endp_init_hdr *init_hdr,
-+				u32 header_size, u32 metadata_offset,
-+				u32 length_offset);
-+void ipa_reg_endp_init_hdr_prod(struct ipa_reg_endp_init_hdr *init_hdr,
-+				u32 header_size, u32 metadata_offset,
-+				u32 length_offset);
-+void ipa_reg_endp_init_hdr_ext_cons(struct ipa_reg_endp_init_hdr_ext *hdr_ext,
-+				    u32 pad_align, bool pad_included);
-+void ipa_reg_endp_init_hdr_ext_prod(struct ipa_reg_endp_init_hdr_ext *hdr_ext,
-+				    u32 pad_align);
-+void ipa_reg_endp_init_aggr_cons(struct ipa_reg_endp_init_aggr *init_aggr,
-+				 u32 byte_limit, u32 packet_limit,
-+				 bool close_on_eof);
-+void ipa_reg_endp_init_aggr_prod(struct ipa_reg_endp_init_aggr *init_aggr,
-+				 enum ipa_aggr_en aggr_en,
-+				 enum ipa_aggr_type aggr_type);
-+void ipa_reg_aggr_force_close(struct ipa_reg_aggr_force_close *force_close,
-+			      u32 pipe_bitmap);
-+void ipa_reg_endp_init_mode_cons(struct ipa_reg_endp_init_mode *init_mode);
-+void ipa_reg_endp_init_mode_prod(struct ipa_reg_endp_init_mode *init_mode,
-+				 enum ipa_mode mode, u32 dest_endp);
-+void ipa_reg_endp_init_cfg_cons(struct ipa_reg_endp_init_cfg *init_cfg,
-+				enum ipa_cs_offload_en offload_type);
-+void ipa_reg_endp_init_cfg_prod(struct ipa_reg_endp_init_cfg *init_cfg,
-+				enum ipa_cs_offload_en offload_type,
-+				u32 metadata_offset);
-+void ipa_reg_endp_init_ctrl(struct ipa_reg_endp_init_ctrl *init_ctrl,
-+			    bool suspend);
-+void ipa_reg_endp_init_deaggr_cons(
-+		struct ipa_reg_endp_init_deaggr *init_deaggr);
-+void ipa_reg_endp_init_deaggr_prod(
-+		struct ipa_reg_endp_init_deaggr *init_deaggr);
-+void ipa_reg_endp_init_seq_cons(struct ipa_reg_endp_init_seq *init_seq);
-+void ipa_reg_endp_init_seq_prod(struct ipa_reg_endp_init_seq *init_seq,
-+				enum ipa_seq_type seq_type);
-+void ipa_reg_endp_init_hdr_metadata_mask_cons(
-+		struct ipa_reg_endp_init_hdr_metadata_mask *metadata_mask,
-+		u32 mask);
-+void ipa_reg_endp_init_hdr_metadata_mask_prod(
-+		struct ipa_reg_endp_init_hdr_metadata_mask *metadata_mask);
-+void ipa_reg_endp_status_cons(struct ipa_reg_endp_status *endp_status,
-+			      bool enable);
-+void ipa_reg_endp_status_prod(struct ipa_reg_endp_status *endp_status,
-+			      bool enable, u32 endp);
-+
-+void ipa_reg_hash_tuple(struct ipa_reg_hash_tuple *tuple);
-+
-+void ipa_reg_rsrc_grp_xy_rsrc_type_n(
-+				struct ipa_reg_rsrc_grp_xy_rsrc_type_n *limits,
-+				u32 x_min, u32 x_max, u32 y_min, u32 y_max);
-+
-+void ipa_reg_qsb_max_writes(struct ipa_reg_qsb_max_writes *max_writes,
-+			    u32 qmb_0_max_writes, u32 qmb_1_max_writes);
-+void ipa_reg_qsb_max_reads(struct ipa_reg_qsb_max_reads *max_reads,
-+			   u32 qmb_0_max_reads, u32 qmb_1_max_reads);
-+
-+void ipa_reg_idle_indication_cfg(struct ipa_reg_idle_indication_cfg *indication,
-+			         u32 debounce_thresh, bool non_idle_enable);
-+
-+/* Get the offset of an n-parameterized register */
-+u32 ipa_reg_n_offset(enum ipa_reg reg, u32 n);
-+
-+/* Get the offset of a register */
-+static inline u32 ipa_reg_offset(enum ipa_reg reg)
-+{
-+	return ipa_reg_n_offset(reg, 0);
++	return ret;
 +}
 +
-+/* ipa_read_reg_n() - Get the raw value of n-parameterized register */
-+u32 ipa_read_reg_n(enum ipa_reg reg, u32 n);
-+
-+/* ipa_write_reg_n() - Write a raw value to an n-param register */
-+void ipa_write_reg_n(enum ipa_reg reg, u32 n, u32 val);
-+
-+/* ipa_read_reg_n_fields() - Get the parsed value of an n-param register */
-+void ipa_read_reg_n_fields(enum ipa_reg reg, u32 n, void *fields);
-+
-+/* ipa_write_reg_n_fields() - Write a parsed value to an n-param register */
-+void ipa_write_reg_n_fields(enum ipa_reg reg, u32 n, const void *fields);
-+
-+/* ipa_read_reg() - Get the raw value from a register */
-+static inline u32 ipa_read_reg(enum ipa_reg reg)
++/**
++ * ipa_init_rt6() - Initialize IPA routing block for IPv6.
++ *
++ * Return:	0 if successful, or a negative error code
++ */
++static int ipa_init_rt6(struct ipa_dma_mem *mem)
 +{
-+	return ipa_read_reg_n(reg, 0);
++	struct ipa_desc desc = { };
++	u32 nhash_offset;
++	u32 hash_offset;
++	void *payload;
++	int ret;
++
++	hash_offset = ipa_ctx->smem_offset + IPA_MEM_V6_RT_HASH_OFST;
++	nhash_offset = ipa_ctx->smem_offset + IPA_MEM_V6_RT_NHASH_OFST;
++	payload = ipahal_ip_v6_routing_init_pyld(mem, hash_offset,
++						 nhash_offset);
++	if (!payload)
++		return -ENOMEM;
++
++	desc.type = IPA_IMM_CMD_DESC;
++	desc.len_opcode = IPA_IMM_CMD_IP_V6_ROUTING_INIT;
++	desc.payload = payload;
++
++	ret = ipa_send_cmd(&desc);
++
++	ipahal_payload_free(payload);
++
++	return ret;
 +}
 +
-+/* ipa_write_reg() - Write a raw value to a register*/
-+static inline void ipa_write_reg(enum ipa_reg reg, u32 val)
++/**
++ * ipa_init_flt4() - Initialize IPA filtering block for IPv4.
++ *
++ * Return:	0 if successful, or a negative error code
++ */
++static int ipa_init_flt4(struct ipa_dma_mem *mem)
 +{
-+	ipa_write_reg_n(reg, 0, val);
++	struct ipa_desc desc = { };
++	u32 nhash_offset;
++	u32 hash_offset;
++	void *payload;
++	int ret;
++
++	hash_offset = ipa_ctx->smem_offset + IPA_MEM_V4_FLT_HASH_OFST;
++	nhash_offset = ipa_ctx->smem_offset + IPA_MEM_V4_FLT_NHASH_OFST;
++	payload = ipahal_ip_v4_filter_init_pyld(mem, hash_offset,
++						nhash_offset);
++	if (!payload)
++		return -ENOMEM;
++
++	desc.type = IPA_IMM_CMD_DESC;
++	desc.len_opcode = IPA_IMM_CMD_IP_V4_FILTER_INIT;
++	desc.payload = payload;
++
++	ret = ipa_send_cmd(&desc);
++
++	ipahal_payload_free(payload);
++
++	return ret;
 +}
 +
-+/* ipa_read_reg_fields() - Get the parsed value of a register */
-+static inline void ipa_read_reg_fields(enum ipa_reg reg, void *fields)
++/**
++ * ipa_init_flt6() - Initialize IPA filtering block for IPv6.
++ *
++ * Return:	0 if successful, or a negative error code
++ */
++static int ipa_init_flt6(struct ipa_dma_mem *mem)
 +{
-+	ipa_read_reg_n_fields(reg, 0, fields);
++	struct ipa_desc desc = { };
++	u32 nhash_offset;
++	u32 hash_offset;
++	void *payload;
++	int ret;
++
++	hash_offset = ipa_ctx->smem_offset + IPA_MEM_V6_FLT_HASH_OFST;
++	nhash_offset = ipa_ctx->smem_offset + IPA_MEM_V6_FLT_NHASH_OFST;
++	payload = ipahal_ip_v6_filter_init_pyld(mem, hash_offset,
++						nhash_offset);
++	if (!payload)
++		return -ENOMEM;
++
++	desc.type = IPA_IMM_CMD_DESC;
++	desc.len_opcode = IPA_IMM_CMD_IP_V6_FILTER_INIT;
++	desc.payload = payload;
++
++	ret = ipa_send_cmd(&desc);
++
++	ipahal_payload_free(payload);
++
++	return ret;
 +}
 +
-+/* ipa_write_reg_fields() - Write a parsed value to a register */
-+static inline void ipa_write_reg_fields(enum ipa_reg reg, const void *fields)
++static void ipa_setup_flt_hash_tuple(void)
 +{
-+	ipa_write_reg_n_fields(reg, 0, fields);
++	u32 ep_mask = ipa_ctx->filter_bitmap;
++
++	while (ep_mask) {
++		u32 i = __ffs(ep_mask);
++
++		ep_mask ^= BIT(i);
++		if (!ipa_is_modem_ep(i))
++			ipa_set_flt_tuple_mask(i);
++	}
 +}
 +
-+u32 ipa_reg_aggr_max_byte_limit(void);
-+u32 ipa_reg_aggr_max_packet_limit(void);
++static void ipa_setup_rt_hash_tuple(void)
++{
++	u32 route_mask;
++	u32 modem_mask;
 +
-+#endif /* _IPA_REG_H_ */
++	BUILD_BUG_ON(!IPA_MEM_MODEM_RT_COUNT);
++	BUILD_BUG_ON(IPA_MEM_RT_COUNT < IPA_MEM_MODEM_RT_COUNT);
++
++	/* Compute a mask representing non-modem route table entries */
++	route_mask = GENMASK(IPA_MEM_RT_COUNT - 1, 0);
++	modem_mask = GENMASK(IPA_MEM_MODEM_RT_INDEX_MAX,
++			     IPA_MEM_MODEM_RT_INDEX_MIN);
++	route_mask &= ~modem_mask;
++
++	while (route_mask) {
++		u32 i = __ffs(route_mask);
++
++		route_mask ^= BIT(i);
++		ipa_set_rt_tuple_mask(i);
++	}
++}
++
++static int ipa_ep_apps_lan_cons_setup(void)
++{
++	enum ipa_client_type client;
++	u32 rx_buffer_size;
++	u32 channel_count;
++	u32 aggr_count;
++	u32 aggr_bytes;
++	u32 aggr_size;
++	u32 ep_id;
++	int ret;
++
++	client = IPA_CLIENT_APPS_LAN_CONS;
++	channel_count = IPA_APPS_LAN_CONS_RING_COUNT;
++	aggr_count = IPA_GENERIC_AGGR_PKT_LIMIT;
++	aggr_bytes = IPA_GENERIC_AGGR_BYTE_LIMIT;
++
++	if (aggr_bytes > ipa_reg_aggr_max_byte_limit())
++		return -EINVAL;
++
++	if (aggr_count > ipa_reg_aggr_max_packet_limit())
++		return -EINVAL;
++
++	if (ipa_ctx->lan_cons_ep_id != IPA_EP_ID_BAD)
++		return -EBUSY;
++
++	/* Compute the buffer size required to handle the requested
++	 * aggregation byte limit.  The aggr_byte_limit value is
++	 * expressed as a number of KB, but we derive that value
++	 * after computing the buffer size to use (in bytes).  The
++	 * buffer must be sufficient to hold one IPA_MTU-sized
++	 * packet *after* the limit is reached.
++	 *
++	 * (Note that the rx_buffer_size value reflects only the
++	 * space for data, not any standard metadata or headers.)
++	 */
++	rx_buffer_size = ipa_aggr_byte_limit_buf_size(aggr_bytes);
++
++	/* Account for the extra IPA_MTU past the limit in the
++	 * buffer, and convert the result to the KB units the
++	 * aggr_byte_limit uses.
++	 */
++	aggr_size = (rx_buffer_size - IPA_MTU) / SZ_1K;
++
++	ret = ipa_ep_alloc(client);
++	if (ret < 0)
++		return ret;
++	ep_id = ret;
++
++	ipa_endp_init_hdr_cons(ep_id, IPA_LAN_RX_HEADER_LENGTH, 0, 0);
++	ipa_endp_init_hdr_ext_cons(ep_id, ilog2(sizeof(u32)), false);
++	ipa_endp_init_aggr_cons(ep_id, aggr_size, aggr_count, false);
++	ipa_endp_init_cfg_cons(ep_id, IPA_CS_OFFLOAD_DL);
++	ipa_endp_init_hdr_metadata_mask_cons(ep_id, 0x0);
++	ipa_endp_status_cons(ep_id, true);
++
++	ret = ipa_ep_setup(ep_id, channel_count, 1, rx_buffer_size,
++			   ipa_lan_rx_cb, NULL);
++	if (ret)
++		ipa_ep_free(ep_id);
++	else
++		ipa_ctx->lan_cons_ep_id = ep_id;
++
++	return ret;
++}
++
++static int ipa_ep_apps_setup(void)
++{
++	struct ipa_dma_mem mem;	/* Empty table */
++	int ret;
++
++	/* CMD OUT (AP->IPA) */
++	ret = ipa_ep_apps_cmd_prod_setup();
++	if (ret < 0)
++		return ret;
++
++	ipa_init_sram();
++	ipa_init_hdr();
++
++	ret = ipahal_rt_generate_empty_img(IPA_MEM_RT_COUNT, &mem);
++	ipa_assert(!ret);
++	ipa_init_rt4(&mem);
++	ipa_init_rt6(&mem);
++	ipahal_free_empty_img(&mem);
++
++	ret = ipahal_flt_generate_empty_img(ipa_ctx->filter_bitmap, &mem);
++	ipa_assert(!ret);
++	ipa_init_flt4(&mem);
++	ipa_init_flt6(&mem);
++	ipahal_free_empty_img(&mem);
++
++	ipa_setup_flt_hash_tuple();
++	ipa_setup_rt_hash_tuple();
++
++	/* LAN IN (IPA->AP)
++	 *
++	 * Even without supporting LAN traffic, we use the LAN consumer
++	 * endpoint for receiving some information from the IPA.  If we issue
++	 * a tagged command, we arrange to be notified of its completion
++	 * through this endpoint.  In addition, we arrange for this endpoint
++	 * to be used as the IPA's default route; the IPA will notify the AP
++	 * of exceptions (unroutable packets, but other events as well)
++	 * through this endpoint.
++	 */
++	ret = ipa_ep_apps_lan_cons_setup();
++	if (ret < 0)
++		goto fail_flt_hash_tuple;
++
++	ipa_cfg_default_route(IPA_CLIENT_APPS_LAN_CONS);
++
++	return 0;
++
++fail_flt_hash_tuple:
++	ipa_ep_teardown(ipa_ctx->cmd_prod_ep_id);
++	ipa_ctx->cmd_prod_ep_id = IPA_EP_ID_BAD;
++
++	return ret;
++}
++
++static int ipa_clock_init(struct device *dev)
++{
++	struct clk *clk;
++	int ret;
++
++	clk = clk_get(dev, "core");
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	ret = clk_set_rate(clk, IPA_CORE_CLOCK_RATE);
++	if (ret) {
++		clk_put(clk);
++		return ret;
++	}
++
++	ipa_ctx->core_clock = clk;
++
++	return 0;
++}
++
++static void ipa_clock_exit(void)
++{
++	clk_put(ipa_ctx->core_clock);
++	ipa_ctx->core_clock = NULL;
++}
++
++/**
++ * ipa_enable_clks() - Turn on IPA clocks
++ */
++static void ipa_enable_clks(void)
++{
++	if (WARN_ON(ipa_interconnect_enable()))
++		return;
++
++	if (WARN_ON(clk_prepare_enable(ipa_ctx->core_clock)))
++		ipa_interconnect_disable();
++}
++
++/**
++ * ipa_disable_clks() - Turn off IPA clocks
++ */
++static void ipa_disable_clks(void)
++{
++	clk_disable_unprepare(ipa_ctx->core_clock);
++	WARN_ON(ipa_interconnect_disable());
++}
++
++/* Add an IPA client under protection of the mutex.  This is called
++ * for the first client, but a race could mean another caller gets
++ * the first reference.  When the first reference is taken, IPA
++ * clocks are enabled endpoints are resumed.  A positive reference count
++ * means the endpoints are active; this doesn't set the first reference
++ * until after this is complete (and the mutex, not the atomic
++ * count, is what protects this).
++ */
++static void ipa_client_add_first(void)
++{
++	mutex_lock(&ipa_ctx->active_clients_mutex);
++
++	/* A reference might have been added while awaiting the mutex. */
++	if (!atomic_inc_not_zero(&ipa_ctx->active_clients_count)) {
++		ipa_enable_clks();
++		ipa_ep_resume_all();
++		atomic_inc(&ipa_ctx->active_clients_count);
++	} else {
++		ipa_assert(atomic_read(&ipa_ctx->active_clients_count) > 1);
++	}
++
++	mutex_unlock(&ipa_ctx->active_clients_mutex);
++}
++
++/* Attempt to add an IPA client reference, but only if this does not
++ * represent the initiaal reference.  Returns true if the reference
++ * was taken, false otherwise.
++ */
++static bool ipa_client_add_not_first(void)
++{
++	return !!atomic_inc_not_zero(&ipa_ctx->active_clients_count);
++}
++
++/* Add an IPA client, but only if the reference count is already
++ * non-zero.  (This is used to avoid blocking.)  Returns true if the
++ * additional reference was added successfully, or false otherwise.
++ */
++bool ipa_client_add_additional(void)
++{
++	return ipa_client_add_not_first();
++}
++
++/* Add an IPA client.  If this is not the first client, the
++ * reference count is updated and return is immediate.  Otherwise
++ * ipa_client_add_first() will safely add the first client, enabling
++ * clocks and setting up (resuming) endpoints before returning.
++ */
++void ipa_client_add(void)
++{
++	/* There's nothing more to do if this isn't the first reference */
++	if (!ipa_client_add_not_first())
++		ipa_client_add_first();
++}
++
++/* Remove an IPA client under protection of the mutex.  This is
++ * called for the last remaining client, but a race could mean
++ * another caller gets an additional reference before the mutex
++ * is acquired.  When the final reference is dropped, endpoints are
++ * suspended and IPA clocks disabled.
++ */
++static void ipa_client_remove_final(void)
++{
++	mutex_lock(&ipa_ctx->active_clients_mutex);
++
++	/* A reference might have been removed while awaiting the mutex. */
++	if (!atomic_dec_return(&ipa_ctx->active_clients_count)) {
++		ipa_ep_suspend_all();
++		ipa_disable_clks();
++	}
++
++	mutex_unlock(&ipa_ctx->active_clients_mutex);
++}
++
++/* Decrement the active clients reference count, and if the result
++ * is 0, suspend the endpoints and disable clocks.
++ *
++ * This function runs in work queue context, scheduled to run whenever
++ * the last reference would be dropped in ipa_client_remove().
++ */
++static void ipa_client_remove_deferred(struct work_struct *work)
++{
++	ipa_client_remove_final();
++}
++
++/* Attempt to remove a client reference, but only if this is not the
++ * only reference remaining.  Returns true if the reference was
++ * removed, or false if doing so would produce a zero reference
++ * count.
++ */
++static bool ipa_client_remove_not_final(void)
++{
++	return !!atomic_add_unless(&ipa_ctx->active_clients_count, -1, 1);
++}
++
++/* Attempt to remove an IPA client reference.  If this represents
++ * the last reference arrange for ipa_client_remove_final() to be
++ * called in workqueue context, dropping the last reference under
++ * protection of the mutex.
++ */
++void ipa_client_remove(void)
++{
++	if (!ipa_client_remove_not_final())
++		queue_work(ipa_ctx->power_mgmt_wq, &ipa_client_remove_work);
++}
++
++/** ipa_inc_acquire_wakelock() - Increase active clients counter, and
++ * acquire wakelock if necessary
++ */
++void ipa_inc_acquire_wakelock(void)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&ipa_ctx->wakeup_lock, flags);
++
++	ipa_ctx->wakeup_count++;
++	if (ipa_ctx->wakeup_count == 1)
++		__pm_stay_awake(&ipa_ctx->wakeup);
++
++	spin_unlock_irqrestore(&ipa_ctx->wakeup_lock, flags);
++}
++
++/** ipa_dec_release_wakelock() - Decrease active clients counter
++ *
++ * In case if the ref count is 0, release the wakelock.
++ */
++void ipa_dec_release_wakelock(void)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&ipa_ctx->wakeup_lock, flags);
++
++	ipa_ctx->wakeup_count--;
++	if (ipa_ctx->wakeup_count == 0)
++		__pm_relax(&ipa_ctx->wakeup);
++
++	spin_unlock_irqrestore(&ipa_ctx->wakeup_lock, flags);
++}
++
++/** ipa_suspend_handler() - Handle the suspend interrupt
++ * @interrupt:	Interrupt type
++ * @endpoints:	Interrupt specific information data
++ */
++static void ipa_suspend_handler(enum ipa_irq_type interrupt, u32 interrupt_data)
++{
++	u32 endpoints = interrupt_data;
++
++	while (endpoints) {
++		enum ipa_client_type client;
++		u32 i = __ffs(endpoints);
++
++		endpoints ^= BIT(i);
++
++		if (!ipa_ctx->ep[i].allocated)
++			continue;
++
++		client = ipa_ctx->ep[i].client;
++		if (!ipa_ap_consumer(client))
++			continue;
++
++		/* endpoint will be unsuspended by enabling IPA clocks */
++		mutex_lock(&ipa_ctx->transport_pm.transport_pm_mutex);
++		if (!atomic_read(&ipa_ctx->transport_pm.dec_clients)) {
++			ipa_client_add();
++
++			atomic_set(&ipa_ctx->transport_pm.dec_clients, 1);
++		}
++		mutex_unlock(&ipa_ctx->transport_pm.transport_pm_mutex);
++	}
++}
++
++/**
++ * ipa_init_interrupts() - Initialize IPA interrupts
++ */
++static int ipa_init_interrupts(void)
++{
++	int ret;
++
++	ret = ipa_interrupts_init();
++	if (!ret)
++		return ret;
++
++	ipa_add_interrupt_handler(IPA_TX_SUSPEND_IRQ, ipa_suspend_handler);
++
++	return 0;
++}
++
++static void ipa_freeze_clock_vote_and_notify_modem(void)
++{
++	u32 value;
++	u32 mask;
++
++	if (ipa_ctx->smp2p_info.res_sent)
++		return;
++
++	if (!ipa_ctx->smp2p_info.enabled_state) {
++		ipa_err("smp2p out gpio not assigned\n");
++		return;
++	}
++
++	ipa_ctx->smp2p_info.ipa_clk_on = ipa_client_add_additional();
++
++	/* Signal whether the clock is enabled */
++	mask = BIT(ipa_ctx->smp2p_info.enabled_bit);
++	value = ipa_ctx->smp2p_info.ipa_clk_on ? mask : 0;
++	qcom_smem_state_update_bits(ipa_ctx->smp2p_info.enabled_state, mask,
++				    value);
++
++	/* Now indicate that the enabled flag is valid */
++	mask = BIT(ipa_ctx->smp2p_info.valid_bit);
++	value = mask;
++	qcom_smem_state_update_bits(ipa_ctx->smp2p_info.valid_state, mask,
++				    value);
++
++	ipa_ctx->smp2p_info.res_sent = true;
++}
++
++void ipa_reset_freeze_vote(void)
++{
++	u32 mask;
++
++	if (!ipa_ctx->smp2p_info.res_sent)
++		return;
++
++	if (ipa_ctx->smp2p_info.ipa_clk_on)
++		ipa_client_remove();
++
++	/* Reset the clock enabled valid flag */
++	mask = BIT(ipa_ctx->smp2p_info.valid_bit);
++	qcom_smem_state_update_bits(ipa_ctx->smp2p_info.valid_state, mask, 0);
++
++	/* Mark the clock disabled for good measure... */
++	mask = BIT(ipa_ctx->smp2p_info.enabled_bit);
++	qcom_smem_state_update_bits(ipa_ctx->smp2p_info.enabled_state, mask, 0);
++
++	ipa_ctx->smp2p_info.res_sent = false;
++	ipa_ctx->smp2p_info.ipa_clk_on = false;
++}
++
++static int
++ipa_panic_notifier(struct notifier_block *this, unsigned long event, void *ptr)
++{
++	ipa_freeze_clock_vote_and_notify_modem();
++	ipa_uc_panic_notifier();
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block ipa_panic_blk = {
++	.notifier_call = ipa_panic_notifier,
++	/* IPA panic handler needs to run before modem shuts down */
++	.priority = INT_MAX,
++};
++
++static void ipa_register_panic_hdlr(void)
++{
++	atomic_notifier_chain_register(&panic_notifier_list, &ipa_panic_blk);
++}
++
++/* Remoteproc callbacks for SSR events: prepare, start, stop, unprepare */
++int ipa_ssr_prepare(struct rproc_subdev *subdev)
++{
++	printk("======== SSR prepare received ========\n");
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ipa_ssr_prepare);
++
++int ipa_ssr_start(struct rproc_subdev *subdev)
++{
++	printk("======== SSR start received ========\n");
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ipa_ssr_start);
++
++void ipa_ssr_stop(struct rproc_subdev *subdev, bool crashed)
++{
++	printk("======== SSR stop received ========\n");
++}
++EXPORT_SYMBOL_GPL(ipa_ssr_stop);
++
++void ipa_ssr_unprepare(struct rproc_subdev *subdev)
++{
++	printk("======== SSR unprepare received ========\n");
++}
++EXPORT_SYMBOL_GPL(ipa_ssr_unprepare);
++
++/**
++ * ipa_post_init() - Initialize the IPA Driver (Part II).
++ *
++ * Perform initialization that requires interaction with IPA hardware.
++ */
++static void ipa_post_init(void)
++{
++	int ret;
++
++	ipa_debug("ipa_post_init() started\n");
++
++	ret = gsi_device_init(ipa_ctx->gsi);
++	if (ret) {
++		ipa_err(":gsi register error - %d\n", ret);
++		return;
++	}
++
++	/* setup the AP-IPA endpoints */
++	if (ipa_ep_apps_setup()) {
++		ipa_err(":failed to setup IPA-Apps endpoints\n");
++		gsi_device_exit(ipa_ctx->gsi);
++
++		return;
++	}
++
++	ipa_ctx->uc_ctx = ipa_uc_init(ipa_ctx->ipa_phys);
++	if (!ipa_ctx->uc_ctx)
++		ipa_err("microcontroller init failed\n");
++
++	ipa_register_panic_hdlr();
++
++	ipa_ctx->modem_clk_vote_valid = true;
++
++	if (ipa_wwan_init())
++		ipa_err("WWAN init failed (ignoring)\n");
++
++	dev_info(ipa_ctx->dev, "IPA driver initialization was successful.\n");
++}
++
++/** ipa_pre_init() - Initialize the IPA Driver.
++ *
++ * Perform initialization which doesn't require access to IPA hardware.
++ */
++static int ipa_pre_init(void)
++{
++	int ret = 0;
++
++	/* enable IPA clocks explicitly to allow the initialization */
++	ipa_enable_clks();
++
++	ipa_init_hw();
++
++	ipa_ctx->ep_count = ipa_get_ep_count();
++	ipa_debug("ep_count %u\n", ipa_get_ep_count());
++	ipa_assert(ipa_ctx->ep_count <= IPA_EP_COUNT_MAX);
++
++	ipa_sram_settings_read();
++	if (ipa_ctx->smem_size < IPA_MEM_END_OFST) {
++		ipa_err("insufficient memory: %hu bytes available, need %u\n",
++			ipa_ctx->smem_size, IPA_MEM_END_OFST);
++		ret = -ENOMEM;
++		goto err_disable_clks;
++	}
++
++	mutex_init(&ipa_ctx->active_clients_mutex);
++	atomic_set(&ipa_ctx->active_clients_count, 1);
++
++	/* Create workqueues for power management */
++	ipa_ctx->power_mgmt_wq =
++		create_singlethread_workqueue("ipa_power_mgmt");
++	if (!ipa_ctx->power_mgmt_wq) {
++		ipa_err("failed to create power mgmt wq\n");
++		ret = -ENOMEM;
++		goto err_disable_clks;
++	}
++
++	mutex_init(&ipa_ctx->transport_pm.transport_pm_mutex);
++
++	/* init the lookaside cache */
++
++	ipa_ctx->dp = ipa_dp_init();
++	if (!ipa_ctx->dp)
++		goto err_destroy_pm_wq;
++
++	/* allocate memory for DMA_TASK workaround */
++	ret = ipa_gsi_dma_task_alloc();
++	if (ret)
++		goto err_dp_exit;
++
++	/* Create a wakeup source. */
++	wakeup_source_init(&ipa_ctx->wakeup, "IPA_WS");
++	spin_lock_init(&ipa_ctx->wakeup_lock);
++
++	/* Note enabling dynamic clock division must not be
++	 * attempted for IPA hardware versions prior to 3.5.
++	 */
++	ipa_enable_dcd();
++
++	/* Assign resource limitation to each group */
++	ipa_set_resource_groups_min_max_limits();
++
++	ret = ipa_init_interrupts();
++	if (!ret)
++		return 0;	/* Success! */
++
++	ipa_err("ipa initialization of interrupts failed\n");
++err_dp_exit:
++	ipa_dp_exit(ipa_ctx->dp);
++	ipa_ctx->dp = NULL;
++err_destroy_pm_wq:
++	destroy_workqueue(ipa_ctx->power_mgmt_wq);
++err_disable_clks:
++	ipa_disable_clks();
++
++	return ret;
++}
++
++static int ipa_firmware_load(struct device *dev)
++{
++	const struct firmware *fw;
++	struct device_node *node;
++	struct resource res;
++	phys_addr_t phys;
++	ssize_t size;
++	void *virt;
++	int ret;
++
++	ret = request_firmware(&fw, IPA_FWS_PATH, dev);
++	if (ret)
++		return ret;
++
++	node = of_parse_phandle(dev->of_node, "memory-region", 0);
++	if (!node) {
++		dev_err(dev, "memory-region not specified\n");
++		ret = -EINVAL;
++		goto out_release_firmware;
++	}
++
++	ret = of_address_to_resource(node, 0, &res);
++	if (ret)
++		goto out_release_firmware;
++
++	phys = res.start,
++	size = (size_t)resource_size(&res);
++	virt = memremap(phys, size, MEMREMAP_WC);
++	if (!virt) {
++		ret = -ENOMEM;
++		goto out_release_firmware;
++	}
++
++	ret = qcom_mdt_load(dev, fw, IPA_FWS_PATH, IPA_PAS_ID,
++			    virt, phys, size, NULL);
++	if (!ret)
++		ret = qcom_scm_pas_auth_and_reset(IPA_PAS_ID);
++
++	memunmap(virt);
++out_release_firmware:
++	release_firmware(fw);
++
++	return ret;
++}
++
++/* Threaded IRQ handler for modem "ipa-clock-query" SMP2P interrupt */
++static irqreturn_t ipa_smp2p_modem_clk_query_isr(int irq, void *ctxt)
++{
++	ipa_freeze_clock_vote_and_notify_modem();
++
++	return IRQ_HANDLED;
++}
++
++/* Threaded IRQ handler for modem "ipa-post-init" SMP2P interrupt */
++static irqreturn_t ipa_smp2p_modem_post_init_isr(int irq, void *ctxt)
++{
++	ipa_post_init();
++
++	return IRQ_HANDLED;
++}
++
++static int
++ipa_smp2p_irq_init(struct device *dev, const char *name, irq_handler_t handler)
++{
++	struct device_node *node = dev->of_node;
++	unsigned int irq;
++	int ret;
++
++	ret = of_irq_get_byname(node, name);
++	if (ret < 0)
++		return ret;
++	if (!ret)
++		return -EINVAL;		/* IRQ mapping failure */
++	irq = ret;
++
++	ret = devm_request_threaded_irq(dev, irq, NULL, handler, 0, name, dev);
++	if (ret)
++		return ret;
++
++	return irq;
++}
++
++static void
++ipa_smp2p_irq_exit(struct device *dev, unsigned int irq)
++{
++	devm_free_irq(dev, irq, dev);
++}
++
++static int ipa_smp2p_init(struct device *dev, bool modem_init)
++{
++	struct qcom_smem_state *enabled_state;
++	struct qcom_smem_state *valid_state;
++	struct device_node *node;
++	unsigned int enabled_bit;
++	unsigned int valid_bit;
++	unsigned int clock_irq;
++	int ret;
++
++	node = dev->of_node;
++
++	valid_state = qcom_smem_state_get(dev, "ipa-clock-enabled-valid",
++					  &valid_bit);
++	if (IS_ERR(valid_state))
++		return PTR_ERR(valid_state);
++
++	enabled_state = qcom_smem_state_get(dev, "ipa-clock-enabled",
++					    &enabled_bit);
++	if (IS_ERR(enabled_state)) {
++		ret = PTR_ERR(enabled_state);
++		ipa_err("error %d getting ipa-clock-enabled state\n", ret);
++
++		return ret;
++	}
++
++	ret = ipa_smp2p_irq_init(dev, "ipa-clock-query",
++				 ipa_smp2p_modem_clk_query_isr);
++	if (ret < 0)
++		return ret;
++	clock_irq = ret;
++
++	if (modem_init) {
++		/* Result will be non-zero (negative for error) */
++		ret = ipa_smp2p_irq_init(dev, "ipa-post-init",
++					 ipa_smp2p_modem_post_init_isr);
++		if (ret < 0) {
++			ipa_smp2p_irq_exit(dev, clock_irq);
++
++			return ret;
++		}
++	}
++
++	/* Success.  Record our smp2p information */
++	ipa_ctx->smp2p_info.valid_state = valid_state;
++	ipa_ctx->smp2p_info.valid_bit = valid_bit;
++	ipa_ctx->smp2p_info.enabled_state = enabled_state;
++	ipa_ctx->smp2p_info.enabled_bit = enabled_bit;
++	ipa_ctx->smp2p_info.clock_query_irq = clock_irq;
++	ipa_ctx->smp2p_info.post_init_irq = modem_init ? ret : 0;
++
++	return 0;
++}
++
++static void ipa_smp2p_exit(struct device *dev)
++{
++	if (ipa_ctx->smp2p_info.post_init_irq)
++		ipa_smp2p_irq_exit(dev, ipa_ctx->smp2p_info.post_init_irq);
++	ipa_smp2p_irq_exit(dev, ipa_ctx->smp2p_info.clock_query_irq);
++
++	memset(&ipa_ctx->smp2p_info, 0, sizeof(ipa_ctx->smp2p_info));
++}
++
++static const struct ipa_match_data tz_init = {
++	.init_type = ipa_tz_init,
++};
++
++static const struct ipa_match_data modem_init = {
++	.init_type = ipa_modem_init,
++};
++
++static const struct of_device_id ipa_plat_drv_match[] = {
++	{
++		.compatible = "qcom,ipa-sdm845-tz_init",
++		.data = &tz_init,
++	},
++	{
++		.compatible = "qcom,ipa-sdm845-modem_init",
++		.data = &modem_init,
++	},
++	{}
++};
++
++static int ipa_plat_drv_probe(struct platform_device *pdev)
++{
++	const struct ipa_match_data *match_data;
++	struct resource *res;
++	struct device *dev;
++	bool modem_init;
++	int ret;
++
++	/* We assume we're working on 64-bit hardware */
++	BUILD_BUG_ON(!IS_ENABLED(CONFIG_64BIT));
++
++	dev = &pdev->dev;
++
++	match_data = of_device_get_match_data(dev);
++	modem_init = match_data->init_type == ipa_modem_init;
++
++	/* If we need Trust Zone, make sure it's ready */
++	if (!modem_init)
++		if (!qcom_scm_is_available())
++			return -EPROBE_DEFER;
++
++	/* Initialize the smp2p driver early.  It might not be ready
++	 * when we're probed, so it might return -EPROBE_DEFER.
++	 */
++	ret = ipa_smp2p_init(dev, modem_init);
++	if (ret)
++		return ret;
++
++	/* Initialize the interconnect driver early too.  It might
++	 * also return -EPROBE_DEFER.
++	 */
++	ret = ipa_interconnect_init(dev);
++	if (ret)
++		goto out_smp2p_exit;
++
++	ret = ipa_clock_init(dev);
++	if (ret)
++		goto err_interconnect_exit;
++
++	ipa_ctx->dev = dev;	/* Set early for ipa_err()/ipa_debug() */
++
++	/* Compute a bitmask representing which endpoints support filtering */
++	ipa_ctx->filter_bitmap = ipa_filter_bitmap_init();
++	ipa_debug("filter_bitmap 0x%08x\n", ipa_ctx->filter_bitmap);
++	if (!ipa_ctx->filter_bitmap)
++		goto err_clock_exit;
++
++	ret = platform_get_irq_byname(pdev, "ipa");
++	if (ret < 0)
++		goto err_clear_filter_bitmap;
++	ipa_ctx->ipa_irq = ret;
++
++	/* Get IPA memory range */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ipa");
++	if (!res) {
++		ret = -ENODEV;
++		goto err_clear_ipa_irq;
++	}
++
++	/* Setup IPA register access */
++	ret = ipa_reg_init(res->start, (size_t)resource_size(res));
++	if (ret)
++		goto err_clear_ipa_irq;
++	ipa_ctx->ipa_phys = res->start;
++
++	ipa_ctx->gsi = gsi_init(pdev);
++	if (IS_ERR(ipa_ctx->gsi)) {
++		ret = PTR_ERR(ipa_ctx->gsi);
++		goto err_clear_gsi;
++	}
++
++	ret = ipa_dma_init(dev, IPA_HW_TBL_SYSADDR_ALIGN);
++	if (ret)
++		goto err_clear_gsi;
++
++	ret = ipahal_init();
++	if (ret)
++		goto err_dma_exit;
++
++	ipa_ctx->cmd_prod_ep_id = IPA_EP_ID_BAD;
++	ipa_ctx->lan_cons_ep_id = IPA_EP_ID_BAD;
++
++	/* Proceed to real initialization */
++	ret = ipa_pre_init();
++	if (ret)
++		goto err_clear_dev;
++
++	/* If the modem is not verifying and loading firmware we need to
++	 * get it loaded ourselves.  Only then can we proceed with the
++	 * second stage of IPA initialization.  If the modem is doing it,
++	 * it will send an SMP2P interrupt to signal this has been done,
++	 * and that will trigger the "post init".
++	 */
++	if (!modem_init) {
++		ret = ipa_firmware_load(dev);
++		if (ret)
++			goto err_clear_dev;
++
++		/* Now we can proceed to stage two initialization */
++		ipa_post_init();
++	}
++
++	return 0;	/* Success */
++
++err_clear_dev:
++	ipa_ctx->lan_cons_ep_id = 0;
++	ipa_ctx->cmd_prod_ep_id = 0;
++	ipahal_exit();
++err_dma_exit:
++	ipa_dma_exit();
++err_clear_gsi:
++	ipa_ctx->gsi = NULL;
++	ipa_ctx->ipa_phys = 0;
++	ipa_reg_exit();
++err_clear_ipa_irq:
++	ipa_ctx->ipa_irq = 0;
++err_clear_filter_bitmap:
++	ipa_ctx->filter_bitmap = 0;
++err_interconnect_exit:
++	ipa_interconnect_exit();
++err_clock_exit:
++	ipa_clock_exit();
++	ipa_ctx->dev = NULL;
++out_smp2p_exit:
++	ipa_smp2p_exit(dev);
++
++	return ret;
++}
++
++static int ipa_plat_drv_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++
++	ipa_ctx->dev = NULL;
++	ipahal_exit();
++	ipa_dma_exit();
++	ipa_ctx->gsi = NULL;	/* XXX ipa_gsi_exit() */
++	ipa_reg_exit();
++
++	ipa_ctx->ipa_phys = 0;
++
++	if (ipa_ctx->lan_cons_ep_id != IPA_EP_ID_BAD) {
++		ipa_ep_free(ipa_ctx->lan_cons_ep_id);
++		ipa_ctx->lan_cons_ep_id = IPA_EP_ID_BAD;
++	}
++	if (ipa_ctx->cmd_prod_ep_id != IPA_EP_ID_BAD) {
++		ipa_ep_free(ipa_ctx->cmd_prod_ep_id);
++		ipa_ctx->cmd_prod_ep_id = IPA_EP_ID_BAD;
++	}
++	ipa_ctx->ipa_irq = 0;	/* XXX Need to de-initialize? */
++	ipa_ctx->filter_bitmap = 0;
++	ipa_interconnect_exit();
++	ipa_smp2p_exit(dev);
++
++	return 0;
++}
++
++/**
++ * ipa_ap_suspend() - suspend callback for runtime_pm
++ * @dev:	IPA device structure
++ *
++ * This callback will be invoked by the runtime_pm framework when an AP suspend
++ * operation is invoked, usually by pressing a suspend button.
++ *
++ * Return: 	0 if successful, -EAGAIN if IPA is in use
++ */
++int ipa_ap_suspend(struct device *dev)
++{
++	u32 i;
++
++	/* In case there is a tx/rx handler in polling mode fail to suspend */
++	for (i = 0; i < ipa_ctx->ep_count; i++) {
++		if (ipa_ctx->ep[i].sys && ipa_ep_polling(&ipa_ctx->ep[i])) {
++			ipa_err("EP %d is in polling state, do not suspend\n",
++				i);
++			return -EAGAIN;
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * ipa_ap_resume() - resume callback for runtime_pm
++ * @dev:	IPA device structure
++ *
++ * This callback will be invoked by the runtime_pm framework when an AP resume
++ * operation is invoked.
++ *
++ * Return:	Zero
++ */
++int ipa_ap_resume(struct device *dev)
++{
++	return 0;
++}
++
++static const struct dev_pm_ops ipa_pm_ops = {
++	.suspend_noirq = ipa_ap_suspend,
++	.resume_noirq = ipa_ap_resume,
++};
++
++static struct platform_driver ipa_plat_drv = {
++	.probe = ipa_plat_drv_probe,
++	.remove = ipa_plat_drv_remove,
++	.driver = {
++		.name = "ipa",
++		.owner = THIS_MODULE,
++		.pm = &ipa_pm_ops,
++		.of_match_table = ipa_plat_drv_match,
++	},
++};
++
++builtin_platform_driver(ipa_plat_drv);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("IPA HW device driver");
 -- 
 2.17.1
 
