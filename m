@@ -2,175 +2,130 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D292C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1780C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D161D2085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D161D2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+	by mail.kernel.org (Postfix) with ESMTP id 6992C2085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BSqXYhbD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6992C2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbeKHAP0 (ORCPT
+        id S1731013AbeKHAPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:15:26 -0500
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:31330 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbeKHAPZ (ORCPT
+        Wed, 7 Nov 2018 19:15:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40904 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbeKHAPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:15:25 -0500
-X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx7ZdE8mPU5nMS5P2QgHAetWm5FNngAjmE0pFNjw="
-X-RZG-CLASS-ID: mo05
-Received: from fs-work.fritz.box
-        by smtp.strato.de (RZmta 44.3 AUTH)
-        with ESMTPSA id j097e4uA7EiHUQn
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 7 Nov 2018 15:44:17 +0100 (CET)
-From:   Frieder Schrempf <frieder.schrempf@kontron.de>
-To:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
-        linux-spi@vger.kernel.org
-Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com,
-        han.xu@nxp.com, shawnguo@kernel.org,
-        Frieder Schrempf <frieder.schrempf@exceet.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/10] ARM: dts: Reflect change of FSL QSPI driver and remove unused properties
-Date:   Wed,  7 Nov 2018 15:43:21 +0100
-Message-Id: <1541601809-16950-5-git-send-email-frieder.schrempf@kontron.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
-References: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
+        Wed, 7 Nov 2018 19:15:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dm6APZ19b4h/dWPymPVe7CblDVoI5A3SjlphVBU11lM=; b=BSqXYhbD5iOCul3nZlvqnYQSG
+        76cLEPFY+1jGqG3M7lC1YtenN6TAwsj0sgxCQbfDvk3XHpW3bA//UD6MUBJZjkdBbVZ2w+nRdAFHi
+        KOZANi3wVMZBWJ/xWEIjwOZsvM9bZcXMrD2/SGUFzoI9Io4WRaR+KCPFk2PA3fk3eezN2Yo6ukk+F
+        Hnae+ztuA/464QcG+707cWbXQPMCQZkXY0uoA65hx2Rh/SqJMKVAOJjEZR67mQT4CsLrolWe5BZ2G
+        SfOwvC0WBQL4jMcfvyfqDnkfEU/uUT7vbcVKb65Ios6PJdJcwk5imblhLeUsRLu7nEIBENmC4Kruc
+        mdMvwb37Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKP4c-0007OJ-FC; Wed, 07 Nov 2018 14:44:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6FE5F20284F94; Wed,  7 Nov 2018 15:44:48 +0100 (CET)
+Date:   Wed, 7 Nov 2018 15:44:48 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v5 03/15] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20181107144448.GH9761@hirez.programming.kicks-ass.net>
+References: <20181029183311.29175-1-patrick.bellasi@arm.com>
+ <20181029183311.29175-4-patrick.bellasi@arm.com>
+ <20181107134414.GR9781@hirez.programming.kicks-ass.net>
+ <20181107142428.GG14309@e110439-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107142428.GG14309@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@exceet.de>
+On Wed, Nov 07, 2018 at 02:24:28PM +0000, Patrick Bellasi wrote:
+> On 07-Nov 14:44, Peter Zijlstra wrote:
+> > On Mon, Oct 29, 2018 at 06:32:57PM +0000, Patrick Bellasi wrote:
 
-The FSL QSPI driver was moved to the SPI framework and it now
-acts as a SPI controller. Therefore the subnodes need to set
-spi-[rx/tx]-bus-width = <4>, so quad mode is used just as before.
+> > > +static void uclamp_group_get(struct uclamp_se *uc_se, unsigned int clamp_id,
+> > > +			     unsigned int clamp_value)
+> > > +{
+> > > +	union uclamp_map *uc_maps = &uclamp_maps[clamp_id][0];
+> > > +	unsigned int prev_group_id = uc_se->group_id;
+> > > +	union uclamp_map uc_map_old, uc_map_new;
+> > > +	unsigned int free_group_id;
+> > > +	unsigned int group_id;
+> > > +	unsigned long res;
+> > > +
+> > > +retry:
+> > > +
+> > > +	free_group_id = UCLAMP_GROUPS;
+> > > +	for (group_id = 0; group_id < UCLAMP_GROUPS; ++group_id) {
+> > > +		uc_map_old.data = atomic_long_read(&uc_maps[group_id].adata);
+> > > +		if (free_group_id == UCLAMP_GROUPS && !uc_map_old.se_count)
+> > > +			free_group_id = group_id;
+> > > +		if (uc_map_old.value == clamp_value)
+> > > +			break;
+> > > +	}
+> > > +	if (group_id >= UCLAMP_GROUPS) {
+> > > +#ifdef CONFIG_SCHED_DEBUG
+> > > +#define UCLAMP_MAPERR "clamp value [%u] mapping to clamp group failed\n"
+> > > +		if (unlikely(free_group_id == UCLAMP_GROUPS)) {
+> > > +			pr_err_ratelimited(UCLAMP_MAPERR, clamp_value);
+> > > +			return;
+> > > +		}
+> > > +#endif
+> > 
+> > Can you please put in a comment, either here or on top, on why this can
+> > not in fact happen? And we're always guaranteed a free group.
+> 
+> You right, that's confusing especially because up to this point we are
+> not granted. We are always granted a free group once we add:
+> 
+>    sched/core: uclamp: add clamp group bucketing support
+> 
+> I've kept it separated to better document how we introduce that
+> support.
+> 
+> Is it ok for for you if I better call out in the change log that the
+> guarantee comes from a following patch... and add the comment in
+> that later patch ?
 
-Also the properties 'bus-num', 'fsl,spi-num-chipselects' and
-'fsl,spi-flash-chipselects' were never read by the driver and
-can be removed.
+Urgh.. that is mighty confusing and since this stuff actually 'works'
+might result in bisection issues too, right?
 
-The 'reg' properties are adjusted to reflect the what bus and
-chipselect the flash is connected to, as the new driver needs
-this information.
-
-The property 'fsl,qspi-has-second-chip' is not needed anymore
-and will be removed after the old driver was disabled to avoid
-breaking ls1021a-moxa-uc-8410a.dts.
-
-Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
----
- arch/arm/boot/dts/imx6sx-sdb-reva.dts       | 8 ++++++--
- arch/arm/boot/dts/imx6sx-sdb.dts            | 8 ++++++--
- arch/arm/boot/dts/imx6ul-14x14-evk.dtsi     | 2 ++
- arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts | 5 ++---
- 4 files changed, 16 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx6sx-sdb-reva.dts b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-index 9cc6ff2..9997156 100644
---- a/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
-@@ -132,13 +132,17 @@
- 		#size-cells = <1>;
- 		compatible = "spansion,s25fl128s", "jedec,spi-nor";
- 		spi-max-frequency = <66000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 	};
- 
--	flash1: s25fl128s@1 {
--		reg = <1>;
-+	flash1: s25fl128s@2 {
-+		reg = <2>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "spansion,s25fl128s", "jedec,spi-nor";
- 		spi-max-frequency = <66000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
-index 6dd9beb..9acfda8 100644
---- a/arch/arm/boot/dts/imx6sx-sdb.dts
-+++ b/arch/arm/boot/dts/imx6sx-sdb.dts
-@@ -117,15 +117,19 @@
- 		#size-cells = <1>;
- 		compatible = "micron,n25q256a", "jedec,spi-nor";
- 		spi-max-frequency = <29000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <0>;
- 	};
- 
--	flash1: n25q256a@1 {
-+	flash1: n25q256a@2 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "micron,n25q256a", "jedec,spi-nor";
- 		spi-max-frequency = <29000000>;
--		reg = <1>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
-+		reg = <2>;
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-index 32a0723..c2c9a2a 100644
---- a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
-@@ -176,6 +176,8 @@
- 		#size-cells = <1>;
- 		compatible = "micron,n25q256a";
- 		spi-max-frequency = <29000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <0>;
- 	};
- };
-diff --git a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-index d01f64b..6a83f30 100644
---- a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-+++ b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-@@ -203,9 +203,6 @@
- };
- 
- &qspi {
--	bus-num = <0>;
--	fsl,spi-num-chipselects = <2>;
--	fsl,spi-flash-chipselects = <0>;
- 	fsl,qspi-has-second-chip;
- 	status = "okay";
- 
-@@ -214,6 +211,8 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		spi-max-frequency = <20000000>;
-+		spi-rx-bus-width = <4>;
-+		spi-tx-bus-width = <4>;
- 		reg = <0>;
- 
- 		partitions@0 {
--- 
-2.7.4
-
+I would really rather prefer a series that makes sense in the order you
+read it.
