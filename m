@@ -2,228 +2,230 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF5BC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16D8C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19ACE2086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:11:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ha76+mpE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19ACE2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 414E82086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:12:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 414E82086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730546AbeKGSlL (ORCPT
+        id S1730590AbeKGSlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:41:11 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42807 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeKGSlL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:41:11 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181107091142euoutp02deb2131507bb06438e613303f577e0c4~kzJKvUoJR0044900449euoutp02K
-        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 09:11:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181107091142euoutp02deb2131507bb06438e613303f577e0c4~kzJKvUoJR0044900449euoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1541581902;
-        bh=xhQArIP8M90BiAOzhDQO9q3VCr4IVh2ihHjsdswmKik=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ha76+mpEugIVDm+PkQD5Ps93d8+lKWaozscdBzjQoQsOuFfxo84hY+bJGGhN3+2bt
-         /VjLd5IZDbdxqJa98ioyTPwbRwu7IIREe7fy0MA3VRON0sM8GtFPrb+VIlDG8OW25R
-         1CCE397Y6Y5+Tn5JP05oiA3kRbk5Nv5T5qYAPaSI=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181107091141eucas1p17bd43d5d4302d09818122e72e5a080a1~kzJJrxx0_1434314343eucas1p1H;
-        Wed,  7 Nov 2018 09:11:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 79.04.04806.D4CA2EB5; Wed,  7
-        Nov 2018 09:11:41 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181107091140eucas1p10c3728aab8af3ce7b8c739a057dcc59c~kzJId7IzP1434314343eucas1p1E;
-        Wed,  7 Nov 2018 09:11:40 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181107091140eusmtrp2e72ceea270f09bbb3a8293fb102b918a~kzJIRNuyQ1205312053eusmtrp2r;
-        Wed,  7 Nov 2018 09:11:40 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-97-5be2ac4d9c3e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 54.5E.04128.C4CA2EB5; Wed,  7
-        Nov 2018 09:11:40 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181107091139eusmtip14453795dfd01f9c74430736af8e9703f~kzJHfd0f91038510385eusmtip1V;
-        Wed,  7 Nov 2018 09:11:39 +0000 (GMT)
-Subject: Re: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16
- ICN6211 MIPI-DSI to RGB bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <25c24350-4acd-68b8-ef5d-75a60094f0b6@samsung.com>
-Date:   Wed, 7 Nov 2018 10:11:38 +0100
+        Wed, 7 Nov 2018 13:41:50 -0500
+Received: from a.mx.secunet.com ([62.96.220.36]:34518 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726218AbeKGSlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 13:41:50 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id E0F6B20083;
+        Wed,  7 Nov 2018 10:12:20 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id LY6g8lrF3dTO; Wed,  7 Nov 2018 10:12:19 +0100 (CET)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 8D106201A2;
+        Wed,  7 Nov 2018 10:12:19 +0100 (CET)
+Received: from [10.182.7.41] (10.182.7.41) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 7 Nov
+ 2018 10:12:19 +0100
+Subject: Re: USB-C device hotplug issue
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+CC:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bin Liu <b-liu@ti.com>,
+        "Maxim Moseychuk" <franchesko.salias.hudro.pedros@gmail.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Dominik Bozek <dominikx.bozek@intel.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+References: <Pine.LNX.4.44L0.1810261000040.1467-100000@iolanthe.rowland.org>
+ <ac4ea7fa-9fd7-0987-a70c-11a26465e680@linux.intel.com>
+From:   Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dennis.wassenberg@secunet.com; keydata=
+ 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
+ YPsSSSBN/R6Xmw==
+Organization: secunet Security Networks AG
+Message-ID: <4140fee5-8935-daed-8438-d04d7f1198b2@secunet.com>
+Date:   Wed, 7 Nov 2018 10:08:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTcRTG+7+3vYrTt2ntoF3XoBupkeAfkm4UvB+K6kuF+1ArXyx0Gpua
-        KZgllqWCJhUOc5VZmYtqmTXTLmt5mWgzy7xQ2rJyhYnMWVZqbq+R337nPOfhOQcOS8rOM8Hs
-        oYQkQZugjlcwvlR1/Vjrqm1GhyrcNj4f57c2ETi7/jPCQ9fyEDZYW2n82j3EYNfl9wQeMRUw
-        +M0PJ4lNHztoPJz3nsbtNSUM/u2ol+Dyt20E7nM+Qdh2PJvCbbYtOLvOKsETHXcpPGZ5SWDn
-        cCO1IYi/NdxL82VjEwRvLDUifqgzW8KXGtP5O45Kmjfr30n42sImhjfdPM3wD0b7aL43t4Hg
-        7109xj/NL6J4l2nBDv9o36gYIf5QiqANW7fP96C5bd7h1oWpT5wGSSbKCj6DfFjgIqD9+w3m
-        DPJlZdwNBF8KyymxGEHgNnQhsXAheDFgpf9ZBj6ck4jCdQQXMqumi0EE4+bn3qlATgMVnWMS
-        DwdxK2G0+Js3hORyGai4e4nwCAy3HMbvdTEelnLrIPO302ugOCW8sDYhD8/h9kBOb+X0zGxo
-        Ku6nPOzD7YTSjoveMJJbCA8GS0iR5dDdbyA8YcDZWZjscDHi3pvhc02tRORA+NpQNc3zYNJs
-        IEQ+BieKX5OiOQdBY9n1afNaeN7QNpXGTiUsh9s1YWJ7I1T01HnbwPlD5+BscQd/OFt9gRTb
-        Usg5KROnF0Nvy31SZDmU291MAVLoZ1ymn3GNfsY1+v+5lxB1E8mFZJ0mVtCtSRCOhOrUGl1y
-        QmzogUSNCU19a/NEg/shevxnvwVxLFL4Se33P6hktDpFd1RjQcCSiiBpfqVDJZPGqI+mCdrE
-        vdrkeEFnQSEspZBL02f1qWRcrDpJiBOEw4L2n0qwPsGZqIRWNn9d+kt56kDuklDqaWKSn41v
-        8eeWRUpV0KnIeHM1NaObuhP3MSDCJ/xPS8+S2xk/Q/KWbVUGFHWHBTZGxay/OGD/pnenFeYH
-        P9uUvlKo2nwia9GGCLMjLbpLbot+NLenLjXO70pkaGQ/q939alfz7pDtE7UOu3TS+Kl6S7tS
-        QekOqlevILU69V/bj25pqQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsVy+t/xu7o+ax5FG/ReZbPoPXeSyaL12DNG
-        i/fLehgt5h85x2px5et7NovPC+8xWXzZNIHN4ur3l8wWmx5fY7X42HOP1eLyrjlsFr8fHWO3
-        WHr9IpPFg5f7GS1ONbayWFw85WrRuvcIu8W/axtZLH4eOs9k8fLjCRYHEY+1H++zeiz++Y/J
-        Y828NYwe72+0snvMW1PtseHRalaPnbPusnvsmXiSzWPTqk42j+3fHrB63O8+zuSxeUm9x4He
-        ySwenzfJBfBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW
-        6dsl6GXsvChTcE6+Yv/L+ewNjM1SXYycHBICJhIvHk5l72Lk4hASWMoo8b9pByNEQlxi9/y3
-        zBC2sMSfa11sEEWvGSWebXsBlhAWyJVYeeMnO4gtIqAt8W3ma7AiZoFeNomNC3qZIToOMUs8
-        PHuSFaSKTUBT4u/mm2wgNq+AnUTD75dg3SwCKhJHj5wEWy0qECFx9uU6RogaQYmTM5+wgNic
-        AoES867NBZvDLKAu8WfeJWYIW15i+9s5ULa4xK0n85kmMArNQtI+C0nLLCQts5C0LGBkWcUo
-        klpanJueW2ykV5yYW1yal66XnJ+7iRGYTLYd+7kFGDTvgg8xCnAwKvHwaux4GC3EmlhWXJl7
-        iFGCg1lJhPd3wqNoId6UxMqq1KL8+KLSnNTiQ4ymQM9NZJYSTc4HJrq8knhDU0NzC0tDc2Nz
-        YzMLJXHe8waVUUIC6YklqdmpqQWpRTB9TBycUg2Mobtvnt0U8NxE+k+fodYdcZ5s68r9p142
-        mTDP3O4pPW/B/WPpx3fOvX9kc5aY7xMRYa2zQfW2+jvyN/tenPbgUaFoje5cz7Dts07sep88
-        dapXsNXj8IlVkaeTOvexFuQ4Mkwv2fjqgj9r2eODD6TexF4O3d6oarhfYc7aU1Kr/l1m/HWf
-        i8vnmxJLcUaioRZzUXEiAGGhe0I8AwAA
-X-CMS-MailID: 20181107091140eucas1p10c3728aab8af3ce7b8c739a057dcc59c
-X-Msg-Generator: CA
+In-Reply-To: <ac4ea7fa-9fd7-0987-a70c-11a26465e680@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
-        <CGME20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b@epcas5p2.samsung.com>
-        <20181026144344.27778-18-jagan@amarulasolutions.com>
-        <3c4c8a08-8c1e-1ac6-2b53-81389d69c97b@samsung.com>
-        <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
-        <bfe28e8d-3786-d35d-a589-abed9ee8e7d5@samsung.com>
-        <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 39CE2921-8922-441C-996C-5FE46B308C13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.11.2018 19:08, Jagan Teki wrote:
-> On Wed, Oct 31, 2018 at 2:45 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
->> On 31.10.2018 09:58, Chen-Yu Tsai wrote:
->>> On Wed, Oct 31, 2018 at 4:53 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>> On 26.10.2018 16:43, Jagan Teki wrote:
->>>>> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
->>>>> bridge panel, which is available on same PCB with 24-bit RGB interface.
->>>>>
->>>>> So, this patch adds DSI specific binding details on existing
->>>>> dt-bindings file.
->>>>>
->>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>>>> ---
->>>>> Changes for v3:
->>>>> - Use existing binding doc and update dsi details
->>>>> Changes for v2:
->>>>> - none
->>>>>
->>>>>  .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
->>>>>  1 file changed, 29 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
->>>>> index 35bc0c839f49..b7855dc7c66f 100644
->>>>> --- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
->>>>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
->>>>> @@ -1,12 +1,39 @@
->>>>>  Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
->>>>>
->>>>> +S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
->>>>> +
->>>>> +Depending on the variant, the PCB attached to the panel module either
->>>>> +supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
->>>>> +an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
->>>>> +itself
->>>> As I understand this is display board, which contains 'pure' RGB panel
->>>> S070WV20-CT16 and optionally ICN6211 DSI->RGB bridge.
->>>> These are separate devices, just connected by vendor to simplify its
->>>> assembly. Why don't you create then bridge driver for ICN6211 and RGB
->>>> panel driver for S070WV20-CT16 - it looks more generic.
->>>> Then you can describe both in dts and voila.
->>>> Creating drivers for every combo of devices (panel + bridge), just
->>>> because some vendor sells them together seems incorrect - we have
->>>> devicetree for it.
->>> Rob suggested this, and also the opposite: using the same
->>> "bananapi,s070wv20-ct16"
->>> compatible string for both types of connections, and have the driver deal with
->>> detecting the bus type.
->>>
->>> The thing about the bridge chip is that there's no available datasheet that
->>> describes all the parts of the init sequence, in fact none at all. I managed
->>> to work out some bits, but the others remain a mystery and must be hard-coded
->>> to match the panel. That would work against having a generic bridge driver.
+
+On 05.11.18 16:35, Mathias Nyman wrote:
+> On 26.10.2018 17:07, Alan Stern wrote:
+>> On Fri, 26 Oct 2018, Dennis Wassenberg wrote:
 >>
->> But it is common for many chips - 1st version of the driver is developed
->> on one platform and it supports only one configuration, if next platform
->> with the same cheap appears the driver is augmented if necessary.
-> At-least few of the commands from panel initialization code, the
-> respective opcode data values are based on panel timings and even
-> clock value is different in DSI. I think it look hard to try bridge
-> driver for these restrictions, do you have any suggestions?
+>>>>> --- a/drivers/usb/core/hub.c
+>>>>> +++ b/drivers/usb/core/hub.c
+>>>>> @@ -2815,7 +2815,9 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+>>>>>                       USB_PORT_FEAT_C_BH_PORT_RESET);
+>>>>>               usb_clear_port_feature(hub->hdev, port1,
+>>>>>                       USB_PORT_FEAT_C_PORT_LINK_STATE);
+>>>>> -            usb_clear_port_feature(hub->hdev, port1,
+>>>>> +
+>>>>> +            if (!warm)
+>>>>> +                usb_clear_port_feature(hub->hdev, port1,
+>>>>>                       USB_PORT_FEAT_C_CONNECTION);
+>>>>>                 /*
+>>>>
+>>>> The key fact is that connection events can get lost if they happen to
+>>>> occur during a port reset.
+>>> Yes.
+>>>>
+>>>> I'm not entirely certain of the logic here, but it looks like the
+>>>> correct test to add should be "if (udev != NULL)", not "if (!warm)".
+>>>> Perhaps Mathias can confirm this
+> 
+> Sorry about the late response, got distracted while performing git
+> archeology.
+> 
+> "if (udev != NULL)" would seem more reasonable.
+> 
+> Logs show that clearing the FEAT_C_CONNECTION was originally added
+> after a hot reset failed, and before issuing a warm reset to a SS.Inactive
+> link.  (see 10d674a USB: When hot reset for USB3 fails, try warm reset.)
+> 
+> Apparently all the change flags needed to be cleared for some specific
+> host + device combination before issuing a warm reset for the enumeration
+> to work properly.
+> 
+> The change to always clear FEAT_C_CONNECTION for USB3 was done later in patch:
+> a24a607 USB: Rip out recursive call on warm port reset.
+> 
+> Motivation was:
+> 
+> "In hub_port_finish_reset, unconditionally clear the connect status
+>  change (CSC) bit for USB 3.0 hubs when the port reset is done.  If we
+>  had to issue multiple warm resets for a device, that bit may have been
+>  set if the device went into SS.Inactive and then was successfully warm
+>  reset."
+> 
+>>> I don't know if clearing the USB_PORT_FEAT_C_CONNECTION bit is
+>>> correct in case of a non warm reset. In my case I always observed a
+>>> warm reset because of the link state change.
+>>> Thats why I checked the warm variable to not change the behavoir for
+>>> cases a didn't checked for the first shot.
+>>
+>> (The syntax of that last sentence is pretty mangled; I can't understand
+>> it.)
+>>
+>> Think of it this way:
+>>
+>>     If a device was not attached before the reset, we don't want
+>>     to clear the connect-change status because then we wouldn't
+>>     recognize a device that was plugged in during the reset.
+>>
+>>     If a device was attached before the reset, we don't want any
+>>     connect-change status which might be provoked by the reset to
+>>     last, because we don't want the core to think that the device
+>>     was unplugged and replugged when all that happened was a reset.
+>>
+>> So the important criterion is whether or not a device was attached to
+>> the port when the reset started.  It's something of a coincidence that
+>> you only observe warm resets when there's nothing attached.
+>>
+>>> During the first run of usb_hub_reset the udev is NULL because in
+>>> this situation the device is not attached logically.
+>>>
+>>> [  112.889810] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+>>> [  113.201192] usb 4-1-port1: XXX: hub_port_reset: udev:            (nil)!
+>>> [  113.201198] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+>>> [  113.253612] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+>>> [  113.377208] usb 4-1-port1: XXX: hub_port_reset: udev: ffff88046b302800!
+>>> [  113.377214] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>>> [  113.429478] usb 4-1.1: new SuperSpeed USB device number 7 using xhci_hcd
+>>> [  113.442370] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5596
+>>> [  113.442376] usb 4-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+>>> [  113.442381] usb 4-1.1: Product: Ultra T C
+>>> [  113.442385] usb 4-1.1: Manufacturer: SanDisk
+>>> [  113.442388] usb 4-1.1: SerialNumber: 4C530001131013121031
+>>>
+>>> Or maybe we can skip clearing the USB_PORT_FEAT_C_CONNECTION bit in
+>>> case of hub_port_reset completely without any other check?
+>>
+>> See above.
+> 
+> Checking for udev sounds reasonable to me.
+> Not sure if we should worry about the specific host+device combo that needed flags
+> cleared before warm reset. See patch:
+> 
+> 10d674a USB: When hot reset for USB3 fails, try warm reset.
+> https://marc.info/?l=linux-usb&m=131603549603799&w=2
+> 
+> -Mathias
+Checking for udev works well too in my case. So there is no need to check the warm flag.
 
+Regarding the other point about the specific host+device combo which needs the flags cleared, I don't know how to proceed.
 
-Where do you see an issue? Since panel is RGB it should have no
-initialization sequence (beside regulator/gpio power on/off), so the
-only thing to do is to figure out which regulators/gpios belongs to
-which component - with publicly available specs it should be doable.
+Best regards,
 
-The whole initialization sequence is for the bridge, so you put it into
-bridge driver, for starters it can be hardcoded.
-
-Then you can:
-
-1. Try to find other users of this ICN6211 chip and compare
-initialization sequences to guess purpose of registers.
-
-2. Try to get specs of the chip (ask vendor, distributor, grep Internet).
-
-3. Do nothing - if there will be other users of the bridge they will do
-this work.
-
-
-Regards
-
-Andrzej
-
-
+Dennis
