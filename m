@@ -2,110 +2,148 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C411C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19021C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343D82086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:46:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="0zhyZrs1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343D82086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id D5F8320827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:47:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F8320827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730880AbeKGUQD (ORCPT
+        id S1727519AbeKGURD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 15:16:03 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33571 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeKGUPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:15:44 -0500
-Received: by mail-wr1-f65.google.com with SMTP id u9-v6so6508947wrr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:45:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TtiQgLxeB3Vvn/F2D6s5fJLLQl7t/5akjyB6egj8ywA=;
-        b=0zhyZrs1I3b3f94v43giJ2+xKNtpj+u2i222TmZvKBZx4aozIM+K/TtJpf4qQp1923
-         ue+riMpQtEfF/we1Jbyyujh7eic8rEfHuH8/tO23R11rl2+4gEmTCuf0IrzIh6u2M6FX
-         QhRrSWdrE/NN8K3dqGYniVltQGAuxSwTsA41Q8b9VxHdW8a7PJOmCuP+mvE7dZHLIHI1
-         qQ+8dEEVxHT9SwaJJesig8VAQJTcnWtI1ps2t/wqOZ9P/JriHWYFdHu76btBvHTPTYRk
-         iDKtJRdQOzXwqYLbaqsSMcIT0tT0dUHe5tmcyc4HKokqBswfdCMB4ZqJEev7WKOXQLlN
-         hFvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TtiQgLxeB3Vvn/F2D6s5fJLLQl7t/5akjyB6egj8ywA=;
-        b=OtJZ1XBAvXzCv3wC1MN+IXQnJXDPv5PSWCrVf6BL9Bj24hStKpJOARjlG28iNV/9uK
-         dffKtYKXCpf1bCXf8PqvgQ7Q/xBOvzFX84agQaohoeeUiRDkpw9IHOQGWzyUeKXzBQCO
-         FZnnSwZ2oXzADLOwaLvMYk8vp7/4DgFsXnvwXkYUrooC8QxI3nKTwJ0ZiqzABmUmVlvN
-         cIwy9gpxJw+sSF+4ptN+ehmd9t7vk28C7eKxATjSVjtsa2zRdjqGc6YRRZmJ/un09yhz
-         nfa3U58oxZOjWobhmdIOQlVBScMvQwkFJ7rpiZVPzDUr2VCkPNhlYSgf5+wFh22/W8Cz
-         9+Pg==
-X-Gm-Message-State: AGRZ1gLwCko0Y0+cjmhzZzlBLl/BYiyiqEliF6pNqkQdy/AQMKitRqCU
-        kgesb7L0DfGnbGIgw4asWnox+g==
-X-Google-Smtp-Source: AJdET5eWHJ7knPhvjHNh3UKLjisXjHbWEAIrvKWOLYMndyy0oF+BEyD9Luy9btlXwSU3dpxlwRhjsw==
-X-Received: by 2002:a5d:4012:: with SMTP id n18-v6mr1321656wrp.185.1541587555294;
-        Wed, 07 Nov 2018 02:45:55 -0800 (PST)
-Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id h125-v6sm314484wmf.48.2018.11.07.02.45.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 07 Nov 2018 02:45:54 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] arm64: dts: meson-gxbb-odroidc2: fix GPIO lines names
-Date:   Wed,  7 Nov 2018 11:45:49 +0100
-Message-Id: <1541587550-17842-4-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541587550-17842-1-git-send-email-narmstrong@baylibre.com>
-References: <1541587550-17842-1-git-send-email-narmstrong@baylibre.com>
+        Wed, 7 Nov 2018 15:17:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48906 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726225AbeKGURD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 15:17:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 834B1EBD;
+        Wed,  7 Nov 2018 02:47:14 -0800 (PST)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12D5A3F718;
+        Wed,  7 Nov 2018 02:47:11 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] sched/fair: update scale invariance of PELT
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org
+References: <1540570303-6097-1-git-send-email-vincent.guittot@linaro.org>
+ <1540570303-6097-3-git-send-email-vincent.guittot@linaro.org>
+ <b89b6805-45c0-8462-b75b-b7da4a35c022@arm.com>
+ <CAKfTPtBapA3JvbgUyESzE=2ZXOGLRLmZh7oi8N=H9PHubCCuNg@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <28af1313-8153-624d-1ae9-1554bb2db474@arm.com>
+Date:   Wed, 7 Nov 2018 11:47:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAKfTPtBapA3JvbgUyESzE=2ZXOGLRLmZh7oi8N=H9PHubCCuNg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The gpio line names were set in the pinctrl node instead of the gpio node,
-at the time it was merged, it worked, but was obviously wrong.
-This patch moves the properties to the gpio nodes.
+On 11/5/18 10:10 AM, Vincent Guittot wrote:
+> On Fri, 2 Nov 2018 at 16:36, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 10/26/18 6:11 PM, Vincent Guittot wrote:
 
-Fixes: b03c7d6438bb ("ARM64: dts: meson-gxbb-odroidc2: Add GPIO lines names")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[...]
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 54954b3..00f7be6 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -187,7 +187,7 @@
- 	pinctrl-names = "default";
- };
- 
--&pinctrl_aobus {
-+&gpio_ao {
- 	gpio-line-names = "UART TX", "UART RX", "VCCK En", "TF 3V3/1V8 En",
- 			  "USB HUB nRESET", "USB OTG Power En",
- 			  "J7 Header Pin2", "IR In", "J7 Header Pin4",
-@@ -197,7 +197,7 @@
- 			  "";
- };
- 
--&pinctrl_periphs {
-+&gpio {
- 	gpio-line-names = /* Bank GPIOZ */
- 			  "Eth MDIO", "Eth MDC", "Eth RGMII RX Clk",
- 			  "Eth RX DV", "Eth RX D0", "Eth RX D1", "Eth RX D2",
--- 
-2.7.4
+>> Thinking about this new approach on a big.LITTLE platform:
+>>
+>> CPU Capacities big: 1024 LITTLE: 512, performance CPUfreq governor
+>>
+>> A 50% (runtime/period) task on a big CPU will become an always running
+>> task on the little CPU. The utilization signal of the task and the
+>> cfs_rq of the little CPU converges to 1024.
+>>
+>> With contrib scaling the utilization signal of the 50% task converges to
+>> 512 on the little CPU, even it is always running on it, and so does the
+>> one of the cfs_rq.
+>>
+>> Two 25% tasks on a big CPU will become two 50% tasks on a little CPU.
+>> The utilization signal of the tasks converges to 512 and the one of the
+>> cfs_rq of the little CPU converges to 1024.
+>>
+>> With contrib scaling the utilization signal of the 25% tasks converges
+>> to 256 on the little CPU, even they run each 50% on it, and the one of
+>> the cfs_rq converges to 512.
+>>
+>> So what do we consider system-wide invariance? I thought that e.g. a 25%
+>> task should have a utilization value of 256 no matter on which CPU it is
+>> running?
+>>
+>> In both cases, the little CPU is not going idle whereas the big CPU does.
+> 
+> IMO, the key point here is that there is no idle time. As soon as
+> there is no idle time, you don't know if a task has enough compute
+> capacity so you can't make difference between the 50% running task or
+> an always running task on the little core.
 
+Agreed. My '2 25% tasks on a 512 cpu' was a special example in the sense 
+that the tasks would stay invariant since they are not restricted by the 
+cpu capacity yet. '2 35% tasks' would also have 256 utilization each 
+with contrib scaling so that's not invariant either.
+
+Could we say that in the overutilized case with contrib scaling each of 
+the n tasks get cpu_cap/n utilization where with time scaling they get 
+1024/n utilization? Even though there is no value in this information 
+because of the over-utilized state.
+
+> That's also interesting to noticed that the task will reach the always
+> running state after more than 600ms on little core with utilization
+> starting from 0.
+> 
+> Then considering the system-wide invariance, the task are not really
+> invariant. If we take a 50% running task that run 40ms in a period of
+> 80ms, the max utilization of the task will be 721 on the big core and
+> 512 on the little core.
+
+Agreed, the utilization of the task on the big CPU oscillates between 
+721 and 321 so the average is still ~512.
+
+> Then, if you take a 39ms running task instead, the utilization on the
+> big core will reach 709 but it will be 507 on little core. So your
+> utilization depends on the current capacity.
+
+OK, but the average should be ~ 507 on big as well. There is idle time 
+now even on the little CPU. But yeah, with longer period value, there 
+are quite big amplitudes.
+
+> With the new proposal, the max utilization will be 709 on big and
+> little cores for the 39ms running task. For the 40ms running task, the
+> utilization will be 721 on big core. then if the task moves on the
+> little, it will reach the value 721 after 80ms,  then 900 after more
+> than 160ms and 1000 after 320ms
+
+We consider max values here? In this case, agreed. So this is a reminder 
+that even if the average utilization of a task compared to the CPU 
+capacity would mark the system as non-overutilized (39ms/80ms on a 512 
+CPU), the utilization of that task looks different because of the 
+oscillation which is pretty noticeable with long periods.
+
+The important bit for EAS is that it only uses utilization in the 
+non-overutilized case. Here, utilization signals should look the same 
+between the two approaches, not considering tasks with long periods like 
+the 39/80ms example above.
+There are also some advantages for EAS with time scaling: (1) faster 
+overutilization detection when a big task runs on a little CPU, (2) 
+higher (initial) task utilization value when this task migrates from 
+little to big CPU.
+
+We should run our EAS task placement tests with your time scaling patches.
