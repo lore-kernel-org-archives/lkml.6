@@ -6,75 +6,72 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCB8C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F7DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F2142086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2142086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A964A2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:56:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A964A2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeKHG10 (ORCPT
+        id S1727337AbeKHG2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:27:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39716 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeKHG1Z (ORCPT
+        Thu, 8 Nov 2018 01:28:38 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:42179 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeKHG2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:27:25 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35F34B7B;
-        Wed,  7 Nov 2018 20:55:18 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 12:55:17 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] ubsan: don't mark __ubsan_handle_builtin_unreachable
- as noreturn
-Message-Id: <20181107125517.b5677f03a9a1978a5d179c9a@linux-foundation.org>
-In-Reply-To: <20181107144516.4587-1-aryabinin@virtuozzo.com>
-References: <CAOesGMi-vkYPDrL2drJ70zf3_xTMWrsfPoW68TkiRJCj8uWBLg@mail.gmail.com>
-        <20181107144516.4587-1-aryabinin@virtuozzo.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Thu, 8 Nov 2018 01:28:37 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gKUs9-0008T8-VQ; Wed, 07 Nov 2018 21:56:22 +0100
+Date:   Wed, 7 Nov 2018 21:56:21 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 2/2] mm/sparse: add common helper to mark all memblocks
+ present
+In-Reply-To: <20181107123838.1b7234c98a87dec5a2b25e67@linux-foundation.org>
+Message-ID: <alpine.DEB.2.21.1811072153590.1666@nanos.tec.linutronix.de>
+References: <20181107173859.24096-1-logang@deltatee.com> <20181107173859.24096-3-logang@deltatee.com> <20181107121207.62cb37cf58484b7cc80a8fd8@linux-foundation.org> <724be9bb-59b6-33f3-7b59-3ca644d59bf7@deltatee.com> <alpine.DEB.2.21.1811072125280.1666@nanos.tec.linutronix.de>
+ <b1cc442e-7314-4a8e-3eec-9adc200d7582@deltatee.com> <20181107123838.1b7234c98a87dec5a2b25e67@linux-foundation.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  7 Nov 2018 17:45:16 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+On Wed, 7 Nov 2018, Andrew Morton wrote:
+> On Wed, 7 Nov 2018 13:36:34 -0700 Logan Gunthorpe <logang@deltatee.com> wrote:
+> 
+> > > Actually if both names suck, then there also is the option to rename both
+> > > instead of adding a comment to explain the suckage.
+> > 
+> > Ok, well, I wasn't expecting to take on a big rename like that as it
+> > would create a patch touching a bunch of arches and mm files... But if
+> > we can come to some agreement on a better name and someone is willing to
+> > take that patch without significant delay then I'd be happy to create
+> > the patch and add it to the start of my series.
+> 
+> Some other time ;)
 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> gcc-8 complains about the prototype for this function:
-> 
-> lib/ubsan.c:432:1: error: ignoring attribute 'noreturn' in declaration of a built-in function '__ubsan_handle_builtin_unreachable' because it conflicts with attribute 'const' [-Werror=attributes]
-> 
-> This is actually a GCC's bug. In GCC internals
-> __ubsan_handle_builtin_unreachable() declared with both 'noreturn' and
-> 'const' attributes instead of only 'noreturn':
->    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84210
-> 
-> Workaround this by removing the noreturn attribute.
-> 
-> ...
->
-> --- a/lib/ubsan.c
-> +++ b/lib/ubsan.c
-> @@ -427,8 +427,7 @@ void __ubsan_handle_shift_out_of_bounds(struct shift_out_of_bounds_data *data,
->  EXPORT_SYMBOL(__ubsan_handle_shift_out_of_bounds);
->  
->  
-> -void __noreturn
-> -__ubsan_handle_builtin_unreachable(struct unreachable_data *data)
-> +void __ubsan_handle_builtin_unreachable(struct unreachable_data *data)
->  {
->  	unsigned long flags;
-
-This code has been here since 2016 and presumably people will want to
-build older kernels with newer gcc's.  So I'll add cc:stable, OK?
+More precise: Manjana. You live way too close to Mexico :)
 
