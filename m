@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E155C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D292C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D5FD2085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D5FD2085B
+	by mail.kernel.org (Postfix) with ESMTP id D161D2085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:44:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D161D2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730755AbeKHAPX (ORCPT
+        id S1730944AbeKHAP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:15:23 -0500
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.133]:20269 "EHLO
+        Wed, 7 Nov 2018 19:15:26 -0500
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:31330 "EHLO
         mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbeKHAPW (ORCPT
+        with ESMTP id S1726635AbeKHAPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:15:22 -0500
+        Wed, 7 Nov 2018 19:15:25 -0500
 X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx7ZdE8mPU5nMS5P2QgHAetWm5FNngAjmE0pFNjw="
 X-RZG-CLASS-ID: mo05
 Received: from fs-work.fritz.box
         by smtp.strato.de (RZmta 44.3 AUTH)
-        with ESMTPSA id j097e4uA7EiCUQm
+        with ESMTPSA id j097e4uA7EiHUQn
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 7 Nov 2018 15:44:12 +0100 (CET)
+        Wed, 7 Nov 2018 15:44:17 +0100 (CET)
 From:   Frieder Schrempf <frieder.schrempf@kontron.de>
 To:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
         linux-spi@vger.kernel.org
@@ -40,12 +40,17 @@ Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
         prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com,
         han.xu@nxp.com, shawnguo@kernel.org,
         Frieder Schrempf <frieder.schrempf@exceet.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/10] dt-bindings: spi: Adjust the bindings for the FSL QSPI driver
-Date:   Wed,  7 Nov 2018 15:43:20 +0100
-Message-Id: <1541601809-16950-4-git-send-email-frieder.schrempf@kontron.de>
+        Li Yang <leoyang.li@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 04/10] ARM: dts: Reflect change of FSL QSPI driver and remove unused properties
+Date:   Wed,  7 Nov 2018 15:43:21 +0100
+Message-Id: <1541601809-16950-5-git-send-email-frieder.schrempf@kontron.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
 References: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
@@ -56,85 +61,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frieder Schrempf <frieder.schrempf@exceet.de>
 
-Adjust the documentation of the new SPI memory interface based
-driver to reflect the new drivers settings.
+The FSL QSPI driver was moved to the SPI framework and it now
+acts as a SPI controller. Therefore the subnodes need to set
+spi-[rx/tx]-bus-width = <4>, so quad mode is used just as before.
 
-The "old" driver was using the "fsl,qspi-has-second-chip" property to
-select one of two dual chip setups (two chips on one bus or two chips
-on separate buses). And it used the order in which the subnodes are
-defined in the dt to select the CS, the chip is connected to.
+Also the properties 'bus-num', 'fsl,spi-num-chipselects' and
+'fsl,spi-flash-chipselects' were never read by the driver and
+can be removed.
 
-Both methods are wrong and in fact the "reg" property should be used to
-determine which bus and CS a chip is connected to. This also enables us
-to use different setups than just single chip, or symmetric dual chip.
+The 'reg' properties are adjusted to reflect the what bus and
+chipselect the flash is connected to, as the new driver needs
+this information.
 
-So the porting of the driver from the MTD to the SPI framework actually
-enforces the use of the "reg" properties and makes
-"fsl,qspi-has-second-chip" superfluous.
-
-As all boards that have "fsl,qspi-has-second-chip" set, also have
-correct "reg" properties, the removal of this property shouldn't lead to
-any incompatibilities.
-
-The only compatibility issues I can see are with imx6sx-sdb.dts and
-imx6sx-sdb-reva.dts, which have their reg properties set incorrectly
-(see explanation here: [2]), all other boards should stay compatible.
-
-Also the "big-endian" flag was removed, as this setting is now selected
-by the driver, depending on which SoC is in use.
+The property 'fsl,qspi-has-second-chip' is not needed anymore
+and will be removed after the old driver was disabled to avoid
+breaking ls1021a-moxa-uc-8410a.dts.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
 ---
- .../devicetree/bindings/spi/spi-fsl-qspi.txt    | 21 +++++++++-----------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/imx6sx-sdb-reva.dts       | 8 ++++++--
+ arch/arm/boot/dts/imx6sx-sdb.dts            | 8 ++++++--
+ arch/arm/boot/dts/imx6ul-14x14-evk.dtsi     | 2 ++
+ arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts | 5 ++---
+ 4 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-index 483e9cf..6d7c9ec 100644
---- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-@@ -3,9 +3,8 @@
- Required properties:
-   - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
- 		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
--		 "fsl,ls1021a-qspi"
-+		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
- 		 or
--		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
- 		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
-   - reg : the first contains the register location and length,
-           the second contains the memory mapping address and length
-@@ -14,15 +13,13 @@ Required properties:
-   - clocks : The clocks needed by the QuadSPI controller
-   - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
+diff --git a/arch/arm/boot/dts/imx6sx-sdb-reva.dts b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
+index 9cc6ff2..9997156 100644
+--- a/arch/arm/boot/dts/imx6sx-sdb-reva.dts
++++ b/arch/arm/boot/dts/imx6sx-sdb-reva.dts
+@@ -132,13 +132,17 @@
+ 		#size-cells = <1>;
+ 		compatible = "spansion,s25fl128s", "jedec,spi-nor";
+ 		spi-max-frequency = <66000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
+ 	};
  
--Optional properties:
--  - fsl,qspi-has-second-chip: The controller has two buses, bus A and bus B.
--                              Each bus can be connected with two NOR flashes.
--			      Most of the time, each bus only has one NOR flash
--			      connected, this is the default case.
--			      But if there are two NOR flashes connected to the
--			      bus, you should enable this property.
--			      (Please check the board's schematic.)
--  - big-endian : That means the IP register is big endian
-+Required SPI slave node properties:
-+  - reg: There are two buses (A and B) with two chip selects each.
-+	 This encodes to which bus and CS the flash is connected:
-+		<0>: Bus A, CS 0
-+		<1>: Bus A, CS 1
-+		<2>: Bus B, CS 0
-+		<3>: Bus B, CS 1
+-	flash1: s25fl128s@1 {
+-		reg = <1>;
++	flash1: s25fl128s@2 {
++		reg = <2>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "spansion,s25fl128s", "jedec,spi-nor";
+ 		spi-max-frequency = <66000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/imx6sx-sdb.dts b/arch/arm/boot/dts/imx6sx-sdb.dts
+index 6dd9beb..9acfda8 100644
+--- a/arch/arm/boot/dts/imx6sx-sdb.dts
++++ b/arch/arm/boot/dts/imx6sx-sdb.dts
+@@ -117,15 +117,19 @@
+ 		#size-cells = <1>;
+ 		compatible = "micron,n25q256a", "jedec,spi-nor";
+ 		spi-max-frequency = <29000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
+ 		reg = <0>;
+ 	};
  
- Example:
- 
-@@ -40,7 +37,7 @@ qspi0: quadspi@40044000 {
+-	flash1: n25q256a@1 {
++	flash1: n25q256a@2 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "micron,n25q256a", "jedec,spi-nor";
+ 		spi-max-frequency = <29000000>;
+-		reg = <1>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
++		reg = <2>;
  	};
  };
  
--Example showing the usage of two SPI NOR devices:
-+Example showing the usage of two SPI NOR devices on bus A:
+diff --git a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
+index 32a0723..c2c9a2a 100644
+--- a/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
++++ b/arch/arm/boot/dts/imx6ul-14x14-evk.dtsi
+@@ -176,6 +176,8 @@
+ 		#size-cells = <1>;
+ 		compatible = "micron,n25q256a";
+ 		spi-max-frequency = <29000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
+ 		reg = <0>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
+index d01f64b..6a83f30 100644
+--- a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
++++ b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
+@@ -203,9 +203,6 @@
+ };
  
- &qspi2 {
- 	pinctrl-names = "default";
+ &qspi {
+-	bus-num = <0>;
+-	fsl,spi-num-chipselects = <2>;
+-	fsl,spi-flash-chipselects = <0>;
+ 	fsl,qspi-has-second-chip;
+ 	status = "okay";
+ 
+@@ -214,6 +211,8 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		spi-max-frequency = <20000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
+ 		reg = <0>;
+ 
+ 		partitions@0 {
 -- 
 2.7.4
 
