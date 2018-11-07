@@ -2,195 +2,125 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB62C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E01C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A487C2085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:34:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A487C2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A3B042085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:35:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B042085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbeKHBFp (ORCPT
+        id S1731221AbeKHBFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:05:45 -0500
-Received: from mga06.intel.com ([134.134.136.31]:20949 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbeKHBFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:05:44 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 07:34:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,475,1534834800"; 
-   d="scan'208";a="106678567"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga002.jf.intel.com with ESMTP; 07 Nov 2018 07:34:53 -0800
-Date:   Wed, 7 Nov 2018 07:34:52 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
+        Wed, 7 Nov 2018 20:05:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53216 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727387AbeKHBFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 20:05:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E55880D;
+        Wed,  7 Nov 2018 07:35:01 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5FD63F5BD;
+        Wed,  7 Nov 2018 07:34:59 -0800 (PST)
+Date:   Wed, 7 Nov 2018 15:34:57 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181107153452.GB22972@linux.intel.com>
-References: <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH v10 00/22] kasan: add software tag-based mode for arm64
+Message-ID: <20181107153456.GE2623@brain-police>
+References: <cover.1541525354.git.andreyknvl@google.com>
+ <CAAeHK+yOsP7V0gPu7EpqCbJZqbGQMZbAp6q1+=0dNGC24reyWg@mail.gmail.com>
+ <20181107145922.GD2623@brain-police>
+ <CAAeHK+zNgv9WxRpf7N3gmsLYGL6oUALAnyerMzeYZUz1LhoUuA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAAeHK+zNgv9WxRpf7N3gmsLYGL6oUALAnyerMzeYZUz1LhoUuA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 05:17:14PM -0800, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
+On Wed, Nov 07, 2018 at 04:11:35PM +0100, Andrey Konovalov wrote:
+> On Wed, Nov 7, 2018 at 3:59 PM, Will Deacon <will.deacon@arm.com> wrote:
+> > On Wed, Nov 07, 2018 at 03:56:03PM +0100, Andrey Konovalov wrote:
+> >> On Tue, Nov 6, 2018 at 6:30 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> >> > This patchset adds a new software tag-based mode to KASAN [1].
+> >> > (Initially this mode was called KHWASAN, but it got renamed,
+> >> >  see the naming rationale at the end of this section).
+> >>
+> >> [...]
+> >>
+> >> > Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> >> > Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+> >> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> >>
+> >> Hi Andrew,
+> >>
+> >> This patchset has now been reviewed-by KASAN maintainers. Could you
+> >> take a look and consider taking this into the -mm tree?
 > >
-> > On Tue, Nov 06, 2018 at 03:39:48PM -0800, Andy Lutomirski wrote:
-> > > On Tue, Nov 6, 2018 at 3:35 PM Sean Christopherson
-> > > <sean.j.christopherson@intel.com> wrote:
-> > > >
-> > > > On Tue, Nov 06, 2018 at 03:00:56PM -0800, Andy Lutomirski wrote:
-> > > > >
-> > > > >
-> > > > > >> On Nov 6, 2018, at 1:59 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > > > > >>
-> > > > > >>> On Tue, 2018-11-06 at 13:41 -0800, Andy Lutomirski wrote:
-> > > > > >> Sean, how does the current SDK AEX handler decide whether to do
-> > > > > >> EENTER, ERESUME, or just bail and consider the enclave dead?  It seems
-> > > > > >> like the *CPU* could give a big hint, but I don't see where there is
-> > > > > >> any architectural indication of why the AEX code got called or any
-> > > > > >> obvious way for the user code to know whether the exit was fixed up by
-> > > > > >> the kernel?
-> > > > > >
-> > > > > > The SDK "unconditionally" does ERESUME at the AEP location, but that's
-> > > > > > bit misleading because its signal handler may muck with the context's
-> > > > > > RIP, e.g. to abort the enclave on a fatal fault.
-> > > > > >
-> > > > > > On an event/exception from within an enclave, the event is immediately
-> > > > > > delivered after loading synthetic state and changing RIP to the AEP.
-> > > > > > In other words, jamming CPU state is essentially a bunch of vectoring
-> > > > > > ucode preamble, but from software's perspective it's a normal event
-> > > > > > that happens to point at the AEP instead of somewhere in the enclave.
-> > > > > > And because the signals the SDK cares about are all synchronous, the
-> > > > > > SDK can simply hardcode ERESUME at the AEP since all of the fault logic
-> > > > > > resides in its signal handler.  IRQs and whatnot simply trampoline back
-> > > > > > into the enclave.
-> > > > > >
-> > > > > > Userspace can do something funky instead of ERESUME, but only *after*
-> > > > > > IRET/RSM/VMRESUME has returned to the AEP location, and in Linux's
-> > > > > > case, after the trap handler has run.
-> > > > > >
-> > > > > > Jumping back a bit, how much do we care about preventing userspace
-> > > > > > from doing stupid things?
-> > > > >
-> > > > > My general feeling is that userspace should be allowed to do apparently
-> > > > > stupid things. For example, as far as the kernel is concerned, Wine and
-> > > > > DOSEMU are just user programs that do stupid things. Linux generally tries
-> > > > > to provide a reasonably complete view of architectural behavior. This is
-> > > > > in contrast to, say, Windows, where IIUC doing an unapproved WRFSBASE May
-> > > > > cause very odd behavior indeed. So magic fixups that do non-architectural
-> > > > > things are not so great.
-> > > >
-> > > > Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
-> > > > with a specific (ignored) prefix pattern?  I.e. effectively make the magic
-> > > > fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
-> > > > that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
-> > > > that the enclave can EEXIT to immediately after the EENTER location.
-> > > >
-> > >
-> > > How does that even work, though?  On an AEX, RIP points to the ERESUME
-> > > instruction, not the EENTER instruction, so if we skip it we just end
-> > > up in lala land.
-> >
-> > Userspace would obviously need to be aware of the fixup behavior, but
-> > it actually works out fairly nicely to have a separate path for ERESUME
-> > fixup since a fault on EENTER is generally fatal, whereas as a fault on
-> > ERESUME might be recoverable.
-> >
+> > I would much prefer to take the arm64 parts (which still need to be reviewed
+> > by Catalin afaict) via the arm64 tree, so please can you split those out
+> > separately?
 > 
-> Hmm.
-> 
-> >
-> > do_eenter:
-> >     mov     tcs, %rbx
-> >     lea     async_exit, %rcx
-> >     mov     $EENTER, %rax
-> >     ENCLU
-> 
-> Or SOME_SILLY_PREFIX ENCLU?
+> Which parts do you mean exactly, which patches? I don't think it makes
+> sense to split this patchset, as one part won't function without the
+> other.
 
-Yeah, forgot to include that.
+I would like the patches that touch code under arch/arm64/ to be reviewed by
+somebody from the arm64 community. Since the core parts have already been
+reviewed, I was suggesting that you could split them out so that they are
+not blocked by the architecture code. Is it not possible to preserve the
+existing KASAN behaviour for arm64 with the core parts merged? I figured it
+must be, since you're not touching any other architectures here and they
+assumedly continue to function correctly.
 
-> >
-> > /*
-> >  * EEXIT or EENTER faulted.  In the latter case, %RAX already holds some
-> >  * fault indicator, e.g. -EFAULT.
-> >  */
-> > eexit_or_eenter_fault:
-> >     ret
-> 
-> But userspace wants to know whether it was a fault or not.  So I think
-> we either need two landing pads or we need to hijack a flag bit (are
-> there any known-zeroed flag bits after EEXIT?) to say whether it was a
-> fault.  And, if it was a fault, we should give the vector, the
-> sanitized error code, and possibly CR2.
+However, if you'd rather keep everything together, please can we give it a
+couple of weeks so we can at least get the architecture bits reviewed? Most
+people are out at LPC next week (and I'm at another conference this week).
 
-As Jethro mentioned, RAX will always be 4 on a successful EEXIT, so we
-can use RAX to indicate a fault.  That's what I was trying to imply with
-EFAULT.  Here's the reg stuffing I use for the POC:
-
-	regs->ax = EFAULT;
-	regs->di = trapnr;
-	regs->si = error_code;
-	regs->dx = address;
-
-
-Well-known RAX values also means the kernel fault handlers only need to
-look for SOME_SILLY_PREFIX ENCLU if RAX==2 || RAX==3, i.e. the fault
-occurred on EENTER or in an enclave (RAX is set to ERESUME's leaf as
-part of the asynchronous enlcave exit flow).
-
-> >
-> > async_exit:
-> >     ENCLU
-> 
-> Same prefix here, right?
-> 
-> >
-> > fixup_handler:
-> >     <do fault stuff>
-> 
-> This whole thing is a bit odd, but not necessarily a terrible idea.
+Will
