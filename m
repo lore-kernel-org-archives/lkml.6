@@ -2,322 +2,172 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B988C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64115C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B81720827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B9B92081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:43:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qAKC9aR0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B81720827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KyqvwaHw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9B92081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387848AbeKGPE3 (ORCPT
+        id S1729870AbeKGPMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 10:04:29 -0500
-Received: from mail-db5eur01on0059.outbound.protection.outlook.com ([104.47.2.59]:56648
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387568AbeKGPE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 10:04:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zWO+uVxxPqK+BFrntz+DEC7tUltabd7pAjAU+t3hllI=;
- b=qAKC9aR0vqpkzqmP01uaksa311n5Sfbx+3r6gPog5Xj24gdExUKQ9mwxQ2AKDNw0g8Q1VC/MLCCyCSuI5T+VqtehfVLrHhj+sUSkE8DWDQP+yqpAoR5r2cg7JrUtG+HlmPgelSVvv6PyebHobyzSXGdCbYf98lWOBe+wGAl1/rA=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
- AM6PR04MB4152.eurprd04.prod.outlook.com (52.135.168.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 7 Nov 2018 05:35:32 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::7d93:8053:57fd:1a00]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::7d93:8053:57fd:1a00%3]) with mapi id 15.20.1273.035; Wed, 7 Nov 2018
- 05:35:32 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>
-CC:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv3 4/4] arm64: dts: layerscape: removed compatible string
- "snps,dw-pcie"
-Thread-Topic: [PATCHv3 4/4] arm64: dts: layerscape: removed compatible string
- "snps,dw-pcie"
-Thread-Index: AQHUdluzeHaY/zpsFkmniwV/0S6BmQ==
-Date:   Wed, 7 Nov 2018 05:35:32 +0000
-Message-ID: <20181107053500.13575-5-Zhiqiang.Hou@nxp.com>
-References: <20181107053500.13575-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181107053500.13575-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR03CA0034.apcprd03.prod.outlook.com
- (2603:1096:203:2f::22) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:aa::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4152;6:e53cbwqLyybUVdvcFugXd2wkuIwJ8Zwh6sUVcRH6baB9dhncJ2mCVDrRE4FVaEtJ+ZW6eJXsgPb2tUpimwaXNFD/MLYQLeokonlbUSI6SI2yiNiPV4UIeZrNtSBkdtdaBOKf0ErSxJ8rk5ka/6u3lDC7Te9SJJNOt6/Xq/ijdvkP6irdWgs0qo7eAFdI9rG7Qtf2QNE/EQ33bNfYXLI+MA4ntfX/ZTAP6UGRrwcVmuXE1ArWJoHJL7BhYokTO05WAhlGGUDirKNI92zEy07+BpyQYtkV0CjfYde3qQ4umnKEQKh4SwBJYRLc+T7kOGqsADeUGd8DcJOfU+t6zJXyaV/i2bRdqQokOWP8bcwan5Y51uSA1AMe8yk46pFWpXoFeLLtBZvZDUNQxjBAdK8JfJEikbtI4dLRu585JKdy2QQhNOucW3aGLq5kZSx/rxpUwz0lELzTYLlmJo/gFsqqpg==;5:igGLwaFdYMYNZ3mlpIV9JgbMkreUzvAKDPjy3MWYtOEXI05phntcaDQKfVVEVgwZWE0dSYy+O0rk6ul13eUiNAGi94AG7SrsS8bX81tuUBmvIMR6dLOAHubh05990F2HUQ8IvMmnIgepYAedacw43TOjO/uBVaYa6/UTff0BPdU=;7:CmOxxqu6KooNo98ZXvVE48zmSrEhqcAsnpJRhUcYLwBHHQNEI3BfYVr/kLGurl3m2SOG5eix/K/GvGE5van8U3z3uahp5rw0AsFZkqRy/QK7+jVznTTf3eD1q3Tl1bF7zMbxPY/P+MI/nr/TPruVkg==
-x-ms-office365-filtering-correlation-id: 7ced2fbe-002d-4ab0-e32f-08d64472d588
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4152;
-x-ms-traffictypediagnostic: AM6PR04MB4152:
-x-microsoft-antispam-prvs: <AM6PR04MB41527C576CA168F3C40BEEC284C40@AM6PR04MB4152.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4152;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4152;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(136003)(189003)(199004)(81166006)(106356001)(81156014)(2616005)(76176011)(6636002)(6486002)(105586002)(14454004)(2501003)(476003)(68736007)(8676002)(6512007)(8936002)(478600001)(53936002)(6436002)(52116002)(256004)(97736004)(4326008)(71200400001)(71190400001)(66066001)(99286004)(486006)(86362001)(6506007)(386003)(446003)(186003)(102836004)(5660300001)(26005)(2201001)(11346002)(305945005)(316002)(3846002)(110136005)(36756003)(1076002)(2906002)(7736002)(6116002)(2900100001)(25786009)(921003)(142933001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4152;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ynWZCpOF3UNE8f4PXb9vgEM3TJA9KzS126/On7xFbj+Rtd0gPnrCNCc+T/B6iWnCwl/ldqU5bIR5LmLj4RbEgXyw/8gEoDsdSnGqQHiIHvvS9YYT+RFVC9d0+PQ79Rx/n+0WCJ6CYUzNdQOI+GMgVLK6xO1Qrx3CyyEltR/sRTELLwzeGzRVWGD3vsik35RkYxLog9QVTBQfjPNKPocw6/r+lWI7FEOIkff70RzfqKorXUNSkgN5hLszQ5xBhf2E0e2PP2DSIdF1SIQLvsgnAIqs1Yo+BEAgYPZse+tQyZkb9pB15kA2kaH2b/C+4Hsp5gqGw3pM2P3de35qHBhron3ObCl64fljAiLULeDEN1A=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ced2fbe-002d-4ab0-e32f-08d64472d588
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 05:35:32.5827
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4152
+        Wed, 7 Nov 2018 10:12:10 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39562 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbeKGPMK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 10:12:10 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n11-v6so7233179pfb.6
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 21:43:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=GNQpj3rjBVklO8bagXhiz60SxP62hFGYHRM9p2t7PbQ=;
+        b=KyqvwaHwrmynroxJ/Y0w04DGuD3qh76/KvfOHJZ56DliOLlcmthoRMJXtv3KR8yVWE
+         eWeLtAoirOVAXaE1FWQcc/2rSQaupPemopsT5uv8Ph5NDqmJ7T2a5AWlzfvremtegQnQ
+         l0T1InJAk70NwjQaEJvjpIxuUGPPEKOW6BV8g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GNQpj3rjBVklO8bagXhiz60SxP62hFGYHRM9p2t7PbQ=;
+        b=RJZ0Ty71pEyTXKgIt40bni4xtJrV+5dh+mS5NSAeq/3iTSylr6YWh4w8UMdMpWpXqD
+         upqhKOmVdvEcDDIDoUfkPP5s0mIvXwEAV/4HDLydA2hKdw87Ri2Bel1lZHpZS8GjepJX
+         8V5GX3GU3FdZavqyY6qC1HADFZ1/SVH2DI1hRW6XdX5iy9Zu1i08T9LjEvxa/G1jrFEF
+         7mBeoYUbNtuqA1jV5mU2fJqfz6Ecc/KVunS+iLyTnYu6GLTMSdzoDlGMV4I60sXrRFsb
+         XnTWWoXhg0OOEuExnilQ+rCY3opf9ZgRmO32fo/EgSlI8R42DIvL6FNbVRt9aLPawcQz
+         t7jQ==
+X-Gm-Message-State: AGRZ1gLIXo9zjpvd5kyjJlNbgIxK+VV+sDpTz6l+H3B7m+Cjl3zxTdCz
+        SfJJwLmC/+FgOAiRL3pdsxPAQQ==
+X-Google-Smtp-Source: AJdET5e6oSiWpsOxTLtOD17haxGtGsTYxcXrcftraXPzrttYLlQ6Sgfjwxsg+QVZBRGc56FtDJHukQ==
+X-Received: by 2002:a63:d547:: with SMTP id v7mr455466pgi.339.1541569400022;
+        Tue, 06 Nov 2018 21:43:20 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id r6sm5850627pgk.91.2018.11.06.21.43.16
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 06 Nov 2018 21:43:19 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc:     rteysseyre@gmail.com, baolin.wang@linaro.org, broonie@kernel.org,
+        geert@linux-m68k.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: trigger: Fix sleeping function called from invalid context
+Date:   Wed,  7 Nov 2018 13:42:58 +0800
+Message-Id: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+We will meet below issue due to mutex_lock() is called in interrupt context.
+The mutex lock is used to protect the pattern trigger data, but before changing
+new pattern trigger data (pattern values or repeat value) by users, we always
+cancel the timer firstly to clear previous patterns' performance. That means
+there is no race in pattern_trig_timer_function(), so we can drop the mutex
+lock in pattern_trig_timer_function() to avoid this issue.
 
-Removed the wrong compatible string "snps,dw-pcie", in case
-match incorrect driver.
+Moreover we can move the timer cancelling into mutex protection, since there
+is no deadlock risk if we remove the mutex lock in pattern_trig_timer_function().
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
+in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted
+4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
+Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+[<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
+[<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
+[<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
+[<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
+[<c07c92c4>] (mutex_lock) from [<c067b28c>] (pattern_trig_timer_function+0x1c/0x11c)
+[<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>] (call_timer_fn+0x1c/0x90)
+[<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
+[<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
+[<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
+[<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
+[<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
+[<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
+[<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
+Exception stack(0xeb483f60 to 0xeb483fa8)
+3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
+3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
+3fa0: 60020013 ffffffff
+[<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
+[<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
+[<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
+[<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
+
+Fixes: 5fd752b6b3a2 ("leds: core: Introduce LED pattern trigger")
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
-V3:
- - Reworded the subject.
+ drivers/leds/trigger/ledtrig-pattern.c |   20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi |  2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |  6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi |  8 ++++----
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 12 ++++--------
- 6 files changed, 18 insertions(+), 22 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1012a.dtsi
-index 5da732f82fa0..028a6daa5597 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-@@ -475,7 +475,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1012a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1012a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1043a.dtsi
-index 3fed504b5381..5480d6c4c548 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -661,7 +661,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1043a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -686,7 +686,7 @@
- 		};
-=20
- 		pcie@3500000 {
--			compatible =3D "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1043a-pcie";
- 			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -711,7 +711,7 @@
- 		};
-=20
- 		pcie@3600000 {
--			compatible =3D "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1043a-pcie";
- 			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1046a.dtsi
-index 51cbd50012d6..519315c5d507 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -630,7 +630,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1046a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1046a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -655,7 +655,7 @@
- 		};
-=20
- 		pcie@3500000 {
--			compatible =3D "fsl,ls1046a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1046a-pcie";
- 			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -680,7 +680,7 @@
- 		};
-=20
- 		pcie@3600000 {
--			compatible =3D "fsl,ls1046a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1046a-pcie";
- 			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1088a.dtsi
-index a07f612ab56b..10b253c88a16 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -512,7 +512,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1088a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1088a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x20 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -536,7 +536,7 @@
- 		};
-=20
- 		pcie@3500000 {
--			compatible =3D "fsl,ls1088a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1088a-pcie";
- 			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 			       0x28 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -560,7 +560,7 @@
- 		};
-=20
- 		pcie@3600000 {
--			compatible =3D "fsl,ls1088a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1088a-pcie";
- 			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 			       0x30 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls2088a.dtsi
-index 7c882da3f6b0..a5f668d786b8 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-@@ -119,7 +119,7 @@
- };
-=20
- &pcie1 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 	       0x20 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-@@ -128,7 +128,7 @@
- };
-=20
- &pcie2 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 	       0x28 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-@@ -137,7 +137,7 @@
- };
-=20
- &pcie3 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 	       0x30 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-@@ -146,7 +146,7 @@
- };
-=20
- &pcie4 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03700000 0x0 0x00100000   /* controller registers */
- 	       0x38 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls208xa.dtsi
-index d188774a36e8..80cc40f76a4a 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -630,8 +630,7 @@
- 		};
-=20
- 		pcie1: pcie@3400000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 108 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
-@@ -651,8 +650,7 @@
- 		};
-=20
- 		pcie2: pcie@3500000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 113 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
-@@ -672,8 +670,7 @@
- 		};
-=20
- 		pcie3: pcie@3600000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 118 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
-@@ -693,8 +690,7 @@
- 		};
-=20
- 		pcie4: pcie@3700000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 123 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
---=20
-2.17.1
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+index 174a298..1870cf8 100644
+--- a/drivers/leds/trigger/ledtrig-pattern.c
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -75,8 +75,6 @@ static void pattern_trig_timer_function(struct timer_list *t)
+ {
+ 	struct pattern_trig_data *data = from_timer(data, t, timer);
+ 
+-	mutex_lock(&data->lock);
+-
+ 	for (;;) {
+ 		if (!data->is_indefinite && !data->repeat)
+ 			break;
+@@ -117,8 +115,6 @@ static void pattern_trig_timer_function(struct timer_list *t)
+ 
+ 		break;
+ 	}
+-
+-	mutex_unlock(&data->lock);
+ }
+ 
+ static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
+@@ -177,14 +173,10 @@ static ssize_t repeat_store(struct device *dev, struct device_attribute *attr,
+ 	if (res < -1 || res == 0)
+ 		return -EINVAL;
+ 
+-	/*
+-	 * Clear previous patterns' performence firstly, and remove the timer
+-	 * without mutex lock to avoid dead lock.
+-	 */
+-	del_timer_sync(&data->timer);
+-
+ 	mutex_lock(&data->lock);
+ 
++	del_timer_sync(&data->timer);
++
+ 	if (data->is_hw_pattern)
+ 		led_cdev->pattern_clear(led_cdev);
+ 
+@@ -235,14 +227,10 @@ static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
+ 	struct pattern_trig_data *data = led_cdev->trigger_data;
+ 	int ccount, cr, offset = 0, err = 0;
+ 
+-	/*
+-	 * Clear previous patterns' performence firstly, and remove the timer
+-	 * without mutex lock to avoid dead lock.
+-	 */
+-	del_timer_sync(&data->timer);
+-
+ 	mutex_lock(&data->lock);
+ 
++	del_timer_sync(&data->timer);
++
+ 	if (data->is_hw_pattern)
+ 		led_cdev->pattern_clear(led_cdev);
+ 
+-- 
+1.7.9.5
 
