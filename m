@@ -2,136 +2,192 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B23C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13087C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C0262086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:03:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0262086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C6BC42081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:08:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FumLz1E4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6BC42081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbeKGObt (ORCPT
+        id S1730932AbeKGOgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 09:31:49 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:50539 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbeKGObs (ORCPT
+        Wed, 7 Nov 2018 09:36:46 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40837 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbeKGOgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 09:31:48 -0500
-Received: by mail-io1-f71.google.com with SMTP id q127-v6so17574613iod.17
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 21:03:04 -0800 (PST)
+        Wed, 7 Nov 2018 09:36:45 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so4968164pgp.7;
+        Tue, 06 Nov 2018 21:08:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GbBTsj5GCzZKxzkYvP/0pZ143/RuxDO5XlD/zZeXRYU=;
+        b=FumLz1E44lo58cQ21hfFJkqm/mQIh7Ll/N7PlcR/kcs4QtQYiAIfcbWm3WOT6So90G
+         wX6kPViMN2+LJfRxG7SOoDCyHxyxv97HpIJh+QaE2hoW7iFgrJrcx4lXdRMYvwZpz/Ba
+         hXYOOoYS/cq1D+VDuGAi1VmOoqpcklLyQTz603ppXjSEOcs0fegcJs2Up4rcIIJmW0Gf
+         W59rUnEtISqNkWa1llj0K10brE6bfC7hpq9M8WPR+lYlk6g0ildba/C8IrJalJTRdpp0
+         bEC71RgsDYToeFF59TUrZ8eKGiJHQHWaJ6qbz5KU1QbXVoSrOOfr+TS3y9nJ5aIMMh25
+         EknQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YyOgCcz+7mpAgCpvC4Igqi2H6VZNxak0CCdZykthrN8=;
-        b=EGHuqZAA8nFvlBEVO2EcGVjRcEKF92VJVepMtBsJJd6Gmxteatjw5RR2rU475Su7L0
-         lfTf5fycHgHaLvmOBvMATOFnHPBTNCqUOLRokNjBr1fLNFh/5C9SdjsqgP/n7/6fi/G4
-         E97WPMTsQ8EyKFR73SHA991OwON3zLEfPKB+W5wG+mniGxxIkCJwqoD9Iv/wQYd9TXL9
-         hOKzA4pObm4UHnUsGuDwQlxFnoUyiVGfTn/fmH7okEoAViWZLzTSlnLJDPA1gy9Ll572
-         UJo7RQxWBQX+BQWJfvpTT0Wb7vx+5hh0jnksheq8Wypnx37gMix8b6t2bC98JH86E7Zm
-         ldpQ==
-X-Gm-Message-State: AGRZ1gLf6qIqf5bJDzFitZwt+SgFJdyME9As98QsMak4CLzohfA2N+2+
-        5IYXoVrof9VLOWBDvVMN7q2YsLcXTTOpXMefXDwquIU1ugXZ
-X-Google-Smtp-Source: AJdET5dLtkqBWp/BG3+qogez/ioSBEL2NO/pyvC/ebazy70D4e0QdqDEpMBp44d7BDmi17xTVFdwNA5r/5V5PkGCRusFvB6XWkYM
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GbBTsj5GCzZKxzkYvP/0pZ143/RuxDO5XlD/zZeXRYU=;
+        b=lGkqhu7F3Yq3wnkijWtDoIAs7RHcHrO2sK00zRkashPykN3lf2QXl2gRJsT+GApYnS
+         LgBpD5d/BTlitu5SujKUTCx9tpqwZqMKFKMnEprB3lIDGEMylPF4wN9XEaceLxsSOsU9
+         WTAkAal3fc4W0rccnpXpLq6nN3tsNYO6M+Tbuuu1U1ycq1s+iNmmT/Alk3p/LpysM1+E
+         3vSSGrhiRA3OsP/kE0f3JFZVsg2Lzh5oFT/CHm27fmixvQmwN4Ic23UmOl2PpOpvvM1Q
+         b69+KZHPRz9QJMxYWY1tkQjwuPt83C2/HtuBSNUvyYrVDR35AHSZKib3StOS8o77LPEq
+         8suA==
+X-Gm-Message-State: AGRZ1gKtk8TqCrXcOqrO0OkigN70k8Kl1ENUzT44dH0aD4bMjN4If3+y
+        NLN7SItQ4Wd4TQLFE0M2A3U=
+X-Google-Smtp-Source: AJdET5fYCqKIB8pYYWBUtSmCKkk12WFDDkdu+pRHAlcTagb2OXELj+Wiq8gAkXzInWPASs1L7p8+ng==
+X-Received: by 2002:a65:44c6:: with SMTP id g6-v6mr420044pgs.350.1541567280468;
+        Tue, 06 Nov 2018 21:08:00 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s22-v6sm7301006pfi.15.2018.11.06.21.07.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 21:07:59 -0800 (PST)
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: add binding documentation for
+ adt7475
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jdelvare@suse.com" <jdelvare@suse.com>
+Cc:     "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20181107040010.27436-1-chris.packham@alliedtelesis.co.nz>
+ <20181107040010.27436-2-chris.packham@alliedtelesis.co.nz>
+ <64720b73-dddf-783c-a3a4-3f32a748bf5d@roeck-us.net>
+ <1ed7434bfded41bfba3b739f58f69102@svr-chch-ex1.atlnz.lc>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <213614fb-1b7a-a06c-6f9f-f3d497750ca6@roeck-us.net>
+Date:   Tue, 6 Nov 2018 21:07:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Received: by 2002:a5e:d715:: with SMTP id v21-v6mr216607iom.17.1541566984537;
- Tue, 06 Nov 2018 21:03:04 -0800 (PST)
-Date:   Tue, 06 Nov 2018 21:03:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000082cc8d057a0c0877@google.com>
-Subject: KASAN: stack-out-of-bounds Read in locks_remove_flock
-From:   syzbot <syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1ed7434bfded41bfba3b739f58f69102@svr-chch-ex1.atlnz.lc>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 11/6/18 8:27 PM, Chris Packham wrote:
+> On 7/11/18 5:24 PM, Guenter Roeck wrote:
+>> On 11/6/18 8:00 PM, Chris Packham wrote:
+>>> With the addition of the invert-pwm property the adt7475 needs its own
+>>> binding documentation rather being captured under trivial-devices.txt.
+>>>
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> ---
+>>>     .../devicetree/bindings/hwmon/adt7475.txt     | 22 +++++++++++++++++++
+>>>     .../devicetree/bindings/trivial-devices.txt   |  4 ----
+>>>     2 files changed, 22 insertions(+), 4 deletions(-)
+>>>     create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.txt b/Documentation/devicetree/bindings/hwmon/adt7475.txt
+>>> new file mode 100644
+>>> index 000000000000..79255439e157
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.txt
+>>> @@ -0,0 +1,22 @@
+>>> +*ADT7475 hwmon sensor.
+>>> +
+>>> +Required properties:
+>>> +- compatible: One of
+>>> +	"adi,adt7473"
+>>> +	"adi,adt7475"
+>>> +	"adi,adt7476"
+>>> +	"adi,adt7490"
+>>> +
+>>> +- reg: I2C address
+>>> +
+>>> +optional properties:
+>>> +
+>>> +- invert-pwm: This configures the PWM to use logic low for 100% duty cycle.
+>>> +
+>>> +Example:
+>>> +
+>>> +hwmon@2e {
+>>> +	compatible = ;
+>>> +	reg = <0x2e>;
+>>> +	invert-pwm;
+>>
+>> If I understand correctly, the flag is set per pwm channel. A single global
+>> property seems inappropriate.
+> 
+> Yes it is per-channel. But I was having a hard time imagining a hardware
+> design that would use both inverted and non-inverted at the same time.
+> 
 
-syzbot found the following crash on:
+People can be inventive. Sometimes too much so.
 
-HEAD commit:    d881de30d29e Add linux-next specific files for 20181107
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14aa485d400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caa433e1c8778437
-dashboard link: https://syzkaller.appspot.com/bug?extid=1818cd833edc063452c6
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> Do you have a preference for how the properties should look?
+> 
+>     invert-pwm[123]?
+> 
+>     invert-pwm = <0x7>;?
+>
+Ultimately we'll have to find a generic way of defining devicetree properties for
+hardware monitoring devices, not just for pwm but for all sensor types. A sub-node
+per channel seems to be the most likely answer, but I think that is a long way off
+(and will require lengthy discussions about acceptable properties).
 
-Unfortunately, I don't have any reproducer for this crash yet.
+I was looking into pwm DT properties, but they define a set of flags
+(PWM_POLARITY_INVERTED, PWM_POLARITY_NORMAL).
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com
+The g762 driver uses "pwm_polarity". Underscore - hmm. Other drivers use module
+parameters, sysfs attributes (pwmX_invert in asc7621 driver), or platform data
+(g762, max6639).
 
-==================================================================
-BUG: KASAN: stack-out-of-bounds in locks_remove_flock+0x33c/0x350  
-fs/locks.c:2567
-Read of size 8 at addr ffff8801c71c7a08 by task syz-executor5/20562
+Maybe pwm-polarity = <PWM_POLARITY_NORMAL | PWM_POLARITY_INVERTED> ?
+No idea if that makes sense. Or just a boolean pwm-polarity-inverted.
 
-CPU: 0 PID: 20562 Comm: syz-executor5 Not tainted 4.20.0-rc1-next-20181107+  
-#107
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  locks_remove_flock+0x33c/0x350 fs/locks.c:2567
-  locks_remove_file+0x148/0x5c0 fs/locks.c:2607
-  __fput+0x2f0/0xa70 fs/file_table.c:271
-  ____fput+0x15/0x20 fs/file_table.c:312
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x411021
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffdb42509a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411021
-RDX: 0000000000000000 RSI: 0000000000732ea0 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 00007ffdb42508c0 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000001 R14: 0000000000000201 R15: 0000000000000005
+Thinking about it per channel vs. per chip ... other drivers also seem to
+use a single property / attribute for the entire chip, so that is fine here
+as well. We can always extend it if needed.
 
-The buggy address belongs to the page:
-page:ffffea00071c71c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 ffffffff071c0101 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+Anyway, I am fine with whatever Rob accepts.
 
-Memory state around the buggy address:
-  ffff8801c71c7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801c71c7980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8801c71c7a00: f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00 00
-                       ^
-  ffff8801c71c7a80: 00 f1 f1 f1 f1 00 00 f2 f2 f2 f2 f2 f2 f8 f2 f2
-  ffff8801c71c7b00: f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00
-==================================================================
+Guenter
 
+>>
+>> Guenter
+>>
+>>> +};
+>>> diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
+>>> index 69c934aec13b..4f29100d6bbf 100644
+>>> --- a/Documentation/devicetree/bindings/trivial-devices.txt
+>>> +++ b/Documentation/devicetree/bindings/trivial-devices.txt
+>>> @@ -14,10 +14,6 @@ ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert an
+>>>     ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
+>>>     adi,adt7461		+/-1C TDM Extended Temp Range I.C
+>>>     adt7461			+/-1C TDM Extended Temp Range I.C
+>>> -adi,adt7473		+/-1C TDM Extended Temp Range I.C
+>>> -adi,adt7475		+/-1C TDM Extended Temp Range I.C
+>>> -adi,adt7476		+/-1C TDM Extended Temp Range I.C
+>>> -adi,adt7490		+/-1C TDM Extended Temp Range I.C
+>>>     adi,adxl345		Three-Axis Digital Accelerometer
+>>>     adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
+>>>     ams,iaq-core		AMS iAQ-Core VOC Sensor
+>>>
+>>
+>>
+> 
+> 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
