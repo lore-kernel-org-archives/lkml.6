@@ -2,107 +2,265 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645A9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4EAC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31FBF2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:26:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31FBF2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 02F162081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F162081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730927AbeKGV46 convert rfc822-to-8bit (ORCPT
+        id S1730928AbeKGV6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:56:58 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55631 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726388AbeKGV46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:56:58 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 837C4208CB; Wed,  7 Nov 2018 13:26:46 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 20F6A206D8;
-        Wed,  7 Nov 2018 13:26:46 +0100 (CET)
-Date:   Wed, 7 Nov 2018 13:26:45 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Christophe Kerello <christophe.kerello@st.com>, <richard@nod.at>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [PATCH v2 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND
- flash controller driver
-Message-ID: <20181107132645.7271e705@xps13>
-In-Reply-To: <20181107132342.33790247@bbrezillon>
-References: <1538732520-2800-1-git-send-email-christophe.kerello@st.com>
-        <1538732520-2800-3-git-send-email-christophe.kerello@st.com>
-        <20181105173905.385dd06e@bbrezillon>
-        <70f99d79-a9d8-0651-d464-2d81b334dbfb@st.com>
-        <20181107132342.33790247@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 7 Nov 2018 16:58:23 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50074 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726388AbeKGV6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 16:58:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF95580D;
+        Wed,  7 Nov 2018 04:28:11 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6434E3F5CF;
+        Wed,  7 Nov 2018 04:28:09 -0800 (PST)
+Date:   Wed, 7 Nov 2018 12:28:03 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Nick Kossifidis <mick@ics.forth.gr>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Damien.LeMoal@wdc.com, alankao@andestech.com, zong@andestech.com,
+        anup@brainfault.org, palmer@sifive.com,
+        linux-kernel@vger.kernel.org, hch@infradead.org,
+        robh+dt@kernel.org, tglx@linutronix.de,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [RFC 0/2] Add RISC-V cpu topology
+Message-ID: <20181107122803.GA8433@e107155-lin>
+References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
+ <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
+ <20181106141331.GA28458@e107155-lin>
+ <969fc2a5198984e0dfe8c3f585dc65f9@mailhost.ics.forth.gr>
+ <20181106162051.w7fyweuxrl7ujzuz@lakrids.cambridge.arm.com>
+ <abcae019e6ae749b17ecb0c721fd3177@mailhost.ics.forth.gr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abcae019e6ae749b17ecb0c721fd3177@mailhost.ics.forth.gr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
+On Wed, Nov 07, 2018 at 04:31:34AM +0200, Nick Kossifidis wrote:
+[...]
 
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Wed, 7 Nov 2018
-13:23:42 +0100:
+>
+> Mark and Sudeep thanks a lot for your feedback, I guess you convinced me
+> that having a device tree binding for the scheduler is not a correct
+> approach.
+>
 
-> On Wed, 7 Nov 2018 12:08:58 +0100
-> Christophe Kerello <christophe.kerello@st.com> wrote:
-> 
-> > >> +
-> > >> +write_8bit:
-> > >> +	for (i = 0; i < len; i++)
-> > >> +		writeb_relaxed(p[i], io_addr_w);    
-> > > 
-> > > Is 8bit access really enforced by the byte accessor? In this case, how
-> > > can you be sure 32-bit accesses are doing the right thing? Isn't there
-> > > a bit somewhere in the config reg to configure the bus width?
-> > >     
-> > 
-> > I have checked the framework after Miquèl comment sent on v1 => "If you 
-> > selected BOUNCE_BUFFER in the options, buf is supposedly
-> > aligned, or am I missing something?".
-> > 
-> > After checking the framework, my understanding was:
-> >   - In case of 8-bit access is requested, the framework provides no 
-> > guarantee on buf. To avoid any issue, I write byte per byte.
-> >   - In case of 8-bit access is not requested, it means that the 
-> > framework will try to write data in the page or in the oob. When writing 
-> > to oob, chip->oob_poi will be used and this buffer is aligned. When 
-> > writing to the page, as the driver enables NAND_USE_BOUNCE_BUFFER 
-> > option, buf is guarantee aligned.  
-> 
-> It's probably what happens right now, but there's no guarantee that all
-> non-8-bit accesses will be provided a 32-bit aligned buffer. The only
-> guarantee we provide is on buffer passed to the
-> chip->ecc.read/write_xxx() hooks, and ->exec_op() can be used outside
-> of the "page access" path.
-> 
-> > 
-> > But, I agree that it would be safe to reconfigure the bus width in 8-bit 
-> > before writing byte per byte in case of a 16-bit NAND is used.  
-> 
-> Yes, and I also think you should not base your is-aligned check on the
-> force_8bit value. Use IS_ALIGNED() instead.
+Thanks :)
 
-Maybe the "configure the bus in 8/16-bit" blocks could deserve a
-helper. There is probably other locations within this driver with the
-same logic?
+> It's not a device after all and I agree that the device tree shouldn't
+> become an OS configuration file. Regarding multiple levels of shared
+> resources my point is that since cpu-map doesn't contain any information of
+> what is shared among the cluster/core members it's not easy to do any
+> further translation. Last time I checked the arm code that uses cpu-map, it
+> only defines one domain for SMT, one for MC and then everything else is
+> ignored. No matter how many clusters have been defined, anything above the
+> core level is the same (and then I guess you started talking about adding
+> "packages" on the representation side).
+>
 
+Correct.
 
-Thanks,
-Miquèl
+> The reason I proposed to have a binding for the scheduler directly is not
+> only because it's simpler and closer to what really happens in the code, it
+> also makes more sense to me than the combination of cpu-map with all the
+> related mappings e.g. for numa or caches or power domains etc.
+>
+
+Again you are just looking at it with Linux kernel perspective.
+
+> However you are right we could definitely augment cpu-map to include support
+> for what I'm saying and clean things up, and since you are open about
+> improving it here is a proposal that I hope you find interesting: At first
+> let's get rid of the <thread> nodes, they don't make sense:
+>
+> thread0 {
+>  cpu = <&CPU0>;
+> };
+>
+
+Do you have any strong reasons to do so ?
+Since it's already there for some time, I believe we can't remove it for
+backward compatibility reasons.
+
+> A thread node can't have more than one cpu entry and any properties
+> should be on the cpu node itself, so it doesn't / can't add any
+> more information. We could just have an array of cpu nodes on the
+> <core> node, it's much cleaner this way.
+>
+> core0 {
+>  members = <&CPU0>, <&CPU1>;
+> };
+>
+
+I agree, but we have kernel code using it(arm64/kernel/topology.c). It's
+too late to remove it. But we can always keep to optional if we move the
+ARM64 binding as generic to start with and mandate it for only ARM64.
+
+> Then let's allow the cluster and core nodes to accept attributes that are
+> common for the cpus they contain. Right now this is considered invalid.
+>
+
+Yes, we have discussed in the past and decided not to. I am fine if we
+need to change it, but assuming the topology implies other information
+could be wrong. On ARM platforms we have learnt it, so we kept any
+information away from topology. I assume same with RISC-V, different
+vendors implement in different ways, so it's better to consider those
+factors.
+
+> For power domains we have a generic binding described on
+> Documentation/devicetree/bindings/power/power_domain.txt
+> which basically says that we need to put power-domains = <power domain
+> specifiers> attribute on each of the cpu nodes.
+>
+
+OK, but what's wrong with that. I gives full flexibility.
+
+> The same happens with the capacity binding specified for arm on
+> Documentation/devicetree/bindings/arm/cpu-capacity.txt
+> which says we should add the capacity-dmips-mhz on each of the cpu nodes.
+>
+
+Ditto, we may need this for our single cluster DSU systems.
+
+> The same also happens with the generic numa binding on
+> Documentation/devicetree/bindings/numa.txt
+> which says we should add the nuna-node-id on each of the cpu nodes.
+>
+
+Yes, but again what's the problem ?
+
+> We could allow for these attributes to exist on cluster and core nodes
+> as well so that we can represent their properties better. It shouldn't
+> be a big deal and it can be done in a backwards-compatible way (if we
+> don't find them on the cpu node, climb up the topology hierarchy until
+> we find them / not find them at all). All I'm saying is that I prefer this:
+>
+
+[...]
+
+>
+> cluster0 {
+>  cluster0 {
+>   core0 {
+>    power-domains = <&pdc 0>;
+>    numa-node-id = <0>;
+>    capacity-dmips-mhz = <578>;
+>    members = <&cpu0>, <&cpu1>;
+>   }
+>  };
+>  cluster1 {
+>   capacity-dmips-mhz = <1024>;
+>   core0 {
+>    power-domains = <&pdc 1>;
+>    numa-node-id = <1>;
+>    members = <&cpu2>;
+>   };
+>   core1 {
+>    power-domains = <&pdc 2>;
+>    numa-node-id = <2>;
+>    members = <&cpu3>;
+>   };
+>  };
+> }
+>
+
+Why are you so keen on optimising the representation ?
+If you are worried about large systems, generate one instead of
+handcrafted.
+
+> When it comes to shared resources, the standard dt mappings we have are for
+> caches and are on the device spec standard (coming from power pc's ePAPR
+> standard I think). The below comes from HiFive unleashed's device tree
+> (U540Config.dts) that follows the spec:
+>
+
+I don't understand what you are trying to explain, ePAPR does specify
+per CPU entries.
+
+[...]
+
+> Note that the cache-controller node that's common between the 4 cores can
+> exist anywhere BUT the cluster node ! However it's a property of the
+> cluster.
+> A quick search through the tree got me r8a77980.dtsi that defines the cache
+> on the cpus node and I'm sure there are other similar cases. Wouldn't this
+> be better ?
+>
+> cluster0 {
+>  core0 {
+>   cache-controller@2010000 {
+>    cache-block-size = <64>;
+>    cache-level = <2>;
+>    cache-sets = <2048>;
+>    cache-size = <2097152>;
+>    cache-unified;
+>    compatible = "sifive,ccache0", "cache";
+>    ...
+>   };
+>   members = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
+
+Not a good idea IMO.
+
+> We could even remove next-level-cache from the cpu nodes and infer it from
+> the  topology (search the topology upwards until we get a node that's
+> "cache"-compatible), we can again make this backwards-compatible.
+>
+
+Why are you assuming that they *have* to be so aligned with topology ?
+How do you deal with different kind of systems ?
+
+>
+> Finally from the examples above I'd like to stress out that the distinction
+> between a cluster and a core doesn't make much sense and it also makes the
+> representation more complicated. To begin with, how would you call the setup
+> on HiFive Unleashed ? A cluster of 4 cores that share the same L3 cache ?
+> One core with 4 harts that share the same L3 cache ? We could represent it
+> like this instead:
+>
+
+Just represent each physical cache and get the list of CPUs sharing it.
+Doesn't matter what it is: cluster or cluster of clusters or cluster of
+harts, blah, blah. It really doesn't matter.
+
+>
+> We could e.g. keep only cluster nodes and allow them to contain either an
+> array of harts or other cluster sub-nodes + optionally a set of attributes,
+> common to the members/sub-nodes of the cluster. This way we'll get in the
+> first example:
+>
+
+All these fancy new ideas you are proposing are good if vendors follow
+some things religiously, but I really doubt if that's true. So just
+have maximum flexibility so that we can represent maximum number of
+systems without having to redefine the bindings again and again for the
+same thing.
+
+So instead of finding ways to optimise, you should really come up with
+list of shortcomings in the existing bindings so that we cover more
+platforms with generic bindings. IMO you are too concerned on optimisation
+of DT representation which may defeat the purpose of generic bindings.
+
+--
+Regards,
+Sudeep
