@@ -2,102 +2,109 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCA4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512E0C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F1A2086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:20:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAklOp16"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F1A2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 208DC208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:21:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208DC208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbeKGUuv (ORCPT
+        id S1730924AbeKGUvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 15:50:51 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38558 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeKGUuu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:50:50 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b11-v6so7586033pfi.5;
-        Wed, 07 Nov 2018 03:20:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=s+/LY0Utln20yvP4ObufTh8Pnkckv99Fm/1BIKpKhyk=;
-        b=iAklOp16v730+zBUPgMggKYxExGCnsDq1gUJZGHq0EK4iGA1Je1+rfrXk5a8NrmTX+
-         hA84qoxM1QL7m+JMuwe3frdRortXTT+6aRIDaF+yfvEDqxQNW7nKZsNHkmjAd4vszN1F
-         Z3yXaFPNUll9TTqOb+cXDgjO9WMhT7MsAVoQQJyxlswj4iTscEzbdH1IaajnyHqnwFyZ
-         Oe/DNPkP0q1afmT6m2UWvERM39p+s+VYHILne6EZ1z+KjWvtJeMP/1iF+hsc+o2oUqP6
-         QkaKTrJjLj2F6jWfyDzTbQXVkADJFD3hQxbrOGqcJL2y1ytF2m57Y55kbG/w0ZhF7nmL
-         VAYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=s+/LY0Utln20yvP4ObufTh8Pnkckv99Fm/1BIKpKhyk=;
-        b=JGE1bx3bxE4R+QTDXmDVqhql4+sr4i7x84x30Wzf+U9aoOX9xlWBEt/LGjf7wpWpvK
-         GVoRYnxHabHvzjdlyXF/DWR8WlNHio2fFtEDCBNf2xXsgI5DkhLRNnSD8hQdPqllelK2
-         nbisrbZqx5BoSWBHw/BSVhF28zJosqEW8YXfO4ReAEOmrLAjNvz87B3uKIXqUgqKFhg2
-         +P8fd4WHgoDhLUoBszle3BtzWc0Ncj0xRML55v71Yr9ab6lv3RTt6fX0xlfukc+TW+vR
-         43rhmoBhTW7/mb2ylfrP57qJ8l8Zg8YH+MXVOZ7y+Q9D0KAiu/BbdVekhcN1x5amKhwA
-         V9rg==
-X-Gm-Message-State: AGRZ1gLq3OcHeauQox6UvkwIxXgSFFaglSdimctW7AHLfZKTz2sPpMl3
-        tgDIhoY4LcXgISJM8BRTyEcKGFgh
-X-Google-Smtp-Source: AJdET5duFCI+pYAzW5ekd4IC05eQ/Z1z61MQ0z0q7DJboxhma9H4pbc3k+m0eyrEbaegx8EmtJk4DA==
-X-Received: by 2002:a62:5bc7:: with SMTP id p190-v6mr4000pfb.175.1541589653937;
-        Wed, 07 Nov 2018 03:20:53 -0800 (PST)
-Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id m129-v6sm452622pfm.78.2018.11.07.03.20.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 03:20:53 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     davem@davemloft.net, edumazet@google.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Joe Perches <joe@perches.com>
-Subject: [PATCH net-next] tcp: minor optimization in tcp ack fast path processing
-Date:   Wed,  7 Nov 2018 19:20:17 +0800
-Message-Id: <1541589617-1607-2-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1541589617-1607-1-git-send-email-laoar.shao@gmail.com>
-References: <1541589617-1607-1-git-send-email-laoar.shao@gmail.com>
+        Wed, 7 Nov 2018 15:51:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726225AbeKGUvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 15:51:03 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 989702D7E8;
+        Wed,  7 Nov 2018 11:21:07 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D1F075D75C;
+        Wed,  7 Nov 2018 11:21:01 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed,  7 Nov 2018 12:21:07 +0100 (CET)
+Date:   Wed, 7 Nov 2018 12:21:01 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Elvira Khabirova <lineprinter@altlinux.org>
+Cc:     rostedt@goodmis.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, ldv@altlinux.org, esyr@redhat.com,
+        luto@kernel.org, strace-devel@lists.strace.io
+Subject: Re: [RFC PATCH] ptrace: add PTRACE_GET_SYSCALL_INFO request
+Message-ID: <20181107112100.GA20419@redhat.com>
+References: <20181107042751.3b519062@akathisia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107042751.3b519062@akathisia>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 07 Nov 2018 11:21:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bitwise operation is a little faster.
-So I replace after() with (flag & FLAG_SND_UNA_ADVANCED) as this flag is
-already set before.
+On 11/07, Elvira Khabirova wrote:
+>
+> In short, if a 64-bit task performs a syscall through int 0x80, its tracer
+> has no reliable means to find out that the syscall was, in fact,
+> a compat syscall, and misidentifies it.
+> * Syscall-enter-stop and syscall-exit-stop look the same for the tracer.
 
-Cc: Joe Perches <joe@perches.com>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- net/ipv4/tcp_input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, this was discussed many times...
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 2868ef2..0167015 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -3610,7 +3610,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
- 	if (flag & FLAG_UPDATE_TS_RECENT)
- 		tcp_replace_ts_recent(tp, TCP_SKB_CB(skb)->seq);
- 
--	if (!(flag & FLAG_SLOWPATH) && after(ack, prior_snd_una)) {
-+	if (!(flag & FLAG_SLOWPATH) && (flag & FLAG_SND_UNA_ADVANCED)) {
- 		/* Window is constant, pure forward advance.
- 		 * No more checks are required.
- 		 * Note, we use the fact that SND.UNA>=SND.WL2.
--- 
-1.8.3.1
+So perhaps it makes sense to encode compat/is_enter in ->ptrace_message,
+debugger can use PTRACE_GETEVENTMSG to get this info.
+
+> Secondly, ptracers also have to support a lot of arch-specific code for
+> obtaining information about the tracee. For some architectures, this
+> requires a ptrace(PTRACE_PEEKUSER, ...) invocation for every syscall
+> argument and return value.
+
+I am not sure about this change... I won't really argue, but imo this
+needs a separate patch.
+
+> +#define PT_IN_SYSCALL_STOP	0x00000004	/* task is in a syscall-stop */
+...
+> -static inline int ptrace_report_syscall(struct pt_regs *regs)
+> +static inline int ptrace_report_syscall(struct pt_regs *regs,
+> +					unsigned long message)
+>  {
+>  	int ptrace = current->ptrace;
+>  
+>  	if (!(ptrace & PT_PTRACED))
+>  		return 0;
+> +	current->ptrace |= PT_IN_SYSCALL_STOP;
+>  
+> +	current->ptrace_message = message;
+>  	ptrace_notify(SIGTRAP | ((ptrace & PT_TRACESYSGOOD) ? 0x80 : 0));
+>  
+>  	/*
+> @@ -76,6 +79,7 @@ static inline int ptrace_report_syscall(struct pt_regs *regs)
+>  		current->exit_code = 0;
+>  	}
+>  
+> +	current->ptrace &= ~PT_IN_SYSCALL_STOP;
+>  	return fatal_signal_pending(current);
+...
+
+> +	case PTRACE_GET_SYSCALL_INFO:
+> +		if (child->ptrace & PT_IN_SYSCALL_STOP)
+> +			ret = ptrace_get_syscall(child, datavp);
+> +		break;
+
+Why? If debugger uses PTRACE_O_TRACESYSGOOD it can know if the tracee reported
+syscall entry/exit or not. PTRACE_GET_SYSCALL_INFO is pointless if not, but
+nothing bad can happen.
+
+Oleg.
 
