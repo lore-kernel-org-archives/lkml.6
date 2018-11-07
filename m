@@ -2,147 +2,153 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8FDC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3438C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B02F2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:38:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFa70hX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B02F2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id BD8D82089F
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:41:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8D82089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbeKHHKu (ORCPT
+        id S1727633AbeKHHNR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:10:50 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40269 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbeKHHKu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:10:50 -0500
-Received: by mail-pl1-f195.google.com with SMTP id q19-v6so5457576pll.7;
-        Wed, 07 Nov 2018 13:38:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=O6p/SxLdWuaDNw5TU6VIArAUGJsUpQ1DcX4dplbFCSU=;
-        b=AFa70hX0LydIxjfqZqnj0Ao82mKYnpVlSRzKjkGAE9tWlpmu8BrePkNY1eYwiOy5ju
-         lH2RNZbP54AvyevgjDhcSYTizGbyoc13D2E6M/lj5ORMkFoJRGFyhFMvnYkZDapQFk1d
-         Ygh4C6INksJHQJrAFyLO9SuNy8D1kXVnRyXL8R3zf+pq4crKXGRuwX1MJkkrKBU+J9Ng
-         0HVF+cWc9URmliD4BYxdbRfpUTLTfNsh1YDsp99bqm86NhXgh9L5yXRXdxQWF4FQRX/l
-         +bjIj0/Ated80afIcCUwwA5dehRcHtnrt0NaMnrj00iP8Kk7/t8zkV5lQyCGcVRWbe2y
-         pG+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=O6p/SxLdWuaDNw5TU6VIArAUGJsUpQ1DcX4dplbFCSU=;
-        b=e7QjwBsOxaDR+NlZKR0au9LuWPI+voNkQP0Xg7NHOOHfYFUevGShUmPDR3p3BKk9VN
-         sn0uadszrBJspWDXDqAb6FwsJxc7B8YycJuVTDKb4sEyWzgigLhnW+iVhHYdyh68fzXn
-         QrSVqjo0str68kNGVhpeToYh/bneZKlXvPGvFHoPzYeUWItaL6mdDDdEf1Qvq040JEut
-         NBuFPCvARkZTCLhkvzRFHv2MLTcQacHiOngdrkwq3Q3b3HGUg15WoCtzW4hHN7EGkEM2
-         7BOOx4I7Dpr5FIrtA8RHUDCaHqb6RHkKiwrebNRm6kNLQknkm/VW4GT9MIJvV9Q7N4Gi
-         ciGg==
-X-Gm-Message-State: AGRZ1gK16YUVsuwf/CYglY59NJ26ndqVnuvkxQ9w7nh7Say6lJeF7gXr
-        brpmQ98n45J+imN3fa3QMpw=
-X-Google-Smtp-Source: AJdET5dHPmXujlByEqZTbTk7G7rxzR8P3W25eHW2xC1OaEUBUomLF3D/prqKWvsH4dFmxmuEZTmZ1w==
-X-Received: by 2002:a17:902:5066:: with SMTP id f35-v6mr1911316plh.145.1541626714360;
-        Wed, 07 Nov 2018 13:38:34 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm1570329pgn.49.2018.11.07.13.38.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 13:38:33 -0800 (PST)
-Date:   Wed, 7 Nov 2018 13:38:32 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: hwmon: tmp108: add optional interrupts and
- #thermal-sensor-cells
-Message-ID: <20181107213831.GA14140@roeck-us.net>
-References: <20181107154708.422-1-heiko@sntech.de>
- <20181107183958.GB5468@roeck-us.net>
- <5910167.PXNgySJWA7@diego>
+        Thu, 8 Nov 2018 02:13:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:33699 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727443AbeKHHNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 02:13:17 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 13:41:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,477,1534834800"; 
+   d="scan'208";a="84770293"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Nov 2018 13:40:59 -0800
+Date:   Wed, 7 Nov 2018 13:40:59 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181107214058.GG27170@linux.intel.com>
+References: <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
+ <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
+ <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5910167.PXNgySJWA7@diego>
+In-Reply-To: <20181107212758.GU5150@brightrain.aerifal.cx>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 10:33:12PM +0100, Heiko Stübner wrote:
-> Hi Guenter,
-> 
-> Am Mittwoch, 7. November 2018, 19:39:58 CET schrieb Guenter Roeck:
-> > On Wed, Nov 07, 2018 at 04:47:08PM +0100, Heiko Stuebner wrote:
-> > > From: Heiko Stuebner <heiko.stuebner@bq.com>
+On Wed, Nov 07, 2018 at 04:27:58PM -0500, Rich Felker wrote:
+> On Tue, Nov 06, 2018 at 03:26:16PM -0800, Sean Christopherson wrote:
+> > On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
+> > > On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
+> > > > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
+> > > > >
+> > > > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
+> > > > > > I almost feel like the right solution is to call into SGX on its own
+> > > > > > private stack or maybe even its own private address space.
+> > > > >
+> > > > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
+> > > > > enclave like its own "thread" with its own stack and its own set of
+> > > > > registers and context?  That seems like a much more workable model than
+> > > > > trying to weave it together with the EENTER context.
+> > > > 
+> > > > So maybe the API should be, roughly
+> > > > 
+> > > > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
+> > > > host_state *state);
+> > > > sgx_exit_reason_t sgx_resume_enclave(same args);
+> > > > 
+> > > > where host_state is something like:
+> > > > 
+> > > > struct host_state {
+> > > >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
+> > > > };
+> > > > 
+> > > > and the values in host_state explicitly have nothing to do with the
+> > > > actual host registers.  So, if you want to use the outcall mechanism,
+> > > > you'd allocate some memory, point sp to that memory, call
+> > > > sgx_enter_enclave(), and then read that memory to do the outcall.
+> > > > 
+> > > > Actually implementing this would be distinctly nontrivial, and would
+> > > > almost certainly need some degree of kernel help to avoid an explosion
+> > > > when a signal gets delivered while we have host_state.sp loaded into
+> > > > the actual SP register.  Maybe rseq could help with this?
+> > > > 
+> > > > The ISA here is IMO not well thought through.
 > > > 
-> > > The tmp108 does have an alert output that can be used as interrupt source
-> > > and can of course also be used as part of a thermal sensor setup for
-> > > things
-> > > like thermal-based cpu frequencies, so document the necessary properties.
-> > > 
-> > > Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
+> > > Maybe I'm mistaken about some fundamentals here, but my understanding
+> > > of SGX is that the whole point is that the host application and the
+> > > code running in the enclave are mutually adversarial towards one
+> > > another. Do any or all of the proposed protocols here account for this
+> > > and fully protect the host application from malicious code in the
+> > > enclave? It seems that having control over the register file on exit
+> > > from the enclave is fundamentally problematic but I assume there must
+> > > be some way I'm missing that this is fixed up.
 > > 
-> > Do you also plan to actually implement interrupt support in the driver ?
+> > SGX provides protections for the enclave but not the other way around.
+> > The kernel has all of its normal non-SGX protections in place, but the
+> > enclave can certainly wreak havoc on its userspace process.  The basic
+> > design idea is that the enclave is a specialized .so that gets extra
+> > security protections but is still effectively part of the overall
+> > application, e.g. it has full access to its host userspace process'
+> > virtual memory.
 > 
-> Not right now but I'm hoping down the road.
-> 
-> The main argument for including this standard property is that
-> the dt-binding is of course a description of the hardware and not the
-> state of the linux driver and the tmp108 obviously has that alert output
-> pin, hence I'd really like to already have it in the new board-dts I'm
-> currently working on so it simply magically works once the driver can
-> use it :-) .
-> 
-NP, just asking. Let's wait for Rob's review, then I'll apply the patch
-unless he has issues.
+> In that case it seems like the only way to use SGX that's not a gaping
+> security hole is to run the SGX enclave in its own fully-seccomp (or
+> equivalent) process, with no host application in the same address
+> space. Since the host application can't see the contents of the
+> enclave to make any determination of whether it's safe to run, running
+> it in the same address space only makes sense if the cpu provides
+> protection against unwanted accesses to the host's memory from the
+> enclave -- and according to you, it doesn't.
 
-Thanks,
-Guenter
+The enclave's code (and any initial data) isn't encrypted until the
+pages are loaded into the Enclave Page Cache (EPC), which can only
+be done by the kernel (via ENCLS[EADD]).  In other words, both the
+kernel and userspace can vet the code/data before running an enclave.
 
-> 
-> Heiko
-> 
-> > > ---
-> > > 
-> > >  Documentation/devicetree/bindings/hwmon/tmp108.txt | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/hwmon/tmp108.txt
-> > > b/Documentation/devicetree/bindings/hwmon/tmp108.txt index
-> > > 8c4b10df86d9..54d4beed4ee5 100644
-> > > --- a/Documentation/devicetree/bindings/hwmon/tmp108.txt
-> > > +++ b/Documentation/devicetree/bindings/hwmon/tmp108.txt
-> > > 
-> > > @@ -7,6 +7,10 @@ Requires node properties:
-> > >  - compatible : "ti,tmp108"
-> > >  - reg : the I2C address of the device. This is 0x48, 0x49, 0x4a, or 0x4b.
-> > > 
-> > > +Optional properties:
-> > > +- interrupts: Reference to the TMP108 alert interrupt.
-> > > +- #thermal-sensor-cells: should be set to 0.
-> > > +
-> > > 
-> > >  Example:
-> > >  	tmp108@48 {
-> > >  	
-> > >  		compatible = "ti,tmp108";
-> 
-> 
-> 
-> 
+Practically speaking, an enclave will be coupled with an untrusted
+userspace runtime, i.e. it's loader.  Enclaves are also measured
+as part of their build process, and so the enclave loader needs to
+know which pages to add to the measurement, and in what order.  I
+guess technically speaking an enclave could have zero pages added
+to its measurement, but that'd probably be a big red flag that said
+enclave is up to something fishy.
