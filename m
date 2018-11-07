@@ -2,203 +2,139 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 145BCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3194C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C286E2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:13:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C286E2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 91D292081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:16:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="BzM35mhF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91D292081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeKHCpM (ORCPT
+        id S1728081AbeKHCrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:45:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:55122 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727772AbeKHCpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:45:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53535A78;
-        Wed,  7 Nov 2018 09:13:54 -0800 (PST)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 40A8D3F5CF;
-        Wed,  7 Nov 2018 09:13:52 -0800 (PST)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-        palmer@sifive.com, anup@brainfault.org, Damien.LeMoal@wdc.com,
-        mick@ics.forth.gr, atish.patra@wdc.com, mark.rutland@arm.com,
-        zong@andestech.com, alankao@andestech.com
-Subject: [RFC PATCH] Documentation: DT: arm: add support for sockets defining package boundaries
-Date:   Wed,  7 Nov 2018 17:13:44 +0000
-Message-Id: <20181107171344.983-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 7 Nov 2018 21:47:41 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:49332 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727576AbeKHCrl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:47:41 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 22B8324E0372;
+        Wed,  7 Nov 2018 09:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1541610983; bh=M5fTyR4ZdkZypVDxzlDWk94TVstF4kI7osU4Ap4uT4w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=BzM35mhFlyS2gTFv82Knxh8WOqKI6lbR+5xPO16ysqi56hDbQURlgofpNbQesuA0b
+         FcoKIqNYXF+0aDhHdptJOtvqGrTsfpi7+SX7uDwJSovaLblEKsC6EudquJZY6yxr5P
+         lLOt0zpB5QsFgKycHXIjH+RPClh3Kgj+CTZR1tdX1ML5IOUZrV/DcU4UyAVte+Zhe8
+         xnZPABkH9H4NLS0op4HLnrijLRYUuzblbrq0oYBDu4TWvb+K03p5VJfqLSEL0ESXgp
+         iXIkkEr+IOXz+hRhyXPIL4UOHCYiSCb8vdD8VstegOK2alAHGHliw2aU+iByF3HoSu
+         lZcTpZ4a3umiQ==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 016CC57A2;
+        Wed,  7 Nov 2018 09:16:18 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 7 Nov 2018 09:16:18 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 7 Nov 2018 18:16:16 +0100
+Received: from [10.0.2.15] (10.107.19.141) by DE02WEHTCB.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 7 Nov
+ 2018 18:16:16 +0100
+Subject: Re: [PATCH 1/3] i3c: master: Add driver for Synopsys DesignWare IP
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vitor Soares <vitor.soares@synopsys.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        "Cyprian Wronka" <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "Rafal Ciepiela" <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        "Kumar Gala" <galak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>, <mshettel@codeaurora.org>,
+        <swboyd@chromium.org>, <joao.pinto@synopsys.com>,
+        <luis.oliveira@synopsys.com>, <manuel.abreu@synopsys.com>,
+        <gustavo.pimentel@synopsys.com>
+References: <1540807618-13246-1-git-send-email-soares@synopsys.com>
+ <1540807618-13246-2-git-send-email-soares@synopsys.com>
+ <20181029134100.GD28520@bombadil.infradead.org>
+ <8a71cb94-ccf5-8ec0-446a-37a29405f585@synopsys.com>
+ <CAMuHMdUO5_-TsGiu3otuLqNtLNgdnw=1QdKjTzPmSxHp9QotxQ@mail.gmail.com>
+From:   vitor <vitor.soares@synopsys.com>
+Message-ID: <4e05e568-c010-a6db-92b1-4c26ad503333@synopsys.com>
+Date:   Wed, 7 Nov 2018 17:16:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUO5_-TsGiu3otuLqNtLNgdnw=1QdKjTzPmSxHp9QotxQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.19.141]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current ARM DT topology description provides the operating system
-with a topological view of the system that is based on leaf nodes
-representing either cores or threads (in an SMT system) and a
-hierarchical set of cluster nodes that creates a hierarchical topology
-view of how those cores and threads are grouped.
+Hi Geert,
 
-However this hierarchical representation of clusters does not allow to
-describe what topology level actually represents the physical package or
-the socket boundary, which is a key piece of information to be used by
-an operating system to optimize resource allocation and scheduling.
+On 07/11/18 15:34, Geert Uytterhoeven wrote:
+> Hi Vitor,
+>
+> On Wed, Nov 7, 2018 at 4:15 PM vitor <vitor.soares@synopsys.com> wrote:
+>> On 29/10/18 13:41, Matthew Wilcox wrote:
+>>> On Mon, Oct 29, 2018 at 10:06:56AM +0000, Vitor soares wrote:
+>>>> +config DW_I3C_MASTER
+>>>> +    tristate "Synospsys DesignWare I3C master driver"
+>>>> +    depends on I3C
+>>>> +    depends on !(ALPHA || PARISC)
+>>> why?
+>> Please check this email thread: https://urldefense.proofpoint.com/v2/url?u=https-3A__lkml.org_lkml_2018_10_8_393&d=DwIBaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=dVPXOATdi751iTXEXYcWuChJA6hcIkXr8tF-i9hrv4E&s=Nk3lXNpRMzhvKMnlXUsFySTr5VYAr2228vXaZfiGBgM&e=
+> Hence this deserves a comment, so we know when/what to do to drop the
+> dependency:
+>
+>      depends on  !(ALPHA || PARISC) # needs {read,write}sl()
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+I agree with you, I just didn't know if I should comment or not. I will 
+do that next version.
 
-Lets add a new "socket" node type in the cpu-map node to describe the
-same.
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- .../devicetree/bindings/arm/topology.txt      | 52 ++++++++++++++-----
- 1 file changed, 39 insertions(+), 13 deletions(-)
+Best regards,
 
-(Note patch generated with -b option to avoid 60+ of whitespace changes)
-
-Hi Rob,
-
-You had expressed your interest to generalise the CPU topology bindings
-accross multiple architectures. Do you want to move to the generic
-bindings before adding this $subject socket support or is it OK to
-finalise on this and then move the majority(based on the agreement)
-to generic binding.
-
-Regards,
-Sudeep
-
-diff --git a/Documentation/devicetree/bindings/arm/topology.txt b/Documentation/devicetree/bindings/arm/topology.txt
-index de9eb0486630..668483554cca 100644
---- a/Documentation/devicetree/bindings/arm/topology.txt
-+++ b/Documentation/devicetree/bindings/arm/topology.txt
-@@ -9,6 +9,7 @@ ARM topology binding description
- In an ARM system, the hierarchy of CPUs is defined through three entities that
- are used to describe the layout of physical CPUs in the system:
-
-+- socket
- - cluster
- - core
- - thread
-@@ -63,21 +64,23 @@ nodes are listed.
-
- 	The cpu-map node's child nodes can be:
-
--	- one or more cluster nodes
-+	- one or more cluster nodes or
-+	- one or more socket nodes in a multi-socket system
-
- 	Any other configuration is considered invalid.
-
--The cpu-map node can only contain three types of child nodes:
-+The cpu-map node can only contain 4 types of child nodes:
-
-+- socket node
- - cluster node
- - core node
- - thread node
-
- whose bindings are described in paragraph 3.
-
--The nodes describing the CPU topology (cluster/core/thread) can only
--be defined within the cpu-map node and every core/thread in the system
--must be defined within the topology.  Any other configuration is
-+The nodes describing the CPU topology (socket/cluster/core/thread) can
-+only be defined within the cpu-map node and every core/thread in the
-+system must be defined within the topology.  Any other configuration is
- invalid and therefore must be ignored.
-
- ===========================================
-@@ -85,26 +88,44 @@ invalid and therefore must be ignored.
- ===========================================
-
- cpu-map child nodes must follow a naming convention where the node name
--must be "clusterN", "coreN", "threadN" depending on the node type (ie
--cluster/core/thread) (where N = {0, 1, ...} is the node number; nodes which
--are siblings within a single common parent node must be given a unique and
-+must be "socketN", "clusterN", "coreN", "threadN" depending on the node type
-+(ie socket/cluster/core/thread) (where N = {0, 1, ...} is the node number; nodes
-+which are siblings within a single common parent node must be given a unique and
- sequential N value, starting from 0).
- cpu-map child nodes which do not share a common parent node can have the same
- name (ie same number N as other cpu-map child nodes at different device tree
- levels) since name uniqueness will be guaranteed by the device tree hierarchy.
-
- ===========================================
--3 - cluster/core/thread node bindings
-+3 - socket/cluster/core/thread node bindings
- ===========================================
-
--Bindings for cluster/cpu/thread nodes are defined as follows:
-+Bindings for socket/cluster/cpu/thread nodes are defined as follows:
-+
-+- socket node
-+
-+	 Description: must be declared within a cpu-map node, one node
-+		      per physical socket in the system. A system can
-+		      contain single or multiple physical socket.
-+		      The association of sockets and NUMA nodes is beyond
-+		      the scope of this bindings, please refer [2] for
-+		      NUMA bindings.
-+
-+	This node is optional for a single socket system.
-+
-+	The socket node name must be "socketN" as described in 2.1 above.
-+	A socket node can not be a leaf node.
-+
-+	A socket node's child nodes must be one or more cluster nodes.
-+
-+	Any other configuration is considered invalid.
-
- - cluster node
-
- 	 Description: must be declared within a cpu-map node, one node
- 		      per cluster. A system can contain several layers of
--		      clustering and cluster nodes can be contained in parent
--		      cluster nodes.
-+		      clustering within a single physical socket and cluster
-+		      nodes can be contained in parent cluster nodes.
-
- 	The cluster node name must be "clusterN" as described in 2.1 above.
- 	A cluster node can not be a leaf node.
-@@ -164,13 +185,15 @@ levels) since name uniqueness will be guaranteed by the device tree hierarchy.
- 4 - Example dts
- ===========================================
-
--Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters):
-+Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters in a single
-+physical socket):
-
- cpus {
- 	#size-cells = <0>;
- 	#address-cells = <2>;
-
- 	cpu-map {
-+		socket0 {
- 			cluster0 {
- 				cluster0 {
- 					core0 {
-@@ -253,6 +276,7 @@ cpus {
- 				};
- 			};
- 		};
-+	};
-
- 	CPU0: cpu@0 {
- 		device_type = "cpu";
-@@ -473,3 +497,5 @@ cpus {
- ===============================================================================
- [1] ARM Linux kernel documentation
-     Documentation/devicetree/bindings/arm/cpus.txt
-+[2] Devicetree NUMA binding description
-+    Documentation/devicetree/bindings/numa.txt
---
-2.17.1
+Vitor Soares
 
