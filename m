@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB230C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C75C46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E13F20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E13F20827
+	by mail.kernel.org (Postfix) with ESMTP id F30482086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30482086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388505AbeKGNey (ORCPT
+        id S2388724AbeKGNez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 08:34:54 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14606 "EHLO huawei.com"
+        Wed, 7 Nov 2018 08:34:55 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14189 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730912AbeKGNew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 08:34:52 -0500
+        id S1730991AbeKGNey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 08:34:54 -0500
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BDEDC2D2548A2;
-        Wed,  7 Nov 2018 12:06:11 +0800 (CST)
+        by Forcepoint Email with ESMTP id 3A9493E229CE6;
+        Wed,  7 Nov 2018 12:06:17 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 7 Nov 2018 12:06:05 +0800
+ 14.3.408.0; Wed, 7 Nov 2018 12:06:07 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <linuxarm@huawei.com>
-Subject: [Patch net-next 03/12] net: hns3: provide some interface & information for the client
-Date:   Wed, 7 Nov 2018 12:06:09 +0800
-Message-ID: <1541563578-28973-4-git-send-email-tanhuazhong@huawei.com>
+Subject: [Patch net-next 11/12] net: hns3: add error handler for hclge_reset()
+Date:   Wed, 7 Nov 2018 12:06:17 +0800
+Message-ID: <1541563578-28973-12-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541563578-28973-1-git-send-email-tanhuazhong@huawei.com>
 References: <1541563578-28973-1-git-send-email-tanhuazhong@huawei.com>
@@ -48,194 +48,282 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The client needs to know if the hardware is resetting when
-loading or unloading itself, because client may abort the loading
-process or wait for the reset process to finish when unloading
-if hardware is resetting.
+When hclge_reset() is called, it may fail for several reasons.
+For example, an higher-level reset event occurs, memory allocation
+failure, hardware reset timeout, etc. Therefore, it is necessary
+to add corresponding error handling for these situations.
+1. A high-level reset is required due to a high-level reset failure.
+2. For memory allocation failure, a high-level reset is initiated by
+the timer to recover. The reason for using the timer is to prevent this
+new high-level reset to interrupt the reset process of other pf/vf;
+3. For the case of hardware reset timeout, reschedule the reset task
+to wait for the hardware to complete the reset.
+For memory allocation failure and reset timeouts, in order to prevent
+an infinite number of scheduled reset tasks, the number of error
+recovery needs to be limited.
 
-So this patch provides these interfaces to do it.
-1. get_hw_reset_stat, the reset status of hardware.
-2. ae_dev_resetting, whether reset task is scheduling.
-3. ae_dev_reset_cnt, how many reset has been done.
-
-Also, the RoCE client needs some field in the hnae3_roce_private_info
-to save its state, and process_hw_error interface in the
-hnae3_client_ops to process hardware errors.
+This patch also add some reset related debug log printing.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        | 12 +++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 29 ++++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  1 +
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 25 +++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |  1 +
- 5 files changed, 68 insertions(+)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 139 +++++++++++++++++----
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   3 +
+ 2 files changed, 120 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index 7deab92..f57034d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -162,6 +162,7 @@ struct hnae3_client_ops {
- 	int (*setup_tc)(struct hnae3_handle *handle, u8 tc);
- 	int (*reset_notify)(struct hnae3_handle *handle,
- 			    enum hnae3_reset_notify_type type);
-+	enum hnae3_reset_type (*process_hw_error)(struct hnae3_handle *handle);
- };
- 
- #define HNAE3_CLIENT_NAME_LENGTH 16
-@@ -432,6 +433,9 @@ struct hnae3_ae_ops {
- 	int (*restore_fd_rules)(struct hnae3_handle *handle);
- 	void (*enable_fd)(struct hnae3_handle *handle, bool enable);
- 	pci_ers_result_t (*process_hw_error)(struct hnae3_ae_dev *ae_dev);
-+	bool (*get_hw_reset_stat)(struct hnae3_handle *handle);
-+	bool (*ae_dev_resetting)(struct hnae3_handle *handle);
-+	unsigned long (*ae_dev_reset_cnt)(struct hnae3_handle *handle);
- };
- 
- struct hnae3_dcb_ops {
-@@ -490,6 +494,14 @@ struct hnae3_roce_private_info {
- 	void __iomem *roce_io_base;
- 	int base_vector;
- 	int num_vectors;
-+
-+	/* The below attributes defined for RoCE client, hnae3 gives
-+	 * initial values to them, and RoCE client can modify and use
-+	 * them.
-+	 */
-+	unsigned long reset_state;
-+	unsigned long instance_state;
-+	unsigned long state;
- };
- 
- struct hnae3_unic_private_info {
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 5e6006b..b669542 100644
+index 0c0327b..579945b 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2466,6 +2466,7 @@ static void hclge_reset(struct hclge_dev *hdev)
- 	 * know if device is undergoing reset
- 	 */
- 	ae_dev->reset_type = hdev->reset_type;
-+	hdev->reset_count++;
- 	/* perform reset of the stack & ae device for a client */
- 	handle = &hdev->vport[0].nic;
- 	rtnl_lock();
-@@ -4604,6 +4605,31 @@ static int hclge_get_all_rules(struct hnae3_handle *handle,
+@@ -2145,6 +2145,7 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ 
+ 	/* check for vector0 reset event sources */
+ 	if (BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B) & rst_src_reg) {
++		dev_info(&hdev->pdev->dev, "global reset interrupt\n");
+ 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
+ 		set_bit(HNAE3_GLOBAL_RESET, &hdev->reset_pending);
+ 		*clearval = BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B);
+@@ -2152,6 +2153,7 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ 	}
+ 
+ 	if (BIT(HCLGE_VECTOR0_CORERESET_INT_B) & rst_src_reg) {
++		dev_info(&hdev->pdev->dev, "core reset interrupt\n");
+ 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
+ 		set_bit(HNAE3_CORE_RESET, &hdev->reset_pending);
+ 		*clearval = BIT(HCLGE_VECTOR0_CORERESET_INT_B);
+@@ -2159,6 +2161,7 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ 	}
+ 
+ 	if (BIT(HCLGE_VECTOR0_IMPRESET_INT_B) & rst_src_reg) {
++		dev_info(&hdev->pdev->dev, "IMP reset interrupt\n");
+ 		set_bit(HNAE3_IMP_RESET, &hdev->reset_pending);
+ 		*clearval = BIT(HCLGE_VECTOR0_IMPRESET_INT_B);
+ 		return HCLGE_VECTOR0_EVENT_RST;
+@@ -2308,8 +2311,11 @@ static int hclge_notify_client(struct hclge_dev *hdev,
+ 		int ret;
+ 
+ 		ret = client->ops->reset_notify(handle, type);
+-		if (ret)
++		if (ret) {
++			dev_err(&hdev->pdev->dev,
++				"notify nic client failed %d(%d)\n", type, ret);
+ 			return ret;
++		}
+ 	}
+ 
  	return 0;
+@@ -2518,9 +2524,49 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
+ 	return ret;
  }
  
-+static bool hclge_get_hw_reset_stat(struct hnae3_handle *handle)
++static bool hclge_reset_err_handle(struct hclge_dev *hdev, bool is_timeout)
 +{
-+	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct hclge_dev *hdev = vport->back;
++#define MAX_RESET_FAIL_CNT 5
++#define RESET_UPGRADE_DELAY_SEC 10
 +
-+	return hclge_read_dev(&hdev->hw, HCLGE_GLOBAL_RESET_REG) ||
-+	       hclge_read_dev(&hdev->hw, HCLGE_FUN_RST_ING);
++	if (hdev->reset_pending) {
++		dev_info(&hdev->pdev->dev, "Reset pending %lu\n",
++			 hdev->reset_pending);
++		return true;
++	} else if ((hdev->reset_type != HNAE3_IMP_RESET) &&
++		   (hclge_read_dev(&hdev->hw, HCLGE_GLOBAL_RESET_REG) &
++		    BIT(HCLGE_IMP_RESET_BIT))) {
++		dev_info(&hdev->pdev->dev,
++			 "reset failed because IMP Reset is pending\n");
++		hclge_clear_reset_cause(hdev);
++		return false;
++	} else if (hdev->reset_fail_cnt < MAX_RESET_FAIL_CNT) {
++		hdev->reset_fail_cnt++;
++		if (is_timeout) {
++			set_bit(hdev->reset_type, &hdev->reset_pending);
++			dev_info(&hdev->pdev->dev,
++				 "re-schedule to wait for hw reset done\n");
++			return true;
++		}
++
++		dev_info(&hdev->pdev->dev, "Upgrade reset level\n");
++		hclge_clear_reset_cause(hdev);
++		mod_timer(&hdev->reset_timer,
++			  jiffies + RESET_UPGRADE_DELAY_SEC * HZ);
++
++		return false;
++	}
++
++	hclge_clear_reset_cause(hdev);
++	dev_err(&hdev->pdev->dev, "Reset fail!\n");
++	return false;
 +}
 +
-+static bool hclge_ae_dev_resetting(struct hnae3_handle *handle)
-+{
-+	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct hclge_dev *hdev = vport->back;
-+
-+	return test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state);
-+}
-+
-+static unsigned long hclge_ae_dev_reset_cnt(struct hnae3_handle *handle)
-+{
-+	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct hclge_dev *hdev = vport->back;
-+
-+	return hdev->reset_count;
-+}
-+
- static void hclge_enable_fd(struct hnae3_handle *handle, bool enable)
+ static void hclge_reset(struct hclge_dev *hdev)
  {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
-@@ -7350,6 +7376,9 @@ static const struct hnae3_ae_ops hclge_ops = {
- 	.restore_fd_rules = hclge_restore_fd_entries,
- 	.enable_fd = hclge_enable_fd,
- 	.process_hw_error = hclge_process_ras_hw_error,
-+	.get_hw_reset_stat = hclge_get_hw_reset_stat,
-+	.ae_dev_resetting = hclge_ae_dev_resetting,
-+	.ae_dev_reset_cnt = hclge_ae_dev_reset_cnt,
- };
+ 	struct hnae3_ae_dev *ae_dev = pci_get_drvdata(hdev->pdev);
++	bool is_timeout = false;
++	int ret;
  
- static struct hnae3_ae_algo ae_algo = {
+ 	/* Initialize ae_dev reset status as well, in case enet layer wants to
+ 	 * know if device is undergoing reset
+@@ -2529,34 +2575,66 @@ static void hclge_reset(struct hclge_dev *hdev)
+ 	hdev->reset_count++;
+ 	hdev->last_reset_time = jiffies;
+ 	/* perform reset of the stack & ae device for a client */
+-	hclge_notify_roce_client(hdev, HNAE3_DOWN_CLIENT);
++	ret = hclge_notify_roce_client(hdev, HNAE3_DOWN_CLIENT);
++	if (ret)
++		goto err_reset;
++
+ 	rtnl_lock();
+-	hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
+-	rtnl_unlock();
++	ret = hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
++	if (ret)
++		goto err_reset_lock;
+ 
+-	hclge_reset_prepare_wait(hdev);
++	rtnl_unlock();
+ 
+-	if (!hclge_reset_wait(hdev)) {
+-		hclge_notify_roce_client(hdev, HNAE3_UNINIT_CLIENT);
+-		rtnl_lock();
+-		hclge_notify_client(hdev, HNAE3_UNINIT_CLIENT);
+-		hclge_reset_ae_dev(hdev->ae_dev);
+-		hclge_notify_client(hdev, HNAE3_INIT_CLIENT);
++	ret = hclge_reset_prepare_wait(hdev);
++	if (ret)
++		goto err_reset;
+ 
+-		hclge_clear_reset_cause(hdev);
+-	} else {
+-		rtnl_lock();
+-		/* schedule again to check pending resets later */
+-		set_bit(hdev->reset_type, &hdev->reset_pending);
+-		hclge_reset_task_schedule(hdev);
++	if (hclge_reset_wait(hdev)) {
++		is_timeout = true;
++		goto err_reset;
+ 	}
+ 
+-	hclge_notify_client(hdev, HNAE3_UP_CLIENT);
++	ret = hclge_notify_roce_client(hdev, HNAE3_UNINIT_CLIENT);
++	if (ret)
++		goto err_reset;
++
++	rtnl_lock();
++	ret = hclge_notify_client(hdev, HNAE3_UNINIT_CLIENT);
++	if (ret)
++		goto err_reset_lock;
++
++	ret = hclge_reset_ae_dev(hdev->ae_dev);
++	if (ret)
++		goto err_reset_lock;
++
++	ret = hclge_notify_client(hdev, HNAE3_INIT_CLIENT);
++	if (ret)
++		goto err_reset_lock;
++
++	hclge_clear_reset_cause(hdev);
++
++	ret = hclge_notify_client(hdev, HNAE3_UP_CLIENT);
++	if (ret)
++		goto err_reset_lock;
++
+ 	rtnl_unlock();
+-	ae_dev->reset_type = HNAE3_NONE_RESET;
+ 
+-	hclge_notify_roce_client(hdev, HNAE3_INIT_CLIENT);
+-	hclge_notify_roce_client(hdev, HNAE3_UP_CLIENT);
++	ret = hclge_notify_roce_client(hdev, HNAE3_INIT_CLIENT);
++	if (ret)
++		goto err_reset;
++
++	ret = hclge_notify_roce_client(hdev, HNAE3_UP_CLIENT);
++	if (ret)
++		goto err_reset;
++
++	return;
++
++err_reset_lock:
++	rtnl_unlock();
++err_reset:
++	if (hclge_reset_err_handle(hdev, is_timeout))
++		hclge_reset_task_schedule(hdev);
+ }
+ 
+ static void hclge_reset_event(struct pci_dev *pdev, struct hnae3_handle *handle)
+@@ -2610,6 +2688,16 @@ static void hclge_set_def_reset_request(struct hnae3_ae_dev *ae_dev,
+ 	set_bit(rst_type, &hdev->default_reset_request);
+ }
+ 
++static void hclge_reset_timer(struct timer_list *t)
++{
++	struct hclge_dev *hdev = from_timer(hdev, t, reset_timer);
++
++	dev_info(&hdev->pdev->dev,
++		 "triggering global reset in reset timer\n");
++	set_bit(HNAE3_GLOBAL_RESET, &hdev->default_reset_request);
++	hclge_reset_event(hdev->pdev, NULL);
++}
++
+ static void hclge_reset_subtask(struct hclge_dev *hdev)
+ {
+ 	/* check if there is any ongoing reset in the hardware. This status can
+@@ -4416,8 +4504,12 @@ static int hclge_restore_fd_entries(struct hnae3_handle *handle)
+ 	struct hlist_node *node;
+ 	int ret;
+ 
++	/* Return ok here, because reset error handling will check this
++	 * return value. If error is returned here, the reset process will
++	 * fail.
++	 */
+ 	if (!hnae3_dev_fd_supported(hdev))
+-		return -EOPNOTSUPP;
++		return 0;
+ 
+ 	hlist_for_each_entry_safe(rule, node, &hdev->fd_rule_list, rule_node) {
+ 		ret = hclge_config_action(hdev, HCLGE_FD_STAGE_1, rule);
+@@ -6713,6 +6805,8 @@ static void hclge_state_uninit(struct hclge_dev *hdev)
+ 
+ 	if (hdev->service_timer.function)
+ 		del_timer_sync(&hdev->service_timer);
++	if (hdev->reset_timer.function)
++		del_timer_sync(&hdev->reset_timer);
+ 	if (hdev->service_task.func)
+ 		cancel_work_sync(&hdev->service_task);
+ 	if (hdev->rst_service_task.func)
+@@ -6871,6 +6965,7 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 	hclge_dcb_ops_set(hdev);
+ 
+ 	timer_setup(&hdev->service_timer, hclge_service_timer, 0);
++	timer_setup(&hdev->reset_timer, hclge_reset_timer, 0);
+ 	INIT_WORK(&hdev->service_task, hclge_service_task);
+ 	INIT_WORK(&hdev->rst_service_task, hclge_reset_service_task);
+ 	INIT_WORK(&hdev->mbx_service_task, hclge_mailbox_service_task);
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 7cfb61e..b6a17f5 100644
+index 69bdb7f..36f3413 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -598,6 +598,7 @@ struct hclge_dev {
- 	unsigned long default_reset_request;
+@@ -102,6 +102,7 @@ enum HLCGE_PORT_TYPE {
+ #define HCLGE_GLOBAL_RESET_REG		0x20A00
+ #define HCLGE_GLOBAL_RESET_BIT		0
+ #define HCLGE_CORE_RESET_BIT		1
++#define HCLGE_IMP_RESET_BIT		2
+ #define HCLGE_FUN_RST_ING		0x20C00
+ #define HCLGE_FUN_RST_ING_B		0
+ 
+@@ -601,6 +602,7 @@ struct hclge_dev {
  	unsigned long reset_request;	/* reset has been requested */
  	unsigned long reset_pending;	/* client rst is pending to be served */
-+	unsigned long reset_count;	/* the number of reset has been done */
+ 	unsigned long reset_count;	/* the number of reset has been done */
++	u32 reset_fail_cnt;
  	u32 fw_version;
  	u16 num_vmdq_vport;		/* Num vmdq vport this PF has set up */
  	u16 num_tqps;			/* Num task queue pairs of this PF */
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 42982fc..517204b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1165,6 +1165,7 @@ static int hclgevf_reset(struct hclgevf_dev *hdev)
- {
- 	int ret;
- 
-+	hdev->reset_count++;
- 	rtnl_lock();
- 
- 	/* bring down the nic to stop any ongoing TX/RX */
-@@ -2185,6 +2186,27 @@ static void hclgevf_get_media_type(struct hnae3_handle *handle,
- 		*media_type = hdev->hw.mac.media_type;
- }
- 
-+static bool hclgevf_get_hw_reset_stat(struct hnae3_handle *handle)
-+{
-+	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+
-+	return !!hclgevf_read_dev(&hdev->hw, HCLGEVF_FUN_RST_ING);
-+}
-+
-+static bool hclgevf_ae_dev_resetting(struct hnae3_handle *handle)
-+{
-+	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+
-+	return test_bit(HCLGEVF_STATE_RST_HANDLING, &hdev->state);
-+}
-+
-+static unsigned long hclgevf_ae_dev_reset_cnt(struct hnae3_handle *handle)
-+{
-+	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+
-+	return hdev->reset_count;
-+}
-+
- static const struct hnae3_ae_ops hclgevf_ops = {
- 	.init_ae_dev = hclgevf_init_ae_dev,
- 	.uninit_ae_dev = hclgevf_uninit_ae_dev,
-@@ -2225,6 +2247,9 @@ static const struct hnae3_ae_ops hclgevf_ops = {
- 	.get_status = hclgevf_get_status,
- 	.get_ksettings_an_result = hclgevf_get_ksettings_an_result,
- 	.get_media_type = hclgevf_get_media_type,
-+	.get_hw_reset_stat = hclgevf_get_hw_reset_stat,
-+	.ae_dev_resetting = hclgevf_ae_dev_resetting,
-+	.ae_dev_reset_cnt = hclgevf_ae_dev_reset_cnt,
- };
- 
- static struct hnae3_ae_algo ae_algovf = {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-index 6b2fd5a..ffb8c77 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-@@ -150,6 +150,7 @@ struct hclgevf_dev {
- #define HCLGEVF_RESET_REQUESTED		0
- #define HCLGEVF_RESET_PENDING		1
- 	unsigned long reset_state;	/* requested, pending */
-+	unsigned long reset_count;	/* the number of reset has been done */
- 	u32 reset_attempts;
- 
- 	u32 fw_version;
+@@ -648,6 +650,7 @@ struct hclge_dev {
+ 	unsigned long service_timer_period;
+ 	unsigned long service_timer_previous;
+ 	struct timer_list service_timer;
++	struct timer_list reset_timer;
+ 	struct work_struct service_task;
+ 	struct work_struct rst_service_task;
+ 	struct work_struct mbx_service_task;
 -- 
 2.7.4
 
