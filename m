@@ -2,83 +2,131 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FC4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CD1C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2068D20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:50:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2068D20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id B1AC420892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:52:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1AC420892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731141AbeKHBVu (ORCPT
+        id S1731153AbeKHBXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:21:50 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:41382 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727645AbeKHBVt (ORCPT
+        Wed, 7 Nov 2018 20:23:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51131 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727604AbeKHBXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:21:49 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 8EEBA72CA56;
-        Wed,  7 Nov 2018 18:50:52 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 804057CC774; Wed,  7 Nov 2018 18:50:52 +0300 (MSK)
-Date:   Wed, 7 Nov 2018 18:50:52 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-kernel@vger.kernel.org, strace-devel@lists.strace.io
-Subject: Re: [RFC PATCH] ptrace: add PTRACE_GET_SYSCALL_INFO request
-Message-ID: <20181107155052.GA27736@altlinux.org>
-Mail-Followup-To: Andy Lutomirski <luto@amacapital.net>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-kernel@vger.kernel.org, strace-devel@lists.strace.io
-References: <20181107042751.3b519062@akathisia>
+        Wed, 7 Nov 2018 20:23:18 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA7Fpsrj1468338
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 7 Nov 2018 07:51:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA7FprO11468333;
+        Wed, 7 Nov 2018 07:51:53 -0800
+Date:   Wed, 7 Nov 2018 07:51:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-f26621e60b35369bca9228bc936dc723b3e421af@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        bp@suse.de, tglx@linutronix.de, torvalds@linux-foundation.org,
+        mingo@kernel.org
+Reply-To: bp@suse.de, tglx@linutronix.de, torvalds@linux-foundation.org,
+          mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          peterz@infradead.org
+In-Reply-To: <20181105093307.GA12445@zn.tnic>
+References: <20181105093307.GA12445@zn.tnic>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] resource/docs: Complete kernel-doc style function
+ documentation
+Git-Commit-ID: f26621e60b35369bca9228bc936dc723b3e421af
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181107042751.3b519062@akathisia>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 04:27:51AM +0100, Elvira Khabirova wrote:
-[...]
-> The structure was chosen according to [2], except for two changes.
-> First: instead of an arch field with a value of AUDIT_ARCH_*, a boolean
-> is_compat value is returned, because a) not all arches have an AUDIT_ARCH_*
-> defined for them,
+Commit-ID:  f26621e60b35369bca9228bc936dc723b3e421af
+Gitweb:     https://git.kernel.org/tip/f26621e60b35369bca9228bc936dc723b3e421af
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Mon, 5 Nov 2018 10:33:07 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 7 Nov 2018 16:47:47 +0100
 
-To be more specific, here is the list of arch subtrees in v4.20-rc1 that
-invoke tracehook_report_syscall_entry() but do not provide syscall_get_arch():
+resource/docs: Complete kernel-doc style function documentation
 
-arch/arc
-arch/c6x
-arch/h8300
-arch/hexagon
-arch/m68k
-arch/nds32
-arch/nios2
-arch/riscv
-arch/um
-arch/xtensa
+Add the missing kernel-doc style function parameters documentation.
 
-Among these trees only m68k has its AUDIT_ARCH_M68K constant defined.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akpm@linux-foundation.org
+Cc: linux-tip-commits@vger.kernel.org
+Cc: rdunlap@infradead.org
+Fixes: b69c2e20f6e4 ("resource: Clean it up a bit")
+Link: http://lkml.kernel.org/r/20181105093307.GA12445@zn.tnic
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/resource.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-
--- 
-ldv
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 17bcb189d530..b0fbf685c77a 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -318,17 +318,24 @@ int release_resource(struct resource *old)
+ 
+ EXPORT_SYMBOL(release_resource);
+ 
+-/*
+- * Finds the lowest iomem resource that covers part of [start..end].  The
+- * caller must specify start, end, flags, and desc (which may be
++/**
++ * Finds the lowest iomem resource that covers part of [@start..@end].  The
++ * caller must specify @start, @end, @flags, and @desc (which may be
+  * IORES_DESC_NONE).
+  *
+- * If a resource is found, returns 0 and *res is overwritten with the part
+- * of the resource that's within [start..end]; if none is found, returns
+- * -1. Returns -EINVAL for other invalid parameters.
++ * If a resource is found, returns 0 and @*res is overwritten with the part
++ * of the resource that's within [@start..@end]; if none is found, returns
++ * -1 or -EINVAL for other invalid parameters.
+  *
+  * This function walks the whole tree and not just first level children
+  * unless @first_lvl is true.
++ *
++ * @start:	start address of the resource searched for
++ * @end:	end address of same resource
++ * @flags:	flags which the resource must have
++ * @desc:	descriptor the resource must have
++ * @first_lvl:	walk only the first level children, if set
++ * @res:	return ptr, if resource found
+  */
+ static int find_next_iomem_res(resource_size_t start, resource_size_t end,
+ 			       unsigned long flags, unsigned long desc,
+@@ -390,9 +397,7 @@ static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
+ }
+ 
+ /**
+- * walk_iomem_res_desc - walk through iomem resources
+- *
+- * Walks through iomem resources and calls @func() with matching resource
++ * Walks through iomem resources and calls func() with matching resource
+  * ranges. This walks through whole tree and not just first level children.
+  * All the memory ranges which overlap start,end and also match flags and
+  * desc are valid candidates.
