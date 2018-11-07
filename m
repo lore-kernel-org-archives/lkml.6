@@ -2,106 +2,102 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5536C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C69EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FD020827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:25:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJtOtHnU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FD020827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A3F12086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:26:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3F12086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeKGPyf (ORCPT
+        id S1729747AbeKGPy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 10:54:35 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37562 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeKGPyf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 10:54:35 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p2-v6so14518947wmc.2;
-        Tue, 06 Nov 2018 22:25:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aR49N8yjTibP5fGwJiI0weDQN1eLl7ZUPmm8Gnaamls=;
-        b=UJtOtHnU3j/wWHB8hT2V0JrU9Y6A161as69O0J0PdpesufJq+pIkZT31ae666lAF8z
-         1Ayk4yEs85cAEfs7qunshh50vMI2PgqIpBhj6wckKu1I3TwxOTFZrwUrnEWazSGSFe7+
-         FDDHEzBuexaJQh3uc1IroOfL/eKJHhicSuemgSrSIR7T4L1ACYwOwE+r5UnBSpNFWlGP
-         eKg5E9lJfeXQjbBo5LbfHv4fyBWe0PcgaNc+GhrnCHB5MA4SjNn0MSQSady+XyZJbzGg
-         oZKL0BzThCJ72pmbA/6UfjXSlLPS5yNRu1fHye9Bca4Ib1cVRAMXABPZMhYgeJrkQfz5
-         jhKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aR49N8yjTibP5fGwJiI0weDQN1eLl7ZUPmm8Gnaamls=;
-        b=ZQ8/7AFQoACeKfDaF0CrHbUk/OH6PoHQroemhM/4X+geUj3UmMk1yZVAlICj+IGyM1
-         ctr6lK9dW2DPmpYE9QNgEIcaabkTVRag38L3PMyLPCCd4wGf1+FB7TYGfhLYuaZ+vlav
-         svNxmyYXI7KjMsfFm/SVV2ew5J24FyN0heq355vr3NPLo/rN6H9wqdb8t+jM/RhIX5ys
-         rUuRPzW2XwufX05IKekByav8ZV78xpVIlkBpN5t9fdiXVatnWeNlnKhd7GBiuojqURDR
-         vEzd3Q3HWWzaqLQb6YKas1eWtKiVnwyM1w249UkBKden5SnxWPTrD604MrciCv5SWADe
-         4/pg==
-X-Gm-Message-State: AGRZ1gLxfNITh7vfRY25lrkJ4+VhceR4VPlV2+pA904gK+HaA80Dg+zl
-        5c8vAbCSbvvuCA3qAhIHPfY=
-X-Google-Smtp-Source: AJdET5d1xR15tmyY+MQ5TCTAuJvAKVXWIyZF2mVqR2UObGa8gkHSox7LV+IedJgLZox69yFraTrYvA==
-X-Received: by 2002:a1c:39c1:: with SMTP id g184-v6mr712244wma.93.1541571938242;
-        Tue, 06 Nov 2018 22:25:38 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id y2-v6sm21657752wrh.53.2018.11.06.22.25.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 22:25:37 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] media: imx214: Remove unnecessary self assignment in for loop
-Date:   Tue,  6 Nov 2018 23:24:50 -0700
-Message-Id: <20181107062450.5511-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 7 Nov 2018 10:54:56 -0500
+Received: from mga17.intel.com ([192.55.52.151]:44023 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726194AbeKGPy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 10:54:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 22:26:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,474,1534834800"; 
+   d="scan'208";a="278987454"
+Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Nov 2018 22:25:58 -0800
+Subject: Re: [PATCH] lib/genaloc: Fix allocation of aligned buffer from
+ non-aligned chunk
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     sbates@raithlin.com, logang@deltatee.com, danielmentz@google.com,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        labbott@redhat.com
+References: <1541506853-10685-1-git-send-email-alexey.skidanov@intel.com>
+ <20181106141542.08a9d7de30a439ec9fe50486@linux-foundation.org>
+From:   Alexey Skidanov <alexey.skidanov@intel.com>
+Message-ID: <fa2b502b-13a1-2f93-02aa-de1121b6e602@intel.com>
+Date:   Wed, 7 Nov 2018 08:27:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181106141542.08a9d7de30a439ec9fe50486@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when a variable is assigned to itself:
 
-drivers/media/i2c/imx214.c:695:13: error: explicitly assigning value of
-variable of type 'const struct reg_8 *' to itself
-[-Werror,-Wself-assign]
-        for (table = table; table->addr != IMX214_TABLE_END ; table++) {
-             ~~~~~ ^ ~~~~~
-1 error generated.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/media/i2c/imx214.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 11/7/18 12:15 AM, Andrew Morton wrote:
+> On Tue,  6 Nov 2018 14:20:53 +0200 Alexey Skidanov <alexey.skidanov@intel.com> wrote:
+> 
+>> On success, gen_pool_first_fit_align() returns the bit number such that
+>> chunk_start_addr + (bit << order) is properly aligned. On failure,
+>> the bitmap size parameter is returned.
+>>
+>> When the chunk_start_addr isn't aligned properly, the
+>> chunk_start_addr + (bit << order) isn't aligned too.
+>>
+>> To fix this, gen_pool_first_fit_align() takes into account
+>> the chunk_start_addr alignment and returns the bit value such that
+>> chunk_start_addr + (bit << order) is properly aligned
+>> (exactly as it done in CMA).
+>>
+>> ...
+>>
+>> --- a/include/linux/genalloc.h
+>> +++ b/include/linux/genalloc.h
+>>
+>> ...
+>>
+>> +		struct gen_pool *pool, unsigned long start_add)
+>>
+>> ...
+>>
+>> +		struct gen_pool *pool, unsigned long start_add)
+>>
+>> ...
+>>
+>> +		struct gen_pool *pool, unsigned long start_add)
+>>
+>> ...
+>>
+> 
+> We have three typos here.  Which makes me wonder why we're passing the
+> new argument and then not using it?
+> 
+genpool uses allocation callbacks function that implement some
+allocation strategy - bes fit, first fit, ... All of them has the same
+type. The added chunk start_addr is used only in one of them -
+gen_pool_first_fit_align()
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 284b9b49ebde..ec3d1b855f62 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -692,7 +692,7 @@ static int imx214_write_table(struct imx214 *imx214,
- 	int i;
- 	int ret;
- 
--	for (table = table; table->addr != IMX214_TABLE_END ; table++) {
-+	for (; table->addr != IMX214_TABLE_END ; table++) {
- 		if (table->addr == IMX214_TABLE_WAIT_MS) {
- 			usleep_range(table->val * 1000,
- 				     table->val * 1000 + 500);
--- 
-2.19.1
-
+Thanks,
+Alexey
