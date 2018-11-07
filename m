@@ -2,121 +2,142 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96793C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F4DC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCF820892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:10:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="amLPf6Js"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCF820892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 59A9B20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:10:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A9B20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbeKGVkE (ORCPT
+        id S1731024AbeKGVkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:40:04 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58864 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeKGVkD (ORCPT
+        Wed, 7 Nov 2018 16:40:17 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34490 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbeKGVkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:40:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MBM4IhaMAH+Go2Pfdu7c4ojjL2kIGoItGR9QxJ5RsD4=; b=amLPf6JscJIGeGunJEZ9dvBCX
-        sNwWIGn1in7foToi8Otw6+Oxwdih3uCsSAMUE+3e8BQDNbhKjMYX4HlsbAAUvuCrIH6Jz3rzO3JBv
-        qHOcwLMNEJ4y4MVp5FgJKDc9o57HXdXcJ7IbObLMiOxNpUbtq9iD7U87wFl35IP33t42epJsrz1oB
-        QMLRoGKA/CXcviXCom89LN7anyzRCKGbXZlpnITV8DLPvYlaZn1xSN/soDXpKFow0xP66qaXj/3d5
-        m6IX2YNnA2oaHkOacPvWDJkryUDTEQANoY9SXdb5PU6N2JmGxuszMyD7wwG0DYKCI1yHuTeaNkA6F
-        PfbLXpTQw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKMeX-0005SD-DV; Wed, 07 Nov 2018 12:09:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AA3CF20284F94; Wed,  7 Nov 2018 13:09:42 +0100 (CET)
-Date:   Wed, 7 Nov 2018 13:09:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v5 01/15] sched/core: uclamp: extend sched_setattr to
- support utilization clamping
-Message-ID: <20181107120942.GM9781@hirez.programming.kicks-ass.net>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-2-patrick.bellasi@arm.com>
+        Wed, 7 Nov 2018 16:40:17 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i138-v6so10617546oib.1;
+        Wed, 07 Nov 2018 04:10:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aNBV8O4UWxL6yl74jBOnzUsZz7Qhj2Vhoe/FAYVFy90=;
+        b=uea5LH3KLdETiUMMhU4mQWo3cRsiikD33vETbB4Nl074xs8zxhglVukq+SeJkn/G5A
+         SUNiINwETeL5Eu36Lp1+AUQ7Q98GBoCITQuusDUMpQQ+pAeg9A2fTrEtiL2OAJiNA3x7
+         e94uLHQJKPzDBrPa6K0HTzGqKnj9X8KPPKe5BGd9BouuqEsb1i+6I+s1Jy+gUf2r34iX
+         cOenIciqizXHm2qeS/gw25Ij2QIJ4GVOuaBYGNRiPFwL0xF2Y4I1tUfq94f6tSloeq5c
+         yooObd5ahX3sqRI7v5308eHksijTUC3vQw0Iplxiy6PV0z1f4WFniNZHwhDUqxJtzDMk
+         TDQQ==
+X-Gm-Message-State: AGRZ1gKOsVqum8ic9cWUXbY8c58ceqJSMu/w15DGzbhyJwBwhsQg+jq8
+        nfqwkijUs+8u0NwRJxSV2luhp5nrqxgMZ21tKoViTqMQ
+X-Google-Smtp-Source: AJdET5ddltPQCVgVKnzsxXNABjMULLFH6hDE/pKeDYLdiHRdTheUgJRXNsQ4JnkB/enIsYJvgCTmqUj7h82glicHZgo=
+X-Received: by 2002:aca:c2c3:: with SMTP id s186-v6mr846599oif.193.1541592610035;
+ Wed, 07 Nov 2018 04:10:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029183311.29175-2-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1556808.yKVbhZSazi@aspire.rjw.lan> <20181106170442.GC9781@hirez.programming.kicks-ass.net>
+ <CAJZ5v0hmm2UWRt1j6hQo14nZLgPrE3DZkOznfo2kMxsZ1spo-Q@mail.gmail.com>
+ <20181106195127.GD9781@hirez.programming.kicks-ass.net> <CAJZ5v0iPs8Wt0PneBVWptqJPP6dEze+=GvxjU=dHBRbmty+kOw@mail.gmail.com>
+ <20181107085936.GI9781@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181107085936.GI9781@hirez.programming.kicks-ass.net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 7 Nov 2018 13:09:58 +0100
+Message-ID: <CAJZ5v0i4_TX_F=2hYKNpsG_QUPsn5EKiyfx2poE6SqsWyEp2Nw@mail.gmail.com>
+Subject: Re: [RFC/RFT][PATCH v3] cpuidle: New timer events oriented governor
+ for tickless systems
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 06:32:55PM +0000, Patrick Bellasi wrote:
-> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
-> index 22627f80063e..c27d6e81517b 100644
-> --- a/include/uapi/linux/sched.h
-> +++ b/include/uapi/linux/sched.h
-> @@ -50,9 +50,11 @@
->  #define SCHED_FLAG_RESET_ON_FORK	0x01
->  #define SCHED_FLAG_RECLAIM		0x02
->  #define SCHED_FLAG_DL_OVERRUN		0x04
-> +#define SCHED_FLAG_UTIL_CLAMP		0x08
->  
->  #define SCHED_FLAG_ALL	(SCHED_FLAG_RESET_ON_FORK	| \
->  			 SCHED_FLAG_RECLAIM		| \
-> -			 SCHED_FLAG_DL_OVERRUN)
-> +			 SCHED_FLAG_DL_OVERRUN		| \
-> +			 SCHED_FLAG_UTIL_CLAMP)
->  
->  #endif /* _UAPI_LINUX_SCHED_H */
-> diff --git a/include/uapi/linux/sched/types.h b/include/uapi/linux/sched/types.h
-> index 10fbb8031930..fde7301ed28c 100644
-> --- a/include/uapi/linux/sched/types.h
-> +++ b/include/uapi/linux/sched/types.h
-> @@ -9,6 +9,7 @@ struct sched_param {
->  };
->  
->  #define SCHED_ATTR_SIZE_VER0	48	/* sizeof first published struct */
-> +#define SCHED_ATTR_SIZE_VER1	56	/* add: util_{min,max} */
->  
->  /*
->   * Extended scheduling parameters data structure.
+On Wed, Nov 7, 2018 at 9:59 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Nov 07, 2018 at 12:39:31AM +0100, Rafael J. Wysocki wrote:
+> > On Tue, Nov 6, 2018 at 8:51 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Tue, Nov 06, 2018 at 07:19:24PM +0100, Rafael J. Wysocki wrote:
+> > > > On Tue, Nov 6, 2018 at 6:04 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > > > Instead of this detector; why haven't you used the code from
+> > > > > kernel/irq/timings.c ?
+> > > >
+> > > > Because it doesn't help much AFAICS.
+> > > >
+> > > > Wakeups need not be interrupts in particular
+> > >
+> > > You're alluding to the MWAIT wakeup through the MONITOR address ?
+> >
+> > Yes.
+>
+> Right, those will not be accounted for and will need something else.
 
+Precisely. :-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4533,6 +4533,10 @@ static int sched_copy_attr(struct sched_
- 	if (ret)
- 		return -EFAULT;
- 
-+	if ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
-+	    size < SCHED_ATTR_SIZE_VER1)
-+		return -EINVAL;
-+
- 	/*
- 	 * XXX: Do we want to be lenient like existing syscalls; or do we want
- 	 * to be strict and return an error on out-of-bounds values?
+> > > > and interrupt patterns that show up when the CPU is busy may not be
+> > > > relevant for when it is idle.
+> > >
+> > > I think that is not always true; consider things like the periodic
+> > > interrupt from frame rendering or audio; if there is nothing more going
+> > > on in the system than say playing your favourite tune, it gets the
+> > > 'need more data soon' interrupt from the audio card, wakes up, does a little
+> > > mp3/flac/ogg/whatever decode to fill up the buffer and goes back to
+> > > sleep. Same for video playback I assume, the vsync interrupt for buffer
+> > > flips is fairly predictable.
+> > >
+> > > The interrupt predictor we have in kernel/irq/timings.c should be very
+> > > accurate in predicting those interrupts.
+> >
+> > In the above case the interrupts should produce a detectable pattern
+> > of wakeups anyway.
+>
+> Ah, not so. Suppose you have both the audio and video interrupt going at
+> a steady rate but different rate, then the combined pattern isn't
+> trivial at all.
+
+It isn't trivial, but it will appear as a "pattern" to the pattern
+detector in v4 of the patch.
+
+Basically, all of that is about looking for a reason to select a
+shallower idle state than indicated by the time till the closest timer
+alone.
+
+From that standpoint it makes sense to look at several most recent
+wakeups and see if a pattern is forming in there, which is what the
+code in v4 of the patch does.  It also makes sense to look at
+interrupt patters, but that is costly, so the overhead needs to be
+justified.  The question to me is whether or not there is any
+additional value in that given that the most recent wakeups are (and
+IMO need to be) taken into consideration anyway.
+
+> > In general, however, I need to be convinced that interrupts that
+> > didn't wake up the CPU from idle are relevant for next wakeup
+> > prediction.  I see that this may be the case, but to what extent is
+> > rather unclear to me and it looks like calling
+> > irq_timings_next_event() would add considerable overhead.
+>
+> How about we add a (debug) knob so that people can play with it for now?
+> If it turns out to be useful, we'll learn.
+
+So I'm inclined to try to invoke irq_timings_next_event() in addition
+to looking at the most recent wakeups and see how far that can get us.
+
+With some extra instrumentation in place it should be possible to
+verify how much value that brings to the table.
