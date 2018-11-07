@@ -2,137 +2,92 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D05C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F1EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 354F820827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:09:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354F820827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3219820827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:11:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZP6YrUzj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3219820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbeKHAjs (ORCPT
+        id S1730598AbeKHAlt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:39:48 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:39476 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeKHAjs (ORCPT
+        Wed, 7 Nov 2018 19:41:49 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52489 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeKHAlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:39:48 -0500
-Received: by mail-it1-f197.google.com with SMTP id r127-v6so22196516itr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 07:09:02 -0800 (PST)
+        Wed, 7 Nov 2018 19:41:49 -0500
+Received: by mail-it1-f194.google.com with SMTP id t190-v6so17555409itb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 07:11:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VzTPwafaMZIoeoZRAErzMhggQ51vpWOhL3koJF7KPKc=;
+        b=ZP6YrUzjmJGwuYB2LFHeoTrhPuBaFTP6YO4/Eslkk5uccAX+D603vGeg/vkXwEUKKR
+         sTMPW03k8cf4uqJuCMRdy2rNhSUrw6ADnwph/lfIzVRd/wkxgiPwSWdJIrBaTOzeZd3p
+         W6jeIAZfd6kxSMXZeergA3BwZiHACHigjeRCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=fNVyof1T1dkYeZmrzhhMrbWhULudIOEKP2ho/Kz5bZo=;
-        b=dw8POFjBIT3RmdbiqMdJ7KFvTSKTxxnENsf7zfmJaVgTVPDtKtByDXYPNq3GYn7AVH
-         uL9UcOEbDFENMnnZEbxcIoKmYtGkcVkw8rfDjlXTLRHVIR/N7H5lipHL6tvaZ7OP8QpU
-         F4CwRFrBQLKjuAQNLjS2Ka4HhQl13sGbmmiLTJSj3lngTv1F1rqjbmWc8H9SP7Vc5Hs4
-         gyPZkXPGQcoUToSsqy2NkDQG/4B8dyTA8NDhPmEh/4DJxgNec/MpgCqBumvAAZFdxJSz
-         n+Dc2VB/9d8/gl92IgGFwUDDqwdjY6VVqevN3mD8htQzexBZ+j7bDkcZ86zPDmWiUgLa
-         l1hQ==
-X-Gm-Message-State: AGRZ1gLVKz06mCAmybduqhhnCt96apb2McXWO7DUQAj29S7tmmv35lCh
-        1Mgsc/+ohDH4mCNUbKKBe5a7agupKdNc+4ZHQ61tYwTYZhjo
-X-Google-Smtp-Source: AJdET5eWj+/FjaaPRjg8eNWbBVQQ9dGwYdbHf7tDPjnbvr7UWVoFuWajWBQTg6Hi4X5KLAi1kyPJ0V1pwKn19KN96TA6XXUJ/Zda
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VzTPwafaMZIoeoZRAErzMhggQ51vpWOhL3koJF7KPKc=;
+        b=Nao+bdom0oW1JvCLj3p4tdRs92VXEOOvYXBmip+FxYIALAziuZV++2LgSUbzej6SCj
+         lIIvNT9UbknLXuqIgHxlV39EaBc0OCx0pqClCygqsddBTjQKNf+uBbICwKTc20KHjB3r
+         LrZi20Jkk28NCFrduil4DBMhLtbr0sOvgnlX1x2eoBhduG5fx3YuTXX5Zj1ThLgEChzx
+         MBOPapTtmpKFi620NqeIKhpAIcZc9+DOsUy1l9Mvt1yg+XQeT9HHG/XnW5NlZpwPQm+N
+         eAR/IKjBTEt6UJFVzUYdvLxhXBFJgu92PZjGyES3cTGjEmk5+6yaTJrM1vSWePU0HG0k
+         cUrQ==
+X-Gm-Message-State: AGRZ1gL56f92UTQongdyAQ+zQiNVWvtfJDmHyUAlpCyfZC4TvtpM3C/d
+        Dym8cnD/fk/BtfXEHdYrY3uDiqAjnCXKOF+AgQZR7Q==
+X-Google-Smtp-Source: AJdET5dm1hMR6ABy323siKAQcUWXR1M7jUlsiquitAkNfk8tkBWFI9TlcZpXmvhO0l/7F0vLGqyFVxws1sAQTMjoKNM=
+X-Received: by 2002:a24:fe88:: with SMTP id w130-v6mr503117ith.69.1541603462989;
+ Wed, 07 Nov 2018 07:11:02 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:6182:: with SMTP id s124-v6mr376099itc.16.1541603342504;
- Wed, 07 Nov 2018 07:09:02 -0800 (PST)
-Date:   Wed, 07 Nov 2018 07:09:02 -0800
-In-Reply-To: <000000000000da5443057a0c047e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009d6000057a147f19@google.com>
-Subject: Re: general protection fault in locks_remove_flock
-From:   syzbot <syzbot+2400c924363a9a43d116@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 07:11:01 -0800 (PST)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <000000000000c25cca0579982a05@google.com>
+References: <000000000000c25cca0579982a05@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 7 Nov 2018 16:11:01 +0100
+Message-ID: <CAJfpegu3wunM+=psdDSsr1pQ23MJyKCSnz6LapHDg8nnFa+ASg@mail.gmail.com>
+Subject: Re: INFO: task hung in fuse_sb_destroy
+To:     syzbot <syzbot+6339eda9cb4ebbc4c37b@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="000000000000cc46f5057a1486ca"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+--000000000000cc46f5057a1486ca
+Content-Type: text/plain; charset="UTF-8"
 
-HEAD commit:    d881de30d29e Add linux-next specific files for 20181107
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10a0102b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caa433e1c8778437
-dashboard link: https://syzkaller.appspot.com/bug?extid=2400c924363a9a43d116
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b42f5b400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151777e5400000
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+59fc453b21f7
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2400c924363a9a43d116@syzkaller.appspotmail.com
+--000000000000cc46f5057a1486ca
+Content-Type: text/x-patch; charset="US-ASCII"; name="fuse-fix-leaked-notify-reply.patch"
+Content-Disposition: attachment; 
+	filename="fuse-fix-leaked-notify-reply.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jo7aw0hq0
 
-audit: type=1800 audit(1541602996.121:30): pid=5502 uid=0 auid=4294967295  
-ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
-comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5657 Comm: syz-executor710 Not tainted  
-4.20.0-rc1-next-20181107+ #107
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:locks_remove_flock+0x216/0x350 fs/locks.c:2567
-Code: 00 0f 85 3a 01 00 00 48 8b 5b 98 48 85 db 74 3a e8 1f 41 92 ff 48 8d  
-7b 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 17 01 00 00 48 8b 5b 08 48 85 db 74 0d e8 f2 40
-RSP: 0018:ffff8801b9dc72c0 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 1ffff100373b8e89 RCX: ffffffff81ed555d
-RDX: 03fffe2006e771d2 RSI: ffffffff81ed5c71 RDI: 1ffff100373b8e91
-RBP: ffff8801b9dc74a0 R08: ffff8801b9dbc480 R09: ffffed003b5e5b67
-R10: ffffed003b5e5b67 R11: ffff8801daf2db3b R12: ffff8801d88f9c80
-R13: ffff8801b9dc7338 R14: 1ffff100373b8e5b R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002001d000 CR3: 000000000946a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  locks_remove_file+0x148/0x5c0 fs/locks.c:2607
-  __fput+0x2f0/0xa70 fs/file_table.c:271
-  ____fput+0x15/0x20 fs/file_table.c:312
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1ad1/0x26d0 kernel/exit.c:867
-  do_group_exit+0x177/0x440 kernel/exit.c:970
-  __do_sys_exit_group kernel/exit.c:981 [inline]
-  __se_sys_exit_group kernel/exit.c:979 [inline]
-  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43ede8
-Code: Bad RIP value.
-RSP: 002b:00007ffe7a46fe78 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ede8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004beea8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace a84b3ae501385451 ]---
-RIP: 0010:locks_remove_flock+0x216/0x350 fs/locks.c:2567
-Code: 00 0f 85 3a 01 00 00 48 8b 5b 98 48 85 db 74 3a e8 1f 41 92 ff 48 8d  
-7b 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 17 01 00 00 48 8b 5b 08 48 85 db 74 0d e8 f2 40
-RSP: 0018:ffff8801b9dc72c0 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 1ffff100373b8e89 RCX: ffffffff81ed555d
-RDX: 03fffe2006e771d2 RSI: ffffffff81ed5c71 RDI: 1ffff100373b8e91
-RBP: ffff8801b9dc74a0 R08: ffff8801b9dbc480 R09: ffffed003b5e5b67
-R10: ffffed003b5e5b67 R11: ffff8801daf2db3b R12: ffff8801d88f9c80
-R13: ffff8801b9dc7338 R14: 1ffff100373b8e5b R15: dffffc0000000000
-FS:  000000000229b880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000043edbe CR3: 000000000946a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
+LS0tCiBmcy9mdXNlL2Rldi5jIHwgICAgNCArKystCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRp
+b25zKCspLCAxIGRlbGV0aW9uKC0pCgotLS0gYS9mcy9mdXNlL2Rldi5jCisrKyBiL2ZzL2Z1c2Uv
+ZGV2LmMKQEAgLTE3NjgsOCArMTc2OCwxMCBAQCBzdGF0aWMgaW50IGZ1c2VfcmV0cmlldmUoc3Ry
+dWN0IGZ1c2VfY29uCiAJcmVxLT5pbi5hcmdzWzFdLnNpemUgPSB0b3RhbF9sZW47CiAKIAllcnIg
+PSBmdXNlX3JlcXVlc3Rfc2VuZF9ub3RpZnlfcmVwbHkoZmMsIHJlcSwgb3V0YXJnLT5ub3RpZnlf
+dW5pcXVlKTsKLQlpZiAoZXJyKQorCWlmIChlcnIpIHsKIAkJZnVzZV9yZXRyaWV2ZV9lbmQoZmMs
+IHJlcSk7CisJCWZ1c2VfcHV0X3JlcXVlc3QoZmMsIHJlcSk7CisJfQogCiAJcmV0dXJuIGVycjsK
+IH0K
+--000000000000cc46f5057a1486ca--
