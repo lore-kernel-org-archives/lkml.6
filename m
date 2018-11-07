@@ -2,93 +2,120 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3085C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0500C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6761C2086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B3720882
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:27:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="BSTmX390"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6761C2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W669+dd2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B3720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbeKHH7p (ORCPT
+        id S1728108AbeKHIAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:59:45 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55096 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbeKHH7o (ORCPT
+        Thu, 8 Nov 2018 03:00:00 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35152 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbeKHIAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:59:44 -0500
-Received: by mail-it1-f194.google.com with SMTP id d6so25317547itl.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 14:27:18 -0800 (PST)
+        Thu, 8 Nov 2018 03:00:00 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 32-v6so7928928pgu.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 14:27:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A62tAQXmtBI5NycZY1pVq4/dnVnZGCescpp3IudPZFY=;
-        b=BSTmX3901VwShKnh0AT8KoiUe7I0wFyiKp9BLZATgcqM9fLifI8BniK8VU0rgrSewP
-         4ShUDuWmpKpaHDMe+IczT8URp16T6ZlxwnjCbeNo777GHJT9/B9XSP7fcBvrAs8RMU5h
-         /Xe1Qfy8XDxGY2qHgw5FyTQ1oYe/PO2GoOO6RgdLWPHiw23HH+iQR1aZ3HufTUlTFgTe
-         /jbu4kAnJWAkhzePy0nMMP7OEp4/0bCTUjAVp/cxj1xgi12kuMIkYAEYTHqVrgWNHbsL
-         RwragaUO27vg46Z/P87RpcC1bL3SWOsv9ofWYFSXZa7OecZ3V5G2n+zlYsXhqB2DIN8g
-         /GZw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hErWVvVfq+l1Lhw6i7dkgVe6YlWD+RYolV83NWx0t70=;
+        b=W669+dd2gXUy/GLOHJHuZBiSVkD0H0R6bEkU4q2iePeJSs92MQQzGIyJL9B1q1FZlM
+         h6O8RtFQxa96Dwynh57Au7XRz9gTaRM4/M0RmRDYhfDCq8leMd/uiWlz5V/b8zcF2Zt0
+         uVzUhYKSEPGKuFYPq7e0D2MdKXn7cLQUsiW4c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=A62tAQXmtBI5NycZY1pVq4/dnVnZGCescpp3IudPZFY=;
-        b=FhtjfaPUoD4S7ToOReylT26//fiX2dPosUTgLGwsOu/h9MWU0PqDOaI9MkMNu1Lnsa
-         XoPVWi/ReheYw5cxbDuzm/oo+MKcVYgwQS1K9GoppL67XPoblE/kRFtdMpGje4hp533+
-         ms/+hPM21qXmjBDsVore6OVkXA2MSDKWDXd9VE3kvP3WrZkXlx++Cm5bJJC4fNURECjg
-         8DCipmwAEpnyozz1ol7SurAyoRijpF1x1FXKcSgSp2YhGL8Ns35hfZ74Sz2o2u7qROxJ
-         pemk2PjaPcC5AgIh7dgMk1s2JwcR47h95l7Y7psAS/P2fBGxQC+EFg2Mb6QBYZBYLyAG
-         Y9Fw==
-X-Gm-Message-State: AGRZ1gIEDOKXmb/2jbUPBOEaHVG+cQJGm4dKUm6ZJB41clMYPcJ+PnNC
-        VwIQbJFo6SuRO2zh7B4nbrli1aWK/PA=
-X-Google-Smtp-Source: AJdET5ewpiTtFIMqJ+ih9F6mzDcyKPIFfSV03LiloqmI50OuHGKnqfrKf79+g826JUIfBL/HnJBo1g==
-X-Received: by 2002:a24:9045:: with SMTP id x66-v6mr1689479itd.155.1541629637640;
-        Wed, 07 Nov 2018 14:27:17 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id v204-v6sm898731itb.6.2018.11.07.14.27.16
+        bh=hErWVvVfq+l1Lhw6i7dkgVe6YlWD+RYolV83NWx0t70=;
+        b=fliIgxt4dp6qK0dy/Q94VeOz9ACQD2Ts3j40Ln4yqi5zDHMFSuNns/FLM529hTvAPU
+         KJpaHD7M3NIMCdIe+qXJZkNxEUt8GHtSIiB2a1KAFzbs+p0gm3wz1AkD889t3xrCsYs4
+         dOzc/VoC7gupW/Tw5dRMe2CgLAar/nmpO2ldfNHoPqLF7nTTxHQ7/vkdQBgIrA58037R
+         5hU52g+CeA3ll6PCnQzjM2atq6NH6I0GCYUXH8LfHuqRND4yi7719PIDINhXnkFw/y9b
+         WRDImZVWPKrZCXz/AgxVOHtHRX7utjENStqdm7F4bLEllRVfF+hiBm8sltUnOE4F+Fma
+         4dbQ==
+X-Gm-Message-State: AGRZ1gIQ2j+1ALWxFIGmcGhL52Ka6+SppIe8gH294La+DXTgqZuILjBW
+        5GnJIvc8MXTeETvQaNMgXAFlew==
+X-Google-Smtp-Source: AJdET5fNzvFAiqFTFyKWaTgIMxcA3X+UmZK4NulEwXUrLVPTDTe403t7ZF571DOILoiMAMtHnNq0ow==
+X-Received: by 2002:a63:561b:: with SMTP id k27mr1787801pgb.271.1541629653794;
+        Wed, 07 Nov 2018 14:27:33 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id 89-v6sm1934373pfq.10.2018.11.07.14.27.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 14:27:16 -0800 (PST)
-Subject: Re: [PATCH] MAINTAINERS: Fix remaining pointers to obsolete
- libata.git
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tejun Heo <tj@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mikael Pettersson <mikpelinux@gmail.com>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181107094757.31210-1-geert+renesas@glider.be>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <55c99084-f15f-5162-f1fa-71a74c1aef0d@kernel.dk>
-Date:   Wed, 7 Nov 2018 15:27:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 07 Nov 2018 14:27:32 -0800 (PST)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] input: cros_ec_keyb: fix button/switch capability reports
+Date:   Wed,  7 Nov 2018 14:27:29 -0800
+Message-Id: <20181107222729.170234-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-In-Reply-To: <20181107094757.31210-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/18 2:47 AM, Geert Uytterhoeven wrote:
-> libata.git no longer exists.  Replace the remaining pointers to it by
-> pointers to the block tree, which is where all libata development
-> happens now.
+The cros_ec_keyb_bs array lists buttons and switches together, expecting
+that its users will match the appropriate type and bit fields. But
+cros_ec_keyb_register_bs() only checks the 'bit' field, which causes
+misreported input capabilities in some cases. For example, tablets
+(e.g., Scarlet -- a.k.a. Acer Chromebook Tab 10) were reporting a SW_LID
+capability, because EC_MKBP_POWER_BUTTON and EC_MKBP_LID_OPEN happen to
+share the same bit.
 
-Thanks, applied.
+(This has comedic effect on a tablet, in which a power-management daemon
+then thinks this "lid" is closed, and so puts the system to sleep as
+soon as it boots!)
 
+To fix this, check both the 'ev_type' and 'bit' fields before reporting
+the capability.
+
+Tested with a lid (Kevin / Samsung Chromebook Plus) and without a lid
+(Scarlet / Acer Chromebook Tab 10).
+
+This error got introduced when porting the feature from the downstream
+Chromium OS kernel to be upstreamed.
+
+Fixes: cdd7950e7aa4 ("input: cros_ec_keyb: Add non-matrix buttons and switches")
+Cc: <stable@vger.kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/input/keyboard/cros_ec_keyb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+index 81be6f781f0b..d56001181598 100644
+--- a/drivers/input/keyboard/cros_ec_keyb.c
++++ b/drivers/input/keyboard/cros_ec_keyb.c
+@@ -493,7 +493,8 @@ static int cros_ec_keyb_register_bs(struct cros_ec_keyb *ckdev)
+ 	for (i = 0; i < ARRAY_SIZE(cros_ec_keyb_bs); i++) {
+ 		const struct cros_ec_bs_map *map = &cros_ec_keyb_bs[i];
+ 
+-		if (buttons & BIT(map->bit))
++		if ((map->ev_type == EV_KEY && (buttons & BIT(map->bit))) ||
++		    (map->ev_type == EV_SW && (switches & BIT(map->bit))))
+ 			input_set_capability(idev, map->ev_type, map->code);
+ 	}
+ 
 -- 
-Jens Axboe
+2.19.1.930.g4563a0d9d0-goog
 
