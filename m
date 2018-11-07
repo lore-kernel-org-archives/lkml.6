@@ -2,173 +2,255 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA79DC46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4FAC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88F9520827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F9520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 52FF720827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b4LVV32x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52FF720827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbeKGUVh (ORCPT
+        id S1730792AbeKGUW1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 15:21:37 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53233 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbeKGUVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:21:37 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 67760224CB; Wed,  7 Nov 2018 11:51:46 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 33B0620701;
-        Wed,  7 Nov 2018 11:51:36 +0100 (CET)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] nvmem: add type attribute
-Date:   Wed,  7 Nov 2018 11:51:33 +0100
-Message-Id: <20181107105133.3789-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 7 Nov 2018 15:22:27 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55017 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbeKGUW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 15:22:27 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r63-v6so13591379wma.4
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:52:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qhMJL82kowJ5cj78PVHvmrdwIzB1mz7xkkE+QR2MfHo=;
+        b=b4LVV32xT8IKhCHAlMENAuREZuboBJyVDcxAD8yCQM8BT1FWg5HkUbNMVSx8wSudCO
+         JrZmeqvnf0N+dz24C6KLakdcfWrOdabsN3L6OSClSBDhT8YrTHB1l3DHTfyHRJTxtJDE
+         8qxtofE+MbDAiBgO1eyW5Dw2MY/fKoP2wk65U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qhMJL82kowJ5cj78PVHvmrdwIzB1mz7xkkE+QR2MfHo=;
+        b=IVaMHze+GXFen2sH40Ss2RalaMDhGP7OR4LkOdAJzAgnJuYS0HWxBZ0Y+hQq1Y3NG5
+         zc9miCPiAd4SbL+gut6OZ1Re+H5bOMoeP4KvgJ8Uk1gkNvcho0XXAJkW5G2zuieG0Puh
+         LvRhsZhWMYSnWj9hnLmJNLPKxED+Mjlp9L4agE2kutvy26S4rt9qTAwwQci19HClTqNB
+         HpppfGfv47OPj6ubjnqD9E65dau7GsXEYi4A93Hr/EgQiydd5wjaLBnRx0D0mTYQ04j2
+         9kPJb34UIp20WoSY+dXP3TbjiozGTIhFKzNE970JyeRuQEPZCnkT1lboifa5tldp8PQn
+         vTYQ==
+X-Gm-Message-State: AGRZ1gLZVMjznkc2p9qLr0c7rJhGesOlJphX3SHEaLAO6pFlveLIMZ6m
+        Fj8D2sViWzohZ+D+7hNHljc7psQoyZY=
+X-Google-Smtp-Source: AJdET5f6CUn2sqIee9dWU/4QFM8ba/zYJEUgFAoc7FHKd31GznB/9oGJJMrfugxBHlVUUoKoM0yfrA==
+X-Received: by 2002:a1c:f60f:: with SMTP id w15-v6mr1626937wmc.101.1541587953992;
+        Wed, 07 Nov 2018 02:52:33 -0800 (PST)
+Received: from [192.168.0.40] (161.230.136.77.rev.sfr.net. [77.136.230.161])
+        by smtp.googlemail.com with ESMTPSA id p7-v6sm390504wrs.23.2018.11.07.02.52.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 02:52:33 -0800 (PST)
+Subject: Re: [PATCH] irq/timings: Fix model validity
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>
+References: <1556808.yKVbhZSazi@aspire.rjw.lan>
+ <20181106170442.GC9781@hirez.programming.kicks-ass.net>
+ <CAJZ5v0hmm2UWRt1j6hQo14nZLgPrE3DZkOznfo2kMxsZ1spo-Q@mail.gmail.com>
+ <20181106195127.GD9781@hirez.programming.kicks-ass.net>
+ <CAJZ5v0iPs8Wt0PneBVWptqJPP6dEze+=GvxjU=dHBRbmty+kOw@mail.gmail.com>
+ <20181107085936.GI9781@hirez.programming.kicks-ass.net>
+ <20181107094624.GB9828@hirez.programming.kicks-ass.net>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <ab9e60d7-e2d3-7d0c-dbf1-c0bed7bdb516@linaro.org>
+Date:   Wed, 7 Nov 2018 11:52:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181107094624.GB9828@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a type attribute so userspace is able to know how the data is stored as
-this can help taking the correct decision when selecting which device to
-use. This will also help program display the proper warnings when burning
-fuses for example.
+On 07/11/2018 10:46, Peter Zijlstra wrote:
+> On Wed, Nov 07, 2018 at 09:59:36AM +0100, Peter Zijlstra wrote:
+>> On Wed, Nov 07, 2018 at 12:39:31AM +0100, Rafael J. Wysocki wrote:
+> 
+>>> In general, however, I need to be convinced that interrupts that
+>>> didn't wake up the CPU from idle are relevant for next wakeup
+>>> prediction.  I see that this may be the case, but to what extent is
+>>> rather unclear to me and it looks like calling
+>>> irq_timings_next_event() would add considerable overhead.
+>>
+>> How about we add a (debug) knob so that people can play with it for now?
+>> If it turns out to be useful, we'll learn.
+> 
+> That said; Daniel, I think there is a problem with how irqs_update()
+> sets irqs->valid. We seem to set valid even when we're still training.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/nvmem/core.c           | 20 ++++++++++++++++++++
- include/linux/nvmem-provider.h | 16 ++++++++++++++++
- 2 files changed, 36 insertions(+)
+Yes, the fix seems right.
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 9b18ce90f907..9c1682feee38 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -28,6 +28,7 @@ struct nvmem_device {
- 	size_t			size;
- 	bool			read_only;
- 	int			flags;
-+	enum nvmem_type		type;
- 	struct bin_attribute	eeprom;
- 	struct device		*base_dev;
- 	struct list_head	cells;
-@@ -82,6 +83,21 @@ static int nvmem_reg_write(struct nvmem_device *nvmem, unsigned int offset,
- 	return -EINVAL;
- }
- 
-+static ssize_t type_show(struct device *dev,
-+			 struct device_attribute *attr, char *buf)
-+{
-+	struct nvmem_device *nvmem = to_nvmem_device(dev);
-+
-+	return sprintf(buf, "%s\n", nvmem_type_str[nvmem->type]);
-+}
-+
-+static DEVICE_ATTR_RO(type);
-+
-+static struct attribute *nvmem_attrs[] = {
-+	&dev_attr_type.attr,
-+	NULL,
-+};
-+
- static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
- 				    struct bin_attribute *attr,
- 				    char *buf, loff_t pos, size_t count)
-@@ -167,6 +183,7 @@ static struct bin_attribute *nvmem_bin_rw_attributes[] = {
- 
- static const struct attribute_group nvmem_bin_rw_group = {
- 	.bin_attrs	= nvmem_bin_rw_attributes,
-+	.attrs		= nvmem_attrs,
- };
- 
- static const struct attribute_group *nvmem_rw_dev_groups[] = {
-@@ -190,6 +207,7 @@ static struct bin_attribute *nvmem_bin_ro_attributes[] = {
- 
- static const struct attribute_group nvmem_bin_ro_group = {
- 	.bin_attrs	= nvmem_bin_ro_attributes,
-+	.attrs		= nvmem_attrs,
- };
- 
- static const struct attribute_group *nvmem_ro_dev_groups[] = {
-@@ -214,6 +232,7 @@ static struct bin_attribute *nvmem_bin_rw_root_attributes[] = {
- 
- static const struct attribute_group nvmem_bin_rw_root_group = {
- 	.bin_attrs	= nvmem_bin_rw_root_attributes,
-+	.attrs		= nvmem_attrs,
- };
- 
- static const struct attribute_group *nvmem_rw_root_dev_groups[] = {
-@@ -237,6 +256,7 @@ static struct bin_attribute *nvmem_bin_ro_root_attributes[] = {
- 
- static const struct attribute_group nvmem_bin_ro_root_group = {
- 	.bin_attrs	= nvmem_bin_ro_root_attributes,
-+	.attrs		= nvmem_attrs,
- };
- 
- static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
-@@ -602,6 +622,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->dev.bus = &nvmem_bus_type;
- 	nvmem->dev.parent = config->dev;
- 	nvmem->priv = config->priv;
-+	nvmem->type = config->type;
- 	nvmem->reg_read = config->reg_read;
- 	nvmem->reg_write = config->reg_write;
- 	nvmem->dev.of_node = config->dev->of_node;
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 1e3283c2af77..00ff92571683 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -19,6 +19,20 @@ typedef int (*nvmem_reg_read_t)(void *priv, unsigned int offset,
- typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
- 				 void *val, size_t bytes);
- 
-+enum nvmem_type {
-+	NVMEM_TYPE_UNKNOWN = 0,
-+	NVMEM_TYPE_EEPROM,
-+	NVMEM_TYPE_OTP,
-+	NVMEM_TYPE_BATTERY_BACKED,
-+};
-+
-+static const char * const nvmem_type_str[] = {
-+	[NVMEM_TYPE_UNKNOWN] = "Unknown",
-+	[NVMEM_TYPE_EEPROM] = "EEPROM",
-+	[NVMEM_TYPE_OTP] = "OTP",
-+	[NVMEM_TYPE_BATTERY_BACKED] = "Battery backed",
-+};
-+
- /**
-  * struct nvmem_config - NVMEM device configuration
-  *
-@@ -28,6 +42,7 @@ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
-  * @owner:	Pointer to exporter module. Used for refcounting.
-  * @cells:	Optional array of pre-defined NVMEM cells.
-  * @ncells:	Number of elements in cells.
-+ * @type:	Type of the nvmem storage
-  * @read_only:	Device is read-only.
-  * @root_only:	Device is accessibly to root only.
-  * @reg_read:	Callback to read data.
-@@ -51,6 +66,7 @@ struct nvmem_config {
- 	struct module		*owner;
- 	const struct nvmem_cell_info	*cells;
- 	int			ncells;
-+	enum nvmem_type		type;
- 	bool			read_only;
- 	bool			root_only;
- 	nvmem_reg_read_t	reg_read;
+Thanks for fixing it.
+
+  -- Daniel
+
+> ---
+> Subject: irq/timings: Fix model validity
+> 
+> The per IRQ timing predictor will produce a 'valid' prediction even if
+> the model is still training. This should not happen.
+> 
+> Fix this by moving the actual training (online stddev algorithm) up a
+> bit and returning early (before predicting) when we've not yet reached
+> the sample threshold.
+> 
+> A direct concequence is that the predictor will only ever run with at
+> least that many samples, which means we can remove one branch.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  kernel/irq/timings.c | 66 +++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 37 insertions(+), 29 deletions(-)
+> 
+> diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
+> index 1e4cb63a5c82..5d22fd5facd5 100644
+> --- a/kernel/irq/timings.c
+> +++ b/kernel/irq/timings.c
+> @@ -28,6 +28,13 @@ struct irqt_stat {
+>  	int	valid;
+>  };
+>  
+> +/*
+> + * The rule of thumb in statistics for the normal distribution
+> + * is having at least 30 samples in order to have the model to
+> + * apply.
+> + */
+> +#define SAMPLE_THRESHOLD	30
+> +
+>  static DEFINE_IDR(irqt_stats);
+>  
+>  void irq_timings_enable(void)
+> @@ -101,7 +108,6 @@ void irq_timings_disable(void)
+>   * distribution appears when the number of samples is 30 (it is the
+>   * rule of thumb in statistics, cf. "30 samples" on Internet). When
+>   * there are three consecutive anomalies, the statistics are resetted.
+> - *
+>   */
+>  static void irqs_update(struct irqt_stat *irqs, u64 ts)
+>  {
+> @@ -146,11 +152,38 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
+>  	 */
+>  	diff = interval - irqs->avg;
+>  
+> +	/*
+> +	 * Online average algorithm:
+> +	 *
+> +	 *  new_average = average + ((value - average) / count)
+> +	 *
+> +	 * The variance computation depends on the new average
+> +	 * to be computed here first.
+> +	 *
+> +	 */
+> +	irqs->avg = irqs->avg + (diff >> IRQ_TIMINGS_SHIFT);
+> +
+> +	/*
+> +	 * Online variance algorithm:
+> +	 *
+> +	 *  new_variance = variance + (value - average) x (value - new_average)
+> +	 *
+> +	 * Warning: irqs->avg is updated with the line above, hence
+> +	 * 'interval - irqs->avg' is no longer equal to 'diff'
+> +	 */
+> +	irqs->variance = irqs->variance + (diff * (interval - irqs->avg));
+> +
+>  	/*
+>  	 * Increment the number of samples.
+>  	 */
+>  	irqs->nr_samples++;
+>  
+> +	/*
+> +	 * If we're still training the model, we can't make any predictions yet.
+> +	 */
+> +	if (irqs->nr_samples < SAMPLE_THRESHOLD)
+> +		return;
+> +
+>  	/*
+>  	 * Online variance divided by the number of elements if there
+>  	 * is more than one sample.  Normally the formula is division
+> @@ -158,16 +191,12 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
+>  	 * more than 32 and dividing by 32 instead of 31 is enough
+>  	 * precise.
+>  	 */
+> -	if (likely(irqs->nr_samples > 1))
+> -		variance = irqs->variance >> IRQ_TIMINGS_SHIFT;
+> +	variance = irqs->variance >> IRQ_TIMINGS_SHIFT;
+>  
+>  	/*
+> -	 * The rule of thumb in statistics for the normal distribution
+> -	 * is having at least 30 samples in order to have the model to
+> -	 * apply. Values outside the interval are considered as an
+> -	 * anomaly.
+> +	 * Values outside the interval are considered as an anomaly.
+>  	 */
+> -	if ((irqs->nr_samples >= 30) && ((diff * diff) > (9 * variance))) {
+> +	if ((diff * diff) > (9 * variance)) {
+>  		/*
+>  		 * After three consecutive anomalies, we reset the
+>  		 * stats as it is no longer stable enough.
+> @@ -191,27 +220,6 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
+>  	 */
+>  	irqs->valid = 1;
+>  
+> -	/*
+> -	 * Online average algorithm:
+> -	 *
+> -	 *  new_average = average + ((value - average) / count)
+> -	 *
+> -	 * The variance computation depends on the new average
+> -	 * to be computed here first.
+> -	 *
+> -	 */
+> -	irqs->avg = irqs->avg + (diff >> IRQ_TIMINGS_SHIFT);
+> -
+> -	/*
+> -	 * Online variance algorithm:
+> -	 *
+> -	 *  new_variance = variance + (value - average) x (value - new_average)
+> -	 *
+> -	 * Warning: irqs->avg is updated with the line above, hence
+> -	 * 'interval - irqs->avg' is no longer equal to 'diff'
+> -	 */
+> -	irqs->variance = irqs->variance + (diff * (interval - irqs->avg));
+> -
+>  	/*
+>  	 * Update the next event
+>  	 */
+> 
+
+
 -- 
-2.19.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
