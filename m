@@ -2,125 +2,98 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C99C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E622DC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9706F20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:42:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9706F20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A3ABF20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:43:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDVlyMS5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3ABF20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeKHJPT convert rfc822-to-8bit (ORCPT
+        id S1728031AbeKHJPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 04:15:19 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35463 "EHLO mga05.intel.com"
+        Thu, 8 Nov 2018 04:15:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727260AbeKHJPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 04:15:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 15:42:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,477,1534834800"; 
-   d="scan'208";a="90296320"
-Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
-  by orsmga008.jf.intel.com with ESMTP; 07 Nov 2018 15:42:36 -0800
-Received: from orsmsx108.amr.corp.intel.com ([169.254.2.228]) by
- ORSMSX110.amr.corp.intel.com ([169.254.10.166]) with mapi id 14.03.0415.000;
- Wed, 7 Nov 2018 15:42:36 -0800
-From:   "Williams, Dan J" <dan.j.williams@intel.com>
-To:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 7/8] device-dax: Add support for a dax override driver
-Thread-Topic: [PATCH 7/8] device-dax: Add support for a dax override driver
-Thread-Index: AQHUcMlYxFUYfFbaG0yZkuAZG4fsaqVFi6WA
-Date:   Wed, 7 Nov 2018 23:42:35 +0000
-Message-ID: <3501c074cf14f6a671632c6a6aaffe77cc5b9512.camel@intel.com>
-References: <154095556915.3271337.12581429676272726902.stgit@dwillia2-desk3.amr.corp.intel.com>
-         <154095560594.3271337.11620109886861134971.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154095560594.3271337.11620109886861134971.stgit@dwillia2-desk3.amr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.34.127]
-Content-Type: text/plain; charset="utf-7"
-Content-ID: <26905435016A1943B616359192FCFA31@intel.com>
-Content-Transfer-Encoding: 8BIT
+        id S1727260AbeKHJPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 04:15:42 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5746C20882;
+        Wed,  7 Nov 2018 23:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541634179;
+        bh=Z8YQ3I2qLt+41BXs33mAuHv0KaiQsmjD2qPWvfRS8tQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SDVlyMS5KczWmAeUglJGxVaDMRfs2U9Sg06uVAwgd4GYC8KyKIutEIXntxq5m69XT
+         VI1Ma8+Le4aCz8n6aPM1a0Y6nPJ++HZE1PgGJJS9NU2KS/rpYPA6+Up7uPeVNe1QsW
+         IkafT7+N8qKrbrUU2yWbxNLXcrMkQbAWeDE9Xm4U=
+Date:   Wed, 7 Nov 2018 17:42:57 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     linux-pci@vger.kernel.org, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Message-ID: <20181107234257.GC41183@google.com>
+References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918221501.13112-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-30 at 20:13 -0700, Dan Williams wrote:
-+AD4- Introduce the 'new+AF8-id' concept for enabling a custom device-driver attach
-+AD4- policy for dax-bus drivers. The intended use is to have a mechanism for
-+AD4- hot-plugging device-dax ranges into the page allocator on-demand. With
-+AD4- this in place the default policy of using device-dax for performance
-+AD4- differentiated memory can be overridden by user-space policy that can
-+AD4- arrange for the memory range to be managed as 'System RAM' with
-+AD4- user-defined NUMA and other performance attributes.
-+AD4- 
-+AD4- Signed-off-by: Dan Williams +ADw-dan.j.williams+AEA-intel.com+AD4-
-+AD4- ---
-+AD4-  drivers/dax/bus.c    +AHw-  145 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+---
-+AD4-  drivers/dax/bus.h    +AHw-   10 +-+-+-
-+AD4-  drivers/dax/device.c +AHw-   11 +-+---
-+AD4-  3 files changed, 156 insertions(+-), 10 deletions(-)
-+AD4- 
-+AD4- 
+On Tue, Sep 18, 2018 at 05:15:00PM -0500, Alexandru Gagniuc wrote:
+> When a PCI device is gone, we don't want to send IO to it if we can
+> avoid it. We expose functionality via the irq_chip structure. As
+> users of that structure may not know about the underlying PCI device,
+> it's our responsibility to guard against removed devices.
+> 
+> .irq_write_msi_msg() is already guarded inside __pci_write_msi_msg().
+> .irq_mask/unmask() are not. Guard them for completeness.
+> 
+> For example, surprise removal of a PCIe device triggers teardown. This
+> touches the irq_chips ops some point to disable the interrupts. I/O
+> generated here can crash the system on firmware-first machines.
+> Not triggering the IO in the first place greatly reduces the
+> possibility of the problem occurring.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 
-Here's an incremental fixup for the string matching in this patch, I'll
-send a v2 if other review comments come in:
+Applied to pci/misc for v4.21, thanks!
 
-diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-index 178d76504f79..17af6fbc3be5 100644
---- a/drivers/dax/bus.c
-+-+-+- b/drivers/dax/bus.c
-+AEAAQA- -39,7 +-39,7 +AEAAQA- static struct dax+AF8-id +ACoAXwBf-dax+AF8-match+AF8-id(struct dax+AF8-device+AF8-driver +ACo-dax+AF8-drv,
- 	lockdep+AF8-assert+AF8-held(+ACY-dax+AF8-bus+AF8-lock)+ADs-
- 
- 	list+AF8-for+AF8-each+AF8-entry(dax+AF8-id, +ACY-dax+AF8-drv-+AD4-ids, list)
--		if (strcmp(dax+AF8-id-+AD4-dev+AF8-name, dev+AF8-name) +AD0APQ- 0)
-+-		if (sysfs+AF8-streq(dax+AF8-id-+AD4-dev+AF8-name, dev+AF8-name))
- 			return dax+AF8-id+ADs-
- 	return NULL+ADs-
- +AH0-
-+AEAAQA- -60,6 +-60,7 +AEAAQA- static ssize+AF8-t do+AF8-id+AF8-store(struct device+AF8-driver +ACo-drv, const char +ACo-buf,
- +AHs-
- 	struct dax+AF8-device+AF8-driver +ACo-dax+AF8-drv +AD0- to+AF8-dax+AF8-drv(drv)+ADs-
- 	unsigned int region+AF8-id, id+ADs-
-+-	char devname+AFs-DAX+AF8-NAME+AF8-LEN+AF0AOw-
- 	struct dax+AF8-id +ACo-dax+AF8-id+ADs-
- 	ssize+AF8-t rc +AD0- count+ADs-
- 	int fields+ADs-
-+AEAAQA- -67,8 +-68,8 +AEAAQA- static ssize+AF8-t do+AF8-id+AF8-store(struct device+AF8-driver +ACo-drv, const char +ACo-buf,
- 	fields +AD0- sscanf(buf, +ACI-dax+ACU-d.+ACU-d+ACI-, +ACY-region+AF8-id, +ACY-id)+ADs-
- 	if (fields +ACEAPQ- 2)
- 		return -EINVAL+ADs-
--
--	if (strlen(buf) +- 1 +AD4- DAX+AF8-NAME+AF8-LEN)
-+-	sprintf(devname, +ACI-dax+ACU-d.+ACU-d+ACI-, region+AF8-id, id)+ADs-
-+-	if (+ACE-sysfs+AF8-streq(buf, devname))
- 		return -EINVAL+ADs-
- 
- 	mutex+AF8-lock(+ACY-dax+AF8-bus+AF8-lock)+ADs-
-+AEAAQA- -99,7 +-100,6 +AEAAQA- static ssize+AF8-t new+AF8-id+AF8-store(struct device+AF8-driver +ACo-drv, const char +ACo-buf,
- +AH0-
- static DRIVER+AF8-ATTR+AF8-WO(new+AF8-id)+ADs-
- 
--
- static ssize+AF8-t remove+AF8-id+AF8-store(struct device+AF8-driver +ACo-drv, const char +ACo-buf,
- 		size+AF8-t count)
- +AHs-
-
-
+> ---
+>  drivers/pci/msi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> index f2ef896464b3..f31058fd2260 100644
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
+>  {
+>  	struct msi_desc *desc = irq_data_get_msi_desc(data);
+>  
+> +	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))
+> +		return;
+> +
+>  	if (desc->msi_attrib.is_msix) {
+>  		msix_mask_irq(desc, flag);
+>  		readl(desc->mask_base);		/* Flush write to device */
+> -- 
+> 2.17.1
+> 
