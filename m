@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 128E4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632DFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA32920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA32920862
+	by mail.kernel.org (Postfix) with ESMTP id 3724820862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:19:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3724820862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeKHDut (ORCPT
+        id S1728248AbeKHDvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:50:49 -0500
-Received: from leonov.paulk.fr ([185.233.101.22]:48908 "EHLO leonov.paulk.fr"
+        Wed, 7 Nov 2018 22:51:07 -0500
+Received: from leonov.paulk.fr ([185.233.101.22]:48930 "EHLO leonov.paulk.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbeKHDut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:50:49 -0500
+        id S1726363AbeKHDvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:51:07 -0500
 Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 5578CBFCAE;
-        Wed,  7 Nov 2018 19:19:14 +0100 (CET)
+        by leonov.paulk.fr (Postfix) with ESMTPS id 76588BFE1D;
+        Wed,  7 Nov 2018 19:19:32 +0100 (CET)
 Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 3CD18C1082; Wed,  7 Nov 2018 19:19:13 +0100 (CET)
+        id 09F13C1089; Wed,  7 Nov 2018 19:19:31 +0100 (CET)
 Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id 67254C1069;
+        by gagarine.paulk.fr (Postfix) with ESMTP id B4F7CC106A;
         Wed,  7 Nov 2018 19:17:57 +0100 (CET)
 From:   Paul Kocialkowski <contact@paulk.fr>
 To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
@@ -43,70 +43,42 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Gerry Demaret <gerry@fosdem.org>,
         Luc Verhaegen <libv@skynet.be>,
         Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH v3 3/8] drm/sun4i: tcon: Support an active-low DE signal with RGB interface
-Date:   Wed,  7 Nov 2018 19:18:38 +0100
-Message-Id: <20181107181843.27628-4-contact@paulk.fr>
+Subject: [PATCH v3 4/8] dt-bindings: Add vendor prefix for LeMaker
+Date:   Wed,  7 Nov 2018 19:18:39 +0100
+Message-Id: <20181107181843.27628-5-contact@paulk.fr>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107181843.27628-1-contact@paulk.fr>
 References: <20181107181843.27628-1-contact@paulk.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some panels need an active-low data enable (DE) signal for the RGB
-interface. This requires flipping a bit in the TCON0 polarity register
-when setting up the mode for the RGB interface.
+This introduces a new device-tree binding vendor prefix for Shenzhen
+LeMaker Technology Co., Ltd.
 
-Match the associated bus flag and use it to set the polarity inversion
-bit for the DE signal when required.
+This vendor was already in use but it was not documented until now.
 
 Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+Reviewed-by: Rob Hering <robh@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 7 ++++++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 1 +
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 262ffb6b0f82..0420f5c978b9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -543,6 +543,9 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
- 		val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
- 
-+	if (display_info.bus_flags & DRM_BUS_FLAG_DE_LOW)
-+		val |= SUN4I_TCON0_IO_POL_DE_NEGATIVE;
-+
- 	/*
- 	 * On A20 and similar SoCs, the only way to achieve Positive Edge
- 	 * (Rising Edge), is setting dclk clock phase to 2/3(240°).
-@@ -565,7 +568,9 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 		clk_set_phase(tcon->dclk, 0);
- 
- 	regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
--			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE | SUN4I_TCON0_IO_POL_VSYNC_POSITIVE,
-+			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE |
-+			   SUN4I_TCON0_IO_POL_VSYNC_POSITIVE |
-+			   SUN4I_TCON0_IO_POL_DE_NEGATIVE,
- 			   val);
- 
- 	/* Map output pins to channel 0 */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index 3d492c8be1fc..b5214d71610f 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -116,6 +116,7 @@
- 
- #define SUN4I_TCON0_IO_POL_REG			0x88
- #define SUN4I_TCON0_IO_POL_DCLK_PHASE(phase)		((phase & 3) << 28)
-+#define SUN4I_TCON0_IO_POL_DE_NEGATIVE			BIT(27)
- #define SUN4I_TCON0_IO_POL_HSYNC_POSITIVE		BIT(25)
- #define SUN4I_TCON0_IO_POL_VSYNC_POSITIVE		BIT(24)
- 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 0f5453d1823c..4eecfbf866a4 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -206,6 +206,7 @@ laird	Laird PLC
+ lantiq	Lantiq Semiconductor
+ lattice	Lattice Semiconductor
+ lego	LEGO Systems A/S
++lemaker	Shenzhen LeMaker Technology Co., Ltd.
+ lenovo	Lenovo Group Ltd.
+ lg	LG Corporation
+ libretech	Shenzhen Libre Technology Co., Ltd
 -- 
 2.19.1
 
