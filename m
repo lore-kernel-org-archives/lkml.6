@@ -2,88 +2,121 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C6BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 110CFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D97E20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6F8720827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:00:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="GaVe497F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D97E20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CEHyUHzJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6F8720827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbeKGN26 (ORCPT
+        id S1730798AbeKGN3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 08:28:58 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:40133 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeKGN26 (ORCPT
+        Wed, 7 Nov 2018 08:29:25 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53220 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeKGN3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 08:28:58 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 65B4B8448C;
-        Wed,  7 Nov 2018 17:00:22 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1541563222;
-        bh=H/NuuLjzodFqvNBqqf/E1B4tF3RN4NvUcKT9Kbs5tHY=;
-        h=From:To:Cc:Subject:Date;
-        b=GaVe497FPu3OLy95v6QuplP7/VFg5YT6nbwqPK0QH+HLRuEhlr4rwXfrqdlVI5EyX
-         x0MgZIboV3dA1wzaesRBI5sfZ8LGMEfzP2Y1h5k4G7G1znyom9ZPpBCWJfm0vk/63E
-         P9B2fCk3l+btJLlMKItYNsQ1GY7CowfdH58LwmsrjVE/M2oX5sRRhgWfgST2NEkB1M
-         1KN+5D75Kb6Sx3YTunLr650OqE2Kshh9NSFugp02/3PICUwjRfeF44lgtOWisrWp32
-         WkArPGyHDnj7vpy8ZSOiYHd28t3NQFg4X5GYBt6/2gb8O25l8gKMUKIn7RrvnFflz8
-         m2/JknuwjNgnQ==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5be263550002>; Wed, 07 Nov 2018 17:00:21 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 416D313EEA1;
-        Wed,  7 Nov 2018 17:00:27 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 1EEC11E220B; Wed,  7 Nov 2018 17:00:21 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     linux@roeck-us.net, robh+dt@kernel.org, jdelvare@suse.com
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 0/2] hwmon: (adt7475): inverted PWM output
-Date:   Wed,  7 Nov 2018 17:00:08 +1300
-Message-Id: <20181107040010.27436-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.19.1
+        Wed, 7 Nov 2018 08:29:25 -0500
+Received: by mail-it1-f196.google.com with SMTP id t190-v6so15402482itb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 20:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2TVMpBB+/DkTSAzbKQ3yKJofOCjBMw+vqbxmlxaqX54=;
+        b=CEHyUHzJEVdMEAPFT0/PCRezrhZMPNt25858rx6geg59XNvxrqYoKuIkUnGG8DyGbw
+         PprzOle/uxVVVyYrSNaMnLJMYp2jctdJsH6/8gADp1nUZMBBxdDWJl0E5SaDrxlJT02t
+         FSH+zTdmiwLOSji1E0k/JTKz6DraZP7XGrtnA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2TVMpBB+/DkTSAzbKQ3yKJofOCjBMw+vqbxmlxaqX54=;
+        b=oYt7s8ZCSEjrwOAm1nlJ2PJfhqXq/96unpV0p02mLajmNB0l5r7hTUxFn+pMi1RhVi
+         8MY3rQQjOjpFWcu7IOrvxzcn0OdKFuKCqhasYFNMPw7JrFQx5nyAhtWkF3aiQYCR1nct
+         poHiaZZGHTYNDvjnE4xbd7s5ZZSkhgdEHxuTMQ1FXsrpec/HxPRVnTk48sSn3d4v0Th5
+         +pnvVAh+sYqjyktYqJPJp4T9FEaheeykkComs13kKxsws60iazRG5I6cEEDpp4Hf4r2e
+         GAZwahPV27Q5kaYNOjhtQQ3C2sjfGliTR5Uq5iiejaubTqkqvDFzIGTNaxxMf003Pze+
+         D2JA==
+X-Gm-Message-State: AGRZ1gJ0bPR8p7umQg93eEIY9S0tMybjApyLNM8ByLl7IvDNChxW1mZy
+        9ykg3N0QygR2Zg1pDeKtPrmCQxbTzAI=
+X-Google-Smtp-Source: AJdET5dj0frR6FOILR9GoqDzuhpkNUJQZ8MXuKG6/cXx/aqhZOJoAEfe4reDQMpEZ5NiTl3b1Uu+sQ==
+X-Received: by 2002:a02:3545:: with SMTP id y5-v6mr234718jae.7.1541563250937;
+        Tue, 06 Nov 2018 20:00:50 -0800 (PST)
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com. [209.85.166.43])
+        by smtp.gmail.com with ESMTPSA id f2sm1498628itb.44.2018.11.06.20.00.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 20:00:49 -0800 (PST)
+Received: by mail-io1-f43.google.com with SMTP id a5-v6so10963634ioq.8
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 20:00:49 -0800 (PST)
+X-Received: by 2002:a6b:dc06:: with SMTP id s6-v6mr178399ioc.139.1541563248803;
+ Tue, 06 Nov 2018 20:00:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+References: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
+ <20181106.192305.406697677@genki.is> <20181107022156.GA254567@google.com> <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
+In-Reply-To: <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Tue, 6 Nov 2018 20:00:36 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXPMMXCBN6PU8qzRm579sC9VBdwnxZdZwRdPY1cBUP8oGQ@mail.gmail.com>
+Message-ID: <CA+ASDXPMMXCBN6PU8qzRm579sC9VBdwnxZdZwRdPY1cBUP8oGQ@mail.gmail.com>
+Subject: Re: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check
+ more robust"
+To:     lists@nerdbynature.de
+Cc:     sky@genki.is, Guenter Roeck <linux@roeck-us.net>,
+        yamada.masahiro@socionext.com,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Nov 6, 2018 at 6:58 PM Christian Kujau <lists@nerdbynature.de> wrote:
+> FWIW, the issue I reported back in 2013[0] was not an ill-configured NFS
+> export, but a read-only NFS export (and then a read-write exported NFS
+> export, but the user compiling the kernel did not have write permission)
+> and so "test -w .git" did not help in determining if the source tree can
+> actually written to. And depending on the user's shell[1], this may or may
+> not still be the case.
 
-I have a hardware design that requires logic low PWM output. The adt7475
-supports this but the current driver does not have any way of configuring=
-=20this.
-I've gone with a device-tree property as this is an artifact of the hardw=
-are
-design and not something that might be configured via sysfs.
+What do you mean, "depending on the user's shell"? AFAICT, it's not
+really a shell-specific question, since POSIX defines '-w':
 
-Chris Packham (2):
-=20 dt-bindings: hwmon: add binding documentation for adt7475
-=20 hwmon: (adt7475): add support for inverting the pwm output
+http://pubs.opengroup.org/onlinepubs/9699919799/utilities/test.html
 
-=20.../devicetree/bindings/hwmon/adt7475.txt     | 22 +++++++++++++++++++=
+(I highly doubt we care about a non-POSIX /bin/sh.)
 
-=20.../devicetree/bindings/trivial-devices.txt   |  4 ----
-=20drivers/hwmon/adt7475.c                       | 17 ++++++++++++++
-=203 files changed, 39 insertions(+), 4 deletions(-)
-=20create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.txt=
+But the dash man-page you point at is correctly noting that 'test -w'
+isn't sufficient for noticing a read-only mount (i.e., you have
+permissions, but the mount isn't writeable). Contrary to what Guenter
+said in his reply, our build isn't actually off a read-only mount --
+it's just running without these write permissions, so 'test -w' will
+do the right thing.
 
+> So I'm all for the $(touch .git/some-file-here) test to decide if the
+> kernel has to be modified during build.
 
---=20
-2.19.1
+I suppose that could work, if you do that only after checking 'test
+-w'. It's important to not even try to write to the source tree when
+not permitted.
+
+On a different tangent: how about the --no-optional-locks (see
+git(1))? Will this get you your "up-to-date" result without writing to
+the .git directory? I've only read the documentation, but not tested
+it.
+
+Brian
+
+> Christian.
+>
+> [0] https://lkml.org/lkml/2013/6/14/574
+> [1] https://manpages.debian.org/unstable/dash/dash.1.en.html
