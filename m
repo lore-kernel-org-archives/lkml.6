@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF0AC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0C4C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0985B2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0BF22086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:12:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="yq5RpJr5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0985B2081D
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="cJKc7DM2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BF22086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731176AbeKHAnZ (ORCPT
+        id S1731198AbeKHAnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:43:25 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:18567 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeKHAnZ (ORCPT
+        Wed, 7 Nov 2018 19:43:31 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:8216 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbeKHAnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:43:25 -0500
+        Wed, 7 Nov 2018 19:43:31 -0500
 X-IronPort-AV: E=Sophos;i="5.54,475,1534834800"; 
-   d="scan'208";a="20793200"
+   d="scan'208";a="22951832"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Nov 2018 08:12:39 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Nov 2018 08:12:44 -0700
 Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 7 Nov 2018 08:12:37 -0700
+ email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 7 Nov 2018 08:12:43 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KzxGz83XHOJ8TnHnoV0sdkAcnfYUJpKEwNJvs6Cr4HU=;
- b=yq5RpJr5C1QRr8ttir3PsfcUcUlA3cC1mPWSJjHfs8JnFT+KRoCMpouCaf/OGoF/drE46tjUc5fFI1l2ymYoEddJUMhQM8G/0kT/AlpuOSEjjDdnspEw3gHAnGE5UU9/nwywOEqGogYhUNwOWjaGqovCgD+j50y0Ddxbuy+/HmA=
+ bh=pdTNHXzYUD2ieOzcZ1lCyL7b9IDxvFvPerXb86JdqFk=;
+ b=cJKc7DM2lagy+/fWf5OCsfwSXRtPjvc2hWZ0EMxNgJo4voph+ISnDy4sWXg9kwAmgmUVUwK6I2dlKgmg97PzQKshmgrVqVE6aBxK0fJgKx8BIhTvlVA1AdsfqQinySQZ210Aw3+jBZhsCz/ldaLgTEoEvD7RaUv/qQo5MKyFaRU=
 Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
  BN6PR1101MB2257.namprd11.prod.outlook.com (10.174.113.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.25; Wed, 7 Nov 2018 15:12:36 +0000
+ 15.20.1294.25; Wed, 7 Nov 2018 15:12:42 +0000
 Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
  ([fe80::c873:c197:d9d6:3bf6]) by BN6PR1101MB2243.namprd11.prod.outlook.com
  ([fe80::c873:c197:d9d6:3bf6%6]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 15:12:36 +0000
+ 15:12:42 +0000
 From:   <Andrei.Stefanescu@microchip.com>
 To:     <linus.walleij@linaro.org>, <gregkh@linuxfoundation.org>,
         <Nicolas.Ferre@microchip.com>, <robh+dt@kernel.org>,
@@ -55,12 +54,11 @@ CC:     <Ludovic.Desroches@microchip.com>, <Cristian.Birsan@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <Andrei.Stefanescu@microchip.com>
-Subject: [PATCH 2/3] MAINTAINERS: add maintainer for sama5d2 PIOBU GPIO driver
-Thread-Topic: [PATCH 2/3] MAINTAINERS: add maintainer for sama5d2 PIOBU GPIO
- driver
-Thread-Index: AQHUdqxRZIT1HnDnzEmzct538P+4AQ==
-Date:   Wed, 7 Nov 2018 15:12:36 +0000
-Message-ID: <1541603580-17448-3-git-send-email-andrei.stefanescu@microchip.com>
+Subject: [PATCH 3/3] gpio: add driver for sama5d2 PIOBU pins
+Thread-Topic: [PATCH 3/3] gpio: add driver for sama5d2 PIOBU pins
+Thread-Index: AQHUdqxUmTJadJepxkKMhamEl2Dylw==
+Date:   Wed, 7 Nov 2018 15:12:41 +0000
+Message-ID: <1541603580-17448-4-git-send-email-andrei.stefanescu@microchip.com>
 References: <1541603580-17448-1-git-send-email-andrei.stefanescu@microchip.com>
 In-Reply-To: <1541603580-17448-1-git-send-email-andrei.stefanescu@microchip.com>
 Accept-Language: en-US
@@ -75,26 +73,26 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [94.177.32.154]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2257;6:M2hMvH1v7oTo5wGCg6uTcMtMDS9GkEM9tbMflSY8hZ8DINonrXme1apP33Jy9DXf5y3tUn4Tye+YjYVemMYs9WtcGMegMdYA6cDTAO5svmVBbZzHk94JFFuA5OeeATUtspEkp1w9QKhZoIlbM/U91x38kSTWCJ2B6UqGbuVSJV8UykfV40xRIrR4437CuFUzA/YpErCHkWtFqnfo9JGe/Bb4o08JNjrAbRaCqZvGh7t5OkWmemxIMepqAoShWluHfnhC/C918Sf3tZ3VqY+C/UzkzwMUJnEYYf1EZ7zDgt25hAIlE6KIXpSzBNbYpeutkNJjl5+TkU4RuB+d9EDs1Gwu7t5fEeIkvGxrO7+QQuwFw+CgSeadOc9x+dwnZYA8vHMHz/1HvKinIAmE0MS6Lki6PfRzugm7cRHFJ4uB+t58X3r1RYp3vbUNJ6wiDtPfHYrDCWezA88git/87kh+mg==;5:uf2NVOeyXVQgWWV+ZV+VO8Vwt1LU4i57YODnWwkp1nnW+8wWC5H5hD5DGpFWEhuQt6sl2KVEa5OokUL/u6aCJQMuoZsh93rdRTNf0D5bZeaopEThWXbfjZkVzWD52/OC0SOwrqCWzN6E5G2mjU5a8AKBLRlozqGh7dyprfcPKWI=;7:MfR58i+GB7HhM8dKbP6ut0ETJAp2kDD9zdSg5WYy6sCevNGpmCgEd0AZVGRG8OAMLYeOWAtpRz2RKpORSAfA/OekvpgLihyErNYa9iWKEUT5C/VYCwa/+PEHDj58KtVwNo8BRmsDsXOrqMK5SNzVzA==
-x-ms-office365-filtering-correlation-id: 75576654-714d-43a5-ac62-08d644c3735c
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2257;6:Az07KEOjgDzJ6lKMljHhDIh+SB3rI7e5aZs6ErWX/T1I6KMMRlyXVzAZbXjwEiX5V9riB5yY4Qu77wLVEGJAOkvtnWQsvLM0UPcuns3dHFoVCUDm0pqozz0wEkRDNJ830ZuQ/zpie/1mOd7TNAfbwa2/bJIu0oyjxiKnakWT/fiBvXDarMpIz7Og8KxaYKe+e+3oYlxuWDAVsVFxOI03zHN4p/SJi2Ntcc1Fiona5X+X0yujjTGOfFshUAFb+MuosU7ifvvJlGV8u4pbPkU1HdnVQHEQMQ8CLUBdlv7X1OasT7RyVZCAKjSRA0D06+Z8khP4vSLCBZaTeM+eAw1JtyI20ZvXS6e6AMJGll0pvZzODusJLz/iOA7wR1pUWt/8YxoLXXe6ikvwVMAQPqw9oqVp6vRgY91SdZw/OIflv+m1m6nA1+txQV7CdxPQazo5X4QPCrqfrNJqjO6UoR3qZg==;5:5fNWM2ISrsws2xE17gdjKZClH0seminFkHGLRIlVV3/aRIma5lagHE+sY8H6A15UbvIwrTIAqMvOsHG7zT7obkVoQQrD/s7mQle3YEliaO/mkyBIXtDHOYD/CuOIcVAN4Ow5w+Rnby80cbc1GBcpOsTeMNXzKvFCdtQamZJDLM0=;7:db1B7dMGHk79zYMoKikgJJEnUANUXTFW/d9l3myS8u9UGYfE7hJ8hwsuuJdzcDNMyexm91HD0f2U+eMsrm+7Ku+8ZW0yLxGAfNUAZZq0l4H0WkHUOOxZj41UNAzlH4tnnrfV0feyX18MkBt5ADTyAA==
+x-ms-office365-filtering-correlation-id: a786ceab-96d1-4e29-31cd-08d644c37688
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2257;
 x-ms-traffictypediagnostic: BN6PR1101MB2257:
-x-microsoft-antispam-prvs: <BN6PR1101MB22578ABC1EEC4742EA2EDB9FEDC40@BN6PR1101MB2257.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(258649278758335)(9452136761055);
+x-microsoft-antispam-prvs: <BN6PR1101MB22575A6E8273AF330D4EDC64EDC40@BN6PR1101MB2257.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231382)(944501410)(52105095)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2257;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2257;
 x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(376002)(366004)(136003)(199004)(189003)(2501003)(5660300001)(99286004)(8936002)(4326008)(97736004)(105586002)(72206003)(386003)(102836004)(6506007)(14454004)(8676002)(26005)(81166006)(52116002)(86362001)(81156014)(2900100001)(76176011)(68736007)(106356001)(217873002)(476003)(478600001)(36756003)(2616005)(53936002)(305945005)(256004)(6512007)(446003)(11346002)(71190400001)(71200400001)(7736002)(2906002)(6486002)(6436002)(186003)(3846002)(66066001)(6116002)(25786009)(486006)(107886003)(316002)(54906003)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2257;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(376002)(366004)(136003)(199004)(189003)(2501003)(5660300001)(99286004)(8936002)(4326008)(97736004)(105586002)(72206003)(386003)(102836004)(6506007)(14454004)(8676002)(26005)(81166006)(52116002)(86362001)(81156014)(2900100001)(76176011)(68736007)(106356001)(476003)(478600001)(36756003)(2616005)(53936002)(305945005)(256004)(14444005)(6512007)(446003)(11346002)(71190400001)(71200400001)(7736002)(2906002)(6486002)(6436002)(186003)(3846002)(66066001)(6116002)(25786009)(486006)(107886003)(316002)(54906003)(110136005)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2257;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: BuUxYSfDNzdUTMG6il6UJCda+1OIhSKZH5d1CilyI5Q72GCPEXYXuoSfuPgtGjYEwUpTjsbHQ+iun4C5I1hT8eEAmUVTosBg72T39hofKomB3IQJHfZC82mq18hx89ZqZh0b6TjizAo0BJX7DNqacqcP8yC7Jqx2cbpvRnD6clJWWgVLJMqNDfx0rIwPV0RgEad4buE5pZ93WShuNC2vf7I5uITvwkAgQifIuAopyPVeTEMZ++Y+GYB9gn0LelZlUBliyw1QZxMMtAtLC1uuywSSzJiKtJmaIqUtyHI3bicOmD7Ae8k/YMb0s6hkZcghHL269eRxNVe/rh/oOIKRnZzpjxXTZBUb5xIqh6cG44Q=
+x-microsoft-antispam-message-info: I4UGLsgb8oT/n+4z12+o5PVZTNPZiCO16SD7qdJLz0IzFQpmhVTISZ7iTShGhh1Jq4LeCgb/1s0LuLCViQxuxgWnpIfxlwNgJ3f8HD5fPZ1ff+iYWM0wPm1b3NPwO4rqC3a+xCNKPOkay94qKP3nf/0X1aywvQLMltvrtmtTZcoZ5D7OT/1Xva3uw0v/sbOwWaeppTJ7I05JVcc06NDm3vyvTOZonvAl5nRFtIhmxwQZxiqGNMt4vDjRxr+V5fTzZmjBMwLpuD/ywIww8XYQ3dVVBmqd1qW/5yNSdRn6N0Evuv46PaVe4X/N0X7AagiqGksJ9rgWOTXGvNA7BCF/c4/wT9IUrWPhFlibRGRQVBM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75576654-714d-43a5-ac62-08d644c3735c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 15:12:36.7080
+X-MS-Exchange-CrossTenant-Network-Message-Id: a786ceab-96d1-4e29-31cd-08d644c37688
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 15:12:42.0004
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
@@ -105,32 +103,322 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a maintainer for the sama5d2 GPIO controller
-driver.
+PIOBU pins do not lose their voltage during Backup/Self-refresh.
+This patch adds a simple GPIO controller for them.
+
+This driver adds support for using the pins as GPIO
+offering the possibility to read/set the voltage.
 
 Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpio/Kconfig              |  10 ++
+ drivers/gpio/Makefile             |   1 +
+ drivers/gpio/gpio-sama5d2-piobu.c | 254 ++++++++++++++++++++++++++++++++++=
+++++
+ 3 files changed, 265 insertions(+)
+ create mode 100644 drivers/gpio/gpio-sama5d2-piobu.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f485597..88369f1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9760,6 +9760,13 @@ M:	Nicolas Ferre <nicolas.ferre@microchip.com>
- S:	Supported
- F:	drivers/power/reset/at91-sama5d2_shdwc.c
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 833a1b5..e562e32 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -429,6 +429,16 @@ config GPIO_REG
+ 	  A 32-bit single register GPIO fixed in/out implementation.  This
+ 	  can be used to represent any register as a set of GPIO signals.
 =20
-+MICROCHIP SAMA5D2-COMPATIBLE PIOBU GPIO
-+M:	Andrei Stefanescu <andrei.stefanescu@microchip.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-gpio@vger.kernel.org
-+F:	drivers/gpio/gpio-sama5d2-piobu.c
-+F:	Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
++config GPIO_SAMA5D2_PIOBU
++	tristate "SAMA5D2 PIOBU GPIO support"
++	depends on GPIO_SYSCON
++	help
++	  Say yes here to use the PIOBU pins as GPIOs.
 +
- MICROCHIP SPI DRIVER
- M:	Nicolas Ferre <nicolas.ferre@microchip.com>
- S:	Supported
++	  PIOBU pins on the SAMA5D2 can be used as GPIOs.
++	  The difference from regular GPIOs is that they
++	  maintain their value during backup/self-refresh.
++
+ config GPIO_SIOX
+ 	tristate "SIOX GPIO support"
+ 	depends on SIOX
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 671c447..f18d345 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -108,6 +108,7 @@ obj-$(CONFIG_GPIO_RDC321X)	+=3D gpio-rdc321x.o
+ obj-$(CONFIG_GPIO_RCAR)		+=3D gpio-rcar.o
+ obj-$(CONFIG_GPIO_REG)		+=3D gpio-reg.o
+ obj-$(CONFIG_ARCH_SA1100)	+=3D gpio-sa1100.o
++obj-$(CONFIG_GPIO_SAMA5D2_PIOBU)	+=3D gpio-sama5d2-piobu.o
+ obj-$(CONFIG_GPIO_SCH)		+=3D gpio-sch.o
+ obj-$(CONFIG_GPIO_SCH311X)	+=3D gpio-sch311x.o
+ obj-$(CONFIG_GPIO_SNPS_CREG)	+=3D gpio-creg-snps.o
+diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-=
+piobu.c
+new file mode 100644
+index 0000000..4ded370
+--- /dev/null
++++ b/drivers/gpio/gpio-sama5d2-piobu.c
+@@ -0,0 +1,254 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SAMA5D2 PIOBU GPIO controller
++ *
++ * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries
++ *
++ * Author: Andrei Stefanescu <andrei.stefanescu@microchip.com>
++ *
++ */
++#include <linux/gpio.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define PIOBU_NUM 8
++#define PIOBU_REG_SIZE 4
++
++/*
++ * backup mode protection register for intrusion detection
++ * normal mode protection register for intrusion detection
++ * wakeup signal generation
++ */
++#define PIOBU_BMPR 0x7C
++#define PIOBU_NMPR 0x80
++#define PIOBU_WKPR 0x90
++
++#define PIOBU_BASE 0x18 /* PIOBU offset from SECUMOD base register address=
+. */
++
++#define PIOBU_DET_OFFSET 16
++
++/* In the datasheet this bit is called OUTPUT */
++#define PIOBU_DIRECTION BIT(8)
++#define PIOBU_OUT BIT(8)
++#define PIOBU_IN 0
++
++#define PIOBU_SOD BIT(9)
++#define PIOBU_PDS BIT(10)
++
++#define PIOBU_HIGH BIT(9)
++#define PIOBU_LOW 0
++
++struct sama5d2_piobu {
++	struct gpio_chip chip;
++	struct regmap *regmap;
++};
++
++/*
++ * sama5d2_piobu_setup_pin - prepares a pin for sama5d2_piobu_set_directio=
+n call
++ *
++ * Do not consider pin for intrusion detection (normal and backup modes)
++ * Do not consider pin as intrusion wakeup interrupt source
++ */
++static int sama5d2_piobu_setup_pin(struct gpio_chip *chip, unsigned int pi=
+n)
++{
++	int ret;
++	struct sama5d2_piobu *piobu =3D container_of(chip, struct sama5d2_piobu,
++						   chip);
++	unsigned int mask =3D BIT(PIOBU_DET_OFFSET + pin);
++
++	ret =3D regmap_update_bits(piobu->regmap, PIOBU_BMPR, mask, 0);
++	if (ret)
++		return ret;
++
++	ret =3D regmap_update_bits(piobu->regmap, PIOBU_NMPR, mask, 0);
++	if (ret)
++		return ret;
++
++	return regmap_update_bits(piobu->regmap, PIOBU_WKPR, mask, 0);
++}
++
++/*
++ * sama5d2_piobu_write_value - writes value & mask at the pin's PIOBU regi=
+ster
++ */
++static int sama5d2_piobu_write_value(struct gpio_chip *chip, unsigned int =
+pin,
++				     unsigned int mask, unsigned int value)
++{
++	int reg, ret;
++	struct sama5d2_piobu *piobu =3D container_of(chip, struct sama5d2_piobu,
++						   chip);
++
++	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
++	ret =3D regmap_update_bits(piobu->regmap, reg, mask, value);
++	return ret;
++}
++
++/*
++ * sama5d2_piobu_read_value - read the value with masking from the pin's P=
+IOBU
++ *			      register
++ */
++static int sama5d2_piobu_read_value(struct gpio_chip *chip, unsigned int p=
+in,
++				    unsigned int mask)
++{
++	struct sama5d2_piobu *piobu =3D container_of(chip, struct sama5d2_piobu,
++						   chip);
++	unsigned int val, reg;
++	int ret;
++
++	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
++	ret =3D regmap_read(piobu->regmap, reg, &val);
++	if (ret < 0)
++		return ret;
++
++	return val & mask;
++}
++
++/*
++ * sama5d2_piobu_set_direction - mark pin as input or output
++ */
++static int sama5d2_piobu_set_direction(struct gpio_chip *chip,
++				       unsigned int direction,
++				       unsigned int pin)
++{
++	return sama5d2_piobu_write_value(chip, pin, PIOBU_DIRECTION, direction);
++}
++
++/*
++ * sama5d2_piobu_get_direction - gpiochip get_direction
++ */
++static int sama5d2_piobu_get_direction(struct gpio_chip *chip,
++				       unsigned int pin)
++{
++	int ret =3D sama5d2_piobu_read_value(chip, pin, PIOBU_DIRECTION);
++
++	if (ret < 0)
++		return ret;
++
++	return (ret =3D=3D PIOBU_IN) ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
++}
++
++/*
++ * sama5d2_piobu_direction_input - gpiochip direction_input
++ */
++static int sama5d2_piobu_direction_input(struct gpio_chip *chip,
++					 unsigned int pin)
++{
++	return sama5d2_piobu_set_direction(chip, PIOBU_IN, pin);
++}
++
++/*
++ * sama5d2_piobu_direction_output - gpiochip direction_output
++ */
++static int sama5d2_piobu_direction_output(struct gpio_chip *chip,
++					  unsigned int pin, int value)
++{
++	return sama5d2_piobu_set_direction(chip, PIOBU_OUT, pin);
++}
++
++/*
++ * sama5d2_piobu_get - gpiochip get
++ */
++static int sama5d2_piobu_get(struct gpio_chip *chip, unsigned int pin)
++{
++	/* if pin is input, read value from PDS else read from SOD */
++	int ret =3D sama5d2_piobu_get_direction(chip, pin);
++
++	if (ret =3D=3D GPIOF_DIR_IN)
++		ret =3D sama5d2_piobu_read_value(chip, pin, PIOBU_PDS);
++	else if (ret =3D=3D GPIOF_DIR_OUT)
++		ret =3D sama5d2_piobu_read_value(chip, pin, PIOBU_SOD);
++
++	if (ret < 0)
++		return ret;
++
++	return !!ret;
++}
++
++/*
++ * sama5d2_piobu_set - gpiochip set
++ */
++static void sama5d2_piobu_set(struct gpio_chip *chip, unsigned int pin,
++			      int value)
++{
++	value =3D (value =3D=3D 0) ? PIOBU_LOW : PIOBU_HIGH;
++	sama5d2_piobu_write_value(chip, pin, PIOBU_SOD, value);
++}
++
++const struct gpio_chip sama5d2_piobu_template_chip =3D {
++	.owner =3D THIS_MODULE,
++	.get_direction =3D sama5d2_piobu_get_direction,
++	.direction_input =3D sama5d2_piobu_direction_input,
++	.direction_output =3D sama5d2_piobu_direction_output,
++	.get =3D sama5d2_piobu_get,
++	.set =3D sama5d2_piobu_set,
++	.base =3D -1,
++	.ngpio =3D PIOBU_NUM,
++	.can_sleep =3D 0,
++
++};
++
++static int sama5d2_piobu_probe(struct platform_device *pdev)
++{
++	struct sama5d2_piobu *piobu;
++	int ret, i;
++
++	piobu =3D devm_kzalloc(&pdev->dev, sizeof(*piobu), GFP_KERNEL);
++	if (!piobu)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, piobu);
++	piobu->chip =3D sama5d2_piobu_template_chip;
++	piobu->chip.label =3D pdev->name;
++	piobu->chip.parent =3D &pdev->dev;
++	piobu->chip.of_node =3D pdev->dev.of_node;
++
++	piobu->regmap =3D
++		syscon_regmap_lookup_by_compatible("microchip,sama5d2-piobu");
++	if (IS_ERR(piobu->regmap)) {
++		dev_err(&pdev->dev, "Failed to get syscon regmap %ld\n",
++			PTR_ERR(piobu->regmap));
++		return PTR_ERR(piobu->regmap);
++	}
++
++	ret =3D devm_gpiochip_add_data(&pdev->dev, &piobu->chip, piobu);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add gpiochip %d\n", ret);
++		return ret;
++	}
++
++	for (i =3D 0; i < PIOBU_NUM; ++i) {
++		ret =3D sama5d2_piobu_setup_pin(&piobu->chip, i);
++		if (ret) {
++			dev_err(&pdev->dev, "Failed to setup pin: %d %d\n",
++				i, ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static const struct of_device_id sama5d2_piobu_ids[] =3D {
++	{ .compatible =3D "microchip,sama5d2-piobu" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, sama5d2_piobu_ids);
++
++static struct platform_driver sama5d2_piobu_driver =3D {
++	.driver =3D {
++		.name		=3D "sama5d2-piobu",
++		.of_match_table	=3D of_match_ptr(sama5d2_piobu_ids)
++	},
++	.probe =3D sama5d2_piobu_probe,
++};
++
++module_platform_driver(sama5d2_piobu_driver);
++
++MODULE_VERSION("1.0");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("SAMA5D2 PIOBU controller driver");
++MODULE_AUTHOR("Andrei Stefanescu <andrei.stefanescu@microchip.com>");
 --=20
 2.7.4
 
