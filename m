@@ -2,112 +2,102 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981B2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59999C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E34B20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20B7020892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:48:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NhWAiKzm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E34B20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Lz9ICeRT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B7020892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731032AbeKHBTR (ORCPT
+        id S1731095AbeKHBTm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:19:17 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40660 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728005AbeKHBTR (ORCPT
+        Wed, 7 Nov 2018 20:19:42 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41266 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727645AbeKHBTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:19:17 -0500
-Received: by mail-ua1-f66.google.com with SMTP id n7so6013283uao.7
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 07:48:22 -0800 (PST)
+        Wed, 7 Nov 2018 20:19:42 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p16-v6so8035862plr.8
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 07:48:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=TrlHarah+TLUgkrwLxYsQP6SLsnTl0xdV5j4cE+KW/k=;
-        b=NhWAiKzmoKWOSuFAM1ham4fkT1TKE1d4kHiJRT5sdGNeytzeiQSDKcvfvqSmpOiPc7
-         Fidu1K6nGb+SwBQ0xqoMIxVRdMG8/knOSN9/faQ8KpgimWcfaCuRjcGzFvJ/nVy/mF2l
-         28yBUjo4qeK+bSV5Mt8z9leZLDRKS3fylfm+eTCSDmtJJWpdMKXSy5n7a0P1w6zNaotR
-         +XwLcBnkislH72h1p9YOnJ45cojb1kbLD4XniwaZ/gzb9/1cxoXmrmm8VMA/L39Gkunk
-         nBGVc/cgovvndyy9hO6RKUzArySi8Pdo4cSHr70KmBRuvWfUyJOCtq/TkWf5F+CDJq7X
-         X3CQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=C3090pGuhpk/phm324RxnllFsyWN0pwLZP3cDNfrwmA=;
+        b=Lz9ICeRTG/FayCFUf4ab5udQhvQN1NOtRDmuhwQSxjkLhsh7B3gY5Z6PYBqOgvj5ke
+         m+610R+h7nx0a4QUICzDk/rjING29Zvc7Y/+fOI3ioNieonl9weHdVgnt2j7U42Bqmdw
+         /2NtBGbZ6mFHC2su9mbmu0EfnyECkQbX1Frw5AYsN4ItA+g9xoNWvUr/PGE6WNud1t0F
+         Drnn5EPhDTn2iL0PL0b3xzL/zOd2q49umsjl+FQDHNsQtyPWycXNH+ZVj0tvfbbSMopM
+         VzV6NW/yar3YiTlnNJ6gDvgnhMLUbXU3gvGS+ZyFLzhK2N6xTPTutroZ1rXdZQ013jxb
+         DX6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=TrlHarah+TLUgkrwLxYsQP6SLsnTl0xdV5j4cE+KW/k=;
-        b=qOkDOOY8v3NeDzOJzI8mRWejwcheMn7O/zDvGhOVcoMgzYfPTr4shwwd9PMpzUiGDz
-         p3OTLRkvGf6IbNdxQv5pIT89zOwDXq/56R47pMhT9dJeaHBGX6yHvhoKeX7kp/c5mOtN
-         dD5WYYQ+83DPkvtXSwk3RpTositwSSmUseOvACoW3SbRChh6LialuBKHcZ5l2EdYLzdu
-         ZXuh+ck5tzkAYfU2lUW3R51a0cRFUS2kC6oYp0HeKeBhkGuocLetB801qxfrzK09O73W
-         QG5SY2Zb7ws3IJBM/wxPPp63iitJ62dfzci90l6QGYUxbox3+IIX4v0KZpdAeV7itGnl
-         crwg==
-X-Gm-Message-State: AGRZ1gKH2ePZJyOlLVQY+8aGG1QiZqC/hTpk3MvyzQSQnj/wd1Z9IK0Q
-        KUwcUdAi+J0Zxkg3DqU0Ev9V3A6+NVPXosMaqsVaQazdiMd91Q==
-X-Google-Smtp-Source: AJdET5cAI9a01SxzPIFrVNsQU75ndS3M2mbuIbr5yY7LrqbNSY2UQ6aPeP2My9HfyKVtrejCKhFmhX23vZtintxHoYE=
-X-Received: by 2002:ab0:45e2:: with SMTP id u89mr318243uau.13.1541605701622;
- Wed, 07 Nov 2018 07:48:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=C3090pGuhpk/phm324RxnllFsyWN0pwLZP3cDNfrwmA=;
+        b=b6YakSoqB9H9kQLei/HgHJWYIypYeGz011mYrufLrTLhBynSH9WwgaY+oF4hP20kAP
+         gxJ2ig34RZneF4zPgH3DGusrvg/8h3y1sOWZk3yNOZX5RKonN1UMTerIwdf6OjscJzX6
+         menKr7Dr4dAzq2VunfrINeMDzQsTrnBpjlbhWeizSa4aQYWCgYSQu3P1JX1V+B8H6C+B
+         q2RQYQ9U2gvNSiFYz+IsSRk/4e9dQ9B3IghfJ58zSimlT6lGNz6ZvYWIrPhAGb49WB1+
+         J6Y9SWOpv2OpJUEPVePBrv00gYc22+ie/mvpYr8Br7AlClBzh8Qt4VfnyvdaEBPl8iHb
+         dj9w==
+X-Gm-Message-State: AGRZ1gJlfrhy9s19bSuUYAaO9lBVcb0y8pv9++OE+AXTFsIqlnPxjH1Z
+        5h0a92kufQxsAMIbcYGTaUzVLw==
+X-Google-Smtp-Source: AJdET5evGg/0uGWPg1VVsgzUkQ5K+uQw2NXrF3mAGkyrBY2Xef0kNGUebwF3p5h8DTtacqOHT9l6VA==
+X-Received: by 2002:a17:902:aa8d:: with SMTP id d13-v6mr770190plr.74.1541605727210;
+        Wed, 07 Nov 2018 07:48:47 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id d126-v6sm1029534pgc.32.2018.11.07.07.48.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 07:48:46 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: mt7622: fix console output issue on rfb1
+Organization: BayLibre
+References: <8043d487e7bd20a11b14d832702bda214a9a694f.1541566473.git.ryder.lee@mediatek.com>
+Date:   Wed, 07 Nov 2018 07:48:45 -0800
+In-Reply-To: <8043d487e7bd20a11b14d832702bda214a9a694f.1541566473.git.ryder.lee@mediatek.com>
+        (Ryder Lee's message of "Wed, 7 Nov 2018 12:59:43 +0800")
+Message-ID: <7hr2fwevmq.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 07:48:20 -0800 (PST)
-In-Reply-To: <20181106130524.GC2453@dhcp22.suse.cz>
-References: <20181031150625.147369-1-dancol@google.com> <20181105132205.138695-1-dancol@google.com>
- <20181106130524.GC2453@dhcp22.suse.cz>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 7 Nov 2018 15:48:20 +0000
-Message-ID: <CAKOZueu5aDtHDBzp6qKECTHEejjb=dyegQkuHh8NfwgNktzFow@mail.gmail.com>
-Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>, rppt@linux.ibm.com,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 1:05 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Mon 05-11-18 13:22:05, Daniel Colascione wrote:
->> State explicitly that holding a /proc/pid file descriptor open does
->> not reserve the PID. Also note that in the event of PID reuse, these
->> open file descriptors refer to the old, now-dead process, and not the
->> new one that happens to be named the same numeric PID.
+Ryder Lee <ryder.lee@mediatek.com> writes:
+
+> The issue was introduced by Kernel CI:
+> https://kernelci.org/boot/id/5bbdcbad59b5146fc5b43592/
+
+The issue was *found* by kernelCI, not introduced by kernelCI. ;)
+
+> Fix this by using a 'stdout-path' property that points to the device.
 >
-> This sounds quite obvious
+> Fixes: c0d9f9ad4f76 ("arm64: dts: mt7622: add earlycon to mt7622-rfb1 board")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
-Many people *on* *LKML* were wrong about this behavior. If it's not
-obvious to experienced kernel developers, it's certainly not obvious
-to the public.
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 
-> otherwise anybody could simply DoS the system
-> by consuming all available pids.
+Note that this patch fixes the problem where there is no more console
+output, but current mainline still doesn't boot as there's another
+crash: http://termbin.com/zitb
 
-People can do that today using the instrument of terror widely known
-as fork(2). The only thing standing between fork(2) and a full process
-table is RLIMIT_NPROC. In a world where we really did reserve a
-numeric PID through the lifetime of any struct pid to which it refers
-(i.e., where "cd /proc/$PID" held $PID), we could charge these struct
-pid reservations against RLIMIT_NPROC and achieve behavior as safe as
-what we have today. The details would be subtle (you'd have to take
-pains to avoid double-counting, for example), but it could be made to
-work. Other people, on the various lkml threads about my process API
-improvement proposals, have proposed fixing the longstanding PID race
-problem by making struct pid behave the way people mistakenly believe
-it behaves today. It's a serious idea worth actual consideration.
+Kevin
