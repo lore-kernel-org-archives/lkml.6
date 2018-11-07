@@ -2,42 +2,41 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AD4C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC257C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39DCD20817
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A9520817
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Y0yC9nPT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39DCD20817
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bfmAF/E9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A9520817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbeKGWI0 (ORCPT
+        id S1730800AbeKGWI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:08:26 -0500
-Received: from mail-eopbgr60057.outbound.protection.outlook.com ([40.107.6.57]:21504
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        Wed, 7 Nov 2018 17:08:27 -0500
+Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:35217
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726395AbeKGWIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726388AbeKGWIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Nov 2018 17:08:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=utvH06NhzOF+E67Ne+X5zZ2Cl+j1uKu3U0pf/CKnw9E=;
- b=Y0yC9nPTKRgbt6UDrW3k0XHmcFZZP6sBKSJlMlEoSxAVXVKnkYjWwtgTuwipYO8Wx5CmBRRwVBGArU1S/LN3xpMJQ3t46LzHERAbYxNqsBD/huw0gmhpr8I6vHFbCrkdkvT+lrBsZcQ+vBDxQ8d3EdagdnBTLV9wtQWnGrKGpXI=
+ bh=0alN577rb7a/7vF82Br8TrX8xGw0pllUVSRb9wXWd30=;
+ b=bfmAF/E9b3dBYlQALuoNOxEpmss92f7unWmo7UNY9hNJ+s1i0NEktKhZpFSPLTK1DXse6zbZIzhknqY36AIejw8YobU1Cd7ziaaNqC9Iv4i9jj042eyFtTbg0Y4GMpxr4noz8qrEuS2JS7XR08B52HQIfLP7KxdM0FxQK+lU33M=
 Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3734.eurprd04.prod.outlook.com (52.133.29.13) with Microsoft SMTP
+ AM6PR0402MB3494.eurprd04.prod.outlook.com (52.133.19.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 7 Nov 2018 12:38:07 +0000
+ 15.20.1294.26; Wed, 7 Nov 2018 12:38:05 +0000
 Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
  ([fe80::5195:5e4c:be83:408b]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
  ([fe80::5195:5e4c:be83:408b%4]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 12:38:07 +0000
+ 12:38:05 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Sascha Hauer <kernel@pengutronix.de>,
         Lucas Stach <l.stach@pengutronix.de>,
@@ -54,13 +53,11 @@ CC:     Michael Turquette <mturquette@baylibre.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v12 2/5] clk: imx: add fractional PLL output clock
-Thread-Topic: [PATCH v12 2/5] clk: imx: add fractional PLL output clock
-Thread-Index: AQHUdpa81hxq5O+RZk6c1He6xGTQYA==
-Date:   Wed, 7 Nov 2018 12:38:07 +0000
-Message-ID: <1541594266-16712-3-git-send-email-abel.vesa@nxp.com>
-References: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v12 0/5] Add i.MX8MQ clock driver
+Thread-Topic: [PATCH v12 0/5] Add i.MX8MQ clock driver
+Thread-Index: AQHUdpa6tQxfFOevC0+oXcF/U1kvxQ==
+Date:   Wed, 7 Nov 2018 12:38:05 +0000
+Message-ID: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -73,313 +70,79 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3734;6:6CN0K7TwFyk1XCrHGVlv4KzyL1ApE++SGi6SONRmYJKuW9mL04Zve0hBKP/CajlcBAzZuZc9N60mPNCrDf1V2Xwtxr7U24oxbMjamNE3RSEYxwFVfge4cye7RpQ8PQHNidwG4Ws9ZOCxViSQk4JJWlopBQ89LY7Kai99J9jIdFB+QapfEqliu6fSQ1cc5RYfewfZ+zRg2Gg9ER0ynkv56g8Z+hoFFTrauCrgxXmA9NfdfbcafJtOtjp3J0IgPZx/rsmqTmpZbzfLBpafIJ04j0UGVpKcbnyZUBckcS8WgYypy8/ukw/FIPVzNXqbq5wGmwSbneLr8tSeICejsWMXeljs1dEhtkjWxuHEzoW7m805v5pQLXkow9RSoB7NXbOGrgP8gTY18iB/R8wUB9FgjBHOfweNqYLekOl5G7MoN1XV3hVL0YrTqADItAaC+5BUmlocBaTmVBNS1+BzOIt2PQ==;5:W918r2AqE5upFrZ3vkIxR+rmI85f/Hf6wpOE8ZqqaXViN+a+KYfnpgM/sEB8TPMawzI97UwIIxT4APKLAxjyhEjyANl2OrvZetiimRiDAp56xhO8FbfXg9esKZprh9zgR/AFT8K4m3nhP75iCoz6Mee47qDG3AWamDgC/XUcW78=;7:JLeHGuuUDcqt/tbG5ErOTl/FY9DNLbPuU0vZcBK8j/cRIkKqmfkwv97buLRYcEULfLUH/cYxktQJPT01qt1s7JNVRUTSodrbxsDPjyxa0ctCitIDdY3X+HW2ypeJyvpjrESs5C5B2O5IqbYZ2k35bQ==
-x-ms-office365-filtering-correlation-id: 8204cf76-f5ff-4cc0-0061-08d644adde59
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3494;6:uyZvVJPgJnnVDyrsV9vw5/rpcQxW8/BALtM51VXbTAw+O20/nbj5xpKW2UHsqXBzVBfjFBiL7npb3YQwk4nXOq58fqlFKb6KxhT1EUlospaxo73RNeOQ+SwQ0BTr8fpjsS4B7/DLZBLNfKSd7YPSXOrOYiX5MuW+h6RtU8nE361a9GadvdpLqz5FSKOd5acaUymjkNGL12xxWoaqHXhgUme8KRsC4BC5XUiL+BJwwQ62nd5JppmZnYa4TG6f+LjZepkU5xlnUPrfwQWOy9Q4PyW2yf61CUcq/v8q5wOmLBulsODJXZWevxFXu/e7FHpE5JU56YshvWtde9UpvyOLeEicPuYX0Z0deKeWh5paLkuZMBhtE4Zm8i5619TGxtSEJJoiI6BbvhMTl1CQCOcMcnhzi9e+yhujrAiTx4VPMR4San76qM//vqJzgoEkzLLKM6QsJDnFvLjtlDErJ9DmSw==;5:0+7jx4nN1wHBLcHelrH5HzzLjpEQ5/00lE+G0e4MmGjGxq5fL0q9jUt7Nq8Tl51EembvGBoQz19MraSHfl5LqH9xAV4UKkvR6jvMAWBB68qkYBI2l4TP6+STbISUjGNLKZFzjfF+EPw66/AumuPXUEdYgOiXFU690WbTh+eUAgA=;7:jJzEjdQC354790nJ8+jofihEazLdw0bGe1eh3+DIdfuz4TBi5dfBvmeHhOuwM3SPPEq9jUMWpWzZmXIYLxowDUa2MVbx1PYtnZK7zGqRAQZrfpW0O5VuOofnwB7EfRFzTjl8dRPaum6cDgB8PeYbjQ==
+x-ms-office365-filtering-correlation-id: 3631fb17-a552-479d-bb43-08d644addd17
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3734;
-x-ms-traffictypediagnostic: AM6PR0402MB3734:
-x-microsoft-antispam-prvs: <AM6PR0402MB3734DC2465A2010141C2CBFCF6C40@AM6PR0402MB3734.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(264314650089876)(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3494;
+x-ms-traffictypediagnostic: AM6PR0402MB3494:
+x-microsoft-antispam-prvs: <AM6PR0402MB3494651641F5CD0783D9F6BFF6C40@AM6PR0402MB3494.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3734;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3734;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3494;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3494;
 x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(39860400002)(346002)(199004)(189003)(25786009)(6116002)(316002)(6506007)(81166006)(81156014)(52116002)(8676002)(3846002)(105586002)(386003)(54906003)(97736004)(6512007)(6306002)(106356001)(6636002)(7416002)(6436002)(76176011)(6486002)(478600001)(186003)(5660300001)(4326008)(2900100001)(486006)(86362001)(575784001)(110136005)(53936002)(44832011)(26005)(14444005)(66066001)(966005)(68736007)(256004)(8936002)(2906002)(14454004)(71190400001)(305945005)(71200400001)(102836004)(446003)(2616005)(36756003)(476003)(7736002)(99286004)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3734;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(346002)(376002)(189003)(199004)(8936002)(2900100001)(4326008)(6306002)(97736004)(476003)(53936002)(6512007)(2906002)(486006)(256004)(14444005)(44832011)(7416002)(386003)(6486002)(186003)(6436002)(36756003)(2616005)(25786009)(478600001)(6506007)(52116002)(102836004)(7736002)(305945005)(71190400001)(71200400001)(3846002)(99286004)(5660300001)(66066001)(316002)(966005)(6116002)(26005)(6636002)(86362001)(81156014)(81166006)(110136005)(105586002)(106356001)(54906003)(14454004)(68736007)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3494;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: DXVUN8N0G6v+eEIK777/zMhbce1waJE/vxBtsU7Ejnixr+8pArkaefogVjqtHit1EngsI3ljx5lxslUu+Vhn4f0eTyUuT5jbafVbN7u5cR2YOeJi3z2gbSbMCpk3J5Fp0gNGdw8ig17aqJWvPqQDkXMefUqew/r8xvSTt1PtdBMcO2MRIzIQR3wh6YMNrnU9N4y2sphZyCZmOBxy1U4Z3DMgp9DwC5qRE56mEUZ4KGEqDId8/AvDe+JRNipXfhqh6B+Qa+Vms90xStCLaTXAmQtw7+9uZ/qnlI3cYzSq7cLXPKbO4LrYZfkoVKgvc8MCdB+YmxU3/wG6v8YcZ/NJ5K+uANoEZAMgCA0SH95A4HM=
+x-microsoft-antispam-message-info: M0XSErTEolQ+FhhagxpPO4FlBiO06dRo+cngkqIV/5GNFSOUEajVpv8+lBWz/kB2f72H0Yss85ILxP8qsgoPopZSFWr+LAQLM2i0JGa9wJ4SwIDRxAWTQF5zwnitTYvVuO2ivUJHugZKiGO7Tz5h6xeFF4K74yEyeAVwhnXpgkEay9Njo8AU/2B2Ab5NyBJWpi1be/XQ1ApOB7OI7ADa7pK8C8LQ01LAGOrbRwaZoQiuuZT75doYv9YCB4ts9b4Tw8G6SEzF+xrTy6DnifcNTQHXyk7LROBrvMZuYVc3I/aghVWbGnzzYiwethY0UIOsi9olwijY2MIfGm809vJyryv7mvy+qiD07K2jSUbvbSw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8204cf76-f5ff-4cc0-0061-08d644adde59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 12:38:07.2871
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3631fb17-a552-479d-bb43-08d644addd17
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 12:38:05.1616
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3734
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3494
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+So this is all cleaned up now. The switch from clk to clk_hw registration
+is done only for the newly added clock types because changing the older
+ones will imply a bigger change. I will spend some time on that, but this
+can't be delayed by that since this is needed in order to boot up.
 
-This is a new fractional clock type introduced on i.MX8.
+Here is a link to the 11th version:
+https://lkml.org/lkml/2018/10/10/292
 
-The description of this fractional clock can be found here:
+Changes since v11:
+ * changed the authorship of the CCM driver
+     since it has changed drastically from the original version.
+ * changed the CCM driver to platform driver
+ * changed all new clock types to clk_hw based registration
+ * fixed the all other comments from Stephen
 
-https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
+Abel Vesa (2):
+  clk: imx: Add imx composite clock
+  clk: imx: Add clock driver for i.MX8MQ CCM
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/clk/imx/Makefile       |   1 +
- drivers/clk/imx/clk-frac-pll.c | 221 +++++++++++++++++++++++++++++++++++++=
+Lucas Stach (3):
+  dt-bindings: add binding for i.MX8MQ CCM
+  clk: imx: add fractional PLL output clock
+  clk: imx: Add SCCG PLL type
+
+ .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-composite-8m.c                 | 178 +++++++
+ drivers/clk/imx/clk-frac-pll.c                     | 221 ++++++++
+ drivers/clk/imx/clk-imx8mq.c                       | 589 +++++++++++++++++=
 ++++
- drivers/clk/imx/clk.h          |   3 +
- 3 files changed, 225 insertions(+)
+ drivers/clk/imx/clk-sccg-pll.c                     | 256 +++++++++
+ drivers/clk/imx/clk.h                              |  64 +++
+ include/dt-bindings/clock/imx8mq-clock.h           | 395 ++++++++++++++
+ 8 files changed, 1728 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.tx=
+t
+ create mode 100644 drivers/clk/imx/clk-composite-8m.c
  create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ create mode 100644 drivers/clk/imx/clk-imx8mq.c
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+ create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..4893c1f 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -6,6 +6,7 @@ obj-y +=3D \
- 	clk-cpu.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
-+	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
- 	clk-pllv1.o \
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.=
-c
-new file mode 100644
-index 0000000..a800093
---- /dev/null
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 NXP.
-+ *
-+ * This driver supports the fractional plls found in the imx8m SOCs
-+ *
-+ * Documentation for this fractional pll can be found at:
-+ *   https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D8=
-34
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+#include <linux/bitfield.h>
-+
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+
-+#define PLL_LOCK_STATUS		BIT(31)
-+#define PLL_PD_MASK		BIT(19)
-+#define PLL_BYPASS_MASK		BIT(14)
-+#define PLL_NEWDIV_VAL		BIT(12)
-+#define PLL_NEWDIV_ACK		BIT(11)
-+#define PLL_FRAC_DIV_MASK	GENMASK(30, 7)
-+#define PLL_INT_DIV_MASK	GENMASK(6, 0)
-+#define PLL_OUTPUT_DIV_MASK	GENMASK(4, 0)
-+#define PLL_FRAC_DENOM		0x1000000
-+
-+#define PLL_FRAC_LOCK_TIMEOUT	10000
-+#define PLL_FRAC_ACK_TIMEOUT	500000
-+
-+struct clk_frac_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-+
-+static int clk_wait_lock(struct clk_frac_pll *pll)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_STATUS, 0,
-+					PLL_FRAC_LOCK_TIMEOUT);
-+}
-+
-+static int clk_wait_ack(struct clk_frac_pll *pll)
-+{
-+	u32 val;
-+
-+	/* return directly if the pll is in powerdown or in bypass */
-+	if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-+		return 0;
-+
-+	/* Wait for the pll's divfi and divff to be reloaded */
-+	return readl_poll_timeout(pll->base, val, val & PLL_NEWDIV_ACK, 0,
-+					PLL_FRAC_ACK_TIMEOUT);
-+}
-+
-+static int clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_wait_lock(pll);
-+}
-+
-+static void clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val |=3D PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+}
-+
-+static int clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val, divff, divfi, divq;
-+	u64 temp64 =3D parent_rate;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	divq =3D ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-+	val =3D readl_relaxed(pll->base + PLL_CFG1);
-+	divff =3D FIELD_GET(PLL_FRAC_DIV_MASK, val);
-+	divfi =3D val & PLL_INT_DIV_MASK;
-+
-+	temp64 *=3D 8;
-+	temp64 *=3D divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+	temp64 /=3D divq;
-+
-+	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
-+}
-+
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	u64 parent_rate =3D *prate;
-+	u32 divff, divfi;
-+	u64 temp64;
-+
-+	parent_rate *=3D 8;
-+	rate *=3D 2;
-+	divfi =3D rate / parent_rate;
-+	temp64 =3D rate - divfi * parent_rate;
-+	temp64 *=3D PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff =3D temp64;
-+
-+	temp64 =3D parent_rate;
-+	temp64 *=3D divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+
-+	return (parent_rate * divfi + temp64) / 2;
-+}
-+
-+/*
-+ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at =
-zero
-+ * (means the PLL output will be divided by 2). So the PLL output can use
-+ * the below formula:
-+ * pllout =3D parent_rate * 8 / 2 * DIVF_VAL;
-+ * where DIVF_VAL =3D 1 + DIVFI + DIVFF / 2^24.
-+ */
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val, divfi, divff;
-+	u64 temp64 =3D parent_rate;
-+	int ret;
-+
-+	parent_rate *=3D 8;
-+	rate *=3D 2;
-+	divfi =3D rate / parent_rate;
-+	temp64 *=3D rate - divfi;
-+	temp64 *=3D PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff =3D temp64;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG1);
-+	val &=3D ~(PLL_FRAC_DIV_MASK | PLL_INT_DIV_MASK);
-+	val |=3D (divff << 7) | (divfi - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG1);
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~0x1f;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val |=3D PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	ret =3D clk_wait_ack(pll);
-+
-+	/* clear the NEV_DIV_VAL */
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops clk_frac_pll_ops =3D {
-+	.prepare	=3D clk_pll_prepare,
-+	.unprepare	=3D clk_pll_unprepare,
-+	.is_prepared	=3D clk_pll_is_prepared,
-+	.recalc_rate	=3D clk_pll_recalc_rate,
-+	.round_rate	=3D clk_pll_round_rate,
-+	.set_rate	=3D clk_pll_set_rate,
-+};
-+
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base)
-+{
-+	struct clk_init_data init;
-+	struct clk_frac_pll *pll;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name =3D name;
-+	init.ops =3D &clk_frac_pll_ops;
-+	init.flags =3D 0;
-+	init.parent_names =3D &parent_name;
-+	init.num_parents =3D 1;
-+
-+	pll->base =3D base;
-+	pll->hw.init =3D &init;
-+
-+	hw =3D &pll->hw;
-+
-+	ret =3D clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pll);
-+		return ERR_CAST(hw);
-+	}
-+
-+	return hw->clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 5895e223..44a1f14 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const=
- char *name,
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
- 		void __iomem *base);
-=20
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
 --=20
 2.7.4
 
