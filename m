@@ -2,195 +2,249 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6261C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08015C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 796AA20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3ED82085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:57:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HOrTghbs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796AA20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vyc2rRlR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3ED82085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbeKGX0F (ORCPT
+        id S1727800AbeKGX1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:26:05 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51419 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbeKGX0F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:26:05 -0500
-Received: by mail-it1-f196.google.com with SMTP id m34-v6so1739826iti.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 05:55:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FGh01L7cooZqcnHrnmambmA0GV3gC0p/DtcaHT2//s4=;
-        b=HOrTghbscRey9eM5er7N8naaqFu1Hl8dtSgB8b1SxggRlpD2EmkiudI259fqLk4l1h
-         nil6pQg466iWrOdq+DQ7yLRy+6HDKTpHWML2tZLFzpafX7/k2I3L4xjZ1KRlZDZd/Ni2
-         T/o3EuD7yxf91TGpO8U3ryEdh2Y7spR9D8BhI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FGh01L7cooZqcnHrnmambmA0GV3gC0p/DtcaHT2//s4=;
-        b=m5X/Yw+ULun1qCZinKjrFElbBzV3AorJhSX6ECfdMrAn5o+fYnoh65BhGiKNn6V8D5
-         NlAGY4gptt0kA6eloBjBdrhAdkjBP1dZmW4Dz36mq/zPuS46Rrhb8iC0UQJ0+91Szg2a
-         uqt4YNlez8KewG8GLbcH99FvTDqGySsStErrlI3zHTgNz1DrbL1ReA03hFoxqcbVmzxh
-         BtRWviH0MEbcnjnbBa/qLh3lnTd48cG6f3lGACKDp6wW+zOLKpK/OFUAUW761eEvSdw5
-         AYVtyHRdpL0T8srDij/ATxzfuwl5y/7I9AFDCnZdU/zYp/kxvDYVC3hHRhYw4qG9iFO+
-         nCEQ==
-X-Gm-Message-State: AGRZ1gIWMvG+UTHcwVXsvuLk//qduo1ZaqC0+S3mc7kYpw2WRVKGX5fy
-        ztA7TOlj5j8/hZhn/rfXdkac8CEtmP5MF0HOg74gNg==
-X-Google-Smtp-Source: AJdET5f4MnAvJ7IhU5YnFcTDV2tsqXW1f4msZKr3kBnkEnbkIyiQ7Fqj4+MTruCYIVbORSBpA9AqRdfjz8l9CQ28yKc=
-X-Received: by 2002:a24:750f:: with SMTP id y15-v6mr264857itc.1.1541598935418;
- Wed, 07 Nov 2018 05:55:35 -0800 (PST)
+        Wed, 7 Nov 2018 18:27:37 -0500
+Received: from mail-ve1eur01on0075.outbound.protection.outlook.com ([104.47.1.75]:26720
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727168AbeKGX1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:27:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q05Dq3gkR/z0OGy1+Hjulq0e1qoXPCN/P+vGGw8lOUw=;
+ b=Vyc2rRlRxp/dKC5MoCQBDvTHJEExsoJXiBKLL5116wjgya90Ot8ejmuNQ4CAN/m9RlHRPKeAUjT7A7EOOo5U71PuZheGaIz1f8jCiyeloJQFxSQIirMENzxxHbvqlQ+dism80YK5g3sFo26Iv8x9MdTtn+gF9JikdIeKRWMGJvg=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB3953.eurprd04.prod.outlook.com (52.134.90.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Wed, 7 Nov 2018 13:57:03 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::a059:70be:9c00:a3c4]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::a059:70be:9c00:a3c4%2]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
+ 13:57:03 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: [PATCH v2] PCI: imx: Add imx6sx suspend/resume support
+Thread-Topic: [PATCH v2] PCI: imx: Add imx6sx suspend/resume support
+Thread-Index: AQHUdqHC7PN/F4fnp0uUaWOgv2Ss9Q==
+Date:   Wed, 7 Nov 2018 13:57:03 +0000
+Message-ID: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [95.76.156.53]
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: AM5PR0201CA0022.eurprd02.prod.outlook.com
+ (2603:10a6:203:3d::32) To AM0PR04MB4290.eurprd04.prod.outlook.com
+ (2603:10a6:208:67::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB3953;6:j1mJfWv926zHWmZZBCD3EgWQJ3AnG2UtZ5dFDoyBflN5zzj/MSsffv0KPpMmf2pGvds9KytzI3uBL6kiYWgLI8YZ6s4L1+qQxXyfIUAoz96YfTULgZS4/xCEyFd2oxO0DiGpoAprOBuk4gTbQpq/alj+lxri4iPfd9TJhFFsh2Whvmfk9nplDPVqya9BBgZORbY/zckQHRIC3PO4AJHA+VoeZ+3XJbxlzz/VOtqIaY0pCumjRyKteZ0OVc9pwXRHOGvxao7f6DcFJ4g5d/PzeBDkDJJtc6/ksG7Q1rm7Imeb3b9IHwIvWDGNAWRoAuEtFJDb/8WPWo98pcdBX4tq3n8Su3uUBQHAGOxyXZtYZ1a/O3q33E/uy3GTsdfIoO+X46udR0wXFiYet7MZoHxDYtetjP+1cH0eKYay+79tdq8VoEvKShW6XieXJnCdDctnkfDzoESkM0QBtZNpW/5QRw==;5:+PcPiBBTrezcAIjE7duvxHuwFwvgZiC0qjEVkT3YRnpPFHAqqgl5Dp7GJbD2U1cxJKwwGJKuYdRW1eZZV3IVcjFkQXS5rTZjnxEPEgorMd/gBORyRR4vqLIwwShqHWlEEikB13eCloTivGLRyxOj2/d/Y++gHjZv9SHxzILC9to=;7:W/NVLF6TPqJyUcOH1bseSUvZ4RWS0d4WPbQHYGwdkRsowd3RS4ayYxYk7ZQnwP4fX781BO5NEHfd1RmUNGqoC5Y5JmD2G1xPfM+8xYC1oMLSo9Smczs4ZvtEb8CxruuWKMDZIBx7VxisSAmAS8EYLA==
+x-ms-office365-filtering-correlation-id: f36a4f9f-9732-4f26-9c49-08d644b8e52b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB3953;
+x-ms-traffictypediagnostic: AM0PR04MB3953:
+x-microsoft-antispam-prvs: <AM0PR04MB3953636CF1D5A9818D62691BEEC40@AM0PR04MB3953.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB3953;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB3953;
+x-forefront-prvs: 08497C3D99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(396003)(39860400002)(376002)(199004)(189003)(8676002)(14454004)(5660300001)(966005)(52116002)(99286004)(118296001)(2900100001)(478600001)(575784001)(86362001)(6506007)(15650500001)(186003)(110136005)(54906003)(386003)(66066001)(102836004)(316002)(7736002)(2906002)(7416002)(305945005)(36756003)(4326008)(6486002)(25786009)(39060400002)(105586002)(106356001)(8936002)(97736004)(26005)(50226002)(14444005)(256004)(81166006)(44832011)(71190400001)(71200400001)(53936002)(6306002)(81156014)(6116002)(6436002)(476003)(3846002)(6512007)(486006)(68736007)(2616005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3953;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: p2IxmzKcENiJV+EWskTwGjtSqHhNTw014XuuknVBWwoURtgq03/5ygpe0zGPHeaNjf77Rp18NSQ4Mk8VXV4qdpRmuaMHrCdoJ9hI7JBEymDmIaw1VBooYyj47izlmtZY+ybd2ZGsxJM797phN29BNtyq4gJhU3bQWgCNj2YpkKhEYl1+NSeYGLDONLcBLp8TvBttscIuDz3368Ghknppj+/xO0EKPZoELMldYfNXIWE1vKTymISPaYGwdaRk/+mhqBw58iMPFZ0+Og3WWduVnmzYaDciBaeQHtj435tXXX+pa/2ByZj8vwUVbbCrIAnFtMk8jXR8Nj+XjWeECIeZXeOdq0stNFtVVKvYYvkEc+c=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a6b:ac42:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 05:55:34 -0800 (PST)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <154149666097.17764.12092615786683141764.stgit@localhost.localdomain>
-References: <154149586524.17764.5252013294539109287.stgit@localhost.localdomain>
- <154149666097.17764.12092615786683141764.stgit@localhost.localdomain>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 7 Nov 2018 14:55:34 +0100
-Message-ID: <CAJfpeguDTsG7vEAhH=CHp43vJak70VzR8YH8K6=vZAUXCZZeEQ@mail.gmail.com>
-Subject: Re: [PATCH 6/6] fuse: Verify userspace asks to requeue interrupt that
- we really sent
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f36a4f9f-9732-4f26-9c49-08d644b8e52b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 13:57:03.2453
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3953
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 10:31 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> When queue_interrupt() is called from fuse_dev_do_write(),
-> it came from userspace directly. Userspace may pass any
-> request id, even the request's we have not interrupted
-> (or even background's request). This patch adds sanity
-> check to make kernel safe against that.
+Enable PCI suspend/resume support on imx6sx socs. This is similar to
+imx7d with a few differences:
 
-Okay, I understand this far.
+* The PM_Turn_Off bit is exposed through an IOMUX GPR, like all other
+pcie control bits on 6sx.
+* The pcie_inbound_axi clk needs to be turned off in suspend. On resume
+it is restored via resume -> deassert_core_reset -> enable_ref_clk.
 
-> The problem is real interrupt may be queued and requeued
-> by two tasks on two cpus. This case, the requeuer has not
-> guarantees it sees FR_INTERRUPTED bit on its cpu (since
-> we know nothing about the way userspace manages requests
-> between its threads and whether it uses smp barriers).
+Most of the resume logic is shared with the initial reset after probe.
 
-This sounds like BS.   There's an explicit  smp_mb__after_atomic()
-after the set_bit(FR_INTERRUPTED,...).  Which means FR_INTERRUPTED is
-going to be visible on all CPU's after this, no need to fool around
-with setting FR_INTERRUPTED again, etc...
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
+---
+Changes since v1:
+* Use a switch statement in imx6_pcie_pm_turnoff. The DT-based turnoff
+path is still an if statement.
+* Did not split imx6_pcie_clk_disable or call it from other paths, this
+would bring complications and is somewhat unrelated.
+* See v1 comments: https://lore.kernel.org/patchwork/patch/996806/
 
+ drivers/pci/controller/dwc/pci-imx6.c       | 44 ++++++++++++++++++---
+ include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  1 +
+ 2 files changed, 40 insertions(+), 5 deletions(-)
 
->
-> To eliminate this problem, queuer writes FR_INTERRUPTED
-> bit again under fiq->waitq.lock, and this guarantees
-> requeuer will see the bit, when checks it.
->
-> I try to introduce solution, which does not affect on
-> performance, and which does not force to take more
-> locks. This is the reason, the below solution is worse:
->
->    request_wait_answer()
->    {
->      ...
->   +  spin_lock(&fiq->waitq.lock);
->      set_bit(FR_INTERRUPTED, &req->flags);
->   +  spin_unlock(&fiq->waitq.lock);
->      ...
->    }
->
-> Also, it does not look a better idea to extend fuse_dev_do_read()
-> with the fix, since it's already a big function:
->
->    fuse_dev_do_read()
->    {
->      ...
->      if (test_bit(FR_INTERRUPTED, &req->flags)) {
->   +      /* Comment */
->   +      barrier();
->   +      set_bit(FR_INTERRUPTED, &req->flags);
->          queue_interrupt(fiq, req);
->      }
->      ...
->    }
->
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  fs/fuse/dev.c |   26 +++++++++++++++++++++-----
->  1 file changed, 21 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 315d395d5c02..3bfc5ed61c9a 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -475,13 +475,27 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
->         fuse_put_request(fc, req);
->  }
->
-> -static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
-> +static int queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
->  {
->         bool kill = false;
->
->         if (test_bit(FR_FINISHED, &req->flags))
-> -               return;
-> +               return 0;
->         spin_lock(&fiq->waitq.lock);
-> +       /* Check for we've sent request to interrupt this req */
-> +       if (unlikely(!test_bit(FR_INTERRUPTED, &req->flags))) {
-> +               spin_unlock(&fiq->waitq.lock);
-> +               return -EINVAL;
-> +       }
-> +       /*
-> +        * Interrupt may be queued from fuse_dev_do_read(), and
-> +        * later requeued on other cpu by fuse_dev_do_write().
-> +        * To make FR_INTERRUPTED bit visible for the requeuer
-> +        * (under fiq->waitq.lock) we write it once again.
-> +        */
-> +       barrier();
-> +       __set_bit(FR_INTERRUPTED, &req->flags);
-> +
->         if (list_empty(&req->intr_entry)) {
->                 list_add_tail(&req->intr_entry, &fiq->interrupts);
->                 /*
-> @@ -492,7 +506,7 @@ static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
->                 if (test_bit(FR_FINISHED, &req->flags)) {
->                         list_del_init(&req->intr_entry);
->                         spin_unlock(&fiq->waitq.lock);
-> -                       return;
-> +                       return 0;
->                 }
->                 wake_up_locked(&fiq->waitq);
->                 kill = true;
-> @@ -500,6 +514,7 @@ static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
->         spin_unlock(&fiq->waitq.lock);
->         if (kill)
->                 kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
-> +       return (int)kill;
->  }
->
->  static void request_wait_answer(struct fuse_conn *fc, struct fuse_req *req)
-> @@ -1959,8 +1974,9 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
->                         nbytes = -EINVAL;
->                 else if (oh.error == -ENOSYS)
->                         fc->no_interrupt = 1;
-> -               else if (oh.error == -EAGAIN)
-> -                       queue_interrupt(&fc->iq, req);
-> +               else if (oh.error == -EAGAIN &&
-> +                        queue_interrupt(&fc->iq, req) < 0)
-> +                       nbytes = -EINVAL;
->
->                 fuse_put_request(fc, req);
->                 fuse_copy_finish(cs);
->
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller=
+/dwc/pci-imx6.c
+index 2cbef2d7c207..54625569d0bc 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -771,41 +771,75 @@ static void imx6_pcie_ltssm_disable(struct device *de=
+v)
+ 	}
+ }
+=20
+ static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+ {
+-	reset_control_assert(imx6_pcie->turnoff_reset);
+-	reset_control_deassert(imx6_pcie->turnoff_reset);
++	struct device *dev =3D imx6_pcie->pci->dev;
++
++	/* Some variants have a turnoff reset in DT */
++	if (imx6_pcie->turnoff_reset) {
++		reset_control_assert(imx6_pcie->turnoff_reset);
++		reset_control_deassert(imx6_pcie->turnoff_reset);
++		goto pm_turnoff_sleep;
++	}
++
++	/* Others poke directly at IOMUXC registers */
++	switch (imx6_pcie->variant) {
++	case IMX6SX:
++		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
++				IMX6SX_GPR12_PCIE_PM_TURN_OFF,
++				IMX6SX_GPR12_PCIE_PM_TURN_OFF);
++		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
++				IMX6SX_GPR12_PCIE_PM_TURN_OFF, 0);
++		break;
++	default:
++		dev_err(dev, "PME_Turn_Off not implemented\n");
++		return;
++	}
+=20
+ 	/*
+ 	 * Components with an upstream port must respond to
+ 	 * PME_Turn_Off with PME_TO_Ack but we can't check.
+ 	 *
+ 	 * The standard recommends a 1-10ms timeout after which to
+ 	 * proceed anyway as if acks were received.
+ 	 */
++pm_turnoff_sleep:
+ 	usleep_range(1000, 10000);
+ }
+=20
+ static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+ {
+ 	clk_disable_unprepare(imx6_pcie->pcie);
+ 	clk_disable_unprepare(imx6_pcie->pcie_phy);
+ 	clk_disable_unprepare(imx6_pcie->pcie_bus);
+=20
+-	if (imx6_pcie->variant =3D=3D IMX7D) {
++	switch (imx6_pcie->variant) {
++	case IMX6SX:
++		clk_disable_unprepare(imx6_pcie->pcie_inbound_axi);
++		break;
++	case IMX7D:
+ 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+ 				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+ 				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
++		break;
++	default:
++		break;
+ 	}
+ }
+=20
++static inline bool imx6_pcie_supports_suspend(struct imx6_pcie *imx6_pcie)
++{
++	return (imx6_pcie->variant =3D=3D IMX7D ||
++		imx6_pcie->variant =3D=3D IMX6SX);
++}
++
+ static int imx6_pcie_suspend_noirq(struct device *dev)
+ {
+ 	struct imx6_pcie *imx6_pcie =3D dev_get_drvdata(dev);
+=20
+-	if (imx6_pcie->variant !=3D IMX7D)
++	if (!imx6_pcie_supports_suspend(imx6_pcie))
+ 		return 0;
+=20
+ 	imx6_pcie_pm_turnoff(imx6_pcie);
+ 	imx6_pcie_clk_disable(imx6_pcie);
+ 	imx6_pcie_ltssm_disable(dev);
+@@ -817,11 +851,11 @@ static int imx6_pcie_resume_noirq(struct device *dev)
+ {
+ 	int ret;
+ 	struct imx6_pcie *imx6_pcie =3D dev_get_drvdata(dev);
+ 	struct pcie_port *pp =3D &imx6_pcie->pci->pp;
+=20
+-	if (imx6_pcie->variant !=3D IMX7D)
++	if (!imx6_pcie_supports_suspend(imx6_pcie))
+ 		return 0;
+=20
+ 	imx6_pcie_assert_core_reset(imx6_pcie);
+ 	imx6_pcie_init_phy(imx6_pcie);
+ 	imx6_pcie_deassert_core_reset(imx6_pcie);
+diff --git a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h b/include/linux/mf=
+d/syscon/imx6q-iomuxc-gpr.h
+index 6c1ad160ed87..c1b25f5e386d 100644
+--- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
++++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+@@ -438,10 +438,11 @@
+ #define IMX6SX_GPR5_DISP_MUX_DCIC1_LCDIF1		(0x0 << 1)
+ #define IMX6SX_GPR5_DISP_MUX_DCIC1_LVDS			(0x1 << 1)
+ #define IMX6SX_GPR5_DISP_MUX_DCIC1_MASK			(0x1 << 1)
+=20
+ #define IMX6SX_GPR12_PCIE_TEST_POWERDOWN		BIT(30)
++#define IMX6SX_GPR12_PCIE_PM_TURN_OFF			BIT(16)
+ #define IMX6SX_GPR12_PCIE_RX_EQ_MASK			(0x7 << 0)
+ #define IMX6SX_GPR12_PCIE_RX_EQ_2			(0x2 << 0)
+=20
+ /* For imx6ul iomux gpr register field define */
+ #define IMX6UL_GPR1_ENET1_CLK_DIR		(0x1 << 17)
+--=20
+2.17.1
+
