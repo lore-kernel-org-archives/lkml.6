@@ -2,133 +2,114 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12897C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C1FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC4402081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:51:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RL/MQsaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC4402081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id F38732081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:53:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38732081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbeKGXVy (ORCPT
+        id S1727703AbeKGXYS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:21:54 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41261 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeKGXVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:21:54 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 70so1773267pgh.8;
-        Wed, 07 Nov 2018 05:51:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rucc7aUCdkhJRnn1/uw6PuIgpBic9W5BcUjPz/9T8BQ=;
-        b=RL/MQsaq4LMS9y9LtEYIPHHRoS6WeSHKtHzf/E1o7ZfOP+DSM5ewbipQgxhq7dDdY5
-         JUocp39eu6cvTfN24h5h3SLuYtUbjU61S4nXDI7jCqhMqetzouKNg4iC7b8MXV3yOUVt
-         ulgm6qHgW2GVuRdlb7ptGRB6EdaOS0lPCPGrd7RNayUHffu0lj7Vo9pe0ZF8PL3Z6ffw
-         eJV6bJi/Qj9Q3ob0d5a+9QGe9wN4LqJXGVX58bxkE42eXObOb9sodHF7ybG2bzAwG7xn
-         ayxnN5XSJcMxQSMtDEW7omubPmSNVezRJt1zcga7Fh9wp+FUAfdbrb0s7uDCH8x5mgNv
-         FCCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rucc7aUCdkhJRnn1/uw6PuIgpBic9W5BcUjPz/9T8BQ=;
-        b=tyTdpTFwqDHHOCNLVgMF4AO+EQttcZEfht3VFgLc82zfcaojpQgg/5sfKs6C8HxQhZ
-         SqHN5eEhItl9VEYdchsBnW2WdRmeBo8423A6aKcSIzc0L+pMeaIrHiDw2xkEb5C2WZOM
-         zx+ucpc4WmtySrPUgui9dvuKQDKZp8XT0fFUaaqO7R5FDAtLj4WBNBJBUOKeNxSfLHwo
-         7WmXIO+oZgGERoveRJIdku5wj2iMsBMMm+kPedQ4itxyq0vqodvCN9Tfcmv5du+h4R0b
-         cvUPIDTGYuLNjt4Appru71dGQnocsL8IGgUEexPWY/Y7rBC9EeEzjl9WoCp+oESvmBNT
-         f9Kw==
-X-Gm-Message-State: AGRZ1gISSIJiMYN6hu3l3//vW3V/k1Fw0RedkS3jsbyoMLTUH9psAKuo
-        6LsvQt+ntGo8Kc4Kfs67WDfR7ce4
-X-Google-Smtp-Source: AJdET5fRD04ZjvYZymsuXEKD0EaS0ho2VjOgKQAbCH5l93XaRoWAaEY8L7+V74zptXMWyQcpWcAzZA==
-X-Received: by 2002:a63:1cd:: with SMTP id 196-v6mr264145pgb.152.1541598685573;
-        Wed, 07 Nov 2018 05:51:25 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r81-v6sm1337732pfa.110.2018.11.07.05.51.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 05:51:24 -0800 (PST)
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-To:     Borislav Petkov <bp@alien8.de>, Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <20181102181055.130531-1-brian.woods@amd.com>
- <20181102181055.130531-3-brian.woods@amd.com>
- <20181102195925.GB160487@google.com> <20181102232948.GC26770@zn.tnic>
- <20181105214537.GA19420@google.com> <20181105215650.GG26868@zn.tnic>
- <20181106214256.GA65443@google.com> <20181106220059.GA4139@zn.tnic>
- <20181106232040.GA85755@google.com> <20181107091838.GA10835@zn.tnic>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <72f4a144-fe83-dc0d-b839-133873ed589b@roeck-us.net>
-Date:   Wed, 7 Nov 2018 05:51:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181107091838.GA10835@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Nov 2018 18:24:18 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:44424 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbeKGXYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:24:18 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0138A1A0201;
+        Wed,  7 Nov 2018 14:53:48 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E9BDE1A01C4;
+        Wed,  7 Nov 2018 14:53:47 +0100 (CET)
+Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B280F20137;
+        Wed,  7 Nov 2018 14:53:47 +0100 (CET)
+From:   Madalin Bucur <madalin.bucur@nxp.com>
+To:     netdev@vger.kernel.org, davem@davemloft.net
+Cc:     linux-kernel@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>
+Subject: [PATCH] dpaa_eth: add ethtool coalesce control
+Date:   Wed,  7 Nov 2018 15:53:43 +0200
+Message-Id: <1541598823-22533-1-git-send-email-madalin.bucur@nxp.com>
+X-Mailer: git-send-email 2.1.0
+Reply-to: madalin.bucur@nxp.com
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/18 1:18 AM, Borislav Petkov wrote:
-> On Tue, Nov 06, 2018 at 05:20:41PM -0600, Bjorn Helgaas wrote:
->> Or maybe even drivers/acpi/thermal.c, which claims every Thermal Zone
->> (ACPI 6.2, sec 11), would be sufficient.  I don't know what the
->> relationship between hwmon and other thermal stuff, e.g.,
->> Documentation/thermal/sysfs-api.txt is.  acpi/thermal.c looks tied
->> into the drivers/thermal stuff (it registers "thermal_zone" devices),
->> but not to hwmon.
-> 
-> Err, I still don't think I'm catching your drift but let me stop you
-> right there: amd_nb is not there only for hwmon/k10temp. It is a small
-> interface glue if you will, which exports the CPU functionality in PCI
-> config space to other consumers.
-> 
+Allow ethtool control of the DPAA QMan portal interrupt coalescing
+settings.
 
-Also, thermal and hwmon are orthogonal, just like hwmon and iio. One would
-typically have a driver in one subsystem, in some cases bridging to the
-other subsystem, but one would not have drivers in both subsystems.
-I think Bjorn is suggesting that the k10temp driver should move to the
-thermal subsystem, though I don't really understand what that has to do
-with finding the correct PCI device(s) to query. Or maybe I misunderstand.
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+---
+ drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Guenter
-
-> So it is not really a driver - it is used by drivers to talk/query CPU
-> settings through it.
-> 
-> With that said, I don't think I understand all that talk about PNP IDs
-> and ACPI methods. But maybe I'm missing something...
-> 
-> So what's up?
-> 
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+index 13d6e2272ece..548a7e8893d8 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+@@ -529,6 +529,45 @@ static int dpaa_get_ts_info(struct net_device *net_dev,
+ 	return 0;
+ }
+ 
++static int dpaa_get_coalesce(struct net_device *dev,
++			     struct ethtool_coalesce *c)
++{
++	struct qman_portal *portal;
++	u32 period;
++	u8 thresh;
++
++	portal = qman_get_affine_portal(smp_processor_id());
++	qman_portal_get_iperiod(portal, &period);
++	qman_dqrr_get_ithresh(portal, &thresh);
++
++	c->rx_coalesce_usecs = period;
++	c->rx_max_coalesced_frames = thresh;
++	c->use_adaptive_rx_coalesce = false;
++
++	return 0;
++}
++
++static int dpaa_set_coalesce(struct net_device *dev,
++			     struct ethtool_coalesce *c)
++{
++	const cpumask_t *cpus = qman_affine_cpus();
++	struct qman_portal *portal;
++	u32 period;
++	u8 thresh;
++	int cpu;
++
++	period = c->rx_coalesce_usecs;
++	thresh = c->rx_max_coalesced_frames;
++
++	for_each_cpu(cpu, cpus) {
++		portal = qman_get_affine_portal(cpu);
++		qman_portal_set_iperiod(portal, period);
++		qman_dqrr_set_ithresh(portal, thresh);
++	}
++
++	return 0;
++}
++
+ const struct ethtool_ops dpaa_ethtool_ops = {
+ 	.get_drvinfo = dpaa_get_drvinfo,
+ 	.get_msglevel = dpaa_get_msglevel,
+@@ -545,4 +584,6 @@ const struct ethtool_ops dpaa_ethtool_ops = {
+ 	.get_rxnfc = dpaa_get_rxnfc,
+ 	.set_rxnfc = dpaa_set_rxnfc,
+ 	.get_ts_info = dpaa_get_ts_info,
++	.get_coalesce = dpaa_get_coalesce,
++	.set_coalesce = dpaa_set_coalesce,
+ };
+-- 
+2.1.0
 
