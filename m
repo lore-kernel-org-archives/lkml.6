@@ -2,146 +2,102 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97193C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706C6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A29820837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhUqrH24"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A29820837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4492820837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4492820837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbeKHFVh (ORCPT
+        id S1727122AbeKHFVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:37 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34866 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbeKHFVg (ORCPT
+        Thu, 8 Nov 2018 00:21:47 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41974 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727694AbeKHFVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:36 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x85-v6so15875979ljb.2;
-        Wed, 07 Nov 2018 11:49:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=d5V1uW76Q0IAtGKD/dIufTon2hNFl+VbR+afaKecsCk=;
-        b=fhUqrH24EtbKvagZWVfkbYbgepEVpgkNVwJebptjR9qTdGkmgzl2NUrYTMsUO5r6L0
-         ATJiOD6BQu8SuuYLV4itxKlw0eAAJhO3LIKAuwI32X+97ttWSbPDfF++Y3ujP73ibSbg
-         9c61rkk2CilWK+ePLEUnNDT/EbP/CJshWLsWBR5S3yLz8ppOvQcIPbteS629kbhsJcGs
-         6QW4yYM9CL2ErY66oFEpQmLcCZsfCIadZmtH0mm2FPxZpUfcaDvpS3UQdAyygAVjBdgx
-         XbaZRvhA3dczW8MI5xMAF7OhBVFDhiu84zdQRVK+vk2pWA52oJaLDZZkYsQxLUefEYha
-         A42w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d5V1uW76Q0IAtGKD/dIufTon2hNFl+VbR+afaKecsCk=;
-        b=k8wPeOULn90MSPMlwOfuAmcaesSNiZm1IBKuZHUEEimF+Q5yY1bLUGo5vJDH/MR7HD
-         PZSuKS6B3kL6QHWTafdu76/TRqUM3IpzqMB1gWmdsTFNQe8U0oACEiPSPk44aR+2zSZj
-         jY0XXW5XcYP30GMtnnrO+pjM7azc0yhmtbX9uoJpeoqL3cnU4a2lC1GSV8Ihq+lOv4DT
-         9Cdf7V0T2FIsRRlysAZID2x4bW0TZIZ2rVET7MBdGMWKqL1B5aQT1rP8xnjskdYvniKS
-         Jd+2AxD4F/GdwOkN1DebFHjAHXR4TyyFF9pwI5HLRBI4fpOcX5Mf7yVi/ggqjfkgvNP3
-         WYgg==
-X-Gm-Message-State: AGRZ1gIQ6auBSvLFqNq4oFjCS8Yb6z49ukHzOuo+Rve4MMDOLYvilLkV
-        Is0212fyMHKKSMpN+pxRBaA=
-X-Google-Smtp-Source: AJdET5dOuTKDLJ53RfgiP9i3iWECg6WiM4vIRF7KyZ63JRbNkriL4zJQVgDXZazhYrxO/8RAtFYZCw==
-X-Received: by 2002:a2e:20c3:: with SMTP id g64-v6mr1048755lji.101.1541620183204;
-        Wed, 07 Nov 2018 11:49:43 -0800 (PST)
-Received: from [192.168.1.18] (dnl153.neoplus.adsl.tpnet.pl. [83.24.93.153])
-        by smtp.gmail.com with ESMTPSA id p77-v6sm354759lja.0.2018.11.07.11.49.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 11:49:42 -0800 (PST)
-Subject: Re: [PATCH 08/24] leds: lt3593: Use led_compose_name()
-To:     Daniel Mack <daniel@zonque.org>, linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
- <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
-Date:   Wed, 7 Nov 2018 20:49:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 8 Nov 2018 00:21:22 -0500
+Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gKTpP-00070Q-TO; Wed, 07 Nov 2018 20:49:28 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 21/23] x86/fpu: Update xstate's PKRU value on write_pkru()
+Date:   Wed,  7 Nov 2018 20:48:56 +0100
+Message-Id: <20181107194858.9380-22-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
+References: <20181107194858.9380-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/2018 08:37 PM, Daniel Mack wrote:
-> On 6/11/2018 11:07 PM, Jacek Anaszewski wrote:
->> Switch to using generic LED support for composing LED class
->> device name.
-> 
-> Thanks for the rework!
-> 
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> ---
->>   drivers/leds/leds-lt3593.c | 19 ++++++++-----------
->>   1 file changed, 8 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
->> index de3623e..d005abc 100644
->> --- a/drivers/leds/leds-lt3593.c
->> +++ b/drivers/leds/leds-lt3593.c
->> @@ -10,10 +10,10 @@
->>   #include <linux/slab.h>
->>   #include <linux/module.h>
->>   #include <linux/of.h>
->> -#include <uapi/linux/uleds.h>
->> +
->> +#define LED_LT3593_NAME "lt3593"
->>     struct lt3593_led_data {
->> -    char name[LED_MAX_NAME_SIZE];
->>       struct led_classdev cdev;
->>       struct gpio_desc *gpiod;
->>   };
->> @@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device
->> *pdev)
->>       struct fwnode_handle *child;
->>       int ret, state = LEDS_GPIO_DEFSTATE_OFF;
->>       enum gpiod_flags flags = GPIOD_OUT_LOW;
->> +    struct led_init_data init_data;
->>       const char *tmp;
->>         if (dev_get_platdata(dev)) {
->> @@ -138,14 +139,11 @@ static int lt3593_led_probe(struct
->> platform_device *pdev)
->>           return PTR_ERR(led_data->gpiod);
->>         child = device_get_next_child_node(dev, NULL);
->> +    init_data.fwnode = child;
-> 
-> Not quite following. `fwnode' is the only member of that struct that is
-> initialized?
-> 
->>   -    ret = fwnode_property_read_string(child, "label", &tmp);
->> -    if (ret < 0)
->> -        snprintf(led_data->name, sizeof(led_data->name),
->> -             "lt3593::");
->> -    else
->> -        snprintf(led_data->name, sizeof(led_data->name),
->> -             "lt3593:%s", tmp);
->> +    ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
-> 
-> ... and here, a member that wasn't written before is used? What am I
-> missing?
+During the context switch the xstate is loaded which also includes the
+PKRU value.
+If xstate is restored on return to userland it is required that the
+PKRU value in xstate is the same as the one in the CPU.
 
-init_data.name pointer is passed to led_compose_name(), which fills
-this array with the composed name.
+Save the PKRU in xstate during modification.
 
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ arch/x86/include/asm/pgtable.h | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e8052924..45ca1c7802812 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -23,6 +23,8 @@
+ 
+ #ifndef __ASSEMBLY__
+ #include <asm/x86_init.h>
++#include <asm/fpu/xstate.h>
++#include <asm/fpu/api.h>
+ 
+ extern pgd_t early_top_pgt[PTRS_PER_PGD];
+ int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
+@@ -133,8 +135,21 @@ static inline u32 read_pkru(void)
+ 
+ static inline void write_pkru(u32 pkru)
+ {
+-	if (boot_cpu_has(X86_FEATURE_OSPKE))
+-		__write_pkru(pkru);
++	struct pkru_state *pk;
++
++	if (!boot_cpu_has(X86_FEATURE_OSPKE))
++		return;
++
++	pk = __raw_xsave_addr(&current->thread.fpu.state.xsave, XFEATURE_PKRU);
++	/*
++	 * The PKRU value in xstate needs to be in sync with the value that is
++	 * written to the CPU. The FPU restore on return to userland would
++	 * otherwise load the previous value again.
++	 */
++	__fpregs_changes_begin();
++	pk->pkru = pkru;
++	__write_pkru(pkru);
++	__fpregs_changes_end();
+ }
+ 
+ static inline int pte_young(pte_t pte)
 -- 
-Best regards,
-Jacek Anaszewski
+2.19.1
+
