@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C75C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7385CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30482086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30482086B
+	by mail.kernel.org (Postfix) with ESMTP id 284DC20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:06:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284DC20827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388724AbeKGNez (ORCPT
+        id S2388655AbeKGNez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 7 Nov 2018 08:34:55 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14189 "EHLO huawei.com"
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14188 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730991AbeKGNey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730995AbeKGNey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Nov 2018 08:34:54 -0500
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3A9493E229CE6;
+        by Forcepoint Email with ESMTP id 351B5471BE130;
         Wed,  7 Nov 2018 12:06:17 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 7 Nov 2018 12:06:07 +0800
+ 14.3.408.0; Wed, 7 Nov 2018 12:06:08 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <linuxarm@huawei.com>
-Subject: [Patch net-next 11/12] net: hns3: add error handler for hclge_reset()
-Date:   Wed, 7 Nov 2018 12:06:17 +0800
-Message-ID: <1541563578-28973-12-git-send-email-tanhuazhong@huawei.com>
+Subject: [Patch net-next 12/12] net: hns3: fix for cmd queue memory not freed problem during reset
+Date:   Wed, 7 Nov 2018 12:06:18 +0800
+Message-ID: <1541563578-28973-13-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541563578-28973-1-git-send-email-tanhuazhong@huawei.com>
 References: <1541563578-28973-1-git-send-email-tanhuazhong@huawei.com>
@@ -48,282 +48,289 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When hclge_reset() is called, it may fail for several reasons.
-For example, an higher-level reset event occurs, memory allocation
-failure, hardware reset timeout, etc. Therefore, it is necessary
-to add corresponding error handling for these situations.
-1. A high-level reset is required due to a high-level reset failure.
-2. For memory allocation failure, a high-level reset is initiated by
-the timer to recover. The reason for using the timer is to prevent this
-new high-level reset to interrupt the reset process of other pf/vf;
-3. For the case of hardware reset timeout, reschedule the reset task
-to wait for the hardware to complete the reset.
-For memory allocation failure and reset timeouts, in order to prevent
-an infinite number of scheduled reset tasks, the number of error
-recovery needs to be limited.
+It is not necessary to reallocate the descriptor and remap the
+descriptor memory in reset process, otherwise it may cause memory
+not freed problem.
 
-This patch also add some reset related debug log printing.
+Also, this patch initializes the cmd queue's spinlocks in
+hclgevf_alloc_cmd_queue, and take the spinlocks when reinitializing
+cmd queue' registers.
 
+Fixes: fedd0c15d288 ("net: hns3: Add HNS3 VF IMP(Integrated Management Proc) cmd interface")
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 139 +++++++++++++++++----
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   3 +
- 2 files changed, 120 insertions(+), 22 deletions(-)
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   | 141 ++++++++++++---------
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h   |   1 +
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  14 +-
+ 3 files changed, 91 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 0c0327b..579945b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2145,6 +2145,7 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
- 
- 	/* check for vector0 reset event sources */
- 	if (BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B) & rst_src_reg) {
-+		dev_info(&hdev->pdev->dev, "global reset interrupt\n");
- 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 		set_bit(HNAE3_GLOBAL_RESET, &hdev->reset_pending);
- 		*clearval = BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B);
-@@ -2152,6 +2153,7 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
- 	}
- 
- 	if (BIT(HCLGE_VECTOR0_CORERESET_INT_B) & rst_src_reg) {
-+		dev_info(&hdev->pdev->dev, "core reset interrupt\n");
- 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 		set_bit(HNAE3_CORE_RESET, &hdev->reset_pending);
- 		*clearval = BIT(HCLGE_VECTOR0_CORERESET_INT_B);
-@@ -2159,6 +2161,7 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
- 	}
- 
- 	if (BIT(HCLGE_VECTOR0_IMPRESET_INT_B) & rst_src_reg) {
-+		dev_info(&hdev->pdev->dev, "IMP reset interrupt\n");
- 		set_bit(HNAE3_IMP_RESET, &hdev->reset_pending);
- 		*clearval = BIT(HCLGE_VECTOR0_IMPRESET_INT_B);
- 		return HCLGE_VECTOR0_EVENT_RST;
-@@ -2308,8 +2311,11 @@ static int hclge_notify_client(struct hclge_dev *hdev,
- 		int ret;
- 
- 		ret = client->ops->reset_notify(handle, type);
--		if (ret)
-+		if (ret) {
-+			dev_err(&hdev->pdev->dev,
-+				"notify nic client failed %d(%d)\n", type, ret);
- 			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -2518,9 +2524,49 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- 	return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+index 0d3b445..b917acf 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+@@ -72,6 +72,45 @@ static bool hclgevf_is_special_opcode(u16 opcode)
+ 	return false;
  }
  
-+static bool hclge_reset_err_handle(struct hclge_dev *hdev, bool is_timeout)
++static void hclgevf_cmd_config_regs(struct hclgevf_cmq_ring *ring)
 +{
-+#define MAX_RESET_FAIL_CNT 5
-+#define RESET_UPGRADE_DELAY_SEC 10
++	struct hclgevf_dev *hdev = ring->dev;
++	struct hclgevf_hw *hw = &hdev->hw;
++	u32 reg_val;
 +
-+	if (hdev->reset_pending) {
-+		dev_info(&hdev->pdev->dev, "Reset pending %lu\n",
-+			 hdev->reset_pending);
-+		return true;
-+	} else if ((hdev->reset_type != HNAE3_IMP_RESET) &&
-+		   (hclge_read_dev(&hdev->hw, HCLGE_GLOBAL_RESET_REG) &
-+		    BIT(HCLGE_IMP_RESET_BIT))) {
-+		dev_info(&hdev->pdev->dev,
-+			 "reset failed because IMP Reset is pending\n");
-+		hclge_clear_reset_cause(hdev);
-+		return false;
-+	} else if (hdev->reset_fail_cnt < MAX_RESET_FAIL_CNT) {
-+		hdev->reset_fail_cnt++;
-+		if (is_timeout) {
-+			set_bit(hdev->reset_type, &hdev->reset_pending);
-+			dev_info(&hdev->pdev->dev,
-+				 "re-schedule to wait for hw reset done\n");
-+			return true;
-+		}
++	if (ring->flag == HCLGEVF_TYPE_CSQ) {
++		reg_val = (u32)ring->desc_dma_addr;
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_BASEADDR_L_REG, reg_val);
++		reg_val = (u32)((ring->desc_dma_addr >> 31) >> 1);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_BASEADDR_H_REG, reg_val);
 +
-+		dev_info(&hdev->pdev->dev, "Upgrade reset level\n");
-+		hclge_clear_reset_cause(hdev);
-+		mod_timer(&hdev->reset_timer,
-+			  jiffies + RESET_UPGRADE_DELAY_SEC * HZ);
++		reg_val = (ring->desc_num >> HCLGEVF_NIC_CMQ_DESC_NUM_S);
++		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_DEPTH_REG, reg_val);
 +
-+		return false;
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_HEAD_REG, 0);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_TAIL_REG, 0);
++	} else {
++		reg_val = (u32)ring->desc_dma_addr;
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_BASEADDR_L_REG, reg_val);
++		reg_val = (u32)((ring->desc_dma_addr >> 31) >> 1);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_BASEADDR_H_REG, reg_val);
++
++		reg_val = (ring->desc_num >> HCLGEVF_NIC_CMQ_DESC_NUM_S);
++		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_DEPTH_REG, reg_val);
++
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_HEAD_REG, 0);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG, 0);
 +	}
-+
-+	hclge_clear_reset_cause(hdev);
-+	dev_err(&hdev->pdev->dev, "Reset fail!\n");
-+	return false;
 +}
 +
- static void hclge_reset(struct hclge_dev *hdev)
- {
- 	struct hnae3_ae_dev *ae_dev = pci_get_drvdata(hdev->pdev);
-+	bool is_timeout = false;
-+	int ret;
- 
- 	/* Initialize ae_dev reset status as well, in case enet layer wants to
- 	 * know if device is undergoing reset
-@@ -2529,34 +2575,66 @@ static void hclge_reset(struct hclge_dev *hdev)
- 	hdev->reset_count++;
- 	hdev->last_reset_time = jiffies;
- 	/* perform reset of the stack & ae device for a client */
--	hclge_notify_roce_client(hdev, HNAE3_DOWN_CLIENT);
-+	ret = hclge_notify_roce_client(hdev, HNAE3_DOWN_CLIENT);
-+	if (ret)
-+		goto err_reset;
-+
- 	rtnl_lock();
--	hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
--	rtnl_unlock();
-+	ret = hclge_notify_client(hdev, HNAE3_DOWN_CLIENT);
-+	if (ret)
-+		goto err_reset_lock;
- 
--	hclge_reset_prepare_wait(hdev);
-+	rtnl_unlock();
- 
--	if (!hclge_reset_wait(hdev)) {
--		hclge_notify_roce_client(hdev, HNAE3_UNINIT_CLIENT);
--		rtnl_lock();
--		hclge_notify_client(hdev, HNAE3_UNINIT_CLIENT);
--		hclge_reset_ae_dev(hdev->ae_dev);
--		hclge_notify_client(hdev, HNAE3_INIT_CLIENT);
-+	ret = hclge_reset_prepare_wait(hdev);
-+	if (ret)
-+		goto err_reset;
- 
--		hclge_clear_reset_cause(hdev);
--	} else {
--		rtnl_lock();
--		/* schedule again to check pending resets later */
--		set_bit(hdev->reset_type, &hdev->reset_pending);
--		hclge_reset_task_schedule(hdev);
-+	if (hclge_reset_wait(hdev)) {
-+		is_timeout = true;
-+		goto err_reset;
- 	}
- 
--	hclge_notify_client(hdev, HNAE3_UP_CLIENT);
-+	ret = hclge_notify_roce_client(hdev, HNAE3_UNINIT_CLIENT);
-+	if (ret)
-+		goto err_reset;
-+
-+	rtnl_lock();
-+	ret = hclge_notify_client(hdev, HNAE3_UNINIT_CLIENT);
-+	if (ret)
-+		goto err_reset_lock;
-+
-+	ret = hclge_reset_ae_dev(hdev->ae_dev);
-+	if (ret)
-+		goto err_reset_lock;
-+
-+	ret = hclge_notify_client(hdev, HNAE3_INIT_CLIENT);
-+	if (ret)
-+		goto err_reset_lock;
-+
-+	hclge_clear_reset_cause(hdev);
-+
-+	ret = hclge_notify_client(hdev, HNAE3_UP_CLIENT);
-+	if (ret)
-+		goto err_reset_lock;
-+
- 	rtnl_unlock();
--	ae_dev->reset_type = HNAE3_NONE_RESET;
- 
--	hclge_notify_roce_client(hdev, HNAE3_INIT_CLIENT);
--	hclge_notify_roce_client(hdev, HNAE3_UP_CLIENT);
-+	ret = hclge_notify_roce_client(hdev, HNAE3_INIT_CLIENT);
-+	if (ret)
-+		goto err_reset;
-+
-+	ret = hclge_notify_roce_client(hdev, HNAE3_UP_CLIENT);
-+	if (ret)
-+		goto err_reset;
-+
-+	return;
-+
-+err_reset_lock:
-+	rtnl_unlock();
-+err_reset:
-+	if (hclge_reset_err_handle(hdev, is_timeout))
-+		hclge_reset_task_schedule(hdev);
- }
- 
- static void hclge_reset_event(struct pci_dev *pdev, struct hnae3_handle *handle)
-@@ -2610,6 +2688,16 @@ static void hclge_set_def_reset_request(struct hnae3_ae_dev *ae_dev,
- 	set_bit(rst_type, &hdev->default_reset_request);
- }
- 
-+static void hclge_reset_timer(struct timer_list *t)
++static void hclgevf_cmd_init_regs(struct hclgevf_hw *hw)
 +{
-+	struct hclge_dev *hdev = from_timer(hdev, t, reset_timer);
-+
-+	dev_info(&hdev->pdev->dev,
-+		 "triggering global reset in reset timer\n");
-+	set_bit(HNAE3_GLOBAL_RESET, &hdev->default_reset_request);
-+	hclge_reset_event(hdev->pdev, NULL);
++	hclgevf_cmd_config_regs(&hw->cmq.csq);
++	hclgevf_cmd_config_regs(&hw->cmq.crq);
 +}
 +
- static void hclge_reset_subtask(struct hclge_dev *hdev)
+ static int hclgevf_alloc_cmd_desc(struct hclgevf_cmq_ring *ring)
  {
- 	/* check if there is any ongoing reset in the hardware. This status can
-@@ -4416,8 +4504,12 @@ static int hclge_restore_fd_entries(struct hnae3_handle *handle)
- 	struct hlist_node *node;
+ 	int size = ring->desc_num * sizeof(struct hclgevf_desc);
+@@ -96,61 +135,23 @@ static void hclgevf_free_cmd_desc(struct hclgevf_cmq_ring *ring)
+ 	}
+ }
+ 
+-static int hclgevf_init_cmd_queue(struct hclgevf_dev *hdev,
+-				  struct hclgevf_cmq_ring *ring)
++static int hclgevf_alloc_cmd_queue(struct hclgevf_dev *hdev, int ring_type)
+ {
+ 	struct hclgevf_hw *hw = &hdev->hw;
+-	int ring_type = ring->flag;
+-	u32 reg_val;
++	struct hclgevf_cmq_ring *ring =
++		(ring_type == HCLGEVF_TYPE_CSQ) ? &hw->cmq.csq : &hw->cmq.crq;
  	int ret;
  
-+	/* Return ok here, because reset error handling will check this
-+	 * return value. If error is returned here, the reset process will
-+	 * fail.
-+	 */
- 	if (!hnae3_dev_fd_supported(hdev))
--		return -EOPNOTSUPP;
-+		return 0;
+-	ring->desc_num = HCLGEVF_NIC_CMQ_DESC_NUM;
+-	spin_lock_init(&ring->lock);
+-	ring->next_to_clean = 0;
+-	ring->next_to_use = 0;
+ 	ring->dev = hdev;
++	ring->flag = ring_type;
  
- 	hlist_for_each_entry_safe(rule, node, &hdev->fd_rule_list, rule_node) {
- 		ret = hclge_config_action(hdev, HCLGE_FD_STAGE_1, rule);
-@@ -6713,6 +6805,8 @@ static void hclge_state_uninit(struct hclge_dev *hdev)
+ 	/* allocate CSQ/CRQ descriptor */
+ 	ret = hclgevf_alloc_cmd_desc(ring);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&hdev->pdev->dev, "failed(%d) to alloc %s desc\n", ret,
+ 			(ring_type == HCLGEVF_TYPE_CSQ) ? "CSQ" : "CRQ");
+-		return ret;
+-	}
+-
+-	/* initialize the hardware registers with csq/crq dma-address,
+-	 * descriptor number, head & tail pointers
+-	 */
+-	switch (ring_type) {
+-	case HCLGEVF_TYPE_CSQ:
+-		reg_val = (u32)ring->desc_dma_addr;
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_BASEADDR_L_REG, reg_val);
+-		reg_val = (u32)((ring->desc_dma_addr >> 31) >> 1);
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_BASEADDR_H_REG, reg_val);
  
- 	if (hdev->service_timer.function)
- 		del_timer_sync(&hdev->service_timer);
-+	if (hdev->reset_timer.function)
-+		del_timer_sync(&hdev->reset_timer);
- 	if (hdev->service_task.func)
- 		cancel_work_sync(&hdev->service_task);
- 	if (hdev->rst_service_task.func)
-@@ -6871,6 +6965,7 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 	hclge_dcb_ops_set(hdev);
+-		reg_val = (ring->desc_num >> HCLGEVF_NIC_CMQ_DESC_NUM_S);
+-		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_DEPTH_REG, reg_val);
+-
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_HEAD_REG, 0);
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_TAIL_REG, 0);
+-		return 0;
+-	case HCLGEVF_TYPE_CRQ:
+-		reg_val = (u32)ring->desc_dma_addr;
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_BASEADDR_L_REG, reg_val);
+-		reg_val = (u32)((ring->desc_dma_addr >> 31) >> 1);
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_BASEADDR_H_REG, reg_val);
+-
+-		reg_val = (ring->desc_num >> HCLGEVF_NIC_CMQ_DESC_NUM_S);
+-		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_DEPTH_REG, reg_val);
+-
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_HEAD_REG, 0);
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG, 0);
+-		return 0;
+-	default:
+-		return -EINVAL;
+-	}
++	return ret;
+ }
  
- 	timer_setup(&hdev->service_timer, hclge_service_timer, 0);
-+	timer_setup(&hdev->reset_timer, hclge_reset_timer, 0);
- 	INIT_WORK(&hdev->service_task, hclge_service_task);
- 	INIT_WORK(&hdev->rst_service_task, hclge_reset_service_task);
- 	INIT_WORK(&hdev->mbx_service_task, hclge_mailbox_service_task);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 69bdb7f..36f3413 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -102,6 +102,7 @@ enum HLCGE_PORT_TYPE {
- #define HCLGE_GLOBAL_RESET_REG		0x20A00
- #define HCLGE_GLOBAL_RESET_BIT		0
- #define HCLGE_CORE_RESET_BIT		1
-+#define HCLGE_IMP_RESET_BIT		2
- #define HCLGE_FUN_RST_ING		0x20C00
- #define HCLGE_FUN_RST_ING_B		0
+ void hclgevf_cmd_setup_basic_desc(struct hclgevf_desc *desc,
+@@ -282,55 +283,73 @@ static int  hclgevf_cmd_query_firmware_version(struct hclgevf_hw *hw,
+ 	return status;
+ }
  
-@@ -601,6 +602,7 @@ struct hclge_dev {
- 	unsigned long reset_request;	/* reset has been requested */
- 	unsigned long reset_pending;	/* client rst is pending to be served */
- 	unsigned long reset_count;	/* the number of reset has been done */
-+	u32 reset_fail_cnt;
- 	u32 fw_version;
- 	u16 num_vmdq_vport;		/* Num vmdq vport this PF has set up */
- 	u16 num_tqps;			/* Num task queue pairs of this PF */
-@@ -648,6 +650,7 @@ struct hclge_dev {
- 	unsigned long service_timer_period;
- 	unsigned long service_timer_previous;
- 	struct timer_list service_timer;
-+	struct timer_list reset_timer;
- 	struct work_struct service_task;
- 	struct work_struct rst_service_task;
- 	struct work_struct mbx_service_task;
+-int hclgevf_cmd_init(struct hclgevf_dev *hdev)
++int hclgevf_cmd_queue_init(struct hclgevf_dev *hdev)
+ {
+-	u32 version;
+ 	int ret;
+ 
+-	/* setup Tx write back timeout */
++	/* Setup the lock for command queue */
++	spin_lock_init(&hdev->hw.cmq.csq.lock);
++	spin_lock_init(&hdev->hw.cmq.crq.lock);
++
+ 	hdev->hw.cmq.tx_timeout = HCLGEVF_CMDQ_TX_TIMEOUT;
++	hdev->hw.cmq.csq.desc_num = HCLGEVF_NIC_CMQ_DESC_NUM;
++	hdev->hw.cmq.crq.desc_num = HCLGEVF_NIC_CMQ_DESC_NUM;
+ 
+-	/* setup queue CSQ/CRQ rings */
+-	hdev->hw.cmq.csq.flag = HCLGEVF_TYPE_CSQ;
+-	ret = hclgevf_init_cmd_queue(hdev, &hdev->hw.cmq.csq);
++	ret = hclgevf_alloc_cmd_queue(hdev, HCLGEVF_TYPE_CSQ);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+-			"failed(%d) to initialize CSQ ring\n", ret);
++			"CSQ ring setup error %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	hdev->hw.cmq.crq.flag = HCLGEVF_TYPE_CRQ;
+-	ret = hclgevf_init_cmd_queue(hdev, &hdev->hw.cmq.crq);
++	ret = hclgevf_alloc_cmd_queue(hdev, HCLGEVF_TYPE_CRQ);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+-			"failed(%d) to initialize CRQ ring\n", ret);
++			"CRQ ring setup error %d\n", ret);
+ 		goto err_csq;
+ 	}
+ 
++	return 0;
++err_csq:
++	hclgevf_free_cmd_desc(&hdev->hw.cmq.csq);
++	return ret;
++}
++
++int hclgevf_cmd_init(struct hclgevf_dev *hdev)
++{
++	u32 version;
++	int ret;
++
++	spin_lock_bh(&hdev->hw.cmq.csq.lock);
++	spin_lock_bh(&hdev->hw.cmq.crq.lock);
++
+ 	/* initialize the pointers of async rx queue of mailbox */
+ 	hdev->arq.hdev = hdev;
+ 	hdev->arq.head = 0;
+ 	hdev->arq.tail = 0;
+ 	hdev->arq.count = 0;
++	hdev->hw.cmq.csq.next_to_clean = 0;
++	hdev->hw.cmq.csq.next_to_use = 0;
++	hdev->hw.cmq.crq.next_to_clean = 0;
++	hdev->hw.cmq.crq.next_to_use = 0;
++
++	hclgevf_cmd_init_regs(&hdev->hw);
++
++	spin_unlock_bh(&hdev->hw.cmq.crq.lock);
++	spin_unlock_bh(&hdev->hw.cmq.csq.lock);
+ 
+ 	/* get firmware version */
+ 	ret = hclgevf_cmd_query_firmware_version(&hdev->hw, &version);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+ 			"failed(%d) to query firmware version\n", ret);
+-		goto err_crq;
++		return ret;
+ 	}
+ 	hdev->fw_version = version;
+ 
+ 	dev_info(&hdev->pdev->dev, "The firmware version is %08x\n", version);
+ 
+ 	return 0;
+-err_crq:
+-	hclgevf_free_cmd_desc(&hdev->hw.cmq.crq);
+-err_csq:
+-	hclgevf_free_cmd_desc(&hdev->hw.cmq.csq);
+-
+-	return ret;
+ }
+ 
+ void hclgevf_cmd_uninit(struct hclgevf_dev *hdev)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h
+index bc294b0..090541d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h
+@@ -256,6 +256,7 @@ static inline u32 hclgevf_read_reg(u8 __iomem *base, u32 reg)
+ 
+ int hclgevf_cmd_init(struct hclgevf_dev *hdev);
+ void hclgevf_cmd_uninit(struct hclgevf_dev *hdev);
++int hclgevf_cmd_queue_init(struct hclgevf_dev *hdev);
+ 
+ int hclgevf_cmd_send(struct hclgevf_hw *hw, struct hclgevf_desc *desc, int num);
+ void hclgevf_cmd_setup_basic_desc(struct hclgevf_desc *desc,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 4a2148b..29da480 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -1966,6 +1966,12 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
+ 		return ret;
+ 	}
+ 
++	ret = hclgevf_cmd_queue_init(hdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Cmd queue init failed: %d\n", ret);
++		goto err_cmd_queue_init;
++	}
++
+ 	ret = hclgevf_cmd_init(hdev);
+ 	if (ret)
+ 		goto err_cmd_init;
+@@ -1975,13 +1981,13 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+ 			"Query vf status error, ret = %d.\n", ret);
+-		goto err_query_vf;
++		goto err_cmd_init;
+ 	}
+ 
+ 	ret = hclgevf_init_msi(hdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed(%d) to init MSI/MSI-X\n", ret);
+-		goto err_query_vf;
++		goto err_cmd_init;
+ 	}
+ 
+ 	hclgevf_state_init(hdev);
+@@ -2037,9 +2043,9 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
+ err_misc_irq_init:
+ 	hclgevf_state_uninit(hdev);
+ 	hclgevf_uninit_msi(hdev);
+-err_query_vf:
+-	hclgevf_cmd_uninit(hdev);
+ err_cmd_init:
++	hclgevf_cmd_uninit(hdev);
++err_cmd_queue_init:
+ 	hclgevf_pci_uninit(hdev);
+ 	return ret;
+ }
 -- 
 2.7.4
 
