@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5087C46464
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0198FC46465
 	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1EBE20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC012086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6Zhbfti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EBE20827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="esSeKFV1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC012086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731659AbeKHDXa (ORCPT
+        id S1731634AbeKHDX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:23:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53264 "EHLO mail.kernel.org"
+        Wed, 7 Nov 2018 22:23:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728131AbeKHDX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:23:29 -0500
+        id S1728131AbeKHDX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:23:27 -0500
 Received: from localhost.localdomain (rrcs-67-79-197-43.sw.biz.rr.com [67.79.197.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA624208A3;
-        Wed,  7 Nov 2018 17:52:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93ED520896;
+        Wed,  7 Nov 2018 17:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541613121;
-        bh=SCfjFI72ZliedsViQFWiX/Xb9nSBdgE202Prn8Nu58E=;
+        s=default; t=1541613120;
+        bh=PIIv7+iNiZqHWjN2mucAtpn8NZHG20kRZUawXYtAuNY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a6ZhbftidWUpLd37BiY/E/0DImspYAKLBAMTIGSTmShlBAHwMAWgVDtEcBs7bvUnP
-         qP3dcgIIo51AhzbjnY/5orVRdiAuj6I1sQItkX4XqAATRFimPL9slHBhhOGMJUssXc
-         NdtImrRkqAr6JD6zHy4Kgu4PIixnoNFrZ2HyI4gg=
+        b=esSeKFV1BH1uP2+WexUC5kql/5wWECnfOvh1xsr8S5QwgcjtLNZm9Y6c0gALDh97p
+         Oq/1rvsK6iddbVyuo9kebsm2KU6+GfA6o2mJLi7ySiEeplBKSEtRZvjOB7iyP2INMl
+         OuNcoP/QR6JpHD3/lF5Zauo2LZ8x2zvaO30eAsgM=
 From:   Alan Tull <atull@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
         linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH 4/4] zynq-fpga: Only route PR via PCAP when required
-Date:   Wed,  7 Nov 2018 11:51:48 -0600
-Message-Id: <1541613108-29660-5-git-send-email-atull@kernel.org>
+        Andreas Puhm <puhm@oregano.at>,
+        Anatolij Gustschin <agust@denx.de>
+Subject: [PATCH 3/4] fpga: altera-cvp: Fix registration for CvP incapable devices
+Date:   Wed,  7 Nov 2018 11:51:47 -0600
+Message-Id: <1541613108-29660-4-git-send-email-atull@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541613108-29660-1-git-send-email-atull@kernel.org>
 References: <1541613108-29660-1-git-send-email-atull@kernel.org>
@@ -53,38 +54,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Looijmans <mike.looijmans@topic.nl>
+From: Andreas Puhm <puhm@oregano.at>
 
-The Xilinx Zynq FPGA driver takes ownership of the PR interface, making
-it impossible to use the ICAP interface for partial reconfiguration.
+The probe function needs to verify the CvP enable bit in order to
+properly determine if FPGA Manager functionality can be safely
+enabled.
 
-This patch changes the driver to only activate PR over PCAP while the
-device is actively being accessed by the driver for programming.
-
-This allows both PCAP and ICAP interfaces to be used for PR.
-
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Fixes: 34d1dc17ce97 ("fpga manager: Add Altera CvP driver")
+Signed-off-by: Andreas Puhm <puhm@oregano.at>
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
 Reviewed-by: Moritz Fischer <mdf@kernel.org>
 Acked-by: Alan Tull <atull@kernel.org>
 ---
- drivers/fpga/zynq-fpga.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/fpga/altera-cvp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
-index bb82efe..57b0e67 100644
---- a/drivers/fpga/zynq-fpga.c
-+++ b/drivers/fpga/zynq-fpga.c
-@@ -501,6 +501,10 @@ static int zynq_fpga_ops_write_complete(struct fpga_manager *mgr,
- 	if (err)
- 		return err;
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 144fa2a..7395085 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -403,6 +403,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 	struct altera_cvp_conf *conf;
+ 	struct fpga_manager *mgr;
+ 	u16 cmd, val;
++	u32 regval;
+ 	int ret;
  
-+	/* Release 'PR' control back to the ICAP */
-+	zynq_fpga_write(priv, CTRL_OFFSET,
-+		zynq_fpga_read(priv, CTRL_OFFSET) & ~CTRL_PCAP_PR_MASK);
+ 	/*
+@@ -416,6 +417,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 		return -ENODEV;
+ 	}
+ 
++	pci_read_config_dword(pdev, VSE_CVP_STATUS, &regval);
++	if (!(regval & VSE_CVP_STATUS_CVP_EN)) {
++		dev_err(&pdev->dev,
++			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
++			regval);
++		return -ENODEV;
++	}
 +
- 	err = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, intr_status,
- 				     intr_status & IXR_PCFG_DONE_MASK,
- 				     INIT_POLL_DELAY,
+ 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+ 		return -ENOMEM;
 -- 
 2.7.4
 
