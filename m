@@ -2,96 +2,122 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E805C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42549C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D430E2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:59:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sNzkE7x6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D430E2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 19BFB2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19BFB2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbeKHDa1 (ORCPT
+        id S1728188AbeKHDc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:30:27 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:35630 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728166AbeKHDa1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:30:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Cc:To:From:Subject:Date:References:In-Reply-To:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5c6nkgpCvsjPHI2lAEAZ29rfXiAahTvEwXyfklBliLc=; b=sNzkE7x6arDD2o3Yd/GvrAbdW
-        xQCAJjfl74S2rKBenF9xWg3ORhC/wTLdd5iCAnaBcsx/0LYz6MSDr2F+YWdDWeXbeJdUdiriniBve
-        vM9EY6hBldDZ+DA27N0pEX4AKyl/lIW05gnvCmFu/WTndMXD/4luVvJqrNf+jCRPhPcySW3lta8Bi
-        4yw5O0G2Uw+7f99ZWUfWRJpRmOMnRmUC7dzweKvp27lQO+QrwLRp1A6ekigVNPgZIk9C3DL8dLYj1
-        YWYVUoTSPioCQ87RVEA4xBsK6z1G+HvYi3bv+fIdv3CSIkKApZFvCpX/Xd5RrBTwmfgPagh52PBy6
-        kuoUFGQuA==;
-Received: from localhost ([127.0.0.1] helo=twosheds.infradead.org)
-        by twosheds.infradead.org with esmtp (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKS6P-00AboG-A8; Wed, 07 Nov 2018 17:58:53 +0000
-Received: from 213.205.242.122
-        (SquirrelMail authenticated user dwmw2)
-        by twosheds.infradead.org with HTTP;
-        Wed, 7 Nov 2018 17:58:53 -0000
-Message-ID: <df9cdf1753ec7e6e20c12aa096b98453.squirrel@twosheds.infradead.org>
-In-Reply-To: <20181107173303.slnb3i2d6ufaonp7@zorba>
-References: <20181106214928.40020-1-nkela@cisco.com>
-    <921b0f78cf67d7307a0555e1fd6f2c2976310adc.camel@infradead.org>
-    <1e4c066d1896e2a0b8b146253d34d05cc4f9ab36.camel@infinera.com>
-    <8b08e8b992093453bb2b9caff8cff08c.squirrel@twosheds.infradead.org>
-    <20181107173303.slnb3i2d6ufaonp7@zorba>
-Date:   Wed, 7 Nov 2018 17:58:53 -0000
-Subject: Re: [PATCH] jffs2: implement mount option to configure endianness
-From:   "David Woodhouse" <dwmw2@infradead.org>
-To:     "Daniel Walker" <danielwa@cisco.com>
-Cc:     "David Woodhouse" <dwmw2@infradead.org>,
-        "Joakim Tjernlund" <joakim.tjernlund@infinera.com>,
-        "nkela@cisco.com" <nkela@cisco.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>
-User-Agent: SquirrelMail/1.4.22-21.fc27
+        Wed, 7 Nov 2018 22:32:28 -0500
+Received: from mga02.intel.com ([134.134.136.20]:1596 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727168AbeKHDc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:32:27 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 10:00:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="106282112"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga001.jf.intel.com with ESMTP; 07 Nov 2018 10:00:57 -0800
+Date:   Wed, 7 Nov 2018 10:00:57 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Message-ID: <20181107180057.GB24807@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
+ <20181107163757.GB11509@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Priority: 3 (Normal)
-Importance: Normal
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181107163757.GB11509@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 07, 2018 at 06:37:57PM +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 06, 2018 at 08:40:00AM -0800, Sean Christopherson wrote:
+> > On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
+> > > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > > can be used by applications to set aside private regions of code and
+> > > data. The code outside the enclave is disallowed to access the memory
+> > > inside the enclave by the CPU access control.
+> > > 
+> > > SGX driver provides a ioctl API for loading and initializing enclaves.
+> > > Address range for enclaves is reserved with mmap() and they are
+> > > destroyed with munmap(). Enclave construction, measurement and
+> > > initialization is done with the provided the ioctl API.
+> > 
+> > ...
+> > 
+> > > +struct sgx_encl {
+> > > +	unsigned int flags;
+> > > +	uint64_t attributes;
+> > > +	uint64_t xfrm;
+> > > +	unsigned int page_cnt;
+> > > +	unsigned int secs_child_cnt;
+> > > +	struct mutex lock;
+> > > +	struct mm_struct *mm;
+> > > +	struct file *backing;
+> > 
+> > Is there any particular reason why the kernel manages the backing for
+> > the enclave and the PCMDs?  Could we have userspace provide the backing
+> > either through the ECREATE ioctl() or maybe a completely new ioctl(),
+> > e.g. to give userspace the option to back the enclave with a NVDIMM
+> > instead of RAM?  A separate ioctl() with control flags might give us
+> > some flexibility in the future, e.g. maybe there are use cases where
+> > userspace would prefer to kill enclaves rather than swap EPC.
+> 
+> Not really except that no one has complained. The very first swapping
+> code that I implemented used a VMA as backing storage. I could take
+> pieces of that code to replace shmem specifics. The difference was that
+> the driver did vm_mmap(). Now that you suggested the above I wonder how
+> it did not came to mind back then to provide the VMA as parameter.
+> 
+> A single buffer that can hold both PCMD entries and swapped pages in its
+> address space would probably be the  best way to do it. I would add that
+> as a field to struct sgx_enclave_create. If we want the kill-behavior,
+> you could signal that with a NULL value.
 
-> On Wed, Nov 07, 2018 at 04:12:14PM -0000, David Woodhouse wrote:
->>
->> > Yes, this may slow things down. I am not sure I agree with the impl.
->> > either.
->> > Could one not make cpu_to_je_X/jeX_to_cpu a function ptr which is set
->> to
->> > a func. with the correct endian?
->>
->> On x86 retpoline would make that quite slow.
->
-> Is x86 the largest consumer of jffs2 ?
+What do we gain by a single buffer vs. separate buffers?  The ioctl()
+would be slightly smaller but it seems like the actual code would be
+more complex.
 
-Certainly not. I'm not sure which architectures do have Spectre V2
-mitigations which make indirect branches expensive now... perhaps there is
-no intersection with the cases where we really care about JFFS2 being
-CPU-bound?
+The enclave build process also utilizes the backing as temp storage
+to avoid having to alloc kernel memory when queueing pages to be added
+by the worker thread (which reminds me that I wanted to document why a
+worker thread is used).  Keeping this behavior would effectively make
+providing backing mandatory.
 
-
--- 
-dwmw2
-
+Are there any potential complications with ENCLS consuming userspace
+pointers?  We'd have to wrap them with user_access_{begin,end}() and
+probably tweak the fixup, but I assume having the fixup handler means
+we're generally ok?
