@@ -2,85 +2,99 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E83CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF76FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 361EC204FD
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:19:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Eq/9Z3dD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 361EC204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B7EA42086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:22:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7EA42086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730784AbeKGVtX (ORCPT
+        id S1727695AbeKGVw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:49:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57480 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbeKGVtW (ORCPT
+        Wed, 7 Nov 2018 16:52:56 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36503 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbeKGVwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:49:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=v23055yEHBFvJw7hZgkV2moVDYtXEwtvERZbDc7AyEM=; b=Eq/9Z3dDAdDZiaU62/V+5KScA
-        C6uuj5dgY2nt+cQv0t2fvuNImlFl+0x62Rp/oRCMxSYrgwIOz6NWksxDyRe0relN0O1wHHbxzJW+d
-        /Xe5xQ+FuZM9UFtPidbaNQHJkWQPh04Qr3prPvhzXsg90IC0lHXZENPZUuBuMX1adxtskOQKaxMNc
-        xBfocgjXi9Nt1zOypopCQb/W3HST8Y4xxKWcn7nIPQH1h+njGqomKfp6zv9y8Yq3nn/O6T0nuz5aO
-        yYTtfjRUuUCqETkx+t5BhWQyTumOsdtUNS4yMJg9dGeO6/wdxfmKywKwlYk9HBNBzjBK65blB8XEx
-        MhNnXZxjA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKMne-0004Cb-UO; Wed, 07 Nov 2018 12:19:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CCB3A20284F94; Wed,  7 Nov 2018 13:19:08 +0100 (CET)
-Date:   Wed, 7 Nov 2018 13:19:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v5 03/15] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20181107121908.GO9781@hirez.programming.kicks-ass.net>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-4-patrick.bellasi@arm.com>
+        Wed, 7 Nov 2018 16:52:55 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k98so4352262otk.3;
+        Wed, 07 Nov 2018 04:22:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5pno4t+SJk+xSPz+MEHryyP72JoQu+JF1pHNOTwLtJo=;
+        b=RB7NMTIMST0L8oxGRjchbMxjLqWHqg0ktpbLlj9F2hrkyZvJ665tGbSqLKHWIIjBQt
+         sXgi4IK56KDO9LbZESA0K9CJey3xpw8+abOGwrSbutiHP1JFj7IWKpuspPyB0ip7jSvp
+         MkU4qdndv6o3OTBDo5G0JtWqluZHDL2FyUEZSXoha5DUyvzBCzdit+BtRNzl7fw6k7lx
+         /eG+v6YzhyaDYlhRDDE+iYlWHzLTWlAFnKcnmsRh6kmBukyeyA12A8JizI017zFTkY82
+         97NcWLsbVaO2HYBwSi0mChbz3s8GbZ2Z8GuntncSikwrPAbSiihgbXl2h82xtBzT7pCF
+         FBnQ==
+X-Gm-Message-State: AGRZ1gIOwXNWCPDiFCx9xvSmzCSPxrClZmrW3vzlYj4YUrBUU5FTBHJU
+        gUWwTo+OtaFbnOf6rhjleO25BnjRCODZkmBgK0Zuhw==
+X-Google-Smtp-Source: AJdET5e4cVppaFc8mejKuyPv9vtVfnMZwiQ54sv3H7tFsOHv3a/GODuSh+pd9ZHhWh2Qm3D7NJkSY8FMORCf+LQTjWc=
+X-Received: by 2002:a9d:42c7:: with SMTP id c7mr816018otj.119.1541593366399;
+ Wed, 07 Nov 2018 04:22:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029183311.29175-4-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181102110653.118257-1-arnd@arndb.de>
+In-Reply-To: <20181102110653.118257-1-arnd@arndb.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 7 Nov 2018 13:22:35 +0100
+Message-ID: <CAJZ5v0grpLSh=QAO3iwwrX0MPzJVxFenFo3j7V+JpeYEu63CjA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / PMIC: xpower: fix IOSF_MBI dependency
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 06:32:57PM +0000, Patrick Bellasi wrote:
-> +struct uclamp_se {
-> +	unsigned int value		: SCHED_CAPACITY_SHIFT + 1;
-> +	unsigned int group_id		: order_base_2(UCLAMP_GROUPS);
+On Fri, Nov 2, 2018 at 12:07 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> We still get a link failure with IOSF_MBI=m when the xpower driver
+> is built-in:
+>
+> drivers/acpi/pmic/intel_pmic_xpower.o: In function `intel_xpower_pmic_update_power':
+> intel_pmic_xpower.c:(.text+0x4f2): undefined reference to `iosf_mbi_block_punit_i2c_access'
+> intel_pmic_xpower.c:(.text+0x5e2): undefined reference to `iosf_mbi_unblock_punit_i2c_access'
+>
+> This makes the dependency stronger, so we can only build when IOSF_MBI
+> is built-in.
+>
+> Fixes: 6a9b593d4b6f ("ACPI / PMIC: xpower: Add depends on IOSF_MBI to Kconfig entry")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/acpi/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index 18851e7eedd5..31a3c4a03f61 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -514,7 +514,7 @@ config CRC_PMIC_OPREGION
+>
+>  config XPOWER_PMIC_OPREGION
+>         bool "ACPI operation region support for XPower AXP288 PMIC"
+> -       depends on MFD_AXP20X_I2C && IOSF_MBI
+> +       depends on MFD_AXP20X_I2C && IOSF_MBI=y
+>         help
+>           This config adds ACPI operation region support for XPower AXP288 PMIC.
+>
+> --
 
-Are you sure about ob2() ? seems weird we'll end up with 0 for
-UCLAMP_GROUPS==1.
+At this point I'm inclined to apply the patch as is as a short-term
+fix and improvements can be made on top of it.
 
-> +	unsigned int mapped		: 1;
-> +};
+Any objections?
