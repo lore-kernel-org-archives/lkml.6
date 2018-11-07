@@ -2,135 +2,133 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A50E2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6A9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53D042085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:01:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6MaNCG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D042085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6709F2085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:02:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6709F2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbeKGVb5 (ORCPT
+        id S1730633AbeKGVc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:31:57 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46110 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeKGVb4 (ORCPT
+        Wed, 7 Nov 2018 16:32:27 -0500
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:2722 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbeKGVc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:31:56 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f23so6719124lfc.13;
-        Wed, 07 Nov 2018 04:01:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=N6/5t+0cbVCot6vaYZiVdQ2CCr5S3Pc5lbG9APMFoy8=;
-        b=P6MaNCG+bEzQCOE7B7mktOVmiNWXpTGDKqC6GDazqgjvWO51z/yYauLn7vzNhg/tGo
-         c1cfb9IH3fCHf82CcRNryvlsxTUlIsY96KHwjOptAuNuAASP6pK5u7wPCKFDghgkvzhz
-         jEpyudj1sWXLHJSAEU46TTl3Jo7PRNYI3wDqheOvN6mPZuiu7Sgn59aU+0kXF2bpLRKz
-         cKUtzpZEuv3HV79Otkc9o0qz/6Dxo7sFXcC/USWyfEej8AiMmQpMslcicFJbH4SPdF2M
-         rwovSTNTMAg4aqpd8of/hblIXjRdcJoyEocaY7TDho8P7v2PRONGVYX8Pr4FOnrJFrYW
-         ylAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=N6/5t+0cbVCot6vaYZiVdQ2CCr5S3Pc5lbG9APMFoy8=;
-        b=IPiZ2cLbYN3V5DtX5f+K7O85uq79PO3P3gHaXifkXsG+8wtMINjtv0KMJQB3AHBkOz
-         h5cpxqJ+MXKdgNAkwiSvfW52kzcbmivMNKwGVJ98dqwFxnSoVo7js+8jfuYmMHOYTQAH
-         ij7xtqtfjUbkCtdMYee4Fm6yPrxAMMgMmVUBQB2cagFsk9zJWHxAKGYT+ttv3nvFnoiM
-         3NB0D8ZKDKmr8rOvNozyavuH7Iv4diGoNSQWt15XLNabsCtOFmZblyBy38Z1mCV80ZqJ
-         vLcANLaN2KMb6w6rtQ4JA+UstK5XRR1VX7wrGu8ozibP88Usn2l20Axrp0c++FXX5N+D
-         MG5w==
-X-Gm-Message-State: AGRZ1gISEJR+AOxeVmDSxkM/ZStCtCKoV27tC3tGS5THb7DrD84K1rsl
-        lovy2JqRZvnzCajNMNPLlc05RhFH
-X-Google-Smtp-Source: AJdET5e0q+2qY1sQ50xtPsq/FZ0O41Oi4rD+lM+MITd3oxez53OP2wPq7yE1fr+3Shsa0z+QwoRT8Q==
-X-Received: by 2002:a19:1901:: with SMTP id 1mr893147lfz.99.1541592110848;
-        Wed, 07 Nov 2018 04:01:50 -0800 (PST)
-Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id f134-v6sm80408lfg.68.2018.11.07.04.01.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 04:01:49 -0800 (PST)
-Subject: Re: [PATCH] media: staging: tegra-vde: Change from __attribute to
- __packed.
-To:     rafaelgoncalves@riseup.net, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-media@vger.kernel.org,
-        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
-References: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <bc0d606c-c2e7-c23d-e1a5-cb9e0a30a937@gmail.com>
-Date:   Wed, 7 Nov 2018 15:01:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 7 Nov 2018 16:32:26 -0500
+X-IronPort-AV: E=Sophos;i="5.54,475,1534809600"; 
+   d="scan'208";a="81521677"
+Subject: Re: [Xen-devel] [PATCH] x86/xen: fix pv boot
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+To:     Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <xen-devel@lists.xenproject.org>, <x86@kernel.org>
+CC:     <sstabellini@kernel.org>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <boris.ostrovsky@oracle.com>, <tglx@linutronix.de>
+References: <20181107113017.30090-1-jgross@suse.com>
+ <f95cf3fb-fb49-8211-0c54-f6c7382ac455@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <6eb96a45-393c-4e06-ee19-549fdbe9e316@citrix.com>
+Date:   Wed, 7 Nov 2018 12:02:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181107022324.11994-1-rafaelgoncalves@riseup.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <f95cf3fb-fb49-8211-0c54-f6c7382ac455@citrix.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.11.2018 5:23, rafaelgoncalves@riseup.net wrote:
-> From: Rafael Goncalves <rafaelgoncalves@riseup.net>
-> 
-> Correct the following warnings from checkpatch.pl:
-> 
-> WARNING: __packed is preferred over __attribute__((packed))
-> +} __attribute__((packed));
-> 
-> WARNING: __packed is preferred over __attribute__((packed))
-> +} __attribute__((packed));
-> 
-> Signed-off-by: Rafael Goncalves <rafaelgoncalves@riseup.net>
-> 
-> ---
-> 
-> Hi.
-> It's my first patch submission, please let me know if there is something
-> that I can improve.
-> ---
->  drivers/staging/media/tegra-vde/uapi.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
-> index a50c7bcae057..5ffa4afa4047 100644
-> --- a/drivers/staging/media/tegra-vde/uapi.h
-> +++ b/drivers/staging/media/tegra-vde/uapi.h
-> @@ -29,7 +29,7 @@ struct tegra_vde_h264_frame {
->  	__u32 flags;
->  
->  	__u32 reserved;
-> -} __attribute__((packed));
-> +} __packed;
->  
->  struct tegra_vde_h264_decoder_ctx {
->  	__s32 bitstream_data_fd;
-> @@ -61,7 +61,7 @@ struct tegra_vde_h264_decoder_ctx {
->  	__u8  num_ref_idx_l1_active_minus1;
->  
->  	__u32 reserved;
-> -} __attribute__((packed));
-> +} __packed;
->  
->  #define VDE_IOCTL_BASE			('v' + 0x20)
->  
-> 
+On 07/11/18 11:55, Andrew Cooper wrote:
+> On 07/11/18 11:30, Juergen Gross wrote:
+>> +	return ret;
+>>  }
+>>  
+>>  static inline int xen_safe_read_ulong(unsigned long *addr, unsigned long *val)
+>>  {
+>> -	return __get_user(*val, (unsigned long __user *)addr);
+>> +	int ret = 0;
+>> +	unsigned long rval;
+>> +
+>> +	asm volatile("1: mov"__i" %2,%"__r"1\n"
+>> +		     "2:\n"
+>> +		     ".section .fixup,\"ax\"\n"
+>> +		     "3: mov %3,%0\n"
+>> +		     "   jmp 2b\n"
+>> +		     ".previous\n"
+>> +		     _ASM_EXTABLE(1b, 3b)
+>> +		     : "=r" (ret), "=r" (rval)
+>> +		     : "m" (*addr), "i" (-1), "0" (ret));
+>> +	*val = rval;
+>> +	return ret;
+> This also uses rval uninitialised if a fault occurs.
+>
+> Overall, how about:
+>
+> static inline int xen_safe_write_ulong(unsigned long *addr, unsigned
+> long val)
+> {
+>     int ret = 0;
+>
+>     asm volatile("1: mov %[val], %[ptr]\n"
+>                  "2:\n"
+>                  ".section .fixup, \"ax\"\n"
+>                  "3: mov %[err], %[ret]\n"
 
-Hello Rafael,
+Actually, if you want a shorter fixup path, `sub $1, %[ret]` would also
+do, and drop the [err] constraint.
 
-Thank you very much for the patch, but looks like it is not correct. The Userspace API header is supposed to be used by kernel and userspace, the __packed macro is available in kernel only.
-
-Interestingly there few places in include/uapi/ that use __packed macro, I'm wondering if they are correct. Note that GCC just won't complain about undefined qualifier, at least by default.
+~Andrew
