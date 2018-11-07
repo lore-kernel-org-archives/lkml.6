@@ -2,80 +2,70 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A661FC32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28861C32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CAE2085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:10:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5oEvkFp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53CAE2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id DDFFC2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:11:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDFFC2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbeKGMit (ORCPT
+        id S1731042AbeKGMkG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 07:38:49 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42942 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730884AbeKGMit (ORCPT
+        Wed, 7 Nov 2018 07:40:06 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41302 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbeKGMkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 07:38:49 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t6-v6so7194424plo.9
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 19:10:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FvRQMKGSiR3INq9Vie5/cS4AMtrW1N4ltNzgD2BFd+Y=;
-        b=c5oEvkFp4c94BEvwyauk4kKOTJXbkxFmhKr+5jqLZ6t+WlBpTh2y5j7QwVhla8VyyQ
-         5WviCLjGGlUOMa3w80z+cBuUwJvGNxwYTd1l7A91ymvhi2jjSgtP+SrJleI7aDrF3o51
-         nlSwUeDH7B3xxL6NPlJtbtVgZEXDxAfZjzC29XN+Z185FcKkLHMKm/rEvE51d++2Hfdd
-         UbvuJM6kD8Yjka4wOawx8g8iyWck9gqEtuzgnZzxXCdYdgM2c6M35tRuG2AOyX4KSntt
-         CRKZoNO/kr3KvOSi0bX6jQrZH2USlMoelEPjdSuNbD9ekwrSNf9reZZtedgowLQb0Mem
-         hhJA==
+        Wed, 7 Nov 2018 07:40:06 -0500
+Received: by mail-ot1-f65.google.com with SMTP id c32so13539689otb.8;
+        Tue, 06 Nov 2018 19:11:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FvRQMKGSiR3INq9Vie5/cS4AMtrW1N4ltNzgD2BFd+Y=;
-        b=g5m+WB4KV8rSN86dEne+AKh8m6ul7toK+VxRi07gW4YhzCmUdA1lW1Ql3PRWocSMiA
-         NPP7CmPbKAic3j+h617b72co3BZEdo6io/zmn2H9AZhvpIrfgvaNLGaRFW9t0Bas7Wfd
-         d6AT2JvsExK220dOvgggACn2OOKas1yRTSp7xk46sjVWRxTO9ZA2bviTCmJKMVuMRi3Q
-         EobnuMXoS+ENlGwEr6fwN+Qo0RyJ/cz6orFh+oyM5reOlsMZ++SxmEPcts2Fwko/RAYk
-         YjyxWOvxLZJBmT6hAYcODb4zh2YXVkMJ0QcpPctpWYV45mRIysvMU4DKHaefLstt/Hde
-         3PHA==
-X-Gm-Message-State: AGRZ1gKZgqAUb/oxFmcYr/B2WQhm+IsWpdDpf+/B9xqLy2fZRPl83XFg
-        So+No/lYKys1GayHD0/OMCH1+JJV
-X-Google-Smtp-Source: AJdET5cUyPnZGQjbc8q21bPx1Io1Y0aKif7KZCav5tZC57OV9fQpYk066/xQMlLGUhMzvpfNP7+U5A==
-X-Received: by 2002:a17:902:a9:: with SMTP id a38-v6mr192261pla.7.1541560222352;
-        Tue, 06 Nov 2018 19:10:22 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id y88-v6sm44033834pfd.104.2018.11.06.19.10.20
+        bh=y2iwNOftUUYfWUpCl4RpNdsGQe3PYSCAPEG4n5Zrro8=;
+        b=dE1p2I5/M+5Idzkfp+Pqb9ZTlneSY02i7l2N/s3IkY6V5So5hIfZ+LbyreiwC3YH2e
+         61xRmxaWmRKTfzXafoTv4oS5LYoFSOubpHE3V8ZTy7bSVmfygcKsAPr92wATL/jPVDjM
+         xJ9JUI/MTqGWyGzgJIp9mrRilUBo1NOf/HHyomBvd1CidRZpQLGMeSNXdugNem/O0uEo
+         Ulnjz3hU64wuKCYldob8EknI3Zv8Dmd0GNnGomKlhLtnFj1C6jJ5FRIxQ10XWZrlg6E7
+         SU9xC9HBpkGRw+mdRLGbLB5yxcb4aBYSfBkyXuTP/+wGKoZg4de8TPuIPMPjNU6Lia80
+         I8iQ==
+X-Gm-Message-State: AGRZ1gJz03rb0XGORGCNhHh59kNHqYbcWIUQk43wubIf54RDnwNV2SZR
+        phT5dwFH75xaT8YqOhe5D3Vg2Oy3
+X-Google-Smtp-Source: AJdET5dNRxXLrjaQ7QaruRtjaH6wUgEuCF3V98MwX2f6A+RJHI+sZRyAtem2ot91oKx4KcsxrlUWqg==
+X-Received: by 2002:a9d:3208:: with SMTP id t8mr84217otc.312.1541560298721;
+        Tue, 06 Nov 2018 19:11:38 -0800 (PST)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id s30sm4292766ota.80.2018.11.06.19.11.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 19:10:21 -0800 (PST)
-Subject: Re: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check
- more robust"
-To:     Christian Kujau <lists@nerdbynature.de>,
-        Brian Norris <briannorris@chromium.org>
-Cc:     Genki Sky <sky@genki.is>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-References: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
- <20181106.192305.406697677@genki.is> <20181107022156.GA254567@google.com>
- <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <43a04c4e-fa13-c162-5970-fe1aaa1ac557@roeck-us.net>
-Date:   Tue, 6 Nov 2018 19:10:19 -0800
+        Tue, 06 Nov 2018 19:11:38 -0800 (PST)
+Subject: Re: [PATCH] block: respect virtual boundary mask in bvecs
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@fb.com>,
+        Linux Block Layer Mailinglist <linux-block@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+References: <20181105102301.9752-1-jthumshirn@suse.de>
+ <20181105105548.GC12367@ming.t460p>
+ <7c649b43-f952-cf94-93d6-44fb153acced@suse.de>
+ <20181105120153.GD12367@ming.t460p>
+ <3c3dd9c2-4240-7bb5-c0ff-af6f2e479c31@suse.de>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <a98db60d-ceb9-2a30-39bb-187125f56627@grimberg.me>
+Date:   Tue, 6 Nov 2018 19:11:36 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
+In-Reply-To: <3c3dd9c2-4240-7bb5-c0ff-af6f2e479c31@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -84,57 +74,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 6:58 PM, Christian Kujau wrote:
-> On Tue, 6 Nov 2018, Brian Norris wrote:
->>> Perhaps both scenarios could be satisfied by having
->>> scripts/setlocalversion first check if .git has write permissions, and
->>> acting accordingly. Looking into history, this actually used to be
->>> done, but cdf2bc632ebc ("scripts/setlocalversion on write-protected
->>> source tree", 2013-06-14) removed the updating of the index.
->>
->> A "writeable" check (e.g., [ -w . ]) would be sufficient for our case.
->> But I'm not so sure about that older NFS report, and I'm also not sure
->> that we should be writing to the source tree at all in this case. Maybe
->> we can also check whether there's a build output directory specified?
-> 
-> FWIW, the issue I reported back in 2013[0] was not an ill-configured NFS
-> export, but a read-only NFS export (and then a read-write exported NFS
-> export, but the user compiling the kernel did not have write permission)
-> and so "test -w .git" did not help in determining if the source tree can
-> actually written to. And depending on the user's shell[1], this may or may
-> not still be the case.
-> 
-> So I'm all for the $(touch .git/some-file-here) test to decide if the
-> kernel has to be modified during build.
-> 
-> Christian.
-> 
-> [0] https://lkml.org/lkml/2013/6/14/574
-> [1] https://manpages.debian.org/unstable/dash/dash.1.en.html
-> 
->>> However, I admit I don't understand the justification in that commit
->>> from 2013. I'm no NFS expert, but perhaps the real problem there is an
->>> incorrectly configured NFS setup (uid/gid mismatch between NFS
->>> client/server, or permissions mismatch between mount options and NFS
->>> server?). Christian Kujau: can you speak to that?
->>>
->>> Well, we could also make our check $(touch .git/some-file-here
->>> 2>/dev/null && ...) instead of $(test -w .git) to handle misconfigured
->>> NFS setups. But not sure if that has its own problems.
->>
->> Trying to 'touch' the source tree will also break us. No matter whether
->> you redirect stderr, our sandbox will still notice the build is doing
->> something fishy and complain.
-> 
-For whatever reason, I did not get any of the interim e-mails, only this one.
-My apologies to not responding earlier. But then Brian has said it all:
-Any write attempt onto the read-only file system will cause our build
-system to bail out.
 
-Also, again: I think it is reasonable to expect that the source tree
-is not touched if an output directory is specified. Any write attempt
-violates this assumption. This most definitely includes any "touch"
-commands on the source tree.
+>> If you mean the real huge page, this patch shouldn't have made a difference
+>> because bio_vec->bv_offset is in [0, PAGE_SIZE), and iSer sets virt
+>> boundary as 4K - 1.
+>>
+>> However, things will change after multipage bvec is introduced.
+> 
+> 
+> Hi Ming,
+> 
+> I've received a blktrace from our customer showing the issue [1].
+> 
+> In this example trace they've submitted (contiguous) 64K I/Os and
+> without this patch, they're seeing a lot of splits as indicated by the
+> trace.
+> 
+> With the patch applied the I/O is directly issued to the LLDD without
+> the splits.
+> 
+> [1] http://beta.suse.com/private/jthumshirn/blktrace.txt
+> 
 
-Thanks,
-Guenter
+This patch makes sense to me. However I agree that we need to clarify
+that this addresses cases where PAGE_SIZE-1 > queue_virt_boundary(q).
+
+And also, lets replace "like iser" with "drivers that sets a virtual
+boundary constraint" as nvme-rdma does the same thing.
