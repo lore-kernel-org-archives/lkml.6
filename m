@@ -2,117 +2,215 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E84FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AAEC46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF342085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:25:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF342085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 093772085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:26:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 093772085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730805AbeKGX4b (ORCPT
+        id S1730931AbeKGX4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:56:31 -0500
-Received: from leonov.paulk.fr ([185.233.101.22]:48710 "EHLO leonov.paulk.fr"
+        Wed, 7 Nov 2018 18:56:33 -0500
+Received: from relay.sw.ru ([185.231.240.75]:59596 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727627AbeKGX4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:56:30 -0500
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 66602BFE9C;
-        Wed,  7 Nov 2018 15:25:54 +0100 (CET)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id BB4CFC1057; Wed,  7 Nov 2018 15:25:53 +0100 (CET)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 4E6E6C02F6;
-        Wed,  7 Nov 2018 15:25:46 +0100 (CET)
-Message-ID: <a4bf7684b456956cfc25699a8d13edc165b33566.camel@paulk.fr>
-Subject: Re: [PATCH v2 3/7] dt-bindings: Add vendor prefix for LeMaker
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com
-Date:   Wed, 07 Nov 2018 15:26:31 +0100
-In-Reply-To: <20181105220802.GA21348@bogus>
-References: <20181101200045.6078-1-contact@paulk.fr>
-         <20181101200045.6078-4-contact@paulk.fr> <20181105220802.GA21348@bogus>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-G39TMI/WFfQedA/LP2wP"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
+        id S1726670AbeKGX4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:56:32 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.90_1)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gKOmH-0002qM-06; Wed, 07 Nov 2018 17:25:53 +0300
+Subject: Re: [PATCH 6/6] fuse: Verify userspace asks to requeue interrupt that
+ we really sent
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <154149586524.17764.5252013294539109287.stgit@localhost.localdomain>
+ <154149666097.17764.12092615786683141764.stgit@localhost.localdomain>
+ <CAJfpeguDTsG7vEAhH=CHp43vJak70VzR8YH8K6=vZAUXCZZeEQ@mail.gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <6f27b5a5-0092-b23f-b28e-341ae093a241@virtuozzo.com>
+Date:   Wed, 7 Nov 2018 17:25:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAJfpeguDTsG7vEAhH=CHp43vJak70VzR8YH8K6=vZAUXCZZeEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07.11.2018 16:55, Miklos Szeredi wrote:
+> On Tue, Nov 6, 2018 at 10:31 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>> When queue_interrupt() is called from fuse_dev_do_write(),
+>> it came from userspace directly. Userspace may pass any
+>> request id, even the request's we have not interrupted
+>> (or even background's request). This patch adds sanity
+>> check to make kernel safe against that.
+> 
+> Okay, I understand this far.
+> 
+>> The problem is real interrupt may be queued and requeued
+>> by two tasks on two cpus. This case, the requeuer has not
+>> guarantees it sees FR_INTERRUPTED bit on its cpu (since
+>> we know nothing about the way userspace manages requests
+>> between its threads and whether it uses smp barriers).
+> 
+> This sounds like BS. There's an explicit  smp_mb__after_atomic()
+> after the set_bit(FR_INTERRUPTED,...).  Which means FR_INTERRUPTED is
+> going to be visible on all CPU's after this, no need to fool around
+> with setting FR_INTERRUPTED again, etc...
 
---=-G39TMI/WFfQedA/LP2wP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hm, but how does it make the bit visible on all CPUS?
 
-Hi,
+The problem is that smp_mb_xxx() barrier on a cpu has a sense
+only in pair with the appropriate barrier on the second cpu.
+There is no guarantee for visibility, if second cpu does not
+have a barrier:
 
-Le lundi 05 novembre 2018 =C3=A0 16:08 -0600, Rob Herring a =C3=A9crit :
-> On Thu, Nov 01, 2018 at 09:00:41PM +0100, Paul Kocialkowski wrote:
-> > This introduces a new device-tree binding vendor prefix for Shenzhen
-> > LeMaker Technology Co., Ltd.
->=20
-> Would be nice to say this is already in use, but wasn't documented.
+  CPU 1                  CPU2                        CPU3                       CPU4                        CPU5
 
-Oh right, it is indeed already used by a few devices.
+  set FR_INTERRUPTED     set FR_SENT                                            
+  <smp mb>               <smp mb>                          
+  test FR_SENT (== 0)    test FR_INTERRUPTED (==1)
+                         list_add[&req->intr_entry]  read[req by intr_entry]
+                                                     <place to insert a barrier>
+                                                     goto userspace
+                                                     write in userspace buffer
+                                                                                read from userspace buffer  
+                                                                                write to userspace buffer
+                                                                                                             read from userspace buffer
+                                                                                                             enter kernel
+                                                                                                             <place to insert a barrier>
+                                                                                                             test FR_INTERRUPTED <- Not visible
 
-> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> > ---
-> >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
-> >  1 file changed, 1 insertion(+)
->=20
-> In any case,
->=20
-> Reviewed-by: Rob Hering <robh@kernel.org>
+The sequence:
 
-I'll change that in v3 and include your Reviewed-by.
+set_bit(FR_INTERRUPTED, ...)
+smp_mb__after_atomic();
+test_bit(FR_SENT, &req->flags)
 
-Cheers,
+just guarantees the expected order on CPU2, which uses <smp mb>,
+but CPU5 does not have any guarantees.
 
-Paul
 
---=20
-Developer of free digital technology and hardware support.
+This 5 CPUs picture is a scheme, which illustrates the possible way userspace
+may manage interrupts. Tags <place to insert a barrier> show places, where
+we not have barriers yet, but where we may introduce them. But even in case
+of we introduce them, there is no a way, that such the barriers help against CPU4.
+So, this is the reason we have to set FR_INTERRUPTED bit again to make it visible
+under the spinlock on CPU5.
 
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+Thanks,
+Kirill
 
---=-G39TMI/WFfQedA/LP2wP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvi9hcACgkQhP3B6o/u
-lQz9Tw//RwW2l8dkD5hFDjw48Xl7PJHhMuLONZ+t7XQJB50egll3ltTHbjo57XgJ
-irSCYblnSPD4KXKXAhMuSHUW0Sr101eRN44hyH3X/w93RkNXiO9z1hq4/XDGjFq4
-09WAMZO2TLkY2l6+fQfCJMGAwAVrJEGLRxV1dKcJtt/u2dgPN53HmA7t4yr1DLiY
-4dDej2FygSpkQ/rXzYVQtnFpxS+EHi6DJNjrKXWchWVu2mN5geMCHY+OLfXuyNmw
-vb/oqQgHCSnPKqVEgohl/SkYsM7NDnM+CFyxUMOgkE/OIGReZh9zq5l0205+cd6h
-sFDhhpxDVJljljErkCgDkjdcoA3AUSS/MEwe+T1ATwswsMLkUCqBedFW3O8rRTuu
-qzMMaGFBRtFxxhcLnGOAUuvxJhcKhzwOPKzvWLgkHNR5EzdHnh7+MuC2aErTKbB3
-mAsvwPt3YO2SSXn6TM/cXROXyCovvI0lnu2iNUUSTr2xdgGyrv+jr30OjgsVB/6k
-V8x0s5wle3JVxdkbZF8+ds5D9RFD2Y1nu0nHCtNyXgtLoULUaKnNDrrPBNWsUQU0
-wXN2NIjiIa2sae4WB+tfpJx0wocX0zkiLv3ati7BYxqfhUMiWHvCQvVwXRMhWh5Q
-VT1tuYF6dIRhiZUiVo77p8HHeZvQgr0gjOzc4c5G8WOlzRLaCvg=
-=Lx5p
------END PGP SIGNATURE-----
-
---=-G39TMI/WFfQedA/LP2wP--
-
+>>
+>> To eliminate this problem, queuer writes FR_INTERRUPTED
+>> bit again under fiq->waitq.lock, and this guarantees
+>> requeuer will see the bit, when checks it.
+>>
+>> I try to introduce solution, which does not affect on
+>> performance, and which does not force to take more
+>> locks. This is the reason, the below solution is worse:
+>>
+>>    request_wait_answer()
+>>    {
+>>      ...
+>>   +  spin_lock(&fiq->waitq.lock);
+>>      set_bit(FR_INTERRUPTED, &req->flags);
+>>   +  spin_unlock(&fiq->waitq.lock);
+>>      ...
+>>    }
+>>
+>> Also, it does not look a better idea to extend fuse_dev_do_read()
+>> with the fix, since it's already a big function:
+>>
+>>    fuse_dev_do_read()
+>>    {
+>>      ...
+>>      if (test_bit(FR_INTERRUPTED, &req->flags)) {
+>>   +      /* Comment */
+>>   +      barrier();
+>>   +      set_bit(FR_INTERRUPTED, &req->flags);
+>>          queue_interrupt(fiq, req);
+>>      }
+>>      ...
+>>    }
+>>
+>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> ---
+>>  fs/fuse/dev.c |   26 +++++++++++++++++++++-----
+>>  1 file changed, 21 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index 315d395d5c02..3bfc5ed61c9a 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -475,13 +475,27 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
+>>         fuse_put_request(fc, req);
+>>  }
+>>
+>> -static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+>> +static int queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+>>  {
+>>         bool kill = false;
+>>
+>>         if (test_bit(FR_FINISHED, &req->flags))
+>> -               return;
+>> +               return 0;
+>>         spin_lock(&fiq->waitq.lock);
+>> +       /* Check for we've sent request to interrupt this req */
+>> +       if (unlikely(!test_bit(FR_INTERRUPTED, &req->flags))) {
+>> +               spin_unlock(&fiq->waitq.lock);
+>> +               return -EINVAL;
+>> +       }
+>> +       /*
+>> +        * Interrupt may be queued from fuse_dev_do_read(), and
+>> +        * later requeued on other cpu by fuse_dev_do_write().
+>> +        * To make FR_INTERRUPTED bit visible for the requeuer
+>> +        * (under fiq->waitq.lock) we write it once again.
+>> +        */
+>> +       barrier();
+>> +       __set_bit(FR_INTERRUPTED, &req->flags);
+>> +
+>>         if (list_empty(&req->intr_entry)) {
+>>                 list_add_tail(&req->intr_entry, &fiq->interrupts);
+>>                 /*
+>> @@ -492,7 +506,7 @@ static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+>>                 if (test_bit(FR_FINISHED, &req->flags)) {
+>>                         list_del_init(&req->intr_entry);
+>>                         spin_unlock(&fiq->waitq.lock);
+>> -                       return;
+>> +                       return 0;
+>>                 }
+>>                 wake_up_locked(&fiq->waitq);
+>>                 kill = true;
+>> @@ -500,6 +514,7 @@ static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+>>         spin_unlock(&fiq->waitq.lock);
+>>         if (kill)
+>>                 kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
+>> +       return (int)kill;
+>>  }
+>>
+>>  static void request_wait_answer(struct fuse_conn *fc, struct fuse_req *req)
+>> @@ -1959,8 +1974,9 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+>>                         nbytes = -EINVAL;
+>>                 else if (oh.error == -ENOSYS)
+>>                         fc->no_interrupt = 1;
+>> -               else if (oh.error == -EAGAIN)
+>> -                       queue_interrupt(&fc->iq, req);
+>> +               else if (oh.error == -EAGAIN &&
+>> +                        queue_interrupt(&fc->iq, req) < 0)
+>> +                       nbytes = -EINVAL;
+>>
+>>                 fuse_put_request(fc, req);
+>>                 fuse_copy_finish(cs);
+>>
