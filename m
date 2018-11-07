@@ -2,84 +2,86 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C48BC46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA259C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C732085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:06:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C732085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D1012085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:06:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1012085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeKGXge (ORCPT
+        id S1727714AbeKGXgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:36:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39666 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726669AbeKGXge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:36:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F3503AFEA;
-        Wed,  7 Nov 2018 14:06:01 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 15:06:01 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v6 1/3] printk: Add line-buffered printk() API.
-Message-ID: <20181107140601.53y5vlubtugeczyt@pathway.suse.cz>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Wed, 7 Nov 2018 18:36:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33608 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726635AbeKGXgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:36:39 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 04C43C05D3F7;
+        Wed,  7 Nov 2018 14:06:08 +0000 (UTC)
+Received: from shodan.usersys.redhat.com (unknown [10.43.17.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BEAC31001F4C;
+        Wed,  7 Nov 2018 14:06:07 +0000 (UTC)
+Received: by shodan.usersys.redhat.com (Postfix, from userid 1000)
+        id 171732C1A0C; Wed,  7 Nov 2018 15:06:07 +0100 (CET)
+From:   Artem Savkov <asavkov@redhat.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH] objtool: fix .cold. functions parent symbols search
+Date:   Wed,  7 Nov 2018 15:05:59 +0100
+Message-Id: <20181107140559.28504-1-asavkov@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 07 Nov 2018 14:06:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-11-02 22:31:55, Tetsuo Handa wrote:
-> How to use this API:
-> 
->   (1) Call get_printk_buffer() and acquire "struct printk_buffer *".
-> 
->   (2) Rewrite printk() calls in the following way. The "ptr" is
->       "struct printk_buffer *" obtained in step (1).
-> 
->       printk(fmt, ...)     => printk_buffered(ptr, fmt, ...)
->       vprintk(fmt, args)   => vprintk_buffered(ptr, fmt, args)
->       pr_emerg(fmt, ...)   => bpr_emerg(ptr, fmt, ...)
->       pr_alert(fmt, ...)   => bpr_alert(ptr, fmt, ...)
->       pr_crit(fmt, ...)    => bpr_crit(ptr, fmt, ...)
->       pr_err(fmt, ...)     => bpr_err(ptr, fmt, ...)
->       pr_warning(fmt, ...) => bpr_warning(ptr, fmt, ...)
->       pr_warn(fmt, ...)    => bpr_warn(ptr, fmt, ...)
->       pr_notice(fmt, ...)  => bpr_notice(ptr, fmt, ...)
->       pr_info(fmt, ...)    => bpr_info(ptr, fmt, ...)
->       pr_cont(fmt, ...)    => bpr_cont(ptr, fmt, ...)
+The way it is currently done it is possible for read_symbols() to find the
+same symbol as parent for ".cold" functions. This leads to a bunch of
+complications such as func length being set to 0 and a segfault in
+add_switch_table(). Fix by copying the search string instead of modifying
+it in place.
 
-I am looking at the sample conversions. We actually won't need
-bpr_cont(). We will use buffer_printk() instead.
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+---
+ tools/objtool/elf.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Well, I think about renaming buffer_printk() to bprintk() or
-define it as a wrapper at least.
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index 6dbb9fae0f9d..781c8afb29b9 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -298,6 +298,7 @@ static int read_symbols(struct elf *elf)
+ 	/* Create parent/child links for any cold subfunctions */
+ 	list_for_each_entry(sec, &elf->sections, list) {
+ 		list_for_each_entry(sym, &sec->symbol_list, list) {
++			char *pname;
+ 			if (sym->type != STT_FUNC)
+ 				continue;
+ 			sym->pfunc = sym->cfunc = sym;
+@@ -305,9 +306,9 @@ static int read_symbols(struct elf *elf)
+ 			if (!coldstr)
+ 				continue;
+ 
+-			coldstr[0] = '\0';
+-			pfunc = find_symbol_by_name(elf, sym->name);
+-			coldstr[0] = '.';
++			pname = strndup(sym->name, coldstr - sym->name);
++			pfunc = find_symbol_by_name(elf, pname);
++			free(pname);
+ 
+ 			if (!pfunc) {
+ 				WARN("%s(): can't find parent function",
+-- 
+2.17.2
 
-Best Regards,
-Petr
