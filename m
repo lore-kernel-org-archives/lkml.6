@@ -2,138 +2,125 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70107C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 583AFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB2220827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137AD20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:53:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nW8mGEU8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB2220827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="TsW68N7K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137AD20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbeKGOLf (ORCPT
+        id S1730938AbeKGOV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 09:11:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57620 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbeKGOLe (ORCPT
+        Wed, 7 Nov 2018 09:21:58 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39965 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730406AbeKGOV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 09:11:34 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA74dCDq175471;
-        Wed, 7 Nov 2018 04:42:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2018-07-02; bh=JoPJA4LpqyVgIOoH0Wu5l8B2TZznbHZwQFuPvZ4jZZ0=;
- b=nW8mGEU8dDEyCaTUUu2axIu5TrLphUP9Yla5mTu5I0VwrnkCMTO9IVWpiNRQa/LgHo0B
- XHAYUEl//3BgrrfeWmS0B3RINCrq5WcdQMNMSYskzyL6J6LuSU5Ke3ndUCM6NHxTDCh9
- 4fBOq0ieMKWbya1emEneu/jeeNHv+4RS332/Gvuf3muuZQeoJoERabvi6WML1u9ERLRQ
- xW99QVANPQwUkrB1P+7dRtvvdHwXMwV4xQXn///6VC374zqkxHDBD6CTIA5p0ad0tuLJ
- 8xgYtQ3PfrJBdY7N42U/RIScu1BatCL0kAtB0F/GQegY6spJ38NFlG3uAdovyZdf7+U3 Ow== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2nh4aqs4yd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Nov 2018 04:42:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA74gKKC018078
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 7 Nov 2018 04:42:20 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA74gIES015615;
-        Wed, 7 Nov 2018 04:42:18 GMT
-Received: from mwanda (/73.241.165.91)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 06 Nov 2018 20:42:18 -0800
-Date:   Wed, 7 Nov 2018 07:42:15 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbuild@01.org, Lubomir Rintel <lkundrak@v3.sk>
-Cc:     kbuild-all@01.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 11/11] [media] marvell-ccic: provide a clock for the
- sensor
-Message-ID: <20181107044146.d5lsvtyjeit7goas@mwanda>
+        Wed, 7 Nov 2018 09:21:58 -0500
+Received: by mail-qk1-f194.google.com with SMTP id y16so18702001qki.7
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 20:53:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=66iO6eqnNSy8JBU5cn5dTMpThpzQ1gx8xxWfeIvk2gk=;
+        b=TsW68N7KD7q79tDD4V53hxqL8zxIjL/+H7dWvGWzGoC3kSjvBkMxkr2sfx7RaTD0WJ
+         KZjHOFvfmMC3ugv5xtff+oLpuM9ki3ow+/WKReQBuwW9RN73wGlYe4OkZ3CIgJ/Cjlvq
+         Ok+DYsd7NI8/yYtj+GsnB9YdO0gS4tXRjQM8rHBDkmRDiQDya6AdE3Gva73VTg911gP9
+         On3QEyHoK8sMWH6n55FaTim1PssuXWXMKpNM1tM4k1x5jSCSBSqszALFhJeVrpmg/LGi
+         XPwnU6Zh+B1pHUFHELtR2Y76XSZLjDHwpBe9QD2uhLozZBBjXZyZkui0qo9/uKPynTvn
+         144g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=66iO6eqnNSy8JBU5cn5dTMpThpzQ1gx8xxWfeIvk2gk=;
+        b=ttMufxiVLJxr/TPJRianFIxNYhFjZyHvgB3pNaHhtGGSCpEuM0ws5rW/jenQTprrj1
+         kQkaMQP7ccm3Mx3heuJCoQqZR70bvib82068orWCPk4+YK3a8XABAdF99OclmM5t460Z
+         re1Yg4I5eTyreqEjpwsybQJKDj5mhWA3l5oXZbu8XG7Qy7AHY5FB2FN219hf2iMOQo0w
+         k/6KbfpFIXEIHYiFSPAlXOAhlEGrMoKIFzleNYV84sN49JwbTJcQUmmFXb1fDhYtk2Js
+         Uqf6AF2xBtoEdZQO7XUpxO2+zcwl9NTVWjW1fuFIeYAYuMmWktKAJKFYN4ngElb2DYq7
+         8z6Q==
+X-Gm-Message-State: AGRZ1gJU68JLWmDHxIK5H7c//7O0wHIRCGZtUk3CjUjk9TGHLasZ5zjK
+        9qaQs/BnGml6TzqFVEqFVtLh6gFNxHj+RKjpF3B5PQ==
+X-Google-Smtp-Source: AJdET5fKlDzZps5RcJmlECR/jJWzS3eHqwXE6Z+kvPuKj2bVjlecFO981JB+u/G9EDnkeKA48ORvFVU5oJtMOE++gO0=
+X-Received: by 2002:a37:b881:: with SMTP id i123-v6mr338562qkf.290.1541566394941;
+ Tue, 06 Nov 2018 20:53:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181105073054.24407-12-lkundrak@v3.sk>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9069 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811070041
+References: <20181103065732.12134-1-jprvita@endlessm.com> <20181105091917.GD4439@amd>
+ <CA+A7VXXUB2CZUyPtaMya7in7ntO_unbqVnaZyfCBT_BXtAxeQQ@mail.gmail.com>
+In-Reply-To: <CA+A7VXXUB2CZUyPtaMya7in7ntO_unbqVnaZyfCBT_BXtAxeQQ@mail.gmail.com>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Wed, 7 Nov 2018 12:53:03 +0800
+Message-ID: <CAD8Lp46Go79C_xOkzM-hq4umET1M62Ofqw48swn1JNocifET3Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / battery: Fix reporting "Not charging" when
+ capacity is 100%
+To:     pavel@ucw.cz, Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        sebastian.reichel@collabora.co.uk,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux@endlessm.com,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lubomir,
+On Mon, Nov 5, 2018 at 1:19 AM Pavel Machek <pavel@ucw.cz> wrote:
+> Plus, I don't think "100% charge" is right test for "battery full". At
+> least on thinkpads, there's configuration option, and it is common
+> _not_ to charge batterry above 95% or so (to increase its lifetime).
 
-url:    https://github.com/0day-ci/linux/commits/Lubomir-Rintel/media-ov7670-hook-s_power-onto-v4l2-core/20181105-163336
-base:   git://linuxtv.org/media_tree.git master
+Hans also touched on this area in his response:
 
-smatch warnings:
-drivers/media/platform/marvell-ccic/mcam-core.c:1682 mcam_v4l_open() warn: inconsistent returns 'mutex:&cam->s_mutex'.
-  Locked on:   line 1673
-  Unlocked on: line 1682
+> As for this kernel-side fix I do not believe that fixing thus in
+> the kernel is the right thing to do. We try to stay away from
+> heuristics using full_charge_capacity in the kernel since that
+> is not really reliable / deterministic.
 
-# https://github.com/0day-ci/linux/commit/a4f7d692c7067355da433bbb534531a4e1a55ac6
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout a4f7d692c7067355da433bbb534531a4e1a55ac6
-vim +1682 drivers/media/platform/marvell-ccic/mcam-core.c
+I'm not fully convinced by this argument though.
 
-abfa3df3 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-11  1656  
-abfa3df3 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-11  1657  /* ---------------------------------------------------------------------- */
-abfa3df3 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-11  1658  /*
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1659   * Our various file operations.
-abfa3df3 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-11  1660   */
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1661  static int mcam_v4l_open(struct file *filp)
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1662  {
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1663  	struct mcam_camera *cam = video_drvdata(filp);
-949bd408 drivers/media/platform/marvell-ccic/mcam-core.c Hans Verkuil    2015-03-05  1664  	int ret;
-abfa3df3 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-11  1665  
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1666  	mutex_lock(&cam->s_mutex);
-949bd408 drivers/media/platform/marvell-ccic/mcam-core.c Hans Verkuil    2015-03-05  1667  	ret = v4l2_fh_open(filp);
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1668  	if (ret)
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1669  		goto out;
-949bd408 drivers/media/platform/marvell-ccic/mcam-core.c Hans Verkuil    2015-03-05  1670  	if (v4l2_fh_is_singular_file(filp)) {
-a4f7d692 drivers/media/platform/marvell-ccic/mcam-core.c Lubomir Rintel  2018-11-05  1671  		ret = sensor_call(cam, core, s_power, 1);
-05fed816 drivers/media/platform/marvell-ccic/mcam-core.c Libin Yang      2013-07-03  1672  		if (ret)
-a4f7d692 drivers/media/platform/marvell-ccic/mcam-core.c Lubomir Rintel  2018-11-05  1673  			return ret;
-^^^^^^^^^^
-This should be a goto out;
+The ACPI spec is not very clear on what conditions you should apply to
+decide when the battery is full. Instead, ACPI seems to provide a
+pretty decent amount of data, and the decision about whether to
+interpret that as "battery full" is left for consumers.
 
-a4f7d692 drivers/media/platform/marvell-ccic/mcam-core.c Lubomir Rintel  2018-11-05  1674  		mcam_clk_enable(cam);
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1675  		__mcam_cam_reset(cam);
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1676  		mcam_set_config_needed(cam, 1);
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1677  	}
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1678  out:
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08  1679  	mutex_unlock(&cam->s_mutex);
-44fbcb10 drivers/media/platform/marvell-ccic/mcam-core.c Hans Verkuil    2015-03-05  1680  	if (ret)
-44fbcb10 drivers/media/platform/marvell-ccic/mcam-core.c Hans Verkuil    2015-03-05  1681  		v4l2_fh_release(filp);
-d43dae75 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-07-08 @1682  	return ret;
-a9b36e85 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-20  1683  }
-abfa3df3 drivers/media/video/marvell-ccic/mcam-core.c    Jonathan Corbet 2011-06-11  1684  
+The best that the ACPI spec offers here is the _BIF/_BIX "Last Full
+Charge Capacity" field (known as full_charge_capacity in this driver),
+and it does appear to consider the "only charge to 95%" consideration,
+although it is only documented as a prediction. There is also a sample
+calculation (section 3.9.3) of how to calculate the Remaining Battery
+Percentage which uses "Last Full Charge Capacity" too.
 
-:::::: The code at line 1682 was first introduced by commit
-:::::: d43dae75cc1140bf27a59aa6d8e8bc7a00f009cc [media] marvell-cam: core code reorganization
+Without a crystal clear definition of battery full, it seems up to the
+consumers of the data to decide when the battery is full via some form
+of heuristic. And this is exactly what acpi-battery already does in
+acpi_battery_is_charged() - and the main aspect is looking at
+full_charge_capacity. The result of this is then sent to userspace.
 
-:::::: TO: Jonathan Corbet <corbet@lwn.net>
-:::::: CC: Mauro Carvalho Chehab <mchehab@redhat.com>
+So it does not seem fair to say that "you can't use basic heuristics
+around full_charge_capacity" because the kernel already does (and this
+is what the ACPI spec encourages), although JP's patch could be
+improved to more clearly and more completely follow the logic in
+acpi_battery_is_charged().
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+The question of whether we would want to interpret the numbers in this
+way when DISCHARGING is set is a good one though. The ACPI spec
+doesn't shine much light on this, but the calculations related to
+battery percentage and battery life in section 3.9.3 at least do not
+seem to consider charging/discharging status.
+
+Thanks
+Daniel
