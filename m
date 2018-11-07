@@ -2,85 +2,98 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4831FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146E6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF9520862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:14:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qwG7qpjd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF9520862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CEA1D20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:18:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA1D20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbeKHDqG (ORCPT
+        id S1727802AbeKHDtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:46:06 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40797 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbeKHDqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:46:06 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b203-v6so16662691wme.5
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:14:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x2a5ljJAfLHZQDopXMrKiW/T8Irdvzz3YUxgXUgvSTI=;
-        b=qwG7qpjdmjaBeDj1qHL4qgMdbT3til4o7ckEzAmBeXs9/SF4GeAWbDKhFb/zKUUfss
-         iZi4Wg3dY0JpS8YiIcbXdLwnycKQAXVQp/olbaW782SXRaMSHe2SphqSKBE63vmoym4Q
-         KSibSTPDBKMw4p9qfXeE5/hbIvxNQSOivAOy6/28Pg7y3aiMfbT65uS1PuYnX808uBNS
-         0S78gb9h4SPDgcCtI/KmmdYfnwtHNT9ABti7kgnrhqMNzLj3b0ObP2mkXME1+p8BKtm/
-         YLOa1mH5ai21djCp3i7uDDeg1HbUquGwgLlmm/KhRZSz4aCups4b1O4hSjAgNhOxB8qL
-         KuFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x2a5ljJAfLHZQDopXMrKiW/T8Irdvzz3YUxgXUgvSTI=;
-        b=SZEfrf06kC7yOKt9djznAsM4WIpRi4ATBw0unBsS7r0KLry/fg8YkFAZOFgmV6CBHV
-         HGEsvbhIaFbm1F4H8rEyCNbI06N+gsqu3qaJ4TZnO61uKvQ7cJughLQwJgE0LLh0BAKO
-         nDqu72xJU4p538UP8tN8B/SuU4MKJ20VGb7/k+j7ecV69VVh/F5sGiwCyVWzBRF5qWvY
-         Q2nGtyOo8N6fRGQn12tiMrUgj4FBg9/j5i9iInO9HTu6zJ3A5StAy5vm+d2Ej+1FBRWN
-         5yGpO8wNP/x/U7DFpKhDYxciUkd1ePtd51Y+KuQTZ84pMaWcyW0iZ06yFj6k9hcxm6f5
-         wQKA==
-X-Gm-Message-State: AGRZ1gLwuySZIC+9TI0/TrTLd5yS7TG7bm6k6FZqEwOQyIcs/JmBwKWX
-        /oM3Qn3QBjBUR4J0d2QmBVzy+iEsCa6i1rV1WlE=
-X-Google-Smtp-Source: AJdET5dUi1xVRYjFMiUa0ku9vMsJAXAEfEiHJrl01JsaWYbJjRjfwRYVcLEJ5ffEfznV9aB8hQ2D4fwx9nW0d2NVDeE=
-X-Received: by 2002:a1c:ee13:: with SMTP id m19-v6mr1051970wmh.142.1541614471725;
- Wed, 07 Nov 2018 10:14:31 -0800 (PST)
+        Wed, 7 Nov 2018 22:49:52 -0500
+Received: from leonov.paulk.fr ([185.233.101.22]:48828 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbeKHDtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:49:52 -0500
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 52482BFCAE;
+        Wed,  7 Nov 2018 19:18:17 +0100 (CET)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 79D4BC1075; Wed,  7 Nov 2018 19:18:16 +0100 (CET)
+Received: from localhost.localdomain (collins [192.168.1.129])
+        by gagarine.paulk.fr (Postfix) with ESMTP id CCCBDC1064;
+        Wed,  7 Nov 2018 19:17:55 +0100 (CET)
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+        Mark Van den Borre <mark@fosdem.org>,
+        Gerry Demaret <gerry@fosdem.org>,
+        Luc Verhaegen <libv@skynet.be>,
+        Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH v3 0/8] BL035-RGB-002 3.5" LCD sunxi DRM support
+Date:   Wed,  7 Nov 2018 19:18:35 +0100
+Message-Id: <20181107181843.27628-1-contact@paulk.fr>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181106214928.40020-1-nkela@cisco.com> <921b0f78cf67d7307a0555e1fd6f2c2976310adc.camel@infradead.org>
- <591D4732-BC3E-4F85-9277-25E049FFF4BA@cisco.com>
-In-Reply-To: <591D4732-BC3E-4F85-9277-25E049FFF4BA@cisco.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Wed, 7 Nov 2018 19:14:20 +0100
-Message-ID: <CAFLxGvz8QgK1P6d-_biSRk4fyYEobio315_tUP+cRXTvt+m1hA@mail.gmail.com>
-Subject: Re: [PATCH] jffs2: implement mount option to configure endianness
-To:     nkela@cisco.com
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, xe-linux-external@cisco.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 7:05 PM Nikunj Kela (nkela) <nkela@cisco.com> wrote:
-> I had tried to use configs to start with via the following patch however I was advised to have a mount option:
-> http://lists.infradead.org/pipermail/linux-mtd/2018-November/085126.html
+The series adds support for the BL035-RGB-002 LCD panel and the required
+device-tree bindings for using it on the BananaPi M1.
 
-Just show performance numbers on how your implementation has an impact or not.
-So far your implementation is also not much optimized, maybe likely()
-or static keys can help...
+Only the changes related to the DRM driver and the panel are submitted
+for merge, which does not include the two final commits.
+
+Changes since v2:
+* Split the commit using the encoder instead of panel;
+* Mentionned that the lemaker prefix was already used;
+* Included all properties in the panel binding documentation;
+* Fixed panel binding in BananaPi device-tree;
+* Switched backlight levels to a 1.8-gamma-corrected table.
+
+Changes since v1:
+* Rebased on drm-misc next;
+* Used the full name of the panel for dt bindings;
+* Removed helper to match flags in order to only retrieve the connector
+  once, as it was already done.
+* Made the bus flags checking possible without a panel;
+
+Paul Kocialkowski (8):
+  drm/sun4i: tcon: Pass encoder to RGB setup function
+  drm/sun4i: tcon: Get the connector from the encoder in RGB setup
+  drm/sun4i: tcon: Support an active-low DE signal with RGB interface
+  dt-bindings: Add vendor prefix for LeMaker
+  dt-bindings: Add bindings for the LeMaker BL035-RGB-002 LCD panel
+  drm/panel: simple: Add support for the LeMaker BL035-RGB-002 3.5" LCD
+  ARM: dts: sun7i: Add pinmux configuration for LCD0 RGB888 pins
+  ARM: dts: sun7i-a20-bananapi: Add bindings for the LeMaker 3.5" LCD
+
+ .../display/panel/lemaker,bl035-rgb-002.txt   | 12 ++++
+ .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+ arch/arm/boot/dts/sun7i-a20-bananapi.dts      | 71 +++++++++++++++++++
+ arch/arm/boot/dts/sun7i-a20.dtsi              | 11 +++
+ drivers/gpu/drm/panel/panel-simple.c          | 27 +++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            | 29 ++++----
+ drivers/gpu/drm/sun4i/sun4i_tcon.h            |  1 +
+ 7 files changed, 138 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/lemaker,bl035-rgb-002.txt
 
 -- 
-Thanks,
-//richard
+2.19.1
+
