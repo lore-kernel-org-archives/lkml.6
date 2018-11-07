@@ -2,131 +2,137 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B6FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B302BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E082C2086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:34:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E082C2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 43EB520862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 07:35:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43EB520862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbeKGRD6 (ORCPT
+        id S1729989AbeKGRFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 12:03:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:52367 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbeKGRD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 12:03:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 23:34:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,474,1534834800"; 
-   d="scan'208";a="105972478"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Nov 2018 23:34:50 -0800
-Received: from fmsmsx156.amr.corp.intel.com (10.18.116.74) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 6 Nov 2018 23:34:50 -0800
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- fmsmsx156.amr.corp.intel.com (10.18.116.74) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 6 Nov 2018 23:34:49 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.117]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.84]) with mapi id 14.03.0415.000;
- Wed, 7 Nov 2018 15:34:47 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [PATCH v4 10/12] iommu/vt-d: Add first level page table
- interface
-Thread-Topic: [PATCH v4 10/12] iommu/vt-d: Add first level page table
- interface
-Thread-Index: AQHUdMlOzB7aisraS0uqhCvHRMya1qVD7geg
-Date:   Wed, 7 Nov 2018 07:34:47 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C257439D5FB43@SHSMSX104.ccr.corp.intel.com>
-References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
- <20181105053151.7173-11-baolu.lu@linux.intel.com>
-In-Reply-To: <20181105053151.7173-11-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGU4YjU2OTMtMzhmOC00NzA0LThhOGItNjhiNjM1ZTI3MzAyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiT2JRMXhnekZhZDdBSStYaURiWE1RbERFOEhoUTZRRm4zXC9iR25lWHJHblFHNXR1VVZCSllhbEpIRkprVFFRaU4ifQ==
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 7 Nov 2018 12:05:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53820 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726298AbeKGRFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 12:05:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DE9E7AC6C;
+        Wed,  7 Nov 2018 07:35:49 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 08:35:48 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        Oscar Salvador <OSalvador@suse.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, memory_hotplug: check zone_movable in
+ has_unmovable_pages
+Message-ID: <20181107073548.GU27423@dhcp22.suse.cz>
+References: <20181106095524.14629-1-mhocko@kernel.org>
+ <20181106203518.GC9042@350D>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106203518.GC9042@350D>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQmFvbHUsDQoNCj4gRnJvbTogTHUgQmFvbHUgW21haWx0bzpiYW9sdS5sdUBsaW51eC5pbnRl
-bC5jb21dDQo+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgNSwgMjAxOCAxOjMyIFBNDQo+IFN1Ympl
-Y3Q6IFtQQVRDSCB2NCAxMC8xMl0gaW9tbXUvdnQtZDogQWRkIGZpcnN0IGxldmVsIHBhZ2UgdGFi
-bGUgaW50ZXJmYWNlDQo+IA0KPiBUaGlzIGFkZHMgYW4gaW50ZXJmYWNlIHRvIHNldHVwIHRoZSBQ
-QVNJRCBlbnRyaWVzIGZvciBmaXJzdA0KDQpUaGlzIHBhdGNoIGFkZHMgaW50ZXJmYWNlIHRvIHNl
-dHVwIHRoZSBQQVNJRCBlbnRyaWVzIGZvciBmaXJzdC4gOikNCg0KPiBsZXZlbCBwYWdlIHRhYmxl
-IHRyYW5zbGF0aW9uLg0KPiANCj4gQ2M6IEFzaG9rIFJhaiA8YXNob2sucmFqQGludGVsLmNvbT4N
-Cj4gQ2M6IEphY29iIFBhbiA8amFjb2IuanVuLnBhbkBsaW51eC5pbnRlbC5jb20+DQo+IENjOiBL
-ZXZpbiBUaWFuIDxrZXZpbi50aWFuQGludGVsLmNvbT4NCj4gQ2M6IExpdSBZaSBMIDx5aS5sLmxp
-dUBpbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFNhbmpheSBLdW1hciA8c2FuamF5Lmsua3Vt
-YXJAaW50ZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBMdSBCYW9sdSA8YmFvbHUubHVAbGludXgu
-aW50ZWwuY29tPg0KPiBSZXZpZXdlZC1ieTogQXNob2sgUmFqIDxhc2hvay5yYWpAaW50ZWwuY29t
-Pg0KPiAtLS0NCj4gIGRyaXZlcnMvaW9tbXUvaW50ZWwtcGFzaWQuYyB8IDgxICsrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIGRyaXZlcnMvaW9tbXUvaW50ZWwtcGFzaWQu
-aCB8IDExICsrKysrDQo+ICBpbmNsdWRlL2xpbnV4L2ludGVsLWlvbW11LmggfCAgMSArDQo+ICAz
-IGZpbGVzIGNoYW5nZWQsIDkzIGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2lvbW11L2ludGVsLXBhc2lkLmMgYi9kcml2ZXJzL2lvbW11L2ludGVsLXBhc2lkLmMNCj4g
-aW5kZXggNjk1MzAzMTdjMzIzLi5kOGNhMWU2YThlNWUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
-aW9tbXUvaW50ZWwtcGFzaWQuYw0KPiArKysgYi9kcml2ZXJzL2lvbW11L2ludGVsLXBhc2lkLmMN
-Cj4gQEAgLTEwLDYgKzEwLDcgQEANCj4gICNkZWZpbmUgcHJfZm10KGZtdCkJIkRNQVI6ICIgZm10
-DQo+IA0KPiAgI2luY2x1ZGUgPGxpbnV4L2JpdG9wcy5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L2Nw
-dWZlYXR1cmUuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9kbWFyLmg+DQo+ICAjaW5jbHVkZSA8bGlu
-dXgvaW50ZWwtaW9tbXUuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9pb21tdS5oPg0KPiBAQCAtMzg4
-LDYgKzM4OSwyNiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgcGFzaWRfc2V0X3BhZ2Vfc25vb3Aoc3Ry
-dWN0IHBhc2lkX2VudHJ5DQo+ICpwZSwgYm9vbCB2YWx1ZSkNCj4gIAlwYXNpZF9zZXRfYml0cygm
-cGUtPnZhbFsxXSwgMSA8PCAyMywgdmFsdWUpOw0KPiAgfQ0KPiANCj4gKy8qDQo+ICsgKiBTZXR1
-cCB0aGUgRmlyc3QgTGV2ZWwgUGFnZSB0YWJsZSBQb2ludGVyIGZpZWxkIChCaXQgMTQwfjE5MSkN
-Cj4gKyAqIG9mIGEgc2NhbGFibGUgbW9kZSBQQVNJRCBlbnRyeS4NCj4gKyAqLw0KPiArc3RhdGlj
-IGlubGluZSB2b2lkDQo+ICtwYXNpZF9zZXRfZmxwdHIoc3RydWN0IHBhc2lkX2VudHJ5ICpwZSwg
-dTY0IHZhbHVlKQ0KPiArew0KPiArCXBhc2lkX3NldF9iaXRzKCZwZS0+dmFsWzJdLCBWVERfUEFH
-RV9NQVNLLCB2YWx1ZSk7DQo+ICt9DQo+ICsNCj4gKy8qDQo+ICsgKiBTZXR1cCB0aGUgRmlyc3Qg
-TGV2ZWwgUGFnaW5nIE1vZGUgZmllbGQgKEJpdCAxMzB+MTMxKSBvZiBhDQo+ICsgKiBzY2FsYWJs
-ZSBtb2RlIFBBU0lEIGVudHJ5Lg0KPiArICovDQo+ICtzdGF0aWMgaW5saW5lIHZvaWQNCj4gK3Bh
-c2lkX3NldF9mbHBtKHN0cnVjdCBwYXNpZF9lbnRyeSAqcGUsIHU2NCB2YWx1ZSkNCj4gK3sNCj4g
-KwlwYXNpZF9zZXRfYml0cygmcGUtPnZhbFsyXSwgR0VOTUFTS19VTEwoMywgMiksIHZhbHVlIDw8
-IDIpOw0KPiArfQ0KPiArDQo+ICBzdGF0aWMgdm9pZA0KPiAgcGFzaWRfY2FjaGVfaW52YWxpZGF0
-aW9uX3dpdGhfcGFzaWQoc3RydWN0IGludGVsX2lvbW11ICppb21tdSwNCj4gIAkJCQkgICAgdTE2
-IGRpZCwgaW50IHBhc2lkKQ0KPiBAQCAtNDU4LDYgKzQ3OSw2NiBAQCB2b2lkIGludGVsX3Bhc2lk
-X3RlYXJfZG93bl9lbnRyeShzdHJ1Y3QgaW50ZWxfaW9tbXUNCj4gKmlvbW11LA0KPiAgCQlkZXZ0
-bGJfaW52YWxpZGF0aW9uX3dpdGhfcGFzaWQoaW9tbXUsIGRldiwgcGFzaWQpOw0KPiAgfQ0KPiAN
-Cj4gKy8qDQo+ICsgKiBTZXQgdXAgdGhlIHNjYWxhYmxlIG1vZGUgcGFzaWQgdGFibGUgZW50cnkg
-Zm9yIGZpcnN0IG9ubHkNCj4gKyAqIHRyYW5zbGF0aW9uIHR5cGUuDQo+ICsgKi8NCj4gK2ludCBp
-bnRlbF9wYXNpZF9zZXR1cF9maXJzdF9sZXZlbChzdHJ1Y3QgaW50ZWxfaW9tbXUgKmlvbW11LA0K
-PiArCQkJCSAgc3RydWN0IGRldmljZSAqZGV2LCBwZ2RfdCAqcGdkLA0KPiArCQkJCSAgaW50IHBh
-c2lkLCBpbnQgZmxhZ3MpDQo+ICt7DQo+ICsJdTE2IGRpZCA9IEZMUFRfREVGQVVMVF9ESUQ7DQo+
-ICsJc3RydWN0IHBhc2lkX2VudHJ5ICpwdGU7DQoNCmFoYSwgc2FtZSBjb21tZW50IHdpdGggcHJl
-dmlvdXMgcGF0Y2guIG1heSBiZSBiZXR0ZXIgdXMgcHRfZW50cnkNCm9yIHBhc2lkX2VudHJ5Lg0K
-DQpSZWdhcmRzLA0KWWkgTGl1DQo=
+On Wed 07-11-18 07:35:18, Balbir Singh wrote:
+> On Tue, Nov 06, 2018 at 10:55:24AM +0100, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > Page state checks are racy. Under a heavy memory workload (e.g. stress
+> > -m 200 -t 2h) it is quite easy to hit a race window when the page is
+> > allocated but its state is not fully populated yet. A debugging patch to
+> > dump the struct page state shows
+> > : [  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
+> > : [  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
+> > : [  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
+> > 
+> > Note that the state has been checked for both PageLRU and PageSwapBacked
+> > already. Closing this race completely would require some sort of retry
+> > logic. This can be tricky and error prone (think of potential endless
+> > or long taking loops).
+> > 
+> > Workaround this problem for movable zones at least. Such a zone should
+> > only contain movable pages. 15c30bc09085 ("mm, memory_hotplug: make
+> > has_unmovable_pages more robust") has told us that this is not strictly
+> > true though. Bootmem pages should be marked reserved though so we can
+> > move the original check after the PageReserved check. Pages from other
+> > zones are still prone to races but we even do not pretend that memory
+> > hotremove works for those so pre-mature failure doesn't hurt that much.
+> > 
+> > Reported-and-tested-by: Baoquan He <bhe@redhat.com>
+> > Acked-by: Baoquan He <bhe@redhat.com>
+> > Fixes: "mm, memory_hotplug: make has_unmovable_pages more robust")
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> >
+> > Hi,
+> > this has been reported [1] and we have tried multiple things to address
+> > the issue. The only reliable way was to reintroduce the movable zone
+> > check into has_unmovable_pages. This time it should be safe also for
+> > the bug originally fixed by 15c30bc09085.
+> > 
+> > [1] http://lkml.kernel.org/r/20181101091055.GA15166@MiWiFi-R3L-srv
+> >  mm/page_alloc.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 863d46da6586..c6d900ee4982 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -7788,6 +7788,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> >  		if (PageReserved(page))
+> >  			goto unmovable;
+> >  
+> > +		/*
+> > +		 * If the zone is movable and we have ruled out all reserved
+> > +		 * pages then it should be reasonably safe to assume the rest
+> > +		 * is movable.
+> > +		 */
+> > +		if (zone_idx(zone) == ZONE_MOVABLE)
+> > +			continue;
+> > +
+> >  		/*
+> 
+> 
+> There is a WARN_ON() in case of failure at the end of the routine,
+> is that triggered when we hit the bug? If we're adding this patch,
+> the WARN_ON needs to go as well.
+
+No the warning should stay in case we encounter reserved pages in zone
+movable.
+
+> The check seems to be quite aggressive and in a loop that iterates
+> pages, but has nothing to do with the page, did you mean to make
+> the check
+> 
+> zone_idx(page_zone(page)) == ZONE_MOVABLE
+
+Does it make any difference? Can we actually encounter a page from a
+different zone here?
+
+> it also skips all checks for pinned pages and other checks
+
+Yes, this is intentional and the comment tries to explain why. I wish we
+could be add a more specific checks for movable pages - e.g. detect long
+term pins that would prevent migration - but we do not have any facility
+for that. Please note that the worst case of a false positive is a
+repeated migration failure and user has a way to break out of migration
+by a signal.
+
+-- 
+Michal Hocko
+SUSE Labs
