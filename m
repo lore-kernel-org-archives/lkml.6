@@ -2,233 +2,412 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E20C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 105F9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3710820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAE2B20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:51:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="Gl3ykUXl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3710820862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PgJ2KUQr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V7HPyD2Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE2B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeKGQQL (ORCPT
+        id S1728490AbeKGQUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 11:16:11 -0500
-Received: from mail-dm3nam03on0107.outbound.protection.outlook.com ([104.47.41.107]:11920
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726194AbeKGQQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 11:16:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QnaTSEy0SDXjtCVE2BuU8Nrp17kxEDoGw95ew5uTVPI=;
- b=Gl3ykUXl3RG8QRukts3o9I9iNW6X7xbfEr3XmmvpQ2qRAk8tVJJ32AaBPFxgwq9cTsInZy1Bz4I5rYpeIZ3QM9DFbO/HGlDX0tT4D3HMg4JsvjD0UeM1zNbUhu6DmMhzaEZWq81Uym/Jh8XYunR6d15K7bXKDRzg5AoWtw8/U14=
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB3309.namprd11.prod.outlook.com (52.135.110.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.29; Wed, 7 Nov 2018 06:47:08 +0000
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4cee:6f2d:f3c2:cac7]) by SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4cee:6f2d:f3c2:cac7%3]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 06:47:08 +0000
-From:   Jethro Beekman <jethro@fortanix.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>
-Subject: Re: RFC: userspace exception fixups
-Thread-Topic: RFC: userspace exception fixups
-Thread-Index: AQHUcgvc1wPHkMTl1kOh3Odo0nI54qU7PrGAgAAFRoCAAAUTgIAABb2AgAAfqQCAACEagIABHyAAgAAHTwCAAAK4AIAAAe+AgAAFtwCAAAQiAIAACscAgAAJ1ICAADLrgIAAFy0AgAABYwCABcSyAIAAFkiAgAAGCACAABEfgIAABcMAgAAF5oCAAAWQgIAADgaAgAANkICAAAH6AIAACX+AgAAE5oCAABEwAIAACZeAgAABRQCAAAZegIAAFNsAgABcIoA=
-Date:   Wed, 7 Nov 2018 06:47:08 +0000
-Message-ID: <4171a890-12d9-8a1c-22da-e53434c1f840@fortanix.com>
-References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
- <1541541565.8854.13.camel@intel.com>
- <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
- <20181106233515.GB11101@linux.intel.com>
- <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
- <20181107000235.GC11101@linux.intel.com>
- <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
-In-Reply-To: <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P192CA0026.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:209:83::39) To SN6PR11MB3167.namprd11.prod.outlook.com
- (2603:10b6:805:c4::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [83.171.135.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR11MB3309;6:y62pkJDtNFqs8F10BNi/OOSvJfuYXqHiaKBuJCvVrK0sruAWAR/Hwmm83iCUmZd33maShnqZYmwyPXohuoMF2inkE4jeYB3jegoW+5l20A4a3/dbqVDduGSQjt8gkjsmPVgj7LLHZCBPvQi05ducIFIPam39KqTXnjBp10xwkNQH6GwWhalS73lni2SKs63eo4ufUb/cFrjmw9e7ZEdTiFkNOiy2egoBVzjLHLHqz/AF6BycGLwAcno31z2wpjJqrsNkKLptvJpcrxEUs4YtJypGyI7CRO1WAxlNAWe2OToZ1RdQBYLibyHW/Jt62tha9GwCaFw6A7JhjB4kMg6pWT7sLQ/PgQJWsYVfOaGeEWLpl9+YmPkFrHljIHXBmrriz+EnzFKWAVNyqkuHthmk1IKGfgiuh44BPbg0gWDSR4ttqxoFWTDzs8Ac6RT2Xk+2fR6VYZREQdxG4ldeBII0kg==;5:ZUjeyFPdH3FmsiHpTEAPgOXpaKqS+4RndKN61eQUhF5zm/QVZ+aPIw/EgfZJISpUE880WXQ1pGGHqdVmgQLbKr+E5fiEPFw5EgYtdc0/lZv79qZd57DdQaJr+YA/ZVtt2rwrNOaLwbv9S6cjCBX58mQ9OYs7gzDl+WjAIqLg5l8=;7:ORUCwY2LNsoIS9UMy7F8pH+zmxDAXu2dickpAmQfJx7bkfgryvG7DcJ+05z5loDHcrlkpWjtaGV+Bo4kq5I2LLz7Ih7D2E2Dk5qGsZo1JOT6KbV75YI9IOvDMuEJsiCQ2CQRdQCp2P260lkgc5FjAg==
-x-ms-office365-filtering-correlation-id: d00b4bce-c4ab-42b0-5e23-08d6447cd617
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB3309;
-x-ms-traffictypediagnostic: SN6PR11MB3309:
-x-microsoft-antispam-prvs: <SN6PR11MB330929A01B32B4439177BD66AAC40@SN6PR11MB3309.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231382)(944501410)(4983020)(52105095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB3309;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB3309;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(396003)(39840400004)(136003)(189003)(199004)(26005)(71190400001)(71200400001)(66066001)(6512007)(486006)(305945005)(5660300001)(7736002)(93886005)(6486002)(102836004)(4326008)(53936002)(54906003)(110136005)(25786009)(316002)(52116002)(7416002)(446003)(99286004)(97736004)(2906002)(186003)(3846002)(476003)(6116002)(31686004)(2616005)(6506007)(8936002)(386003)(81156014)(81166006)(11346002)(8676002)(76176011)(36756003)(53546011)(6436002)(106356001)(2900100001)(31696002)(86362001)(105586002)(68736007)(256004)(229853002)(508600001)(99936001)(6246003)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3309;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ufegrBdaG4GNthpP5cm3pqBGVSzv1HKLTcGPNmjdEOEX4rtNieTcK5EnmMPC1s6qd0jKDocwPCLrN7oJCD/qopLumsuQOsc+K1p6HhzFmrcspNQfuO9CQb8BWyoDnpPku8LABUIkd3FFsN3MIQb5xwh3LgJ6d+Qp1FwMyMkqSTBFaFBZdbSVNs7DQZOR5WahKGAKHxzei7oeDt8wwwJQ115C8o2TQsjHFFJByuMHSPPvXJI6vA0eyk1WFt4b8lHeizJbTRPwjuynhl6TfOYS30HKfriKAT1tzjUdtY+k/sNVk2t9cNglnvoO2Rur3HuVmS9hECKW3LDNn46RB6kqcGlVqcK3Do3RE5BEF3wCzyo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060801080805010704030402"
+        Wed, 7 Nov 2018 11:20:21 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42054 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbeKGQUV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 11:20:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 92892607CA; Wed,  7 Nov 2018 06:51:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541573481;
+        bh=SXz6B9UAdWeyKnbyu7o1N2P1HBXl4kQBoDJU3bwqPAI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PgJ2KUQrxkat+iF8hC/1tY7SlUphf9AEVA8zpHYFpRdxoWAurmNOgkuJkUyscAiZB
+         d1av97mgK1PEk3/uUkdYN7ulN9isoPN+VngfBflNFceqdRb+F9GSJmaUa+UvYh0Yxj
+         eAXX5G9ouj9B6Ykju++o+i8S65oFHdwKzak5gCn4=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D82AF603D2;
+        Wed,  7 Nov 2018 06:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541573479;
+        bh=SXz6B9UAdWeyKnbyu7o1N2P1HBXl4kQBoDJU3bwqPAI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=V7HPyD2YmnQ3+QkGKYyNpkCIFE9CMNK3V3UZk7BkVT85bQGJhaPfCN56z1LfEnup8
+         itmujvvjE9g40YsO6jnGAROswbr8K8Sf5cQTPaX3IXGsoTL6ervxw/wvPE/GQ0uoga
+         ua21yUcrNyjI+kL4+BFJTSvg0wvCgRhpwynmzKho=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D82AF603D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: qdsp6: q6afe-dai: Fix the dai
+ widgets
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        broonie@kernel.org, alsa-devel@alsa-project.org
+Cc:     bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
+        lgirdwood@gmail.com, tiwai@suse.com
+References: <20181106113857.19737-1-srinivas.kandagatla@linaro.org>
+ <20181106113857.19737-3-srinivas.kandagatla@linaro.org>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <571aaf69-6975-09bc-1d0f-ade5c3e2d019@codeaurora.org>
+Date:   Wed, 7 Nov 2018 12:21:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d00b4bce-c4ab-42b0-5e23-08d6447cd617
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 06:47:08.1586
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3309
+In-Reply-To: <20181106113857.19737-3-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------ms060801080805010704030402
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-On 2018-11-07 02:17, Andy Lutomirski wrote:
-> On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
->>
->> /*
->>   * EEXIT or EENTER faulted.  In the latter case, %RAX already holds s=
-ome
->>   * fault indicator, e.g. -EFAULT.
->>   */
->> eexit_or_eenter_fault:
->>      ret
->=20
-> But userspace wants to know whether it was a fault or not.  So I think
-> we either need two landing pads or we need to hijack a flag bit (are
-> there any known-zeroed flag bits after EEXIT?) to say whether it was a
-> fault.  And, if it was a fault, we should give the vector, the
-> sanitized error code, and possibly CR2.
-
-On AEX, %rax will contain ENCLU_LEAF_ERESUME (0x3). On EEXIT, %rax will=20
-contain ENCLU_LEAF_EEXIT (0x4).
-
---
-Jethro Beekman | Fortanix
+Thanks Srinivas for the fix.
 
 
---------------ms060801080805010704030402
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+On 11/6/2018 5:08 PM, Srinivas Kandagatla wrote:
+> For some reason the dapm widgets are incorrectly defined from the start,
+> Not sure how we ended up with such thing. Fix them now!
+>
+> Without this fix the backend dais are always powered up even if there
+> is no active stream.
+>
+> Reported-by: Jimmy Cheng-Yi Chiang <cychiang@google.com>
+> Reported-by: Rohit kumar <rohitkr@codeaurora.org>
+Tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   sound/soc/qcom/qdsp6/q6afe-dai.c | 208 +++++++++++++++----------------
+>   1 file changed, 104 insertions(+), 104 deletions(-)
+>
+> diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+> index 60ff4a2d3577..8f6c8fc073a9 100644
+> --- a/sound/soc/qcom/qdsp6/q6afe-dai.c
+> +++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+> @@ -1112,204 +1112,204 @@ static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
+>   }
+>   
+>   static const struct snd_soc_dapm_widget q6afe_dai_widgets[] = {
+> -	SND_SOC_DAPM_AIF_OUT("HDMI_RX", "HDMI Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_RX", "Slimbus Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_RX", "Slimbus1 Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_RX", "Slimbus2 Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_RX", "Slimbus3 Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_RX", "Slimbus4 Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_RX", "Slimbus5 Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_RX", "Slimbus6 Playback", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_0_TX", "Slimbus Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_1_TX", "Slimbus1 Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_2_TX", "Slimbus2 Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_3_TX", "Slimbus3 Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_4_TX", "Slimbus4 Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_5_TX", "Slimbus5 Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SLIMBUS_6_TX", "Slimbus6 Capture", 0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_RX", "Quaternary MI2S Playback",
+> +	SND_SOC_DAPM_AIF_IN("HDMI_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_0_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_1_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_2_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_3_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_4_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_5_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("SLIMBUS_6_RX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_TX", NULL, 0, 0, 0, 0),
+> +	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_RX", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_TX", "Quaternary MI2S Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_TX", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_RX", "Tertiary MI2S Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_MI2S_RX", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_MI2S_TX", "Tertiary MI2S Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_TX", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX", "Secondary MI2S Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_MI2S_RX", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_MI2S_TX", "Secondary MI2S Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_TX", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX_SD1",
+> +	SND_SOC_DAPM_AIF_IN("SEC_MI2S_RX_SD1",
+>   			"Secondary MI2S Playback SD1",
+>   			0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_RX", "Primary MI2S Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRI_MI2S_RX", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRI_MI2S_TX", "Primary MI2S Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_TX", NULL,
+>   						0, 0, 0, 0),
+>   
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_0", "Primary TDM0 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_0", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_1", "Primary TDM1 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_1", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_2", "Primary TDM2 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_2", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_3", "Primary TDM3 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_3", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_4", "Primary TDM4 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_4", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_5", "Primary TDM5 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_5", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_6", "Primary TDM6 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_6", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_7", "Primary TDM7 Playback",
+> +	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_7", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_0", "Primary TDM0 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_0", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_1", "Primary TDM1 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_1", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_2", "Primary TDM2 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_2", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_3", "Primary TDM3 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_3", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_4", "Primary TDM4 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_4", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_5", "Primary TDM5 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_5", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_6", "Primary TDM6 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_6", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_7", "Primary TDM7 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_7", NULL,
+>   						0, 0, 0, 0),
+>   
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_0", "Secondary TDM0 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_0", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_1", "Secondary TDM1 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_1", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_2", "Secondary TDM2 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_2", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_3", "Secondary TDM3 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_3", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_4", "Secondary TDM4 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_4", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_5", "Secondary TDM5 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_5", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_6", "Secondary TDM6 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_6", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_7", "Secondary TDM7 Playback",
+> +	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_7", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_0", "Secondary TDM0 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_0", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_1", "Secondary TDM1 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_1", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_2", "Secondary TDM2 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_2", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_3", "Secondary TDM3 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_3", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_4", "Secondary TDM4 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_4", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_5", "Secondary TDM5 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_5", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_6", "Secondary TDM6 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_6", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_7", "Secondary TDM7 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_7", NULL,
+>   						0, 0, 0, 0),
+>   
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_0", "Tertiary TDM0 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_0", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_1", "Tertiary TDM1 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_1", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_2", "Tertiary TDM2 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_2", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_3", "Tertiary TDM3 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_3", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_4", "Tertiary TDM4 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_4", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_5", "Tertiary TDM5 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_5", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_6", "Tertiary TDM6 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_6", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_7", "Tertiary TDM7 Playback",
+> +	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_7", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_0", "Tertiary TDM0 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_0", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_1", "Tertiary TDM1 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_1", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_2", "Tertiary TDM2 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_2", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_3", "Tertiary TDM3 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_3", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_4", "Tertiary TDM4 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_4", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_5", "Tertiary TDM5 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_5", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_6", "Tertiary TDM6 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_6", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_7", "Tertiary TDM7 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_7", NULL,
+>   						0, 0, 0, 0),
+>   
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_0", "Quaternary TDM0 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_0", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_1", "Quaternary TDM1 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_1", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_2", "Quaternary TDM2 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_2", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_3", "Quaternary TDM3 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_3", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_4", "Quaternary TDM4 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_4", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_5", "Quaternary TDM5 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_5", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_6", "Quaternary TDM6 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_6", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_7", "Quaternary TDM7 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_7", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_0", "Quaternary TDM0 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_0", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_1", "Quaternary TDM1 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_1", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_2", "Quaternary TDM2 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_2", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_3", "Quaternary TDM3 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_3", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_4", "Quaternary TDM4 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_4", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_5", "Quaternary TDM5 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_5", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_6", "Quaternary TDM6 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_6", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_7", "Quaternary TDM7 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_7", NULL,
+>   						0, 0, 0, 0),
+>   
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_0", "Quinary TDM0 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_0", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_1", "Quinary TDM1 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_1", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_2", "Quinary TDM2 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_2", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_3", "Quinary TDM3 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_3", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_4", "Quinary TDM4 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_4", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_5", "Quinary TDM5 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_5", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_6", "Quinary TDM6 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_6", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_7", "Quinary TDM7 Playback",
+> +	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_7", NULL,
+>   			     0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_0", "Quinary TDM0 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_0", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_1", "Quinary TDM1 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_1", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_2", "Quinary TDM2 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_2", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_3", "Quinary TDM3 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_3", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_4", "Quinary TDM4 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_4", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_5", "Quinary TDM5 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_5", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_6", "Quinary TDM6 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_6", NULL,
+>   						0, 0, 0, 0),
+> -	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_7", "Quinary TDM7 Capture",
+> +	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_7", NULL,
+>   						0, 0, 0, 0),
+>   };
+>   
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
-CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
-bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
-MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
-Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
-LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
-lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
-O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
-ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
-lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
-BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
-MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
-AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
-hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
-bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
-dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
-bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
-v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
-shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
-rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
-eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
-qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
-apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
-BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
-T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
-b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
-GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
-ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
-bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
-NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
-NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
-qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
-jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
-ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
-jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
-Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
-BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
-VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
-hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
-QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
-7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
-+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
-E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
-gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
-SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
-/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
-m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
-UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
-rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
-TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
-x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTEwNzA2NDY1OVowLwYJKoZIhvcNAQkEMSIEIP122b9l
-q3m9HHIB3AfCKCe3x1b9nFWDdv8ZCzr5Sf7YMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
-Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
-Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
-XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
-R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
-Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
-YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQDHPD7e/B7Xmi08Q9sbN82xMMONgP/ly/XL8qt1rGp1TMixFAFe5/G1Tj1Cuz05oapu9a8/
-5j2GLq8fe/1mgEHmuNpHMYU+yNDkT2UoNYMrAb8Kmzh/RSIYFKCB8jybW5U0HIhj5Vj4E3UP
-oGmvAIdqdCXjyLAoP8+GKmAL2O9p4jKdFSpyBKFptAWx5P2rc/6dA0FKrmePX9sayrtRbtWI
-BK6hXogkHNNcpgyKAiOPAD/mlj+RrtmopOvX3nIjnzjWzvE9OtKS6q7CIjx08gOd5cHY9Onw
-pocroH2k2N0HYsJ0mQF2JRybh2uUQRejTLwWf55eD1ta0Y9sMUs0KODcAAAAAAAA
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
 
---------------ms060801080805010704030402--
