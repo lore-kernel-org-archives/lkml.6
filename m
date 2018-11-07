@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AA1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5087C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3292089A
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1EBE20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LoFsPwBZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3292089A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6Zhbfti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EBE20827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbeKHDX1 (ORCPT
+        id S1731659AbeKHDXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:23:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53154 "EHLO mail.kernel.org"
+        Wed, 7 Nov 2018 22:23:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728131AbeKHDXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:23:25 -0500
+        id S1728131AbeKHDX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:23:29 -0500
 Received: from localhost.localdomain (rrcs-67-79-197-43.sw.biz.rr.com [67.79.197.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 325412086C;
-        Wed,  7 Nov 2018 17:51:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA624208A3;
+        Wed,  7 Nov 2018 17:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541613118;
-        bh=sY39UE+yRQ/D75n62OkdEzVGW8A8pqxGWZF2JuxXO0o=;
+        s=default; t=1541613121;
+        bh=SCfjFI72ZliedsViQFWiX/Xb9nSBdgE202Prn8Nu58E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LoFsPwBZzykofPjYOv1Yjjitypdkpy14EKi30KhNW+LFNcjuYGsI1JiWCaIQ4kbj9
-         WdTK2qTlLMi2+mGljzoFdvCAM7biyJ7lrXrThXnFpHe+vkXsfKb8tusiht5JGd85Yj
-         F4skNMD1jfwxbPGBHK4c36aHr4UuAQGBRdLzRy7o=
+        b=a6ZhbftidWUpLd37BiY/E/0DImspYAKLBAMTIGSTmShlBAHwMAWgVDtEcBs7bvUnP
+         qP3dcgIIo51AhzbjnY/5orVRdiAuj6I1sQItkX4XqAATRFimPL9slHBhhOGMJUssXc
+         NdtImrRkqAr6JD6zHy4Kgu4PIixnoNFrZ2HyI4gg=
 From:   Alan Tull <atull@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
         linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Anatolij Gustschin <agust@denx.de>
-Subject: [PATCH 1/4] fpga: altera-cvp: fix 'bad IO access' on x86_64
-Date:   Wed,  7 Nov 2018 11:51:45 -0600
-Message-Id: <1541613108-29660-2-git-send-email-atull@kernel.org>
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH 4/4] zynq-fpga: Only route PR via PCAP when required
+Date:   Wed,  7 Nov 2018 11:51:48 -0600
+Message-Id: <1541613108-29660-5-git-send-email-atull@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541613108-29660-1-git-send-email-atull@kernel.org>
 References: <1541613108-29660-1-git-send-email-atull@kernel.org>
@@ -53,43 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anatolij Gustschin <agust@denx.de>
+From: Mike Looijmans <mike.looijmans@topic.nl>
 
-If mapping the CvP BAR fails, we still can configure the FPGA via
-PCI config space access. In this case the iomap pointer is NULL.
-On x86_64, passing NULL address to pci_iounmap() generates
-"Bad IO access at port 0x0" output with stack call trace. Fix it.
+The Xilinx Zynq FPGA driver takes ownership of the PR interface, making
+it impossible to use the ICAP interface for partial reconfiguration.
 
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
+This patch changes the driver to only activate PR over PCAP while the
+device is actively being accessed by the driver for programming.
+
+This allows both PCAP and ICAP interfaces to be used for PR.
+
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Reviewed-by: Moritz Fischer <mdf@kernel.org>
 Acked-by: Alan Tull <atull@kernel.org>
 ---
- drivers/fpga/altera-cvp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/fpga/zynq-fpga.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 610a155..144fa2a 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -477,7 +477,8 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	return 0;
+diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
+index bb82efe..57b0e67 100644
+--- a/drivers/fpga/zynq-fpga.c
++++ b/drivers/fpga/zynq-fpga.c
+@@ -501,6 +501,10 @@ static int zynq_fpga_ops_write_complete(struct fpga_manager *mgr,
+ 	if (err)
+ 		return err;
  
- err_unmap:
--	pci_iounmap(pdev, conf->map);
-+	if (conf->map)
-+		pci_iounmap(pdev, conf->map);
- 	pci_release_region(pdev, CVP_BAR);
- err_disable:
- 	cmd &= ~PCI_COMMAND_MEMORY;
-@@ -493,7 +494,8 @@ static void altera_cvp_remove(struct pci_dev *pdev)
- 
- 	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
- 	fpga_mgr_unregister(mgr);
--	pci_iounmap(pdev, conf->map);
-+	if (conf->map)
-+		pci_iounmap(pdev, conf->map);
- 	pci_release_region(pdev, CVP_BAR);
- 	pci_read_config_word(pdev, PCI_COMMAND, &cmd);
- 	cmd &= ~PCI_COMMAND_MEMORY;
++	/* Release 'PR' control back to the ICAP */
++	zynq_fpga_write(priv, CTRL_OFFSET,
++		zynq_fpga_read(priv, CTRL_OFFSET) & ~CTRL_PCAP_PR_MASK);
++
+ 	err = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, intr_status,
+ 				     intr_status & IXR_PCFG_DONE_MASK,
+ 				     INIT_POLL_DELAY,
 -- 
 2.7.4
 
