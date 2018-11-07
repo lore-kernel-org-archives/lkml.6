@@ -2,110 +2,118 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFC2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6F4C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED5720892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:45:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED5720892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DECC20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:45:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wbs+hn/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DECC20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeKHGRl (ORCPT
+        id S1727474AbeKHGRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:17:41 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51753 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbeKHGRj (ORCPT
+        Thu, 8 Nov 2018 01:17:45 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34770 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbeKHGRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:17:39 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA7KibZg1607948
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 7 Nov 2018 12:44:37 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA7Kib6S1607945;
-        Wed, 7 Nov 2018 12:44:37 -0800
-Date:   Wed, 7 Nov 2018 12:44:37 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Woods, Brian" <tipbot@zytor.com>
-Message-ID: <tip-210ba1201ff950b3d05bfd8fa5d47540cea393c0@git.kernel.org>
-Cc:     bhelgaas@google.com, mingo@redhat.com, bp@suse.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
-        linux@roeck-us.net, puwen@hygon.cn, tglx@linutronix.de,
-        linux-pci@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        Brian.Woods@amd.com, mingo@kernel.org, brian.woods@amd.com,
-        qianyue.zj@alibaba-inc.com, jdelvare@suse.com, clemens@ladisch.de
-Reply-To: tglx@linutronix.de, linux-hwmon@vger.kernel.org,
-          linux-pci@vger.kernel.org, mingo@kernel.org, brian.woods@amd.com,
-          Brian.Woods@amd.com, clemens@ladisch.de, jdelvare@suse.com,
-          qianyue.zj@alibaba-inc.com, bhelgaas@google.com,
-          mingo@redhat.com, hpa@zytor.com, x86@kernel.org, bp@suse.de,
-          linux-kernel@vger.kernel.org, puwen@hygon.cn, linux@roeck-us.net
-In-Reply-To: <20181106200754.60722-5-brian.woods@amd.com>
-References: <20181106200754.60722-5-brian.woods@amd.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/amd-nb] hwmon/k10temp: Add support for AMD family 17h,
- model 30h CPUs
-Git-Commit-ID: 210ba1201ff950b3d05bfd8fa5d47540cea393c0
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 8 Nov 2018 01:17:44 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p6so5466422lfc.1;
+        Wed, 07 Nov 2018 12:45:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kxxp7oTVnelFCu69L9l5id2ZBhf0fxKkX46WlsbSjcE=;
+        b=Wbs+hn/8mfHH0pcweFiXH7mvkXLly2wcUVRRJgSWPL0V2MleuxuhaINqJ/A1Ntg/X2
+         ZK+8qcikfTLfHDicEtmAqAnA8VYfRI4wNiSGq1p1ckmPDdAc9eBziMpogcLHvEuGE4mp
+         yrhXWiSQoO7w7QWnvryaI52aM6AHbwhbpMa+WfjIIS3CW9CILZ4tuGCAPfTeQYw2D6Xx
+         bhayW3s6w9suu0MHCp9aKGzfaK5iG3iNRT1IJqADDhgIR2dWM3Hj5TWRkd2LiG8Tzmww
+         6PH6CKEhDj66g4AeQK+yGSAOV3T3vvhqVSh4hQW/Qbcqh+n/iVHne9H8oR2LhXHoc7qh
+         qRQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kxxp7oTVnelFCu69L9l5id2ZBhf0fxKkX46WlsbSjcE=;
+        b=XjZlBiu61OzHUjZHy4m8Ik/ZRTMaKB/1eWo2VSbKn4SUdvNKR+7ns+jsBGaWhc1exq
+         SxN6tuSSv7grUJ/883qBNF+lYPy3+5GITDqjRkuiezYf/O9xTMlIrjTKTqk4NhGqLn6f
+         IHQGrOyC5zhYm5oN7aEOXSvUFmCGAXDu/Jom4OtLUdOwd8ESKFLWR//kpce6RS2TMIgx
+         YCLXRSabDJsz597j7nVGEFPNQxD0OlJx/8TNsMJngNggp9DJrPKoRFIYt44CDMXD6+bs
+         T5rZB6wQWs6ma923YJHnDDQ7usV+acrn6cn5lO1/RqKj/eYrE74s7oGSwQ6IoOF5y7aL
+         tJSA==
+X-Gm-Message-State: AGRZ1gJvO4YquMMClNwJWpmJhjgQDALo8hLjFTelmjW0307+9KoQ6pNQ
+        jv06Qul7ijhnQdGOA72U+N/LHwOYY1+G+A==
+X-Google-Smtp-Source: AJdET5cT4InIGdlApCGw92QMzmccrvbwU9dWjqcU0i16PzONzP1GZCq19vcH3jof8JU5i4Na4hj4rw==
+X-Received: by 2002:ac2:4354:: with SMTP id o20mr1046925lfl.129.1541623537927;
+        Wed, 07 Nov 2018 12:45:37 -0800 (PST)
+Received: from [192.168.1.18] (dnl153.neoplus.adsl.tpnet.pl. [83.24.93.153])
+        by smtp.gmail.com with ESMTPSA id b20sm286775lfj.61.2018.11.07.12.45.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 12:45:37 -0800 (PST)
+Subject: Re: [PATCH trivial] Documentation: ABI: led-trigger-pattern: Fix
+ typos
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Jiri Kosina <trivial@kernel.org>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181107134524.13989-1-geert+renesas@glider.be>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <58507e6b-a1a9-c1ff-e469-11611ba7e8ab@gmail.com>
+Date:   Wed, 7 Nov 2018 21:45:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181107134524.13989-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  210ba1201ff950b3d05bfd8fa5d47540cea393c0
-Gitweb:     https://git.kernel.org/tip/210ba1201ff950b3d05bfd8fa5d47540cea393c0
-Author:     Woods, Brian <Brian.Woods@amd.com>
-AuthorDate: Tue, 6 Nov 2018 20:08:21 +0000
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 7 Nov 2018 21:39:13 +0100
+Hi Geert,
 
-hwmon/k10temp: Add support for AMD family 17h, model 30h CPUs
+On 11/07/2018 02:45 PM, Geert Uytterhoeven wrote:
+>   - Spelling s/brigntess/brightness/,
+>   - Double "use".
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/ABI/testing/sysfs-class-led-trigger-pattern | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> index fb3d1e03b8819bb9..1e5d172e064624d9 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+> @@ -37,8 +37,8 @@ Description:
+>  		  0-|   /             \/             \/
+>  		    +---0----1----2----3----4----5----6------------> time (s)
+>  
+> -		2. To make the LED go instantly from one brigntess value to another,
+> -		we should use use zero-time lengths (the brightness must be same as
+> +		2. To make the LED go instantly from one brightness value to another,
+> +		we should use zero-time lengths (the brightness must be same as
+>  		the previous tuple's). So the format should be:
+>  		"brightness_1 duration_1 brightness_1 0 brightness_2 duration_2
+>  		brightness_2 0 ...". For example:
+> 
 
-Add support for AMD family 17h model 30h processors for k10temp. Model
-30h is functionally the same as model 01h processors (as far as k10temp
-is concerned), just the PCI device IDs need to be updated.
+Thanks for the patch.
 
-Signed-off-by: Brian Woods <brian.woods@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: Clemens Ladisch <clemens@ladisch.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Jean Delvare <jdelvare@suse.com>
-CC: Jia Zhang <qianyue.zj@alibaba-inc.com>
-CC: <linux-hwmon@vger.kernel.org>
-CC: <linux-pci@vger.kernel.org>
-CC: Pu Wen <puwen@hygon.cn>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181106200754.60722-5-brian.woods@amd.com
----
- drivers/hwmon/k10temp.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to the fixes-for-4.20-rc2 branch of linux-leds.git.
 
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index bc6871c8dd4e..9790f1f5eb98 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -360,6 +360,7 @@ static const struct pci_device_id k10temp_id_table[] = {
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
-+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M30H_DF_F3) },
- 	{}
- };
- MODULE_DEVICE_TABLE(pci, k10temp_id_table);
+-- 
+Best regards,
+Jacek Anaszewski
