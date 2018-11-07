@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE04C32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE41C32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051792086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 708392086A
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:34:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JcEHsVh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051792086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O2wMMMyq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708392086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389394AbeKGKC3 (ORCPT
+        id S2389360AbeKGKC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 7 Nov 2018 05:02:29 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51576 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388999AbeKGKBR (ORCPT
+Received: from mail-it1-f194.google.com ([209.85.166.194]:39932 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389026AbeKGKBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 05:01:17 -0500
-Received: by mail-it1-f196.google.com with SMTP id h13so20647465itl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:33:21 -0800 (PST)
+        Wed, 7 Nov 2018 05:01:18 -0500
+Received: by mail-it1-f194.google.com with SMTP id m15so20446279itl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:33:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pjR6c17n71mFi43rsN43F9+YeBe4+W87Vl2pubTjX8Y=;
-        b=JcEHsVh0QqP4kppevC18a/zV3PQuPgIqQjhrDth4+/9x1A1xClctVmXWKVi2OILfp7
-         Uw4RzqtL2hTAp2Dgh0P1QoeIGhONygHVdWdIZGooPkZXp+HothKObXa8fug9dWcJ5kRQ
-         IMmNwET/TNFx1EKZFemtFOi6cIcL7gjwzDEeA=
+        bh=gWkYzB4k4xq/XrsrsazkTNMqoBAgIRq8t035xK0VvbY=;
+        b=O2wMMMyqCeyAZLetK3AQTp70pj8qUdxwvVkM/kE8HXtiNoeZhmr4RujpizoOYn0LKi
+         gTsx9TiTm+DN8R/kif1wCoDnWsfLsgzXvPTM49YQgjxAKkrg8RARh0VPjfUJ7hHxJA4A
+         L7+7+xoumdphMy6eSH5HkiWjJFJq8LIWqXWsA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pjR6c17n71mFi43rsN43F9+YeBe4+W87Vl2pubTjX8Y=;
-        b=NL/PNZ3ndTV3po95xO6f98EJ5WRnTYTabVwydvjn7fg5LCa0TEagQB8OlIRVZ4tCUi
-         DpZqIQH7PrFXpma2xbtRDY2B4eNVn/+/ewWbgaIyIdeuIwlIWW4+nBLhvImWs+cxgznT
-         61hPqaXjKmv3hKms38hFnT0AXc5Ni8xiuq5nsyvpnYrDMsCVRu53WviasKeH5ARICKUj
-         V/1WAIcuyFwty4W+uyikDhNrlhqUygg3KxyaGrX6ZTzTVpDBFJGii3OcK7bO/hgzQLCG
-         i/3x2tB/jqxqI42sQmrWiUIt4xVtI8piFblNDzQqpjNYETz2VXh8dc5zOwj15FP/X0Du
-         auPw==
-X-Gm-Message-State: AGRZ1gIL7UWXNDdoRUg19OpQK+LeAFIfBQUes6gyjnkL2ik7kE6JcjiH
-        BXjTVkxytNF002km+cf2cdNlGg==
-X-Google-Smtp-Source: AJdET5ffHAVmGYx/GCJgg5CdeaTgOddjw2kG6DYRYxU/2j08VdsOfpJ8EDm38lXsTj/2TFzQ1JXekg==
-X-Received: by 2002:a24:140b:: with SMTP id 11-v6mr112774itg.59.1541550800007;
-        Tue, 06 Nov 2018 16:33:20 -0800 (PST)
+        bh=gWkYzB4k4xq/XrsrsazkTNMqoBAgIRq8t035xK0VvbY=;
+        b=WmWtkNyTHBpv2DhjxRVCDA76F8dh2RVptvqJJr8zY8rPwJ1NgJIBrmQlbagNK1VDgu
+         O2LXl91SMbPtT7kOkSgmlmLKDSm0iQOAKQc6KAvd2QD0fuOyQF0xYqGPeT5hYno6SWSA
+         FEM++vpBkI4CIBR3KFGWU78YEWByu650wsm/Hu3MZ+Kvsdrcc4gPq8rUah7z0ZwyC3uw
+         KtAmpWVS30R8cGfhWu+M1z5vIGFxt2/rMSknpLV51duRDcZIzW1y9kwkTpNzF32NQFv2
+         kX8JrRRzb6bxH+xKUrK6l+4adm+N+h8vigtk+bUPJRtVICutsWedZL0m4OpiCSny3aWg
+         QwnQ==
+X-Gm-Message-State: AGRZ1gLzF+jon4j8tlzpGYzgEhRnSWnvZfuXZ6bLBL7vy2JRFZY8K70+
+        8A3Sw4o7LK0odRx43IJsd4MKjg==
+X-Google-Smtp-Source: AJdET5c1Qqs7SqIeiELJUmyRU+ynUy8eFCLiHIFCg1BebyNkXV1P/lnWppm8IcBeeTZnGKbxjorYbQ==
+X-Received: by 2002:a24:9ac7:: with SMTP id l190-v6mr117486ite.178.1541550802613;
+        Tue, 06 Nov 2018 16:33:22 -0800 (PST)
 Received: from shibby.gateway.innflux.com ([66.228.239.218])
-        by smtp.gmail.com with ESMTPSA id e184-v6sm1061128ite.9.2018.11.06.16.33.17
+        by smtp.gmail.com with ESMTPSA id e184-v6sm1061128ite.9.2018.11.06.16.33.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 16:33:19 -0800 (PST)
+        Tue, 06 Nov 2018 16:33:21 -0800 (PST)
 From:   Alex Elder <elder@linaro.org>
 To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
         ilias.apalodimas@linaro.org
@@ -63,9 +63,9 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         syadagir@codeaurora.org, mjavid@codeaurora.org, robh+dt@kernel.org,
         mark.rutland@arm.com
-Subject: [RFC PATCH 04/12] soc: qcom: ipa: immediate commands
-Date:   Tue,  6 Nov 2018 18:32:42 -0600
-Message-Id: <20181107003250.5832-5-elder@linaro.org>
+Subject: [RFC PATCH 05/12] soc: qcom: ipa: IPA interrupts and the microcontroller
+Date:   Tue,  6 Nov 2018 18:32:43 -0600
+Message-Id: <20181107003250.5832-6-elder@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181107003250.5832-1-elder@linaro.org>
 References: <20181107003250.5832-1-elder@linaro.org>
@@ -74,833 +74,685 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch contains (mostly) code implementing "immediate commands."
-(The source files are still named "ipahal" for historical reasons.)
+The IPA has an interrupt line distinct from the interrupt used by
+the GSI code.  Whereas GSI interrupts are generally related to
+channel events (like transfer completions), IPA interrupts are
+related to other events related to the IPA.  When the IPA IRQ fires,
+an IPA interrupt status register indicates which IPA interrupt
+events are being signaled.  IPA interrupts can be masked
+independently, and can also be endependently enabled or disabled.
 
-One channel (APPS CMD_PROD) is used for sending commands *to* the
-IPA itself, rather than passing data through it.  These immediate
-commands are issued to the IPA using the normal GSI queueing
-mechanism.  And each command's completion is handled using the
-normal GSI transfer completion mechanisms.
+The IPA has an embedded microcontroller that can be used for
+additional processing of messages passing through the IPA.  This
+feature is generally not used by the current code.
 
-In addition to immediate commands, the "IPA HAL" includes code for
-interpreting status packets that are supplied to the IPA on consumer
-channels.
+Currently only three IPA interrupts are used:  one to trigger a
+resume when in a suspended state; and two that allow the embedded
+microcontroller to signal events.
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- drivers/net/ipa/ipahal.c | 541 +++++++++++++++++++++++++++++++++++++++
- drivers/net/ipa/ipahal.h | 253 ++++++++++++++++++
- 2 files changed, 794 insertions(+)
- create mode 100644 drivers/net/ipa/ipahal.c
- create mode 100644 drivers/net/ipa/ipahal.h
+ drivers/net/ipa/ipa_interrupts.c | 307 ++++++++++++++++++++++++++++
+ drivers/net/ipa/ipa_uc.c         | 336 +++++++++++++++++++++++++++++++
+ 2 files changed, 643 insertions(+)
+ create mode 100644 drivers/net/ipa/ipa_interrupts.c
+ create mode 100644 drivers/net/ipa/ipa_uc.c
 
-diff --git a/drivers/net/ipa/ipahal.c b/drivers/net/ipa/ipahal.c
+diff --git a/drivers/net/ipa/ipa_interrupts.c b/drivers/net/ipa/ipa_interrupts.c
 new file mode 100644
-index 000000000000..de00bcd54d4f
+index 000000000000..75cd81a1eab0
 --- /dev/null
-+++ b/drivers/net/ipa/ipahal.c
-@@ -0,0 +1,541 @@
++++ b/drivers/net/ipa/ipa_interrupts.c
+@@ -0,0 +1,307 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++/* Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
++ * Copyright (C) 2018 Linaro Ltd.
++ */
++
++/*
++ * DOC: IPA Interrupts
++ *
++ * The IPA has an interrupt line distinct from the interrupt used
++ * by the GSI code.  Whereas GSI interrupts are generally related
++ * to channel events (like transfer completions), IPA interrupts are
++ * related to other events related to the IPA.  Some of the IPA
++ * interrupts come from a microcontroller embedded in the IPA.
++ * Each IPA interrupt type can be both masked and acknowledged
++ * independent of the others,
++ *
++ * So two of the IPA interrupts are initiated by the microcontroller.
++ * A third can be generated to signal the need for a wakeup/resume
++ * when the IPA has been suspended.  The modem can cause this event
++ * to occur (for example, for an incoming call).  There are other IPA
++ * events defined, but at this time only these three are supported.
++ */
++
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/workqueue.h>
++
++#include "ipa_i.h"
++#include "ipa_reg.h"
++
++struct ipa_interrupt_info {
++	ipa_irq_handler_t handler;
++	enum ipa_irq_type interrupt;
++};
++
++#define IPA_IRQ_NUM_MAX	32	/* Number of IRQ bits in IPA interrupt mask */
++static struct ipa_interrupt_info ipa_interrupt_info[IPA_IRQ_NUM_MAX];
++
++static struct workqueue_struct *ipa_interrupt_wq;
++
++static void enable_tx_suspend_work_func(struct work_struct *work);
++static DECLARE_DELAYED_WORK(tx_suspend_work, enable_tx_suspend_work_func);
++
++static const int ipa_irq_mapping[] = {
++	[IPA_INVALID_IRQ]		= -1,
++	[IPA_UC_IRQ_0]			= 2,
++	[IPA_UC_IRQ_1]			= 3,
++	[IPA_TX_SUSPEND_IRQ]		= 14,
++};
++
++/* IPA interrupt handlers are called in contexts that can block */
++static void ipa_interrupt_work_func(struct work_struct *work);
++static DECLARE_WORK(ipa_interrupt_work, ipa_interrupt_work_func);
++
++/* Workaround disables TX_SUSPEND interrupt for this long */
++#define DISABLE_TX_SUSPEND_INTR_DELAY	msecs_to_jiffies(5)
++
++/* Disable the IPA TX_SUSPEND interrupt, and arrange for it to be
++ * re-enabled again in 5 milliseconds.
++ *
++ * This is part of a hardware bug workaround.
++ */
++static void ipa_tx_suspend_interrupt_wa(void)
++{
++	u32 val;
++
++	val = ipa_read_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP);
++	val &= ~BIT(ipa_irq_mapping[IPA_TX_SUSPEND_IRQ]);
++	ipa_write_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP, val);
++
++	queue_delayed_work(ipa_interrupt_wq, &tx_suspend_work,
++			   DISABLE_TX_SUSPEND_INTR_DELAY);
++}
++
++static void ipa_handle_interrupt(int irq_num)
++{
++	struct ipa_interrupt_info *intr_info = &ipa_interrupt_info[irq_num];
++	u32 endpoints = 0;	/* Only TX_SUSPEND uses its interrupt_data */
++
++	if (!intr_info->handler)
++		return;
++
++	if (intr_info->interrupt == IPA_TX_SUSPEND_IRQ) {
++		/* Disable the suspend interrupt temporarily */
++		ipa_tx_suspend_interrupt_wa();
++
++		/* Get and clear mask of endpoints signaling TX_SUSPEND */
++		endpoints = ipa_read_reg_n(IPA_IRQ_SUSPEND_INFO_EE_N,
++					   IPA_EE_AP);
++		ipa_write_reg_n(IPA_SUSPEND_IRQ_CLR_EE_N, IPA_EE_AP, endpoints);
++	}
++
++	intr_info->handler(intr_info->interrupt, endpoints);
++}
++
++static inline bool is_uc_irq(int irq_num)
++{
++	enum ipa_irq_type interrupt = ipa_interrupt_info[irq_num].interrupt;
++
++	return interrupt != IPA_UC_IRQ_0 && interrupt != IPA_UC_IRQ_1;
++}
++
++static void ipa_process_interrupts(void)
++{
++	while (true) {
++		u32 ipa_intr_mask;
++		u32 imask;	/* one set bit */
++
++		/* Determine which interrupts have fired, then examine only
++		 * those that are enabled.  Note that a suspend interrupt
++		 * bug forces us to re-read the enabled mask every time to
++		 * avoid an endless loop.
++		 */
++		ipa_intr_mask = ipa_read_reg_n(IPA_IRQ_STTS_EE_N, IPA_EE_AP);
++		ipa_intr_mask &= ipa_read_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP);
++
++		if (!ipa_intr_mask)
++			break;
++
++		do {
++			int i = __ffs(ipa_intr_mask);
++			bool uc_irq = is_uc_irq(i);
++
++			imask = BIT(i);
++
++			/* Clear uC interrupt before processing to avoid
++			 * clearing unhandled interrupts
++			 */
++			if (uc_irq)
++				ipa_write_reg_n(IPA_IRQ_CLR_EE_N, IPA_EE_AP,
++						imask);
++
++			ipa_handle_interrupt(i);
++
++			/* Clear non-uC interrupt after processing
++			 * to avoid clearing interrupt data
++			 */
++			if (!uc_irq)
++				ipa_write_reg_n(IPA_IRQ_CLR_EE_N, IPA_EE_AP,
++						imask);
++		} while ((ipa_intr_mask ^= imask));
++	}
++}
++
++static void ipa_interrupt_work_func(struct work_struct *work)
++{
++	ipa_client_add();
++
++	ipa_process_interrupts();
++
++	ipa_client_remove();
++}
++
++static irqreturn_t ipa_isr(int irq, void *ctxt)
++{
++	/* Schedule handling (if not already scheduled) */
++	queue_work(ipa_interrupt_wq, &ipa_interrupt_work);
++
++	return IRQ_HANDLED;
++}
++
++/* Re-enable the IPA TX_SUSPEND interrupt after having been disabled
++ * for a moment by ipa_tx_suspend_interrupt_wa().  This is part of a
++ * workaround for a hardware bug.
++ */
++static void enable_tx_suspend_work_func(struct work_struct *work)
++{
++	u32 val;
++
++	ipa_client_add();
++
++	val = ipa_read_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP);
++	val |= BIT(ipa_irq_mapping[IPA_TX_SUSPEND_IRQ]);
++	ipa_write_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP, val);
++
++	ipa_process_interrupts();
++
++	ipa_client_remove();
++}
++
++/* Register SUSPEND_IRQ_EN_EE_N_ADDR for L2 interrupt. */
++static void tx_suspend_enable(void)
++{
++	enum ipa_client_type client;
++	u32 val = ~0;
++
++	/* Compute the mask to use (bits set for all non-modem endpoints) */
++	for (client = 0; client < IPA_CLIENT_MAX; client++)
++		if (ipa_modem_consumer(client) || ipa_modem_producer(client))
++			val &= ~BIT(ipa_client_ep_id(client));
++
++	ipa_write_reg_n(IPA_SUSPEND_IRQ_EN_EE_N, IPA_EE_AP, val);
++}
++
++/* Unregister SUSPEND_IRQ_EN_EE_N_ADDR for L2 interrupt. */
++static void tx_suspend_disable(void)
++{
++	ipa_write_reg_n(IPA_SUSPEND_IRQ_EN_EE_N, IPA_EE_AP, 0);
++}
++
++/**
++ * ipa_add_interrupt_handler() - Adds handler for an IPA interrupt
++ * @interrupt:		IPA interrupt type
++ * @handler:		The handler for that interrupt
++ *
++ * Adds handler to an IPA interrupt type and enable it.  IPA interrupt
++ * handlers are allowed to block (they aren't run in interrupt context).
++ */
++void ipa_add_interrupt_handler(enum ipa_irq_type interrupt,
++			       ipa_irq_handler_t handler)
++{
++	int irq_num = ipa_irq_mapping[interrupt];
++	struct ipa_interrupt_info *intr_info;
++	u32 val;
++
++	intr_info = &ipa_interrupt_info[irq_num];
++	intr_info->handler = handler;
++	intr_info->interrupt = interrupt;
++
++	/* Enable the IPA interrupt */
++	val = ipa_read_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP);
++	val |= BIT(irq_num);
++	ipa_write_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP, val);
++
++	if (interrupt == IPA_TX_SUSPEND_IRQ)
++		tx_suspend_enable();
++}
++
++/**
++ * ipa_remove_interrupt_handler() - Removes handler for an IPA interrupt type
++ * @interrupt:		IPA interrupt type
++ *
++ * Remove an IPA interrupt handler and disable it.
++ */
++void ipa_remove_interrupt_handler(enum ipa_irq_type interrupt)
++{
++	int irq_num = ipa_irq_mapping[interrupt];
++	struct ipa_interrupt_info *intr_info;
++	u32 val;
++
++	intr_info = &ipa_interrupt_info[irq_num];
++	intr_info->handler = NULL;
++	intr_info->interrupt = IPA_INVALID_IRQ;
++
++	if (interrupt == IPA_TX_SUSPEND_IRQ)
++		tx_suspend_disable();
++
++	/* Disable the interrupt */
++	val = ipa_read_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP);
++	val &= ~BIT(irq_num);
++	ipa_write_reg_n(IPA_IRQ_EN_EE_N, IPA_EE_AP, val);
++}
++
++/**
++ * ipa_interrupts_init() - Initialize the IPA interrupts framework
++ */
++int ipa_interrupts_init(void)
++{
++	int ret;
++
++	ret = request_irq(ipa_ctx->ipa_irq, ipa_isr, IRQF_TRIGGER_RISING,
++			  "ipa", ipa_ctx->dev);
++	if (ret)
++		return ret;
++
++	ipa_interrupt_wq = alloc_ordered_workqueue("ipa_interrupt_wq", 0);
++	if (ipa_interrupt_wq)
++		return 0;
++
++	free_irq(ipa_ctx->ipa_irq, ipa_ctx->dev);
++
++	return -ENOMEM;
++}
++
++/**
++ * ipa_suspend_active_aggr_wa() - Emulate suspend interrupt
++ * @ep_id:	Endpoint on which to emulate a suspend
++ *
++ *  Emulate suspend IRQ to unsuspend a client suspended with an open
++ *  aggregation frame.  This is to work around a hardware issue
++ *  where an IRQ is not generated as it should be when this occurs.
++ */
++void ipa_suspend_active_aggr_wa(u32 ep_id)
++{
++	struct ipa_reg_aggr_force_close force_close;
++	struct ipa_interrupt_info *intr_info;
++	u32 clnt_mask;
++	int irq_num;
++
++	irq_num = ipa_irq_mapping[IPA_TX_SUSPEND_IRQ];
++	intr_info = &ipa_interrupt_info[irq_num];
++	clnt_mask = BIT(ep_id);
++
++	/* Nothing to do if the endpoint doesn't have aggregation open */
++	if (!(ipa_read_reg(IPA_STATE_AGGR_ACTIVE) & clnt_mask))
++		return;
++
++	/* Force close aggregation */
++	ipa_reg_aggr_force_close(&force_close, clnt_mask);
++	ipa_write_reg_fields(IPA_AGGR_FORCE_CLOSE, &force_close);
++
++	/* Simulate suspend IRQ */
++	ipa_assert(!in_interrupt());
++	if (intr_info->handler)
++		intr_info->handler(intr_info->interrupt, clnt_mask);
++}
+diff --git a/drivers/net/ipa/ipa_uc.c b/drivers/net/ipa/ipa_uc.c
+new file mode 100644
+index 000000000000..2065e53f3601
+--- /dev/null
++++ b/drivers/net/ipa/ipa_uc.c
+@@ -0,0 +1,336 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
 + * Copyright (C) 2018 Linaro Ltd.
 + */
 +
 +#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <asm/unaligned.h>
++#include <linux/delay.h>
 +
-+#include "ipahal.h"
-+#include "ipa_i.h"	/* ipa_err() */
-+#include "ipa_dma.h"
++#include "ipa_i.h"
 +
 +/**
-+ * DOC:  IPA Immediate Commands
++ * DOC:  The IPA Embedded Microcontroller
 + *
-+ * The APPS_CMD_PROD channel is used to issue immediate commands to
-+ * the IPA.  An immediate command is generally used to request the
-+ * IPA do something other than data transfer.
-+ *
-+ * An immediate command is represented by a GSI transfer element.
-+ * Each immediate command has a well-defined format, with a known
-+ * length.  The transfer element's length field can therefore be
-+ * used to hold a command's opcode.  The "payload" of an immediate
-+ * command contains additional information required for the command.
-+ * It resides in DRAM and is referred to using the DMA memory data
-+ * pointer (the same one used to refer to the data in a "normal"
-+ * transfer).
-+ *
-+ * Immediate commands are issued to the IPA through the APPS_CMD_PROD
-+ * channel using the normal GSI queueing mechanism.  And each command's
-+ * completion is handled using the normal GSI transfer completion
-+ * mechanisms.
++ * The IPA incorporates an embedded microcontroller that is able to
++ * do some additional handling/offloading of network activity.  The
++ * current code makes essentially no use of the microcontroller.
++ * Despite not being used, the microcontroller still requires some
++ * initialization, and it needs to be notified in the event the AP
++ * crashes.  The IPA embedded microcontroller represents another IPA
++ * execution environment (in addition to the AP subsystem and
++ * modem).
 + */
 +
-+/**
-+ * struct ipahal_context - HAL global context data
-+ * @empty_fltrt_tbl:	Empty table to be used for table initialization
-+ */
-+static struct ipahal_context {
-+	struct ipa_dma_mem empty_fltrt_tbl;
-+} ipahal_ctx_struct;
-+static struct ipahal_context *ipahal_ctx = &ipahal_ctx_struct;
++/* Supports hardware interface version 0x2000 */
 +
-+/* enum ipa_pipeline_clear_option - Values for pipeline clear waiting options
-+ * @IPAHAL_HPS_CLEAR: Wait for HPS clear. All queues except high priority queue
-+ *  shall not be serviced until HPS is clear of packets or immediate commands.
-+ *  The high priority Rx queue / Q6ZIP group shall still be serviced normally.
++#define IPA_RAM_UC_SMEM_SIZE	128	/* Size of shared memory area */
++
++/* Delay to allow a the microcontroller to save state when crashing */
++#define IPA_SEND_DELAY		100	/* microseconds */
++
++/*
++ * The IPA has an embedded microcontroller that is capable of doing
++ * more general-purpose processing, for example for handling certain
++ * exceptional conditions.  When it has completed its boot sequence
++ * it signals the AP with an interrupt.  At this time we don't use
++ * any of the microcontroller capabilities, but we do handle the
++ * "ready" interrupt.  We also notify it (by sending it a special
++ * command) in the event of a crash.
 + *
-+ * @IPAHAL_SRC_GRP_CLEAR: Wait for originating source group to be clear
-+ *  (for no packet contexts allocated to the originating source group).
-+ *  The source group / Rx queue shall not be serviced until all previously
-+ *  allocated packet contexts are released. All other source groups/queues shall
-+ *  be serviced normally.
++ * A 128 byte block of structured memory within the IPA SRAM is used
++ * to communicate between the AP and the microcontroller embedded in
++ * the IPA.
 + *
-+ * @IPAHAL_FULL_PIPELINE_CLEAR: Wait for full pipeline to be clear.
-+ *  All groups / Rx queues shall not be serviced until IPA pipeline is fully
-+ *  clear. This should be used for debug only.
++ * To send a command to the microcontroller, the AP fills in the
++ * command opcode and command parameter fields in this area, then
++ * writes a register to signal to the microcontroller the command is
++ * available.  When the microcontroller has executed the command, it
++ * writes response data to this shared area, then issues a response
++ * interrupt (micrcontroller IRQ 1) to the AP.  The response
++ * includes a "response operation" that indicates the completion,
++ * along with a "response parameter" which encodes the original
++ * command and the command's status (result).
 + *
-+ *  The values assigned to these are assumed by the REGISTER_WRITE
-+ *  (struct ipa_imm_cmd_hw_register_write) and the DMA_SHARED_MEM
-+ *  (struct ipa_imm_cmd_hw_dma_shared_mem) immediate commands for
-+ *  IPA version 3 hardware.  They are also used to modify the opcode
-+ *  used to implement these commands for IPA version 4 hardware.
++ * The shared area is also used to communicate events asynchronously
++ * from the microcontroller to the AP.  Events are signaled using
++ * the event interrupt (micrcontroller IRQ 0).  The microcontroller
++ * fills in an "event operation" and "event parameter" before
++ * triggering the interrupt.
++ *
++ * Some additional information is also found in this shared area,
++ * but is currently unused by the IPA driver.
++ *
++ * All other space in the shared area is reserved, and must not be
++ * read or written by the AP.
 + */
-+enum ipahal_pipeline_clear_option {
-+	IPAHAL_HPS_CLEAR		= 0,
-+	IPAHAL_SRC_GRP_CLEAR		= 1,
-+	IPAHAL_FULL_PIPELINE_CLEAR	= 2,
++
++/** struct ipa_uc_shared_area - AP/microcontroller shared memory area
++ *
++ * @command: command code (AP->microcontroller)
++ * @command_param: low 32 bits of command parameter (AP->microcontroller)
++ * @command_param_hi: high 32 bits of command parameter (AP->microcontroller)
++ *
++ * @response: response code (microcontroller->AP)
++ * @response_param: response parameter (microcontroller->AP)
++ *
++ * @event: event code (microcontroller->AP)
++ * @event_param: event parameter (microcontroller->AP)
++ *
++ * @first_error_address: address of first error-source on SNOC
++ * @hw_state: state of hardware (including error type information)
++ * @warning_counter: counter of non-fatal hardware errors
++ * @interface_version: hardware-reported interface version
++ */
++struct ipa_uc_shared_area {
++	u32 command		: 8;	/* enum ipa_uc_command */
++	/* 3 reserved bytes */
++	u32 command_param;
++	u32 command_param_hi;
++
++	u32 response		: 8; 	/* enum ipa_uc_response */
++	/* 3 reserved bytes */
++	u32 response_param;
++
++	u32 event		: 8;	/* enum ipa_uc_event */
++	/* 3 reserved bytes */
++	u32 event_param;
++
++	u32 first_error_address;
++	u32 hw_state		: 8,
++	    warning_counter	: 8,
++	    reserved		: 16;
++	u32 interface_version	: 16;
++	/* 2 reserved bytes */
 +};
 +
-+/* Immediate commands H/W structures */
-+
-+/* struct ipa_imm_cmd_hw_ip_fltrt_init - IP_V*_FILTER_INIT/IP_V*_ROUTING_INIT
-+ * command payload in H/W format.
-+ * Inits IPv4/v6 routing or filter block.
-+ * @hash_rules_addr: Addr in system mem where hashable flt/rt rules starts
-+ * @hash_rules_size: Size in bytes of the hashable tbl to cpy to local mem
-+ * @hash_local_addr: Addr in shared mem where hashable flt/rt tbl should
-+ *  be copied to
-+ * @nhash_rules_size: Size in bytes of the non-hashable tbl to cpy to local mem
-+ * @nhash_local_addr: Addr in shared mem where non-hashable flt/rt tbl should
-+ *  be copied to
-+ * @rsvd: reserved
-+ * @nhash_rules_addr: Addr in sys mem where non-hashable flt/rt tbl starts
++/** struct ipa_uc_ctx - IPA microcontroller context
++ *
++ * @uc_loaded: whether microcontroller has been loaded
++ * @shared: pointer to AP/microcontroller shared memory area
 + */
-+struct ipa_imm_cmd_hw_ip_fltrt_init {
-+	u64 hash_rules_addr;
-+	u64 hash_rules_size	: 12,
-+	    hash_local_addr	: 16,
-+	    nhash_rules_size	: 12,
-+	    nhash_local_addr	: 16,
-+	    rsvd		: 8;
-+	u64 nhash_rules_addr;
++struct ipa_uc_ctx {
++	bool uc_loaded;
++	struct ipa_uc_shared_area *shared;
++} ipa_uc_ctx;
++
++/*
++ * Microcontroller event codes, error codes, commands, and responses
++ * to commands all encode both a "code" and a "feature" in their
++ * 8-bit numeric value.  The top 3 bits represent the feature, and
++ * the bottom 5 bits represent the code.  A "common" feature uses
++ * feature code 0, and at this time we only deal with common
++ * features.  Because of this we can just ignore the feature bits
++ * and define the values of symbols in  the following enumerated
++ * types by just their code values.
++ */
++
++/** enum ipa_uc_event - common cpu events (microcontroller->AP)
++ *
++ * @IPA_UC_EVENT_NO_OP: no event present
++ * @IPA_UC_EVENT_ERROR: system error has been detected
++ * @IPA_UC_EVENT_LOG_INFO: logging information available
++ */
++enum ipa_uc_event {
++	IPA_UC_EVENT_NO_OP     = 0,
++	IPA_UC_EVENT_ERROR     = 1,
++	IPA_UC_EVENT_LOG_INFO  = 2,
 +};
 +
-+/* struct ipa_imm_cmd_hw_hdr_init_local - HDR_INIT_LOCAL command payload
-+ *  in H/W format.
-+ * Inits hdr table within local mem with the hdrs and their length.
-+ * @hdr_table_addr: Word address in sys mem where the table starts (SRC)
-+ * @size_hdr_table: Size of the above (in bytes)
-+ * @hdr_addr: header address in IPA sram (used as DST for memory copy)
-+ * @rsvd: reserved
++/** enum ipa_uc_error - common error types (microcontroller->AP)
++ *
++ * @IPA_UC_ERROR_NONE: no error
++ * @IPA_UC_ERROR_INVALID_DOORBELL: invalid data read from doorbell
++ * @IPA_UC_ERROR_DMA: unexpected DMA error
++ * @IPA_UC_ERROR_FATAL_SYSTEM: microcontroller has crashed and requires reset
++ * @IPA_UC_ERROR_INVALID_OPCODE: invalid opcode sent
++ * @IPA_UC_ERROR_INVALID_PARAMS: invalid params for the requested command
++ * @IPA_UC_ERROR_CONS_DISABLE_CMD_GSI_STOP: consumer endpoint stop failure
++ * @IPA_UC_ERROR_PROD_DISABLE_CMD_GSI_STOP: producer endpoint stop failure
++ * @IPA_UC_ERROR_CH_NOT_EMPTY: micrcontroller GSI channel is not empty
 + */
-+struct ipa_imm_cmd_hw_hdr_init_local {
-+	u64 hdr_table_addr;
-+	u32 size_hdr_table	: 12,
-+	    hdr_addr		: 16,
-+	    rsvd		: 4;
++enum ipa_uc_error {
++	IPA_UC_ERROR_NONE			= 0,
++	IPA_UC_ERROR_INVALID_DOORBELL		= 1,
++	IPA_UC_ERROR_DMA			= 2,
++	IPA_UC_ERROR_FATAL_SYSTEM		= 3,
++	IPA_UC_ERROR_INVALID_OPCODE		= 4,
++	IPA_UC_ERROR_INVALID_PARAMS		= 5,
++	IPA_UC_ERROR_CONS_DISABLE_CMD_GSI_STOP	= 6,
++	IPA_UC_ERROR_PROD_DISABLE_CMD_GSI_STOP	= 7,
++	IPA_UC_ERROR_CH_NOT_EMPTY		= 8,
 +};
 +
-+/* struct ipa_imm_cmd_hw_dma_shared_mem - DMA_SHARED_MEM command payload
-+ *  in H/W format.
-+ * Perform mem copy into or out of the SW area of IPA local mem
-+ * @sw_rsvd: Ignored by H/W. My be used by S/W
-+ * @size: Size in bytes of data to copy. Expected size is up to 2K bytes
-+ * @local_addr: Address in IPA local memory
-+ * @direction: Read or write?
-+ *	0: IPA write, Write to local address from system address
-+ *	1: IPA read, Read from local address to system address
-+ * @skip_pipeline_clear: 0 to wait until IPA pipeline is clear. 1 don't wait
-+ * @pipeline_clear_options: options for pipeline to clear
-+ *	0: HPS - no pkt inside HPS (not grp specific)
-+ *	1: source group - The immediate cmd src grp does npt use any pkt ctxs
-+ *	2: Wait until no pkt reside inside IPA pipeline
-+ *	3: reserved
-+ * @rsvd: reserved - should be set to zero
-+ * @system_addr: Address in system memory
++/** enum ipa_uc_command - commands from the AP to the microcontroller
++ *
++ * @IPA_UC_COMMAND_NO_OP: no operation
++ * @IPA_UC_COMMAND_UPDATE_FLAGS: request to re-read configuration flags
++ * @IPA_UC_COMMAND_DEBUG_RUN_TEST: request to run hardware test
++ * @IPA_UC_COMMAND_DEBUG_GET_INFO: request to read internal debug information
++ * @IPA_UC_COMMAND_ERR_FATAL: AP system crash notification
++ * @IPA_UC_COMMAND_CLK_GATE: request hardware to enter clock gated state
++ * @IPA_UC_COMMAND_CLK_UNGATE: request hardware to enter clock ungated state
++ * @IPA_UC_COMMAND_MEMCPY: request hardware to perform memcpy
++ * @IPA_UC_COMMAND_RESET_PIPE: request endpoint reset
++ * @IPA_UC_COMMAND_REG_WRITE: request a register be written
++ * @IPA_UC_COMMAND_GSI_CH_EMPTY: request to determine whether channel is empty
 + */
-+struct ipa_imm_cmd_hw_dma_shared_mem {
-+	u16 sw_rsvd;
-+	u16 size;
-+	u16 local_addr;
-+	u16 direction			: 1,
-+	    skip_pipeline_clear		: 1,
-+	    pipeline_clear_options	: 2,
-+	    rsvd			: 12;
-+	u64 system_addr;
++enum ipa_uc_command {
++	IPA_UC_COMMAND_NO_OP		= 0,
++	IPA_UC_COMMAND_UPDATE_FLAGS	= 1,
++	IPA_UC_COMMAND_DEBUG_RUN_TEST	= 2,
++	IPA_UC_COMMAND_DEBUG_GET_INFO	= 3,
++	IPA_UC_COMMAND_ERR_FATAL	= 4,
++	IPA_UC_COMMAND_CLK_GATE		= 5,
++	IPA_UC_COMMAND_CLK_UNGATE	= 6,
++	IPA_UC_COMMAND_MEMCPY		= 7,
++	IPA_UC_COMMAND_RESET_PIPE	= 8,
++	IPA_UC_COMMAND_REG_WRITE	= 9,
++	IPA_UC_COMMAND_GSI_CH_EMPTY	= 10,
 +};
 +
-+/* struct ipa_imm_cmd_hw_dma_task_32b_addr -
-+ *	IPA_DMA_TASK_32B_ADDR command payload in H/W format.
-+ * Used by clients using 32bit addresses. Used to perform DMA operation on
-+ *  multiple descriptors.
-+ *  The Opcode is dynamic, where it holds the number of buffer to process
-+ * @sw_rsvd: Ignored by H/W. My be used by S/W
-+ * @cmplt: Complete flag: When asserted IPA will interrupt SW when the entire
-+ *  DMA related data was completely xfered to its destination.
-+ * @eof: Enf Of Frame flag: When asserted IPA will assert the EOT to the
-+ *  dest client. This is used used for aggr sequence
-+ * @flsh: Flush flag: When asserted, pkt will go through the IPA blocks but
-+ *  will not be xfered to dest client but rather will be discarded
-+ * @lock: Lock endpoint flag: When asserted, IPA will stop processing
-+ *  descriptors from other EPs in the same src grp (RX queue)
-+ * @unlock: Unlock endpoint flag: When asserted, IPA will stop exclusively
-+ *  servicing current EP out of the src EPs of the grp (RX queue)
-+ * @size1: Size of buffer1 data
-+ * @addr1: Pointer to buffer1 data
-+ * @packet_size: Total packet size. If a pkt send using multiple DMA_TASKs,
-+ *  only the first one needs to have this field set. It will be ignored
-+ *  in subsequent DMA_TASKs until the packet ends (EOT). First DMA_TASK
-+ *  must contain this field (2 or more buffers) or EOT.
++/** enum ipa_uc_response - common hardware response codes
++ *
++ * @IPA_UC_RESPONSE_NO_OP: no operation
++ * @IPA_UC_RESPONSE_INIT_COMPLETED: microcontroller ready
++ * @IPA_UC_RESPONSE_CMD_COMPLETED: AP-issued command has completed
++ * @IPA_UC_RESPONSE_DEBUG_GET_INFO: get debug info
 + */
-+struct ipa_imm_cmd_hw_dma_task_32b_addr {
-+	u16 sw_rsvd	: 11,
-+	    cmplt	: 1,
-+	    eof		: 1,
-+	    flsh	: 1,
-+	    lock	: 1,
-+	    unlock	: 1;
-+	u16 size1;
-+	u32 addr1;
-+	u16 packet_size;
-+	u16 rsvd1;
-+	u32 rsvd2;
++enum ipa_uc_response {
++	IPA_UC_RESPONSE_NO_OP		= 0,
++	IPA_UC_RESPONSE_INIT_COMPLETED	= 1,
++	IPA_UC_RESPONSE_CMD_COMPLETED	= 2,
++	IPA_UC_RESPONSE_DEBUG_GET_INFO	= 3,
 +};
 +
-+/* IPA Status packet H/W structures and info */
-+
-+/* struct ipa_status_pkt_hw - IPA status packet payload in H/W format.
-+ *  This structure describes the status packet H/W structure for the
-+ *   following statuses: IPA_STATUS_PACKET, IPA_STATUS_DROPPED_PACKET,
-+ *   IPA_STATUS_SUSPENDED_PACKET.
-+ *  Other statuses types has different status packet structure.
-+ * @status_opcode: The Type of the status (Opcode).
-+ * @exception: (not bitmask) - the first exception that took place.
-+ *  In case of exception, src endp and pkt len are always valid.
-+ * @status_mask: Bit mask specifying on which H/W blocks the pkt was processed.
-+ * @pkt_len: Pkt payload len including hdr, include retained hdr if used. Does
-+ *  not include padding or checksum trailer len.
-+ * @endp_src_idx: Source end point index.
-+ * @rsvd1: reserved
-+ * @endp_dest_idx: Destination end point index.
-+ *  Not valid in case of exception
-+ * @rsvd2: reserved
-+ * @metadata: meta data value used by packet
-+ * @flt_local: Filter table location flag: Does matching flt rule belongs to
-+ *  flt tbl that resides in lcl memory? (if not, then system mem)
-+ * @flt_hash: Filter hash hit flag: Does matching flt rule was in hash tbl?
-+ * @flt_global: Global filter rule flag: Does matching flt rule belongs to
-+ *  the global flt tbl? (if not, then the per endp tables)
-+ * @flt_ret_hdr: Retain header in filter rule flag: Does matching flt rule
-+ *  specifies to retain header?
-+ * @flt_rule_id: The ID of the matching filter rule. This info can be combined
-+ *  with endp_src_idx to locate the exact rule. ID=0x3ff reserved to specify
-+ *  flt miss. In case of miss, all flt info to be ignored
-+ * @rt_local: Route table location flag: Does matching rt rule belongs to
-+ *  rt tbl that resides in lcl memory? (if not, then system mem)
-+ * @rt_hash: Route hash hit flag: Does matching rt rule was in hash tbl?
-+ * @ucp: UC Processing flag.
-+ * @rt_tbl_idx: Index of rt tbl that contains the rule on which was a match
-+ * @rt_rule_id: The ID of the matching rt rule. This info can be combined
-+ *  with rt_tbl_idx to locate the exact rule. ID=0x3ff reserved to specify
-+ *  rt miss. In case of miss, all rt info to be ignored
-+ * @nat_hit: NAT hit flag: Was their NAT hit?
-+ * @nat_entry_idx: Index of the NAT entry used of NAT processing
-+ * @nat_type: Defines the type of the NAT operation (ignored for now)
-+ * @tag_info: S/W defined value provided via immediate command
-+ * @seq_num: Per source endp unique packet sequence number
-+ * @time_of_day_ctr: running counter from IPA clock
-+ * @hdr_local: Header table location flag: In header insertion, was the header
-+ *  taken from the table resides in local memory? (If no, then system mem)
-+ * @hdr_offset: Offset of used header in the header table
-+ * @frag_hit: Frag hit flag: Was their frag rule hit in H/W frag table?
-+ * @frag_rule: Frag rule index in H/W frag table in case of frag hit
-+ * @hw_specific: H/W specific reserved value
++/** union ipa_uc_event_data - microcontroller->AP event data
++ *
++ * @error_type: ipa_uc_error error type value
++ * @raw32b: 32-bit register value (used when reading)
 + */
-+#define IPA_RULE_ID_BITS	10	/* See ipahal_is_rule_miss_id() */
-+struct ipa_pkt_status_hw {
-+	u8  status_opcode;
-+	u8  exception;
-+	u16 status_mask;
-+	u16 pkt_len;
-+	u8  endp_src_idx	: 5,
-+	    rsvd1		: 3;
-+	u8  endp_dest_idx	: 5,
-+	    rsvd2		: 3;
-+	u32 metadata;
-+	u16 flt_local		: 1,
-+	    flt_hash		: 1,
-+	    flt_global		: 1,
-+	    flt_ret_hdr		: 1,
-+	    flt_rule_id		: IPA_RULE_ID_BITS,
-+	    rt_local		: 1,
-+	    rt_hash		: 1;
-+	u16 ucp			: 1,
-+	    rt_tbl_idx		: 5,
-+	    rt_rule_id		: IPA_RULE_ID_BITS;
-+	u64 nat_hit		: 1,
-+	    nat_entry_idx	: 13,
-+	    nat_type		: 2,
-+	    tag_info		: 48;
-+	u32 seq_num		: 8,
-+	    time_of_day_ctr	: 24;
-+	u16 hdr_local		: 1,
-+	    hdr_offset		: 10,
-+	    frag_hit		: 1,
-+	    frag_rule		: 4;
-+	u16 hw_specific;
-+};
++union ipa_uc_event_data {
++	u8 error_type;	/* enum ipa_uc_error */
++	u32 raw32b;
++} __packed;
 +
-+void *ipahal_dma_shared_mem_write_pyld(struct ipa_dma_mem *mem, u32 offset)
-+{
-+	struct ipa_imm_cmd_hw_dma_shared_mem *data;
-+
-+	ipa_assert(mem->size < 1 << 16);	/* size is 16 bits wide */
-+	ipa_assert(offset < 1 << 16);		/* local_addr is 16 bits wide */
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return NULL;
-+
-+	data->size = mem->size;
-+	data->local_addr = offset;
-+	data->direction = 0;	/* 0 = write to IPA; 1 = read from IPA */
-+	data->skip_pipeline_clear = 0;
-+	data->pipeline_clear_options = IPAHAL_HPS_CLEAR;
-+	data->system_addr = mem->phys;
-+
-+	return data;
-+}
-+
-+void *ipahal_hdr_init_local_pyld(struct ipa_dma_mem *mem, u32 offset)
-+{
-+	struct ipa_imm_cmd_hw_hdr_init_local *data;
-+
-+	ipa_assert(mem->size < 1 << 12);  /* size_hdr_table is 12 bits wide */
-+	ipa_assert(offset < 1 << 16);		/* hdr_addr is 16 bits wide */
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return NULL;
-+
-+	data->hdr_table_addr = mem->phys;
-+	data->size_hdr_table = mem->size;
-+	data->hdr_addr = offset;
-+
-+	return data;
-+}
-+
-+static void *fltrt_init_common(struct ipa_dma_mem *mem, u32 hash_offset,
-+			       u32 nhash_offset)
-+{
-+	struct ipa_imm_cmd_hw_ip_fltrt_init *data;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return NULL;
-+
-+	data->hash_rules_addr = (u64)mem->phys;
-+	data->hash_rules_size = (u32)mem->size;
-+	data->hash_local_addr = hash_offset;
-+	data->nhash_rules_addr = (u64)mem->phys;
-+	data->nhash_rules_size = (u32)mem->size;
-+	data->nhash_local_addr = nhash_offset;
-+
-+	return data;
-+}
-+
-+void *ipahal_ip_v4_routing_init_pyld(struct ipa_dma_mem *mem, u32 hash_offset,
-+			       u32 nhash_offset)
-+{
-+	return fltrt_init_common(mem, hash_offset, nhash_offset);
-+}
-+
-+void *ipahal_ip_v6_routing_init_pyld(struct ipa_dma_mem *mem, u32 hash_offset,
-+				     u32 nhash_offset)
-+{
-+	return fltrt_init_common(mem, hash_offset, nhash_offset);
-+}
-+
-+void *ipahal_ip_v4_filter_init_pyld(struct ipa_dma_mem *mem, u32 hash_offset,
-+				    u32 nhash_offset)
-+{
-+	return fltrt_init_common(mem, hash_offset, nhash_offset);
-+}
-+
-+void *ipahal_ip_v6_filter_init_pyld(struct ipa_dma_mem *mem, u32 hash_offset,
-+				    u32 nhash_offset)
-+{
-+	return fltrt_init_common(mem, hash_offset, nhash_offset);
-+}
-+
-+void *ipahal_dma_task_32b_addr_pyld(struct ipa_dma_mem *mem)
-+{
-+	struct ipa_imm_cmd_hw_dma_task_32b_addr *data;
-+
-+	/* size1 and packet_size are both 16 bits wide */
-+	ipa_assert(mem->size < 1 << 16);
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return NULL;
-+
-+	data->cmplt = 0;
-+	data->eof = 0;
-+	data->flsh = 1;
-+	data->lock = 0;
-+	data->unlock = 0;
-+	data->size1 = mem->size;
-+	data->addr1 = mem->phys;
-+	data->packet_size = mem->size;
-+
-+	return data;
-+}
-+
-+void ipahal_payload_free(void *payload)
-+{
-+	kfree(payload);
-+}
-+
-+/* IPA Packet Status Logic */
-+
-+/* Maps an exception type returned in a ipa_pkt_status_hw structure
-+ * to the ipahal_pkt_status_exception value that represents it in
-+ * the exception field of a ipahal_pkt_status structure.  Returns
-+ * IPAHAL_PKT_STATUS_EXCEPTION_MAX for an unrecognized value.
++/** union ipa_uc_response_data - response to AP command
++ *
++ * @command: the AP issued command this is responding to
++ * @status: 0 for success indication, otherwise failure
++ * @raw32b: 32-bit register value (used when reading)
 + */
-+static enum ipahal_pkt_status_exception
-+exception_map(u8 exception, bool is_ipv6)
++union ipa_uc_response_data {
++	struct ipa_uc_response_param {
++		u8 command;	/* enum ipa_uc_command */
++		u8 status;	/* enum ipa_uc_error */
++	} params;
++	u32 raw32b;
++} __packed;
++
++/** ipa_uc_loaded() - tell whether the microcontroller has been loaded
++ *
++ * Returns true if the microcontroller is loaded, false otherwise
++ */
++bool ipa_uc_loaded(void)
 +{
-+	switch (exception) {
-+	case 0x00:	return IPAHAL_PKT_STATUS_EXCEPTION_NONE;
-+	case 0x01:	return IPAHAL_PKT_STATUS_EXCEPTION_DEAGGR;
-+	case 0x04:	return IPAHAL_PKT_STATUS_EXCEPTION_IPTYPE;
-+	case 0x08:	return IPAHAL_PKT_STATUS_EXCEPTION_PACKET_LENGTH;
-+	case 0x10:	return IPAHAL_PKT_STATUS_EXCEPTION_FRAG_RULE_MISS;
-+	case 0x20:	return IPAHAL_PKT_STATUS_EXCEPTION_SW_FILT;
-+	case 0x40:	return is_ipv6 ? IPAHAL_PKT_STATUS_EXCEPTION_IPV6CT
-+				       : IPAHAL_PKT_STATUS_EXCEPTION_NAT;
-+	default:	return IPAHAL_PKT_STATUS_EXCEPTION_MAX;
++	return ipa_uc_ctx.uc_loaded;
++}
++
++static void
++ipa_uc_event_handler(enum ipa_irq_type interrupt, u32 interrupt_data)
++{
++	struct ipa_uc_shared_area *shared = ipa_uc_ctx.shared;
++	union ipa_uc_event_data event_param;
++	u8 event;
++
++	event = shared->event;
++	event_param.raw32b = shared->event_param;
++
++	/* General handling */
++	if (event == IPA_UC_EVENT_ERROR) {
++		ipa_err("uC error type 0x%02x timestamp 0x%08x\n",
++			event_param.error_type, ipa_read_reg(IPA_TAG_TIMER));
++		ipa_bug();
++	} else {
++		ipa_err("unsupported uC event opcode=%u\n", event);
 +	}
 +}
 +
-+/* ipahal_pkt_status_get_size() - Get H/W size of packet status */
-+u32 ipahal_pkt_status_get_size(void)
++static void
++ipa_uc_response_hdlr(enum ipa_irq_type interrupt, u32 interrupt_data)
 +{
-+	return sizeof(struct ipa_pkt_status_hw);
-+}
++	struct ipa_uc_shared_area *shared = ipa_uc_ctx.shared;
++	union ipa_uc_response_data response_data;
++	u8 response;
 +
-+/* ipahal_pkt_status_parse() - Parse Packet Status payload to abstracted form
-+ * @unparsed_status: Pointer to H/W format of the packet status as read from H/W
-+ * @status: Pointer to pre-allocated buffer where the parsed info will be stored
-+ */
-+void ipahal_pkt_status_parse(const void *unparsed_status,
-+			     struct ipahal_pkt_status *status)
-+{
-+	const struct ipa_pkt_status_hw *hw_status = unparsed_status;
-+	bool is_ipv6;
++	response = shared->response;
 +
-+	status->status_opcode =
-+			(enum ipahal_pkt_status_opcode)hw_status->status_opcode;
-+	is_ipv6 = hw_status->status_mask & BIT(7) ? false : true;
-+	/* If hardware status values change we may have to re-map this */
-+	status->status_mask =
-+			(enum ipahal_pkt_status_mask)hw_status->status_mask;
-+	status->exception = exception_map(hw_status->exception, is_ipv6);
-+	status->pkt_len = hw_status->pkt_len;
-+	status->endp_src_idx = hw_status->endp_src_idx;
-+	status->endp_dest_idx = hw_status->endp_dest_idx;
-+	status->metadata = hw_status->metadata;
-+	status->rt_miss = ipahal_is_rule_miss_id(hw_status->rt_rule_id);
-+}
-+
-+int ipahal_init(void)
-+{
-+	struct ipa_dma_mem *mem = &ipahal_ctx->empty_fltrt_tbl;
-+
-+	/* Set up an empty filter/route table entry in system
-+	 * memory.  This will be used, for example, to delete a
-+	 * route safely.
++	/* An INIT_COMPLETED response message is sent to the AP by
++	 * the microcontroller when it is operational.  Other than
++	 * this, the AP should only receive responses from the
++	 * microntroller when it has sent it a request message.
 +	 */
-+	if (ipa_dma_alloc(mem, IPA_HW_TBL_WIDTH, GFP_KERNEL)) {
-+		ipa_err("error allocating empty filter/route table\n");
-+		return -ENOMEM;
++	if (response == IPA_UC_RESPONSE_INIT_COMPLETED) {
++		/* The proxy vote is held until uC is loaded to ensure that
++		 * IPA_HW_2_CPU_RESPONSE_INIT_COMPLETED is received.
++		 */
++		ipa_proxy_clk_unvote();
++		ipa_uc_ctx.uc_loaded = true;
++	} else if (response == IPA_UC_RESPONSE_CMD_COMPLETED) {
++		response_data.raw32b = shared->response_param;
++		ipa_err("uC command response code %u status %u\n",
++			response_data.params.command,
++			response_data.params.status);
++	} else {
++		ipa_err("Unsupported uC rsp opcode = %u\n", response);
 +	}
-+
-+	return 0;
 +}
 +
-+void ipahal_exit(void)
++/** ipa_uc_init() - Initialize the microcontroller
++ *
++ * Returns pointer to microcontroller context on success, NULL otherwise
++ */
++struct ipa_uc_ctx *ipa_uc_init(phys_addr_t phys_addr)
 +{
-+	ipa_dma_free(&ipahal_ctx->empty_fltrt_tbl);
++	phys_addr += ipa_reg_n_offset(IPA_SRAM_DIRECT_ACCESS_N, 0);
++	ipa_uc_ctx.shared = ioremap(phys_addr, IPA_RAM_UC_SMEM_SIZE);
++	if (!ipa_uc_ctx.shared)
++		return NULL;
++
++	ipa_add_interrupt_handler(IPA_UC_IRQ_0, ipa_uc_event_handler);
++	ipa_add_interrupt_handler(IPA_UC_IRQ_1, ipa_uc_response_hdlr);
++
++	return &ipa_uc_ctx;
 +}
 +
-+/* Does the given rule ID represent a routing or filter rule miss?
-+ * A rule miss is indicated as an all-1's value in the rt_rule_id
-+ * or flt_rule_id field of the ipahal_pkt_status structure.
-+ */
-+bool ipahal_is_rule_miss_id(u32 id)
++/* Send a command to the microcontroller */
++static void send_uc_command(u32 command, u32 command_param)
 +{
-+	BUILD_BUG_ON(IPA_RULE_ID_BITS < 2);
++	struct ipa_uc_shared_area *shared = ipa_uc_ctx.shared;
 +
-+	return id == (1U << IPA_RULE_ID_BITS) - 1;
++	shared->command = command;
++	shared->command_param = command_param;
++	shared->command_param_hi = 0;
++	shared->response = 0;
++	shared->response_param = 0;
++
++	wmb();	/* ensure write to shared memory is done before triggering uc */
++
++	ipa_write_reg_n(IPA_IRQ_EE_UC_N, IPA_EE_AP, 0x1);
 +}
 +
-+/**
-+ * ipahal_rt_generate_empty_img() - Generate empty route table header
-+ * @route_count:	Number of table entries
-+ * @mem:		DMA memory object representing the header structure
-+ *
-+ * Allocates and fills an "empty" route table header having the given
-+ * number of entries.  Each entry in the table contains the DMA address
-+ * of a routing entry.
-+ *
-+ * This function initializes all entries to point at the preallocated
-+ * empty routing entry in system RAM.
-+ *
-+ * Return:	0 if successful, or a negative error code otherwise
-+ */
-+int ipahal_rt_generate_empty_img(u32 route_count, struct ipa_dma_mem *mem)
++void ipa_uc_panic_notifier(void)
 +{
-+	u64 addr;
-+	int i;
++	if (!ipa_uc_ctx.uc_loaded)
++		return;
 +
-+	BUILD_BUG_ON(!IPA_HW_TBL_HDR_WIDTH);
++	if (!ipa_client_add_additional())
++		return;
 +
-+	if (ipa_dma_alloc(mem, route_count * IPA_HW_TBL_HDR_WIDTH, GFP_KERNEL))
-+		return -ENOMEM;
++	send_uc_command(IPA_UC_COMMAND_ERR_FATAL, 0);
 +
-+	addr = (u64)ipahal_ctx->empty_fltrt_tbl.phys;
-+	for (i = 0; i < route_count; i++)
-+		put_unaligned(addr, mem->virt + i * IPA_HW_TBL_HDR_WIDTH);
++	/* give uc enough time to save state */
++	udelay(IPA_SEND_DELAY);
 +
-+	return 0;
++	ipa_client_remove();
 +}
-+
-+/**
-+ * ipahal_flt_generate_empty_img() - Generate empty filter table header
-+ * @filter_bitmap:	Bitmap representing which endpoints support filtering
-+ * @mem:		DMA memory object representing the header structure
-+ *
-+ * Allocates and fills an "empty" filter table header based on the
-+ * given filter bitmap.
-+ *
-+ * The first slot in a filter table header is a 64-bit bitmap whose
-+ * set bits define which endpoints support filtering.  Following
-+ * this, each set bit in the mask has the DMA address of the filter
-+ * used for the corresponding endpoint.
-+ *
-+ * This function initializes all endpoints that support filtering to
-+ * point at the preallocated empty filter in system RAM.
-+ *
-+ * Note:  the (software) bitmap here uses bit 0 to represent
-+ * endpoint 0, bit 1 for endpoint 1, and so on.  This is different
-+ * from the hardware (which uses bit 1 to represent filter 0, etc.).
-+ *
-+ * Return:	0 if successful, or a negative error code
-+ */
-+int ipahal_flt_generate_empty_img(u64 filter_bitmap, struct ipa_dma_mem *mem)
-+{
-+	u32 filter_count = hweight32(filter_bitmap) + 1;
-+	u64 addr;
-+	int i;
-+
-+	ipa_assert(filter_bitmap);
-+
-+	if (ipa_dma_alloc(mem, filter_count * IPA_HW_TBL_HDR_WIDTH, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	/* Save the endpoint bitmap in the first slot of the table.
-+	 * Convert it from software to hardware representation by
-+	 * shifting it left one position.
-+	 * XXX Does bit position 0 represent global?  At IPA3, global
-+	 * XXX configuration is possible but not used.
-+	 */
-+	put_unaligned(filter_bitmap << 1, mem->virt);
-+
-+	/* Point every entry in the table at the empty filter */
-+	addr = (u64)ipahal_ctx->empty_fltrt_tbl.phys;
-+	for (i = 1; i < filter_count; i++)
-+		put_unaligned(addr, mem->virt + i * IPA_HW_TBL_HDR_WIDTH);
-+
-+	return 0;
-+}
-+
-+void ipahal_free_empty_img(struct ipa_dma_mem *mem)
-+{
-+	ipa_dma_free(mem);
-+}
-diff --git a/drivers/net/ipa/ipahal.h b/drivers/net/ipa/ipahal.h
-new file mode 100644
-index 000000000000..940254940d90
---- /dev/null
-+++ b/drivers/net/ipa/ipahal.h
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ * Copyright (C) 2018 Linaro Ltd.
-+ */
-+#ifndef _IPAHAL_H_
-+#define _IPAHAL_H_
-+
-+#include <linux/types.h>
-+
-+#include "ipa_dma.h"
-+
-+/* The IPA implements offloaded packet filtering and routing
-+ * capabilities.  This is managed by programming IPA-resident
-+ * tables of rules that define the processing that should be
-+ * performed by the IPA and the conditions under which they
-+ * should be applied.  Aspects of these rules are constrained
-+ * by things like table entry sizes and alignment requirements;
-+ * all of these are in units of bytes.  These definitions are
-+ * subject to some constraints:
-+ * - IPA_HW_TBL_WIDTH must be non-zero
-+ * - IPA_HW_TBL_SYSADDR_ALIGN must be a non-zero power of 2
-+ * - IPA_HW_TBL_HDR_WIDTH must be non-zero
-+ *
-+ * Values could differ for different versions of IPA hardware.
-+ * These values are for v3.5.1, found in the SDM845.
-+ */
-+#define IPA_HW_TBL_WIDTH		8
-+#define IPA_HW_TBL_SYSADDR_ALIGN	128
-+#define IPA_HW_TBL_HDR_WIDTH		8
-+
-+/**
-+ * ipahal_dma_shared_mem_write_pyld() - Write to shared memory command payload
-+ *
-+ * Return a pointer to the payload for a DMA shared memory write immediate
-+ * command, or null if one can't be allocated.  Result is dynamically
-+ * allocated, and caller must ensure it gets released by providing it to
-+ * ipahal_destroy_imm_cmd() when it is no longer needed.
-+ *
-+ * Return:	 Pointer to the immediate command payload, or NULL
-+ */
-+void *ipahal_dma_shared_mem_write_pyld(struct ipa_dma_mem *mem, u32 offset);
-+
-+/**
-+ * ipahal_hdr_init_local_pyld() - Header initialization command payload
-+ * mem:		DMA buffer containing data for initialization
-+ * offset:	Where in location IPA local memory to write
-+ *
-+ * Return a pointer to the payload for a header init local immediate
-+ * command, or null if one can't be allocated.  Caller must ensure result
-+ * gets released by providing it to ipahal_destroy_imm_cmd().
-+ *
-+ * Return:	 Pointer to the immediate command payload, or NULL
-+ */
-+void *ipahal_hdr_init_local_pyld(struct ipa_dma_mem *mem, u32 offset);
-+
-+/**
-+ * ipahal_ip_v4_routing_init_pyld() - IPv4 routing table initialization payload
-+ * mem:		The IPv4 routing table data to be written
-+ * hash_offset:	The location in IPA memory for a hashed routing table
-+ * nhash_offset: The location in IPA memory for a non-hashed routing table
-+ *
-+ * Return a pointer to the payload for an IPv4 routing init immediate
-+ * command, or null if one can't be allocated.  Caller must ensure result
-+ * gets released by providing it to ipahal_destroy_imm_cmd().
-+ *
-+ * Return:	 Pointer to the immediate command payload, or NULL
-+ */
-+void *ipahal_ip_v4_routing_init_pyld(struct ipa_dma_mem *mem,
-+				     u32 hash_offset, u32 nhash_offset);
-+
-+/**
-+ * ipahal_ip_v6_routing_init_pyld() - IPv6 routing table initialization payload
-+ * mem:		The IPv6 routing table data to be written
-+ * hash_offset:	The location in IPA memory for a hashed routing table
-+ * nhash_offset: The location in IPA memory for a non-hashed routing table
-+ *
-+ * Return a pointer to the payload for an IPv4 routing init immediate
-+ * command, or null if one can't be allocated.  Caller must ensure result
-+ * gets released by providing it to ipahal_destroy_imm_cmd().
-+ *
-+ * Return:	 Pointer to the immediate command payload, or NULL
-+ */
-+void *ipahal_ip_v6_routing_init_pyld(struct ipa_dma_mem *mem,
-+				     u32 hash_offset, u32 nhash_offset);
-+
-+/**
-+ * ipahal_ip_v4_filter_init_pyld() - IPv4 filter table initialization payload
-+ * mem:		The IPv4 filter table data to be written
-+ * hash_offset:	The location in IPA memory for a hashed filter table
-+ * nhash_offset: The location in IPA memory for a non-hashed filter table
-+ *
-+ * Return a pointer to the payload for an IPv4 filter init immediate
-+ * command, or null if one can't be allocated.  Caller must ensure result
-+ * gets released by providing it to ipahal_destroy_imm_cmd().
-+ *
-+ * Return:	 Pointer to the immediate command payload, or NULL
-+ */
-+void *ipahal_ip_v4_filter_init_pyld(struct ipa_dma_mem *mem,
-+				    u32 hash_offset, u32 nhash_offset);
-+
-+/**
-+ * ipahal_ip_v6_filter_init_pyld() - IPv6 filter table initialization payload
-+ * mem:		The IPv6 filter table data to be written
-+ * hash_offset:	The location in IPA memory for a hashed filter table
-+ * nhash_offset: The location in IPA memory for a non-hashed filter table
-+ *
-+ * Return a pointer to the payload for an IPv4 filter init immediate
-+ * command, or null if one can't be allocated.  Caller must ensure result
-+ * gets released by providing it to ipahal_destroy_imm_cmd().
-+ *
-+ * Return:	 Pointer to the immediate command payload, or NULL
-+ */
-+void *ipahal_ip_v6_filter_init_pyld(struct ipa_dma_mem *mem,
-+				    u32 hash_offset, u32 nhash_offset);
-+
-+/**
-+ * ipahal_dma_task_32b_addr_pyld() - 32-bit DMA task command payload
-+ * mem:		DMA memory involved in the task
-+ *
-+ * Return a pointer to the payload for DMA task 32-bit address immediate
-+ * command, or null if one can't be allocated.  Caller must ensure result
-+ * gets released by providing it to ipahal_destroy_imm_cmd().
-+ */
-+void *ipahal_dma_task_32b_addr_pyld(struct ipa_dma_mem *mem);
-+
-+/**
-+ * ipahal_payload_free() - Release an allocated immediate command payload
-+ * @payload:	Payload to be released
-+ */
-+void ipahal_payload_free(void *payload);
-+
-+/**
-+ * enum ipahal_pkt_status_opcode - Packet Status Opcode
-+ * @IPAHAL_STATUS_OPCODE_PACKET_2ND_PASS: Packet Status generated as part of
-+ *  IPA second processing pass for a packet (i.e. IPA XLAT processing for
-+ *  the translated packet).
-+ *
-+ *  The values assigned here are assumed by ipa_pkt_status_parse()
-+ *  to match values returned in the status_opcode field of a
-+ *  ipa_pkt_status_hw structure inserted by the IPA in received
-+ *  buffer.
-+ */
-+enum ipahal_pkt_status_opcode {
-+	IPAHAL_PKT_STATUS_OPCODE_PACKET			= 0x01,
-+	IPAHAL_PKT_STATUS_OPCODE_NEW_FRAG_RULE		= 0x02,
-+	IPAHAL_PKT_STATUS_OPCODE_DROPPED_PACKET		= 0x04,
-+	IPAHAL_PKT_STATUS_OPCODE_SUSPENDED_PACKET	= 0x08,
-+	IPAHAL_PKT_STATUS_OPCODE_LOG			= 0x10,
-+	IPAHAL_PKT_STATUS_OPCODE_DCMP			= 0x20,
-+	IPAHAL_PKT_STATUS_OPCODE_PACKET_2ND_PASS	= 0x40,
-+};
-+
-+/**
-+ * enum ipahal_pkt_status_exception - Packet Status exception type
-+ * @IPAHAL_PKT_STATUS_EXCEPTION_PACKET_LENGTH: formerly IHL exception.
-+ *
-+ * Note: IPTYPE, PACKET_LENGTH and PACKET_THRESHOLD exceptions means that
-+ *  partial / no IP processing took place and corresponding Status Mask
-+ *  fields should be ignored. Flt and rt info is not valid.
-+ *
-+ * NOTE:: Any change to this enum, need to change to
-+ *	ipahal_pkt_status_exception_to_str array as well.
-+ */
-+enum ipahal_pkt_status_exception {
-+	IPAHAL_PKT_STATUS_EXCEPTION_NONE = 0,
-+	IPAHAL_PKT_STATUS_EXCEPTION_DEAGGR,
-+	IPAHAL_PKT_STATUS_EXCEPTION_IPTYPE,
-+	IPAHAL_PKT_STATUS_EXCEPTION_PACKET_LENGTH,
-+	IPAHAL_PKT_STATUS_EXCEPTION_PACKET_THRESHOLD,
-+	IPAHAL_PKT_STATUS_EXCEPTION_FRAG_RULE_MISS,
-+	IPAHAL_PKT_STATUS_EXCEPTION_SW_FILT,
-+	/* NAT and IPv6CT have the same value at HW.
-+	 * NAT for IPv4 and IPv6CT for IPv6 exceptions
-+	 */
-+	IPAHAL_PKT_STATUS_EXCEPTION_NAT,
-+	IPAHAL_PKT_STATUS_EXCEPTION_IPV6CT,
-+	IPAHAL_PKT_STATUS_EXCEPTION_MAX,
-+};
-+
-+/**
-+ * enum ipahal_pkt_status_mask - Packet Status bitmask values of
-+ *  the contained flags. This bitmask indicates flags on the properties of
-+ *  the packet as well as IPA processing it may had.
-+ * @TAG_VALID: Flag specifying if TAG and TAG info valid?
-+ * @CKSUM_PROCESS: CSUM block processing flag: Was pkt processed by csum block?
-+ *  If so, csum trailer exists
-+ */
-+enum ipahal_pkt_status_mask {
-+	/* Other values are defined but are not specifically handled yet. */
-+	IPAHAL_PKT_STATUS_MASK_CKSUM_PROCESS	= 0x0100,
-+};
-+
-+/**
-+ * struct ipahal_pkt_status - IPA status packet abstracted payload.
-+ * @status_opcode: The type of status (Opcode).
-+ * @exception: The first exception that took place.
-+ *  In case of exception, endp_src_idx and pkt_len are always valid.
-+ * @status_mask: Bit mask for flags on several properties on the packet
-+ *  and processing it may passed at IPA.
-+ * @pkt_len: Pkt pyld len including hdr and retained hdr if used. Does
-+ *  not include padding or checksum trailer len.
-+ * @endp_src_idx: Source end point index.
-+ * @endp_dest_idx: Destination end point index.
-+ *  Not valid in case of exception
-+ * @metadata: meta data value used by packet
-+ * @rt_miss: Routing miss flag: Was their a routing rule miss?
-+ *
-+ * This structure describes the status packet fields for the following
-+ * status values: IPA_STATUS_PACKET, IPA_STATUS_DROPPED_PACKET,
-+ * IPA_STATUS_SUSPENDED_PACKET.  Other status types have different status
-+ * packet structure.  Note that the hardware supplies additional status
-+ * information that is currently unused.
-+ */
-+struct ipahal_pkt_status {
-+	enum ipahal_pkt_status_opcode status_opcode;
-+	enum ipahal_pkt_status_exception exception;
-+	enum ipahal_pkt_status_mask status_mask;
-+	u32 pkt_len;
-+	u8 endp_src_idx;
-+	u8 endp_dest_idx;
-+	u32 metadata;
-+	bool rt_miss;
-+};
-+
-+/**
-+ * ipahal_pkt_status_get_size() - Get size of a hardware packet status
-+ */
-+u32 ipahal_pkt_status_get_size(void);
-+
-+/* ipahal_pkt_status_parse() - Parse packet status payload
-+ * @unparsed_status:	Packet status read from hardware
-+ * @status:		Buffer to hold parsed status information
-+ */
-+void ipahal_pkt_status_parse(const void *unparsed_status,
-+			     struct ipahal_pkt_status *status);
-+
-+int ipahal_init(void);
-+void ipahal_exit(void);
-+
-+/* Does the given ID represent rule miss? */
-+bool ipahal_is_rule_miss_id(u32 id);
-+
-+int ipahal_rt_generate_empty_img(u32 route_count, struct ipa_dma_mem *mem);
-+int ipahal_flt_generate_empty_img(u64 ep_bitmap, struct ipa_dma_mem *mem);
-+
-+/**
-+ * ipahal_free_empty_img() - Free empty filter or route image
-+ * @mem:	DMA memory containing filter/route data
-+ */
-+void ipahal_free_empty_img(struct ipa_dma_mem *mem);
-+
-+#endif /* _IPAHAL_H_ */
 -- 
 2.17.1
 
