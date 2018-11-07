@@ -2,128 +2,93 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D775C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10481C46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11C12089A
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11C12089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id CD1302081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:25:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="i6eBBq8l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1302081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbeKHAyN (ORCPT
+        id S1727816AbeKHA4k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:54:13 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:47286 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726830AbeKHAyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:54:13 -0500
-Received: (qmail 1735 invoked by uid 2102); 7 Nov 2018 10:23:23 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 7 Nov 2018 10:23:23 -0500
-Date:   Wed, 7 Nov 2018 10:23:23 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Florian Fainelli <f.fainelli@gmail.com>
-cc:     Al Cooper <al.cooper@broadcom.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        <linux-kernel@vger.kernel.org>, Alban Bedel <albeu@free.fr>,
-        Alex Elder <elder@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <devicetree@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jianguo Sun <sunjianguo1@huawei.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kees Cook <keescook@chromium.org>, <linux-usb@vger.kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH V3 4/6] usb: ohci-platform: Add support for Broadcom STB
- SoC's
-In-Reply-To: <674c3275-de47-57f4-84aa-58b318aef67b@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1811071019090.1542-100000@iolanthe.rowland.org>
+        Wed, 7 Nov 2018 19:56:40 -0500
+Received: from imap.thunk.org ([74.207.234.97]:49172 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727203AbeKHA4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 19:56:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ZeYb+xBNhiWS7emnLY4af3tCaj+iG0cuinpBw5wTrZA=; b=i6eBBq8l2ZF4GFj02hVkcKkPZO
+        HkOsh6PsPObsys46JBgw3rXRzv3E6TQcWSFoKaQmvvvu7I8XJJRAhhKeVK+q+ndPijL7R4CFGMspy
+        Xs8tewATGichb7PJ68zzoBBYR23swEFm69eCr8jklsyyZ+sEErAHS22T+gNpGE7sjTMI=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKPiH-0008Vg-VF; Wed, 07 Nov 2018 15:25:50 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 336657A7D10; Wed,  7 Nov 2018 10:25:49 -0500 (EST)
+Date:   Wed, 7 Nov 2018 10:25:49 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] ext4: lost brelse in __ext4_read_dirblock()
+Message-ID: <20181107152549.GB9919@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+References: <cover.1541011937.git.vvs@virtuozzo.com>
+ <60f19df8-1e65-99a0-cb6b-696d1b530fd4@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60f19df8-1e65-99a0-cb6b-696d1b530fd4@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Nov 2018, Florian Fainelli wrote:
-
-> On 11/6/18 1:40 PM, Al Cooper wrote:
-> > On 11/6/18 11:08 AM, Alan Stern wrote:
-> >> On Mon, 5 Nov 2018, Al Cooper wrote:
-> >>
-> >>> Add support for Broadcom STB SoC's to the ohci platform driver.
-> >>>
-> >>> Signed-off-by: Al Cooper <alcooperx@gmail.com>
-> >>> ---
-> >>
-> >>> @@ -177,6 +189,8 @@ static int ohci_platform_probe(struct
-> >>> platform_device *dev)
-> >>>           ohci->flags |= OHCI_QUIRK_FRAME_NO;
-> >>>       if (pdata->num_ports)
-> >>>           ohci->num_ports = pdata->num_ports;
-> >>> +    if (pdata->suspend_without_phy_exit)
-> >>> +        hcd->suspend_without_phy_exit = 1;
-> >>
-> >> Sorry if I missed this in the earlier discussions...  Is there any
-> >> possibility of adding a DT binding that could express this requirement,
-> >> instead of putting it in the platform data?
-> >>
-> >> Alan Stern
-> >>
-> > 
-> > Alan,
-> > 
-> > That was my original approach but internal review suggested that I use
-> > pdata instead. Below is my original patch for:
+On Wed, Oct 31, 2018 at 10:12:18PM +0300, Vasily Averin wrote:
+> Fixes dc6982ff4db1 ("ext4: refactor code to read directory blocks ...") # 3.9
 > 
-> And the reason for that suggestion was really because it was percevied
-> as encoding a driver behavior as a Device Tree property as opposed to
-> describing something that was inherently and strictly a hardware
-> behavior (therefore suitable for Device Tree).
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> ---
+>  fs/ext4/namei.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index d388cce72db2..1a21e59ede72 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -111,6 +111,7 @@ static struct buffer_head *__ext4_read_dirblock(struct inode *inode,
+>  	if (!bh) {
+>  		ext4_error_inode(inode, func, line, block,
+>  				 "Directory hole found");
+> +		brelse(bh);
+>  		return ERR_PTR(-EFSCORRUPTED);
+>  	}
+>  	dirent = (struct ext4_dir_entry *) bh->b_data;
 
-Right.  The best way to approach this problem is to identify and 
-characterize the hardware behavior which makes this override necessary.  
-Then _that_ can be added to DT, since it will be a property of the 
-hardware rather than of the driver.
+Inside the conditional, bh == NULL, so the brelse isn't needed.
 
-> > Add the ability to skip calling the PHY's exit routine on suspend
-> > and the PHY's init routine on resume. This is to handle a USB PHY
-> > that should have it's power_off function called on suspend but cannot
-> > have it's exit function called because on exit it will disable the
-> > PHY to the point where register accesses to the Host Controllers
-> > using the PHY will be disabled and the host drivers will crash.
+Cheers,
 
-What's special about this PHY?  Why does the exit function mess the PHY 
-up?  Or to put it another way, why doesn't the exit function mess up 
-other PHYs in the same way?
-
-For that matter, can we change the code so that suspend doesn't call 
-the exit function for _any_ PHY?  Will just calling the power_off 
-function be good enough?  If not, then why not?
-
-Alan Stern
-
+						- Ted
