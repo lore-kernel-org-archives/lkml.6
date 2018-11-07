@@ -2,184 +2,346 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0F1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DB0C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9460E20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:59:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="KmVm7576"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9460E20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	by mail.kernel.org (Postfix) with ESMTP id 9463420827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:59:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9463420827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729641AbeKGT2n (ORCPT
+        id S1730567AbeKGT3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:28:43 -0500
-Received: from mail-eopbgr60076.outbound.protection.outlook.com ([40.107.6.76]:22592
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726223AbeKGT2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:28:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vrVQGKw18OK5PCFILqacK4T2/BaCkkhcpI41SmKiDjA=;
- b=KmVm7576G7Mws+krS70v5mxz3cmb/fkiJSnSj8V/lZQLsL9F0RSZKPdadCiQVwsFjvIJrI05Dbllbf5SJbICqeQWf7aap5VVgtiioj87LPiPybvjoeGkjdcIAk0TzeOhdP7tSahWy+RCDMOZZ1wCEr6jaB2G1LWG0dT6l57L2hQ=
-Received: from HE1PR05MB3257.eurprd05.prod.outlook.com (10.170.243.19) by
- HE1PR05MB1868.eurprd05.prod.outlook.com (10.166.86.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.36; Wed, 7 Nov 2018 09:59:02 +0000
-Received: from HE1PR05MB3257.eurprd05.prod.outlook.com
- ([fe80::5829:b089:b09b:ba47]) by HE1PR05MB3257.eurprd05.prod.outlook.com
- ([fe80::5829:b089:b09b:ba47%5]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 09:59:02 +0000
-From:   Tariq Toukan <tariqt@mellanox.com>
-To:     Aaron Lu <aaron.lu@intel.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?UGF3ZcWCIFN0YXN6ZXdza2k=?= <pstaszewski@itcare.pl>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Yoel Caspersen <yoel@kviknet.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: [PATCH v2 1/2] mm/page_alloc: free order-0 pages through PCP in
- page_frag_free()
-Thread-Topic: [PATCH v2 1/2] mm/page_alloc: free order-0 pages through PCP in
- page_frag_free()
-Thread-Index: AQHUdZGVagQSzmtOa0+RnNIAeCEPrqVEFdoA
-Date:   Wed, 7 Nov 2018 09:59:02 +0000
-Message-ID: <ec2e45bb-5c28-8f89-5bb5-041f68f79b51@mellanox.com>
-References: <20181105085820.6341-1-aaron.lu@intel.com>
- <20181106052833.GC6203@intel.com>
-In-Reply-To: <20181106052833.GC6203@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR02CA0024.eurprd02.prod.outlook.com
- (2603:10a6:20b:6e::37) To HE1PR05MB3257.eurprd05.prod.outlook.com
- (2603:10a6:7:35::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tariqt@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR05MB1868;6:28Elo1OXXEDXdsRFZkz2DMjqONre3CMwJetlkKpfv+VH53QdH4OalW2/VtKjzn7R1X6ShCMc4Q1+X/jimDWl5x0KZVN6lfpv9d2rwHcvU25P0q4MsqpoXMhFKcI6RT4ppptBg3zJJ498pe8pfOxO797+ZIK5UBwaVRe2PpTIoxwqBg9JqEvACR3xEkfpskifAGx7gLuRL1r8oMjuVcbpuvhoQTHADbfemlJSAJkkblE+wRNWOzBeowNo81wfrPPiY1gzkVTRhJXLsJc0+q4RsRPUM+WqD9foLLRiZHobDz5Cj62h0bJx4ZzhqeF+QNLJeYCKn/ngfU1lg+Q67cFRusGReHOUJsBgEoq+ieJl1C3neuESnXZwEjvlaA7EyfyOQZFYFQKl4EW9Lo8/qpRKKZTRnSpc1ktu+6p/wZnmIOauqRjE0Xb5fU+BfG5Humk4qiVONDV1tn4M+ZcUlvBJqA==;5:nSiz569QIAsD4CiuQwVBqzcnHw1v/EmQTdKC7uwFJCnQ1Z6PTQNEEswdd8lMpI+KcM0t5z6FjGOvxMgy03Aaqs9DtBT3uJxxhYimIrEBTk45Pn4UtokICH3VQ76jFTIAb1zJba5gJYYrQm7uiOHzqBMkI+GSpDtKUXS9mDEy9xg=;7:eaYiOBUsz+a555ijmGWEAe3RrrbPWqIY9GUpw1htJ2Gb/F1+W7nWZOLCD2i6CGeGMczRkMD69jGoDf4qYgaMelqh9l4sJ8VjdGFCgYfNcu77j1uQsLPID/q13saGYWSq2+K5uBHfnqy6kk9udq+J0g==
-x-ms-office365-filtering-correlation-id: d968f1d9-1130-4be7-c311-08d64497a4ef
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB1868;
-x-ms-traffictypediagnostic: HE1PR05MB1868:
-x-microsoft-antispam-prvs: <HE1PR05MB1868ADDD4A0AEEF45D8395EDAEC40@HE1PR05MB1868.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231382)(944501410)(52105095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR05MB1868;BCL:0;PCL:0;RULEID:;SRVR:HE1PR05MB1868;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(376002)(39860400002)(366004)(54534003)(189003)(199004)(71190400001)(6512007)(6306002)(71200400001)(6116002)(53936002)(7736002)(305945005)(106356001)(6436002)(31686004)(99286004)(25786009)(3846002)(2201001)(86362001)(6246003)(2900100001)(31696002)(105586002)(486006)(52116002)(2906002)(446003)(476003)(2616005)(11346002)(2501003)(110136005)(229853002)(39060400002)(54906003)(97736004)(4326008)(81156014)(186003)(76176011)(966005)(7416002)(81166006)(478600001)(8676002)(256004)(14444005)(26005)(5660300001)(66066001)(36756003)(68736007)(53546011)(386003)(6506007)(102836004)(14454004)(8936002)(6486002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB1868;H:HE1PR05MB3257.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 50yvaebOK6C4d8BIlFJqW186UkHbMgQrBHIB4yxE9Xz3z95TTTzzPCdtH5gycuEfavglW7p+h0YZ+s6Fb5a7YfAUY3Wc33FhJm8xckUZKE03UoHl3FU18X5NFEFxKENnPXppEUl2UxUGX+qE1NCwSpWvEf9/zoyBSNAkuR4mbank/xoVK4RrPIuPMa7ljElSrt13dq8QUTPpo4CJdW6qYcbVkuk1Udhd5wPzdVlyK4F9k7Rz14IUXr6LYUTIHFNJV1efhkr3f1tN2Q27gxqYe5Li/j9VdhyTbGwhsvjNs1B2dkqnrVunNDXiReRUTtzpD0/07uXHU2LVVPoHajmEQDPPwUDqQStcaywLvZfrj/g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8E84CDD3EFD6BC4E914933E12F5749A7@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 7 Nov 2018 14:29:20 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39189 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729691AbeKGT3T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:29:19 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10-v6so16681217wrv.6
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 01:59:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oYwpQrAhoKzJ+woZwVSPBZf/oyN1tgcMdnN1OWo/Bw4=;
+        b=K6E2mURPL+cj145sM76fauj7s7ytYj6K7ARkYCcv4SKEqo2A0rFMDSLNTlianRF2qs
+         iQ/QyMLpvlRPa5MiT6uQ8+8bn6golZqcLvUG8mb+gAZBkfJhuHLb1dlO5SjuI1QV7bli
+         pCp0sxh1chPfV9Jp3KULPfUtdd0vy5s8zjnNWw60mlcJSTQk61OvNQWzQPyvO3gK/+wB
+         5Gf1MtTgJMBYOh0heMhnDjxvFDOngrnS2mKmPwMXfwOokq/u4KNW6mw4+LEFpCsZeRNp
+         l/yChjyqT+XfVknoDiPRJULLijGpc54B0LTmFBplgxORzQn0mt3taLUrHpMOIdzURCYv
+         J5Pw==
+X-Gm-Message-State: AGRZ1gK+XHz6UGaBZhjcLUPoshN14dcbA5xaqPpNG/DAvrVIOoxRmzD1
+        dsSlNSJ7FvIsIjDYuWBKVia83g==
+X-Google-Smtp-Source: AJdET5c9z398mCvdYOhSHcOwsk9bLP6n1IhrT0kZEVO8OfPupgaUnG/22E9UQTXX/pRdtbI4JTIZCA==
+X-Received: by 2002:adf:e443:: with SMTP id t3-v6mr1170097wrm.96.1541584780014;
+        Wed, 07 Nov 2018 01:59:40 -0800 (PST)
+Received: from localhost.localdomain ([151.35.177.55])
+        by smtp.gmail.com with ESMTPSA id v129-v6sm552945wme.45.2018.11.07.01.59.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 01:59:38 -0800 (PST)
+Date:   Wed, 7 Nov 2018 10:59:34 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     lizefan@huawei.com, tj@kernel.org
+Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org,
+        cgroups@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+        rostedt@goodmis.org
+Subject: Re: [PATCH v5 3/5] cgroup/cpuset: make callback_lock raw
+Message-ID: <20181107095934.GX18091@localhost.localdomain>
+References: <20180903142801.20046-1-juri.lelli@redhat.com>
+ <20180903142801.20046-4-juri.lelli@redhat.com>
+ <20180925143416.GD25664@localhost.localdomain>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d968f1d9-1130-4be7-c311-08d64497a4ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 09:59:02.4105
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB1868
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925143416.GD25664@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA2LzExLzIwMTggNzoyOCBBTSwgQWFyb24gTHUgd3JvdGU6DQo+IHBhZ2VfZnJhZ19m
-cmVlKCkgY2FsbHMgX19mcmVlX3BhZ2VzX29rKCkgdG8gZnJlZSB0aGUgcGFnZSBiYWNrIHRvDQo+
-IEJ1ZGR5LiBUaGlzIGlzIE9LIGZvciBoaWdoIG9yZGVyIHBhZ2UsIGJ1dCBmb3Igb3JkZXItMCBw
-YWdlcywgaXQNCj4gbWlzc2VzIHRoZSBvcHRpbWl6YXRpb24gb3Bwb3J0dW5pdHkgb2YgdXNpbmcg
-UGVyLUNwdS1QYWdlcyBhbmQgY2FuDQo+IGNhdXNlIHpvbmUgbG9jayBjb250ZW50aW9uIHdoZW4g
-Y2FsbGVkIGZyZXF1ZW50bHkuDQo+IA0KPiBQYXdlxYIgU3Rhc3pld3NraSByZWNlbnRseSBzaGFy
-ZWQgaGlzIHJlc3VsdCBvZiAnaG93IExpbnV4IGtlcm5lbA0KPiBoYW5kbGVzIG5vcm1hbCB0cmFm
-ZmljJ1sxXSBhbmQgZnJvbSBwZXJmIGRhdGEsIEplc3BlciBEYW5nYWFyZCBCcm91ZXINCj4gZm91
-bmQgdGhlIGxvY2sgY29udGVudGlvbiBjb21lcyBmcm9tIHBhZ2UgYWxsb2NhdG9yOg0KPiANCj4g
-ICAgbWx4NWVfcG9sbF90eF9jcQ0KPiAgICB8DQo+ICAgICAtLTE2LjM0JS0tbmFwaV9jb25zdW1l
-X3NrYg0KPiAgICAgICAgICAgICAgIHwNCj4gICAgICAgICAgICAgICB8LS0xMi42NSUtLV9fZnJl
-ZV9wYWdlc19vaw0KPiAgICAgICAgICAgICAgIHwgICAgICAgICAgfA0KPiAgICAgICAgICAgICAg
-IHwgICAgICAgICAgIC0tMTEuODYlLS1mcmVlX29uZV9wYWdlDQo+ICAgICAgICAgICAgICAgfCAg
-ICAgICAgICAgICAgICAgICAgIHwNCj4gICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAg
-ICAgfC0tMTAuMTAlLS1xdWV1ZWRfc3Bpbl9sb2NrX3Nsb3dwYXRoDQo+ICAgICAgICAgICAgICAg
-fCAgICAgICAgICAgICAgICAgICAgIHwNCj4gICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAg
-ICAgICAgIC0tMC42NSUtLV9yYXdfc3Bpbl9sb2NrDQo+ICAgICAgICAgICAgICAgfA0KPiAgICAg
-ICAgICAgICAgIHwtLTEuNTUlLS1wYWdlX2ZyYWdfZnJlZQ0KPiAgICAgICAgICAgICAgIHwNCj4g
-ICAgICAgICAgICAgICAgLS0xLjQ0JS0tc2tiX3JlbGVhc2VfZGF0YQ0KPiANCj4gSmVzcGVyIGV4
-cGxhaW5lZCBob3cgaXQgaGFwcGVuZWQ6IG1seDUgZHJpdmVyIFJYLXBhZ2UgcmVjeWNsZQ0KPiBt
-ZWNoYW5pc20gaXMgbm90IGVmZmVjdGl2ZSBpbiB0aGlzIHdvcmtsb2FkIGFuZCBwYWdlcyBoYXZl
-IHRvIGdvDQo+IHRocm91Z2ggdGhlIHBhZ2UgYWxsb2NhdG9yLiBUaGUgbG9jayBjb250ZW50aW9u
-IGhhcHBlbnMgZHVyaW5nDQo+IG1seDUgRE1BIFRYIGNvbXBsZXRpb24gY3ljbGUuIEFuZCB0aGUg
-cGFnZSBhbGxvY2F0b3IgY2Fubm90IGtlZXANCj4gdXAgYXQgdGhlc2Ugc3BlZWRzLlsyXQ0KPiAN
-Cj4gSSB0aG91Z2h0IHRoYXQgX19mcmVlX3BhZ2VzX29rKCkgYXJlIG1vc3RseSBmcmVlaW5nIGhp
-Z2ggb3JkZXINCj4gcGFnZXMgYW5kIHRob3VnaHQgdGhpcyBpcyBhbiBsb2NrIGNvbnRlbnRpb24g
-Zm9yIGhpZ2ggb3JkZXIgcGFnZXMNCj4gYnV0IEplc3BlciBleHBsYWluZWQgaW4gZGV0YWlsIHRo
-YXQgX19mcmVlX3BhZ2VzX29rKCkgaGVyZSBhcmUNCj4gYWN0dWFsbHkgZnJlZWluZyBvcmRlci0w
-IHBhZ2VzIGJlY2F1c2UgbWx4NSBpcyB1c2luZyBvcmRlci0wIHBhZ2VzDQo+IHRvIHNhdGlzZnkg
-aXRzIHBhZ2UgcG9vbCBhbGxvY2F0aW9uIHJlcXVlc3QuWzNdDQo+IA0KDQpUaGFua3MgZm9yIHlv
-dXIgcGF0Y2ghDQpBY2tlZC1ieTogVGFyaXEgVG91a2FuIDx0YXJpcXRAbWVsbGFub3guY29tPg0K
-DQo+IFRoZSBmcmVlIHBhdGggYXMgcG9pbnRlZCBvdXQgYnkgSmVzcGVyIGlzOg0KPiBza2JfZnJl
-ZV9oZWFkKCkNCj4gICAgLT4gc2tiX2ZyZWVfZnJhZygpDQo+ICAgICAgLT4gcGFnZV9mcmFnX2Zy
-ZWUoKQ0KPiBBbmQgdGhlIHBhZ2VzIGJlaW5nIGZyZWVkIG9uIHRoaXMgcGF0aCBhcmUgb3JkZXIt
-MCBwYWdlcy4NCj4gDQo+IEZpeCB0aGlzIGJ5IGRvaW5nIHNpbWlsYXIgdGhpbmdzIGFzIGluIF9f
-cGFnZV9mcmFnX2NhY2hlX2RyYWluKCkgLQ0KPiBzZW5kIHRoZSBiZWluZyBmcmVlZCBwYWdlIHRv
-IFBDUCBpZiBpdCdzIGFuIG9yZGVyLTAgcGFnZSwgb3INCj4gZGlyZWN0bHkgdG8gQnVkZHkgaWYg
-aXQgaXMgYSBoaWdoIG9yZGVyIHBhZ2UuDQo+IA0KPiBXaXRoIHRoaXMgY2hhbmdlLCBQYXdlxYIg
-aGFzbid0IG5vdGljZWQgbG9jayBjb250ZW50aW9uIHlldCBpbg0KPiBoaXMgd29ya2xvYWQgYW5k
-IEplc3BlciBoYXMgbm90aWNlZCBhIDclIHBlcmZvcm1hbmNlIGltcHJvdmVtZW50DQo+IHVzaW5n
-IGEgbWljcm8gYmVuY2htYXJrIGFuZCBsb2NrIGNvbnRlbnRpb24gaXMgZ29uZS4gSWxpYXMnIHRl
-c3QNCj4gb24gYSAnbG93JyBzcGVlZCAxR2JpdCBpbnRlcmZhY2Ugb24gYW4gY29ydGV4LWE1MyBz
-aG93cyB+MTElDQo+IHBlcmZvcm1hbmNlIGJvb3N0IHRlc3Rpbmcgd2l0aCA2NGJ5dGUgcGFja2V0
-cyBhbmQgX19mcmVlX3BhZ2VzX29rKCkNCj4gZGlzYXBwZWFyZWQgZnJvbSBwZXJmIHRvcC4NCj4g
-DQo+IFsxXTogaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbmV0ZGV2L21zZzUzMTM2Mi5o
-dG1sDQo+IFsyXTogaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbmV0ZGV2L21zZzUzMTQy
-MS5odG1sDQo+IFszXTogaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbmV0ZGV2L21zZzUz
-MTU1Ni5odG1sDQo+IFJlcG9ydGVkLWJ5OiBQYXdlxYIgU3Rhc3pld3NraSA8cHN0YXN6ZXdza2lA
-aXRjYXJlLnBsPg0KPiBBbmFseXNlZC1ieTogSmVzcGVyIERhbmdhYXJkIEJyb3VlciA8YnJvdWVy
-QHJlZGhhdC5jb20+DQo+IEFja2VkLWJ5OiBWbGFzdGltaWwgQmFia2EgPHZiYWJrYUBzdXNlLmN6
-Pg0KPiBBY2tlZC1ieTogTWVsIEdvcm1hbiA8bWdvcm1hbkB0ZWNoc2luZ3VsYXJpdHkubmV0Pg0K
-PiBBY2tlZC1ieTogSmVzcGVyIERhbmdhYXJkIEJyb3VlciA8YnJvdWVyQHJlZGhhdC5jb20+DQo+
-IEFja2VkLWJ5OiBJbGlhcyBBcGFsb2RpbWFzIDxpbGlhcy5hcGFsb2RpbWFzQGxpbmFyby5vcmc+
-DQo+IFRlc3RlZC1ieTogSWxpYXMgQXBhbG9kaW1hcyA8aWxpYXMuYXBhbG9kaW1hc0BsaW5hcm8u
-b3JnPg0KPiBBY2tlZC1ieTogQWxleGFuZGVyIER1eWNrIDxhbGV4YW5kZXIuaC5kdXlja0BsaW51
-eC5pbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEFhcm9uIEx1IDxhYXJvbi5sdUBpbnRlbC5j
-b20+DQo+IC0tLQ0KPiB2Mjogb25seSBjaGFuZ2Vsb2cgY2hhbmdlczoNCj4gICAgICAtIHJlbW92
-ZSB0aGUgZHVwbGljYXRlZCBza2JfZnJlZV9mcmFnKCkgYXMgcG9pbnRlZCBieSBKZXNwZXI7DQo+
-ICAgICAgLSBhZGQgSWxpYXMnIHRlc3QgcmVzdWx0Ow0KPiAgICAgIC0gYWRkIHBlb3BsZSdzIGFj
-ay90ZXN0IHRhZy4NCj4gDQo+ICAgbW0vcGFnZV9hbGxvYy5jIHwgMTAgKysrKysrKystLQ0KPiAg
-IDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvbW0vcGFnZV9hbGxvYy5jIGIvbW0vcGFnZV9hbGxvYy5jDQo+IGluZGV4IGFl
-MzE4Mzk4NzRiOC4uOTFhOWE2YWY0MWEyIDEwMDY0NA0KPiAtLS0gYS9tbS9wYWdlX2FsbG9jLmMN
-Cj4gKysrIGIvbW0vcGFnZV9hbGxvYy5jDQo+IEBAIC00NTU1LDggKzQ1NTUsMTQgQEAgdm9pZCBw
-YWdlX2ZyYWdfZnJlZSh2b2lkICphZGRyKQ0KPiAgIHsNCj4gICAJc3RydWN0IHBhZ2UgKnBhZ2Ug
-PSB2aXJ0X3RvX2hlYWRfcGFnZShhZGRyKTsNCj4gICANCj4gLQlpZiAodW5saWtlbHkocHV0X3Bh
-Z2VfdGVzdHplcm8ocGFnZSkpKQ0KPiAtCQlfX2ZyZWVfcGFnZXNfb2socGFnZSwgY29tcG91bmRf
-b3JkZXIocGFnZSkpOw0KPiArCWlmICh1bmxpa2VseShwdXRfcGFnZV90ZXN0emVybyhwYWdlKSkp
-IHsNCj4gKwkJdW5zaWduZWQgaW50IG9yZGVyID0gY29tcG91bmRfb3JkZXIocGFnZSk7DQo+ICsN
-Cj4gKwkJaWYgKG9yZGVyID09IDApDQo+ICsJCQlmcmVlX3VucmVmX3BhZ2UocGFnZSk7DQo+ICsJ
-CWVsc2UNCj4gKwkJCV9fZnJlZV9wYWdlc19vayhwYWdlLCBvcmRlcik7DQo+ICsJfQ0KPiAgIH0N
-Cj4gICBFWFBPUlRfU1lNQk9MKHBhZ2VfZnJhZ19mcmVlKTsNCj4gICANCj4gDQo=
+Hi,
+
+Ping.
+
+Thanks,
+
+- Juri
+
+On 25/09/18 16:34, Juri Lelli wrote:
+> Hi Li Zefan and Tejun Heo,
+> 
+> It would be great if you could please have a look at the proposed change
+> below (and the rest of the set of course :-).
+> 
+> Another bit that I'd be more comfortable after hearing your word on it
+> is this one (discussed over 5/5):
+> 
+> https://lore.kernel.org/lkml/20180925130750.GA25664@localhost.localdomain/
+> 
+> Best,
+> 
+> - Juri
+> 
+> On 03/09/18 16:27, Juri Lelli wrote:
+> > callback_lock grants the holder read-only access to cpusets.  For fixing
+> > a synchronization issue between cpusets and scheduler core, it is now
+> > required to make callback_lock available to core scheduler code.
+> > 
+> > Convert callback_lock to raw_spin_lock, so that it will be always safe
+> > to acquire it from atomic context.
+> > 
+> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> > ---
+> >  kernel/cgroup/cpuset.c | 66 +++++++++++++++++++++---------------------
+> >  1 file changed, 33 insertions(+), 33 deletions(-)
+> > 
+> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> > index 266f10cb7222..5b43f482fa0f 100644
+> > --- a/kernel/cgroup/cpuset.c
+> > +++ b/kernel/cgroup/cpuset.c
+> > @@ -288,7 +288,7 @@ static struct cpuset top_cpuset = {
+> >   */
+> >  
+> >  static DEFINE_MUTEX(cpuset_mutex);
+> > -static DEFINE_SPINLOCK(callback_lock);
+> > +static DEFINE_RAW_SPINLOCK(callback_lock);
+> >  
+> >  static struct workqueue_struct *cpuset_migrate_mm_wq;
+> >  
+> > @@ -922,9 +922,9 @@ static void update_cpumasks_hier(struct cpuset *cs, struct cpumask *new_cpus)
+> >  			continue;
+> >  		rcu_read_unlock();
+> >  
+> > -		spin_lock_irq(&callback_lock);
+> > +		raw_spin_lock_irq(&callback_lock);
+> >  		cpumask_copy(cp->effective_cpus, new_cpus);
+> > -		spin_unlock_irq(&callback_lock);
+> > +		raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  		WARN_ON(!is_in_v2_mode() &&
+> >  			!cpumask_equal(cp->cpus_allowed, cp->effective_cpus));
+> > @@ -989,9 +989,9 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+> >  	if (retval < 0)
+> >  		return retval;
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	cpumask_copy(cs->cpus_allowed, trialcs->cpus_allowed);
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  	/* use trialcs->cpus_allowed as a temp variable */
+> >  	update_cpumasks_hier(cs, trialcs->cpus_allowed);
+> > @@ -1175,9 +1175,9 @@ static void update_nodemasks_hier(struct cpuset *cs, nodemask_t *new_mems)
+> >  			continue;
+> >  		rcu_read_unlock();
+> >  
+> > -		spin_lock_irq(&callback_lock);
+> > +		raw_spin_lock_irq(&callback_lock);
+> >  		cp->effective_mems = *new_mems;
+> > -		spin_unlock_irq(&callback_lock);
+> > +		raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  		WARN_ON(!is_in_v2_mode() &&
+> >  			!nodes_equal(cp->mems_allowed, cp->effective_mems));
+> > @@ -1245,9 +1245,9 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
+> >  	if (retval < 0)
+> >  		goto done;
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	cs->mems_allowed = trialcs->mems_allowed;
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  	/* use trialcs->mems_allowed as a temp variable */
+> >  	update_nodemasks_hier(cs, &trialcs->mems_allowed);
+> > @@ -1338,9 +1338,9 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+> >  	spread_flag_changed = ((is_spread_slab(cs) != is_spread_slab(trialcs))
+> >  			|| (is_spread_page(cs) != is_spread_page(trialcs)));
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	cs->flags = trialcs->flags;
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  	if (!cpumask_empty(trialcs->cpus_allowed) && balance_flag_changed)
+> >  		rebuild_sched_domains_locked();
+> > @@ -1755,7 +1755,7 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
+> >  	cpuset_filetype_t type = seq_cft(sf)->private;
+> >  	int ret = 0;
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  
+> >  	switch (type) {
+> >  	case FILE_CPULIST:
+> > @@ -1774,7 +1774,7 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
+> >  		ret = -EINVAL;
+> >  	}
+> >  
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -1989,12 +1989,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+> >  
+> >  	cpuset_inc();
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	if (is_in_v2_mode()) {
+> >  		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+> >  		cs->effective_mems = parent->effective_mems;
+> >  	}
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  	if (!test_bit(CGRP_CPUSET_CLONE_CHILDREN, &css->cgroup->flags))
+> >  		goto out_unlock;
+> > @@ -2021,12 +2021,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+> >  	}
+> >  	rcu_read_unlock();
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	cs->mems_allowed = parent->mems_allowed;
+> >  	cs->effective_mems = parent->mems_allowed;
+> >  	cpumask_copy(cs->cpus_allowed, parent->cpus_allowed);
+> >  	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  out_unlock:
+> >  	mutex_unlock(&cpuset_mutex);
+> >  	return 0;
+> > @@ -2065,7 +2065,7 @@ static void cpuset_css_free(struct cgroup_subsys_state *css)
+> >  static void cpuset_bind(struct cgroup_subsys_state *root_css)
+> >  {
+> >  	mutex_lock(&cpuset_mutex);
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  
+> >  	if (is_in_v2_mode()) {
+> >  		cpumask_copy(top_cpuset.cpus_allowed, cpu_possible_mask);
+> > @@ -2076,7 +2076,7 @@ static void cpuset_bind(struct cgroup_subsys_state *root_css)
+> >  		top_cpuset.mems_allowed = top_cpuset.effective_mems;
+> >  	}
+> >  
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  	mutex_unlock(&cpuset_mutex);
+> >  }
+> >  
+> > @@ -2174,12 +2174,12 @@ hotplug_update_tasks_legacy(struct cpuset *cs,
+> >  {
+> >  	bool is_empty;
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	cpumask_copy(cs->cpus_allowed, new_cpus);
+> >  	cpumask_copy(cs->effective_cpus, new_cpus);
+> >  	cs->mems_allowed = *new_mems;
+> >  	cs->effective_mems = *new_mems;
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  	/*
+> >  	 * Don't call update_tasks_cpumask() if the cpuset becomes empty,
+> > @@ -2216,10 +2216,10 @@ hotplug_update_tasks(struct cpuset *cs,
+> >  	if (nodes_empty(*new_mems))
+> >  		*new_mems = parent_cs(cs)->effective_mems;
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  	cpumask_copy(cs->effective_cpus, new_cpus);
+> >  	cs->effective_mems = *new_mems;
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  
+> >  	if (cpus_updated)
+> >  		update_tasks_cpumask(cs);
+> > @@ -2312,21 +2312,21 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
+> >  
+> >  	/* synchronize cpus_allowed to cpu_active_mask */
+> >  	if (cpus_updated) {
+> > -		spin_lock_irq(&callback_lock);
+> > +		raw_spin_lock_irq(&callback_lock);
+> >  		if (!on_dfl)
+> >  			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
+> >  		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
+> > -		spin_unlock_irq(&callback_lock);
+> > +		raw_spin_unlock_irq(&callback_lock);
+> >  		/* we don't mess with cpumasks of tasks in top_cpuset */
+> >  	}
+> >  
+> >  	/* synchronize mems_allowed to N_MEMORY */
+> >  	if (mems_updated) {
+> > -		spin_lock_irq(&callback_lock);
+> > +		raw_spin_lock_irq(&callback_lock);
+> >  		if (!on_dfl)
+> >  			top_cpuset.mems_allowed = new_mems;
+> >  		top_cpuset.effective_mems = new_mems;
+> > -		spin_unlock_irq(&callback_lock);
+> > +		raw_spin_unlock_irq(&callback_lock);
+> >  		update_tasks_nodemask(&top_cpuset);
+> >  	}
+> >  
+> > @@ -2425,11 +2425,11 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+> >  {
+> >  	unsigned long flags;
+> >  
+> > -	spin_lock_irqsave(&callback_lock, flags);
+> > +	raw_spin_lock_irqsave(&callback_lock, flags);
+> >  	rcu_read_lock();
+> >  	guarantee_online_cpus(task_cs(tsk), pmask);
+> >  	rcu_read_unlock();
+> > -	spin_unlock_irqrestore(&callback_lock, flags);
+> > +	raw_spin_unlock_irqrestore(&callback_lock, flags);
+> >  }
+> >  
+> >  void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
+> > @@ -2477,11 +2477,11 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
+> >  	nodemask_t mask;
+> >  	unsigned long flags;
+> >  
+> > -	spin_lock_irqsave(&callback_lock, flags);
+> > +	raw_spin_lock_irqsave(&callback_lock, flags);
+> >  	rcu_read_lock();
+> >  	guarantee_online_mems(task_cs(tsk), &mask);
+> >  	rcu_read_unlock();
+> > -	spin_unlock_irqrestore(&callback_lock, flags);
+> > +	raw_spin_unlock_irqrestore(&callback_lock, flags);
+> >  
+> >  	return mask;
+> >  }
+> > @@ -2573,14 +2573,14 @@ bool __cpuset_node_allowed(int node, gfp_t gfp_mask)
+> >  		return true;
+> >  
+> >  	/* Not hardwall and node outside mems_allowed: scan up cpusets */
+> > -	spin_lock_irqsave(&callback_lock, flags);
+> > +	raw_spin_lock_irqsave(&callback_lock, flags);
+> >  
+> >  	rcu_read_lock();
+> >  	cs = nearest_hardwall_ancestor(task_cs(current));
+> >  	allowed = node_isset(node, cs->mems_allowed);
+> >  	rcu_read_unlock();
+> >  
+> > -	spin_unlock_irqrestore(&callback_lock, flags);
+> > +	raw_spin_unlock_irqrestore(&callback_lock, flags);
+> >  	return allowed;
+> >  }
+> >  
+> > -- 
+> > 2.17.1
+> > 
