@@ -2,368 +2,189 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897A5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F21C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3349B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3349B20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0383420862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:22:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VRRpUdNk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0383420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbeKGRt7 (ORCPT
+        id S1728507AbeKGRvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 12:49:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60886 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727212AbeKGRt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 12:49:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E3DB0B6E1;
-        Wed,  7 Nov 2018 08:20:38 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 09:20:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Arun KS <arunks@codeaurora.org>
-Cc:     akpm@linux-foundation.org, keescook@chromium.org,
-        khlebnikov@yandex-team.ru, minchan@kernel.org, vbabka@suse.cz,
-        osalvador@suse.de, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, getarunks@gmail.com
-Subject: Re: [PATCH v2 1/4] mm: Fix multiple evaluvations of totalram_pages
- and managed_pages
-Message-ID: <20181107082037.GX27423@dhcp22.suse.cz>
-References: <1541521310-28739-1-git-send-email-arunks@codeaurora.org>
- <1541521310-28739-2-git-send-email-arunks@codeaurora.org>
+        Wed, 7 Nov 2018 12:51:44 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47722 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbeKGRvo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 12:51:44 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA78Du0O185113;
+        Wed, 7 Nov 2018 08:22:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=oFsd5WsioBYFOcolfg3S2zSWpt+BKhIbFjepumHDN38=;
+ b=VRRpUdNkXuIHDJWYXdJQaxIf/+AYP27TBCcovvw/ZOd4XwpoT49xAWgxu4S+1rXz7Mm0
+ mRDQn+O0aEK8dpr247w1a76SMYGpRJ5+wy+OsajZwxwJ64bHkmTynSBX2KalCzsGFnkh
+ xhJ6W2sX/Qbdro5yUIz3Hp5qhqnyrU1bzar5/bZg+Xc56yRBhfwvyKU47CR/BTMW6ESN
+ 09y7gyf/3NlSXQ0BT8ve3hg5CAGZIyNxIBeNb+u57zSWU45XfAAxjiCVtNUjy87zxYUz
+ mSRJTGn/ipmTUAEE6NxcldJI+iJi5EUcwuJ1ClD2wVtduNutc68A7Uk+5LiJk0hjvRh5 ow== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2nh3mpsxt7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Nov 2018 08:22:20 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA78MEBr030157
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Nov 2018 08:22:15 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA78MEnh005862;
+        Wed, 7 Nov 2018 08:22:14 GMT
+Received: from [10.182.69.118] (/10.182.69.118)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 07 Nov 2018 00:22:14 -0800
+Subject: Re: [LKP] a9f38e1dec [ 245.678853] INFO: task mount:580 blocked for
+ more than 120 seconds.
+To:     kernel test robot <rong.a.chen@intel.com>,
+        Omar Sandoval <osandov@fb.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+References: <20181107031643.GD24195@shao2-debian>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <f5f81267-0aea-4ae1-0112-88279598eb07@oracle.com>
+Date:   Wed, 7 Nov 2018 16:22:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541521310-28739-2-git-send-email-arunks@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181107031643.GD24195@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9069 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811070077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 06-11-18 21:51:47, Arun KS wrote:
-> This patch is in preparation to a later patch which converts totalram_pages
-> and zone->managed_pages to atomic variables. This patch does not introduce
-> any functional changes.
 
-I forgot to comment on this one. The patch makes a lot of sense. But I
-would be little bit more conservative and won't claim "no functional
-changes". As things stand now multiple reads in the same function are
-racy (without holding the lock). I do not see any example of an
-obviously harmful case but claiming the above is too strong of a
-statement. I would simply go with something like "Please note that
-re-reading the value might lead to a different value and as such it
-could lead to unexpected behavior. There are no known bugs as a result
-of the current code but it is better to prevent from them in principle."
 
-> Signed-off-by: Arun KS <arunks@codeaurora.org>
-> Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-
-Other than that
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  arch/um/kernel/mem.c                 |  3 +--
->  arch/x86/kernel/cpu/microcode/core.c |  5 +++--
->  drivers/hv/hv_balloon.c              | 19 ++++++++++---------
->  fs/file_table.c                      |  7 ++++---
->  kernel/fork.c                        |  5 +++--
->  kernel/kexec_core.c                  |  5 +++--
->  mm/page_alloc.c                      |  5 +++--
->  mm/shmem.c                           |  3 ++-
->  net/dccp/proto.c                     |  7 ++++---
->  net/netfilter/nf_conntrack_core.c    |  7 ++++---
->  net/netfilter/xt_hashlimit.c         |  5 +++--
->  net/sctp/protocol.c                  |  7 ++++---
->  12 files changed, 44 insertions(+), 34 deletions(-)
+On 11/7/18 11:16 AM, kernel test robot wrote:
+> Greetings,
 > 
-> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-> index 1067469..134d3fd 100644
-> --- a/arch/um/kernel/mem.c
-> +++ b/arch/um/kernel/mem.c
-> @@ -51,8 +51,7 @@ void __init mem_init(void)
->  
->  	/* this will put all low memory onto the freelists */
->  	memblock_free_all();
-> -	max_low_pfn = totalram_pages;
-> -	max_pfn = totalram_pages;
-> +	max_pfn = max_low_pfn = totalram_pages;
->  	mem_init_print_info(NULL);
->  	kmalloc_ok = 1;
->  }
-> diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-> index 2637ff0..99c67ca 100644
-> --- a/arch/x86/kernel/cpu/microcode/core.c
-> +++ b/arch/x86/kernel/cpu/microcode/core.c
-> @@ -434,9 +434,10 @@ static ssize_t microcode_write(struct file *file, const char __user *buf,
->  			       size_t len, loff_t *ppos)
->  {
->  	ssize_t ret = -EINVAL;
-> +	unsigned long totalram_pgs = totalram_pages;
->  
-> -	if ((len >> PAGE_SHIFT) > totalram_pages) {
-> -		pr_err("too much data (max %ld pages)\n", totalram_pages);
-> +	if ((len >> PAGE_SHIFT) > totalram_pgs) {
-> +		pr_err("too much data (max %ld pages)\n", totalram_pgs);
->  		return ret;
->  	}
->  
-> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-> index 4163151..cac4945 100644
-> --- a/drivers/hv/hv_balloon.c
-> +++ b/drivers/hv/hv_balloon.c
-> @@ -1090,6 +1090,7 @@ static void process_info(struct hv_dynmem_device *dm, struct dm_info_msg *msg)
->  static unsigned long compute_balloon_floor(void)
->  {
->  	unsigned long min_pages;
-> +	unsigned long totalram_pgs = totalram_pages;
->  #define MB2PAGES(mb) ((mb) << (20 - PAGE_SHIFT))
->  	/* Simple continuous piecewiese linear function:
->  	 *  max MiB -> min MiB  gradient
-> @@ -1102,16 +1103,16 @@ static unsigned long compute_balloon_floor(void)
->  	 *    8192       744    (1/16)
->  	 *   32768      1512	(1/32)
->  	 */
-> -	if (totalram_pages < MB2PAGES(128))
-> -		min_pages = MB2PAGES(8) + (totalram_pages >> 1);
-> -	else if (totalram_pages < MB2PAGES(512))
-> -		min_pages = MB2PAGES(40) + (totalram_pages >> 2);
-> -	else if (totalram_pages < MB2PAGES(2048))
-> -		min_pages = MB2PAGES(104) + (totalram_pages >> 3);
-> -	else if (totalram_pages < MB2PAGES(8192))
-> -		min_pages = MB2PAGES(232) + (totalram_pages >> 4);
-> +	if (totalram_pgs < MB2PAGES(128))
-> +		min_pages = MB2PAGES(8) + (totalram_pgs >> 1);
-> +	else if (totalram_pgs < MB2PAGES(512))
-> +		min_pages = MB2PAGES(40) + (totalram_pgs >> 2);
-> +	else if (totalram_pgs < MB2PAGES(2048))
-> +		min_pages = MB2PAGES(104) + (totalram_pgs >> 3);
-> +	else if (totalram_pgs < MB2PAGES(8192))
-> +		min_pages = MB2PAGES(232) + (totalram_pgs >> 4);
->  	else
-> -		min_pages = MB2PAGES(488) + (totalram_pages >> 5);
-> +		min_pages = MB2PAGES(488) + (totalram_pgs >> 5);
->  #undef MB2PAGES
->  	return min_pages;
->  }
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index e49af4c..6e3c088 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -380,10 +380,11 @@ void __init files_init(void)
->  void __init files_maxfiles_init(void)
->  {
->  	unsigned long n;
-> -	unsigned long memreserve = (totalram_pages - nr_free_pages()) * 3/2;
-> +	unsigned long totalram_pgs = totalram_pages;
-> +	unsigned long memreserve = (totalram_pgs - nr_free_pages()) * 3/2;
->  
-> -	memreserve = min(memreserve, totalram_pages - 1);
-> -	n = ((totalram_pages - memreserve) * (PAGE_SIZE / 1024)) / 10;
-> +	memreserve = min(memreserve, totalram_pgs - 1);
-> +	n = ((totalram_pgs - memreserve) * (PAGE_SIZE / 1024)) / 10;
->  
->  	files_stat.max_files = max_t(unsigned long, n, NR_FILE);
->  }
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 07cddff..7823f31 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -739,15 +739,16 @@ void __init __weak arch_task_cache_init(void) { }
->  static void set_max_threads(unsigned int max_threads_suggested)
->  {
->  	u64 threads;
-> +	unsigned long totalram_pgs = totalram_pages;
->  
->  	/*
->  	 * The number of threads shall be limited such that the thread
->  	 * structures may only consume a small part of the available memory.
->  	 */
-> -	if (fls64(totalram_pages) + fls64(PAGE_SIZE) > 64)
-> +	if (fls64(totalram_pgs) + fls64(PAGE_SIZE) > 64)
->  		threads = MAX_THREADS;
->  	else
-> -		threads = div64_u64((u64) totalram_pages * (u64) PAGE_SIZE,
-> +		threads = div64_u64((u64) totalram_pgs * (u64) PAGE_SIZE,
->  				    (u64) THREAD_SIZE * 8UL);
->  
->  	if (threads > max_threads_suggested)
-> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> index 86ef06d..dff217c 100644
-> --- a/kernel/kexec_core.c
-> +++ b/kernel/kexec_core.c
-> @@ -152,6 +152,7 @@ int sanity_check_segment_list(struct kimage *image)
->  	int i;
->  	unsigned long nr_segments = image->nr_segments;
->  	unsigned long total_pages = 0;
-> +	unsigned long totalram_pgs = totalram_pages;
->  
->  	/*
->  	 * Verify we have good destination addresses.  The caller is
-> @@ -217,13 +218,13 @@ int sanity_check_segment_list(struct kimage *image)
->  	 * wasted allocating pages, which can cause a soft lockup.
->  	 */
->  	for (i = 0; i < nr_segments; i++) {
-> -		if (PAGE_COUNT(image->segment[i].memsz) > totalram_pages / 2)
-> +		if (PAGE_COUNT(image->segment[i].memsz) > totalram_pgs / 2)
->  			return -EINVAL;
->  
->  		total_pages += PAGE_COUNT(image->segment[i].memsz);
->  	}
->  
-> -	if (total_pages > totalram_pages / 2)
-> +	if (total_pages > totalram_pgs / 2)
->  		return -EINVAL;
->  
->  	/*
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index a919ba5..173312b 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7245,6 +7245,7 @@ static void calculate_totalreserve_pages(void)
->  		for (i = 0; i < MAX_NR_ZONES; i++) {
->  			struct zone *zone = pgdat->node_zones + i;
->  			long max = 0;
-> +			unsigned long managed_pages = zone->managed_pages;
->  
->  			/* Find valid and maximum lowmem_reserve in the zone */
->  			for (j = i; j < MAX_NR_ZONES; j++) {
-> @@ -7255,8 +7256,8 @@ static void calculate_totalreserve_pages(void)
->  			/* we treat the high watermark as reserved pages. */
->  			max += high_wmark_pages(zone);
->  
-> -			if (max > zone->managed_pages)
-> -				max = zone->managed_pages;
-> +			if (max > managed_pages)
-> +				max = managed_pages;
->  
->  			pgdat->totalreserve_pages += max;
->  
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index ea26d7a..6b91eab 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -114,7 +114,8 @@ static unsigned long shmem_default_max_blocks(void)
->  
->  static unsigned long shmem_default_max_inodes(void)
->  {
-> -	return min(totalram_pages - totalhigh_pages, totalram_pages / 2);
-> +	unsigned long totalram_pgs = totalram_pages;
-> +	return min(totalram_pgs - totalhigh_pages, totalram_pgs / 2);
->  }
->  #endif
->  
-> diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-> index 43733ac..f27daa1 100644
-> --- a/net/dccp/proto.c
-> +++ b/net/dccp/proto.c
-> @@ -1131,6 +1131,7 @@ static inline void dccp_mib_exit(void)
->  static int __init dccp_init(void)
->  {
->  	unsigned long goal;
-> +	unsigned long totalram_pgs = totalram_pages;
->  	int ehash_order, bhash_order, i;
->  	int rc;
->  
-> @@ -1154,10 +1155,10 @@ static int __init dccp_init(void)
->  	 *
->  	 * The methodology is similar to that of the buffer cache.
->  	 */
-> -	if (totalram_pages >= (128 * 1024))
-> -		goal = totalram_pages >> (21 - PAGE_SHIFT);
-> +	if (totalram_pgs >= (128 * 1024))
-> +		goal = totalram_pgs >> (21 - PAGE_SHIFT);
->  	else
-> -		goal = totalram_pages >> (23 - PAGE_SHIFT);
-> +		goal = totalram_pgs >> (23 - PAGE_SHIFT);
->  
->  	if (thash_entries)
->  		goal = (thash_entries *
-> diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-> index ca1168d..0b1801e 100644
-> --- a/net/netfilter/nf_conntrack_core.c
-> +++ b/net/netfilter/nf_conntrack_core.c
-> @@ -2248,6 +2248,7 @@ static __always_inline unsigned int total_extension_size(void)
->  
->  int nf_conntrack_init_start(void)
->  {
-> +	unsigned long totalram_pgs = totalram_pages;
->  	int max_factor = 8;
->  	int ret = -ENOMEM;
->  	int i;
-> @@ -2267,11 +2268,11 @@ int nf_conntrack_init_start(void)
->  		 * >= 4GB machines have 65536 buckets.
->  		 */
->  		nf_conntrack_htable_size
-> -			= (((totalram_pages << PAGE_SHIFT) / 16384)
-> +			= (((totalram_pgs << PAGE_SHIFT) / 16384)
->  			   / sizeof(struct hlist_head));
-> -		if (totalram_pages > (4 * (1024 * 1024 * 1024 / PAGE_SIZE)))
-> +		if (totalram_pgs > (4 * (1024 * 1024 * 1024 / PAGE_SIZE)))
->  			nf_conntrack_htable_size = 65536;
-> -		else if (totalram_pages > (1024 * 1024 * 1024 / PAGE_SIZE))
-> +		else if (totalram_pgs > (1024 * 1024 * 1024 / PAGE_SIZE))
->  			nf_conntrack_htable_size = 16384;
->  		if (nf_conntrack_htable_size < 32)
->  			nf_conntrack_htable_size = 32;
-> diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-> index 3e7d259..6cb9a74 100644
-> --- a/net/netfilter/xt_hashlimit.c
-> +++ b/net/netfilter/xt_hashlimit.c
-> @@ -274,14 +274,15 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
->  	struct xt_hashlimit_htable *hinfo;
->  	const struct seq_operations *ops;
->  	unsigned int size, i;
-> +	unsigned long totalram_pgs = totalram_pages;
->  	int ret;
->  
->  	if (cfg->size) {
->  		size = cfg->size;
->  	} else {
-> -		size = (totalram_pages << PAGE_SHIFT) / 16384 /
-> +		size = (totalram_pgs << PAGE_SHIFT) / 16384 /
->  		       sizeof(struct hlist_head);
-> -		if (totalram_pages > 1024 * 1024 * 1024 / PAGE_SIZE)
-> +		if (totalram_pgs > 1024 * 1024 * 1024 / PAGE_SIZE)
->  			size = 8192;
->  		if (size < 16)
->  			size = 16;
-> diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-> index 9b277bd..7128f85 100644
-> --- a/net/sctp/protocol.c
-> +++ b/net/sctp/protocol.c
-> @@ -1368,6 +1368,7 @@ static __init int sctp_init(void)
->  	int status = -EINVAL;
->  	unsigned long goal;
->  	unsigned long limit;
-> +	unsigned long totalram_pages;
->  	int max_share;
->  	int order;
->  	int num_entries;
-> @@ -1426,10 +1427,10 @@ static __init int sctp_init(void)
->  	 * The methodology is similar to that of the tcp hash tables.
->  	 * Though not identical.  Start by getting a goal size
->  	 */
-> -	if (totalram_pages >= (128 * 1024))
-> -		goal = totalram_pages >> (22 - PAGE_SHIFT);
-> +	if (totalram_pgs >= (128 * 1024))
-> +		goal = totalram_pgs >> (22 - PAGE_SHIFT);
->  	else
-> -		goal = totalram_pages >> (24 - PAGE_SHIFT);
-> +		goal = totalram_pgs >> (24 - PAGE_SHIFT);
->  
->  	/* Then compute the page order for said goal */
->  	order = get_order(goal);
-> -- 
-> 1.9.1
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+> 
+> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_torvalds_linux.git&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=8qsZc_c8QfZOGoITiebvlt5BO9GBK61cAY4xLOCegFU&s=ZGRhkdRCPvSKvbZzx-HAQtWcDZfzce60e2TMvBQyORo&e= master
+> 
+> commit a9f38e1dec107af70d81338332494bf0a1e76597
+> Author:     Omar Sandoval <osandov@fb.com>
+> AuthorDate: Mon Oct 15 09:21:34 2018 -0600
+> Commit:     Jens Axboe <axboe@kernel.dk>
+> CommitDate: Tue Oct 16 09:50:14 2018 -0600
+> 
+>     floppy: convert to blk-mq
+>     
+>     This driver likes to fetch requests from all over the place, so make
+>     queue_rq put requests on a list so that the logic stays the same. Tested
+>     with QEMU.
+>     
+>     Signed-off-by: Omar Sandoval <osandov@fb.com>
+>     
+>     Converted to blk_mq_init_sq_queue() and fixed a few spots where the
+>     tag_set leaked on cleanup.
+>     
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> 6ec3938cff  ataflop: convert to blk-mq
+> a9f38e1dec  floppy: convert to blk-mq
+> 8053e5b93e  Merge tag 'trace-v4.20-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
+> 337734cbca  Add linux-next specific files for 20181106
+> +---------------------------------------------------------+------------+------------+------------+---------------+
+> |                                                         | 6ec3938cff | a9f38e1dec | 8053e5b93e | next-20181106 |
+> +---------------------------------------------------------+------------+------------+------------+---------------+
+> | boot_successes                                          | 251        | 68         | 69         | 74            |
+> | boot_failures                                           | 48         | 27         | 25         | 23            |
+> | Mem-Info                                                | 48         | 12         | 15         | 7             |
+> | invoked_oom-killer:gfp_mask=0x                          | 6          | 4          | 3          | 2             |
+> | EIP:iov_iter_fault_in_readable                          | 4          | 1          |            |               |
+> | Out_of_memory:Kill_process                              | 3          | 2          | 2          |               |
+> | Out_of_memory_and_no_killable_processes                 | 3          | 2          | 2          |               |
+> | Kernel_panic-not_syncing:System_is_deadlocked_on_memory | 3          | 2          | 2          |               |
+> | EIP:__put_user_4                                        | 1          |            |            |               |
+> | INFO:task_blocked_for_more_than#seconds                 | 0          | 15         | 10         | 16            |
+> | EIP:lock_is_held_type                                   | 0          | 1          | 0          | 1             |
+> | EIP:native_safe_halt                                    | 0          | 3          |            |               |
+> | Kernel_panic-not_syncing:hung_task:blocked_tasks        | 0          | 15         | 10         | 16            |
+> | EIP:strnlen_user                                        | 0          | 1          |            |               |
+> | EIP:_local_bh_enable                                    | 0          | 1          |            |               |
+> | EIP:__lock_acquire                                      | 0          | 1          | 1          | 1             |
+> | EIP:vprintk_emit                                        | 0          | 1          |            |               |
+> | EIP:do_softirq_own_stack                                | 0          | 0          | 1          |               |
+> | EIP:default_idle                                        | 0          | 0          | 2          | 1             |
+> | EIP:reschedule_interrupt                                | 0          | 0          | 1          |               |
+> | EIP:delay_tsc                                           | 0          | 0          | 0          | 1             |
+> | EIP:copy_page_from_iter                                 | 0          | 0          | 0          | 1             |
+> | EIP:_cond_resched                                       | 0          | 0          | 0          | 1             |
+> +---------------------------------------------------------+------------+------------+------------+---------------+
+> 
+> [  244.196551] random: get_random_u32 called from arch_align_stack+0x2d/0x40 with crng_init=1
+> [  245.254485] _warn_unseeded_randomness: 54 callbacks suppressed
+> [  245.254491] random: get_random_u32 called from copy_process+0x1c8/0x17b0 with crng_init=1
+> [  245.257366] random: get_random_u32 called from arch_pick_mmap_layout+0x110/0x140 with crng_init=1
+> [  245.258675] random: get_random_u32 called from load_elf_binary+0x2b6/0xb48 with crng_init=1
+> [  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
+> [  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
+> [  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  245.682181] mount           D 6372   580      1 0x00000004
+> [  245.683023] Call Trace:
+> [  245.683425]  __schedule+0x2df/0x570
+> [  245.683975]  schedule+0x2d/0x80
+> [  245.684476]  schedule_timeout+0x19d/0x330
+> [  245.685090]  ? wait_for_common+0xa5/0x170
+> [  245.685735]  wait_for_common+0xac/0x170
+> [  245.686339]  ? do_sched_yield+0x90/0x90
+> [  245.686935]  wait_for_completion+0x12/0x20
+> [  245.687571]  __floppy_read_block_0+0xfb/0x150
+> [  245.688244]  ? floppy_resume+0x40/0x40
+> [  245.688844]  floppy_revalidate+0x20f/0x240
+> [  245.689486]  check_disk_change+0x43/0x60
+> [  245.690087]  floppy_open+0x1ea/0x360
+> [  245.690653]  __blkdev_get+0xb4/0x4d0
+> [  245.691212]  ? blkdev_get+0x1db/0x370
+> [  245.691777]  blkdev_get+0x1f3/0x370
+> [  245.692351]  ? path_put+0x15/0x20
+> [  245.692871]  ? lookup_bdev+0x4b/0x90
+> [  245.693539]  blkdev_get_by_path+0x3d/0x80
+> [  245.694165]  mount_bdev+0x2a/0x190
+> [  245.694695]  squashfs_mount+0x10/0x20
+> [  245.695271]  ? squashfs_alloc_inode+0x30/0x30
+> [  245.695960]  mount_fs+0xf/0x90
+> [  245.696451]  vfs_kern_mount+0x43/0x130
+> [  245.697036]  do_mount+0x187/0xc40
+> [  245.697563]  ? memdup_user+0x28/0x50
+> [  245.698124]  ksys_mount+0x60/0xc0
+> [  245.698639]  sys_mount+0x19/0x20
+> [  245.699167]  do_int80_syscall_32+0x61/0x130
+> [  245.699813]  entry_INT80_32+0xc7/0xc7
+> [  245.700391] EIP: 0x47f46fee
+> [  245.700829] Code: 11 83 c8 ff eb e2 90 90 90 90 90 90 57 56 53 8b 7c 24 20 8b 74 24 1c 8b 54 24 18 8b 4c 24 14 8b 5c 24 10 b8 15 00 00 00 cd 80 <5b> 5e 5f 3d 01 f0 ff ff 73 01 c3 e8 e8 80 03 00 81 c1 f6 5f 09 00
+> [  245.703680] EAX: ffffffda EBX: affa4efa ECX: affa4f03 EDX: 080d3630
+> [  245.704642] ESI: 00008010 EDI: 00000000 EBP: 00000000 ESP: affa45c0
+> [  245.705637] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000282
 
--- 
-Michal Hocko
-SUSE Labs
+There is not a q->queue_lock as blk-legacy to serialize floppy_queue_rq from different contexts.
+
+Thanks
+Jianchao
