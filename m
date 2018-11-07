@@ -2,109 +2,107 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96976C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188F7C46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 637E92081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637E92081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengaru.com
+	by mail.kernel.org (Postfix) with ESMTP id BA1042081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:33:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="NQ9xzH1Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1042081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeKHGEk (ORCPT
+        id S1726943AbeKHGFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:04:40 -0500
-Received: from shells.gnugeneration.com ([66.240.222.126]:41928 "EHLO
-        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeKHGEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:04:39 -0500
-Received: by shells.gnugeneration.com (Postfix, from userid 1000)
-        id 431141A40326; Wed,  7 Nov 2018 12:32:39 -0800 (PST)
-Date:   Wed, 7 Nov 2018 12:32:39 -0800
-From:   Vito Caputo <vcaputo@pengaru.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Colascione <dancol@google.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, longman@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
-Message-ID: <20181107203239.nsbccdyckeeprjzr@shells.gnugeneration.com>
-References: <20181029192521.23059-1-dave@stgolabs.net>
- <CAKOZuevx9beEB-KWz0gRNaJQLfzu0cu7nuMYaB5ZT1O_ooQYAA@mail.gmail.com>
- <20181106154840.3b448356214afa63dc8cb28c@linux-foundation.org>
- <CAJfpegsdFiM6QWt3VBEDvGdKHfvsvUnm06MC-ha7z_WPTP9znA@mail.gmail.com>
+        Thu, 8 Nov 2018 01:05:04 -0500
+Received: from imap.thunk.org ([74.207.234.97]:50714 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbeKHGFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 01:05:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=A3YRY3+QRbp9EyiO7Z7sJKOubxpVe9EveUMzGVqq/BI=; b=NQ9xzH1ZAVXIww9VmeJSDLkLy1
+        xdw41miKoiX+V1VnOzLVIFXFq4aa6U0HA35JOyVWrYJ3lh76zi/P9e684lGsLr1MZ8e2T3XPXus/j
+        EovqAb3kcufarQvINrY+vZdDwuVnU0H95GgW30/DldJqKnIge10LVb9EkrExGeG9edow=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKUVK-0002pA-2r; Wed, 07 Nov 2018 20:32:46 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4BCAF7A7D27; Wed,  7 Nov 2018 15:32:45 -0500 (EST)
+Date:   Wed, 7 Nov 2018 15:32:45 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Russell King <rmk@armlinux.org.uk>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [TECH TOPIC] SoC maintainer group
+Message-ID: <20181107203245.GK9919@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Olof Johansson <olof@lixom.net>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>, linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Russell King <rmk@armlinux.org.uk>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
+ <20181107171723.GI9919@thunk.org>
+ <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
+ <CAOesGMg+jW7SN2+E_FYbwi8GdNhc8KrEsahB-Nn+AseO6kLGXA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsdFiM6QWt3VBEDvGdKHfvsvUnm06MC-ha7z_WPTP9znA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAOesGMg+jW7SN2+E_FYbwi8GdNhc8KrEsahB-Nn+AseO6kLGXA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 11:03:06AM +0100, Miklos Szeredi wrote:
-> On Wed, Nov 7, 2018 at 12:48 AM, Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> > On Mon, 29 Oct 2018 23:04:45 +0000 Daniel Colascione <dancol@google.com> wrote:
-> >
-> >> On Mon, Oct 29, 2018 at 7:25 PM, Davidlohr Bueso <dave@stgolabs.net> wrote:
-> >> > This patch introduces a new /proc/stat2 file that is identical to the
-> >> > regular 'stat' except that it zeroes all hard irq statistics. The new
-> >> > file is a drop in replacement to stat for users that need performance.
-> >>
-> >> For a while now, I've been thinking over ways to improve the
-> >> performance of collecting various bits of kernel information. I don't
-> >> think that a proliferation of special-purpose named bag-of-fields file
-> >> variants is the right answer, because even if you add a few info-file
-> >> variants, you're still left with a situation where a given file
-> >> provides a particular caller with too little or too much information.
-> >> I'd much rather move to a model in which userspace *explicitly* tells
-> >> the kernel which fields it wants, with the kernel replying with just
-> >> those particular fields, maybe in their raw binary representations.
-> >> The ASCII-text bag-of-everything files would remain available for
-> >> ad-hoc and non-performance critical use, but programs that cared about
-> >> performance would have an efficient bypass. One concrete approach is
-> >> to let users open up today's proc files and, instead of read(2)ing a
-> >> text blob, use an ioctl to retrieve specified and targeted information
-> >> of the sort that would normally be encoded in the text blob. Because
-> >> callers would open the same file when using either the text or binary
-> >> interfaces, little would have to change, and it'd be easy to implement
-> >> fallbacks when a particular system doesn't support a particular
-> >> fast-path ioctl.
+On Wed, Nov 07, 2018 at 10:47:24AM -0800, Olof Johansson wrote:
 > 
-> Please.   Sysfs, with the one value per file rule, was created exactly
-> for the purpose of eliminating these sort of problems with procfs.  So
-> instead of inventing special purpose interfaces for proc, just make
-> the info available in sysfs, if not already available.
-> 
+> Can we have 3pm-3:30pm on Thursday? It seems relatively low on
+> embedded-related conflicts and at 3  people would have time to migrate
+> from Daniel Vetter's gitlab talk if needed.
 
-I like the sysfs approach to organizing the data, and have wanted
-fd-batching IO syscalls in other circumstances anyways, so I think
-there's a good possibility of something along those lines getting added
-eventually.
+I'd really like to keep the slots all 45 minutes, aligned with the LPC
+referreed paper track, since that's what most MC runners were also
+strongly encouraged to do.  (Although to be fair, it looks like most
+of the MC runners haven't really stuck with that.)
 
-At a past employer I had written some backup software which had to
-reassemble versioned files from chains of reverse differentials (think
-rdiff-backup).  I had all the information needed to quickly construct a
-multi-fd iovec to supply to a single batched readv syscall when
-servicing versioned reads from a FUSE mount that involved a potentially
-long chain of diffs, but no such syscall exists.  The more
-differentials, the more fragmented the operation tended to be, requiring
-increasing numbers of smaller reads across more files to reconstruct the
-buffer.
+The rooms are all fairly close to one another, and if you want to wait
+a few minutes pack up and move next door or across the hall, that's
+fine.  But it's going to be a lot simpler of we tell people that the
+official starting time is 2:45pm.
 
-The same thing would be useful for making reads from large numbers of
-sysfs files less costly.  I presume proposing such a generally
-applicable VFS API addition would meet less resistance than specialized
-proc interfaces, perhaps naively :).
-
-Regards,
-Vito Caputo
+						- Ted
