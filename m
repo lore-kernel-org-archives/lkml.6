@@ -2,151 +2,164 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDCFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3EFC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3FF420862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:51:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzsSTBwG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3FF420862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 203D320892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:52:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203D320892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbeKHCWL (ORCPT
+        id S1731324AbeKHCXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:22:11 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34590 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbeKHCWL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:22:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f1-v6so11740073wmg.1;
-        Wed, 07 Nov 2018 08:50:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FH1CRg9zKXdmOnTWJLsZTHhhSYiFD57sq5PuBYc7CFk=;
-        b=UzsSTBwGZrTJUGDxk1awqN5vfVAiIoBgsRRDaIPBLgEtasDu6fhWBDvoZV+L2m7vOv
-         JRi+/N40C5hwRy1wiIvciufvciS8Hqrw3WdJM4YfjPLOARbr0H51nsKYsDttuUuBeu/K
-         HrQViT2pZmi6cVv8UpodzL7xMXuBH0dTk0aqb3xEHhcdlixcD3i+ssZ5TaQ+xvVpwpTQ
-         1owcd38Y3dTzSKGu/DxA+jTUi19W20vAeYNTr7hKHM0pCSWm0kShgs3JCPGCk2jq8xVo
-         x2iHU0PWCmXioAjjLHvonfobQiuyelgBlEObd73TFoVwf6oeGCxrMT6QgXODXnyNbl2l
-         rXmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FH1CRg9zKXdmOnTWJLsZTHhhSYiFD57sq5PuBYc7CFk=;
-        b=hbtFumg9dwfUczZgebiLvj/wKHKgGG8IzI5dw+ymBOT4kqcuajQ69GYTUyflL9Jw/A
-         1U+i0dV7YxPOKvdJJqAadavWg5yFZnFXeI50NIoYsQMQUQu/2bQ3YbRvZGb5Cc+b445G
-         vUMwR/vqe5d8vS7/n/ZUU+cCVEd39172KD7YEHZGI1UmgxWDVuHf4gSJbto6dwjlFDl1
-         EVjh7k66WtTO/eaGFmtajyci+wfVysQXmQDN5mWelVb2QS27LWCS5N7808WK1c+V/thk
-         pgvaF/0aa/W5zq2/Z7vEvBTJsSza4s+I000OECIqBTi50KWjre5Pb2kWCrA9lrtOk5ch
-         P1jw==
-X-Gm-Message-State: AGRZ1gJO4iaFF17SSd6VGTsm8GWYTnOvOwRgdZ+dD9kVOd1hevGABRqz
-        e5vayIV4B69o2nd+EbiBPig=
-X-Google-Smtp-Source: AJdET5c2seQF7/Aip/jfzXfhwX1j5YBXvbk/ujJ5944RKW4+bWpbv9/OeEE0H9OcHGzDrBnsZDe7Tw==
-X-Received: by 2002:a1c:ee89:: with SMTP id j9-v6mr830950wmi.58.1541609458572;
-        Wed, 07 Nov 2018 08:50:58 -0800 (PST)
-Received: from gmail.com (net-2-42-72-229.cust.vodafonedsl.it. [2.42.72.229])
-        by smtp.gmail.com with ESMTPSA id y9-v6sm613127wru.70.2018.11.07.08.50.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 08:50:57 -0800 (PST)
-From:   Paolo Pisati <p.pisati@gmail.com>
-To:     Woojung Huh <woojung.huh@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        netdev@vger.kernel.org, stable@vger.kernel.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [stable, netdev 4.4+] lan78xx: make sure RX_ADDRL & RX_ADDRH regs are always up to date
-Date:   Wed,  7 Nov 2018 17:50:57 +0100
-Message-Id: <1541609457-28725-1-git-send-email-p.pisati@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 7 Nov 2018 21:23:23 -0500
+Received: from foss.arm.com ([217.140.101.70]:54368 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727676AbeKHCXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:23:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5C81A78;
+        Wed,  7 Nov 2018 08:52:12 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09F2F3F5BD;
+        Wed,  7 Nov 2018 08:52:06 -0800 (PST)
+Date:   Wed, 7 Nov 2018 16:52:00 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org, Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Subject: Re: [PATCH v10 08/22] kasan, arm64: untag address in __kimg_to_phys
+ and _virt_addr_is_linear
+Message-ID: <20181107165200.oaou6cx2lmjzmjyl@lakrids.cambridge.arm.com>
+References: <cover.1541525354.git.andreyknvl@google.com>
+ <b2aa056b65b8f1a410379bf2f6ef439d5d99e8eb.1541525354.git.andreyknvl@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2aa056b65b8f1a410379bf2f6ef439d5d99e8eb.1541525354.git.andreyknvl@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[partial backport upstream 760db29bdc97b73ff60b091315ad787b1deb5cf5]
+Hi Andrey,
 
-Upon invocation, lan78xx_init_mac_address() checks that the mac address present
-in the RX_ADDRL & RX_ADDRH registers is a valid address, if not, it first tries
-to read a new address from an external eeprom or the otp area, and in case both
-read fail (or the address read back is invalid), it randomly generates a new
-one.
+On Tue, Nov 06, 2018 at 06:30:23PM +0100, Andrey Konovalov wrote:
+> __kimg_to_phys (which is used by virt_to_phys) and _virt_addr_is_linear
+> (which is used by virt_addr_valid) assume that the top byte of the address
+> is 0xff, which isn't always the case with tag-based KASAN.
 
-Unfortunately, due to the way the above logic is laid out,
-if both read_eeprom() and read_otp() fail, a new mac address is correctly
-generated but is never written back to RX_ADDRL & RX_ADDRH, leaving the chip in an
-incosistent state and with an invalid mac address (e.g. the nic appears to be
-completely dead, and doesn't receive any packet, etc):
+I'm confused by this. Why/when do kimg address have a non-default tag?
 
-lan78xx_init_mac_address()
-...
-if (lan78xx_read_eeprom(addr ...) || lan78xx_read_otp(addr ...)) {
-	if (is_valid_ether_addr(addr) {
-		// nop...
-	} else {
-		random_ether_addr(addr);
-	}
+Any kimg address is part of the static kernel image, so it's not obvious
+to me how a kimg address would gain a tag. Could you please explain how
+this happens in the commit message?
 
-	// correctly writes back the new address
-	lan78xx_write_reg(RX_ADDRL, addr ...);
-	lan78xx_write_reg(RX_ADDRH, addr ...);
-} else {
-	// XXX if both eeprom and otp read fail, we land here and skip
-	// XXX the RX_ADDRL & RX_ADDRH update completely
-	random_ether_addr(addr);
-}
+> This patch resets the tag in those macros.
+> 
+> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  arch/arm64/include/asm/memory.h | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index 0f1e024a951f..3226a0218b0b 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -92,6 +92,15 @@
+>  #define KASAN_THREAD_SHIFT	0
+>  #endif
+>  
+> +#ifdef CONFIG_KASAN_SW_TAGS
+> +#define KASAN_TAG_SHIFTED(tag)		((unsigned long)(tag) << 56)
+> +#define KASAN_SET_TAG(addr, tag)	(((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
+> +						KASAN_TAG_SHIFTED(tag))
+> +#define KASAN_RESET_TAG(addr)		KASAN_SET_TAG(addr, 0xff)
+> +#else
+> +#define KASAN_RESET_TAG(addr)		addr
+> +#endif
 
-This bug went unnoticed because lan78xx_read_otp() was buggy itself and would
-never fail, up until 4bfc338 "lan78xx: Correctly indicate invalid OTP"
-fixed it and as a side effect uncovered this bug.
+Nit: the rest of the helper macros in this file are lower-case, with
+specialised helpers prefixed with several underscores. Could we please
+stick with that convention?
 
-4.18+ is fine, since the bug was implicitly fixed in 760db29 "lan78xx: Read MAC
-address from DT if present" when the address change logic was reorganized, but
-it's still present in all stable trees below that: linux-4.4.y, linux-4.9.y,
-linux-4.14.y, etc up to linux-4.18.y (not included).
+e.g. have __tag_set() and __tag_reset() helpers.
 
-Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
----
- drivers/net/usb/lan78xx.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> +
+>  #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
+>  
+>  /*
+> @@ -232,7 +241,7 @@ static inline unsigned long kaslr_offset(void)
+>  #define __is_lm_address(addr)	(!!((addr) & BIT(VA_BITS - 1)))
+>  
+>  #define __lm_to_phys(addr)	(((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
+> -#define __kimg_to_phys(addr)	((addr) - kimage_voffset)
+> +#define __kimg_to_phys(addr)	(KASAN_RESET_TAG(addr) - kimage_voffset)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 50e2e10a..114dc55 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1660,13 +1660,6 @@ static void lan78xx_init_mac_address(struct lan78xx_net *dev)
- 				netif_dbg(dev, ifup, dev->net,
- 					  "MAC address set to random addr");
- 			}
--
--			addr_lo = addr[0] | (addr[1] << 8) |
--				  (addr[2] << 16) | (addr[3] << 24);
--			addr_hi = addr[4] | (addr[5] << 8);
--
--			ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
--			ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
- 		} else {
- 			/* generate random MAC */
- 			random_ether_addr(addr);
-@@ -1674,6 +1667,11 @@ static void lan78xx_init_mac_address(struct lan78xx_net *dev)
- 				  "MAC address set to random addr");
- 		}
- 	}
-+	addr_lo = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
-+	addr_hi = addr[4] | (addr[5] << 8);
-+
-+	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
-+	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
- 
- 	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
- 	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
--- 
-2.7.4
+IIUC You need to adjust __lm_to_phys() too, since that could be passed
+an address from SLAB.
 
+Maybe that's done in a later patch, but if so it's confusing to split it
+out that way. It would be nicer to fix all the *_to_*() helpers in one
+go.
+
+>  
+>  #define __virt_to_phys_nodebug(x) ({					\
+>  	phys_addr_t __x = (phys_addr_t)(x);				\
+> @@ -308,7 +317,8 @@ static inline void *phys_to_virt(phys_addr_t x)
+>  #endif
+>  #endif
+>  
+> -#define _virt_addr_is_linear(kaddr)	(((u64)(kaddr)) >= PAGE_OFFSET)
+> +#define _virt_addr_is_linear(kaddr)	(KASAN_RESET_TAG((u64)(kaddr)) >= \
+> +						PAGE_OFFSET)
+
+This is painful to read. Could you please split this like:
+
+#define _virt_addr_is_linear(kaddr) \
+	(__tag_reset((u64)(kaddr)) >= PAGE_OFFSET)
+
+... and we could reformat virt_addr_valid() in the same way while we're
+at it.
+
+Thanks,
+Mark.
