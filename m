@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EDAC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A98DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F3A20882
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:48:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F3A20882
+	by mail.kernel.org (Postfix) with ESMTP id 383AD2077B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:56:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383AD2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeKHJVV (ORCPT
+        id S1728043AbeKHJ3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 04:21:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:37023 "EHLO ozlabs.org"
+        Thu, 8 Nov 2018 04:29:21 -0500
+Received: from ozlabs.org ([203.11.71.1]:50035 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726191AbeKHJVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 04:21:21 -0500
+        id S1727591AbeKHJ3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 04:29:21 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42r35Y1Ttbz9s9G;
-        Thu,  8 Nov 2018 10:48:33 +1100 (AEDT)
+        by ozlabs.org (Postfix) with ESMTPSA id 42r3Gl10Jqz9sBZ;
+        Thu,  8 Nov 2018 10:56:30 +1100 (AEDT)
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        nfont@linux.vnet.ibm.com,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Subject: Re: [PATCH v6 07/18] of: dynamic: change type of of_{at,de}tach_node() to void
-In-Reply-To: <6bc78502-7587-eb9c-237f-d3f031979d42@gmail.com>
-References: <1541431515-25197-1-git-send-email-frowand.list@gmail.com> <1541431515-25197-8-git-send-email-frowand.list@gmail.com> <87tvktqedf.fsf@concordia.ellerman.id.au> <6bc78502-7587-eb9c-237f-d3f031979d42@gmail.com>
-Date:   Thu, 08 Nov 2018 10:48:33 +1100
-Message-ID: <87h8gsqwj2.fsf@concordia.ellerman.id.au>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Rob Herring <rob.herring@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        kirill@shutemov.name, "Linus Walleij" <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Guenter Roeck <linux@roeck-us.net>, jacek.anaszewski@gmail.com,
+        axboe@kernel.dk, "Ulf Hansson" <ulf.hansson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Git pull ack emails..
+In-Reply-To: <20181107114153.187fbc25@bbrezillon>
+References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com> <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com> <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com> <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1> <CAHk-=wh6i5t5jYHrC-ZCdj8qoZWP3BptV87U=G9G4UyunzPf7Q@mail.gmail.com> <20181023200408.GA13179@chatter.qube.local> <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com> <CABGGiszsw=QXPwTe3mf26BG=Pxig6zGcXXJfRA+w0Pawrm5qpQ@mail.gmail.com> <20181026211504.GG27137@sirena.org.uk> <87zhutdrt7.fsf@concordia.ellerman.id.au> <20181107114153.187fbc25@bbrezillon>
+Date:   Thu, 08 Nov 2018 10:56:31 +1100
+Message-ID: <87efbwqw5s.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,41 +52,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frank Rowand <frowand.list@gmail.com> writes:
-> On 11/7/18 4:08 AM, Michael Ellerman wrote:
->> frowand.list@gmail.com writes:
->> 
->>> From: Frank Rowand <frank.rowand@sony.com>
->>>
->>> of_attach_node() and of_detach_node() always return zero, so
->>> their return value is meaningless.
->> 
->> But should they always return zero?
->> 
->> At least __of_attach_node_sysfs() can fail in several ways.
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
+> Hello Michael,
 >
-> Sigh.  And of_reconfig_notify() can fail.  And at one point in the
-> history the return value of of_reconfig_notify() was returned by
-> of_attach_node() if of_reconfig_notify() failed.
+> On Thu, 01 Nov 2018 21:18:28 +1100
+> Michael Ellerman <mpe@ellerman.id.au> wrote:
 >
->> And there's also this in __of_detach_node() which should probably be
->> returning an error:
+>> Mark Brown <broonie@kernel.org> writes:
 >> 
->> 	if (WARN_ON(of_node_check_flag(np, OF_DETACHED)))
->>         	return;
+>> > On Fri, Oct 26, 2018 at 12:36:14PM -0500, Rob Herring wrote:  
+>> >> On Thu, Oct 25, 2018 at 9:14 AM Linus Torvalds
+>> >> <torvalds@linux-foundation.org> wrote:  
+>> >  
+>> >> > Are there other situations where you might want to track something
+>> >> > _outside_ of a pull request? Maybe. I can't really think of a lot of
+>> >> > them, though. Patches etc don't have commit ID's to track, but it  
+>> >
+>> > patchwork gives them IDs and lets you do lookups using them, that's what
+>> > I'm doing.  You can get the ID from a git commit by piping the output of
+>> > git show into parser.py from the patchwork source, it works a lot of the
+>> > time but things like editing the commit message will break it (this is a
+>> > theme with my scripting around the mail stuff...).
+>> >  
+>> >> submissions. For example, with Greg and Mark B you can expect an
+>> >> automated replies. Mark's reply gets threaded with the original, but
+>> >> Greg's do not. For networking, you may or may not get a manual reply,  
+>> >
+>> > Mine *mostly* gets threaded, it's relying on being able to talk to
+>> > patchwork to figure out the message ID at the minute so if the patchwork
+>> > lookup fails for whatever reason it'll just use on what's in the commit
+>> > for the CC list and not thread.  That isn't ideal, especially when I'm
+>> > travelling and my network connection isn't the best, I keep meaning to
+>> > try to figure out a better way which would probably be based on git
+>> > notes as discussed earlier.  
 >> 
+>> Yeah I use git notes for this.
 >> 
->> Seems to me we should instead be fixing these to propagate errors,
->> rather than hiding them?
+>> When I apply a patch I record the patchwork id in a git note, I have a
+>> custom hacked pwclient that does it automatically. I also download the
+>> full mbox from patchwork and stash it in .git/patchwork/<patch id>.
+>> 
+>> Then I have everything I need to generate a properly threaded reply to
+>> the original mail.
+>> 
+>> The git notes work well, if you add the following to your .git/config:
+>> 
+>> [notes]
+>> 	rewriteRef = refs/notes/*
+>> 	displayRef = refs/notes/*
+>> 
+>> Then all notes are copied when you rewrite a commit (rebase), and also
+>> displayed by eg. git show.
+>> 
+>> Every now and then if you do extensive rebasing/splitting you get
+>> commits with the wrong or no patchwork ids. But that's pretty rare and
+>> not that hard to fixup when it happens.
+>> 
+>> There's a slightly sanitised version of some of my scripts here:
+>>   https://github.com/mpe/patchwork-scripts
 >
-> The history of how of_attach_node() stopped propagating errors is
-> a bit more complex than I want to dig into at the moment.  So I'll
-> drop this patch from the series and add investigating this onto
-> my todo list.  I suspect that the result of investigating will be
-> that error return values should not be ignored in of_attach_node()
-> and of_detach_node(), but should instead be propagated to the
-> callers, as you suggest.
+> I had pretty much the same workflow to automatically update the patch
+> status in patchwork when I push things to the MTD tree, but I was
+> lacking the part sending notifications (this was done manually).
+>
+> With your scripts this is now addressed, thanks a lot for sharing
+> them!
 
-Thanks.
+Awesome, glad they helped!
+
+I have some modifications locally to detect when I've merged an entire
+series and only reply to the first patch. At the moment that's all a bit
+too hacky for public viewing, but I'll try and clean it up at some point
+and push it out :)
 
 cheers
