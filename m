@@ -4,167 +4,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE323C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648AEC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B67720883
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:27:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2311020862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:29:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Xh7Z/dKh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B67720883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jzUZ29GA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2311020862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388812AbeKGN4J (ORCPT
+        id S2388843AbeKGN6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 08:56:09 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:40209 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387839AbeKGN4J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 08:56:09 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 68EEF8448C;
-        Wed,  7 Nov 2018 17:27:28 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1541564848;
-        bh=jGpTKjhvRcr/oNvZYZ/8LyNVnvVvDDY7NiAc3U9jtc4=;
-        h=From:To:CC:Subject:Date:References;
-        b=Xh7Z/dKhJ6Zg0If+DDDzNfRenh9XkR7WzZv7BAeC792rD5k9SNihchabgGRk1vy02
-         YIhtprulLTJ/4ek7L669sSPNhZ4tCi5CG4xjEX60EgVVzDgPpo1yQ/eBEJVq0+I9Rm
-         0hsQ+dW4ZjKucUsnRr5zj1ODMwXiVJ3XZhZRYR+Z0k1pbxPmsVmQ95Y1tlkcfXwXsh
-         Jnr4EtuF8xZl4z6N+Apxv0MVs1zzaoK12RHlctuDJ9gCUgdPK2GYUDps91H4krrUzv
-         MmbfyqXjPxWSLKRT3BPexfnCoh7Bsqes5IBa6QdHSaxtLA0tDju4Ss+nBUnKuxrtnR
-         Y/4xR4zvi9aUQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5be269b00001>; Wed, 07 Nov 2018 17:27:28 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 7 Nov 2018 17:27:28 +1300
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Wed, 7 Nov 2018 17:27:28 +1300
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "jdelvare@suse.com" <jdelvare@suse.com>
-CC:     "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: add binding documentation for
- adt7475
-Thread-Topic: [PATCH 1/2] dt-bindings: hwmon: add binding documentation for
- adt7475
-Thread-Index: AQHUdk5nXr6sO2VXpkGFaxm/KObkRw==
-Date:   Wed, 7 Nov 2018 04:27:27 +0000
-Message-ID: <1ed7434bfded41bfba3b739f58f69102@svr-chch-ex1.atlnz.lc>
-References: <20181107040010.27436-1-chris.packham@alliedtelesis.co.nz>
- <20181107040010.27436-2-chris.packham@alliedtelesis.co.nz>
- <64720b73-dddf-783c-a3a4-3f32a748bf5d@roeck-us.net>
-Accept-Language: en-NZ, en-US
+        Wed, 7 Nov 2018 08:58:03 -0500
+Received: from mail-ve1eur01on0044.outbound.protection.outlook.com ([104.47.1.44]:31824
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387839AbeKGN6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 08:58:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PbXj3+yf2algdIN8KgDX8nM5y2isENqetCSxq7iGXSY=;
+ b=jzUZ29GAMN4XUcrO6pSasccMasssmv/KgBYgSgHdcgk8l/LFnU0vmq0YStwqNrPMlCvWXdAg3jAHDqHtpkw+zWcXPt2JH5Ru1EY6DwIkT2/N/q/kuWtmPnsoj+j7swDWd2//iMCx5tgOi64FI59fG1AwXTHrAoaRhuWZ4kpV1DQ=
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
+ AM6PR04MB5461.eurprd04.prod.outlook.com (20.178.93.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Wed, 7 Nov 2018 04:29:19 +0000
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::7d93:8053:57fd:1a00]) by AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::7d93:8053:57fd:1a00%3]) with mapi id 15.20.1273.035; Wed, 7 Nov 2018
+ 04:29:19 +0000
+From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
+To:     Leo Li <leoyang.li@nxp.com>
+CC:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>
+Subject: RE: [PATCH v2 3/4] dts/arm/ls1021a: Clean PCIe controller compatible
+ strings
+Thread-Topic: [PATCH v2 3/4] dts/arm/ls1021a: Clean PCIe controller compatible
+ strings
+Thread-Index: AQHUbEgOmENJU84lvUu8AoxrcxdgO6UyBLqAgBHHDdA=
+Date:   Wed, 7 Nov 2018 04:29:19 +0000
+Message-ID: <AM6PR04MB5781A4335A41AF4DC9D1D87884C40@AM6PR04MB5781.eurprd04.prod.outlook.com>
+References: <20181025094929.29481-1-Zhiqiang.Hou@nxp.com>
+ <20181025094929.29481-4-Zhiqiang.Hou@nxp.com>
+ <CADRPPNQRofR6Upe6_pTNm-bqt0HMVWBOXyYSH8xGvD2g7_nwCA@mail.gmail.com>
+In-Reply-To: <CADRPPNQRofR6Upe6_pTNm-bqt0HMVWBOXyYSH8xGvD2g7_nwCA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB5461;6:8ppMcx1C03hfxO4KJsjYqSZ/y1gErFZ5u2TOKACO3k96cUz5FpTIWNQkbs5gQRXSBBBVqH+WCB67xcqbORCrZzQDOrhCfnlDYzb71O7EFc7U+WF/DrwUwxI3cIe2Q5xq/7CSEprEqmRl1kR6Q4EvFpmq4PN9NW2maXwv9gFdhv8id+XlGEbLJte/UcpOapriO0TmSAChAzd9sC2DJ1J/cCOSkSHUSeBgynS3BUgk0oPQygjt2+/vS3z5BwlRstPx/IDJnUM/bL6F5cesz0YHeM1x5I6B+gNRDkY7huifDvKK/wJx0TRhWcF5gC7yTWbuO5RxXJD5aQ7iAlxwKlDfclHcTM5USej60ELZNhTvBvFPqlJ3XdArgBa7OsWvsKmlwdUzidARA9+xJsoKIixXPEh/xVNsnh67wldyjU77TRwVNVuAh9wAu9SsyE2k4adzPGIx+ApTjVydviYwUtqjfg==;5:ovBjNhcJe6ydd6P0x0EIGxErtk+jdrEVIOMvaQUGt2KuTQWv/m3UPGP3XzfNdUZiJg2qacD6MQP+xPyix4s3W+rHMjeiMtrdHRNpMhjgsq4r5FrqIyO9S7MnAA2cFkzPmomZdpycviWrZesfAw7SHhDi9NL73n8C2B3l83pqpfc=;7:5OXN/r0k78xphCvxnqvu1I8rdQkeUn9frTBKCVzwxKJ4n3b3A2GgbQuWG2yhlYX6z8mg3dbDr/RVvx0GykJ0n9+D6o4bMjo56Vk646/nnvXgJ/cYuLCIQng7FHzmTvHPvUNP8gt3uBftLDLiMp9D8w==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1a913d28-b44b-41fc-1c66-08d6446995ee
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5461;
+x-ms-traffictypediagnostic: AM6PR04MB5461:
+x-microsoft-antispam-prvs: <AM6PR04MB54614708F73EF463131F03A584C40@AM6PR04MB5461.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(258649278758335)(180628864354917)(211936372134217)(153496737603132);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5461;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5461;
+x-forefront-prvs: 08497C3D99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(136003)(376002)(396003)(13464003)(199004)(189003)(71200400001)(53936002)(2906002)(7696005)(14454004)(81156014)(81166006)(55016002)(3846002)(4326008)(68736007)(105586002)(9686003)(8676002)(86362001)(76176011)(6116002)(54906003)(316002)(6436002)(8936002)(25786009)(99286004)(478600001)(229853002)(106356001)(2900100001)(11346002)(476003)(446003)(33656002)(186003)(74316002)(486006)(66066001)(6862004)(256004)(5660300001)(102836004)(6506007)(7736002)(97736004)(53546011)(6636002)(71190400001)(305945005)(6246003)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5461;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: cQOPHQw/dLoSvaZOHpAfxrIXdw3JW1qaLTH4NuUxz5wRmBrqJRE58B4JLy9CMWtLPibO1OdmpHV49GYpSWGdaZAcMH5HrxOvUrAOZ81IA95fVNo/dSuUadX3LHZ3jlUVVTGISOubYIluqmW/HAMhNq2+m/zuaMe0YhC0EDapnVrbLvzVUlSlUeS63CsqAy6SLWTSnznOStGwHHL3AAO54yl07Y5IbpCGZdJK953g7BqqdWEu8giAYeCJPr7lAi2RFLjoR6ZAdA0aA9NvC8x/vDPj8GuGjHD3CnULvveCYl0j7BypIlpgg5THsSZYuSI7CG3GZyBR8kU+kYQ2sei9/N0bmGZLL9efw+2iXaKltfA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a913d28-b44b-41fc-1c66-08d6446995ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 04:29:19.5507
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5461
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/11/18 5:24 PM, Guenter Roeck wrote:=0A=
-> On 11/6/18 8:00 PM, Chris Packham wrote:=0A=
->> With the addition of the invert-pwm property the adt7475 needs its own=
-=0A=
->> binding documentation rather being captured under trivial-devices.txt.=
-=0A=
->>=0A=
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->> ---=0A=
->>    .../devicetree/bindings/hwmon/adt7475.txt     | 22 ++++++++++++++++++=
-+=0A=
->>    .../devicetree/bindings/trivial-devices.txt   |  4 ----=0A=
->>    2 files changed, 22 insertions(+), 4 deletions(-)=0A=
->>    create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.tx=
-t=0A=
->>=0A=
->> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.txt b/Docum=
-entation/devicetree/bindings/hwmon/adt7475.txt=0A=
->> new file mode 100644=0A=
->> index 000000000000..79255439e157=0A=
->> --- /dev/null=0A=
->> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.txt=0A=
->> @@ -0,0 +1,22 @@=0A=
->> +*ADT7475 hwmon sensor.=0A=
->> +=0A=
->> +Required properties:=0A=
->> +- compatible: One of=0A=
->> +	"adi,adt7473"=0A=
->> +	"adi,adt7475"=0A=
->> +	"adi,adt7476"=0A=
->> +	"adi,adt7490"=0A=
->> +=0A=
->> +- reg: I2C address=0A=
->> +=0A=
->> +optional properties:=0A=
->> +=0A=
->> +- invert-pwm: This configures the PWM to use logic low for 100% duty cy=
-cle.=0A=
->> +=0A=
->> +Example:=0A=
->> +=0A=
->> +hwmon@2e {=0A=
->> +	compatible =3D ;=0A=
->> +	reg =3D <0x2e>;=0A=
->> +	invert-pwm;=0A=
-> =0A=
-> If I understand correctly, the flag is set per pwm channel. A single glob=
-al=0A=
-> property seems inappropriate.=0A=
-=0A=
-Yes it is per-channel. But I was having a hard time imagining a hardware =
-=0A=
-design that would use both inverted and non-inverted at the same time.=0A=
-=0A=
-Do you have a preference for how the properties should look?=0A=
-=0A=
-   invert-pwm[123]?=0A=
-=0A=
-   invert-pwm =3D <0x7>;?=0A=
-=0A=
-> =0A=
-> Guenter=0A=
-> =0A=
->> +};=0A=
->> diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Doc=
-umentation/devicetree/bindings/trivial-devices.txt=0A=
->> index 69c934aec13b..4f29100d6bbf 100644=0A=
->> --- a/Documentation/devicetree/bindings/trivial-devices.txt=0A=
->> +++ b/Documentation/devicetree/bindings/trivial-devices.txt=0A=
->> @@ -14,10 +14,6 @@ ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-=
-Pin SOT with SMBus Alert an=0A=
->>    ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor=
--Based Systems=0A=
->>    adi,adt7461		+/-1C TDM Extended Temp Range I.C=0A=
->>    adt7461			+/-1C TDM Extended Temp Range I.C=0A=
->> -adi,adt7473		+/-1C TDM Extended Temp Range I.C=0A=
->> -adi,adt7475		+/-1C TDM Extended Temp Range I.C=0A=
->> -adi,adt7476		+/-1C TDM Extended Temp Range I.C=0A=
->> -adi,adt7490		+/-1C TDM Extended Temp Range I.C=0A=
->>    adi,adxl345		Three-Axis Digital Accelerometer=0A=
->>    adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibility=
- value "adi,adxl345" must be listed too)=0A=
->>    ams,iaq-core		AMS iAQ-Core VOC Sensor=0A=
->>=0A=
-> =0A=
-> =0A=
-=0A=
+SGkgTGVvLA0KDQpUaGFua3MgYSBsb3QgZm9yIHlvdXIgY29tbWVudHMhDQoNCj4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGkgWWFuZyA8bGVveWFuZy5saUBueHAuY29tPg0K
+PiBTZW50OiAyMDE45bm0MTDmnIgyN+aXpSA0OjU4DQo+IFRvOiBaLnEuIEhvdSA8emhpcWlhbmcu
+aG91QG54cC5jb20+DQo+IENjOiBtb2RlcmF0ZWQgbGlzdDpBUk0vRlJFRVNDQUxFIElNWCAvIE1Y
+QyBBUk0gQVJDSElURUNUVVJFDQo+IDxsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmc+OyBsa21sIDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsNCj4gbGludXgtcGNpQHZn
+ZXIua2VybmVsLm9yZzsgb3BlbiBsaXN0Ok9QRU4gRklSTVdBUkUgQU5EIEZMQVRURU5FRA0KPiBE
+RVZJQ0UgVFJFRSBCSU5ESU5HUyA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+OyBSb2IgSGVy
+cmluZw0KPiA8cm9iaCtkdEBrZXJuZWwub3JnPjsgU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwu
+b3JnPjsgTWFyayBSdXRsYW5kDQo+IDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IEJqb3JuIEhlbGdh
+YXMgPGJoZWxnYWFzQGdvb2dsZS5jb20+OyBNaW5na2FpDQo+IEh1IDxtaW5na2FpLmh1QG54cC5j
+b20+OyBNLmguIExpYW4gPG1pbmdodWFuLmxpYW5AbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
+QVRDSCB2MiAzLzRdIGR0cy9hcm0vbHMxMDIxYTogQ2xlYW4gUENJZSBjb250cm9sbGVyDQo+IGNv
+bXBhdGlibGUgc3RyaW5ncw0KPiANCj4gT24gVGh1LCBPY3QgMjUsIDIwMTggYXQgNDo1MiBBTSBa
+LnEuIEhvdSA8emhpcWlhbmcuaG91QG54cC5jb20+IHdyb3RlOg0KPiANCj4gVGhlIGNvcnJlY3Qg
+cHJlZml4IGZvciBhcm0gZHRzIHBhdGNoZXMgc2hvdWxkIGJlOiAiQVJNOiBkdHM6IGxzMTAyMWE6
+DQo+IC4uLiIsIGFuZCBpdCBzaG91bGQgYmUgYmV0dGVyIHRvIG1lbnRpb24gdGhlIHN0cmluZyBy
+ZW1vdmVkIGluIHRoZSB0aXRsZSB0b28uDQoNCldpbGwgY29ycmVjdCBpdCBpbiB2My4NCg0KPiAN
+Cj4gPg0KPiA+IEZyb206IEhvdSBaaGlxaWFuZyA8WmhpcWlhbmcuSG91QG54cC5jb20+DQo+ID4N
+Cj4gPiBSZW1vdmVkIHRoZSB3cm9uZyBjb21wYXRpYmxlIHN0cmluZyAic25wcyxkdy1wY2llIiwg
+aW4gY2FzZSBtYXRjaA0KPiA+IGluY29ycmVjdCBkcml2ZXIuDQo+ID4NCj4gPiBTaWduZWQtb2Zm
+LWJ5OiBIb3UgWmhpcWlhbmcgPFpoaXFpYW5nLkhvdUBueHAuY29tPg0KPiA+IC0tLQ0KPiA+IFYy
+Og0KPiA+ICAtIG5vIGNoYW5nZQ0KPiA+DQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL2xzMTAyMWEu
+ZHRzaSB8IDQgKystLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRl
+bGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2xzMTAy
+MWEuZHRzaQ0KPiA+IGIvYXJjaC9hcm0vYm9vdC9kdHMvbHMxMDIxYS5kdHNpIGluZGV4IGJkZDZl
+NjZhNzlhZC4uMWFhYTMyODhhNDUwDQo+ID4gMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vYm9v
+dC9kdHMvbHMxMDIxYS5kdHNpDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvbHMxMDIxYS5k
+dHNpDQo+ID4gQEAgLTcxNiw3ICs3MTYsNyBAQA0KPiA+ICAgICAgICAgICAgICAgICB9Ow0KPiA+
+DQo+ID4gICAgICAgICAgICAgICAgIHBjaWVAMzQwMDAwMCB7DQo+ID4gLSAgICAgICAgICAgICAg
+ICAgICAgICAgY29tcGF0aWJsZSA9ICJmc2wsbHMxMDIxYS1wY2llIiwNCj4gInNucHMsZHctcGNp
+ZSI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJmc2wsbHMxMDIx
+YS1wY2llIjsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MHgwMCAweDAzNDAw
+MDAwIDB4MCAweDAwMDEwMDAwDQo+IC8qIGNvbnRyb2xsZXIgcmVnaXN0ZXJzICovDQo+ID4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4NDAgMHgwMDAwMDAwMCAweDAgMHgwMDAwMjAw
+MD47DQo+IC8qIGNvbmZpZ3VyYXRpb24gc3BhY2UgKi8NCj4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgICByZWctbmFtZXMgPSAicmVncyIsICJjb25maWciOyBAQCAtNzM5LDcNCj4gKzczOSw3DQo+
+ID4gQEANCj4gPiAgICAgICAgICAgICAgICAgfTsNCj4gPg0KPiA+ICAgICAgICAgICAgICAgICBw
+Y2llQDM1MDAwMDAgew0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAi
+ZnNsLGxzMTAyMWEtcGNpZSIsDQo+ICJzbnBzLGR3LXBjaWUiOw0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgIGNvbXBhdGlibGUgPSAiZnNsLGxzMTAyMWEtcGNpZSI7DQo+ID4gICAgICAgICAg
+ICAgICAgICAgICAgICAgcmVnID0gPDB4MDAgMHgwMzUwMDAwMCAweDAgMHgwMDAxMDAwMA0KPiAv
+KiBjb250cm9sbGVyIHJlZ2lzdGVycyAqLw0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAweDQ4IDB4MDAwMDAwMDAgMHgwIDB4MDAwMDIwMDA+Ow0KPiAvKiBjb25maWd1cmF0aW9u
+IHNwYWNlICovDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmVnLW5hbWVzID0gInJlZ3Mi
+LCAiY29uZmlnIjsNCj4gPiAtLQ0KPiA+IDIuMTcuMQ0KPiA+DQoNClRoYW5rcywNClpoaXFpYW5n
+DQo=
