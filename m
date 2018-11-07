@@ -2,119 +2,97 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA38DC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE71C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A26020896
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:47:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="UYKIWahn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A26020896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id DF37A2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:47:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF37A2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730478AbeKGSRA (ORCPT
+        id S1730528AbeKGSRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:17:00 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35280 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeKGSRA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:17:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id x85-v6so14041897ljb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 00:47:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uJhCXDpMB4CHmRSDfpZAmsbG/gVWqnv31v9wAomE9DQ=;
-        b=UYKIWahn4q7dYASO3Ia+VzuPA/IT4DcrhcB4ptTyElig7Zj7YCr45rDWQvSe++Vjs6
-         j2rmIgGu2FVvGGyXqWkwWubD+Q5UVHnIbP/Athwps0PdtDR511BlZBnXX2JIcv5II0g2
-         Bf/3NFFKWafgesPgU4LCrlVng4bSLFDzgQbPzqtTx/N2nOEbmMNQ4qZcDnvl+wnVfDNY
-         I2ezFiBz4SJVSnMSWfq5b37MljRuUd+yvzSWMee7/kNJnn8aB8ptNncblnJz/CLk8wOb
-         M9kGz8CSaAzOty4xIV9fw2nHbAcdDoQsSyM5dHTZwVsXJI6UeV/ipnE+mKygI+kKuy4m
-         TNjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uJhCXDpMB4CHmRSDfpZAmsbG/gVWqnv31v9wAomE9DQ=;
-        b=pXI5xAVmzjIZFPY74FFas4psLSWkrqUvMKtjQ7/tHhXG05/n55woG6yTTYjMyx20DS
-         ldcu8yTrnsZf/S04k/geM4RczByppPVb+LBr9iQIYzkLe8XGxP4H9usveStpEEy9yhMe
-         MXhzmxc9+kJ9hhOQtiJ0mIs1EEbv8TpIyDbf1D4WBxeN5T40rgH7asJXxPffpAE/m51V
-         1CUjhGj6SdDtP1qrDGmQYGwAMwBQx/7RlfV/JVk/mMlYRDibVgU9+rCE5hYgqpqkxUUw
-         q0JpasvzZ7/4nbnZ6EUr28YqOzW9ca3bklVg2eLPaT9ahOu6IO3wtE9y9WsKdQ3NqcJB
-         SRfw==
-X-Gm-Message-State: AGRZ1gKiXBZ6ZzCKmpG5ectpKDyY0b7O8DEYP0pA4i1KWXtFF6SYmVMf
-        FZ5dLEcSxQD2FiMeeJkvNKqnqKJoNDM=
-X-Google-Smtp-Source: AJdET5cjbL96D9EyyRbOjU1G3S3hf30jc+64ieDF6JkpEB54nhoSXAPTPlWheE6Kwn4R78cYdFNnhw==
-X-Received: by 2002:a2e:449c:: with SMTP id b28-v6mr667106ljf.47.1541580456107;
-        Wed, 07 Nov 2018 00:47:36 -0800 (PST)
-Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id a20-v6sm1143905ljf.28.2018.11.07.00.47.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 00:47:35 -0800 (PST)
-Subject: Re: [PATCH v3 0/7] PBLK Bugfixes and cleanups
-To:     hans.ml.holmberg@owltronix.com
-Cc:     javier@cnexlabs.com, sboisvert@gydle.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hans.holmberg@cnexlabs.com
-References: <20181106133330.26570-1-hans.ml.holmberg@owltronix.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <b73d4c3e-bc2e-9a7d-cc8d-abf5dacb874e@lightnvm.io>
-Date:   Wed, 7 Nov 2018 09:47:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 7 Nov 2018 13:17:07 -0500
+Received: from sauhun.de ([88.99.104.3]:55258 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726641AbeKGSRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 13:17:07 -0500
+Received: from localhost (p54B339B3.dip0.t-ipconnect.de [84.179.57.179])
+        by pokefinder.org (Postfix) with ESMTPSA id 526132C0571;
+        Wed,  7 Nov 2018 09:47:43 +0100 (CET)
+Date:   Wed, 7 Nov 2018 09:47:41 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc:     Faiz Abbas <faiz_abbas@ti.com>, linux-mmc@vger.kernel.org,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+Message-ID: <20181107084741.GA31092@kunai>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+ <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
+ <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <20181106133330.26570-1-hans.ml.holmberg@owltronix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/2018 02:33 PM, Hans Holmberg wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> 
-> This series is a slew of bugfixes and cleanups for PBLK, mostly
-> fixing issues found during corner-case testing in QEMU.
-> 
-> Changes since v1:
-> 	Messed up from:, now the patches apply with the correct author
-> 	Pardon the mess.
-> 
-> Changes since v2:
-> 	Fixed kbuild reported issue and potential divide by zero in:
-> 		("lightnvm: pblk: set conservative threshold for user writes")
-> 	Fixed commit message nitpicks reported by Sebastien
-> 
-> The patch-set applies on top of:
-> 	remote https://github.com/OpenChannelSSD/linux.git
-> 	branch for-4.21/core
-> 
-> Hans Holmberg (7):
->    lightnvm: pblk: fix resubmission of overwritten write err lbas
->    lightnvm: pblk: account for write error sectors in emeta
->    lightnvm: pblk: stop writes gracefully when running out of lines
->    lightnvm: pblk: set conservative threshold for user writes
->    lightnvm: pblk: remove unused macro
->    lightnvm: pblk: fix pblk_lines_init error handling path
->    lightnvm: pblk: remove dead code in pblk_recov_l2p
-> 
->   drivers/lightnvm/pblk-init.c     | 45 ++++++++++++++++++--------
->   drivers/lightnvm/pblk-map.c      | 47 ++++++++++++++++-----------
->   drivers/lightnvm/pblk-recovery.c |  1 -
->   drivers/lightnvm/pblk-rl.c       |  5 ++-
->   drivers/lightnvm/pblk-write.c    | 55 +++++++++++++++++++++++---------
->   drivers/lightnvm/pblk.h          | 16 ++++++++--
->   6 files changed, 116 insertions(+), 53 deletions(-)
-> 
 
-Sebastien, would you like me add your Reviewed-by?
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> That also happens to be one of the cards we deploy; However i did
+> wonder about adding a quirk but decided against it as it was not clear
+> to me from the specification that CACHE ON really is meant to complete
+> within GENERIC_CMD6_TIMEOUT. That and i fret about ending up in hit-a-
+> mole games as the failure is really quite tedious (boot failure).=20
+
+I agree that we should use the more defensive variant as a default. I
+mean there should be no performance regression since most cards will
+respond just faster, or? The only downside I could see is that we might
+miss a real timeout with no bounds set and might get stuck? Maybe it is
+worth contacting eMMC spec people to at least know what is the expected
+behaviour?
+
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvipqgACgkQFA3kzBSg
+KbYHLw/7Bv4FJNQWjg+ox2ikLhOwBTCA17ia1KziTy3hpkArpy0hZR4yn+0qBDrl
+kXcsMqMzEQHp4IFZrvFQuNOGR/ItKOW7whg4d3B0VJB2wDtu02Dna05PEe4txu4G
+qjId6n9UHvuR2xBW5wo23MWqXiTMdTcQb5hn0Df1vh8AsajoRTXfLvz0i9RYAJiG
+omER+4GgvToO/PZWdoqskorPIJPRVsz90QIVaeFPoXkDHr2XM+XYsK3Iaos3RJRO
+7W95u8+R4CWAvYbxVvNFgj8oD/y91ntVbkcJz+km6BgR/Y0ck3YeqE0SKbRtFrkk
+YgaqISJDE2MpLR9WKOCGOqTN7bDdiaDgIGUZAErngyBI4WmjUPscZf71UY++SxnV
+5r2u0wyZ5MnXaiQez8+u6G6Z4VrnyhTwHtZDOBeFeQHlcEGKSVEjZ4I4JloNWM0d
+eylx8dAUqvNQQVadwXvlqGxzXN2/2V+dGKc5l1t+h/8vUYMqSHP46qPsCKVgQmcn
+2DRahrpE80xT+//2+XNq3ffGBdzCg/q3WwSqa3bkp861O1Jemp42GQwLHjF9Q/E4
+mk40YBIe4+w6CfVgJ6vXpq/3vcpZ/AivlHuCleXvz02pHC0/irVbeXlmJ5IkPevC
+4cUTJlAc+N3wDvWnEgxmH6e/yyTN1MiZqx+s6NcSxPXkIRdifaI=
+=2ZIL
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
