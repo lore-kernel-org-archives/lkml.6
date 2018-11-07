@@ -2,135 +2,106 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FA5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9EE3C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D36721019
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D36721019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 70F5620989
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70F5620989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeKHHAf (ORCPT
+        id S1727602AbeKHHAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:00:35 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58188 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbeKHHAe (ORCPT
+        Thu, 8 Nov 2018 02:00:39 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54739 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbeKHHAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:00:34 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gKVMk-0003R5-00; Wed, 07 Nov 2018 21:27:58 +0000
-Date:   Wed, 7 Nov 2018 16:27:58 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181107212758.GU5150@brightrain.aerifal.cx>
-References: <CAG48ez1+nGDbuBaKJVPAOzEwiBkXqHHs7vmyAqvbeM42r0nFHg@mail.gmail.com>
- <CALCETrXq1Kj=McxnPVjkscNq-b_7LeoFOdu7qKjHdvwcfFh9Og@mail.gmail.com>
- <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <20181106231730.GR5150@brightrain.aerifal.cx>
- <20181106232616.GA11101@linux.intel.com>
+        Thu, 8 Nov 2018 02:00:39 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA7LRsMW1620791
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 7 Nov 2018 13:27:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA7LRs311620788;
+        Wed, 7 Nov 2018 13:27:54 -0800
+Date:   Wed, 7 Nov 2018 13:27:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Janakarajan Natarajan <tipbot@zytor.com>
+Message-ID: <tip-08e823c2c5899ef2de3aa1727233f1f19e8c1cc1@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, bp@suse.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, dwmw@amazon.co.uk,
+        r.marek@assembler.cz, Janakarajan.Natarajan@amd.com,
+        fenghua.yu@intel.com, konrad.wilk@oracle.com, x86@kernel.org
+Reply-To: tglx@linutronix.de, bp@suse.de, mingo@kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, mingo@redhat.com,
+          r.marek@assembler.cz, dwmw@amazon.co.uk,
+          Janakarajan.Natarajan@amd.com, fenghua.yu@intel.com,
+          konrad.wilk@oracle.com, x86@kernel.org
+In-Reply-To: <1541624211-32196-1-git-send-email-Janakarajan.Natarajan@amd.com>
+References: <1541624211-32196-1-git-send-email-Janakarajan.Natarajan@amd.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/cpufeatures: Add WBNOINVD feature definition
+Git-Commit-ID: 08e823c2c5899ef2de3aa1727233f1f19e8c1cc1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181106232616.GA11101@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 03:26:16PM -0800, Sean Christopherson wrote:
-> On Tue, Nov 06, 2018 at 06:17:30PM -0500, Rich Felker wrote:
-> > On Tue, Nov 06, 2018 at 11:02:11AM -0800, Andy Lutomirski wrote:
-> > > On Tue, Nov 6, 2018 at 10:41 AM Dave Hansen <dave.hansen@intel.com> wrote:
-> > > >
-> > > > On 11/6/18 10:20 AM, Andy Lutomirski wrote:
-> > > > > I almost feel like the right solution is to call into SGX on its own
-> > > > > private stack or maybe even its own private address space.
-> > > >
-> > > > Yeah, I had the same gut feeling.  Couldn't the debugger even treat the
-> > > > enclave like its own "thread" with its own stack and its own set of
-> > > > registers and context?  That seems like a much more workable model than
-> > > > trying to weave it together with the EENTER context.
-> > > 
-> > > So maybe the API should be, roughly
-> > > 
-> > > sgx_exit_reason_t sgx_enter_enclave(pointer_to_enclave, struct
-> > > host_state *state);
-> > > sgx_exit_reason_t sgx_resume_enclave(same args);
-> > > 
-> > > where host_state is something like:
-> > > 
-> > > struct host_state {
-> > >   unsigned long bp, sp, ax, bx, cx, dx, si, di;
-> > > };
-> > > 
-> > > and the values in host_state explicitly have nothing to do with the
-> > > actual host registers.  So, if you want to use the outcall mechanism,
-> > > you'd allocate some memory, point sp to that memory, call
-> > > sgx_enter_enclave(), and then read that memory to do the outcall.
-> > > 
-> > > Actually implementing this would be distinctly nontrivial, and would
-> > > almost certainly need some degree of kernel help to avoid an explosion
-> > > when a signal gets delivered while we have host_state.sp loaded into
-> > > the actual SP register.  Maybe rseq could help with this?
-> > > 
-> > > The ISA here is IMO not well thought through.
-> > 
-> > Maybe I'm mistaken about some fundamentals here, but my understanding
-> > of SGX is that the whole point is that the host application and the
-> > code running in the enclave are mutually adversarial towards one
-> > another. Do any or all of the proposed protocols here account for this
-> > and fully protect the host application from malicious code in the
-> > enclave? It seems that having control over the register file on exit
-> > from the enclave is fundamentally problematic but I assume there must
-> > be some way I'm missing that this is fixed up.
-> 
-> SGX provides protections for the enclave but not the other way around.
-> The kernel has all of its normal non-SGX protections in place, but the
-> enclave can certainly wreak havoc on its userspace process.  The basic
-> design idea is that the enclave is a specialized .so that gets extra
-> security protections but is still effectively part of the overall
-> application, e.g. it has full access to its host userspace process'
-> virtual memory.
+Commit-ID:  08e823c2c5899ef2de3aa1727233f1f19e8c1cc1
+Gitweb:     https://git.kernel.org/tip/08e823c2c5899ef2de3aa1727233f1f19e8c1cc1
+Author:     Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+AuthorDate: Wed, 7 Nov 2018 20:59:07 +0000
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 7 Nov 2018 22:21:03 +0100
 
-In that case it seems like the only way to use SGX that's not a gaping
-security hole is to run the SGX enclave in its own fully-seccomp (or
-equivalent) process, with no host application in the same address
-space. Since the host application can't see the contents of the
-enclave to make any determination of whether it's safe to run, running
-it in the same address space only makes sense if the cpu provides
-protection against unwanted accesses to the host's memory from the
-enclave -- and according to you, it doesn't.
+x86/cpufeatures: Add WBNOINVD feature definition
 
-Rich
+Add a new cpufeature definition for the WBNOINVD instruction.
+
+The WBNOINVD instruction writes all modified cache lines in all levels of
+the cache associated with a processor to main memory while retaining the
+cached values.
+
+Both AMD and Intel support this instruction.
+
+Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: David Woodhouse <dwmw@amazon.co.uk>
+CC: Fenghua Yu <fenghua.yu@intel.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC: Rudolf Marek <r.marek@assembler.cz>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/1541624211-32196-1-git-send-email-Janakarajan.Natarajan@amd.com
+---
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 28c4a502b419..39a48f06d39d 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -281,6 +281,7 @@
+ #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
+ #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
+ #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* Always save/restore FP error pointers */
++#define X86_FEATURE_WBNOINVD		(13*32+ 9) /* WBNOINVD instruction */
+ #define X86_FEATURE_AMD_IBPB		(13*32+12) /* "" Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
