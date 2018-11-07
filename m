@@ -2,28 +2,28 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978DFC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A74C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61B902086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B902086B
+	by mail.kernel.org (Postfix) with ESMTP id B64B42086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64B42086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387990AbeKGTsz (ORCPT
+        id S2388077AbeKGTs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:48:55 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:45516 "EHLO
+        Wed, 7 Nov 2018 14:48:56 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:45542 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730906AbeKGTsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:48:53 -0500
+        id S1730972AbeKGTsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:48:55 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 609925FC7A; Wed,  7 Nov 2018 18:13:16 +0800 (CST)
+        id 3D7B95FB7D; Wed,  7 Nov 2018 18:13:16 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -34,12 +34,10 @@ Cc:     linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
         Loic Poulain <loic.poulain@gmail.com>,
         linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/15] dt-bindings: net: broadcom-bluetooth: Add BCM4330 compatible string
-Date:   Wed,  7 Nov 2018 18:12:57 +0800
-Message-Id: <20181107101308.7626-5-wens@csie.org>
+Subject: [PATCH 00/15] ARM: sunxi: Enable Broadcom-based Bluetooth controllers
+Date:   Wed,  7 Nov 2018 18:12:53 +0800
+Message-Id: <20181107101308.7626-1-wens@csie.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181107101308.7626-1-wens@csie.org>
-References: <20181107101308.7626-1-wens@csie.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,32 +45,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BCM4330 is a 802.11 a/b/g/n WiFi + Bluetooth 4.0 chip from Broadcom.
-It is found in the Ampak AP6330 WiFi+BT module. The partiular one I have
-identifies as BCM4330B1 for Bluetooth and BCM4330/4 for WiFi.
+Hi everyone,
 
-It is unclear if the AP6330 module uses this revision of the BCM4330, or
-if there are multiple revisions. The module does not have revision
-markings. This patch elects to use just BCM4330 for the compatible
-string.
+On many Allwinner SBCs / developer boards, there is a WiFi+BT combo
+module from AMPAK. Inside is either one or two Broadcom chips, depending
+on the model. This series enables the Bluetooth controllers for AMPAK
+AP6210, AP6212, and AP6330 found on several boards. More will come later
+as other SoCs require changes to some other parts. I did not cover the
+SCO PCM connections from the controller to the SoC's I2S interface. It
+seems no one is actually doing this, so I was not sure how to proceed.
+Any suggestions?
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
- 1 file changed, 1 insertion(+)
+I deliberately left out the netdev mailing list and Dave Miller, as the
+only thing that is under net is the binding document. Maybe we should
+move that out of Documentation/devicetree/bindings/net/ ?
 
-diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-index cb50931a6506..33423002c8c2 100644
---- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-+++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-@@ -11,6 +11,7 @@ Required properties:
- 
-  - compatible: should contain one of the following:
-    * "brcm,bcm20702a1"
-+   * "brcm,bcm4330-bt"
-    * "brcm,bcm43438-bt"
- 
- Optional properties:
+Also, I'm not subscribed to the linux-bluetooth ML, so please CC me for
+any discussions.
+
+Patches 1 through 4 are device tree binding changes:
+
+1 - Make the external clock name unambiguous, and add a second entry for
+    the LPO clock.
+
+2 - Add regulator supply properties for the VBAT and VDDIO power pins.
+
+3 - Add a compatible string for BCM20702A1.
+
+4 - Add a compatible string for BCM4330.
+
+Patches 5 through 13 are changes to the driver, either improvements,
+or updates to handle the updated device tree binding.
+
+5 - Make the driver handle deferred probing for the external clock.
+
+6 - Simplify clock error checking for subsequent clk API calls.
+
+7 - Handle clock-names for the main external clock.
+
+8 - Support a new external clock, the LPO.
+
+9 - Support regulator supplies.
+
+10 - Wait a small amount of time after toggling the GPIO for the device
+     to settle.
+
+11 - Add support for BCM20702A1, including its default address.
+
+12 - Add BCM4330 compatible string to the driver.
+
+13 - Handle default address for BCM43430A0.
+
+14 - Enable Broadcom-based serdev Bluetooth for multiple Allwinner ARMv7
+     boards.
+
+15 - Enable Broadcom-based serdev Bluetooth for the Bananapi M64.
+
+checkpatch reports an error for both patch 11 and patch 13:
+
+    ERROR: space required after that close brace '}'
+
+I followed the existing code's style. If this is undesirable, I can send
+a follow-up patch fixing the entire code block.
+
+The first 13 patches should go through the Bluetooth tree, while we, the
+sunxi maintainers, will take the last 2.
+
+Chen-Yu Tsai (14):
+  dt-bindings: net: broadcom-bluetooth: Fix external clock names
+  dt-bindings: net: broadcom-bluetooth: Add VBAT and VDDIO supplies
+  dt-bindings: net: broadcom-bluetooth: Add BCM20702A1 compatible string
+  dt-bindings: net: broadcom-bluetooth: Add BCM4330 compatible string
+  Bluetooth: hci_bcm: Handle deferred probing for the clock supply
+  Bluetooth: hci_bcm: Simplify clk_get error handling
+  Bluetooth: hci_bcm: Use "txco" and "extclk" to get clock reference
+  Bluetooth: hci_bcm: Add support for LPO clock
+  Bluetooth: hci_bcm: Add support for regulator supplies
+  Bluetooth: hci_bcm: Wait for device to come out of reset after power
+    on
+  Bluetooth: hci_bcm: Add compatible string for BCM4330
+  Bluetooth: btbcm: Add default address for BCM43430A0
+  ARM: dts: sunxi: Enable Broadcom-based Bluetooth for multiple boards
+  arm64: dts: allwinner: a64: bananapi-m64: Add Bluetooth device node
+
+Maxime Ripard (1):
+  Bluetooth: hci_bcm: Add BCM20702A1 variant
+
+ .../bindings/net/broadcom-bluetooth.txt       |   9 +-
+ arch/arm/boot/dts/sun7i-a20-cubietruck.dts    |  22 ++++
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts  |  18 +++
+ .../boot/dts/sun8i-a83t-cubietruck-plus.dts   |  18 +++
+ arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  14 +++
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  14 +++
+ drivers/bluetooth/btbcm.c                     |  13 +-
+ drivers/bluetooth/hci_bcm.c                   | 112 +++++++++++++++---
+ 8 files changed, 204 insertions(+), 16 deletions(-)
+
 -- 
 2.19.1
 
