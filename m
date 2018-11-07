@@ -2,183 +2,206 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4DCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5503C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBF4F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:41:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="VULOifAt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBF4F20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E31220862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:42:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E31220862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeKHIOL (ORCPT
+        id S1727247AbeKHIOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:14:11 -0500
-Received: from mail.kdab.com ([176.9.126.58]:63758 "EHLO mail.kdab.com"
+        Thu, 8 Nov 2018 03:14:32 -0500
+Received: from mga06.intel.com ([134.134.136.31]:51048 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727760AbeKHIOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:14:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1541630498; x=1542494499; bh=Bp5/0rEBHLYpNdxrT1eHAGx9dQn
- 0Jua5dTCJ5SDl0E0=; b=VULOifAtHa7HBvy+t2fCtcU9Kw93LVhxLdC3Ziy53J5
- peG95RIiLAwZxFhyPYcB1yA4546jfxcWlHyYr9nRs8lU8NcMEqrSLgCq3f8fzVlq
- SqjfmpBgm1d9OwkWIzUymZMmKdWE0MVX2Y6Zk0X0MvwBSRQQG53cNxpuS3Oyl7jo
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>, namhyung@kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho <acme@kernel.org>
-Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
- unwinding - wrong stack pointer register value?]
-Date:   Wed, 07 Nov 2018 23:41:31 +0100
-Message-ID: <1584560.aXQ729uQp3@agathebauer>
-Organization: KDAB
-In-Reply-To: <20181106202411.GU6218@tassilo.jf.intel.com>
-References: <2335309.gnWok9HYb4@agathebauer> <2102566.fCj8pZGm78@agathebauer>
- <20181106202411.GU6218@tassilo.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2604735.gXIAmy9HsQ";
- micalg="sha256"; protocol="application/pkcs7-signature"
+        id S1726896AbeKHIOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 03:14:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 14:42:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,477,1534834800"; 
+   d="scan'208";a="106781101"
+Received: from spandruv-mobl.amr.corp.intel.com ([10.254.10.84])
+  by orsmga002.jf.intel.com with ESMTP; 07 Nov 2018 14:42:01 -0800
+Message-ID: <baf4b2e9c9b7cb2f827fd3bffce4b72f6d9376a8.camel@linux.intel.com>
+Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        "Woods, Brian" <Brian.Woods@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Myron Stowe <myron.stowe@redhat.com>,
+        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Date:   Wed, 07 Nov 2018 14:42:00 -0800
+In-Reply-To: <20181107213103.GA41183@google.com>
+References: <20181102181055.130531-1-brian.woods@amd.com>
+         <20181102181055.130531-3-brian.woods@amd.com>
+         <20181102195925.GB160487@google.com> <20181102232948.GC26770@zn.tnic>
+         <20181105214537.GA19420@google.com> <20181105215650.GG26868@zn.tnic>
+         <20181106214256.GA65443@google.com> <20181106220059.GA4139@zn.tnic>
+         <20181106232040.GA85755@google.com>
+         <75748b089ee696d5cbaa5c0ce68bad228699894c.camel@linux.intel.com>
+         <20181107213103.GA41183@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2604735.gXIAmy9HsQ
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-On Dienstag, 6. November 2018 21:24:11 CET Andi Kleen wrote:
-> > Where would I look for the source to change here? So far, I only
-> > concentrated on the userspace side of perf in tools/perf.
+On Wed, 2018-11-07 at 15:31 -0600, Bjorn Helgaas wrote:
+> On Wed, Nov 07, 2018 at 11:15:37AM -0800, Srinivas Pandruvada wrote:
+> > On Tue, 2018-11-06 at 17:20 -0600, Bjorn Helgaas wrote:
+> > > [+cc Sumeet, Srinivas for INT3401 questions below]
+> > > [Beginning of thread:
+> > > 
+> > 
+> > 
+https://lore.kernel.org/linux-pci/20181102181055.130531-1-brian.woods@amd.com/
+> > > ]
+> > > 
+> > > On Tue, Nov 06, 2018 at 11:00:59PM +0100, Borislav Petkov wrote:
+> > > > On Tue, Nov 06, 2018 at 03:42:56PM -0600, Bjorn Helgaas wrote:
+> > > > > This isn't some complicated new device where the programming
+> > > > > model changed on the new CPU.  This is a thermometer that was
+> > > > > already supported.  ACPI provides plenty of functionality
+> > > > > that
+> > > > > could be used to support this generically, e.g., see
+> > > > > drivers/acpi/thermal.c,
+> > > > > drivers/thermal/int340x_thermal/processor_thermal_device.c,
+> > > > > etc.
+> > > > 
+> > > > Ok, you say ACPI but how do you envision practically doing
+> > > > that?
+> > > > I mean, this is used by old boxes too - ever since K8. So how
+> > > > do
+> > > > we go and add ACPI functionality to old boxes?
+> > > > 
+> > > > Or do you mean it should simply be converted to do
+> > > > pci_register_driver() with a struct pci_driver pointer which
+> > > > has
+> > > > all those PCI device IDs in a table? I'm looking at the last
+> > > > example
+> > > > drivers/thermal/int340x_thermal/processor_thermal_device.c you
+> > > > gave above.
+> > > 
+> > > No, there would be no need to change anything for boxes already
+> > > in
+> > > the field.  But for *new* systems, you could make devices or
+> > > thermal zones in the ACPI namespace (they might even already be
+> > > there for use by Windows).
+> > > 
+> > > drivers/thermal/int340x_thermal/processor_thermal_device.c claims
+> > > either INT3401 ACPI devices or listed PCI devices. 
+> > 
+> > To enumerate a driver to get processor temperature and get power
+> > properties, we have two methods:
+> > -  The older Atom processors valleyview and Baytrail had no PCI
+> > device
+> > for the processor thermal management. There was INT3401 ACPI device
+> > to
+> > handle this.
+> > 
+> > - The newer processors for core and Atom, has a dedicate PCI device
+> > and
+> > there is no INT3401 ACPI device anymore.
 > 
-> Kind of similar to
+> This is really interesting because it's completely the reverse of
+> what
+> I would have expected.
 > 
-> a405bad5ad20 perf/x86: Add Haswell specific transaction flag reporting
-> fdfbbd07e91f perf: Add generic transaction flags
+> You use INT3401 on the *older* processors, where int3401_add() is
+> called for any platform devices with INT3401 PNP ID:
 > 
-> Report the original (not overwritten) regs->ip and regs->sp
-
-Thanks a lot Andi! With your help, I have managed to find the exact issue for 
-my scenario. Turns out, it really is "just" the instruction pointer that is 
-wrong. I.e. originally we have IP = 0x7feda32ca68c, but with PEBS we correct 
-that to IP = 7feda32ca688. The SP register value stays the same according to 
-my printk output. Using the original IP value, we can unwind correctly since 
-we point to the correct place in the .eh_frame section. The PEBS IP points to 
-a different position in the .eh_frame section, which is "too early".
-
-That brings up some questions:
-
-- I noticed `perf record --intr-regs`, but the values recorded in the 
-perf.data file are always the same. I.e. comparing uregs and iregs, I always 
-see the same values printed by `perf script`. This smells like a bug to me, 
-but so far I haven't figured out why this happens...
-
-- Independently, when I add a custom printk manually in `arch/x86/events/
-intel/ds.c` at the end of `setup_pebs_sample_data`, then I'm never seeing any 
-differences between SP in iregs/pebs/regs. Shouldn't it also be recorded via 
-PEBS? Or is it just chance that I'm never seeing any difference in 
-setup_pebs_sample_data between iregs->sp and regs->sp?
-
-- Generally, how do we want to handle this bug? If `--intr-regs` would 
-actually record a different IP than stored in uregs in the perf.data file, 
-then we could use that as a fallback for unwinding, when it fails the first 
-time. Or should we always unwind from that IP? How do we mark the "actual" 
-frame/IP then, if that differs?
-
-Thanks
-
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart2604735.gXIAmy9HsQ
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMTA3MjI0MTMxWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgAy08xyRFEPL2fPCM+NANwV7NoqyD
-FZhj/JIJQugQepowDQYJKoZIhvcNAQEBBQAEggEAAZrhIv7b3SbvFGtw3QknDRzfApJ8qhkx2myq
-aFjNern60xw1enUu5bDsONMua++kG3kJEiYP3ewRGlPZVgXk5ThOt4i2AOdiDBxo18iJla2tB3VU
-7CvQlQPPpqB5ibbn+oGCau+AVuFBPyB8WQTkXr6QoCwRLZsFugmx1myEtV7nu8FuL4NpS74wKleW
-TgSvpo6EMpJ3OcASE0GH7IB4D6nymmKQ8EHz6BhFo3Woz7619Resd9H2B/MsCTWvwfsgJodTialb
-2xDAP47ldVu5q7tw+FokNV43RqawSqHtqLkJrY/E3VthcQeRVWQfXoqMlPl42CZu3d7L2TsMiDuS
-0AAAAAAAAA==
+>   int3401_add(plat_dev)                   # platform/ACPI .probe
+>     proc_thermal_add(dev)
+>       adev = ACPI_COMPANION(dev)
+>       int340x_thermal_zone_add(adev)
+> 	thermal_zone_device_register()
+> 
+> The sensors are read in this path, where thermal_zone_get_temp() is
+> the generic thermal entry point:
+> 
+>   thermal_zone_get_temp()
+>     tz->ops->get_temp()
+>       int340x_thermal_get_zone_temp()    # ops.get_temp
+> 	acpi_evaluate_integer(..., "_TMP", ...)
+> 
+> The above works for any platform that supplies the INT3401 device
+> because the _TMP method that actually reads the sensor is supplied by
+> the platform firmware.
+> 
+> On *newer* processors, you apparently use this path:
+> 
+>   proc_thermal_pci_probe(pci_dev)        # PCI .probe
+>     pci_enable_device(pci_dev)
+>     proc_thermal_add(dev)
+>       adev = ACPI_COMPANION(dev)
+>       int340x_thermal_zone_add(adev)
+> 	thermal_zone_device_register()
+> 
+> Except for enabling the PCI device and a BSW_THERMAL hack, this is
+> exactly the *SAME*: you add a thermal zone for the ACPI device and
+> read the sensor using ACPI _TMP methods.
+> 
+> But now you have to add new PCI IDs (Skylake, Broxton, CannonLake,
+> CoffeeLake, GeminiLake, etc) for every new platform.  This seems like
+> a regression, not an improvement.  What am I missing?
 
 
---nextPart2604735.gXIAmy9HsQ--
+Path of activation via both devices is same. Both will call
+proc_thermal_add().
 
+There is no INT3401 on any newer atom or core platforms, so you can't
+enumerate on this device. We don't control what ACPI device is present
+on a system. It depends on what the other non-Linux OS is using.
+ Also the PCI  ACPI companion device doesn't have to supply a _TMP
+method.
+
+
+The INT3401 is a special device which must have _TMP otherwise firmware
+validation will fail. Yes, if there is INT3401 on all platforms we
+don't need PCI enumeration just for temperature and trips. But this PCI
+device brings in lots of other features which are still in works.
+
+
+Not sure about the context of discussion here. Are you suggesting some
+core changes where we don't have to add PCI ids like Skylake etc. ?
+
+
+Thanks,
+Srinivas
+
+> 
+
+
+> > Since OEM systems will have different power properties and thermal
+> > trips, there is a companion ACPI device, which provides PPCC and
+> > thermal trips and optionally output from another temperature sensor
+> > from the default on processor cores.
+> 
+> Bjorn
 
