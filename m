@@ -2,157 +2,93 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B13C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C80C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2215020827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:25:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2215020827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 48D4420896
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D4420896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731401AbeKHB4F (ORCPT
+        id S1731329AbeKHB4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:56:05 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47602 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727372AbeKHB4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:56:05 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8D64912FE9D66;
-        Thu,  8 Nov 2018 00:24:58 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
- 00:24:50 +0800
-Subject: Re: [PATCH] of, numa: Validate some distance map rules
-To:     Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>
-References: <1541507973-149965-1-git-send-email-john.garry@huawei.com>
- <20181107154430.GA9996@brain-police> <20181107155552.GB18618@bogus>
-CC:     <frowand.list@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <anshuman.khandual@arm.com>, <peterz@infradead.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5b81e832-4ad0-13f2-1857-0764d175c61b@huawei.com>
-Date:   Wed, 7 Nov 2018 16:24:45 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Wed, 7 Nov 2018 20:56:46 -0500
+Received: from mga02.intel.com ([134.134.136.20]:51628 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbeKHB4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 20:56:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 08:25:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,475,1534834800"; 
+   d="scan'208";a="106691258"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 07 Nov 2018 08:25:39 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gKQeB-000D5C-10; Thu, 08 Nov 2018 00:25:39 +0800
+Date:   Thu, 8 Nov 2018 00:25:28 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>
+Subject: [PATCH] soc: qcom: fix semicolon.cocci warnings
+Message-ID: <20181107162528.GA10939@lkp-sb-ep06>
+References: <201811080026.ggtb93Wl%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181107155552.GB18618@bogus>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201811080026.ggtb93Wl%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 15:55, Rob Herring wrote:
-> On Wed, Nov 07, 2018 at 03:44:31PM +0000, Will Deacon wrote:
->> Hi John,
->>
->> On Tue, Nov 06, 2018 at 08:39:33PM +0800, John Garry wrote:
->>> Currently the NUMA distance map parsing does not validate the distance
->>> table for the distance-matrix rules 1-2 in [1].
->>>
->>> However the arch NUMA code may enforce some of these rules, but not all.
->>> Such is the case for the arm64 port, which does not enforce the rule that
->>> the distance between separates nodes cannot equal LOCAL_DISTANCE.
->>>
->>> The patch adds the following rules validation:
->>> - distance of node to self equals LOCAL_DISTANCE
->>> - distance of separate nodes > LOCAL_DISTANCE
->>>
->>> A note on dealing with symmetrical distances between nodes:
->>>
->>> Validating symmetrical distances between nodes is difficult. If it were
->>> mandated in the bindings that every distance must be recorded in the
->>> table, validating symmetrical distances would be straightforward. However,
->>> it isn't.
->>>
->>> In addition to this, it is also possible to record [b, a] distance only
->>> (and not [a, b]). So, when processing the table for [b, a], we cannot
->>> assert that current distance of [a, b] != [b, a] as invalid, as [a, b]
->>> distance may not be present in the table and current distance would be
->>> default at REMOTE_DISTANCE.
->>>
->>> As such, we maintain the policy that we overwrite distance [a, b] = [b, a]
->>> for b > a. This policy is different to kernel ACPI SLIT validation, which
->>> allows non-symmetrical distances (ACPI spec SLIT rules allow it). However,
->>> the debug message is dropped as it may be misleading (for a distance which
->>> is later overwritten).
->>>
->>> Some final notes on semantics:
->>>
->>> - It is implied that it is the responsibility of the arch NUMA code to
->>>   reset the NUMA distance map for an error in distance map parsing.
->>>
->>> - It is the responsibility of the FW NUMA topology parsing (whether OF or
->>>   ACPI) to enforce NUMA distance rules, and not arch NUMA code.
->>>
->>> [1] Documents/devicetree/bindings/numa.txt
->>>
->>> Signed-off-by: John Garry <john.garry@huawei.com>
->>
->> Is it worth mentioning that the lack of this check was leading to a kernel
->> crash with a malformed DT entry?
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Yeah, I was thinking in hindsight that I should have mentioned the 
-yet-unresolved crash we avoid.
-
->
-> So should be marked for stable too?
-
-Probably. So this patch is masking a crash I have observed, which may be 
-good enough reason on its own.
-
-In addition, I would still say that failing to validate the distance map 
-falls into the "oh, that's not good" category of stable rules.
-
->
->>
->>> diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
->>> index 35c64a4295e0..fe6b13608e51 100644
->>> --- a/drivers/of/of_numa.c
->>> +++ b/drivers/of/of_numa.c
->>> @@ -104,9 +104,14 @@ static int __init of_numa_parse_distance_map_v1(struct device_node *map)
->>>  		distance = of_read_number(matrix, 1);
->>>  		matrix++;
->>>
->>> +		if ((nodea == nodeb && distance != LOCAL_DISTANCE) ||
->>> +		    (nodea != nodeb && distance <= LOCAL_DISTANCE)) {
->>> +			pr_err("Invalid distance[node%d -> node%d] = %d\n",
->>> +			       nodea, nodeb, distance);
->>> +			return -EINVAL;
->>> +		}
->>> +
->>>  		numa_set_distance(nodea, nodeb, distance);
->>> -		pr_debug("distance[node%d -> node%d] = %d\n",
->>> -			 nodea, nodeb, distance);
->>
->> Looks good to me, although I'm not sure which tree this should go through.
->>
->> Acked-by: Will Deacon <will.deacon@arm.com>
->
-
-Thanks Will.
-
-> I'll take it. Please resend with the comment Will asked for.
->
-
-OK, I'll repost an updated version.
-
-> Rob
->
-
-Cheers,
-john
-
-> .
->
+sound/soc/qcom/sdm845.c:156:3-4: Unneeded semicolon
 
 
+ Remove unneeded semicolon.
+
+Generated by: scripts/coccinelle/misc/semicolon.cocci
+
+Fixes: ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
+CC: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   8053e5b93eca9b011f7b79bb019bf1eeaaf96c4b
+commit: ccfb464cd106890cfa51070f75921a273e2852e5 soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs
+
+ sdm845.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -153,7 +153,7 @@ static void  sdm845_snd_shutdown(struct
+ 			snd_soc_dai_set_sysclk(cpu_dai,
+ 				Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT,
+ 				0, SNDRV_PCM_STREAM_PLAYBACK);
+-		};
++		}
+ 		break;
+ 
+ 	case QUATERNARY_TDM_RX_0:
