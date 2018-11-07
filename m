@@ -3,102 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D61C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EDAC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EEA520882
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EEA520882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 77F3A20882
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F3A20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeKHJQz (ORCPT
+        id S1727972AbeKHJVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 04:16:55 -0500
-Received: from mga02.intel.com ([134.134.136.20]:50932 "EHLO mga02.intel.com"
+        Thu, 8 Nov 2018 04:21:21 -0500
+Received: from ozlabs.org ([203.11.71.1]:37023 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727260AbeKHJQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 04:16:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 15:44:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,477,1534834800"; 
-   d="scan'208";a="89413487"
-Received: from spandruv-mobl.amr.corp.intel.com ([10.254.10.84])
-  by orsmga006.jf.intel.com with ESMTP; 07 Nov 2018 15:44:10 -0800
-Message-ID: <f854c74c307aa8f7cf482f5e4e63cf03f3dc12ca.camel@linux.intel.com>
-Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        "Woods, Brian" <Brian.Woods@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Date:   Wed, 07 Nov 2018 15:44:10 -0800
-In-Reply-To: <9e4da173ba2978e1c16839162dd927c5ea0fdc36.camel@linux.intel.com>
-References: <20181102195925.GB160487@google.com>
-         <20181102232948.GC26770@zn.tnic> <20181105214537.GA19420@google.com>
-         <20181105215650.GG26868@zn.tnic> <20181106214256.GA65443@google.com>
-         <20181106220059.GA4139@zn.tnic> <20181106232040.GA85755@google.com>
-         <75748b089ee696d5cbaa5c0ce68bad228699894c.camel@linux.intel.com>
-         <20181107213103.GA41183@google.com>
-         <baf4b2e9c9b7cb2f827fd3bffce4b72f6d9376a8.camel@linux.intel.com>
-         <20181107231411.GB41183@google.com>
-         <9e4da173ba2978e1c16839162dd927c5ea0fdc36.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726191AbeKHJVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 04:21:21 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42r35Y1Ttbz9s9G;
+        Thu,  8 Nov 2018 10:48:33 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        nfont@linux.vnet.ibm.com,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Subject: Re: [PATCH v6 07/18] of: dynamic: change type of of_{at,de}tach_node() to void
+In-Reply-To: <6bc78502-7587-eb9c-237f-d3f031979d42@gmail.com>
+References: <1541431515-25197-1-git-send-email-frowand.list@gmail.com> <1541431515-25197-8-git-send-email-frowand.list@gmail.com> <87tvktqedf.fsf@concordia.ellerman.id.au> <6bc78502-7587-eb9c-237f-d3f031979d42@gmail.com>
+Date:   Thu, 08 Nov 2018 10:48:33 +1100
+Message-ID: <87h8gsqwj2.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-07 at 15:30 -0800, Srinivas Pandruvada wrote:
-> [...]
-> 
-> > Sure, you can't *force* OEMs to supply a given ACPI device, but you
-> > can certainly say "if you want this functionality, supply INT3401
-> > devices."  That's what you do with PNP0A03 (PCI host bridges), for
-> > example.  If an OEM doesn't supply PNP0A03 devices, the system can
-> > boot just fine as long as you don't need PCI.
-> > 
-> > This model of using the PCI IDs forces OS vendors to release
-> > updates
-> > for every new platform.  I guess you must have considered that and
-> > decided whatever benefit you're getting was worth the cost.
-> 
-> Not worth cost. This is a pain. Every release we end up adding a
-> single
-> line change to many drivers adding a PCI device id. 
-> Since there is no unique class_mask for PCI device for these devices,
-> we need to add device_id for each generation even if there is no
-> change.
-> Instead if we have some feature to say don't enumerate for PCI device
-> id < X and a black list, it will save lot of work.
-This still needs some work on our internal PCI device allocation scheme
-, where we can reserve a block of ids for a PCI device for same
-functionality from generation to generation.
+Frank Rowand <frowand.list@gmail.com> writes:
+> On 11/7/18 4:08 AM, Michael Ellerman wrote:
+>> frowand.list@gmail.com writes:
+>> 
+>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>
+>>> of_attach_node() and of_detach_node() always return zero, so
+>>> their return value is meaningless.
+>> 
+>> But should they always return zero?
+>> 
+>> At least __of_attach_node_sysfs() can fail in several ways.
+>
+> Sigh.  And of_reconfig_notify() can fail.  And at one point in the
+> history the return value of of_reconfig_notify() was returned by
+> of_attach_node() if of_reconfig_notify() failed.
+>
+>> And there's also this in __of_detach_node() which should probably be
+>> returning an error:
+>> 
+>> 	if (WARN_ON(of_node_check_flag(np, OF_DETACHED)))
+>>         	return;
+>> 
+>> 
+>> Seems to me we should instead be fixing these to propagate errors,
+>> rather than hiding them?
+>
+> The history of how of_attach_node() stopped propagating errors is
+> a bit more complex than I want to dig into at the moment.  So I'll
+> drop this patch from the series and add investigating this onto
+> my todo list.  I suspect that the result of investigating will be
+> that error return values should not be ignored in of_attach_node()
+> and of_detach_node(), but should instead be propagated to the
+> callers, as you suggest.
 
-Thanks,
-Srinivas
+Thanks.
 
-
+cheers
