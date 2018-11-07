@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0006C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5795AC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8215520837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8215520837
+	by mail.kernel.org (Postfix) with ESMTP id 25A9320837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A9320837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeKHFVM (ORCPT
+        id S1727691AbeKHFVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:12 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41899 "EHLO
+        Thu, 8 Nov 2018 00:21:15 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41908 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeKHFVM (ORCPT
+        with ESMTP id S1727272AbeKHFVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:12 -0500
+        Thu, 8 Nov 2018 00:21:14 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTpD-00070Q-C9; Wed, 07 Nov 2018 20:49:16 +0100
+        id 1gKTpF-00070Q-Di; Wed, 07 Nov 2018 20:49:17 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 11/23] x86/fpu: Add (__)make_fpregs_active helpers
-Date:   Wed,  7 Nov 2018 20:48:46 +0100
-Message-Id: <20181107194858.9380-12-bigeasy@linutronix.de>
+Subject: [PATCH 12/23] x86/fpu: Make __raw_xsave_addr() use feature number instead of mask
+Date:   Wed,  7 Nov 2018 20:48:47 +0100
+Message-Id: <20181107194858.9380-13-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
 References: <20181107194858.9380-1-bigeasy@linutronix.de>
@@ -49,91 +49,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+Most users of __raw_xsave_addr() use a feature number, shift it to a
+mask and then __raw_xsave_addr() shifts it back to the feature number.
 
-Add helper function that ensures the floating point registers for
-the current task are active. Use with preemption disabled.
+Make __raw_xsave_addr() use the feature number as argument.
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/fpu/api.h      | 11 +++++++++++
- arch/x86/include/asm/fpu/internal.h | 26 ++++++++++++++++----------
- 2 files changed, 27 insertions(+), 10 deletions(-)
+ arch/x86/kernel/fpu/xstate.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index a9caac9d4a729..8c03b42416656 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -10,6 +10,7 @@
- 
- #ifndef _ASM_X86_FPU_API_H
- #define _ASM_X86_FPU_API_H
-+#include <linux/preempt.h>
- 
- /*
-  * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
-@@ -27,6 +28,16 @@ extern void kernel_fpu_begin(void);
- extern void kernel_fpu_end(void);
- extern bool irq_fpu_usable(void);
- 
-+static inline void __fpregs_changes_begin(void)
-+{
-+	preempt_disable();
-+}
-+
-+static inline void __fpregs_changes_end(void)
-+{
-+	preempt_enable();
-+}
-+
- /*
-  * Query the presence of one or more xfeatures. Works on any legacy CPU as well.
-  *
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index d7f9e14c73c19..260cd4f4ba2bb 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -512,6 +512,20 @@ static inline void fpregs_activate(struct fpu *fpu)
- 	trace_x86_fpu_regs_activated(fpu);
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index a2041961f3008..3dfe3627deaf6 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -805,22 +805,20 @@ void fpu__resume_cpu(void)
  }
  
-+/*
-+ * Load the FPU state for the current task. Call with preemption disabled.
-+ */
-+static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
-+{
-+	if (!fpregs_state_valid(fpu, cpu)) {
-+		if (current->mm)
-+			copy_kernel_to_fpregs(&fpu->state);
-+		else
-+			copy_kernel_to_fpregs(&init_fpstate);
-+	}
-+	fpregs_activate(fpu);
-+}
-+
  /*
-  * FPU state switching for scheduling.
+- * Given an xstate feature mask, calculate where in the xsave
++ * Given an xstate feature nr, calculate where in the xsave
+  * buffer the state is.  Callers should ensure that the buffer
+  * is valid.
   *
-@@ -547,16 +561,8 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+  * Note: does not work for compacted buffers.
   */
- static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+-void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
++static void *__raw_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
  {
--	if (static_cpu_has(X86_FEATURE_FPU)) {
--		if (!fpregs_state_valid(new_fpu, cpu)) {
--			if (current->mm)
--				copy_kernel_to_fpregs(&new_fpu->state);
--			else
--				copy_kernel_to_fpregs(&init_fpstate);
--		}
+-	int feature_nr = fls64(xstate_feature_mask) - 1;
 -
--		fpregs_activate(new_fpu);
--	}
-+	if (static_cpu_has(X86_FEATURE_FPU))
-+		__fpregs_load_activate(new_fpu, cpu);
- }
+-	if (!xfeature_enabled(feature_nr)) {
++	if (!xfeature_enabled(xfeature_nr)) {
+ 		WARN_ON_FPU(1);
+ 		return NULL;
+ 	}
  
+-	return (void *)xsave + xstate_comp_offsets[feature_nr];
++	return (void *)xsave + xstate_comp_offsets[xfeature_nr];
+ }
  /*
+  * Given the xsave area and a state inside, this function returns the
+@@ -842,6 +840,7 @@ void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
+  */
+ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
+ {
++	int xfeature_nr;
+ 	/*
+ 	 * Do we even *have* xsave state?
+ 	 */
+@@ -869,7 +868,8 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
+ 	if (!(xsave->header.xfeatures & xstate_feature))
+ 		return NULL;
+ 
+-	return __raw_xsave_addr(xsave, xstate_feature);
++	xfeature_nr = fls64(xstate_feature) - 1;
++	return __raw_xsave_addr(xsave, xfeature_nr);
+ }
+ EXPORT_SYMBOL_GPL(get_xsave_addr);
+ 
+@@ -1016,7 +1016,7 @@ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int of
+ 		 * Copy only in-use xstates:
+ 		 */
+ 		if ((header.xfeatures >> i) & 1) {
+-			void *src = __raw_xsave_addr(xsave, 1 << i);
++			void *src = __raw_xsave_addr(xsave, i);
+ 
+ 			offset = xstate_offsets[i];
+ 			size = xstate_sizes[i];
+@@ -1102,7 +1102,7 @@ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned i
+ 		 * Copy only in-use xstates:
+ 		 */
+ 		if ((header.xfeatures >> i) & 1) {
+-			void *src = __raw_xsave_addr(xsave, 1 << i);
++			void *src = __raw_xsave_addr(xsave, i);
+ 
+ 			offset = xstate_offsets[i];
+ 			size = xstate_sizes[i];
+@@ -1159,7 +1159,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
+ 		u64 mask = ((u64)1 << i);
+ 
+ 		if (hdr.xfeatures & mask) {
+-			void *dst = __raw_xsave_addr(xsave, 1 << i);
++			void *dst = __raw_xsave_addr(xsave, i);
+ 
+ 			offset = xstate_offsets[i];
+ 			size = xstate_sizes[i];
+@@ -1213,7 +1213,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
+ 		u64 mask = ((u64)1 << i);
+ 
+ 		if (hdr.xfeatures & mask) {
+-			void *dst = __raw_xsave_addr(xsave, 1 << i);
++			void *dst = __raw_xsave_addr(xsave, i);
+ 
+ 			offset = xstate_offsets[i];
+ 			size = xstate_sizes[i];
 -- 
 2.19.1
 
