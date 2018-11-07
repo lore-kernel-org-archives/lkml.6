@@ -2,122 +2,256 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3B9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A92C46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1524D20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:41:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xQA7pbn5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1524D20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 63F372086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:42:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F372086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbeKGTLP (ORCPT
+        id S1730554AbeKGTLr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:11:15 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36135 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbeKGTLO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:11:14 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a8-v6so15043882wmf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 01:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GEmZ4B5NLPm7sbS8U0uahMmV7akpbAHP8pL0hlfpaBQ=;
-        b=xQA7pbn58vHuWusvB6tmzoK5YfMo1s5FkJ5cxXGx7MOMJfEdfmU4Co9VI2GzhD/ZwP
-         Bp+RpzWv35DsskSaSDFF9J3o8c7w9BKYBybCNpHbjavLDYWHXXykTIOBaB4C5Kv4F9uS
-         k3Cq1LBCOWUYnWycsk+POiD1nqQbK6Tuidked+LczbqAIT43ffuWxfx70pYQJ5gYerbx
-         S1rk9xFLORD30n/EefG330TzZcr3NeSLBPNkcJqmmZ7Tqi4YK4s/ppBqRWTTCxt1DMnD
-         FEDldLsYe4O/D90pvxz3VrMG3Vc2YHKhq5gTRKU9BdHX9Y2Hc+dFgWNgpaprQj7tXT5s
-         HGqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GEmZ4B5NLPm7sbS8U0uahMmV7akpbAHP8pL0hlfpaBQ=;
-        b=InfMDsZ44Vo+3vOG9NenYFFT+ti1n+K09hzFt79j6Rshv8uiiUr7qXUKrOoX+uyz2l
-         xnrgqvyTzPMLT/JTIuGpxkFnRruY+WtWR9ZxqL/k1us/3MqMMj0tgUL8zNTXTqmSaR1d
-         0QyiVyBzNeGTCeujzb4ueGfIbgMlH2VF1+KnO48ZNj9DjpDwT+HZGJbCINbvpJ6IjKNW
-         gTDJ5IX4/DqswMo6v3ylecQK9cYrcN6qEgs4atfDc0q8MTfTvtcI/Yj+C+jbH4BmzLEs
-         0A0pNMzGdaNFV8jCS+RhFNJCLwM6KWmqB87gW0eRJqQxni06j4rXc6FwcaRW6I9eA4We
-         ua9w==
-X-Gm-Message-State: AGRZ1gJl55upASILAw7rVRj9r1+/+uN26PKdtU/lpXXGAKsf+ntI6kbE
-        sKNnOz1jzlpEP7DUkzE8QRoGosKbbglpa0UyYkq+lQ==
-X-Google-Smtp-Source: AJdET5drHqdVEfDEex09kZuu29EdmGedL971FOBrYW6c04carkf44TTQN+DLvp8mnMzCZK9gAn2meYTfpLxNmtn/e1c=
-X-Received: by 2002:a1c:8c8c:: with SMTP id o134-v6mr1310198wmd.35.1541583699333;
- Wed, 07 Nov 2018 01:41:39 -0800 (PST)
+        Wed, 7 Nov 2018 14:11:47 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32721 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727364AbeKGTLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:11:47 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id F240CCEB842FC;
+        Wed,  7 Nov 2018 09:42:08 +0000 (GMT)
+Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 7 Nov
+ 2018 09:42:02 +0000
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+To:     Nayna Jain <nayna@linux.ibm.com>,
+        <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+ <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
+Date:   Wed, 7 Nov 2018 10:41:57 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com> <1541497202-20570-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1541497202-20570-2-git-send-email-narmstrong@baylibre.com>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Wed, 7 Nov 2018 10:41:27 +0100
-Message-ID: <CAMO6nay=te3W67b83LKv35tXL8+09rvE9EaFwLDrRBhwpEgMvQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] drm/meson: Support Overlay plane for video rendering
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.142]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 10:40 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> The Amlogic Meson GX SoCs support an Overlay plane behind the primary
-> plane for video rendering.
->
-> This Overlay plane support various YUV layouts :
-> - YUYV
-> - NV12 / NV21
-> - YUV444 / 422 / 420 / 411 / 410
->
-> The scaler supports a wide range of scaling ratios, but for simplicity,
-> plane atomic check limits the scaling from x5 to /5 in vertical and
-> horizontal scaling.
->
-> The z-order is fixed and always behind the primary plane and cannot be changed.
->
-> The scaling parameter algorithm was taken from the Amlogic vendor kernel
-> code and rewritten to match the atomic universal plane requirements.
->
-> The video rendering using this overlay plane support has been tested using
-> the new Kodi DRM-KMS Prime rendering path along the in-review V4L2 Mem2Mem
-> Hardware Video Decoder up to 3840x2160 NV12 frames on various display modes.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/gpu/drm/meson/Makefile          |   2 +-
->  drivers/gpu/drm/meson/meson_canvas.c    |   7 +-
->  drivers/gpu/drm/meson/meson_canvas.h    |  11 +-
->  drivers/gpu/drm/meson/meson_crtc.c      | 216 +++++++++++-
->  drivers/gpu/drm/meson/meson_drv.c       |  29 +-
->  drivers/gpu/drm/meson/meson_drv.h       |  52 +++
->  drivers/gpu/drm/meson/meson_overlay.c   | 586 ++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/meson/meson_overlay.h   |  14 +
->  drivers/gpu/drm/meson/meson_registers.h |   3 +
->  drivers/gpu/drm/meson/meson_viu.c       |  15 +
->  drivers/gpu/drm/meson/meson_vpp.c       |  44 ++-
->  11 files changed, 971 insertions(+), 8 deletions(-)
->  create mode 100644 drivers/gpu/drm/meson/meson_overlay.c
->  create mode 100644 drivers/gpu/drm/meson/meson_overlay.h
->
+On 11/7/2018 7:14 AM, Nayna Jain wrote:
+> 
+> 
+> On 11/06/2018 08:31 PM, Roberto Sassu wrote:
+>> This patch removes the hard-coded limit of the active_banks array size.
+> 
+> 
+> The hard-coded limit in static array active_banks[] represents the 
+> maximum possible banks.
+> A TPM might have three banks, but only one bank may be active.
+> 
+> To confirm my understanding, is the idea for this patch is to 
+> dynamically identify the number of possible banks or the number of 
+> active banks ?
 
-Tested by rendering video with:
- - gstreamer 1.14.4 using kmssink
- - ffmpeg-drm (https://github.com/Elyotna/ffmpeg-drm),
-by applying this patch on top of the video decoder patch series.
+The idea is to dynamically identify the number of active banks.
 
-Used different resolutions and pixel aspect ratios.
+In the TPM Commands specification (section 30.2.1), I found:
 
-Tested-by: Maxime Jourdan <mjourdan@baylibre.com>
+TPM_CAP_PCRS – Returns the current allocation of PCR in a
+TPML_PCR_SELECTION.
 
-[snip]
+You mentioned:
+
+#TPM_RC_SIZE response code when count is greater
+than the possible number of banks
+
+but TPML_PCR_SELECTION is provided by the TPM.
+
+Roberto
+
+
+>> It stores in the tpm_chip structure the number of active PCR banks,
+>> determined in tpm2_get_pcr_allocation(), and replaces the static array
+>> with a pointer to a dynamically allocated array.
+>>
+>> As a consequence of the introduction of nr_active_banks, tpm_pcr_extend()
+>> does not check anymore if the algorithm stored in tpm_chip is equal to
+>> zero. The active_banks array always contains valid algorithms.
+>>
+>> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+>> PCR banks")
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   drivers/char/tpm/tpm-chip.c      |  1 +
+>>   drivers/char/tpm/tpm-interface.c | 19 ++++++++++++-------
+>>   drivers/char/tpm/tpm.h           |  3 ++-
+>>   drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++---------
+>>   4 files changed, 23 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index 46caadca916a..2a9e8b744436 100644
+>> --- a/drivers/char/tpm/tpm-chip.c
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>>       kfree(chip->log.bios_event_log);
+>>       kfree(chip->work_space.context_buf);
+>>       kfree(chip->work_space.session_buf);
+>> +    kfree(chip->active_banks);
+>>       kfree(chip);
+>>   }
+>>
+>> diff --git a/drivers/char/tpm/tpm-interface.c 
+>> b/drivers/char/tpm/tpm-interface.c
+>> index 1a803b0cf980..ba7ca6b3e664 100644
+>> --- a/drivers/char/tpm/tpm-interface.c
+>> +++ b/drivers/char/tpm/tpm-interface.c
+>> @@ -1039,8 +1039,7 @@ static int tpm1_pcr_extend(struct tpm_chip 
+>> *chip, int pcr_idx, const u8 *hash,
+>>   int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>>   {
+>>       int rc;
+>> -    struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+>> -    u32 count = 0;
+>> +    struct tpm2_digest *digest_list;
+>>       int i;
+>>
+>>       chip = tpm_find_get_ops(chip);
+>> @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, int 
+>> pcr_idx, const u8 *hash)
+>>           return -ENODEV;
+>>
+>>       if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>> -        memset(digest_list, 0, sizeof(digest_list));
+>> +        digest_list = kmalloc_array(chip->nr_active_banks,
+>> +                        sizeof(*digest_list), GFP_KERNEL);
+>> +        if (!digest_list)
+>> +            return -ENOMEM;
+>>
+>> -        for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+>> -                chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+>> +        memset(digest_list, 0,
+>> +               chip->nr_active_banks * sizeof(*digest_list));
+>> +
+>> +        for (i = 0; i < chip->nr_active_banks; i++) {
+>>               digest_list[i].alg_id = chip->active_banks[i];
+>>               memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+>> -            count++;
+>>           }
+>>
+>> -        rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+>> +        rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_active_banks,
+>> +                     digest_list);
+>> +        kfree(digest_list);
+>>           tpm_put_ops(chip);
+>>           return rc;
+>>       }
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index f3501d05264f..98368c3a6ff7 100644
+>> --- a/drivers/char/tpm/tpm.h
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -248,7 +248,8 @@ struct tpm_chip {
+>>       const struct attribute_group *groups[3];
+>>       unsigned int groups_cnt;
+>>
+>> -    u16 active_banks[7];
+>> +    u32 nr_active_banks;
+>> +    u16 *active_banks;
+>>   #ifdef CONFIG_ACPI
+>>       acpi_handle acpi_dev_handle;
+>>       char ppi_version[TPM_PPI_VERSION_LEN + 1];
+>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>> index c31b490bd41d..533089cede07 100644
+>> --- a/drivers/char/tpm/tpm2-cmd.c
+>> +++ b/drivers/char/tpm/tpm2-cmd.c
+>> @@ -242,7 +242,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int 
+>> pcr_idx, u32 count,
+>>       int i;
+>>       int j;
+>>
+>> -    if (count > ARRAY_SIZE(chip->active_banks))
+>> +    if (count > chip->nr_active_banks)
+>>           return -EINVAL;
+>>
+>>       rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+>> @@ -859,7 +859,6 @@ static ssize_t tpm2_get_pcr_allocation(struct 
+>> tpm_chip *chip)
+>>       void *marker;
+>>       void *end;
+>>       void *pcr_select_offset;
+>> -    unsigned int count;
+>>       u32 sizeof_pcr_selection;
+>>       u32 rsp_len;
+>>       int rc;
+>> @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct 
+>> tpm_chip *chip)
+>>       if (rc)
+>>           goto out;
+>>
+>> -    count = be32_to_cpup(
+>> +    chip->nr_active_banks = be32_to_cpup(
+>>           (__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+> 
+> 
+> As per my understanding, the count in the TPML_PCR_SELECTION represent 
+> the number of possible banks and not the number of active banks.
+> TCG Structures Spec for TPM 2.0 - Table 102 mentions this as explanation 
+> of #TPM_RC_SIZE.
+> 
+> Thanks & Regards,
+>      - Nayna
+> 
+> 
+>>
+>> -    if (count > ARRAY_SIZE(chip->active_banks)) {
+>> -        rc = -ENODEV;
+>> +    chip->active_banks = kmalloc_array(chip->nr_active_banks,
+>> +                       sizeof(*chip->active_banks),
+>> +                       GFP_KERNEL);
+>> +    if (!chip->active_banks) {
+>> +        rc = -ENOMEM;
+>>           goto out;
+>>       }
+>>
+>> @@ -891,7 +893,7 @@ static ssize_t tpm2_get_pcr_allocation(struct 
+>> tpm_chip *chip)
+>>       rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+>>       end = &buf.data[rsp_len];
+>>
+>> -    for (i = 0; i < count; i++) {
+>> +    for (i = 0; i < chip->nr_active_banks; i++) {
+>>           pcr_select_offset = marker +
+>>               offsetof(struct tpm2_pcr_selection, size_of_select);
+>>           if (pcr_select_offset >= end) {
+>> @@ -908,9 +910,6 @@ static ssize_t tpm2_get_pcr_allocation(struct 
+>> tpm_chip *chip)
+>>       }
+>>
+>>   out:
+>> -    if (i < ARRAY_SIZE(chip->active_banks))
+>> -        chip->active_banks[i] = TPM2_ALG_ERROR;
+>> -
+>>       tpm_buf_destroy(&buf);
+>>
+>>       return rc;
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
