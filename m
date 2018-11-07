@@ -2,144 +2,168 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5C4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4BDC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A44C20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:58:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A44C20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 099BD20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:58:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iaW6txQe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 099BD20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbeKHE3o (ORCPT
+        id S1729566AbeKHEaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:29:44 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:44289 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbeKHE3o (ORCPT
+        Wed, 7 Nov 2018 23:30:24 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45160 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbeKHEaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:29:44 -0500
-Received: by mail-io1-f71.google.com with SMTP id u5-v6so19950189iol.11
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:58:04 -0800 (PST)
+        Wed, 7 Nov 2018 23:30:24 -0500
+Received: by mail-wr1-f67.google.com with SMTP id k15-v6so15582379wre.12
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:58:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Bvz4tB1LNY/gc/mjCYlvIM7t6UGBtFaayf4QdhN8Rjc=;
+        b=iaW6txQeDuffTLORs44F6bMvZqmeYv2VJt1/SC6lfHm3rNiQfQR9OUZ1wgImwx3s27
+         SzuAkC0hfOrBvsyGiaImclcRYA6jhLLr5dgOCUHJdUnK4s0PWHmPIYgOlI8L18uIXKdW
+         ORJUxEuvjt1UVf13QQCQYrjJK5M83ew4FSEBShV+ruM6m7h6MhtxNql5lf7zcbFfBkQB
+         38K/3pjjy28McxgsVQ55NIwDolmBsnX9RE8XGGbzzyfREfBcvt/VOOQbHSsauP/70N15
+         /OLhJwMaMetps+pkseFGTMLJUjlKubDesi1uOmd6icJyl5GvN5p/gvsA42QtpUHTbd+g
+         orjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=3dp5mjuZq6EaeSi9osdN2HZdPlrZMq2hPbZhmyc9ctM=;
-        b=OiypiqdFY5JHTlw8q7jLjmWFDwwORqh3ItIpDMecSQdLvp3YuIqfd8a2SBmmrbb08T
-         bj8nLLsedJZ+v6CV0T+SysWym0IGgg7Jw+fjRHFF+ZZc7O51wbl3Zcg8dtZgzSjSYGXP
-         OqyrjXVyePmvJ75Mb6NVlrbd7JZmnfGrQzdwVWjz7lZNXdNTihQYoH5MJoasszfdZHAk
-         OT1+qG2mw6Q7+kvh8OMvTK79p/Y+wNDuk/w/vXMLNw00Q3hIre5UvWSriIMveqKOGUXv
-         pLD6hqdcdLv4UExC2so8H+FWvW/ZHNWqeMqjJhl+iDTYeCTKocqP+PX9n0NH0zawrUtQ
-         vbZQ==
-X-Gm-Message-State: AGRZ1gLdpsS6jTTjT+YKU1xQoQmsBW1HQJKI5IttEb4RS6NLZDez8JPn
-        aoEPy8BKkmHWBTTbYzXDOhrkrtwe1RY3npMvmVmkyKPJkWIR
-X-Google-Smtp-Source: AJdET5dIG4oTu1JwxtjFRWcd16E5FGhLCPvDJhvhsuhUICCXXm5MyuhmoeU6IFJm4EiVDtzsxImI0pBGWiwr5zu2sVeizIU6nMPN
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Bvz4tB1LNY/gc/mjCYlvIM7t6UGBtFaayf4QdhN8Rjc=;
+        b=XG40Q+Q8KDHhpvASDKeT7n3SzRSsrWSU9iB2FEAv7jOFHw6Qf5uRFqLwkBIgOLddMR
+         MNCNz+LV1/bFOBOUgXb3G8wzAOEKDr7XrpiqOTaeX4unHRY9XN/4g+i/PckxoXQQH0Sn
+         gzBuXtAI3aLXoVYu/LSE8da+Ipw080s9A5qnJaMPxw1v1qp4Hj6RkQor5NsjimWFhU+R
+         ev2taZ6m9mwiAM5ujvmFqGg49QRn9z9tMnGngaDiaHqGPcAR3Wilv2c3dNv3xOwSKsED
+         WMVDoUsat0iZ4zkUlgnhAslETj3G+3QTccMRdW6f1YeYMFqXR2nHlmSMY9q3Ai86r8AJ
+         ahSA==
+X-Gm-Message-State: AGRZ1gJyBRGhEnELDW28jToGO0Db9wABx1RcpXWmBMAP49HnhcZs1TGe
+        ur5c81rdNUfLIEEm9dvoHs2Xzg==
+X-Google-Smtp-Source: AJdET5cDf8An+6w2imVC3+OY8FKCg0jfbaSZw/s4lOU14UwVgom0NgyFJbOOAQB/RXOV8vC4BGvzmg==
+X-Received: by 2002:adf:dcd1:: with SMTP id x17-v6mr1334145wrm.212.1541617123692;
+        Wed, 07 Nov 2018 10:58:43 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id u8-v6sm1797881wrr.33.2018.11.07.10.58.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 10:58:42 -0800 (PST)
+Date:   Wed, 7 Nov 2018 19:58:40 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] crypto: crypto_user_stat: convert all stats from u32
+ to u64
+Message-ID: <20181107185840.GC5133@Red>
+References: <1541422274-40060-1-git-send-email-clabbe@baylibre.com>
+ <1541422274-40060-3-git-send-email-clabbe@baylibre.com>
+ <20181106014242.GD28490@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:2c91:: with SMTP id i139-v6mr1060561iti.40.1541617084335;
- Wed, 07 Nov 2018 10:58:04 -0800 (PST)
-Date:   Wed, 07 Nov 2018 10:58:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b10cfe057a17b246@google.com>
-Subject: KMSAN: kernel-infoleak in kvm_write_guest_page
-From:   syzbot <syzbot+a8ef68d71211ba264f56@syzkaller.appspotmail.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106014242.GD28490@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Nov 05, 2018 at 05:42:42PM -0800, Eric Biggers wrote:
+> Hi Corentin,
+> 
+> On Mon, Nov 05, 2018 at 12:51:11PM +0000, Corentin Labbe wrote:
+> > All the 32-bit fields need to be 64-bit.  In some cases, UINT32_MAX crypto
+> > operations can be done in seconds.
+> > 
+> > Reported-by: Eric Biggers <ebiggers@kernel.org>
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  crypto/algapi.c                 |  10 +--
+> >  crypto/crypto_user_stat.c       | 114 +++++++++++++++-----------------
+> >  include/crypto/acompress.h      |   8 +--
+> >  include/crypto/aead.h           |   8 +--
+> >  include/crypto/akcipher.h       |  16 ++---
+> >  include/crypto/hash.h           |   6 +-
+> >  include/crypto/kpp.h            |  12 ++--
+> >  include/crypto/rng.h            |   8 +--
+> >  include/crypto/skcipher.h       |   8 +--
+> >  include/linux/crypto.h          |  46 ++++++-------
+> >  include/uapi/linux/cryptouser.h |  38 +++++------
+> >  11 files changed, 133 insertions(+), 141 deletions(-)
+> > 
+> > diff --git a/crypto/algapi.c b/crypto/algapi.c
+> > index f5396c88e8cd..42fe316f80ee 100644
+> > --- a/crypto/algapi.c
+> > +++ b/crypto/algapi.c
+> > @@ -259,13 +259,13 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+> >  	list_add(&larval->alg.cra_list, &crypto_alg_list);
+> >  
+> >  #ifdef CONFIG_CRYPTO_STATS
+> > -	atomic_set(&alg->encrypt_cnt, 0);
+> > -	atomic_set(&alg->decrypt_cnt, 0);
+> > +	atomic64_set(&alg->encrypt_cnt, 0);
+> > +	atomic64_set(&alg->decrypt_cnt, 0);
+> >  	atomic64_set(&alg->encrypt_tlen, 0);
+> >  	atomic64_set(&alg->decrypt_tlen, 0);
+> > -	atomic_set(&alg->verify_cnt, 0);
+> > -	atomic_set(&alg->cipher_err_cnt, 0);
+> > -	atomic_set(&alg->sign_cnt, 0);
+> > +	atomic64_set(&alg->verify_cnt, 0);
+> > +	atomic64_set(&alg->cipher_err_cnt, 0);
+> > +	atomic64_set(&alg->sign_cnt, 0);
+> >  #endif
+> >  
+> >  out:
+> > diff --git a/crypto/crypto_user_stat.c b/crypto/crypto_user_stat.c
+> > index a6fb2e6f618d..352569f378a0 100644
+> > --- a/crypto/crypto_user_stat.c
+> > +++ b/crypto/crypto_user_stat.c
+> > @@ -35,22 +35,21 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
+> >  {
+> >  	struct crypto_stat raead;
+> >  	u64 v64;
+> > -	u32 v32;
+> >  
+> >  	memset(&raead, 0, sizeof(raead));
+> >  
+> >  	strscpy(raead.type, "aead", sizeof(raead.type));
+> >  
+> > -	v32 = atomic_read(&alg->encrypt_cnt);
+> > -	raead.stat_encrypt_cnt = v32;
+> > +	v64 = atomic64_read(&alg->encrypt_cnt);
+> > +	raead.stat_encrypt_cnt = v64;
+> >  	v64 = atomic64_read(&alg->encrypt_tlen);
+> >  	raead.stat_encrypt_tlen = v64;
+> > -	v32 = atomic_read(&alg->decrypt_cnt);
+> > -	raead.stat_decrypt_cnt = v32;
+> > +	v64 = atomic64_read(&alg->decrypt_cnt);
+> > +	raead.stat_decrypt_cnt = v64;
+> >  	v64 = atomic64_read(&alg->decrypt_tlen);
+> >  	raead.stat_decrypt_tlen = v64;
+> > -	v32 = atomic_read(&alg->aead_err_cnt);
+> > -	raead.stat_aead_err_cnt = v32;
+> > +	v64 = atomic64_read(&alg->aead_err_cnt);
+> > +	raead.stat_aead_err_cnt = v64;
+> >  
+> >  	return nla_put(skb, CRYPTOCFGA_STAT_AEAD, sizeof(raead), &raead);
+> >  }
+> 
+> Why not assign the result of atomic64_read() directly?
+> I don't see the point of the 'v64' variable.
+> 
 
-syzbot found the following crash on:
+Yes it will be more compact and easier to read
 
-HEAD commit:    7438a3b20295 kmsan: print user address when reporting info..
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d782f5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8df5fc509a1b351b
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8ef68d71211ba264f56
-compiler:       clang version 8.0.0 (trunk 343298)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f09133400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a39e05400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a8ef68d71211ba264f56@syzkaller.appspotmail.com
-
-L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
-https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.
-==================================================================
-BUG: KMSAN: kernel-infoleak in __copy_to_user include/linux/uaccess.h:121  
-[inline]
-BUG: KMSAN: kernel-infoleak in __kvm_write_guest_page  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1849 [inline]
-BUG: KMSAN: kernel-infoleak in kvm_write_guest_page+0x373/0x500  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1861
-CPU: 1 PID: 6274 Comm: syz-executor149 Not tainted 4.19.0+ #78
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x32d/0x480 lib/dump_stack.c:113
-  kmsan_report+0x19f/0x300 mm/kmsan/kmsan.c:911
-  kmsan_internal_check_memory+0x35f/0x450 mm/kmsan/kmsan.c:993
-  kmsan_copy_to_user+0x7c/0xe0 mm/kmsan/kmsan_hooks.c:552
-  __copy_to_user include/linux/uaccess.h:121 [inline]
-  __kvm_write_guest_page arch/x86/kvm/../../../virt/kvm/kvm_main.c:1849  
-[inline]
-  kvm_write_guest_page+0x373/0x500  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1861
-  kvm_write_guest+0x1e1/0x360 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1883
-  kvm_pv_clock_pairing arch/x86/kvm/x86.c:6793 [inline]
-  kvm_emulate_hypercall+0x1c96/0x21b0 arch/x86/kvm/x86.c:6866
-  handle_vmcall+0x41/0x50 arch/x86/kvm/vmx.c:7487
-  vmx_handle_exit+0x1e81/0xbac0 arch/x86/kvm/vmx.c:10128
-  vcpu_enter_guest arch/x86/kvm/x86.c:7667 [inline]
-  vcpu_run arch/x86/kvm/x86.c:7730 [inline]
-  kvm_arch_vcpu_ioctl_run+0xac32/0x11d80 arch/x86/kvm/x86.c:7930
-  kvm_vcpu_ioctl+0xfb1/0x1f90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2590
-  do_vfs_ioctl+0xf77/0x2d30 fs/ioctl.c:46
-  ksys_ioctl fs/ioctl.c:702 [inline]
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:707
-  __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:707
-  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x442b39
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 1b 0c fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcb4e05478 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000442b39
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000007
-RBP: 00000000006cd018 R08: 0000000020000100 R09: 0000000020000100
-R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000403be0
-R13: 0000000000403c70 R14: 0000000000000000 R15: 0000000000000000
-
-Local variable description: ----clock_pairing.i@kvm_emulate_hypercall
-Variable was created at:
-  kvm_emulate_hypercall+0x60/0x21b0 arch/x86/kvm/x86.c:6827
-  handle_vmcall+0x41/0x50 arch/x86/kvm/vmx.c:7487
-
-Bytes 28-63 of 64 are uninitialized
-Memory access of size 64 starts at ffff8801aac5f3d8
-Data copied to user address 0000000020000000
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks
