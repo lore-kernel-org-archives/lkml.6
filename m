@@ -2,139 +2,108 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6156C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648E5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718F82086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:36:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718F82086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.De
+	by mail.kernel.org (Postfix) with ESMTP id 356AE2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:38:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356AE2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeKHCH0 (ORCPT
+        id S1728087AbeKHCJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:07:26 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:53404 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbeKHCH0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:07:26 -0500
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 185AA1C75740;
-        Wed,  7 Nov 2018 17:36:14 +0100 (CET)
-Received: from sntmail11s.snt-is.com (10.203.32.181) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 7 Nov 2018
- 17:36:13 +0100
-Received: from sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a]) by
- sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a%4]) with mapi id
- 15.01.1466.003; Wed, 7 Nov 2018 17:36:13 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.De>
-To:     Olof Johansson <olof@lixom.net>
-CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "Boris Brezillon" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Brian Norris" <computersforpeace@gmail.com>,
-        Mark Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Mark Brown <broonie@kernel.org>,
-        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
-        "han.xu@nxp.com" <han.xu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Eric Anholt <eric@anholt.net>, Stefan Agner <stefan@agner.ch>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        "yannick.fertre@st.com" <yannick.fertre@st.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 06/10] ARM: defconfig: Use the new FSL QSPI driver
- under the SPI framework
-Thread-Topic: [PATCH v4 06/10] ARM: defconfig: Use the new FSL QSPI driver
- under the SPI framework
-Thread-Index: AQHUdqh4fJ7CTSTis0KZzqRTstzHg6VEbX+AgAAEaoA=
-Date:   Wed, 7 Nov 2018 16:36:13 +0000
-Message-ID: <b12936f5-871d-a982-13c5-9d894f4a1521@kontron.de>
-References: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
- <1541601809-16950-7-git-send-email-frieder.schrempf@kontron.de>
- <CAOesGMgPwwwmizC+R4W1aLpvgcuVOYQr2qR2Vqb6171zGfarRw@mail.gmail.com>
-In-Reply-To: <CAOesGMgPwwwmizC+R4W1aLpvgcuVOYQr2qR2Vqb6171zGfarRw@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E3E8513E95EB0141883D08AD67B99E63@snt-world.com>
-Content-Transfer-Encoding: base64
+        Wed, 7 Nov 2018 21:09:15 -0500
+Received: from mga02.intel.com ([134.134.136.20]:53472 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727312AbeKHCJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:09:15 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 08:38:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="84068375"
+Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.132])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Nov 2018 08:37:59 -0800
+Date:   Wed, 7 Nov 2018 18:37:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Message-ID: <20181107163757.GB11509@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 185AA1C75740.AD0DC
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: alexandre.torgue@st.com, arnd@arndb.de,
-        boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, david.wolfe@nxp.com,
-        dwmw2@infradead.org, eric@anholt.net, fabio.estevam@nxp.com,
-        frieder.schrempf@exceet.de, geert+renesas@glider.be, han.xu@nxp.com,
-        horms+renesas@verge.net.au, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, linux@armlinux.org.uk,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com, olof@lixom.net,
-        prabhakar.kushwaha@nxp.com, richard@nod.at, s.hauer@pengutronix.de,
-        shawnguo@kernel.org, stefan.wahren@i2se.com, stefan@agner.ch,
-        tony@atomide.com, yannick.fertre@st.com, yogeshnarayan.gaur@nxp.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1541522400.7839.48.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgT2xvZiwNCg0KT24gMDcuMTEuMTggMTc6MjAsIE9sb2YgSm9oYW5zc29uIHdyb3RlOg0KPiBP
-biBXZWQsIE5vdiA3LCAyMDE4IGF0IDY6NDQgQU0gRnJpZWRlciBTY2hyZW1wZg0KPiA8ZnJpZWRl
-ci5zY2hyZW1wZkBrb250cm9uLmRlPiB3cm90ZToNCj4+DQo+PiBGcm9tOiBGcmllZGVyIFNjaHJl
-bXBmIDxmcmllZGVyLnNjaHJlbXBmQGV4Y2VldC5kZT4NCj4+DQo+PiBUaGUgbmV3IGRyaXZlciBh
-dCBzcGkvc3BpLWZzbC1xc3BpLmMgcmVwbGFjZXMgdGhlIG9sZCBTUEkgTk9SIGRyaXZlcg0KPj4g
-YXQgbXRkL2ZzbC1xdWFkc3BpLmMuIFN3aXRjaCB0byB0aGUgbmV3IGRyaXZlciBpbiB0aGUgZGVm
-Y29uZmlncy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVy
-LnNjaHJlbXBmQGV4Y2VldC5kZT4NCj4gDQo+IEhpIEZyaWVkZXIsDQo+IA0KPiBUaGlzIHBhdGNo
-IGlzIHBhcnQgb2YgYSBzZXJpZXMgdGhhdCBJIGRpZG4ndCBzZWUgdGhlIHJlc3Qgb2YsIGJ1dCBp
-bg0KPiBnZW5lcmFsIHdlIHByZWZlciB0byBtZXJnZSB0aGVzZSB0aHJvdWdoIGFybS1zb2MgZXZl
-biBpZiB0aGUgZHJpdmVyDQo+IGdvZXMgaW4gdGhyb3VnaCBhbm90aGVyIHRyZWUuIFRoZSB3YXkg
-d2UnZCBwcmVmZXIgdG8gaGFuZGxlIGl0IGlzIHRoYXQNCj4gb25jZSB0aGUgZHJpdmVyIGxhbmRz
-LCB3ZSdsbCB0YWtlIHRoZSBjb25maWcgb3B0aW9uIGNoYW5nZSB0byB0dXJuIGl0DQo+IG9uLiBU
-byBhdm9pZCBvdXIgYnJhbmNoZXMgdG8gYnJlYWsgdW50aWwgYm90aCBzaWRlcyBoYXZlIGxhbmRl
-ZCwgaXQNCj4gbWlnaHQgYmUgYSBnb29kIGlkZWEgdG8ga2VlcCBib3RoIGRyaXZlcnMgb24gZm9y
-IGEgc2hvcnQgd2hpbGUgKG9uZQ0KPiByZWxlYXNlKS4NCj4gDQo+IFNvLCBJJ20gbm90IGdvaW5n
-IHRvIGFjayB0aGlzIHNpbmNlIHdlIGF2b2lkIHRha2luZyBkZWZjb25maWcgY2hhbmdlcw0KPiB0
-aHJvdWdoIGRyaXZlciB0cmVlcyAodGhlc2UgdHdvIGRlZmNvbmZpZ3MgdGVuZCB0byBjaHVybiBh
-IGxvdCBhbmQgd2UNCj4gZG9uJ3Qgd2FudCB0byBjcmVhdGUgbWVyZ2UgY29uZmxpY3RzIHdoZXJl
-IHdlIGRvbid0IGhhdmUgdG8pLCBidXQNCj4gd2UnbGwgYmUgaGFwcHkgdG8gcGljayBpdCB1cCB3
-aGVuIHRoZSB0aW1lIGNvbWVzLg0KDQpPaywgdGhhbmsgeW91IGZvciBleHBsYWluaW5nIHRoZSBj
-b21tb24gcHJhY3RpY2UuIEkgd2lsbCBkcm9wIHRoZSBjb25maWcgDQpjaGFuZ2VzIGZvciB0aGUg
-bmV4dCB2ZXJzaW9uIGFuZCBzZW5kIGl0IHNlcGFyYXRlbHkgd2hlbiB0aGUgdGltZSBpcyByZWFk
-eS4NCg0KQm90aCB0aGUgb2xkIGRyaXZlciBhbmQgdGhlIG5ldyBvbmUgdXNlIHRoZSBzYW1lIGNv
-bXBhdGlibGUgc3RyaW5ncyBmb3IgDQpwcm9iaW5nLiBXb3VsZG4ndCB0aGF0IGNhdXNlIHByb2Js
-ZW1zIGlmIGJvdGggZHJpdmVycyBhcmUgZW5hYmxlZCBmb3IgYSANCndoaWxlLCBvciBhbSBJIG1p
-c3Npbmcgc29tZXRoaW5nPw0KDQpUaGFua3MsDQpGcmllZGVyDQoNCj4gDQo+IA0KPiBUaGFua3Ms
-DQo+IA0KPiAtT2xvZg0KPiA=
+On Tue, Nov 06, 2018 at 08:40:00AM -0800, Sean Christopherson wrote:
+> On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
+> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > can be used by applications to set aside private regions of code and
+> > data. The code outside the enclave is disallowed to access the memory
+> > inside the enclave by the CPU access control.
+> > 
+> > SGX driver provides a ioctl API for loading and initializing enclaves.
+> > Address range for enclaves is reserved with mmap() and they are
+> > destroyed with munmap(). Enclave construction, measurement and
+> > initialization is done with the provided the ioctl API.
+> 
+> ...
+> 
+> > +struct sgx_encl {
+> > +	unsigned int flags;
+> > +	uint64_t attributes;
+> > +	uint64_t xfrm;
+> > +	unsigned int page_cnt;
+> > +	unsigned int secs_child_cnt;
+> > +	struct mutex lock;
+> > +	struct mm_struct *mm;
+> > +	struct file *backing;
+> 
+> Is there any particular reason why the kernel manages the backing for
+> the enclave and the PCMDs?  Could we have userspace provide the backing
+> either through the ECREATE ioctl() or maybe a completely new ioctl(),
+> e.g. to give userspace the option to back the enclave with a NVDIMM
+> instead of RAM?  A separate ioctl() with control flags might give us
+> some flexibility in the future, e.g. maybe there are use cases where
+> userspace would prefer to kill enclaves rather than swap EPC.
+
+Not really except that no one has complained. The very first swapping
+code that I implemented used a VMA as backing storage. I could take
+pieces of that code to replace shmem specifics. The difference was that
+the driver did vm_mmap(). Now that you suggested the above I wonder how
+it did not came to mind back then to provide the VMA as parameter.
+
+A single buffer that can hold both PCMD entries and swapped pages in its
+address space would probably be the  best way to do it. I would add that
+as a field to struct sgx_enclave_create. If we want the kill-behavior,
+you could signal that with a NULL value.
+
+/Jarkko
