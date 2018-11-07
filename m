@@ -2,128 +2,214 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9679BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24D8C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD4F20818
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:58:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="xjUSj6oU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AD4F20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F89820818
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:59:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F89820818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbeKHFaE (ORCPT
+        id S1726708AbeKHFax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:30:04 -0500
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:46446 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbeKHFaE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:30:04 -0500
-Received: by mail-oi1-f170.google.com with SMTP id k64-v6so14871541oia.13
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 11:58:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u25Hl9nttXsOv9mUmKr2AbGA4/VesCfN1ie9f8ee/nc=;
-        b=xjUSj6oUJ/tXzIfUxeDC2g9JF6xPqKSZlEwIRb+RK08PotmqGdEEkebmeTfQ/V331W
-         8XFYIfN5GPPJLJkb3fepCM3uLn6gyIdg1cKJSmxvSvZ6iqn5rxJNnglcTSiXR1juwQk9
-         eeIL5K0zcpxd+KrFRRKjVPLcnmzCUm7Kug2Ap47RDLfAQ+nLj7AJZJ7FA6Ib1OMh0jc0
-         sgWjMqCqN4XtkJdt/VDaVlr6VlE9Ato01EXVKLiFF02LLyuOCQRlskIksY0qzZDq4FhE
-         7jC34n/ykJsKlqAQQKB8YAl/CKpTd6XeGR7Qa3+HS0rajo7VVyrIGy2lxlPVxYhdPOfg
-         EWZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u25Hl9nttXsOv9mUmKr2AbGA4/VesCfN1ie9f8ee/nc=;
-        b=WCXz5IKoqUkn6wKdqFEYVxhHdbiQoK/nXgwswQu5eRueVRe36aAE6XdBPkU0KdOetf
-         gJEvoX8v/gcYm62rPrfglj/RA+ySQz6IXjpb9O3p1HdghcjYm//WimaFHjQcwAGu0343
-         9AmDpsD3Szzx2hD+U/GqeNEysyyYQdyuQujOdCDOMHHIfc5lKwX8q1PE4nV5BeBPl5u8
-         3CQ5WwPHUrpz49QNNyA3U7ZIUtQ8M7dkPp0yMRQZGGBWT36twAtCv+LIZpJsoN3hewz2
-         zTDWLvScRPXNBYbJQ0I0cuHtfA4JyeaPx+II807FLoWu86Vaq86Acb2gYnPGwnkrD+qz
-         Q4Xg==
-X-Gm-Message-State: AGRZ1gLegFBojc5Kb48lq33g9fGPe+LbPxUr9QdLIM1MSHYmKjI7VESS
-        /R4qAXjIINyXZsc5UuSkOlpEi/TD95J6D6fA9l7j6zSY
-X-Google-Smtp-Source: AJdET5cxQAtvrCSvsMwq913Bs1m28aK8H/8JiH/Z33+rViM8T0lwkv2OU7+HtIc6oU1tCxQPeUBlkUw1Aduk2SIspY4=
-X-Received: by 2002:aca:e691:: with SMTP id d139-v6mr942880oih.232.1541620691838;
- Wed, 07 Nov 2018 11:58:11 -0800 (PST)
+        Thu, 8 Nov 2018 00:30:53 -0500
+Received: from mga11.intel.com ([192.55.52.93]:41325 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725838AbeKHFax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 00:30:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 11:59:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="102417620"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Nov 2018 11:58:58 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 0A801E6; Wed,  7 Nov 2018 21:58:56 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Brown <broonie@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] PCI: Move Rohm vendor ID to generic list
+Date:   Wed,  7 Nov 2018 21:58:56 +0200
+Message-Id: <20181107195856.43223-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181107171010.421878737@linutronix.de> <20181107124855.328133e7@lwn.net>
-In-Reply-To: <20181107124855.328133e7@lwn.net>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 7 Nov 2018 11:58:00 -0800
-Message-ID: <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
-Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        john.stultz@linaro.org, acme@redhat.com, frederic@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>, daniel.lezcano@linaro.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 11:49 AM Jonathan Corbet <corbet@lwn.net> wrote:
->
-> On Wed, 07 Nov 2018 18:10:10 +0100
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> > Mark recently suggested in one of the ksummit discussions to add subsystem
-> > or tree specific maintainer handbooks to document subsystem/tree specific
-> > development process information.
-> >
-> > The following series adds the general section and the tip tree specific
-> > handbook.
->
-> So this is an idea that has gone around for a while; developers often get
-> into trouble when wandering into an unfamiliar part of the kernel, so
-> documenting the quaint local customs might help.  Assuming people actually
-> read the documentation, of course.
->
-> What's here seems generally good, but I do have an overall worry that we
-> may want to consider:
->
->   - How much do we want to support and document subsystem-specific quirks
->     vs. promoting reasonable and consistent rules kernel-wide?
->
-> There is a *lot* of stuff in the new tip manual.  Much of it, regarding
-> coding style and the writing of changelogs, really seems like it should be
-> global; if we need better documentation of that stuff, I'd really rather
-> see that advice folded into the central documents.  Having two (or more)
-> extensive coding-style documents doesn't seem like it's going to help us.
->
-> The stuff that is truly specific to tip seems fairly minimal:
->
->   - what goes into tip
->   - the reverse fir tree thing
->   - tail comments, or the distaste thereabouts
->   - subject-line prefixes
->
-> Having a tip-specific document that contains only those (plus whatever
-> else I forgot to list) would, IMO, make it much more likely that readers
-> would actually notice (and follow) the stuff that's specific to tip.
->
-> See what I'm getting at here?  Am I totally out to lunch on this?
+Move the Rohm vendor ID to pci_ids.h from dozen of drivers.
 
-Not at all, and this is one of the thrusts of my talk next week at
-Plumbers. I *do* want to propose that sub-systems document all their
-local quirks. Then we can refactor the common ones into a global
-document, have some discussion fodder if some sub-system specific
-rules can be unified, and otherwise leave the freedom for individual
-sub-systems to be different as long as it's documented.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+I believe the best chance to get it merged and be less intrusive to ongoing
+work is through PCI subsystem as a _fix_ for v4.20.
+
+ drivers/dma/pch_dma.c                                | 1 -
+ drivers/gpio/gpio-ml-ioh.c                           | 2 --
+ drivers/gpio/gpio-pch.c                              | 1 -
+ drivers/i2c/busses/i2c-eg20t.c                       | 1 -
+ drivers/misc/pch_phub.c                              | 1 -
+ drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c | 7 ++-----
+ drivers/spi/spi-topcliff-pch.c                       | 1 -
+ drivers/tty/serial/pch_uart.c                        | 2 --
+ drivers/usb/gadget/udc/pch_udc.c                     | 1 -
+ include/linux/pci_ids.h                              | 2 ++
+ 10 files changed, 4 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/dma/pch_dma.c b/drivers/dma/pch_dma.c
+index afd8f27bda96..538b6e0e17bb 100644
+--- a/drivers/dma/pch_dma.c
++++ b/drivers/dma/pch_dma.c
+@@ -972,7 +972,6 @@ static void pch_dma_remove(struct pci_dev *pdev)
+ }
+ 
+ /* PCI Device ID of DMA device */
+-#define PCI_VENDOR_ID_ROHM             0x10DB
+ #define PCI_DEVICE_ID_EG20T_PCH_DMA_8CH        0x8810
+ #define PCI_DEVICE_ID_EG20T_PCH_DMA_4CH        0x8815
+ #define PCI_DEVICE_ID_ML7213_DMA1_8CH	0x8026
+diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+index 51c7d1b84c2e..0c076dce9e17 100644
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -31,8 +31,6 @@
+ 
+ #define IOH_IRQ_BASE		0
+ 
+-#define PCI_VENDOR_ID_ROHM             0x10DB
+-
+ struct ioh_reg_comn {
+ 	u32	ien;
+ 	u32	istatus;
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index ffce0ab912ed..8c7f3d20e30e 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -524,7 +524,6 @@ static int pch_gpio_resume(struct pci_dev *pdev)
+ #define pch_gpio_resume NULL
+ #endif
+ 
+-#define PCI_VENDOR_ID_ROHM             0x10DB
+ static const struct pci_device_id pch_gpio_pcidev_id[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x8803) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_ROHM, 0x8014) },
+diff --git a/drivers/i2c/busses/i2c-eg20t.c b/drivers/i2c/busses/i2c-eg20t.c
+index 835d54ac2971..231675b10376 100644
+--- a/drivers/i2c/busses/i2c-eg20t.c
++++ b/drivers/i2c/busses/i2c-eg20t.c
+@@ -177,7 +177,6 @@ static wait_queue_head_t pch_event;
+ static DEFINE_MUTEX(pch_mutex);
+ 
+ /* Definition for ML7213 by LAPIS Semiconductor */
+-#define PCI_VENDOR_ID_ROHM		0x10DB
+ #define PCI_DEVICE_ID_ML7213_I2C	0x802D
+ #define PCI_DEVICE_ID_ML7223_I2C	0x8010
+ #define PCI_DEVICE_ID_ML7831_I2C	0x8817
+diff --git a/drivers/misc/pch_phub.c b/drivers/misc/pch_phub.c
+index 540845651b8c..309703e9c42e 100644
+--- a/drivers/misc/pch_phub.c
++++ b/drivers/misc/pch_phub.c
+@@ -64,7 +64,6 @@
+ #define CLKCFG_UARTCLKSEL			(1 << 18)
+ 
+ /* Macros for ML7213 */
+-#define PCI_VENDOR_ID_ROHM			0x10db
+ #define PCI_DEVICE_ID_ROHM_ML7213_PHUB		0x801A
+ 
+ /* Macros for ML7223 */
+diff --git a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+index 43c0c10dfeb7..3a4225837049 100644
+--- a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
++++ b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+@@ -27,7 +27,6 @@
+ #define DRV_VERSION     "1.01"
+ const char pch_driver_version[] = DRV_VERSION;
+ 
+-#define PCI_DEVICE_ID_INTEL_IOH1_GBE	0x8802		/* Pci device ID */
+ #define PCH_GBE_MAR_ENTRIES		16
+ #define PCH_GBE_SHORT_PKT		64
+ #define DSC_INIT16			0xC000
+@@ -37,11 +36,9 @@ const char pch_driver_version[] = DRV_VERSION;
+ #define PCH_GBE_PCI_BAR			1
+ #define PCH_GBE_RESERVE_MEMORY		0x200000	/* 2MB */
+ 
+-/* Macros for ML7223 */
+-#define PCI_VENDOR_ID_ROHM			0x10db
+-#define PCI_DEVICE_ID_ROHM_ML7223_GBE		0x8013
++#define PCI_DEVICE_ID_INTEL_IOH1_GBE		0x8802
+ 
+-/* Macros for ML7831 */
++#define PCI_DEVICE_ID_ROHM_ML7223_GBE		0x8013
+ #define PCI_DEVICE_ID_ROHM_ML7831_GBE		0x8802
+ 
+ #define PCH_GBE_TX_WEIGHT         64
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 97d137591b18..d794180e83dc 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -92,7 +92,6 @@
+ #define PCH_MAX_SPBR		1023
+ 
+ /* Definition for ML7213/ML7223/ML7831 by LAPIS Semiconductor */
+-#define PCI_VENDOR_ID_ROHM		0x10DB
+ #define PCI_DEVICE_ID_ML7213_SPI	0x802c
+ #define PCI_DEVICE_ID_ML7223_SPI	0x800F
+ #define PCI_DEVICE_ID_ML7831_SPI	0x8816
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index cb85002a10d8..d04108e7503a 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -192,8 +192,6 @@ enum {
+ #define PCH_UART_HAL_LOOP		(PCH_UART_MCR_LOOP)
+ #define PCH_UART_HAL_AFE		(PCH_UART_MCR_AFE)
+ 
+-#define PCI_VENDOR_ID_ROHM		0x10DB
+-
+ #define BOTH_EMPTY (UART_LSR_TEMT | UART_LSR_THRE)
+ 
+ #define DEFAULT_UARTCLK   1843200 /*   1.8432 MHz */
+diff --git a/drivers/usb/gadget/udc/pch_udc.c b/drivers/usb/gadget/udc/pch_udc.c
+index afaea11ec771..5b6f2b9eaa5f 100644
+--- a/drivers/usb/gadget/udc/pch_udc.c
++++ b/drivers/usb/gadget/udc/pch_udc.c
+@@ -368,7 +368,6 @@ struct pch_udc_dev {
+ #define PCI_DEVICE_ID_INTEL_QUARK_X1000_UDC	0x0939
+ #define PCI_DEVICE_ID_INTEL_EG20T_UDC		0x8808
+ 
+-#define PCI_VENDOR_ID_ROHM		0x10DB
+ #define PCI_DEVICE_ID_ML7213_IOH_UDC	0x801D
+ #define PCI_DEVICE_ID_ML7831_IOH_UDC	0x8808
+ 
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index 69f0abe1ba1a..7fc8d79260e6 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -1137,6 +1137,8 @@
+ #define PCI_VENDOR_ID_TCONRAD		0x10da
+ #define PCI_DEVICE_ID_TCONRAD_TOKENRING	0x0508
+ 
++#define PCI_VENDOR_ID_ROHM		0x10db
++
+ #define PCI_VENDOR_ID_NVIDIA			0x10de
+ #define PCI_DEVICE_ID_NVIDIA_TNT		0x0020
+ #define PCI_DEVICE_ID_NVIDIA_TNT2		0x0028
+-- 
+2.19.1
+
