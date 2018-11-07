@@ -6,105 +6,80 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46210C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667CDC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD53D2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:37:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD53D2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id 185D72081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:38:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185D72081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbeKHFJl (ORCPT
+        id S1728229AbeKHFJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:09:41 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:55032 "EHLO mail.bugwerft.de"
+        Thu, 8 Nov 2018 00:09:49 -0500
+Received: from smtp1-3.goneo.de ([85.220.129.32]:35929 "EHLO smtp1-3.goneo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725953AbeKHFJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:09:41 -0500
-Received: from [192.168.178.170] (pD95EFA86.dip0.t-ipconnect.de [217.94.250.134])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 3701E2A75B8;
-        Wed,  7 Nov 2018 19:35:32 +0000 (UTC)
-Subject: Re: [PATCH 08/24] leds: lt3593: Use led_compose_name()
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
-Date:   Wed, 7 Nov 2018 20:37:52 +0100
+        id S1725953AbeKHFJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 00:09:48 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by smtp1.goneo.de (Postfix) with ESMTP id AC1A2241024;
+        Wed,  7 Nov 2018 20:37:59 +0100 (CET)
+X-Virus-Scanned: by goneo
+Received: from smtp1.goneo.de ([127.0.0.1])
+        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id a2I8XAhCMkzi; Wed,  7 Nov 2018 20:37:58 +0100 (CET)
+Received: from [192.168.1.127] (dyndsl-037-138-077-056.ewe-ip-backbone.de [37.138.77.56])
+        by smtp1.goneo.de (Postfix) with ESMTPSA id 594FC23F106;
+        Wed,  7 Nov 2018 20:37:58 +0100 (CET)
+Subject: Re: [PATCH v2 2/2] kernel-doc: extend $type_param to match members
+ referenced by pointer
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1541609233-14182-1-git-send-email-rppt@linux.ibm.com>
+ <1541609233-14182-3-git-send-email-rppt@linux.ibm.com>
+From:   Markus Heiser <markus.heiser@darmarit.de>
+Message-ID: <67c21f80-754f-1aa6-6722-bb90da5e5370@darmarit.de>
+Date:   Wed, 7 Nov 2018 20:37:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
+In-Reply-To: <1541609233-14182-3-git-send-email-rppt@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/2018 11:07 PM, Jacek Anaszewski wrote:
-> Switch to using generic LED support for composing LED class
-> device name.
-
-Thanks for the rework!
-
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> ---
->   drivers/leds/leds-lt3593.c | 19 ++++++++-----------
->   1 file changed, 8 insertions(+), 11 deletions(-)
+Am 07.11.18 um 17:47 schrieb Mike Rapoport:
+> Currently, function parameter description can match '@type.member'
+> expressions but fails to match '@type->member'.
+> Extend the $type_param regex to allow matching both
 > 
-> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
-> index de3623e..d005abc 100644
-> --- a/drivers/leds/leds-lt3593.c
-> +++ b/drivers/leds/leds-lt3593.c
-> @@ -10,10 +10,10 @@
->   #include <linux/slab.h>
->   #include <linux/module.h>
->   #include <linux/of.h>
-> -#include <uapi/linux/uleds.h>
-> +
-> +#define LED_LT3593_NAME "lt3593"
->   
->   struct lt3593_led_data {
-> -	char name[LED_MAX_NAME_SIZE];
->   	struct led_classdev cdev;
->   	struct gpio_desc *gpiod;
->   };
-> @@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device *pdev)
->   	struct fwnode_handle *child;
->   	int ret, state = LEDS_GPIO_DEFSTATE_OFF;
->   	enum gpiod_flags flags = GPIOD_OUT_LOW;
-> +	struct led_init_data init_data;
->   	const char *tmp;
->   
->   	if (dev_get_platdata(dev)) {
-> @@ -138,14 +139,11 @@ static int lt3593_led_probe(struct platform_device *pdev)
->   		return PTR_ERR(led_data->gpiod);
->   
->   	child = device_get_next_child_node(dev, NULL);
-> +	init_data.fwnode = child;
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>   scripts/kernel-doc | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+> index 24d3550..f9f1431 100755
+> --- a/scripts/kernel-doc
+> +++ b/scripts/kernel-doc
+> @@ -212,7 +212,7 @@ my $anon_struct_union = 0;
+>   my $type_constant = '\b``([^\`]+)``\b';
+>   my $type_constant2 = '\%([-_\w]+)';
+>   my $type_func = '(\w+)\(\)';
+> -my $type_param = '\@(\w*(\.\w+)*(\.\.\.)?)';
+> +my $type_param = '\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)';
 
-Not quite following. `fwnode' is the only member of that struct that is 
-initialized?
+Thanks, works! FWIW: added [1] this to the linuxdoc project (a kernel-doc
+spinoff).  There we have a small frmaework for testing kernel-doc patches [2].
+Which found a few hundert usages of '->' pointers in the whole kernel sources.
 
->   
-> -	ret = fwnode_property_read_string(child, "label", &tmp);
-> -	if (ret < 0)
-> -		snprintf(led_data->name, sizeof(led_data->name),
-> -			 "lt3593::");
-> -	else
-> -		snprintf(led_data->name, sizeof(led_data->name),
-> -			 "lt3593:%s", tmp);
-> +	ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
+[1] https://github.com/return42/linuxdoc/commit/cce336ce0
+[2] https://github.com/return42/linuxdoc/blob/master/Makefile#L95
 
-... and here, a member that wasn't written before is used? What am I 
-missing?
-
-
-Thanks,
-Daniel
+-- Markus --
