@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A9BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6C2C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE322081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A6D120989
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S3xgE38V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE322081D
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SHDKlaYF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6D120989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbeKHCl7 (ORCPT
+        id S1731652AbeKHCmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:41:59 -0500
+        Wed, 7 Nov 2018 21:42:02 -0500
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:57233 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731535AbeKHCl7 (ORCPT
+        with ESMTP id S1731542AbeKHCmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:41:59 -0500
+        Wed, 7 Nov 2018 21:42:02 -0500
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181107171041euoutp02cb18a9bb5d618c473406377cbb94d08b~k5rXoZqx80448104481euoutp02L
-        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 17:10:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181107171041euoutp02cb18a9bb5d618c473406377cbb94d08b~k5rXoZqx80448104481euoutp02L
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181107171045euoutp02ac2675c66e851108705eb0b8325a4360~k5rbAOLw30522705227euoutp02z
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 17:10:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181107171045euoutp02ac2675c66e851108705eb0b8325a4360~k5rbAOLw30522705227euoutp02z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1541610641;
-        bh=ieA62//icH3sN534y4WduRONZ7BGyV+dTJD6+lsC1Uc=;
+        s=mail20170921; t=1541610645;
+        bh=0WFLEzAw2aavBK3I3OCjzkbVzKlMAaSYdb55506bcLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3xgE38VaLT9mH49bY8KyabDY4LV2IVgQ2gah7S0d4I3oMygELYEJnXeipBwdZzwn
-         U17ChQa1RJ0jcMQhntLBwOF/FqxMDjhD+fBdjsGL7sO6YykMXY0jqqt87AFKAdkeT6
-         BeD0lflZoqBR9R/6wXNwbZM6wZ6WhiIQubV/z+a0=
+        b=SHDKlaYFutykon+xuEEHvsJiXgW30bvazqNpKWALFkyIMVveyYuEUrBWG1DfQ+l/F
+         YGXN4BDLjKbcTnYl51OaaRSrunHCOvZQmCnoIKiEuw+T3FRPSzu0bb0qq8nd7b3Acj
+         KQd4vvTYJKUajhQnnn2TCa7abSLiRfyUY6PdaoJg=
 Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181107171040eucas1p171b453f64b6e663696bb8ff4e5977ab3~k5rW3lNU72722727227eucas1p1p;
-        Wed,  7 Nov 2018 17:10:40 +0000 (GMT)
+        20181107171044eucas1p13ae4deff325bdfcc14ed4cf1c1fea211~k5raMvwvk2318323183eucas1p1H;
+        Wed,  7 Nov 2018 17:10:44 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id E5.64.04294.09C13EB5; Wed,  7
-        Nov 2018 17:10:40 +0000 (GMT)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 38.64.04294.39C13EB5; Wed,  7
+        Nov 2018 17:10:43 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181107171039eucas1p2227bd4bc573fd0d2a3a97986004be16b~k5rWOnvg82796227962eucas1p2X;
-        Wed,  7 Nov 2018 17:10:39 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181107171043eucas1p16be3fa901c7bceb129c70fc81dba6e48~k5rZfeL-_3085730857eucas1p1d;
+        Wed,  7 Nov 2018 17:10:43 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181107171039eusmtrp1d7c5234efc852adb3c4ecf14d2089a98~k5rWCyZnf2472724727eusmtrp1k;
-        Wed,  7 Nov 2018 17:10:39 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-c0-5be31c907189
+        20181107171043eusmtrp1c9acb4456537ee03616de44eccab9dca~k5rZTgZXz2472624726eusmtrp1q;
+        Wed,  7 Nov 2018 17:10:43 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-c8-5be31c930bb9
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9C.23.04128.F8C13EB5; Wed,  7
-        Nov 2018 17:10:39 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EF.23.04128.39C13EB5; Wed,  7
+        Nov 2018 17:10:43 +0000 (GMT)
 Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181107171039eusmtip2f98159ddfb4c2381755683c5e71b98c6~k5rVe8tOq0341103411eusmtip2I;
-        Wed,  7 Nov 2018 17:10:39 +0000 (GMT)
+        20181107171042eusmtip25b8b49cf290ae30058e6ad32c6256fe7~k5rYrNGek0340803408eusmtip2U;
+        Wed,  7 Nov 2018 17:10:42 +0000 (GMT)
 From:   Lukasz Luba <l.luba@partner.samsung.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -67,109 +67,105 @@ To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 Cc:     rui.zhang@intel.com, edubezval@gmail.com,
         daniel.lezcano@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, corbet@lwn.net, b.zolnierkie@samsung.com,
-        krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v2 05/11] Doc: DT: thermal: new irq-mode for trip point
-Date:   Wed,  7 Nov 2018 18:09:47 +0100
-Message-Id: <1541610593-28542-6-git-send-email-l.luba@partner.samsung.com>
+        krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 08/11] arm: dts: exynos4: add support for thermal trip
+ irq-mode
+Date:   Wed,  7 Nov 2018 18:09:50 +0100
+Message-Id: <1541610593-28542-9-git-send-email-l.luba@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsWy7djPc7oTZB5HG5x4LGSxccZ6VosnB9oZ
-        LeZ9lrWYf+Qcq8X8K9dYLc6f38BucatBxmLTYyBvYdsSFovLu+awWXzuPcJosfT6RSaL1r1H
-        2C2ePOxjc+DzWDNvDaPHzll32T0W73nJ5LFpVSebx51re9g8Ni+p91jcN5nV4+C7PUwefVtW
-        MXp83iQXwBXFZZOSmpNZllqkb5fAlTGz8SNzwXz+igfPDzI1ME7j6WLk4JAQMJE4sTKui5GL
-        Q0hgBaPElf9r2CGcL4wSm97sYYRwPjNKPP31nQ2mY8YkBYj4ckaJOa+2M8N1XLy3nhWkiE1A
-        T2LHqkKQuIjAbEaJz/sWg41lFrjDKHFqymJmkCJhAXeJM3PDuxg5OVgEVCXuP33CAmLzCnhJ
-        HFn1lhnElhCQk7h5rhPM5hTwlph3+S3YHAmBY+wSD3qb2CGKXCRenIVolhAQlnh1fAtUXEbi
-        9OQeqHixxNmOVWwQdo1E+8kdUDXWEoePXwQ7mllAU2L9Ln2IsKPEya1/WCEe5pO48VYQJMwM
-        ZE7aNp0ZIswr0dEmBFGtIbGl5wIThC0msXzNNKjhHhLt/yZDw3AeMAynbmWdwCg/C2HZAkbG
-        VYziqaXFuempxUZ5qeV6xYm5xaV56XrJ+bmbGIEp6fS/4192MO76k3SIUYCDUYmH98LWh9FC
-        rIllxZW5hxglOJiVRHh7Vz+KFuJNSaysSi3Kjy8qzUktPsQozcGiJM5bzfAgWkggPbEkNTs1
-        tSC1CCbLxMEp1cBYEJs8h39io59v2TzjiC98UvUc91RWXa3drGn5L2VxelXWPl4nyRl9pdcK
-        bri8q53wrPiF6maV2Z9/rT/0+4DGitfCG4/f0vsS8pYj/O27tkqPn5dnccnoTju1wyn58Yqz
-        b36p/Vw82+tCbnLSWvVMw1MWx0oOx1zcKH/iYm7EeaO7OYn8r2OvKbEUZyQaajEXFScCADjx
-        lgJFAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsVy+t/xe7r9Mo+jDeY0aFtsnLGe1eLJgXZG
-        i3mfZS3mHznHajH/yjVWi/PnN7Bb3GqQsdj0GMhb2LaExeLyrjlsFp97jzBaLL1+kcmide8R
-        dosnD/vYHPg81sxbw+ixc9Zddo/Fe14yeWxa1cnmcefaHjaPzUvqPRb3TWb1OPhuD5NH35ZV
-        jB6fN8kFcEXp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp
-        2yXoZcxs/MhcMJ+/4sHzg0wNjNN4uhg5OCQETCRmTFLoYuTiEBJYyihx5UU3cxcjJ1BcTGLS
-        vu3sELawxJ9rXWwQRZ8YJd49PMoK0swmoCexY1UhSFxEYD6jxNFNl8GKmAWeMUqsnP6SCaRI
-        WMBd4szccJBBLAKqEvefPmEBsXkFvCSOrHoLtUxO4ua5TjCbU8BbYt7lt2CLhYBqvs9azzaB
-        kW8BI8MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwCjZduznlh2MXe+CDzEKcDAq8fBq7HgY
-        LcSaWFZcmXuIUYKDWUmEt3f1o2gh3pTEyqrUovz4otKc1OJDjKZAR01klhJNzgdGcF5JvKGp
-        obmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBsZDTOv3fl4426v9F98rqQi2
-        cxWnXp93Uo2a9mG2Z+cc6bNO37K/hpjkiIQe6HOMOf7ny73WO7XTgmfXBvhZF6tsn6Opc272
-        EgNL/gWn1Bma372bvaT7kH8ry/sHU2NPHI/1b/Fn3Ghoe3vlQdatex1X6l1k5fh/KPLo4eoq
-        yeZVvz6t2Sm50rtIiaU4I9FQi7moOBEAZusvNKgCAAA=
-X-CMS-MailID: 20181107171039eucas1p2227bd4bc573fd0d2a3a97986004be16b
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSWUwTQRzGnd3udluoWQqRCSKYRlFMBETBTTAGDSYbfPHBxCgPWmE5lAJ2
+        AS2aiCFyVECUoICmYDhba4CKiBxFCpEgSiEQbg9u1ECEIoI1KstWfft933z/YyZDoFIj5kJE
+        xcQzyhh5tAwXC+perXXvzXWdDPF5v+hH1eRXYdTUyzRAaSzbqKL2bowq6h/AqNuTX1DKbK4W
+        UiPJrpRhct16lFoqoPoaHuKUJasdUPlmI0KVDfYi1M3mdiE1NZ6NB5K0XqMH9IvCd0K6pOkT
+        Qht0GTg9NtCE009Lr9Ml2bkY3brQhNDZtTpAWwxuJ8RnxIfCmOioREbpfficOPJHZzUe129/
+        pVU/iyWDbyI1EBGQPACT89eAGogJKVkJYMHEkE0sA7i0MGUTFgBzWqwCNSA2SobHdvB+BYDp
+        GXPYv4pOaxHgQjjpBet1lzjfiXwAoMVYIuQEShYjcNH6RMANdyRPwlvlRoRjAbkTjva9wTmW
+        kMFwenQU4xd0g8PdGSjHIvI41PTNbzSC5IAQTq80CvlQEDQ/L0N5doSfO2ptvivsys0U8MzC
+        t+k6nOdrMK2z3pYJgG0dvRi3NUp6wqoGb94+AlfvZCL8jTfDoXkHzkbX8W7dfZS3JTA9Vcqn
+        d8PazB6E5y2wQn/P1pyGKx9SUf59NAB+XygHOcC98P+wYgB0wJlJYBURDOsbw1z2YuUKNiEm
+        wis0VmEA67+q61fHcj1o+HneBEgCyOwlPc/GQ6SYPJFVKUwAEqjMSZL1eCJEKgmTq5IYZexZ
+        ZUI0w5rAVkIgc5Zc3fQxREpGyOOZiwwTxyj/niKEyCUZFBsmkprH6lp+O8SpU7+Gi51HZoJ9
+        bzgUXDh2yqqe6zIRdmGBC9sTPcKjjr5uTXJpaNcerK9RaWdKC8usmpTT2jaTr2ZSNBja3NZo
+        NzIbiRrtffKW4mr8A+zNqnCdXuXhl05GVLKKcm93l7YUzxb/oLT+1TyG1U7tV2qbd4XLBGyk
+        fN8eVMnK/wA2SA0mUQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsVy+t/xe7qTZR5HG3w7zGWxccZ6VosnB9oZ
+        LeZ9lrWYf+Qcq8X8K9dYLfofv2a2OH9+A7vFrQYZi02PgUIL25awWFzeNYfN4nPvEUaLGef3
+        MVksvX6RyaJ17xF2iycP+9gcBDzWzFvD6LFz1l12j8V7XjJ5bFrVyeZx59oeNo/NS+o9FvdN
+        ZvU4+G4Pk0ffllWMHp83yQVwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
+        6dvZpKTmZJalFunbJehl/Dq5ga3gCk/FwTXPWRsYv3J2MXJwSAiYSNy8o9LFyMUhJLCUUeLt
+        tYtsXYycQHExiUn7trND2MISf651sUEUfWKUOHHmHxNIM5uAnsSOVYUgcRGB+YwSRzddBiti
+        FljDJLH10HlGkG5hgSCJM3tvg01lEVCVuH35DJjNK+Al8fT2bVaIDXISN891MoPYnALeEvMu
+        vwXbLARU833WerYJjHwLGBlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBMbOtmM/t+xg7HoX
+        fIhRgINRiYdXY8fDaCHWxLLiytxDjBIczEoivL2rH0UL8aYkVlalFuXHF5XmpBYfYjQFOmoi
+        s5Rocj4wrvNK4g1NDc0tLA3Njc2NzSyUxHnPG1RGCQmkJ5akZqemFqQWwfQxcXBKNTDm/98l
+        wKgz/cWN8iOCroduOsjwPE9hMFeryMqc5bPIZ0JA+G7p2cn3PxtPnp65zEgm50PO2m5jT52b
+        ObEdVx97T8yxd970iP/4XrYb0+92RWzTib20d6bD+U+Fh0N3rLJvm/A7+fIVtysm5QuCV1Tb
+        rWVRWJF7Q2Cft0LnZLY6qxtJx4U8TEyVWIozEg21mIuKEwFk1ewKswIAAA==
+X-CMS-MailID: 20181107171043eucas1p16be3fa901c7bceb129c70fc81dba6e48
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181107171039eucas1p2227bd4bc573fd0d2a3a97986004be16b
+X-RootMTR: 20181107171043eucas1p16be3fa901c7bceb129c70fc81dba6e48
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181107171039eucas1p2227bd4bc573fd0d2a3a97986004be16b
+X-CMS-RootMailID: 20181107171043eucas1p16be3fa901c7bceb129c70fc81dba6e48
 References: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181107171039eucas1p2227bd4bc573fd0d2a3a97986004be16b@eucas1p2.samsung.com>
+        <CGME20181107171043eucas1p16be3fa901c7bceb129c70fc81dba6e48@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thermal trip point gets new flag in DT: irq-mode.
-Trip point may have a new explicit flag which indicate
-IRQ support when the temperature is met (so the thermal framework
-deos not need to set polling for it).
-It is useful for 'passive' cooling trip point,
-which now will not register for polling the temperature.
+This patch adds support for new flag which indicates
+that trip point triggers IRQ when temperature is met.
+Change existing trip points to be expicitly marked with the new flag.
 
-Update documentation about irq-mode for trip points.
-
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- Documentation/devicetree/bindings/thermal/thermal.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/exynos4-cpu-thermal.dtsi | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
-index ca14ba9..bee21e3 100644
---- a/Documentation/devicetree/bindings/thermal/thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/thermal.txt
-@@ -90,6 +90,10 @@ Required properties:
- 	"critical":	Hardware not reliable.
-   Type: string
- 
-+- irq-mode:		A flag indicating that trip rises irq, so there is no
-+  Type: bool		need of polling in thermal framework.
-+  Size: one cell
-+
- * Cooling device maps
- 
- The cooling device maps node is a node to describe how cooling devices
-@@ -256,16 +260,19 @@ thermal-zones {
- 				temperature = <90000>; /* millicelsius */
- 				hysteresis = <2000>; /* millicelsius */
- 				type = "active";
+diff --git a/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi b/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+index 021d9fc..5e07289 100644
+--- a/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
++++ b/arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+@@ -17,22 +17,26 @@ thermal-zones {
+ 			cpu_alert0: cpu-alert-0 {
+ 				temperature = <70000>; /* millicelsius */
+ 				hysteresis = <10000>; /* millicelsius */
+-				type = "active";
++				type = "passive";
 +				irq-mode;
  			};
- 			cpu_alert1: cpu-alert1 {
- 				temperature = <100000>; /* millicelsius */
- 				hysteresis = <2000>; /* millicelsius */
- 				type = "passive";
+ 			cpu_alert1: cpu-alert-1 {
+ 				temperature = <95000>; /* millicelsius */
+ 				hysteresis = <10000>; /* millicelsius */
+-				type = "active";
++				type = "passive";
 +				irq-mode;
  			};
- 			cpu_crit: cpu-crit {
- 				temperature = <125000>; /* millicelsius */
- 				hysteresis = <2000>; /* millicelsius */
+ 			cpu_alert2: cpu-alert-2 {
+ 				temperature = <110000>; /* millicelsius */
+ 				hysteresis = <10000>; /* millicelsius */
+-				type = "active";
++				type = "passive";
++				irq-mode;
+ 			};
+ 			cpu_crit0: cpu-crit-0 {
+ 				temperature = <120000>; /* millicelsius */
+ 				hysteresis = <0>; /* millicelsius */
  				type = "critical";
 +				irq-mode;
  			};
  		};
- 
+ 		cooling-maps {
 -- 
 2.7.4
 
