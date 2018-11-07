@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B84F1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AD5C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858C520837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858C520837
+	by mail.kernel.org (Postfix) with ESMTP id CBEAC214DB
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBEAC214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbeKHFVG (ORCPT
+        id S1727334AbeKHFVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:06 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41861 "EHLO
+        Thu, 8 Nov 2018 00:21:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41874 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbeKHFVF (ORCPT
+        with ESMTP id S1725953AbeKHFVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:05 -0500
+        Thu, 8 Nov 2018 00:21:07 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTp9-00070Q-7D; Wed, 07 Nov 2018 20:49:11 +0100
+        id 1gKTp5-00070Q-J5; Wed, 07 Nov 2018 20:49:07 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 07/23] x86/fpu: Remove fpu->initialized usage in copy_fpstate_to_sigframe()
-Date:   Wed,  7 Nov 2018 20:48:42 +0100
-Message-Id: <20181107194858.9380-8-bigeasy@linutronix.de>
+Subject: [PATCH 02/23] x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
+Date:   Wed,  7 Nov 2018 20:48:37 +0100
+Message-Id: <20181107194858.9380-3-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
 References: <20181107194858.9380-1-bigeasy@linutronix.de>
@@ -49,65 +49,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since ->initialized is always true for user tasks and kernel threads
-don't get this far, we always save the registers directly to userspace.
+This is a preparation for the removal of the ->initialized member in the
+fpu struct.
+__fpu__restore_sig() is deactivating the FPU via fpu__drop() and then
+setting manually ->initialized followed by fpu__restore(). The result is
+that it is possible to manipulate fpu->state and the state of registers
+won't be saved/restore on a context switch which would overwrite state.
 
-Remove check for ->initialized because it is always true and remove the
-false condition.
+Don't access the fpu->state while the content is read from user space
+and examined / sanitized. Use a temporary buffer kmalloc() buffer for
+the preparation of the FPU registers and once the state is considered
+okay, load it. Should something go wrong, return with and error and
+without altering the original FPU registers.
+
+The removal of "fpu__initialize()" is a nop because fpu->initialized is
+already set for the user task.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/kernel/fpu/signal.c | 30 ++++++------------------------
- 1 file changed, 6 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/fpu/signal.h |  2 +-
+ arch/x86/kernel/fpu/regset.c      |  5 ++--
+ arch/x86/kernel/fpu/signal.c      | 41 ++++++++++++-------------------
+ 3 files changed, 19 insertions(+), 29 deletions(-)
 
+diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
+index 44bbc39a57b30..7fb516b6893a8 100644
+--- a/arch/x86/include/asm/fpu/signal.h
++++ b/arch/x86/include/asm/fpu/signal.h
+@@ -22,7 +22,7 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+ 
+ extern void convert_from_fxsr(struct user_i387_ia32_struct *env,
+ 			      struct task_struct *tsk);
+-extern void convert_to_fxsr(struct task_struct *tsk,
++extern void convert_to_fxsr(struct fxregs_state *fxsave,
+ 			    const struct user_i387_ia32_struct *env);
+ 
+ unsigned long
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index bc02f5144b958..5dbc099178a88 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -269,11 +269,10 @@ convert_from_fxsr(struct user_i387_ia32_struct *env, struct task_struct *tsk)
+ 		memcpy(&to[i], &from[i], sizeof(to[0]));
+ }
+ 
+-void convert_to_fxsr(struct task_struct *tsk,
++void convert_to_fxsr(struct fxregs_state *fxsave,
+ 		     const struct user_i387_ia32_struct *env)
+ 
+ {
+-	struct fxregs_state *fxsave = &tsk->thread.fpu.state.fxsave;
+ 	struct _fpreg *from = (struct _fpreg *) &env->st_space[0];
+ 	struct _fpxreg *to = (struct _fpxreg *) &fxsave->st_space[0];
+ 	int i;
+@@ -350,7 +349,7 @@ int fpregs_set(struct task_struct *target, const struct user_regset *regset,
+ 
+ 	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &env, 0, -1);
+ 	if (!ret)
+-		convert_to_fxsr(target, &env);
++		convert_to_fxsr(&target->thread.fpu.state.fxsave, &env);
+ 
+ 	/*
+ 	 * update the header bit in the xsave header, indicating the
 diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 5777ee0c32fed..30e65085dc4d9 100644
+index 61a949d84dfa5..5777ee0c32fed 100644
 --- a/arch/x86/kernel/fpu/signal.c
 +++ b/arch/x86/kernel/fpu/signal.c
-@@ -157,7 +157,6 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
- int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+@@ -207,11 +207,11 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ }
+ 
+ static inline void
+-sanitize_restored_xstate(struct task_struct *tsk,
++sanitize_restored_xstate(union fpregs_state *state,
+ 			 struct user_i387_ia32_struct *ia32_env,
+ 			 u64 xfeatures, int fx_only)
  {
- 	struct fpu *fpu = &current->thread.fpu;
--	struct xregs_state *xsave = &fpu->state.xsave;
- 	struct task_struct *tsk = current;
- 	int ia32_fxstate = (buf != buf_fx);
+-	struct xregs_state *xsave = &tsk->thread.fpu.state.xsave;
++	struct xregs_state *xsave = &state->xsave;
+ 	struct xstate_header *header = &xsave->header;
  
-@@ -172,29 +171,12 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 			sizeof(struct user_i387_ia32_struct), NULL,
- 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
+ 	if (use_xsave()) {
+@@ -238,7 +238,7 @@ sanitize_restored_xstate(struct task_struct *tsk,
+ 		 */
+ 		xsave->i387.mxcsr &= mxcsr_feature_mask;
  
--	if (fpu->initialized || using_compacted_format()) {
--		/* Save the live register state to the user directly. */
--		if (copy_fpregs_to_sigframe(buf_fx))
--			return -1;
--		/* Update the thread's fxstate to save the fsave header. */
--		if (ia32_fxstate)
--			copy_fxregs_to_kernel(fpu);
--	} else {
--		/*
--		 * It is a *bug* if kernel uses compacted-format for xsave
--		 * area and we copy it out directly to a signal frame. It
--		 * should have been handled above by saving the registers
--		 * directly.
--		 */
--		if (boot_cpu_has(X86_FEATURE_XSAVES)) {
--			WARN_ONCE(1, "x86/fpu: saving compacted-format xsave area to a signal frame!\n");
--			return -1;
--		}
+-		convert_to_fxsr(tsk, ia32_env);
++		convert_to_fxsr(&state->fxsave, ia32_env);
+ 	}
+ }
+ 
+@@ -284,8 +284,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 	if (!access_ok(VERIFY_READ, buf, size))
+ 		return -EACCES;
+ 
+-	fpu__initialize(fpu);
 -
--		fpstate_sanitize_xstate(fpu);
--		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
--			return -1;
--	}
-+	/* Save the live register state to the user directly. */
-+	if (copy_fpregs_to_sigframe(buf_fx))
-+		return -1;
-+	/* Update the thread's fxstate to save the fsave header. */
-+	if (ia32_fxstate)
-+		copy_fxregs_to_kernel(fpu);
+ 	if (!static_cpu_has(X86_FEATURE_FPU))
+ 		return fpregs_soft_set(current, NULL,
+ 				       0, sizeof(struct user_i387_ia32_struct),
+@@ -314,41 +312,34 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		 * thread's fpu state, reconstruct fxstate from the fsave
+ 		 * header. Validate and sanitize the copied state.
+ 		 */
++		union fpregs_state *state;
++		void *tmp;
+ 		struct user_i387_ia32_struct env;
+ 		int err = 0;
  
- 	/* Save the fsave header for the 32-bit frames. */
- 	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
+-		/*
+-		 * Drop the current fpu which clears fpu->initialized. This ensures
+-		 * that any context-switch during the copy of the new state,
+-		 * avoids the intermediate state from getting restored/saved.
+-		 * Thus avoiding the new restored state from getting corrupted.
+-		 * We will be ready to restore/save the state only after
+-		 * fpu->initialized is again set.
+-		 */
+-		fpu__drop(fpu);
++		tmp = kmalloc(sizeof(*state) + fpu_kernel_xstate_size + 64, GFP_KERNEL);
++		if (!tmp)
++			return -ENOMEM;
++		state = PTR_ALIGN(tmp, 64);
+ 
+ 		if (using_compacted_format()) {
+-			err = copy_user_to_xstate(&fpu->state.xsave, buf_fx);
++			err = copy_user_to_xstate(&state->xsave, buf_fx);
+ 		} else {
+-			err = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
++			err = __copy_from_user(&state->xsave, buf_fx, state_size);
+ 
+ 			if (!err && state_size > offsetof(struct xregs_state, header))
+-				err = validate_xstate_header(&fpu->state.xsave.header);
++				err = validate_xstate_header(&state->xsave.header);
+ 		}
+ 
+ 		if (err || __copy_from_user(&env, buf, sizeof(env))) {
+-			fpstate_init(&fpu->state);
+-			trace_x86_fpu_init_state(fpu);
+ 			err = -1;
+ 		} else {
+-			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
++			sanitize_restored_xstate(state, &env,
++						 xfeatures, fx_only);
++			copy_kernel_to_fpregs(state);
+ 		}
+ 
+-		fpu->initialized = 1;
+-		preempt_disable();
+-		fpu__restore(fpu);
+-		preempt_enable();
+-
++		kfree(tmp);
+ 		return err;
+ 	} else {
+ 		/*
 -- 
 2.19.1
 
