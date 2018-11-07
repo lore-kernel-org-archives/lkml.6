@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1790BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDBEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12132081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:03:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12132081D
+	by mail.kernel.org (Postfix) with ESMTP id 0087D2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:03:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0087D2081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731001AbeKGObu (ORCPT
+        id S1730956AbeKGObu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 7 Nov 2018 09:31:50 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:55195 "EHLO
+Received: from mail-it1-f198.google.com ([209.85.166.198]:39971 "EHLO
         mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbeKGObt (ORCPT
+        with ESMTP id S1730852AbeKGObt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Nov 2018 09:31:49 -0500
-Received: by mail-it1-f198.google.com with SMTP id r79-v6so8774585itc.4
+Received: by mail-it1-f198.google.com with SMTP id y144-v6so20122495itc.5
         for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 21:03:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=oB4fg5vIV2H+KLpsidiqfpd5Skp0BlYRxVFsZuPH0/4=;
-        b=W0koOvAfm5xFFX45dKq5e5xcq8WfpZWtjbR2NXGqBOQgjU0xvkY+iq2JsJy6FbSxO6
-         0BSDXdtZBTrutKUNBxFHQ8Vo17pHgsQ4qnoMqo+oNTXOcTeNtA7N28E5mjNG2F0vlRi+
-         so/sCoqiroK5MMWVsFWTgFpUt9dLeSuh7rmv97wlymTX7uewMLwJOH2K3blX7n5cwv1A
-         rDHsNcZP68GlZ2qcIunD6WKu7FOtOGcgGkj1paHmCxYBeL+8Z4GcgLJ2ZiwcQ7mhRyT0
-         qP9+DoKLiIlK+VybvdctpF1ZLKkg6XspErmI+Ca/gzZIWSiKq+qhDkH92iJuw4QleLqN
-         FVnA==
-X-Gm-Message-State: AGRZ1gJ1d+XzNGinFTGX/5rRn7+B45BF7aE3YDoHhgWqYGE481kHDCTX
-        GihV/8Pkld5lmpLDf0z06qCXFyQYNhRHGe+lYwVzAeev7H6x
-X-Google-Smtp-Source: AJdET5ca3jCCwaJY/3bBgCGM15auXNU//kvTzj9doxWwAL7tQbf1XG1cZuKh0ZMDrcBPnm0bp6yigNtvMcZdCtv6IH3POgCW4lVU
+        bh=oKdqLNRUyfDOsY22dPLcC9o/6BB8HqoxmHM+EbugauA=;
+        b=FMSLm+lANKYprURoJlksRzuv8gbb2WK/n7l7JlNSoiVgAq6dMLAtOTikXc12wBXyQ/
+         3zrwZrS0S8Na31o2j+amIogtGlYgXcvkzzpUpTw0t21X/VfdF8QMzegP/A/tZXpwq5p2
+         6eUA0Ng7KqpI0qNzZO21iXhielrS2hUuYk5PURv2PrFP7tuY9fResZOLkdZ/esjCI/Jb
+         DRSAGuhcTERA4o4WIwkYhX7Dl1Yuxu331KXrOyJCR8a+7vS4ZdndYqHbrbLfkHXPgz6L
+         NSaDi0+glSxxXkE6OT8lD8zUFyDKF+0pAyaE8wj9dbxJnbhvUGBPoydMIWbCGBt1Cz0j
+         E4ow==
+X-Gm-Message-State: AGRZ1gKsZxgqW22ljVPM+60iYRjTsZAA+W71yZWTGqmeYNepTCTdPpsI
+        yuoWd92/iIiHouwJmfbPjnsI6ThuHkxS5KhMiQaPItzOYVxX
+X-Google-Smtp-Source: AJdET5cQ6A5C38LNEPy0Q+0RwKJ/U5zMmqrsipdftaS5LLh7df3QiIFZtKwac8vjlDk53Q8q6BNL19P2KYuox9SC4Mar9eCa4ECH
 MIME-Version: 1.0
-X-Received: by 2002:a6b:cf17:: with SMTP id o23-v6mr224549ioa.30.1541566984756;
+X-Received: by 2002:a6b:df42:: with SMTP id d2-v6mr214832iop.21.1541566984997;
  Tue, 06 Nov 2018 21:03:04 -0800 (PST)
 Date:   Tue, 06 Nov 2018 21:03:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008628be057a0c089f@google.com>
-Subject: KASAN: use-after-free Read in locks_remove_flock
-From:   syzbot <syzbot+34a98afb89842107f03f@syzkaller.appspotmail.com>
+Message-ID: <00000000000089d2c9057a0c083a@google.com>
+Subject: general protection fault in __x86_indirect_thunk_rbx
+From:   syzbot <syzbot+83e12cf81d2c14842146@syzkaller.appspotmail.com>
 To:     bfields@fieldses.org, jlayton@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
@@ -62,38 +62,52 @@ syzbot found the following crash on:
 
 HEAD commit:    d881de30d29e Add linux-next specific files for 20181107
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e42f5b400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ae9825400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=caa433e1c8778437
-dashboard link: https://syzkaller.appspot.com/bug?extid=34a98afb89842107f03f
+dashboard link: https://syzkaller.appspot.com/bug?extid=83e12cf81d2c14842146
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+34a98afb89842107f03f@syzkaller.appspotmail.com
+Reported-by: syzbot+83e12cf81d2c14842146@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: use-after-free in locks_remove_flock+0x33c/0x350 fs/locks.c:2567
-Read of size 8 at addr ffff8801c92fc040 by task syz-executor1/15515
-
-CPU: 1 PID: 15515 Comm: syz-executor1 Not tainted 4.20.0-rc1-next-20181107+  
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 9939 Comm: syz-executor5 Not tainted 4.20.0-rc1-next-20181107+  
 #107
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:__x86_indirect_thunk_rbx+0x10/0x20 arch/x86/lib/retpoline.S:33
+Code: 90 0f ae e8 eb f9 48 89 04 24 c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00  
+00 00 00 e8 07 00 00 00 f3 90 0f ae e8 eb f9 48 89 1c 24 <c3> 0f 1f 44 00  
+00 66 2e 0f 1f 84 00 00 00 00 00 e8 07 00 00 00 f3
+RSP: 0018:ffff88019f166eb0 EFLAGS: 00010293
+RAX: ffff8801c298a680 RBX: 5f415e415d415c41 RCX: ffffffff81ed555d
+kobject: 'loop2' (000000005961f4a7): kobject_uevent_env
+RDX: 0000000000000000 RSI: ffffffff81ed5c9e RDI: ffff88019f166f38
+RBP: ffff88019f1670a0 R08: ffff8801c298a680 R09: ffffed003b5e5b67
+kobject: 'loop2' (000000005961f4a7): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+R10: ffffed003b5e5b67 R11: ffff8801daf2db3b R12: ffff8801ce6465c0
+R13: ffff88019f166f38 R14: 1ffff10033e2cddb R15: dffffc0000000000
+FS:  00007fdc2a4eb700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000072c000 CR3: 000000019fde7000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  locks_remove_flock+0x33c/0x350 fs/locks.c:2567
   locks_remove_file+0x148/0x5c0 fs/locks.c:2607
   __fput+0x2f0/0xa70 fs/file_table.c:271
   ____fput+0x15/0x20 fs/file_table.c:312
   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1ad1/0x26d0 kernel/exit.c:867
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+  get_signal+0x8a8/0x1970 kernel/signal.c:2517
+  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
@@ -102,67 +116,46 @@ RIP: 0033:0x457569
 Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc1e8ed4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000049
-RAX: 0000000000000000 RBX: 0000000000000002 RCX: 0000000000457569
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc1e8ed56d4
-R13: 00000000004bdd9e R14: 00000000004ccdb8 R15: 00000000ffffffff
-
-Allocated by task 15515:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
-  kmem_cache_zalloc include/linux/slab.h:731 [inline]
-  locks_alloc_lock+0x9e/0x300 fs/locks.c:304
-  flock_make_lock+0x22c/0x2a0 fs/locks.c:438
-  __do_sys_flock fs/locks.c:2057 [inline]
-  __se_sys_flock fs/locks.c:2038 [inline]
-  __x64_sys_flock+0x12b/0x350 fs/locks.c:2038
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 15515:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3760
-  locks_free_lock+0x295/0x420 fs/locks.c:341
-  __do_sys_flock fs/locks.c:2078 [inline]
-  __se_sys_flock fs/locks.c:2038 [inline]
-  __x64_sys_flock+0x289/0x350 fs/locks.c:2038
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801c92fc000
-  which belongs to the cache file_lock_cache of size 264
-The buggy address is located 64 bytes inside of
-  264-byte region [ffff8801c92fc000, ffff8801c92fc108)
-The buggy address belongs to the page:
-page:ffffea000724bf00 count:1 mapcount:0 mapping:ffff8801d9a1c3c0 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffff8801d9a82e48 ffffea00075e1608 ffff8801d9a1c3c0
-raw: 0000000000000000 ffff8801c92fc000 000000010000000c 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801c92fbf00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-  ffff8801c92fbf80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ffff8801c92fc000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                            ^
-  ffff8801c92fc080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c92fc100: fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb
-==================================================================
-------------[ cut here ]------------
-downgrading a read lock
-WARNING: CPU: 0 PID: 15521 at kernel/locking/lockdep.c:3556  
-__lock_downgrade kernel/locking/lockdep.c:3556 [inline]
-WARNING: CPU: 0 PID: 15521 at kernel/locking/lockdep.c:3556  
-lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
+RSP: 002b:00007fdc2a4eac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffe0 RBX: 0000000000000006 RCX: 0000000000457569
+RDX: 000000000000029f RSI: 0000000020a88f88 RDI: 0000000000000005
+RBP: 000000000072bf00 R08: 0000000020e68000 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdc2a4eb6d4
+R13: 00000000004c3b86 R14: 00000000004d5cc8 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace f409c0e248b1eb30 ]---
+RIP: 0010:__x86_indirect_thunk_rbx+0x10/0x20 arch/x86/lib/retpoline.S:33
+Code: 90 0f ae e8 eb f9 48 89 04 24 c3 0f 1f 44 00 00 66 2e 0f 1f 84 00 00  
+00 00 00 e8 07 00 00 00 f3 90 0f ae e8 eb f9 48 89 1c 24 <c3> 0f 1f 44 00  
+00 66 2e 0f 1f 84 00 00 00 00 00 e8 07 00 00 00 f3
+RSP: 0018:ffff88019f166eb0 EFLAGS: 00010293
+RAX: ffff8801c298a680 RBX: 5f415e415d415c41 RCX: ffffffff81ed555d
+RDX: 0000000000000000 RSI: ffffffff81ed5c9e RDI: ffff88019f166f38
+RBP: ffff88019f1670a0 R08: ffff8801c298a680 R09: ffffed003b5e5b67
+R10: ffffed003b5e5b67 R11: ffff8801daf2db3b R12: ffff8801ce6465c0
+audit: type=1326 audit(1541560871.105:63): auid=4294967295 uid=0 gid=0  
+ses=4294967295 subj==unconfined pid=9895 comm="syz-executor3"  
+exe="/root/syz-executor3" sig=9 arch=c000003e syscall=228 compat=0  
+ip=0x45a3ca code=0x0
+R13: ffff88019f166f38 R14: 1ffff10033e2cddb R15: dffffc0000000000
+FS:  00007fdc2a4eb700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+kobject: 'loop4' (00000000e724a344): kobject_uevent_env
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kobject: 'loop4' (00000000e724a344): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'kvm' (00000000c2eca0f7): kobject_uevent_env
+kobject: 'loop3' (00000000e5653105): kobject_uevent_env
+kobject: 'kvm' (00000000c2eca0f7): fill_kobj_path: path  
+= '/devices/virtual/misc/kvm'
+kobject: 'loop3' (00000000e5653105): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+CR2: 00007fe26d074db8 CR3: 00000001a2d54000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kobject: 'kvm' (00000000c2eca0f7): kobject_uevent_env
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kobject: 'kvm' (00000000c2eca0f7): fill_kobj_path: path  
+= '/devices/virtual/misc/kvm'
+kobject: 'loop0' (00000000b5ef668f): kobject_uevent_env
 
 
 ---
