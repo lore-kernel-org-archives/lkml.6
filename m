@@ -2,143 +2,145 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E808C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C8BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D407A2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D407A2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id C558F2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 04:24:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ef5IIWnp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C558F2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389448AbeKGNoi (ORCPT
+        id S2388765AbeKGNw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 08:44:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57170 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388667AbeKGNoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 08:44:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2C106B659;
-        Wed,  7 Nov 2018 04:16:00 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Date:   Wed, 07 Nov 2018 15:12:31 +1100
-Subject: [PATCH 23/23] SUNRPC discard cr_uid from struct rpc_cred.
-Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Message-ID: <154156395166.24086.4433778895891818320.stgit@noble>
-In-Reply-To: <154156285766.24086.14262073575778354276.stgit@noble>
-References: <154156285766.24086.14262073575778354276.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+        Wed, 7 Nov 2018 08:52:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42871 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbeKGNw7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 08:52:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t6-v6so7275368plo.9;
+        Tue, 06 Nov 2018 20:24:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4sgxXEOdOs3QCD+MDooRCjKxkaKA1vtlr59+tLG9PLU=;
+        b=ef5IIWnpyVTxqkFiW5I1n74ro5hJiMfSi9qzMlLiAXq5krxFF4GAzkC6yhpZaMQvRk
+         8kBBIlD67r8tBlYQ9Jz45TwSu2bIsjbjXQ6LEVojETMCeZ/gBRnZuelx+eFRnya+EYre
+         t0q7eMgd0n5/0RKQ9nprenaY5lDCVyWOxDQfDcVq4ejln4+YtU7/Z55gHvKyp/n6EBST
+         YFkSGBN+vowMmoA/dYXxI5R8/mwUPoiYbYrKpOc2qxta4/6DIdZsx1s1kOV0R3jgcdAo
+         ZEGK9hcrrGmZtLFxMWwRP98Vj8WThcuTwmdSH5S8S/SDXEpXtwzOJRfb5uO5lWku0NCA
+         cmDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4sgxXEOdOs3QCD+MDooRCjKxkaKA1vtlr59+tLG9PLU=;
+        b=WXuBiC5+Fqmgzqf8NVKmMto02jXyt9npj6FDTg3rmvMns0a697Mz+4tv+5TGk/OJXR
+         xnkdpy4PWjpzJnRTog+vgqnvM/y1eUDOvRA03gCuYjTBN2jCfXXCJdD2U5RpK67ZjSvS
+         fDPeaZ/Pn3DB7VspCDzmOJRvWeD3nL+wKOZq6MCLoIQO8UbBXv7NPHNwoJPgQpX2kyvh
+         HfGIlZLBk0ny6nFoU3W7tqGHLKx1oYlNFLH2UD9BsL1Dh9PNVrcHtg+NYhC3ycXj6CTR
+         mKIfDi8GjF9k17gMIWFYalu/TAeQvKiYVxnfEgwZZvz5LWFa9uuQ/hyHoOPP6rdDs9Sw
+         VWig==
+X-Gm-Message-State: AGRZ1gLb046KsC2njoSfaLKDNFZ5Ut2SVj+XL6NshFWlw+bqhG0uS2XK
+        zPQI/GeDbrZ2YrAA8u76t38=
+X-Google-Smtp-Source: AJdET5f4tSZucOV+Ds6fYdXX36gyNghxPwyOjOdVXdV7oD3ivTI+E/EPdkoZc+hxpaoGzeyj1PPMhg==
+X-Received: by 2002:a17:902:8346:: with SMTP id z6-v6mr367216pln.147.1541564661658;
+        Tue, 06 Nov 2018 20:24:21 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id b18-v6sm42768319pgg.88.2018.11.06.20.24.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Nov 2018 20:24:20 -0800 (PST)
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: add binding documentation for
+ adt7475
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        robh+dt@kernel.org, jdelvare@suse.com
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+References: <20181107040010.27436-1-chris.packham@alliedtelesis.co.nz>
+ <20181107040010.27436-2-chris.packham@alliedtelesis.co.nz>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <64720b73-dddf-783c-a3a4-3f32a748bf5d@roeck-us.net>
+Date:   Tue, 6 Nov 2018 20:24:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181107040010.27436-2-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just use ->cr_cred->fsuid directly.
+On 11/6/18 8:00 PM, Chris Packham wrote:
+> With the addition of the invert-pwm property the adt7475 needs its own
+> binding documentation rather being captured under trivial-devices.txt.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>   .../devicetree/bindings/hwmon/adt7475.txt     | 22 +++++++++++++++++++
+>   .../devicetree/bindings/trivial-devices.txt   |  4 ----
+>   2 files changed, 22 insertions(+), 4 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.txt b/Documentation/devicetree/bindings/hwmon/adt7475.txt
+> new file mode 100644
+> index 000000000000..79255439e157
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.txt
+> @@ -0,0 +1,22 @@
+> +*ADT7475 hwmon sensor.
+> +
+> +Required properties:
+> +- compatible: One of
+> +	"adi,adt7473"
+> +	"adi,adt7475"
+> +	"adi,adt7476"
+> +	"adi,adt7490"
+> +
+> +- reg: I2C address
+> +
+> +optional properties:
+> +
+> +- invert-pwm: This configures the PWM to use logic low for 100% duty cycle.
+> +
+> +Example:
+> +
+> +hwmon@2e {
+> +	compatible = ;
+> +	reg = <0x2e>;
+> +	invert-pwm;
 
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- include/linux/sunrpc/auth.h    |    2 --
- net/sunrpc/auth.c              |    1 -
- net/sunrpc/auth_gss/auth_gss.c |   12 ++++++------
- 3 files changed, 6 insertions(+), 9 deletions(-)
+If I understand correctly, the flag is set per pwm channel. A single global
+property seems inappropriate.
 
-diff --git a/include/linux/sunrpc/auth.h b/include/linux/sunrpc/auth.h
-index 5486082d3d63..eed3cb16ccf1 100644
---- a/include/linux/sunrpc/auth.h
-+++ b/include/linux/sunrpc/auth.h
-@@ -58,8 +58,6 @@ struct rpc_cred {
- 	refcount_t		cr_count;	/* ref count */
- 	const struct cred	*cr_cred;
- 
--	kuid_t			cr_uid;
--
- 	/* per-flavor data */
- };
- #define RPCAUTH_CRED_NEW	0
-diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-index a07a7c59d3a4..1ff9768f5456 100644
---- a/net/sunrpc/auth.c
-+++ b/net/sunrpc/auth.c
-@@ -655,7 +655,6 @@ rpcauth_init_cred(struct rpc_cred *cred, const struct auth_cred *acred,
- 	cred->cr_ops = ops;
- 	cred->cr_expire = jiffies;
- 	cred->cr_cred = get_cred(acred->cred);
--	cred->cr_uid = acred->cred->fsuid;
- }
- EXPORT_SYMBOL_GPL(rpcauth_init_cred);
- 
-diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-index 4fa1881d31ca..9ab100e3346a 100644
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -565,7 +565,7 @@ gss_setup_upcall(struct gss_auth *gss_auth, struct rpc_cred *cred)
- 	struct gss_cred *gss_cred = container_of(cred,
- 			struct gss_cred, gc_base);
- 	struct gss_upcall_msg *gss_new, *gss_msg;
--	kuid_t uid = cred->cr_uid;
-+	kuid_t uid = cred->cr_cred->fsuid;
- 
- 	gss_new = gss_alloc_msg(gss_auth, uid, gss_cred->gc_principal);
- 	if (IS_ERR(gss_new))
-@@ -604,7 +604,7 @@ gss_refresh_upcall(struct rpc_task *task)
- 	int err = 0;
- 
- 	dprintk("RPC: %5u %s for uid %u\n",
--		task->tk_pid, __func__, from_kuid(&init_user_ns, cred->cr_uid));
-+		task->tk_pid, __func__, from_kuid(&init_user_ns, cred->cr_cred->fsuid));
- 	gss_msg = gss_setup_upcall(gss_auth, cred);
- 	if (PTR_ERR(gss_msg) == -EAGAIN) {
- 		/* XXX: warning on the first, under the assumption we
-@@ -637,7 +637,7 @@ gss_refresh_upcall(struct rpc_task *task)
- out:
- 	dprintk("RPC: %5u %s for uid %u result %d\n",
- 		task->tk_pid, __func__,
--		from_kuid(&init_user_ns, cred->cr_uid),	err);
-+		from_kuid(&init_user_ns, cred->cr_cred->fsuid),	err);
- 	return err;
- }
- 
-@@ -653,7 +653,7 @@ gss_create_upcall(struct gss_auth *gss_auth, struct gss_cred *gss_cred)
- 	int err;
- 
- 	dprintk("RPC:       %s for uid %u\n",
--		__func__, from_kuid(&init_user_ns, cred->cr_uid));
-+		__func__, from_kuid(&init_user_ns, cred->cr_cred->fsuid));
- retry:
- 	err = 0;
- 	/* if gssd is down, just skip upcalling altogether */
-@@ -701,7 +701,7 @@ gss_create_upcall(struct gss_auth *gss_auth, struct gss_cred *gss_cred)
- 	gss_release_msg(gss_msg);
- out:
- 	dprintk("RPC:       %s for uid %u result %d\n",
--		__func__, from_kuid(&init_user_ns, cred->cr_uid), err);
-+		__func__, from_kuid(&init_user_ns, cred->cr_cred->fsuid), err);
- 	return err;
- }
- 
-@@ -1497,7 +1497,7 @@ gss_match(struct auth_cred *acred, struct rpc_cred *rc, int flags)
- 	} else {
- 		if (gss_cred->gc_principal != NULL)
- 			return 0;
--		ret = uid_eq(rc->cr_uid, acred->cred->fsuid);
-+		ret = uid_eq(rc->cr_cred->fsuid, acred->cred->fsuid);
- 	}
- 	return ret;
- }
+Guenter
 
+> +};
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
+> index 69c934aec13b..4f29100d6bbf 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.txt
+> +++ b/Documentation/devicetree/bindings/trivial-devices.txt
+> @@ -14,10 +14,6 @@ ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert an
+>   ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
+>   adi,adt7461		+/-1C TDM Extended Temp Range I.C
+>   adt7461			+/-1C TDM Extended Temp Range I.C
+> -adi,adt7473		+/-1C TDM Extended Temp Range I.C
+> -adi,adt7475		+/-1C TDM Extended Temp Range I.C
+> -adi,adt7476		+/-1C TDM Extended Temp Range I.C
+> -adi,adt7490		+/-1C TDM Extended Temp Range I.C
+>   adi,adxl345		Three-Axis Digital Accelerometer
+>   adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
+>   ams,iaq-core		AMS iAQ-Core VOC Sensor
+> 
 
