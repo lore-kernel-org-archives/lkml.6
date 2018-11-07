@@ -2,88 +2,122 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B0FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7126A2085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:28:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7126A2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 129312085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129312085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbeKGT6Y (ORCPT
+        id S1730562AbeKGT7D convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:58:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59436 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726218AbeKGT6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:58:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0762AAF9B;
-        Wed,  7 Nov 2018 10:28:38 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 11:28:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Arun KS <arunks@codeaurora.org>, keescook@chromium.org,
-        minchan@kernel.org, getarunks@gmail.com,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        julia.lawall@lip6.fr
-Subject: Re: [PATCH v1 0/4]mm: convert totalram_pages, totalhigh_pages and
- managed pages to atomic
-Message-ID: <20181107102837.GC27423@dhcp22.suse.cz>
-References: <1540551662-26458-1-git-send-email-arunks@codeaurora.org>
- <9b210d4cc9925caf291412d7d45f16d7@codeaurora.org>
- <63d9f48c-e39f-d345-0fb6-2f04afe769a2@yandex-team.ru>
- <08a61c003eed0280fd82f6200debcbca@codeaurora.org>
- <10c88df6-dbb1-7490-628c-055d59b5ad8e@yandex-team.ru>
- <22fa2222012341a54f6b0b6aea341aa2@codeaurora.org>
- <c3b0edf9-e6a2-c1ab-8490-d94b9830c8ae@yandex-team.ru>
- <89a259aa-156e-041c-b3bc-266824acb173@suse.cz>
+        Wed, 7 Nov 2018 14:59:03 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:27686 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726259AbeKGT7C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:59:02 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by dkim.mimecast.com with ESMTP id
+ uk-mta-179-ZS9EnN-mOoKzVXqdZBIkCg-1; Wed, 07 Nov 2018 10:29:15 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
+ 7 Nov 2018 10:29:20 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 7 Nov 2018 10:29:20 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
+CC:     "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "haitao.huang@intel.com" <haitao.huang@intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Thread-Topic: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Thread-Index: AQHUddgrysSRxlXgvUSYD+ItRQz08aVEHTFw
+Date:   Wed, 7 Nov 2018 10:29:20 +0000
+Message-ID: <ed7b04087e59403f986bab27a668933f@AcuMS.aculab.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89a259aa-156e-041c-b3bc-266824acb173@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: ZS9EnN-mOoKzVXqdZBIkCg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-11-18 09:50:10, Vlastimil Babka wrote:
-> On 11/7/18 8:02 AM, Konstantin Khlebnikov wrote:
-[...]
-> > Could you point what exactly are you fixing with this set?
-> > 
-> > from v2:
-> > 
-> >  > totalram_pages, zone->managed_pages and totalhigh_pages updates
-> >  > are protected by managed_page_count_lock, but readers never care
-> >  > about it. Convert these variables to atomic to avoid readers
-> >  > potentially seeing a store tear.
-> > 
-> > This?
-> > 
-> > 
-> > Aligned unsigned long almost always stored at once.
+From: Jarkko Sakkinen
+> Sent: 06 November 2018 13:46
 > 
-> The point is "almost always", so better not rely on it :) But the main
-> motivation was that managed_page_count_lock handling was complicating
-> Arun's "memory_hotplug: Free pages as higher order" patch and it seemed
-> a better idea to just remove and convert this to atomics, with
-> preventing potential store-to-read tearing as a bonus.
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the enclave is disallowed to access the memory
+> inside the enclave by the CPU access control.
+> 
+> SGX driver provides a ioctl API for loading and initializing enclaves.
+> Address range for enclaves is reserved with mmap() and they are
+> destroyed with munmap(). Enclave construction, measurement and
+> initialization is done with the provided the ioctl API.
+..
+> +struct sgx_encl {
+> +	unsigned int flags;
+> +	uint64_t attributes;
+> +	uint64_t xfrm;
+> +	unsigned int page_cnt;
+> +	unsigned int secs_child_cnt;
+> +	struct mutex lock;
+> +	struct mm_struct *mm;
+> +	struct file *backing;
+> +	struct kref refcount;
+> +	unsigned long base;
+> +	unsigned long size;
+> +	unsigned long ssaframesize;
+> +	struct radix_tree_root page_tree;
+> +	struct list_head add_page_reqs;
+> +	struct work_struct add_page_work;
+> +	struct sgx_encl_page secs;
+> +	struct pid *tgid;
+> +	struct mmu_notifier mmu_notifier;
+> +	struct notifier_block pm_notifier;
+> +};
 
-And more importantly the lock itself seems bogus as mentioned here
-http://lkml.kernel.org/r/20181106141732.GR27423@dhcp22.suse.cz
+It may not really matter (yet) but there is at least one hole in that strcture.
 
-> It would be nice to mention it in the changelogs though.
+	David
 
-agreed
--- 
-Michal Hocko
-SUSE Labs
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
