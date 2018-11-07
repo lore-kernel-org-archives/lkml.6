@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2386C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52835C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A15F420827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:03:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15F420827
+	by mail.kernel.org (Postfix) with ESMTP id 2558F20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:03:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2558F20827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731638AbeKHCe4 (ORCPT
+        id S1731650AbeKHCfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:34:56 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46498 "EHLO mail.skyhub.de"
+        Wed, 7 Nov 2018 21:35:05 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46472 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731397AbeKHCdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:33:45 -0500
+        id S1727870AbeKHCdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:33:43 -0500
 X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
 Received: from mail.skyhub.de ([127.0.0.1])
         by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id fhsl2TsyX1D3; Wed,  7 Nov 2018 18:02:31 +0100 (CET)
+        with ESMTP id CcPWDb-_F8z6; Wed,  7 Nov 2018 18:02:30 +0100 (CET)
 Received: from zn.tnic (p200300EC2BCBE000329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:e000:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 852661EC0291;
-        Wed,  7 Nov 2018 18:02:31 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BD4061EC0291;
+        Wed,  7 Nov 2018 18:02:29 +0100 (CET)
 From:   Borislav Petkov <bp@alien8.de>
 To:     X86 ML <x86@kernel.org>
 Cc:     "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 03/16] x86/microcode/AMD: Move verify_patch_size() up in the file
-Date:   Wed,  7 Nov 2018 18:02:05 +0100
-Message-Id: <20181107170218.7596-4-bp@alien8.de>
+Subject: [PATCH 01/16] x86/microcode/AMD: Subtract SECTION_HDR_SIZE from file leftover length
+Date:   Wed,  7 Nov 2018 18:02:03 +0100
+Message-Id: <20181107170218.7596-2-bp@alien8.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107170218.7596-1-bp@alien8.de>
 References: <20181107170218.7596-1-bp@alien8.de>
@@ -49,117 +49,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 
-... to enable later improvements.
+verify_patch_size() verifies whether the remaining size of the microcode
+container file is large enough to contain a patch of the indicated size.
 
-No functional changes.
+However, the section header length is not included in this indicated
+size but it is present in the leftover file length so it should be
+subtracted from the leftover file length before passing this value to
+verify_patch_size().
 
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Cc: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/6df43f4f6a28186a13a66e8d7e61143c5e1a2324.1529424596.git.mail@maciej.szmigiero.name
+[ Split comment. ]
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 82 ++++++++++++++---------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 36aeb01b3ae8..f8d60cb9bb9a 100644
+index 07b5fc00b188..b44c9029860c 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -174,6 +174,47 @@ static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
- 	return true;
+@@ -461,8 +461,12 @@ static int collect_cpu_info_amd(int cpu, struct cpu_signature *csig)
+ 	return 0;
  }
  
+-static unsigned int verify_patch_size(u8 family, u32 patch_size,
+-				      unsigned int size)
 +/*
 + * Check whether the passed remaining file @size is large enough to contain a
 + * patch of the indicated @patch_size (and also whether this size does not
 + * exceed the per-family maximum).
 + */
 +static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
-+{
-+	u32 max_size;
-+
-+#define F1XH_MPB_MAX_SIZE 2048
-+#define F14H_MPB_MAX_SIZE 1824
-+#define F15H_MPB_MAX_SIZE 4096
-+#define F16H_MPB_MAX_SIZE 3458
-+#define F17H_MPB_MAX_SIZE 3200
-+
-+	switch (family) {
-+	case 0x14:
-+		max_size = F14H_MPB_MAX_SIZE;
-+		break;
-+	case 0x15:
-+		max_size = F15H_MPB_MAX_SIZE;
-+		break;
-+	case 0x16:
-+		max_size = F16H_MPB_MAX_SIZE;
-+		break;
-+	case 0x17:
-+		max_size = F17H_MPB_MAX_SIZE;
-+		break;
-+	default:
-+		max_size = F1XH_MPB_MAX_SIZE;
-+		break;
-+	}
-+
-+	if (patch_size > min_t(u32, size, max_size)) {
-+		pr_err("patch size mismatch\n");
-+		return 0;
-+	}
-+
-+	return patch_size;
-+}
-+
- /*
-  * This scans the ucode blob for the proper container as we can have multiple
-  * containers glued together. Returns the equivalence ID from the equivalence
-@@ -562,47 +603,6 @@ static int collect_cpu_info_amd(int cpu, struct cpu_signature *csig)
- 	return 0;
- }
- 
--/*
-- * Check whether the passed remaining file @size is large enough to contain a
-- * patch of the indicated @patch_size (and also whether this size does not
-- * exceed the per-family maximum).
-- */
--static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
--{
--	u32 max_size;
--
--#define F1XH_MPB_MAX_SIZE 2048
--#define F14H_MPB_MAX_SIZE 1824
--#define F15H_MPB_MAX_SIZE 4096
--#define F16H_MPB_MAX_SIZE 3458
--#define F17H_MPB_MAX_SIZE 3200
--
--	switch (family) {
--	case 0x14:
--		max_size = F14H_MPB_MAX_SIZE;
--		break;
--	case 0x15:
--		max_size = F15H_MPB_MAX_SIZE;
--		break;
--	case 0x16:
--		max_size = F16H_MPB_MAX_SIZE;
--		break;
--	case 0x17:
--		max_size = F17H_MPB_MAX_SIZE;
--		break;
--	default:
--		max_size = F1XH_MPB_MAX_SIZE;
--		break;
--	}
--
--	if (patch_size > min_t(u32, size, max_size)) {
--		pr_err("patch size mismatch\n");
--		return 0;
--	}
--
--	return patch_size;
--}
--
- static enum ucode_state apply_microcode_amd(int cpu)
  {
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	u32 max_size;
+ 
+@@ -621,7 +625,12 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 		return crnt_size;
+ 	}
+ 
+-	ret = verify_patch_size(family, patch_size, leftover);
++	/*
++	 * The section header length is not included in this indicated size
++	 * but is present in the leftover file length so we need to subtract
++	 * it before passing this value to the function below.
++	 */
++	ret = verify_patch_size(family, patch_size, leftover - SECTION_HDR_SIZE);
+ 	if (!ret) {
+ 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
+ 		return crnt_size;
 -- 
 2.19.1
 
