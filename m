@@ -2,127 +2,181 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61087C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5E2C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3143720827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:39:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3143720827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id B470220827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:39:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B470220827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbeKGSIt (ORCPT
+        id S1730261AbeKGSJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:08:49 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:34542 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbeKGSIt (ORCPT
+        Wed, 7 Nov 2018 13:09:08 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:36560 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeKGSJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:08:49 -0500
-X-IronPort-AV: E=Sophos;i="5.54,475,1534834800"; 
-   d="scan'208";a="23737749"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Nov 2018 01:39:28 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch07.mchp-main.com
- (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Wed, 7 Nov 2018
- 01:39:27 -0700
-Date:   Wed, 7 Nov 2018 09:39:28 +0100
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Andrei Stefanescu - M50506 <Andrei.Stefanescu@microchip.com>
-CC:     "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        Cristian Birsan - M91496 <Cristian.Birsan@microchip.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: at91: switched to resume/suspend callbacks.
-Message-ID: <20181107083928.vqgnpw3mmczjn4el@M43218.corp.atmel.com>
-Mail-Followup-To: Andrei Stefanescu - M50506 <Andrei.Stefanescu@microchip.com>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        Cristian Birsan - M91496 <Cristian.Birsan@microchip.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1540203006-805-1-git-send-email-andrei.stefanescu@microchip.com>
+        Wed, 7 Nov 2018 13:09:08 -0500
+Received: by mail-vs1-f68.google.com with SMTP id v205so8989578vsc.3;
+        Wed, 07 Nov 2018 00:39:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZFTtJn0e12aMuFN/NK2Fwvdbn+D3VzC033GvZhFZ66o=;
+        b=dKc2ttnltoda7Cgf5ei5gp/M8puAMmTKDTQXdEcWegFnvmkmUm7pdNJHHtMGU1URlL
+         p6AgMdRP4zM+Qnu36+ADC56FJT39qqPMxWzAi9Pa/7wVWPunt/HotiPHQAbNTYGVFQUM
+         y6r8XoSEklIUfkCd8jWUAOutcxaxMNmP3YQxdr1GsrFHhqqfm/gbJ/DQKKbc8cNySAfJ
+         Ac8FC3VALfheFGCDNhAQgHK1dM74kZcW9pNscZetPySK7R4RRgOCtWLGTKg4AmblRiyA
+         t/hT54PQ0wYV/rmnh06PMvwRSqYXYh8tft7en4tEgJRinqNiGOet6oaR+N5C65qL7XuI
+         QbTw==
+X-Gm-Message-State: AGRZ1gI+SvtQMtpyUHnStQ8mbS7iQz1D1jcFANXQ/ehFpV92siafWYYu
+        sgFrAYGJ+axV7K3OlQC7KfQzP/DR9z+qJa2eosg=
+X-Google-Smtp-Source: AJdET5ew6c4Jv80yWOkeTRDg1m9WWK6V7/P7n+MvyejDYiplmbIGbvb0OxdmXLMB+m/7AoggoyAjk8gjU7iesPOu6Xs=
+X-Received: by 2002:a67:b404:: with SMTP id x4mr380152vsl.152.1541579986970;
+ Wed, 07 Nov 2018 00:39:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1540203006-805-1-git-send-email-andrei.stefanescu@microchip.com>
-User-Agent: NeoMutt/20180716
+References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
+ <20181106090756.GP20885@w540> <CAMuHMdWbrA1hgh3kw+fvL0x3ciNKHV52uhDX0FNJzU_Grb_+qQ@mail.gmail.com>
+ <20181106093121.GA24024@w540>
+In-Reply-To: <20181106093121.GA24024@w540>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 7 Nov 2018 09:39:35 +0100
+Message-ID: <CAMuHMdUd=bYrKu4v0OssWPA=ZAYuiUANahy8x8xNGUoUoXmLCA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 12:17:47PM +0200, Andrei Stefanescu - M50506 wrote:
-> In the previous version of the driver resume/suspend_noirq callbacks
-> were used. Because of this, when resuming from suspend-to-ram,
-> an I2C (belonging to a FLEXCOM) would resume before FLEXCOM.
-> The first read on the I2C bus would then result in a timeout.
-> 
-> This patch switches to resume/suspend callbacks which are 
-> called after FLEXCOM resumes. FLEXCOM, SPI and USART drivers use
-> resume/suspend callbacks.
-> 
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
-I can't figure out why we use the _noirq variant. When patches for PM
-stuff were sent, suspend/resume callbacks were used but in the latest
-version it moved to the _noirq variant without explanation.
+Hi Jacopo,
 
-Excepting if someone has an argument to keep the _noirq variant,
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
+(sorry, seems I prepared a reply, but forgot to press "Send")
 
-Thanks
+On Tue, Nov 6, 2018 at 10:31 AM jacopo mondi <jacopo@jmondi.org> wrote:
+> On Tue, Nov 06, 2018 at 10:24:30AM +0100, Geert Uytterhoeven wrote:
+> > On Tue, Nov 6, 2018 at 10:08 AM jacopo mondi <jacopo@jmondi.org> wrote:
+> > > On Mon, Nov 05, 2018 at 06:19:22PM +0100, Geert Uytterhoeven wrote:
+> > > > On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > > > >    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
+> > > > >
+> > > > > On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
+> > > > > could appear on different sets of pins, usually the 'a' and 'b' one.
+> > > > >
+> > > > > With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
+> > > > >
+> > > > > VIN_DATA_PIN_GROUP(vin4_data_a, 8)
+> > > > >
+> > > > > which results in the group being named as "vin4_data_a_8" which is
+> > > > > un-consistent with the canonical group names (eg. "vin4_data8_a").
+> > > > >
+> > > > > This series adds a macro that allows to specify the group 'version' along with
+> > > > > the pin and mux numbers in patch [1/1]. I haven't been able to find a better
+> > > > > term than 'version' as 'group' was already taken. Suggestions welcome.
+> > > >
+> > > > Yeah, the datasheet also calls these groups :-(
+> > > > A possible alternative is to use "variant"?
+> > > >
+> > > > Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
+> > > > macro varargs, and passing the "variant" as the (optional) third parameter?
+> > > > That way existing users work as a before, while you can also write e.g.
+> > > >
+> > > >     VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
+> > >
+> > > Indeed.
+> > >
+> > > Would something along the following lines fly for you?
+> > >
+> > > #define VIN_DATA_PIN_GROUP(n, s, ...)                                   \
+> > >         {                                                               \
+> > >                 .name = #n#s#__VA_ARGS__,                               \
+> > >                 .pins = n##__VA_ARGS__##_pins.data##s,                  \
+> > >                 .mux = n##__VA_ARGS__##_mux.data##s,                    \
+> > >                 .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
+> > >         }
+> > >
+> > > It can be used as:
+> > > VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
+> > > VIN_DATA_PIN_GROUP(vin5_data, 8),
+> > >
+> > > With your ack on this, I'll send v2.
+> >
+> > Thank you, that is exactly what I had in mind.
+> >
+> > > > > As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
+> > > > > wired, I made sure the macro creates correct names and fields not only by
+> > > > > compile testing it, but with a small C program [1] that replicates the VIN data
+> > > > > layout defined in the PFC module and access fields (and has helped me testing
+> > > > > more easily the preprocessor stringification/concatenation process).
+> > > > >
+> > > > > Final note: Simon, you took the E3 patches in your tree, and I expect them to
+> > > > > land on v4.20-rc1. They use the old macros, are follow up patches ok?)
+> > > >
+> > > > Which patches are using these macro names, and are in v4.20-rc1?
+> > > >
+> > > > BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
+> > > > have broken groups names on r8a7792, r8a7795, and r8a7796.
+> > > > Fortunately we have no known users of them, so they can be fixed.
+> > > >
+> > >
+> > > On v4.20-rc1 the grep returns none for me :/
+> > > git grep v4.20-rc1 "vin._data_[a-z][0-9]" drivers/pinctrl/sh-pfc/
+> >
+> > I grepped the .o files, to make sure it would see the final strings, which
+> > obviously works in the build tree only ;-)
+>
+> Ah yes, stupid me.
+>
+> >
+> > For the source tree, please try:
+> >
+> >     git grep -w VIN_DATA_PIN_GROUP.*_[a-z] v4.20-rc1
+>
+> Argh, there are quite a few of them, but fortunately no users so far.
+>
+> Is it ok fixing them in v2 of this series with follow-up patches, or
+> would you like a single patch that introduces the variadic macro and
+> replaces all the occurrences in the per-SoC PFC modules in one go?
 
-Regards
+Given the r8a7795 and r8a7796 issues were introduced in v4.17:
 
-Ludovic
+    a5c2949ff7bd9e04 ("pinctrl: sh-pfc: r8a7796: Deduplicate VIN4 pin
+definitions")
+    9942a5b52990b8d5 ("pinctrl: sh-pfc: r8a7795: Deduplicate VIN4 pin
+definitions")
 
-> ---
->  drivers/i2c/busses/i2c-at91.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-> index bfd1fdf..81f7b94 100644
-> --- a/drivers/i2c/busses/i2c-at91.c
-> +++ b/drivers/i2c/busses/i2c-at91.c
-> @@ -1174,7 +1174,7 @@ static int at91_twi_runtime_resume(struct device *dev)
->  	return clk_prepare_enable(twi_dev->clk);
->  }
->  
-> -static int at91_twi_suspend_noirq(struct device *dev)
-> +static int at91_twi_suspend(struct device *dev)
->  {
->  	if (!pm_runtime_status_suspended(dev))
->  		at91_twi_runtime_suspend(dev);
-> @@ -1182,7 +1182,7 @@ static int at91_twi_suspend_noirq(struct device *dev)
->  	return 0;
->  }
->  
-> -static int at91_twi_resume_noirq(struct device *dev)
-> +static int at91_twi_resume(struct device *dev)
->  {
->  	struct at91_twi_dev *twi_dev = dev_get_drvdata(dev);
->  	int ret;
-> @@ -1202,8 +1202,8 @@ static int at91_twi_resume_noirq(struct device *dev)
->  }
->  
->  static const struct dev_pm_ops at91_twi_pm = {
-> -	.suspend_noirq	= at91_twi_suspend_noirq,
-> -	.resume_noirq	= at91_twi_resume_noirq,
-> +	.suspend	= at91_twi_suspend,
-> +	.resume		= at91_twi_resume,
->  	.runtime_suspend	= at91_twi_runtime_suspend,
->  	.runtime_resume		= at91_twi_runtime_resume,
->  };
-> -- 
-> 2.7.4
-> 
+while the r8a7792 issue date back to v4.9:
+
+    7dd74bb1f058786e ("pinctrl: sh-pfc: r8a7792: Add VIN pin groups")
+
+I think separate patches are easier for backporting.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
