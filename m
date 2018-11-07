@@ -2,86 +2,90 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414E4C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D20C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D46F20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:00:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D46F20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C87320827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:01:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="efilHdXx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C87320827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731273AbeKHBbO (ORCPT
+        id S1731299AbeKHBcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 20:31:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59834 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727546AbeKHBbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 20:31:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AE160B65D;
-        Wed,  7 Nov 2018 16:00:15 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 17:00:15 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>, rppt@linux.ibm.com,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
-Message-ID: <20181107160015.GI27423@dhcp22.suse.cz>
-References: <20181031150625.147369-1-dancol@google.com>
- <20181105132205.138695-1-dancol@google.com>
- <20181106130524.GC2453@dhcp22.suse.cz>
- <CAKOZueu5aDtHDBzp6qKECTHEejjb=dyegQkuHh8NfwgNktzFow@mail.gmail.com>
+        Wed, 7 Nov 2018 20:32:20 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:36865 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727668AbeKHBcU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 20:32:20 -0500
+Received: by mail-vs1-f67.google.com with SMTP id h18so9723579vsj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 08:01:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WS9zibSB4iZWTedBoRMKnZJf+/qsJfvPY26Ky9zapvc=;
+        b=efilHdXx/NjzFvFQPQOyQkmg+ZtlnQw58eJVkWu5P6MFx43vJmPJURAgVzEfihVXzJ
+         J43UgV+MpGQSAtJdCdSSPoWJU+dJHWx2VvBeDHP8Q8PztIOfmDQ9HdwcVpUhTYT10NNq
+         xUlLjSUDGQGKFulIzDimMGzVtzI1JwyPI6DK3cfhfazbkuNnkZqEyGhUiiQ7z7YS6yJQ
+         2QcyCrQF+b8lmCGQZ0wtwHpjsF629pwr43IaRDBgn+6SbxMlOOYQ690MddYgnIXFaf3T
+         vHrk2oYmsbnBFZEeqRbTja5isxWxj2Hxp2vxjmsaTwjlNGGkWVWjRpn6HwjyR7ahcp4H
+         WO2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WS9zibSB4iZWTedBoRMKnZJf+/qsJfvPY26Ky9zapvc=;
+        b=PXDSE5BTAEZK8ddFFqKXxEAZ2j17InZikoXrp0BN6lvsvyey5WpIjvzFs1PMyr5uuF
+         B8oFvKstCNu/4wWJcRZD0VUIR3XmmYZNkRYje+UXDZzTjk5t76P4IgcO7D158wIYD5ZI
+         A3ykSXB27tXtMP8u3dhDNoQhgxC4q58BkGVM18beNoxYlxTFEugtFfJLJF/PDNAx4SZ8
+         KNbF+X3UtI+por3iCvZ1YJGNoefi3UlsIQ14s4v7vuOfCWm5khdIL8hqBaoPE40EAfvP
+         AQCRuzu9iuw7+2We0zew2k/ILee6FXgGLzmM+FNaii87Ri6XPtwGBZjN04XpfnJbSxIC
+         ux5g==
+X-Gm-Message-State: AGRZ1gKOVe/WppT4IyVnSXkopsDH9rEKpOj5w2hJRyFFZ24gMGxkac0+
+        AWwsfrMF143YUFOpsTA3KL/IPab5twxRp4dCbkyOaw==
+X-Google-Smtp-Source: AJdET5dC6KTECzi2AAeJXVf/TI2TFYx1BFA20CY5Oma6nUhDVjy/a3y0HDAhub0ALrsRU0EFJpb8MxsqmE7iqgygyqU=
+X-Received: by 2002:a67:6cc1:: with SMTP id h184mr304932vsc.149.1541606481350;
+ Wed, 07 Nov 2018 08:01:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKOZueu5aDtHDBzp6qKECTHEejjb=dyegQkuHh8NfwgNktzFow@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 08:01:20 -0800 (PST)
+In-Reply-To: <CAJfpegvs4hafbe9XSgU175+26_ks9oh6iUo5m2tYLA=6MMvMrQ@mail.gmail.com>
+References: <20181029192521.23059-1-dave@stgolabs.net> <CAKOZuevx9beEB-KWz0gRNaJQLfzu0cu7nuMYaB5ZT1O_ooQYAA@mail.gmail.com>
+ <20181106154840.3b448356214afa63dc8cb28c@linux-foundation.org>
+ <CAJfpegsdFiM6QWt3VBEDvGdKHfvsvUnm06MC-ha7z_WPTP9znA@mail.gmail.com>
+ <CAKOZueu=zM_HjeET6SBJaP2zHD6+w7K8ewtk6B8C38Gkm4g0LA@mail.gmail.com> <CAJfpegvs4hafbe9XSgU175+26_ks9oh6iUo5m2tYLA=6MMvMrQ@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 7 Nov 2018 16:01:20 +0000
+Message-ID: <CAKOZuesWpDJqqtyMxpVWBhe0ZnS3e=NOm6ZOeizuxX37tk2BbA@mail.gmail.com>
+Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>, longman@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07-11-18 15:48:20, Daniel Colascione wrote:
-> On Tue, Nov 6, 2018 at 1:05 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Mon 05-11-18 13:22:05, Daniel Colascione wrote:
-> >> State explicitly that holding a /proc/pid file descriptor open does
-> >> not reserve the PID. Also note that in the event of PID reuse, these
-> >> open file descriptors refer to the old, now-dead process, and not the
-> >> new one that happens to be named the same numeric PID.
-> >
-> > This sounds quite obvious
-> 
-> Many people *on* *LKML* were wrong about this behavior. If it's not
-> obvious to experienced kernel developers, it's certainly not obvious
-> to the public.
+On Wed, Nov 7, 2018 at 3:54 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Wed, Nov 7, 2018 at 4:42 PM, Daniel Colascione <dancol@google.com> wrote:
+>
+>> configuration!" is something I've heard more than once. Who's to say
+>> that sysfs is for exposing /proc/pid/stat,
+>
+> Patch is about /proc/stat not /proc/PID/stat.  Please revise your
+> arguments based on that.
 
-Fair enough
-
-> > otherwise anybody could simply DoS the system
-> > by consuming all available pids.
-> 
-> People can do that today using the instrument of terror widely known
-> as fork(2). The only thing standing between fork(2) and a full process
-> table is RLIMIT_NPROC.
-
-not really. If you really do care about pid space depletion then you
-should use pid cgroup controller.
--- 
-Michal Hocko
-SUSE Labs
+My argument stands. The considerations I'm discussing apply to both
+process-specific and system-global information files.
