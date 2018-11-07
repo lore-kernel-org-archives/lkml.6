@@ -2,639 +2,146 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8126BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97193C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3382520837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3382520837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5A29820837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhUqrH24"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A29820837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbeKHFVb (ORCPT
+        id S1728267AbeKHFVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:31 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41996 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbeKHFVa (ORCPT
+        Thu, 8 Nov 2018 00:21:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34866 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbeKHFVg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:30 -0500
-Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTpT-00070Q-Ax; Wed, 07 Nov 2018 20:49:31 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 23/23] x86/fpu: Defer FPU state load until return to userspace
-Date:   Wed,  7 Nov 2018 20:48:58 +0100
-Message-Id: <20181107194858.9380-24-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
-References: <20181107194858.9380-1-bigeasy@linutronix.de>
+        Thu, 8 Nov 2018 00:21:36 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so15875979ljb.2;
+        Wed, 07 Nov 2018 11:49:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=d5V1uW76Q0IAtGKD/dIufTon2hNFl+VbR+afaKecsCk=;
+        b=fhUqrH24EtbKvagZWVfkbYbgepEVpgkNVwJebptjR9qTdGkmgzl2NUrYTMsUO5r6L0
+         ATJiOD6BQu8SuuYLV4itxKlw0eAAJhO3LIKAuwI32X+97ttWSbPDfF++Y3ujP73ibSbg
+         9c61rkk2CilWK+ePLEUnNDT/EbP/CJshWLsWBR5S3yLz8ppOvQcIPbteS629kbhsJcGs
+         6QW4yYM9CL2ErY66oFEpQmLcCZsfCIadZmtH0mm2FPxZpUfcaDvpS3UQdAyygAVjBdgx
+         XbaZRvhA3dczW8MI5xMAF7OhBVFDhiu84zdQRVK+vk2pWA52oJaLDZZkYsQxLUefEYha
+         A42w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d5V1uW76Q0IAtGKD/dIufTon2hNFl+VbR+afaKecsCk=;
+        b=k8wPeOULn90MSPMlwOfuAmcaesSNiZm1IBKuZHUEEimF+Q5yY1bLUGo5vJDH/MR7HD
+         PZSuKS6B3kL6QHWTafdu76/TRqUM3IpzqMB1gWmdsTFNQe8U0oACEiPSPk44aR+2zSZj
+         jY0XXW5XcYP30GMtnnrO+pjM7azc0yhmtbX9uoJpeoqL3cnU4a2lC1GSV8Ihq+lOv4DT
+         9Cdf7V0T2FIsRRlysAZID2x4bW0TZIZ2rVET7MBdGMWKqL1B5aQT1rP8xnjskdYvniKS
+         Jd+2AxD4F/GdwOkN1DebFHjAHXR4TyyFF9pwI5HLRBI4fpOcX5Mf7yVi/ggqjfkgvNP3
+         WYgg==
+X-Gm-Message-State: AGRZ1gIQ6auBSvLFqNq4oFjCS8Yb6z49ukHzOuo+Rve4MMDOLYvilLkV
+        Is0212fyMHKKSMpN+pxRBaA=
+X-Google-Smtp-Source: AJdET5dOuTKDLJ53RfgiP9i3iWECg6WiM4vIRF7KyZ63JRbNkriL4zJQVgDXZazhYrxO/8RAtFYZCw==
+X-Received: by 2002:a2e:20c3:: with SMTP id g64-v6mr1048755lji.101.1541620183204;
+        Wed, 07 Nov 2018 11:49:43 -0800 (PST)
+Received: from [192.168.1.18] (dnl153.neoplus.adsl.tpnet.pl. [83.24.93.153])
+        by smtp.gmail.com with ESMTPSA id p77-v6sm354759lja.0.2018.11.07.11.49.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 11:49:42 -0800 (PST)
+Subject: Re: [PATCH 08/24] leds: lt3593: Use led_compose_name()
+To:     Daniel Mack <daniel@zonque.org>, linux-leds@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pavel@ucw.cz, robh@kernel.org
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
+ <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
+Date:   Wed, 7 Nov 2018 20:49:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+On 11/07/2018 08:37 PM, Daniel Mack wrote:
+> On 6/11/2018 11:07 PM, Jacek Anaszewski wrote:
+>> Switch to using generic LED support for composing LED class
+>> device name.
+> 
+> Thanks for the rework!
+> 
+>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> ---
+>>   drivers/leds/leds-lt3593.c | 19 ++++++++-----------
+>>   1 file changed, 8 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+>> index de3623e..d005abc 100644
+>> --- a/drivers/leds/leds-lt3593.c
+>> +++ b/drivers/leds/leds-lt3593.c
+>> @@ -10,10 +10,10 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of.h>
+>> -#include <uapi/linux/uleds.h>
+>> +
+>> +#define LED_LT3593_NAME "lt3593"
+>>     struct lt3593_led_data {
+>> -    char name[LED_MAX_NAME_SIZE];
+>>       struct led_classdev cdev;
+>>       struct gpio_desc *gpiod;
+>>   };
+>> @@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device
+>> *pdev)
+>>       struct fwnode_handle *child;
+>>       int ret, state = LEDS_GPIO_DEFSTATE_OFF;
+>>       enum gpiod_flags flags = GPIOD_OUT_LOW;
+>> +    struct led_init_data init_data;
+>>       const char *tmp;
+>>         if (dev_get_platdata(dev)) {
+>> @@ -138,14 +139,11 @@ static int lt3593_led_probe(struct
+>> platform_device *pdev)
+>>           return PTR_ERR(led_data->gpiod);
+>>         child = device_get_next_child_node(dev, NULL);
+>> +    init_data.fwnode = child;
+> 
+> Not quite following. `fwnode' is the only member of that struct that is
+> initialized?
+> 
+>>   -    ret = fwnode_property_read_string(child, "label", &tmp);
+>> -    if (ret < 0)
+>> -        snprintf(led_data->name, sizeof(led_data->name),
+>> -             "lt3593::");
+>> -    else
+>> -        snprintf(led_data->name, sizeof(led_data->name),
+>> -             "lt3593:%s", tmp);
+>> +    ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
+> 
+> ... and here, a member that wasn't written before is used? What am I
+> missing?
 
-Defer loading of FPU state until return to userspace. This gives
-the kernel the potential to skip loading FPU state for tasks that
-stay in kernel mode, or for tasks that end up with repeated
-invocations of kernel_fpu_begin() & kernel_fpu_end().
+init_data.name pointer is passed to led_compose_name(), which fills
+this array with the composed name.
 
-The __fpregs_changes_{begin|end}() section ensures that the register
-remain unchanged. Otherwise a context switch or a BH could save the
-registers to its FPU context and processor's FPU register would became
-random if beeing modified at the same time.
-
-KVM swaps the host/guest register on entry/exit path. I kept the flow as
-is. First it ensures that the registers are loaded and then saves the
-current (host) state before it loads the guest's register. The swap is
-done at the very end with disabled interrupts so it should not change
-anymore before theg guest is entered. The read/save version seems to be
-cheaper compared to memcpy() in a micro benchmark.
-
-Each thread gets TIF_NEED_FPU_LOAD set as part of fork() / fpu__copy().
-For kernel threads, this flag gets never cleared which avoids saving /
-restoring the FPU state for kernel threads and during in-kernel usage of
-the FPU register. This should restore the performance regression which
-was introduced after the removal of the ->initialized field in struct
-fpu.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/entry/common.c             |  8 +++
- arch/x86/include/asm/fpu/api.h      | 14 +++++
- arch/x86/include/asm/fpu/internal.h | 31 +++++----
- arch/x86/include/asm/trace/fpu.h    |  5 +-
- arch/x86/kernel/fpu/core.c          | 97 +++++++++++++++++++++++------
- arch/x86/kernel/fpu/signal.c        | 49 ++++++++-------
- arch/x86/kernel/process.c           |  2 +-
- arch/x86/kernel/process_32.c        |  5 +-
- arch/x86/kernel/process_64.c        |  5 +-
- arch/x86/kvm/x86.c                  | 19 ++++--
- 10 files changed, 172 insertions(+), 63 deletions(-)
-
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 3b2490b819181..e46fe9aa2934a 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -31,6 +31,7 @@
- #include <asm/vdso.h>
- #include <linux/uaccess.h>
- #include <asm/cpufeature.h>
-+#include <asm/fpu/api.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/syscalls.h>
-@@ -196,6 +197,13 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
- 	if (unlikely(cached_flags & EXIT_TO_USERMODE_LOOP_FLAGS))
- 		exit_to_usermode_loop(regs, cached_flags);
- 
-+	/* Reload ti->flags; we may have rescheduled above. */
-+	cached_flags = READ_ONCE(ti->flags);
-+
-+	fpregs_assert_state_consistent();
-+	if (unlikely(cached_flags & _TIF_NEED_FPU_LOAD))
-+		switch_fpu_return();
-+
- #ifdef CONFIG_COMPAT
- 	/*
- 	 * Compat syscalls set TS_COMPAT.  Make sure we clear it before
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index 8c03b42416656..d10b60d80d35a 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -27,17 +27,31 @@ extern void __kernel_fpu_end(void);
- extern void kernel_fpu_begin(void);
- extern void kernel_fpu_end(void);
- extern bool irq_fpu_usable(void);
-+extern void fpregs_mark_activate(void);
- 
- static inline void __fpregs_changes_begin(void)
- {
- 	preempt_disable();
-+	local_bh_disable();
- }
- 
- static inline void __fpregs_changes_end(void)
- {
-+	local_bh_enable();
- 	preempt_enable();
- }
- 
-+#ifdef CONFIG_X86_DEBUG_FPU
-+extern void fpregs_assert_state_consistent(void);
-+#else
-+static inline void fpregs_assert_state_consistent(void) { }
-+#endif
-+
-+/*
-+ * Load the task FPU state before returning to userspace.
-+ */
-+extern void switch_fpu_return(void);
-+
- /*
-  * Query the presence of one or more xfeatures. Works on any legacy CPU as well.
-  *
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 5e86ff60a3a5c..0406f0987697f 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -29,7 +29,7 @@ extern void fpu__prepare_write(struct fpu *fpu);
- extern void fpu__save(struct fpu *fpu);
- extern int  fpu__restore_sig(void __user *buf, int ia32_frame);
- extern void fpu__drop(struct fpu *fpu);
--extern int  fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu);
-+extern int  fpu__copy(struct task_struct *dst, struct task_struct *src);
- extern void fpu__clear(struct fpu *fpu);
- extern int  fpu__exception_code(struct fpu *fpu, int trap_nr);
- extern int  dump_fpu(struct pt_regs *ptregs, struct user_i387_struct *fpstate);
-@@ -436,15 +436,20 @@ static inline void fpregs_activate(struct fpu *fpu)
- /*
-  * Load the FPU state for the current task. Call with preemption disabled.
-  */
--static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
-+static inline void __fpregs_load_activate(void)
- {
-+	struct fpu *fpu = &current->thread.fpu;
-+	int cpu = smp_processor_id();
-+	int kthread = current->mm == NULL;
-+
-+	if (kthread)
-+		return;
- 	if (!fpregs_state_valid(fpu, cpu)) {
--		if (current->mm)
--			copy_kernel_to_fpregs(&fpu->state);
--		else
--			copy_kernel_to_fpregs(&init_fpstate);
-+		copy_kernel_to_fpregs(&fpu->state);
-+		fpregs_activate(fpu);
-+		fpu->last_cpu = cpu;
- 	}
--	fpregs_activate(fpu);
-+	clear_thread_flag(TIF_NEED_FPU_LOAD);
- }
- 
- /*
-@@ -455,8 +460,8 @@ static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
-  *  - switch_fpu_prepare() saves the old state.
-  *    This is done within the context of the old process.
-  *
-- *  - switch_fpu_finish() restores the new state as
-- *    necessary.
-+ *  - switch_fpu_finish() sets TIF_NEED_FPU_LOAD; the floating point state
-+ *    will get loaded on return to userspace, or when the kernel needs it.
-  */
- static inline void
- switch_fpu_prepare(struct fpu *old_fpu, int cpu)
-@@ -477,15 +482,15 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
-  */
- 
- /*
-- * Set up the userspace FPU context for the new task, if the task
-- * has used the FPU.
-+ * Load PKRU from the FPU context if available. Delay loading the loading of the
-+ * complete FPU state until the return to userland.
-  */
--static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
-+static inline void switch_fpu_finish(struct fpu *new_fpu)
- {
- 	if (!static_cpu_has(X86_FEATURE_FPU))
- 		return;
- 
--	__fpregs_load_activate(new_fpu, cpu);
-+	set_thread_flag(TIF_NEED_FPU_LOAD);
- 
- 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
- 		struct pkru_state *pk;
-diff --git a/arch/x86/include/asm/trace/fpu.h b/arch/x86/include/asm/trace/fpu.h
-index bd65f6ba950f8..91a1422091ceb 100644
---- a/arch/x86/include/asm/trace/fpu.h
-+++ b/arch/x86/include/asm/trace/fpu.h
-@@ -13,19 +13,22 @@ DECLARE_EVENT_CLASS(x86_fpu,
- 
- 	TP_STRUCT__entry(
- 		__field(struct fpu *, fpu)
-+		__field(bool, load_fpu)
- 		__field(u64, xfeatures)
- 		__field(u64, xcomp_bv)
- 		),
- 
- 	TP_fast_assign(
- 		__entry->fpu		= fpu;
-+		__entry->load_fpu	= test_thread_flag(TIF_NEED_FPU_LOAD);
- 		if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
- 			__entry->xfeatures = fpu->state.xsave.header.xfeatures;
- 			__entry->xcomp_bv  = fpu->state.xsave.header.xcomp_bv;
- 		}
- 	),
--	TP_printk("x86/fpu: %p xfeatures: %llx xcomp_bv: %llx",
-+	TP_printk("x86/fpu: %p load: %d xfeatures: %llx xcomp_bv: %llx",
- 			__entry->fpu,
-+			__entry->load_fpu,
- 			__entry->xfeatures,
- 			__entry->xcomp_bv
- 	)
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 02bbd40fe1e95..85746819deed2 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -101,16 +101,20 @@ void __kernel_fpu_begin(void)
- 
- 	kernel_fpu_disable();
- 
--	copy_fpregs_to_fpstate(fpu);
-+	__cpu_invalidate_fpregs_state();
-+	if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
-+		set_thread_flag(TIF_NEED_FPU_LOAD);
-+		/*
-+		 * Ignore return value -- we don't care if reg state
-+		 * is clobbered.
-+		 */
-+		copy_fpregs_to_fpstate(fpu);
-+	}
- }
- EXPORT_SYMBOL(__kernel_fpu_begin);
- 
- void __kernel_fpu_end(void)
- {
--	struct fpu *fpu = &current->thread.fpu;
--
--	copy_kernel_to_fpregs(&fpu->state);
--
- 	kernel_fpu_enable();
- }
- EXPORT_SYMBOL(__kernel_fpu_end);
-@@ -138,14 +142,16 @@ void fpu__save(struct fpu *fpu)
- {
- 	WARN_ON_FPU(fpu != &current->thread.fpu);
- 
--	preempt_disable();
-+	__fpregs_changes_begin();
- 	trace_x86_fpu_before_save(fpu);
- 
--	if (!copy_fpregs_to_fpstate(fpu)) {
--		copy_kernel_to_fpregs(&fpu->state);
-+	if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
-+		if (!copy_fpregs_to_fpstate(fpu)) {
-+			copy_kernel_to_fpregs(&fpu->state);
-+		}
- 	}
- 	trace_x86_fpu_after_save(fpu);
--	preempt_enable();
-+	__fpregs_changes_end();
- }
- EXPORT_SYMBOL_GPL(fpu__save);
- 
-@@ -178,8 +184,11 @@ void fpstate_init(union fpregs_state *state)
- }
- EXPORT_SYMBOL_GPL(fpstate_init);
- 
--int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
-+int fpu__copy(struct task_struct *dst, struct task_struct *src)
- {
-+	struct fpu *dst_fpu = &dst->thread.fpu;
-+	struct fpu *src_fpu = &src->thread.fpu;
-+
- 	dst_fpu->last_cpu = -1;
- 
- 	if (!static_cpu_has(X86_FEATURE_FPU))
-@@ -194,16 +203,23 @@ int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
- 	memset(&dst_fpu->state.xsave, 0, fpu_kernel_xstate_size);
- 
- 	/*
--	 * Save current FPU registers directly into the child
--	 * FPU context, without any memory-to-memory copying.
-+	 * If the FPU registers are not current just memcpy() the state.
-+	 * Otherwise save current FPU registers directly into the child's FPU
-+	 * context, without any memory-to-memory copying.
- 	 *
- 	 * ( The function 'fails' in the FNSAVE case, which destroys
--	 *   register contents so we have to copy them back. )
-+	 *   register contents so we have to load them back. )
- 	 */
--	if (!copy_fpregs_to_fpstate(dst_fpu)) {
--		memcpy(&src_fpu->state, &dst_fpu->state, fpu_kernel_xstate_size);
--		copy_kernel_to_fpregs(&src_fpu->state);
--	}
-+	__fpregs_changes_begin();
-+	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+		memcpy(&dst_fpu->state, &src_fpu->state, fpu_kernel_xstate_size);
-+
-+	else if (!copy_fpregs_to_fpstate(dst_fpu))
-+		copy_kernel_to_fpregs(&dst_fpu->state);
-+
-+	__fpregs_changes_end();
-+
-+	set_tsk_thread_flag(dst, TIF_NEED_FPU_LOAD);
- 
- 	trace_x86_fpu_copy_src(src_fpu);
- 	trace_x86_fpu_copy_dst(dst_fpu);
-@@ -219,10 +235,9 @@ static void fpu__initialize(struct fpu *fpu)
- {
- 	WARN_ON_FPU(fpu != &current->thread.fpu);
- 
-+	set_thread_flag(TIF_NEED_FPU_LOAD);
- 	fpstate_init(&fpu->state);
- 	trace_x86_fpu_init_state(fpu);
--
--	trace_x86_fpu_activate_state(fpu);
- }
- 
- /*
-@@ -301,6 +316,8 @@ void fpu__drop(struct fpu *fpu)
-  */
- static inline void copy_init_fpstate_to_fpregs(void)
- {
-+	__fpregs_changes_begin();
-+
- 	if (use_xsave())
- 		copy_kernel_to_xregs(&init_fpstate.xsave, -1);
- 	else if (static_cpu_has(X86_FEATURE_FXSR))
-@@ -310,6 +327,9 @@ static inline void copy_init_fpstate_to_fpregs(void)
- 
- 	if (boot_cpu_has(X86_FEATURE_OSPKE))
- 		copy_init_pkru_to_fpregs();
-+
-+	fpregs_mark_activate();
-+	__fpregs_changes_end();
- }
- 
- /*
-@@ -332,6 +352,45 @@ void fpu__clear(struct fpu *fpu)
- 		copy_init_fpstate_to_fpregs();
- }
- 
-+/*
-+ * Load FPU context before returning to userspace.
-+ */
-+void switch_fpu_return(void)
-+{
-+	if (!static_cpu_has(X86_FEATURE_FPU))
-+		return;
-+
-+	__fpregs_load_activate();
-+}
-+EXPORT_SYMBOL_GPL(switch_fpu_return);
-+
-+#ifdef CONFIG_X86_DEBUG_FPU
-+/*
-+ * If current FPU state according to its tracking (loaded FPU ctx on this CPU)
-+ * is not valid then we must have TIF_NEED_FPU_LOAD set so the context is loaded on
-+ * return to userland.
-+ */
-+void fpregs_assert_state_consistent(void)
-+{
-+       struct fpu *fpu = &current->thread.fpu;
-+
-+       if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+               return;
-+       WARN_ON_FPU(!fpregs_state_valid(fpu, smp_processor_id()));
-+}
-+EXPORT_SYMBOL_GPL(fpregs_assert_state_consistent);
-+#endif
-+
-+void fpregs_mark_activate(void)
-+{
-+	struct fpu *fpu = &current->thread.fpu;
-+
-+	fpregs_activate(fpu);
-+	fpu->last_cpu = smp_processor_id();
-+	clear_thread_flag(TIF_NEED_FPU_LOAD);
-+}
-+EXPORT_SYMBOL_GPL(fpregs_mark_activate);
-+
- /*
-  * x87 math exception handling:
-  */
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 9720529859483..9a9c379c23c35 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -251,6 +251,7 @@ static void copy_to_fpregs_zeroing(struct fpu *fpu, u64 xbv, int fx_only)
- 	}
- 	clear_thread_flag(TIF_NEED_FPU_LOAD);
- 	fpregs_activate(fpu);
-+	fpu->last_cpu = smp_processor_id();
- 	__fpregs_changes_end();
- }
- 
-@@ -262,7 +263,7 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 	int state_size = fpu_kernel_xstate_size;
- 	u64 xfeatures = 0;
- 	int fx_only = 0;
--	int err = 0;
-+	int err;
- 
- 	ia32_fxstate &= (IS_ENABLED(CONFIG_X86_32) ||
- 			 IS_ENABLED(CONFIG_IA32_EMULATION));
-@@ -297,40 +298,43 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 		}
- 	}
- 
-+	/*
-+	 * The current state of the FPU registers does not matter. By setting
-+	 * TIF_NEED_FPU_LOAD unconditionally it is ensured that the our xstate
-+	 * is not modified on context switch and that the xstate is considered
-+	 * to loaded again on return to userland (overriding last_cpu avoids the
-+	 * optimisation).
-+	 */
-+	set_thread_flag(TIF_NEED_FPU_LOAD);
-+	__fpu_invalidate_fpregs_state(fpu);
-+
- 	if (ia32_fxstate) {
- 		/*
- 		 * For 32-bit frames with fxstate, copy the user state to the
- 		 * thread's fpu state, reconstruct fxstate from the fsave
- 		 * header. Validate and sanitize the copied state.
- 		 */
--		union fpregs_state *state;
--		void *tmp;
- 		struct user_i387_ia32_struct env;
- 
--		tmp = kmalloc(sizeof(*state) + fpu_kernel_xstate_size + 64, GFP_KERNEL);
--		if (!tmp)
--			return -ENOMEM;
--		state = PTR_ALIGN(tmp, 64);
--
- 		if (using_compacted_format()) {
--			err = copy_user_to_xstate(&state->xsave, buf_fx);
-+			err = copy_user_to_xstate(&fpu->state.xsave, buf_fx);
- 		} else {
--			err = __copy_from_user(&state->xsave, buf_fx, state_size);
-+			err = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
- 
- 			if (!err && state_size > offsetof(struct xregs_state, header))
--				err = validate_xstate_header(&state->xsave.header);
-+				err = validate_xstate_header(&fpu->state.xsave.header);
-+		}
-+		if (err) {
-+			err = -EINVAL;
-+			goto out;
- 		}
- 
--		if (err || __copy_from_user(&env, buf, sizeof(env))) {
--			err = -1;
--		} else {
--			sanitize_restored_xstate(state, &env,
--						 xfeatures, fx_only);
--			copy_kernel_to_fpregs(state);
-+		if (__copy_from_user(&env, buf, sizeof(env))) {
-+			err = -EFAULT;
-+			goto out;
- 		}
- 
--		kfree(tmp);
--		return err;
-+		sanitize_restored_xstate(&fpu->state, &env, xfeatures, fx_only);
- 	} else {
- 		/*
- 		 * For 64-bit frames and 32-bit fsave frames, restore the user
-@@ -338,8 +342,8 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 		 */
- 		err = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
- 		if (err) {
--			fpu__clear(fpu);
--			return -EFAULT;
-+			err = EFAULT;
-+			goto out;
- 		}
- 		if ((unsigned long)buf_fx % 64)
- 			fx_only = 1;
-@@ -347,6 +351,9 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 	}
- 
- 	return 0;
-+out:
-+	fpu__clear(fpu);
-+	return err;
- }
- 
- static inline int xstate_sigframe_size(void)
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index c93fcfdf16734..cd7105fb92bfc 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -96,7 +96,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- 	dst->thread.vm86 = NULL;
- #endif
- 
--	return fpu__copy(&dst->thread.fpu, &src->thread.fpu);
-+	return fpu__copy(dst, src);
- }
- 
- /*
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 5c99e49c0d392..5c059ecb136db 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -233,7 +233,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 
- 	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
- 
--	switch_fpu_prepare(prev_fpu, cpu);
-+	if (!test_thread_flag(TIF_NEED_FPU_LOAD))
-+		switch_fpu_prepare(prev_fpu, cpu);
- 
- 	/*
- 	 * Save away %gs. No need to save %fs, as it was saved on the
-@@ -294,7 +295,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 
- 	this_cpu_write(current_task, next_p);
- 
--	switch_fpu_finish(next_fpu, cpu);
-+	switch_fpu_finish(next_fpu);
- 
- 	/* Load the Intel cache allocation PQR MSR. */
- 	intel_rdt_sched_in();
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 4fd0dfa5bd83e..83c3ea439190a 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -558,7 +558,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ENTRY) &&
- 		     this_cpu_read(irq_count) != -1);
- 
--	switch_fpu_prepare(prev_fpu, cpu);
-+	if (!test_thread_flag(TIF_NEED_FPU_LOAD))
-+		switch_fpu_prepare(prev_fpu, cpu);
- 
- 	/* We must save %fs and %gs before load_TLS() because
- 	 * %fs and %gs may be cleared by load_TLS().
-@@ -610,7 +611,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	this_cpu_write(current_task, next_p);
- 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
- 
--	switch_fpu_finish(next_fpu, cpu);
-+	switch_fpu_finish(next_fpu);
- 
- 	/* Reload sp0. */
- 	update_task_stack(next_p);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 75301b439b6e4..4cc57223893c5 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7734,6 +7734,10 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		wait_lapic_expire(vcpu);
- 	guest_enter_irqoff();
- 
-+	fpregs_assert_state_consistent();
-+	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+		switch_fpu_return();
-+
- 	if (unlikely(vcpu->arch.switch_db_regs)) {
- 		set_debugreg(0, 7);
- 		set_debugreg(vcpu->arch.eff_db[0], 0);
-@@ -7993,22 +7997,29 @@ static int complete_emulated_mmio(struct kvm_vcpu *vcpu)
- /* Swap (qemu) user FPU context for the guest FPU context. */
- static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
- {
--	preempt_disable();
-+	__fpregs_changes_begin();
-+
- 	copy_fpregs_to_fpstate(&vcpu->arch.user_fpu);
-+
- 	/* PKRU is separately restored in kvm_x86_ops->run.  */
- 	__copy_kernel_to_fpregs(&vcpu->arch.guest_fpu.state,
- 				~XFEATURE_MASK_PKRU);
--	preempt_enable();
-+
-+	fpregs_mark_activate();
-+	__fpregs_changes_end();
- 	trace_kvm_fpu(1);
- }
- 
- /* When vcpu_run ends, restore user space FPU context. */
- static void kvm_put_guest_fpu(struct kvm_vcpu *vcpu)
- {
--	preempt_disable();
-+	__fpregs_changes_begin();
-+
- 	copy_fpregs_to_fpstate(&vcpu->arch.guest_fpu);
- 	copy_kernel_to_fpregs(&vcpu->arch.user_fpu.state);
--	preempt_enable();
-+
-+	fpregs_mark_activate();
-+	__fpregs_changes_end();
- 	++vcpu->stat.fpu_reload;
- 	trace_kvm_fpu(0);
- }
 -- 
-2.19.1
-
+Best regards,
+Jacek Anaszewski
