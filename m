@@ -2,155 +2,109 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3083AC46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:36:19 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D2120862
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF52C0044C
 	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:36:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="ZKMcN8J2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D2120862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 36C9920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:36:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C9920862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731543AbeKHDHk (ORCPT
+        id S1731521AbeKHDHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:07:40 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43527 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728117AbeKHDHj (ORCPT
+        Wed, 7 Nov 2018 22:07:39 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:13019 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727648AbeKHDHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Nov 2018 22:07:39 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g26-v6so15479847lja.10
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 09:36:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=94VwVroRz8OsQAeOpOtXrrHyWiA98PnE8gQ8bs66pwo=;
-        b=ZKMcN8J2/l2cZ3FGpvfYIsp32gIvXAYX7ncuk3iTSj8Lc3Lxb0YpTqeW6elvM+evQ0
-         FaR/OQlDRRlCVAIgB2xWBYamib1gMatV5SYlzScvZbEJiWaagvI3x3yQOcWizM3Mvfny
-         sfcofHDnQqsrcMiLs10+W9+smK8rU+SM1nHPQcJjuv7p4trqF810BxmlX8fAXAd8riH+
-         we5MTiQC7hyFfSik7plzvnAjcQfrh5wxwelBuPELyOPZhSROsN2oRKSUnjaiE1t+Ummj
-         31XyDRSBQ/jF5VtKNlqIAX/T62rjLu1vIgICVTDSb+zc2Al5mPtLFHSrows1+yt8dcrX
-         4wcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=94VwVroRz8OsQAeOpOtXrrHyWiA98PnE8gQ8bs66pwo=;
-        b=q/O4BEcRdViITLdY8RHIRQ6E95oZJSFEv+DYyVlyPUGvPw3EphEVZUxn8Md9IfWE1Z
-         eAadScjiYuzEPQMOVsbgYPHmCxC8V6979rrl+00T+ZjkBrDFNEFCKoBQH6jdhgfbfvEL
-         Lbbd0T676hb7IC3Oa46GqBGEB4vLD/SAcDaE92fO9fI8+ZBg1Axnl4KufguUAr1tYj7n
-         /ORz3MnH/fT247HmYbny4Uvg2zhSANtPqqAUBJBhMkS8xyXZRs+qie59m04ppQcWwSCz
-         nQzfSsoADbGQOOLElDjSFuFlUK2N7zR3xj3KxHvMUJZbCf5BAv3WhKo707jzwzQV6fQd
-         srzg==
-X-Gm-Message-State: AGRZ1gK42DpEKvbVq+t9jYpu8YoClKKTCjOGF0ELa+HYp0fbzkZRkxPs
-        ONwYZOfvr7Blya1SsJ+23x9ax9I0IlTuxfptvCoEUg==
-X-Google-Smtp-Source: AJdET5dFIb2fmt9q2LrEYHJOS7KwJc2OyQYHMrRN/YjSk+1FbyKoKnrqmNKJrhgz2SKSKjAZer9XbVJqSYDf73eOlqo=
-X-Received: by 2002:a2e:90ca:: with SMTP id o10-v6mr720453ljg.134.1541612174263;
- Wed, 07 Nov 2018 09:36:14 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.54,476,1534809600"; 
+   d="scan'208";a="81542236"
+Subject: Re: [Xen-devel] [PATCH v2] x86/xen: fix pv boot
+To:     Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <xen-devel@lists.xenproject.org>, <x86@kernel.org>
+CC:     <sstabellini@kernel.org>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <boris.ostrovsky@oracle.com>, <tglx@linutronix.de>
+References: <20181107170100.9435-1-jgross@suse.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
+ VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
+ srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
+ Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
+ ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
+ YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
+ LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
+ e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
+ gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
+ ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
+ cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
+ CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
+ 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
+ IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
+ SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
+ JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
+ mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
+ ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
+ RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
+ dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
+ /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
+ TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
+ Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
+ 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
+ vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
+ g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
+ wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
+ 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
+ kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
+ bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
+ uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
+ XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
+ HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
+ pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
+ vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
+ b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
+ 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
+ 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
+ nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
+ B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
+ d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
+ 6+ahAA==
+Message-ID: <d8a07a83-2595-f22e-ca9c-313f74bb11ba@citrix.com>
+Date:   Wed, 7 Nov 2018 17:36:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
- <3189677.9XQFCzzJyO@avalon>
-In-Reply-To: <3189677.9XQFCzzJyO@avalon>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 7 Nov 2018 09:36:02 -0800
-Message-ID: <CAOesGMi84d+ZSK49Cf26Wvy5mU8D8VkUK1zvfs-a=eSYD+4osw@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [TECH TOPIC] SoC maintainer group
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        Russell King <rmk@armlinux.org.uk>,
-        Kevin Hilman <khilman@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181107170100.9435-1-jgross@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 3:32 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On 07/11/18 17:01, Juergen Gross wrote:
+> Commit 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on
+> kernel addresses") introduced a regression for booting Xen PV guests.
 >
-> Hi Olof,
+> Xen PV guests are using __put_user() and __get_user() for accessing the
+> p2m map (physical to machine frame number map) as accesses might fail
+> in case of not populated areas of the map.
 >
-> On Wednesday, 7 November 2018 00:16:27 EET Olof Johansson wrote:
-> > Hi KS organizers (and others),
-> >
-> > This is a late topic proposal, hopefully there is still time on the age=
-nda.
-> >
-> > We=E2=80=99ve recently been discussing some maintainer model changes as
-> > described below, and would like a slot to discuss the idea and solicit
-> > feedback/comments from the others there.
-> >
-> >
-> > This started with Arnd and I finally being in one place at the same
-> > time, and talking about how we want to evolve arm-soc maintainership
-> > moving forward. We've been independently thinking of ways to expand
-> > the group and making it more self-service for everybody, but there's a
-> > bunch of tooling needed to make it run smoothly beyond the smaller
-> > group we have now.
-> >
-> > In the end, we ended up looking at it from a slightly different angle:
-> > Right now, when contributors show up with new platform support, the
-> > first hill they need to climb is figuring out how they need to carve
-> > up their platform among all the various maintainers, how to make sure
-> > they're all handshaking on keeping things stable, and get code
-> > submitted. It's awkward, not well documented and one of the biggest
-> > overheads we have on our side as well.
-> >
-> > When we started talking to other maintainers, we're also realizing
-> > that we are currently duplicating a lot of work. In particular, we
-> > often all get cc:d on patch series, so we all need to read and filter,
-> > and assume that other maintainers spot the right patches, etc.
-> >
-> > We have discussed a few different options, and it seems like pooling
-> > more of the contribution flow to a group of co-maintainers is a useful
-> > approach. Initially, we're considering the arm-soc platforms, clock
-> > drivers and pinctrl drivers, which all tend to be affected by new
-> > platform contributions in this way, and often end up cross-cc:d on
-> > everything. Additionally, the flow for successfully merging a new
-> > platform or SoC needs to be documented and advertised. This is true
-> > whether or not we change the way that maintainers coordinate amongst
-> > themselves, or whether or not we change the current workflow used by
-> > platform contributors today.
-> >
-> > So, we're planning to change things up a bit. We're starting a new
-> > group that pools current arm-soc, clk and pinctrl drivers and
-> > maintainers into one funnel. We'll set up a new mail alias for the
-> > maintainer group, and one shared patchwork to collect contributions.
-> > We still expect developers to use existing mailing lists, and we still
-> > expect for example ARM platform maintainers to keep their workflow of
-> > collecting patches for their platform like they do today. Down the
-> > road it might make sense to incorporate other driver subsystems as
-> > well.
-> >
-> > Beyond this, we're going to keep a close eye on the drm-misc tree,
-> > which is exploring a move to gitlab (and working with gitlab on adding
-> > the features they need to move over). If they get a broad maintainer
-> > model working well in that environment it could be something we reuse
-> > for ourselves too.
+> With above commit using __put_user() and __get_user() for accessing
+> kernel pages is no longer valid. So replace the Xen hack by adding
+> appropriate p2m access functions using the default fixup handler.
 >
-> gitlab is an umbrella term that covers many features proposed by the prod=
-uct.
-> Are there particular features that you already think you would be interes=
-ted
-> in, or features that you already know you wouldn't want to use ?
+> Fixes: 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-To be honest, I haven't looked closely yet and I'm looking forward to
-learning about what the DRM plans are during LPC.
-
-
--Olof
+Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
