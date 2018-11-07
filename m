@@ -2,82 +2,95 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC32C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFDEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF5C20892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:07:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=genki.is header.i=@genki.is header.b="VCzRNxd2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADF5C20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=genki.is
+	by mail.kernel.org (Postfix) with ESMTP id 613A520892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:10:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613A520892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeKHGjl (ORCPT
+        id S1727308AbeKHGmK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:39:41 -0500
-Received: from genki.is ([104.200.25.21]:43230 "EHLO genki.is"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbeKHGjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:39:41 -0500
-Received: by genki.is (OpenSMTPD) with ESMTP id 964ecac3;
-        Wed, 7 Nov 2018 21:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=genki.is; h=date
-        :message-id:mime-version:content-transfer-encoding:content-type
-        :from:subject:to:cc:in-reply-to:references; s=dkim; bh=BNry9EZbX
-        c5va3/O0oqkiexIwqk=; b=VCzRNxd2q7UvxqxIeT0gbyImqa7UIQUkWEbyFaEU1
-        JLVIepqNGuvaBkxW92RP3EtuQL7z0hKI2631bgnJwH3MHQwlmIZZPy3lF/L9vbym
-        q8Qm7+VqzPOzqQdVZR0GfTk4JE5iljNP3aayUqPzp6u2dYFRPtz3vAUoF8jp9Xqn
-        mdnNU2PmZIucS0VGW77sR2k8l9guQ9gH208lzoJ6EHAWjUcn7JHpmpL4nlgg8nZb
-        plyoheZ39unfJcadnyg/c4Hzzv85tdoa25y5OJZb6z7dDTz8h4HyPCopw3V0WIdS
-        qagrBT5ylT1kdYToX7qkC4oFn2cQhAFKPu/LUmxcWG25g==
-Received: by genki.is (OpenSMTPD) with ESMTPSA id 7f3f5a01 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Wed, 7 Nov 2018 21:07:32 +0000 (UTC)
-Date:   Wed, 07 Nov 2018 13:07:31 -0800
-Message-ID: <20181107.210731.330601031@genki.is>
+        Thu, 8 Nov 2018 01:42:10 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43570 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbeKHGmK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 01:42:10 -0500
+Received: by mail-qk1-f193.google.com with SMTP id r71so22943455qkr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 13:10:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/354RJktfWO3Xv0X4oRS/MwprSK52O+Iss7VIFmrPCA=;
+        b=LGRkVcse5aoBczAa+8lGndK3GrC9Dq3O6X66dVVfMYZhBVGl0Blr2VKpwrMEl+h2wg
+         RbCtnfolSTHTXfUzrxYLd3H2SUfhsT3J5Lwm4mL6pm9ayIz17QVqeJwBeERgL+upWQrz
+         LrNo82XmDb6iBRqSXnHkqBLDfufBNwaDsRwXQbwlWDJ71Iku/dRW6gWre4O1Atz6/Neq
+         shf01Oyh7PjQ0dvyXuleBxzsiYue/KIJx1d1owZUKOlxX63KR7eYToG3xQRX9XhhYieS
+         onA2wUGSQB4h8UqwWqqkf6ObzERr5jq/bEeTr8EIN9GksX4WGX79UQ2OOV5eenbCJnyZ
+         7FWA==
+X-Gm-Message-State: AGRZ1gIyzmIyssthd89vTglPf6/78WPgaE2ezPOdLtfOSRH01NGrVhI5
+        RgG5r5ZMpXXlTF8cyYmW8Ko36b6vDWDYFwD7X1M=
+X-Google-Smtp-Source: AJdET5dWhffFHUu7ZBoRk2k1Xds+Ikbp4k6UXVNUOvLdhMLXUvvYGJXNGas97+IHnJoQZuTJ58TZ4WJzzzpen9pkmQM=
+X-Received: by 2002:a0c:f50c:: with SMTP id j12mr1864644qvm.149.1541624998627;
+ Wed, 07 Nov 2018 13:09:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-From:   Genki Sky <sky@genki.is>
-Subject: Re: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check
- more robust"
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Brian Norris <briannorris@chromium.org>, lists@nerdbynature.de,
-        yamada.masahiro@socionext.com,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-In-Reply-To: <20181107205514.GB12273@roeck-us.net>
-References: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
-        <20181106.192305.406697677@genki.is> <20181107022156.GA254567@google.com>
-        <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
-        <CA+ASDXPMMXCBN6PU8qzRm579sC9VBdwnxZdZwRdPY1cBUP8oGQ@mail.gmail.com>
-        <20181107184435.GA168339@google.com> <20181107.204358.257636196@genki.is>
-        <20181107205514.GB12273@roeck-us.net>
+References: <CAK8P3a3JcztCSYBuu5ZJXaV83VNLv_1v3v-EKMR+tC1oOsQesw@mail.gmail.com>
+ <mhng-3c26b2fb-0c11-42f2-9026-1113b200a7b2@palmer-si-x1c4> <CAEn-LTpQ5uTte2bBrEs3uLKtsckkKPUOP+jHw5k-DFAwGCS3WA@mail.gmail.com>
+In-Reply-To: <CAEn-LTpQ5uTte2bBrEs3uLKtsckkKPUOP+jHw5k-DFAwGCS3WA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 7 Nov 2018 22:09:39 +0100
+Message-ID: <CAK8P3a30Dmq3vp-+=jvVu8VMe+GKc9dU=+ZF0rzhFiUq2NuJ_w@mail.gmail.com>
+Subject: Re: [PATCH] riscv: add asm/unistd.h UAPI header
+To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Nov 2018 12:55:14 -0800, Guenter Roeck <linux@roeck-us.net> wrote:
-> I do not think it is a good idea to create a random file in the .git directory
-> under any circumstance, and much less so if an output directory was specified,
-> no matter if the path is read-only or not. I also still think that it is a
-> bad idea to touch the source tree if an output directory was specified.
-> It defeats the purpose of specifying an output directory.
+On Wed, Nov 7, 2018 at 7:30 PM David Abdurachmanov
+<david.abdurachmanov@gmail.com> wrote:
+> On Wed, Nov 7, 2018 at 1:08 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+> > On Mon, 05 Nov 2018 12:56:15 PST (-0800), Arnd Bergmann wrote:
 
-I was thinking of touching a pre-existing file like .git/config or
-.git/description, which I was hoping would be harmless. But sounds
-like that's still not desired?
+> > The target is still the next glibc release (Feb 1st) for a stable RV32I ABI.
+> > That's progressing well, with one last blocking issue related to some of our
+> > floating-point emulation routines before we can submit the port.  This should
+> > give us ample time to line up the ABIs correctly so everything works.
+> >
+> > So I think the correct answer here is to drop __ARCH_WANT_STAT64 from RISC-V.
+> >
+>
+> Then if you agree I could do and send v2:
+>
+> +#ifdef __LP64__
+> +#define __ARCH_WANT_NEW_STAT
+> +#endif /* __LP64__ */
 
-Okay, I guess one approach is to only refresh the index if $objtree ==
-$srctree, by passing some flag to scripts/setlocalversion from
-scripts/package/Makefile. Is that what you're thinking? Feels a little
-strange, but it seems it'd satisfy everyone.
+Looks good to me.
 
-> Ubuntu 16.04 ships with git version 2.7.4.
+> Cannot use CONFIG_64BIT as in user space nothing defines it.
+> Alternatively I could
+> check for __riscv_xlen == 64.
+>
+> I found _LP64 and __LP64__ being used in kernel, incl. include/uapi/linux/rseq.h
 
-Okay. I guess --no-optional-locks is a no-go then.
+I think older gcc versions were less consistent about those macros, which
+is why I introduced __BITS_PER_LONG a long time ago. We now support
+gcc-4.6 as the minimum, so using __LP64__ is reliable, and on RISC-V
+we obviously have a much newer compiler anyway.
+
+        Arnd
