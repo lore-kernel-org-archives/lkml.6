@@ -2,137 +2,97 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79D3C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA667C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC18020892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:04:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC18020892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 75A4F20818
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:05:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ZAoR9H76"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A4F20818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeKHFfx (ORCPT
+        id S1726724AbeKHFhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:35:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:3215 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeKHFfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:35:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 12:03:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
-   d="scan'208";a="106311544"
-Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
-  by orsmga001.jf.intel.com with ESMTP; 07 Nov 2018 12:03:58 -0800
-Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
- ORSMSX110.amr.corp.intel.com (10.22.240.8) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 7 Nov 2018 12:03:56 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
- ORSMSX151.amr.corp.intel.com ([169.254.7.114]) with mapi id 14.03.0415.000;
- Wed, 7 Nov 2018 12:03:55 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v8 2/4] x86/modules: Increase randomization for modules
-Thread-Topic: [PATCH v8 2/4] x86/modules: Increase randomization for modules
-Thread-Index: AQHUcuJ7dRNa9BxcYEKh1HD163He3aVDyT8AgAGBqQA=
-Date:   Wed, 7 Nov 2018 20:03:49 +0000
-Message-ID: <68d41324607f1169fcdfee95d95a25b4f4e772a3.camel@intel.com>
-References: <20181102192520.4522-1-rick.p.edgecombe@intel.com>
-         <20181102192520.4522-3-rick.p.edgecombe@intel.com>
-         <20181106130532.1ef8e080baeedfa0960eebd4@linux-foundation.org>
-In-Reply-To: <20181106130532.1ef8e080baeedfa0960eebd4@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.168]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DA46A8C359EDEA489B36D199FF38D22D@intel.com>
-Content-Transfer-Encoding: base64
+        Thu, 8 Nov 2018 00:37:03 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40464 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbeKHFhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 00:37:03 -0500
+Received: by mail-it1-f196.google.com with SMTP id e11so21344992itl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 12:05:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RGlRR0IxOueRFL5tHOTubBMGk8c1XHhzE/wNkZpJwuA=;
+        b=ZAoR9H76XpG2j6xbZ1WtUpXAockKhAgT4Qq3uqTcIJemwQofmGEuh2QICafEsC5KCc
+         ka8dA5kvhV/W0U8XZTZMroMnTQSSa4d3jXlaUDoqr7QbY/ttLM64LFOVpVesnK+uki8g
+         CXQDnsLlMUo89nMR1VCDhNcuTJEFAFB85nvx49RaDxjlKnmKNg4R7EnnatI1bnCnlV0l
+         Ecj3sKBhnwwmjaLHkXOFreo0I/257etLiSM4RgQw96v3LgbUmKEXfwR3JylXDGZiyV7t
+         9P/04uDbF159+eILjAg7qqkajIyq1VGmZ9q9UkghkSzLNICfdshBME83nCQRu8LNk0a0
+         1zDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RGlRR0IxOueRFL5tHOTubBMGk8c1XHhzE/wNkZpJwuA=;
+        b=K+9D0emxHoAxTQt2M/POa8sMm4hDs39n+dmoX44V1d1EtkiUxTTH5GGOPNHEY9rNTc
+         Qt9ah+7UrDXoybVTMDBFGt6P5N8A3wpxoTQYv5rS+Ywyy+tdUlRd0D9No59oGVxaiXzx
+         hOT6fRsSzQCF8fwn/NvDSTop3f+JHnHSoFNWzz9n1muiMomFJim9qU9dgn3MFzMkZrhW
+         EQLGuyoJF9a0L/mmjxYr2OHC2zOTUl/i4S17IRTM9ndF7HL6Zx/QnIB060Wj5GGv4lvb
+         ljIRd8YssO69OCwMD+mZIAK6FCSG3GzsUbQV1jfCe/h00ALAnClwe5CFH6X2UxmpBjt0
+         2qGw==
+X-Gm-Message-State: AGRZ1gJi3+4MI5OjT0PlRDxYkQZX5em4hGxN6xCmziq45eCjpBwehw9c
+        lWhSV0yk8bRI8ZK9Nmo+P9MJ7Q==
+X-Google-Smtp-Source: AJdET5ctEVNxpLcy4zsAd9munOkyvPTHRrt0fWyNzqkJbVNaSV1D2tMQlCuoi7l7D3aYyAShf6CDQg==
+X-Received: by 2002:a24:508a:: with SMTP id m132-v6mr1413313itb.19.1541621109022;
+        Wed, 07 Nov 2018 12:05:09 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1134::136a? ([2620:10d:c090:180::1:ed44])
+        by smtp.gmail.com with ESMTPSA id u127-v6sm785866ita.10.2018.11.07.12.05.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 12:05:07 -0800 (PST)
+Subject: Re: [PATCH v2] block: respect virtual boundary mask in bvecs
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     Linux Block Layer Mailinglist <linux-block@vger.kernel.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Sagi Grimberg <sagi@grimberg.me>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Ming Lei <ming.lei@redhat.com>
+References: <20181107135814.15727-1-jthumshirn@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <756f1630-f875-4a7c-26cf-9cce7b850ca1@kernel.dk>
+Date:   Wed, 7 Nov 2018 13:05:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181107135814.15727-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTExLTA2IGF0IDEzOjA1IC0wODAwLCBBbmRyZXcgTW9ydG9uIHdyb3RlOg0K
-PiBPbiBGcmksICAyIE5vdiAyMDE4IDEyOjI1OjE4IC0wNzAwIFJpY2sgRWRnZWNvbWJlIDxyaWNr
-LnAuZWRnZWNvbWJlQGludGVsLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiA+IFRoaXMgY2hhbmdlcyB0
-aGUgYmVoYXZpb3Igb2YgdGhlIEtBU0xSIGxvZ2ljIGZvciBhbGxvY2F0aW5nIG1lbW9yeSBmb3Ig
-dGhlDQo+ID4gdGV4dA0KPiA+IHNlY3Rpb25zIG9mIGxvYWRhYmxlIG1vZHVsZXMuIEl0IHJhbmRv
-bWl6ZXMgdGhlIGxvY2F0aW9uIG9mIGVhY2ggbW9kdWxlIHRleHQNCj4gPiBzZWN0aW9uIHdpdGgg
-YWJvdXQgMTcgYml0cyBvZiBlbnRyb3B5IGluIHR5cGljYWwgdXNlLiBUaGlzIGlzIGVuYWJsZWQg
-b24NCj4gPiBYODZfNjQNCj4gPiBvbmx5LiBGb3IgMzIgYml0LCB0aGUgYmVoYXZpb3IgaXMgdW5j
-aGFuZ2VkLg0KPiA+IA0KPiA+IEl0IHJlZmFjdG9ycyBleGlzdGluZyBjb2RlIGFyb3VuZCBtb2R1
-bGUgcmFuZG9taXphdGlvbiBzb21ld2hhdC4gVGhlcmUgYXJlDQo+ID4gbm93DQo+ID4gdGhyZWUg
-ZGlmZmVyZW50IGJlaGF2aW9ycyBmb3IgeDg2IG1vZHVsZV9hbGxvYyBkZXBlbmRpbmcgb24gY29u
-ZmlnLg0KPiA+IFJBTkRPTUlaRV9CQVNFPW4sIGFuZCBSQU5ET01JWkVfQkFTRT15IEFSQ0g9eDg2
-XzY0LCBhbmQgUkFORE9NSVpFX0JBU0U9eQ0KPiA+IEFSQ0g9aTM4Ni4NCj4gPiANCj4gPiBUaGUg
-cmVmYWN0b3Igb2YgdGhlIGV4aXN0aW5nIGNvZGUgaXMgdG8gdHJ5IHRvIGNsZWFybHkgc2hvdyB3
-aGF0DQo+ID4gdGhvc2UgYmVoYXZpb3JzIGFyZSB3aXRob3V0IGhhdmluZyB0aHJlZSBzZXBhcmF0
-ZSB2ZXJzaW9ucyBvciB0aHJlYWRpbmcgdGhlDQo+ID4gYmVoYXZpb3JzIGluIGEgYnVuY2ggb2Yg
-bGl0dGxlIHNwb3RzLiBUaGUgcmVhc29uIGl0IGlzIG5vdCBlbmFibGVkIG9uIDMyIGJpdA0KPiA+
-IHlldCBpcyBiZWNhdXNlIHRoZSBtb2R1bGUgc3BhY2UgaXMgbXVjaCBzbWFsbGVyIGFuZCBzaW11
-bGF0aW9ucyBoYXZlbid0IGJlZW4NCj4gPiBydW4gdG8gc2VlIGhvdyBpdCBwZXJmb3Jtcy4NCj4g
-PiANCj4gPiBUaGUgbmV3IGFsZ29yaXRobSBicmVha3MgdGhlIG1vZHVsZSBzcGFjZSBpbiB0d28s
-IGEgcmFuZG9tIGFyZWEgYW5kIGEgYmFja3VwDQo+ID4gYXJlYS4gSXQgZmlyc3QgdHJpZXMgdG8g
-YWxsb2NhdGUgYXQgYSBudW1iZXIgb2YgcmFuZG9tbHkgbG9jYXRlZCBzdGFydGluZw0KPiA+IHBh
-Z2VzDQo+ID4gaW5zaWRlIHRoZSByYW5kb20gc2VjdGlvbiB3aXRob3V0IHB1cmdpbmcgYW55IGxh
-enkgZnJlZSB2bWFwIGFyZWFzIGFuZA0KPiA+IHRyaWdnZXJpbmcgdGhlIGFzc29jaWF0ZWQgVExC
-IGZsdXNoLg0KPiBTdXJwcmlzZWQuICBJcyBvbmUgVExCIGZsdXNoIHBlciBtb2R1bGUgbG9hZGlu
-ZyBzdWZmaWNpZW50bHkgZXhwZW5zaXZlDQo+IHRvIGp1c3RpZnkgYW55IGVmZm9ydCB0byBhdm9p
-ZCBpdD8gIElPVywgcGxlYXNlIHByb3ZpZGUgc29tZQ0KPiBqdXN0aWZpY2F0aW9uIGFuZCBleHBs
-YW5hdGlvbiBpbiB0aGUgY2hhbmdlbG9nLg0KSSdsbCBmaXggdGhpcy4gVGhlIHRleHQgaXMgYWNj
-dXJhdGUsIGJ1dCBtaXNsZWFkaW5nIGluIGNvbW11bmljYXRpbmcgdGhlDQppbnRlbnRpb25zIGJl
-Y2F1c2UgaXQgd2FzIGxlZnQgb3ZlciBmcm9tIGFuIGVhcmxpZXIgdmVyc2lvbi4gU29ycnkgYWJv
-dXQgdGhhdC4NCg0KSSB0aGluayB0aGUgcGVyZm9ybWFuY2UgYmVuZWZpdCBtaWdodCBjb21lIG1v
-cmUgZnJvbSBhdm9pZGluZyB0aGUgcmV0cnkgaW4NCnZtYWxsb2MsIHRoYW4gdGhlIFRMQiBmbHVz
-aC4gSW4gdGhlIG90aGVyIG1haWwgSSBwb3N0ZWQgc29tZSBiZW5jaG1hcmtzLg0KDQo+ID4gSWYg
-dGhpcyBmYWlscywgdGhlbiBpdCB3aWxsIGFsbG9jYXRlIGluDQo+ID4gdGhlIGJhY2t1cCBhcmVh
-LiBUaGUgYmFja3VwIGFyZWEgYmFzZSB3aWxsIGJlIG9mZnNldCBpbiB0aGUgc2FtZSB3YXkgYXMg
-dGhlDQo+ID4gY3VycmVudCBhbGdvcml0aG0gZG9lcyBmb3IgdGhlIGJhc2UgYXJlYSwgMTAyNCBw
-b3NzaWJsZSBsb2NhdGlvbnMuDQo+IA0KPiBTbyBwcmVzdW1hYmx5IHRoZSBhbGxvY2F0aW9uIGVm
-Zm9ydCBpbiB0aGUgcmFuZG9taXplZCBzZWN0aW9uIGlzDQo+IHNvbWV3aGF0IGxpa2VseSB0byBm
-YWlsLiAgVGhhdCdzIHVuZm9ydHVuYXRlLiAgU29tZSBkaXNjdXNzaW9uIGFib3V0DQo+IHdoeSB0
-aGVzZSBmYWlsdXJlcyBvY2N1ciB3b3VsZCBiZSBoZWxwZnVsLg0KPiANCj4gQmVjYXVzZSBpdCB3
-b3VsZCBiZSBuaWNlIHRvIGRvIGF3YXkgd2l0aCB0aGUgYmFja3VwIGFyZWEgYWx0b2dldGhlci4g
-DQo+IEJ1dCB0aGlzIHJlYWRlciBkb2Vzbid0IHJlYWxseSB1bmRlcnN0YW5kIHdoeSB0aGUgYmFj
-a3VwIGFyZWEgaXMNCj4gbmVlZGVkLg0KV2l0aCB0aGUgaGlnaCAxMDAwMCBudW1iZXIgdHJpZXMs
-IGl0IHVzdWFsbHkgb25seSBmYWlscyBmb3IgbGFyZ2VyIG1vZHVsZXMgdW50aWwNCnRoZSBtb2R1
-bGUgc3BhY2Ugc3RhcnRzIHRvIGdldCBmdWxsZXIuIEEgY29uY3JldGUgdXNlIGNhc2UgZm9yIHRo
-ZSBiYWNrdXAgYXJlYQ0KaXMgd2hlbiB0aGUgcmFuZG9tIGFyZWEgaXMgZnJhZ21lbnRlZCB3aXRo
-IEJQRiBmaWx0ZXJzLCBhbmQgdGhlbiB0aGUgdXNlciB0cmllcw0KdG8gbG9hZCBhIGxhcmdlIG1v
-ZHVsZS4NCg0KRm9yIGV4YW1wbGUgaW1hZ2luZSBpZiB5b3UgaGFkIHRoZSBmdWxsIDFHQiBvZiBt
-b2R1bGUgc3BhY2UgYXMgdGhlIHJhbmRvbSBhcmVhLg0KSWYgeW91IGhhdmUgMTAwMCBCUEYgZmls
-dGVycyBpbnNlcnRlZCwgYW5kIHRoZXkgZW5kZWQgdXAgYmVpbmcgZXZlbmx5DQpkaXN0cmlidXRl
-ZCwgMUdCLzEwMDA9MU1CLCBhbmQgc28geW91IGNvdWxkbid0IGxvYWQgYW55IG1vZHVsZXMgb3Zl
-ciAxTUIuIFdpdGgNCjIwMDAsIDAuNSBNQiwgZXRjLg0KDQpUaGUgMi8zOjEvMyBicmVha2Rvd24g
-d2FzIGNob3NlbiBhcyBteSBiZXN0IGd1ZXNzIGF0IHRoZSBiZXN0IHRyYWRlb2ZmIG9mDQpmcmFn
-bWVudGF0aW9uIHNhZmV0eSBhbmQgZW50cm9weS4NCg0KPiA+IER1ZSB0byBib290X3BhcmFtcyBi
-ZWluZyBkZWZpbmVkIHdpdGggZGlmZmVyZW50IHR5cGVzIGluIGRpZmZlcmVudCBwbGFjZXMsDQo+
-ID4gcGxhY2luZyB0aGUgY29uZmlnIGhlbHBlcnMgbW9kdWxlcy5oIG9yIGthc2xyLmggY2F1c2Vk
-IGNvbmZsaWN0cyBlbHNld2hlcmUsDQo+ID4gYW5kDQo+ID4gc28gdGhleSBhcmUgcGxhY2VkIGlu
-IGEgbmV3IGZpbGUsIGthc2xyX21vZHVsZXMuaCwgaW5zdGVhZC4NCj4gPiANCj4gDQo+IA0K
+On 11/7/18 6:58 AM, Johannes Thumshirn wrote:
+> With drivers that are settting a virtual boundary constrain, we are
+> seeing a lot of bio splitting and smaller I/Os being submitted to the
+> driver.
+> 
+> This happens because the bio gap detection code does not account cases
+> where PAGE_SIZE - 1 is bigger than queue_virt_boundary() and thus will
+> split the bio unnecessarily.
+
+Thanks, applied.
+
+-- 
+Jens Axboe
+
