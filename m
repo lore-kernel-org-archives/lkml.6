@@ -2,107 +2,93 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC3DC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C276AC32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436542085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:01:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GNQOkJnX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436542085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 73DB82085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 03:03:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73DB82085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nerdbynature.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389382AbeKGM3e (ORCPT
+        id S2389348AbeKGMcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 07:29:34 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45281 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389320AbeKGM3e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 07:29:34 -0500
-Received: by mail-ed1-f66.google.com with SMTP id w39-v6so7844177edw.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 19:01:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j6Wudk1T2V/jEzrgGaZ7Bl/Cz6VjYO8rNqjfNWQ1HzY=;
-        b=GNQOkJnXGtzIi6IFoSV/k+5gRciq/Sp/nRI2iBj7Lt6LzWTZGJBbdFsZ7uVuZq4vpq
-         POE8gzXohaV5MrfkyDM7lt7mnUlyji/LaVVgbPQ3MTifAh0fLkO5xdu5pEBDqgS59Kpk
-         E9wRKsLwNFwZanOJsEOWCBuuZfrZEsJtbWN24=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j6Wudk1T2V/jEzrgGaZ7Bl/Cz6VjYO8rNqjfNWQ1HzY=;
-        b=HR2yROAcgYIfsxZrqozLALkRx59W4BNyMpjTXjUyKKrXFaGC3aLNzE/UBBV4LcXPKr
-         juGildfu+bmCN213uumwVCF49Em33jSFqEP0u/rWfFzqqBaJJYF7k131YcyFqydC/qoz
-         2IGS316TjjRBzmkY5CuX2J3rcu3B2HNVOjNZgvVxzSyAimP5aVp/x+QGz4SKPukqmYpF
-         Kj+pfvrMlwdk17x+x+5AFOHO4kPQtxd6BcKznkzLfPNKpq6jwjEEvlwjRPx0rZHMOu51
-         lEK1ZcsBfOJ9ZjIQWNuONDfGFpQiiV2V23XFgVZWO8UtywXkN85xZK8vFa0ReWMYlYWO
-         nWRA==
-X-Gm-Message-State: AGRZ1gJYPJ5Ja9/ytb3GUc1jIYCSfbhaGqJzFFddwfOMhHM2VBF/lDHu
-        EI5iPFBnO8bdrhr1KkJRKov/74RktrsID6Q1i+CiaQ==
-X-Google-Smtp-Source: AJdET5eLtQELRfVcpDoSET82CbT6qe8Je1XuaUGMkINCCEd2iKuVmQsWgvBBvaRFt6DeLJIHWfzjGuoeuil+busp8Rc=
-X-Received: by 2002:a17:906:a301:: with SMTP id j1-v6mr354212ejz.188.1541559668864;
- Tue, 06 Nov 2018 19:01:08 -0800 (PST)
+        Wed, 7 Nov 2018 07:32:22 -0500
+Received: from trent.utfs.org ([94.185.90.103]:50490 "EHLO trent.utfs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727749AbeKGMcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 07:32:22 -0500
+X-Greylist: delayed 343 seconds by postgrey-1.27 at vger.kernel.org; Wed, 07 Nov 2018 07:32:21 EST
+Received: from localhost (localhost [IPv6:::1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by trent.utfs.org (Postfix) with ESMTPS id 5DCA25FA7B;
+        Wed,  7 Nov 2018 03:58:13 +0100 (CET)
+Date:   Tue, 6 Nov 2018 18:58:13 -0800 (PST)
+From:   Christian Kujau <lists@nerdbynature.de>
+To:     Brian Norris <briannorris@chromium.org>
+cc:     Genki Sky <sky@genki.is>, Guenter Roeck <linux@roeck-us.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check
+ more robust"
+In-Reply-To: <20181107022156.GA254567@google.com>
+Message-ID: <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
+References: <1541527838-4585-1-git-send-email-linux@roeck-us.net> <20181106.192305.406697677@genki.is> <20181107022156.GA254567@google.com>
+User-Agent: Alpine 2.21.999 (DEB 277 2018-05-20)
 MIME-Version: 1.0
-References: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
- <1541387810-24867-3-git-send-email-zhang.chunyan@linaro.org>
- <be0a18e8-8ee6-4d4e-6dcc-6ba6e39033c9@ti.com> <CAK8P3a2X4tbx_R-5VgfApF-UPmJ_XuzH3hO_uVAfffC6h8WrJw@mail.gmail.com>
-In-Reply-To: <CAK8P3a2X4tbx_R-5VgfApF-UPmJ_XuzH3hO_uVAfffC6h8WrJw@mail.gmail.com>
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-Date:   Wed, 7 Nov 2018 11:00:57 +0800
-Message-ID: <CAG2=9p-skR8xqqBrULS6_EWFX0H_mvvOJKDGVfzf026H_dychg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] mmc: sdhci-omap: Add using external dma
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Nov 2018 at 20:51, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On 11/5/18, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> > On 05/11/18 8:46 AM, Chunyan Zhang wrote:
-> >>
-> >> +    sdhci_switch_extdma(host, true);
-> >
-> > A number of devices using sdhci-omap supports ADMA. So switching to
-> > external
-> > DMA shouldn't be unconditional.
-> >
-> > IMHO sdhci.c should see if the device supports ADMA or SDMA. If not it
-> > should
-> > try switching to external DMA and if external DMA too is not supported, it
-> > should use PIO.
->
-> What's the reasoning for preferring ADMA/SDMA over external DMA if
-> both are supported?
->
-> I'd expect that if the external DMA for some reason is worse than
-> ADMA, we just wouldn't list it in the DT at all, but if it's listed and
-> ADMA also works, then the driver should try to use it before falling
-> back to ADMA.
+On Tue, 6 Nov 2018, Brian Norris wrote:
+> > Perhaps both scenarios could be satisfied by having
+> > scripts/setlocalversion first check if .git has write permissions, and
+> > acting accordingly. Looking into history, this actually used to be
+> > done, but cdf2bc632ebc ("scripts/setlocalversion on write-protected
+> > source tree", 2013-06-14) removed the updating of the index.
+> 
+> A "writeable" check (e.g., [ -w . ]) would be sufficient for our case.
+> But I'm not so sure about that older NFS report, and I'm also not sure
+> that we should be writing to the source tree at all in this case. Maybe
+> we can also check whether there's a build output directory specified?
 
-Thanks Arnd and Kishon, let's see what Andrian and Ulf would suggest,
-and then I will address in next version of patchset.
+FWIW, the issue I reported back in 2013[0] was not an ill-configured NFS 
+export, but a read-only NFS export (and then a read-write exported NFS 
+export, but the user compiling the kernel did not have write permission) 
+and so "test -w .git" did not help in determining if the source tree can 
+actually written to. And depending on the user's shell[1], this may or may 
+not still be the case.
 
-Thanks again,
-Chunyan
+So I'm all for the $(touch .git/some-file-here) test to decide if the 
+kernel has to be modified during build.
 
->
->        Arnd
+Christian. 
+
+[0] https://lkml.org/lkml/2013/6/14/574
+[1] https://manpages.debian.org/unstable/dash/dash.1.en.html
+
+> > However, I admit I don't understand the justification in that commit
+> > from 2013. I'm no NFS expert, but perhaps the real problem there is an
+> > incorrectly configured NFS setup (uid/gid mismatch between NFS
+> > client/server, or permissions mismatch between mount options and NFS
+> > server?). Christian Kujau: can you speak to that?
+> > 
+> > Well, we could also make our check $(touch .git/some-file-here
+> > 2>/dev/null && ...) instead of $(test -w .git) to handle misconfigured
+> > NFS setups. But not sure if that has its own problems.
+> 
+> Trying to 'touch' the source tree will also break us. No matter whether
+> you redirect stderr, our sandbox will still notice the build is doing
+> something fishy and complain.
+
+-- 
+BOFH excuse #192:
+
+runaway cat on system.
