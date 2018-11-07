@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B28A3C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF61C32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D672086B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6107820827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:04:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RT3QNZsr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D672086B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kgw3jYni"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6107820827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388978AbeKGKcS (ORCPT
+        id S2389031AbeKGKcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 05:32:18 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45751 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387697AbeKGKcR (ORCPT
+        Wed, 7 Nov 2018 05:32:20 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36894 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387697AbeKGKcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 05:32:17 -0500
-Received: by mail-pl1-f194.google.com with SMTP id o19-v6so7033781pll.12
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 17:04:16 -0800 (PST)
+        Wed, 7 Nov 2018 05:32:19 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u13-v6so6940954pfm.4
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 17:04:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WQM7chB0oDewwNnyIx9CKfvrFsyvLv4TlbWwfrMWGXo=;
-        b=RT3QNZsrexQ10U8eGOLxbLruMSjgUhr+TLEqjuVkJ6d4zm8lcdVeR50NiGKuvKknaj
-         ZOR3qV8Gex62a4pp1H5inI9eY1ma9POzAJiY8m70fNXeI2uw4geFVV3+QGyAaGne97Ml
-         axhvODRUoJMdUqfy8ysGZLOwh0Bws0qhqXdi8=
+        bh=IBgaqhFzeF1TpKh7XpgYVYLbY8p4f3B3hZXickKUZUg=;
+        b=kgw3jYnioIm9CljR2FvmQhiREM4Bkk0e1ODD4XmY6reyfDOK2Kh+cjQX38xgUJyQYg
+         0O8MwzsWJ+zXc3Yj7C8pStYq6L9y+MsoiSFKFn2y46ZBRXAf/OYbLdODjhkRMN5m32AV
+         d2eoyeh09XMfWfrBoZ8MqXIarjFiEnvUu/HgU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WQM7chB0oDewwNnyIx9CKfvrFsyvLv4TlbWwfrMWGXo=;
-        b=S/5JlImBFUPEhAVzJbwknHPvvDMB0cCtsSJ3y9voQbgCc8xB74HSzQNZ4d+hCHsNId
-         cleItfnvcyC8LdRIEhdB/Wq69ZisupCMhcJbdTcpZEWcqHbHDj31W1UBHHGqcE03x/X9
-         NAIlhaRwzb0VJVFS7/PVB90MLspiidJWS4xVB/Eu1KWWsqzWK7fsBpdO/lOUp83jFe4A
-         MacKHPfZi8ndY2+Os6AaavTR4dBgdyg4eNOpImtzoTEvE8JkyPsk+HxThaIDh3h3Gvn2
-         zJ3UtTUZvShha0FM0dhzm9Uji+PM0TR+u16KvHyLr3SEfcfEPIu+c8loybM3JnzgZlEA
-         +qmw==
-X-Gm-Message-State: AGRZ1gJLOSTtWDd5P5Aev6IJ7ydYxstNUHH729C6PtXJxQYmfmePV33Q
-        T4a2h9sPIKao0JlAYM5dpqas7g==
-X-Google-Smtp-Source: AJdET5dbQyY9HQLt4CjVjduEuH6F7Uo/Wi0xqO2etcTnRWyUqpNM4eK1L8QIwPxuEvweU53Or24F8w==
-X-Received: by 2002:a17:902:b612:: with SMTP id b18-v6mr29215604pls.205.1541552656499;
-        Tue, 06 Nov 2018 17:04:16 -0800 (PST)
+        bh=IBgaqhFzeF1TpKh7XpgYVYLbY8p4f3B3hZXickKUZUg=;
+        b=DcWWkp2OSA+KcSpkXAkQSVd4hvPYRddTcfhwjgsFmpZar81PVLUsPbH8Xu8KP0CWFT
+         RJmLlFaBQNU+h04BFIzFgufKahiBtO4c5XtTP0utVbm7t6LUKTsxKflhbcCUn/4iHtSo
+         ZVm/4MoyxOZKgJVL9/3Yb0HIEOoI49kzvrnRzXRU7h8WV71ArwcFiKjnzowlCqGQQI8A
+         sZYub9t/Y67Fis6ZUK402tAa9OTzBxQVOnHYszlfWKDZc9+hPPitBjineJHozChl3s9T
+         d92kGdNfWzJ1sluHJIm55HgMowEGeCx+i7H1OTYAUPn6pM7ZxfQk+2woTdA6Ji8mtIwX
+         dySQ==
+X-Gm-Message-State: AGRZ1gLdTBODtWFs4Iq/OSruCiFw9dlffVbLIr0keqPnuRSuGphZWbRy
+        RQECl5nbFgFVXUXrWvIAk4oUuF57GRA=
+X-Google-Smtp-Source: AJdET5c3y3jJPeDvOM2g185ltZt+ZGQIj/wmh+Vvh4kt5SZ1AzJry4u0mjsgi4HRKlSxdmumNrA6Kg==
+X-Received: by 2002:a63:fd53:: with SMTP id m19mr6879798pgj.340.1541552657619;
+        Tue, 06 Nov 2018 17:04:17 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id v37sm30134695pgn.5.2018.11.06.17.04.15
+        by smtp.gmail.com with ESMTPSA id v37sm30134695pgn.5.2018.11.06.17.04.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 17:04:15 -0800 (PST)
+        Tue, 06 Nov 2018 17:04:17 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Jason Wessel <jason.wessel@windriver.com>,
         Daniel Thompson <daniel.thompson@linaro.org>
 Cc:     kgdb-bugreport@lists.sourceforge.net,
         Peter Zijlstra <peterz@infradead.org>,
         Douglas Anderson <dianders@chromium.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/4] kgdb: Don't round up a CPU that failed rounding up before
-Date:   Tue,  6 Nov 2018 17:00:27 -0800
-Message-Id: <20181107010028.184543-4-dianders@chromium.org>
+Subject: [PATCH v3 4/4] kdb: Don't back trace on a cpu that didn't round up
+Date:   Tue,  6 Nov 2018 17:00:28 -0800
+Message-Id: <20181107010028.184543-5-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <20181107010028.184543-1-dianders@chromium.org>
 References: <20181107010028.184543-1-dianders@chromium.org>
@@ -76,69 +77,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we're using the default implementation of kgdb_roundup_cpus() that
-uses smp_call_function_single_async() we can end up hanging
-kgdb_roundup_cpus() if we try to round up a CPU that failed to round
-up before.
-
-Specifically smp_call_function_single_async() will try to wait on the
-csd lock for the CPU that we're trying to round up.  If the previous
-round up never finished then that lock could still be held and we'll
-just sit there hanging.
-
-There's not a lot of use trying to round up a CPU that failed to round
-up before.  Let's keep a flag that indicates whether the CPU started
-but didn't finish to round up before.  If we see that flag set then
-we'll skip the next round up.
-
-In general we have a few goals here:
-- We never want to end up calling smp_call_function_single_async()
-  when the csd is still locked.  This is accomplished because
-  flush_smp_call_function_queue() unlocks the csd _before_ invoking
-  the callback.  That means that when kgdb_nmicallback() runs we know
-  for sure the the csd is no longer locked.  Thus when we set
-  "rounding_up = false" we know for sure that the csd is unlocked.
-- If there are no timeouts rounding up we should never skip a round
-  up.
-
-NOTE #1: In general trying to continue running after failing to round
-up CPUs doesn't appear to be supported in the debugger.  When I
-simulate this I find that kdb reports "Catastrophic error detected"
-when I try to continue.  I can overrule and continue anyway, but it
-should be noted that we may be entering the land of dragons here.
-
-NOTE #2: I did a bit of testing before and after this change.  I
-introduced a 10 second hang in the kernel while holding a spinlock
-that I could invoke on a certain CPU with 'taskset -c 3 cat /sys/...".
-
-Before this change if I did:
-- Invoke hang
-- Enter debugger
-- g (which warns about Catastrophic error, g again to go anyway)
-- g
-- Enter debugger
-
-...I'd hang the rest of the 10 seconds without getting a debugger
-prompt.  After this change I end up in the debugger the 2nd time after
-only 1 second with the standard warning about 'Timed out waiting for
-secondary CPUs.'
-
-I'll also note that once the CPU finished waiting I could actually
-debug it (aka "btc" worked)
-
-I won't promise that everything works perfectly if the errant CPU
-comes back at just the wrong time (like as we're entering or exiting
-the debugger) but it certainly seems like an improvement.
-
-NOTE #3: setting 'kgdb_info[cpu].rounding_up = false' is in
-kgdb_nmicallback() instead of kgdb_call_nmi_hook() because some
-implementations override kgdb_call_nmi_hook().  It shouldn't hurt to
-have it in kgdb_nmicallback() in any case.
-
-NOTE #4: this logic is really only needed because there is no API call
-like "smp_try_call_function_single_async()" or "smp_csd_is_locked()".
-If such an API existed then we'd use it instead, but it seemed a bit
-much to add an API like this just for kgdb.
+If you have a CPU that fails to round up and then run 'btc' you'll end
+up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
+It's wise to also set the task to NULL when leaving the debugger so
+that if we fail to round up on a later entry into the debugger we
+won't backtrace a stale task.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
@@ -148,57 +91,44 @@ Changes in v3:
 
 Changes in v2: None
 
- kernel/debug/debug_core.c | 17 +++++++++++++++++
- kernel/debug/debug_core.h |  1 +
- 2 files changed, 18 insertions(+)
+ kernel/debug/debug_core.c |  1 +
+ kernel/debug/kdb/kdb_bt.c | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index 23f2b5613afa..324cba8917f1 100644
+index 324cba8917f1..08851077c20a 100644
 --- a/kernel/debug/debug_core.c
 +++ b/kernel/debug/debug_core.c
-@@ -246,6 +246,20 @@ void __weak kgdb_roundup_cpus(void)
- 			continue;
- 
- 		csd = &per_cpu(kgdb_roundup_csd, cpu);
+@@ -587,6 +587,7 @@ static int kgdb_cpu_enter(struct kgdb_state *ks, struct pt_regs *regs,
+ 			kgdb_info[cpu].exception_state &=
+ 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 			kgdb_info[cpu].enter_kgdb--;
++			kgdb_info[cpu].task = NULL;
+ 			smp_mb__before_atomic();
+ 			atomic_dec(&slaves_in_kgdb);
+ 			dbg_touch_watchdogs();
+diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+index 7921ae4fca8d..7e2379aa0a1e 100644
+--- a/kernel/debug/kdb/kdb_bt.c
++++ b/kernel/debug/kdb/kdb_bt.c
+@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
+ 		kdb_printf("btc: cpu status: ");
+ 		kdb_parse("cpu\n");
+ 		for_each_online_cpu(cpu) {
+-			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
++			void *kdb_tsk = KDB_TSK(cpu);
 +
-+		/*
-+		 * If it didn't round up last time, don't try again
-+		 * since smp_call_function_single_async() will block.
-+		 *
-+		 * If rounding_up is false then we know that the
-+		 * previous call must have at least started and that
-+		 * means smp_call_function_single_async() won't block.
-+		 */
-+		smp_mb();
-+		if (kgdb_info[cpu].rounding_up)
-+			continue;
-+		kgdb_info[cpu].rounding_up = true;
++			/* If a CPU failed to round up we could be here */
++			if (!kdb_tsk) {
++				kdb_printf("WARNING: no task for cpu %ld\n",
++					   cpu);
++				continue;
++			}
 +
- 		csd->func = kgdb_call_nmi_hook;
- 		smp_call_function_single_async(cpu, csd);
- 	}
-@@ -782,6 +796,9 @@ int kgdb_nmicallback(int cpu, void *regs)
- 	struct kgdb_state kgdb_var;
- 	struct kgdb_state *ks = &kgdb_var;
- 
-+	kgdb_info[cpu].rounding_up = false;
-+	smp_mb();
-+
- 	memset(ks, 0, sizeof(struct kgdb_state));
- 	ks->cpu			= cpu;
- 	ks->linux_regs		= regs;
-diff --git a/kernel/debug/debug_core.h b/kernel/debug/debug_core.h
-index 127d9bc49fb4..b4a7c326d546 100644
---- a/kernel/debug/debug_core.h
-+++ b/kernel/debug/debug_core.h
-@@ -42,6 +42,7 @@ struct debuggerinfo_struct {
- 	int			ret_state;
- 	int			irq_depth;
- 	int			enter_kgdb;
-+	bool			rounding_up;
- };
- 
- extern struct debuggerinfo_struct kgdb_info[];
++			sprintf(buf, "btt 0x%px\n", kdb_tsk);
+ 			kdb_parse(buf);
+ 			touch_nmi_watchdog();
+ 		}
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
