@@ -2,110 +2,97 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631F7C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8E6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A9820837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:36:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A9820837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id ED9712081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:38:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9712081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeKHGIs (ORCPT
+        id S1726917AbeKHGKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:08:48 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:49686 "EHLO ale.deltatee.com"
+        Thu, 8 Nov 2018 01:10:20 -0500
+Received: from mga12.intel.com ([192.55.52.136]:9319 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726611AbeKHGIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:08:48 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gKUZ1-0005qg-46; Wed, 07 Nov 2018 13:36:35 -0700
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>
-References: <20181107173859.24096-1-logang@deltatee.com>
- <20181107173859.24096-3-logang@deltatee.com>
- <20181107121207.62cb37cf58484b7cc80a8fd8@linux-foundation.org>
- <724be9bb-59b6-33f3-7b59-3ca644d59bf7@deltatee.com>
- <alpine.DEB.2.21.1811072125280.1666@nanos.tec.linutronix.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b1cc442e-7314-4a8e-3eec-9adc200d7582@deltatee.com>
-Date:   Wed, 7 Nov 2018 13:36:34 -0700
+        id S1726480AbeKHGKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 01:10:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 12:38:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="84123342"
+Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Nov 2018 12:38:16 -0800
+Subject: Re: [PATCHv10 3/8] firmware: add Intel Stratix10 service layer driver
+To:     Randy Dunlap <rdunlap@infradead.org>, gregkh@linuxfoundation.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, dinguyen@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, atull@kernel.org,
+        mdf@kernel.org, arnd@arndb.de, corbet@lwn.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, todd.riffel@intel.com,
+        richard.gong@intel.com
+References: <1541523172-5171-1-git-send-email-richard.gong@linux.intel.com>
+ <1541523172-5171-4-git-send-email-richard.gong@linux.intel.com>
+ <595b853f-6a8c-d608-e716-95ef1c84d0b9@infradead.org>
+From:   Richard Gong <richard.gong@linux.intel.com>
+Message-ID: <f266e76a-6222-252e-dc79-c13044602a98@linux.intel.com>
+Date:   Wed, 7 Nov 2018 14:47:13 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811072125280.1666@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+In-Reply-To: <595b853f-6a8c-d608-e716-95ef1c84d0b9@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: osalvador@suse.de, vbabka@suse.cz, mhocko@suse.com, arnd@arndb.de, hch@lst.de, aou@eecs.berkeley.edu, palmer@sifive.com, sbates@raithlin.com, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, tglx@linutronix.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/2] mm/sparse: add common helper to mark all memblocks
- present
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Randy,
 
-
-On 2018-11-07 1:26 p.m., Thomas Gleixner wrote:
-> Logan,
+On 11/6/18 11:03 AM, Randy Dunlap wrote:
+> On 11/6/18 8:52 AM, richard.gong@linux.intel.com wrote:
+>> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+>> index 7273e50..b6813bc 100644
+>> --- a/drivers/firmware/Kconfig
+>> +++ b/drivers/firmware/Kconfig
+>> @@ -216,6 +216,18 @@ config FW_CFG_SYSFS_CMDLINE
+>>   	  WARNING: Using incorrect parameters (base address in particular)
+>>   	  may crash your system.
+>>   
+>> +config INTEL_STRATIX10_SERVICE
+>> +       tristate "Intel Stratix10 Service Layer"
+>> +       depends on HAVE_ARM_SMCCC
+>> +       default n
+>> +       help
+>> +        Intel Stratix10 service layer runs at privileged exception level,
+>> +	interfaces with the service providers (FPGA manager is one of them) and
+>> +	manages secure monitor call to communicate with secure monitor software
+>> +	at secure monitor exception level.
+>> +
+>> +        Say Y here if you want Stratix10 service layer support.
 > 
-> On Wed, 7 Nov 2018, Logan Gunthorpe wrote:
->> On 2018-11-07 1:12 p.m., Andrew Morton wrote:
->>>> +void __init memblocks_present(void)
->>>> +{
->>>> +	struct memblock_region *reg;
->>>> +
->>>> +	for_each_memblock(memory, reg) {
->>>> +		memory_present(memblock_get_region_node(reg),
->>>> +			       memblock_region_memory_base_pfn(reg),
->>>> +			       memblock_region_memory_end_pfn(reg));
->>>> +	}
->>>> +}
->>>> +
->>>
->>> I don't like the name much.  To me, memblocks_present means "are
->>> memblocks present" whereas this actually means "memblocks are present".
->>> But whatever.  A little covering comment which describes what this
->>> does and why it does it would be nice.
->>
->> The same argument can be made about the existing memory_present()
->> function and I think it's worth keeping the naming consistent. I'll add
->> a comment and resend shortly.
+> from Documentation/process/coding-style.rst:
 > 
-> Actually if both names suck, then there also is the option to rename both
-> instead of adding a comment to explain the suckage.
+> Lines under a ``config`` definition are indented with one tab,
+> while help text is indented an additional two spaces.
+> 
+>
 
-Ok, well, I wasn't expecting to take on a big rename like that as it
-would create a patch touching a bunch of arches and mm files... But if
-we can come to some agreement on a better name and someone is willing to
-take that patch without significant delay then I'd be happy to create
-the patch and add it to the start of my series.
+I will correct that in the next submission.
 
-Some ideas for new names:
+> thanks.
+> 
 
-mark_memory_present() / mark_memblocks_present()
-set_memory_present() / set_memblocks_present()
-memory_register() / memblocks_register()
-register_memory() / register_memblocks()
-
-Logan
+Regards,
+Richard
