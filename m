@@ -2,116 +2,139 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2597EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6156C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D72E32086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:33:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CK69W+RY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72E32086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 718F82086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:36:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718F82086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.De
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeKHCEz (ORCPT
+        id S1728001AbeKHCH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:04:55 -0500
-Received: from imap.thunk.org ([74.207.234.97]:49530 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726752AbeKHCEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:04:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=UaXXjSeX5KEIi27cXQdt86WNOwPjgRtNmZk+P+yUNeQ=; b=CK69W+RYUSutJJSptevpZ+yG5m
-        2BB20a4P9ms2MzGhO2aJWCz/v2w7juLILU+L8/6IMXcvxUJnSZ4O+2Wyc9w8H7q/KpP4Kz115YAgg
-        Xlw8CdT9WDpuodDGhzvEnrZgaTkimh14o8z8bsMByYC8bqkCJBFh+zKYzjgiH8V8Y2wE=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gKQm3-0000dj-Of; Wed, 07 Nov 2018 16:33:47 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id F023D7A7D18; Wed,  7 Nov 2018 11:33:46 -0500 (EST)
-Date:   Wed, 7 Nov 2018 11:33:46 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: missing !bh check in ext4_xattr_inode_write()
-Message-ID: <20181107163346.GH9919@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org
-References: <710ddac8-eb88-e631-3b27-74410039d15f@virtuozzo.com>
+        Wed, 7 Nov 2018 21:07:26 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:53404 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbeKHCH0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:07:26 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 185AA1C75740;
+        Wed,  7 Nov 2018 17:36:14 +0100 (CET)
+Received: from sntmail11s.snt-is.com (10.203.32.181) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 7 Nov 2018
+ 17:36:13 +0100
+Received: from sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a]) by
+ sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a%4]) with mapi id
+ 15.01.1466.003; Wed, 7 Nov 2018 17:36:13 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.De>
+To:     Olof Johansson <olof@lixom.net>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Brian Norris" <computersforpeace@gmail.com>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
+        "han.xu@nxp.com" <han.xu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Eric Anholt <eric@anholt.net>, Stefan Agner <stefan@agner.ch>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Tony Lindgren <tony@atomide.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        "yannick.fertre@st.com" <yannick.fertre@st.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 06/10] ARM: defconfig: Use the new FSL QSPI driver
+ under the SPI framework
+Thread-Topic: [PATCH v4 06/10] ARM: defconfig: Use the new FSL QSPI driver
+ under the SPI framework
+Thread-Index: AQHUdqh4fJ7CTSTis0KZzqRTstzHg6VEbX+AgAAEaoA=
+Date:   Wed, 7 Nov 2018 16:36:13 +0000
+Message-ID: <b12936f5-871d-a982-13c5-9d894f4a1521@kontron.de>
+References: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
+ <1541601809-16950-7-git-send-email-frieder.schrempf@kontron.de>
+ <CAOesGMgPwwwmizC+R4W1aLpvgcuVOYQr2qR2Vqb6171zGfarRw@mail.gmail.com>
+In-Reply-To: <CAOesGMgPwwwmizC+R4W1aLpvgcuVOYQr2qR2Vqb6171zGfarRw@mail.gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.42]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E3E8513E95EB0141883D08AD67B99E63@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <710ddac8-eb88-e631-3b27-74410039d15f@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 185AA1C75740.AD0DC
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: alexandre.torgue@st.com, arnd@arndb.de,
+        boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, david.wolfe@nxp.com,
+        dwmw2@infradead.org, eric@anholt.net, fabio.estevam@nxp.com,
+        frieder.schrempf@exceet.de, geert+renesas@glider.be, han.xu@nxp.com,
+        horms+renesas@verge.net.au, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, linux@armlinux.org.uk,
+        marek.vasut@gmail.com, miquel.raynal@bootlin.com, olof@lixom.net,
+        prabhakar.kushwaha@nxp.com, richard@nod.at, s.hauer@pengutronix.de,
+        shawnguo@kernel.org, stefan.wahren@i2se.com, stefan@agner.ch,
+        tony@atomide.com, yannick.fertre@st.com, yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 04, 2018 at 08:29:39PM +0300, Vasily Averin wrote:
-> ext4_getblk() called with map_flags=0 can return NULL,
-> it can lead to oops on bh dereferemce
-> 
-> Fixes e50e5129f384 ("ext4: xattr-in-inode support")
-> Cc: stable@kernel.org # 4.13
-> 
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-> ---
->  fs/ext4/xattr.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 0b9688683526..6dc6c70828f0 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -1384,6 +1384,8 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
->  		bh = ext4_getblk(handle, ea_inode, block, 0);
->  		if (IS_ERR(bh))
->  			return PTR_ERR(bh);
-> +		if (!bh)
-> +			return -ENOMEM;
-
-ext4_getblk() should never return NULL here; and if it does, it won't
-be because of ENOMEM.  If we did have a memory allocation problem, we
-would have returned ERR_PTR(-ENOMEM). 
-
-In the while loop above this point, the blocks in ea_inode would have
-been allocated, and so when ext4_getblk() is called with map_flags ==
-0, it will return NULL if there is a hole in the inode --- but we had
-*just* allocated the blocks in question.
-
-The only time that bh could be NULL, then, would be in the case of
-something really going wrong; a programming error elsewhere (perhaps a
-wild pointer dereference) or I/O error causing on-disk file system
-corruption (although that would be highly unlikely given that we had
-*just* allocated the blocks and so the metadata blocks in question
-probably would still be in the cache).
-
-If we do want to handle this case, what we should do is something like
-call WARN_ON_ONCE(1), call ext4_error() since the file system may have
-gotten corrupted, and then return -EFSCORRUPTED.
-
-(Linus has said that there should be no new BUG_ON's, so the
-WARN_ON_ONE is to help debugging, and flaging the file system as
-corrupted is probably the best we could do here, and is marginally
-better than what we do now, which is just let the Oops take place.)
-
-						- Ted
+SGkgT2xvZiwNCg0KT24gMDcuMTEuMTggMTc6MjAsIE9sb2YgSm9oYW5zc29uIHdyb3RlOg0KPiBP
+biBXZWQsIE5vdiA3LCAyMDE4IGF0IDY6NDQgQU0gRnJpZWRlciBTY2hyZW1wZg0KPiA8ZnJpZWRl
+ci5zY2hyZW1wZkBrb250cm9uLmRlPiB3cm90ZToNCj4+DQo+PiBGcm9tOiBGcmllZGVyIFNjaHJl
+bXBmIDxmcmllZGVyLnNjaHJlbXBmQGV4Y2VldC5kZT4NCj4+DQo+PiBUaGUgbmV3IGRyaXZlciBh
+dCBzcGkvc3BpLWZzbC1xc3BpLmMgcmVwbGFjZXMgdGhlIG9sZCBTUEkgTk9SIGRyaXZlcg0KPj4g
+YXQgbXRkL2ZzbC1xdWFkc3BpLmMuIFN3aXRjaCB0byB0aGUgbmV3IGRyaXZlciBpbiB0aGUgZGVm
+Y29uZmlncy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVy
+LnNjaHJlbXBmQGV4Y2VldC5kZT4NCj4gDQo+IEhpIEZyaWVkZXIsDQo+IA0KPiBUaGlzIHBhdGNo
+IGlzIHBhcnQgb2YgYSBzZXJpZXMgdGhhdCBJIGRpZG4ndCBzZWUgdGhlIHJlc3Qgb2YsIGJ1dCBp
+bg0KPiBnZW5lcmFsIHdlIHByZWZlciB0byBtZXJnZSB0aGVzZSB0aHJvdWdoIGFybS1zb2MgZXZl
+biBpZiB0aGUgZHJpdmVyDQo+IGdvZXMgaW4gdGhyb3VnaCBhbm90aGVyIHRyZWUuIFRoZSB3YXkg
+d2UnZCBwcmVmZXIgdG8gaGFuZGxlIGl0IGlzIHRoYXQNCj4gb25jZSB0aGUgZHJpdmVyIGxhbmRz
+LCB3ZSdsbCB0YWtlIHRoZSBjb25maWcgb3B0aW9uIGNoYW5nZSB0byB0dXJuIGl0DQo+IG9uLiBU
+byBhdm9pZCBvdXIgYnJhbmNoZXMgdG8gYnJlYWsgdW50aWwgYm90aCBzaWRlcyBoYXZlIGxhbmRl
+ZCwgaXQNCj4gbWlnaHQgYmUgYSBnb29kIGlkZWEgdG8ga2VlcCBib3RoIGRyaXZlcnMgb24gZm9y
+IGEgc2hvcnQgd2hpbGUgKG9uZQ0KPiByZWxlYXNlKS4NCj4gDQo+IFNvLCBJJ20gbm90IGdvaW5n
+IHRvIGFjayB0aGlzIHNpbmNlIHdlIGF2b2lkIHRha2luZyBkZWZjb25maWcgY2hhbmdlcw0KPiB0
+aHJvdWdoIGRyaXZlciB0cmVlcyAodGhlc2UgdHdvIGRlZmNvbmZpZ3MgdGVuZCB0byBjaHVybiBh
+IGxvdCBhbmQgd2UNCj4gZG9uJ3Qgd2FudCB0byBjcmVhdGUgbWVyZ2UgY29uZmxpY3RzIHdoZXJl
+IHdlIGRvbid0IGhhdmUgdG8pLCBidXQNCj4gd2UnbGwgYmUgaGFwcHkgdG8gcGljayBpdCB1cCB3
+aGVuIHRoZSB0aW1lIGNvbWVzLg0KDQpPaywgdGhhbmsgeW91IGZvciBleHBsYWluaW5nIHRoZSBj
+b21tb24gcHJhY3RpY2UuIEkgd2lsbCBkcm9wIHRoZSBjb25maWcgDQpjaGFuZ2VzIGZvciB0aGUg
+bmV4dCB2ZXJzaW9uIGFuZCBzZW5kIGl0IHNlcGFyYXRlbHkgd2hlbiB0aGUgdGltZSBpcyByZWFk
+eS4NCg0KQm90aCB0aGUgb2xkIGRyaXZlciBhbmQgdGhlIG5ldyBvbmUgdXNlIHRoZSBzYW1lIGNv
+bXBhdGlibGUgc3RyaW5ncyBmb3IgDQpwcm9iaW5nLiBXb3VsZG4ndCB0aGF0IGNhdXNlIHByb2Js
+ZW1zIGlmIGJvdGggZHJpdmVycyBhcmUgZW5hYmxlZCBmb3IgYSANCndoaWxlLCBvciBhbSBJIG1p
+c3Npbmcgc29tZXRoaW5nPw0KDQpUaGFua3MsDQpGcmllZGVyDQoNCj4gDQo+IA0KPiBUaGFua3Ms
+DQo+IA0KPiAtT2xvZg0KPiA=
