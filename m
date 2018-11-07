@@ -2,43 +2,76 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3082CC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BBBC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D602081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2D602081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 801C420862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:57:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgWmWWJv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 801C420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbeKGSYm (ORCPT
+        id S1730324AbeKGS04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:24:42 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58540 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeKGSYm (ORCPT
+        Wed, 7 Nov 2018 13:26:56 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34294 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbeKGS04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:24:42 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 0F337263BB6
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org, robert.jarzmik@free.fr,
-        daniel.thompson@linaro.org, lee.jones@linaro.org
-Cc:     kernel@collabora.com, heiko@sntech.de, stable@vger.kernel.org,
-        u.kleine-koenig@pengutronix.de, linux-pwm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>
-Subject: [PATCH v3] backlight: pwm_bl: Fix brightness levels for non-DT case.
-Date:   Wed,  7 Nov 2018 09:55:07 +0100
-Message-Id: <20181107085507.26126-1-enric.balletbo@collabora.com>
+        Wed, 7 Nov 2018 13:26:56 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j26-v6so16508261wre.1;
+        Wed, 07 Nov 2018 00:57:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ETL7Is+WZyqQ8ia+CkDrCnNCwY/JOaHMUTqHjGSCshY=;
+        b=AgWmWWJvI9YsOOWIoioj3sjyqyWh6N7/25gBFO3/N4xCnxZ4k94B8qUCYe0rzPVBsu
+         frROf9H5xTvxlRqahxbeXh0V+WNye266sTLkymlH767Hg1HgLiJ3a65/dLv/bZWHOoRp
+         O1bX7W5RbYaSx3nD+sjb7aAhEukJu8WpHeLfge/1pz57qs5m7tPhY11F8JsJSsLVckFP
+         441ttWdWIzUzxJWDHdREnnjiHYz7/Ei3HGsI9KKVHmL3FOfMHASAA1apYNhikmhv/zOZ
+         ziwmsb3WGboWKVXMYRM0HjkY2qmIrlxzh3mi9o3JhktRyNeuVQTy0rCnywlEGL02Pe4I
+         H7Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ETL7Is+WZyqQ8ia+CkDrCnNCwY/JOaHMUTqHjGSCshY=;
+        b=jHvfNxm6cGI2MymFp81TpTEYYenbTuOBQSSke9qCUK0IbsyaaEI9I5ku+KdMrWF0xA
+         ZWKj6aHg+4QVjZss505aZWVy41jhCUXhZXYxZf7TRLwXzFfoh0jQKp0elnI8uy1ODLKO
+         asKS+xDlv6yjFa58AR5z5v1HoaXkfy+qOFVEZ8uZ1JmuZX8yFKQnr+AP5GMJs9mPHgzl
+         IWpzsm15ZCmfwUmIKEJ9zIJtROeV96DrDGJmW94gIBcP0lmNztp/nFKSGYKlhPd2jWFs
+         nayjh8/o/I0IGcQwq1ntN3+pDR9rj/Dsagez1lcDJNTNOkPdJX3BaEI8tbj4wuUMZONe
+         hCdA==
+X-Gm-Message-State: AGRZ1gKq17pnP1ZJrQYoCzT0g5WJtYtmEU9sqsJ4U7wFy81lBsm1XAsx
+        bevNri8rjNaBeQ0EX0Xsdhw=
+X-Google-Smtp-Source: AJdET5cRv4Xw2d6lJjBIZSQ9GISpn3nVgwckqYAwNvh4tl3uTByoshAtbOkXexMc5tXdagTEnXYB9g==
+X-Received: by 2002:a5d:62c1:: with SMTP id o1-v6mr969466wrv.83.1541581049999;
+        Wed, 07 Nov 2018 00:57:29 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id j203-v6sm256150wmd.46.2018.11.07.00.57.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 00:57:29 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v2] pinctrl: zynq: Use define directive for PIN_CONFIG_IO_STANDARD
+Date:   Wed,  7 Nov 2018 01:56:40 -0700
+Message-Id: <20181107085639.32366-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181101005724.9622-1-natechancellor@gmail.com>
+References: <20181101005724.9622-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,101 +79,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
-linearly to human eye")' allows the possibility to compute a default
-brightness table when there isn't the brightness-levels property in the
-DT. Unfortunately the changes made broke the pwm backlight for the
-non-DT boards.
+Clang warns when one enumerated type is implicitly converted to another:
 
-Usually, the non-DT boards don't pass the brightness levels via platform
-data, instead, it sets the max_brightness in their platform data and the
-driver calculates the level without a table. The offending patch assumed
-that when there is no brightness levels table we should create one, but this
-is clearly wrong for the non-DT case.
+drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
+enumeration type 'enum zynq_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+        ~               ^~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
+enumeration type 'enum zynq_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+            ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+macro 'PCONFDUMP'
+        .param = a, .display = b, .format = c, .has_arg = d     \
+                 ^
+2 warnings generated.
 
-After this patch the code handles the DT and the non-DT case taking in
-consideration also if max_brightness is set or not.
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
 
-Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
-Cc: <stable@vger.kernel.org>
-Reported-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
 
-Changes in v3:
-- Fixed some typos in commit message.
-- Removed ' in Fixes tag.
+v1 -> v2:
 
-Changes in v2:
-- Rebase on top of mainline
-- Add Tested-by and Acked-by tags.
+* Avoid kernel-doc warning
 
- drivers/video/backlight/pwm_bl.c | 41 +++++++++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ drivers/pinctrl/pinctrl-zynq.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 678b27063198..f9ef0673a083 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -562,7 +562,30 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 		goto err_alloc;
- 	}
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index a0daf27042bd..90fd37e8207b 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -971,15 +971,12 @@ enum zynq_io_standards {
+ 	zynq_iostd_max
+ };
  
--	if (!data->levels) {
-+	if (data->levels) {
-+		/*
-+		 * For the DT case, only when brightness levels is defined
-+		 * data->levels is filled. For the non-DT case, data->levels
-+		 * can come from platform data, however is not usual.
-+		 */
-+		for (i = 0; i <= data->max_brightness; i++) {
-+			if (data->levels[i] > pb->scale)
-+				pb->scale = data->levels[i];
-+
-+			pb->levels = data->levels;
-+		}
-+	} else if (!data->max_brightness) {
-+		/*
-+		 * If no brightness levels are provided and max_brightness is
-+		 * not set, use the default brightness table. For the DT case,
-+		 * max_brightness is set to 0 when brightness levels is not
-+		 * specified. For the non-DT case, max_brightness is usually
-+		 * set to some value.
-+		 */
-+
-+		/* Get the PWM period (in nanoseconds) */
-+		pwm_get_state(pb->pwm, &state);
-+
- 		ret = pwm_backlight_brightness_default(&pdev->dev, data,
- 						       state.period);
- 		if (ret < 0) {
-@@ -570,13 +593,19 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 				"failed to setup default brightness table\n");
- 			goto err_alloc;
- 		}
--	}
+-/**
+- * enum zynq_pin_config_param - possible pin configuration parameters
+- * @PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
++/*
++ * PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
+  *	this parameter (on a custom format) tells the driver which alternative
+  *	IO standard to use.
+  */
+-enum zynq_pin_config_param {
+-	PIN_CONFIG_IOSTANDARD = PIN_CONFIG_END + 1,
+-};
++#define PIN_CONFIG_IOSTANDARD		(PIN_CONFIG_END + 1)
  
--	for (i = 0; i <= data->max_brightness; i++) {
--		if (data->levels[i] > pb->scale)
--			pb->scale = data->levels[i];
-+		for (i = 0; i <= data->max_brightness; i++) {
-+			if (data->levels[i] > pb->scale)
-+				pb->scale = data->levels[i];
- 
--		pb->levels = data->levels;
-+			pb->levels = data->levels;
-+		}
-+	} else {
-+		/*
-+		 * That only happens for the non-DT case, where platform data
-+		 * sets the max_brightness value.
-+		 */
-+		pb->scale = data->max_brightness;
- 	}
- 
- 	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
+ static const struct pinconf_generic_params zynq_dt_params[] = {
+ 	{"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
 -- 
 2.19.1
 
