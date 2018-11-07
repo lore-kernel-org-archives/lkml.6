@@ -2,261 +2,115 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E776C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A971C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D35420862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32ECB20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:12:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="szWZz43R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D35420862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="glNTkWrI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32ECB20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbeKHDno (ORCPT
+        id S1728015AbeKHDoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:43:44 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40550 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbeKHDnn (ORCPT
+        Wed, 7 Nov 2018 22:44:22 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34307 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727656AbeKHDoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:43:43 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z10so5769984pgp.7;
-        Wed, 07 Nov 2018 10:12:10 -0800 (PST)
+        Wed, 7 Nov 2018 22:44:21 -0500
+Received: by mail-pl1-f196.google.com with SMTP id f12-v6so7030127plo.1;
+        Wed, 07 Nov 2018 10:12:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IBFBpjyx0j7uTb6KabNXrBmQ9ObkCpM5/6Twyw63m+Q=;
-        b=szWZz43RBbIhg+kgH+sM98ohNnB3hdD9RBk8cZtu7ZJLSTiEi1boaWB7nG9ZjFYLhB
-         TiaJOHilJigAznA/eP7vIlO0kS3cglH+PMPpZV2JNqx30hs9F44qyaZejwDS7kd8RX0K
-         cm6AKwF9KIw6QTPOyhiGMp4BUiacdGdW5rHfeMENE0C3Wf/yS6+JeWUK5OdFYhfSYIVy
-         CC0DTgjx+DV25Vtay6/AMbKlKYesIt8ZEa20i+fgh8HdMsYTIfzoN8Yx7TPDzWX9UCdu
-         CSchXFM0/w3zmjtdSg8hxBwlB8ZLjTlc9VUkNkgdG7y3XNAEYgfoDfmmhrFJT6OBrCjM
-         NUHA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WJulaHyZTW+3D3nyyBUhImJNKnq+eB6poijbUDSXIco=;
+        b=glNTkWrI+TIs8RzbgQiNkFYj9ozMXd8KeAcw2gP1IgvDLBAMTp30kkKKIxFzuzcwSs
+         rRAmqPLFFm6zGOAqcXllGgLYiBxtxS4dhoRlv2860a3w0ioo5P5MnB+EQ3s3Ml4YMgU9
+         Ko+enxSQy9MSe6na822bvFojY1a1K9PW+3/DWdtuXxyO9hBZ51A61uqe8vAq5am0yOmz
+         h++J+lRZcWwE/xo2ztoLjHpFR1hG4TIQ494T+KRyvu14Ccql0yPgbKjSIjIBPdcChCoN
+         /+XiOVsvUKxWdbWzyDPiKq7I9zGjq68U3DhSic9a5TMAB8LMU7kdcErhE3KEktS7WyNh
+         a9Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=IBFBpjyx0j7uTb6KabNXrBmQ9ObkCpM5/6Twyw63m+Q=;
-        b=fbpGQVX7YIolg0qzIrG2oC/vTBuCOGMZPFwR17ELbWEM7z8DwV4v3Hi5lC/ZJcCdgz
-         lxoT1M2/tqIurAR/+gO06unuqFlR+OpdBaI/WuXd+jDY9kvy3V7xHw2HBQEKhsr6rI97
-         gL0Y++r4Fnzsj87xdJLKsRpfa7DQI8xBCkK2mMlVVWD0VErJNSwkglzXsXwBiiARY/ZI
-         iFtTqXDTbnRWZS8YPoxRZlhSnwaNpW+wbnHe07JG6/soEJeLz2BPOpeK6wPCzXzD4yj5
-         tDxfSGToAayg43Wt37VKuTXMeqTEHUiA5YDk7goU3IgYnTXa51CKP4O5tyuoM6dqL14K
-         zMXQ==
-X-Gm-Message-State: AGRZ1gI7i+7lL4ejkcBe6O8tsItlnSXHfr9S9qaXmn5NV8XoqPT1ixuC
-        ht8VM3uRgTQnCDDtqQ7k0Js=
-X-Google-Smtp-Source: AJdET5fMn5FmFytCMvMgEfICE4SMeWwTepGwhhTh6eses60asYMOKesk4H727r/hKK7HKFRXUb3xNw==
-X-Received: by 2002:a63:224f:: with SMTP id t15mr1028020pgm.69.1541614329760;
-        Wed, 07 Nov 2018 10:12:09 -0800 (PST)
-Received: from [10.69.78.41] ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm1325762pgn.49.2018.11.07.10.12.05
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WJulaHyZTW+3D3nyyBUhImJNKnq+eB6poijbUDSXIco=;
+        b=so6dD0CkEunq0R6kJZBaqTRQ92jODWDISfKBqQO0N8WY/7RKL8xcxtUscpOTxSBRb1
+         iO5OQLhPq0vdmqwL4CVMIlkAjAH4NKlYcCWT/Ff70N85VPhpFw+8dU4BZVps0vyPFoXH
+         E7XYnKxbcrz8ed8tJUB4rmW98be0KMcSsIBplfnu7loYVjIV11cmmxaM1nol9XJdg0qf
+         h9Kt0s4Nj4EM6wwzrJhNRdBXj9RNmO/lH4HaoK4pgQAwvyLhWoz0XhoB6vzLxUGhWZ9O
+         zB6w2QW4n/AG2mOGwoHd32k3KcB7IW9giH0RE9FPVOE1tYttYWQUTsxcHfM2kwLX3TlI
+         H1dg==
+X-Gm-Message-State: AGRZ1gKK+krX3kezJAnhf41glkJ/XOpTQLMEpGgOZ1gwRX9JU831ppD1
+        WsTLxKHcGJwA3eWbcpJ99sGJjmSs
+X-Google-Smtp-Source: AJdET5d1tx/4lG4dBauyM7vcyR6MnanBedWxI/WT0UDIsu7a7kqsLdK7LDq65dP+H0SZ+ZRbF6HtQw==
+X-Received: by 2002:a17:902:3a3:: with SMTP id d32-v6mr1240048pld.304.1541614368588;
+        Wed, 07 Nov 2018 10:12:48 -0800 (PST)
+Received: from ?IPv6:2601:282:800:fd80:b9ef:3cc7:d955:8635? ([2601:282:800:fd80:b9ef:3cc7:d955:8635])
+        by smtp.googlemail.com with ESMTPSA id c127-v6sm1401935pfa.31.2018.11.07.10.12.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 10:12:08 -0800 (PST)
-Subject: Re: [PATCH V3 4/6] usb: ohci-platform: Add support for Broadcom STB
- SoC's
-To:     Al Cooper <al.cooper@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc:     Al Cooper <alcooperx@gmail.com>, linux-kernel@vger.kernel.org,
-        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jianguo Sun <sunjianguo1@huawei.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-References: <Pine.LNX.4.44L0.1811071124260.1542-100000@iolanthe.rowland.org>
- <16a80878-58f7-1584-058e-0e0e49da61cb@gmail.com>
- <45134862-4b72-be72-533c-942c2bf70400@broadcom.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- w0j9Sw==
-Message-ID: <c551a2e2-c494-04d3-53cf-f027b02906ed@gmail.com>
-Date:   Wed, 7 Nov 2018 10:11:59 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 07 Nov 2018 10:12:47 -0800 (PST)
+Subject: Re: [RFC perf,bpf 5/5] perf util: generate bpf_prog_info_event for
+ short living bpf programs
+To:     Alexei Starovoitov <ast@fb.com>, David Ahern <dsahern@gmail.com>,
+        David Miller <davem@davemloft.net>
+Cc:     Song Liu <songliubraving@fb.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "acme@kernel.org" <acme@kernel.org>
+References: <b984776a-ce69-ab16-ed87-1cea89c9d79a@gmail.com>
+ <6C5A9FBD-F50D-444C-9038-E9557EC850D2@fb.com>
+ <27fc8327-3390-ba5a-6063-89c9e7165e7b@fb.com>
+ <20181106.153647.1701013551426767213.davem@davemloft.net>
+ <39fe6abc-5c3e-bac3-0c0b-cf68bea23ab0@fb.com>
+ <0a05a14c-3a79-e894-ae48-cbe1df4feb91@gmail.com>
+ <82745121-339e-2751-c9db-d1fca02d0b33@fb.com>
+ <7d0b100b-a64b-0d30-8ec0-2689ef44423d@gmail.com>
+ <edda462f-a32c-bc25-94c8-8d06a47bd480@fb.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <c1355a46-77b7-f340-855e-6237b223e43a@gmail.com>
+Date:   Wed, 7 Nov 2018 11:12:45 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <45134862-4b72-be72-533c-942c2bf70400@broadcom.com>
+In-Reply-To: <edda462f-a32c-bc25-94c8-8d06a47bd480@fb.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/2018 9:40 AM, Al Cooper wrote:
-> On 11/7/18 12:29 PM, Florian Fainelli wrote:
->> On 11/7/18 8:27 AM, Alan Stern wrote:
->>> On Wed, 7 Nov 2018, Al Cooper wrote:
->>>
->>>> On 11/7/18 10:23 AM, Alan Stern wrote:
->>>>> On Tue, 6 Nov 2018, Florian Fainelli wrote:
->>>>>
->>>>>> On 11/6/18 1:40 PM, Al Cooper wrote:
->>>>>>> On 11/6/18 11:08 AM, Alan Stern wrote:
->>>>>>>> On Mon, 5 Nov 2018, Al Cooper wrote:
->>>>>>>>
->>>>>>>>> Add support for Broadcom STB SoC's to the ohci platform driver.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Al Cooper <alcooperx@gmail.com>
->>>>>>>>> ---
->>>>>>>>
->>>>>>>>> @@ -177,6 +189,8 @@ static int ohci_platform_probe(struct
->>>>>>>>> platform_device *dev)
->>>>>>>>>             ohci->flags |= OHCI_QUIRK_FRAME_NO;
->>>>>>>>>         if (pdata->num_ports)
->>>>>>>>>             ohci->num_ports = pdata->num_ports;
->>>>>>>>> +    if (pdata->suspend_without_phy_exit)
->>>>>>>>> +        hcd->suspend_without_phy_exit = 1;
->>>>>>>>
->>>>>>>> Sorry if I missed this in the earlier discussions...  Is there any
->>>>>>>> possibility of adding a DT binding that could express this
->>>>>>>> requirement,
->>>>>>>> instead of putting it in the platform data?
->>>>>>>>
->>>>>>>> Alan Stern
->>>>>>>>
->>>>>>>
->>>>>>> Alan,
->>>>>>>
->>>>>>> That was my original approach but internal review suggested that
->>>>>>> I use
->>>>>>> pdata instead. Below is my original patch for:
->>>>>>
->>>>>> And the reason for that suggestion was really because it was
->>>>>> percevied
->>>>>> as encoding a driver behavior as a Device Tree property as opposed to
->>>>>> describing something that was inherently and strictly a hardware
->>>>>> behavior (therefore suitable for Device Tree).
->>>>>
->>>>> Right.  The best way to approach this problem is to identify and
->>>>> characterize the hardware behavior which makes this override
->>>>> necessary.
->>>>> Then _that_ can be added to DT, since it will be a property of the
->>>>> hardware rather than of the driver.
->>>>>
->>>>>>> Add the ability to skip calling the PHY's exit routine on suspend
->>>>>>> and the PHY's init routine on resume. This is to handle a USB PHY
->>>>>>> that should have it's power_off function called on suspend but
->>>>>>> cannot
->>>>>>> have it's exit function called because on exit it will disable the
->>>>>>> PHY to the point where register accesses to the Host Controllers
->>>>>>> using the PHY will be disabled and the host drivers will crash.
->>>>>
->>>>> What's special about this PHY?  Why does the exit function mess the
->>>>> PHY
->>>>> up?  Or to put it another way, why doesn't the exit function mess up
->>>>> other PHYs in the same way?
->>>>>
->>>>> For that matter, can we change the code so that suspend doesn't call
->>>>> the exit function for _any_ PHY?  Will just calling the power_off
->>>>> function be good enough?  If not, then why not?
->>>>>
->>>>> Alan Stern
->>>>>
->>>>
->>>> In our USB hardware the USB PHY supplies a clock for the EHCI/OHCI and
->>>> XHCI host controllers and if the PHY is totally shut down the EHCI,
->>>> OHCI
->>>> and XHCI registers will cause an exception if accessed and cause the
->>>> EHCI, OHCI and XHCI drivers to crash. There is always talk of fixing
->>>> this in the hardware by adding an aux clock that will takeover when the
->>>> PHY clock is shut down, but this hasn't happened yet. It seems like
->>>> "exit on suspend" still makes sense on systems that don't have this
->>>> problem (additional power savings?) so removing the exit on suspend for
->>>> all systems is not a good idea.
->>>
->>> Then in theory you should be able to add a Device Tree property which
->>> says that the PHY provides a clock for the USB host controller.  That
->>> is strictly a property of the hardware; it has nothing to do with the
->>> driver.  Therefore it is appropriate for DT.
+On 11/6/18 6:09 PM, Alexei Starovoitov wrote:
+> On 11/6/18 4:44 PM, David Ahern wrote:
 >>
->> The very compatible string that is being allocated/defined for this
->> controller carries that information already, that is, if you probe a
->> "brcm,bcm7445-ohci" compatible then that means the controller has a
->> dependency on the PHY to supply its clock.
->>
->> Adding a property vs. keying on the compatible string makes sense if you
->> know there is at least a second consumer of that property (unless we
->> make it a broadcom specific property, in which case, it really is
->> redundant with the compatible string).
->>
->> Anyway, my grudge with that property was the name chosen initially,
->> which included an action to be performed by an implementation as opposed
->> to something purely descriptive. E.g: 'phy-supplies-clock' might be okay.
->>
->>>
->>> Wouldn't this solve your issue?
->>
->> It would not change much except that there is no need to much with
->> ohci-platform.c anymore, but ultimately that property needs to be read
->> by ohci-hcd.c and acted on, which would likely lead to the same amount
->> of changes as those present in patch #2 currently.
->>
-> We also need this functionality in the EHCI and XHCI drivers and it's
-> not the ohci-hcd.c module that needs to know, it's the core/phy.c module
-> called from core/hcd.c.
+>> So one use case is profiling bpf programs. I was also considering the
+>> auditing discussion from some weeks ago which I thought the events are
+>> also targeting.
+> 
+> yes. there should be separate mode for 're: audit discussion' where
+> only bpf events are collected. This patch set doesn't add that to
+> perf user space side.
+> The kernel side is common though. It can be used for bpf load/unload
+> only and for different use case in this set. Which is making
+> bpf program appear in normal 'perf report'.
 
-So in that regard the Device Tree property would actually scale a bit
-better in that you would no longer need to modify the various
-*hci-plat*.c files, if that is the way to go, then sure.
--- 
-Florian
+It would be good for perf-script to work in the next version. Users
+should be able to dump the event from the kernel and the synthesized
+events. Should be trivial to add and allows a review of both
+perspectives -- profiling and monitoring events.
