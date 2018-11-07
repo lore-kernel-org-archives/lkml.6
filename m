@@ -2,346 +2,97 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DB0C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA7FC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9463420827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 09:59:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9463420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 751A220827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:00:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h80+3mxn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751A220827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730567AbeKGT3U (ORCPT
+        id S1730588AbeKGTae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:29:20 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39189 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729691AbeKGT3T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:29:19 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10-v6so16681217wrv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 01:59:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oYwpQrAhoKzJ+woZwVSPBZf/oyN1tgcMdnN1OWo/Bw4=;
-        b=K6E2mURPL+cj145sM76fauj7s7ytYj6K7ARkYCcv4SKEqo2A0rFMDSLNTlianRF2qs
-         iQ/QyMLpvlRPa5MiT6uQ8+8bn6golZqcLvUG8mb+gAZBkfJhuHLb1dlO5SjuI1QV7bli
-         pCp0sxh1chPfV9Jp3KULPfUtdd0vy5s8zjnNWw60mlcJSTQk61OvNQWzQPyvO3gK/+wB
-         5Gf1MtTgJMBYOh0heMhnDjxvFDOngrnS2mKmPwMXfwOokq/u4KNW6mw4+LEFpCsZeRNp
-         l/yChjyqT+XfVknoDiPRJULLijGpc54B0LTmFBplgxORzQn0mt3taLUrHpMOIdzURCYv
-         J5Pw==
-X-Gm-Message-State: AGRZ1gK+XHz6UGaBZhjcLUPoshN14dcbA5xaqPpNG/DAvrVIOoxRmzD1
-        dsSlNSJ7FvIsIjDYuWBKVia83g==
-X-Google-Smtp-Source: AJdET5c9z398mCvdYOhSHcOwsk9bLP6n1IhrT0kZEVO8OfPupgaUnG/22E9UQTXX/pRdtbI4JTIZCA==
-X-Received: by 2002:adf:e443:: with SMTP id t3-v6mr1170097wrm.96.1541584780014;
-        Wed, 07 Nov 2018 01:59:40 -0800 (PST)
-Received: from localhost.localdomain ([151.35.177.55])
-        by smtp.gmail.com with ESMTPSA id v129-v6sm552945wme.45.2018.11.07.01.59.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 01:59:38 -0800 (PST)
-Date:   Wed, 7 Nov 2018 10:59:34 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     lizefan@huawei.com, tj@kernel.org
-Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org,
-        cgroups@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
-        rostedt@goodmis.org
-Subject: Re: [PATCH v5 3/5] cgroup/cpuset: make callback_lock raw
-Message-ID: <20181107095934.GX18091@localhost.localdomain>
-References: <20180903142801.20046-1-juri.lelli@redhat.com>
- <20180903142801.20046-4-juri.lelli@redhat.com>
- <20180925143416.GD25664@localhost.localdomain>
+        Wed, 7 Nov 2018 14:30:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726218AbeKGTae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:30:34 -0500
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 534652086C;
+        Wed,  7 Nov 2018 10:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541584856;
+        bh=OouFcYJmMkmY+cyBU+G9f3cRVEUbCRaRrpDj4jTJf9c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=h80+3mxnic2FmWFHP8cV32XrROk4seQWcDvKMUow/iB17S06bTM/Hifcil7QgjNNQ
+         Zwlizc1IApYq/CMeVhglh55jdckDD+Lgf9fELNDF42l82uV+UTgWck300bWbftbv/H
+         IIoY9H2CfJKlZAwzDMOwfpwPyhk9kXTBtIsEGQ+Y=
+Received: by mail-wr1-f49.google.com with SMTP id r10-v6so16685549wrv.6;
+        Wed, 07 Nov 2018 02:00:56 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKVc/mpatMdEOTj4n/FgFTjQs0af1L5AAj4AFpgAcNZCm4oi+XL
+        v/vXIZ0Tbwipx/3T7iRCswr1XLOn+KwHcDZMHZ0=
+X-Google-Smtp-Source: AJdET5eyW66mzqMrsrX/lEgi0y096zOqpqP03gI8r6LJ/JOtBYomnt7gDI/N2vI5dl3QwcNqM79+wlgRUwQ3T4zYbnc=
+X-Received: by 2002:adf:fac4:: with SMTP id a4-v6mr1276510wrs.202.1541584854771;
+ Wed, 07 Nov 2018 02:00:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925143416.GD25664@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181102025728.963-1-olof@lixom.net>
+In-Reply-To: <20181102025728.963-1-olof@lixom.net>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Wed, 7 Nov 2018 02:00:43 -0800
+X-Gmail-Original-Message-ID: <CAGp9Lzq3rgNs=uuXDVTurwgGrCjDQg=rje0rpetbzeMX7U-XLg@mail.gmail.com>
+Message-ID: <CAGp9Lzq3rgNs=uuXDVTurwgGrCjDQg=rje0rpetbzeMX7U-XLg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: Fix dependencies for EINT_MTK
+To:     olof@lixom.net
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Thanks for the catch.
 
-Ping.
+Acked-by: Sean Wang <sean.wang@kernel.org>
 
-Thanks,
-
-- Juri
-
-On 25/09/18 16:34, Juri Lelli wrote:
-> Hi Li Zefan and Tejun Heo,
-> 
-> It would be great if you could please have a look at the proposed change
-> below (and the rest of the set of course :-).
-> 
-> Another bit that I'd be more comfortable after hearing your word on it
-> is this one (discussed over 5/5):
-> 
-> https://lore.kernel.org/lkml/20180925130750.GA25664@localhost.localdomain/
-> 
-> Best,
-> 
-> - Juri
-> 
-> On 03/09/18 16:27, Juri Lelli wrote:
-> > callback_lock grants the holder read-only access to cpusets.  For fixing
-> > a synchronization issue between cpusets and scheduler core, it is now
-> > required to make callback_lock available to core scheduler code.
-> > 
-> > Convert callback_lock to raw_spin_lock, so that it will be always safe
-> > to acquire it from atomic context.
-> > 
-> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> > ---
-> >  kernel/cgroup/cpuset.c | 66 +++++++++++++++++++++---------------------
-> >  1 file changed, 33 insertions(+), 33 deletions(-)
-> > 
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index 266f10cb7222..5b43f482fa0f 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -288,7 +288,7 @@ static struct cpuset top_cpuset = {
-> >   */
-> >  
-> >  static DEFINE_MUTEX(cpuset_mutex);
-> > -static DEFINE_SPINLOCK(callback_lock);
-> > +static DEFINE_RAW_SPINLOCK(callback_lock);
-> >  
-> >  static struct workqueue_struct *cpuset_migrate_mm_wq;
-> >  
-> > @@ -922,9 +922,9 @@ static void update_cpumasks_hier(struct cpuset *cs, struct cpumask *new_cpus)
-> >  			continue;
-> >  		rcu_read_unlock();
-> >  
-> > -		spin_lock_irq(&callback_lock);
-> > +		raw_spin_lock_irq(&callback_lock);
-> >  		cpumask_copy(cp->effective_cpus, new_cpus);
-> > -		spin_unlock_irq(&callback_lock);
-> > +		raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  		WARN_ON(!is_in_v2_mode() &&
-> >  			!cpumask_equal(cp->cpus_allowed, cp->effective_cpus));
-> > @@ -989,9 +989,9 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
-> >  	if (retval < 0)
-> >  		return retval;
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	cpumask_copy(cs->cpus_allowed, trialcs->cpus_allowed);
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  	/* use trialcs->cpus_allowed as a temp variable */
-> >  	update_cpumasks_hier(cs, trialcs->cpus_allowed);
-> > @@ -1175,9 +1175,9 @@ static void update_nodemasks_hier(struct cpuset *cs, nodemask_t *new_mems)
-> >  			continue;
-> >  		rcu_read_unlock();
-> >  
-> > -		spin_lock_irq(&callback_lock);
-> > +		raw_spin_lock_irq(&callback_lock);
-> >  		cp->effective_mems = *new_mems;
-> > -		spin_unlock_irq(&callback_lock);
-> > +		raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  		WARN_ON(!is_in_v2_mode() &&
-> >  			!nodes_equal(cp->mems_allowed, cp->effective_mems));
-> > @@ -1245,9 +1245,9 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
-> >  	if (retval < 0)
-> >  		goto done;
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	cs->mems_allowed = trialcs->mems_allowed;
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  	/* use trialcs->mems_allowed as a temp variable */
-> >  	update_nodemasks_hier(cs, &trialcs->mems_allowed);
-> > @@ -1338,9 +1338,9 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
-> >  	spread_flag_changed = ((is_spread_slab(cs) != is_spread_slab(trialcs))
-> >  			|| (is_spread_page(cs) != is_spread_page(trialcs)));
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	cs->flags = trialcs->flags;
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  	if (!cpumask_empty(trialcs->cpus_allowed) && balance_flag_changed)
-> >  		rebuild_sched_domains_locked();
-> > @@ -1755,7 +1755,7 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
-> >  	cpuset_filetype_t type = seq_cft(sf)->private;
-> >  	int ret = 0;
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  
-> >  	switch (type) {
-> >  	case FILE_CPULIST:
-> > @@ -1774,7 +1774,7 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
-> >  		ret = -EINVAL;
-> >  	}
-> >  
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  	return ret;
-> >  }
-> >  
-> > @@ -1989,12 +1989,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
-> >  
-> >  	cpuset_inc();
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	if (is_in_v2_mode()) {
-> >  		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
-> >  		cs->effective_mems = parent->effective_mems;
-> >  	}
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  	if (!test_bit(CGRP_CPUSET_CLONE_CHILDREN, &css->cgroup->flags))
-> >  		goto out_unlock;
-> > @@ -2021,12 +2021,12 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
-> >  	}
-> >  	rcu_read_unlock();
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	cs->mems_allowed = parent->mems_allowed;
-> >  	cs->effective_mems = parent->mems_allowed;
-> >  	cpumask_copy(cs->cpus_allowed, parent->cpus_allowed);
-> >  	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  out_unlock:
-> >  	mutex_unlock(&cpuset_mutex);
-> >  	return 0;
-> > @@ -2065,7 +2065,7 @@ static void cpuset_css_free(struct cgroup_subsys_state *css)
-> >  static void cpuset_bind(struct cgroup_subsys_state *root_css)
-> >  {
-> >  	mutex_lock(&cpuset_mutex);
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  
-> >  	if (is_in_v2_mode()) {
-> >  		cpumask_copy(top_cpuset.cpus_allowed, cpu_possible_mask);
-> > @@ -2076,7 +2076,7 @@ static void cpuset_bind(struct cgroup_subsys_state *root_css)
-> >  		top_cpuset.mems_allowed = top_cpuset.effective_mems;
-> >  	}
-> >  
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  	mutex_unlock(&cpuset_mutex);
-> >  }
-> >  
-> > @@ -2174,12 +2174,12 @@ hotplug_update_tasks_legacy(struct cpuset *cs,
-> >  {
-> >  	bool is_empty;
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	cpumask_copy(cs->cpus_allowed, new_cpus);
-> >  	cpumask_copy(cs->effective_cpus, new_cpus);
-> >  	cs->mems_allowed = *new_mems;
-> >  	cs->effective_mems = *new_mems;
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  	/*
-> >  	 * Don't call update_tasks_cpumask() if the cpuset becomes empty,
-> > @@ -2216,10 +2216,10 @@ hotplug_update_tasks(struct cpuset *cs,
-> >  	if (nodes_empty(*new_mems))
-> >  		*new_mems = parent_cs(cs)->effective_mems;
-> >  
-> > -	spin_lock_irq(&callback_lock);
-> > +	raw_spin_lock_irq(&callback_lock);
-> >  	cpumask_copy(cs->effective_cpus, new_cpus);
-> >  	cs->effective_mems = *new_mems;
-> > -	spin_unlock_irq(&callback_lock);
-> > +	raw_spin_unlock_irq(&callback_lock);
-> >  
-> >  	if (cpus_updated)
-> >  		update_tasks_cpumask(cs);
-> > @@ -2312,21 +2312,21 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
-> >  
-> >  	/* synchronize cpus_allowed to cpu_active_mask */
-> >  	if (cpus_updated) {
-> > -		spin_lock_irq(&callback_lock);
-> > +		raw_spin_lock_irq(&callback_lock);
-> >  		if (!on_dfl)
-> >  			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
-> >  		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
-> > -		spin_unlock_irq(&callback_lock);
-> > +		raw_spin_unlock_irq(&callback_lock);
-> >  		/* we don't mess with cpumasks of tasks in top_cpuset */
-> >  	}
-> >  
-> >  	/* synchronize mems_allowed to N_MEMORY */
-> >  	if (mems_updated) {
-> > -		spin_lock_irq(&callback_lock);
-> > +		raw_spin_lock_irq(&callback_lock);
-> >  		if (!on_dfl)
-> >  			top_cpuset.mems_allowed = new_mems;
-> >  		top_cpuset.effective_mems = new_mems;
-> > -		spin_unlock_irq(&callback_lock);
-> > +		raw_spin_unlock_irq(&callback_lock);
-> >  		update_tasks_nodemask(&top_cpuset);
-> >  	}
-> >  
-> > @@ -2425,11 +2425,11 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
-> >  {
-> >  	unsigned long flags;
-> >  
-> > -	spin_lock_irqsave(&callback_lock, flags);
-> > +	raw_spin_lock_irqsave(&callback_lock, flags);
-> >  	rcu_read_lock();
-> >  	guarantee_online_cpus(task_cs(tsk), pmask);
-> >  	rcu_read_unlock();
-> > -	spin_unlock_irqrestore(&callback_lock, flags);
-> > +	raw_spin_unlock_irqrestore(&callback_lock, flags);
-> >  }
-> >  
-> >  void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
-> > @@ -2477,11 +2477,11 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
-> >  	nodemask_t mask;
-> >  	unsigned long flags;
-> >  
-> > -	spin_lock_irqsave(&callback_lock, flags);
-> > +	raw_spin_lock_irqsave(&callback_lock, flags);
-> >  	rcu_read_lock();
-> >  	guarantee_online_mems(task_cs(tsk), &mask);
-> >  	rcu_read_unlock();
-> > -	spin_unlock_irqrestore(&callback_lock, flags);
-> > +	raw_spin_unlock_irqrestore(&callback_lock, flags);
-> >  
-> >  	return mask;
-> >  }
-> > @@ -2573,14 +2573,14 @@ bool __cpuset_node_allowed(int node, gfp_t gfp_mask)
-> >  		return true;
-> >  
-> >  	/* Not hardwall and node outside mems_allowed: scan up cpusets */
-> > -	spin_lock_irqsave(&callback_lock, flags);
-> > +	raw_spin_lock_irqsave(&callback_lock, flags);
-> >  
-> >  	rcu_read_lock();
-> >  	cs = nearest_hardwall_ancestor(task_cs(current));
-> >  	allowed = node_isset(node, cs->mems_allowed);
-> >  	rcu_read_unlock();
-> >  
-> > -	spin_unlock_irqrestore(&callback_lock, flags);
-> > +	raw_spin_unlock_irqrestore(&callback_lock, flags);
-> >  	return allowed;
-> >  }
-> >  
-> > -- 
-> > 2.17.1
-> > 
+On Thu, Nov 1, 2018 at 7:57 PM Olof Johansson <olof@lixom.net> wrote:
+>
+> Fixes the following config-time warning:
+>
+> WARNING: unmet direct dependencies detected for EINT_MTK
+>   Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n]) && (PINCTRL_MTK [=n] || PINCTRL_MTK_MOORE [=n] || COMPILE_TEST [=n])
+>   Selected by [y]:
+>   - PINCTRL_MTK_PARIS [=y] && PINCTRL [=y] && OF [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n])
+>
+> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> ---
+>  drivers/pinctrl/mediatek/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index 9d142e1da567..50efc9cc8ee7 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -3,7 +3,7 @@ menu "MediaTek pinctrl drivers"
+>
+>  config EINT_MTK
+>         bool "MediaTek External Interrupt Support"
+> -       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
+> +       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
+>         select GPIOLIB
+>         select IRQ_DOMAIN
+>
+> --
+> 2.11.0
+>
