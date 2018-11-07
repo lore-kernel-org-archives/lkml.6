@@ -2,80 +2,80 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356F2C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517DEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2B802081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:16:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030AE2081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:17:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENYXm2rW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B802081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="GasLE6Xh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030AE2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeKHArI (ORCPT
+        id S1727854AbeKHAse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:47:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37205 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeKHArI (ORCPT
+        Wed, 7 Nov 2018 19:48:34 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54099 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbeKHAse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:47:08 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c10-v6so7445877pgq.4;
-        Wed, 07 Nov 2018 07:16:20 -0800 (PST)
+        Wed, 7 Nov 2018 19:48:34 -0500
+Received: by mail-it1-f196.google.com with SMTP id r12-v6so20534753ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 07:17:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=s3uQNLZ0xnXl8aHoNxOz/s0JQbfR9Ehd2ASnbJ1VF0Q=;
-        b=ENYXm2rWOWTSdV3CIfo1EuhzzEREub2s7M+wYx9HXMihpf1Phut1+p8muL6w3p0jKo
-         8gMQGJsWawX6HVbIUMUoetiV9UXsEtYJTLEt6Ay9Eh4tPL+hcwBEdr2aAx83TWuPpKrd
-         +TZ+0oOfmjUfqCCaFZaiJTLBsDj0851F4O7Hfutoma8Scym/tIgB9+WAcSt6W6XKKcpa
-         wrK2mAUQlu1D3Eg4sZ//Sz3U/+j1MF2jHdXYMVz8M9qVeOg47JvPqt28VLRJDsLSsem6
-         SB+4QhANYPs7Dx9wQ9T0hDKwt4qEJtugc+zSNo63rK9Dm7iMEKgDPVzL2uFGhl54UWga
-         n9sw==
+        bh=NkaM85iPRuktW7NLSPq0HVpUFuF+fFwLozt9vEcykEc=;
+        b=GasLE6XhtfP4i09mF17TzHef8EHs5gWBKWJ7o7igGyKDNxsv4rxOtQNaAz0VoCTdRr
+         lsVYeer2WVyhs/iTNwUMWxQ+T1Wp/UNosKuqhY2x3gc2Q5u1R9VqddbgdMrgr0Wx770K
+         7vKduhZOYoLg9/4eEp6d/JHk37EC1iV3wA/SkfV32+539GB0eclu0UCmFpARP2t7PeBA
+         aHYqMix4OSdP5n9H8i/A0OlC9PZez9M8vBbYcuHHmThH742xeHxI1c0k3XwIxDnwHDPj
+         r0ia8lAeHRtz3X5zM1yaD3ZexZwwVWblEcphvYEOotWcjx0PLEejQosF9nHvhw6mahJ2
+         cB2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=s3uQNLZ0xnXl8aHoNxOz/s0JQbfR9Ehd2ASnbJ1VF0Q=;
-        b=lHwgCb7CgLXP4kqDzG7JhhoSQYBFe8Gd0rNZp5dFOsR9k9RdfLSSOvHgrRiKo6+ixV
-         2se1n+ELieZmlGBQqavcbrS+XmYGT3t9HWerDGioAWVcdR4FxvjCJbv7+GJl6ZGnb8yM
-         Pvh+OpB6G5gj7IJLB2ezmzY8J956d6gU+Y2GrM3KmM2NJJgoalZfIBa7j1qIaZjiwB2H
-         Xm8c7MDknYmM4PSOjkLBjQnFIKEuC/ytpqT4K/5BA6/HPW6mHzmD2wfmV0Ot9/ycniD4
-         zEhyPn+u2huSJL7tdj8HxJBsWxJPpuX/AMRALIDsnrgCwt8qTUHmvnj6C0H1ENBjfLKX
-         q21w==
-X-Gm-Message-State: AGRZ1gKj3pV48NA571Y12fvosXMYLZ8Uf4XVEyNH/+2wZ1jnrWzemDf6
-        yamD8GoP0CH2MGvbRInqqx0=
-X-Google-Smtp-Source: AJdET5eTirn6oaTEcRf1JrlqfAUhX0FybFfVW49OpSo0DEFKvxTJibPiQe/UwCzK3LqLP6UXj3xT9w==
-X-Received: by 2002:a63:c0f:: with SMTP id b15mr525573pgl.314.1541603780431;
-        Wed, 07 Nov 2018 07:16:20 -0800 (PST)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id e65-v6sm1067595pfa.90.2018.11.07.07.16.19
+        bh=NkaM85iPRuktW7NLSPq0HVpUFuF+fFwLozt9vEcykEc=;
+        b=TfI6C4dCOIAOkfrZGOuN9twyKqicvgZwUlo2skkqq2V32N1QCOqpFK+XsojJz4X2hE
+         4vTKmHsF4DdCDQSatf8ZfeTmTkKMJu58gL7l/Z5k3fnIAzFGEm+GrN5Bz8mdQ6nj3TaB
+         WfDGkgVrU8G9O73quPUGaU40oMgH2ZndsT2m8q25HM+CMqcTxNNJ892UiEi/adxvjIjN
+         lB0Fy5ncUZCiPNzxiRVy0Q/XtoJYlMNyO3CkrLBaLg5a4DkZgQ+hzOsA5fmi/iAy3Rvh
+         jc0AlFYvJg+rVdAeK8q+AiwFmJWFtb/LkknPj/a/MdVnnzxrf76qKP1iMjQjwd7dxydR
+         rwuQ==
+X-Gm-Message-State: AGRZ1gKlS0BSQkU3OsCx68y+XMMJEIoLKa7vYTmGexoZL2kLzRpaF9Yp
+        cHbU7p0nqhL1XR4TBdH2J8qTbA==
+X-Google-Smtp-Source: AJdET5c9Wl/A1jBKobU8eItk+wD1FULVJ62yrMMdUlwHv8NYd7uwbfDGbTMyhHsV5nPqfD2jvbObNQ==
+X-Received: by 2002:a02:8a08:: with SMTP id j8-v6mr604132jak.46.1541603865793;
+        Wed, 07 Nov 2018 07:17:45 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id f64-v6sm243112ioa.54.2018.11.07.07.17.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 07:16:19 -0800 (PST)
-Subject: Re: [PATCH net-next] tcp: minor optimization in tcp ack fast path
- processing
-To:     Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
-        edumazet@google.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joe Perches <joe@perches.com>
-References: <1541589617-1607-1-git-send-email-laoar.shao@gmail.com>
- <1541589617-1607-2-git-send-email-laoar.shao@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <560b2828-cb1b-5ab5-f98b-b042a7e483f8@gmail.com>
-Date:   Wed, 7 Nov 2018 07:16:18 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 07 Nov 2018 07:17:44 -0800 (PST)
+Subject: Re: [LKP] a9f38e1dec [ 245.678853] INFO: task mount:580 blocked for
+ more than 120 seconds.
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Omar Sandoval <osandov@fb.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LKP <lkp@01.org>
+References: <20181107031643.GD24195@shao2-debian>
+ <f5f81267-0aea-4ae1-0112-88279598eb07@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1de09da9-fc06-b26e-99fa-97d813c0ccf0@kernel.dk>
+Date:   Wed, 7 Nov 2018 08:17:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1541589617-1607-2-git-send-email-laoar.shao@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f5f81267-0aea-4ae1-0112-88279598eb07@oracle.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,37 +83,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/07/2018 03:20 AM, Yafang Shao wrote:
-> Bitwise operation is a little faster.
-
-
-> So I replace after() with (flag & FLAG_SND_UNA_ADVANCED) as this flag is
-> already set before.
+On 11/7/18 1:22 AM, jianchao.wang wrote:
 > 
-> Cc: Joe Perches <joe@perches.com>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  net/ipv4/tcp_input.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index 2868ef2..0167015 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -3610,7 +3610,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
->  	if (flag & FLAG_UPDATE_TS_RECENT)
->  		tcp_replace_ts_recent(tp, TCP_SKB_CB(skb)->seq);
->  
-> -	if (!(flag & FLAG_SLOWPATH) && after(ack, prior_snd_una)) {
-> +	if (!(flag & FLAG_SLOWPATH) && (flag & FLAG_SND_UNA_ADVANCED)) {
->  		/* Window is constant, pure forward advance.
->  		 * No more checks are required.
->  		 * Note, we use the fact that SND.UNA>=SND.WL2.
+> On 11/7/18 11:16 AM, kernel test robot wrote:
+>> Greetings,
+>>
+>> 0day kernel testing robot got the below dmesg and the first bad commit is
+>>
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_torvalds_linux.git&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=8qsZc_c8QfZOGoITiebvlt5BO9GBK61cAY4xLOCegFU&s=ZGRhkdRCPvSKvbZzx-HAQtWcDZfzce60e2TMvBQyORo&e= master
+>>
+>> commit a9f38e1dec107af70d81338332494bf0a1e76597
+>> Author:     Omar Sandoval <osandov@fb.com>
+>> AuthorDate: Mon Oct 15 09:21:34 2018 -0600
+>> Commit:     Jens Axboe <axboe@kernel.dk>
+>> CommitDate: Tue Oct 16 09:50:14 2018 -0600
+>>
+>>     floppy: convert to blk-mq
+>>     
+>>     This driver likes to fetch requests from all over the place, so make
+>>     queue_rq put requests on a list so that the logic stays the same. Tested
+>>     with QEMU.
+>>     
+>>     Signed-off-by: Omar Sandoval <osandov@fb.com>
+>>     
+>>     Converted to blk_mq_init_sq_queue() and fixed a few spots where the
+>>     tag_set leaked on cleanup.
+>>     
+>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>
+>> 6ec3938cff  ataflop: convert to blk-mq
+>> a9f38e1dec  floppy: convert to blk-mq
+>> 8053e5b93e  Merge tag 'trace-v4.20-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
+>> 337734cbca  Add linux-next specific files for 20181106
+>> +---------------------------------------------------------+------------+------------+------------+---------------+
+>> |                                                         | 6ec3938cff | a9f38e1dec | 8053e5b93e | next-20181106 |
+>> +---------------------------------------------------------+------------+------------+------------+---------------+
+>> | boot_successes                                          | 251        | 68         | 69         | 74            |
+>> | boot_failures                                           | 48         | 27         | 25         | 23            |
+>> | Mem-Info                                                | 48         | 12         | 15         | 7             |
+>> | invoked_oom-killer:gfp_mask=0x                          | 6          | 4          | 3          | 2             |
+>> | EIP:iov_iter_fault_in_readable                          | 4          | 1          |            |               |
+>> | Out_of_memory:Kill_process                              | 3          | 2          | 2          |               |
+>> | Out_of_memory_and_no_killable_processes                 | 3          | 2          | 2          |               |
+>> | Kernel_panic-not_syncing:System_is_deadlocked_on_memory | 3          | 2          | 2          |               |
+>> | EIP:__put_user_4                                        | 1          |            |            |               |
+>> | INFO:task_blocked_for_more_than#seconds                 | 0          | 15         | 10         | 16            |
+>> | EIP:lock_is_held_type                                   | 0          | 1          | 0          | 1             |
+>> | EIP:native_safe_halt                                    | 0          | 3          |            |               |
+>> | Kernel_panic-not_syncing:hung_task:blocked_tasks        | 0          | 15         | 10         | 16            |
+>> | EIP:strnlen_user                                        | 0          | 1          |            |               |
+>> | EIP:_local_bh_enable                                    | 0          | 1          |            |               |
+>> | EIP:__lock_acquire                                      | 0          | 1          | 1          | 1             |
+>> | EIP:vprintk_emit                                        | 0          | 1          |            |               |
+>> | EIP:do_softirq_own_stack                                | 0          | 0          | 1          |               |
+>> | EIP:default_idle                                        | 0          | 0          | 2          | 1             |
+>> | EIP:reschedule_interrupt                                | 0          | 0          | 1          |               |
+>> | EIP:delay_tsc                                           | 0          | 0          | 0          | 1             |
+>> | EIP:copy_page_from_iter                                 | 0          | 0          | 0          | 1             |
+>> | EIP:_cond_resched                                       | 0          | 0          | 0          | 1             |
+>> +---------------------------------------------------------+------------+------------+------------+---------------+
+>>
+>> [  244.196551] random: get_random_u32 called from arch_align_stack+0x2d/0x40 with crng_init=1
+>> [  245.254485] _warn_unseeded_randomness: 54 callbacks suppressed
+>> [  245.254491] random: get_random_u32 called from copy_process+0x1c8/0x17b0 with crng_init=1
+>> [  245.257366] random: get_random_u32 called from arch_pick_mmap_layout+0x110/0x140 with crng_init=1
+>> [  245.258675] random: get_random_u32 called from load_elf_binary+0x2b6/0xb48 with crng_init=1
+>> [  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
+>> [  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
+>> [  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> [  245.682181] mount           D 6372   580      1 0x00000004
+>> [  245.683023] Call Trace:
+>> [  245.683425]  __schedule+0x2df/0x570
+>> [  245.683975]  schedule+0x2d/0x80
+>> [  245.684476]  schedule_timeout+0x19d/0x330
+>> [  245.685090]  ? wait_for_common+0xa5/0x170
+>> [  245.685735]  wait_for_common+0xac/0x170
+>> [  245.686339]  ? do_sched_yield+0x90/0x90
+>> [  245.686935]  wait_for_completion+0x12/0x20
+>> [  245.687571]  __floppy_read_block_0+0xfb/0x150
+>> [  245.688244]  ? floppy_resume+0x40/0x40
+>> [  245.688844]  floppy_revalidate+0x20f/0x240
+>> [  245.689486]  check_disk_change+0x43/0x60
+>> [  245.690087]  floppy_open+0x1ea/0x360
+>> [  245.690653]  __blkdev_get+0xb4/0x4d0
+>> [  245.691212]  ? blkdev_get+0x1db/0x370
+>> [  245.691777]  blkdev_get+0x1f3/0x370
+>> [  245.692351]  ? path_put+0x15/0x20
+>> [  245.692871]  ? lookup_bdev+0x4b/0x90
+>> [  245.693539]  blkdev_get_by_path+0x3d/0x80
+>> [  245.694165]  mount_bdev+0x2a/0x190
+>> [  245.694695]  squashfs_mount+0x10/0x20
+>> [  245.695271]  ? squashfs_alloc_inode+0x30/0x30
+>> [  245.695960]  mount_fs+0xf/0x90
+>> [  245.696451]  vfs_kern_mount+0x43/0x130
+>> [  245.697036]  do_mount+0x187/0xc40
+>> [  245.697563]  ? memdup_user+0x28/0x50
+>> [  245.698124]  ksys_mount+0x60/0xc0
+>> [  245.698639]  sys_mount+0x19/0x20
+>> [  245.699167]  do_int80_syscall_32+0x61/0x130
+>> [  245.699813]  entry_INT80_32+0xc7/0xc7
+>> [  245.700391] EIP: 0x47f46fee
+>> [  245.700829] Code: 11 83 c8 ff eb e2 90 90 90 90 90 90 57 56 53 8b 7c 24 20 8b 74 24 1c 8b 54 24 18 8b 4c 24 14 8b 5c 24 10 b8 15 00 00 00 cd 80 <5b> 5e 5f 3d 01 f0 ff ff 73 01 c3 e8 e8 80 03 00 81 c1 f6 5f 09 00
+>> [  245.703680] EAX: ffffffda EBX: affa4efa ECX: affa4f03 EDX: 080d3630
+>> [  245.704642] ESI: 00008010 EDI: 00000000 EBP: 00000000 ESP: affa45c0
+>> [  245.705637] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000282
 > 
+> There is not a q->queue_lock as blk-legacy to serialize floppy_queue_rq from different contexts.
 
-What about reducing this to a single conditional jump ?
+Doesn't look immediately racy, the internal queue list is protected by
+the floppy_lock, and the busy start is marked by atomic bit setting.
+Do you see an issue with it, or are you just pontificating?
 
-if ((flag & (FLAG_SLOWPATH | FLAG_SND_UNA_ADVANCED)) == FLAG_SND_UNA_ADVANCED)  {
+FWIW, just ran qemu with two floppy drives and concurrent access,
+didn't see an issue.
+
+-- 
+Jens Axboe
 
