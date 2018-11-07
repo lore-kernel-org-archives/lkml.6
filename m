@@ -2,122 +2,98 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B0FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5635EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129312085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129312085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 158002086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:31:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158002086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbeKGT7D convert rfc822-to-8bit (ORCPT
+        id S1727364AbeKGUBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:59:03 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:27686 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726259AbeKGT7C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:59:02 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by dkim.mimecast.com with ESMTP id
- uk-mta-179-ZS9EnN-mOoKzVXqdZBIkCg-1; Wed, 07 Nov 2018 10:29:15 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 7 Nov 2018 10:29:20 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 7 Nov 2018 10:29:20 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-CC:     "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@intel.com" <haitao.huang@intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v16 18/22] platform/x86: Intel SGX driver
-Thread-Topic: [PATCH v16 18/22] platform/x86: Intel SGX driver
-Thread-Index: AQHUddgrysSRxlXgvUSYD+ItRQz08aVEHTFw
-Date:   Wed, 7 Nov 2018 10:29:20 +0000
-Message-ID: <ed7b04087e59403f986bab27a668933f@AcuMS.aculab.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
- <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 7 Nov 2018 15:01:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59984 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726218AbeKGUBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 15:01:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EC8ABB6E7;
+        Wed,  7 Nov 2018 10:31:37 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 11:31:37 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [GIT PULL] HID fixes
+Message-ID: <nycvar.YFH.7.76.1811071125360.21975@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-X-MC-Unique: ZS9EnN-mOoKzVXqdZBIkCg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Sakkinen
-> Sent: 06 November 2018 13:46
-> 
-> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> can be used by applications to set aside private regions of code and
-> data. The code outside the enclave is disallowed to access the memory
-> inside the enclave by the CPU access control.
-> 
-> SGX driver provides a ioctl API for loading and initializing enclaves.
-> Address range for enclaves is reserved with mmap() and they are
-> destroyed with munmap(). Enclave construction, measurement and
-> initialization is done with the provided the ioctl API.
-..
-> +struct sgx_encl {
-> +	unsigned int flags;
-> +	uint64_t attributes;
-> +	uint64_t xfrm;
-> +	unsigned int page_cnt;
-> +	unsigned int secs_child_cnt;
-> +	struct mutex lock;
-> +	struct mm_struct *mm;
-> +	struct file *backing;
-> +	struct kref refcount;
-> +	unsigned long base;
-> +	unsigned long size;
-> +	unsigned long ssaframesize;
-> +	struct radix_tree_root page_tree;
-> +	struct list_head add_page_reqs;
-> +	struct work_struct add_page_work;
-> +	struct sgx_encl_page secs;
-> +	struct pid *tgid;
-> +	struct mmu_notifier mmu_notifier;
-> +	struct notifier_block pm_notifier;
-> +};
+Linus,
 
-It may not really matter (yet) but there is at least one hole in that strcture.
+please pull from
 
-	David
+  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+to receive HID subsytem fixes
+
+=====
+- hid.git is moving towards group maintainership (where group is myself 
+  and Benjamin Tissoires), therefore this pull request updates MAINTAINERS
+  accordingly
+- fix for hid-asus config dependency from Arnd Bergmann
+- two device-specific quirks for i2c-hid from Julian Sax and Kai-Heng Feng
+- other few small assorted fixes
+=====
+
+Thanks.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      HID: asus: fix build warning wiht CONFIG_ASUS_WMI disabled
+
+Benjamin Tissoires (2):
+      Revert "HID: add NOGET quirk for Eaton Ellipse MAX UPS"
+      HID: alps: allow incoming reports when only the trackstick is opened
+
+Breno Leitao (1):
+      HID: hiddev: fix potential Spectre v1
+
+Jiri Kosina (1):
+      HID: moving to group maintainership model
+
+Julian Sax (1):
+      HID: i2c-hid: add Direkt-Tek DTLAPY133-1 to descriptor override
+
+Kai-Heng Feng (1):
+      HID: i2c-hid: Add a small delay after sleep command for Raydium touchpanel
+
+Linus Walleij (1):
+      HID: fix up .raw_event() documentation
+
+ MAINTAINERS                              |  8 ++++----
+ drivers/hid/hid-alps.c                   | 18 ++++++++++++++++++
+ drivers/hid/hid-asus.c                   |  3 +++
+ drivers/hid/hid-ids.h                    |  3 +++
+ drivers/hid/hid-quirks.c                 |  1 -
+ drivers/hid/i2c-hid/i2c-hid-core.c       | 19 +++++++++++++++++++
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c |  8 ++++++++
+ drivers/hid/usbhid/hiddev.c              | 18 ++++++++++++++----
+ include/linux/hid.h                      |  4 ++--
+ 9 files changed, 71 insertions(+), 11 deletions(-)
+
+-- 
+Jiri Kosina
+SUSE Labs
 
