@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC21EC32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF09C32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946E82086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946E82086C
+	by mail.kernel.org (Postfix) with ESMTP id 2615D20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 01:38:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2615D20844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389178AbeKGLGN (ORCPT
+        id S2389220AbeKGLGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 06:06:13 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:54952 "EHLO
+        Wed, 7 Nov 2018 06:06:16 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:42500 "EHLO
         mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731041AbeKGLGN (ORCPT
+        with ESMTP id S1731064AbeKGLGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 06:06:13 -0500
-Received: by mail-it1-f199.google.com with SMTP id r79-v6so8154585itc.4
+        Wed, 7 Nov 2018 06:06:15 -0500
+Received: by mail-it1-f199.google.com with SMTP id z195-v6so11721943itb.7
         for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 17:38:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zLfIIYC+kz0FLbrzhXVatrNwp2S/BkHfR0TxQ0h2Gas=;
-        b=Ru7hkA0TePTspCu4rVDP3OQLS0fNS/2zqino1DgQhjRAPbJsGjlY8lP/nr+wupGgXt
-         6AkyZM/+4VCqcH4vgxfTmyquDx1WkrvsI3vi6yqhYcc5QQLIJ5RFCAJ9jX2sVNNWsEKf
-         wjacy8LBbBy2sSspkj1BIG7sgVD1t2BkOFtI7UyGKkfgI6KH/RHYnkdBuTvVfD1ZfteX
-         XrkTEpxIcvwNywkf5wpAwd0zciYuWvTM9EZGulvk69JMelcP2ctoRLbnVWxyOsy81VQ+
-         oUHZwAhyu9xNzBYzDiP/nTQpcOe7yjeuCfguyrr+22ALNayPupNyLDGVsqxzVzbrt/jr
-         Uc7A==
-X-Gm-Message-State: AGRZ1gJnWAC52Z64MVzCVS+v0es+QYmFg1LnaKryU6Pn+E6qBDx1kni+
-        Eda4D8Fejb9KOKYX77/0+Fox15nRKwaIzV0+8i/nOZ8OFW4u
-X-Google-Smtp-Source: AJdET5fnVMjV8FauntCO4Ro9YwYXMIumNDAQWINnqlbLONzWQek1I6q1EFpZDH35B7KQ/py1E7DmBsRXn+Vd6b8o+4M2Z56qqYo+
+        bh=nzeduqLufxi0WabRb8ixC8yb/f8MuxIkOpJMeB2MkcM=;
+        b=GxOBuNqti+qK7Yi6IsviGBUK/3V7yEQuwJ7fsAEZzd26Fys065qRmYhsE0PDX6qLlV
+         wqFUgvL+MG1X30orDMqS3b0Nen9yDG9UPDbMpc0cRJz/dT425pOfZ17h8Y/ptugJsDwF
+         ///QtIJGdJ4t+xJAZhGozNIj6iFDwm4W9rHKJJSrCLzQrtO2CGtgez1xLpk0L0rrorVw
+         eswSZwq53PuDPcX/AweRZ94ZGDbTqFteiburJDBhADZbpspD9S7U2+y/tScWGaGGQsMM
+         x/3/bHOtlzZSczVrwvSjC9BBepyE0RROKlUuKckNXYGoFqGfuHHbOE3IjjWxN1BuuR4X
+         ylkA==
+X-Gm-Message-State: AGRZ1gJm0crDnPVttiBnrZhTCj46RKZRhBHThniOQjgl0Kg31b1SVdk4
+        VpCO0XN8Px99IqOL8fuNin1qFdsiU/AGN8xAXVyN9wjHvwcz
+X-Google-Smtp-Source: AJdET5dLCLUhrbuw1G7qxlVaDbOO57fLeyG4ZkRnd43qHbEBD/FxedIhz7Ejv3awduUFaBbcozy6YDp9OrT4byu2ju88ainRymKB
 MIME-Version: 1.0
-X-Received: by 2002:a6b:3b4b:: with SMTP id i72-v6mr19926989ioa.6.1541554684843;
- Tue, 06 Nov 2018 17:38:04 -0800 (PST)
-Date:   Tue, 06 Nov 2018 17:38:04 -0800
+X-Received: by 2002:a24:ac6c:: with SMTP id m44-v6mr161421iti.40.1541554685220;
+ Tue, 06 Nov 2018 17:38:05 -0800 (PST)
+Date:   Tue, 06 Nov 2018 17:38:05 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000645f00057a092b8c@google.com>
-Subject: BUG: spinlock cpu recursion on CPU, syz-executor
-From:   syzbot <syzbot+e9a3960298616a5a5abc@syzkaller.appspotmail.com>
-To:     bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Message-ID: <0000000000006a2474057a092bf7@google.com>
+Subject: possible deadlock in static_key_slow_dec
+From:   syzbot <syzbot+b011e55d1b4c015100d2@syzkaller.appspotmail.com>
+To:     ard.biesheuvel@linaro.org, bp@suse.de, jbaron@akamai.com,
+        jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,83 +61,234 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    651022382c7f Linux 4.20-rc1
+HEAD commit:    83650fd58a93 Merge tag 'arm64-upstream' of git://git.kerne..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d6ae33400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f559fee2fc3375a
-dashboard link: https://syzkaller.appspot.com/bug?extid=e9a3960298616a5a5abc
+console output: https://syzkaller.appspot.com/x/log.txt?x=15122fcb400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9384ecb1c973baed
+dashboard link: https://syzkaller.appspot.com/bug?extid=b011e55d1b4c015100d2
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130d742b400000
+
+Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e9a3960298616a5a5abc@syzkaller.appspotmail.com
+Reported-by: syzbot+b011e55d1b4c015100d2@syzkaller.appspotmail.com
 
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
-https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.
-BUG: spinlock cpu recursion on CPU#0, syz-executor0/8023
-  lock: 0xffffc900045ea000, .magic: dead4ead, .owner: <none>/-1, .owner_cpu:  
-0
-CPU: 0 PID: 8023 Comm: syz-executor0 Not tainted 4.20.0-rc1+ #99
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.0+ #318 Not tainted
+------------------------------------------------------
+syz-executor3/25522 is trying to acquire lock:
+000000009aed6c7d (cpu_hotplug_lock.rw_sem){++++}, at: __static_key_slow_dec  
+kernel/jump_label.c:239 [inline]
+000000009aed6c7d (cpu_hotplug_lock.rw_sem){++++}, at:  
+static_key_slow_dec+0x57/0xa0 kernel/jump_label.c:254
+
+but task is already holding lock:
+00000000d2ffe4a1 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0x1b5/0x2c0  
+mm/util.c:348
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&mm->mmap_sem){++++}:
+        __might_fault+0x15e/0x1e0 mm/memory.c:4360
+        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+        copy_to_user include/linux/uaccess.h:155 [inline]
+        perf_read_group kernel/events/core.c:4776 [inline]
+        __perf_read kernel/events/core.c:4843 [inline]
+        perf_read+0x7e3/0xa60 kernel/events/core.c:4858
+        __vfs_read+0x117/0x9b0 fs/read_write.c:416
+        vfs_read+0x17f/0x3c0 fs/read_write.c:452
+        ksys_read+0x101/0x260 fs/read_write.c:578
+        __do_sys_read fs/read_write.c:588 [inline]
+        __se_sys_read fs/read_write.c:586 [inline]
+        __x64_sys_read+0x73/0xb0 fs/read_write.c:586
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #2 (&cpuctx_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+        __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+        perf_event_init_cpu+0xd2/0x180 kernel/events/core.c:11679
+        perf_event_init+0x519/0x595 kernel/events/core.c:11726
+        start_kernel+0x646/0xa2b init/main.c:652
+        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+-> #1 (pmus_lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+        __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+        perf_event_init_cpu+0x2f/0x180 kernel/events/core.c:11673
+        cpuhp_invoke_callback+0x35d/0x2100 kernel/cpu.c:167
+        cpuhp_up_callbacks kernel/cpu.c:584 [inline]
+        _cpu_up+0x290/0x560 kernel/cpu.c:1139
+        do_cpu_up+0x1ca/0x210 kernel/cpu.c:1173
+        cpu_up+0x18/0x20 kernel/cpu.c:1181
+        smp_init+0x1a3/0x1be kernel/smp.c:578
+        kernel_init_freeable+0x431/0x6b9 init/main.c:1146
+        kernel_init+0x11/0x1ae init/main.c:1071
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+-> #0 (cpu_hotplug_lock.rw_sem){++++}:
+        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+        percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36  
+[inline]
+        percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+        cpus_read_lock+0x3e/0xd0 kernel/cpu.c:287
+        __static_key_slow_dec kernel/jump_label.c:239 [inline]
+        static_key_slow_dec+0x57/0xa0 kernel/jump_label.c:254
+        sw_perf_event_destroy+0x8b/0x140 kernel/events/core.c:8172
+        _free_event+0x414/0x1660 kernel/events/core.c:4446
+        put_event+0x48/0x60 kernel/events/core.c:4532
+        perf_mmap_close+0x62f/0x1220 kernel/events/core.c:5515
+        remove_vma+0xb1/0x180 mm/mmap.c:181
+        remove_vma_list mm/mmap.c:2574 [inline]
+        __do_munmap+0x751/0xf80 mm/mmap.c:2817
+        do_munmap mm/mmap.c:2825 [inline]
+        mmap_region+0x6a7/0x1cd0 mm/mmap.c:1729
+        do_mmap+0xa22/0x1230 mm/mmap.c:1559
+        do_mmap_pgoff include/linux/mm.h:2320 [inline]
+        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:350
+        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1609
+        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   cpu_hotplug_lock.rw_sem --> &cpuctx_mutex --> &mm->mmap_sem
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&mm->mmap_sem);
+                                lock(&cpuctx_mutex);
+                                lock(&mm->mmap_sem);
+   lock(cpu_hotplug_lock.rw_sem);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor3/25522:
+  #0: 00000000d2ffe4a1 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0x1b5/0x2c0  
+mm/util.c:348
+
+stack backtrace:
+CPU: 1 PID: 25522 Comm: syz-executor3 Not tainted 4.19.0+ #318
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x244/0x39d lib/dump_stack.c:113
-  spin_dump.cold.3+0x81/0xe7 kernel/locking/spinlock_debug.c:67
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-  spin_bug kernel/locking/spinlock_debug.c:75 [inline]
-  debug_spin_lock_before kernel/locking/spinlock_debug.c:85 [inline]
-  do_raw_spin_lock+0x26a/0x350 kernel/locking/spinlock_debug.c:112
-kobject: 'loop2' (000000000bdb293a): kobject_uevent_env
-  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
-  _raw_spin_lock+0x35/0x40 kernel/locking/spinlock.c:144
-kobject: 'loop2' (000000000bdb293a): fill_kobj_path: path  
+  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
+kernel/locking/lockdep.c:1221
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2347 [inline]
+  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  cpus_read_lock+0x3e/0xd0 kernel/cpu.c:287
+  __static_key_slow_dec kernel/jump_label.c:239 [inline]
+  static_key_slow_dec+0x57/0xa0 kernel/jump_label.c:254
+  sw_perf_event_destroy+0x8b/0x140 kernel/events/core.c:8172
+  _free_event+0x414/0x1660 kernel/events/core.c:4446
+  put_event+0x48/0x60 kernel/events/core.c:4532
+  perf_mmap_close+0x62f/0x1220 kernel/events/core.c:5515
+  remove_vma+0xb1/0x180 mm/mmap.c:181
+  remove_vma_list mm/mmap.c:2574 [inline]
+  __do_munmap+0x751/0xf80 mm/mmap.c:2817
+  do_munmap mm/mmap.c:2825 [inline]
+  mmap_region+0x6a7/0x1cd0 mm/mmap.c:1729
+  do_mmap+0xa22/0x1230 mm/mmap.c:1559
+  do_mmap_pgoff include/linux/mm.h:2320 [inline]
+  vm_mmap_pgoff+0x213/0x2c0 mm/util.c:350
+  ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1609
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f217cd7fc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457569
+RDX: 0000000000000000 RSI: 0000000000003000 RDI: 0000000020ffd000
+RBP: 000000000072bfa0 R08: 000000000000000a R09: 0000000000000000
+R10: 0000000000000011 R11: 0000000000000246 R12: 00007f217cd806d4
+R13: 00000000004c2a9d R14: 00000000004d40c0 R15: 00000000ffffffff
+kobject: 'loop2' (00000000ca2cc98a): kobject_uevent_env
+kobject: 'loop2' (00000000ca2cc98a): fill_kobj_path: path  
 = '/devices/virtual/block/loop2'
-  spin_lock include/linux/spinlock.h:329 [inline]
-  kvm_mmu_change_mmu_pages+0xf3/0x450 arch/x86/kvm/mmu.c:2717
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
-  kvm_arch_commit_memory_region+0x289/0x2d0 arch/x86/kvm/x86.c:9322
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-  __kvm_set_memory_region+0x1c99/0x2d50  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1064
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
-  kvm_set_memory_region+0x2e/0x50  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1085
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
-  kvm_vm_ioctl_set_memory_region  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:1097 [inline]
-  kvm_vm_ioctl+0x652/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2995
-kobject: 'loop3' (0000000005b5310e): kobject_uevent_env
-kobject: 'kvm' (00000000968c974f): kobject_uevent_env
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000968c974f): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-kobject: 'loop3' (0000000005b5310e): fill_kobj_path: path  
+kobject: 'loop4' (00000000812c9751): kobject_uevent_env
+kobject: 'loop4' (00000000812c9751): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop0' (00000000fba26143): kobject_uevent_env
+kobject: 'loop0' (00000000fba26143): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop3' (0000000099278ded): kobject_uevent_env
+kobject: 'loop3' (0000000099278ded): fill_kobj_path: path  
 = '/devices/virtual/block/loop3'
-------------[ cut here ]------------
-downgrading a read lock
-WARNING: CPU: 1 PID: 5667 at kernel/locking/lockdep.c:3556 __lock_downgrade  
-kernel/locking/lockdep.c:3556 [inline]
-WARNING: CPU: 1 PID: 5667 at kernel/locking/lockdep.c:3556  
-lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
+kobject: 'loop1' (0000000032ae37eb): kobject_uevent_env
+kobject: 'loop1' (0000000032ae37eb): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000fba26143): kobject_uevent_env
+kobject: 'loop0' (00000000fba26143): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop0' (00000000fba26143): kobject_uevent_env
+kobject: 'loop0' (00000000fba26143): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop4' (00000000812c9751): kobject_uevent_env
+kobject: 'loop4' (00000000812c9751): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000ca2cc98a): kobject_uevent_env
+kobject: 'loop2' (00000000ca2cc98a): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop0' (00000000fba26143): kobject_uevent_env
+kobject: 'loop0' (00000000fba26143): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop1' (0000000032ae37eb): kobject_uevent_env
+kobject: 'loop1' (0000000032ae37eb): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (0000000099278ded): kobject_uevent_env
+kobject: 'loop3' (0000000099278ded): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+kobject: 'loop0' (00000000fba26143): kobject_uevent_env
+kobject: 'loop0' (00000000fba26143): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'loop5' (000000001bc15b41): kobject_uevent_env
+kobject: 'loop5' (000000001bc15b41): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
 
 
 ---
@@ -148,5 +299,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
 syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
