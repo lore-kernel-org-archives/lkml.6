@@ -2,74 +2,74 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D89C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F56C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5CE20882
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:20:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5CE20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DFBBB20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:23:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFBBB20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeKHHxN (ORCPT
+        id S1727810AbeKHHzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:53:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41426 "EHLO mx1.redhat.com"
+        Thu, 8 Nov 2018 02:55:25 -0500
+Received: from ms.lwn.net ([45.79.88.28]:45794 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbeKHHxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:53:13 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726751AbeKHHzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 02:55:25 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0FDE9316468F;
-        Wed,  7 Nov 2018 22:20:49 +0000 (UTC)
-Received: from redhat.com (null.msp.redhat.com [10.15.80.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C1826887B;
-        Wed,  7 Nov 2018 22:20:45 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 16:20:42 -0600
-From:   David Teigland <teigland@redhat.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Christine Caulfield <ccaulfie@redhat.com>,
-        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] dlm: fix various incorrect behaviors
-Message-ID: <20181107222042.GA24927@redhat.com>
-References: <20181102201822.12518-1-tycho@tycho.ws>
+        by ms.lwn.net (Postfix) with ESMTPSA id B8C262ED;
+        Wed,  7 Nov 2018 22:22:59 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 15:22:58 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Federico Vaga <federico.vaga@vaga.pv.it>
+Cc:     Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] doc:it_IT: add some process/* translations
+Message-ID: <20181107152258.48267a2a@lwn.net>
+In-Reply-To: <20181005185157.27819-1-federico.vaga@vaga.pv.it>
+References: <20181005185157.27819-1-federico.vaga@vaga.pv.it>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102201822.12518-1-tycho@tycho.ws>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 07 Nov 2018 22:20:49 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 02:18:19PM -0600, Tycho Andersen wrote:
-> Hi,
-> 
-> here's a series to fix some bugs I noticed in the DLM. The third patch
-> in the series and maybe the first should probably go to stable, assuming
-> everyone agrees they're indeed bugs.
-> 
-> Thanks,
-> 
-> Tycho
-> 
-> Tycho Andersen (3):
->   dlm: fix invalid free
->   dlm: don't allow zero length names
->   dlm: don't leak kernel pointer to userspace
-> 
->  fs/dlm/lockspace.c | 2 +-
->  fs/dlm/member.c    | 5 +++--
->  fs/dlm/user.c      | 2 +-
->  3 files changed, 5 insertions(+), 4 deletions(-)
+On Fri,  5 Oct 2018 20:51:57 +0200
+Federico Vaga <federico.vaga@vaga.pv.it> wrote:
 
-I've pushed these to linux-dlm next.
-Dave
+> This patch does not translate entirely the subfolder "process/"
+> but only part of it (to begin with).
+> 
+> In order to avoid broken links, I included empty documents
+> for those which are not yet translated.
+> 
+> In order to be able to refer to all documents in "process/",
+> I added a sphinx label to those which had not one.
+> 
+> Translated documents:
+> - howto
+> - 1.Intro
+> - clang-format
+> - coding-style
+> - kernel-driver-statement
+> - magic-number
+> - volatile-considered-harmful
+> - development-process
+
+So I'm (finally) ready to apply this, but it has conflicts against current
+docs-next.  Could I ask you, please, to send me a respin?
+
+Thanks,
+
+jon
