@@ -2,95 +2,126 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFDEC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2504C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613A520892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:10:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613A520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 9008A20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 21:18:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RX4sUZGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9008A20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeKHGmK (ORCPT
+        id S1727334AbeKHGuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:42:10 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43570 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbeKHGmK (ORCPT
+        Thu, 8 Nov 2018 01:50:44 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:43684 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbeKHGuo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:42:10 -0500
-Received: by mail-qk1-f193.google.com with SMTP id r71so22943455qkr.10
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 13:10:00 -0800 (PST)
+        Thu, 8 Nov 2018 01:50:44 -0500
+Received: by mail-vk1-f196.google.com with SMTP id o130so1578152vke.10
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 13:18:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4ihhgHrKEE1pacViDFlSsQzwqvPqE2E1R1WjQ3EseAE=;
+        b=RX4sUZGfUL61yuG7JSexiOiBeR1R305fZSarM2oMqdfoyJzcFa3hZXPdiywZxhDeoC
+         qDKMD5lhaddRKPtE+o9uCrU+PwZIsch/256TpC0aE+cyWerJl7pkPDBNCBYHqrXNsyAP
+         +Cr+ckNPcEHFlgTF6virgzEbMAO8NwID9Tqeg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/354RJktfWO3Xv0X4oRS/MwprSK52O+Iss7VIFmrPCA=;
-        b=LGRkVcse5aoBczAa+8lGndK3GrC9Dq3O6X66dVVfMYZhBVGl0Blr2VKpwrMEl+h2wg
-         RbCtnfolSTHTXfUzrxYLd3H2SUfhsT3J5Lwm4mL6pm9ayIz17QVqeJwBeERgL+upWQrz
-         LrNo82XmDb6iBRqSXnHkqBLDfufBNwaDsRwXQbwlWDJ71Iku/dRW6gWre4O1Atz6/Neq
-         shf01Oyh7PjQ0dvyXuleBxzsiYue/KIJx1d1owZUKOlxX63KR7eYToG3xQRX9XhhYieS
-         onA2wUGSQB4h8UqwWqqkf6ObzERr5jq/bEeTr8EIN9GksX4WGX79UQ2OOV5eenbCJnyZ
-         7FWA==
-X-Gm-Message-State: AGRZ1gIyzmIyssthd89vTglPf6/78WPgaE2ezPOdLtfOSRH01NGrVhI5
-        RgG5r5ZMpXXlTF8cyYmW8Ko36b6vDWDYFwD7X1M=
-X-Google-Smtp-Source: AJdET5dWhffFHUu7ZBoRk2k1Xds+Ikbp4k6UXVNUOvLdhMLXUvvYGJXNGas97+IHnJoQZuTJ58TZ4WJzzzpen9pkmQM=
-X-Received: by 2002:a0c:f50c:: with SMTP id j12mr1864644qvm.149.1541624998627;
- Wed, 07 Nov 2018 13:09:58 -0800 (PST)
+        bh=4ihhgHrKEE1pacViDFlSsQzwqvPqE2E1R1WjQ3EseAE=;
+        b=sM/fdCL/3IlyVWQbkwv2lyjDj08tfXpCs3SQV+j7zdNVakzrM79SntFGQUs7KXOw2Z
+         5QBLc8TrfZivO0ph7GakWo9qguvMosDPRHd6XaWkZdSTAAvsLLV8mEdqJxdSPfyFjFKA
+         LYGWW8qeYYdJ2Nu5dSRXce1AlklfQ6+6a2ST+FDVEGtiw3RW3a62PCe+Ba1pId8TpmwQ
+         PwyUBQ6VS/QhIan27yEWg1RQxYhc1wyT+t/QeEuOQuVYn1F7hTRlF0B1bN1mys+R24Re
+         BSDIkqMfq3/kHNRropIEzDx7UrGW7HgL+1li/ZCZj35I9DLLBLQiNarQa88cEl7gIdoL
+         Ifrw==
+X-Gm-Message-State: AGRZ1gLzyrNJ06aireXJwLiiQUAb40VuIQ1RLFDBObmA1b5/9TRyrrHB
+        SpGIET7/AkCTnbAY+yzuJ/Rn9GivRgY=
+X-Google-Smtp-Source: AJdET5cppQUpnLITafuAL8/IaKSxP2VZLdwAtrBMQ3KdoyM+QRmioKuQNr74UYD3ti+y7yN4uBDIhQ==
+X-Received: by 2002:a1f:e3c7:: with SMTP id a190mr847244vkh.66.1541625512039;
+        Wed, 07 Nov 2018 13:18:32 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id x132sm483693vsc.34.2018.11.07.13.18.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 13:18:31 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id d21so6409507uap.9
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 13:18:31 -0800 (PST)
+X-Received: by 2002:ab0:650e:: with SMTP id w14mr915588uam.83.1541625510833;
+ Wed, 07 Nov 2018 13:18:30 -0800 (PST)
 MIME-Version: 1.0
-References: <CAK8P3a3JcztCSYBuu5ZJXaV83VNLv_1v3v-EKMR+tC1oOsQesw@mail.gmail.com>
- <mhng-3c26b2fb-0c11-42f2-9026-1113b200a7b2@palmer-si-x1c4> <CAEn-LTpQ5uTte2bBrEs3uLKtsckkKPUOP+jHw5k-DFAwGCS3WA@mail.gmail.com>
-In-Reply-To: <CAEn-LTpQ5uTte2bBrEs3uLKtsckkKPUOP+jHw5k-DFAwGCS3WA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 7 Nov 2018 22:09:39 +0100
-Message-ID: <CAK8P3a30Dmq3vp-+=jvVu8VMe+GKc9dU=+ZF0rzhFiUq2NuJ_w@mail.gmail.com>
-Subject: Re: [PATCH] riscv: add asm/unistd.h UAPI header
-To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
+References: <1541527838-4585-1-git-send-email-linux@roeck-us.net>
+ <20181106.192305.406697677@genki.is> <20181107022156.GA254567@google.com>
+ <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org> <CA+ASDXPMMXCBN6PU8qzRm579sC9VBdwnxZdZwRdPY1cBUP8oGQ@mail.gmail.com>
+ <20181107184435.GA168339@google.com> <20181107.204358.257636196@genki.is>
+ <20181107205514.GB12273@roeck-us.net> <20181107.210731.330601031@genki.is>
+In-Reply-To: <20181107.210731.330601031@genki.is>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 7 Nov 2018 13:18:19 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Wcxf7p1DyJdVEqODbc6TdTtbPiLszWCAS1xC6=4kkLbw@mail.gmail.com>
+Message-ID: <CAD=FV=Wcxf7p1DyJdVEqODbc6TdTtbPiLszWCAS1xC6=4kkLbw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "scripts/setlocalversion: git: Make -dirty check
+ more robust"
+To:     sky@genki.is
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Brian Norris <briannorris@chromium.org>, lists@nerdbynature.de,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 7:30 PM David Abdurachmanov
-<david.abdurachmanov@gmail.com> wrote:
-> On Wed, Nov 7, 2018 at 1:08 AM Palmer Dabbelt <palmer@sifive.com> wrote:
-> > On Mon, 05 Nov 2018 12:56:15 PST (-0800), Arnd Bergmann wrote:
+Hi,
 
-> > The target is still the next glibc release (Feb 1st) for a stable RV32I ABI.
-> > That's progressing well, with one last blocking issue related to some of our
-> > floating-point emulation routines before we can submit the port.  This should
-> > give us ample time to line up the ABIs correctly so everything works.
-> >
-> > So I think the correct answer here is to drop __ARCH_WANT_STAT64 from RISC-V.
-> >
+On Wed, Nov 7, 2018 at 1:07 PM Genki Sky <sky@genki.is> wrote:
 >
-> Then if you agree I could do and send v2:
+> On Wed, 7 Nov 2018 12:55:14 -0800, Guenter Roeck <linux@roeck-us.net> wrote:
+> > I do not think it is a good idea to create a random file in the .git directory
+> > under any circumstance, and much less so if an output directory was specified,
+> > no matter if the path is read-only or not. I also still think that it is a
+> > bad idea to touch the source tree if an output directory was specified.
+> > It defeats the purpose of specifying an output directory.
 >
-> +#ifdef __LP64__
-> +#define __ARCH_WANT_NEW_STAT
-> +#endif /* __LP64__ */
-
-Looks good to me.
-
-> Cannot use CONFIG_64BIT as in user space nothing defines it.
-> Alternatively I could
-> check for __riscv_xlen == 64.
+> I was thinking of touching a pre-existing file like .git/config or
+> .git/description, which I was hoping would be harmless. But sounds
+> like that's still not desired?
 >
-> I found _LP64 and __LP64__ being used in kernel, incl. include/uapi/linux/rseq.h
+> Okay, I guess one approach is to only refresh the index if $objtree ==
+> $srctree, by passing some flag to scripts/setlocalversion from
+> scripts/package/Makefile. Is that what you're thinking? Feels a little
+> strange, but it seems it'd satisfy everyone.
 
-I think older gcc versions were less consistent about those macros, which
-is why I introduced __BITS_PER_LONG a long time ago. We now support
-gcc-4.6 as the minimum, so using __LP64__ is reliable, and on RISC-V
-we obviously have a much newer compiler anyway.
+From reading the thread it sounds like Guenter was not even super
+happy with that based on the principal that you wouldn't expect a
+kernel build to be doing write operations in your .git directory even
+if $objtree == $srctree
 
-        Arnd
+
+> > Ubuntu 16.04 ships with git version 2.7.4.
+>
+> Okay. I guess --no-optional-locks is a no-go then.
+
+In theory you could wrap it.  If passing git with
+"--no-optional-locks" doesn't work you could fall back to the old
+code?  That would mean only people with newer git would get your new
+feature and everyone else would stick with the pre-existing behavior.
+
+It does seem like any things like this should be done atop Guenter's
+revert.  AKA: revert first to get things working the way that they
+were and then start talking about how to make it better.
+
+-Doug
