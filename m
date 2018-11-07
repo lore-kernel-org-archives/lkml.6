@@ -6,104 +6,103 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648E5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED52C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 356AE2086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356AE2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 91A6C2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A6C2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeKHCJP (ORCPT
+        id S1731268AbeKHCJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:09:15 -0500
-Received: from mga02.intel.com ([134.134.136.20]:53472 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727312AbeKHCJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:09:15 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 08:38:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
-   d="scan'208";a="84068375"
-Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.132])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Nov 2018 08:37:59 -0800
-Date:   Wed, 7 Nov 2018 18:37:57 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
-Message-ID: <20181107163757.GB11509@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
- <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
- <1541522400.7839.48.camel@intel.com>
+        Wed, 7 Nov 2018 21:09:55 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41692 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbeKHCJz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:09:55 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x12-v6so18101554wrw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 08:38:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oxAyYKk4ZUdTcgphyhxBz3Mw8M/Glz83iSK7x/ZcXHo=;
+        b=cp+/J/fGNFRFFPENNdOHOPEsLViKELMZI0w/n1hzq2Kine7jG/IHKbRIsLOZ3koQWJ
+         7OPwVG8ihyZpOXJD2wL8UxuzkiaGuFciHcbwS7iPt8KCi6KwG2Y//9L6+pWzNNkjr6xm
+         DYgXdaDo7HpFIbb//8+v+3bM8mzXcZCHARd1hziP9X6OBNw3f+Y3xsZ/E5DLi7wU92Ok
+         TFGHcjZUEstaFAxoOEYbDyY4vqetZrXReayxWSHklMKUnoqsSCSR9HYaiHZJA/onBTtI
+         lJzEPHbEuS+V3G6r7qcj0QyeladZ3ppw4G649iFjXA1tswbza/Eb3wDRj1u5W2wO6i8z
+         oiWA==
+X-Gm-Message-State: AGRZ1gKa46DXug5OK9rdvP/505nIkF0oQrr5K3fXbQnLG2+USHxveUbw
+        OQAHmqs+yHholeCPbgWi254JGQ==
+X-Google-Smtp-Source: AJdET5c60rQd9hnDrD4BI0jNNB+VZlNFfT04p04OI3/WkOzgIuhL/pQxJ0tMSyV02sh162FjkRuqew==
+X-Received: by 2002:a5d:69ce:: with SMTP id s14-v6mr954531wrw.177.1541608726500;
+        Wed, 07 Nov 2018 08:38:46 -0800 (PST)
+Received: from localhost.localdomain ([151.35.177.55])
+        by smtp.gmail.com with ESMTPSA id 137-v6sm2122692wmo.43.2018.11.07.08.38.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 08:38:45 -0800 (PST)
+Date:   Wed, 7 Nov 2018 17:38:41 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     lizefan@huawei.com, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, cgroups@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
+        longman@redhat.com
+Subject: Re: [PATCH v5 3/5] cgroup/cpuset: make callback_lock raw
+Message-ID: <20181107163841.GA18091@localhost.localdomain>
+References: <20180903142801.20046-1-juri.lelli@redhat.com>
+ <20180903142801.20046-4-juri.lelli@redhat.com>
+ <20180925143416.GD25664@localhost.localdomain>
+ <20181107155330.GA2509588@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1541522400.7839.48.camel@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181107155330.GA2509588@devbig004.ftw2.facebook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 08:40:00AM -0800, Sean Christopherson wrote:
-> On Tue, 2018-11-06 at 15:45 +0200, Jarkko Sakkinen wrote:
-> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> > can be used by applications to set aside private regions of code and
-> > data. The code outside the enclave is disallowed to access the memory
-> > inside the enclave by the CPU access control.
-> > 
-> > SGX driver provides a ioctl API for loading and initializing enclaves.
-> > Address range for enclaves is reserved with mmap() and they are
-> > destroyed with munmap(). Enclave construction, measurement and
-> > initialization is done with the provided the ioctl API.
-> 
-> ...
-> 
-> > +struct sgx_encl {
-> > +	unsigned int flags;
-> > +	uint64_t attributes;
-> > +	uint64_t xfrm;
-> > +	unsigned int page_cnt;
-> > +	unsigned int secs_child_cnt;
-> > +	struct mutex lock;
-> > +	struct mm_struct *mm;
-> > +	struct file *backing;
-> 
-> Is there any particular reason why the kernel manages the backing for
-> the enclave and the PCMDs?  Could we have userspace provide the backing
-> either through the ECREATE ioctl() or maybe a completely new ioctl(),
-> e.g. to give userspace the option to back the enclave with a NVDIMM
-> instead of RAM?  A separate ioctl() with control flags might give us
-> some flexibility in the future, e.g. maybe there are use cases where
-> userspace would prefer to kill enclaves rather than swap EPC.
+Hi,
 
-Not really except that no one has complained. The very first swapping
-code that I implemented used a VMA as backing storage. I could take
-pieces of that code to replace shmem specifics. The difference was that
-the driver did vm_mmap(). Now that you suggested the above I wonder how
-it did not came to mind back then to provide the VMA as parameter.
+On 07/11/18 07:53, Tejun Heo wrote:
+> Hello,
+> 
+> On Tue, Sep 25, 2018 at 04:34:16PM +0200, Juri Lelli wrote:
+> > It would be great if you could please have a look at the proposed change
+> > below (and the rest of the set of course :-).
+> 
+> Yeah, looks good to me.  Please feel free to add
+> 
+>  Acked-by: Tejun Heo <tj@kernel.org>
 
-A single buffer that can hold both PCMD entries and swapped pages in its
-address space would probably be the  best way to do it. I would add that
-as a field to struct sgx_enclave_create. If we want the kill-behavior,
-you could signal that with a NULL value.
+Thanks!
 
-/Jarkko
+> > Another bit that I'd be more comfortable after hearing your word on it
+> > is this one (discussed over 5/5):
+> > 
+> > https://lore.kernel.org/lkml/20180925130750.GA25664@localhost.localdomain/
+> 
+> Can you please loop Waiman Long <longman@redhat.com> into discussion?
+> He's working on cgroup2 cpuset support which might collide.
+
+Sure, I've been originally working on this on top of his series, but
+didn't try with latest version. Hopefully the two series don't generate
+too much collisions. I'll try to find some time soon to check again.
+
+In the meantime, Waiman Long, how do you feel about it? :-)
+
+Thread starts at (you if missed it)
+
+https://lore.kernel.org/lkml/20180903142801.20046-1-juri.lelli@redhat.com/
+
+Best,
+
+- Juri
