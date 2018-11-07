@@ -2,198 +2,147 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C67C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF83BC46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC7A20837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:50:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC7A20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6B14C20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:50:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Snw9eUhA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B14C20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbeKHFVW (ORCPT
+        id S1727162AbeKHFV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:22 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41964 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbeKHFVV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:21 -0500
-Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTpN-00070Q-Jo; Wed, 07 Nov 2018 20:49:25 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 19/23] x86/fpu: Always store the registers in copy_fpstate_to_sigframe()
-Date:   Wed,  7 Nov 2018 20:48:54 +0100
-Message-Id: <20181107194858.9380-20-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
-References: <20181107194858.9380-1-bigeasy@linutronix.de>
+        Thu, 8 Nov 2018 00:21:56 -0500
+Received: from mail-dm3nam03on0070.outbound.protection.outlook.com ([104.47.41.70]:33301
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726362AbeKHFVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 00:21:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TBLgHP8Qg23wPrkT92c+y+QQN3nVUImta2nNQDclVNM=;
+ b=Snw9eUhABwxS3Yth4PUCbb+Bk0+DRSI9qdp0lWi+eAQ/88D5Nh3BGMz+ib0KbXE7HhJ+JzHYS515YzG8qFnsrk1+cxyKtsbUEPkXlIid6KyLs71b4Ju3iZ1iL5MQoiy/bIRdwstZq3q28FC5CM81Y6qiHwpD+3mFOcooemK0IA4=
+Received: from CY4PR12MB1768.namprd12.prod.outlook.com (10.175.63.10) by
+ CY4PR12MB1703.namprd12.prod.outlook.com (10.175.62.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Wed, 7 Nov 2018 19:50:01 +0000
+Received: from CY4PR12MB1768.namprd12.prod.outlook.com
+ ([fe80::82f:4b8a:fd43:aab3]) by CY4PR12MB1768.namprd12.prod.outlook.com
+ ([fe80::82f:4b8a:fd43:aab3%8]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
+ 19:50:01 +0000
+From:   "Woods, Brian" <Brian.Woods@amd.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Woods, Brian" <Brian.Woods@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, Pu Wen <puwen@hygon.cn>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Myron Stowe <myron.stowe@redhat.com>,
+        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
+Thread-Topic: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
+Thread-Index: AQHUctdtTs18UoG4rUKlKIFT94W0kqU9IkqagASZzYCAAAMiAIABjnMAgAAFC4CAABZFgIAApxAAgAByOsGAAD4qgA==
+Date:   Wed, 7 Nov 2018 19:50:01 +0000
+Message-ID: <20181107194955.GA19346@amd.com>
+References: <20181102195925.GB160487@google.com>
+ <20181102232948.GC26770@zn.tnic> <20181105214537.GA19420@google.com>
+ <20181105215650.GG26868@zn.tnic> <20181106214256.GA65443@google.com>
+ <20181106220059.GA4139@zn.tnic> <20181106232040.GA85755@google.com>
+ <20181107091838.GA10835@zn.tnic> <20181107133856.GA238955@google.com>
+ <20181107160707.GA14169@zn.tnic>
+In-Reply-To: <20181107160707.GA14169@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN1PR12CA0056.namprd12.prod.outlook.com
+ (2603:10b6:802:20::27) To CY4PR12MB1768.namprd12.prod.outlook.com
+ (2603:10b6:903:122::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Woods@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR12MB1703;20:1UZOaMsVTrOo01BXBYOnOPZDbVad/sgqwKBKBRvONdBHgNwiJhq31itj6gwDYBm2X586RPo94MTntgw1mQ8FU1z9FyrKH3CLjgYyMc+OGcWefCTxhp9QyEtBlMkn50pYO2wf6n8zeb6+vkVc0KB1W+uYuxrCP8YooeBjifaGLJa6FP2h766KM27PD4L8GDWwW+bwZJvZou5wDeWTDf1w3tE+r2JH2ft3EwgjQzc/qLhx9FyJyE8pGB0migZp//r5
+x-ms-office365-filtering-correlation-id: 293c924a-2d00-45cd-823b-08d644ea344b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:CY4PR12MB1703;
+x-ms-traffictypediagnostic: CY4PR12MB1703:
+x-microsoft-antispam-prvs: <CY4PR12MB17030A4789F7A3FAC0BFF522E5C40@CY4PR12MB1703.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:CY4PR12MB1703;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1703;
+x-forefront-prvs: 08497C3D99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(346002)(376002)(366004)(39860400002)(136003)(396003)(199004)(189003)(52314003)(8676002)(71200400001)(81166006)(81156014)(6486002)(6512007)(14454004)(52116002)(7736002)(76176011)(71190400001)(8936002)(186003)(1076002)(2906002)(229853002)(256004)(72206003)(102836004)(25786009)(386003)(6506007)(3846002)(6436002)(53936002)(2616005)(93886005)(6116002)(11346002)(305945005)(6246003)(7416002)(54906003)(316002)(33656002)(446003)(2900100001)(6916009)(26005)(97736004)(478600001)(4326008)(486006)(105586002)(66066001)(106356001)(476003)(5660300001)(86362001)(36756003)(68736007)(99286004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1703;H:CY4PR12MB1768.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: MUwJAPDK9womBLhVaYDopKUaxnH9qh0LZzi3RF/kgr5Y2afO1+LFIelg0s1qQNlpL5vEDAVvQH+omE7dwa+pNIpmMVJ0hTRFzC69DkbDBbJSUVhc+ua4jGgbJK3ARCw2WudCHyStD6FbVV2Dz+wgUCN9jbBWXXx5AXcUEK4UKk87nlwLGp1bqZA16LWa3WyEBT/JNcqjKlx8hdJaX5eq/LW/7Hx39aLvd1EmJUQpN2JsvJda5G0HKO7Ux8KpMavQdwHJYe/4bm42mLLfrLGhEjcLI0kXjvRNr9nVJu0Ota8tp8STIpLxn6K7Sr+A6xVYiL8up6I0+dkuevRew3E9Yxq8J+1mSP07thKX1D3Rltk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7998EECAD1E2BA468FA787687FFC6F70@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 293c924a-2d00-45cd-823b-08d644ea344b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 19:50:01.4267
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1703
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+On Wed, Nov 07, 2018 at 05:07:07PM +0100, Borislav Petkov wrote:
+> Thanks for explaining.
+>=20
+> So I don't know about temp sensors - I'm talking about amd_nb which is
+> something... well, I explained already what it is in my previous mail so
+> I won't repeat myself.
+>=20
+> Anyway, if there is such a PNP ID device - and I believe I have stumbled
+> upon some blurb about it in the BKDGs - which says "this device
+> represents the PCI device IDs of a CPU" and if that can be used to
+> register amd_nb through it, then sure, I don't see why not.
+>=20
+> This way, when new CPU comes out and the same PNP ID device is present,
+> amd_nb would load, sure.
+>=20
+> Maybe Brian knows more on the subject...
+>=20
+> --=20
+> Regards/Gruss,
+>     Boris.
+>=20
+> Good mailing practices for 400: avoid top-posting and trim the reply.
 
-copy_fpstate_to_sigframe() stores the registers directly to user space.
-This is okay because the FPU register are valid and saving it directly
-avoids saving it into kernel memory and making a copy.
-However… We can't keep doing this if we are going to restore the FPU
-registers on the return to userland. It is possible that the FPU
-registers will be invalidated in the middle of the save operation and
-this should be done with disabled preemption / BH.
+More on exactly what?
 
-Save the FPU registers to task's FPU struct and copy them to the user
-memory.  later on.
+If it's the PNP ID device, if you can let me know where in the BKDG you
+found it before so I can look for keywords etc?  Because I'd need to
+find those for k8 onwards so.
 
-This code is extracted from an earlier version of the patchset while
-there still was lazy-FPU on x86.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/include/asm/fpu/internal.h | 45 -----------------------------
- arch/x86/kernel/fpu/signal.c        | 30 +++++++------------
- 2 files changed, 11 insertions(+), 64 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index ed65e0642a1e1..9e213a6703c84 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -123,22 +123,6 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
- 		     _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_fprestore)	\
- 		     : output : input)
- 
--static inline int copy_fregs_to_user(struct fregs_state __user *fx)
--{
--	return user_insn(fnsave %[fx]; fwait,  [fx] "=m" (*fx), "m" (*fx));
--}
--
--static inline int copy_fxregs_to_user(struct fxregs_state __user *fx)
--{
--	if (IS_ENABLED(CONFIG_X86_32))
--		return user_insn(fxsave %[fx], [fx] "=m" (*fx), "m" (*fx));
--	else if (IS_ENABLED(CONFIG_AS_FXSAVEQ))
--		return user_insn(fxsaveq %[fx], [fx] "=m" (*fx), "m" (*fx));
--
--	/* See comment in copy_fxregs_to_kernel() below. */
--	return user_insn(rex64/fxsave (%[fx]), "=m" (*fx), [fx] "R" (fx));
--}
--
- static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
- {
- 	if (IS_ENABLED(CONFIG_X86_32)) {
-@@ -349,35 +333,6 @@ static inline void copy_kernel_to_xregs(struct xregs_state *xstate, u64 mask)
- 	XSTATE_XRESTORE(xstate, lmask, hmask);
- }
- 
--/*
-- * Save xstate to user space xsave area.
-- *
-- * We don't use modified optimization because xrstor/xrstors might track
-- * a different application.
-- *
-- * We don't use compacted format xsave area for
-- * backward compatibility for old applications which don't understand
-- * compacted format of xsave area.
-- */
--static inline int copy_xregs_to_user(struct xregs_state __user *buf)
--{
--	int err;
--
--	/*
--	 * Clear the xsave header first, so that reserved fields are
--	 * initialized to zero.
--	 */
--	err = __clear_user(&buf->header, sizeof(buf->header));
--	if (unlikely(err))
--		return -EFAULT;
--
--	stac();
--	XSTATE_OP(XSAVE, buf, -1, -1, err);
--	clac();
--
--	return err;
--}
--
- /*
-  * Restore xstate from user space xsave area.
-  */
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index f61f4d804537a..254a8dff9cd82 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -118,22 +118,6 @@ static inline int save_xstate_epilog(void __user *buf, int ia32_frame)
- 	return err;
- }
- 
--static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
--{
--	int err;
--
--	if (use_xsave())
--		err = copy_xregs_to_user(buf);
--	else if (use_fxsr())
--		err = copy_fxregs_to_user((struct fxregs_state __user *) buf);
--	else
--		err = copy_fregs_to_user((struct fregs_state __user *) buf);
--
--	if (unlikely(err) && __clear_user(buf, fpu_user_xstate_size))
--		err = -EFAULT;
--	return err;
--}
--
- /*
-  * Save the fpu, extended register state to the user signal frame.
-  *
-@@ -157,6 +141,7 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
- int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- {
- 	struct fpu *fpu = &current->thread.fpu;
-+	struct xregs_state *xsave = &fpu->state.xsave;
- 	struct task_struct *tsk = current;
- 	int ia32_fxstate = (buf != buf_fx);
- 
-@@ -171,12 +156,19 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 			sizeof(struct user_i387_ia32_struct), NULL,
- 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
- 
--	/* Save the live register state to the user directly. */
--	if (copy_fpregs_to_sigframe(buf_fx))
--		return -1;
- 	/* Update the thread's fxstate to save the fsave header. */
- 	if (ia32_fxstate)
- 		copy_fxregs_to_kernel(fpu);
-+	else
-+		copy_fpregs_to_fpstate(fpu);
-+
-+	if (using_compacted_format()) {
-+		copy_xstate_to_user(buf_fx, xsave, 0, size);
-+	} else {
-+		fpstate_sanitize_xstate(fpu);
-+		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
-+			return -1;
-+	}
- 
- 	/* Save the fsave header for the 32-bit frames. */
- 	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
--- 
-2.19.1
-
+--=20
+Brian Woods
