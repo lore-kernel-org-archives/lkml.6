@@ -2,78 +2,109 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A39C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96976C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C69E2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C69E2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 637E92081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637E92081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengaru.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbeKHGD1 (ORCPT
+        id S1726896AbeKHGEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:03:27 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42015 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeKHGD1 (ORCPT
+        Thu, 8 Nov 2018 01:04:40 -0500
+Received: from shells.gnugeneration.com ([66.240.222.126]:41928 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeKHGEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 01:03:27 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gKUTy-00088O-QJ; Wed, 07 Nov 2018 20:31:22 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][drm-next] drm/virtio: fix memory leak of vfpriv on error return path
-Date:   Wed,  7 Nov 2018 20:31:22 +0000
-Message-Id: <20181107203122.6861-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 8 Nov 2018 01:04:39 -0500
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id 431141A40326; Wed,  7 Nov 2018 12:32:39 -0800 (PST)
+Date:   Wed, 7 Nov 2018 12:32:39 -0800
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, longman@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
+Message-ID: <20181107203239.nsbccdyckeeprjzr@shells.gnugeneration.com>
+References: <20181029192521.23059-1-dave@stgolabs.net>
+ <CAKOZuevx9beEB-KWz0gRNaJQLfzu0cu7nuMYaB5ZT1O_ooQYAA@mail.gmail.com>
+ <20181106154840.3b448356214afa63dc8cb28c@linux-foundation.org>
+ <CAJfpegsdFiM6QWt3VBEDvGdKHfvsvUnm06MC-ha7z_WPTP9znA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsdFiM6QWt3VBEDvGdKHfvsvUnm06MC-ha7z_WPTP9znA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Nov 07, 2018 at 11:03:06AM +0100, Miklos Szeredi wrote:
+> On Wed, Nov 7, 2018 at 12:48 AM, Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+> > On Mon, 29 Oct 2018 23:04:45 +0000 Daniel Colascione <dancol@google.com> wrote:
+> >
+> >> On Mon, Oct 29, 2018 at 7:25 PM, Davidlohr Bueso <dave@stgolabs.net> wrote:
+> >> > This patch introduces a new /proc/stat2 file that is identical to the
+> >> > regular 'stat' except that it zeroes all hard irq statistics. The new
+> >> > file is a drop in replacement to stat for users that need performance.
+> >>
+> >> For a while now, I've been thinking over ways to improve the
+> >> performance of collecting various bits of kernel information. I don't
+> >> think that a proliferation of special-purpose named bag-of-fields file
+> >> variants is the right answer, because even if you add a few info-file
+> >> variants, you're still left with a situation where a given file
+> >> provides a particular caller with too little or too much information.
+> >> I'd much rather move to a model in which userspace *explicitly* tells
+> >> the kernel which fields it wants, with the kernel replying with just
+> >> those particular fields, maybe in their raw binary representations.
+> >> The ASCII-text bag-of-everything files would remain available for
+> >> ad-hoc and non-performance critical use, but programs that cared about
+> >> performance would have an efficient bypass. One concrete approach is
+> >> to let users open up today's proc files and, instead of read(2)ing a
+> >> text blob, use an ioctl to retrieve specified and targeted information
+> >> of the sort that would normally be encoded in the text blob. Because
+> >> callers would open the same file when using either the text or binary
+> >> interfaces, little would have to change, and it'd be easy to implement
+> >> fallbacks when a particular system doesn't support a particular
+> >> fast-path ioctl.
+> 
+> Please.   Sysfs, with the one value per file rule, was created exactly
+> for the purpose of eliminating these sort of problems with procfs.  So
+> instead of inventing special purpose interfaces for proc, just make
+> the info available in sysfs, if not already available.
+> 
 
-The allocation for vfpriv is being leaked on an error return path,
-fix this by kfree'ing it before returning.
+I like the sysfs approach to organizing the data, and have wanted
+fd-batching IO syscalls in other circumstances anyways, so I think
+there's a good possibility of something along those lines getting added
+eventually.
 
-Detected by CoverityScan, CID#1475380 ("Resource Leak")
+At a past employer I had written some backup software which had to
+reassemble versioned files from chains of reverse differentials (think
+rdiff-backup).  I had all the information needed to quickly construct a
+multi-fd iovec to supply to a single batched readv syscall when
+servicing versioned reads from a FUSE mount that involved a potentially
+long chain of diffs, but no such syscall exists.  The more
+differentials, the more fragmented the operation tended to be, requiring
+increasing numbers of smaller reads across more files to reconstruct the
+buffer.
 
-Fixes: 6a37c49a94a9 ("drm/virtio: Handle context ID allocation errors")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/virtio/virtgpu_kms.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The same thing would be useful for making reads from large numbers of
+sysfs files less costly.  I presume proposing such a generally
+applicable VFS API addition would meet less resistance than specialized
+proc interfaces, perhaps naively :).
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index bf609dcae224..f4f995639ed1 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -266,8 +266,10 @@ int virtio_gpu_driver_open(struct drm_device *dev, struct drm_file *file)
- 
- 	get_task_comm(dbgname, current);
- 	id = virtio_gpu_context_create(vgdev, strlen(dbgname), dbgname);
--	if (id < 0)
-+	if (id < 0) {
-+		kfree(vfpriv);
- 		return id;
-+	}
- 
- 	vfpriv->ctx_id = id;
- 	file->driver_priv = vfpriv;
--- 
-2.19.1
-
+Regards,
+Vito Caputo
