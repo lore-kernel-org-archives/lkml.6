@@ -2,113 +2,116 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2E5C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F3DC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21BCA20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21BCA20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 9B6D12086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cBkRYZuh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6D12086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387484AbeKHAcA (ORCPT
+        id S2387604AbeKHAcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:32:00 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42424 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbeKHAb7 (ORCPT
+        Wed, 7 Nov 2018 19:32:08 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40510 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbeKHAcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:31:59 -0500
-Received: by mail-qk1-f195.google.com with SMTP id u68so21226148qkg.9;
-        Wed, 07 Nov 2018 07:01:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lrCgMd5aB29UDxkP4+Dhx2tcotNtUM5bvR43by0uZ9w=;
-        b=kWh0HfmwhE18SxY6APeJtZtf6pxpigaosTg/I9dqvg6E4ddX1hWTfr/F5/vfW0IYND
-         jrUWt+Ia4//xLzGCtUT3fY0oN6ledBEDfFqCOYUdq9wcP1Sn0RD9oPIpv3pizowFKdU1
-         eBm9//skQ3XA73cAfc7IJV4qkCLoqvYMc6NJiGq7tc84+vp/ZZOWskU0eycvN2xQ56nW
-         Nvw/9zU9p2Y3dU9hUgxKOOqJZRHThz2MRx/UL3iCxGmUNMGdUcmVTIy24DPXmkuv5lzv
-         GDDA+8xj6CaLcEwfTdqfwYsFLPAZZxNJFayY3jNWKaSmnKgYGCH6X+DJ4Qw/csl8rwas
-         bqeA==
-X-Gm-Message-State: AGRZ1gIRb1Y/7D9CyMJakrI5KmQHYmAxJ1OuKzZHqlkH8vd4sPSaOcix
-        wrbxSsuv5JiR9YGftgvVgAk/GWwLvIJ5bMtYoKQ=
-X-Google-Smtp-Source: AJdET5fGtJreKrh6+Sg3ALXmbwOBxP4qwZQ1WVcARcjjl7YnJZpddJVaMEBeP7omKBn7pB9kZjPnI/B05WRhFyxfiqM=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr555617qte.212.1541602874338;
- Wed, 07 Nov 2018 07:01:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20181107003250.5832-1-elder@linaro.org> <20181107003250.5832-8-elder@linaro.org>
-In-Reply-To: <20181107003250.5832-8-elder@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 7 Nov 2018 16:00:58 +0100
-Message-ID: <CAK8P3a2FsgR=SYAWsgFURVni1ReiCugKs1iUAfQzZhPkbW8aOA@mail.gmail.com>
-Subject: Re: [RFC PATCH 07/12] soc: qcom: ipa: IPA register abstraction
-To:     Alex Elder <elder@linaro.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Networking <netdev@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syadagir@codeaurora.org, mjavid@codeaurora.org,
+        Wed, 7 Nov 2018 19:32:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=u5c+gGV1Y4SmUheYKUb5AUNT7sbeLFw1p7dty5Cgob8=; b=cBkRYZuhyxar
+        sL6GsoPv3pdSkK66UfeNjCdkWeyRmj1ydBCnIrWSXw2qON9igeJULQ/15QMIXe09nhFTHl3sdurTE
+        45KTasonX4bfWsRmZygIzTszgL93ttLpDD7b8YbEjmVHkrY+ub82mgPownVWp5A5Twto/Kz7TIpiU
+        dQ8Ko=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gKPKZ-0006b6-Mp; Wed, 07 Nov 2018 15:01:19 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6F3831124E14; Wed,  7 Nov 2018 15:01:19 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: Kconfig: Enable McSPI driver for K3 platforms" to the spi tree
+In-Reply-To:  <20181107103926.32550-3-vigneshr@ti.com>
+Message-Id: <20181107150119.6F3831124E14@debutante.sirena.org.uk>
+Date:   Wed,  7 Nov 2018 15:01:19 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 1:33 AM Alex Elder <elder@linaro.org> wrote:
-> diff --git a/drivers/net/ipa/ipa_reg.c b/drivers/net/ipa/ipa_reg.c
-> new file mode 100644
-> index 000000000000..5e0aa6163235
-> --- /dev/null
-> +++ b/drivers/net/ipa/ipa_reg.c
-> @@ -0,0 +1,972 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
-> + * Copyright (C) 2018 Linaro Ltd.
-> + */
-> +
-> +#include <linux/types.h>
-> +#include <linux/io.h>
-> +#include <linux/bitfield.h>
-> +
-> +#include "ipa_reg.h"
-> +
-> +/* I/O remapped base address of IPA register space */
-> +static void __iomem *ipa_reg_virt;
+The patch
 
-This should of course be part of the device structure.
+   spi: Kconfig: Enable McSPI driver for K3 platforms
 
-> +/* struct ipa_reg_desc - descriptor for an abstracted hardware register
-> + *
-> + * @construct - fn to construct the register value from its field structure
-> + * @parse - function to parse register field values into its field structure
-> + * @offset - register offset relative to base address
-> + * @n_ofst - size multiplier for "N-parameterized" registers
-> + */
-> +struct ipa_reg_desc {
-> +       u32 (*construct)(enum ipa_reg reg, const void *fields);
-> +       void (*parse)(enum ipa_reg reg, void *fields, u32 val);
-> +       u32 offset;
-> +       u16 n_ofst;
-> +};
+has been applied to the spi tree at
 
-Indirect function pointers can be a bit expensive in the post-spectre
-days. It's probably not overly important if these are always part of
-an MMIO access function, but you should be careful about using
-these in the data path.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-How many different versions do we have to support in practice?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-       Arnd
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 81df42d10457d3aef5321e9772c8eef173adf7f7 Mon Sep 17 00:00:00 2001
+From: Vignesh R <vigneshr@ti.com>
+Date: Wed, 7 Nov 2018 16:09:26 +0530
+Subject: [PATCH] spi: Kconfig: Enable McSPI driver for K3 platforms
+
+Enable McSPI driver to be built for K3 platforms, to support McSPI on
+AM654 SoC of K3 family.
+
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 91d45c9ac439..b9be21cc07d2 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -435,7 +435,7 @@ config SPI_OMAP_UWIRE
+ 
+ config SPI_OMAP24XX
+ 	tristate "McSPI driver for OMAP"
+-	depends on ARCH_OMAP2PLUS || COMPILE_TEST
++	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
+ 	select SG_SPLIT
+ 	help
+ 	  SPI master controller for OMAP24XX and later Multichannel SPI
+-- 
+2.19.0.rc2
+
