@@ -2,168 +2,108 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05A1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AAAC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4A520827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4A520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 594D720685
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:02:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="teBd8OLT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594D720685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387836AbeKHAcR (ORCPT
+        id S1731131AbeKHAdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:32:17 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50885 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731109AbeKHAcR (ORCPT
+        Wed, 7 Nov 2018 19:33:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39628 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728023AbeKHAdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:32:17 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKPKg-0003cE-QM; Wed, 07 Nov 2018 16:01:26 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKPKf-0002au-Ei; Wed, 07 Nov 2018 16:01:25 +0100
-Date:   Wed, 7 Nov 2018 16:01:25 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: =?iso-8859-1?B?W1JDRqBQQVRDSCx2Miwy?= =?iso-8859-1?B?LzJd?= pwm:
- imx: Configure output to GPIO in disabled state
-Message-ID: <20181107150125.7cpd4v5t7yi2254c@pengutronix.de>
-References: <1539163920-9442-3-git-send-email-michal.vokac@ysoft.com>
- <20181012085720.GA9451@taurus.defre.kleine-koenig.org>
- <fa96ae2a-c2cc-b47a-1198-5daffa7c865f@ysoft.com>
- <20181012160854.hmgpokxgsrqdzobx@pengutronix.de>
- <e4289ee5-3fc1-2848-1cae-77d29b5ed93c@ysoft.com>
- <20181107093355.e4n3irrnkybqsjvc@pengutronix.de>
- <eb4e7a42-bd5c-3ae2-ccb7-d1a73d5ae99c@ysoft.com>
+        Wed, 7 Nov 2018 19:33:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BajKpttSdO7/u9+SqfsSWgXtf+a5roYCBshOi+zDIoE=; b=teBd8OLTjDM6u7Dj5SPgIGPGH
+        sq1f81gjG0CGgek4t+6tUdmPzfRxai9NdmiFoZuztBE4GQGGmxwg4Cn2NHuCA20VgOdRqju6i6I0J
+        O4H9b2J2y4S/v6tcIBc0qk7OuMGhH+IaKoiKZIr6MGrZmMA4d4PfQmSe6RsDFOTArwCN5MDbIVwvf
+        sghwIQQTz2yBn9xTNlDI9aJqyAuWP5rHRdnDx3C8SuAetC07z4YpmDfM2V+cNCPjxBSAktfu2/CgO
+        MXVCuC2jbQBlInALAFyo75DZGDdx8pZKRdpPWi8acObalLW34DVkUWbtE7vdoOSPIuAz3LLagKzyV
+        pjkWW+k7w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKPLc-0004Zd-EV; Wed, 07 Nov 2018 15:02:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D4E0F20284F94; Wed,  7 Nov 2018 16:02:21 +0100 (CET)
+Date:   Wed, 7 Nov 2018 16:02:21 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, mingo@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        bristot@redhat.com, linux-rt-users@vger.kernel.org,
+        mtk.manpages@gmail.com,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH] kernel/time/posix-cpu-timers: Remove useless call to
+ check_dl_overrun
+Message-ID: <20181107150221.GJ9761@hirez.programming.kicks-ass.net>
+References: <20181107111032.32291-1-juri.lelli@redhat.com>
+ <20181107095627.13e9c187@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb4e7a42-bd5c-3ae2-ccb7-d1a73d5ae99c@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181107095627.13e9c187@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michal,
-
-On Wed, Nov 07, 2018 at 01:32:10PM +0000, Vokáč Michal wrote:
-> On 7.11.2018 10:33, Uwe Kleine-König wrote:
-> > Hello Michal,
+On Wed, Nov 07, 2018 at 09:56:27AM -0500, Steven Rostedt wrote:
+> On Wed,  7 Nov 2018 12:10:32 +0100
+> Juri Lelli <juri.lelli@redhat.com> wrote:
+> 
+> > check_dl_overrun is used to send a SIGXCPU to users that asked to be
+> > informed when SCHED_DEADLINE runtime overruns occur.
 > > 
-> > just to state it more explicitly, I think the following patch (not even
-> > compile tested) is much preferable over your approach:
+> > The function is called by check_thread_timers already, so the call in
+> > check_process_timers is redundant/wrong (even though harmless).
+> > 
+> > Remove it.
+> > 
+> > Fixes: 34be39305a77 ("sched/deadline: Implement "runtime overrun signal" support")
+> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Luca Abeni <luca.abeni@santannapisa.it>
+> > Cc: Claudio Scordino <claudio@evidence.eu.com>
+> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  kernel/time/posix-cpu-timers.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+> > index ce32cf741b25..8f0644af40be 100644
+> > --- a/kernel/time/posix-cpu-timers.c
+> > +++ b/kernel/time/posix-cpu-timers.c
+> > @@ -917,9 +917,6 @@ static void check_process_timers(struct task_struct *tsk,
+> >  	struct task_cputime cputime;
+> >  	unsigned long soft;
+> >  
+> > -	if (dl_task(tsk))
+> > -		check_dl_overrun(tsk);
+> > -
 > 
-> Interesting idea. I just wonder why nobody else did not come up with such
-> a simple solution before.
+> Hmm, I wonder if we should just move this check directly into
+> run_posix_cpu_timers() directly. Why is it hidden in this call?
 
-I think I mentioned it already in this thread, but it went unnoticed :-)
-
-> > diff --git a/drivers/pwm/pwm-imx.c b/drivers/pwm/pwm-imx.c
-> > index 1d5242c9cde0..af88644b5efb 100644
-> > --- a/drivers/pwm/pwm-imx.c
-> > +++ b/drivers/pwm/pwm-imx.c
-> > @@ -216,7 +216,14 @@ static int imx_pwm_apply_v2(struct pwm_chip *chip, struct pwm_device *pwm,
-> >   			cr |= MX3_PWMCR_POUTC;
-> >   
-> >   		writel(cr, imx->mmio_base + MX3_PWMCR);
-> > -	} else if (cstate.enabled) {
-> > +	} else if (cstate.enabled && state->polarity == PWM_POLARITY_NORMAL) {
-> > +		/*
-> > +		 * When disabled in hardware the output pin goes to 0
-> > +		 * independant of the polarity setting. The expectation of some
-> > +		 * people however is that after disabling the pin goes to the
-> > +		 * inactive level which isn't given for an inversed pwm, so
-> > +		 * only disable for normal polarity.
-> > +		 */
-> >   		writel(0, imx->mmio_base + MX3_PWMCR);
-> >   
-> >   		clk_disable_unprepare(imx->clk_per);
-> 
-> I tested your patch. It does not work as you expected.
-> 
-> In v4.20-rc1 the pwm-backlight driver has been converted to atomic API.
-> So the pwm_apply_v2 function is called only once to set new period/duty
-> and state. With your patch that means that "echo 0 > brightness" has no
-> visible effect. It leaves the PWM chip enabled with period/duty set to
-> however it was. But the core thinks it was reconfigured:
-
-Then the patch isn't correct yet. The idea is always keep the hardware
-running and only disable it if it's uninverted.
-> 
-> # cat /sys/class/backlight/backight/brightness
-> 0
-> 
-> # cat /sys/kernel/debug/pwm
-> platform/2080000.pwm, 1 PWM device
->   pwm-0   (backlight           ): requested period: 500000 ns duty: 0 ns polarity: inverse
-> 
-> > I think it solves most if not all problems you want to address with the
-> > pinctrl stuff.
-> 
-> Unfortunately not. I also tested your patch on v4.19. It works as you
-> probably intended - it is possible to disable backlight without the PWM
-> chip being disabled. But it does not solve the time frame between
-> imx_pwm_probe() and imx_pwm_apply_v2().
-
-In imx_pwm_probe it's not yet known what the polarity is supposed to be,
-right? So the right thing to do there is to not touch the configuration
-of the pwm. I think all states that are problematic then are also
-problematic with the gpio/pinmux approach. (I might be wrong here, so
-feel free to invest some brain cycles to prove me wrong. But I'd be
-surprised if there are problems that are relevant.)
- 
-> In probe you do not have any users yet. So you do not know the requested
-> output polarity. With "default" pinctrl the PWM output would be muxed to
-> the selected pin and since the PWM chip is most probably disabled
-> (unless you enabled it in bootloader) you would get low level on the pin.
-> That means your backlight is fully enabled until the first call to
-> imx_pwm_apply_v2(). On my system this is 2 seconds.
-
-With the gpio/pinmux approach you don't know the intended polarity
-either and maybe enable the display, too. For both the solution is to
-let the bootloader enable the pwm with the right output level.
-Am I missing something?
-
-> It might not be a big issue for backlight but for motor control it is
-> not the right thing to do.
-> 
-> The other thing is I would prefer to make the change optional. With your
-> approach you are changing the behavior for all current users of inverted
-> PWM. I do not think all imx6 users are aware of the problem so they might
-> not be OK with the sudden change in the behavior.
-
-Isn't my change an improvement for all users? What state do you have in
-mind that make things worse than they are now?
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+It is not; it is duplicated in this call. The one in
+check_thread_timeres() makes sense (it is a thread property).
