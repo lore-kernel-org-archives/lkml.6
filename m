@@ -2,248 +2,113 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEA9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B1EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F9E20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0437720862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 22:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cQOy8Mka"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F9E20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fbIL4G2K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0437720862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeKHHiX (ORCPT
+        id S1727760AbeKHHlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 02:38:23 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33820 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeKHHiX (ORCPT
+        Thu, 8 Nov 2018 02:41:08 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:35046 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbeKHHlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 02:38:23 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A752F561;
-        Wed,  7 Nov 2018 23:05:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1541628360;
-        bh=zfp4WSK5tU04IjMUV1PRH3q88EM03S29/LzCuu47vnw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cQOy8MkaL9k8oO6M3t74aRrluKXjqSs1uuO3817j5g74NL1WgzQsNlV61Nce8E/O/
-         ukBmvKLgVUvmNeSXdDQzFwUqyw389pZEFN1KYF2G81Td9Oz3J5nCh7t8I5OwsKFCdI
-         a2dSVkaSwnTxJPujWqvuPa/5vRiTVRRDqGtlZnpw=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Daniel Axtens <dja@axtens.net>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <linux-media@destevenson.freeserve.co.uk>,
-        Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v2] [media] uvcvideo: Refactor teardown of uvc on USB disconnect
-Date:   Thu, 08 Nov 2018 00:06:11 +0200
-Message-ID: <1686453.Z5aelINeFC@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20170423045349.10292-1-dja@axtens.net>
-References: <20170423045349.10292-1-dja@axtens.net>
+        Thu, 8 Nov 2018 02:41:07 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA7M483t060910;
+        Wed, 7 Nov 2018 22:08:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=o7MXF7SJcrGL2SsNB+CG3fWVQmgawRKvWhfaxdjq4DI=;
+ b=fbIL4G2Kh3SwPraFrPIzUwUo02qfEMRiT5fCOuE1OKiHChLHzolnsdwB0u/diX4FKQ4s
+ INhAU7NOUtsuu1j2wj2Y9ytYTfStYWMh+BWSoBj0qWdzP12cA2vkTt/6wKbmsLMM1/ET
+ 9YI0aTDSzYfMG4CiUEU0TY+YEFRUm5144eHKNtkjle3UGrtHLCIYXYEagjZeURoJVXV9
+ dSM14c620+7tqyMrRCNo/D9Y2aZy5+lAnvJzRDG+nD5wBZhVa/XrBZngxj91MG8w/NQ7
+ JF2G4/D7OpTnnftAXl/Ka92GAsrbMJ+ToNkAiUVt8QS8RzzTPnjyN0WjbVcThwjA3U1u nQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2nh4aqx4yh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Nov 2018 22:08:41 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA7M8eJL001241
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 7 Nov 2018 22:08:40 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA7M8eSP032015;
+        Wed, 7 Nov 2018 22:08:40 GMT
+Received: from [10.175.44.41] (/10.175.44.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 07 Nov 2018 14:08:39 -0800
+Subject: Re: [PATCH] cpuset: remove set but not used variable 'cs'
+To:     Yi Wang <wang.yi59@zte.com.cn>, lizefan@huawei.com
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+References: <1541575111-36000-1-git-send-email-wang.yi59@zte.com.cn>
+From:   Tom Hromatka <tom.hromatka@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <7ac28cbe-56ec-3564-15fd-94acb4687150@oracle.com>
+Date:   Wed, 7 Nov 2018 15:08:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1541575111-36000-1-git-send-email-wang.yi59@zte.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9070 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811070195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On 11/07/2018 12:18 AM, Yi Wang wrote:
+> This fixes the following warning:
+> kernel/cgroup/cpuset.c: In function ‘cpuset_cancel_attach’:
+> kernel/cgroup/cpuset.c:1501:17: warning: variable ‘cs’ set but not used [-Wunused-but-set-variable]
+>    struct cpuset *cs;
+>                   ^
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
 
-Thank you for the patch.
 
-On Sunday, 23 April 2017 07:53:49 EET Daniel Axtens wrote:
-> Currently, disconnecting a USB webcam while it is in use prints out a
-> number of warnings, such as:
-> 
-> WARNING: CPU: 2 PID: 3118 at
-> /build/linux-ezBi1T/linux-4.8.0/fs/sysfs/group.c:237
-> sysfs_remove_group+0x8b/0x90 sysfs group ffffffffa7cd0780 not found for
-> kobject 'event13'
-> 
-> This has been noticed before. [0]
-> 
-> This is because of the order in which things are torn down.
-> 
-> If there are no streams active during a USB disconnect:
-> 
->  - uvc_disconnect() is invoked via device_del() through the bus
->    notifier mechanism.
-> 
->  - this calls uvc_unregister_video().
-> 
->  - uvc_unregister_video() unregisters the video device for each
->    stream,
-> 
->  - because there are no streams open, it calls uvc_delete()
-> 
->  - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
->    input device.
-> 
->  - uvc_delete() calls media_device_unregister(), which cleans up the
->    media device
-> 
->  - uvc_delete(), uvc_unregister_video() and uvc_disconnect() all
->    return, and we end up back in device_del().
-> 
->  - device_del() then cleans up the sysfs folder for the camera with
->    dpm_sysfs_remove(). Because uvc_status_cleanup() and
->    media_device_unregister() have already been called, this all works
->    nicely.
-> 
-> If, on the other hand, there *are* streams active during a USB disconnect:
-> 
->  - uvc_disconnect() is invoked
-> 
->  - this calls uvc_unregister_video()
-> 
->  - uvc_unregister_video() unregisters the video device for each
->    stream,
-> 
->  - uvc_unregister_video() and uvc_disconnect() return, and we end up
->    back in device_del().
-> 
->  - device_del() then cleans up the sysfs folder for the camera with
->    dpm_sysfs_remove(). Because the status input device and the media
->    device are children of the USB device, this also deletes their
->    sysfs folders.
-> 
->  - Sometime later, the final stream is closed, invoking uvc_release().
-> 
->  - uvc_release() calls uvc_delete()
-> 
->  - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
->    input device. Because the sysfs directory has already been removed,
->    this causes a WARNing.
-> 
->  - uvc_delete() calls media_device_unregister(), which cleans up the
->    media device. Because the sysfs directory has already been removed,
->    this causes another WARNing.
-> 
-> To fix this, we need to make sure the devices are always unregistered
-> before the end of uvc_disconnect(). To this, move the unregistration
-> into the disconnect path:
-> 
->  - split uvc_status_cleanup() into two parts, one on disconnect that
->    unregisters and one on delete that frees.
-> 
->  - move v4l2_device_unregister() and media_device_unregister() into
->    the disconnect path.
-> 
-> [0]: https://lkml.org/lkml/2016/12/8/657
-> 
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Dave Stevenson <linux-media@destevenson.freeserve.co.uk>
-> Cc: Greg KH <greg@kroah.com>
-> Signed-off-by: Daniel Axtens <dja@axtens.net>
-> 
-> ---
-> 
-> v2: Move v4l2_device_unregister() as well as media_device_unregister(),
->     thanks Laurent.
-> 
-> Tested with cheese and yavta.
-> 
-> Laurent, I know you were concerned about race conditions so I plugged
-> and unplugged the camera over a dozen times, with lots of debugging
-> turned on.
-> 
-> In particular:
->  - KASan was enabled and didn't trigger
->  - If I unplugged while yavta was running, and replugged *while yatva
->    was still running*, the video camera came up as video2, not video1.
->    This indicates that yatva was successfully holding a reference to
->    video1 - as it should.
->  - No other debugging triggered any warning.
+Reviewed-by: Tom Hromatka <tom.hromatka@oracle.com>
 
-Thank you for running those tests. I'm still a bit concerned but I'll live 
-with it. The issues are in the MC and V4L2 core anyway, there isn't much we 
-could do here to fix them.
 
 > ---
->  drivers/media/usb/uvc/uvc_driver.c | 12 ++++++++----
->  drivers/media/usb/uvc/uvc_status.c |  8 ++++++--
->  drivers/media/usb/uvc/uvcvideo.h   |  1 +
->  3 files changed, 15 insertions(+), 6 deletions(-)
+>   kernel/cgroup/cpuset.c | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c
-> b/drivers/media/usb/uvc/uvc_driver.c index 46d6be0bb316..0d0541054ce2
-> 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1812,11 +1812,7 @@ static void uvc_delete(struct uvc_device *dev)
->  	usb_put_intf(dev->intf);
->  	usb_put_dev(dev->udev);
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 266f10c..784f948 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1498,10 +1498,8 @@ static int cpuset_can_attach(struct cgroup_taskset *tset)
+>   static void cpuset_cancel_attach(struct cgroup_taskset *tset)
+>   {
+>   	struct cgroup_subsys_state *css;
+> -	struct cpuset *cs;
+>   
+>   	cgroup_taskset_first(tset, &css);
+> -	cs = css_cs(css);
+>   
+>   	mutex_lock(&cpuset_mutex);
+>   	css_cs(css)->attach_in_progress--;
 > 
-> -	if (dev->vdev.dev)
-> -		v4l2_device_unregister(&dev->vdev);
->  #ifdef CONFIG_MEDIA_CONTROLLER
-> -	if (media_devnode_is_registered(dev->mdev.devnode))
-> -		media_device_unregister(&dev->mdev);
->  	media_device_cleanup(&dev->mdev);
->  #endif
-> 
-> @@ -1884,6 +1880,14 @@ static void uvc_unregister_video(struct uvc_device
-> *dev) uvc_debugfs_cleanup_stream(stream);
->  	}
-> 
-> +	uvc_status_unregister(dev);
-> +	if (dev->vdev.dev)
-> +		v4l2_device_unregister(&dev->vdev);
-> +#ifdef CONFIG_MEDIA_CONTROLLER
-> +	if (media_devnode_is_registered(dev->mdev.devnode))
-> +		media_device_unregister(&dev->mdev);
-> +#endif
-> +
->  	/* Decrement the stream count and call uvc_delete explicitly if there
->  	 * are no stream left.
->  	 */
-> diff --git a/drivers/media/usb/uvc/uvc_status.c
-> b/drivers/media/usb/uvc/uvc_status.c index f552ab997956..95709b23d3b4
-> 100644
-> --- a/drivers/media/usb/uvc/uvc_status.c
-> +++ b/drivers/media/usb/uvc/uvc_status.c
-> @@ -198,12 +198,16 @@ int uvc_status_init(struct uvc_device *dev)
->  	return 0;
->  }
-> 
-> -void uvc_status_cleanup(struct uvc_device *dev)
-> +void uvc_status_unregister(struct uvc_device *dev)
->  {
->  	usb_kill_urb(dev->int_urb);
-> +	uvc_input_cleanup(dev);
-
-I think it would make sense to rename uvc_input_cleanup() to 
-uvc_input_unregister(). I'll make the change locally so there's no need to 
-resubmit this patch.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> +}
-> +
-> +void uvc_status_cleanup(struct uvc_device *dev)
-> +{
->  	usb_free_urb(dev->int_urb);
->  	kfree(dev->status);
-> -	uvc_input_cleanup(dev);
->  }
-> 
->  int uvc_status_start(struct uvc_device *dev, gfp_t flags)
-
-[snip]
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
 
