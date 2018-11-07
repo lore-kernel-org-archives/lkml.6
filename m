@@ -2,141 +2,110 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0F6C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FDDC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2702A20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:30:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2702A20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 611BB20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 611BB20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeKGVAS (ORCPT
+        id S1726757AbeKGVIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:00:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41190 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726248AbeKGVAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:00:18 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 44548ACB4;
-        Wed,  7 Nov 2018 11:30:19 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH] x86/xen: fix pv boot
-Date:   Wed,  7 Nov 2018 12:30:17 +0100
-Message-Id: <20181107113017.30090-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Wed, 7 Nov 2018 16:08:54 -0500
+Received: from foss.arm.com ([217.140.101.70]:49404 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726241AbeKGVIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 16:08:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B7F780D;
+        Wed,  7 Nov 2018 03:38:55 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CA533F5CF;
+        Wed,  7 Nov 2018 03:38:52 -0800 (PST)
+Date:   Wed, 7 Nov 2018 11:38:49 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v5 09/15] sched/cpufreq: uclamp: add utilization clamping
+ for FAIR tasks
+Message-ID: <20181107113849.GC14309@e110439-lin>
+References: <20181029183311.29175-1-patrick.bellasi@arm.com>
+ <20181029183311.29175-11-patrick.bellasi@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181029183311.29175-11-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on
-kernel addresses") introduced a regression for booting Xen PV guests.
+On 29-Oct 18:33, Patrick Bellasi wrote:
 
-Xen PV guests are using __put_user() and __get_user() for accessing the
-p2m map (physical to machine frame number map) as accesses might fail
-in case of not populated areas of the map.
+[...]
 
-With above commit using __put_user() and __get_user() for accessing
-kernel pages is no longer valid. So replace the Xen hack by adding
-appropriate p2m access functions using the default fixup handler.
+> +#ifdef CONFIG_UCLAMP_TASK
+> +/**
+> + * clamp_util: clamp a utilization value for a specified CPU
+> + * @rq: the CPU's RQ to get the clamp values from
+> + * @util: the utilization signal to clamp
+> + *
+> + * Each CPU tracks util_{min,max} clamp values depending on the set of its
+> + * currently RUNNABLE tasks. Given a utilization signal, i.e a signal in
+> + * the [0..SCHED_CAPACITY_SCALE] range, this function returns a clamped
+> + * utilization signal considering the current clamp values for the
+> + * specified CPU.
+> + *
+> + * Return: a clamped utilization signal for a given CPU.
+> + */
+> +static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
+> +{
+> +	unsigned int min_util = rq->uclamp.value[UCLAMP_MIN];
+> +	unsigned int max_util = rq->uclamp.value[UCLAMP_MAX];
 
-Fixes: 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/xen/page.h | 39 ++++++++++++++++++++++++++++++++++++---
- arch/x86/xen/p2m.c              |  3 +--
- 2 files changed, 37 insertions(+), 5 deletions(-)
+Just notice here we can have an issue.
 
-diff --git a/arch/x86/include/asm/xen/page.h b/arch/x86/include/asm/xen/page.h
-index 123e669bf363..a39015cb2f3f 100644
---- a/arch/x86/include/asm/xen/page.h
-+++ b/arch/x86/include/asm/xen/page.h
-@@ -9,7 +9,7 @@
- #include <linux/mm.h>
- #include <linux/device.h>
- 
--#include <linux/uaccess.h>
-+#include <asm/extable.h>
- #include <asm/page.h>
- #include <asm/pgtable.h>
- 
-@@ -91,15 +91,48 @@ clear_foreign_p2m_mapping(struct gnttab_unmap_grant_ref *unmap_ops,
-  * Helper functions to write or read unsigned long values to/from
-  * memory, when the access may fault.
-  */
-+#ifdef CONFIG_X86_32
-+#define __i "l"
-+#define __r "k"
-+#else
-+#define __i "q"
-+#define __r ""
-+#endif
- static inline int xen_safe_write_ulong(unsigned long *addr, unsigned long val)
- {
--	return __put_user(val, (unsigned long __user *)addr);
-+	int ret = 0;
-+
-+	asm volatile("1: mov"__i" %"__r"1,%2\n"
-+		     "2:\n"
-+		     ".section .fixup,\"ax\"\n"
-+		     "3: mov %3,%0\n"
-+		     "   jmp 2b\n"
-+		     ".previous\n"
-+		     _ASM_EXTABLE(1b, 3b)
-+		     : "=r"(ret)
-+		     : "r" (val), "m" (*addr), "i" (-1), "0" (ret));
-+	return ret;
- }
- 
- static inline int xen_safe_read_ulong(unsigned long *addr, unsigned long *val)
- {
--	return __get_user(*val, (unsigned long __user *)addr);
-+	int ret = 0;
-+	unsigned long rval;
-+
-+	asm volatile("1: mov"__i" %2,%"__r"1\n"
-+		     "2:\n"
-+		     ".section .fixup,\"ax\"\n"
-+		     "3: mov %3,%0\n"
-+		     "   jmp 2b\n"
-+		     ".previous\n"
-+		     _ASM_EXTABLE(1b, 3b)
-+		     : "=r" (ret), "=r" (rval)
-+		     : "m" (*addr), "i" (-1), "0" (ret));
-+	*val = rval;
-+	return ret;
- }
-+#undef __i
-+#undef __r
- 
- #ifdef CONFIG_XEN_PV
- /*
-diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
-index b06731705529..055e37e43541 100644
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@ -656,8 +656,7 @@ bool __set_phys_to_machine(unsigned long pfn, unsigned long mfn)
- 
- 	/*
- 	 * The interface requires atomic updates on p2m elements.
--	 * xen_safe_write_ulong() is using __put_user which does an atomic
--	 * store via asm().
-+	 * xen_safe_write_ulong() is using an atomic store via asm().
- 	 */
- 	if (likely(!xen_safe_write_ulong(xen_p2m_addr + pfn, mfn)))
- 		return true;
+For each scheduling entity, we always ensure that:
+
+    util_min <= util_max
+
+However, since CPU's {min,max}_util clamps are always MAX aggregated
+considering the corresponding clamps of RUNNABLE tasks with
+_different_ clamps, we can end up with CPU clamps where:
+
+    util_min > util_max
+
+Thus, we need to add the following sanity check here:
+
++       if (unlikely(min_util > max_util))
++               return min_util;
+
+> +
+> +	return clamp(util, min_util, max_util);
+> +}
+
 -- 
-2.16.4
+#include <best/regards.h>
 
+Patrick Bellasi
