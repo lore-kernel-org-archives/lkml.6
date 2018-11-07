@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2A5C46465
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C3CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D03E2086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D03E2086C
+	by mail.kernel.org (Postfix) with ESMTP id 164EE2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 164EE2086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeKHFVD (ORCPT
+        id S1727166AbeKHFVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:03 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41831 "EHLO
+        Thu, 8 Nov 2018 00:21:04 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41841 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726435AbeKHFVC (ORCPT
+        with ESMTP id S1725953AbeKHFVD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:02 -0500
+        Thu, 8 Nov 2018 00:21:03 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTp6-00070Q-3X; Wed, 07 Nov 2018 20:49:08 +0100
+        id 1gKTp7-00070Q-NO; Wed, 07 Nov 2018 20:49:09 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 03/23] x86/fpu: Remove fpu__restore()
-Date:   Wed,  7 Nov 2018 20:48:38 +0100
-Message-Id: <20181107194858.9380-4-bigeasy@linutronix.de>
+Subject: [PATCH 05/23] x86/fpu: Remove preempt_disable() in fpu__clear()
+Date:   Wed,  7 Nov 2018 20:48:40 +0100
+Message-Id: <20181107194858.9380-6-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
 References: <20181107194858.9380-1-bigeasy@linutronix.de>
@@ -49,108 +49,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are no users of fpu__restore() so it is time to remove it.
-The comment regarding fpu__restore() and TS bit is stale since commit
-b3b0870ef3ffe ("i387: do not preload FPU state at task switch time") and
-has no meaning since.
+The preempt_disable() section was introduced in commit a10b6a16cdad8
+("x86/fpu: Make the fpu state change in fpu__clear() scheduler-atomic")
+and it was said to be temporary.
+
+fpu__initialize() initializes the FPU struct to its "init" value and
+then sets ->initialized to 1. The last part is the important one.
+The content of the `state' does not matter because it gets set via
+copy_init_fpstate_to_fpregs().
+A preemption here has little meaning because the register will always be
+set to the same content after copy_init_fpstate_to_fpregs(). A softirq
+with a kernel_fpu_begin() could also force to save FPU's register after
+fpu__initialize() without changing the outcome here.
+
+Remove the preempt_disable() section in fpu__clear(), preemption here
+does not hurt.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- Documentation/preempt-locking.txt   |  1 -
- arch/x86/include/asm/fpu/internal.h |  1 -
- arch/x86/kernel/fpu/core.c          | 24 ------------------------
- arch/x86/kernel/process_32.c        |  4 +---
- arch/x86/kernel/process_64.c        |  4 +---
- 5 files changed, 2 insertions(+), 32 deletions(-)
+ arch/x86/kernel/fpu/core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/preempt-locking.txt b/Documentation/preempt-locking.txt
-index 509f5a422d571..dce336134e54a 100644
---- a/Documentation/preempt-locking.txt
-+++ b/Documentation/preempt-locking.txt
-@@ -52,7 +52,6 @@ preemption must be disabled around such regions.
- 
- Note, some FPU functions are already explicitly preempt safe.  For example,
- kernel_fpu_begin and kernel_fpu_end will disable and enable preemption.
--However, fpu__restore() must be called with preemption disabled.
- 
- 
- RULE #3: Lock acquire and release must be performed by same task
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 5f7290e6e954e..32ea458f13b5c 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -28,7 +28,6 @@ extern void fpu__initialize(struct fpu *fpu);
- extern void fpu__prepare_read(struct fpu *fpu);
- extern void fpu__prepare_write(struct fpu *fpu);
- extern void fpu__save(struct fpu *fpu);
--extern void fpu__restore(struct fpu *fpu);
- extern int  fpu__restore_sig(void __user *buf, int ia32_frame);
- extern void fpu__drop(struct fpu *fpu);
- extern int  fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu);
 diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 2ea85b32421a0..9387e0fec7d17 100644
+index 9387e0fec7d17..b7d9b19ab8116 100644
 --- a/arch/x86/kernel/fpu/core.c
 +++ b/arch/x86/kernel/fpu/core.c
-@@ -305,30 +305,6 @@ void fpu__prepare_write(struct fpu *fpu)
+@@ -368,11 +368,9 @@ void fpu__clear(struct fpu *fpu)
+ 	 * Make sure fpstate is cleared and initialized.
+ 	 */
+ 	if (static_cpu_has(X86_FEATURE_FPU)) {
+-		preempt_disable();
+ 		fpu__initialize(fpu);
+ 		user_fpu_begin();
+ 		copy_init_fpstate_to_fpregs();
+-		preempt_enable();
  	}
  }
- 
--/*
-- * 'fpu__restore()' is called to copy FPU registers from
-- * the FPU fpstate to the live hw registers and to activate
-- * access to the hardware registers, so that FPU instructions
-- * can be used afterwards.
-- *
-- * Must be called with kernel preemption disabled (for example
-- * with local interrupts disabled, as it is in the case of
-- * do_device_not_available()).
-- */
--void fpu__restore(struct fpu *fpu)
--{
--	fpu__initialize(fpu);
--
--	/* Avoid __kernel_fpu_begin() right after fpregs_activate() */
--	kernel_fpu_disable();
--	trace_x86_fpu_before_restore(fpu);
--	fpregs_activate(fpu);
--	copy_kernel_to_fpregs(&fpu->state);
--	trace_x86_fpu_after_restore(fpu);
--	kernel_fpu_enable();
--}
--EXPORT_SYMBOL_GPL(fpu__restore);
--
- /*
-  * Drops current FPU state: deactivates the fpregs and
-  * the fpstate. NOTE: it still leaves previous contents
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 5046a3c9dec2f..d9510452b69a6 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -274,9 +274,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	/*
- 	 * Leave lazy mode, flushing any hypercalls made here.
- 	 * This must be done before restoring TLS segments so
--	 * the GDT and LDT are properly updated, and must be
--	 * done before fpu__restore(), so the TS bit is up
--	 * to date.
-+	 * the GDT and LDT are properly updated.
- 	 */
- 	arch_end_context_switch(next_p);
- 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 0e0b4288a4b2b..cf2c157714594 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -576,9 +576,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	/*
- 	 * Leave lazy mode, flushing any hypercalls made here.  This
- 	 * must be done after loading TLS entries in the GDT but before
--	 * loading segments that might reference them, and and it must
--	 * be done before fpu__restore(), so the TS bit is up to
--	 * date.
-+	 * loading segments that might reference them.
- 	 */
- 	arch_end_context_switch(next_p);
  
 -- 
 2.19.1
