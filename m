@@ -2,121 +2,102 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D719C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FC6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 319FB2086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:30:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 319FB2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5232D20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:31:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5232D20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731315AbeKHCBg (ORCPT
+        id S1728095AbeKHCCO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:01:36 -0500
-Received: from mga14.intel.com ([192.55.52.115]:51994 "EHLO mga14.intel.com"
+        Wed, 7 Nov 2018 21:02:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727312AbeKHCBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:01:35 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 08:30:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
-   d="scan'208";a="84702378"
-Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.132])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Nov 2018 08:30:22 -0800
-Date:   Wed, 7 Nov 2018 18:30:19 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-Message-ID: <20181107163019.GA11509@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
- <20181106054911.GA15575@linux.intel.com>
- <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+        id S1727312AbeKHCCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:02:14 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBA5D2086C;
+        Wed,  7 Nov 2018 16:31:07 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 11:31:06 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, mingo@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        bristot@redhat.com, linux-rt-users@vger.kernel.org,
+        mtk.manpages@gmail.com,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH] kernel/time/posix-cpu-timers: Remove useless call to
+ check_dl_overrun
+Message-ID: <20181107113106.475914e1@gandalf.local.home>
+In-Reply-To: <20181107150221.GJ9761@hirez.programming.kicks-ass.net>
+References: <20181107111032.32291-1-juri.lelli@redhat.com>
+        <20181107095627.13e9c187@gandalf.local.home>
+        <20181107150221.GJ9761@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 08:45:37AM -0800, Dave Hansen wrote:
-> On 11/5/18 9:49 PM, Jarkko Sakkinen wrote:
-> > On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
-> >> The ABI seems entirely undocumented and rather lightly designed, which
-> >> seems like something we should fix before this is merged.
+On Wed, 7 Nov 2018 16:02:21 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Wed, Nov 07, 2018 at 09:56:27AM -0500, Steven Rostedt wrote:
+> > On Wed,  7 Nov 2018 12:10:32 +0100
+> > Juri Lelli <juri.lelli@redhat.com> wrote:
+> >   
+> > > check_dl_overrun is used to send a SIGXCPU to users that asked to be
+> > > informed when SCHED_DEADLINE runtime overruns occur.
+> > > 
+> > > The function is called by check_thread_timers already, so the call in
+> > > check_process_timers is redundant/wrong (even though harmless).
+> > > 
+> > > Remove it.
+> > > 
+> > > Fixes: 34be39305a77 ("sched/deadline: Implement "runtime overrun signal" support")
+> > > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Luca Abeni <luca.abeni@santannapisa.it>
+> > > Cc: Claudio Scordino <claudio@evidence.eu.com>
+> > > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > ---
+> > >  kernel/time/posix-cpu-timers.c | 3 ---
+> > >  1 file changed, 3 deletions(-)
+> > > 
+> > > diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+> > > index ce32cf741b25..8f0644af40be 100644
+> > > --- a/kernel/time/posix-cpu-timers.c
+> > > +++ b/kernel/time/posix-cpu-timers.c
+> > > @@ -917,9 +917,6 @@ static void check_process_timers(struct task_struct *tsk,
+> > >  	struct task_cputime cputime;
+> > >  	unsigned long soft;
+> > >  
+> > > -	if (dl_task(tsk))
+> > > -		check_dl_overrun(tsk);
+> > > -  
 > > 
-> > ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
-> > documentation is included to intel_sgx.rst. I'm not saying that there is
-> > no space refine it but it is neither undocumented.
+> > Hmm, I wonder if we should just move this check directly into
+> > run_posix_cpu_timers() directly. Why is it hidden in this call?  
 > 
-> I specifically mean the instruction flow around asynchronous exits or
-> explicit enclave exit calls via EEXIT.  Signals are part of the ABI but
-> go unmentioned in the documentation.
+> It is not; it is duplicated in this call. The one in
+> check_thread_timeres() makes sense (it is a thread property).
 
-Ok, thanks for clarification. We will document it.
-> 
-> It's also worth noting that EENTER *can* act (from the kernel's
-> perspective) like an instruction that both jumps and sets a bunch of
-> registers (including %rsp).  It's certainly abnormal in that regard.
+OK, in that case.
 
-Agreed.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-> In fact, in the docs:
-> 
-> > +Enclave can only execute code inside the ELRANGE. Instructions that may cause
-> > +VMEXIT, IO instructions and instructions that require a privilege change are
-> > +prohibited inside the enclave. Interrupts and exceptions always cause enclave
-> > +to exit and jump to an address outside the enclave given when the enclave is
-> > +entered by using the leaf instruction ENCLS(EENTER).
-> 
-> it's probably a really good idea to explain that the address outside of
-> the enclave is enclave-provided, and is not, for instance, just the next
-> instruction after EENTER.
-> 
-> >> Also, for a feature as massive and complicated as this one, it seems
-> >> irresponsible to not have a selftest.  Is that not feasible for some reason?
-> > 
-> > I do have the in-kernel launch enclave stuff backed up here:
-> > 
-> > https://github.com/jsakkine-intel/sgx-le-host
-> > https://github.com/jsakkine-intel/sgx-le
-> > 
-> > This is about as simple as it gets without any type of run-time.
-> 
-> Does this code run when I type "make kselftest"?  If not, I think we
-> should rectify that.
-
-No, it doesn't. It is just my backup for the non-SDK user space code
-that I've made that I will use to fork my user space SGX projects in
-the future.
-
-I can work-out a selftest (and provide a new patch in the series) but
-I'm still wondering what the enclave should do. I would suggest that
-we start with an enclave that does just EEXIT and nothing else.
-
-/Jarkko
+-- Steve
