@@ -2,111 +2,101 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A7FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C57C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AAE42081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:37:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675DF20827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kOvZzuVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AAE42081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz38I4dX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675DF20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730742AbeKHAH7 (ORCPT
+        id S1730898AbeKHAId (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:07:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36720 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbeKHAH7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:07:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/aj/EsArb9CEadFCqv2LDpL/Pm+9u6CBNIGhuzGKnoc=; b=kOvZzuVfWuZjw2L8RWjDUfRC/
-        1jj8Rdc5spnWoSghouMRnwmGNRY1rYNbRrRyatSioSzwff+vOH6mvYe7bK2JTsE6CGCHe4DngcHgM
-        cXxTKkas2POYsuq5mSVDHfZ/4vZcrFyo48U40rAL+7fMB0+USS1baelfuphThB5cZ9+RngRkPz0xJ
-        IMPCe8ETobiCX/uviP6BJBmDbCuMmsxbQtDEjcLIj4EYNGbyqPnYx7OnlrV1wrrS1wH0X4sCpEmvu
-        smY+wpj+0N5+azPfpq6Dmcz9IggunP170wnmOU5b1eLlCTifowkAAbkV4aCaCRX0kpjjsQPEoAqxb
-        toDhq58mA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKOxH-0003kn-NO; Wed, 07 Nov 2018 14:37:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 498312029F883; Wed,  7 Nov 2018 15:37:13 +0100 (CET)
-Date:   Wed, 7 Nov 2018 15:37:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v5 03/15] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20181107143713.GS9781@hirez.programming.kicks-ass.net>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-4-patrick.bellasi@arm.com>
+        Wed, 7 Nov 2018 19:08:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbeKHAIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 19:08:32 -0500
+Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27C902081D;
+        Wed,  7 Nov 2018 14:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541601475;
+        bh=Uhhz85+fb48saS+inscMZIOvBce3D0inWWQwMnEk9Uw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Oz38I4dXDsZp9Rd+qW0pxoSTyPG21fVOoti71yRJpne68Y2JV6eBxPsl2aAbB5tgE
+         Xkj8LUbvYV9H3fDnQxNvh1STUrLxdvnXzSTXXBu3oBhOFKCwRyoW8lgsu9i+2cKiVy
+         GQihRh1Px5gQrp9hkc38YLOhYHom2FaskMyS7CgU=
+Date:   Wed, 7 Nov 2018 15:37:51 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Ke Wu <mikewu@google.com>
+Cc:     dhowells@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] modsign: use all trusted keys to verify module
+ signature
+Message-ID: <20181107143750.GA26862@linux-8ccs>
+References: <20181022222614.41016-1-mikewu@google.com>
+ <20181106232130.33932-1-mikewu@google.com>
+ <CANRnR9QkiiNNxSBzLUeFHw--xPGVEd5E0RfqNTgj4ji8LmVz7g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20181029183311.29175-4-patrick.bellasi@arm.com>
+In-Reply-To: <CANRnR9QkiiNNxSBzLUeFHw--xPGVEd5E0RfqNTgj4ji8LmVz7g@mail.gmail.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 06:32:57PM +0000, Patrick Bellasi wrote:
-> +static int __setscheduler_uclamp(struct task_struct *p,
-> +				 const struct sched_attr *attr)
-> +{
-> +	unsigned int lower_bound = p->uclamp[UCLAMP_MIN].value;
-> +	unsigned int upper_bound = p->uclamp[UCLAMP_MAX].value;
-> +	int result = 0;
-> +
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
-> +		lower_bound = attr->sched_util_min;
-> +
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
-> +		upper_bound = attr->sched_util_max;
-> +
-> +	if (lower_bound > upper_bound ||
-> +	    upper_bound > SCHED_CAPACITY_SCALE)
->  		return -EINVAL;
->  
-> +	mutex_lock(&uclamp_mutex);
->  
-> +	/* Update each required clamp group */
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
-> +		uclamp_group_get(&p->uclamp[UCLAMP_MIN],
-> +				 UCLAMP_MIN, lower_bound);
-> +	}
-> +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
-> +		uclamp_group_get(&p->uclamp[UCLAMP_MAX],
-> +				 UCLAMP_MAX, upper_bound);
-> +	}
-> +
-> +	mutex_unlock(&uclamp_mutex);
-> +
-> +	return result;
-> +}
++++ Ke Wu [06/11/18 15:23 -0800]:
+>Thanks for the comment! I switched to use
+>VERIFY_USE_SECONDARY_KEYRING, please take a look.
 
-I'm missing where we error due to lack of groups.
+Patch has been queued on modules-next. Thanks!
+
+Jessica
+
+>On Tue, Nov 6, 2018 at 3:21 PM Ke Wu <mikewu@google.com> wrote:
+>>
+>> Make mod_verify_sig to use all trusted keys. This allows keys in
+>> secondary_trusted_keys to be used to verify PKCS#7 signature on a
+>> kernel module.
+>>
+>> Signed-off-by: Ke Wu <mikewu@google.com>
+>> ---
+>> Changelog since v1:
+>> - Use VERIFY_USE_SECONDARY_KEYRING rather than (void *)1UL
+>>
+>>  kernel/module_signing.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+>> index f2075ce8e4b3..6b9a926fd86b 100644
+>> --- a/kernel/module_signing.c
+>> +++ b/kernel/module_signing.c
+>> @@ -83,6 +83,7 @@ int mod_verify_sig(const void *mod, struct load_info *info)
+>>         }
+>>
+>>         return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+>> -                                     NULL, VERIFYING_MODULE_SIGNATURE,
+>> +                                     VERIFY_USE_SECONDARY_KEYRING,
+>> +                                     VERIFYING_MODULE_SIGNATURE,
+>>                                       NULL, NULL);
+>>  }
+>> --
+>> 2.19.1.930.g4563a0d9d0-goog
+>>
+>
+>
+>-- 
+>Ke Wu | Software Engineer | mikewu@google.com | Google Inc.
