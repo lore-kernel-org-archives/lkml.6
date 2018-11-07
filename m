@@ -2,62 +2,44 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F55C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0473C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 688E92081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 688E92081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C2C462081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 10:19:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C462081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730817AbeKGTso (ORCPT
+        id S1730901AbeKGTsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:48:44 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37397 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbeKGTs3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:48:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p2-v6so15140957wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 02:18:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k4D3ilvRNbEdywbamB4FAtEIm3b4AWw0D1l/xvNW28A=;
-        b=m8f0wYO1sTPQ3QWXKH46B1RrLVr5WtN0W3++SV4taHkLyubvJtZdRCU1WDbXMZ/a8w
-         kvOPZ3i4khAi4Z5xEB9Ul6Ac8aV8BUs6owEnC7qG0fOrqrlJU4qo27B+mavu9Kub8df+
-         95lgpc2qr3JO2x6CFw5kmYtPee9srEB7lG5njDqka8kUDTSyBwBq1UPb8mPl+JWEu015
-         yrwVz3xeWT4anpwwxJ17ruZR+ftbQ5AFMd7LOBoOmZCC73xXD4110A4G4lqEwlqpYDSe
-         unbaNmW5xcytfeVKOeTM5YfIyoFsM2PFI/gH68o8OptHaRMmEJwPWLTe8buYY11+RZCl
-         SzZQ==
-X-Gm-Message-State: AGRZ1gIOEwAoUSQCvWPlpwxqXji9WP0fs6AIp/LyzFDyJYFW5UIDlkBl
-        cGJU2hYmqEtNBnMxz0sUvuU=
-X-Google-Smtp-Source: AJdET5e39Bf8HqnTYRY869Rb3DDpMinUmxIe1N5NVJO5e00HwQZeHZ45MgeP6ywWcDyD1cpln9a53g==
-X-Received: by 2002:a1c:4b12:: with SMTP id y18-v6mr1436028wma.122.1541585926771;
-        Wed, 07 Nov 2018 02:18:46 -0800 (PST)
-Received: from tiehlicka.suse.cz (ip-37-188-140-85.eurotel.cz. [37.188.140.85])
-        by smtp.gmail.com with ESMTPSA id w18-v6sm217527wrn.66.2018.11.07.02.18.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 02:18:46 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     <linux-mm@kvack.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Baoquan He <bhe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH 3/5] mm, memory_hotplug: drop pointless block alignment checks from __offline_pages
-Date:   Wed,  7 Nov 2018 11:18:28 +0100
-Message-Id: <20181107101830.17405-4-mhocko@kernel.org>
+        Wed, 7 Nov 2018 14:48:50 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:45500 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730832AbeKGTst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 14:48:49 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id A976C5FD95; Wed,  7 Nov 2018 18:13:16 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
+        Loic Poulain <loic.poulain@gmail.com>,
+        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 10/15] Bluetooth: hci_bcm: Wait for device to come out of reset after power on
+Date:   Wed,  7 Nov 2018 18:13:03 +0800
+Message-Id: <20181107101308.7626-11-wens@csie.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181107101830.17405-1-mhocko@kernel.org>
-References: <20181107101830.17405-1-mhocko@kernel.org>
+In-Reply-To: <20181107101308.7626-1-wens@csie.org>
+References: <20181107101308.7626-1-wens@csie.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,33 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+The datasheets for BCM20702 and BCM43438 both have power up time
+sequence graphs, however they are slightly different. Both chips
+also have an internal power-on-reset, which holds the chip in reset
+for a short time after the regulators are enabled.
 
-This function is never called from a context which would provide
-misaligned pfn range so drop the pointless check.
+For the BCM20702, the time period from when the regulators are enabled,
+until the chip settles and comes out of sleep state, is 6564 ~ 8171 us.
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+For the BCM43438, the graph only shows the time period from when the
+regulators are enabled until the chip responds by driving the host's
+CTS line low, assuming the host has already driven its RTS line low.
+This is shown to be 6.5 sleep cycles, with the sleep clock at 32.768
+kHz. This is around 2 ms.
+
+Wait a full 10 ms after the regulators are enabled to account for signal
+rising times.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- mm/memory_hotplug.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/bluetooth/hci_bcm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 2b2b3ccbbfb5..a92b1b8f6218 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1554,12 +1554,6 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	struct zone *zone;
- 	struct memory_notify arg;
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 060001f11a98..bf5dee9b04d8 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -256,6 +256,9 @@ static int bcm_gpio_set_power(struct bcm_device *dev, bool powered)
+ 		regulator_bulk_disable(BCM_NUM_SUPPLIES, dev->supplies);
+ 	}
  
--	/* at least, alignment against pageblock is necessary */
--	if (!IS_ALIGNED(start_pfn, pageblock_nr_pages))
--		return -EINVAL;
--	if (!IS_ALIGNED(end_pfn, pageblock_nr_pages))
--		return -EINVAL;
--
- 	mem_hotplug_begin();
++	/* wait for device to power on and come out of reset */
++	usleep_range(10000, 20000);
++
+ 	dev->res_enabled = powered;
  
- 	/* This makes hotplug much easier...and readable.
+ 	return 0;
 -- 
 2.19.1
 
