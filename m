@@ -2,102 +2,302 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33679C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFF6C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F11112081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:01:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F11112081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 978622081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:04:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978622081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbeKGUaz (ORCPT
+        id S1726620AbeKGUeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 15:30:55 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:49249 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726225AbeKGUaz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 15:30:55 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by dkim.mimecast.com with ESMTP id
- uk-mta-131-IpHlzqaHPDyDiGJ-u5fDwg-1; Wed, 07 Nov 2018 11:01:01 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 7 Nov 2018 11:01:05 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 7 Nov 2018 11:01:05 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Tetsuo Handa' <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-CC:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        Wed, 7 Nov 2018 15:34:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:49070 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726218AbeKGUeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 15:34:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20761EBD;
+        Wed,  7 Nov 2018 03:04:31 -0800 (PST)
+Received: from e111474-lin.manchester.arm.com (e111474-lin.manchester.arm.com [10.32.99.110])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFFE63F718;
+        Wed,  7 Nov 2018 03:04:28 -0800 (PST)
+From:   Robert Walker <robert.walker@arm.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: RE: [PATCH v6 1/3] printk: Add line-buffered printk() API.
-Thread-Topic: [PATCH v6 1/3] printk: Add line-buffered printk() API.
-Thread-Index: AQHUdogRgDaMOD8K702OSi1cCtNLCaVEI+qQ
-Date:   Wed, 7 Nov 2018 11:01:05 +0000
-Message-ID: <8354d714f6b6489d9003d6e04ee10618@AcuMS.aculab.com>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181106143502.GA32748@tigerII.localdomain>
- <42f33aae-a1d1-197f-a1d5-8c5ec88e88d1@i-love.sakura.ne.jp>
-In-Reply-To: <42f33aae-a1d1-197f-a1d5-8c5ec88e88d1@i-love.sakura.ne.jp>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: IpHlzqaHPDyDiGJ-u5fDwg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Robert Walker <robert.walker@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        CoreSight@lists.linaro.org
+Subject: [PATCH v4] perf: Support for Arm A32/T32 instruction sets in CoreSight trace
+Date:   Wed,  7 Nov 2018 11:04:12 +0000
+Message-Id: <1541588652-17380-1-git-send-email-robert.walker@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogVGV0c3VvIEhhbmRhDQo+IFNlbnQ6IDA3IE5vdmVtYmVyIDIwMTggMTA6NTMNCj4gDQo+
-IE9uIDIwMTgvMTEvMDYgMjM6MzUsIFNlcmdleSBTZW5vemhhdHNreSB3cm90ZToNCj4gPj4gU2lu
-Y2Ugd2Ugd2FudCB0byByZW1vdmUgInN0cnVjdCBjb250IiBldmVudHVhbGx5LCB3ZSB3aWxsIHRy
-eSB0byByZW1vdmUNCj4gPj4gYm90aCAiaW1wbGljaXQgcHJpbnRrKCkgdXNlcnMgd2hvIGFyZSBl
-eHBlY3RpbmcgS0VSTl9DT05UIGJlaGF2aW9yIiBhbmQNCj4gPj4gImV4cGxpY2l0IHByX2NvbnQo
-KS9wcmludGsoS0VSTl9DT05UKSB1c2VycyIuIFRoZXJlZm9yZSwgY29udmVydGluZyB0bw0KPiA+
-PiB0aGlzIEFQSSBpcyByZWNvbW1lbmRlZC4NCj4gPg0KPiA+IC0gVGhlIHByaW50ay1mYWxsYmFj
-ayBzb3VuZHMgbGlrZSBhIGhpbnQgdGhhdCB0aGUgZXhpc3RpbmcgJ2NvbnQnIGhhbmRsaW5nDQo+
-ID4gICBiZXR0ZXIgc3RheSBpbiB0aGUga2VybmVsLiBJIGRvbid0IHNlZSBob3cgdGhlIGV4aXN0
-aW5nICdjb250JyBpcw0KPiA+ICAgc2lnbmlmaWNhbnRseSB3b3JzZSB0aGFuDQo+ID4gCQlicHJf
-d2FybihOVUxMLCAuLi4pLT5wcmludGsoKSAvLyBubyAnY29udCcgc3VwcG9ydA0KPiA+ICAgSSBk
-b24ndCBzZWUgd2h5IHdvdWxkIHdlIHdhbnQgdG8gZG8gaXQsIHNvcnJ5LiBJIGRvbid0IHNlZSAi
-aXQgdGFrZXMgMTYNCj4gPiAgIHByaW50ay1idWZmZXJzIHRvIG1ha2UgYSB0aGluZyBnbyByaWdo
-dCIgYXMgYSBzdXJlIHRoaW5nLg0KPiANCj4gRXhpc3RpbmcgJ2NvbnQnIGhhbmRsaW5nIHdpbGwg
-c3RheSBmb3IgYSB3aGlsZS4gQWZ0ZXIgbWFqb3JpdHkgb2YNCj4gcHJfY29udCgpL0tFUk5fQ09O
-VCB1c2VycyBhcmUgY29udmVydGVkLCAnY29udCcgc3VwcG9ydCB3aWxsIGJlIHJlbW92ZWQNCj4g
-KGUuZy4gS0VSTl9DT05UIGJlY29tZXMgIiIpLg0KDQpBIHRob3VnaDoNCg0KV2h5IG5vdCBtYWtl
-IHRoZSBwcmludGYgbG9jayBzbGlnaHRseSAnc3RpY2t5Jz8NCi0gSWYgdGhlIG91dHB1dCBsaW5l
-IGlzIGluY29tcGxldGUgc2F2ZSB0aGUgY3B1aWQuDQotIElmIHRoZXJlIGlzIGEgc2F2ZWQgY3B1
-aWQgdGhhdCBkb2Vzbid0IG1hdGNoIHRoZSBjdXJyZW50IGNwdSB0aGVuIHNwaW4gZm9yIGEgYml0
-Lg0KDQpBbnkgY2FsbGVycyBvZiBwcmludGsoKSBoYXZlIHRvIGFzc3VtZSB0aGV5IHdpbGwgc3Bp
-biBvbiB0aGUgYnVmZmVyIGZvciB0aGUNCmxvbmdlc3QgcHJpbnRrIGZvcm1hdHRpbmcgKGFuZCBz
-eW1ib2wgbG9va3VwIG1pZ2h0IHRha2UgYSB3aGlsZSkgc28gYSBzaG9ydA0KYWRkaXRpb25hbCBk
-ZWxheSB3b24ndCBtYXR0ZXIuDQoNClRoZW4gdHdvIGNhbGxzIHRvIHByaW50aygpIGZvciB0aGUg
-c2FtZSBsaW5lIHdvbid0ICh1c3VhbGx5KSBnZXQgc3BsaXQgYW5kDQpub25lIG9mIHRoZSBjYWxs
-ZXJzIG5lZWQgYW55IGNoYW5nZXMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3Mg
-TGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQ
-VCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+This patch adds support for generating instruction samples from trace of
+AArch32 programs using the A32 and T32 instruction sets.
+
+T32 has variable 2 or 4 byte instruction size, so the conversion between
+addresses and instruction counts requires extra information from the trace
+decoder, requiring version 0.10.0 of OpenCSD.  A check for the OpenCSD
+library version has been added to the feature check for OpenCSD.
+
+Signed-off-by: Robert Walker <robert.walker@arm.com>
+---
+ tools/build/feature/test-libopencsd.c           |  8 +++
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 29 ++++++++++
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 10 ++++
+ tools/perf/util/cs-etm.c                        | 71 +++++++++++--------------
+ 4 files changed, 78 insertions(+), 40 deletions(-)
+
+diff --git a/tools/build/feature/test-libopencsd.c b/tools/build/feature/test-libopencsd.c
+index 5ff1246..d68eb4f 100644
+--- a/tools/build/feature/test-libopencsd.c
++++ b/tools/build/feature/test-libopencsd.c
+@@ -1,6 +1,14 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <opencsd/c_api/opencsd_c_api.h>
+ 
++/*
++ * Check OpenCSD library version is sufficient to provide required features
++ */
++#define OCSD_MIN_VER ((0 << 16) | (10 << 8) | (0))
++#if !defined(OCSD_VER_NUM) || (OCSD_VER_NUM < OCSD_MIN_VER)
++#error "OpenCSD >= 0.10.0 is required"
++#endif
++
+ int main(void)
+ {
+ 	(void)ocsd_get_version();
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 938def6..5efb616 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -263,9 +263,12 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
+ 	decoder->tail = 0;
+ 	decoder->packet_count = 0;
+ 	for (i = 0; i < MAX_BUFFER; i++) {
++		decoder->packet_buffer[i].isa = CS_ETM_ISA_UNKNOWN;
+ 		decoder->packet_buffer[i].start_addr = CS_ETM_INVAL_ADDR;
+ 		decoder->packet_buffer[i].end_addr = CS_ETM_INVAL_ADDR;
++		decoder->packet_buffer[i].instr_count = 0;
+ 		decoder->packet_buffer[i].last_instr_taken_branch = false;
++		decoder->packet_buffer[i].last_instr_size = 0;
+ 		decoder->packet_buffer[i].exc = false;
+ 		decoder->packet_buffer[i].exc_ret = false;
+ 		decoder->packet_buffer[i].cpu = INT_MIN;
+@@ -294,11 +297,15 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+ 	decoder->packet_count++;
+ 
+ 	decoder->packet_buffer[et].sample_type = sample_type;
++	decoder->packet_buffer[et].isa = CS_ETM_ISA_UNKNOWN;
+ 	decoder->packet_buffer[et].exc = false;
+ 	decoder->packet_buffer[et].exc_ret = false;
+ 	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
+ 	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
+ 	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
++	decoder->packet_buffer[et].instr_count = 0;
++	decoder->packet_buffer[et].last_instr_taken_branch = false;
++	decoder->packet_buffer[et].last_instr_size = 0;
+ 
+ 	if (decoder->packet_count == MAX_BUFFER - 1)
+ 		return OCSD_RESP_WAIT;
+@@ -321,8 +328,28 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+ 
+ 	packet = &decoder->packet_buffer[decoder->tail];
+ 
++	switch (elem->isa) {
++	case ocsd_isa_aarch64:
++		packet->isa = CS_ETM_ISA_A64;
++		break;
++	case ocsd_isa_arm:
++		packet->isa = CS_ETM_ISA_A32;
++		break;
++	case ocsd_isa_thumb2:
++		packet->isa = CS_ETM_ISA_T32;
++		break;
++	case ocsd_isa_tee:
++	case ocsd_isa_jazelle:
++	case ocsd_isa_custom:
++	case ocsd_isa_unknown:
++	default:
++		packet->isa = CS_ETM_ISA_UNKNOWN;
++	}
++
+ 	packet->start_addr = elem->st_addr;
+ 	packet->end_addr = elem->en_addr;
++	packet->instr_count = elem->num_instr_range;
++
+ 	switch (elem->last_i_type) {
+ 	case OCSD_INSTR_BR:
+ 	case OCSD_INSTR_BR_INDIRECT:
+@@ -336,6 +363,8 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+ 		break;
+ 	}
+ 
++	packet->last_instr_size = elem->last_instr_sz;
++
+ 	return ret;
+ }
+ 
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+index 612b575..9351bd1 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+@@ -28,11 +28,21 @@ enum cs_etm_sample_type {
+ 	CS_ETM_TRACE_ON = 1 << 1,
+ };
+ 
++enum cs_etm_isa {
++	CS_ETM_ISA_UNKNOWN,
++	CS_ETM_ISA_A64,
++	CS_ETM_ISA_A32,
++	CS_ETM_ISA_T32,
++};
++
+ struct cs_etm_packet {
+ 	enum cs_etm_sample_type sample_type;
++	enum cs_etm_isa isa;
+ 	u64 start_addr;
+ 	u64 end_addr;
++	u32 instr_count;
+ 	u8 last_instr_taken_branch;
++	u8 last_instr_size;
+ 	u8 exc;
+ 	u8 exc_ret;
+ 	int cpu;
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 73430b7..cad133c 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -31,14 +31,6 @@
+ 
+ #define MAX_TIMESTAMP (~0ULL)
+ 
+-/*
+- * A64 instructions are always 4 bytes
+- *
+- * Only A64 is supported, so can use this constant for converting between
+- * addresses and instruction counts, calculting offsets etc
+- */
+-#define A64_INSTR_SIZE 4
+-
+ struct cs_etm_auxtrace {
+ 	struct auxtrace auxtrace;
+ 	struct auxtrace_queues queues;
+@@ -510,21 +502,16 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
+ 	etmq->last_branch_rb->nr = 0;
+ }
+ 
+-static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+-{
+-	/* Returns 0 for the CS_ETM_TRACE_ON packet */
+-	if (packet->sample_type == CS_ETM_TRACE_ON)
+-		return 0;
++static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
++					 u64 addr) {
++	u8 instrBytes[2];
+ 
+-	/*
+-	 * The packet records the execution range with an exclusive end address
+-	 *
+-	 * A64 instructions are constant size, so the last executed
+-	 * instruction is A64_INSTR_SIZE before the end address
+-	 * Will need to do instruction level decode for T32 instructions as
+-	 * they can be variable size (not yet supported).
++	cs_etm__mem_access(etmq, addr, ARRAY_SIZE(instrBytes), instrBytes);
++	/* T32 instruction size is indicated by bits[15:11] of the first
++	 * 16-bit word of the instruction: 0b11101, 0b11110 and 0b11111
++	 * denote a 32-bit instruction.
+ 	 */
+-	return packet->end_addr - A64_INSTR_SIZE;
++	return ((instrBytes[1] & 0xF8) >= 0xE8) ? 4 : 2;
+ }
+ 
+ static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+@@ -536,27 +523,32 @@ static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+ 	return packet->start_addr;
+ }
+ 
+-static inline u64 cs_etm__instr_count(const struct cs_etm_packet *packet)
++static inline
++u64 cs_etm__last_executed_instr(const struct cs_etm_packet *packet)
+ {
+-	/*
+-	 * Only A64 instructions are currently supported, so can get
+-	 * instruction count by dividing.
+-	 * Will need to do instruction level decode for T32 instructions as
+-	 * they can be variable size (not yet supported).
+-	 */
+-	return (packet->end_addr - packet->start_addr) / A64_INSTR_SIZE;
++	/* Returns 0 for the CS_ETM_TRACE_ON packet */
++	if (packet->sample_type == CS_ETM_TRACE_ON)
++		return 0;
++
++	return packet->end_addr - packet->last_instr_size;
+ }
+ 
+-static inline u64 cs_etm__instr_addr(const struct cs_etm_packet *packet,
++static inline u64 cs_etm__instr_addr(struct cs_etm_queue *etmq,
++				     const struct cs_etm_packet *packet,
+ 				     u64 offset)
+ {
+-	/*
+-	 * Only A64 instructions are currently supported, so can get
+-	 * instruction address by muliplying.
+-	 * Will need to do instruction level decode for T32 instructions as
+-	 * they can be variable size (not yet supported).
+-	 */
+-	return packet->start_addr + offset * A64_INSTR_SIZE;
++	if (packet->isa == CS_ETM_ISA_T32) {
++		u64 addr = packet->start_addr;
++
++		while (offset > 0) {
++			addr += cs_etm__t32_instr_size(etmq, addr);
++			offset--;
++		}
++		return addr;
++	}
++
++	/* Assume a 4 byte instruction size (A32/A64) */
++	return packet->start_addr + offset * 4;
+ }
+ 
+ static void cs_etm__update_last_branch_rb(struct cs_etm_queue *etmq)
+@@ -888,9 +880,8 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+ 	struct cs_etm_auxtrace *etm = etmq->etm;
+ 	struct cs_etm_packet *tmp;
+ 	int ret;
+-	u64 instrs_executed;
++	u64 instrs_executed = etmq->packet->instr_count;
+ 
+-	instrs_executed = cs_etm__instr_count(etmq->packet);
+ 	etmq->period_instructions += instrs_executed;
+ 
+ 	/*
+@@ -920,7 +911,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+ 		 * executed, but PC has not advanced to next instruction)
+ 		 */
+ 		u64 offset = (instrs_executed - instrs_over - 1);
+-		u64 addr = cs_etm__instr_addr(etmq->packet, offset);
++		u64 addr = cs_etm__instr_addr(etmq, etmq->packet, offset);
+ 
+ 		ret = cs_etm__synth_instruction_sample(
+ 			etmq, addr, etm->instructions_sample_period);
+-- 
+2.7.4
 
