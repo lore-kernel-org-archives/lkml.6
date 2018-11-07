@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8139EC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0006C46464
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3034F20837
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3034F20837
+	by mail.kernel.org (Postfix) with ESMTP id 8215520837
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:49:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8215520837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeKHFVL (ORCPT
+        id S1727575AbeKHFVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:21:11 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41870 "EHLO
+        Thu, 8 Nov 2018 00:21:12 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41899 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbeKHFVK (ORCPT
+        with ESMTP id S1727337AbeKHFVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:21:10 -0500
+        Thu, 8 Nov 2018 00:21:12 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gKTpA-00070Q-8O; Wed, 07 Nov 2018 20:49:12 +0100
+        id 1gKTpD-00070Q-C9; Wed, 07 Nov 2018 20:49:16 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 08/23] x86/fpu: Remove fpu->initialized
-Date:   Wed,  7 Nov 2018 20:48:43 +0100
-Message-Id: <20181107194858.9380-9-bigeasy@linutronix.de>
+Subject: [PATCH 11/23] x86/fpu: Add (__)make_fpregs_active helpers
+Date:   Wed,  7 Nov 2018 20:48:46 +0100
+Message-Id: <20181107194858.9380-12-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181107194858.9380-1-bigeasy@linutronix.de>
 References: <20181107194858.9380-1-bigeasy@linutronix.de>
@@ -49,499 +49,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The `initialized' member of the fpu struct is always set to one user
-tasks and zero for kernel tasks. This avoids saving/restoring the FPU
-registers for kernel threads.
+From: Rik van Riel <riel@surriel.com>
 
-By dropping that member the context switch time between kernel-threads
-increases because the FPU registers are needlessly stored and restored.
-The following context switch
-	1. TaskA -> kernel thread1
-	2. kernel thread1 -> TaskA
+Add helper function that ensures the floating point registers for
+the current task are active. Use with preemption disabled.
 
-will restore TaskA's FPU registers in step 2. This wasn't the case
-earlier because they would not have been destroyed by the kernel thread.
-This means now fpu_fpregs_owner_ctx points always to current's FPU
-struct (even for kernel threads).
-
-One different behaviour: Since the FPU registers are now restored for
-kernel threads, they will have PKRU=0. Before this change, the kernel
-thread had a random value (inherited from the previous user task).
-
-The increased context switch time will be reverted once the FPU
-registers are restored on return to userland.
-
+Signed-off-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/ia32/ia32_signal.c         | 17 +++----
- arch/x86/include/asm/fpu/internal.h | 17 ++++---
- arch/x86/include/asm/fpu/types.h    |  9 ----
- arch/x86/include/asm/trace/fpu.h    |  5 +-
- arch/x86/kernel/fpu/core.c          | 77 +++++++----------------------
- arch/x86/kernel/fpu/init.c          |  2 -
- arch/x86/kernel/fpu/regset.c        | 19 ++-----
- arch/x86/kernel/fpu/xstate.c        |  2 -
- arch/x86/kernel/process_32.c        |  4 +-
- arch/x86/kernel/process_64.c        |  4 +-
- arch/x86/kernel/signal.c            | 17 +++----
- arch/x86/mm/pkeys.c                 |  7 +--
- 12 files changed, 51 insertions(+), 129 deletions(-)
+ arch/x86/include/asm/fpu/api.h      | 11 +++++++++++
+ arch/x86/include/asm/fpu/internal.h | 26 ++++++++++++++++----------
+ 2 files changed, 27 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index 86b1341cba9ac..eb215ac5d9f46 100644
---- a/arch/x86/ia32/ia32_signal.c
-+++ b/arch/x86/ia32/ia32_signal.c
-@@ -216,8 +216,7 @@ static void __user *get_sigframe(struct ksignal *ksig, struct pt_regs *regs,
- 				 size_t frame_size,
- 				 void __user **fpstate)
- {
--	struct fpu *fpu = &current->thread.fpu;
--	unsigned long sp;
-+	unsigned long sp, fx_aligned, math_size;
+diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+index a9caac9d4a729..8c03b42416656 100644
+--- a/arch/x86/include/asm/fpu/api.h
++++ b/arch/x86/include/asm/fpu/api.h
+@@ -10,6 +10,7 @@
  
- 	/* Default to using normal stack */
- 	sp = regs->sp;
-@@ -231,15 +230,11 @@ static void __user *get_sigframe(struct ksignal *ksig, struct pt_regs *regs,
- 		 ksig->ka.sa.sa_restorer)
- 		sp = (unsigned long) ksig->ka.sa.sa_restorer;
- 
--	if (fpu->initialized) {
--		unsigned long fx_aligned, math_size;
--
--		sp = fpu__alloc_mathframe(sp, 1, &fx_aligned, &math_size);
--		*fpstate = (struct _fpstate_32 __user *) sp;
--		if (copy_fpstate_to_sigframe(*fpstate, (void __user *)fx_aligned,
--				    math_size) < 0)
--			return (void __user *) -1L;
--	}
-+	sp = fpu__alloc_mathframe(sp, 1, &fx_aligned, &math_size);
-+	*fpstate = (struct _fpstate_32 __user *) sp;
-+	if (copy_fpstate_to_sigframe(*fpstate, (void __user *)fx_aligned,
-+				     math_size) < 0)
-+		return (void __user *) -1L;
- 
- 	sp -= frame_size;
- 	/* Align the stack pointer according to the i386 ABI,
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 971fb0988d56f..d7ef8ac8b17eb 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -526,7 +526,7 @@ static inline void fpregs_activate(struct fpu *fpu)
- static inline void
- switch_fpu_prepare(struct fpu *old_fpu, int cpu)
- {
--	if (static_cpu_has(X86_FEATURE_FPU) && old_fpu->initialized) {
-+	if (static_cpu_has(X86_FEATURE_FPU)) {
- 		if (!copy_fpregs_to_fpstate(old_fpu))
- 			old_fpu->last_cpu = -1;
- 		else
-@@ -534,8 +534,7 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
- 
- 		/* But leave fpu_fpregs_owner_ctx! */
- 		trace_x86_fpu_regs_deactivated(old_fpu);
--	} else
--		old_fpu->last_cpu = -1;
-+	}
- }
+ #ifndef _ASM_X86_FPU_API_H
+ #define _ASM_X86_FPU_API_H
++#include <linux/preempt.h>
  
  /*
-@@ -548,12 +547,14 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+  * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
+@@ -27,6 +28,16 @@ extern void kernel_fpu_begin(void);
+ extern void kernel_fpu_end(void);
+ extern bool irq_fpu_usable(void);
+ 
++static inline void __fpregs_changes_begin(void)
++{
++	preempt_disable();
++}
++
++static inline void __fpregs_changes_end(void)
++{
++	preempt_enable();
++}
++
+ /*
+  * Query the presence of one or more xfeatures. Works on any legacy CPU as well.
+  *
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index d7f9e14c73c19..260cd4f4ba2bb 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -512,6 +512,20 @@ static inline void fpregs_activate(struct fpu *fpu)
+ 	trace_x86_fpu_regs_activated(fpu);
+ }
+ 
++/*
++ * Load the FPU state for the current task. Call with preemption disabled.
++ */
++static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
++{
++	if (!fpregs_state_valid(fpu, cpu)) {
++		if (current->mm)
++			copy_kernel_to_fpregs(&fpu->state);
++		else
++			copy_kernel_to_fpregs(&init_fpstate);
++	}
++	fpregs_activate(fpu);
++}
++
+ /*
+  * FPU state switching for scheduling.
+  *
+@@ -547,16 +561,8 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
   */
  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
  {
--	bool preload = static_cpu_has(X86_FEATURE_FPU) &&
--		       new_fpu->initialized;
-+	if (static_cpu_has(X86_FEATURE_FPU)) {
-+		if (!fpregs_state_valid(new_fpu, cpu)) {
-+			if (current->mm)
-+				copy_kernel_to_fpregs(&new_fpu->state);
-+			else
-+				copy_kernel_to_fpregs(&init_fpstate);
-+		}
- 
--	if (preload) {
--		if (!fpregs_state_valid(new_fpu, cpu))
--			copy_kernel_to_fpregs(&new_fpu->state);
- 		fpregs_activate(new_fpu);
- 	}
- }
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index 202c53918ecfa..c5a6edd92de4f 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -293,15 +293,6 @@ struct fpu {
- 	 */
- 	unsigned int			last_cpu;
- 
--	/*
--	 * @initialized:
--	 *
--	 * This flag indicates whether this context is initialized: if the task
--	 * is not running then we can restore from this context, if the task
--	 * is running then we should save into this context.
--	 */
--	unsigned char			initialized;
--
- 	/*
- 	 * @state:
- 	 *
-diff --git a/arch/x86/include/asm/trace/fpu.h b/arch/x86/include/asm/trace/fpu.h
-index 069c04be15076..bd65f6ba950f8 100644
---- a/arch/x86/include/asm/trace/fpu.h
-+++ b/arch/x86/include/asm/trace/fpu.h
-@@ -13,22 +13,19 @@ DECLARE_EVENT_CLASS(x86_fpu,
- 
- 	TP_STRUCT__entry(
- 		__field(struct fpu *, fpu)
--		__field(bool, initialized)
- 		__field(u64, xfeatures)
- 		__field(u64, xcomp_bv)
- 		),
- 
- 	TP_fast_assign(
- 		__entry->fpu		= fpu;
--		__entry->initialized	= fpu->initialized;
- 		if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
- 			__entry->xfeatures = fpu->state.xsave.header.xfeatures;
- 			__entry->xcomp_bv  = fpu->state.xsave.header.xcomp_bv;
- 		}
- 	),
--	TP_printk("x86/fpu: %p initialized: %d xfeatures: %llx xcomp_bv: %llx",
-+	TP_printk("x86/fpu: %p xfeatures: %llx xcomp_bv: %llx",
- 			__entry->fpu,
--			__entry->initialized,
- 			__entry->xfeatures,
- 			__entry->xcomp_bv
- 	)
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 8391debc57265..2ed82c6e646b9 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -101,15 +101,7 @@ void __kernel_fpu_begin(void)
- 
- 	kernel_fpu_disable();
- 
--	if (fpu->initialized) {
--		/*
--		 * Ignore return value -- we don't care if reg state
--		 * is clobbered.
--		 */
--		copy_fpregs_to_fpstate(fpu);
--	} else {
--		__cpu_invalidate_fpregs_state();
--	}
-+	copy_fpregs_to_fpstate(fpu);
- }
- EXPORT_SYMBOL(__kernel_fpu_begin);
- 
-@@ -117,8 +109,7 @@ void __kernel_fpu_end(void)
- {
- 	struct fpu *fpu = &current->thread.fpu;
- 
--	if (fpu->initialized)
--		copy_kernel_to_fpregs(&fpu->state);
-+	copy_kernel_to_fpregs(&fpu->state);
- 
- 	kernel_fpu_enable();
- }
-@@ -149,10 +140,9 @@ void fpu__save(struct fpu *fpu)
- 
- 	preempt_disable();
- 	trace_x86_fpu_before_save(fpu);
--	if (fpu->initialized) {
--		if (!copy_fpregs_to_fpstate(fpu)) {
--			copy_kernel_to_fpregs(&fpu->state);
+-	if (static_cpu_has(X86_FEATURE_FPU)) {
+-		if (!fpregs_state_valid(new_fpu, cpu)) {
+-			if (current->mm)
+-				copy_kernel_to_fpregs(&new_fpu->state);
+-			else
+-				copy_kernel_to_fpregs(&init_fpstate);
 -		}
-+
-+	if (!copy_fpregs_to_fpstate(fpu)) {
-+		copy_kernel_to_fpregs(&fpu->state);
- 	}
- 	trace_x86_fpu_after_save(fpu);
- 	preempt_enable();
-@@ -192,7 +182,7 @@ int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
- {
- 	dst_fpu->last_cpu = -1;
- 
--	if (!src_fpu->initialized || !static_cpu_has(X86_FEATURE_FPU))
-+	if (!static_cpu_has(X86_FEATURE_FPU))
- 		return 0;
- 
- 	WARN_ON_FPU(src_fpu != &current->thread.fpu);
-@@ -229,14 +219,10 @@ static void fpu__initialize(struct fpu *fpu)
- {
- 	WARN_ON_FPU(fpu != &current->thread.fpu);
- 
--	if (!fpu->initialized) {
--		fpstate_init(&fpu->state);
--		trace_x86_fpu_init_state(fpu);
-+	fpstate_init(&fpu->state);
-+	trace_x86_fpu_init_state(fpu);
- 
--		trace_x86_fpu_activate_state(fpu);
--		/* Safe to do for the current task: */
--		fpu->initialized = 1;
+-
+-		fpregs_activate(new_fpu);
 -	}
-+	trace_x86_fpu_activate_state(fpu);
++	if (static_cpu_has(X86_FEATURE_FPU))
++		__fpregs_load_activate(new_fpu, cpu);
  }
  
  /*
-@@ -249,32 +235,20 @@ static void fpu__initialize(struct fpu *fpu)
-  *
-  * - or it's called for stopped tasks (ptrace), in which case the
-  *   registers were already saved by the context-switch code when
-- *   the task scheduled out - we only have to initialize the registers
-- *   if they've never been initialized.
-+ *   the task scheduled out.
-  *
-  * If the task has used the FPU before then save it.
-  */
- void fpu__prepare_read(struct fpu *fpu)
- {
--	if (fpu == &current->thread.fpu) {
-+	if (fpu == &current->thread.fpu)
- 		fpu__save(fpu);
--	} else {
--		if (!fpu->initialized) {
--			fpstate_init(&fpu->state);
--			trace_x86_fpu_init_state(fpu);
--
--			trace_x86_fpu_activate_state(fpu);
--			/* Safe to do for current and for stopped child tasks: */
--			fpu->initialized = 1;
--		}
--	}
- }
- 
- /*
-  * This function must be called before we write a task's fpstate.
-  *
-- * If the task has used the FPU before then invalidate any cached FPU registers.
-- * If the task has not used the FPU before then initialize its fpstate.
-+ * Invalidate any cached FPU registers.
-  *
-  * After this function call, after registers in the fpstate are
-  * modified and the child task has woken up, the child task will
-@@ -291,17 +265,8 @@ void fpu__prepare_write(struct fpu *fpu)
- 	 */
- 	WARN_ON_FPU(fpu == &current->thread.fpu);
- 
--	if (fpu->initialized) {
--		/* Invalidate any cached state: */
--		__fpu_invalidate_fpregs_state(fpu);
--	} else {
--		fpstate_init(&fpu->state);
--		trace_x86_fpu_init_state(fpu);
--
--		trace_x86_fpu_activate_state(fpu);
--		/* Safe to do for stopped child tasks: */
--		fpu->initialized = 1;
--	}
-+	/* Invalidate any cached state: */
-+	__fpu_invalidate_fpregs_state(fpu);
- }
- 
- /*
-@@ -318,17 +283,13 @@ void fpu__drop(struct fpu *fpu)
- 	preempt_disable();
- 
- 	if (fpu == &current->thread.fpu) {
--		if (fpu->initialized) {
--			/* Ignore delayed exceptions from user space */
--			asm volatile("1: fwait\n"
--				     "2:\n"
--				     _ASM_EXTABLE(1b, 2b));
--			fpregs_deactivate(fpu);
--		}
-+		/* Ignore delayed exceptions from user space */
-+		asm volatile("1: fwait\n"
-+			     "2:\n"
-+			     _ASM_EXTABLE(1b, 2b));
-+		fpregs_deactivate(fpu);
- 	}
- 
--	fpu->initialized = 0;
--
- 	trace_x86_fpu_dropped(fpu);
- 
- 	preempt_enable();
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 6abd83572b016..20d8fa7124c77 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -239,8 +239,6 @@ static void __init fpu__init_system_ctx_switch(void)
- 
- 	WARN_ON_FPU(!on_boot_cpu);
- 	on_boot_cpu = 0;
--
--	WARN_ON_FPU(current->thread.fpu.initialized);
- }
- 
- /*
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index 5dbc099178a88..d652b939ccfb5 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -15,16 +15,12 @@
-  */
- int regset_fpregs_active(struct task_struct *target, const struct user_regset *regset)
- {
--	struct fpu *target_fpu = &target->thread.fpu;
--
--	return target_fpu->initialized ? regset->n : 0;
-+	return regset->n;
- }
- 
- int regset_xregset_fpregs_active(struct task_struct *target, const struct user_regset *regset)
- {
--	struct fpu *target_fpu = &target->thread.fpu;
--
--	if (boot_cpu_has(X86_FEATURE_FXSR) && target_fpu->initialized)
-+	if (boot_cpu_has(X86_FEATURE_FXSR))
- 		return regset->n;
- 	else
- 		return 0;
-@@ -370,16 +366,9 @@ int fpregs_set(struct task_struct *target, const struct user_regset *regset,
- int dump_fpu(struct pt_regs *regs, struct user_i387_struct *ufpu)
- {
- 	struct task_struct *tsk = current;
--	struct fpu *fpu = &tsk->thread.fpu;
--	int fpvalid;
- 
--	fpvalid = fpu->initialized;
--	if (fpvalid)
--		fpvalid = !fpregs_get(tsk, NULL,
--				      0, sizeof(struct user_i387_ia32_struct),
--				      ufpu, NULL);
--
--	return fpvalid;
-+	return !fpregs_get(tsk, NULL, 0, sizeof(struct user_i387_ia32_struct),
-+			   ufpu, NULL);
- }
- EXPORT_SYMBOL(dump_fpu);
- 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 9dc0a2c8c2755..a2041961f3008 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -894,8 +894,6 @@ const void *get_xsave_field_ptr(int xsave_state)
- {
- 	struct fpu *fpu = &current->thread.fpu;
- 
--	if (!fpu->initialized)
--		return NULL;
- 	/*
- 	 * fpu__save() takes the CPU's xstate registers
- 	 * and saves them off to the 'fpu memory buffer.
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index b8a935adc96fc..5c99e49c0d392 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -292,10 +292,10 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	if (prev->gs | next->gs)
- 		lazy_load_gs(next->gs);
- 
--	switch_fpu_finish(next_fpu, cpu);
--
- 	this_cpu_write(current_task, next_p);
- 
-+	switch_fpu_finish(next_fpu, cpu);
-+
- 	/* Load the Intel cache allocation PQR MSR. */
- 	intel_rdt_sched_in();
- 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index cf2c157714594..4fd0dfa5bd83e 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -604,14 +604,14 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 
- 	x86_fsgsbase_load(prev, next);
- 
--	switch_fpu_finish(next_fpu, cpu);
--
- 	/*
- 	 * Switch the PDA and FPU contexts.
- 	 */
- 	this_cpu_write(current_task, next_p);
- 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
- 
-+	switch_fpu_finish(next_fpu, cpu);
-+
- 	/* Reload sp0. */
- 	update_task_stack(next_p);
- 
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 92a3b312a53c4..2687e698c31fc 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -246,7 +246,7 @@ get_sigframe(struct k_sigaction *ka, struct pt_regs *regs, size_t frame_size,
- 	unsigned long sp = regs->sp;
- 	unsigned long buf_fx = 0;
- 	int onsigstack = on_sig_stack(sp);
--	struct fpu *fpu = &current->thread.fpu;
-+	int ret;
- 
- 	/* redzone */
- 	if (IS_ENABLED(CONFIG_X86_64))
-@@ -265,11 +265,9 @@ get_sigframe(struct k_sigaction *ka, struct pt_regs *regs, size_t frame_size,
- 		sp = (unsigned long) ka->sa.sa_restorer;
- 	}
- 
--	if (fpu->initialized) {
--		sp = fpu__alloc_mathframe(sp, IS_ENABLED(CONFIG_X86_32),
--					  &buf_fx, &math_size);
--		*fpstate = (void __user *)sp;
--	}
-+	sp = fpu__alloc_mathframe(sp, IS_ENABLED(CONFIG_X86_32),
-+				  &buf_fx, &math_size);
-+	*fpstate = (void __user *)sp;
- 
- 	sp = align_sigframe(sp - frame_size);
- 
-@@ -281,8 +279,8 @@ get_sigframe(struct k_sigaction *ka, struct pt_regs *regs, size_t frame_size,
- 		return (void __user *)-1L;
- 
- 	/* save i387 and extended state */
--	if (fpu->initialized &&
--	    copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size) < 0)
-+	ret = copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size);
-+	if (ret < 0)
- 		return (void __user *)-1L;
- 
- 	return (void __user *)sp;
-@@ -763,8 +761,7 @@ handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 		/*
- 		 * Ensure the signal handler starts with the new fpu state.
- 		 */
--		if (fpu->initialized)
--			fpu__clear(fpu);
-+		fpu__clear(fpu);
- 	}
- 	signal_setup_done(failed, ksig, stepping);
- }
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index 6e98e0a7c9231..0af3ece18f113 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -39,17 +39,12 @@ int __execute_only_pkey(struct mm_struct *mm)
- 	 * dance to set PKRU if we do not need to.  Check it
- 	 * first and assume that if the execute-only pkey is
- 	 * write-disabled that we do not have to set it
--	 * ourselves.  We need preempt off so that nobody
--	 * can make fpregs inactive.
-+	 * ourselves.
- 	 */
--	preempt_disable();
- 	if (!need_to_set_mm_pkey &&
--	    current->thread.fpu.initialized &&
- 	    !__pkru_allows_read(read_pkru(), execute_only_pkey)) {
--		preempt_enable();
- 		return execute_only_pkey;
- 	}
--	preempt_enable();
- 
- 	/*
- 	 * Set up PKRU so that it denies access for everything
 -- 
 2.19.1
 
