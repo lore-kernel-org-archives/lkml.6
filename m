@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9B3C32789
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DDDC32789
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE2EA2086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826F92086A
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 00:33:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZL0jQZ0x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2EA2086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f2IYf7Ra"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826F92086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388907AbeKGKBD (ORCPT
+        id S2388954AbeKGKBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 05:01:03 -0500
-Received: from mail-it1-f180.google.com ([209.85.166.180]:40142 "EHLO
-        mail-it1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388662AbeKGKBB (ORCPT
+        Wed, 7 Nov 2018 05:01:04 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:34900 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388888AbeKGKBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 05:01:01 -0500
-Received: by mail-it1-f180.google.com with SMTP id e11so17173506itl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:33:07 -0800 (PST)
+        Wed, 7 Nov 2018 05:01:03 -0500
+Received: by mail-it1-f193.google.com with SMTP id v11so14309411itj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 16:33:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IWqht3lWvRgaSjU7kSguHrGrb0qMDwHxt+moiiah5KM=;
-        b=ZL0jQZ0xy9R6opJpoe/wEfGb8ZRudO+IxHxd7U1ISG6XrvrQMj2vg0zUoEvGduml9U
-         tSO1uBvK4IsragGs+1ghN9EYuNrN/xqcuE3ju86CN/qHt3xoMW4kqhC+y2hIRVdG9HEs
-         V0T89ymdBWafur1XazI3iP0Lo9azskqt7ptu8=
+        bh=mChNx9VPrLoj/ohW2Qed5LeAGe8qnQ1vrW73K+GOCFs=;
+        b=f2IYf7Ra+LGI0tRtEQXE1i/zvFYB5PcP6cP0XaOJJoYU3TIQD5yu68p7FJ+FIftxEE
+         BI4Y+iL5A7iSOtflBBDOu/YRZ6HidRJJS/jB5LmZw0Gfqz9EwAa4Loqzq44Gc2IdwZp7
+         TjG7nYw0kDn1vb4IfZXPMC7V/JSDzCNp2EHe4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IWqht3lWvRgaSjU7kSguHrGrb0qMDwHxt+moiiah5KM=;
-        b=jAMgK0sVLwsDwL6R6gPe3qvd2febrn0REDjkKz4r0n63oJlJFm2XlO6iJjDZKcvksF
-         g6f5DE9fcXH7r3GLu2JlkIxXdHTzID/XkzzLf8RiytVcuU+GAAioN6wPqwOgNzdKKmqy
-         zHVjgUxY9LNxEmM62SqIKrNSwPvsk3ImThvCe+DCF0x/+ALNUcCClIUIIzViP0zuNVVB
-         qTSsF2PsY9g/cxhP09CJoyNPgSx3ENZ4CiLEai2zSzP4FzMswWL1DOdcsH0mvJuvVcnc
-         rawd2bywNE3G1JYF+Wsp8RZk7weL9ESUiEC37iPCOVRjbQb0ewYn+nWlqOeXtE8s3syy
-         ZvpQ==
-X-Gm-Message-State: AGRZ1gLUgNHdua85iZybpFObThYEf2YFD9wwU8C99EsdzdE7Im3EXddf
-        LUWG/OxVAU0JW5HQwhP2ScazqA==
-X-Google-Smtp-Source: AJdET5fFL4HNp5Gut9DMGOQrOGf69NMWtzXA/+P/rsQldhQpLI34aOg84581ENq6fHyn084lodzGCA==
-X-Received: by 2002:a24:3c0a:: with SMTP id m10-v6mr116546ita.37.1541550786630;
-        Tue, 06 Nov 2018 16:33:06 -0800 (PST)
+        bh=mChNx9VPrLoj/ohW2Qed5LeAGe8qnQ1vrW73K+GOCFs=;
+        b=oRBWj5GtshQ9dRQ94BCO5iug4srsUURhBiCO9EK1uOmLSATq8BEQjXL2JvA4MiBxwA
+         AMf2PCj9up1YWQlltk9++gBFSPCcu0N3LsqO0VCz7zPLsbGS9PUriSa+uLEElBttN8kj
+         RuJrRiAWejzlz8j3Yc0Ti+bHo2wU5n4zi0lqRC2B6kc83wgVaxm9mMsn53Sn7FUfbjU2
+         smWDqjBRAEIp2VDMl39V+zEeML351qlewZrFbJs8O7WhodA2p4sPjxln/B0IEhW5LaW2
+         mPL77bmiwivBC0CpyavrI7TUR+pRjmEBvFicXEoSfgirdTApwactt4bnU4y+YyJ3I3p1
+         XSpw==
+X-Gm-Message-State: AGRZ1gKzUQ+1O2ga9xwITgILQqNFJT1QFeiPdavKopCtULwrtX905pya
+        Etebd/yMSM+6QsabTxBIa/cfvg==
+X-Google-Smtp-Source: AJdET5fc96+Vvpxcaxjsyi6rLtBcRzz7GokxwEQ2SeDLr5Pay1oBKGGI8r1HlytuVfQSsqvCDEDUfA==
+X-Received: by 2002:a24:4a95:: with SMTP id k143-v6mr117987itb.132.1541550788960;
+        Tue, 06 Nov 2018 16:33:08 -0800 (PST)
 Received: from shibby.gateway.innflux.com ([66.228.239.218])
-        by smtp.gmail.com with ESMTPSA id e184-v6sm1061128ite.9.2018.11.06.16.33.03
+        by smtp.gmail.com with ESMTPSA id e184-v6sm1061128ite.9.2018.11.06.16.33.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Nov 2018 16:33:05 -0800 (PST)
+        Tue, 06 Nov 2018 16:33:08 -0800 (PST)
 From:   Alex Elder <elder@linaro.org>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
-        arnd@arndb.de, bjorn.andersson@linaro.org,
+To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
         ilias.apalodimas@linaro.org
 Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        syadagir@codeaurora.org, mjavid@codeaurora.org
-Subject: [RFC PATCH 01/12] dt-bindings: soc: qcom: add IPA bindings
-Date:   Tue,  6 Nov 2018 18:32:39 -0600
-Message-Id: <20181107003250.5832-2-elder@linaro.org>
+        syadagir@codeaurora.org, mjavid@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: [RFC PATCH 02/12] soc: qcom: ipa: DMA helpers
+Date:   Tue,  6 Nov 2018 18:32:40 -0600
+Message-Id: <20181107003250.5832-3-elder@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181107003250.5832-1-elder@linaro.org>
 References: <20181107003250.5832-1-elder@linaro.org>
@@ -74,180 +74,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the binding definitions for the "qcom,ipa" and "qcom,rmnet-ipa"
-device tree nodes.
+This patch includes code implementing the IPA DMA module, which
+defines a structure to represent a DMA allocation for the IPA device.
+It's used throughout the IPA code.
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- .../devicetree/bindings/soc/qcom/qcom,ipa.txt | 136 ++++++++++++++++++
- .../bindings/soc/qcom/qcom,rmnet-ipa.txt      |  15 ++
- 2 files changed, 151 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,rmnet-ipa.txt
+ drivers/net/ipa/ipa_dma.c | 61 +++++++++++++++++++++++++++++++++++++++
+ drivers/net/ipa/ipa_dma.h | 61 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 122 insertions(+)
+ create mode 100644 drivers/net/ipa/ipa_dma.c
+ create mode 100644 drivers/net/ipa/ipa_dma.h
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt
+diff --git a/drivers/net/ipa/ipa_dma.c b/drivers/net/ipa/ipa_dma.c
 new file mode 100644
-index 000000000000..d4d3d37df029
+index 000000000000..dfde59e5072a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt
-@@ -0,0 +1,136 @@
-+Qualcomm IPA (IP Accelerator) Driver
++++ b/drivers/net/ipa/ipa_dma.c
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+This binding describes the Qualcomm IPA.  The IPA is capable of offloading
-+certain network processing tasks (e.g. filtering, routing, and NAT) from
-+the main processor.  The IPA currently serves only as a network interface,
-+providing access to an LTE network available via a modem.
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (C) 2018 Linaro Ltd.
++ */
 +
-+The IPA sits between multiple independent "execution environments,"
-+including the AP subsystem (APSS) and the modem.  The IPA presents
-+a Generic Software Interface (GSI) to each execution environment.
-+The GSI is an integral part of the IPA, but it is logically isolated
-+and has a distinct interrupt and a separately-defined address space.
++#include <linux/types.h>
++#include <linux/device.h>
++#include <linux/dma-mapping.h>
++#include <linux/string.h>
 +
-+    ----------   -------------   ---------
-+    |        |   |G|       |G|   |       |
-+    |  APSS  |===|S|  IPA  |S|===| Modem |
-+    |        |   |I|       |I|   |       |
-+    ----------   -------------   ---------
++#include "ipa_dma.h"
 +
-+See also:
-+  bindings/interrupt-controller/interrupts.txt
-+  bindings/interconnect/interconnect.txt
-+  bindings/soc/qcom/qcom,smp2p.txt
-+  bindings/reserved-memory/reserved-memory.txt
-+  bindings/clock/clock-bindings.txt
++static struct device *ipa_dma_dev;
 +
-+All properties defined below are required.
++int ipa_dma_init(struct device *dev, u32 align)
++{
++	int ret;
 +
-+- compatible:
-+	Must be one of the following compatible strings:
-+		"qcom,ipa-sdm845-modem_init"
-+		"qcom,ipa-sdm845-tz_init"
++	/* Ensure DMA addresses will have the alignment we require */
++	if (dma_get_cache_alignment() % align)
++		return -ENOTSUPP;
 +
-+-reg:
-+	Resources specyfing the physical address spaces of the IPA and GSI.
++	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
++	if (!ret)
++		ipa_dma_dev = dev;
 +
-+-reg-names:
-+	The names of the address space ranges defined by the "reg" property.
-+	Must be "ipa" and "gsi".
++	return ret;
++}
 +
-+- interrupts-extended:
-+	Specifies the IRQs used by the IPA.  Four cells are required,
-+	specifying: the IPA IRQ; the GSI IRQ; the clock query interrupt
-+	from the modem; and the "ready for stage 2 initialization"
-+	interrupt from the modem.  The first two are hardware IRQs; the
-+	third and fourth are SMP2P input interrupts.
++void ipa_dma_exit(void)
++{
++	ipa_dma_dev = NULL;
++}
 +
-+- interrupt-names:
-+	The names of the interrupts defined by the "interrupts-extended"
-+	property.  Must be "ipa", "gsi", "ipa-clock-query", and
-+	"ipa-post-init".
++int ipa_dma_alloc(struct ipa_dma_mem *mem, size_t size, gfp_t gfp)
++{
++	dma_addr_t phys;
++	void *virt;
 +
-+- clocks:
-+	Resource that defines the IPA core clock.
++	virt = dma_zalloc_coherent(ipa_dma_dev, size, &phys, gfp);
++	if (!virt)
++		return -ENOMEM;
 +
-+- clock-names:
-+	The name used for the IPA core clock.  Must be "core".
++	mem->virt = virt;
++	mem->phys = phys;
++	mem->size = size;
 +
-+- interconnects:
-+	Specifies the interconnects used by the IPA.  Three cells are
-+	required, specifying:  the path from the IPA to memory; from
-+	IPA to internal (SoC resident) memory; and between the AP
-+	subsystem and IPA for register access.
++	return 0;
++}
 +
-+- interconnect-names:
-+	The names of the interconnects defined by the "interconnects"
-+	property.  Must be "memory", "imem", and "config".
++void ipa_dma_free(struct ipa_dma_mem *mem)
++{
++	dma_free_coherent(ipa_dma_dev, mem->size, mem->virt, mem->phys);
++	memset(mem, 0, sizeof(*mem));
++}
 +
-+- qcom,smem-states
-+	The state bits used for SMP2P output.  Two cells must be specified.
-+	The first indicates whether the value in the second bit is valid
-+	(1 means valid).  The second, if valid, defines whether the IPA
-+	clock is enabled (1 means enabled).
-+
-+- qcom,smem-state-names
-+	The names of the state bits used for SMP2P output.  These must be
-+	"ipa-clock-enabled-valid" and "ipa-clock-enabled".
-+
-+- memory-region
-+	A phandle for a reserved memory area that holds the firmware passed
-+	to Trust Zone for authentication.  (Note, this is required
-+	only for "qcom,ipa-sdm845-tz_init".)
-+
-+= EXAMPLE
-+
-+The following example represents the IPA present in the SDM845 SoC.  It
-+shows portions of the "modem-smp2p" node to indicate its relationship
-+with the interrupts and SMEM states used by the IPA.
-+
-+	modem-smp2p {
-+		compatible = "qcom,smp2p";
-+		. . .
-+		ipa_smp2p_out: ipa-ap-to-modem {
-+			qcom,entry-name = "ipa";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		ipa_smp2p_in: ipa-modem-to-ap {
-+			qcom,entry-name = "ipa";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	ipa@1e00000 {
-+		compatible = "qcom,ipa-sdm845-modem_init";
-+
-+		reg = <0x1e40000 0x34000>,
-+		      <0x1e04000 0x2c000>;
-+		reg-names = "ipa",
-+			    "gsi";
-+
-+		interrupts-extended = <&intc 0 311 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&intc 0 432 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&ipa_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&ipa_smp2p_in 1 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "ipa",
-+				  "gsi",
-+				  "ipa-clock-query",
-+				  "ipa-post-init";
-+
-+		clocks = <&rpmhcc RPMH_IPA_CLK>;
-+		clock-names = "core";
-+
-+		interconnects = <&qnoc MASTER_IPA &qnoc SLAVE_EBI1>,
-+			        <&qnoc MASTER_IPA &qnoc SLAVE_IMEM>,
-+			        <&qnoc MASTER_APPSS_PROC &qnoc SLAVE_IPA_CFG>;
-+		interconnect-names = "memory",
-+				     "imem",
-+				     "config";
-+
-+		qcom,smem-states = <&ipa_smp2p_out 0>,
-+				   <&ipa_smp2p_out 1>;
-+		qcom,smem-state-names = "ipa-clock-enabled-valid",
-+					"ipa-clock-enabled";
-+	};
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,rmnet-ipa.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,rmnet-ipa.txt
++void *ipa_dma_phys_to_virt(struct ipa_dma_mem *mem, dma_addr_t phys)
++{
++	return mem->virt + (phys - mem->phys);
++}
+diff --git a/drivers/net/ipa/ipa_dma.h b/drivers/net/ipa/ipa_dma.h
 new file mode 100644
-index 000000000000..3d0b2aabefc7
+index 000000000000..e211dbd9d4ec
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,rmnet-ipa.txt
-@@ -0,0 +1,15 @@
-+Qualcomm IPA RMNet Driver
++++ b/drivers/net/ipa/ipa_dma.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+This binding describes the IPA RMNet driver, which is used to
-+represent virtual interfaces available on the modem accessed via
-+the IPA.  Other than the compatible string there are no properties
-+associated with this device.
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (C) 2018 Linaro Ltd.
++ */
++#ifndef _IPA_DMA_H_
++#define _IPA_DMA_H_
 +
-+- compatible:
-+	Must be "qcom,rmnet-ipa".
++#include <linux/types.h>
++#include <linux/device.h>
 +
-+= EXAMPLE
++/**
++ * struct ipa_dma_mem - IPA allocated DMA memory descriptor
++ * @virt: host virtual base address of allocated DMA memory
++ * @phys: bus physical base address of DMA memory
++ * @size: size (bytes) of DMA memory
++ */
++struct ipa_dma_mem {
++	void *virt;
++	dma_addr_t phys;
++	size_t size;
++};
 +
-+	qcom,rmnet-ipa {
-+		compatible = "qcom,rmnet-ipa";
-+	};
++/**
++ * ipa_dma_init() - Initialize IPA DMA system.
++ * @dev:	IPA device structure
++ * @align:	Hardware required alignment for DMA memory
++ *
++ * Returns:	 0 if successful, or a negative error code.
++ */
++int ipa_dma_init(struct device *dev, u32 align);
++
++/**
++ * ipa_dma_exit() - shut down/clean up IPA DMA system
++ */
++void ipa_dma_exit(void);
++
++/**
++ * ipa_dma_alloc() - allocate a DMA buffer, describe it in mem struct
++ * @mem:	Memory structure to fill with allocation information.
++ * @size:	Size of DMA buffer to allocate.
++ * @gfp:	Allocation mode.
++ */
++int ipa_dma_alloc(struct ipa_dma_mem *mem, size_t size, gfp_t gfp);
++
++/**
++ * ipa_dma_free() - free a previously-allocated DMA buffer
++ * @mem:	Information about DMA allocation to free
++ */
++void ipa_dma_free(struct ipa_dma_mem *mem);
++
++/**
++ * ipa_dma_phys_to_virt() - return the virtual equivalent of a DMA address
++ * @phys:	DMA allocation information
++ * @phys:	Physical address to convert
++ *
++ * Return:	Virtual address corresponding to the given physical address
++ */
++void *ipa_dma_phys_to_virt(struct ipa_dma_mem *mem, dma_addr_t phys);
++
++#endif /* !_IPA_DMA_H_ */
 -- 
 2.17.1
 
