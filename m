@@ -2,102 +2,89 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8478AC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6BEC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6BD20827
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:15:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fyGzcWbc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6BD20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A77220827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A77220827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730991AbeKGXqK (ORCPT
+        id S1730574AbeKGXu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 18:46:10 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51324 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbeKGXqK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:46:10 -0500
-Received: by mail-wm1-f65.google.com with SMTP id w7-v6so14160458wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 06:15:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yK6NzDx4sIyotlD6DesYMrbO0KdE1/+hr0cPwWXbrfA=;
-        b=fyGzcWbc7HO3XkpkOW3hNqQsKN5jtXvP+ivBt4RnyBrJYDrGM8SxvzZEwjYrFe2h7j
-         XHnYd3gkHrV5ucevF2l5nJjfy4QOWbQj7f7UNpDAmApBZp9ySYjK5lRlOSKPbbTnrg+G
-         vPDfT9TbgI1nA00V5nrcLWfz913beb+QNBPNI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yK6NzDx4sIyotlD6DesYMrbO0KdE1/+hr0cPwWXbrfA=;
-        b=TMYx5YR8j0WMgW/bgXjuXuVtgHRWYEfdV0+2uxn7o+EAe5PFE/VrfLsXZOLhzLclnP
-         LtrV1rDJ1XtcXjBPTt5Aal0yO638stE7c1qSJxAYvOMcJ6ieYitE0J4rEErpLwhoIMm7
-         8lUWsckkKNfSJUo0h5MUHzU7hWuyTSIx7xWAiVWcfuSwq3CaF9PXOsku+9WgbboZ9zka
-         zWEgFFXKhhiT7TeR4IV+RONIZKoBCCGCXctPZ1CLjd/X+XYOKnfMta+9IwRyOaWmXUyU
-         GWkLi8RqreNMRjVhXoFMb88rGqO4nGaE8lSJaTHR51MamH2PIeKMX6pE+hYak+BOFtQk
-         bXPw==
-X-Gm-Message-State: AGRZ1gKyzbW63LHmJHOMbtw+F1e+FpFyEVm56q3WaW6M3v1kGtpEgyx6
-        okmSp20DJaoro3be3SBzvtlMFzmjccs=
-X-Google-Smtp-Source: AJdET5d2AawtJH61W7c271fcEAM/Y6SZa3IeJcsbOsZ8suZ4MOl0Qx+mD9u9HO/SWcnkTwXzG6eI9A==
-X-Received: by 2002:a1c:a8cf:: with SMTP id r198-v6mr309947wme.147.1541600135163;
-        Wed, 07 Nov 2018 06:15:35 -0800 (PST)
-Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id x142-v6sm2192875wmd.20.2018.11.07.06.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 06:15:34 -0800 (PST)
-Subject: Re: [PATCH v2] slimbus: ngd: QCOM_QMI_HELPERS has to be selected
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org
-References: <20181015183218.GA16900@kroah.com>
- <20181015194441.10475-1-niklas.cassel@linaro.org>
- <20181107135911.GA23393@kroah.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <f6e9ae15-b52b-b8c5-3d16-3b67b8977c38@linaro.org>
-Date:   Wed, 7 Nov 2018 14:15:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 7 Nov 2018 18:50:29 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51570 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726830AbeKGXu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 18:50:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03898A78;
+        Wed,  7 Nov 2018 06:19:55 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 353553F718;
+        Wed,  7 Nov 2018 06:19:52 -0800 (PST)
+Date:   Wed, 7 Nov 2018 14:19:49 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v5 03/15] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20181107141949.GF14309@e110439-lin>
+References: <20181029183311.29175-1-patrick.bellasi@arm.com>
+ <20181029183311.29175-4-patrick.bellasi@arm.com>
+ <20181107121908.GO9781@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20181107135911.GA23393@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107121908.GO9781@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/11/18 13:59, Greg KH wrote:
-> Really?  I do this and then I get this build error on x86:
+On 07-Nov 13:19, Peter Zijlstra wrote:
+> On Mon, Oct 29, 2018 at 06:32:57PM +0000, Patrick Bellasi wrote:
+> > +struct uclamp_se {
+> > +	unsigned int value		: SCHED_CAPACITY_SHIFT + 1;
+> > +	unsigned int group_id		: order_base_2(UCLAMP_GROUPS);
 > 
-> drivers/slimbus/qcom-ngd-ctrl.c: In function ‘of_qcom_slim_ngd_register’:
-> drivers/slimbus/qcom-ngd-ctrl.c:1333:63: warning: dereferencing ‘void *’ pointer
->    data = of_match_node(qcom_slim_ngd_dt_match, parent->of_node)->data;
->                                                                 ^~
-> drivers/slimbus/qcom-ngd-ctrl.c:1333:63: error: request for member ‘data’ in something not a structure or union
-> 
-> 
-> So I can't take this, something else must be wrong here...
-That is fine!
-Yes, there seems to be one more issue here, on non DT platforms 
-of_match_node is set to be NULL, which is why we are seeing this error I 
-guess!
+> Are you sure about ob2() ? seems weird we'll end up with 0 for
+> UCLAMP_GROUPS==1.
 
-I will fix this up, do some test and send both the fixes together.
+So, we have:
 
-thanks,
-srini
+   #define UCLAMP_GROUPS (CONFIG_UCLAMP_GROUPS_COUNT + 1)
 
+because one clamp group is always reserved for defaults.
+Thus, ob2(in) is always called with n>=2.
+
+... should be safe no ?
+
+However, will check better again on v6 for possible corner-cases...
+
+> > +	unsigned int mapped		: 1;
+> > +};
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
