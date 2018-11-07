@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8157FC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11130C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC7220882
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC04520883
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:09:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fV2K4fx8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC7220882
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dQ81GztV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC04520883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbeKHIlf (ORCPT
+        id S1728393AbeKHIlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 03:41:35 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42998 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727374AbeKHIle (ORCPT
+        Thu, 8 Nov 2018 03:41:37 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40993 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727374AbeKHIlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 03:41:34 -0500
-Received: by mail-pf1-f194.google.com with SMTP id u10-v6so2618487pfn.9
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 15:08:59 -0800 (PST)
+        Thu, 8 Nov 2018 03:41:36 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 70so2385439pgh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 15:09:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=251q+wzxMwb9EgjyEsAosebAViYOYzyiWozPstsfYng=;
-        b=fV2K4fx8qaKM1Eo4yhZfAvx1TS/LwV1RBOW2YgqcgovtU/6t158ik28R7BVDqBCg5I
-         0WF62c6NByPdStb6yuYI5AMLnRD8MOUaMb2vcHcBYltt8PtrlVkch5PV+29lTgEYZ7aM
-         RmKRahNlyWR9hlGGnJayqXvXfVsCA3SNY6vTE=
+        bh=KfFijGXJwU7EYqU+SdDNmXH5u5EZCG9E6Nv8N75Zm7o=;
+        b=dQ81GztVCN/8T6I1e52qyjWwEl0/RCF9wQDvKZS2H3xNo/ItgsXkjnyzQmJTNVWFie
+         TpxCp9atw7eIqjOSz6tUF0DDmPGeo8xseVtU30X9R7a8oAK8EDVkXS+cUxZurfJ2SouT
+         qxxDw+TdYYvAsDgZRs/3xw2R6gUA+4quEl4Y4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=251q+wzxMwb9EgjyEsAosebAViYOYzyiWozPstsfYng=;
-        b=T60SJa5GxkSmQj+wTh9pDYmyxNiCeXXwe+2CNNj9x/pJaVPP9CZQW3yOVAmjXOIwFE
-         zyD7nsOZfG3yu7F05KkEpYr4mLspbWEsqJZZUVuS7RnLqtTXtMI3TsCiFHh9zmO3NANj
-         7e56Bi6Ge1En1mr2BDI3+QfzIRO9A1tbdEg+U7nBCD5UrAzuSze0EXappGbEklN+BsZx
-         /V7K6E5l07uaxxtqr0SwEKQahFqcRwVH2rjRZ51FhLYM0zncsmotEdDzINV0mLxjaui1
-         OLK7xHpfkg0rMdLsfXgsOJyycxWRyuCgBrsaWrWgOQy89Kfui9aPTlspc+NBXgq531bo
-         +PcA==
-X-Gm-Message-State: AGRZ1gLF8XDJtBeeGwgZvyEqbXsiEVS2GYRsphfSsSWNJkAiWPpaaapi
-        1snjWWPZcns2iA3gm7dZcmOpmA==
-X-Google-Smtp-Source: AJdET5eI9EbywTsMpdytlF4HKf9rhgtpLLpxsed1ryKtAlGfNiGkTjyKjFvpIMtVwSvuZu+yMhIJwA==
-X-Received: by 2002:a62:9f98:: with SMTP id v24-v6mr2228075pfk.108.1541632139005;
-        Wed, 07 Nov 2018 15:08:59 -0800 (PST)
+        bh=KfFijGXJwU7EYqU+SdDNmXH5u5EZCG9E6Nv8N75Zm7o=;
+        b=EtWLS2vs7kWQGr88ijg1bsOBH2gVes4xrtK8SevcB4TfdlW/ksx0Q4DDN5J1dQThSV
+         icxgnzwZS52gAWMWz13x4kT9w7T8GLwuCmMyjnu8OUfTbnXXYqKnbs4RWLRA2bNm0Rdd
+         hdZfwot6gKEbLwTSMx2Jg0HkweeYeM3DBExlrxwsc1yyUUna2llxD2CultNRWKl/9HOv
+         59XCzXnrj6X2S1OXavMAHjzNThPtxIkrjaaSPWkJ0rVYj2j7Xr6HNoaCrIIGDhutnm6i
+         B5A+s+W2gUldF9UchiYOi8lqC1rns5FUcMWsIYDaBff6sHoYNSSAIlLdufTZ6eWV/nok
+         rDdQ==
+X-Gm-Message-State: AGRZ1gLzx+XhSwSCEq7UfoYaO8xIL2QLnzZv+98eW2sHjHZQS3/0zk0V
+        TmRPhISoFpEtfufquAygP8pbXA==
+X-Google-Smtp-Source: AJdET5ef8y8Nygxsop3YIKnTByh0+2J7UmD7KJ+Qb2G1w6hOXQxMbv62yKPd5McBvf7aEWwcmcLRtw==
+X-Received: by 2002:a62:ae06:: with SMTP id q6-v6mr2242703pff.126.1541632140457;
+        Wed, 07 Nov 2018 15:09:00 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id e70-v6sm1802034pfb.113.2018.11.07.15.08.57
+        by smtp.gmail.com with ESMTPSA id e70-v6sm1802034pfb.113.2018.11.07.15.08.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 07 Nov 2018 15:08:58 -0800 (PST)
+        Wed, 07 Nov 2018 15:08:59 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     alexander.shishkin@linux.intel.com, leo.yan@linaro.org,
         suzuki.poulose@arm.com, coresight@lists.linaro.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] coresight: etm3x: Deal with CLAIM tag before and after accessing HW
-Date:   Wed,  7 Nov 2018 16:08:51 -0700
-Message-Id: <1541632132-1252-4-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 4/4] coresight: etm3x: Release CLAIM tag when operated from perf
+Date:   Wed,  7 Nov 2018 16:08:52 -0700
+Message-Id: <1541632132-1252-5-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541632132-1252-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1541632132-1252-1-git-send-email-mathieu.poirier@linaro.org>
@@ -71,65 +71,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves access to the CLAIM tag so that no modification to the HW
-happens before and after the CLAIM operation has been carried.
+This patch deals with the release of the CLAIM tag when the ETM is
+operated from perf.  Otherwise the tag is left asserted and subsequent
+requests to use the device fail.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etm3x.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm3x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
-index fd5c4cca7db5..4f638d81a66a 100644
+index 4f638d81a66a..d7f452e62193 100644
 --- a/drivers/hwtracing/coresight/coresight-etm3x.c
 +++ b/drivers/hwtracing/coresight/coresight-etm3x.c
-@@ -363,15 +363,16 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
+@@ -602,6 +602,7 @@ static void etm_disable_perf(struct coresight_device *csdev)
+ 	 * power down the tracer.
+ 	 */
+ 	etm_set_pwrdwn(drvdata);
++	coresight_disclaim_device_unlocked(drvdata->base);
  
- 	CS_UNLOCK(drvdata->base);
- 
-+	rc = coresight_claim_device_unlocked(drvdata->base);
-+	if (rc)
-+		goto done;
-+
- 	/* Turn engine on */
- 	etm_clr_pwrdwn(drvdata);
- 	/* Apply power to trace registers */
- 	etm_set_pwrup(drvdata);
- 	/* Make sure all registers are accessible */
- 	etm_os_unlock(drvdata);
--	rc = coresight_claim_device_unlocked(drvdata->base);
--	if (rc)
--		goto done;
- 
- 	etm_set_prog(drvdata);
- 
-@@ -422,12 +423,11 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
- 	etm_clr_prog(drvdata);
- 
- done:
--	if (rc)
--		etm_set_pwrdwn(drvdata);
  	CS_LOCK(drvdata->base);
- 
--	dev_dbg(drvdata->dev, "cpu: %d enable smp call done: %d\n",
--		drvdata->cpu, rc);
-+	if (!rc)
-+		dev_dbg(drvdata->dev, "cpu: %d enable smp call done: %d\n",
-+			drvdata->cpu, rc);
- 	return rc;
  }
- 
-@@ -577,9 +577,9 @@ static void etm_disable_hw(void *info)
- 	for (i = 0; i < drvdata->nr_cntr; i++)
- 		config->cntr_val[i] = etm_readl(drvdata, ETMCNTVRn(i));
- 
-+	etm_set_pwrdwn(drvdata);
- 	coresight_disclaim_device_unlocked(drvdata->base);
- 
--	etm_set_pwrdwn(drvdata);
- 	CS_LOCK(drvdata->base);
- 
- 	dev_dbg(drvdata->dev, "cpu: %d disable smp call done\n", drvdata->cpu);
 -- 
 2.7.4
 
