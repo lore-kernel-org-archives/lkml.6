@@ -2,133 +2,280 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_75_100 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23732C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F92CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D582081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:22:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DRzVpzG9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D582081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 011972081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 20:22:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 011972081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbeKHFyO (ORCPT
+        id S1727051AbeKHFyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:54:14 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:42316 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbeKHFyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 00:54:13 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA7KIuYY024448;
-        Wed, 7 Nov 2018 20:21:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=g81bR2VFriFbSeNQT3NitCx+/9tD4imkdee1NLEu8Ek=;
- b=DRzVpzG9d6VfjlY7k/kTiBuT/dnqi2uMQMT6ZJThVhRFFD+F4Ny1YwwPl7+0sKaqYrTh
- jlucHOpEsPV5DRspwnohxZKswiOO4rvdBUfceoOonls0TJHCIo+bOk5tW7Sb4V62l0JL
- nBRH7B6amJ/bluoV3pnVLZEH0/iE5M7HTETaLHrd7BrwdWsh6/9K3gE/LjOPCtVySdrt
- zSJrauhTVY7KdyN2+xuadW3RP2UZ8vPi97W0AxIip5gRG3seJ1/bczCDjoyckRscZdsQ
- CA2ULtIsrSNZ4n4T9nOZ/ud/WiEIKjbHYFFqB7TzRRX8eFqTrq1J3uDj4i3MuVnL8YJJ IQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2nh33u5thc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Nov 2018 20:21:41 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA7KLeoj013863
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 7 Nov 2018 20:21:40 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA7KLcq5014294;
-        Wed, 7 Nov 2018 20:21:38 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 07 Nov 2018 12:21:38 -0800
-Date:   Wed, 7 Nov 2018 12:21:45 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "aaron.lu@intel.com" <aaron.lu@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "jwadams@google.com" <jwadams@google.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "prasad.singamsetty@oracle.com" <prasad.singamsetty@oracle.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-        "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>
-Subject: Re: [RFC PATCH v4 01/13] ktask: add documentation
-Message-ID: <20181107202145.xvaq3pmqbzyekfan@ca-dmjordan1.us.oracle.com>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-2-daniel.m.jordan@oracle.com>
- <20181106084911.GA22504@hirez.programming.kicks-ass.net>
- <20181106203411.pdce6tgs7dncwflh@ca-dmjordan1.us.oracle.com>
- <20181106205146.GB30490@mellanox.com>
- <20181107102752.GK9781@hirez.programming.kicks-ass.net>
+        Thu, 8 Nov 2018 00:54:22 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:20434 "EHLO smtp4-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbeKHFyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 00:54:21 -0500
+Received: from [192.168.1.42] (unknown [77.207.133.132])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 47B8519F59D;
+        Wed,  7 Nov 2018 21:22:13 +0100 (CET)
+Subject: [PATCH 1/9] arm64: defconfig: Regenerate for v4.20
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     arm-soc <arm@kernel.org>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <8b49a92b-ca92-1fca-cd09-3bcd7a3dcbb9@free.fr>
+Message-ID: <5da5de06-f190-cb65-7f82-d84f2b6359a4@free.fr>
+Date:   Wed, 7 Nov 2018 21:14:20 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107102752.GK9781@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9070 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=535
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811070181
+In-Reply-To: <8b49a92b-ca92-1fca-cd09-3bcd7a3dcbb9@free.fr>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 11:27:52AM +0100, Peter Zijlstra wrote:
-> On Tue, Nov 06, 2018 at 08:51:54PM +0000, Jason Gunthorpe wrote:
-> > On Tue, Nov 06, 2018 at 12:34:11PM -0800, Daniel Jordan wrote:
-> > 
-> > > > What isn't clear is if this calling thread is waiting or not. Only do
-> > > > this inheritance trick if it is actually waiting on the work. If it is
-> > > > not, nobody cares.
-> > > 
-> > > The calling thread waits.  Even if it didn't though, the inheritance trick
-> > > would still be desirable for timely completion of the job.
-> > 
-> > Can you make lockdep aware that this is synchronous?
-> > 
-> > ie if I do
-> > 
-> >   mutex_lock()
-> >   ktask_run()
-> >   mutex_lock()
-> > 
-> > Can lockdep know that all the workers are running under that lock?
-> > 
-> > I'm thinking particularly about rtnl_lock as a possible case, but
-> > there could also make some sense to hold the read side of the mm_sem
-> > or similar like the above.
-> 
-> Yes, the normal trick is adding a fake lock to ktask_run and holding
-> that over the actual job. See lock_map* in flush_workqueue() vs
-> process_one_work().
+Run the platform defconfig through kbuild, and handle the trivial case
+where options merely move around.
 
-I'll add that for the next version.
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+ arch/arm64/configs/defconfig | 90 ++++++++++++++++++------------------
+ 1 file changed, 45 insertions(+), 45 deletions(-)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index c9a57d11330b..f786c95504d3 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -3,6 +3,7 @@ CONFIG_POSIX_MQUEUE=y
+ CONFIG_AUDIT=y
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
+ CONFIG_IRQ_TIME_ACCOUNTING=y
+ CONFIG_BSD_PROCESS_ACCT=y
+ CONFIG_BSD_PROCESS_ACCT_V3=y
+@@ -28,9 +29,6 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_KALLSYMS_ALL=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_PROFILING=y
+-CONFIG_JUMP_LABEL=y
+-CONFIG_MODULES=y
+-CONFIG_MODULE_UNLOAD=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_ALPINE=y
+ CONFIG_ARCH_BCM2835=y
+@@ -46,9 +44,6 @@ CONFIG_ARCH_MEDIATEK=y
+ CONFIG_ARCH_MESON=y
+ CONFIG_ARCH_MVEBU=y
+ CONFIG_ARCH_QCOM=y
+-CONFIG_ARCH_ROCKCHIP=y
+-CONFIG_ARCH_SEATTLE=y
+-CONFIG_ARCH_SYNQUACER=y
+ CONFIG_ARCH_RENESAS=y
+ CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A774C0=y
+@@ -59,7 +54,10 @@ CONFIG_ARCH_R8A77970=y
+ CONFIG_ARCH_R8A77980=y
+ CONFIG_ARCH_R8A77990=y
+ CONFIG_ARCH_R8A77995=y
++CONFIG_ARCH_ROCKCHIP=y
++CONFIG_ARCH_SEATTLE=y
+ CONFIG_ARCH_STRATIX10=y
++CONFIG_ARCH_SYNQUACER=y
+ CONFIG_ARCH_TEGRA=y
+ CONFIG_ARCH_SPRD=y
+ CONFIG_ARCH_THUNDER=y
+@@ -91,16 +89,10 @@ CONFIG_PCIE_HISI_STB=y
+ CONFIG_ARM64_VA_BITS_48=y
+ CONFIG_SCHED_MC=y
+ CONFIG_NUMA=y
+-CONFIG_PREEMPT=y
+-CONFIG_KSM=y
+-CONFIG_MEMORY_FAILURE=y
+-CONFIG_TRANSPARENT_HUGEPAGE=y
+-CONFIG_CMA=y
+ CONFIG_SECCOMP=y
+ CONFIG_KEXEC=y
+ CONFIG_CRASH_DUMP=y
+ CONFIG_XEN=y
+-# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_COMPAT=y
+ CONFIG_HIBERNATION=y
+ CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
+@@ -118,7 +110,37 @@ CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
+ CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
+ CONFIG_ARM_SCPI_CPUFREQ=y
+ CONFIG_ARM_TEGRA186_CPUFREQ=y
++CONFIG_ARM_SCPI_PROTOCOL=y
++CONFIG_RASPBERRYPI_FIRMWARE=y
+ CONFIG_TI_SCI_PROTOCOL=y
++CONFIG_EFI_CAPSULE_LOADER=y
++CONFIG_ACPI=y
++CONFIG_ACPI_APEI=y
++CONFIG_ACPI_APEI_GHES=y
++CONFIG_ACPI_APEI_MEMORY_FAILURE=y
++CONFIG_ACPI_APEI_EINJ=y
++CONFIG_VIRTUALIZATION=y
++CONFIG_KVM=y
++CONFIG_ARM64_CRYPTO=y
++CONFIG_CRYPTO_SHA1_ARM64_CE=y
++CONFIG_CRYPTO_SHA2_ARM64_CE=y
++CONFIG_CRYPTO_SHA512_ARM64_CE=m
++CONFIG_CRYPTO_SHA3_ARM64=m
++CONFIG_CRYPTO_SM3_ARM64_CE=m
++CONFIG_CRYPTO_GHASH_ARM64_CE=y
++CONFIG_CRYPTO_CRCT10DIF_ARM64_CE=m
++CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
++CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
++CONFIG_CRYPTO_CHACHA20_NEON=m
++CONFIG_CRYPTO_AES_ARM64_BS=m
++CONFIG_JUMP_LABEL=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
++CONFIG_KSM=y
++CONFIG_MEMORY_FAILURE=y
++CONFIG_TRANSPARENT_HUGEPAGE=y
++CONFIG_CMA=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+@@ -202,8 +224,8 @@ CONFIG_SCSI_HISI_SAS=y
+ CONFIG_SCSI_HISI_SAS_PCI=y
+ CONFIG_SCSI_UFSHCD=m
+ CONFIG_SCSI_UFSHCD_PLATFORM=m
+-CONFIG_SCSI_UFS_HISI=y
+ CONFIG_SCSI_UFS_QCOM=m
++CONFIG_SCSI_UFS_HISI=y
+ CONFIG_ATA=y
+ CONFIG_SATA_AHCI=y
+ CONFIG_SATA_AHCI_PLATFORM=y
+@@ -371,8 +393,8 @@ CONFIG_BATTERY_SBS=m
+ CONFIG_BATTERY_BQ27XXX=y
+ CONFIG_SENSORS_ARM_SCPI=y
+ CONFIG_SENSORS_LM90=m
+-CONFIG_SENSORS_INA2XX=m
+ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
++CONFIG_SENSORS_INA2XX=m
+ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+ CONFIG_CPU_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+@@ -395,8 +417,6 @@ CONFIG_BCM2835_WDT=y
+ CONFIG_MFD_BD9571MWV=y
+ CONFIG_MFD_AXP20X_RSB=y
+ CONFIG_MFD_CROS_EC=y
+-CONFIG_CROS_EC_I2C=y
+-CONFIG_CROS_EC_SPI=y
+ CONFIG_MFD_CROS_EC_CHARDEV=m
+ CONFIG_MFD_EXYNOS_LPASS=m
+ CONFIG_MFD_HI6421_PMIC=y
+@@ -430,9 +450,9 @@ CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y
+ CONFIG_MEDIA_CONTROLLER=y
+ CONFIG_VIDEO_V4L2_SUBDEV_API=y
+ # CONFIG_DVB_NET is not set
+-CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_MEDIA_USB_SUPPORT=y
+ CONFIG_USB_VIDEO_CLASS=m
++CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
+ CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
+ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+@@ -448,7 +468,6 @@ CONFIG_DRM_EXYNOS_DSI=y
+ CONFIG_DRM_EXYNOS_HDMI=y
+ CONFIG_DRM_EXYNOS_MIC=y
+ CONFIG_DRM_ROCKCHIP=m
+-CONFIG_DRM_SUN4I=m
+ CONFIG_ROCKCHIP_ANALOGIX_DP=y
+ CONFIG_ROCKCHIP_CDN_DP=y
+ CONFIG_ROCKCHIP_DW_HDMI=y
+@@ -456,6 +475,7 @@ CONFIG_ROCKCHIP_DW_MIPI_DSI=y
+ CONFIG_ROCKCHIP_INNO_HDMI=y
+ CONFIG_DRM_RCAR_DU=m
+ CONFIG_DRM_RCAR_LVDS=m
++CONFIG_DRM_SUN4I=m
+ CONFIG_DRM_TEGRA=m
+ CONFIG_DRM_PANEL_SIMPLE=m
+ CONFIG_DRM_I2C_ADV7511=m
+@@ -587,6 +607,8 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
++CONFIG_CROS_EC_I2C=y
++CONFIG_CROS_EC_SPI=y
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+@@ -662,9 +684,9 @@ CONFIG_PHY_ROCKCHIP_INNO_HDMI=m
+ CONFIG_PHY_ROCKCHIP_INNO_USB2=y
+ CONFIG_PHY_ROCKCHIP_PCIE=m
+ CONFIG_PHY_ROCKCHIP_TYPEC=y
+-CONFIG_PHY_TEGRA_XUSB=y
+-CONFIG_PHY_UNIPHIER_USB3=y
+ CONFIG_PHY_UNIPHIER_USB2=y
++CONFIG_PHY_UNIPHIER_USB3=y
++CONFIG_PHY_TEGRA_XUSB=y
+ CONFIG_HISI_PMU=y
+ CONFIG_QCOM_L2_PMU=y
+ CONFIG_QCOM_L3_PMU=y
+@@ -674,14 +696,6 @@ CONFIG_UNIPHIER_EFUSE=y
+ CONFIG_MESON_EFUSE=m
+ CONFIG_TEE=y
+ CONFIG_OPTEE=y
+-CONFIG_ARM_SCPI_PROTOCOL=y
+-CONFIG_RASPBERRYPI_FIRMWARE=y
+-CONFIG_EFI_CAPSULE_LOADER=y
+-CONFIG_ACPI=y
+-CONFIG_ACPI_APEI=y
+-CONFIG_ACPI_APEI_GHES=y
+-CONFIG_ACPI_APEI_MEMORY_FAILURE=y
+-CONFIG_ACPI_APEI_EINJ=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
+ CONFIG_EXT4_FS_POSIX_ACL=y
+@@ -707,8 +721,9 @@ CONFIG_ROOT_NFS=y
+ CONFIG_9P_FS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+-CONFIG_VIRTUALIZATION=y
+-CONFIG_KVM=y
++CONFIG_SECURITY=y
++CONFIG_CRYPTO_ECHAINIV=y
++CONFIG_CRYPTO_ANSI_CPRNG=y
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
+ CONFIG_DEBUG_FS=y
+@@ -718,19 +733,4 @@ CONFIG_DEBUG_KERNEL=y
+ # CONFIG_DEBUG_PREEMPT is not set
+ # CONFIG_FTRACE is not set
+ CONFIG_MEMTEST=y
+-CONFIG_SECURITY=y
+-CONFIG_CRYPTO_ECHAINIV=y
+-CONFIG_CRYPTO_ANSI_CPRNG=y
+ CONFIG_CRYPTO_DEV_FSL_DPAA2_CAAM=y
+-CONFIG_ARM64_CRYPTO=y
+-CONFIG_CRYPTO_SHA1_ARM64_CE=y
+-CONFIG_CRYPTO_SHA2_ARM64_CE=y
+-CONFIG_CRYPTO_SHA512_ARM64_CE=m
+-CONFIG_CRYPTO_SHA3_ARM64=m
+-CONFIG_CRYPTO_SM3_ARM64_CE=m
+-CONFIG_CRYPTO_GHASH_ARM64_CE=y
+-CONFIG_CRYPTO_CRCT10DIF_ARM64_CE=m
+-CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
+-CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
+-CONFIG_CRYPTO_CHACHA20_NEON=m
+-CONFIG_CRYPTO_AES_ARM64_BS=m
+-- 
+2.17.1
+
