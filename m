@@ -2,140 +2,107 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BBBC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32471C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 801C420862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:57:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgWmWWJv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 801C420862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EC9512086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 08:57:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9512086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730324AbeKGS04 (ORCPT
+        id S1730506AbeKGS1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 13:26:56 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34294 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbeKGS04 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 13:26:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j26-v6so16508261wre.1;
-        Wed, 07 Nov 2018 00:57:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ETL7Is+WZyqQ8ia+CkDrCnNCwY/JOaHMUTqHjGSCshY=;
-        b=AgWmWWJvI9YsOOWIoioj3sjyqyWh6N7/25gBFO3/N4xCnxZ4k94B8qUCYe0rzPVBsu
-         frROf9H5xTvxlRqahxbeXh0V+WNye266sTLkymlH767Hg1HgLiJ3a65/dLv/bZWHOoRp
-         O1bX7W5RbYaSx3nD+sjb7aAhEukJu8WpHeLfge/1pz57qs5m7tPhY11F8JsJSsLVckFP
-         441ttWdWIzUzxJWDHdREnnjiHYz7/Ei3HGsI9KKVHmL3FOfMHASAA1apYNhikmhv/zOZ
-         ziwmsb3WGboWKVXMYRM0HjkY2qmIrlxzh3mi9o3JhktRyNeuVQTy0rCnywlEGL02Pe4I
-         H7Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ETL7Is+WZyqQ8ia+CkDrCnNCwY/JOaHMUTqHjGSCshY=;
-        b=jHvfNxm6cGI2MymFp81TpTEYYenbTuOBQSSke9qCUK0IbsyaaEI9I5ku+KdMrWF0xA
-         ZWKj6aHg+4QVjZss505aZWVy41jhCUXhZXYxZf7TRLwXzFfoh0jQKp0elnI8uy1ODLKO
-         asKS+xDlv6yjFa58AR5z5v1HoaXkfy+qOFVEZ8uZ1JmuZX8yFKQnr+AP5GMJs9mPHgzl
-         IWpzsm15ZCmfwUmIKEJ9zIJtROeV96DrDGJmW94gIBcP0lmNztp/nFKSGYKlhPd2jWFs
-         nayjh8/o/I0IGcQwq1ntN3+pDR9rj/Dsagez1lcDJNTNOkPdJX3BaEI8tbj4wuUMZONe
-         hCdA==
-X-Gm-Message-State: AGRZ1gKq17pnP1ZJrQYoCzT0g5WJtYtmEU9sqsJ4U7wFy81lBsm1XAsx
-        bevNri8rjNaBeQ0EX0Xsdhw=
-X-Google-Smtp-Source: AJdET5cRv4Xw2d6lJjBIZSQ9GISpn3nVgwckqYAwNvh4tl3uTByoshAtbOkXexMc5tXdagTEnXYB9g==
-X-Received: by 2002:a5d:62c1:: with SMTP id o1-v6mr969466wrv.83.1541581049999;
-        Wed, 07 Nov 2018 00:57:29 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id j203-v6sm256150wmd.46.2018.11.07.00.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 00:57:29 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v2] pinctrl: zynq: Use define directive for PIN_CONFIG_IO_STANDARD
-Date:   Wed,  7 Nov 2018 01:56:40 -0700
-Message-Id: <20181107085639.32366-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181101005724.9622-1-natechancellor@gmail.com>
-References: <20181101005724.9622-1-natechancellor@gmail.com>
+        Wed, 7 Nov 2018 13:27:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39362 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726306AbeKGS1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 13:27:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8CC43AD73;
+        Wed,  7 Nov 2018 08:57:51 +0000 (UTC)
+Subject: Re: [PATCH v2 2/4] mm: Convert zone->managed_pages to atomic variable
+To:     Arun KS <arunks@codeaurora.org>, akpm@linux-foundation.org,
+        keescook@chromium.org, khlebnikov@yandex-team.ru,
+        minchan@kernel.org, mhocko@kernel.org, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com
+References: <1541521310-28739-1-git-send-email-arunks@codeaurora.org>
+ <1541521310-28739-3-git-send-email-arunks@codeaurora.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <9379a2c2-d791-2f2a-9019-2ff091dac5db@suse.cz>
+Date:   Wed, 7 Nov 2018 09:57:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1541521310-28739-3-git-send-email-arunks@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another:
+On 11/6/18 5:21 PM, Arun KS wrote:
+> totalram_pages, zone->managed_pages and totalhigh_pages updates
+> are protected by managed_page_count_lock, but readers never care
+> about it. Convert these variables to atomic to avoid readers
+> potentially seeing a store tear.
+> 
+> This patch converts zone->managed_pages. Subsequent patches will
+> convert totalram_panges, totalhigh_pages and eventually
+> managed_page_count_lock will be removed.
+> 
+> Suggested-by: Michal Hocko <mhocko@suse.com>
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
-enumeration type 'enum zynq_pin_config_param' to different enumeration
-type 'enum pin_config_param' [-Wenum-conversion]
-        {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
-        ~               ^~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
-enumeration type 'enum zynq_pin_config_param' to different enumeration
-type 'enum pin_config_param' [-Wenum-conversion]
-        = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-            ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-macro 'PCONFDUMP'
-        .param = a, .display = b, .format = c, .has_arg = d     \
-                 ^
-2 warnings generated.
-
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-v1 -> v2:
-
-* Avoid kernel-doc warning
-
- drivers/pinctrl/pinctrl-zynq.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index a0daf27042bd..90fd37e8207b 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -971,15 +971,12 @@ enum zynq_io_standards {
- 	zynq_iostd_max
- };
- 
--/**
-- * enum zynq_pin_config_param - possible pin configuration parameters
-- * @PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
-+/*
-+ * PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
-  *	this parameter (on a custom format) tells the driver which alternative
-  *	IO standard to use.
-  */
--enum zynq_pin_config_param {
--	PIN_CONFIG_IOSTANDARD = PIN_CONFIG_END + 1,
--};
-+#define PIN_CONFIG_IOSTANDARD		(PIN_CONFIG_END + 1)
- 
- static const struct pinconf_generic_params zynq_dt_params[] = {
- 	{"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
--- 
-2.19.1
-
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
