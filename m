@@ -2,225 +2,167 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2541BC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0E9C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF1DD2081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 11:55:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF1DD2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B09A2085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:00:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ILCVg5bV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B09A2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeKGVZq (ORCPT
+        id S1726604AbeKGVaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:25:46 -0500
-Received: from smtp.eu.citrix.com ([185.25.65.24]:2406 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeKGVZq (ORCPT
+        Wed, 7 Nov 2018 16:30:01 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35413 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeKGVaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:25:46 -0500
-X-IronPort-AV: E=Sophos;i="5.54,475,1534809600"; 
-   d="scan'208";a="81521354"
-Subject: Re: [Xen-devel] [PATCH] x86/xen: fix pv boot
-To:     Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-        <xen-devel@lists.xenproject.org>, <x86@kernel.org>
-CC:     <sstabellini@kernel.org>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <boris.ostrovsky@oracle.com>, <tglx@linutronix.de>
-References: <20181107113017.30090-1-jgross@suse.com>
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <f95cf3fb-fb49-8211-0c54-f6c7382ac455@citrix.com>
-Date:   Wed, 7 Nov 2018 11:55:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 7 Nov 2018 16:30:01 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z16-v6so17121098wrv.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 03:59:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j01Qxhiz39nito7ewQN1W1FtxPRlmQuaymrKYUa51rI=;
+        b=ILCVg5bVwam473Ss2BjzMaODuDwBjw07aFa2Z47GB04e1Yx1b8DuAd3ndBFUmV90E1
+         e6hoXrzvubeSqCTdkwH03ucvU3p//HWJ2NH20QtPIgK7qqV6NddGJ9+CBYFgX/+XJeFH
+         OJlApgGSfiiMrwPkhJjDnL66qBNlD986jQOCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j01Qxhiz39nito7ewQN1W1FtxPRlmQuaymrKYUa51rI=;
+        b=M/4uPwCj0hHr3BP1yoYDTpEJ8Phfyvct/aUKYD27c01a4OdE3Jc6DWcrswO8dU8J9A
+         xJ4KF0R/sWp5d3CBKdCf5zlPwiCKWEqYXIvtWNUAkBCBF/cO7kO4nopVpHS5L/fbWgDE
+         SJg/RTLZDLzIah3rPxmebHnFChE9v2jg4GV2dBppoSdrp+QWHlPjrBZPa4rTt0v0cpXH
+         hlq4G3fY21aLTzpUIEgObWUis/dd/144foIOf9+8pnqym7JJ2MA1ISSeW7RH83tCwtgC
+         ZbKcQ9pTpBkPTaFhEp95A8uXwuVay25PMN0LgMze97Oys/zBcRJWcoWVxtY4KY6X9t6Q
+         a8iA==
+X-Gm-Message-State: AGRZ1gI3A9rvdBQK/6VUV2sxVJwvP4m/Vu+un4z/5YY2NbJEZaPXWTS0
+        yxj4PLk/lI1D3ekH+xuBTnL6jQ==
+X-Google-Smtp-Source: AJdET5cYxL6rJzlR4/x+b/Imbe/09gHwnVdg466LN1bHsMT7euNPucd6OMAWigORKqiCfxG0eZh7uw==
+X-Received: by 2002:adf:fac4:: with SMTP id a4-v6mr1698489wrs.202.1541591996873;
+        Wed, 07 Nov 2018 03:59:56 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id v11-v6sm564320wrt.40.2018.11.07.03.59.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 03:59:55 -0800 (PST)
+Date:   Wed, 7 Nov 2018 11:59:53 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] kgdb: Don't round up a CPU that failed rounding
+ up before
+Message-ID: <20181107115953.cnar4u2axi4poaxe@holly.lan>
+References: <20181107010028.184543-1-dianders@chromium.org>
+ <20181107010028.184543-4-dianders@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20181107113017.30090-1-jgross@suse.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107010028.184543-4-dianders@chromium.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/18 11:30, Juergen Gross wrote:
-> Commit 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on
-> kernel addresses") introduced a regression for booting Xen PV guests.
->
-> Xen PV guests are using __put_user() and __get_user() for accessing the
-> p2m map (physical to machine frame number map) as accesses might fail
-> in case of not populated areas of the map.
->
-> With above commit using __put_user() and __get_user() for accessing
-> kernel pages is no longer valid. So replace the Xen hack by adding
-> appropriate p2m access functions using the default fixup handler.
->
-> Fixes: 9da3f2b7405440 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/include/asm/xen/page.h | 39 ++++++++++++++++++++++++++++++++++++---
->  arch/x86/xen/p2m.c              |  3 +--
->  2 files changed, 37 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/include/asm/xen/page.h b/arch/x86/include/asm/xen/page.h
-> index 123e669bf363..a39015cb2f3f 100644
-> --- a/arch/x86/include/asm/xen/page.h
-> +++ b/arch/x86/include/asm/xen/page.h
-> @@ -9,7 +9,7 @@
->  #include <linux/mm.h>
->  #include <linux/device.h>
+On Tue, Nov 06, 2018 at 05:00:27PM -0800, Douglas Anderson wrote:
+> If we're using the default implementation of kgdb_roundup_cpus() that
+> uses smp_call_function_single_async() we can end up hanging
+> kgdb_roundup_cpus() if we try to round up a CPU that failed to round
+> up before.
+> 
+> Specifically smp_call_function_single_async() will try to wait on the
+> csd lock for the CPU that we're trying to round up.  If the previous
+> round up never finished then that lock could still be held and we'll
+> just sit there hanging.
+> 
+> There's not a lot of use trying to round up a CPU that failed to round
+> up before.  Let's keep a flag that indicates whether the CPU started
+> but didn't finish to round up before.  If we see that flag set then
+> we'll skip the next round up.
+> 
+> In general we have a few goals here:
+> - We never want to end up calling smp_call_function_single_async()
+>   when the csd is still locked.  This is accomplished because
+>   flush_smp_call_function_queue() unlocks the csd _before_ invoking
+>   the callback.  That means that when kgdb_nmicallback() runs we know
+>   for sure the the csd is no longer locked.  Thus when we set
+>   "rounding_up = false" we know for sure that the csd is unlocked.
+> - If there are no timeouts rounding up we should never skip a round
+>   up.
+> 
+> NOTE #1: In general trying to continue running after failing to round
+> up CPUs doesn't appear to be supported in the debugger.  When I
+> simulate this I find that kdb reports "Catastrophic error detected"
+> when I try to continue.  I can overrule and continue anyway, but it
+> should be noted that we may be entering the land of dragons here.
+
+It's been quite a while but AFAIR I decided to set the catastrophic
+error here *because* the stuck csd lock would make restarting fragile.
+
+So arguably we are now able to remove the code that sets this flag when
+a CPU fails to round up.
+
+
+> NOTE #3: setting 'kgdb_info[cpu].rounding_up = false' is in
+> kgdb_nmicallback() instead of kgdb_call_nmi_hook() because some
+> implementations override kgdb_call_nmi_hook().  It shouldn't hurt to
+> have it in kgdb_nmicallback() in any case.
+
+Slightly icky but I guess this is OK.
+
+> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+> index 23f2b5613afa..324cba8917f1 100644
+> --- a/kernel/debug/debug_core.c
+> +++ b/kernel/debug/debug_core.c
+> @@ -246,6 +246,20 @@ void __weak kgdb_roundup_cpus(void)
+>  			continue;
 >  
-> -#include <linux/uaccess.h>
-> +#include <asm/extable.h>
->  #include <asm/page.h>
->  #include <asm/pgtable.h>
->  
-> @@ -91,15 +91,48 @@ clear_foreign_p2m_mapping(struct gnttab_unmap_grant_ref *unmap_ops,
->   * Helper functions to write or read unsigned long values to/from
->   * memory, when the access may fault.
->   */
-> +#ifdef CONFIG_X86_32
-> +#define __i "l"
-> +#define __r "k"
-> +#else
-> +#define __i "q"
-> +#define __r ""
-> +#endif
-
-You don't need any of these.  GCC and Clang can derive the correct
-encoding from the type passed in, and will DTRT given unsigned long's.
-
-Furthermore, it makes the asm easier to read.
-
->  static inline int xen_safe_write_ulong(unsigned long *addr, unsigned long val)
->  {
-> -	return __put_user(val, (unsigned long __user *)addr);
-> +	int ret = 0;
+>  		csd = &per_cpu(kgdb_roundup_csd, cpu);
 > +
-> +	asm volatile("1: mov"__i" %"__r"1,%2\n"
-> +		     "2:\n"
-> +		     ".section .fixup,\"ax\"\n"
-> +		     "3: mov %3,%0\n"
-> +		     "   jmp 2b\n"
-> +		     ".previous\n"
-> +		     _ASM_EXTABLE(1b, 3b)
-> +		     : "=r"(ret)
-> +		     : "r" (val), "m" (*addr), "i" (-1), "0" (ret));
+> +		/*
+> +		 * If it didn't round up last time, don't try again
+> +		 * since smp_call_function_single_async() will block.
+> +		 *
+> +		 * If rounding_up is false then we know that the
+> +		 * previous call must have at least started and that
+> +		 * means smp_call_function_single_async() won't block.
+> +		 */
+> +		smp_mb();
 
-This constraint hides the write to addr.
+Not commented and I suspect this may have no useful effect. What 
+(harmful) orderings does this barrier render impossible?
 
-> +	return ret;
->  }
->  
->  static inline int xen_safe_read_ulong(unsigned long *addr, unsigned long *val)
->  {
-> -	return __get_user(*val, (unsigned long __user *)addr);
-> +	int ret = 0;
-> +	unsigned long rval;
+
+> +		if (kgdb_info[cpu].rounding_up)
+> +			continue;
+> +		kgdb_info[cpu].rounding_up = true;
 > +
-> +	asm volatile("1: mov"__i" %2,%"__r"1\n"
-> +		     "2:\n"
-> +		     ".section .fixup,\"ax\"\n"
-> +		     "3: mov %3,%0\n"
-> +		     "   jmp 2b\n"
-> +		     ".previous\n"
-> +		     _ASM_EXTABLE(1b, 3b)
-> +		     : "=r" (ret), "=r" (rval)
-> +		     : "m" (*addr), "i" (-1), "0" (ret));
-> +	*val = rval;
-> +	return ret;
+>  		csd->func = kgdb_call_nmi_hook;
+>  		smp_call_function_single_async(cpu, csd);
+>  	}
+> @@ -782,6 +796,9 @@ int kgdb_nmicallback(int cpu, void *regs)
+>  	struct kgdb_state kgdb_var;
+>  	struct kgdb_state *ks = &kgdb_var;
+>  
+> +	kgdb_info[cpu].rounding_up = false;
+> +	smp_mb();
 
-This also uses rval uninitialised if a fault occurs.
+Also not commented. Here I think the barrier may have a purpose (to
+ensure rounding_up gets cleared before we peek at dbg_master_lock) but
+if that is the case we need to comment it.
+ 
 
-Overall, how about:
-
-static inline int xen_safe_write_ulong(unsigned long *addr, unsigned
-long val)
-{
-    int ret = 0;
-
-    asm volatile("1: mov %[val], %[ptr]\n"
-                 "2:\n"
-                 ".section .fixup, \"ax\"\n"
-                 "3: mov %[err], %[ret]\n"
-                 "   jmp 2b\n"
-                 ".previous\n"
-                 _ASM_EXTABLE(1b, 3b)
-                 : [ret] "+r" (ret), [ptr] "=m" (*addr),
-                 : [val] "r" (val), [err] "i" (-1));
-
-    return ret;
-}
-
-static inline int xen_safe_read_ulong(const unsigned long *addr,
-                                      unsigned long *val)
-{
-    int ret = 0;
-    unsigned long rval = ~0ul;
-
-    asm volatile("1: mov %[ptr], %[rval]\n"
-                 "2:\n"
-                 ".section .fixup, \"ax\"\n"
-                 "3: mov %[err], %[ret]\n"
-                 "   jmp 2b\n"
-                 ".previous\n"
-                 _ASM_EXTABLE(1b, 3b)
-                 : [ret] "+r" (ret), [rval] "+r" (rval)
-                 : [ptr] "=m" (*addr), [err] "i" (-1));
-    *val = rval;
-
-    return ret;
-}
-
-?
-
-~Andrew
+Daniel.
