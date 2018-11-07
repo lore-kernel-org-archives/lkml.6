@@ -2,117 +2,148 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187C1C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41597C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6012085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6012085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A71420827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 15:01:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IepAuI2A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A71420827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731173AbeKHAbB (ORCPT
+        id S1727990AbeKHAb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:31:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42003 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727866AbeKHAbB (ORCPT
+        Wed, 7 Nov 2018 19:31:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40220 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbeKHAb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:31:01 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA7F04ND102164
-        for <linux-kernel@vger.kernel.org>; Wed, 7 Nov 2018 10:00:17 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nm1303mrc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 10:00:16 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 7 Nov 2018 15:00:15 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 7 Nov 2018 15:00:12 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA7F0BmA48890002
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 7 Nov 2018 15:00:11 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89B665205A;
-        Wed,  7 Nov 2018 15:00:11 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.58])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 3DCF15204F;
-        Wed,  7 Nov 2018 15:00:10 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 07 Nov 2018 17:00:09 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] kernel-doc: extend $type_param to match members referenced by pointer
-Date:   Wed,  7 Nov 2018 17:00:08 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18110715-0020-0000-0000-000002E32AFC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110715-0021-0000-0000-00002132A8AA
-Message-Id: <1541602808-26233-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-07_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811070135
+        Wed, 7 Nov 2018 19:31:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=FhYOWeXTPN3rKw/TRtfoZ1HT5XTN3j2Jq+SpJrsZtpM=; b=IepAuI2AsRzd
+        t3nszoxflyIbp2JIQvhZR5R0n68XqbTUMrwoSTrZiqX2sixw6U6TV3B0m+b6Pw0DxlrapQwdpxn5j
+        o1VXEXioywm2XP2Q+RtG9fGvT6qkZ/mRSArSfFYrMnkwoI4rC1UDlkLISGbZTrgjZsRHzkIuDsp3i
+        g1ALU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gKPKQ-0006b0-MG; Wed, 07 Nov 2018 15:01:10 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 657B71124E14; Wed,  7 Nov 2018 15:01:10 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: bd718x7: Remove double indirection for bd718xx_pmic_inits.rdatas" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181107150110.657B71124E14@debutante.sirena.org.uk>
+Date:   Wed,  7 Nov 2018 15:01:10 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, function parameter description can match '@type.member'
-expressions but fails to match '@type->member'.
-Extend the $type_param regex to allow matching both
+The patch
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+   regulator: bd718x7: Remove double indirection for bd718xx_pmic_inits.rdatas
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From de226ebda96cafa981b9c0fef56888931668b671 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 28 Oct 2018 17:09:22 +0100
+Subject: [PATCH] regulator: bd718x7: Remove double indirection for
+ bd718xx_pmic_inits.rdatas
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With gcc 4.1:
+
+    drivers/regulator/bd718x7-regulator.c: In function ‘bd718xx_probe’:
+    drivers/regulator/bd718x7-regulator.c:1020: warning: initialization from incompatible pointer type
+    drivers/regulator/bd718x7-regulator.c:1024: warning: initialization from incompatible pointer type
+
+Apparently this old compiler can't handle the obscure double
+indirection.
+
+However, there is no need for a double indirection.  Just store a
+pointer to the array instead, like other drivers tend to do.
+
+Fixes: 494edd266b945f36 ("regulator/mfd: Support ROHM BD71847 power management IC")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- scripts/kernel-doc | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/regulator/bd718x7-regulator.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index ffbe901..3ce8800 100755
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -212,7 +212,7 @@ my $anon_struct_union = 0;
- my $type_constant = '\b``([^\`]+)``\b';
- my $type_constant2 = '\%([-_\w]+)';
- my $type_func = '(\w+)\(\)';
--my $type_param = '\@(\w*(\.\w+)*(\.\.\.)?)';
-+my $type_param = '\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)';
- my $type_fp_param = '\@(\w+)\(\)';  # Special RST handling for func ptr params
- my $type_env = '(\$\w+)';
- my $type_enum = '\&(enum\s*([_\w]+))';
-@@ -361,7 +361,7 @@ my $doc_com = '\s*\*\s*';
- my $doc_com_body = '\s*\* ?';
- my $doc_decl = $doc_com . '(\w+)';
- # @params and a strictly limited set of supported section names
--my $doc_sect = $doc_com . 
-+my $doc_sect = $doc_com .
-     '\s*(\@[.\w]+|\@\.\.\.|description|context|returns?|notes?|examples?)\s*:(.*)';
- my $doc_content = $doc_com_body . '(.*)';
- my $doc_block = $doc_com . 'DOC:\s*(.*)?';
-@@ -751,7 +751,7 @@ sub output_blockhead_rst(%) {
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 3a47e0372e77..fff5bc4faa2c 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1007,7 +1007,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ };
  
- #
- # Apply the RST highlights to a sub-block of text.
--#   
-+#  
- sub highlight_block($) {
-     # The dohighlight kludge requires the text be called $contents
-     my $contents = shift;
+ struct bd718xx_pmic_inits {
+-	const struct bd718xx_regulator_data (*r_datas)[];
++	const struct bd718xx_regulator_data *r_datas;
+ 	unsigned int r_amount;
+ };
+ 
+@@ -1017,11 +1017,11 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+ 		[BD718XX_TYPE_BD71837] = {
+-			.r_datas = &bd71837_regulators,
++			.r_datas = bd71837_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71837_regulators),
+ 		},
+ 		[BD718XX_TYPE_BD71847] = {
+-			.r_datas = &bd71847_regulators,
++			.r_datas = bd71847_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71847_regulators),
+ 		},
+ 	};
+@@ -1059,7 +1059,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
++		r = &pmic_regulators[mfd->chip_type].r_datas[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
 -- 
-2.7.4
+2.19.0.rc2
 
