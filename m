@@ -2,183 +2,116 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B09C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA92C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60D6A2089F
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:53:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bujUtv3U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D6A2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3972220827
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3972220827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeKGWXx (ORCPT
+        id S1730349AbeKGWY1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:23:53 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37520 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbeKGWXx (ORCPT
+        Wed, 7 Nov 2018 17:24:27 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63707 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeKGWY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:23:53 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p6-v6so7830143pll.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 04:53:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ImsRjFHz81aAoZFUZoZ6p387TSHywmxyKWLF3SR1+so=;
-        b=bujUtv3UeD8gnEwCToMiX5dQ2N1VzWHnWjZbQrkKUdC2mUnsRT3KEiuEgCdB/PsRUW
-         I+Z7riyz1x1YG+FHn8ZtwCuAlr5K4A8XA7Ve2SNQnVsP0sU3UWAFNS4kMq2ykMj49lVt
-         j8Mqv/6uUHrfV/Bs1P0VhxGxoWMorVWlHsY90KYbmlBkQmKoPI9p2R2UymL696zs7bUf
-         CwufcWK9hywVIoRUaJwXTKcUOIJfR/p+8qA/bUrKWuPPji/4z/yVhGojz76t8VHSzFu1
-         T+8x7TXhtVBeylGET+mvx6a+aJnDdSmII2svr1D9PVnbB9IE5V0t3I7JP2S7N88Kg8aB
-         Flvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ImsRjFHz81aAoZFUZoZ6p387TSHywmxyKWLF3SR1+so=;
-        b=ROg2Gs8dYlbCgof0DrYAR288S0vWNWiKB/6QNVcbdXl+eS9bzkFsNdX+rbbMab+Q4C
-         9+qXI7BT4U5HyfdDaauhYkYp5YYHAwfMTYZx1pQ+NYlPWevjbqzx+1UhMBsUtbwevt8J
-         fgttDbtQYwKmSlCWXZJ+an1QmehqIZH5LxUf62l9OpkN+MFCx6UuTW8hxnJVdo4nfMA/
-         K+gT6UKo1zKpPN9Y2SnrdPNbfIN/2cnfcJet+guV0obhhDrqvVHBlKfrLziBvsaUm7hJ
-         vjml7KreZs6ZS5hz5B+s6K7Qpbh2ZYBqvh++Tbl1aGQ+zfeMQ6eJWfjnZGZ7cf3Cs1Fa
-         VDWA==
-X-Gm-Message-State: AGRZ1gJ9EgCf+tHStzsoJczB0Mp6E2hyAbhSQOw8xCTwJVUYtlje8hsL
-        n4UGostPtSXkRaeTfVtufJk=
-X-Google-Smtp-Source: AJdET5fIQ8wusSFabVuYvWfTOs+l+N50HErcOj9SIl/URYIlrl44DM8NoZiUWZZLSUw8zjwZEXPoFg==
-X-Received: by 2002:a17:902:14e:: with SMTP id 72-v6mr69191plb.299.1541595216338;
-        Wed, 07 Nov 2018 04:53:36 -0800 (PST)
-Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm2141586pge.13.2018.11.07.04.53.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 04:53:35 -0800 (PST)
-Date:   Wed, 7 Nov 2018 23:53:24 +1100
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        Oscar Salvador <OSalvador@suse.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, memory_hotplug: check zone_movable in
- has_unmovable_pages
-Message-ID: <20181107125324.GD9042@350D>
-References: <20181106095524.14629-1-mhocko@kernel.org>
- <20181106203518.GC9042@350D>
- <20181107073548.GU27423@dhcp22.suse.cz>
+        Wed, 7 Nov 2018 17:24:27 -0500
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA7CsAZB020176;
+        Wed, 7 Nov 2018 21:54:10 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Wed, 07 Nov 2018 21:54:10 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA7Cs3Ke020044
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 7 Nov 2018 21:54:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v6 1/3] printk: Add line-buffered printk() API.
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181106143502.GA32748@tigerII.localdomain>
+ <20181107102154.pobr7yrl5il76be6@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c4b4d3df-53c6-e938-122e-c172ba8b2500@i-love.sakura.ne.jp>
+Date:   Wed, 7 Nov 2018 21:54:02 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107073548.GU27423@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181107102154.pobr7yrl5il76be6@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 08:35:48AM +0100, Michal Hocko wrote:
-> On Wed 07-11-18 07:35:18, Balbir Singh wrote:
-> > On Tue, Nov 06, 2018 at 10:55:24AM +0100, Michal Hocko wrote:
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > Page state checks are racy. Under a heavy memory workload (e.g. stress
-> > > -m 200 -t 2h) it is quite easy to hit a race window when the page is
-> > > allocated but its state is not fully populated yet. A debugging patch to
-> > > dump the struct page state shows
-> > > : [  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
-> > > : [  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
-> > > : [  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
-> > > 
-> > > Note that the state has been checked for both PageLRU and PageSwapBacked
-> > > already. Closing this race completely would require some sort of retry
-> > > logic. This can be tricky and error prone (think of potential endless
-> > > or long taking loops).
-> > > 
-> > > Workaround this problem for movable zones at least. Such a zone should
-> > > only contain movable pages. 15c30bc09085 ("mm, memory_hotplug: make
-> > > has_unmovable_pages more robust") has told us that this is not strictly
-> > > true though. Bootmem pages should be marked reserved though so we can
-> > > move the original check after the PageReserved check. Pages from other
-> > > zones are still prone to races but we even do not pretend that memory
-> > > hotremove works for those so pre-mature failure doesn't hurt that much.
-> > > 
-> > > Reported-and-tested-by: Baoquan He <bhe@redhat.com>
-> > > Acked-by: Baoquan He <bhe@redhat.com>
-> > > Fixes: "mm, memory_hotplug: make has_unmovable_pages more robust")
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > ---
-> > >
-> > > Hi,
-> > > this has been reported [1] and we have tried multiple things to address
-> > > the issue. The only reliable way was to reintroduce the movable zone
-> > > check into has_unmovable_pages. This time it should be safe also for
-> > > the bug originally fixed by 15c30bc09085.
-> > > 
-> > > [1] http://lkml.kernel.org/r/20181101091055.GA15166@MiWiFi-R3L-srv
-> > >  mm/page_alloc.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > > index 863d46da6586..c6d900ee4982 100644
-> > > --- a/mm/page_alloc.c
-> > > +++ b/mm/page_alloc.c
-> > > @@ -7788,6 +7788,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> > >  		if (PageReserved(page))
-> > >  			goto unmovable;
-> > >  
-> > > +		/*
-> > > +		 * If the zone is movable and we have ruled out all reserved
-> > > +		 * pages then it should be reasonably safe to assume the rest
-> > > +		 * is movable.
-> > > +		 */
-> > > +		if (zone_idx(zone) == ZONE_MOVABLE)
-> > > +			continue;
-> > > +
-> > >  		/*
-> > 
-> > 
-> > There is a WARN_ON() in case of failure at the end of the routine,
-> > is that triggered when we hit the bug? If we're adding this patch,
-> > the WARN_ON needs to go as well.
+On 2018/11/07 19:21, Petr Mladek wrote:
+> On Tue 2018-11-06 23:35:02, Sergey Senozhatsky wrote:
+>>> Since we want to remove "struct cont" eventually, we will try to remove
+>>> both "implicit printk() users who are expecting KERN_CONT behavior" and
+>>> "explicit pr_cont()/printk(KERN_CONT) users". Therefore, converting to
+>>> this API is recommended.
+>>
+>> - The printk-fallback sounds like a hint that the existing 'cont' handling
+>>   better stay in the kernel. I don't see how the existing 'cont' is
+>>   significantly worse than
+>> 		bpr_warn(NULL, ...)->printk() // no 'cont' support
+>>   I don't see why would we want to do it, sorry. I don't see "it takes 16
+>>   printk-buffers to make a thing go right" as a sure thing.
 > 
-> No the warning should stay in case we encounter reserved pages in zone
-> movable.
->
-
-Fair enough!
- 
-> > The check seems to be quite aggressive and in a loop that iterates
-> > pages, but has nothing to do with the page, did you mean to make
-> > the check
-> > 
-> > zone_idx(page_zone(page)) == ZONE_MOVABLE
+> I see it the following way:
 > 
-> Does it make any difference? Can we actually encounter a page from a
-> different zone here?
+>    + mixed cont lines are very rare but they happen
 > 
-
-Just to avoid page state related issues, do we want to go ahead
-with the migration if zone_idx(page_zone(page)) != ZONE_MOVABLE.
-
-> > it also skips all checks for pinned pages and other checks
+>    + 16 buffers are more than 1 so it could only be better [*]
 > 
-> Yes, this is intentional and the comment tries to explain why. I wish we
-> could be add a more specific checks for movable pages - e.g. detect long
-> term pins that would prevent migration - but we do not have any facility
-> for that. Please note that the worst case of a false positive is a
-> repeated migration failure and user has a way to break out of migration
-> by a signal.
->
+>    + the printk_buffer() code is self-contained and does not
+>      complicate the logic of the classic printk() code [**]
+> 
+> 
+> [*] A missing put_printk_buffer() might cause that we would get
+>     out of buffers. But the same problem is with locks,
+>     disabled preemption, disabled interrupts, seq_buffer,
+>     alloc/free. Such problems happen but they are rare.
+> 
+>     Also I do not expect that the same buffer would be shared
+>     between many functions. Therefore it should be easy
+>     to use it correctly.
 
-Basically isolate_pages() will fail as opposed to hotplug failing upfront.
-The basic assertion this patch makes is that all ZONE_MOVABLE pages that
-are not reserved are hotpluggable.
+Since we can allocate printk() buffer upon dup_task_struct()
+and free it upon free_task_struct(), we can have enough printk()
+buffers for task context. Also, since total number of exceptional
+contexts (e.g. interrupts, oops) is finite, we can have enough
+printk() buffers for exceptional contexts.
 
-Balbir Singh.
+Is it possible to identify all locations which should use their own
+printk() buffers (e.g. interrupt handlers, oops handlers) ? If yes,
+despite Linus's objection, automatically switching printk() buffers
+(like memalloc_nofs_save()/memalloc_nofs_restore() instead of
+https://lkml.kernel.org/r/201709021512.DJG00503.JHOSOFFMFtVLOQ@I-love.SAKURA.ne.jp )
+will be easiest and least error prone.
+
