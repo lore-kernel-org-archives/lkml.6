@@ -2,151 +2,98 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAD9C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65048C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9228F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9228F20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 3159620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 17:39:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MKZDtJ6E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3159620862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbeKHDKb (ORCPT
+        id S1731614AbeKHDK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:10:31 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:48330 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728083AbeKHDKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 22:10:30 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gKRnB-0003U5-I0; Wed, 07 Nov 2018 10:39:02 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gKRnA-0006HQ-Fv; Wed, 07 Nov 2018 10:39:00 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Date:   Wed,  7 Nov 2018 10:38:58 -0700
-Message-Id: <20181107173859.24096-2-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181107173859.24096-1-logang@deltatee.com>
-References: <20181107173859.24096-1-logang@deltatee.com>
+        Wed, 7 Nov 2018 22:10:59 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40747 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbeKHDK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 22:10:59 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u130-v6so14519616oie.7
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 09:39:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=rZiFRx9VrRsRXac2sOm4lzh12bTAfzn9VB1zquKY3fA=;
+        b=MKZDtJ6EMv3vOo/rEQsIPjw3sVU4PlMGJJjgmXFdinJ2v5kojsfqvVxTOJ8Iz2McBq
+         8EgYm1R/EjLL5KIYI9+eszcI27nFi+CO7oGGniql0fqvWkVAg8G/rlTuI2GVP9gKlcJN
+         +m7jK95GD+yD8fQxh0DbbchGnhzSmKH+cLI7A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=rZiFRx9VrRsRXac2sOm4lzh12bTAfzn9VB1zquKY3fA=;
+        b=HCCkn+iI4vhGk99bVHVUF8NaDG/glH3LgB9NqSekKmlDS2uSVYnErvwzlU9kJ+6Yv0
+         MFtSu1/ayBJpFwrHPFULfP81NEeZxo6+LkOABth6OWZ+wYkaQ62DD1U5nP29m4uE6zxK
+         ZRBx5lPlwdYPRLykFEZGzohuQwZmBj5iqGCPmOMdpmIhq1a4pNWJY0JRXdnejaAIV3A5
+         LgOUUcAYaINOijBJ9GZ8xnW34C4nG8niqmrx97rmqpYSDeQuZxh/d4UOEGmrFsdh5cyB
+         IftyhCvvGbDMHhoUWdM/Gqf9v7QrGlzUPr3MnjgEmIbw7zhYa0+Qbx/AALvHfZcQiMzI
+         LROQ==
+X-Gm-Message-State: AGRZ1gIbDdHu++lw0DvB5VwYYGfrepsiBM987GKfPQg0/ePVZrwFaUgW
+        EchnScW+/8cBvjuQxboDbODmQytFZTP77Z15FV5Jaw==
+X-Google-Smtp-Source: AJdET5f8fNwLAE04sRh0xhjZKmvvzPPW0CYmd7V7zAC7y6dpH4gfjzw68LNH32du75sdRapfsoBLKQja+SRGHrzPby4=
+X-Received: by 2002:aca:b68b:: with SMTP id g133-v6mr668680oif.25.1541612374957;
+ Wed, 07 Nov 2018 09:39:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-sh@vger.kernel.org, akpm@linux-foundation.org, sbates@raithlin.com, palmer@sifive.com, aou@eecs.berkeley.edu, hch@lst.de, arnd@arndb.de, logang@deltatee.com, catalin.marinas@arm.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 1/2] mm: Introduce common STRUCT_PAGE_MAX_SHIFT define
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Received: by 2002:a9d:4b0e:0:0:0:0:0 with HTTP; Wed, 7 Nov 2018 09:39:14 -0800 (PST)
+In-Reply-To: <20181107171031.22573-1-alex.bennee@linaro.org>
+References: <20181107171031.22573-1-alex.bennee@linaro.org>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Wed, 7 Nov 2018 17:39:14 +0000
+Message-ID: <CAFEAcA8LL0uC6o1V3W2T=2P47xZ0zGhMR5mEE+x=8qwmDKZL_g@mail.gmail.com>
+Subject: Re: [RFC PATCH] KVM: arm64: don't single-step for non-emulated faults
+To:     =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>
+Cc:     kvm-devel <kvm@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This define is used by arm64 to calculate the size of the vmemmap
-region. It is defined as the log2 of the upper bound on the size
-of a struct page.
+On 7 November 2018 at 17:10, Alex Benn=C3=A9e <alex.bennee@linaro.org> wrot=
+e:
+> Not all faults handled by handle_exit are instruction emulations. For
+> example a ESR_ELx_EC_IABT will result in the page tables being updated
+> but the instruction that triggered the fault hasn't actually executed
+> yet. We use the simple heuristic of checking for a changed PC before
+> seeing if kvm_arm_handle_step_debug wants to claim we stepped an
+> instruction.
+>
+> Signed-off-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 
-We move it into mm_types.h so it can be defined properly instead of
-set and checked with a build bug. This also allows us to use the same
-define for riscv.
+What's the rationale for this change? Presumably it's fixing
+something, but the commit message doesn't really say what...
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>
----
- arch/arm64/include/asm/memory.h | 9 ---------
- arch/arm64/mm/init.c            | 8 --------
- include/asm-generic/fixmap.h    | 1 +
- include/linux/mm_types.h        | 5 +++++
- 4 files changed, 6 insertions(+), 17 deletions(-)
+This feels to me like it's working around the fact that
+we've separated two things ("advance pc (or set it if we're
+going to make the guest take an exception)" and "notice that
+we have completed a single step") that should be handled
+at one point in the code.
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b96442960aea..f0a5c9531e8b 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -34,15 +34,6 @@
-  */
- #define PCI_IO_SIZE		SZ_16M
- 
--/*
-- * Log2 of the upper bound of the size of a struct page. Used for sizing
-- * the vmemmap region only, does not affect actual memory footprint.
-- * We don't use sizeof(struct page) directly since taking its size here
-- * requires its definition to be available at this point in the inclusion
-- * chain, and it may not be a power of 2 in the first place.
-- */
--#define STRUCT_PAGE_MAX_SHIFT	6
--
- /*
-  * VMEMMAP_SIZE - allows the whole linear region to be covered by
-  *                a struct page array
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 9d9582cac6c4..1a3e411a1d08 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -612,14 +612,6 @@ void __init mem_init(void)
- 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
- #endif
- 
--#ifdef CONFIG_SPARSEMEM_VMEMMAP
--	/*
--	 * Make sure we chose the upper bound of sizeof(struct page)
--	 * correctly when sizing the VMEMMAP array.
--	 */
--	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
--#endif
--
- 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
- 		extern int sysctl_overcommit_memory;
- 		/*
-diff --git a/include/asm-generic/fixmap.h b/include/asm-generic/fixmap.h
-index 827e4d3bbc7a..8cc7b09c1bc7 100644
---- a/include/asm-generic/fixmap.h
-+++ b/include/asm-generic/fixmap.h
-@@ -16,6 +16,7 @@
- #define __ASM_GENERIC_FIXMAP_H
- 
- #include <linux/bug.h>
-+#include <linux/mm_types.h>
- 
- #define __fix_to_virt(x)	(FIXADDR_TOP - ((x) << PAGE_SHIFT))
- #define __virt_to_fix(x)	((FIXADDR_TOP - ((x)&PAGE_MASK)) >> PAGE_SHIFT)
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f6292a53..2c471a2c43fa 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -206,6 +206,11 @@ struct page {
- #endif
- } _struct_page_alignment;
- 
-+/*
-+ * Used for sizing the vmemmap region on some architectures
-+ */
-+#define STRUCT_PAGE_MAX_SHIFT	(order_base_2(sizeof(struct page)))
-+
- #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
- #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
- 
--- 
-2.19.0
-
+thanks
+-- PMM
