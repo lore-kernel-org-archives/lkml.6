@@ -2,178 +2,144 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952DCC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2256CC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507762081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:59:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VDP2dxic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507762081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E1E032081D
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 13:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E032081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbeKGW3W (ORCPT
+        id S1727427AbeKGWbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:29:22 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36698 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbeKGW3W (ORCPT
+        Wed, 7 Nov 2018 17:31:22 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55687 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeKGWbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 17:29:22 -0500
-Received: by mail-it1-f195.google.com with SMTP id w7-v6so22542698itd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 04:59:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UxMt6D8za7895WYIt/xdvKqS6zXb0+QwCyXDw3fGgU4=;
-        b=VDP2dxic9+6NzvO9+MUgHs8ghLRNGtArGfr7qLBWRgqg9uHODxGrSdZH69jFoCnIuD
-         rGPWW7jsquKW34610SG3YcY72z2X7plYbM4wWEpx4joVPlPrLCz9ufmJb+qgWy/yECLE
-         BGEtX0kaONUWGFCEqU+StqztasJiZMxBTV7ck=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UxMt6D8za7895WYIt/xdvKqS6zXb0+QwCyXDw3fGgU4=;
-        b=s+mJr+YnW/KIUlw1EsBtzxEzw/gkAP4aX7h71kzRZDJZM1IBJQOjKrZlEkOFDnbp0a
-         RikihEkiFtoKPcwGDzDXKbaiucfRfLK4g3Lb0SIbVY8Umq/Db0c5mp8Wq2Tc37wDqgCw
-         t6NGaNj+2KdbEpNqStgLeLV1b8zwETjd3J1b+oR/79g+DxYc0d7ktBVXo15T1ynV4pHd
-         I4eK0Nzlk4RGt0/Zo6Wdsk0aYisrBCFpOonrBa4CnXLSKfhpIfQ04neCySPryAZ547bf
-         QSUlyKXtmJdxuwv8t+noKSP3QjER6LZNUEhJsAl3fHURB0k2GrSGmaoBky/j9Ej45PHc
-         TVwg==
-X-Gm-Message-State: AGRZ1gJHT8yzBYVz0+3Yvc4YWkILN8q2D5LIHnrPor/Q8SVHrZ+wIpfI
-        0QF1oIjRXhs8qjyTYMQI8sjbFFBnXyCJ0Wlgb7WbwQ==
-X-Google-Smtp-Source: AJdET5ciKvT54Z4JOCCYaTNjL0bUDnfpyeMyTeChIA6/brqumJRm9fuMuf3p0CfAvzN7KDZZgmcqh4dpqjG+yTBT7+w=
-X-Received: by 2002:a24:f246:: with SMTP id j67-v6mr96052ith.114.1541595544092;
- Wed, 07 Nov 2018 04:59:04 -0800 (PST)
+        Wed, 7 Nov 2018 17:31:22 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1gKNSB-0006ct-Oy; Wed, 07 Nov 2018 14:01:03 +0100
+Received: from mgr by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mgr@pengutronix.de>)
+        id 1gKNS9-0004Pe-RG; Wed, 07 Nov 2018 14:01:01 +0100
+Date:   Wed, 7 Nov 2018 14:01:01 +0100
+From:   Michael Grzeschik <mgr@pengutronix.de>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stoth@kernellabs.com, laurent.pinchart@ideasonboard.com,
+        kernel@pengutronix.de, mchehab@kernel.org, davem@davemloft.net
+Subject: Re: [PATCH 1/2] media: mst3367: add support for mstar mst3367 HDMI RX
+Message-ID: <20181107130101.a2geyss47gpfd6nc@pengutronix.de>
+References: <20181019105439.27796-1-m.grzeschik@pengutronix.de>
+ <20181019105439.27796-2-m.grzeschik@pengutronix.de>
+ <1539946939.3688.58.camel@pengutronix.de>
 MIME-Version: 1.0
-References: <1540570303-6097-1-git-send-email-vincent.guittot@linaro.org>
- <1540570303-6097-3-git-send-email-vincent.guittot@linaro.org>
- <b89b6805-45c0-8462-b75b-b7da4a35c022@arm.com> <CAKfTPtBapA3JvbgUyESzE=2ZXOGLRLmZh7oi8N=H9PHubCCuNg@mail.gmail.com>
- <28af1313-8153-624d-1ae9-1554bb2db474@arm.com>
-In-Reply-To: <28af1313-8153-624d-1ae9-1554bb2db474@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 7 Nov 2018 13:58:52 +0100
-Message-ID: <CAKfTPtDQJYG1a+JDO_okHcbk9mxn+k+b_dwP5hTbUH1e00ZszA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] sched/fair: update scale invariance of PELT
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="52puqmqenwrgio5w"
+Content-Disposition: inline
+In-Reply-To: <1539946939.3688.58.camel@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 13:58:31 up 147 days, 22:07, 120 users,  load average: 1.12, 0.48,
+ 0.24
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Nov 2018 at 11:47, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> On 11/5/18 10:10 AM, Vincent Guittot wrote:
-> > On Fri, 2 Nov 2018 at 16:36, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> >>
-> >> On 10/26/18 6:11 PM, Vincent Guittot wrote:
->
-> [...]
->
-> >> Thinking about this new approach on a big.LITTLE platform:
-> >>
-> >> CPU Capacities big: 1024 LITTLE: 512, performance CPUfreq governor
-> >>
-> >> A 50% (runtime/period) task on a big CPU will become an always running
-> >> task on the little CPU. The utilization signal of the task and the
-> >> cfs_rq of the little CPU converges to 1024.
-> >>
-> >> With contrib scaling the utilization signal of the 50% task converges to
-> >> 512 on the little CPU, even it is always running on it, and so does the
-> >> one of the cfs_rq.
-> >>
-> >> Two 25% tasks on a big CPU will become two 50% tasks on a little CPU.
-> >> The utilization signal of the tasks converges to 512 and the one of the
-> >> cfs_rq of the little CPU converges to 1024.
-> >>
-> >> With contrib scaling the utilization signal of the 25% tasks converges
-> >> to 256 on the little CPU, even they run each 50% on it, and the one of
-> >> the cfs_rq converges to 512.
-> >>
-> >> So what do we consider system-wide invariance? I thought that e.g. a 25%
-> >> task should have a utilization value of 256 no matter on which CPU it is
-> >> running?
-> >>
-> >> In both cases, the little CPU is not going idle whereas the big CPU does.
-> >
-> > IMO, the key point here is that there is no idle time. As soon as
-> > there is no idle time, you don't know if a task has enough compute
-> > capacity so you can't make difference between the 50% running task or
-> > an always running task on the little core.
->
-> Agreed. My '2 25% tasks on a 512 cpu' was a special example in the sense
-> that the tasks would stay invariant since they are not restricted by the
-> cpu capacity yet. '2 35% tasks' would also have 256 utilization each
-> with contrib scaling so that's not invariant either.
->
-> Could we say that in the overutilized case with contrib scaling each of
-> the n tasks get cpu_cap/n utilization where with time scaling they get
-> 1024/n utilization? Even though there is no value in this information
-> because of the over-utilized state.
->
-> > That's also interesting to noticed that the task will reach the always
-> > running state after more than 600ms on little core with utilization
-> > starting from 0.
-> >
-> > Then considering the system-wide invariance, the task are not really
-> > invariant. If we take a 50% running task that run 40ms in a period of
-> > 80ms, the max utilization of the task will be 721 on the big core and
-> > 512 on the little core.
->
-> Agreed, the utilization of the task on the big CPU oscillates between
-> 721 and 321 so the average is still ~512.
->
-> > Then, if you take a 39ms running task instead, the utilization on the
-> > big core will reach 709 but it will be 507 on little core. So your
-> > utilization depends on the current capacity.
->
-> OK, but the average should be ~ 507 on big as well. There is idle time
 
-I don't know about the average, the utilization varies between 709-292
-on big core and between 507-486 in little core
+--52puqmqenwrgio5w
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> now even on the little CPU. But yeah, with longer period value, there
-> are quite big amplitudes.
->
-> > With the new proposal, the max utilization will be 709 on big and
-> > little cores for the 39ms running task. For the 40ms running task, the
-> > utilization will be 721 on big core. then if the task moves on the
-> > little, it will reach the value 721 after 80ms,  then 900 after more
-> > than 160ms and 1000 after 320ms
->
-> We consider max values here? In this case, agreed. So this is a reminder
+On Fri, Oct 19, 2018 at 01:02:19PM +0200, Lucas Stach wrote:
+> Am Freitag, den 19.10.2018, 12:54 +0200 schrieb Michael Grzeschik:
+> > > From: Steven Toth <stoth@kernellabs.com>
+> >=20
+> > This patch is based on the work of Steven Toth. He reverse engineered
+> > the driver by tracing the windows driver.
+> >=20
+> > https://github.com/stoth68000/hdcapm/
+> >=20
+> > > Signed-off-by: Steven Toth <stoth@kernellabs.com>
+> > > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+> > ---
+> > =A0MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0|=A0=
+=A0=A0=A06 +
+> > =A0drivers/media/i2c/Kconfig=A0=A0=A0|=A0=A0=A010 +
+> > =A0drivers/media/i2c/Makefile=A0=A0|=A0=A0=A0=A01 +
+> > =A0drivers/media/i2c/mst3367.c | 1104 +++++++++++++++++++++++++++++++++=
+++
+> > =A0include/media/i2c/mst3367.h |=A0=A0=A029 +
+> > =A05 files changed, 1150 insertions(+)
+> > =A0create mode 100644 drivers/media/i2c/mst3367.c
+> > =A0create mode 100644 include/media/i2c/mst3367.h
+> >=20
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 556f902b3766..9c69b7f9b2f9 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -9787,6 +9787,12 @@ L:	linux-mtd@lists.infradead.org
+> > > =A0S:	Maintained
+> > > =A0F:	drivers/mtd/devices/docg3*
+> > =A0
+> > +MT9M032 APTINA SENSOR DRIVER
+> > > > +M:	Michael Grzeschik <m.grzeschik@pengutronix.de>
+> > > +S:	Maintained
+> > > +F:	drivers/media/i2c/mst3367.c
+> > > +F:	include/media/i2c/mst3367.h
+>=20
+> Das sollte nicht in diesem Patch landen, oder?
 
-Yes, we consider max value as it's what is mainly used especially with
-util_est feature
+Yes, I will remove it from the patch and put this into a separate one.
 
-> that even if the average utilization of a task compared to the CPU
-> capacity would mark the system as non-overutilized (39ms/80ms on a 512
-> CPU), the utilization of that task looks different because of the
-> oscillation which is pretty noticeable with long periods.
->
-> The important bit for EAS is that it only uses utilization in the
-> non-overutilized case. Here, utilization signals should look the same
-> between the two approaches, not considering tasks with long periods like
-> the 39/80ms example above.
-> There are also some advantages for EAS with time scaling: (1) faster
-> overutilization detection when a big task runs on a little CPU, (2)
-> higher (initial) task utilization value when this task migrates from
-> little to big CPU.
->
-> We should run our EAS task placement tests with your time scaling patches.
+Are there any more suggestions for this series?
+
+Regards,
+Michael
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--52puqmqenwrgio5w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAlvi4gUACgkQC+njFXoe
+LGQucBAAnq8+lGHBzZnkWjFR0QCeBd3mmFzpXmUAULkHQfss6vSBZ/wZmmUlVNNE
+zc/0hX1UPfL3BS7Qa9g4olSFdv0mjNqkKA/IAPZwdKhS1l5cVOaM9KBO7+BFlnDs
+0NSTvqzncWm7b1nlO64uLWnl40K5ZD+Bd8nF/UKUzIG2BDd5yGdxNAcE8WEkWlp4
+y0GnhmFp0B30eByAqraLK0xcXbKYpiObgM35vu91P0mzQuNfgqQ/BVjpC6QFOpwD
+jaD1xxm7WQVkhKx5/vvXk9ugrVj5P0zwO5pr75lnX/FgLurBSuQmVyJlaTjhUgwn
+0j+TJN9QAs3CEs5XqYo5USpfRZSVuA5yKQA/W9yY4VA04UG9/+qyp2iocSZe802+
+PWUZsu46ZFDOJyhgsN5iFwjC671CwJV/9NYdJ2is2PdZNWm+yePgaIVTxgakMawf
+bMYOgKM1HpTQBWa/Gtgdc/GJ7JBdoSpyN7i0EIZGBLva7dQHc8tMHOjv0SyN1yOE
+evvY7feWDVWtR6mHSscWV1it/0GAn+oPkKtQjCzO3onEd4e6Q1aGsPeVGxP3Tlkf
+C7skqS78WxtuGi7DajnBOoMfebLBRg6z2iwMfUGYJcqnvGGPVHJu+tt8XFwWJTQk
+SBzUeV5+dRXG4NH1H44c6uny5vzQ8FbgjtblO53Nq45xbjWjXgU=
+=uH3G
+-----END PGP SIGNATURE-----
+
+--52puqmqenwrgio5w--
