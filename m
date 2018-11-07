@@ -2,102 +2,94 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7DEC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C34C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A832086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:56:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A832086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 93E532085B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 14:56:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E532085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388084AbeKHA07 (ORCPT
+        id S1731152AbeKHA1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 19:26:59 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52256 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388031AbeKHA07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 19:26:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DC8715AB;
-        Wed,  7 Nov 2018 06:56:17 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0CB13F5BD;
-        Wed,  7 Nov 2018 06:56:14 -0800 (PST)
-Date:   Wed, 7 Nov 2018 14:56:12 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v5 03/15] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20181107145612.GJ14309@e110439-lin>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-4-patrick.bellasi@arm.com>
- <20181107121908.GO9781@hirez.programming.kicks-ass.net>
- <20181107141949.GF14309@e110439-lin>
- <20181107144252.GG9761@hirez.programming.kicks-ass.net>
+        Wed, 7 Nov 2018 19:27:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727693AbeKHA1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 19:27:11 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F000C2086C;
+        Wed,  7 Nov 2018 14:56:28 +0000 (UTC)
+Date:   Wed, 7 Nov 2018 09:56:27 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, bristot@redhat.com,
+        linux-rt-users@vger.kernel.org, mtk.manpages@gmail.com,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH] kernel/time/posix-cpu-timers: Remove useless call to
+ check_dl_overrun
+Message-ID: <20181107095627.13e9c187@gandalf.local.home>
+In-Reply-To: <20181107111032.32291-1-juri.lelli@redhat.com>
+References: <20181107111032.32291-1-juri.lelli@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107144252.GG9761@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-Nov 15:42, Peter Zijlstra wrote:
-> On Wed, Nov 07, 2018 at 02:19:49PM +0000, Patrick Bellasi wrote:
-> > On 07-Nov 13:19, Peter Zijlstra wrote:
-> > > On Mon, Oct 29, 2018 at 06:32:57PM +0000, Patrick Bellasi wrote:
-> > > > +struct uclamp_se {
-> > > > +	unsigned int value		: SCHED_CAPACITY_SHIFT + 1;
-> > > > +	unsigned int group_id		: order_base_2(UCLAMP_GROUPS);
-> > > 
-> > > Are you sure about ob2() ? seems weird we'll end up with 0 for
-> > > UCLAMP_GROUPS==1.
-> > 
-> > So, we have:
-> > 
-> >    #define UCLAMP_GROUPS (CONFIG_UCLAMP_GROUPS_COUNT + 1)
-> > 
-> > because one clamp group is always reserved for defaults.
-> > Thus, ob2(in) is always called with n>=2.
-> > 
-> > ... should be safe no ?
+On Wed,  7 Nov 2018 12:10:32 +0100
+Juri Lelli <juri.lelli@redhat.com> wrote:
+
+> check_dl_overrun is used to send a SIGXCPU to users that asked to be
+> informed when SCHED_DEADLINE runtime overruns occur.
 > 
-> +config UCLAMP_GROUPS_COUNT
-> +       int "Number of different utilization clamp values supported"
-> +       range 0 32
-> +       default 5
+> The function is called by check_thread_timers already, so the call in
+> check_process_timers is redundant/wrong (even though harmless).
 > 
-> 0+1 == 1
+> Remove it.
+> 
+> Fixes: 34be39305a77 ("sched/deadline: Implement "runtime overrun signal" support")
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Luca Abeni <luca.abeni@santannapisa.it>
+> Cc: Claudio Scordino <claudio@evidence.eu.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  kernel/time/posix-cpu-timers.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+> index ce32cf741b25..8f0644af40be 100644
+> --- a/kernel/time/posix-cpu-timers.c
+> +++ b/kernel/time/posix-cpu-timers.c
+> @@ -917,9 +917,6 @@ static void check_process_timers(struct task_struct *tsk,
+>  	struct task_cputime cputime;
+>  	unsigned long soft;
+>  
+> -	if (dl_task(tsk))
+> -		check_dl_overrun(tsk);
+> -
 
-Seems so... :)
+Hmm, I wonder if we should just move this check directly into
+run_posix_cpu_timers() directly. Why is it hidden in this call?
 
-> Increase the min range and you should be good I think.
+-- Steve
 
-... dunno why I was absolutely convinced that was already 1, since 0
-group does not make a lot of sense. :/
 
--- 
-#include <best/regards.h>
+>  	/*
+>  	 * If cputimer is not running, then there are no active
+>  	 * process wide timers (POSIX 1.b, itimers, RLIMIT_CPU).
 
-Patrick Bellasi
