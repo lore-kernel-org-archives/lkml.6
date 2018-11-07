@@ -2,133 +2,262 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6A9C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0088FC46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6709F2085B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6709F2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id C4EE22086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 12:03:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4EE22086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbeKGVc1 (ORCPT
+        id S1730248AbeKGVdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 16:32:27 -0500
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:2722 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeKGVc0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 16:32:26 -0500
-X-IronPort-AV: E=Sophos;i="5.54,475,1534809600"; 
-   d="scan'208";a="81521677"
-Subject: Re: [Xen-devel] [PATCH] x86/xen: fix pv boot
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-To:     Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-        <xen-devel@lists.xenproject.org>, <x86@kernel.org>
-CC:     <sstabellini@kernel.org>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <boris.ostrovsky@oracle.com>, <tglx@linutronix.de>
-References: <20181107113017.30090-1-jgross@suse.com>
- <f95cf3fb-fb49-8211-0c54-f6c7382ac455@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <6eb96a45-393c-4e06-ee19-549fdbe9e316@citrix.com>
-Date:   Wed, 7 Nov 2018 12:02:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 7 Nov 2018 16:33:42 -0500
+Received: from foss.arm.com ([217.140.101.70]:49686 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbeKGVdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 16:33:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FA4880D;
+        Wed,  7 Nov 2018 04:03:38 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6360D3F5CF;
+        Wed,  7 Nov 2018 04:03:36 -0800 (PST)
+Date:   Wed, 7 Nov 2018 12:03:33 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        ryder.lee@mediatek.com, linux-kernel@vger.kernel.org,
+        youlin.pei@mediatek.com, yt.shen@mediatek.com,
+        jianjun.wang@mediatek.com
+Subject: Re: [PATCH] PCI: mediatek: Use
+ devm_of_pci_get_host_bridge_resources() to parse DT
+Message-ID: <20181107120333.GB11586@e107981-ln.cambridge.arm.com>
+References: <1539833014-1738-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <f95cf3fb-fb49-8211-0c54-f6c7382ac455@citrix.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539833014-1738-1-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/18 11:55, Andrew Cooper wrote:
-> On 07/11/18 11:30, Juergen Gross wrote:
->> +	return ret;
->>  }
->>  
->>  static inline int xen_safe_read_ulong(unsigned long *addr, unsigned long *val)
->>  {
->> -	return __get_user(*val, (unsigned long __user *)addr);
->> +	int ret = 0;
->> +	unsigned long rval;
->> +
->> +	asm volatile("1: mov"__i" %2,%"__r"1\n"
->> +		     "2:\n"
->> +		     ".section .fixup,\"ax\"\n"
->> +		     "3: mov %3,%0\n"
->> +		     "   jmp 2b\n"
->> +		     ".previous\n"
->> +		     _ASM_EXTABLE(1b, 3b)
->> +		     : "=r" (ret), "=r" (rval)
->> +		     : "m" (*addr), "i" (-1), "0" (ret));
->> +	*val = rval;
->> +	return ret;
-> This also uses rval uninitialised if a fault occurs.
->
-> Overall, how about:
->
-> static inline int xen_safe_write_ulong(unsigned long *addr, unsigned
-> long val)
-> {
->     int ret = 0;
->
->     asm volatile("1: mov %[val], %[ptr]\n"
->                  "2:\n"
->                  ".section .fixup, \"ax\"\n"
->                  "3: mov %[err], %[ret]\n"
+On Thu, Oct 18, 2018 at 11:23:34AM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
+> DT parser.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 109 +++++++++------------------------
+>  1 file changed, 29 insertions(+), 80 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 2a1f97c..6632d4e 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -197,29 +197,20 @@ struct mtk_pcie_port {
+>   * @dev: pointer to PCIe device
+>   * @base: IO mapped register base
+>   * @free_ck: free-run reference clock
+> - * @io: IO resource
+> - * @pio: PIO resource
+>   * @mem: non-prefetchable memory resource
+> - * @busn: bus range
+> - * @offset: IO / Memory offset
+>   * @ports: pointer to PCIe port information
+>   * @soc: pointer to SoC-dependent operations
+> + * @busnr: root bus number
+>   */
+>  struct mtk_pcie {
+>  	struct device *dev;
+>  	void __iomem *base;
+>  	struct clk *free_ck;
+>  
+> -	struct resource io;
+> -	struct resource pio;
+>  	struct resource mem;
+> -	struct resource busn;
+> -	struct {
+> -		resource_size_t mem;
+> -		resource_size_t io;
+> -	} offset;
+>  	struct list_head ports;
+>  	const struct mtk_pcie_soc *soc;
+> +	int busnr;
 
-Actually, if you want a shorter fixup path, `sub $1, %[ret]` would also
-do, and drop the [err] constraint.
+If you move the code initializing and probing the pci_host_bridge into
+mtk_pcie_setup() (and rename that function) this variable becomes
+useless. It should be an unsigned int, by the way.
 
-~Andrew
+>  };
+>  
+>  static void mtk_pcie_subsys_powerdown(struct mtk_pcie *pcie)
+> @@ -1045,55 +1036,42 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->dev;
+>  	struct device_node *node = dev->of_node, *child;
+> -	struct of_pci_range_parser parser;
+> -	struct of_pci_range range;
+> -	struct resource res;
+>  	struct mtk_pcie_port *port, *tmp;
+> +	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> +	struct list_head *windows = &host->windows;
+> +	struct resource_entry *win, *tmp_win;
+> +	resource_size_t io_base;
+>  	int err;
+>  
+> -	if (of_pci_range_parser_init(&parser, node)) {
+> -		dev_err(dev, "missing \"ranges\" property\n");
+> -		return -EINVAL;
+> -	}
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    windows, &io_base);
+> +	if (err)
+> +		return err;
+>  
+> -	for_each_of_pci_range(&parser, &range) {
+> -		err = of_pci_range_to_resource(&range, node, &res);
+> -		if (err < 0)
+> -			return err;
+> +	err = devm_request_pci_bus_resources(dev, windows);
+> +	if (err < 0)
+> +		return err;
+>  
+> -		switch (res.flags & IORESOURCE_TYPE_BITS) {
+> +	/* Get the I/O and memory ranges from DT */
+> +	resource_list_for_each_entry_safe(win, tmp_win, windows) {
+> +		switch (resource_type(win->res)) {
+>  		case IORESOURCE_IO:
+> -			pcie->offset.io = res.start - range.pci_addr;
+> -
+> -			memcpy(&pcie->pio, &res, sizeof(res));
+> -			pcie->pio.name = node->full_name;
+> -
+> -			pcie->io.start = range.cpu_addr;
+> -			pcie->io.end = range.cpu_addr + range.size - 1;
+> -			pcie->io.flags = IORESOURCE_MEM;
+> -			pcie->io.name = "I/O";
+> -
+> -			memcpy(&res, &pcie->io, sizeof(res));
+> -			break;
+> -
+> +			err = devm_pci_remap_iospace(dev, win->res, io_base);
+> +			if (err) {
+> +				dev_warn(dev, "error %d: failed to map resource %pR\n",
+> +					 err, win->res);
+> +				resource_list_destroy_entry(win);
+> +			}
+
+Missing a break.
+
+>  		case IORESOURCE_MEM:
+> -			pcie->offset.mem = res.start - range.pci_addr;
+> -
+> -			memcpy(&pcie->mem, &res, sizeof(res));
+> +			memcpy(&pcie->mem, win->res, sizeof(*win->res));
+>  			pcie->mem.name = "non-prefetchable";
+>  			break;
+> +		case IORESOURCE_BUS:
+> +			pcie->busnr = win->res->start;
+> +			break;
+>  		}
+>  	}
+>  
+> -	err = of_pci_parse_bus_range(node, &pcie->busn);
+> -	if (err < 0) {
+> -		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
+> -		pcie->busn.name = node->name;
+> -		pcie->busn.start = 0;
+> -		pcie->busn.end = 0xff;
+> -		pcie->busn.flags = IORESOURCE_BUS;
+> -	}
+> -
+>  	for_each_available_child_of_node(node, child) {
+>  		int slot;
+>  
+> @@ -1125,28 +1103,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> -static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
+> -{
+> -	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> -	struct list_head *windows = &host->windows;
+> -	struct device *dev = pcie->dev;
+> -	int err;
+> -
+> -	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
+> -	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
+> -	pci_add_resource(windows, &pcie->busn);
+> -
+> -	err = devm_request_pci_bus_resources(dev, windows);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	return 0;
+> -}
+> -
+>  static int mtk_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1169,11 +1125,7 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+>  	if (err)
+>  		return err;
+>  
+> -	err = mtk_pcie_request_resources(pcie);
+> -	if (err)
+> -		goto put_resources;
+> -
+> -	host->busnr = pcie->busn.start;
+> +	host->busnr = pcie->busnr;
+>  	host->dev.parent = pcie->dev;
+>  	host->ops = pcie->soc->ops;
+>  	host->map_irq = of_irq_parse_and_map_pci;
+> @@ -1181,12 +1133,9 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+>  	host->sysdata = pcie;
+>  
+>  	err = pci_host_probe(host);
+> -	if (err)
+> -		goto put_resources;
+> -
+> -	return 0;
+> +	if (!err)
+> +		return 0;
+>  
+
+No, leave the error path.
+
+	err = pci_host_probe(host);
+	if (err)
+		goto put_resources;
+
+	return 0;
+put_resources:
+	...
+
+it is easier to follow.
+
+Thanks,
+Lorenzo
+
+> -put_resources:
+>  	if (!list_empty(&pcie->ports))
+>  		mtk_pcie_put_resources(pcie);
+>  
+> -- 
+> 2.6.4
+> 
