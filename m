@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717F2C46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC218C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E51220892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:38:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E51220892
+	by mail.kernel.org (Postfix) with ESMTP id 6F79020896
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 18:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F79020896
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeKHEKF (ORCPT
+        id S1728965AbeKHEKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 7 Nov 2018 23:10:05 -0500
-Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:60343 "EHLO
-        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726915AbeKHEKE (ORCPT
+Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:38971 "EHLO
+        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726780AbeKHEKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Nov 2018 23:10:04 -0500
 Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp02.blacknight.com (Postfix) with ESMTPS id 99C8E98AA3
-        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 18:38:24 +0000 (UTC)
-Received: (qmail 19880 invoked from network); 7 Nov 2018 18:38:24 -0000
+        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 2B006B8AAA
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 18:38:24 +0000 (GMT)
+Received: (qmail 19840 invoked from network); 7 Nov 2018 18:38:23 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPA; 7 Nov 2018 18:38:24 -0000
+  by 81.17.254.9 with ESMTPA; 7 Nov 2018 18:38:23 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -38,9 +38,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 5/5] mm: Target compaction on pageblocks that were recently fragmented
-Date:   Wed,  7 Nov 2018 18:38:22 +0000
-Message-Id: <20181107183822.15567-6-mgorman@techsingularity.net>
+Subject: [PATCH 3/5] mm: Reclaim small amounts of memory when an external fragmentation event occurs
+Date:   Wed,  7 Nov 2018 18:38:20 +0000
+Message-Id: <20181107183822.15567-4-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181107183822.15567-1-mgorman@techsingularity.net>
 References: <20181107183822.15567-1-mgorman@techsingularity.net>
@@ -49,30 +49,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Despite the earlier patches, external fragmentation events are still
-inevitable as not all callers can stall or are appropriate to stall.  In the
-event the result is a mixed pageblock, it is desirable to move all movable
-pages from that block so that unmovable/unreclaimable allocations do not
-further pollute the address space. This patch queues such pageblocks for
-early compaction and relies on kswapd to wake kcompactd when some pages
-are reclaimed. Waking kcompactd after kswapd makes progress is so that
-the compaction is more likely to have a suitable migration destination.
+An external fragmentation event was previously described as
 
-This patch may be controversial as there are multiple other design
-decisions that can be made. We could refuse to change pageblock ownership
-in some cases but great care would need to be taken to avoid premature
-OOMs or a livelock. Similarly, we could tag pageblocks as mixed and
-search for them but that would increase scanning costs. Finally, there
-is a corner case that a mixed pageblock that is after the point where a
-free scanner can operate may fail to clean the pageblock but addressing
-that would require a fundamental alteration to how compaction works.
+    When the page allocator fragments memory, it records the event using
+    the mm_page_alloc_extfrag event. If the fallback_order is smaller
+    than a pageblock order (order-9 on 64-bit x86) then it's considered
+    an event that will cause external fragmentation issues in the future.
 
-Unlike the previous patches, the benefit here is harder to quantify as
-any work that is queued may or may not help an allocation request in the
-future.  The timing of the allocation stream is critical and detecting
-differences in latency may be within the noise.  Hence, the potential
-benefit of this patch is more conceptual than quantitive even though
-there are some positive results.
+The kernel reduces the probability of such events by increasing the
+watermark sizes by calling set_recommended_min_free_kbytes early in the
+lifetime of the system. This works reasonably well in general but if there
+are enough sparsely populated pageblocks then the problem can still occur
+as enough memory is free overall and kswapd stays asleep.
+
+This patch introduces a watermark_boost_factor sysctl that allows a
+zone watermark to be temporarily boosted when an external fragmentation
+causing events occurs. The boosting will stall allocations that would
+decrease free memory below the boosted low watermark and kswapd is woken
+unconditionally to reclaim an amount of memory relative to the size
+of the high watermark and the watermark_boost_factor until the boost
+is cleared. When kswapd finishes, it wakes kcompactd at the pageblock
+order to clean some of the pageblocks that may have been affected by the
+fragmentation event. kswapd avoids any writeback or swap from reclaim
+context during this operation to avoid excessive system disruption in
+the name of fragmentation avoidance. Care is taken so that kswapd will
+do normal reclaim work if the system is really low on memory.
+
+This was evaluated using the same workloads as "mm, page_alloc: Spread
+allocations across zones before introducing fragmentation".
 
 1-socket Skylake machine
 config-global-dhp__workload_thpfioscale XFS (no special madvise)
@@ -82,21 +86,20 @@ config-global-dhp__workload_thpfioscale XFS (no special madvise)
 4.20-rc1 extfrag events < order 9:  1023463
 4.20-rc1+patch:                      358574 (65% reduction)
 4.20-rc1+patch1-3:                    19274 (98% reduction)
-4.20-rc1+patch1-4:                     1351 (99.9% reduction)
-4.20-rc1+patch1-5:                     2554 (99.8% reduction)
 
                                    4.20.0-rc1             4.20.0-rc1
-                                   stall-v2r6         proactive-v2r6
-Amean     fault-base-1      648.66 (   0.00%)      655.18 *  -1.00%*
-Amean     fault-huge-1      167.79 (   0.00%)      163.00 (   2.85%)
+                                 lowzone-v2r4             boost-v2r4
+Amean     fault-base-1      663.65 (   0.00%)      659.85 *   0.57%*
+Amean     fault-huge-1        0.00 (   0.00%)      172.19 * -99.00%*
 
                               4.20.0-rc1             4.20.0-rc1
-                              stall-v2r6         proactive-v2r6
-Percentage huge-1        1.16 (   0.00%)        0.03 ( -97.14%)
+                            lowzone-v2r4             boost-v2r4
+Percentage huge-1        0.00 (   0.00%)        1.68 ( 100.00%)
 
-The performance is similar but not necessarily indicative that the patch
-had any effect. There was no reported compaction activity so essentially
-the patch was a no-op.
+Note that external fragmentation causing events are massively reduced
+by this path whether in comparison to the previous kernel or the vanilla
+kernel. The fault latency for huge pages appears to be increased but that
+is only because THP allocations were successful with the patch applied.
 
 1-socket Skylake machine
 global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
@@ -105,19 +108,20 @@ global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
 4.20-rc1 extfrag events < order 9:  342549
 4.20-rc1+patch:                     337890 ( 1% reduction)
 4.20-rc1+patch1-3:                   12801 (96% reduction)
-4.20-rc1+patch1-4:                    1511 (99.7% reduction)
 
+thpfioscale Fault Latencies
+thpfioscale Fault Latencies
                                    4.20.0-rc1             4.20.0-rc1
-                                   stall-v2r6         proactive-v2r6
-Amean     fault-base-1    43404.60 (   0.00%)        0.00 ( 100.00%)
-Amean     fault-huge-1     1424.32 (   0.00%)      540.99 *  62.02%*
+                                 lowzone-v2r4             boost-v2r4
+Amean     fault-base-1     1531.37 (   0.00%)     1578.91 (  -3.10%)
+Amean     fault-huge-1     1160.95 (   0.00%)     1090.23 *   6.09%*
 
                               4.20.0-rc1             4.20.0-rc1
-                              stall-v2r6         proactive-v2r6
-Percentage huge-1       99.92 (   0.00%)      100.00 (   0.08%)
+                            lowzone-v2r4             boost-v2r4
+Percentage huge-1       78.97 (   0.00%)       82.59 (   4.58%)
 
-Slight increase in fragmentation events but the latency was improved
-and THP allocations had a 100% success rate.
+As before, massive reduction in external fragmentation events, some jitter
+on latencies and an increase in THP allocation success rates.
 
 2-socket Haswell machine
 config-global-dhp__workload_thpfioscale XFS (no special madvise)
@@ -127,22 +131,21 @@ config-global-dhp__workload_thpfioscale XFS (no special madvise)
 4.20-rc1 extfrag events < order 9:  209820
 4.20-rc1+patch:                     185923 (11% reduction)
 4.20-rc1+patch1-3:                   11240 (95% reduction)
-4.20-rc1+patch1-4:                   13241 (93% reduction)
-4.20-rc1+patch1-5:                   11916 (94% reduction)
 
-thpfioscale Fault Latencies
                                    4.20.0-rc1             4.20.0-rc1
-                                   stall-v2r6         proactive-v2r6
-Amean     fault-base-5     1508.94 (   0.00%)     1545.56 (  -2.43%)
-Amean     fault-huge-5      614.88 (   0.00%)      557.46 *   9.34%*
+                                 lowzone-v2r4             boost-v2r4
+Amean     fault-base-5     1334.99 (   0.00%)     1395.28 (  -4.52%)
+Amean     fault-huge-5     2428.43 (   0.00%)      539.69 (  77.78%)
 
                               4.20.0-rc1             4.20.0-rc1
-                              stall-v2r6         proactive-v2r6
-Percentage huge-5        3.38 (   0.00%)        4.53 (  33.99%)
+                            lowzone-v2r4             boost-v2r4
+Percentage huge-5        1.13 (   0.00%)        0.53 ( -52.94%)
 
-Fragmentation-causing events are slightly reduced and there is a slight
-improvement in THP allocation latencies and success rates. Remember that
-no special effort is being made to allocate THP in this workload.
+This is an illustration of why latencies are not the primary metric.
+There is a 95% reduction in fragmentation causing events but the
+huge page latencies look fantastic until you account for the fact it
+might be because the success rate was lower. Given how low it was
+initially, this is partially down to luck.
 
 2-socket Haswell machine
 global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
@@ -151,434 +154,449 @@ global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
 4.20-rc1 extfrag events < order 9: 167464
 4.20-rc1+patch:                    130081 (22% reduction)
 4.20-rc1+patch1-3:                  12057 (92% reduction)
-4.20-rc1+patch1-4:                  11060 (93% reduction)
-4.20-rc1+patch1-5:                   8903 (95% reduction)
 
+thpfioscale Fault Latencies
                                    4.20.0-rc1             4.20.0-rc1
-                                   stall-v2r6         proactive-v2r6
-Amean     fault-base-5     9363.89 (   0.00%)     9067.00 (   3.17%)
-Amean     fault-huge-5     3638.29 (   0.00%)     1509.51 *  58.51%*
+                                 lowzone-v2r4             boost-v2r4
+Amean     fault-base-5     6652.67 (   0.00%)     8691.83 * -30.65%*
+Amean     fault-huge-5     2486.89 (   0.00%)     2899.83 * -16.60%*
 
-thpfioscale Percentage Faults Huge
                               4.20.0-rc1             4.20.0-rc1
-                              stall-v2r6         proactive-v2r6
-Percentage huge-5       99.27 (   0.00%)       99.93 (   0.67%)
+                            lowzone-v2r4             boost-v2r4
+Percentage huge-5       94.49 (   0.00%)       95.55 (   1.13%)
 
-There is a small decrease in fragmentation events but the most notable
-part is the decrease in latency with a similarly high THP allocation
-success rate.
-
-It is less obvious whether this is a universal win as fragmentation-causing
-events were already low and in the case of MADV_HUGEPAGE, the allocation
-success rates were already high. However, it's encouraging that the THP
-allocation latencies were improved.
+There is a large reduction in fragmentation events with a very slightly
+higher THP allocation success rate. The latencies look bad but a closer
+look at the data seems to indicate the problem is at the tails. Given the
+high THP allocation success rate, the system is under quite some pressure.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- include/linux/compaction.h        |   4 ++
- include/linux/migrate.h           |   7 +-
- include/linux/mmzone.h            |   4 ++
- include/trace/events/compaction.h |  62 ++++++++++++++++
- mm/compaction.c                   | 145 +++++++++++++++++++++++++++++++++++---
- mm/migrate.c                      |   6 +-
- mm/page_alloc.c                   |   7 ++
- 7 files changed, 224 insertions(+), 11 deletions(-)
+ Documentation/sysctl/vm.txt |  19 +++++++
+ include/linux/mm.h          |   1 +
+ include/linux/mmzone.h      |  11 ++--
+ kernel/sysctl.c             |   8 +++
+ mm/page_alloc.c             |  53 +++++++++++++++++--
+ mm/vmscan.c                 | 123 ++++++++++++++++++++++++++++++++++++++++----
+ 6 files changed, 199 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index 68250a57aace..1fc1ad055f66 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -177,6 +177,7 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
- extern int kcompactd_run(int nid);
- extern void kcompactd_stop(int nid);
- extern void wakeup_kcompactd(pg_data_t *pgdat, int order, int classzone_idx);
-+extern void kcompactd_queue_migration(struct zone *zone, struct page *page);
+diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
+index 7d73882e2c27..2244520d7913 100644
+--- a/Documentation/sysctl/vm.txt
++++ b/Documentation/sysctl/vm.txt
+@@ -63,6 +63,7 @@ files can be found in mm/swap.c.
+ - swappiness
+ - user_reserve_kbytes
+ - vfs_cache_pressure
++- watermark_boost_factor
+ - watermark_scale_factor
+ - zone_reclaim_mode
  
- #else
- static inline void reset_isolation_suitable(pg_data_t *pgdat)
-@@ -225,6 +226,9 @@ static inline void wakeup_kcompactd(pg_data_t *pgdat, int order, int classzone_i
- {
- }
+@@ -856,6 +857,24 @@ ten times more freeable objects than there are.
  
-+static inline void kcompactd_queue_migration(struct zone *zone, struct page *page)
-+{
-+}
- #endif /* CONFIG_COMPACTION */
+ =============================================================
  
- #if defined(CONFIG_COMPACTION) && defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index f2b4abbca55e..f12cee38c0f0 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -61,7 +61,7 @@ static inline struct page *new_page_nodemask(struct page *page,
++watermark_boost_factor:
++
++This factor controls the level of reclaim when memory is being fragmented.
++It defines the percentage of the low watermark of a zone that will be
++reclaimed if pages of different mobility are being mixed within pageblocks.
++The intent is so that compaction has less work to do and increase the
++success rate of future high-order allocations such as SLUB allocations,
++THP and hugetlbfs pages.
++
++To make it sensible with respect to the watermark_scale_factor parameter,
++the unit is in fractions of 10,000. The default value of 15000 means
++that 150% of the high watermark will be reclaimed in the event of a
++pageblock being mixed due to fragmentation. If this value is smaller
++than a pageblock then a pageblocks worth of pages will be reclaimed (e.g.
++2MB on 64-bit x86). A boost factor of 0 will disable the feature.
++
++=============================================================
++
+ watermark_scale_factor:
  
- #ifdef CONFIG_MIGRATION
+ This factor controls the aggressiveness of kswapd. It defines the
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fcf9cc9d535f..81926daf6dfb 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2194,6 +2194,7 @@ extern void zone_pcp_reset(struct zone *zone);
  
--extern void putback_movable_pages(struct list_head *l);
-+extern unsigned int putback_movable_pages(struct list_head *l);
- extern int migrate_page(struct address_space *mapping,
- 			struct page *newpage, struct page *page,
- 			enum migrate_mode mode);
-@@ -82,7 +82,10 @@ extern int migrate_page_move_mapping(struct address_space *mapping,
- 		int extra_count);
- #else
+ /* page_alloc.c */
+ extern int min_free_kbytes;
++extern int watermark_boost_factor;
+ extern int watermark_scale_factor;
  
--static inline void putback_movable_pages(struct list_head *l) {}
-+static inline unsigned int putback_movable_pages(struct list_head *l)
-+{
-+	return 0;
-+}
- static inline int migrate_pages(struct list_head *l, new_page_t new,
- 		free_page_t free, unsigned long private, enum migrate_mode mode,
- 		int reason)
+ /* nommu.c */
 diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index cffec484ac8a..980fad03ae8e 100644
+index e43e8e79db99..d352c1dab486 100644
 --- a/include/linux/mmzone.h
 +++ b/include/linux/mmzone.h
-@@ -497,6 +497,10 @@ struct zone {
- 	unsigned int		compact_considered;
- 	unsigned int		compact_defer_shift;
- 	int			compact_order_failed;
-+
-+#define COMPACT_QUEUE_LENGTH 16
-+	unsigned long		compact_queue[COMPACT_QUEUE_LENGTH];
-+	int			nr_compact;
- #endif
+@@ -269,10 +269,10 @@ enum zone_watermarks {
+ 	NR_WMARK
+ };
  
- #if defined CONFIG_COMPACTION || defined CONFIG_CMA
-diff --git a/include/trace/events/compaction.h b/include/trace/events/compaction.h
-index 6074eff3d766..6b5b61177d8c 100644
---- a/include/trace/events/compaction.h
-+++ b/include/trace/events/compaction.h
-@@ -353,6 +353,68 @@ DEFINE_EVENT(kcompactd_wake_template, mm_compaction_kcompactd_wake,
- 	TP_ARGS(nid, order, classzone_idx)
- );
+-#define min_wmark_pages(z) (z->_watermark[WMARK_MIN])
+-#define low_wmark_pages(z) (z->_watermark[WMARK_LOW])
+-#define high_wmark_pages(z) (z->_watermark[WMARK_HIGH])
+-#define wmark_pages(z, i) (z->_watermark[i])
++#define min_wmark_pages(z) (z->_watermark[WMARK_MIN] + z->watermark_boost)
++#define low_wmark_pages(z) (z->_watermark[WMARK_LOW] + z->watermark_boost)
++#define high_wmark_pages(z) (z->_watermark[WMARK_HIGH] + z->watermark_boost)
++#define wmark_pages(z, i) (z->_watermark[i] + z->watermark_boost)
  
-+TRACE_EVENT(mm_compaction_wakeup_kcompactd_queue,
-+
-+	TP_PROTO(
-+		int nid,
-+		enum zone_type zoneid,
-+		unsigned long pfn,
-+		int nr_queued),
-+
-+	TP_ARGS(nid, pfn, zoneid, nr_queued),
-+
-+	TP_STRUCT__entry(
-+		__field(int, nid)
-+		__field(enum zone_type, zoneid)
-+		__field(unsigned long, pfn)
-+		__field(int, nr_queued)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->nid = nid;
-+		__entry->zoneid = zoneid;
-+		__entry->pfn = pfn;
-+		__entry->nr_queued = nr_queued;
-+	),
-+
-+	TP_printk("nid=%d zoneid=%-8s pfn=%lu nr_queued=%d",
-+		__entry->nid,
-+		__print_symbolic(__entry->zoneid, ZONE_TYPE),
-+		__entry->pfn,
-+		__entry->nr_queued)
-+);
-+
-+TRACE_EVENT(mm_compaction_kcompactd_migrated,
-+
-+	TP_PROTO(
-+		int nid,
-+		enum zone_type zoneid,
-+		int nr_migrated,
-+		int nr_failed),
-+
-+	TP_ARGS(nid, zoneid, nr_migrated, nr_failed),
-+
-+	TP_STRUCT__entry(
-+		__field(int, nid)
-+		__field(enum zone_type, zoneid)
-+		__field(int, nr_migrated)
-+		__field(int, nr_failed)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->nid = nid;
-+		__entry->zoneid = zoneid,
-+		__entry->nr_migrated = nr_migrated;
-+		__entry->nr_failed = nr_failed;
-+	),
-+
-+	TP_printk("nid=%d zoneid=%-8s nr_migrated=%d nr_failed=%d",
-+		__entry->nid,
-+		__print_symbolic(__entry->zoneid, ZONE_TYPE),
-+		__entry->nr_migrated,
-+		__entry->nr_failed)
-+);
-+
- #endif /* _TRACE_COMPACTION_H */
+ struct per_cpu_pages {
+ 	int count;		/* number of pages in the list */
+@@ -364,6 +364,7 @@ struct zone {
  
- /* This part must be outside protection */
-diff --git a/mm/compaction.c b/mm/compaction.c
-index ef29490b0f46..0fdeecd47a03 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1915,6 +1915,12 @@ void compaction_unregister_node(struct node *node)
+ 	/* zone watermarks, access with *_wmark_pages(zone) macros */
+ 	unsigned long _watermark[NR_WMARK];
++	unsigned long watermark_boost;
  
- static inline bool kcompactd_work_requested(pg_data_t *pgdat)
- {
-+	int zoneid;
-+
-+	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++)
-+		if (pgdat->node_zones[zoneid].nr_compact)
-+			return true;
-+
- 	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
- }
+ 	unsigned long nr_reserved_highatomic;
  
-@@ -1938,6 +1944,92 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
+@@ -885,6 +886,8 @@ static inline int is_highmem(struct zone *zone)
+ struct ctl_table;
+ int min_free_kbytes_sysctl_handler(struct ctl_table *, int,
+ 					void __user *, size_t *, loff_t *);
++int watermark_boost_factor_sysctl_handler(struct ctl_table *, int,
++					void __user *, size_t *, loff_t *);
+ int watermark_scale_factor_sysctl_handler(struct ctl_table *, int,
+ 					void __user *, size_t *, loff_t *);
+ extern int sysctl_lowmem_reserve_ratio[MAX_NR_ZONES];
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5fc724e4e454..1825f712e73b 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1462,6 +1462,14 @@ static struct ctl_table vm_table[] = {
+ 		.proc_handler	= min_free_kbytes_sysctl_handler,
+ 		.extra1		= &zero,
+ 	},
++	{
++		.procname	= "watermark_boost_factor",
++		.data		= &watermark_boost_factor,
++		.maxlen		= sizeof(watermark_boost_factor),
++		.mode		= 0644,
++		.proc_handler	= watermark_boost_factor_sysctl_handler,
++		.extra1		= &zero,
++	},
+ 	{
+ 		.procname	= "watermark_scale_factor",
+ 		.data		= &watermark_scale_factor,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index ad996a769bd5..4abac725a149 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -263,6 +263,7 @@ compound_page_dtor * const compound_page_dtors[] = {
+ 
+ int min_free_kbytes = 1024;
+ int user_min_free_kbytes = -1;
++int watermark_boost_factor __read_mostly = 15000;
+ int watermark_scale_factor = 10;
+ 
+ static unsigned long nr_kernel_pages __meminitdata;
+@@ -2129,6 +2130,21 @@ static bool can_steal_fallback(unsigned int order, int start_mt)
  	return false;
  }
  
-+static void kcompactd_migrate_block(struct compact_control *cc,
-+	unsigned long pfn)
++static inline void boost_watermark(struct zone *zone)
 +{
-+	unsigned long end = min(pfn + pageblock_nr_pages, zone_end_pfn(cc->zone));
-+	unsigned long total_migrated = 0, total_failed = 0;
++	unsigned long max_boost;
 +
-+	cc->migrate_pfn = pfn;
-+	while (pfn && pfn < end) {
-+		int err;
-+		unsigned long nr_migrated, nr_failed = 0;
++	if (!watermark_boost_factor)
++		return;
 +
-+		pfn = isolate_migratepages_range(cc, pfn, end);
-+		if (!pfn)
-+			break;
++	max_boost = mult_frac(wmark_pages(zone, WMARK_HIGH),
++			watermark_boost_factor, 10000);
++	max_boost = max(pageblock_nr_pages, max_boost);
 +
-+		nr_migrated = cc->nr_migratepages;
-+		err = migrate_pages(&cc->migratepages, compaction_alloc,
-+				compaction_free, (unsigned long)cc,
-+				cc->mode, MR_COMPACTION);
-+		if (err) {
-+			nr_failed = putback_movable_pages(&cc->migratepages);
-+			nr_migrated -= nr_failed;
-+		}
-+		cc->nr_migratepages = 0;
-+		total_migrated += nr_migrated;
-+		total_failed += nr_failed;
-+	}
-+
-+	trace_mm_compaction_kcompactd_migrated(zone_to_nid(cc->zone),
-+		zone_idx(cc->zone), total_migrated, total_failed);
++	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
++		max_boost);
 +}
 +
-+static void kcompactd_init_cc(struct compact_control *cc, struct zone *zone)
-+{
-+	cc->nr_freepages = 0;
-+	cc->nr_migratepages = 0;
-+	cc->total_migrate_scanned = 0;
-+	cc->total_free_scanned = 0;
-+	cc->zone = zone;
-+	INIT_LIST_HEAD(&cc->freepages);
-+	INIT_LIST_HEAD(&cc->migratepages);
-+}
-+
-+static void kcompactd_do_queue(pg_data_t *pgdat)
-+{
-+	/*
-+	 * With no special task, compact all zones so that a page of requested
-+	 * order is allocatable.
-+	 */
-+	int zoneid;
-+	struct zone *zone;
-+	struct compact_control cc = {
-+		.order = 0,
-+		.total_migrate_scanned = 0,
-+		.total_free_scanned = 0,
-+		.classzone_idx = 0,
-+		.mode = MIGRATE_SYNC,
-+		.ignore_skip_hint = true,
-+		.gfp_mask = GFP_KERNEL,
-+	};
-+	trace_mm_compaction_kcompactd_wake(pgdat->node_id, 0, -1);
-+
-+	migrate_prep();
-+	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
-+		unsigned long pfn = ULONG_MAX;
-+		int limit;
-+
-+		zone = &pgdat->node_zones[zoneid];
-+		if (!populated_zone(zone))
-+			continue;
-+
-+		kcompactd_init_cc(&cc, zone);
-+		cc.free_pfn = pageblock_start_pfn(zone_end_pfn(zone) - 1);
-+		limit = zone->nr_compact;
-+		while (zone->nr_compact && limit--) {
-+			unsigned long flags;
-+
-+			spin_lock_irqsave(&zone->lock, flags);
-+			if (zone->nr_compact)
-+				pfn = zone->compact_queue[--zone->nr_compact];
-+			spin_unlock_irqrestore(&zone->lock, flags);
-+			kcompactd_migrate_block(&cc, pfn);
-+		}
-+	}
-+}
-+
- static void kcompactd_do_work(pg_data_t *pgdat)
- {
- 	/*
-@@ -1957,7 +2049,6 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 	};
- 	trace_mm_compaction_kcompactd_wake(pgdat->node_id, cc.order,
- 							cc.classzone_idx);
--	count_compact_event(KCOMPACTD_WAKE);
- 
- 	for (zoneid = 0; zoneid <= cc.classzone_idx; zoneid++) {
- 		int status;
-@@ -1973,13 +2064,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 							COMPACT_CONTINUE)
- 			continue;
- 
--		cc.nr_freepages = 0;
--		cc.nr_migratepages = 0;
--		cc.total_migrate_scanned = 0;
--		cc.total_free_scanned = 0;
--		cc.zone = zone;
--		INIT_LIST_HEAD(&cc.freepages);
--		INIT_LIST_HEAD(&cc.migratepages);
-+		kcompactd_init_cc(&cc, zone);
- 
- 		if (kthread_should_stop())
- 			return;
-@@ -2025,6 +2110,19 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 
- void wakeup_kcompactd(pg_data_t *pgdat, int order, int classzone_idx)
- {
-+	int i;
-+
-+	/* Wake kcompact if there are compaction queue entries */
-+	for (i = 0; i < MAX_NR_ZONES; i++) {
-+		struct zone *zone = &pgdat->node_zones[i];
-+
-+		if (!managed_zone(zone))
-+			continue;
-+
-+		if (zone->nr_compact)
-+			goto wake;
-+	}
-+
- 	if (!order)
- 		return;
- 
-@@ -2044,6 +2142,7 @@ void wakeup_kcompactd(pg_data_t *pgdat, int order, int classzone_idx)
- 	if (!kcompactd_node_suitable(pgdat))
- 		return;
- 
-+wake:
- 	trace_mm_compaction_wakeup_kcompactd(pgdat->node_id, order,
- 							classzone_idx);
- 	wake_up_interruptible(&pgdat->kcompactd_wait);
-@@ -2076,6 +2175,8 @@ static int kcompactd(void *p)
- 				kcompactd_work_requested(pgdat));
- 
- 		psi_memstall_enter(&pflags);
-+		count_compact_event(KCOMPACTD_WAKE);
-+		kcompactd_do_queue(pgdat);
- 		kcompactd_do_work(pgdat);
- 		psi_memstall_leave(&pflags);
+ /*
+  * This function implements actual steal behaviour. If order is large enough,
+  * we can steal whole pageblock. If not, we first move freepages in this
+@@ -2160,6 +2176,14 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
+ 		goto single_page;
  	}
-@@ -2083,6 +2184,34 @@ static int kcompactd(void *p)
+ 
++	/*
++	 * Boost watermarks to increase reclaim pressure to reduce the
++	 * likelihood of future fallbacks. Wake kswapd now as the node
++	 * may be balanced overall and kswapd will not wake naturally.
++	 */
++	boost_watermark(zone);
++	wakeup_kswapd(zone, 0, 0, zone_idx(zone));
++
+ 	/* We are not allowed to try stealing from the whole block */
+ 	if (!whole_block)
+ 		goto single_page;
+@@ -3277,11 +3301,19 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
+  * probably too small. It only makes sense to spread allocations to avoid
+  * fragmentation between the Normal and DMA32 zones.
+  */
+-static inline unsigned int alloc_flags_nofragment(struct zone *zone)
++static inline unsigned int
++alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
+ {
+ 	if (zone_idx(zone) != ZONE_NORMAL)
+ 		return 0;
+ 
++	/*
++	 * A fragmenting fallback will try waking kswapd. ALLOC_NOFRAGMENT
++	 * may break that so such callers can introduce fragmentation.
++	 */
++	if (!(gfp_mask & __GFP_KSWAPD_RECLAIM))
++		return 0;
++
+ 	/*
+ 	 * If ZONE_DMA32 exists, assume it is the one after ZONE_NORMAL and
+ 	 * the pointer is within zone->zone_pgdat->node_zones[].
+@@ -3292,7 +3324,8 @@ static inline unsigned int alloc_flags_nofragment(struct zone *zone)
+ 	return ALLOC_NOFRAGMENT;
+ }
+ #else
+-static inline unsigned int alloc_flags_nofragment(struct zone *zone)
++static inline unsigned int
++alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
+ {
+ 	return 0;
+ }
+@@ -4447,7 +4480,8 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 	 * Forbid the first pass from falling back to types that fragment
+ 	 * memory until all local zones are considered.
+ 	 */
+-	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone);
++	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone,
++								gfp_mask);
+ 
+ 	/* First allocation attempt */
+ 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
+@@ -7438,6 +7472,7 @@ static void __setup_per_zone_wmarks(void)
+ 
+ 		zone->_watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
+ 		zone->_watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
++		zone->watermark_boost = 0;
+ 
+ 		spin_unlock_irqrestore(&zone->lock, flags);
+ 	}
+@@ -7538,6 +7573,18 @@ int min_free_kbytes_sysctl_handler(struct ctl_table *table, int write,
  	return 0;
  }
  
-+/*
-+ * Queue a pageblock to have all movable pages migrated from. Note that
-+ * kcompactd is not woken at this point. This assumes that kswapd has
-+ * been woken to reclaim pages above the boosted watermark. kcompactd
-+ * will be woken when kswapd has made progress.
-+ */
-+void kcompactd_queue_migration(struct zone *zone, struct page *page)
++int watermark_boost_factor_sysctl_handler(struct ctl_table *table, int write,
++	void __user *buffer, size_t *length, loff_t *ppos)
 +{
-+	unsigned long pfn = page_to_pfn(page) & ~(pageblock_nr_pages - 1);
-+	int nr_queued = -1;
++	int rc;
 +
-+	/* Do not overflow the queue */
-+	if (zone->nr_compact == COMPACT_QUEUE_LENGTH)
-+		goto trace;
++	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
++	if (rc)
++		return rc;
 +
-+	/* Only queue a pageblock once */
-+	for (nr_queued = 0; nr_queued < zone->nr_compact; nr_queued++) {
-+		if (zone->compact_queue[nr_queued] == pfn)
-+			return;
++	return 0;
++}
++
+ int watermark_scale_factor_sysctl_handler(struct ctl_table *table, int write,
+ 	void __user *buffer, size_t *length, loff_t *ppos)
+ {
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 62ac0c488624..5ba76ec4f01e 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3378,6 +3378,30 @@ static void age_active_anon(struct pglist_data *pgdat,
+ 	} while (memcg);
+ }
+ 
++static bool pgdat_watermark_boosted(pg_data_t *pgdat, int classzone_idx)
++{
++	int i;
++	struct zone *zone;
++
++	/*
++	 * Check for watermark boosts top-down as the higher zones
++	 * are more likely to be boosted. Both watermarks and boosts
++	 * should not be checked at the time time as reclaim would
++	 * start prematurely when there is no boosting and a lower
++	 * zone is balanced.
++	 */
++	for (i = classzone_idx; i >= 0; i--) {
++		zone = pgdat->node_zones + i;
++		if (!managed_zone(zone))
++			continue;
++
++		if (zone->watermark_boost)
++			return true;
 +	}
 +
-+	zone->compact_queue[zone->nr_compact++] = pfn;
-+
-+trace:
-+	trace_mm_compaction_wakeup_kcompactd_queue(zone_to_nid(zone),
-+		zone_idx(zone), pfn, nr_queued);
++	return false;
 +}
 +
  /*
-  * This kcompactd start function will be called by init and node-hot-add.
-  * On node-hot-add, kcompactd will moved to proper cpus if cpus are hot-added.
-diff --git a/mm/migrate.c b/mm/migrate.c
-index f7e4bfdc13b7..2ee3c38d2269 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -164,12 +164,14 @@ void putback_movable_page(struct page *page)
-  * built from lru, balloon, hugetlbfs page. See isolate_migratepages_range()
-  * and isolate_huge_page().
-  */
--void putback_movable_pages(struct list_head *l)
-+unsigned int putback_movable_pages(struct list_head *l)
- {
- 	struct page *page;
- 	struct page *page2;
-+	unsigned int nr_putback = 0;
+  * Returns true if there is an eligible zone balanced for the request order
+  * and classzone_idx
+@@ -3388,9 +3412,12 @@ static bool pgdat_balanced(pg_data_t *pgdat, int order, int classzone_idx)
+ 	unsigned long mark = -1;
+ 	struct zone *zone;
  
- 	list_for_each_entry_safe(page, page2, l, lru) {
-+		nr_putback++;
- 		if (unlikely(PageHuge(page))) {
- 			putback_active_hugepage(page);
++	/*
++	 * Check watermarks bottom-up as lower zones are more likely to
++	 * meet watermarks.
++	 */
+ 	for (i = 0; i <= classzone_idx; i++) {
+ 		zone = pgdat->node_zones + i;
+-
+ 		if (!managed_zone(zone))
  			continue;
-@@ -195,6 +197,8 @@ void putback_movable_pages(struct list_head *l)
- 			putback_lru_page(page);
+ 
+@@ -3516,14 +3543,14 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 	unsigned long nr_soft_reclaimed;
+ 	unsigned long nr_soft_scanned;
+ 	unsigned long pflags;
++	unsigned long nr_boost_reclaim;
++	unsigned long zone_boosts[MAX_NR_ZONES] = { 0, };
++	bool boosted;
+ 	struct zone *zone;
+ 	struct scan_control sc = {
+ 		.gfp_mask = GFP_KERNEL,
+ 		.order = order,
+-		.priority = DEF_PRIORITY,
+-		.may_writepage = !laptop_mode,
+ 		.may_unmap = 1,
+-		.may_swap = 1,
+ 	};
+ 
+ 	psi_memstall_enter(&pflags);
+@@ -3531,9 +3558,28 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 
+ 	count_vm_event(PAGEOUTRUN);
+ 
++	/*
++	 * Account for the reclaim boost. Note that the zone boost is left in
++	 * place so that parallel allocations that are near the watermark will
++	 * stall or direct reclaim until kswapd is finished.
++	 */
++	nr_boost_reclaim = 0;
++	for (i = 0; i <= classzone_idx; i++) {
++		zone = pgdat->node_zones + i;
++		if (!managed_zone(zone))
++			continue;
++
++		nr_boost_reclaim += zone->watermark_boost;
++		zone_boosts[i] = zone->watermark_boost;
++	}
++	boosted = nr_boost_reclaim;
++
++restart:
++	sc.priority = DEF_PRIORITY;
+ 	do {
+ 		unsigned long nr_reclaimed = sc.nr_reclaimed;
+ 		bool raise_priority = true;
++		bool balanced;
+ 		bool ret;
+ 
+ 		sc.reclaim_idx = classzone_idx;
+@@ -3560,13 +3606,39 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
  		}
- 	}
-+
-+	return nr_putback;
- }
  
- /*
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 86a6e86c51bb..1e72f757253e 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2214,6 +2214,9 @@ static bool steal_suitable_fallback(struct zone *zone, struct page *page,
- 	boost_watermark(zone, false);
- 	wakeup_kswapd(zone, 0, 0, zone_idx(zone));
+ 		/*
+-		 * Only reclaim if there are no eligible zones. Note that
+-		 * sc.reclaim_idx is not used as buffer_heads_over_limit may
+-		 * have adjusted it.
++		 * If the pgdat is imbalanced then ignore boosting and preserve
++		 * the watermarks for a later time and restart. Note that the
++		 * zone watermarks will be still reset at the end of balancing
++		 * on the grounds that the normal reclaim should be enough to
++		 * re-evaluate if boosting is required when kswapd next wakes.
++		 */
++		balanced = pgdat_balanced(pgdat, sc.order, classzone_idx);
++		if (!balanced && nr_boost_reclaim) {
++			nr_boost_reclaim = 0;
++			goto restart;
++		}
++
++		/*
++		 * If boosting is not active then only reclaim if there are no
++		 * eligible zones. Note that sc.reclaim_idx is not used as
++		 * buffer_heads_over_limit may have adjusted it.
+ 		 */
+-		if (pgdat_balanced(pgdat, sc.order, classzone_idx))
++		if (!nr_boost_reclaim && balanced)
+ 			goto out;
  
-+	if (start_type == MIGRATE_MOVABLE || old_block_type == MIGRATE_MOVABLE)
-+		kcompactd_queue_migration(zone, page);
++		/* Limit the priority of boosting to avoid reclaim writeback */
++		if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
++			raise_priority = false;
 +
- 	if ((alloc_flags & ALLOC_FRAGMENT_STALL) &&
- 	    current_order < fragment_stall_order) {
- 		return false;
-@@ -6457,7 +6460,11 @@ static void pgdat_init_split_queue(struct pglist_data *pgdat) {}
- #ifdef CONFIG_COMPACTION
- static void pgdat_init_kcompactd(struct pglist_data *pgdat)
- {
-+	int i;
++		/*
++		 * Do not writeback or swap pages for boosted reclaim. The
++		 * intent is to relieve pressure not issue sub-optimal IO
++		 * from reclaim context. If no pages are reclaimed, the
++		 * reclaim will be aborted.
++		 */
++		sc.may_writepage = !laptop_mode && !nr_boost_reclaim;
++		sc.may_swap = !nr_boost_reclaim;
 +
- 	init_waitqueue_head(&pgdat->kcompactd_wait);
-+	for (i = 0; i < MAX_NR_ZONES; i++)
-+		pgdat->node_zones[i].nr_compact = 0;
- }
- #else
- static void pgdat_init_kcompactd(struct pglist_data *pgdat) {}
+ 		/*
+ 		 * Do some background aging of the anon list, to give
+ 		 * pages a chance to be referenced before reclaiming. All
+@@ -3618,6 +3690,16 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 		 * progress in reclaiming pages
+ 		 */
+ 		nr_reclaimed = sc.nr_reclaimed - nr_reclaimed;
++		nr_boost_reclaim -= min(nr_boost_reclaim, nr_reclaimed);
++
++		/*
++		 * If reclaim made no progress for a boost, stop reclaim as
++		 * IO cannot be queued and it could be an infinite loop in
++		 * extreme circumstances.
++		 */
++		if (nr_boost_reclaim && !nr_reclaimed)
++			break;
++
+ 		if (raise_priority || !nr_reclaimed)
+ 			sc.priority--;
+ 	} while (sc.priority >= 1);
+@@ -3626,6 +3708,28 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 		pgdat->kswapd_failures++;
+ 
+ out:
++	/* If reclaim was boosted, account for the reclaim done in this pass */
++	if (boosted) {
++		unsigned long flags;
++
++		for (i = 0; i <= classzone_idx; i++) {
++			if (!zone_boosts[i])
++				continue;
++
++			/* Increments are under the zone lock */
++			zone = pgdat->node_zones + i;
++			spin_lock_irqsave(&zone->lock, flags);
++			zone->watermark_boost -= min(zone->watermark_boost, zone_boosts[i]);
++			spin_unlock_irqrestore(&zone->lock, flags);
++		}
++
++		/*
++		 * As there is now likely space, wakeup kcompact to defragment
++		 * pageblocks.
++		 */
++		wakeup_kcompactd(pgdat, pageblock_order, classzone_idx);
++	}
++
+ 	snapshot_refaults(NULL, pgdat);
+ 	__fs_reclaim_release();
+ 	psi_memstall_leave(&pflags);
+@@ -3854,7 +3958,8 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
+ 
+ 	/* Hopeless node, leave it to direct reclaim if possible */
+ 	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ||
+-	    pgdat_balanced(pgdat, order, classzone_idx)) {
++	    (pgdat_balanced(pgdat, order, classzone_idx) &&
++	     !pgdat_watermark_boosted(pgdat, classzone_idx))) {
+ 		/*
+ 		 * There may be plenty of free memory available, but it's too
+ 		 * fragmented for high-order allocations.  Wake up kcompactd
 -- 
 2.16.4
 
