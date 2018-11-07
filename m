@@ -2,146 +2,201 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D1BC46464
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF1BC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADCC020892
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNOqtyQj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADCC020892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 957E320892
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957E320892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbeKHEco (ORCPT
+        id S1729833AbeKHEc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:32:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51742 "EHLO mail.kernel.org"
+        Wed, 7 Nov 2018 23:32:56 -0500
+Received: from mga12.intel.com ([192.55.52.136]:2418 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725727AbeKHEcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:32:43 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 208B420862;
-        Wed,  7 Nov 2018 19:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541617263;
-        bh=HY3iJm3Ccw0G4LKGVA8FPkjVKVLj2rK3qzm7WAZOftI=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=sNOqtyQjfit9uionxGXkE5iuD+Lo2caTTT5WM+Slfl6MNlOph7ZYVKZMAbyZlm43B
-         HiqDnQDoqVMIqNF51+KOT15dgkfiP6V13z9NlurkA78VS8Nwn7d+ziRNDdJscmCCo8
-         rITaL9fKdrC0R12jQqhjBv6IDvQ6PNNaXx7ndmds=
-Content-Type: text/plain; charset="utf-8"
+        id S1725727AbeKHEc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:32:56 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 11:01:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="106298502"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga001.jf.intel.com with ESMTP; 07 Nov 2018 11:01:15 -0800
+Date:   Wed, 7 Nov 2018 11:01:15 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181107190114.GA26603@linux.intel.com>
+References: <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com>
+ <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ <20181106233515.GB11101@linux.intel.com>
+ <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+ <20181107000235.GC11101@linux.intel.com>
+ <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+ <20181107153452.GB22972@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
- <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
- <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
-Message-ID: <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Date:   Wed, 07 Nov 2018 11:01:02 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107153452.GB22972@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2018-11-07 03:54:45)
-> On Wed, Oct 17, 2018 at 12:55:52PM -0700, Stephen Boyd wrote:
-> > Quoting Abel Vesa (2018-09-24 03:39:55)
-> > > +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-> > > +                                        unsigned long parent_rate)
-> > > +{
-> > > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > > +       u32 val, ref, divr1, divf1, divr2, divf2;
-> > > +       u64 temp64;
-> > > +
-> > > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
-> > > +       switch (FIELD_GET(PLL_REF_MASK, val)) {
-> > > +       case 0:
-> > > +               ref =3D OSC_25M;
-> > > +               break;
-> > > +       case 1:
-> > > +               ref =3D OSC_27M;
-> > > +               break;
-> > > +       default:
-> > > +               ref =3D OSC_25M;
-> > =
+On Wed, Nov 07, 2018 at 07:34:52AM -0800, Sean Christopherson wrote:
+> On Tue, Nov 06, 2018 at 05:17:14PM -0800, Andy Lutomirski wrote:
+> > On Tue, Nov 6, 2018 at 4:02 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > On Tue, Nov 06, 2018 at 03:39:48PM -0800, Andy Lutomirski wrote:
+> > > > On Tue, Nov 6, 2018 at 3:35 PM Sean Christopherson
+> > > > <sean.j.christopherson@intel.com> wrote:
+> > > > >
+> > > > > Sorry if I'm beating a dead horse, but what if we only did fixup on ENCLU
+> > > > > with a specific (ignored) prefix pattern?  I.e. effectively make the magic
+> > > > > fixup opt-in, falling back to signals.  Jamming RIP to skip ENCLU isn't
+> > > > > that far off the architecture, e.g. EENTER stuffs RCX with the next RIP so
+> > > > > that the enclave can EEXIT to immediately after the EENTER location.
+> > > > >
+> > > >
+> > > > How does that even work, though?  On an AEX, RIP points to the ERESUME
+> > > > instruction, not the EENTER instruction, so if we skip it we just end
+> > > > up in lala land.
+> > >
+> > > Userspace would obviously need to be aware of the fixup behavior, but
+> > > it actually works out fairly nicely to have a separate path for ERESUME
+> > > fixup since a fault on EENTER is generally fatal, whereas as a fault on
+> > > ERESUME might be recoverable.
+> > >
+> > 
+> > Hmm.
+> > 
+> > >
+> > > do_eenter:
+> > >     mov     tcs, %rbx
+> > >     lea     async_exit, %rcx
+> > >     mov     $EENTER, %rax
+> > >     ENCLU
+> > 
+> > Or SOME_SILLY_PREFIX ENCLU?
+> 
+> Yeah, forgot to include that.
+> 
+> > >
+> > > /*
+> > >  * EEXIT or EENTER faulted.  In the latter case, %RAX already holds some
+> > >  * fault indicator, e.g. -EFAULT.
+> > >  */
+> > > eexit_or_eenter_fault:
+> > >     ret
+> > 
+> > But userspace wants to know whether it was a fault or not.  So I think
+> > we either need two landing pads or we need to hijack a flag bit (are
+> > there any known-zeroed flag bits after EEXIT?) to say whether it was a
+> > fault.  And, if it was a fault, we should give the vector, the
+> > sanitized error code, and possibly CR2.
+> 
+> As Jethro mentioned, RAX will always be 4 on a successful EEXIT, so we
+> can use RAX to indicate a fault.  That's what I was trying to imply with
+> EFAULT.  Here's the reg stuffing I use for the POC:
+> 
+> 	regs->ax = EFAULT;
+> 	regs->di = trapnr;
+> 	regs->si = error_code;
+> 	regs->dx = address;
+> 
+> 
+> Well-known RAX values also means the kernel fault handlers only need to
+> look for SOME_SILLY_PREFIX ENCLU if RAX==2 || RAX==3, i.e. the fault
+> occurred on EENTER or in an enclave (RAX is set to ERESUME's leaf as
+> part of the asynchronous enlcave exit flow).
 
-> > Does this information not come through 'parent_rate'?
-> > =
+POC kernel code, 64-bit only.
 
-> =
+Limiting this to 64-bit isn't necessary, but it makes the code prettier
+and allows using REX as the magic prefix.  I like the idea of using REX
+because it seems least likely to be repurposed for yet another new
+feature.  I have no idea if 64-bit only will fly with the SDK folks.
 
-> No. So basically both pll1 and pll2 and the divider after it form togethe=
-r this SCCG:
-> =
+Going off comments in similar code related to UMIP, we'd need to figure
+out how to handle protection keys.
 
-> https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
-> =
 
-> See: Figure 5-8. SSCG PLL Block Diagram
+/* REX with all bits set, ignored by ENCLU. */
+#define SGX_DO_ENCLU_FIXUP	0x4F
 
-Thanks for the link!
+#define SGX_ENCLU_OPCODE0	0x0F
+#define SGX_ENCLU_OPCODE1	0x01
+#define SGX_ENCLU_OPCODE2	0xD7
 
-> =
+/* ENCLU is a three-byte opcode, plus one byte for the magic prefix. */
+#define SGX_ENCLU_FIXUP_INSN_LEN	4
 
-> We're basically reading the input of the pll 1 in order to compute the ou=
-tput of the entire SCCG.
-> =
+static int sgx_detect_enclu(struct pt_regs *regs)
+{
+	unsigned char buf[SGX_ENCLU_FIXUP_INSN_LEN];
 
-> I know it's a mess. I'm working on cleaning it up, but for now we need th=
-is in in order to boot up.
+	/* Look for EENTER or ERESUME in RAX, 64-bit mode only. */
+	if (!regs || (regs->ax != 2 && regs->ax != 3) || !user_64bit_mode(regs))
+		return 0;
 
-What's the plan to clean it up?
+	if (copy_from_user(buf, (void __user *)(regs->ip), sizeof(buf)))
+		return 0;
 
-> =
+	if (buf[0] == SGX_DO_ENCLU_FIXUP &&
+	    buf[1] == SGX_ENCLU_OPCODE0 &&
+	    buf[2] == SGX_ENCLU_OPCODE1 &&
+	    buf[3] == SGX_ENCLU_OPCODE2)
+		return SGX_ENCLU_FIXUP_INSN_LEN;
 
-> > > +               break;
-> > > +       }
-> > > +
-> > > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
-> > > +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
-> > > +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
-> > > +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
-> > > +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
-> > > +
-> > > +       temp64 =3D ref * 2;
-> > > +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
-> > > +
-> > > +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
-> > =
+	return 0;
+}
 
-> > Nitpicks: A comment with the equation may be helpful to newcomers.
-> =
+bool sgx_fixup_enclu_fault(struct pt_regs *regs, int trapnr,
+			   unsigned long error_code, unsigned long address)
+{
+	int insn_len;
 
-> Since the SCCG is contructed by multiple different types of clocks here, =
-the equation doesn't help
-> since it is spread in all constructing blocks.
+	insn_len = sgx_detect_enclu(regs);
+	if (!insn_len)
+		return false;
 
-Ok.
-
+	regs->ip += insn_len;
+	regs->ax = EFAULT;
+	regs->di = trapnr;
+	regs->si = error_code;
+	regs->dx = address;
+	return true;
+}
