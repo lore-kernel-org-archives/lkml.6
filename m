@@ -2,172 +2,153 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64115C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F356C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B9B92081D
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 05:43:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KyqvwaHw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9B92081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E568820862
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 06:07:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E568820862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729870AbeKGPMK (ORCPT
+        id S1729574AbeKGPfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 10:12:10 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39562 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbeKGPMK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 10:12:10 -0500
-Received: by mail-pf1-f193.google.com with SMTP id n11-v6so7233179pfb.6
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Nov 2018 21:43:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=GNQpj3rjBVklO8bagXhiz60SxP62hFGYHRM9p2t7PbQ=;
-        b=KyqvwaHwrmynroxJ/Y0w04DGuD3qh76/KvfOHJZ56DliOLlcmthoRMJXtv3KR8yVWE
-         eWeLtAoirOVAXaE1FWQcc/2rSQaupPemopsT5uv8Ph5NDqmJ7T2a5AWlzfvremtegQnQ
-         l0T1InJAk70NwjQaEJvjpIxuUGPPEKOW6BV8g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GNQpj3rjBVklO8bagXhiz60SxP62hFGYHRM9p2t7PbQ=;
-        b=RJZ0Ty71pEyTXKgIt40bni4xtJrV+5dh+mS5NSAeq/3iTSylr6YWh4w8UMdMpWpXqD
-         upqhKOmVdvEcDDIDoUfkPP5s0mIvXwEAV/4HDLydA2hKdw87Ri2Bel1lZHpZS8GjepJX
-         8V5GX3GU3FdZavqyY6qC1HADFZ1/SVH2DI1hRW6XdX5iy9Zu1i08T9LjEvxa/G1jrFEF
-         7mBeoYUbNtuqA1jV5mU2fJqfz6Ecc/KVunS+iLyTnYu6GLTMSdzoDlGMV4I60sXrRFsb
-         XnTWWoXhg0OOEuExnilQ+rCY3opf9ZgRmO32fo/EgSlI8R42DIvL6FNbVRt9aLPawcQz
-         t7jQ==
-X-Gm-Message-State: AGRZ1gLIXo9zjpvd5kyjJlNbgIxK+VV+sDpTz6l+H3B7m+Cjl3zxTdCz
-        SfJJwLmC/+FgOAiRL3pdsxPAQQ==
-X-Google-Smtp-Source: AJdET5e6oSiWpsOxTLtOD17haxGtGsTYxcXrcftraXPzrttYLlQ6Sgfjwxsg+QVZBRGc56FtDJHukQ==
-X-Received: by 2002:a63:d547:: with SMTP id v7mr455466pgi.339.1541569400022;
-        Tue, 06 Nov 2018 21:43:20 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id r6sm5850627pgk.91.2018.11.06.21.43.16
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 21:43:19 -0800 (PST)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc:     rteysseyre@gmail.com, baolin.wang@linaro.org, broonie@kernel.org,
-        geert@linux-m68k.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: trigger: Fix sleeping function called from invalid context
-Date:   Wed,  7 Nov 2018 13:42:58 +0800
-Message-Id: <5f1cfb9c87f591b12efa2e7a0063f15532649634.1541563908.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Wed, 7 Nov 2018 10:35:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53480 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726470AbeKGPfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 10:35:53 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B20B3097043;
+        Wed,  7 Nov 2018 06:07:00 +0000 (UTC)
+Received: from xz-x1.nay.redhat.com (dhcp-14-128.nay.redhat.com [10.66.14.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 943291057053;
+        Wed,  7 Nov 2018 06:06:47 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        peterx@redhat.com, Dan Williams <dan.j.williams@intel.com>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH RFC v2 0/4] mm: some enhancements to the page fault mechanism
+Date:   Wed,  7 Nov 2018 14:06:39 +0800
+Message-Id: <20181107060643.10950-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 07 Nov 2018 06:07:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We will meet below issue due to mutex_lock() is called in interrupt context.
-The mutex lock is used to protect the pattern trigger data, but before changing
-new pattern trigger data (pattern values or repeat value) by users, we always
-cancel the timer firstly to clear previous patterns' performance. That means
-there is no race in pattern_trig_timer_function(), so we can drop the mutex
-lock in pattern_trig_timer_function() to avoid this issue.
+(sorry I got the cc list messed up; am sending another one with no
+ change but only to fix the cc list)
 
-Moreover we can move the timer cancelling into mutex protection, since there
-is no deadlock risk if we remove the mutex lock in pattern_trig_timer_function().
+This is an RFC series as cleanup and enhancements to current page
+fault logic.  The whole idea comes from the discussion between Andrea
+and Linus on the bug reported by syzbot here:
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
-in_atomic(): 1, irqs_disabled(): 0, pid: 0, name: swapper/1
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-4.20.0-rc1-koelsch-00841-ga338c8181013c1a9 #171
-Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-[<c020f19c>] (unwind_backtrace) from [<c020aecc>] (show_stack+0x10/0x14)
-[<c020aecc>] (show_stack) from [<c07affb8>] (dump_stack+0x7c/0x9c)
-[<c07affb8>] (dump_stack) from [<c02417d4>] (___might_sleep+0xf4/0x158)
-[<c02417d4>] (___might_sleep) from [<c07c92c4>] (mutex_lock+0x18/0x60)
-[<c07c92c4>] (mutex_lock) from [<c067b28c>] (pattern_trig_timer_function+0x1c/0x11c)
-[<c067b28c>] (pattern_trig_timer_function) from [<c027f6fc>] (call_timer_fn+0x1c/0x90)
-[<c027f6fc>] (call_timer_fn) from [<c027f944>] (expire_timers+0x94/0xa4)
-[<c027f944>] (expire_timers) from [<c027fc98>] (run_timer_softirq+0x108/0x15c)
-[<c027fc98>] (run_timer_softirq) from [<c02021cc>] (__do_softirq+0x1d4/0x258)
-[<c02021cc>] (__do_softirq) from [<c0224d24>] (irq_exit+0x64/0xc4)
-[<c0224d24>] (irq_exit) from [<c0268dd0>] (__handle_domain_irq+0x80/0xb4)
-[<c0268dd0>] (__handle_domain_irq) from [<c045e1b0>] (gic_handle_irq+0x58/0x90)
-[<c045e1b0>] (gic_handle_irq) from [<c02019f8>] (__irq_svc+0x58/0x74)
-Exception stack(0xeb483f60 to 0xeb483fa8)
-3f60: 00000000 00000000 eb9afaa0 c0217e80 00000000 ffffe000 00000000 c0e06408
-3f80: 00000002 c0e0647c c0c6a5f0 00000000 c0e04900 eb483fb0 c0207ea8 c0207e98
-3fa0: 60020013 ffffffff
-[<c02019f8>] (__irq_svc) from [<c0207e98>] (arch_cpu_idle+0x1c/0x38)
-[<c0207e98>] (arch_cpu_idle) from [<c0247ca8>] (do_idle+0x138/0x268)
-[<c0247ca8>] (do_idle) from [<c0248050>] (cpu_startup_entry+0x18/0x1c)
-[<c0248050>] (cpu_startup_entry) from [<402022ec>] (0x402022ec)
+  https://lkml.org/lkml/2017/11/2/833
 
-Fixes: 5fd752b6b3a2 ("leds: core: Introduce LED pattern trigger")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/leds/trigger/ledtrig-pattern.c |   20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
+Basically it does two things:
 
-diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-index 174a298..1870cf8 100644
---- a/drivers/leds/trigger/ledtrig-pattern.c
-+++ b/drivers/leds/trigger/ledtrig-pattern.c
-@@ -75,8 +75,6 @@ static void pattern_trig_timer_function(struct timer_list *t)
- {
- 	struct pattern_trig_data *data = from_timer(data, t, timer);
- 
--	mutex_lock(&data->lock);
--
- 	for (;;) {
- 		if (!data->is_indefinite && !data->repeat)
- 			break;
-@@ -117,8 +115,6 @@ static void pattern_trig_timer_function(struct timer_list *t)
- 
- 		break;
- 	}
--
--	mutex_unlock(&data->lock);
- }
- 
- static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
-@@ -177,14 +173,10 @@ static ssize_t repeat_store(struct device *dev, struct device_attribute *attr,
- 	if (res < -1 || res == 0)
- 		return -EINVAL;
- 
--	/*
--	 * Clear previous patterns' performence firstly, and remove the timer
--	 * without mutex lock to avoid dead lock.
--	 */
--	del_timer_sync(&data->timer);
--
- 	mutex_lock(&data->lock);
- 
-+	del_timer_sync(&data->timer);
-+
- 	if (data->is_hw_pattern)
- 		led_cdev->pattern_clear(led_cdev);
- 
-@@ -235,14 +227,10 @@ static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
- 	struct pattern_trig_data *data = led_cdev->trigger_data;
- 	int ccount, cr, offset = 0, err = 0;
- 
--	/*
--	 * Clear previous patterns' performence firstly, and remove the timer
--	 * without mutex lock to avoid dead lock.
--	 */
--	del_timer_sync(&data->timer);
--
- 	mutex_lock(&data->lock);
- 
-+	del_timer_sync(&data->timer);
-+
- 	if (data->is_hw_pattern)
- 		led_cdev->pattern_clear(led_cdev);
- 
+  (a) Allows the page fault logic to be more interactive on not only
+      SIGKILL, but also the rest of userspace signals, and,
+
+  (b) Allows the page fault retry (VM_FAULT_RETRY) to happen for more
+      than once.
+
+For (a): with the changes we should be able to react faster when page
+faults are working in parallel with userspace signals like SIGSTOP and
+SIGCONT (and more), and with that we can remove the buggy part in
+userfaultfd and benefit the whole page fault mechanism on faster
+signal processing to reach the userspace.
+
+For (b), we should be able to allow the page fault handler to loop for
+even more than twice.  Some context: for now since we have
+FAULT_FLAG_ALLOW_RETRY we can allow to retry the page fault once with
+the same interrupt context, however never more than twice.  This can
+be not only a potential cleanup to remove this assumption since AFAIU
+the code itself doesn't really have this twice-only limitation (though
+that should be a protective approach in the past), at the same time
+it'll greatly simplify future works like userfaultfd write-protect
+where it's possible to retry for more than twice (please have a look
+at [1] below for a possible user that might require the page fault to
+be handled for a third time; if we can remove the retry limitation we
+can simply drop that patch and those complexity).
+
+Some more details on each of the patch (even more in commit messages):
+
+Patch 1: A cleanup of existing GUP code to rename the confusing
+         "nonblocking" parameter to "locked" which seems suite more.
+
+Patch 2: Complete the page fault faster for non-sigkill signals
+
+Patch 3: Remove the limitation to only allow to retry page fault for
+         twice (page fault part)
+
+Patch 4: Similar work of patch 3, but for GUP.
+
+The series is only lightly tested.  Before more tests, I'd be really
+glad to see whether there's any feedbacks on these changes, on whether
+the changes make any sense, or anything important that I may have
+missed, or any suggestions on how to better test the work, etc...
+
+Looking forward to your comments.  Thanks,
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?h=userfault&id=b245ecf6cf59156966f3da6e6b674f6695a5ffa5
+
+Peter Xu (4):
+  mm: gup: rename "nonblocking" to "locked" where proper
+  mm: userfault: return VM_FAULT_RETRY on signals
+  mm: allow VM_FAULT_RETRY for multiple times
+  mm: gup: allow VM_FAULT_RETRY for multiple times
+
+ arch/alpha/mm/fault.c      |  4 +--
+ arch/arc/mm/fault.c        | 12 ++++----
+ arch/arm/mm/fault.c        | 17 ++++++-----
+ arch/arm64/mm/fault.c      | 11 ++-----
+ arch/hexagon/mm/vm_fault.c |  3 +-
+ arch/ia64/mm/fault.c       |  3 +-
+ arch/m68k/mm/fault.c       |  5 +---
+ arch/microblaze/mm/fault.c |  3 +-
+ arch/mips/mm/fault.c       |  3 +-
+ arch/nds32/mm/fault.c      |  7 ++---
+ arch/nios2/mm/fault.c      |  5 +---
+ arch/openrisc/mm/fault.c   |  3 +-
+ arch/parisc/mm/fault.c     |  4 +--
+ arch/powerpc/mm/fault.c    |  9 ++----
+ arch/riscv/mm/fault.c      |  9 ++----
+ arch/s390/mm/fault.c       | 14 ++++-----
+ arch/sh/mm/fault.c         |  5 +++-
+ arch/sparc/mm/fault_32.c   |  4 ++-
+ arch/sparc/mm/fault_64.c   |  4 ++-
+ arch/um/kernel/trap.c      |  6 ++--
+ arch/unicore32/mm/fault.c  | 10 ++-----
+ arch/x86/mm/fault.c        | 13 ++++++--
+ arch/xtensa/mm/fault.c     |  4 ++-
+ fs/userfaultfd.c           | 24 ---------------
+ mm/gup.c                   | 61 +++++++++++++++++++++-----------------
+ mm/hugetlb.c               |  8 ++---
+ 26 files changed, 114 insertions(+), 137 deletions(-)
+
 -- 
-1.7.9.5
+2.17.1
 
