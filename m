@@ -2,179 +2,116 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DCAC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2597EC0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E352086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:32:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D72E32086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:33:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SG+jkJ+Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E352086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CK69W+RY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72E32086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbeKHCDu (ORCPT
+        id S1728114AbeKHCEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:03:50 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34400 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbeKHCDu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:03:50 -0500
-Received: by mail-io1-f67.google.com with SMTP id d80-v6so12369368iof.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 08:32:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WBFvOupRtJvP9d+lO+uiIRlm/XREZlArppdVF/CCLec=;
-        b=SG+jkJ+ZQb9ksUQxgtYyFPRAQ4iM22ndXSCDIbmWAY8C4eSfa3edOi02BsrnA+qa8w
-         eBBxi1NrEwwKdYangu9OG9F+5LFLEEBvBKrd4UfsdloHn8wrJM78s8YADyYOL7HahdkX
-         UnzHgBtiY6LsqO/HrJCyJ/rXIjM40JHTm5QY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WBFvOupRtJvP9d+lO+uiIRlm/XREZlArppdVF/CCLec=;
-        b=ET6iF2S6Y5cPONEDpltv45veP//pfem3hDwc7bI1MAFo+rjzk8O/zSZdepLhfT6dP3
-         xEfjJFjOhs0PFkWf/1lqgU/uncZDuYFKEO6PT7gJQN032nhAZlmBVCG8FmNz7Kf7hWuy
-         RdT/ql7G6WQj7NuEAJneHt2OoQUCbqX2mX8Ye6s25uvZ+ZLNhxSWFvt83hSqdsD/sIjh
-         3AQ1e3chiri0y7yudlXRmUnEiFkHgUTQoCiRmy3hcj62VW73xbQ2bdejKjmjKeCus3GJ
-         h0UZVYj1IveJXjGNthMroVZzBqvawsCUS69xMVI1cSX8xzulYcgTP5S3KAPCCq0fPiYv
-         iZpg==
-X-Gm-Message-State: AGRZ1gJg6TRT3uqhPppPoYPSdq/xBhBn7rUX24MFFQxqN21TkLaxuC3c
-        NYxUWEYMS1sKujX9aZ249j9lZatNst2WVTRSYKcg8A==
-X-Google-Smtp-Source: AJdET5cd4m3B4EKGHZb6Vgo1k6hSI0gJPQE54D9gkM6hupiHaFJ1R27xchlBw4wV9FVgiF745W7rUBKJAAWtVb13NpA=
-X-Received: by 2002:a6b:244:: with SMTP id 65-v6mr730571ioc.183.1541608363484;
- Wed, 07 Nov 2018 08:32:43 -0800 (PST)
+        Wed, 7 Nov 2018 21:04:55 -0500
+Received: from imap.thunk.org ([74.207.234.97]:49530 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbeKHCEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:04:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=UaXXjSeX5KEIi27cXQdt86WNOwPjgRtNmZk+P+yUNeQ=; b=CK69W+RYUSutJJSptevpZ+yG5m
+        2BB20a4P9ms2MzGhO2aJWCz/v2w7juLILU+L8/6IMXcvxUJnSZ4O+2Wyc9w8H7q/KpP4Kz115YAgg
+        Xlw8CdT9WDpuodDGhzvEnrZgaTkimh14o8z8bsMByYC8bqkCJBFh+zKYzjgiH8V8Y2wE=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKQm3-0000dj-Of; Wed, 07 Nov 2018 16:33:47 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id F023D7A7D18; Wed,  7 Nov 2018 11:33:46 -0500 (EST)
+Date:   Wed, 7 Nov 2018 11:33:46 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: missing !bh check in ext4_xattr_inode_write()
+Message-ID: <20181107163346.GH9919@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+References: <710ddac8-eb88-e631-3b27-74410039d15f@virtuozzo.com>
 MIME-Version: 1.0
-References: <20181016101513.26919-1-quentin.perret@arm.com> <20181016101513.26919-4-quentin.perret@arm.com>
-In-Reply-To: <20181016101513.26919-4-quentin.perret@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 7 Nov 2018 17:32:32 +0100
-Message-ID: <CAKfTPtBN3HpNMrztcmAwkGuW9uHaKBi9KoqdvBEHuxf7=078NA@mail.gmail.com>
-Subject: Re: [PATCH v8 03/15] PM: Introduce an Energy Model management framework
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        pkondeti@codeaurora.org, Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <710ddac8-eb88-e631-3b27-74410039d15f@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin,
+On Sun, Nov 04, 2018 at 08:29:39PM +0300, Vasily Averin wrote:
+> ext4_getblk() called with map_flags=0 can return NULL,
+> it can lead to oops on bh dereferemce
+> 
+> Fixes e50e5129f384 ("ext4: xattr-in-inode support")
+> Cc: stable@kernel.org # 4.13
+> 
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> ---
+>  fs/ext4/xattr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 0b9688683526..6dc6c70828f0 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -1384,6 +1384,8 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
+>  		bh = ext4_getblk(handle, ea_inode, block, 0);
+>  		if (IS_ERR(bh))
+>  			return PTR_ERR(bh);
+> +		if (!bh)
+> +			return -ENOMEM;
 
-On Tue, 16 Oct 2018 at 12:15, Quentin Perret <quentin.perret@arm.com> wrote:
->
+ext4_getblk() should never return NULL here; and if it does, it won't
+be because of ENOMEM.  If we did have a memory allocation problem, we
+would have returned ERR_PTR(-ENOMEM). 
 
-> +
-> +/**
-> + * em_pd_energy() - Estimates the energy consumed by the CPUs of a perf. domain
-> + * @pd         : performance domain for which energy has to be estimated
-> + * @max_util   : highest utilization among CPUs of the domain
-> + * @sum_util   : sum of the utilization of all CPUs in the domain
-> + *
-> + * Return: the sum of the energy consumed by the CPUs of the domain assuming
-> + * a capacity state satisfying the max utilization of the domain.
-> + */
-> +static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
-> +                               unsigned long max_util, unsigned long sum_util)
-> +{
-> +       unsigned long freq, scale_cpu;
-> +       struct em_cap_state *cs;
-> +       int i, cpu;
-> +
-> +       /*
-> +        * In order to predict the capacity state, map the utilization of the
-> +        * most utilized CPU of the performance domain to a requested frequency,
-> +        * like schedutil.
-> +        */
-> +       cpu = cpumask_first(to_cpumask(pd->cpus));
-> +       scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-> +       cs = &pd->table[pd->nr_cap_states - 1];
-> +       freq = map_util_freq(max_util, cs->frequency, scale_cpu);
-> +
-> +       /*
-> +        * Find the lowest capacity state of the Energy Model above the
-> +        * requested frequency.
-> +        */
-> +       for (i = 0; i < pd->nr_cap_states; i++) {
-> +               cs = &pd->table[i];
-> +               if (cs->frequency >= freq)
-> +                       break;
-> +       }
-> +
-> +       /*
-> +        * The capacity of a CPU in the domain at that capacity state (cs)
-> +        * can be computed as:
-> +        *
-> +        *             cs->freq * scale_cpu
-> +        *   cs->cap = --------------------                          (1)
-> +        *                 cpu_max_freq
-> +        *
-> +        * So, ignoring the costs of idle states (which are not available in
-> +        * the EM), the energy consumed by this CPU at that capacity state is
-> +        * estimated as:
-> +        *
-> +        *             cs->power * cpu_util
-> +        *   cpu_nrg = --------------------                          (2)
-> +        *                   cs->cap
-> +        *
-> +        * since 'cpu_util / cs->cap' represents its percentage of busy time.
-> +        *
-> +        *   NOTE: Although the result of this computation actually is in
-> +        *         units of power, it can be manipulated as an energy value
-> +        *         over a scheduling period, since it is assumed to be
-> +        *         constant during that interval.
-> +        *
-> +        * By injecting (1) in (2), 'cpu_nrg' can be re-expressed as a product
-> +        * of two terms:
-> +        *
-> +        *             cs->power * cpu_max_freq   cpu_util
-> +        *   cpu_nrg = ------------------------ * ---------          (3)
-> +        *                    cs->freq            scale_cpu
-> +        *
-> +        * The first term is static, and is stored in the em_cap_state struct
-> +        * as 'cs->cost'.
-> +        *
-> +        * Since all CPUs of the domain have the same micro-architecture, they
-> +        * share the same 'cs->cost', and the same CPU capacity. Hence, the
-> +        * total energy of the domain (which is the simple sum of the energy of
-> +        * all of its CPUs) can be factorized as:
-> +        *
-> +        *            cs->cost * \Sum cpu_util
-> +        *   pd_nrg = ------------------------                       (4)
-> +        *                  scale_cpu
-> +        */
-> +       return cs->cost * sum_util / scale_cpu;
+In the while loop above this point, the blocks in ea_inode would have
+been allocated, and so when ext4_getblk() is called with map_flags ==
+0, it will return NULL if there is a hole in the inode --- but we had
+*just* allocated the blocks in question.
 
-Why do you need to keep scale_cpu outside the cs->cost ? do you expect
-arch_scale_cpu_capacity() to change at runtime ?
+The only time that bh could be NULL, then, would be in the case of
+something really going wrong; a programming error elsewhere (perhaps a
+wild pointer dereference) or I/O error causing on-disk file system
+corruption (although that would be highly unlikely given that we had
+*just* allocated the blocks and so the metadata blocks in question
+probably would still be in the cache).
 
-If the returned value of arch_scale_cpu_capacity() changes, we will
-have to rebuild several others things and we can include the update of
-cs->cost
+If we do want to handle this case, what we should do is something like
+call WARN_ON_ONCE(1), call ext4_error() since the file system may have
+gotten corrupted, and then return -EFSCORRUPTED.
+
+(Linus has said that there should be no new BUG_ON's, so the
+WARN_ON_ONE is to help debugging, and flaging the file system as
+corrupted is probably the best we could do here, and is marginally
+better than what we do now, which is just let the Oops take place.)
+
+						- Ted
