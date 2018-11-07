@@ -2,122 +2,121 @@ Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44846C0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D719C0044C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 084932086C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084932086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 319FB2086C
+	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 16:30:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 319FB2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbeKHCAR (ORCPT
+        id S1731315AbeKHCBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 7 Nov 2018 21:00:17 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52353 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbeKHCAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Nov 2018 21:00:16 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKQhZ-0005py-Ln; Wed, 07 Nov 2018 17:29:09 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKQhZ-0007KT-3M; Wed, 07 Nov 2018 17:29:09 +0100
-Date:   Wed, 7 Nov 2018 17:29:09 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Suji Velupillai <suji.velupillai@broadcom.com>
-Subject: Re: [PATCH 2/2] pwm: bcm-kona: apply pwm settings on enable
-Message-ID: <20181107162908.tejzekhc35pbknut@pengutronix.de>
-References: <20181107093613.26734-1-peron.clem@gmail.com>
- <20181107093613.26734-2-peron.clem@gmail.com>
+        Wed, 7 Nov 2018 21:01:36 -0500
+Received: from mga14.intel.com ([192.55.52.115]:51994 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727312AbeKHCBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Nov 2018 21:01:35 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 08:30:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,476,1534834800"; 
+   d="scan'208";a="84702378"
+Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.132])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Nov 2018 08:30:22 -0800
+Date:   Wed, 7 Nov 2018 18:30:19 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
+Message-ID: <20181107163019.GA11509@linux.intel.com>
+References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
+ <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
+ <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
+ <20181106054911.GA15575@linux.intel.com>
+ <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181107093613.26734-2-peron.clem@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Wed, Nov 07, 2018 at 10:36:13AM +0100, Clément Péron wrote:
-> From: Suji Velupillai <suji.velupillai@broadcom.com>
+On Tue, Nov 06, 2018 at 08:45:37AM -0800, Dave Hansen wrote:
+> On 11/5/18 9:49 PM, Jarkko Sakkinen wrote:
+> > On Mon, Nov 05, 2018 at 12:27:11PM -0800, Dave Hansen wrote:
+> >> The ABI seems entirely undocumented and rather lightly designed, which
+> >> seems like something we should fix before this is merged.
+> > 
+> > ABI is documented in arch/x86/include/uapi/asm/sgx.h that from which the
+> > documentation is included to intel_sgx.rst. I'm not saying that there is
+> > no space refine it but it is neither undocumented.
 > 
-> When pwm_bl framework calls enable, a call to pwm_is_enabled(pwm) still
-> return false, this prevents the backlight being turn on at boot time.
+> I specifically mean the instruction flow around asynchronous exits or
+> explicit enclave exit calls via EEXIT.  Signals are part of the ABI but
+> go unmentioned in the documentation.
+
+Ok, thanks for clarification. We will document it.
 > 
-> Signed-off-by: Suji Velupillai <suji.velupillai@broadcom.com>
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> ---
->  drivers/pwm/pwm-bcm-kona.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
+> It's also worth noting that EENTER *can* act (from the kernel's
+> perspective) like an instruction that both jumps and sets a bunch of
+> registers (including %rsp).  It's certainly abnormal in that regard.
+
+Agreed.
+
+> In fact, in the docs:
 > 
-> diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
-> index 09a95aeb3a70..d991d53c4b38 100644
-> --- a/drivers/pwm/pwm-bcm-kona.c
-> +++ b/drivers/pwm/pwm-bcm-kona.c
-> @@ -108,8 +108,8 @@ static void kona_pwmc_apply_settings(struct kona_pwmc *kp, unsigned int chan)
->  	ndelay(400);
->  }
->  
-> -static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
-> -			    int duty_ns, int period_ns)
-> +static int __pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
-> +			 int duty_ns, int period_ns, bool pwmc_enabled)
->  {
->  	struct kona_pwmc *kp = to_kona_pwmc(chip);
->  	u64 val, div, rate;
-> @@ -155,7 +155,7 @@ static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
->  	 * always calculated above to ensure the new values are
->  	 * validated immediately instead of on enable.
->  	 */
-> -	if (pwm_is_enabled(pwm)) {
-> +	if (pwm_is_enabled(pwm) || pwmc_enabled) {
+> > +Enclave can only execute code inside the ELRANGE. Instructions that may cause
+> > +VMEXIT, IO instructions and instructions that require a privilege change are
+> > +prohibited inside the enclave. Interrupts and exceptions always cause enclave
+> > +to exit and jump to an address outside the enclave given when the enclave is
+> > +entered by using the leaf instruction ENCLS(EENTER).
+> 
+> it's probably a really good idea to explain that the address outside of
+> the enclave is enclave-provided, and is not, for instance, just the next
+> instruction after EENTER.
+> 
+> >> Also, for a feature as massive and complicated as this one, it seems
+> >> irresponsible to not have a selftest.  Is that not feasible for some reason?
+> > 
+> > I do have the in-kernel launch enclave stuff backed up here:
+> > 
+> > https://github.com/jsakkine-intel/sgx-le-host
+> > https://github.com/jsakkine-intel/sgx-le
+> > 
+> > This is about as simple as it gets without any type of run-time.
+> 
+> Does this code run when I type "make kselftest"?  If not, I think we
+> should rectify that.
 
-Having pwm-API-calls in hw-drivers is ugly. Apart from not giving the
-intended return code this function should IMHO be reserved to pwm
-consumers. The underlaying problem is that pwm-bl does:
+No, it doesn't. It is just my backup for the non-SDK user space code
+that I've made that I will use to fork my user space SGX projects in
+the future.
 
-	pwm_config(pwm, duty_cycle, period);
-	pwm_enable(pwm);
+I can work-out a selftest (and provide a new patch in the series) but
+I'm still wondering what the enclave should do. I would suggest that
+we start with an enclave that does just EEXIT and nothing else.
 
-and expects that the duty_cycle and period is used then. Doesn't
-everything works just fine if the if-block is always executed?
-
-The better fix here would be to convert the driver to the atomic API
-(i.e. implement .apply instead of .config, .set_polarity, .enable and
-.disable).
-
-Alternatively in .enable ensure that the hardware is programmed with the
-parameters from pwm->state. (But converting to the atomic API is the
-better approach.)
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+/Jarkko
