@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077BCECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1890DECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B783421479
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33F620989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9+xmyJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B783421479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIQ4+2X4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33F620989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732161AbeKIHob (ORCPT
+        id S1732195AbeKIHod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37394 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731313AbeKIHoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:30 -0500
+        id S1732130AbeKIHob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:31 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AEC720989;
+        by mail.kernel.org (Postfix) with ESMTPSA id F038720844;
         Thu,  8 Nov 2018 22:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714819;
-        bh=GKdo53lO3vlyDawRK1/vbK4ZRrlmMNj+NTr5Za/5mpo=;
+        s=default; t=1541714820;
+        bh=hlrIAPWlMAMNorBW3KMrH58gmVzRw0IGzZkf2D93QjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C9+xmyJnzL7LXkC6OBsQpt1puI8x5pYmekNVqFhOB27eCII8Ea/KnJR/FSUdJwPFb
-         8M2PlB3r4KK/Z2isF1YNdZj6J9cVFIhFYmWwYVtg3fMjjGR2k0AyFnyPd+pYlkEV9o
-         mSDbVWHYSkdhi8T6DAPFLYw85ExBZQKQsxU3a1tI=
+        b=cIQ4+2X4U6pJTPOvaK1vt+3vuo11YTIIIuXli/GReQo857LIy/JnhjKOzsVi//mb9
+         lWhUNhX1uc/fPYZjnCRr213AyC1JE2Xq4SyjxoNYF6xhhpupcIcNINGUcZLNfjYi5Q
+         jgrbhXpNylmWS1EHaChLvVMhqhju3ww0c2aHm0Xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Michal Kubecek <mkubecek@suse.cz>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 146/171] vhost: Fix Spectre V1 vulnerability
-Date:   Thu,  8 Nov 2018 13:51:56 -0800
-Message-Id: <20181108215137.492819851@linuxfoundation.org>
+Subject: [PATCH 4.9 147/171] ethtool: fix a privilege escalation bug
+Date:   Thu,  8 Nov 2018 13:51:57 -0800
+Message-Id: <20181108215137.545721852@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,42 +63,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit ff002269a4ee9c769dbf9365acef633ebcbd6cbe ]
+[ Upstream commit 58f5bbe331c566f49c9559568f982202a278aa78 ]
 
-The idx in vhost_vring_ioctl() was controlled by userspace, hence a
-potential exploitation of the Spectre variant 1 vulnerability.
+In dev_ethtool(), the eth command 'ethcmd' is firstly copied from the
+use-space buffer 'useraddr' and checked to see whether it is
+ETHTOOL_PERQUEUE. If yes, the sub-command 'sub_cmd' is further copied from
+the user space. Otherwise, 'sub_cmd' is the same as 'ethcmd'. Next,
+according to 'sub_cmd', a permission check is enforced through the function
+ns_capable(). For example, the permission check is required if 'sub_cmd' is
+ETHTOOL_SCOALESCE, but it is not necessary if 'sub_cmd' is
+ETHTOOL_GCOALESCE, as suggested in the comment "Allow some commands to be
+done by anyone". The following execution invokes different handlers
+according to 'ethcmd'. Specifically, if 'ethcmd' is ETHTOOL_PERQUEUE,
+ethtool_set_per_queue() is called. In ethtool_set_per_queue(), the kernel
+object 'per_queue_opt' is copied again from the user-space buffer
+'useraddr' and 'per_queue_opt.sub_command' is used to determine which
+operation should be performed. Given that the buffer 'useraddr' is in the
+user space, a malicious user can race to change the sub-command between the
+two copies. In particular, the attacker can supply ETHTOOL_PERQUEUE and
+ETHTOOL_GCOALESCE to bypass the permission check in dev_ethtool(). Then
+before ethtool_set_per_queue() is called, the attacker changes
+ETHTOOL_GCOALESCE to ETHTOOL_SCOALESCE. In this way, the attacker can
+bypass the permission check and execute ETHTOOL_SCOALESCE.
 
-Fixing this by sanitizing idx before using it to index d->vqs.
+This patch enforces a check in ethtool_set_per_queue() after the second
+copy from 'useraddr'. If the sub-command is different from the one obtained
+in the first copy in dev_ethtool(), an error code EINVAL will be returned.
 
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Fixes: f38d138a7da6 ("net/ethtool: support set coalesce per queue")
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/core/ethtool.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -28,6 +28,7 @@
- #include <linux/module.h>
- #include <linux/sort.h>
- #include <linux/interval_tree_generic.h>
-+#include <linux/nospec.h>
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -2397,13 +2397,17 @@ roll_back:
+ 	return ret;
+ }
  
- #include "vhost.h"
+-static int ethtool_set_per_queue(struct net_device *dev, void __user *useraddr)
++static int ethtool_set_per_queue(struct net_device *dev,
++				 void __user *useraddr, u32 sub_cmd)
+ {
+ 	struct ethtool_per_queue_op per_queue_opt;
  
-@@ -1289,6 +1290,7 @@ long vhost_vring_ioctl(struct vhost_dev
- 	if (idx >= d->nvqs)
- 		return -ENOBUFS;
+ 	if (copy_from_user(&per_queue_opt, useraddr, sizeof(per_queue_opt)))
+ 		return -EFAULT;
  
-+	idx = array_index_nospec(idx, d->nvqs);
- 	vq = d->vqs[idx];
- 
- 	mutex_lock(&vq->mutex);
++	if (per_queue_opt.sub_command != sub_cmd)
++		return -EINVAL;
++
+ 	switch (per_queue_opt.sub_command) {
+ 	case ETHTOOL_GCOALESCE:
+ 		return ethtool_get_per_queue_coalesce(dev, useraddr, &per_queue_opt);
+@@ -2669,7 +2673,7 @@ int dev_ethtool(struct net *net, struct
+ 		rc = ethtool_get_phy_stats(dev, useraddr);
+ 		break;
+ 	case ETHTOOL_PERQUEUE:
+-		rc = ethtool_set_per_queue(dev, useraddr);
++		rc = ethtool_set_per_queue(dev, useraddr, sub_cmd);
+ 		break;
+ 	case ETHTOOL_GLINKSETTINGS:
+ 		rc = ethtool_get_link_ksettings(dev, useraddr);
 
 
