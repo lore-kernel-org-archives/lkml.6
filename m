@@ -2,184 +2,100 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594F4C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DBCC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1110F208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8B6521104
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:20:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="bAB7CY8n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1110F208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCDtnMls"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B6521104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeKHUyZ (ORCPT
+        id S1727661AbeKHUzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:54:25 -0500
-Received: from mail-ty1jpn01on0127.outbound.protection.outlook.com ([104.47.93.127]:6578
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726252AbeKHUyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:54:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pv8bba29ivqhFXUW/OHBHxux6UCozgbsYrpKW6B8Svc=;
- b=bAB7CY8nLs3yJ3HvsHmmfVU6Bb3aZb+KW1xIFEAxqKaR5QXOhdeJNSHa9zO22r14Vd7de0Mciu5hdqMVBUuI2azod9wMPEgjLDD3UZbB/iAz5PspMtznfBZYoUFP9Jt6YHI6Flfuqj8Wpr99k7PGu+9taKJOSruiRMlzcOi7OeQ=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1SPR00MB085.jpnprd01.prod.outlook.com (10.174.228.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Thu, 8 Nov 2018 11:19:17 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::708f:601d:1cf4:6095]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::708f:601d:1cf4:6095%5]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 11:19:17 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] serial: sh-sci: Document r8a774a1 bindings
-Thread-Topic: [PATCH] serial: sh-sci: Document r8a774a1 bindings
-Thread-Index: AQHUM8saTW8u1ZgMVE6lx+EpGbfHE6VGQasQ
-Date:   Thu, 8 Nov 2018 11:19:17 +0000
-Message-ID: <TY1PR01MB1770A808CD0FB80FD1AE263DC0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1534250042-15815-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1534250042-15815-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1SPR00MB085;20:AHwKeft8Y1/A+zhuaziFLUWWXLHHGgqjcSbf/h6/JheXYr65raZHysokJpveQX/SeCilOZEPotbBRHIpEZOvR0yTp49T/rDzv1CN6nL5oQD2oP40da6Kvtj5RQDKK9xtUdnnwLyj+bdff9tmRMeZ8ht9LvFIbUQqfFsmPUfcB9M=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: ee7d5184-04ea-4d6d-9aef-08d6456c05d0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1SPR00MB085;
-x-ms-traffictypediagnostic: TY1SPR00MB085:
-x-microsoft-antispam-prvs: <TY1SPR00MB085C92589F28394A2A4B010C0C50@TY1SPR00MB085.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:TY1SPR00MB085;BCL:0;PCL:0;RULEID:;SRVR:TY1SPR00MB085;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39860400002)(376002)(346002)(189003)(199004)(76176011)(99286004)(4326008)(3846002)(6116002)(97736004)(186003)(54906003)(316002)(110136005)(7696005)(6436002)(25786009)(305945005)(7736002)(86362001)(5660300001)(71200400001)(74316002)(71190400001)(53936002)(14454004)(476003)(14444005)(256004)(6246003)(68736007)(106356001)(446003)(413944005)(102836004)(11346002)(2906002)(81166006)(81156014)(44832011)(9686003)(486006)(8936002)(33656002)(8676002)(229853002)(2900100001)(6506007)(53546011)(26005)(478600001)(105586002)(55016002)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1SPR00MB085;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: BZB/g4vpmQ2RKrouBIFjFtXMkSQvaLQu2vJabWKQt1hajChEZg/KmTK4XW3p5EFSrXFiMhtlMMkekJrnOdnPaaW44XpnPazfNL3WO92rlUINgi+B8DuCGWXJP4MvABOwZbfAArwcF7IslPPnZsfoWCin6JrZYRsA9V73EBNAfq6O+Nnv6Z2DL82yLu0kfOUgWISPd3gdKSfvlAK/QiRF2Jw8S4TKQvw7BLZPFLqWmvSuGuv0NC1mrYqUA2vxmtkF4F4GGVwO8fAb/WCbYO8dPO+X/Yz4zFtA4+8pbsUkl73bIosulmqKzudA3AMEyyRHNdo1QPOmQtxgtD8tJKkoinBEcGEyMaPifj2fbNXlGxA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 8 Nov 2018 15:55:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727349AbeKHUzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 15:55:07 -0500
+Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BD2B208E3;
+        Thu,  8 Nov 2018 11:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541676002;
+        bh=DHEiSDA8QzbpvDw9va9WFkdTJzi1Sfy9Ot3L4/czgp4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fCDtnMlsK2re14buk1egckXe7XJXAjROh/H3QOMv8gv7s+1WW823o7oLabdPFJ7PW
+         hfvtv5x+RSP4Z4Br2Kw1KAC8VTjJwlObQpF+ZO336cJyEIuzixfHkcElNKGfcpb1K9
+         vrUA5u59maBrB1JOFCw6HSmcV07cYAlwPHDICvTA=
+Date:   Thu, 8 Nov 2018 03:20:01 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu
+ format specifier
+Message-ID: <20181108112001.GA7793@kroah.com>
+References: <20181108110224.1916-1-colin.king@canonical.com>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee7d5184-04ea-4d6d-9aef-08d6456c05d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 11:19:17.3644
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR00MB085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108110224.1916-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear All,
-
-This is just a gentle reminder.
-
-Thanks,
-Fab
-
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 14 August 2018 13:34
-> Subject: [PATCH] serial: sh-sci: Document r8a774a1 bindings
->
-> RZ/G2M (R8A774A1) SoC also has the R-Car Gen3 compatible SCIF and
-> HSCIF ports, so document the SoC specific bindings. While at it,
-> update the RZ/G1 and RZ/G2 family specific strings description as
-> outdated.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+On Thu, Nov 08, 2018 at 11:02:24AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
+> of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
+> build warning. Fix this by using the %lu format specifer.
+> 
+> Cleans up warning:
+> drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
+> specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+> 
+> Fixes: 42e764d05712 ("staging: tegravde: replace bit assignment with macro")
+> Cc: Ioannis Valasakis <code@wizofe.uk>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  .../devicetree/bindings/serial/renesas,sci-serial.txt      | 14 ++++++++=
-------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.=
-txt b/Documentation/devicetree/bindings/serial/renesas,sci-
-> serial.txt
-> index eaca9da..1994ab8 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-> +++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-> @@ -20,6 +20,8 @@ Required properties:
->      - "renesas,hscif-r8a7745" for R8A7745 (RZ/G1E) HSCIF compatible UART=
-.
->      - "renesas,scif-r8a77470" for R8A77470 (RZ/G1C) SCIF compatible UART=
-.
->      - "renesas,hscif-r8a77470" for R8A77470 (RZ/G1C) HSCIF compatible UA=
-RT.
-> +    - "renesas,scif-r8a774a1" for R8A774A1 (RZ/G2M) SCIF compatible UART=
-.
-> +    - "renesas,hscif-r8a774a1" for R8A774A1 (RZ/G2M) HSCIF compatible UA=
-RT.
->      - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART=
-.
->      - "renesas,scif-r8a7779" for R8A7779 (R-Car H1) SCIF compatible UART=
-.
->      - "renesas,scif-r8a7790" for R8A7790 (R-Car H2) SCIF compatible UART=
-.
-> @@ -55,13 +57,13 @@ Required properties:
->      - "renesas,scifa-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFA compatible=
- UART.
->      - "renesas,scifb-sh73a0" for SH73A0 (SH-Mobile AG5) SCIFB compatible=
- UART.
->      - "renesas,rcar-gen1-scif" for R-Car Gen1 SCIF compatible UART,
-> -    - "renesas,rcar-gen2-scif" for R-Car Gen2 SCIF compatible UART,
-> -    - "renesas,rcar-gen3-scif" for R-Car Gen3 SCIF compatible UART,
-> -    - "renesas,rcar-gen2-scifa" for R-Car Gen2 SCIFA compatible UART,
-> -    - "renesas,rcar-gen2-scifb" for R-Car Gen2 SCIFB compatible UART,
-> +    - "renesas,rcar-gen2-scif" for R-Car Gen2 and RZ/G1 SCIF compatible =
-UART,
-> +    - "renesas,rcar-gen3-scif" for R-Car Gen3 and RZ/G2 SCIF compatible =
-UART,
-> +    - "renesas,rcar-gen2-scifa" for R-Car Gen2 and RZ/G1 SCIFA compatibl=
-e UART,
-> +    - "renesas,rcar-gen2-scifb" for R-Car Gen2 and RZ/G1 SCIFB compatibl=
-e UART,
->      - "renesas,rcar-gen1-hscif" for R-Car Gen1 HSCIF compatible UART,
-> -    - "renesas,rcar-gen2-hscif" for R-Car Gen2 HSCIF compatible UART,
-> -    - "renesas,rcar-gen3-hscif" for R-Car Gen3 HSCIF compatible UART,
-> +    - "renesas,rcar-gen2-hscif" for R-Car Gen2 and RZ/G1 HSCIF compatibl=
-e UART,
-> +    - "renesas,rcar-gen3-hscif" for R-Car Gen3 and RZ/G2 HSCIF compatibl=
-e UART,
->      - "renesas,scif" for generic SCIF compatible UART.
->      - "renesas,scifa" for generic SCIFA compatible UART.
->      - "renesas,scifb" for generic SCIFB compatible UART.
-> --
-> 2.7.4
+>  drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+> index 6f06061a40d9..66cf14212c14 100644
+> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+> @@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+>  			value |= frame->frame_num;
+>  
+>  			dev_dbg(vde->miscdev.parent,
+> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
+> +				"\tFrame %d: frame_num = %d B_frame = %lu\n",
+>  				i + 1, frame->frame_num,
+>  				(frame->flags & FLAG_B_FRAME));
+>  		} else {
+> -- 
+> 2.19.1
 
+Thanks for this, you beat me too it :)
 
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+greg k-h
