@@ -2,60 +2,68 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A248C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14280C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E3420837
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:24:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E3420837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D584B20837
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:26:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D584B20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeKHL57 (ORCPT
+        id S1728662AbeKHL70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:57:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:28532 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728586AbeKHL56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:57:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 18:24:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="94534666"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Nov 2018 18:24:45 -0800
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v4 05/12] iommu/vt-d: Reserve a domain id for FL and PT
- modes
-To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
- <20181105053151.7173-6-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439D5FAE7@SHSMSX104.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <855f56ac-80be-8179-ba99-45ef99ccb87f@linux.intel.com>
-Date:   Thu, 8 Nov 2018 10:22:14 +0800
+        Thu, 8 Nov 2018 06:59:26 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33369 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeKHL70 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 06:59:26 -0500
+Received: by mail-pg1-f193.google.com with SMTP id q5-v6so8176024pgv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 18:26:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d1wTShLA8tfcEf/d3Ubsk49/Ldf123MkB0jTx9bO5CA=;
+        b=sD4Nn0YONL2FMtFPK8NDQYo+sXDtlj2Jof0YDFIM9zvBCR8e7VT3Yk09fNzKG8b7bI
+         GhAlGdEVSVdN+7irJMBn5NgtpZAexaBBejXuItcwqb7V0OlInmEY3psFq8fmxk3BVSdL
+         kbJ2sdR9UqEw6gWU7TmIWuzM63h52Z8zYjQBEzO0Fxv+nGdw74zzGS+HYLSTU9sqeSjY
+         xRw7a5Wgci2/w2Fahnyc0wGVD+V4fGGlMVmyAHbMLXkom00lhL2+awH6F37uPRg+v3k9
+         gNvhDg4ohjHQUYAQIRr/jAwadHYRUsd/YXmPxDHlaOs7tzw/uN+6RFIgfivlBx86hQgs
+         aiJw==
+X-Gm-Message-State: AGRZ1gJLMfPq/wPgzT3tai2h2xVGfTFQgKFItB9Mv5AFiM1ZClGXIcU4
+        UqpG+PJeliDgjaMGbi8rWlzRnoY/
+X-Google-Smtp-Source: AJdET5fpPJMeaJPSzL8d2PWWMluRecKECqyXUohXFYcfWqMPNcBtPIJFOxrYMtPyfVpYCU0riegTbA==
+X-Received: by 2002:a62:85:: with SMTP id 127-v6mr2758556pfa.24.1541643974876;
+        Wed, 07 Nov 2018 18:26:14 -0800 (PST)
+Received: from asus.site ([2601:647:4601:5d98:fb3c:91c5:1423:24cd])
+        by smtp.gmail.com with ESMTPSA id z8sm1827440pgz.53.2018.11.07.18.26.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 18:26:13 -0800 (PST)
+Subject: Re: [LKP] [drivers/base] 1431aa42b3:
+ WARNING:at_drivers/base.c:#device_bind_driver
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@sandisk.com>, lkp@01.org
+References: <20181108002442.GH24195@shao2-debian>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <78791260-c029-4ce8-d44a-61f3a9b392d1@acm.org>
+Date:   Wed, 7 Nov 2018 18:26:12 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <A2975661238FB949B60364EF0F2C257439D5FAE7@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181108002442.GH24195@shao2-debian>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,83 +71,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 11/7/18 2:55 PM, Liu, Yi L wrote:
-> Hi Baolu,
+On 11/7/18 4:24 PM, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
 > 
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Monday, November 5, 2018 1:32 PM
->> Subject: [PATCH v4 05/12] iommu/vt-d: Reserve a domain id for FL and PT modes
->>
->> Vt-d spec rev3.0 (section 6.2.3.1) requires that each pasid
->> entry for first-level or pass-through translation should be
->> programmed with a domain id different from those used for
->> second-level or nested translation. It is recommended that
->> software could use a same domain id for all first-only and
->> pass-through translations.
->>
->> This reserves a domain id for first-level and pass-through
->> translations.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Cc: Sanjay Kumar <sanjay.k.kumar@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/intel-iommu.c | 10 ++++++++++
->>   drivers/iommu/intel-pasid.h |  6 ++++++
->>   2 files changed, 16 insertions(+)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index 9331240c70b8..2f7455ee4e7a 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -1618,6 +1618,16 @@ static int iommu_init_domains(struct intel_iommu
->> *iommu)
->>   	 */
->>   	set_bit(0, iommu->domain_ids);
->>
->> +	/*
->> +	 * Vt-d spec rev3.0 (section 6.2.3.1) requires that each pasid
->> +	 * entry for first-level or pass-through translation modes should
->> +	 * be programmed with a domain id different from those used for
->> +	 * second-level or nested translation. We reserve a domain id for
->> +	 * this purpose.
->> +	 */
->> +	if (sm_supported(iommu))
->> +		set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
+> commit: 1431aa42b3afc1dd50b292abcc68ccdc3193da63 ("drivers/base: Verify struct device locking requirements at runtime")
+> https://github.com/bvanassche/linux for-next
 > 
-> "FLPT_DEFAULT_DID" looks very likely for first level translation. How about
-> "PT_FL_DEFAULT_DID"?
-
-We have comments above it, so people won't be confused.
-
+> in testcase: boot
 > 
->>   	return 0;
->>   }
->>
->> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
->> index 12f480c2bb8b..03c1612d173c 100644
->> --- a/drivers/iommu/intel-pasid.h
->> +++ b/drivers/iommu/intel-pasid.h
->> @@ -17,6 +17,12 @@
->>   #define PDE_PFN_MASK			PAGE_MASK
->>   #define PASID_PDE_SHIFT			6
->>
->> +/*
->> + * Domain ID reserved for pasid entries programmed for first-level
->> + * only and pass-through transfer modes.
->> + */
->> +#define FLPT_DEFAULT_DID		1
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu IvyBridge -smp 2 -m 2G
 > 
-> Would be helpful to elaborate why DID 1 is selected in the patch
-> description.
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> [ ... ]
 
-Yeah. DID 0 has been caved out for caching mode and we start from 1 for
-this.
+A fix has already been pushed out, so I think this report can be ignored.
 
-Best regards,
-Lu Baolu
+Bart.
