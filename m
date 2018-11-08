@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FDAECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75847ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB33E21486
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DE8320844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uh5onaJJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB33E21486
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmzH7kBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE8320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731748AbeKIHnL (ORCPT
+        id S1731760AbeKIHnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:43:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35428 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:43:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727227AbeKIHnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729245AbeKIHnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:43:11 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF9F020844;
-        Thu,  8 Nov 2018 22:05:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D35A20892;
+        Thu,  8 Nov 2018 22:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714740;
-        bh=UyN3P1C06sMEsM8DJFLtJYDHfMLitEyAQc9AJLxhuE4=;
+        s=default; t=1541714741;
+        bh=5dBt6c3ogwKCIR681v6TrIqP5AjXs8AZLnLcCWNEGbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uh5onaJJchCY5Sb0kLYGRySt2WJ8FmNlGcJgYZvpO4L7oyDdx1MwxxfsfbIc/JPAO
-         DfO28wjpOPpMB32lx5083PZV2EioE1zRkuVFrkbyRbrl4KYj26SnF48Dcw+p7Du2xp
-         JtmQLh0YRdWGJDFcZNb1q51YnAp1pABIr8Z0Jixs=
+        b=cmzH7kBArU3d8gOLZqFaKXUx7ahyt7LMxnfbHXaWwXNhbvOZccjvbrZnZFuHdKkeS
+         arWVpO+b/0YW9lCKBgwYW2Zw1AQxvqckIObMyu3LQ/S4UY9tHw7AkGPMEaaWZ1hWCC
+         s21dR2u1tFOtPI/ACZ9XSVEsolCsbbkb+PUqgXS8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        David Sterba <dsterba@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Ilya Lesokhin <ilyal@mellanox.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 097/171] mm/frame_vector.c: release a semaphore in get_vaddr_frames()
-Date:   Thu,  8 Nov 2018 13:51:07 -0800
-Message-Id: <20181108215134.528482156@linuxfoundation.org>
+Subject: [PATCH 4.9 098/171] IB/mlx5: Avoid passing an invalid QP type to firmware
+Date:   Thu,  8 Nov 2018 13:51:08 -0800
+Message-Id: <20181108215134.589754310@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -69,43 +65,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1f704fd0d14043e76e80f6b8b2251b9b2cedcca6 ]
+[ Upstream commit e7b169f34403becd3c9fd3b6e46614ab788f2187 ]
 
-A semaphore is acquired before this check, so we must release it before
-leaving.
+During QP creation, the mlx5 driver translates the QP type to an
+internal value which is passed on to FW. There was no check to make
+sure that the translated value is valid, and -EINVAL was coerced into
+the mailbox command.
 
-Link: http://lkml.kernel.org/r/20171211211009.4971-1-christophe.jaillet@wanadoo.fr
-Fixes: b7f0554a56f2 ("mm: fail get_vaddr_frames() for filesystem-dax mappings")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: David Sterba <dsterba@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Current firmware refuses this as an invalid QP type, but future/past
+firmware may do something else.
+
+Fixes: 09a7d9eca1a6c ('{net,IB}/mlx5: QP/XRCD commands via mlx5 ifc')
+Reviewed-by: Ilya Lesokhin <ilyal@mellanox.com>
+Signed-off-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/frame_vector.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-index 375a103d7a56..d73eed0443f6 100644
---- a/mm/frame_vector.c
-+++ b/mm/frame_vector.c
-@@ -61,8 +61,10 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
- 	 * get_user_pages_longterm() and disallow it for filesystem-dax
- 	 * mappings.
- 	 */
--	if (vma_is_fsdax(vma))
--		return -EOPNOTSUPP;
-+	if (vma_is_fsdax(vma)) {
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index abb47e780070..f8f7a2191b98 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -1523,6 +1523,7 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
+ 	u32 uidx = MLX5_IB_DEFAULT_UIDX;
+ 	struct mlx5_ib_create_qp ucmd;
+ 	struct mlx5_ib_qp_base *base;
++	int mlx5_st;
+ 	void *qpc;
+ 	u32 *in;
+ 	int err;
+@@ -1538,6 +1539,10 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
+ 	spin_lock_init(&qp->sq.lock);
+ 	spin_lock_init(&qp->rq.lock);
  
- 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
- 		vec->got_ref = true;
++	mlx5_st = to_mlx5_st(init_attr->qp_type);
++	if (mlx5_st < 0)
++		return -EINVAL;
++
+ 	if (init_attr->rwq_ind_tbl) {
+ 		if (!udata)
+ 			return -ENOSYS;
+@@ -1665,7 +1670,7 @@ static int create_qp_common(struct mlx5_ib_dev *dev, struct ib_pd *pd,
+ 
+ 	qpc = MLX5_ADDR_OF(create_qp_in, in, qpc);
+ 
+-	MLX5_SET(qpc, qpc, st, to_mlx5_st(init_attr->qp_type));
++	MLX5_SET(qpc, qpc, st, mlx5_st);
+ 	MLX5_SET(qpc, qpc, pm_state, MLX5_QP_PM_MIGRATED);
+ 
+ 	if (init_attr->qp_type != MLX5_IB_QPT_REG_UMR)
 -- 
 2.17.1
 
