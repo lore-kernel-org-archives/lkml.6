@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E80CC43610
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C64CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC8A20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5EB420844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:42:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lhwe3/Xk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC8A20844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0MXLn4z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5EB420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbeKIITp (ORCPT
+        id S1728791AbeKIITp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 03:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49340 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:49370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728915AbeKIHdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728927AbeKIHdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:33:36 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 041422089A;
-        Thu,  8 Nov 2018 21:56:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97AE62089F;
+        Thu,  8 Nov 2018 21:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714169;
-        bh=tsU6L4NqBvmesVda34w42L6XwO8PyLUnduxTpztgTiw=;
+        bh=4ahfbmkkkQrF2f6xjKNzKiwGTykqHPGjPhD8kby+wDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lhwe3/Xk67CwtxT+kYZbRp3lJXw5FbtXy/UILxpYfEjIDIun6mrqgZ2BQTvc8/c0u
-         FHyvIRnDoGcRYdFBAABtMaFQHzlhXGYykSpQyQ9I33fcQxBJAS/bggl8CaJ51RZ9Js
-         MqgO7L+/kZLGamRt66MQE8KDL53hU84W3QlzSLtw=
+        b=F0MXLn4zAqhDwn0u1mGFDNu6cAj7f2tv/+8itGT2HyQ0SsFqmL38VLII7fskX0hiM
+         ZDtXYlVdKL73rTonB2meo96YEFSK1M6yxPXufYekruOKZqf9n06i5fEFAo5PV5ifb4
+         w+05URIbc5LDS19M4PpnwYfe34KccDdPa08Oht2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoffer Dall <cdall@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Eugenia Emantayev <eugenia@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 090/144] arm/arm64: KVM: Take mmap_sem in stage2_unmap_vm
-Date:   Thu,  8 Nov 2018 13:51:01 -0800
-Message-Id: <20181108215101.941288550@linuxfoundation.org>
+Subject: [PATCH 3.18 091/144] net/mlx4_en: Remove dependency between timestamping capability and service_task
+Date:   Thu,  8 Nov 2018 13:51:02 -0800
+Message-Id: <20181108215102.042478643@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,42 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 90f6e150e44a0dc3883110eeb3ab35d1be42b6bb ]
+[ Upstream commit fc9f5ea9b4ecbe9b7839c92f0a54261809c723d3 ]
 
-We don't hold the mmap_sem while searching for the VMAs when
-we try to unmap each memslot for a VM. Fix this properly to
-avoid unexpected results.
+Service task is responsible for other tasks in addition to timestamping
+overflow check. Launch it even if timestamping is not supported by device.
 
-Fixes: commit 957db105c997 ("arm/arm64: KVM: Introduce stage2_unmap_vm")
-Cc: stable@vger.kernel.org # v3.19+
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 07841f9d94c1 ('net/mlx4_en: Schedule napi when RX buffers allocation fails')
+Signed-off-by: Eugenia Emantayev <eugenia@mellanox.com>
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kvm/mmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c
-index e506389d02fb..017d6d1e1766 100644
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -760,6 +760,7 @@ void stage2_unmap_vm(struct kvm *kvm)
- 	int idx;
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+index f31814293d3c..980dd359e3f7 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -2638,9 +2638,8 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+ 	}
+ 	queue_delayed_work(mdev->workqueue, &priv->stats_task, STATS_DELAY);
  
- 	idx = srcu_read_lock(&kvm->srcu);
-+	down_read(&current->mm->mmap_sem);
- 	spin_lock(&kvm->mmu_lock);
+-	if (mdev->dev->caps.flags2 & MLX4_DEV_CAP_FLAG2_TS)
+-		queue_delayed_work(mdev->workqueue, &priv->service_task,
+-				   SERVICE_TASK_DELAY);
++	queue_delayed_work(mdev->workqueue, &priv->service_task,
++			   SERVICE_TASK_DELAY);
  
- 	slots = kvm_memslots(kvm);
-@@ -767,6 +768,7 @@ void stage2_unmap_vm(struct kvm *kvm)
- 		stage2_unmap_memslot(kvm, memslot);
- 
- 	spin_unlock(&kvm->mmu_lock);
-+	up_read(&current->mm->mmap_sem);
- 	srcu_read_unlock(&kvm->srcu, idx);
- }
- 
+ 	err = register_netdev(dev);
+ 	if (err) {
 -- 
 2.17.1
 
