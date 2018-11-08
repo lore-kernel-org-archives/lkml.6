@@ -2,96 +2,217 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3808ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC14AECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7706520827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7706520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 7E19C20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:56:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p3Mu3hWV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E19C20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeKICbG (ORCPT
+        id S1727047AbeKICdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:31:06 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:35143 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbeKICbF (ORCPT
+        Thu, 8 Nov 2018 21:33:18 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36620 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbeKICdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:31:05 -0500
-Received: by mail-qk1-f193.google.com with SMTP id w204so2663829qka.2;
-        Thu, 08 Nov 2018 08:54:43 -0800 (PST)
+        Thu, 8 Nov 2018 21:33:18 -0500
+Received: by mail-io1-f65.google.com with SMTP id o19-v6so15129481iod.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:56:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=U7EtIGKKrpbK8qF7rV+oRd3kv+4RLyW20seBWri68E0=;
+        b=p3Mu3hWVCCQya8Z5c5EVuXgET10v6wzg70fTbWoaLzUii+2UoWQOrFUdUApHLwctE+
+         hIiofiFciim8DMkyAWPsrx3sn0oOee7d0TzN+nGVRPvsHiIx/qQW6/RXzAB6IAtUp0Pv
+         9BS4+G3cozl49C/+jJNebtfD0309T1ES+7/XboLEtxqIkt44BC6tXtHOqrZkhEPk1pga
+         NVH8G4ea2/+ILoTZOpjY/yFSzI3RHZOrd4nKrTrkP3D8S+7ZGQW7/cHoVBF85Kr/eifH
+         Q0R89R6/8udvUxXPllq7BRjgxlvmAYwR572tHCtWLm96CXXJvLD8QxmJKq5tmA8xDEmI
+         qfnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=/r2pkmkSdytf8ArSse1xG1oINIbNgF2IBwly2XdtLSM=;
-        b=CKkq+Bnha5GPO/pHs2OKdTcHWMs9qLQaWCmDjhLDU68Ho+11QB1H+B3f0pMBog2R2C
-         rLojGQxtuOAckTAlEKuBsCKgUyoXGSQ75e6TMblZUSQN9X1Y322RTDvYe8gtIYVHE+/6
-         9a4qYaIXZ7OHCQhdMYNfbJWVtFxj6DQTL2txtVaJIyTIy2pWEC3dNGNt9m5B/nUFU5OH
-         5u67HSP96gsZB/OR6QNUP17N9z72G7MLXPhkW+dooOpULD5TB+p7gfEniFQlBNpfyWkW
-         fmGgkL/zW2fSH+QvpksIcn/c52g4inajo+J0hQxOmDjgPVrz81ebVCVxMNKQVV7We/0M
-         dwGw==
-X-Gm-Message-State: AGRZ1gL15lE5pZfW/hHgtf9+5drA5q3pfDlGlazgPmChvfy4nO5V6vx/
-        nkyXjYRlJvmyxijoUazbEn7TpCU2r9u0s/8AjB8=
-X-Google-Smtp-Source: AJdET5f0+LsipQZIjl1jQJwxMKKfg4heXFulrsmEoYn1bKbocwZOfSlModat2pgUr/beDw/cGDipi4q8OLEd5TsPGP8=
-X-Received: by 2002:a0c:d992:: with SMTP id y18mr5322062qvj.161.1541696083229;
- Thu, 08 Nov 2018 08:54:43 -0800 (PST)
+        bh=U7EtIGKKrpbK8qF7rV+oRd3kv+4RLyW20seBWri68E0=;
+        b=JHcHQBcAbqEWU1ofHNJCj7hc1KGbCbO19yAvm/Adb7Z+X/IL87ywb/N9IdrN75AsCn
+         3eqn0+lJ3u8Rt8gxeAY/0F5hJDaGL31DLTemNjVA+ydtci/M98I8+SUyhF/ghdqc6adZ
+         ZAQ0lpDMSFOojyCbNId0RM7dqX0KLExxoeiXI3w8D5T1gjL6DAfbM+VkQpon9n4vU7L0
+         b0rRT1zi0f1/mtzM8Z5hVm5mjBWaOS2x63kUHhKssrIn5H+VouDkzz9d/XsPKFStiOLe
+         BDHuWjctT7r6W1f3Yzm4Xc3NXv3oybJlay8t5O4YYLHBp3DOnQwwwPwtKWpC1R+3gWhR
+         XmzA==
+X-Gm-Message-State: AGRZ1gJsIDsIlS3oFUsd/crQifLIeuKiJac/Pc57OICC+NDgjEBlQGD8
+        dvU0x45BI2q/9+14qluTR1wNdaj898rVM9cOkpYYTg==
+X-Google-Smtp-Source: AJdET5dZZ/1VD191G/4GRN1OXrFN3jbl0xammXTKrGBvFTtPWL7pAAx9iN4KXqaALcArItZb6dB0cUKmS7cUEXSnEac=
+X-Received: by 2002:a6b:9383:: with SMTP id v125-v6mr3744541iod.282.1541696214783;
+ Thu, 08 Nov 2018 08:56:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20181104155501.14767-1-TheSven73@googlemail.com>
- <20181104155501.14767-5-TheSven73@googlemail.com> <CAK8P3a3DnKcRxL5dG_pvBVTngFh5eDL2JdEqZzgL0RXJy5dZGw@mail.gmail.com>
- <CAGngYiXEsg-6MXK60s8gOq2d8LGq+USTk1FC3GYqy2TQheaxHg@mail.gmail.com>
-In-Reply-To: <CAGngYiXEsg-6MXK60s8gOq2d8LGq+USTk1FC3GYqy2TQheaxHg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 8 Nov 2018 17:54:10 +0100
-Message-ID: <CAK8P3a1q-09=5z4KZPWdpT-T=Tg244HpyN1Cd5=0pDGkQV7aPA@mail.gmail.com>
-Subject: Re: [PATCH anybus v3 4/6] bus: support HMS Anybus-S bus
-To:     thesven73@gmail.com
-Cc:     svendev@arcx.com, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>, noralf@tronnes.org,
-        Johan Hovold <johan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        gregkh <gregkh@linuxfoundation.org>,
-        John Garry <john.garry@huawei.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
+Received: by 2002:a02:b01b:0:0:0:0:0 with HTTP; Thu, 8 Nov 2018 08:56:34 -0800 (PST)
+In-Reply-To: <000000000000b6f7c3057a29ffb1@google.com>
+References: <CACT4Y+YTYwE2buUYADuhuqYHb1b68JYBbG8hejn0G=6xCGFg9A@mail.gmail.com>
+ <000000000000b6f7c3057a29ffb1@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 8 Nov 2018 08:56:34 -0800
+Message-ID: <CACT4Y+YiNvfhx93um7FUp6bgv9nhvbW21K_RJh8yM8kdN12LZw@mail.gmail.com>
+Subject: Re: Re: KMSAN: uninit-value in vcs_read
+To:     syzbot <syzbot+fed4435f163beccc67eb@syzkaller.appspotmail.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        syzkaller-bugs@googlegroups.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 4:47 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
-> On Thu, Nov 8, 2018 at 9:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > I see this is called from the interrupt handler at the moment, which
-> > means you cannot call sleeping functions, but it also means that
-> > the timeout may never happen because the timer tick IRQ cannot
-> > get through. That means you may have to change the irq handler
-> > logic, e.g. to try this a few times but then defer to a bottom half
-> > if it fails for a long time.
+On Thu, Nov 8, 2018 at 8:48 AM, syzbot
+<syzbot+fed4435f163beccc67eb@syzkaller.appspotmail.com> wrote:
+>> On Tue, May 15, 2018 at 9:26 AM, syzbot
+>> <syzbot+fed4435f163beccc67eb@syzkaller.appspotmail.com> wrote:
+>>>
+>>> Hello,
 >
-> Touche ! Yes, this is very likely a big problem.
 >
-> What if I converted the interrupt handler into a threaded interrupt handler?
-> That would allow the timer tick to get through, correct?
+>>> syzbot found the following crash on:
+>
+>
+>>> HEAD commit:    e2ab7e8abba4 kmsan: temporarily disable
+>>> visitAsmInstructio..
+>>> git tree:       https://github.com/google/kmsan.git/master
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=158135db800000
+>>> kernel config:
+>>> https://syzkaller.appspot.com/x/.config?x=5bf8b7964e37a698
+>>> dashboard link:
+>>> https://syzkaller.appspot.com/bug?extid=fed4435f163beccc67eb
+>>> compiler:       clang version 7.0.0 (trunk 329391)
+>>> syzkaller
+>>> repro:https://syzkaller.appspot.com/x/repro.syz?x=17a2f91b800000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bd452b800000
+>
+>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the
+>>> commit:
+>>> Reported-by: syzbot+fed4435f163beccc67eb@syzkaller.appspotmail.com
+>
+>
+>> #syz dup: KMSAN: kernel-infoleak in vcs_read
+>
+>
+> Can't dup bug to a bug in different reporting (upstream->moderation).Please
+> dup syzbot bugs only onto syzbot bugs for the same kernel/reporting.
 
-Yes, with a threaded IRQ handler, the tick comes through, and you can
-use a sleeping function to back off between the retries.
+Let's try this:
 
-        Arnd
+#syz fix: vt: prevent leaking uninitialized data to userspace via /dev/vcs*
+
+
+>>> ==================================================================
+>>> BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184
+>>> [inline]
+>>> BUG: KMSAN: uninit-value in vcs_read+0x18ba/0x1cc0
+>>> drivers/tty/vt/vc_screen.c:352
+>>> CPU: 1 PID: 3501 Comm: syzkaller315412 Not tainted 4.16.0+ #82
+>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>> Google 01/01/2011
+>>> Call Trace:
+>>>   __dump_stack lib/dump_stack.c:17 [inline]
+>>>   dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+>>>   kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+>>>   kmsan_internal_check_memory+0x125/0x1d0 mm/kmsan/kmsan.c:1157
+>>>   kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+>>>   copy_to_user include/linux/uaccess.h:184 [inline]
+>>>   vcs_read+0x18ba/0x1cc0 drivers/tty/vt/vc_screen.c:352
+>>>   __vfs_read+0x19f/0x8e0 fs/read_write.c:411
+>>>   vfs_read+0x36c/0x6c0 fs/read_write.c:447
+>>>   SYSC_pread64+0x275/0x310 fs/read_write.c:611
+>>>   SyS_pread64+0x65/0x90 fs/read_write.c:598
+>>>   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+>>>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>>> RIP: 0033:0x443d39
+>>> RSP: 002b:00007ffcbd3c35f8 EFLAGS: 00000213 ORIG_RAX: 0000000000000011
+>>> RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443d39
+>>> RDX: 0000000000000083 RSI: 0000000020000140 RDI: 0000000000000003
+>>> RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
+>>> R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004019e0
+>>> R13: 0000000000401a70 R14: 0000000000000000 R15: 0000000000000000
+>
+>
+>>> Uninit was stored to memory at:
+>>>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+>>>   kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
+>>>   kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
+>>>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
+>>>   vcs_read+0xd01/0x1cc0 drivers/tty/vt/vc_screen.c:274
+>>>   __vfs_read+0x19f/0x8e0 fs/read_write.c:411
+>>>   vfs_read+0x36c/0x6c0 fs/read_write.c:447
+>>>   SYSC_pread64+0x275/0x310 fs/read_write.c:611
+>>>   SyS_pread64+0x65/0x90 fs/read_write.c:598
+>>>   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+>>>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>>> Uninit was created at:
+>>>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+>>>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+>>>   kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+>>>   __kmalloc+0x23c/0x350 mm/slub.c:3791
+>>>   kmalloc include/linux/slab.h:517 [inline]
+>>>   vc_allocate+0x438/0x800 drivers/tty/vt/vt.c:787
+>>>   con_install+0x8c/0x640 drivers/tty/vt/vt.c:2876
+>>>   tty_driver_install_tty drivers/tty/tty_io.c:1224 [inline]
+>>>   tty_init_dev+0x1b0/0x1020 drivers/tty/tty_io.c:1324
+>>>   tty_open_by_driver drivers/tty/tty_io.c:1959 [inline]
+>>>   tty_open+0x15e9/0x2ea0 drivers/tty/tty_io.c:2007
+>>>   chrdev_open+0xc20/0xd90 fs/char_dev.c:417
+>>>   do_dentry_open+0xcc6/0x1430 fs/open.c:752
+>>>   vfs_open+0x1b7/0x2e0 fs/open.c:866
+>>>   do_last fs/namei.c:3379 [inline]
+>>>   path_openat+0x460a/0x6520 fs/namei.c:3520
+>>>   do_filp_open+0x261/0x640 fs/namei.c:3554
+>>>   do_sys_open+0x624/0x960 fs/open.c:1059
+>>>   SYSC_open+0xab/0xc0 fs/open.c:1077
+>>>   SyS_open+0x54/0x80 fs/open.c:1072
+>>>   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+>>>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>
+>
+>>> Bytes 0-79 of 131 are uninitialized
+>>> ==================================================================
+>
+>
+>
+>>> ---
+>>> This bug is generated by a bot. It may contain errors.
+>>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+>
+>>> syzbot will keep track of this bug report. See:
+>>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+>>> syzbot.
+>>> syzbot can test patches for this bug, for details see:
+>>> https://goo.gl/tpsmEJ#testing-patches
+>
+>
+>>> --
+>>> You received this message because you are subscribed to the Google Groups
+>>> "syzkaller-bugs" group.
+>>> To unsubscribe from this group and stop receiving emails from it, send an
+>>> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+>>> To view this discussion on the web visit
+>>>
+>>> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000da269e056c410efd%40google.com.
+>>> For more options, visit https://groups.google.com/d/optout.
