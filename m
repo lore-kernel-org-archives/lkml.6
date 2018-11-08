@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D7AECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF5CECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A260208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29FBA21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0nQL3vKq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A260208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTSoPFGI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FBA21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732969AbeKIHrr (ORCPT
+        id S1732979AbeKIHrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:47:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41734 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:47:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732957AbeKIHrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:47:46 -0500
+        id S1732957AbeKIHrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:47:48 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19F342148E;
-        Thu,  8 Nov 2018 22:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46B05208A3;
+        Thu,  8 Nov 2018 22:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541715015;
-        bh=tNLh9AEgUgEpx3ZnHFNLQ11L3MwYx+4I4n1xBCeZf6M=;
+        s=default; t=1541715016;
+        bh=KcIibG8roijUXxtv1YGydyWbeVS7Rs85L6KVGVymShM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0nQL3vKq439atavPPsq54QyFEiqLDxRLgRjP9O+FP/RdCDtsMvNl3P4N7qqLDmd/J
-         YXhG7MKBlVmfpoikJ8rfmiqm7meZLXOmrwKpcWw0R676SiCGuZBuCTqEtsZpwHf9sq
-         XIXnTjdM9BUQEkfpPFsTpzeuhjIG6TKwsw95KKFc=
+        b=TTSoPFGI/GQWlGHtUf8MhS02O3N+/GmStXnaJL3//dwTwrPP4SD27vxsQK4W0Rn+6
+         v5HFh4AlyPEbz0a6GcxBUhrtO3H9tfhWJBxzAlZe7UkR9XRfW3Y6w9q1C6nNiWeNVm
+         8IGFUB3yzHlrN6XBeYqmNQ+q+fkTvigehF+Z86FU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.18 34/34] x86/fpu: Fix i486 + no387 boot crash by only saving FPU registers on context switch if there is an FPU
-Date:   Thu,  8 Nov 2018 13:53:03 -0800
-Message-Id: <20181108215140.972635174@linuxfoundation.org>
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 4.18 27/34] drm/sun4i: Fix an ulong overflow in the dotclock driver
+Date:   Thu,  8 Nov 2018 13:52:56 -0800
+Message-Id: <20181108215140.563857522@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -69,54 +63,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 2224d616528194b02424c91c2ee254b3d29942c3 upstream.
+commit e84cb605e02f1b3d0aee8d7157419cd8aaa06038 upstream.
 
-Booting an i486 with "no387 nofxsr" ends with with the following crash:
+The calculated ideal rate can easily overflow an unsigned long, thus
+making the best div selection buggy as soon as no ideal match is found
+before the overflow occurs.
 
-   math_emulate: 0060:c101987d
-   Kernel panic - not syncing: Math emulation needed in kernel
-
-on the first context switch in user land.
-
-The reason is that copy_fpregs_to_fpstate() tries FNSAVE which does not work
-as the FPU is turned off.
-
-This bug was introduced in:
-
-  f1c8cd0176078 ("x86/fpu: Change fpu->fpregs_active users to fpu->fpstate_active")
-
-Add a check for X86_FEATURE_FPU before trying to save FPU registers (we
-have such a check in switch_fpu_finish() already).
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Fixes: f1c8cd0176078 ("x86/fpu: Change fpu->fpregs_active users to fpu->fpstate_active")
-Link: http://lkml.kernel.org/r/20181016202525.29437-4-bigeasy@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 4731a72df273 ("drm/sun4i: request exact rates to our parents")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181018100250.12565-1-boris.brezillon@bootlin.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/fpu/internal.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_dotclock.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -528,7 +528,7 @@ static inline void fpregs_activate(struc
- static inline void
- switch_fpu_prepare(struct fpu *old_fpu, int cpu)
- {
--	if (old_fpu->initialized) {
-+	if (static_cpu_has(X86_FEATURE_FPU) && old_fpu->initialized) {
- 		if (!copy_fpregs_to_fpstate(old_fpu))
- 			old_fpu->last_cpu = -1;
- 		else
+--- a/drivers/gpu/drm/sun4i/sun4i_dotclock.c
++++ b/drivers/gpu/drm/sun4i/sun4i_dotclock.c
+@@ -81,9 +81,19 @@ static long sun4i_dclk_round_rate(struct
+ 	int i;
+ 
+ 	for (i = tcon->dclk_min_div; i <= tcon->dclk_max_div; i++) {
+-		unsigned long ideal = rate * i;
++		u64 ideal = (u64)rate * i;
+ 		unsigned long rounded;
+ 
++		/*
++		 * ideal has overflowed the max value that can be stored in an
++		 * unsigned long, and every clk operation we might do on a
++		 * truncated u64 value will give us incorrect results.
++		 * Let's just stop there since bigger dividers will result in
++		 * the same overflow issue.
++		 */
++		if (ideal > ULONG_MAX)
++			goto out;
++
+ 		rounded = clk_hw_round_rate(clk_hw_get_parent(hw),
+ 					    ideal);
+ 
 
 
