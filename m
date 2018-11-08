@@ -3,76 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5211DC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5D0C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19D2A20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:21:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19D2A20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 519C020827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:22:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519C020827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeKHPzt (ORCPT
+        id S1726770AbeKHPz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 10:55:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49690 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725724AbeKHPzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 10:55:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77FD7B02B;
-        Thu,  8 Nov 2018 06:21:54 +0000 (UTC)
-Date:   Wed, 7 Nov 2018 22:21:43 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     "chouryzhou(??????)" <chouryzhou@tencent.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arve@android.com" <arve@android.com>,
-        "tkjos@android.com" <tkjos@android.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] binder: ipc namespace support for android binder
-Message-ID: <20181108062143.7web34burq62gefu@linux-r8p5>
-References: <5FBCBE569E134E4CA167B91C0A77FD610198F6BB7D@EXMBX-SZMAIL022.tencent.com>
+        Thu, 8 Nov 2018 10:55:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41201 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeKHPz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 10:55:59 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gKdhZ-00029d-Nz; Thu, 08 Nov 2018 07:22:01 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gKdhY-0007kk-L6; Thu, 08 Nov 2018 07:22:00 +0100
+Date:   Thu, 8 Nov 2018 07:22:00 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Joe Perches <joe@perches.com>, kernel@pengutronix.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/spdxcheck: make python3 compliant
+Message-ID: <20181108062200.ytkezavtcaypdlat@pengutronix.de>
+References: <20181023070802.22558-1-u.kleine-koenig@pengutronix.de>
+ <20181107153251.bac94150f8ebc8dbf53abe23@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5FBCBE569E134E4CA167B91C0A77FD610198F6BB7D@EXMBX-SZMAIL022.tencent.com>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181107153251.bac94150f8ebc8dbf53abe23@linux-foundation.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018, chouryzhou(??????) wrote:
+Hello Andrew,
 
->+// If init_ipc_ns is not defined elsewhere,
->+// we make a fake one here to put our variable.
+On Wed, Nov 07, 2018 at 03:32:51PM -0800, Andrew Morton wrote:
+> On Tue, 23 Oct 2018 09:08:02 +0200 Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
+> 
+> > Without this change the following happens when using Python3 (3.6.6):
+> > 
+> > 	$ echo "GPL-2.0" | python3 scripts/spdxcheck.py -
+> > 	FAIL: 'str' object has no attribute 'decode'
+> > 	Traceback (most recent call last):
+> > 	  File "scripts/spdxcheck.py", line 253, in <module>
+> > 	    parser.parse_lines(sys.stdin, args.maxlines, '-')
+> > 	  File "scripts/spdxcheck.py", line 171, in parse_lines
+> > 	    line = line.decode(locale.getpreferredencoding(False), errors='ignore')
+> > 	AttributeError: 'str' object has no attribute 'decode'
+> > 
+> > So as the line is already a string, there is no need to decode it and
+> > the line can be dropped.
+> 
+> I suppose people might want to run spdxcheck.py against (say) 4.19.x
+> using python3.  So I'll add a cc:stable here, OK?
 
-/*
- * comments like this please
- */
+Not sure if people call spdxcheck.py stand-alone. checkpatch.pl calls it
+using "python scripts/spdxcheck.py" which AFAICT should still be python2
+on all machines. The shebang-line also uses "python" and not "python3".
 
->+#if !defined(CONFIG_SYSVIPC) &&  !defined(CONFIG_POSIX_MQUEUE)
->+struct ipc_namespace init_ipc_ns;
-...
->--- a/include/linux/ipc_namespace.h
->+++ b/include/linux/ipc_namespace.h
->@@ -63,6 +63,12 @@ struct ipc_namespace {
->        unsigned int    mq_msg_default;
->        unsigned int    mq_msgsize_default;
->
->+       /* next fields are for binder */
->+       struct mutex      binder_procs_lock;
->+       struct hlist_head binder_procs;
->+       struct mutex      binder_contexts_lock;
->+       struct hlist_head binder_contexts;
+So for now this is only cosmetic (unless there are distros that install
+Python 3 as "python").
 
-Please make the above inside #ifdef CONFIG_ANDROID_BINDER_IPC.
+Best regards
+Uwe
 
-Thanks,
-Davidlohr
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
