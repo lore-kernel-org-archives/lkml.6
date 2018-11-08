@@ -2,102 +2,102 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCA6ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE1ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A910920684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5O5BfBO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A910920684
+	by mail.kernel.org (Postfix) with ESMTP id AB15720684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB15720684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeKID3i (ORCPT
+        id S1727995AbeKID3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:29:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeKID3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:29:37 -0500
-Received: from localhost.localdomain (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 833D220684;
-        Thu,  8 Nov 2018 17:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541699581;
-        bh=vnlwdfd6vSnhGBuI9F1XbnQaermOihTPK0yaeLKkTyc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l5O5BfBOKxItg7H/epme26g5Kd+DqooQiL38YdAP2LlQs8M+Q8gQAELAxk5vpfUtj
-         Os95jFqqFaRvUay7NOzoFaSgGQDfsz0w9ZDj1TboZPC+uzHf3dPczOuGxYdzh0egHA
-         1ocpvbaDQ2d/OOMLpQJVK0y4ANhgdSXyq5Chd8PY=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v3 18/18] arm64: dts: qcom: pms405: Add pon and pwrkey nodes
-Date:   Thu,  8 Nov 2018 23:20:49 +0530
-Message-Id: <20181108175049.7090-19-vkoul@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181108175049.7090-1-vkoul@kernel.org>
-References: <20181108175049.7090-1-vkoul@kernel.org>
+        Thu, 8 Nov 2018 22:29:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58352 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726801AbeKID3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:29:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BFA67AD5C;
+        Thu,  8 Nov 2018 17:53:03 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 18:53:01 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     akpm@linux-foundation.org, rientjes@google.com,
+        dan.j.williams@intel.com, linux@dominikbrodowski.net,
+        dave.hansen@linux.intel.com, dwmw@amazon.co.uk, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: mmap: remove verify_mm_writelocked()
+Message-ID: <20181108175301.GC18390@dhcp22.suse.cz>
+References: <20181108174856.10811-1-tiny.windzz@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108174856.10811-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PMS405 also features PON block, so add PON and PWRKEY nodes
+On Thu 08-11-18 12:48:56, Yangtao Li wrote:
+> We should get rid of this function. It no longer serves its purpose.This
+> is a historical artifact from 2005 where do_brk was called outside of
+> the core mm.We do have a proper abstraction in vm_brk_flags and that one
+> does the locking properly.So there is no need to use this function.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- arch/arm64/boot/dts/qcom/pms405.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/pms405.dtsi b/arch/arm64/boot/dts/qcom/pms405.dtsi
-index 02b758cfd758..a1272a444e02 100644
---- a/arch/arm64/boot/dts/qcom/pms405.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pms405.dtsi
-@@ -2,6 +2,7 @@
- // Copyright (c) 2018, Linaro Limited
- 
- #include <dt-bindings/spmi/spmi.h>
-+#include <dt-bindings/input/linux-event-codes.h>
- 
- &spmi_bus {
- 	pms405_0: pms405@0 {
-@@ -26,6 +27,21 @@
- 				<0 0xcb 0 IRQ_TYPE_NONE>;
- 		};
- 
-+		pon@800 {
-+			compatible = "qcom,pms405-pon";
-+			reg = <0x0800>;
-+			mode-bootloader = <0x2>;
-+			mode-recovery = <0x1>;
-+
-+			pwrkey {
-+				compatible = "qcom,pm8941-pwrkey";
-+				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-+				debounce = <15625>;
-+				bias-pull-up;
-+				linux,code = <KEY_POWER>;
-+			};
-+		};
-+
- 		rtc@6000 {
- 			compatible = "qcom,pm8941-rtc";
- 			reg = <0x6000>;
+> ---
+>  mm/mmap.c | 16 ----------------
+>  1 file changed, 16 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index f7cd9cb966c0..1cee506494d2 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2910,16 +2910,6 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+>  	return ret;
+>  }
+>  
+> -static inline void verify_mm_writelocked(struct mm_struct *mm)
+> -{
+> -#ifdef CONFIG_DEBUG_VM
+> -	if (unlikely(down_read_trylock(&mm->mmap_sem))) {
+> -		WARN_ON(1);
+> -		up_read(&mm->mmap_sem);
+> -	}
+> -#endif
+> -}
+> -
+>  /*
+>   *  this is really a simplified "do_mmap".  it only handles
+>   *  anonymous maps.  eventually we may be able to do some
+> @@ -2946,12 +2936,6 @@ static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long fla
+>  	if (error)
+>  		return error;
+>  
+> -	/*
+> -	 * mm->mmap_sem is required to protect against another thread
+> -	 * changing the mappings in case we sleep.
+> -	 */
+> -	verify_mm_writelocked(mm);
+> -
+>  	/*
+>  	 * Clear old maps.  this also does some error checking for us
+>  	 */
+> -- 
+> 2.17.0
+> 
+
 -- 
-2.14.4
-
+Michal Hocko
+SUSE Labs
