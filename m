@@ -2,196 +2,302 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CDFC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D06C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E5A21104
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:25:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="SO4OwixV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1E5A21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BEF92133D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BEF92133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeKHVAc (ORCPT
+        id S1727514AbeKHVBI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 16:00:32 -0500
-Received: from mail-os2jpn01on0100.outbound.protection.outlook.com ([104.47.92.100]:40592
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726274AbeKHVAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 16:00:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ddT8lTGY5+fefS+HwNKv5S4H8LLydEZTYEh+heN7xEw=;
- b=SO4OwixVFA0afErh3MkoSg7olwv51HSs4xIpJkYAzn8vDNz/9spjcJE3P8sm84zy6ZffeYDgRBzg5T/PlUUS8TEH3jRfEwjPWW9UnnTuLx2AAwhIxzIxd0SIQ81i7PkfGb1rF67gKdkjzVThIqf2Cv1VIp1aVRm0saBm9pIlGl4=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1817.jpnprd01.prod.outlook.com (52.133.162.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Thu, 8 Nov 2018 11:25:23 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::708f:601d:1cf4:6095]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::708f:601d:1cf4:6095%5]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 11:25:23 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        Thu, 8 Nov 2018 16:01:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:38690 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726252AbeKHVBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 16:01:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 149A080D;
+        Thu,  8 Nov 2018 03:26:06 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC4BC3F5CF;
+        Thu,  8 Nov 2018 03:26:03 -0800 (PST)
+Subject: Re: [PATCH 08/10] irqchip/gic-v3-its: Decouple its initialization
+ from gic
+To:     Robert Richter <rrichter@cavium.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] dt-bindings: can: rcar_can: Add r8a774a1 support
-Thread-Topic: [PATCH v2 2/3] dt-bindings: can: rcar_can: Add r8a774a1 support
-Thread-Index: AQHUSPMgnV7YcVxKm0CbO3oTvHgR86VGGWKA
-Date:   Thu, 8 Nov 2018 11:25:23 +0000
-Message-ID: <TY1PR01MB17709C158FEAC53383231CB7C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1536576195-11520-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1536576195-11520-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536576195-11520-3-git-send-email-fabrizio.castro@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1817;20:DSy9fsgnHihJgCyqgq9eZ/X+lWwEI39d0wDG6EdmJZGj8wZJDYQ+0fQEcYcmnRgBvN6cjSUx5BwRtbNDkIeJGVy296BlcrsSP99UZGQqDH98nyYMEBJNVQboJ8gNLKUlYvHOUfybk1f3hoiqEqS4VanUZhk0mDE3VsrucIB1bsg=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 5f0282ac-a714-40a1-bd0e-08d6456cdfe0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1817;
-x-ms-traffictypediagnostic: TY1PR01MB1817:
-x-microsoft-antispam-prvs: <TY1PR01MB1817CC3CD5727A071B3163DEC0C50@TY1PR01MB1817.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1817;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1817;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(366004)(396003)(346002)(136003)(189003)(199004)(66066001)(71190400001)(4326008)(55016002)(25786009)(2906002)(6436002)(5660300001)(53936002)(6116002)(305945005)(68736007)(97736004)(71200400001)(3846002)(6246003)(86362001)(9686003)(110136005)(99286004)(74316002)(7736002)(54906003)(7416002)(7696005)(478600001)(316002)(76176011)(229853002)(8936002)(81166006)(81156014)(53546011)(6506007)(26005)(102836004)(33656002)(11346002)(8676002)(256004)(413944005)(106356001)(105586002)(446003)(186003)(476003)(14454004)(44832011)(486006)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1817;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: /mZGodrBP2ykS0sPaOvRcxBhkz2QLwCQCgWs5k69uR8e/+qJQ4vu/gM8dUVeroh5xl89aCxmmNKBWsp+LEmWI+YaCnuM0eTquSA79zipyVJhDZPlPkogN5P1S9eux7Qz6A7sfwOiOnf+9m+5RFzwbnU/NhU5TOXTsGBxtoD2kDJMRA7B28GDAYhBq3Pc6sD+Cz+zbPliGqeDyoZd3RkdwiPWkDTrsqBIvoKL30MGuslXn0oOqtODy0AlJoCsjUnqsT9aqvlbUSjBxaaHbyQ7j8FDlvtKe39/jP+PtTLlQkmh7qwuqFouOCwXrLSJdd/CXErjyqYot7pr/ck5vRkNZKgL7l9avOmEHkPCJK72HbE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        "Richter, Robert" <Robert.Richter@cavium.com>
+References: <20181107220254.6116-1-rrichter@cavium.com>
+ <20181107220254.6116-9-rrichter@cavium.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <21a0183b-bf4b-1895-d10b-8287dbff930a@arm.com>
+Date:   Thu, 8 Nov 2018 11:26:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f0282ac-a714-40a1-bd0e-08d6456cdfe0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 11:25:23.1934
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1817
+In-Reply-To: <20181107220254.6116-9-rrichter@cavium.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear All,
 
-Who is the best person to take this patch?
 
-Thanks,
-Fab
-
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 10 September 2018 11:43
-> Subject: [PATCH v2 2/3] dt-bindings: can: rcar_can: Add r8a774a1 support
->
-> Document RZ/G2M (r8a774a1) SoC specific bindings.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+On 07/11/18 22:03, Robert Richter wrote:
+> This patch separates its initialization from the gic. Probing and
+> initialization of its nodes is separate now. There is an own cpu
+> notifier for its now.
+> 
+> Signed-off-by: Robert Richter <rrichter@cavium.com>
 > ---
-> v1->v2:
-> * dropped "renesas,rzg-gen2-can" and fixed "clocks" property description
->   as per Geert's comments.
->
-> This patch applies on top of next-20180910.
->
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 18 ++++++++++++=
-+-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Doc=
-umentation/devicetree/bindings/net/can/rcar_can.txt
-> index 94a7f33..f3b160c 100644
-> --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> @@ -4,6 +4,7 @@ Renesas R-Car CAN controller Device Tree Bindings
->  Required properties:
->  - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A77=
-43 SoC.
->        "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-> +      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC=
-.
->        "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
->        "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
->        "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
-> @@ -16,15 +17,21 @@ Required properties:
->        "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device=
-.
->        "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
->        compatible device.
-> -      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device=
-.
-> +      "renesas,rcar-gen3-can" for a generic R-Car Gen3 or RZ/G2
-> +      compatible device.
->        When compatible with the generic version, nodes must list the
->        SoC-specific version corresponding to the platform first
->        followed by the generic version.
->
->  - reg: physical base address and size of the R-Car CAN register map.
->  - interrupts: interrupt specifier for the sole interrupt.
-> -- clocks: phandles and clock specifiers for 3 CAN clock inputs.
-> -- clock-names: 3 clock input name strings: "clkp1", "clkp2", "can_clk".
-> +- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
-> +  devices.
-> +  phandles and clock specifiers for 3 CAN clock inputs for every other
-> +  SoC.
-> +- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
-> +       3 clock input name strings for every other SoC: "clkp1", "clkp2",
-> +       "can_clk".
->  - pinctrl-0: pin control group to be used for this controller.
->  - pinctrl-names: must be "default".
->
-> @@ -41,8 +48,9 @@ using the below properties:
->  Optional properties:
->  - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values =
-are:
->      <0x0> (default) : Peripheral clock (clkp1)
-> -    <0x1> : Peripheral clock (clkp2)
-> -    <0x3> : Externally input clock
-> +    <0x1> : Peripheral clock (clkp2) (not supported by
-> +    RZ/G2 devices)
-> +    <0x3> : External input clock
->
->  Example
->  -------
-> --
-> 2.7.4
+>   drivers/irqchip/irq-gic-v3-its.c   | 58 +++++++++++++++++++++++++-------------
+>   drivers/irqchip/irq-gic-v3.c       | 14 ++++-----
+>   include/linux/cpuhotplug.h         |  1 +
+>   include/linux/irqchip/arm-gic-v3.h |  2 +-
+>   4 files changed, 48 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index c28f4158ff70..fd8561fcfdf3 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -167,6 +167,7 @@ static struct {
+>   } vpe_proxy;
+>   
+>   static LIST_HEAD(its_nodes);
+> +static LIST_HEAD(its_probed);
+>   static DEFINE_RAW_SPINLOCK(its_lock);
+>   static struct rdists *gic_rdists;
+>   static struct irq_domain *its_parent;
+> @@ -3482,20 +3483,13 @@ static int __init its_compute_its_list_map(struct its_node *its)
+>   
+>   static void its_free(struct its_node *its)
+>   {
+> -	raw_spin_lock(&its_lock);
+> -	list_del(&its->entry);
+> -	raw_spin_unlock(&its_lock);
+> -
+>   	kfree(its);
+>   }
+>   
+> -static int __init its_init_one(struct its_node *its);
+> -
+>   static int __init its_probe_one(struct resource *res,
+>   				struct fwnode_handle *handle, int numa_node)
+>   {
+>   	struct its_node *its;
+> -	int err;
+>   
+>   	its = kzalloc(sizeof(*its), GFP_KERNEL);
+>   	if (!its)
+> @@ -3510,16 +3504,12 @@ static int __init its_probe_one(struct resource *res,
+>   	its->numa_node = numa_node;
+>   
+>   	raw_spin_lock(&its_lock);
+> -	list_add_tail(&its->entry, &its_nodes);
+> +	list_add_tail(&its->entry, &its_probed);
+>   	raw_spin_unlock(&its_lock);
+>   
+>   	pr_info("ITS %pR\n", res);
+>   
+> -	err = its_init_one(its);
+> -	if (err)
+> -		its_free(its);
+> -
+> -	return err;
+> +	return 0;
+>   }
+>   
+>   static int __init its_init_one(struct its_node *its)
+> @@ -3717,7 +3707,7 @@ static int redist_disable_lpis(void)
+>   	return 0;
+>   }
+>   
+> -int its_cpu_init(void)
+> +static int its_cpu_init(unsigned int cpu)
+>   {
+>   	if (!list_empty(&its_nodes)) {
+>   		int ret;
+> @@ -3913,8 +3903,6 @@ static void __init its_acpi_probe(void)
+>   static void __init its_acpi_probe(void) { }
+>   #endif
+>   
+> -static int __init its_init(void);
+> -
+>   int __init its_probe(struct fwnode_handle *handle, struct rdists *rdists,
+>   		     struct irq_domain *parent_domain)
+>   {
+> @@ -3929,23 +3917,51 @@ int __init its_probe(struct fwnode_handle *handle, struct rdists *rdists,
+>   
+>   	gic_rdists = rdists;
+>   
+> -	return its_init();
+> +	return 0;
+>   }
+>   
+> -static int __init its_init(void)
+> +int __init its_init(void)
+>   {
+>   	struct its_node *its;
+>   	bool has_v4 = false;
+>   	int err;
+>   
+> +	if (list_empty(&its_probed))
+> +		return 0;
+> +
+> +	raw_spin_lock(&its_lock);
+> +redo:
+> +	list_for_each_entry(its, &its_probed, entry) {
+> +		list_del_init(&its->entry);
+> +
+> +		raw_spin_unlock(&its_lock);
+> +
+> +		/* Needs to be called in non-atomic context */
+> +		err = its_init_one(its);
+> +		if (err)
+> +			its_free(its);
+> +
+> +		raw_spin_lock(&its_lock);
+> +
+> +		if (!err)
+> +			list_add_tail(&its->entry, &its_nodes);
+> +
+> +		goto redo;
 
+Again, you're starting a loop only to work on the first element and then 
+restarting the loop.
 
+Just do a while (!list_empty()), and without gotos...
 
+> +	}
+> +
+> +	raw_spin_unlock(&its_lock);
+> +
+>   	if (list_empty(&its_nodes)) {
+>   		pr_warn("ITS: No ITS available, not enabling LPIs\n");
+>   		return -ENXIO;
+>   	}
+>   
+>   	err = allocate_lpi_tables();
+> -	if (err)
+> +	if (err) {
+> +		pr_warn("ITS: Failed to initialize (%d), not enabling LPIs\n",
+> +			err);
+>   		return err;
+> +	}
+>   
+>   	list_for_each_entry(its, &its_nodes, entry)
+>   		has_v4 |= its->is_v4;
+> @@ -3960,5 +3976,9 @@ static int __init its_init(void)
+>   
+>   	register_syscore_ops(&its_syscore_ops);
+>   
+> +	cpuhp_setup_state(CPUHP_AP_IRQ_GIC_ITS_STARTING,
+> +			"irqchip/arm/gicv3-its:starting",
+> +			its_cpu_init, NULL);
+> +
+>   	return 0;
+>   }
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index e04108b7c6b7..d2942efdb6d5 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -685,9 +685,6 @@ static int gic_starting_cpu(unsigned int cpu)
+>   {
+>   	gic_cpu_init();
+>   
+> -	if (gic_dist_supports_lpis())
+> -		its_cpu_init();
+> -
+>   	return 0;
+>   }
+>   
+> @@ -815,7 +812,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+>   #else
+>   #define gic_set_affinity	NULL
+>   #define gic_smp_init()		do { } while(0)
+> -#endif
+> +#endif	/* CONFIG_SMP */
+>   
+>   #ifdef CONFIG_CPU_PM
+>   /* Check whether it's single security state view */
+> @@ -1131,10 +1128,8 @@ static int __init gic_init_bases(void __iomem *dist_base,
+>   	gic_cpu_init();
+>   	gic_cpu_pm_init();
+>   
+> -	if (gic_dist_supports_lpis()) {
+> +	if (gic_dist_supports_lpis())
+>   		its_probe(handle, &gic_data.rdists, gic_data.domain);
+> -		its_cpu_init();
+> -	}
+>   
+>   	return 0;
+>   
+> @@ -1327,6 +1322,9 @@ static int __init gic_of_init(struct device_node *node, struct device_node *pare
+>   
+>   	if (static_branch_likely(&supports_deactivate_key))
+>   		gic_of_setup_kvm_info(node);
+> +
+> +	its_init();
+> +
+>   	return 0;
+>   
+>   out_unmap_rdist:
+> @@ -1630,6 +1628,8 @@ gic_acpi_init(struct acpi_subtable_header *header, const unsigned long end)
+>   	if (static_branch_likely(&supports_deactivate_key))
+>   		gic_acpi_setup_kvm_info();
+>   
+> +	its_init();
+> +
+>   	return 0;
+>   
+>   out_fwhandle_free:
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index e0cd2baa8380..584f73585142 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -96,6 +96,7 @@ enum cpuhp_state {
+>   	CPUHP_AP_SCHED_STARTING,
+>   	CPUHP_AP_RCUTREE_DYING,
+>   	CPUHP_AP_IRQ_GIC_STARTING,
+> +	CPUHP_AP_IRQ_GIC_ITS_STARTING,
+>   	CPUHP_AP_IRQ_HIP04_STARTING,
+>   	CPUHP_AP_IRQ_ARMADA_XP_STARTING,
+>   	CPUHP_AP_IRQ_BCM2836_STARTING,
+> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+> index a6fdb2910f73..f4348fa4260a 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -602,9 +602,9 @@ struct rdists {
+>   
+>   struct irq_domain;
+>   struct fwnode_handle;
+> -int its_cpu_init(void);
+>   int its_probe(struct fwnode_handle *handle, struct rdists *rdists,
+>   	      struct irq_domain *domain);
+> +int its_init(void);
+>   int mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent);
+>   
+>   static inline bool gic_enable_sre(void)
+> 
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+-- 
+Julien Thierry
