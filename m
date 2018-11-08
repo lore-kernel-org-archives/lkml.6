@@ -1,164 +1,263 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64EAC46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8781BC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6221220827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:30:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwOpwpeV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6221220827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 46CA420827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:32:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46CA420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.De
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeKHSFT (ORCPT
+        id S1726690AbeKHSGk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:05:19 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52745 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbeKHSFT (ORCPT
+        Thu, 8 Nov 2018 13:06:40 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:40970 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbeKHSGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:05:19 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r11-v6so344719wmb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 00:30:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LxAmM3G9OkFkIRy3Xv3CcBoUjJ+UpMu9hO52XJNc7/o=;
-        b=AwOpwpeVV5E9Hf1AlRxT/Y65DaygmM1l0FxYn1psGU1rd9Q02LNEfpZq6oOykchIJg
-         0hK15ngHI9/xFuUbUb2Cvc7xwTH6xanYRRHzewsPklWHoIbcJ8vhD5Xlorus8uPMWyii
-         VDxok3xhAFiuzpbVl4X4U4bRKDjh95f9M7kPapfBqnJr+OVZxo9IwL9J+p6G0sF5XU1+
-         9YWXuKQStdD/lQihqA4RP5unuOztOVW8KLzEj0EW9kehc3KlAV013LYAAKET77foIdyp
-         6KpZOt4y2SYX0rpyMM09jfB0nLohSrste/+WYaWFiiPpYGwpiInED8W5GHRct3xIt2BJ
-         n7oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LxAmM3G9OkFkIRy3Xv3CcBoUjJ+UpMu9hO52XJNc7/o=;
-        b=BDnpYSu1cULgbr1KlPVHGP+U0g/nFGqAFll0tptX3JSPefkL0qqpCLrt4Du1w/wJ8R
-         h54cyMnSGCCZBTByXqiRdQ/XXogNDc1oJfj/2ATJvJN3vb7XvZF+azDhWPdFf34Q4/l0
-         tl6CP12yUfeHF6ZynJTrY49UfLZntQTAQIpzSM3idMCj8in7OjmtbUiDyoC9Z4zmd3M6
-         solIIsb1U3dNCyMtAyS36iy9i9NGemLrbr8D8WW5vmVFXcTCD7HRGXrXmRACj4xJTxkT
-         GVPThVAuoWg6cnrHWVQjcmAUPDWI+pIgU7j4JT9Iwm8F8couQA845biE0K4Utz/BRySn
-         unEQ==
-X-Gm-Message-State: AGRZ1gJpIz3qMPVR5lWzeze2HYR+FkB/aU4hYYkX3wlSEZes0A3alkLy
-        z8POg6Aoo/S25Qqsn+4SORQ=
-X-Google-Smtp-Source: AJdET5dF1NizFK/hmb4V3B1JtV7XAdW72+w0m/Co2T+PaYvSNlPcz4wfxri8kVFPwmeOf7pRC7NFzw==
-X-Received: by 2002:a1c:dc42:: with SMTP id t63-v6mr330185wmg.17.1541665854446;
-        Thu, 08 Nov 2018 00:30:54 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id e66-v6sm6116024wmf.40.2018.11.08.00.30.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 00:30:53 -0800 (PST)
-Date:   Thu, 8 Nov 2018 09:30:51 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108083051.GI20032@gmail.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
+        Thu, 8 Nov 2018 13:06:40 -0500
+Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 697122134261;
+        Thu,  8 Nov 2018 09:32:11 +0100 (CET)
+Received: from sntmail11s.snt-is.com (10.203.32.181) by sntmail14r.snt-is.com
+ (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 8 Nov 2018
+ 09:32:11 +0100
+Received: from sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a]) by
+ sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a%4]) with mapi id
+ 15.01.1466.003; Thu, 8 Nov 2018 09:32:11 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.De>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+CC:     Schrempf Frieder <frieder.schrempf@kontron.De>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+Subject: [PATCH] mtd: nand: spi: Add initial support for Toshiba TC58CVG2S0H
+Thread-Topic: [PATCH] mtd: nand: spi: Add initial support for Toshiba
+ TC58CVG2S0H
+Thread-Index: AQHUdz2L3HigzaAOUUKXPQ4ku2nhHg==
+Date:   Thu, 8 Nov 2018 08:32:11 +0000
+Message-ID: <1541665796-21092-1-git-send-email-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.42]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107171149.165693799@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 697122134261.A566A
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add minimal support for the Toshiba TC58CVG2S0H SPI NAND chip.
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+ drivers/mtd/nand/spi/Makefile  |   2 +-
+ drivers/mtd/nand/spi/core.c    |   1 +
+ drivers/mtd/nand/spi/toshiba.c | 136 ++++++++++++++++++++++++++++++++++++
+ include/linux/mtd/spinand.h    |   1 +
+ 4 files changed, 139 insertions(+), 1 deletion(-)
 
-> +Line breaks
-> +^^^^^^^^^^^
-> +
-> +Restricting line length to 80 characters makes deeply indented code hard to
-> +read.  Consider breaking out code into helper functions to avoid excessive
-> +line breaking.
-> +
-> +The 80 character rule is not a strict rule, so please use common sense when
-> +breaking lines. Especially format strings should never be broken up.
-
-Might make sense to explain that:
-
-  + The reason for that rule is that if for example we have this printk line:
-  +
-  +		if (uh_oh()) {
-  +			pr_info("Something really bad happened, danger"
-  +				"danger, blue smoke reported!\n");
-  +		}
-  +
-  + People would see this message in the syslog:
-  +
-  +   Thu Nov  8 09:22:33: Something really bad happened, dangerdanger, blue smoke reported!
-  +
-  + And chances are that in sheer panic they'd type the most distinctive 
-  + part of that text as a search pattern for the kernel source tree:
-  +
-  +   $ git grep -i 'dangerdanger'
-  +   $
-  +
-  + ... and they'd get absolutely no match on that string due to the 
-  + col80 broken format string, and confusion and frustration would rise, 
-  + in addition to growing amounts of blue smoke.
-  +
-  + We don't want that, so just write out the single line:
-
-  +		if (uh_oh())
-  +			pr_info("Something really bad happened, danger danger, blue smoke reported!\n");
-  +
-  + Also note two other advantages of writing it like this:
-  +
-  +  - We saved two curly braces.
-  +  - We also added a proper space to 'danger danger' which was the original intended message.
-
-?
-
-> +
-> +When splitting function declarations or function calls, then please align
-> +the first argument in the second line with the first argument in the first
-> +line::
-> +
-> +  static int long_function_name(struct foobar *barfoo, unsigned int id,
-> +  				unsigned int offset)
-> +  {
-> +
-> +  	if (!id) {
-> +		ret = longer_function_name(barfoo, DEFAULT_BARFOO_ID,
-> +					   offset);
-
-BTW., in this particular case I think small violations of col80 rule are 
-even more readable, i.e.:
-
-> +		ret = longer_function_name(barfoo, DEFAULT_BARFOO_ID, offset);
-
-And note that in this example we used 78 colums so we didn't even violate 
-the col80 rule. ;-)
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
+index b74e074..be5f735 100644
+--- a/drivers/mtd/nand/spi/Makefile
++++ b/drivers/mtd/nand/spi/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+-spinand-objs := core.o macronix.o micron.o winbond.o
++spinand-objs := core.o macronix.o micron.o toshiba.o winbond.o
+ obj-$(CONFIG_MTD_SPI_NAND) += spinand.o
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 30f8364..87bdf2a 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -766,6 +766,7 @@ static const struct nand_ops spinand_ops = {
+ static const struct spinand_manufacturer *spinand_manufacturers[] = {
+ 	&macronix_spinand_manufacturer,
+ 	&micron_spinand_manufacturer,
++	&toshiba_spinand_manufacturer,
+ 	&winbond_spinand_manufacturer,
+ };
+ 
+diff --git a/drivers/mtd/nand/spi/toshiba.c b/drivers/mtd/nand/spi/toshiba.c
+new file mode 100644
+index 0000000..294bcf6
+--- /dev/null
++++ b/drivers/mtd/nand/spi/toshiba.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 exceet electronics GmbH
++ * Copyright (c) 2018 Kontron Electronics GmbH
++ *
++ * Author: Frieder Schrempf <frieder.schrempf@kontron.de>
++ */
++
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/mtd/spinand.h>
++
++#define SPINAND_MFR_TOSHIBA		0x98
++
++static SPINAND_OP_VARIANTS(read_cache_variants,
++		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_X2_OP(0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_OP(true, 0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_OP(false, 0, 1, NULL, 0));
++
++static SPINAND_OP_VARIANTS(write_cache_variants,
++		SPINAND_PROG_LOAD(true, 0, NULL, 0));
++
++static SPINAND_OP_VARIANTS(update_cache_variants,
++		SPINAND_PROG_LOAD(false, 0, NULL, 0));
++
++static int tc58cvg2s0h_ooblayout_ecc(struct mtd_info *mtd, int section,
++				     struct mtd_oob_region *region)
++{
++	if (section > 7)
++		return -ERANGE;
++
++	region->offset = 128 + 16 * section;
++	region->length = 16;
++
++
++	return 0;
++}
++
++static int tc58cvg2s0h_ooblayout_free(struct mtd_info *mtd, int section,
++				      struct mtd_oob_region *region)
++{
++	if (section > 7)
++		return -ERANGE;
++
++	region->offset = 2 + 16 * section;
++	region->length = 14;
++
++
++	return 0;
++}
++
++static const struct mtd_ooblayout_ops tc58cvg2s0h_ooblayout = {
++	.ecc = tc58cvg2s0h_ooblayout_ecc,
++	.free = tc58cvg2s0h_ooblayout_free,
++};
++
++static int tc58cvg2s0h_ecc_get_status(struct spinand_device *spinand,
++				      u8 status)
++{
++	struct nand_device *nand = spinand_to_nand(spinand);
++	u8 mbf = 0;
++	struct spi_mem_op op = SPINAND_GET_FEATURE_OP(0x30, &mbf);
++
++	switch (status & STATUS_ECC_MASK) {
++	case STATUS_ECC_NO_BITFLIPS:
++		return 0;
++
++	case STATUS_ECC_UNCOR_ERROR:
++		return -EBADMSG;
++
++	case STATUS_ECC_HAS_BITFLIPS:
++		/*
++		 * Let's try to retrieve the real maximum number of bitflips
++		 * in order to avoid forcing the wear-leveling layer to move
++		 * data around if it's not necessary.
++		 */
++		if (spi_mem_exec_op(spinand->spimem, &op))
++			return nand->eccreq.strength;
++
++		mbf >>= 4;
++
++		if (WARN_ON(mbf > nand->eccreq.strength || !mbf))
++			return nand->eccreq.strength;
++
++		return mbf;
++
++	default:
++		break;
++	}
++
++	return -EINVAL;
++}
++
++static const struct spinand_info toshiba_spinand_table[] = {
++	SPINAND_INFO("TC58CVG2S0H", 0xCD,
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&tc58cvg2s0h_ooblayout,
++				     tc58cvg2s0h_ecc_get_status)),
++};
++
++static int toshiba_spinand_detect(struct spinand_device *spinand)
++{
++	u8 *id = spinand->id.data;
++	int ret;
++
++	/*
++	 * Toshiba SPI NAND read ID needs a dummy byte,
++	 * so the first byte in id is garbage.
++	 */
++	if (id[1] != SPINAND_MFR_TOSHIBA)
++		return 0;
++
++	ret = spinand_match_and_init(spinand, toshiba_spinand_table,
++				     ARRAY_SIZE(toshiba_spinand_table),
++				     id[2]);
++	if (ret)
++		return ret;
++
++	return 1;
++}
++
++static const struct spinand_manufacturer_ops toshiba_spinand_manuf_ops = {
++	.detect = toshiba_spinand_detect,
++};
++
++const struct spinand_manufacturer toshiba_spinand_manufacturer = {
++	.id = SPINAND_MFR_TOSHIBA,
++	.name = "Toshiba",
++	.ops = &toshiba_spinand_manuf_ops,
++};
+diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+index 088ff96..816c4b0 100644
+--- a/include/linux/mtd/spinand.h
++++ b/include/linux/mtd/spinand.h
+@@ -196,6 +196,7 @@ struct spinand_manufacturer {
+ /* SPI NAND manufacturers */
+ extern const struct spinand_manufacturer macronix_spinand_manufacturer;
+ extern const struct spinand_manufacturer micron_spinand_manufacturer;
++extern const struct spinand_manufacturer toshiba_spinand_manufacturer;
+ extern const struct spinand_manufacturer winbond_spinand_manufacturer;
+ 
+ /**
+-- 
+2.7.4
