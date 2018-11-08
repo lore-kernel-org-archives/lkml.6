@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C71ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2D1ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15AE32147A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC910208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="umPs76Sr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15AE32147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH006TlA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC910208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732740AbeKIHqY (ORCPT
+        id S1732750AbeKIHq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:46:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40288 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:46:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727215AbeKIHqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:23 -0500
+        id S1727215AbeKIHq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:46:29 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4B9421019;
-        Thu,  8 Nov 2018 22:08:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6874A2089F;
+        Thu,  8 Nov 2018 22:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714931;
-        bh=3qwv29NItZ3lz2czIRMFa6hY/EAGo5pI48+WStj8xT8=;
+        s=default; t=1541714937;
+        bh=s2mI98JnojUSX8zM88FJmvYDej55M9g2dtjNbYC/i7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=umPs76SrjxqU0qPfKvTdXdcQnsBj6I0KnQLiSbRG7SAocmlQoh7G5o6hnU9cTDk3C
-         hTmjUdZ5qDYuaHGYdRtq1Pl0f+s+IhJA32yf7sKqUeMwxWfjN6dAmrCh9Efr6y1eVB
-         I5FGY8WKuELtYuMvUdO1sV49RQzXGCmx/5gZ0bkQ=
+        b=pH006TlAx7JPqsfskgcupe2LmPl89TxeBT0qo9kgBf8ShVR5WctCYPVsVHQCRaQEI
+         PVBkYTEra5XRVojzX3gZcAbCg9GL1x1OcMcv8HwlHhKgk2d1lnukzSwTrNQkaSq+7g
+         5IP/044kHvOjhkDjRsn3I7KocHRwzu5VNT2rCrI8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        eric.dumazet@gmail.com, bp@alien8.de
-Subject: [PATCH 4.14 26/31] x86/tsc: Force inlining of cyc2ns bits
-Date:   Thu,  8 Nov 2018 13:52:50 -0800
-Message-Id: <20181108215131.821321834@linuxfoundation.org>
+        stable@vger.kernel.org, Zhimin Gu <kookoo.gu@intel.com>,
+        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 27/31] x86, hibernate: Fix nosave_regions setup for hibernation
+Date:   Thu,  8 Nov 2018 13:52:51 -0800
+Message-Id: <20181108215131.904582752@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -63,57 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Zhimin Gu <kookoo.gu@intel.com>
 
-commit 4907c68abd3f60f650f98d5a69d4ec77c0bde44f upstream.
+commit cc55f7537db6af371e9c1c6a71161ee40f918824 upstream.
 
-Looking at the asm for native_sched_clock() I noticed we don't inline
-enough. Mostly caused by sharing code with cyc2ns_read_begin(), which
-we didn't used to do. So mark all that __force_inline to make it DTRT.
+On 32bit systems, nosave_regions(non RAM areas) located between
+max_low_pfn and max_pfn are not excluded from hibernation snapshot
+currently, which may result in a machine check exception when
+trying to access these unsafe regions during hibernation:
 
-Fixes: 59eaef78bfea ("x86/tsc: Remodel cyc2ns to use seqcount_latch()")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Cc: eric.dumazet@gmail.com
-Cc: bp@alien8.de
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181011104019.695196158@infradead.org
+[  612.800453] Disabling lock debugging due to kernel taint
+[  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
+[  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
+[  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
+[  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
+[  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+[  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
+[  612.853380] Kernel panic - not syncing: Fatal machine check
+[  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
+
+This is because on 32bit systems, pages above max_low_pfn are regarded
+as high memeory, and accessing unsafe pages might cause expected MCE.
+On the problematic 32bit system, there are reserved memory above low
+memory, which triggered the MCE:
+
+e820 memory mapping:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000d160cfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d160d000-0x00000000d1613fff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x00000000d1614000-0x00000000d1a44fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d1a45000-0x00000000d1ecffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000d1ed0000-0x00000000d7eeafff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d7eeb000-0x00000000d7ffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000d8000000-0x00000000d875ffff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d8760000-0x00000000d87fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000d8800000-0x00000000d8fadfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d8fae000-0x00000000d8ffffff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x00000000d9000000-0x00000000da71bfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000da71c000-0x00000000da7fffff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x00000000da800000-0x00000000dbb8bfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000dbb8c000-0x00000000dbffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000041edfffff] usable
+
+Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
+This fix does not impact 64bit system because on 64bit max_low_pfn
+is the same as max_pfn.
+
+Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/tsc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/setup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -60,7 +60,7 @@ struct cyc2ns {
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1287,7 +1287,7 @@ void __init setup_arch(char **cmdline_p)
+ 	kvm_guest_init();
  
- static DEFINE_PER_CPU_ALIGNED(struct cyc2ns, cyc2ns);
+ 	e820__reserve_resources();
+-	e820__register_nosave_regions(max_low_pfn);
++	e820__register_nosave_regions(max_pfn);
  
--void cyc2ns_read_begin(struct cyc2ns_data *data)
-+void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
- {
- 	int seq, idx;
+ 	x86_init.resources.reserve_resources();
  
-@@ -77,7 +77,7 @@ void cyc2ns_read_begin(struct cyc2ns_dat
- 	} while (unlikely(seq != this_cpu_read(cyc2ns.seq.sequence)));
- }
- 
--void cyc2ns_read_end(void)
-+void __always_inline cyc2ns_read_end(void)
- {
- 	preempt_enable_notrace();
- }
-@@ -123,7 +123,7 @@ static void cyc2ns_init(int cpu)
- 	seqcount_init(&c2n->seq);
- }
- 
--static inline unsigned long long cycles_2_ns(unsigned long long cyc)
-+static __always_inline unsigned long long cycles_2_ns(unsigned long long cyc)
- {
- 	struct cyc2ns_data data;
- 	unsigned long long ns;
 
 
