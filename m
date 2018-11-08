@@ -2,98 +2,115 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF238C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20030C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8379E20818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0FCB20818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qt28jviC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8379E20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiIkmS3q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0FCB20818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730469AbeKIIBu (ORCPT
+        id S1730502AbeKIICE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:01:50 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37302 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeKIIBu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 03:01:50 -0500
-Received: by mail-ed1-f65.google.com with SMTP id y10-v6so229956edr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 14:24:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=CPFX4uVCKXMP3814gZIQemoLaJE5n/O3zYhVzKP9RT4=;
-        b=Qt28jviCXJO2bQJXP6NQbOo7Ug/1KtCCllivWhfLqi+Jt26bABDOZmncUq0Q1t9lnk
-         USBaTXOnFvrnqjfqFKwik2S2X0OejYB9xClmLjXW4rpoMMah0+jqUuZfccyxC/jJU2oU
-         o8Iy7dUkQDiAg8jneqFGPVLP6GvNt4On3gMaVcQ3LmwAMoGwkLR1cEfbM7wWmODkvV2T
-         sNr8P9Lu8H2N5LIeSrU0LDrGSn2n4tLfle8wbGHLhIOKlY6n9xgTHZTay9d6x2NRoVpX
-         BVcinlxKbLfD8sFJFIQ8GltfRwJVuciun9CM3P/NJszbno3MZ04PI8sZozojk1Ua+WId
-         XpwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=CPFX4uVCKXMP3814gZIQemoLaJE5n/O3zYhVzKP9RT4=;
-        b=ixUqS2c4ymt+OMEhKQOYzMgXYuzP3DSCra0VXK09mL39dtq17XvAgcScdnmzZy5KXS
-         r3wEHrydl2hqNoGkxV7xabgCgOdViO7dFWGvE+J23pou7ngajRPrsnNOe/RMYG1RfS9o
-         o2vvpobKwZxtadFk0FQioggCKkyf77W+TnMloReF1CJ/AvuUI2YnYLXmtSSOUUr50IAK
-         ZFxm6E/UGXhP/6gVGRcGVq4EXZw+ps8ULeFvwD8gd8ACBr2XpQYKJGfS4HWCFk8jl2o8
-         GVsKb9m8MS5ZNXzIV3Ax0wZaPNrnKGYJ/a8b1/1eDPk2b8dRZuMH7waQgVVXEehBdXXO
-         w72Q==
-X-Gm-Message-State: AGRZ1gKIDkd+h2o4pagCwLn4lH0CU4WforFmNU8HB0xRlq+36yMgqwnC
-        J6iqjhb9rQzfxDCTYHVhLQ3bbe5cSRFleLpjllzT5+WC
-X-Google-Smtp-Source: AJdET5c0JEAXr0Nw/eaB909loOyU+y2JQtrnLWX2d4NpMktN3sHTlR4pgDG/dXfjrCPsyLdzeU+HYQu2ggxs7iDAp/4=
-X-Received: by 2002:a50:a1c7:: with SMTP id 65-v6mr27613edk.190.1541715852312;
- Thu, 08 Nov 2018 14:24:12 -0800 (PST)
-MIME-Version: 1.0
-From:   Rian Quinn <rianquinn@gmail.com>
-Date:   Thu, 8 Nov 2018 15:23:59 -0700
-Message-ID: <CANmpu8XY10CgYsnGn9hVDzGJQyWdwNihpYu3So62KtNwrkwGXw@mail.gmail.com>
-Subject: x86_64 INIT/SIPI Bug
+        Fri, 9 Nov 2018 03:02:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730387AbeKIHmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:42:36 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DDEA2086C;
+        Thu,  8 Nov 2018 22:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541714706;
+        bh=t031WiWdkzihlwvrToUYUpmpj9dD01vZZ0IrVGJPd3Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qiIkmS3qiWi4B4KwDDvpSUiksJ11YTaKy3Uw3H+lai2UhcYz9YzfX5To5oq95ZDza
+         mW1mHwNPMe4/7p2j2FfJdnliRlb5MjNtJolTEhkCxJoSEUDKq8+VwWuYWRTuBmQuI6
+         l/DYfCG6FRDo5/uO+9p+3+g9shAPDIsdtVFcHQNg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>,
+        kernel-team@fb.com, Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 051/171] net/mlx5: Fix command completion after timeout access invalid structure
+Date:   Thu,  8 Nov 2018 13:50:21 -0800
+Message-Id: <20181108215131.205451114@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
+References: <20181108215127.257643509@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I apologize upfront if this is the wrong place to post this, pretty new to this.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-We are working on the Bareflank Hypervisor (www.bareflank.org), and we
-are passing through the INIT/SIPI process (similar to how a VMX
-rootkit from EFI might boot the OS) and we noticed that on Arch Linux,
-the INIT/SIPI process stalls, something we are not seeing on Ubuntu.
+------------------
 
-Turns out, to fix the issue, we had to turn on cpu_init_udelay=10000.
-The problem is, once a hypervisor is turned on, even one that is doing
-nothing but passing through the instructions, the "quick" that is
-detailed below fails as the kernel is not giving the CPU enough time
-to perform a VMExit/VMEntry (even through the VMExit is not doing
-anything).
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/smpboot.c?h=v4.20-rc1#n650
+[ Upstream commit 061870800efb4e3d1ad4082a2569363629bdfcfc ]
 
-You can see our INIT/SIPI code here if you are interested:
-https://github.com/rianquinn/extended_apis/blob/hyperkernel_1/bfvmm/src/hve/arch/intel_x64/vmexit/init_signal.cpp
+Completion on timeout should not free the driver command entry structure
+as it will need to access it again once real completion event from FW
+will occur.
 
-The reason I suggest this is a bug is the manual clearly states that a
-wait is required and the "quirk" that turns off this delay prevents
-code like this from working. Would it be possible to either:
-- Turn this off by default, but still allow someone to turn it on if
-they are confident the delay is not needed?
-- Provide a generic way to turn this off (maybe if a hypervisor is
-detected, it defaults to off)?
+Fixes: 73dd3a4839c1 ('net/mlx5: Avoid using pending command interface slots')
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Cc: kernel-team@fb.com
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I'd be more than happy to provide a patch and test, but I'm not sure
-if there is any interest in changing this code.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+index 9680c8805178..1d5263c46eee 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -965,7 +965,7 @@ static int mlx5_cmd_invoke(struct mlx5_core_dev *dev, struct mlx5_cmd_msg *in,
+ 
+ 	err = wait_func(dev, ent);
+ 	if (err == -ETIMEDOUT)
+-		goto out_free;
++		goto out;
+ 
+ 	ds = ent->ts2 - ent->ts1;
+ 	op = MLX5_GET(mbox_in, in->first.data, opcode);
+@@ -1428,6 +1428,7 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool forced)
+ 					mlx5_core_err(dev, "Command completion arrived after timeout (entry idx = %d).\n",
+ 						      ent->idx);
+ 					free_ent(cmd, ent->idx);
++					free_cmd(ent);
+ 				}
+ 				continue;
+ 			}
+@@ -1486,7 +1487,8 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool forced)
+ 				free_msg(dev, ent->in);
+ 
+ 				err = err ? err : ent->status;
+-				free_cmd(ent);
++				if (!forced)
++					free_cmd(ent);
+ 				callback(err, context);
+ 			} else {
+ 				complete(&ent->done);
+-- 
+2.17.1
 
-Thanks,
-- Rian Quinn
+
+
