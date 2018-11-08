@@ -3,97 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1401AECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817CDECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD15A2081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367582081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuK2nKQk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD15A2081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2VfHeAqf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367582081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbeKIECF (ORCPT
+        id S1727262AbeKIECW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:02:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54096 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 23:02:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeKIECE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:02:04 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726801AbeKIECW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:02:22 -0500
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EEC42081C;
-        Thu,  8 Nov 2018 18:25:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4F2C2089F
+        for <linux-kernel@vger.kernel.org>; Thu,  8 Nov 2018 18:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541701519;
-        bh=zBej8b1EIgM6Z5fGvQ5vBuWgaZp/uFKbFPA+IwXp0EQ=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=uuK2nKQkuO+3WB3DQwDmYIxggGWiYE8qye63l7Q7qJicq8MHTlKqyKBxJaUUqNSuZ
-         wEOqTilO7p/1dlzfT6TLLCN7Zvnr5pqPb5G5iyII5PMjy4mrsFSwfvO7HxJSmDQRHE
-         E0xKdHArk0/d1A/5ZCErpZ4RGZ+W0KrX4gIPrSSA=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1541701537;
+        bh=1btlQgstCpJizvq6kZHc76gmMfvapjxjFfB1YtKv9hc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2VfHeAqf4tFX+DYTLht0rE/yFHZSWTdDscN+eUuluGJQZWsVxLJImPu31/5CDLlJY
+         Z5a7BKHEQl2U5UNa153jX14kxXDWNkGTdyhFgIe0dVr6pSKMy+uc/tL8w+6p4CP/qy
+         NwBBwunfmBpETFlGkFeC5XcOajMQMEbEMzw4A7tk=
+Received: by mail-wr1-f51.google.com with SMTP id k15-v6so19331151wre.12
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 10:25:36 -0800 (PST)
+X-Gm-Message-State: AGRZ1gL7TKzZTQu1FBdELQDZ5SQKOGsDha2t0WyAqQkwxFB+nNg//USz
+        eMN3ydud9wo1tHgaSbMiNSCjDOU07ejyz4uLaUsPyg==
+X-Google-Smtp-Source: AJdET5do1Uf3kJUumJuaQnyEV+8v4EhWSLxxilj2b5xH5OQNhEhauVGSjkMI2hceJ2XuhXXw18Y0214DtJB8UGiScP0=
+X-Received: by 2002:adf:82c9:: with SMTP id 67-v6mr4882257wrc.131.1541701535293;
+ Thu, 08 Nov 2018 10:25:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
- <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
- <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
- <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
- <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
- <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
-Message-ID: <154170151864.88331.3913955115537863015@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Thu, 08 Nov 2018 10:25:18 -0800
+References: <20181107194858.9380-1-bigeasy@linutronix.de> <20181107194858.9380-23-bigeasy@linutronix.de>
+In-Reply-To: <20181107194858.9380-23-bigeasy@linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 8 Nov 2018 10:25:24 -0800
+X-Gmail-Original-Message-ID: <CALCETrXYTSsxYUmxb6FmvQrSaMPJ77jqgnfzG_7yRGxLUw3_QQ@mail.gmail.com>
+Message-ID: <CALCETrXYTSsxYUmxb6FmvQrSaMPJ77jqgnfzG_7yRGxLUw3_QQ@mail.gmail.com>
+Subject: Re: [PATCH 22/23] x86/fpu: Don't restore the FPU state directly from
+ userland in __fpu__restore_sig()
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-11-07 22:43:43)
-> Thanks Stephen.
-> =
+On Wed, Nov 7, 2018 at 11:49 AM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> __fpu__restore_sig() restores the CPU's FPU state directly from
+> userland. If we restore registers on return to userland then we can't
+> load them directly from userland because a context switch/BH could
+> destroy them.
+>
+> Restore the FPU registers after they have been copied from userland.
+> __fpregs_changes_begin() ensures that they are not modified while beeing
+> worked on. TIF_NEED_FPU_LOAD is clreared we want to keep our state, not
+> the saved state.
 
-> On 11/6/2018 10:46 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-11-02 20:16:20)
-> >> On 11/2/2018 10:08 PM, Stephen Boyd wrote:
-> >>> Quoting Taniya Das (2018-10-28 00:35:40)
-> >>>
-> >>
-> >> How about moving the QSPI clocks too under this qcom property? Later
-> >> could add the support?
-> > =
-
-> > Yes the plan would be to have QSPI clks there too. Bjorn has sent the
-> > patch now.
-> > =
-
-> >   https://lkml.kernel.org/r/20181106055013.11271-1-bjorn.andersson@lina=
-ro.org
-> > =
-
-> Would you be merging the code soon and then I should submit the cleaned =
-
-> up LPASS next series?
-> =
-
-
-Yes, if you want to resubmit on top of that series it would make it
-easier for me to apply these patches. I'm currently waiting for any DT
-review from Rob Herring, and having the patches ready and staged can be
-done regardless of that.
-
+I'm conceptually okay with this change, but what happens if the
+registers that are copied into the kernel are garbage?  We used to
+fail the restore and presumably kill the task.  What happens now?
