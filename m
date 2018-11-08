@@ -2,108 +2,130 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EE8ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B724EECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 112EB2077B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8B4206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:47:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="hQIyFQAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 112EB2077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maine.edu
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="LkBD1Mmr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8B4206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeKICXH (ORCPT
+        id S1727037AbeKICYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:23:07 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42245 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeKICXG (ORCPT
+        Thu, 8 Nov 2018 21:24:13 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43620 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbeKICYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:23:06 -0500
-Received: by mail-qk1-f196.google.com with SMTP id m5so3897671qka.9
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:46:47 -0800 (PST)
+        Thu, 8 Nov 2018 21:24:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y3-v6so21681819wrh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:47:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=6zTe9U4eVMVGlN13E3lWnRN7lUZ4APDipeHnvMeFxRo=;
-        b=hQIyFQAdubwQXoXNLkX5N7iB/b3rGjkNzbFNHFHymv7+rICW53UzuNAcM8dYbtls9L
-         z6W9okpDb3Vq2plb0JyjTOPu3EBeJejQ9I0MIsf/KnRhlMQnMCeOvCaSpnx6GP/UQCK4
-         0jUAqtv8PfPy27oI/bbFhSnnEIWbzL6p7uSCU=
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wi3RtwoU7gFjKqwR0o2e4Ytwq9fzaxAaDuVQ7ukHVnA=;
+        b=LkBD1MmrAnQ18ZGE33LMrYtO9FAKIcBFgeFfsKePaGfnlFWOkP12lsoOraoRrwCH+8
+         tAt/zibmuRv+MYGrTZPKMRDIDx3g9tsqNMFXyAGcIlSLzynNbRicdybcfruMaeTMTagh
+         9vDLlEpZkoN0MmlodsQ4pPmtulZ3FuiMCGuPNDDDgAIhVgbWb6D7H2di64WcucNsSHTR
+         LU2iEwzdwdlVb0Ox8L4J7mMUinX7aZ4QJP1Lxt9qTCghd4k5EG3EOR2R0likn/cgiPbo
+         j9heTuDFAm9sQL77zPt8QJ60Ed4cAL9WqdL5irtqy/cSuWIvNQtkN63QEYAKiivQklHY
+         aaIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=6zTe9U4eVMVGlN13E3lWnRN7lUZ4APDipeHnvMeFxRo=;
-        b=M5gRLcadg6hiDYt6V+GmLIGVUfL6R7gKVFwADAjGoeTnHWunU/8XWY2kt1K9Y+6rmg
-         9A08MGia0l/CZC+WyGJlnF1l9UFXRq11uMADSOquHClXrtryprjIyESK0W3E/iN53XPA
-         r11SEOYCmLVwiuUmtBoTQklwVzVH4/hPYMsoJhytpykPPpM3E9wIW1wTH7CXRgXnwl9s
-         Grn7FjKEyyJi+uYodv/y7QA/iVvpMPDfmR5ZUytljFlTt/G9sHi6CJ5wP8eYH8gwmoWW
-         TIoGwonjVybnViyE8tvcbeEXA9IumuWTVAeE3mDt/EnE3sFGjj7xG/Fsjgu8+tfYCA6F
-         Gv8g==
-X-Gm-Message-State: AGRZ1gI4WtR86YQVSOq9BPIolNLQ6+VdWhewqLe4SszqqDn2+gIddFgD
-        UQ/gJNZeRScUjqTLvLNjFpcywA==
-X-Google-Smtp-Source: AJdET5eWBpL0o4Pl3mSlvlz8gYcmH64NbqS3CKQ6kv4YTPwIFzKKKaGKstk5MXCO7Nt9Y+/rkHf3Ag==
-X-Received: by 2002:ac8:2fdc:: with SMTP id m28mr5341848qta.202.1541695606558;
-        Thu, 08 Nov 2018 08:46:46 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id 33sm3977679qto.14.2018.11.08.08.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 08:46:45 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Thu, 8 Nov 2018 11:46:41 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-cc:     Vince Weaver <vincent.weaver@maine.edu>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        torvalds@linux-foundation.org
-Subject: Re: perf: perf_fuzzer triggers NULL pointer dereference
-In-Reply-To: <87a7mj5yx4.fsf@ashishki-desk.ger.corp.intel.com>
-Message-ID: <alpine.DEB.2.21.1811081145220.8092@macbook-air>
-References: <alpine.DEB.2.21.1811081041070.7406@macbook-air> <alpine.DEB.2.21.1811081100490.7406@macbook-air> <87a7mj5yx4.fsf@ashishki-desk.ger.corp.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wi3RtwoU7gFjKqwR0o2e4Ytwq9fzaxAaDuVQ7ukHVnA=;
+        b=PgpwGKi+OXcIdBlj/Bk1h9mXi1JQnbib4tRxw9eF0bBHSaCTCswbX4CD5rLvhixFp8
+         vzpjLh7KoF/XFiRUveKlb5uMQJL+2W+Y7ROmY/gZ1N+7EoAq9vR6+0s8KcCdwx81x1GQ
+         9/JDhSD2okrSjwP1j7EPjKd8eBE3+AZDmnVZLj9+JxODMRb1Fw8pFgEr0ufxJORNyVnd
+         5gQpjLdbn060bSc0587uWPhnFkAMTTYSae4x1HhnvFrDVbZ/LZr6ILQJH+ONAtYzUPKL
+         AQFeDYo0aD7z6y/tfvHFVNi2+bGT83v7eHQqNNseir0CGSvdOwv4kwwsc+FHi7J5BT/7
+         qUUA==
+X-Gm-Message-State: AGRZ1gLCJCqbxf8ElojwrxQ1rG+8t0gBc0Zy3ljATiG55AT9xX3qniR3
+        Zsl0N2YvNXtwfbzOT+/tQPjBKvNV/LY=
+X-Google-Smtp-Source: AJdET5cT0aS20yaRcn68Fu4pRE7/SRhCWL1nI4bJYbfVpf4Qccfd4XY0C3kMscgWaBgRp7pIrRrbng==
+X-Received: by 2002:a5d:4406:: with SMTP id z6-v6mr4918103wrq.294.1541695671774;
+        Thu, 08 Nov 2018 08:47:51 -0800 (PST)
+Received: from debian-brgl.lan ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm2810606wrb.3.2018.11.08.08.47.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 08:47:51 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] irq/irq_sim: add locking
+Date:   Thu,  8 Nov 2018 17:47:48 +0100
+Message-Id: <20181108164748.31222-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018, Alexander Shishkin wrote:
+Two threads can try to fire the irq_sim with different offsets and will
+end up fighting for the irq_work asignment. To fix it: add a mutex and
+lock it before firing.
 
-> Vince Weaver <vincent.weaver@maine.edu> writes:
-> 
-> > On Thu, 8 Nov 2018, Vince Weaver wrote:
-> >
-> >> [91760.326510] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> >> [91760.334876] PGD 0 P4D 0 
-> >> [91760.337596] Oops: 0000 [#1] SMP PTI
-> >> [91760.341332] CPU: 6 PID: 0 Comm: swapper/6 Tainted: G        W         4.20.0-rc1+ #119
-> >> [91760.349816] Hardware name: LENOVO 10AM000AUS/SHARKBAY, BIOS FBKT72AUS 01/26/2014
-> >> [91760.357723] RIP: 0010:perf_prepare_sample+0x82/0x4a0
-> >
-> > so what's the best way to do the equivelent of addr2line on something like 
-> > this, now that we aren't allowed to know the RIP anymore?
-> 
-> scripts/decode_stacktrace.sh works most of the time.
-> 
-> Sounds like BTS needs fixing up again. Thanks for looking at it though!
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ include/linux/irq_sim.h | 1 +
+ kernel/irq/irq_sim.c    | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-In case it matters, it looks like the address of the oops comes down to
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+index 630a57e55db6..676bfa0c12b9 100644
+--- a/include/linux/irq_sim.h
++++ b/include/linux/irq_sim.h
+@@ -29,6 +29,7 @@ struct irq_sim {
+ 	int			irq_base;
+ 	unsigned int		irq_count;
+ 	struct irq_sim_irq_ctx	*irqs;
++	struct mutex		lock;
+ };
+ 
+ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index dd20d0d528d4..2f06c24b51a0 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -74,6 +74,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ 	}
+ 
+ 	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
++	mutex_init(&sim->lock);
+ 	sim->irq_count = num_irqs;
+ 
+ 	return sim->irq_base;
+@@ -142,10 +143,14 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+  */
+ void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+ {
++	mutex_lock(&sim->lock);
++
+ 	if (sim->irqs[offset].enabled) {
+ 		sim->work_ctx.irq = irq_sim_irqnum(sim, offset);
+ 		irq_work_queue(&sim->work_ctx.work);
+ 	}
++
++	mutex_unlock(&sim->lock);
+ }
+ EXPORT_SYMBOL_GPL(irq_sim_fire);
+ 
+-- 
+2.19.1
 
-	linux.git/kernel/events/core.c:6393
-
-	size += data->callchain->nr;
-
-Vince
