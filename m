@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D394C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E300C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3124D20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8DAB2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:50:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="POs29XcK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3124D20892
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qc2tR4Mk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DAB2086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeKHWZg (ORCPT
+        id S1727229AbeKHWZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:25:36 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34858 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbeKHWZf (ORCPT
+        Thu, 8 Nov 2018 17:25:39 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40516 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeKHWZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:25:35 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t15-v6so1099777wmt.0
+        Thu, 8 Nov 2018 17:25:36 -0500
+Received: by mail-wr1-f68.google.com with SMTP id i17-v6so21125951wre.7
         for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 04:50:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nkZaCRo2zaKnU4q4rgttYNexn9XZNPQYchlDiiglfeA=;
-        b=POs29XcKSJ+Osg56eob86xqMnKkpzaPJhCixt8Ooj3mtV7gEsriApCb71VBKUO48c1
-         AZgQ/gjS7/GvPVxX2Yyu8+RTp4/YnUKGci29D/3wP1IrIBb800MG0mrLGom1BkDFfS9s
-         tGaZQ+TpRqdvXpZLoxbXKLqct8GM93AQ5hw36nI4fEMly2s8K6fnciAqPFOiDVMgtgAZ
-         s5GgYPrbDIQ2OF6FNtF97d5IoeR1fUKjMOgBFKqeyNba7Lmy9FtHSa3GSPGFd1m+pVSm
-         Mu6iTyKfuCZM2SR9v5gDkplLqEX9W/qQSP1WWmzIStUKYzTHfD0/VPmgZ3aNCofQGLNx
-         hJmw==
+        bh=nxpMMCYWSFWXNIFPId8SwguThCMN22bu5Vmyb8nJFx0=;
+        b=qc2tR4Mkzz5cpf1fkpnINLnC/RHZvZKtcD4wUq+oS907JBd6rfs+pvBHATB8gjAq3S
+         VDWBczMgtD3R4kyqW7L75cBa2rWZGC73zKvc4zIZyU6qbMswyelUi5JDau2xqrKRIhIa
+         HxnROoEZQjsq7bzAQ53iUPtK9xxMpagZnc4Pl4MMAyZ3NPaDPz2Gh8hG1ftK1/NBxgaf
+         ZpzNbpZoBY/setMtK96C628GJ3JbaU0XIUKMG1eF4/igXfqYCnlyHqazPvtPt9vmmbUM
+         DpFuZt2Azp6JGJsX8HRszccRWv3VTi8NLIfBEPelfqyBWpMOa/y4AeXwkyJwUqJIAr8O
+         4TDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nkZaCRo2zaKnU4q4rgttYNexn9XZNPQYchlDiiglfeA=;
-        b=sgRlHNZG7ifdHRwk3xVvsQGAbz4NLrYfa1ofoAULzNQ/OXgy6DWjjSj3CZ2L+2uF/s
-         nU16FU7qiK6j9wmLpDYJP8vSa6cYqg67lbOhHESOhoaAigCjvlJGZxqRnKTa+jezfaMz
-         ey9Vr2zz5h21JOlFzwlsBTYtOtatK4TiJvLK0nAeazKFQk6VMJSLaKQrV6HaSu7bdPBd
-         Zu7FsORqlOF3aJkAnGdSqX6ApS0QvQ/dfeBmKTsjwwrHgHuFDf/wHhJOnka1jYq8yRZL
-         ADTpBObv97oxJcBCo7kaUTmxzaK687gifTRFET6WX7TIk5BEV0AcUUSmJWT5yt3cT0SK
-         t/2A==
-X-Gm-Message-State: AGRZ1gKzyVBbSvoDezqeihbR8tlA2IqBF+fcQRGClB8TjKYhtkxPSh4U
-        uw2Wc1ujzV8105ItDuEMKhB55g==
-X-Google-Smtp-Source: AJdET5fZaWG3YR/6zKy2dBTCaPdGFqk+oQfKw8B8lyIzM3KBshKw9OhMSgzfUUH+0g2Xx7MYq11U1Q==
-X-Received: by 2002:a1c:a90:: with SMTP id 138-v6mr1059495wmk.89.1541681413179;
+        bh=nxpMMCYWSFWXNIFPId8SwguThCMN22bu5Vmyb8nJFx0=;
+        b=lhmiU9z+Df9YjFp8ZfR27WhAK3MvvbSJWsbfvEeyc/m2FpWPPK5PoHu4Sbb/8lrLI8
+         KXR2zDn500wUCDI38QHi2UVBwuk6kSAgU+dFDi+sRWMDk8XyMOByuiTRwCp78pNhUL8z
+         a7VdRCZoBa8hI8AYrs3fx3dBs0EAyNDBIj3dfVTkla0iEFvGKOZLy9IUgpyB/fefQR3/
+         jhoEPKRWtN6b6C523odnKovFz9MIh8taZrsA3g6KxVdZfp5hRizJCFbCwcHudwL3sQou
+         SLhuM20/ngkK1HRUIgDX+6O7zGu/CSsCS9sNxEQZ4CHHO4lUCQosJ/wWW8tA/7wHXLxP
+         CABw==
+X-Gm-Message-State: AGRZ1gKauCHpyySlN7gQpVqkpD+HhizQ0vXcHCOL0NpRclD5V4WD7ZNr
+        yc4M9FYRJhKoF8H6ltV2zQIepA==
+X-Google-Smtp-Source: AJdET5dOEbmCVsA1ouLdk5OZXufcrQx15B4mkoDiJi89grafd9vC+BPuvyIgc0MMfVkBY9J84jebtw==
+X-Received: by 2002:adf:f542:: with SMTP id j2-v6mr3885305wrp.70.1541681413971;
         Thu, 08 Nov 2018 04:50:13 -0800 (PST)
 Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm2470014wru.88.2018.11.08.04.50.12
+        by smtp.gmail.com with ESMTPSA id e5-v6sm2470014wru.88.2018.11.08.04.50.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 04:50:12 -0800 (PST)
+        Thu, 08 Nov 2018 04:50:13 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     Yasunari.Takiguchi@sony.com
+To:     Yasunari.Takiguchi@sony.com, devicetree@vger.kernel.org
 Cc:     Neil Armstrong <narmstrong@baylibre.com>, mchehab@kernel.org,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] media: cxd2880-spi: Add optional vcc regulator
-Date:   Thu,  8 Nov 2018 13:50:09 +0100
-Message-Id: <1541681410-8187-2-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH 2/2] media: sony-cxd2880: add optional vcc regulator to bindings
+Date:   Thu,  8 Nov 2018 13:50:10 +0100
+Message-Id: <1541681410-8187-3-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541681410-8187-1-git-send-email-narmstrong@baylibre.com>
 References: <1541681410-8187-1-git-send-email-narmstrong@baylibre.com>
@@ -73,63 +73,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds an optional VCC regulator to the driver probe function to
-make sure power is enabled to the module before starting attaching to
-the device.
+This patchset adds an optional VCC regulator to the bindings of the Sony
+CXD2880 DVB-T2/T tuner + demodulator adapter.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/media/spi/cxd2880-spi.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/media/spi/sony-cxd2880.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
-index c437309..d5c433e 100644
---- a/drivers/media/spi/cxd2880-spi.c
-+++ b/drivers/media/spi/cxd2880-spi.c
-@@ -10,6 +10,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": %s: " fmt, __func__
+diff --git a/Documentation/devicetree/bindings/media/spi/sony-cxd2880.txt b/Documentation/devicetree/bindings/media/spi/sony-cxd2880.txt
+index fc5aa26..98a72c0 100644
+--- a/Documentation/devicetree/bindings/media/spi/sony-cxd2880.txt
++++ b/Documentation/devicetree/bindings/media/spi/sony-cxd2880.txt
+@@ -5,6 +5,10 @@ Required properties:
+ - reg: SPI chip select number for the device.
+ - spi-max-frequency: Maximum bus speed, should be set to <55000000> (55MHz).
  
- #include <linux/spi/spi.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/ktime.h>
- 
- #include <media/dvb_demux.h>
-@@ -51,6 +52,7 @@ struct cxd2880_dvb_spi {
- 	struct mutex spi_mutex; /* For SPI access exclusive control */
- 	int feed_count;
- 	int all_pid_feed_count;
-+	struct regulator *vcc_supply;
- 	u8 *ts_buf;
- 	struct cxd2880_pid_filter_config filter_config;
- };
-@@ -518,6 +520,17 @@ cxd2880_spi_probe(struct spi_device *spi)
- 	if (!dvb_spi)
- 		return -ENOMEM;
- 
-+	dvb_spi->vcc_supply = devm_regulator_get_optional(&spi->dev, "vcc");
-+	if (IS_ERR(dvb_spi->vcc_supply)) {
-+		if (PTR_ERR(dvb_spi->vcc_supply) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		dvb_spi->vcc_supply = NULL;
-+	} else {
-+		ret = regulator_enable(dvb_spi->vcc_supply);
-+		if (ret)
-+			return ret;
-+	}
++Optional properties:
++- vcc-supply: Optional phandle to the vcc regulator to power the adapter,
++  as described in the file ../regulator/regulator.txt
 +
- 	dvb_spi->spi = spi;
- 	mutex_init(&dvb_spi->spi_mutex);
- 	dev_set_drvdata(&spi->dev, dvb_spi);
-@@ -631,6 +644,9 @@ cxd2880_spi_remove(struct spi_device *spi)
- 	dvb_frontend_detach(&dvb_spi->dvb_fe);
- 	dvb_unregister_adapter(&dvb_spi->adapter);
+ Example:
  
-+	if (dvb_spi->vcc_supply)
-+		regulator_disable(dvb_spi->vcc_supply);
-+
- 	kfree(dvb_spi);
- 	pr_info("cxd2880_spi remove ok.\n");
- 
+ cxd2880@0 {
 -- 
 2.7.4
 
