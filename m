@@ -2,172 +2,186 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1090C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030F2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB4520825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B242F20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:40:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="vcI6rDfy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB4520825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ML5e/bHN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B242F20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbeKHRMP (ORCPT
+        id S1726892AbeKHROa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:12:15 -0500
-Received: from mail-dm3nam03on0078.outbound.protection.outlook.com ([104.47.41.78]:1206
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726454AbeKHRMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:12:15 -0500
+        Thu, 8 Nov 2018 12:14:30 -0500
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:44709 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKHRO3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 12:14:29 -0500
+Received: by mail-wr1-f46.google.com with SMTP id j17-v6so14940943wrq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 23:40:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wXle2WtWSr+VEMzcNC1l04byo40UM7qs5KonFvoa0EQ=;
- b=vcI6rDfyLSArk4ZVqmQek+7dU49C1rPxlY5StRvC9AOPkJsVNY3Mbe4Fj7O6NqltmLutGYovVfYLD9LGKj2Un4mx0yIhWwMqolu6m4vfwiJ9tgJ7hojKgu5EDhfbHLlGnH59IIp7mfvQU3dP4o6pKP33xWgpNtdXRT9c2feMRTI=
-Received: from BN3PR03CA0102.namprd03.prod.outlook.com (2603:10b6:400:4::20)
- by BN3PR03MB2260.namprd03.prod.outlook.com (2a01:111:e400:7bba::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.25; Thu, 8 Nov
- 2018 07:38:00 +0000
-Received: from BL2FFO11FD023.protection.gbl (2a01:111:f400:7c09::125) by
- BN3PR03CA0102.outlook.office365.com (2603:10b6:400:4::20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1294.21 via Frontend Transport; Thu, 8 Nov 2018 07:38:00 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; googlegroups.com; dkim=none (message not signed)
- header.d=none;googlegroups.com; dmarc=bestguesspass action=none
- header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- BL2FFO11FD023.mail.protection.outlook.com (10.173.161.102) with Microsoft
- SMTP Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id
- 15.20.1294.14 via Frontend Transport; Thu, 8 Nov 2018 07:38:00 +0000
-Received: from NWD2HUBCAS9.ad.analog.com (nwd2hubcas9.ad.analog.com [10.64.69.109])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id wA87bxxV002915
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 7 Nov 2018 23:38:00 -0800
-Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
- NWD2HUBCAS9.ad.analog.com ([fe80::44a2:871b:49ab:ea47%12]) with mapi id
- 14.03.0210.002; Thu, 8 Nov 2018 02:37:59 -0500
-From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-To:     "lars@metafoo.de" <lars@metafoo.de>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "renatogeh@gmail.com" <renatogeh@gmail.com>,
-        "giuliano.belinassi@gmail.com" <giuliano.belinassi@gmail.com>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>
-Subject: Re: [PATCH 2/3] staging: iio: ad7780: check if ad778x before gain
- update
-Thread-Topic: [PATCH 2/3] staging: iio: ad7780: check if ad778x before gain
- update
-Thread-Index: AQHUdsq9/u7F7H8Y906jNLnnERvVvqVF0iuA
-Date:   Thu, 8 Nov 2018 07:37:59 +0000
-Message-ID: <a2395b548ab5dce9b001484bbf4de7994e5e2da2.camel@analog.com>
-References: <cover.1541615978.git.giuliano.belinassi@usp.br>
-         <2a521e5f036eb74b684f368a6227509cac93fe0d.1541615978.git.giuliano.belinassi@usp.br>
-In-Reply-To: <2a521e5f036eb74b684f368a6227509cac93fe0d.1541615978.git.giuliano.belinassi@usp.br>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.50.1.244]
-x-adiroutedonprem: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B5DA2E6BCB622F45A15C8BB1710EECE8@analog.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=E0zepbe2I6n9EZ/qXBTetrsRCKJL36jojbMpCxIqrlk=;
+        b=ML5e/bHNeiYFg+hfKIJXU5ZSOkPJfbI8xhZNFyTXsI+f97FJd4k0r6ltUH9ciksLDJ
+         viwx2Vsil30MwDa+tUiFBtLqo4iB6cCJIdTybQWGGqT/BLle/HYAUYhFtxNxsXuA60Ys
+         CSJ5WSYSpRMhGh3hMLFAXtJSJV8LF8VGmksDtHdEcGQLlkEup8rYElMwsQv7Edq/MYRv
+         W1CK4elUmV1MS0cp9UgLiMJb/suJbQfmko+xzGefY0XlLSWE2GiFBdEzLaF0Vng13f5v
+         9tWldQIjzP7Q60uVv2spFhTXeiHXV2YjtgVH8hjb+u0VnpQcypcQzGrFXi+DLLcr2Ssx
+         kpPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E0zepbe2I6n9EZ/qXBTetrsRCKJL36jojbMpCxIqrlk=;
+        b=LpDCQljT5Vtfl0b04IwEdeLeGsQONDJZ+Xq2ioKAsE87CnjRjocOGJOBm6qa0xoIXE
+         ZyrXkrf8II8V9FS4J4YDdoWOpWC9nZq5QfUTjxjgkuMpPgNe0c2eEWZgQ/J0wiBPUJai
+         ZzMJXSk959EIJgU/9bkyAZelVp0Emi7UfBuvJJ3ZVg/ob77LzznTRz7c6u81U6k0Tc4v
+         fmcUyR5qz2YF+5MDkhyw96IdHih3V1163OwohoWB5N8r0LaoDWSsb71uagmVnpUDgYjv
+         j3XOz/aZulNbqjzhpBXn+U/LzTLjCz0YjO6qczzHIn6jn59TlDKFTlENrIaS3Qm30PWY
+         7BUA==
+X-Gm-Message-State: AGRZ1gJQ59hi7X3IXGfPCCFu3IMvjhXAzDDrv5Ok8sHtXR13RTnyZIHI
+        nlYPZ9QKqQBWTWgO3hbTJK4=
+X-Google-Smtp-Source: AJdET5fLtxRKtXs5HFwhqAfkB5FudanxnTh2XByubRs5MhH3vICVbbNyrwK9MLXdjtYthN5w5cBHFQ==
+X-Received: by 2002:adf:b716:: with SMTP id l22-v6mr3243656wre.157.1541662815837;
+        Wed, 07 Nov 2018 23:40:15 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id e8-v6sm3449534wmf.22.2018.11.07.23.40.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 23:40:15 -0800 (PST)
+Date:   Thu, 8 Nov 2018 08:40:12 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
+Message-ID: <20181108074012.GD20032@gmail.com>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107171149.165693799@linutronix.de>
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(376002)(396003)(2980300002)(438002)(199004)(189003)(36756003)(436003)(102836004)(39060400002)(106002)(6246003)(2906002)(7416002)(47776003)(2201001)(478600001)(11346002)(4326008)(446003)(476003)(426003)(126002)(7696005)(2616005)(486006)(14454004)(336012)(86362001)(118296001)(356004)(7736002)(7636002)(50466002)(8936002)(246002)(305945005)(2501003)(26005)(186003)(6116002)(3846002)(5660300001)(23676004)(2486003)(76176011)(2900100001)(316002)(106466001)(8676002)(54906003)(110136005)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR03MB2260;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD023;1:8yC8uZwR4LDXjh4G4krXeUvrSJAKZ7VcrJmdyYLT7HByiS+0pu7ar7LEXIr4qXPM0SlDn7JtEP1TAXHe2KWzTtsZsSXQW1qNU0eBb2D96A3SvrMRt5nxFGMohSMQkQQJ
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 725a8ece-546e-460f-5b00-08d6454d1c07
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN3PR03MB2260;
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2260;3:JgI31DeumZZ2vkGU/3r0rXvbfAoFdIpYX9yjKmLCvtb9x7xGWQlL9sh3esfSd0ikaC/YNs9Bco52pbasawSIPgZMlHe/yJY2Dy45GjDzpEpF3fRSqai9zj3mBzDhnm7exuUKzza55/E7xCfgMx4DVkd5pD+1ldbhaBGDI3gf6yWzXHAMqpsuDEI/7ISd6cVsy1Qd+qXwc+IJtC3ZP9fDR78BVXxTq82YJVlqzMe4dLeBpajyjuU9vDR7YrQ53dYl074ZwDvNXFEGhmwHU80UVJRqbe4U9BZpGvCLZc0pWjW5H6IhLMAzlPGBvmvdHGmwTBTJdgiUtLXjd+HVSYeGq+ststHR9rzj0EuJctH8JvU=;25:0k/gHlVu2k66AI6JMsKJmHDTZ6KzIS+fztQIKyzju+2WHfgMGFjUcSynEcwbOYKOFZtOjIXPrkjXdKx/MtGwUmVdFVn6A6AzLz8X81Kek1HS82CUrqAYG44cnG62palUsQr5RFpSpJFTYmbmSMx7aUkfSCM7fI975Bg4B3AdMCbSGb123rykt3fuJgdUquz0GMg/WZ9oqXyNYntHpBBk/dkGoVom/Sri4HZrIqcgfudRKi8t+uYdXByJQ+KpfxdjuySuzAk+i90I1zaY4COQpR4EVZ2TB3NtvkqvATCytnGUQY8Pqd6x5j7ni93/U02TeDQeWkUcmUC7O543ZoLOEQ==
-X-MS-TrafficTypeDiagnostic: BN3PR03MB2260:
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2260;31:w7q0RGP8d1Imv52aukEGiYx0OUiXygtZVC+j9ScSmgmjxzrhOx3PVxhpW25kCvkkEwdFVJsnUwZobbjt+WWioVMr4+HlamOKB9bokUzHIY8GwqKXuUS4WtA5rKuyej7/utEU/DJdXq+y8Ybocenf9XDBSRbDILgYANh3pBARDLiP8diV0CzjCyxWffC9oqGYvC96Z/YkMrluXGyDf75/DPZc5GdUDLHbRdVTVjUkWL0=;20:RH8o+ab8d26jRMMCvvr1u+DCgBEJ819xGqGuoQTBOa6D7wxzcXP97bDcZsyAwmUaBh9U5YDBkZMuKIr8A/QIQaUCO/pTDW9w9uZ9qcCWpmS8Oru1bWh0ng4yZbvmLKJdI7iPy7JPZfJyEk2Tk86gOUsdZCUTcQaGMmuXKNUmc6aCSmL18B37bU07z/aqI1PovvyzRTDVl3kobuFTJA/i3ynBTmEkXmvxARAOwdJMAS22MCbn4UWNc5I9zCU3ndbMwRmg0H9axDogBoCpVUvpHfQYXfrlmaAGvkWkDODWm02/ZBFIYT+FK2Uas+3PWjojMXZgDF8XwXCqOOdnw/L59Bol4TM+8oBcFVF1JG8lHeha9VFemgC73ETBYRe8SFmNtUdcMVJrYkIPcmLpX2B/iXpmq78l6Oi3MSxk/v5Xxc1kJx7hsXSVY5R8WIwvbDGlb52T6MfSsEdGRkDEyQ6xpK5IySYQU70UoHOf9iJgcln+c/JFLv4tSdZQFGZ4EcCl
-X-Microsoft-Antispam-PRVS: <BN3PR03MB22604A3F5842CB9F2F75E6FFF9C50@BN3PR03MB2260.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93004095)(10201501046)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN3PR03MB2260;BCL:0;PCL:0;RULEID:;SRVR:BN3PR03MB2260;
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2260;4:L4kJvBGmhWficmz/fpeqsblFm9iAkY+XmOHUS3UXomJnZT4iZD1KnNiH69Lc8SGzGMwXz1ZNJyGPjR19nJjZ9PwGLbTLVeA9VZvKNHIZOMJ4Hf1d90AqgR+XmbQB5mITPfAxtJAC6TfpH+vxg3z3vVZ2TOkjBxeW1I4qAS3igRucSGphX8S7d8f9vXvyOZPVJTDToW0ZpUvb/JlyuWpNSEfLawdQjqIuKPjf9zIQITCX9x1jfVUh9JvAvXZSIx03FiCi/Drs2Un/tQlYwvU5iQ==
-X-Forefront-PRVS: 0850800A29
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjNQUjAzTUIyMjYwOzIzOmJpUFovdk9URHFQdm5pZHpYWWkweTJWV1g4?=
- =?utf-8?B?VmNxOFg2WnJMdlR0UnlnOXI0bTE2VkMrb0FRYUl1WEtPNk03YTRmRnNRSkFz?=
- =?utf-8?B?djE0WFM4dmlaTk90MXpOeXNvL1doazB3TmpGS3Z2VFpQV0RRb3c2bC9GeXpL?=
- =?utf-8?B?cTA4aUtxZkFvOENGVmIzSWdrdWlpZ28rM2VVbUx5ckVReHJTNHJ4Ull5NmVu?=
- =?utf-8?B?cXFZd0lMZWJhUVBHQUpWeThYenNTNDdnT3dLc0hRbEJtVUg1WjlFak5kbHRN?=
- =?utf-8?B?UmFpL2N2SE8ydkZKTCtKSGg1QXFMRy9DNUxxWmk1bFhYVnR3VGV2dlEwTndU?=
- =?utf-8?B?RSt1bmV6ZDFwbmZiQnRCM3lQeStJU05UVEpQVlVZaDhObEhCR1luYndWeWox?=
- =?utf-8?B?QXpXNEtjMUIrUlkwdzBQU1FpNnQwcEx0c3FlcEdxTTVMUWo1NVBDd0NwNy9J?=
- =?utf-8?B?RUc1SEExN3VpRTg0LzBpVGVmMFFVSnZCMG5GLzBwbUJnUEFBaGxJb2NnWlZw?=
- =?utf-8?B?UjB0U1ZabGZEKzZOWTc2eS9GSjRoMUxkeS9nSHhZdkJkTFpwSXp5SllkZ0lS?=
- =?utf-8?B?aWJ6MEs0V1FObTdjcG1WQmk4b2hzSHN0aUpmdExnNjR2VldzY1d0OWZ1alN2?=
- =?utf-8?B?Q2Fpd3drM3F6WnMxSnhKczRNbkxWdXZFYkh5dTU0SDJZRGV5empWVXlQdkR5?=
- =?utf-8?B?QkpRZUdMMEpTbWVFMjZ6WnBTK3R3UzFTdC85MFY5b1RjN0REZXlvZTNSUE50?=
- =?utf-8?B?NGY2cmNkTyt3NzJMbFFNOC92QnZlS3dxMGZOY1ZXd1pUbDBDMkNHeDhtREJV?=
- =?utf-8?B?MkZBUnZzQVBFazd6SDBYbzRaWTJuMHNIV2FzZVk3WFY1K0x6WGx1SE9SeWFv?=
- =?utf-8?B?Z1Z6cUN3dm5iWE1aV1lBOTZRQkEzQVExRit2UHdIbmE4YlZDWCtmRzZRTWJM?=
- =?utf-8?B?Y3c4ci91MmxtbU82OU5saUk0ZkxJQ2Q3M3Y1Ris2YmtORno5eGtqNFU0MDFZ?=
- =?utf-8?B?cTcwN0pIK29SbGN0SzgzYnFaVHZGeFdvM2FuazhUY0E5cUhmUFRPaGl3S2FH?=
- =?utf-8?B?dm5aaFNwWkpVaEV0ZktNV2E1OGIzSysxWWcyR0tDU0V2NUZJZFRqVGptOW1s?=
- =?utf-8?B?T2c3Y1ZUZ2w3WElrU0QrTlZsZGZad0JDcXA4ZS9udUltTEJ2c3loUS8yWk83?=
- =?utf-8?B?TkNweHBkS0UyWnJPSnQ0Q3FGaE53MlJsby9MWWxYZmV4eG5uV0c5dk54d3BP?=
- =?utf-8?B?NE9XYmh2UERLdjllZ1NMM25ydkQyelhyQW9UOHdhdU5YVTk5WGZZbjdrQWJm?=
- =?utf-8?B?aFp4cWZvRU1jRGdtN3pram9VcSsrVzJWYUxmbmNBcW5mUm9aYnVXOXVBVkk3?=
- =?utf-8?B?L0VjSXRUQ1doNHVmWW9JalN0VXREQk5qTEZNV0N1V1JQMmxJKytEYXhTOGVy?=
- =?utf-8?B?OS9zdDYwbHVlNEZnMEhlK2ZSeGIvRkxwdWNJNXFxdFFvMUpLamR6SUlGRDB3?=
- =?utf-8?B?SEZoNHE5WWRHTW5LZ3ZaeFpEYk16dVkyWTlsK3h0L1NYZEt0RzBYMXl0S05n?=
- =?utf-8?B?M1FodGlROUxHallINGhXakV2ZWs4Q2V6cjkzTmswN1pmMVJDN3UySEgvMlg3?=
- =?utf-8?Q?g86uyvHOeYGhTK162ws5?=
-X-Microsoft-Antispam-Message-Info: 9VzMomerb4VxOItQsOMnzyef/RyNnfLrbzRwIVXMIKQFp6eGMFGu6caPfsuae7GEJTnCEHiZrgPqnjR1JQPsjow6fdEur5FP7wYtLkGYb3Xyxq8YCQ89hLwMObII9QiPxBJ8yLu5sI2jxj2U477pxLlodwuFzeO0p+iiW3marE3QN2wDCjs5r330tP/H7L3WEynSNx4KBMNu4tCeeXOhECgcviBNI/WG4kL7HB1w7SjkATbz6zthf8wlOy+Jrjfj5FzuN2aHQZl8i7cRNNXLybuYhve3qtwVy7ZphA6mxqgMZgcvS9jploHBh9RqrzlUe02autsj6EoBlh/tmPwMKEcjNTPiVAD/d5e9+Udxw78=
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2260;6:bqpr2GF3mTp0tfBZHpFXNVuC1Ica3zSKDGNju1A3APxDU1bWfm++4xFX3m/3pyoKoVPvYlhFUvrj7dEy0YhTTRU0j8hxQKRIpFLmVWmizS0plHIoz2g90MFYTN1rfWWJ3bhKBnvMNvO9nR1DryMz2qQEe1+qzU9ks2EuD6o6a9YmURT1V6TS55p/maoeeOlnJNBQRv+hR5jBve1QtEdB3K2VVOAL7z3TpmBmqbzswM2nZekCmKO2fHN43cHIUuuY/3XC8SCTQSQU31jVn+MJYAjFX/H4PhMRg9W4TjzCVm+7dz7JQKF41Z08LnsmcLxL9nxvrtlV+5zCATYWPIrsef8UuOKjiCGKOtbP4U0AlBy3e0zGbebhT3rohShEb5DTCFKmpvVGQJPyIAjl2AUFZeGddqofHqDvl3HrBfRQkCCBFOdK9YJmx4BwbYZ6/+4k8ZSJvJjd2p57em399dYfTw==;5:D5vxtr3RNnIkhbCaTpuMjQ2rBJi0lOUEjLqREwzB+hThAuUnGG5onA2O6Q/RM4VRlg2joqpwt7OYgd3OPpdmaOFej63H+ouC0zbZZqheQ+scdbOFfXe26WKHKT5GnvcMA/amBaxRH8bbzrWig9iswuwOJdzU3lSGqIvs8ZsMwNk=;7:At+0RLZe9KZ2bXIdmlPu9inq62fN/25WI/GgY4R9WTxOVlLyWHPmQrtUJz+GCN3gHABX09hlz4E2eutvQcrQFDs2hND0N1oRtIxtx3VpM7MqdyRZSNZwmvPEb3fycMWbTFxQjD9mcWAnIxbjWv8pGA==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2018 07:38:00.3452
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 725a8ece-546e-460f-5b00-08d6454d1c07
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR03MB2260
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107171149.165693799@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTExLTA3IGF0IDE2OjUwIC0wMjAwLCBHaXVsaWFubyBCZWxpbmFzc2kgd3Jv
-dGU6DQo+IE9ubHkgdGhlIGFkNzc4eCBoYXZlIHRoZSAnZ2Fpbicgc3RhdHVzIGJpdC4gQ2hlY2sg
-aXQgYmVmb3JlIHVwZGF0aW5nLg0KPiANCg0KVGhpcyBsb29rcyBnb29kLg0KVGhlIG9ubHkgbm90
-ZSBpcyB0aGF0IGl0IGNhbiBiZSBzcXVhc2hlZCB3aXRoIHRoZSAxc3QgcGF0Y2ggKHdoaWNoIEkg
-bm90ZWQNCm9uIHRoZSAxc3QgcGF0Y2gpLg0KDQo+IFNpZ25lZC1vZmYtYnk6IEdpdWxpYW5vIEJl
-bGluYXNzaSA8Z2l1bGlhbm8uYmVsaW5hc3NpQHVzcC5icj4NCj4gLS0tDQo+ICBkcml2ZXJzL3N0
-YWdpbmcvaWlvL2FkYy9hZDc3ODAuYyB8IDEwICsrKysrKy0tLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCA2IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3NzgwLmMNCj4gYi9kcml2ZXJzL3N0YWdpbmcvaWlvL2Fk
-Yy9hZDc3ODAuYw0KPiBpbmRleCA2ZTUxYmZkYjA3NmEuLjBhNDczYWFlNTJmMiAxMDA2NDQNCj4g
-LS0tIGEvZHJpdmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3NzgwLmMNCj4gKysrIGIvZHJpdmVycy9z
-dGFnaW5nL2lpby9hZGMvYWQ3NzgwLmMNCj4gQEAgLTExNCwxMCArMTE0LDEyIEBAIHN0YXRpYyBp
-bnQgYWQ3NzgwX3Bvc3Rwcm9jZXNzX3NhbXBsZShzdHJ1Y3QNCj4gYWRfc2lnbWFfZGVsdGEgKnNp
-Z21hX2RlbHRhLA0KPiAgCSAgICAoKHJhd19zYW1wbGUgJiBjaGlwX2luZm8tPnBhdHRlcm5fbWFz
-aykgIT0gY2hpcF9pbmZvLT5wYXR0ZXJuKSkNCj4gIAkJcmV0dXJuIC1FSU87DQo+ICANCj4gLQlp
-ZiAocmF3X3NhbXBsZSAmIEFENzc4MF9HQUlOKQ0KPiAtCQlzdC0+Z2FpbiA9IDE7DQo+IC0JZWxz
-ZQ0KPiAtCQlzdC0+Z2FpbiA9IDEyODsNCj4gKwlpZiAoY2hpcF9pbmZvLT5pc19hZDc3OHgpIHsN
-Cj4gKwkJaWYgKHJhd19zYW1wbGUgJiBBRDc3ODBfR0FJTikNCj4gKwkJCXN0LT5nYWluID0gMTsN
-Cj4gKwkJZWxzZQ0KPiArCQkJc3QtPmdhaW4gPSAxMjg7DQo+ICsJfQ0KPiAgDQo+ICAJcmV0dXJu
-IDA7DQo+ICB9DQo=
+
+* Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> + - Signed-off-by: ``Patch handler <handler@mail>``
+> +
+> +   SOBs after the author SOB are from people handling and transporting the
+> +   patch, but were not involved in development. If the handler made
+> +   modifications to the patch or the changelog, then this should be
+> +   mentioned **after** the changelog text and **above** all commit tags in
+> +   the following format::
+> +
+> +     ... changelog text ends.
+> +
+> +     [ handler: Replaced foo by bar and updated changelog ]
+> +
+> +     First-tag: .....
+> +
+> +   Note the two empty new lines which separate the changelog text and the
+> +   commit tags from that notice.
+
+Even after a decade of introducing Git I still see Signed-off-by used as 
+an Acked-by or Reviewed-by substitutes, so I'd suggest adding this small 
+explanation as well:
+
+  +   SOB chains should reflect the *real* route a patch took as it was 
+  +   propagated to us, with the first SOB entry signalling primary
+  +   authorship of a single author. Acks should be given as Acked-by 
+  +   lines and review approvals as Reviewed-by lines.
+
+
+> +   If a patch is sent to the mailing list by a handler then the author has
+> +   to be noted in the first line of the changelog with::
+> +
+> +     From: ``Author <author@mail>``
+> +
+> +     Changelog text starts here....
+> +
+> +   so the authorship is preserved. The 'From:' line has to be followed by a
+> +   empty newline. If that 'From:' line is missing, then the patch would be
+> +   attributed to the person who sent (transported) it. The 'From:' line is
+> +   automatically removed when the patch is applied and does not show up in
+> +   the final git changelog. It merely affects the authorship information of
+> +   the resulting git commit.
+
+s/(transported)
+ /(transported, handled)
+
+to connect the text with the whole 'handler' language used before?
+
+and since we are not talking about the 'git command', maybe also:
+
+s/git
+ /Git
+
+?
+
+> + - Cc: ``cc-ed-person <person@mail>``
+> +
+> +   If the patch should be backported to stable, then please add a '``Cc:
+> +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
+> +   mail.
+
+Can I suggest a more canonical form:
+
+	Cc: <stable@vger.kernel.org> # v4.18 and later kernels
+
+It would be nice if people adding Cc: stable lines would actually try to 
+figure out which exact kernel versions are affected.
+
+Also the '<>' form makes it easier to read and my email client will also 
+syntax highlight it in that case. ;-)
+
+
+> + - Link: ``https://link/to/information``
+> +
+> +   For referring to email on LKML or other kernel mailing lists, please use
+> +   the lkml.kernel.org redirector URL::
+
+s/referring to email
+ /referring to an email
+
+> +
+> +     https://lkml.kernel.org/r/email-message@id
+> +
+> +   The kernel.org redirector is considered a stable URL unlike other email
+> +   archives.
+
+s/URL unlike
+ /URL, unlike
+
+?
+
+Thanks,
+
+	Ingo
