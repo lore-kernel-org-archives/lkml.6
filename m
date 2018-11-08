@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAED6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694CAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0F7220857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 309C620844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:40:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkAQoCSq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0F7220857
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xY54e+dR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 309C620844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729264AbeKIIRe (ORCPT
+        id S1729292AbeKIIRr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:17:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50388 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:17:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729189AbeKIHeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:34:01 -0500
+        id S1727422AbeKIHdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:33:54 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F5EF2089A;
-        Thu,  8 Nov 2018 21:56:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A078021104;
+        Thu,  8 Nov 2018 21:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714193;
-        bh=wfWM3X4a4cbs600ZtWALGJaXie3pjlc7r37Lg8AyCa4=;
+        s=default; t=1541714186;
+        bh=uI47qzz8nfT+pObBbIgGkLME6cxdqzwg9re/ceNXYEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PkAQoCSq5Kb5jrRE/V1iCMR1bgfGy4V9qfPK5Fm95SIlmO6L8xjxJoatLqzzdpAsF
-         gNB6veqRDoIofpJyKugBAJ+G4XYWxZtmuNwzOdDnMjbqE1dt5EQoWC2ck9qmRrMeXH
-         ieKPHuBL46gkFVvfiivXXW76nimo2OnIikezD5c8=
+        b=xY54e+dR0DmyXwJ1akHl9uKIWuGpHdqVPqAukobJn99aH/LnI6Q1AITYn0rDZVDUr
+         aF+MLmgvtx6qq1Ip+xVdkzrBTulpcf5UR2ZtsX0YPezX7nY9HtEiu+LqAOnIHGMeGP
+         6DOOz7EQ4+Wj+BEr+veYBuflajAb8QA/n/bR9Bbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ken Xue <Ken.Xue@amd.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Xiangliang Yu <Xiangliang.Yu@amd.com>,
-        "James E.J. Bottomley" <JBottomley@odin.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Michael Terry <Michael.terry@canonical.com>,
+        stable@vger.kernel.org,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 114/144] Revert "SCSI: Fix NULL pointer dereference in runtime PM"
-Date:   Thu,  8 Nov 2018 13:51:25 -0800
-Message-Id: <20181108215106.202460357@linuxfoundation.org>
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 111/144] libata: blacklist Micron 500IT SSD with MU01 firmware
+Date:   Thu,  8 Nov 2018 13:51:22 -0800
+Message-Id: <20181108215105.905321571@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -68,76 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1c69d3b6eb73e466ecbb8edaf1bc7fd585b288da ]
+[ Upstream commit 136d769e0b3475d71350aa3648a116a6ee7a8f6c ]
 
-This reverts commit 49718f0fb8c9 ("SCSI: Fix NULL pointer dereference in
-runtime PM")
+While whitelisting Micron M500DC drives, the tweaked blacklist entry
+enabled queued TRIM from M500IT variants also. But these do not support
+queued TRIM. And while using those SSDs with the latest kernel we have
+seen errors and even the partition table getting corrupted.
 
-The old commit may lead to a issue that blk_{pre|post}_runtime_suspend and
-blk_{pre|post}_runtime_resume may not be called in pairs.
+Some part from the dmesg:
+[    6.727384] ata1.00: ATA-9: Micron_M500IT_MTFDDAK060MBD, MU01, max UDMA/133
+[    6.727390] ata1.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32), AA
+[    6.741026] ata1.00: supports DRM functions and may not be fully accessible
+[    6.759887] ata1.00: configured for UDMA/133
+[    6.762256] scsi 0:0:0:0: Direct-Access     ATA      Micron_M500IT_MT MU01 PQ: 0 ANSI: 5
 
-Take sr device as example, when sr device goes to runtime suspend,
-blk_{pre|post}_runtime_suspend will be called since sr device defined
-pm->runtime_suspend. But blk_{pre|post}_runtime_resume will not be called
-since sr device doesn't have pm->runtime_resume. so, sr device can not
-resume correctly anymore.
+and then for the error:
+[  120.860334] ata1.00: exception Emask 0x1 SAct 0x7ffc0007 SErr 0x0 action 0x6 frozen
+[  120.860338] ata1.00: irq_stat 0x40000008
+[  120.860342] ata1.00: failed command: SEND FPDMA QUEUED
+[  120.860351] ata1.00: cmd 64/01:00:00:00:00/00:00:00:00:00/a0 tag 0 ncq dma 512 out
+         res 40/00:00:00:00:00/00:00:00:00:00/00 Emask 0x5 (timeout)
+[  120.860353] ata1.00: status: { DRDY }
+[  120.860543] ata1: hard resetting link
+[  121.166128] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+[  121.166376] ata1.00: supports DRM functions and may not be fully accessible
+[  121.186238] ata1.00: supports DRM functions and may not be fully accessible
+[  121.204445] ata1.00: configured for UDMA/133
+[  121.204454] ata1.00: device reported invalid CHS sector 0
+[  121.204541] sd 0:0:0:0: [sda] tag#18 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+[  121.204546] sd 0:0:0:0: [sda] tag#18 Sense Key : 0x5 [current]
+[  121.204550] sd 0:0:0:0: [sda] tag#18 ASC=0x21 ASCQ=0x4
+[  121.204555] sd 0:0:0:0: [sda] tag#18 CDB: opcode=0x93 93 08 00 00 00 00 00 04 28 80 00 00 00 30 00 00
+[  121.204559] print_req_error: I/O error, dev sda, sector 272512
 
-More discussion can be found from below link.
-http://marc.info/?l=linux-scsi&m=144163730531875&w=2
+After few reboots with these errors, and the SSD is corrupted.
+After blacklisting it, the errors are not seen and the SSD does not get
+corrupted any more.
 
-Signed-off-by: Ken Xue <Ken.Xue@amd.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Xiangliang Yu <Xiangliang.Yu@amd.com>
-Cc: James E.J. Bottomley <JBottomley@odin.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Michael Terry <Michael.terry@canonical.com>
+Fixes: 243918be6393 ("libata: Do not blacklist Micron M500DC")
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_pm.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/ata/libata-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/scsi_pm.c b/drivers/scsi/scsi_pm.c
-index a2dcf6a54ec6..75320dad9677 100644
---- a/drivers/scsi/scsi_pm.c
-+++ b/drivers/scsi/scsi_pm.c
-@@ -221,13 +221,13 @@ static int sdev_runtime_suspend(struct device *dev)
- 	struct scsi_device *sdev = to_scsi_device(dev);
- 	int err = 0;
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index cd589d012ef1..6629a5deccbd 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4249,6 +4249,8 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 						ATA_HORKAGE_NOLPM, },
  
--	if (pm && pm->runtime_suspend) {
--		err = blk_pre_runtime_suspend(sdev->request_queue);
--		if (err)
--			return err;
-+	err = blk_pre_runtime_suspend(sdev->request_queue);
-+	if (err)
-+		return err;
-+	if (pm && pm->runtime_suspend)
- 		err = pm->runtime_suspend(dev);
--		blk_post_runtime_suspend(sdev->request_queue, err);
--	}
-+	blk_post_runtime_suspend(sdev->request_queue, err);
-+
- 	return err;
- }
- 
-@@ -250,11 +250,11 @@ static int sdev_runtime_resume(struct device *dev)
- 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
- 	int err = 0;
- 
--	if (pm && pm->runtime_resume) {
--		blk_pre_runtime_resume(sdev->request_queue);
-+	blk_pre_runtime_resume(sdev->request_queue);
-+	if (pm && pm->runtime_resume)
- 		err = pm->runtime_resume(dev);
--		blk_post_runtime_resume(sdev->request_queue, err);
--	}
-+	blk_post_runtime_resume(sdev->request_queue, err);
-+
- 	return err;
- }
- 
+ 	/* devices that don't properly handle queued TRIM commands */
++	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
++						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Crucial_CT*M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
 -- 
 2.17.1
 
