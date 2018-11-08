@@ -2,221 +2,85 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E83AC46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B23C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2E2820837
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:57:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E2820837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 75F3020837
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:01:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F3020837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tencent.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbeKHMaW (ORCPT
+        id S1728557AbeKHMet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 07:30:22 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33378 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726726AbeKHMaW (ORCPT
+        Thu, 8 Nov 2018 07:34:49 -0500
+Received: from mail4.tencent.com ([183.57.53.109]:41091 "EHLO
+        mail4.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728349AbeKHMet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 07:30:22 -0500
-X-UUID: 357e8821132a482f821320a5868d0e12-20181108
-X-UUID: 357e8821132a482f821320a5868d0e12-20181108
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 370850293; Thu, 08 Nov 2018 10:56:59 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 8 Nov 2018 10:56:58 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 8 Nov 2018 10:56:57 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>
-CC:     <devicetree@vger.kernel.org>, <honghui.zhang@mediatek.com>,
-        <youlin.pei@mediatek.com>, <jianjun.wang@mediatek.com>
-Subject: [PATCH v2] PCI: mediatek: Use devm_of_pci_get_host_bridge_resources() to parse DT
-Date:   Thu, 8 Nov 2018 10:56:55 +0800
-Message-ID: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
+        Thu, 8 Nov 2018 07:34:49 -0500
+Received: from EXHUB-SZMail03.tencent.com (unknown [10.14.6.33])
+        by mail4.tencent.com (Postfix) with ESMTP id 64F3A50B4E;
+        Thu,  8 Nov 2018 11:01:17 +0800 (CST)
+Received: from EXMBX-SZMAIL022.tencent.com ([fe80::dcc:e364:cd45:89d9]) by
+ EXHUB-SZMail03.tencent.com ([::1]) with mapi id 14.03.0415.000; Thu, 8 Nov
+ 2018 11:01:16 +0800
+From:   =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arve@android.com" <arve@android.com>,
+        "tkjos@android.com" <tkjos@android.com>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
+Subject: RE: [PATCH V2] binder: ipc namespace support for android binder
+Thread-Topic: [PATCH V2] binder: ipc namespace support for android binder
+Thread-Index: AdR3D01oz5WISVmGRtWGMtGzvv7LkA==
+Date:   Thu, 8 Nov 2018 03:01:15 +0000
+Message-ID: <5FBCBE569E134E4CA167B91C0A77FD610198F8406F@EXMBX-SZMAIL022.tencent.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.96.208.62]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
-
-Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
-DT parser.
-
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
----
- drivers/pci/controller/pcie-mediatek.c | 98 +++++++++-------------------------
- 1 file changed, 24 insertions(+), 74 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 2a1f97c..0590a93 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -197,11 +197,7 @@ struct mtk_pcie_port {
-  * @dev: pointer to PCIe device
-  * @base: IO mapped register base
-  * @free_ck: free-run reference clock
-- * @io: IO resource
-- * @pio: PIO resource
-  * @mem: non-prefetchable memory resource
-- * @busn: bus range
-- * @offset: IO / Memory offset
-  * @ports: pointer to PCIe port information
-  * @soc: pointer to SoC-dependent operations
-  */
-@@ -210,14 +206,7 @@ struct mtk_pcie {
- 	void __iomem *base;
- 	struct clk *free_ck;
- 
--	struct resource io;
--	struct resource pio;
- 	struct resource mem;
--	struct resource busn;
--	struct {
--		resource_size_t mem;
--		resource_size_t io;
--	} offset;
- 	struct list_head ports;
- 	const struct mtk_pcie_soc *soc;
- };
-@@ -1045,55 +1034,43 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct device_node *node = dev->of_node, *child;
--	struct of_pci_range_parser parser;
--	struct of_pci_range range;
--	struct resource res;
- 	struct mtk_pcie_port *port, *tmp;
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-+	struct list_head *windows = &host->windows;
-+	struct resource_entry *win, *tmp_win;
-+	resource_size_t io_base;
- 	int err;
- 
--	if (of_pci_range_parser_init(&parser, node)) {
--		dev_err(dev, "missing \"ranges\" property\n");
--		return -EINVAL;
--	}
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    windows, &io_base);
-+	if (err)
-+		return err;
- 
--	for_each_of_pci_range(&parser, &range) {
--		err = of_pci_range_to_resource(&range, node, &res);
--		if (err < 0)
--			return err;
-+	err = devm_request_pci_bus_resources(dev, windows);
-+	if (err < 0)
-+		return err;
- 
--		switch (res.flags & IORESOURCE_TYPE_BITS) {
-+	/* Get the I/O and memory ranges from DT */
-+	resource_list_for_each_entry_safe(win, tmp_win, windows) {
-+		switch (resource_type(win->res)) {
- 		case IORESOURCE_IO:
--			pcie->offset.io = res.start - range.pci_addr;
--
--			memcpy(&pcie->pio, &res, sizeof(res));
--			pcie->pio.name = node->full_name;
--
--			pcie->io.start = range.cpu_addr;
--			pcie->io.end = range.cpu_addr + range.size - 1;
--			pcie->io.flags = IORESOURCE_MEM;
--			pcie->io.name = "I/O";
--
--			memcpy(&res, &pcie->io, sizeof(res));
-+			err = devm_pci_remap_iospace(dev, win->res, io_base);
-+			if (err) {
-+				dev_warn(dev, "error %d: failed to map resource %pR\n",
-+					 err, win->res);
-+				resource_list_destroy_entry(win);
-+			}
- 			break;
--
- 		case IORESOURCE_MEM:
--			pcie->offset.mem = res.start - range.pci_addr;
--
--			memcpy(&pcie->mem, &res, sizeof(res));
-+			memcpy(&pcie->mem, win->res, sizeof(*win->res));
- 			pcie->mem.name = "non-prefetchable";
- 			break;
-+		case IORESOURCE_BUS:
-+			host->busnr = win->res->start;
-+			break;
- 		}
- 	}
- 
--	err = of_pci_parse_bus_range(node, &pcie->busn);
--	if (err < 0) {
--		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
--		pcie->busn.name = node->name;
--		pcie->busn.start = 0;
--		pcie->busn.end = 0xff;
--		pcie->busn.flags = IORESOURCE_BUS;
--	}
--
- 	for_each_available_child_of_node(node, child) {
- 		int slot;
- 
-@@ -1125,28 +1102,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
- 	return 0;
- }
- 
--static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
--{
--	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
--	struct list_head *windows = &host->windows;
--	struct device *dev = pcie->dev;
--	int err;
--
--	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
--	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
--	pci_add_resource(windows, &pcie->busn);
--
--	err = devm_request_pci_bus_resources(dev, windows);
--	if (err < 0)
--		return err;
--
--	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
--	if (err < 0)
--		return err;
--
--	return 0;
--}
--
- static int mtk_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1169,11 +1124,6 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
--	err = mtk_pcie_request_resources(pcie);
--	if (err)
--		goto put_resources;
--
--	host->busnr = pcie->busn.start;
- 	host->dev.parent = pcie->dev;
- 	host->ops = pcie->soc->ops;
- 	host->map_irq = of_irq_parse_and_map_pci;
--- 
-2.6.4
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbmRyZXcgTW9ydG9uIDxha3Bt
+QGxpbnV4LWZvdW5kYXRpb24ub3JnPg0KPiBTZW50OiBUaHVyc2RheSwgTm92ZW1iZXIgOCwgMjAx
+OCA2OjM4IEFNDQo+IFRvOiBjaG91cnl6aG91KOWRqOWogSkgPGNob3VyeXpob3VAdGVuY2VudC5j
+b20+DQo+IENjOiBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgYXJ2ZUBhbmRyb2lkLmNvbTsg
+dGtqb3NAYW5kcm9pZC5jb207DQo+IGRhdmVAc3Rnb2xhYnMubmV0OyBkZXZlbEBkcml2ZXJkZXYu
+b3N1b3NsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIIFYyXSBiaW5kZXI6IGlwYyBuYW1lc3BhY2Ugc3VwcG9ydCBmb3IgYW5kcm9pZA0KPiBi
+aW5kZXINCj4gDQo+IE9uIFdlZCwgNyBOb3YgMjAxOCAwMTo0ODoxMiArMDAwMCBjaG91cnl6aG91
+KOWRqOWogSkNCj4gPGNob3VyeXpob3VAdGVuY2VudC5jb20+IHdyb3RlOg0KPiANCj4gPiA+ID4g
+LS0tIGEvaXBjL25hbWVzcGFjZS5jDQo+ID4gPiA+ICsrKyBiL2lwYy9uYW1lc3BhY2UuYw0KPiA+
+ID4gPiBAQCAtNTYsNiArNTYsOSBAQCBzdGF0aWMgc3RydWN0IGlwY19uYW1lc3BhY2UgKmNyZWF0
+ZV9pcGNfbnMoc3RydWN0DQo+ID4gPiB1c2VyX25hbWVzcGFjZSAqdXNlcl9ucywNCj4gPiA+ID4g
+ICAgICAgICBucy0+dWNvdW50cyA9IHVjb3VudHM7DQo+ID4gPiA+DQo+ID4gPiA+ICAgICAgICAg
+ZXJyID0gbXFfaW5pdF9ucyhucyk7DQo+ID4gPiA+ICsgICAgICAgaWYgKGVycikNCj4gPiA+ID4g
+KyAgICAgICAgICAgICAgIGdvdG8gZmFpbF9wdXQ7DQo+ID4gPiA+ICsgICAgICAgZXJyID0gYmlu
+ZGVyX2luaXRfbnMobnMpOw0KPiA+ID4gPiAgICAgICAgIGlmIChlcnIpDQo+ID4gPiA+ICAgICAg
+ICAgICAgICAgICBnb3RvIGZhaWxfcHV0Ow0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IERvbid0IHdl
+IG5lZWQgYW4gbXFfcHV0X21udCgpIGlmIGJpbmRlcl9pbml0X25zKCkgZmFpbHM/DQo+ID4gPg0K
+PiA+ID4gZnJlZV9pcGNfbnMoKSBzZWVtcyB0byBoYXZlIGZvcmdvdHRlbiBhYm91dCB0aGF0IHRv
+by4gIEluIHdoaWNoIGNhc2UgaXQNCj4gPiA+IG11c3QgYmUgbWFkbHkgbGVha2luZyBtb3VudHMg
+c28gcHJvYmFibHkgSSdtIHdyb25nLiAgQ29uZnVzZWQuDQo+ID4gPg0KPiA+DQo+ID4gbXFfaW5p
+dF9ucyB3aWxsIGRvIGNsZWFuIGpvYiBpZiBpdCBmYWlsZWQsIGFuZCBhcyBkbyBiaW5kZXJfaW5p
+dF9ucy4NCj4gDQo+IE15IHBvaW50IGlzIHRoYXQgaWYgbXFfaW5pdF9ucygpIHN1Y2NlZWRzIGFu
+ZCBiaW5kZXJfaW5pdF9ucygpIGZhaWxzLA0KPiB3ZSBkb24ndCB1bmRvIHRoZSBlZmZlY3RzIG9m
+IG1xX2luaXRfbnMoKT8NCg0KT2gsIG1xX3B1dF9tbnQgaXMgY2FsbGVkIGluIHB1dF9pcGNfbnMu
+IFdlIHNob3VsZCBpbnZva2UgcHV0X2lwY19ucyBpZiBiaW5kZXJfaW5pdF9ucyBmYWlscy4gSSB3
+aWxsIHVwZGF0ZSB0aGUgcGF0Y2ggc29vbi4gVGhhbmsgeW91IHZlcnkgbXVjaCBmb3IgcG9pbnRp
+bmcgb3V0IHRoZSBpc3N1ZS4NCg==
