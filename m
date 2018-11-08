@@ -2,81 +2,83 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADF2C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4805C20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:22:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PDRIfdpU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4805C20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 413BD20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:23:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413BD20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbeKHS4c (ORCPT
+        id S1726618AbeKHS56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:56:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35560 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeKHS4c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EJsKISGxYo4H2RYZRbLqy+Y+g60nV2TrympHApZXX/Y=; b=PDRIfdpUYxX2BoW6QzNPIRrxx
-        I44lQ64A18R56SFuBXPDtOTY1yHLWnCc4ns35Sjx10ejPt02zekpcwBsxsQ6MGFI9Zmwa4SXeL9ku
-        bJvWNdlSCkKDfAzE1ujt14SroGJrKX3gPOnz+DNzRAxSl1OjJAaXp3zAUkoo98/tbMREI5KIEB9ir
-        io3dSyU/Uf6TqDjWfASwSEvllqeTqUuaNDrv76LzFKh/b04p8qdbF1kN6sJv72im7K3MWAxsu56b6
-        RotCEMQGghNgBZ1u5lZ4Mhais1yOLtpZDyQvyHzXy2lbTpCsbl0eabHm3FPIT5B+5cKzoklcBzdtO
-        iXOR7xMnw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKgVd-0001TG-Dz; Thu, 08 Nov 2018 09:21:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 336BE20284F98; Thu,  8 Nov 2018 10:21:51 +0100 (CET)
-Date:   Thu, 8 Nov 2018 10:21:51 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: Question on comment header for for_each_domain()
-Message-ID: <20181108092151.GM9761@hirez.programming.kicks-ass.net>
-References: <20181107230002.GA15577@linux.ibm.com>
+        Thu, 8 Nov 2018 13:57:58 -0500
+Received: from sauhun.de ([88.99.104.3]:34866 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726145AbeKHS56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:57:58 -0500
+Received: from localhost (p54B33960.dip0.t-ipconnect.de [84.179.57.96])
+        by pokefinder.org (Postfix) with ESMTPSA id 8E99B2C0889;
+        Thu,  8 Nov 2018 10:23:20 +0100 (CET)
+Date:   Thu, 8 Nov 2018 10:23:20 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add entry for i2c-omap driver
+Message-ID: <20181108092320.GC951@kunai>
+References: <20181108091931.3342-1-vigneshr@ti.com>
+ <20181108091931.3342-4-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
 Content-Disposition: inline
-In-Reply-To: <20181107230002.GA15577@linux.ibm.com>
+In-Reply-To: <20181108091931.3342-4-vigneshr@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 03:00:02PM -0800, Paul E. McKenney wrote:
-> Hello!
-> 
-> The header comment for for_each_domain() talks about a call to
-> synchronize_sched() within detach_destroy_domains(), but I am not
-> seeing any such call.  Because synchronize_sched() is now folded into
-> synchronize_rcu(), I have a patch that edits the comment, but it looks
-> like a larger change is needed.
-> 
-> Or am I blind today?
 
-I think you're quite right and that comment is a wee bit stale.
+--JWEK1jqKZ6MHAcjA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The sched domain tree is indeed protected by regular RCU (not RCU-sched
-as the comment seems to imply) and this is per destroy_sched_domains()
-using call_rcu().
+On Thu, Nov 08, 2018 at 02:49:31PM +0530, Vignesh R wrote:
+> Add separate entry for i2c-omap and add my name as reviewer for this
+> driver.
 
-And most (I didn't look at all) uses for the sched-domain tree do indeed
-employ rcu_read_lock().
+Thanks for stepping up, yet out of curiosity: why not maintainer?
 
 
+--JWEK1jqKZ6MHAcjA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvkAIgACgkQFA3kzBSg
+Kba+ag//eGminUyjlFcJqcSRjGnf7+LqqeVc07AlJmwhdUwpFd9u7odCF3GTZ1hx
+kV26//NQ2S62q0z9piujG5f0UvJRUKv3P/KnTEn2qjw6paAwbJNeunkJfqsOmNPd
+b36cYEUHRBNe3m6WVbOkxJxUYiqBTbx0AYu0MWo0uzonyl5IYws3hFZfL+Di7jgC
+8oQawmLeQ3PtMAxnVtRS6GMMpmRPogfS3tfE+3NLVzfWaa609oQynEFvfK0ynUXo
+gVy91FQzmxxFtkn8Y2+Z4dtPYNmil8LnelhDljVO+sJf4hxec+igFkSc5EUMRSzO
+rNXYaH2CtQv3VRLmyvTpx118i7mkCIjH4XYpTLPaIRsbJyvrZM9n2K0krQp838kL
+T1prYC2gQEqWZhL+ZK/Q/CjxFCY2rzp94AgWoecn+Lb43RqfBNiDgjrsBBgRCJro
+MoKb+6LETDEpj9Vql4MUi70R9wAYQBwS+ZdaBulSRXTKfHhcRMCQ58JQG/prMRvs
+6YESdYeSNdIGdYI/xIp/sCHySCXZmZcoUrVJ5Wp9M2WZMcw0Ti+uxwILhHkhMapu
+F59dqxoixUSX6mR5hTllQ3AxD1CHmxBIYrm0cEkdbf+P9JHGqyCuEfNkCB9jwhy+
+6zBMZu49BgDPCOucQPdfsWNhs8RZiJdIFnnejWaqdKvCDh8r5CA=
+=FygF
+-----END PGP SIGNATURE-----
+
+--JWEK1jqKZ6MHAcjA--
