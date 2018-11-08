@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D9ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79729ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4B9214DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407B3214DB
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6V4dikP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4B9214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEJHTuOE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 407B3214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732473AbeKIHpg (ORCPT
+        id S1732510AbeKIHpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:45:36 -0500
+        Fri, 9 Nov 2018 02:45:39 -0500
 Received: from mail.kernel.org ([198.145.29.99]:38916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730889AbeKIHpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:36 -0500
+        id S1730889AbeKIHph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:45:37 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E90262147A;
-        Thu,  8 Nov 2018 22:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C21A7214DA;
+        Thu,  8 Nov 2018 22:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714884;
-        bh=F1kpqFBUR2kN87CJSP9iGPG0w3x2LuufbIqZ/HPpi8M=;
+        s=default; t=1541714885;
+        bh=CIoyKv+eaueeIZpFvlMqpc5H8Ic+osWi3E2jp3YurHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q6V4dikPoRIJmR4AdVNbEl3anEYlnHleltsStKM/OZ1NQGYyKtd2tkUDeemLVrqx4
-         9RVJEvMOVZ3w66GP7RyunMCFv82xoU4TjkoarY/tctx0WkEqwe/hfHgRF38/hTObGk
-         AhXJlvRIDDlDhIIT8WBDITwqHZXzC8cF62SpuV94=
+        b=dEJHTuOERCFUIhLIipVnHai9SFx1T5XzqIZJ/4cNCBlQMqwzd7IBZlUu0r92INou3
+         tV1j/7frWqMYPeDcK0u1iBZIpYkEcVEjR3tkc7j/Id6feDP6/T3+QqiNLHQttR+ybt
+         AHhidn3+JrtyDJuHN1e9rWLQr0z1CWTxz2mo31FM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alan Chiang <alanx.chiang@intel.com>,
+        Andy Yeh <andy.yeh@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 170/171] net: fs_enet: do not call phy_stop() in interrupts
-Date:   Thu,  8 Nov 2018 13:52:20 -0800
-Message-Id: <20181108215139.237496264@linuxfoundation.org>
+Subject: [PATCH 4.14 01/31] eeprom: at24: Add support for address-width property
+Date:   Thu,  8 Nov 2018 13:52:25 -0800
+Message-Id: <20181108215129.753982396@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
-References: <20181108215127.257643509@linuxfoundation.org>
+In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
+References: <20181108215129.641434673@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -59,128 +59,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit f8b39039cbf2a15f2b8c9f081e1cbd5dee00aaf5 ]
+[ Upstream commit a2b3bf4846e5eed62ea6abb096af2c950961033c ]
 
-In case of TX timeout, fs_timeout() calls phy_stop(), which
-triggers the following BUG_ON() as we are in interrupt.
+Provide a flexible way to determine the addressing bits of eeprom.
+Pass the addressing bits to driver through address-width property.
 
-[92708.199889] kernel BUG at drivers/net/phy/mdio_bus.c:482!
-[92708.204985] Oops: Exception in kernel mode, sig: 5 [#1]
-[92708.210119] PREEMPT
-[92708.212107] CMPC885
-[92708.214216] CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W       4.9.61 #39
-[92708.223227] task: c60f0a40 task.stack: c6104000
-[92708.227697] NIP: c02a84bc LR: c02a947c CTR: c02a93d8
-[92708.232614] REGS: c6105c70 TRAP: 0700   Tainted: G        W        (4.9.61)
-[92708.241193] MSR: 00021032 <ME,IR,DR,RI>[92708.244818]   CR: 24000822  XER: 20000000
-[92708.248767]
-GPR00: c02a947c c6105d20 c60f0a40 c62b4c00 00000005 0000001f c069aad8 0001a688
-GPR08: 00000007 00000100 c02a93d8 00000000 000005fc 00000000 c6213240 c06338e4
-GPR16: 00000001 c06330d4 c0633094 00000000 c0680000 c6104000 c6104000 00000000
-GPR24: 00000200 00000000 ffffffff 00000004 00000078 00009032 00000000 c62b4c00
-NIP [c02a84bc] mdiobus_read+0x20/0x74
-[92708.281517] LR [c02a947c] kszphy_config_intr+0xa4/0xc4
-[92708.286547] Call Trace:
-[92708.288980] [c6105d20] [c6104000] 0xc6104000 (unreliable)
-[92708.294339] [c6105d40] [c02a947c] kszphy_config_intr+0xa4/0xc4
-[92708.300098] [c6105d50] [c02a5330] phy_stop+0x60/0x9c
-[92708.305007] [c6105d60] [c02c84d0] fs_timeout+0xdc/0x110
-[92708.310197] [c6105d80] [c035cd48] dev_watchdog+0x268/0x2a0
-[92708.315593] [c6105db0] [c0060288] call_timer_fn+0x34/0x17c
-[92708.321014] [c6105dd0] [c00605f0] run_timer_softirq+0x21c/0x2e4
-[92708.326887] [c6105e50] [c001e19c] __do_softirq+0xf4/0x2f4
-[92708.332207] [c6105eb0] [c001e3c8] run_ksoftirqd+0x2c/0x40
-[92708.337560] [c6105ec0] [c003b420] smpboot_thread_fn+0x1f0/0x258
-[92708.343405] [c6105ef0] [c003745c] kthread+0xbc/0xd0
-[92708.348217] [c6105f40] [c000c400] ret_from_kernel_thread+0x5c/0x64
-[92708.354275] Instruction dump:
-[92708.357207] 7c0803a6 bbc10018 38210020 4e800020 7c0802a6 9421ffe0 54290024 bfc10018
-[92708.364865] 90010024 7c7f1b78 81290008 552902ee <0f090000> 3bc3002c 7fc3f378 90810008
-[92708.372711] ---[ end trace 42b05441616fafd7 ]---
-
-This patch moves fs_timeout() actions into an async worker.
-
-Fixes: commit 48257c4f168e5 ("Add fs_enet ethernet network driver, for several embedded platforms")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
+Signed-off-by: Andy Yeh <andy.yeh@intel.com>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../ethernet/freescale/fs_enet/fs_enet-main.c    | 16 +++++++++++++---
- drivers/net/ethernet/freescale/fs_enet/fs_enet.h |  1 +
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/misc/eeprom/at24.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-index 4b86260584a0..8b66551511f5 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-@@ -613,9 +613,11 @@ static int fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	return NETDEV_TX_OK;
- }
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index 4cc0b42f2acc..ded48a0c77ee 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -577,6 +577,23 @@ static void at24_get_pdata(struct device *dev, struct at24_platform_data *chip)
+ 	if (device_property_present(dev, "read-only"))
+ 		chip->flags |= AT24_FLAG_READONLY;
  
--static void fs_timeout(struct net_device *dev)
-+static void fs_timeout_work(struct work_struct *work)
- {
--	struct fs_enet_private *fep = netdev_priv(dev);
-+	struct fs_enet_private *fep = container_of(work, struct fs_enet_private,
-+						   timeout_work);
-+	struct net_device *dev = fep->ndev;
- 	unsigned long flags;
- 	int wake = 0;
- 
-@@ -627,7 +629,6 @@ static void fs_timeout(struct net_device *dev)
- 		phy_stop(dev->phydev);
- 		(*fep->ops->stop)(dev);
- 		(*fep->ops->restart)(dev);
--		phy_start(dev->phydev);
- 	}
- 
- 	phy_start(dev->phydev);
-@@ -639,6 +640,13 @@ static void fs_timeout(struct net_device *dev)
- 		netif_wake_queue(dev);
- }
- 
-+static void fs_timeout(struct net_device *dev)
-+{
-+	struct fs_enet_private *fep = netdev_priv(dev);
++	err = device_property_read_u32(dev, "address-width", &val);
++	if (!err) {
++		switch (val) {
++		case 8:
++			if (chip->flags & AT24_FLAG_ADDR16)
++				dev_warn(dev, "Override address width to be 8, while default is 16\n");
++			chip->flags &= ~AT24_FLAG_ADDR16;
++			break;
++		case 16:
++			chip->flags |= AT24_FLAG_ADDR16;
++			break;
++		default:
++			dev_warn(dev, "Bad \"address-width\" property: %u\n",
++				 val);
++		}
++	}
 +
-+	schedule_work(&fep->timeout_work);
-+}
-+
- /*-----------------------------------------------------------------------------
-  *  generic link-change handler - should be sufficient for most cases
-  *-----------------------------------------------------------------------------*/
-@@ -759,6 +767,7 @@ static int fs_enet_close(struct net_device *dev)
- 	netif_stop_queue(dev);
- 	netif_carrier_off(dev);
- 	napi_disable(&fep->napi);
-+	cancel_work_sync(&fep->timeout_work);
- 	phy_stop(dev->phydev);
- 
- 	spin_lock_irqsave(&fep->lock, flags);
-@@ -1033,6 +1042,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
- 
- 	ndev->netdev_ops = &fs_enet_netdev_ops;
- 	ndev->watchdog_timeo = 2 * HZ;
-+	INIT_WORK(&fep->timeout_work, fs_timeout_work);
- 	netif_napi_add(ndev, &fep->napi, fs_enet_napi, fpi->napi_weight);
- 
- 	ndev->ethtool_ops = &fs_ethtool_ops;
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-index fee24c822fad..0e4e024449ec 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-@@ -124,6 +124,7 @@ struct fs_enet_private {
- 	spinlock_t lock;	/* during all ops except TX pckt processing */
- 	spinlock_t tx_lock;	/* during fs_start_xmit and fs_tx         */
- 	struct fs_platform_info *fpi;
-+	struct work_struct timeout_work;
- 	const struct fs_ops *ops;
- 	int rx_ring, tx_ring;
- 	dma_addr_t ring_mem_addr;
+ 	err = device_property_read_u32(dev, "pagesize", &val);
+ 	if (!err) {
+ 		chip->page_size = val;
 -- 
 2.17.1
 
