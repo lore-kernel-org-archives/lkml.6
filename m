@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52973ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA02ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E90620989
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 779AF208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XF6Jlh1S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E90620989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vZspvF/l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779AF208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730892AbeKIHjA (ORCPT
+        id S1730901AbeKIHjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:39:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:39:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728090AbeKIHi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:38:59 -0500
+        id S1728090AbeKIHjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:39:04 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E525B20989;
-        Thu,  8 Nov 2018 22:01:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8560C20892;
+        Thu,  8 Nov 2018 22:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714490;
-        bh=wS8wQIMy9jV83ey1Z1wplRkCmwoDaQg/zXlWOaRz2cU=;
+        s=default; t=1541714495;
+        bh=VX3Dp+J9sbgHcEF8ms/W+ZtwfY3Tt5eilorz0gib4fs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XF6Jlh1SyBMR8ExdL4Z6HQ6jaCXZl3y56yuJYsD0/UO8aC4OQJZNfUXrhc8xZmfMK
-         eFubrjfA0dglQInp7bWgcBP05w91tXRAF525ECuVDln+oWqjVMRGtRJZKCAQKmYIma
-         OPFR7BLGYHFick/hEJTYQKeLt3cyAq7X+BFg3waM=
+        b=vZspvF/lgqViOAUeKAOdBJsAE7xuwKeKS8q/0ynxAioKWN+SU5usoZPbTyp3AqINA
+         LihbOHL85o5KpooN2oOi+O30O2sX0rvWoeq+JYEqGMLmm7V5GzKpdVm2OzciJQjohV
+         MY/SQ3bOQ0AdgO5Zz5x6s6ZNV1LKf0qd3RTtjjkI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tobias Herzog <t-herzog@gmx.de>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.4 108/114] cdc-acm: correct counting of UART states in serial state notification
-Date:   Thu,  8 Nov 2018 13:52:03 -0800
-Message-Id: <20181108215110.528165084@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Felipe Balbi <felipe.balbi@intel.com>
+Subject: [PATCH 4.4 109/114] usb: gadget: storage: Fix Spectre v1 vulnerability
+Date:   Thu,  8 Nov 2018 13:52:04 -0800
+Message-Id: <20181108215110.618226295@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -62,55 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tobias Herzog <t-herzog@gmx.de>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit f976d0e5747ca65ccd0fb2a4118b193d70aa1836 upstream.
+commit 9ae24af3669111d418242caec8dd4ebd9ba26860 upstream.
 
-The usb standard ("Universal Serial Bus Class Definitions for Communication
-Devices") distiguishes between "consistent signals" (DSR, DCD), and
-"irregular signals" (break, ring, parity error, framing error, overrun).
-The bits of "irregular signals" are set, if this error/event occurred on
-the device side and are immeadeatly unset, if the serial state notification
-was sent.
-Like other drivers of real serial ports do, just the occurence of those
-events should be counted in serial_icounter_struct (but no 1->0
-transitions).
+num can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Signed-off-by: Tobias Herzog <t-herzog@gmx.de>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
+This issue was detected with the help of Smatch:
+
+drivers/usb/gadget/function/f_mass_storage.c:3177 fsg_lun_make() warn:
+potential spectre issue 'fsg_opts->common->luns' [r] (local cap)
+
+Fix this by sanitizing num before using it to index
+fsg_opts->common->luns
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Felipe Balbi <felipe.balbi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/usb/gadget/function/f_mass_storage.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -332,17 +332,17 @@ static void acm_ctrl_irq(struct urb *urb
+--- a/drivers/usb/gadget/function/f_mass_storage.c
++++ b/drivers/usb/gadget/function/f_mass_storage.c
+@@ -220,6 +220,8 @@
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/composite.h>
  
- 		if (difference & ACM_CTRL_DSR)
- 			acm->iocount.dsr++;
--		if (difference & ACM_CTRL_BRK)
--			acm->iocount.brk++;
--		if (difference & ACM_CTRL_RI)
--			acm->iocount.rng++;
- 		if (difference & ACM_CTRL_DCD)
- 			acm->iocount.dcd++;
--		if (difference & ACM_CTRL_FRAMING)
-+		if (newctrl & ACM_CTRL_BRK)
-+			acm->iocount.brk++;
-+		if (newctrl & ACM_CTRL_RI)
-+			acm->iocount.rng++;
-+		if (newctrl & ACM_CTRL_FRAMING)
- 			acm->iocount.frame++;
--		if (difference & ACM_CTRL_PARITY)
-+		if (newctrl & ACM_CTRL_PARITY)
- 			acm->iocount.parity++;
--		if (difference & ACM_CTRL_OVERRUN)
-+		if (newctrl & ACM_CTRL_OVERRUN)
- 			acm->iocount.overrun++;
- 		spin_unlock(&acm->read_lock);
++#include <linux/nospec.h>
++
+ #include "configfs.h"
  
+ 
+@@ -3260,6 +3262,7 @@ static struct config_group *fsg_lun_make
+ 	fsg_opts = to_fsg_opts(&group->cg_item);
+ 	if (num >= FSG_MAX_LUNS)
+ 		return ERR_PTR(-ERANGE);
++	num = array_index_nospec(num, FSG_MAX_LUNS);
+ 
+ 	mutex_lock(&fsg_opts->lock);
+ 	if (fsg_opts->refcnt || fsg_opts->common->luns[num]) {
 
 
