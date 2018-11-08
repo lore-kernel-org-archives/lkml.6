@@ -2,190 +2,157 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C004C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4A7C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4FE32086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:24:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4FE32086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id A1BB52086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 11:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BB52086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeKHU7k (ORCPT
+        id S1727396AbeKHU7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:59:40 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:41825 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHU7k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:59:40 -0500
-Received: from [109.168.11.45] (port=36654 helo=[192.168.101.125])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gKiQA-001ZTM-Pc; Thu, 08 Nov 2018 12:24:22 +0100
-Subject: Re: [PATCH v4 3/4] media: i2c: Add MAX9286 driver
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     kieran.bingham+renesas@ideasonboard.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, sakari.ailus@iki.fi,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
- <bfae74db-aa54-32b3-966b-b8d17f2e366b@ideasonboard.com>
- <898b4698-c3c3-9d38-e117-6a4274ba2ca4@lucaceresoli.net>
- <20181108101101.GE24024@w540>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <71bc438b-321e-cecc-120c-a95ff12642f2@lucaceresoli.net>
-Date:   Thu, 8 Nov 2018 12:24:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 15:59:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44358 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726359AbeKHU7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 15:59:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3AE72ACF9;
+        Thu,  8 Nov 2018 11:24:46 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 12:24:43 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v6 1/3] printk: Add line-buffered printk() API.
+Message-ID: <20181108112443.huqkju4uwrenvtnu@pathway.suse.cz>
+References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181106143502.GA32748@tigerII.localdomain>
+ <20181107102154.pobr7yrl5il76be6@pathway.suse.cz>
+ <20181108022138.GA2343@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <20181108101101.GE24024@w540>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108022138.GA2343@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Thu 2018-11-08 11:21:38, Sergey Senozhatsky wrote:
+> On (11/07/18 11:21), Petr Mladek wrote:
+> What is the problem:
+> - we have tons of CPUs, with tons of tasks running on them, with preemption,
+>   and interrupts, and potentially printk-s coming from various
+>   contexts/CPUs/tasks etc. so one 'cont' buffer is not enough.
+> 
+> What is the proposed solution:
+> - if 1 is not enough then 16 will do. And if 16 is not enough then this
+>   is not our problem anymore, it's a kernel misconfiguration and users'
+>   fault.
 
-On 08/11/18 11:11, jacopo mondi wrote:
-> Hi Luca, Kieran,
->     sorry to jump up, but I feel this should be clarified.
-> 
-> On Wed, Nov 07, 2018 at 06:24:18PM +0100, Luca Ceresoli wrote:
->> Hi Kieran,
->>
->> thanks for the clarification. One additional note below.
->>
->> On 07/11/18 16:06, Kieran Bingham wrote:
->>> Hi Luca
->>>
->>> <Top posting for new topic>
->>>
->>>> <lucaceresoli> kbingham: hi, I'm looking at your GMSL v4 patches
->>>> <lucaceresoli> kbingham: jmondi helped me in understanding parts of it, but I still have a question
->>>> <lucaceresoli> kbingham: are the drivers waiting for the established link before the remote chips are accessed? where?
->>>
->>> I'm replying here rather than spam the IRC channel with a big paste.
->>> It's also a useful description to the probe sequence, so I've kept it
->>> with the driver posting.
->>>
->>> I hope the following helps illustrate the sequences which are involved:
->>>
->>> max9286_probe()
->>>  - max9286_i2c_mux_close() # Disable all links
->>>  - max9286_configure_i2c # Configure early communication settings
->>>  - max9286_init():
->>>    - regulator_enable() # Power up all cameras
->>>    - max9286_setup() # Most link setup is done here.
->>>    ... Set up v4l2/async/media-controller endpoints
->>>    - max9286_i2c_mux_init() # Start configuring cameras:
->>>      - i2c_mux_alloc() # Create our mux device
->>>      - for_each_source(dev, source)
->>>            i2c_mux_add_adapter() # This is where sensors get probed.
->>>
->>> So yes sensors are only communicated with once the link is brought up as
->>> much as possible.
->>
->> For the records, an additional bit of explanation I got from Kieran via IRC.
->>
->> The fact that link is already up when the sensors are probed is due to
->> the fact that the power regulator has a delay of *8 seconds*. This is
->> intended, because there's an MCU on the camera modules that talks on the
->> I2C bus during that time, and thus the drivers need to wait after it's done.
-> 
-> The 8sec delay is due to the fact an integrated MCU on the remote
-> camera module programs the local sensor and the serializer intgrated
-> in the module in to some default configuration state. At power up, we
-> just want to let it finish, with all reverse channels closed
-> (camera module -> SoC direction) not to have the MCU transmitted
-> messages repeated to the local side (our remote serializer does repeat
-> messages not directed to it on it's remote side, as our local
-> deserialier does).
-> 
-> The "link up" thing is fairly more complicated for GMSL than just
-> having a binary "on" or "off" mode. This technology defines two different
-> "channels", a 'configuration-channel' for transmitting control messages
-> on the serial link (i2c messages for the deserializer/serializer pair
-> this patches support) and a 'video-channel' for transmission of
-> high-speed data, such as, no surprise, video and images :)
-> 
-> GMSL also defines two "link modes": a clock-less "configuration link"
-> and an high-speed "video link". The "configuration link" is available a
-> few msec after power up (roughly), while the "video link" needs a pixel
-> clock to be supplied to the serializer for it to enter this mode and
-> be able to lock the status between itself and the deserializer. Then it can
-> begin serializing video data.
-> 
-> The 'control channel' is available both when the link is in
-> 'configuration' and 'video' mode, while the 'video' channel is
-> available only when the link is in 'video' mode (or, to put it more
-> simply: you can send i2c configuration messages while the link is
-> serializing video).
-> 
-> Our implementation uses the link in 'configuration mode' during the
-> remote side programming phase, at 'max9286_i2c_mux_init()' time, with
-> the 'max9286_i2c_mux_select()' function enabling selectively the
-> 'configuration link' of each single remote end. It probes the remote device
-> by instantiating a new i2c_adapter connected to the mux, one for each
-> remote end, and performs the device configuration by initially using its
-> default power up i2c address (it is safe to do so, all other links are
-> closed), then changes the remote devices address to an unique one
-> (as our devices allows us to do so, otherwise you should use the
-> deserializer address translation feature to mask and translate the
-> remote addresses).
-> 
-> Now all remote devices have an unique i2c address, and we can operate
-> with all 'configuration links' open with no risk of i2c addresses
-> collisions.
-> 
-> At this point when we want to start the video stream, we send a
-> control message to the remote device, which enables the pixel clock
-> output from the image sensor, and activate the 'video channel' on the
-> remote serializer. The local deserializer makes sure all 'video links'
-> are locked (see 'max9286_check_video_links()') and at this point we
-> can begin serializing/deserializing video data.
-> 
-> As you can see, the initial delay only plays a role in avoiding
-> collision before we properly configure the channels and the i2c
-> addresses. The link setup phase is instead an integral part of the
-> system configuration, and there are no un-necessary delays used to
-> work around it setup procedure.
-> 
-> Does this help clarifying the system startup procedure?
+I believe that I mentioned this more times. 16 buffers is the first
+attempt. We could improve it later in several ways:
 
-Yes, that's very informative, thank you very much.
+  + add more buffers
+  + combine buffers on stack, dynamically allocated and static ones.
 
-Given the complexity of the driver and the non-obviousness of some
-workarounds to "unfortunate hardware design choices", I think [some of]
-this explanation should be committed together with the driver, in order
-to make it more understandable to other people. Even more since you've
-already taken time to write it.
+BTW: I do not remember seeing mixed lines from anything even close to 16
+CPUs. Maybe I was just lucky or my memory is leaky.
 
-Thanks,
--- 
-Luca
+
+> Let's have one more look at what we will fix and what we will break.
+> 
+> 'cont' has premature flushes.
+> 
+>   Why is it good.
+>   It preserves the correct order of events.
+> 
+>   pr_cont("calling foo->init()....");
+>   foo->init()
+>    printk("Can't allocate buffer\n");    // premature flush
+>   pr_cont("...blah\h");
+> 
+>  Will end up in the logbuf as:
+>  [12345.123] calling foo->init()....
+>  [12345.124] Can't allocate buffer
+>  [12345.125] ...blah
+> 
+>  Where buffered printk will endup as:
+>  [12345.123] Can't allocate buffer
+>  [12345.124] calling foo->init().......blah
+
+We will always have this problem with API using explicit buffers.
+What do you suggest instead, please?
+
+I am afraid that we are running in cycles. The other serious
+alternative was having per-process and per-context buffers
+but it was rejected several times.
+
+
+> Not to mention that buffered printk does not flush on panic.
+> So, frankly, as of now, I don't see buffered printk as a 'cont'
+> replacement.
+
+The static array of buffers can be flushed on panic.
+
+
+> If our problem is OOM and lockdep print outs, then let's address only
+> those two; let's not "fix" the rest of the kernel, especially the early
+> boot, - we can break more things than we can mend.
+
+Do you have any alternative proposal how to handle OOM and lockdep, please?
+
+
+> [..]
+> > I opened this problem once and it got lost. So I did not want to
+> > complicate it at this moment.
+>
+> - I don't exactly like the completely of the vprintk_buffered. If
+>   buffered printk is for single line, then it must be for single
+>   line only.
+
+My undestanding is that the new API is similar to the current cont
+buffer from this point of view:
+
+    + buffer size is LOG_LINE_MAX
+    + it is flushed when full
+
+The only difference is that it is flushed also when there is a
+complete line. Is this a problem, please?
+
+
+> And I'm not buying the "we will need this for printk origin
+> info injection" argument.
+
+I was against this idea several times. The current API does
+not do anything like this.
+
+
+> - It seems that buffered printk attempts to solve too many problems.
+>   I'd prefer it to address just one.
+
+This API tries to handle continuous lines more reliably.
+Do I miss anything, please?
+
+Best Regards,
+Petr
