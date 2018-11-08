@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7638ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B5EECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72EC22146E
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36183208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAQbYqpg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72EC22146E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTTZcLzu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36183208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbeKIHjg (ORCPT
+        id S1731018AbeKIHjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:39:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59232 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:39:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727304AbeKIHjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:39:35 -0500
+        id S1730999AbeKIHjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:39:36 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D97CA20892;
-        Thu,  8 Nov 2018 22:02:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1957A2146E;
+        Thu,  8 Nov 2018 22:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714526;
-        bh=pj5QOilt+6ZNqj5/G1o6Ndpq/74bfO3wQy/otZOZWRQ=;
+        s=default; t=1541714527;
+        bh=3zMlNp2LTbMrtlH0zj7vjuQmEkZt6tfDsbdLUip23nY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kAQbYqpguQtX1ZkcWG55s/cz0P7BwCZscxMXrCWscfwD7GvxArAq9hUINRVjFSPLt
-         yHwlxbEVvGowp7twyLzXvdpG014P79LNWlT4Kn514iyHO5eBKmGwQBb7upDCMDuCAI
-         m4G7kz7VNym7JE888ohFq97Cl/OqRowGOixB95rE=
+        b=lTTZcLzuwFdYT81xQm0R++63RTrpp+4muPUtVD6Ykddk/j0QihVtE7884xaTs3oL+
+         Zah2FaUZb7dhWxKEvfAR5xc+WDLR34U5C5DAOXxNG6M3VJOjOaX3dfEkEBp4KHEx5I
+         5WcWfspL4fUTq7Zrme94SLdK/Dh6fwEFVrtWJi18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 002/171] xfrm6: call kfree_skb when skb is toobig
-Date:   Thu,  8 Nov 2018 13:49:32 -0800
-Message-Id: <20181108215127.400378997@linuxfoundation.org>
+Subject: [PATCH 4.9 004/171] cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
+Date:   Thu,  8 Nov 2018 13:49:34 -0800
+Message-Id: <20181108215127.520438684@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,43 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 215ab0f021c9fea3c18b75e7d522400ee6a49990 ]
+[ Upstream commit 24f33e64fcd0d50a4b1a8e5b41bd0257aa66b0e8 ]
 
-After commit d6990976af7c5d8f55903bfb4289b6fb030bf754 ("vti6: fix PMTU caching
-and reporting on xmit"), some too big skbs might be potentially passed down to
-__xfrm6_output, causing it to fail to transmit but not free the skb, causing a
-leak of skb, and consequentially a leak of dst references.
+Core regulatory hints didn't set wiphy_idx to WIPHY_IDX_INVALID. Since
+the regulatory request is zeroed, wiphy_idx was always implicitly set to
+0. This resulted in updating only phy #0.
+Fix that.
 
-After running pmtu.sh, that shows as failure to unregister devices in a namespace:
-
-[  311.397671] unregister_netdevice: waiting for veth_b to become free. Usage count = 1
-
-The fix is to call kfree_skb in case of transmit failures.
-
-Fixes: dd767856a36e ("xfrm6: Don't call icmpv6_send on local error")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 806a9e39670b ("cfg80211: make regulatory_request use wiphy_idx instead of wiphy")
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+[add fixes tag]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/xfrm6_output.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/wireless/reg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv6/xfrm6_output.c b/net/ipv6/xfrm6_output.c
-index 4d09ce6fa90e..64862c5084ee 100644
---- a/net/ipv6/xfrm6_output.c
-+++ b/net/ipv6/xfrm6_output.c
-@@ -165,9 +165,11 @@ static int __xfrm6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 5dbac3749738..36d1d25082e3 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2298,6 +2298,7 @@ static int regulatory_hint_core(const char *alpha2)
+ 	request->alpha2[0] = alpha2[0];
+ 	request->alpha2[1] = alpha2[1];
+ 	request->initiator = NL80211_REGDOM_SET_BY_CORE;
++	request->wiphy_idx = WIPHY_IDX_INVALID;
  
- 	if (toobig && xfrm6_local_dontfrag(skb)) {
- 		xfrm6_local_rxpmtu(skb, mtu);
-+		kfree_skb(skb);
- 		return -EMSGSIZE;
- 	} else if (!skb->ignore_df && toobig && skb->sk) {
- 		xfrm_local_error(skb, mtu);
-+		kfree_skb(skb);
- 		return -EMSGSIZE;
- 	}
+ 	queue_regulatory_request(request);
  
 -- 
 2.17.1
