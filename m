@@ -2,168 +2,142 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C14ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6590DECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A8121019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:37:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=metanate.com header.i=@metanate.com header.b="VPCGn2eS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A8121019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=metanate.com
+	by mail.kernel.org (Postfix) with ESMTP id 3949B20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:37:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3949B20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeKIDNe (ORCPT
+        id S1727232AbeKIDN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:13:34 -0500
-Received: from dougal.metanate.com ([90.155.101.14]:24524 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726710AbeKIDNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:13:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
-        :In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=AOp3pOwZWcY9f86KjSXjzVdOVqOQ6phSjniJ7lnCdVw=; b=VPCGn2eScnBh8szWUcLpS1Knp5
-        s+YTVi3av0Lk4ewy2z9k/aJlMD5FRI0va2Ks/Xjz3jcFBHD1Wp2Vqw26R3Oo9fveQi8NJ5I0fHcTO
-        zr8l6FsJWckVCyZEN9lC1Urg7qQdkYioMTT3QQcv7V7FqBb6YA+W5GcSggBXJIFS5LslVs9M+7ulW
-        A77YktQ2UOuX+wIbnjCBnG3GECdnTHqoLX03gytyJVPtLspX/Cdh7TYh13yuTdgcgamjBYVQJCifG
-        s+3j6EnJF7CmFg8Zm8j3EIK7HQSB0xMYH0Ds3Ez/oY7sNCG9v7ExrgbDL0IRTvUEsDLQoL9HifxPw
-        3i8NGN7A==;
-Received: from 188-39-28-98.static.enta.net ([188.39.28.98] helo=donbot)
-        by shrek.metanate.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <john@metanate.com>)
-        id 1gKoEg-000673-Db; Thu, 08 Nov 2018 17:36:54 +0000
-Date:   Thu, 8 Nov 2018 17:36:53 +0000
-From:   John Keeping <john@metanate.com>
-To:     Minas Harutyunyan <minas.harutyunyan@synopsys.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "arthur.petrosyan@synopsys.com" <arthur.petrosyan@synopsys.com>
-Subject: Re: [PATCH] usb: dwc2: gadget: fix ISOC frame overflow handling
-Message-ID: <20181108173654.118f9e3e@donbot>
-In-Reply-To: <410670D7E743164D87FA6160E7907A56013A79E7CE@am04wembxa.internal.synopsys.com>
-References: <20181023134355.29829-1-john@metanate.com>
-        <410670D7E743164D87FA6160E7907A56013A79E7CE@am04wembxa.internal.synopsys.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 22:13:59 -0500
+Received: from mga06.intel.com ([134.134.136.31]:63187 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726845AbeKIDN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:13:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 09:37:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="94709705"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 09:37:25 -0800
+From:   thor.thayer@linux.intel.com
+To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCHv2] net: stmmac: Fix RX packet size > 8191
+Date:   Thu,  8 Nov 2018 11:39:45 -0600
+Message-Id: <1541698785-9577-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Minas,
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-On Mon, 5 Nov 2018 08:28:07 +0000
-Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:
+Ping problems with packets > 8191 as shown:
 
-> On 10/23/2018 5:43 PM, John Keeping wrote:
-> > By clearing the overrun flag as soon as the target frame is next
-> > incremented, we can end up incrementing the target frame more than
-> > expected in dwc2_gadget_handle_ep_disabled() when the endpoint's
-> > interval is greater than 1.  This happens if the target frame has
-> > just wrapped at the point when the endpoint is disabled and the
-> > frame number has not yet done so.
-> > 
-> > Instead, wait until the frame number also wraps and then clear the
-> > overrun flag.
-> > 
-> > Signed-off-by: John Keeping <john@metanate.com>
-> > ---
-> >   drivers/usb/dwc2/gadget.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> > index 2d6d2c8244de..8da2c052dfa1 100644
-> > --- a/drivers/usb/dwc2/gadget.c
-> > +++ b/drivers/usb/dwc2/gadget.c
-> > @@ -117,7 +117,7 @@ static inline void
-> > dwc2_gadget_incr_frame_num(struct dwc2_hsotg_ep *hs_ep) if
-> > (hs_ep->target_frame > DSTS_SOFFN_LIMIT) { hs_ep->frame_overrun =
-> > true; hs_ep->target_frame &= DSTS_SOFFN_LIMIT;
-> > -	} else {
-> > +	} else if (hs_ep->parent->frame_number <
-> > hs_ep->target_frame) { hs_ep->frame_overrun = false;
-> >   	}
-> >   }
-> >   
-> Did you tested mentioned by you scenario? If you see issue can you 
-> provide debug log and point the issue line in the log.
+PING 192.168.1.99 (192.168.1.99) 8150(8178) bytes of data.
+8158 bytes from 192.168.1.99: icmp_seq=1 ttl=64 time=0.669 ms
+wrong data byte 8144 should be 0xd0 but was 0x0
+16    10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+      20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+%< ---------------snip--------------------------------------
+8112  b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
+      c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+8144  0 0 0 0 d0 d1
+      ^^^^^^^
+Notice the 4 bytes of 0 before the expected byte of d0.
 
-It only reproduces very occasionally so it's difficult to capture a full
-debug log containing the error.
+Databook notes that the RX buffer must be a multiple of 4/8/16
+bytes [1].
 
-I applied this patch to capture logging specifically around this
-scenario:
+Update the DMA Buffer size define to 8188 instead of 8192. Remove
+the -1 from the RX buffer size allocations and use the new
+DMA Buffer size directly.
 
--- >8 --
-diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 220c0f9b89b0..3770b9d3b523 100644
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -2722,13 +2722,20 @@ static void dwc2_gadget_handle_ep_disabled(struct dwc2_hsotg_ep *hs_ep)
-        }
+[1] Synopsys DesignWare Cores Ethernet MAC Universal v3.70a
+    [section 8.4.2 - Table 8-24]
+
+Tested on SoCFPGA Stratix10 with ping sweep from 100 to 8300 byte packets.
+
+Fixes: 286a83721720 ("stmmac: add CHAINED descriptor mode support (V4)")
+Suggested-by: Jose Abreu <jose.abreu@synopsys.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+v2  Change BUF_SIZE_8KiB directly instead of separate define in RFT.
+---
+ drivers/net/ethernet/stmicro/stmmac/common.h    | 3 ++-
+ drivers/net/ethernet/stmicro/stmmac/descs_com.h | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c  | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/ring_mode.c | 2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index b1b305f8f414..272b9ca66314 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -365,7 +365,8 @@ struct dma_features {
  
-        do {
-+               unsigned int target_frame = hs_ep->target_frame;
-+               bool frame_overrun = hs_ep->frame_overrun;
-+
-                hs_req = get_ep_head(hs_ep);
-                if (hs_req)
-                        dwc2_hsotg_complete_request(hsotg, hs_ep, hs_req,
-                                                    -ENODATA);
-+
-                dwc2_gadget_incr_frame_num(hs_ep);
-                /* Update current frame number value. */
-                hsotg->frame_number = dwc2_hsotg_read_frameno(hsotg);
-+
-+               dev_warn(hsotg->dev, "%s: expiring request frame_number=0x%04x target_frame=0x%04x overrun=%u\n",
-+                        __func__, hsotg->frame_number, target_frame, frame_overrun);
-        } while (dwc2_gadget_target_frame_elapsed(hs_ep));
+ /* GMAC TX FIFO is 8K, Rx FIFO is 16K */
+ #define BUF_SIZE_16KiB 16384
+-#define BUF_SIZE_8KiB 8192
++/* RX Buffer size must be < 8191 and multiple of 4/8/16 bytes */
++#define BUF_SIZE_8KiB 8188
+ #define BUF_SIZE_4KiB 4096
+ #define BUF_SIZE_2KiB 2048
  
-        dwc2_gadget_start_next_request(hs_ep);
--- 8< --
+diff --git a/drivers/net/ethernet/stmicro/stmmac/descs_com.h b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+index ca9d7e48034c..40d6356a7e73 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/descs_com.h
++++ b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+@@ -31,7 +31,7 @@
+ /* Enhanced descriptors */
+ static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end)
+ {
+-	p->des1 |= cpu_to_le32(((BUF_SIZE_8KiB - 1)
++	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB
+ 			<< ERDES1_BUFFER2_SIZE_SHIFT)
+ 		   & ERDES1_BUFFER2_SIZE_MASK);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index 77914c89d749..5ef91a790f9d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -262,7 +262,7 @@ static void enh_desc_init_rx_desc(struct dma_desc *p, int disable_rx_ic,
+ 				  int mode, int end)
+ {
+ 	p->des0 |= cpu_to_le32(RDES0_OWN);
+-	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB - 1) & ERDES1_BUFFER1_SIZE_MASK);
++	p->des1 |= cpu_to_le32(BUF_SIZE_8KiB & ERDES1_BUFFER1_SIZE_MASK);
+ 
+ 	if (mode == STMMAC_CHAIN_MODE)
+ 		ehn_desc_rx_set_on_chain(p);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+index abc3f85270cd..d8c5bc412219 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
++++ b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+@@ -140,7 +140,7 @@ static void clean_desc3(void *priv_ptr, struct dma_desc *p)
+ static int set_16kib_bfsize(int mtu)
+ {
+ 	int ret = 0;
+-	if (unlikely(mtu >= BUF_SIZE_8KiB))
++	if (unlikely(mtu > BUF_SIZE_8KiB))
+ 		ret = BUF_SIZE_16KiB;
+ 	return ret;
+ }
+-- 
+2.7.4
 
-and I captured this log (the first entry is a separate error and then
-the remaining ones show this bug being triggered):
-
-[  562.571227] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3eb9 target_frame=0x3ec0
-[  562.611213] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff8 target_frame=0x0008
-[  562.611219] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff8 target_frame=0x0010
-[  562.611223] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0018
-[  562.611228] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0020
-[  562.611232] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0028
-[  562.611236] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0030
-[  562.611240] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0038
-[  562.611244] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0040
-[  562.611249] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0048
-[  562.611253] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0050
-[  562.611257] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0058
-[  562.611261] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0060
-[  562.611265] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0068
-[  562.611269] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0070
-[  562.611274] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0078
-[  562.611278] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0080
-[  562.611282] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0088
-[  562.611286] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0090
-[  562.611290] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x0098
-[  562.611294] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request frame_number=0x3ff9 target_frame=0x00a0
-
-
-This was on v4.19 with an additional patch to disable descriptor DMA
-because that seems to be causing problems on RK3288 although I haven't
-figured out exactly why it's a problem.
-
-
-Regards,
-John
