@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AB3ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324FCECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD4320844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9F3C20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBm9XsA9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD4320844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaCRFxZU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F3C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeKIHmR (ORCPT
+        id S1731490AbeKIHmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:42:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34020 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:42:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727288AbeKIHmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:42:17 -0500
+        id S1727288AbeKIHmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:42:18 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAC0F208A3;
-        Thu,  8 Nov 2018 22:04:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1842A20844;
+        Thu,  8 Nov 2018 22:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714686;
-        bh=MBanEg1tCspwEbgEscg6fU5mMt207z/SR/WHbRBTj5Y=;
+        s=default; t=1541714688;
+        bh=98JvYzUzuD6neUgXffg0PE5QMT2/wBrDRrdCs27Y8eY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YBm9XsA9okuSRHAnBNSF26xXLmUsotD/U6n0jvmslUU6xErEGw40A0HckIq4axU0d
-         69QulOXwXq4QXqHk/2p6orabl70J+3f4RxcxYnKX1z6ehuYVjBWNkw+nVQw1jPiRZ6
-         sk6Rog+0GYsFEH7KUVv/8glVJDaA8A3fBk3H1S84=
+        b=qaCRFxZUs1f7/hvGXdP7BrhDmCozourksvMjjnF8LbXYS7BF2NL6bM99phZv570Uj
+         dJ85DgMhbvr9dULJYadbUUPnkWF728V1z0B5bo6219qqfHCcJMrdzUaj0RIFSiBQpB
+         CmAk4+HSMPudZgftEU4UdCpqkMBFSIiwKPRr+c4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        stable@vger.kernel.org, Manish Chopra <manish.chopra@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 064/171] net: ethernet: stmmac: Fix altr_tse_pcs SGMII Initialization
-Date:   Thu,  8 Nov 2018 13:50:34 -0800
-Message-Id: <20181108215132.208673697@linuxfoundation.org>
+Subject: [PATCH 4.9 065/171] qlcnic: Fix tunnel offload for 82xx adapters
+Date:   Thu,  8 Nov 2018 13:50:35 -0800
+Message-Id: <20181108215132.283850917@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,50 +63,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 77032732d0e89b83c3bca75b857a1f63e9efb44b ]
+[ Upstream commit 4bd7ef0b033721b659b9357057e76d1ced95c1da ]
 
-Fix NETDEV WATCHDOG timeout on startup by adding missing register
-writes that properly setup SGMII.
+Qlogic's 82xx series adapter doesn't support
+tunnel offloads, driver incorrectly assumes that it is
+supported and causes firmware hang while running tunnel IO.
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Acked-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+This patch fixes this by not advertising tunnel offloads
+for 82xx adapters.
+
+Signed-off-by: Manish Chopra <manish.chopra@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic.h   | 26 +++++++++++++++++--
+ .../ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c   |  2 ++
+ .../net/ethernet/qlogic/qlcnic/qlcnic_main.c  |  2 ++
+ .../qlogic/qlcnic/qlcnic_sriov_common.c       |  2 ++
+ 4 files changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.c b/drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.c
-index 489ef146201e..6a9c954492f2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/altr_tse_pcs.c
-@@ -37,6 +37,7 @@
- #define TSE_PCS_CONTROL_AN_EN_MASK			BIT(12)
- #define TSE_PCS_CONTROL_REG				0x00
- #define TSE_PCS_CONTROL_RESTART_AN_MASK			BIT(9)
-+#define TSE_PCS_CTRL_AUTONEG_SGMII			0x1140
- #define TSE_PCS_IF_MODE_REG				0x28
- #define TSE_PCS_LINK_TIMER_0_REG			0x24
- #define TSE_PCS_LINK_TIMER_1_REG			0x26
-@@ -65,6 +66,7 @@
- #define TSE_PCS_SW_RESET_TIMEOUT			100
- #define TSE_PCS_USE_SGMII_AN_MASK			BIT(1)
- #define TSE_PCS_USE_SGMII_ENA				BIT(0)
-+#define TSE_PCS_IF_USE_SGMII				0x03
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+index 5ddadcd0c8db..f1242ab32ca6 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+@@ -1825,22 +1825,44 @@ struct qlcnic_hardware_ops {
+ 	u32 (*get_cap_size)(void *, int);
+ 	void (*set_sys_info)(void *, int, u32);
+ 	void (*store_cap_mask)(void *, u32);
++	bool (*encap_rx_offload) (struct qlcnic_adapter *adapter);
++	bool (*encap_tx_offload) (struct qlcnic_adapter *adapter);
+ };
  
- #define SGMII_ADAPTER_CTRL_REG				0x00
- #define SGMII_ADAPTER_DISABLE				0x0001
-@@ -101,7 +103,9 @@ int tse_pcs_init(void __iomem *base, struct tse_pcs *pcs)
+ extern struct qlcnic_nic_template qlcnic_vf_ops;
+ 
+-static inline bool qlcnic_encap_tx_offload(struct qlcnic_adapter *adapter)
++static inline bool qlcnic_83xx_encap_tx_offload(struct qlcnic_adapter *adapter)
  {
- 	int ret = 0;
+ 	return adapter->ahw->extra_capability[0] &
+ 	       QLCNIC_83XX_FW_CAPAB_ENCAP_TX_OFFLOAD;
+ }
  
--	writew(TSE_PCS_USE_SGMII_ENA, base + TSE_PCS_IF_MODE_REG);
-+	writew(TSE_PCS_IF_USE_SGMII, base + TSE_PCS_IF_MODE_REG);
+-static inline bool qlcnic_encap_rx_offload(struct qlcnic_adapter *adapter)
++static inline bool qlcnic_83xx_encap_rx_offload(struct qlcnic_adapter *adapter)
+ {
+ 	return adapter->ahw->extra_capability[0] &
+ 	       QLCNIC_83XX_FW_CAPAB_ENCAP_RX_OFFLOAD;
+ }
+ 
++static inline bool qlcnic_82xx_encap_tx_offload(struct qlcnic_adapter *adapter)
++{
++	return false;
++}
 +
-+	writew(TSE_PCS_CTRL_AUTONEG_SGMII, base + TSE_PCS_CONTROL_REG);
++static inline bool qlcnic_82xx_encap_rx_offload(struct qlcnic_adapter *adapter)
++{
++        return false;
++}
++
++static inline bool qlcnic_encap_rx_offload(struct qlcnic_adapter *adapter)
++{
++        return adapter->ahw->hw_ops->encap_rx_offload(adapter);
++}
++
++static inline bool qlcnic_encap_tx_offload(struct qlcnic_adapter *adapter)
++{
++        return adapter->ahw->hw_ops->encap_tx_offload(adapter);
++}
++
+ static inline int qlcnic_start_firmware(struct qlcnic_adapter *adapter)
+ {
+ 	return adapter->nic_ops->start_firmware(adapter);
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+index 05d32e86bcf7..35c5ac41c0a1 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -242,6 +242,8 @@ static struct qlcnic_hardware_ops qlcnic_83xx_hw_ops = {
+ 	.get_cap_size			= qlcnic_83xx_get_cap_size,
+ 	.set_sys_info			= qlcnic_83xx_set_sys_info,
+ 	.store_cap_mask			= qlcnic_83xx_store_cap_mask,
++	.encap_rx_offload		= qlcnic_83xx_encap_rx_offload,
++	.encap_tx_offload		= qlcnic_83xx_encap_tx_offload,
+ };
  
- 	writew(TSE_PCS_SGMII_LINK_TIMER_0, base + TSE_PCS_LINK_TIMER_0_REG);
- 	writew(TSE_PCS_SGMII_LINK_TIMER_1, base + TSE_PCS_LINK_TIMER_1_REG);
+ static struct qlcnic_nic_template qlcnic_83xx_ops = {
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+index 3ae3968b0edf..ebf5ead16939 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -632,6 +632,8 @@ static struct qlcnic_hardware_ops qlcnic_hw_ops = {
+ 	.get_cap_size			= qlcnic_82xx_get_cap_size,
+ 	.set_sys_info			= qlcnic_82xx_set_sys_info,
+ 	.store_cap_mask			= qlcnic_82xx_store_cap_mask,
++	.encap_rx_offload               = qlcnic_82xx_encap_rx_offload,
++	.encap_tx_offload               = qlcnic_82xx_encap_tx_offload,
+ };
+ 
+ static int qlcnic_check_multi_tx_capability(struct qlcnic_adapter *adapter)
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+index 2f656f395f39..c58180f40844 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+@@ -77,6 +77,8 @@ static struct qlcnic_hardware_ops qlcnic_sriov_vf_hw_ops = {
+ 	.free_mac_list			= qlcnic_sriov_vf_free_mac_list,
+ 	.enable_sds_intr		= qlcnic_83xx_enable_sds_intr,
+ 	.disable_sds_intr		= qlcnic_83xx_disable_sds_intr,
++	.encap_rx_offload               = qlcnic_83xx_encap_rx_offload,
++	.encap_tx_offload               = qlcnic_83xx_encap_tx_offload,
+ };
+ 
+ static struct qlcnic_nic_template qlcnic_sriov_vf_ops = {
 -- 
 2.17.1
 
