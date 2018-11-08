@@ -4,85 +4,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FABC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7889AC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1182086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:21:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1182086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A85A20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:22:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A85A20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbeKHV4V (ORCPT
+        id S1726920AbeKHV5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 16:56:21 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14637 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbeKHV4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 16:56:21 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 797D26EBACD68;
-        Thu,  8 Nov 2018 20:21:00 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 8 Nov 2018 20:20:52 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Evgeniy Dushistov <dushistov@mail.ru>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Yue Haibing <yuehaibing@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ufs: remove set but not used variable 'usb3'
-Date:   Thu, 8 Nov 2018 12:30:35 +0000
-Message-ID: <1541680235-158692-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1534815222-101634-1-git-send-email-yuehaibing@huawei.com>
-References: <1534815222-101634-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 16:57:51 -0500
+Received: from foss.arm.com ([217.140.101.70]:39740 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbeKHV5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 16:57:51 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B189EBD;
+        Thu,  8 Nov 2018 04:22:37 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73AEE3F5BD;
+        Thu,  8 Nov 2018 04:22:31 -0800 (PST)
+Date:   Thu, 8 Nov 2018 12:22:29 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org, Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Subject: Re: [PATCH v10 12/22] kasan, arm64: fix up fault handling logic
+Message-ID: <20181108122228.xqwhpkjritrvqneq@lakrids.cambridge.arm.com>
+References: <cover.1541525354.git.andreyknvl@google.com>
+ <4891a504adf61c0daf1e83642b6f7519328dfd5f.1541525354.git.andreyknvl@google.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4891a504adf61c0daf1e83642b6f7519328dfd5f.1541525354.git.andreyknvl@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Haibing <yuehaibing@huawei.com>
+On Tue, Nov 06, 2018 at 06:30:27PM +0100, Andrey Konovalov wrote:
+> show_pte in arm64 fault handling relies on the fact that the top byte of
+> a kernel pointer is 0xff, which isn't always the case with tag-based
+> KASAN.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+That's for the TTBR1 check, right?
 
-fs/ufs/super.c: In function 'ufs_statfs':
-fs/ufs/super.c:1409:32: warning:
- variable 'usb3' set but not used [-Wunused-but-set-variable]
+i.e. for the following to work:
 
-It not used any more after commit
-c596961d1b4c ("ufs: fix s_size/s_dsize users")
+	if (addr >= VA_START)
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- fs/ufs/super.c | 2 --
- 1 file changed, 2 deletions(-)
+... we need the tag bits to be an extension of bit 55...
 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index a4e07e9..6a5db06 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -1406,11 +1406,9 @@ static int ufs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct super_block *sb = dentry->d_sb;
- 	struct ufs_sb_private_info *uspi= UFS_SB(sb)->s_uspi;
- 	unsigned  flags = UFS_SB(sb)->s_flags;
--	struct ufs_super_block_third *usb3;
- 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
- 
- 	mutex_lock(&UFS_SB(sb)->s_lock);
--	usb3 = ubh_get_usb_third(uspi);
- 	
- 	if ((flags & UFS_TYPE_MASK) == UFS_TYPE_UFS2)
- 		buf->f_type = UFS2_MAGIC;
+> 
+> This patch resets the top byte in show_pte.
+> 
+> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  arch/arm64/mm/fault.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index 7d9571f4ae3d..d9a84d6f3343 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -32,6 +32,7 @@
+>  #include <linux/perf_event.h>
+>  #include <linux/preempt.h>
+>  #include <linux/hugetlb.h>
+> +#include <linux/kasan.h>
+>  
+>  #include <asm/bug.h>
+>  #include <asm/cmpxchg.h>
+> @@ -141,6 +142,8 @@ void show_pte(unsigned long addr)
+>  	pgd_t *pgdp;
+>  	pgd_t pgd;
+>  
+> +	addr = (unsigned long)kasan_reset_tag((void *)addr);
 
+... but this ORs in (0xffUL << 56), which is not correct for addresses
+which aren't TTBR1 addresses to begin with, where bit 55 is clear, and
+throws away useful information.
 
+We could use untagged_addr() here, but that wouldn't be right for
+kernels which don't use TBI1, and we'd erroneously report addresses
+under the TTBR1 range as being in the TTBR1 range.
 
+I also see that the entry assembly for el{1,0}_{da,ia} clears the tag
+for EL0 addresses.
+
+So we could have:
+
+static inline bool is_ttbr0_addr(unsigned long addr)
+{
+	/* entry assembly clears tags for TTBR0 addrs */
+	return addr < TASK_SIZE_64;
+}
+
+static inline bool is_ttbr1_addr(unsigned long addr)
+{
+	/* TTBR1 addresses may have a tag if HWKASAN is in use */
+	return arch_kasan_reset_tag(addr) >= VA_START;
+}
+
+... and use those in the conditionals, leaving the addr as-is for
+reporting purposes.
+
+Thanks,
+Mark.
