@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4599FECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71113ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F070A20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37F7120844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtLrPYbn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F070A20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbuuI0hp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F7120844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731879AbeKIHng (ORCPT
+        id S1731891AbeKIHnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:43:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:43:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729999AbeKIHng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730301AbeKIHng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:43:36 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C76520844;
+        by mail.kernel.org (Postfix) with ESMTPSA id D707520989;
         Thu,  8 Nov 2018 22:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714765;
-        bh=k6k8drBhFDgyt7BKyFiC6ddu6nT6JCrIj8IO7wlqPQ0=;
+        s=default; t=1541714766;
+        bh=aPPlqaPBiWBiWF1WZbYQY9k1vVhhRTDqq+Ai/l09pD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtLrPYbnwR5rArS17pw4HOKw384L/K+iDKRHYdnIvIdGAmdYsdv6fyRNzlhCCQlmj
-         3wsrKqA9RCJWziXulGBhVZZ+946Xly1UbNyGVth1GeJh92pHaWYmdLXjXK4kPRwte9
-         QwQnPxiuaEx8hTMbUP2y4V2BxQWK/lPqXFBEf7jQ=
+        b=VbuuI0hpexSJLWbQw8cabNIT4+45AuNLT6JmIVG0Y+i/ucrLBYS3b2HLXT+phZAId
+         7+QOa5e6rgsdmdRvNBkg0/VdaA4Ebr7bvzA4Q55TzvFms0H0xR6XvBQ2bInMNrrHEh
+         r3g+JBiHe9Aa6lPesqiGPi6yil121GEiv7noUdXc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liam Shepherd <liam@dancer.es>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 114/171] xen-netfront: Update features after registering netdev
-Date:   Thu,  8 Nov 2018 13:51:24 -0800
-Message-Id: <20181108215135.564183733@linuxfoundation.org>
+Subject: [PATCH 4.9 115/171] sparc64: Fix regression in pmdp_invalidate().
+Date:   Thu,  8 Nov 2018 13:51:25 -0800
+Message-Id: <20181108215135.645303930@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,50 +62,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 45c8184c1bed1ca8a7f02918552063a00b909bf5 ]
+[ Upstream commit cfb61b5e3e09f8b49bc4d685429df75f45127adc ]
 
-Update the features after calling register_netdev() otherwise the
-device features are not set up correctly and it not possible to change
-the MTU of the device. After this change, the features reported by
-ethtool match the device's features before the commit which introduced
-the issue and it is possible to change the device's MTU.
+pmdp_invalidate() was changed to update the pmd atomically
+(to not lose dirty/access bits) and return the original pmd
+value.
 
-Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-Reported-by: Liam Shepherd <liam@dancer.es>
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+However, in doing so, we lost a lot of the essential work that
+set_pmd_at() does, namely to update hugepage mapping counts and
+queuing up the batched TLB flush entry.
+
+Thus we were not flushing entries out of the TLB when making
+such PMD changes.
+
+Fix this by abstracting the accounting work of set_pmd_at() out into a
+separate function, and call it from pmdp_establish().
+
+Fixes: a8e654f01cb7 ("sparc64: update pmdp_invalidate() to return old pmd value")
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/xen-netfront.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/sparc/mm/tlb.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 3c1adb38412b..c85edd161a6c 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1994,10 +1994,6 @@ static int xennet_connect(struct net_device *dev)
- 	/* talk_to_netback() sets the correct number of queues */
- 	num_queues = dev->real_num_tx_queues;
+diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
+index b2722ed31053..349cb83f7b5f 100644
+--- a/arch/sparc/mm/tlb.c
++++ b/arch/sparc/mm/tlb.c
+@@ -163,13 +163,10 @@ static void tlb_batch_pmd_scan(struct mm_struct *mm, unsigned long vaddr,
+ 	pte_unmap(pte);
+ }
  
--	rtnl_lock();
--	netdev_update_features(dev);
--	rtnl_unlock();
+-void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+-		pmd_t *pmdp, pmd_t pmd)
+-{
+-	pmd_t orig = *pmdp;
 -
- 	if (dev->reg_state == NETREG_UNINITIALIZED) {
- 		err = register_netdev(dev);
- 		if (err) {
-@@ -2007,6 +2003,10 @@ static int xennet_connect(struct net_device *dev)
- 		}
- 	}
+-	*pmdp = pmd;
  
-+	rtnl_lock();
-+	netdev_update_features(dev);
-+	rtnl_unlock();
++static void __set_pmd_acct(struct mm_struct *mm, unsigned long addr,
++			   pmd_t orig, pmd_t pmd)
++{
+ 	if (mm == &init_mm)
+ 		return;
+ 
+@@ -219,6 +216,15 @@ void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+ 	}
+ }
+ 
++void set_pmd_at(struct mm_struct *mm, unsigned long addr,
++		pmd_t *pmdp, pmd_t pmd)
++{
++	pmd_t orig = *pmdp;
 +
- 	/*
- 	 * All public and private state should now be sane.  Get
- 	 * ready to start sending and receiving packets and give the driver
++	*pmdp = pmd;
++	__set_pmd_acct(mm, addr, orig, pmd);
++}
++
+ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ 		unsigned long address, pmd_t *pmdp, pmd_t pmd)
+ {
+@@ -227,6 +233,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ 	do {
+ 		old = *pmdp;
+ 	} while (cmpxchg64(&pmdp->pmd, old.pmd, pmd.pmd) != old.pmd);
++	__set_pmd_acct(vma->vm_mm, address, old, pmd);
+ 
+ 	return old;
+ }
 -- 
 2.17.1
 
