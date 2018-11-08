@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 452CBECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBE2ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C602081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:48:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C602081C
+	by mail.kernel.org (Postfix) with ESMTP id 8F3312081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:50:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3312081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeKIH0W (ORCPT
+        id S1727287AbeKIH17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:26:22 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62967 "EHLO mga09.intel.com"
+        Fri, 9 Nov 2018 02:27:59 -0500
+Received: from mga18.intel.com ([134.134.136.126]:30783 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbeKIH0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:26:22 -0500
+        id S1725922AbeKIH17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:27:59 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:48:56 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:50:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="278283513"
+   d="scan'208";a="278283968"
 Received: from amwells-mobl1.amr.corp.intel.com (HELO [10.251.14.246]) ([10.251.14.246])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 13:48:54 -0800
-Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
- shadow stack
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 13:50:31 -0800
+Subject: Re: RFC: userspace exception fixups
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-5-yu-cheng.yu@intel.com>
- <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
- <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
- <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+References: <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <20181108195420.GA14715@linux.intel.com>
+ <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+ <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
+ <20181108211600.GA17167@linux.intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -108,12 +108,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <043a17ef-dc9f-56d2-5fba-1a58b7b0fd4d@intel.com>
-Date:   Thu, 8 Nov 2018 13:48:54 -0800
+Message-ID: <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
+Date:   Thu, 8 Nov 2018 13:50:31 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+In-Reply-To: <20181108211600.GA17167@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -122,19 +122,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/8/18 1:22 PM, Andy Lutomirski wrote:
->> +struct cet_kernel_state {
->> +       u64 kernel_ssp; /* kernel shadow stack */
->> +       u64 pl1_ssp;    /* ring-1 shadow stack */
->> +       u64 pl2_ssp;    /* ring-2 shadow stack */
->> +} __packed;
->> +
-> Why are these __packed?  It seems like it'll generate bad code for no
-> obvious purpose.
+On 11/8/18 1:16 PM, Sean Christopherson wrote:
+> On Thu, Nov 08, 2018 at 12:10:30PM -0800, Dave Hansen wrote:
+>> On 11/8/18 12:05 PM, Andy Lutomirski wrote:
+>>> Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
+>>> not the most terrible thing in the world.  But could the SDK live with
+>>> something more like my suggestion where the vDSO supplies a normal
+>>> function that takes a struct containing registers that are visible to
+>>> the enclave?  This would make it extremely awkward for the enclave to
+>>> use the untrusted stack per se, but it would make it quite easy (I
+>>> think) for the untrusted part of the SDK to allocate some extra memory
+>>> and just tell the enclave that *that* memory is the stack.
+>>
+>> I really think the enclave should keep its grubby mitts off the
+>> untrusted stack.  There are lots of ways to get memory, even with
+>> stack-like semantics, that don't involve mucking with the stack itself.
+>>
+>> I have not heard a good, hard argument for why there is an absolute
+>> *need* to store things on the actual untrusted stack.
+> 
+> Convenience and performance are the only arguments I've heard, e.g. so
+> that allocating memory doesn't require an extra EEXIT->EENTER round trip.
 
-It's a hardware-defined in-memory structure.  Granted, we'd need a
-really wonky compiler to make that anything *other* than a nicely-packed
-24-byte structure, but the __packed makes it explicit.
+Well, for the first access, it's going to cost a bunch asynchronous
+exits to fault in all the stack pages.  Instead of that, if you had a
+single area, or an explicit out-call to allocate and populate the area,
+you could do it in a single EEXIT and zero asynchronous exits for demand
+page faults.
 
-It is probably a really useful long-term thing to stop using __packed
-and start using "__hw_defined" or something that #defines down to __packed.
+So, it might be convenient, but I'm rather suspicious of any performance
+arguments.
