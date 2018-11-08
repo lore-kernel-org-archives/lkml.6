@@ -6,262 +6,249 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C90ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B08ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5F220825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:07:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5F220825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E021B20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:07:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E021B20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeKIDno (ORCPT
+        id S1727561AbeKIDnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:43:44 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:36294 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeKIDnn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:43:43 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8I6mBD008017;
-        Thu, 8 Nov 2018 12:06:48 -0600
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8I6mMB117268
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 12:06:48 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 12:06:48 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 12:06:48 -0600
-Received: from [172.22.151.38] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8I6lP1030927;
-        Thu, 8 Nov 2018 12:06:47 -0600
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <linux-leds@vger.kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <pavel@ucw.cz>, <robh@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <84dd8750-883e-1318-df85-f4c6b46b898f@ti.com>
-Date:   Thu, 8 Nov 2018 12:06:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 8 Nov 2018 22:43:46 -0500
+Received: from mga07.intel.com ([134.134.136.100]:2500 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726974AbeKIDnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:43:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 10:07:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="106592079"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 08 Nov 2018 10:07:06 -0800
+Subject: [driver-core PATCH v6 5/9] driver core: Establish clear order of
+ operations for deferred probe and remove
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org,
+        alexander.h.duyck@linux.intel.com
+Date:   Thu, 08 Nov 2018 10:07:06 -0800
+Message-ID: <154170042611.12967.14256799141542560553.stgit@ahduyck-desk1.jf.intel.com>
+In-Reply-To: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
-> Add public led_compose_name() API for composing LED class device
-> name basing on fwnode_handle data. The function composes device name
-> according to either a new <color:function> pattern or the legacy
-> <devicename:color:function> pattern. The decision on using the
-> particular pattern is made basing on whether fwnode contains new
-> "function" and "color" properties, or the legacy "label" proeprty.
-> 
-> Backwards compatibility with in-driver hard-coded LED class device
-> names is assured thanks to the default_desc argument.
-> 
-> In case none of the aformentioned properties was found, then, for OF
-> nodes, the node name is adopted for LED class device name.
-> 
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Baolin Wang <baolin.wang@linaro.org>
-> Cc: Daniel Mack <daniel@zonque.org>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Cc: Simon Shields <simon@lineageos.org>
-> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> ---
->  Documentation/leds/leds-class.txt |  2 +-
->  drivers/leds/led-core.c           | 71 +++++++++++++++++++++++++++++++++++++++
->  include/linux/leds.h              | 32 ++++++++++++++++++
->  3 files changed, 104 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
-> index 836cb16..e9009c4 100644
-> --- a/Documentation/leds/leds-class.txt
-> +++ b/Documentation/leds/leds-class.txt
-> @@ -43,7 +43,7 @@ LED Device Naming
->  
->  Is currently of the form:
->  
-> -"devicename:colour:function"
-> +"colour:function"
->  
->  There have been calls for LED properties such as colour to be exported as
->  individual led class attributes. As a solution which doesn't incur as much
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index ede4fa0..f7371fc 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -16,6 +16,8 @@
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/property.h>
->  #include <linux/rwsem.h>
->  #include "leds.h"
->  
-> @@ -327,3 +329,72 @@ void led_sysfs_enable(struct led_classdev *led_cdev)
->  	led_cdev->flags &= ~LED_SYSFS_DISABLE;
->  }
->  EXPORT_SYMBOL_GPL(led_sysfs_enable);
-> +
-> +static void led_parse_properties(struct fwnode_handle *fwnode,
-> +				 struct led_properties *props)
-> +{
-> +	int ret;
-> +
-> +	if (!fwnode)
-> +		return;
-> +
-> +	ret = fwnode_property_read_string(fwnode, "label", &props->label);
+Add an additional bit flag to the device struct named async_probe. This
+additional flag allows us to guarantee ordering between probe and remove
+operations.
 
-If we have the label do we need to continue to look for the function and color nodes?
+This allows us to guarantee that if we execute a remove operation or a
+driver load attempt on a given interface it will not attempt to update the
+driver member asynchronously following the earlier operation. Previously
+this guarantee was not present and could result in us attempting to remove
+a driver from an interface only to have it show up later when it is
+asynchronously loaded.
 
-It can be checked and diverted using fwnode_property_present for the "label" property
+One change I made in addition is I replaced the use of "bool X:1" to define
+the bitfield to a "u8 X:1" setup in order to resolve some checkpatch
+warnings.
 
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ drivers/base/dd.c      |  104 +++++++++++++++++++++++++++---------------------
+ include/linux/device.h |    3 +
+ 2 files changed, 62 insertions(+), 45 deletions(-)
 
-> +	if (!ret)
-> +		return;
-> +
-> +	ret = fwnode_property_read_string(fwnode, "function", &props->function);
-> +	if (ret)
-> +		pr_info("Failed to parse function property\n");
-> +
-> +	ret = fwnode_property_read_string(fwnode, "color", &props->color);
-> +	if (ret)
-> +		pr_info("Failed to parse color property\n");
-> +}
-> +
-> +int led_compose_name(struct fwnode_handle *fwnode, const char *led_hw_name,
-> +		     const char *default_desc, char *led_classdev_name)
-> +{
-> +	struct led_properties props = {};
-> +
-> +	if (!led_classdev_name)
-> +		return -EINVAL;
-> +
-> +	led_parse_properties(fwnode, &props);
-> +
-> +	if (props.label) {
-> +		/*
-> +		 * Presence of 'label' DT property implies legacy LED name,
-> +		 * formatted as <devicename:color:function>, with possible
-> +		 * section omission if doesn't apply to given device.
-> +		 *
-> +		 * If no led_hw_name has been passed, then it indicates that
-> +		 * DT label should be used as-is for LED class device name.
-> +		 * Otherwise the label is prepended with led_hw_name to compose
-> +		 * the final LED class device name.
-> +		 */
-> +		if (!led_hw_name) {
-> +			strncpy(led_classdev_name, props.label,
-> +				LED_MAX_NAME_SIZE);
-> +		} else {
-> +			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-> +				 led_hw_name, props.label);
-> +		}
-> +	} else if (props.function || props.color) {
-> +		snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-> +			 props.color ?: "", props.function ?: "");
-> +	} else if (default_desc) {
-> +		if (!led_hw_name) {
-> +			pr_err("Legacy LED naming requires devicename segment");
-> +			return -EINVAL;
-> +		}
-> +		snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-> +			 led_hw_name, default_desc);
-> +	} else if (is_of_node(fwnode)) {
-> +		strncpy(led_classdev_name, to_of_node(fwnode)->name,
-> +			LED_MAX_NAME_SIZE);
-> +	} else
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(led_compose_name);
-> diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index 646c49a..ddb4001 100644
-> --- a/include/linux/leds.h
-> +++ b/include/linux/leds.h
-> @@ -238,6 +238,32 @@ extern void led_sysfs_disable(struct led_classdev *led_cdev);
->  extern void led_sysfs_enable(struct led_classdev *led_cdev);
->  
->  /**
-> + * led_compose_name - compose LED class device name
-> + * @child: child fwnode_handle describing a LED,
-> + *	   or a group of synchronized LEDs.
-> + * @led_hw_name: name of the LED controller, used when falling back to legacy
-> + *		 LED naming; it should be set to NULL in new LED class drivers
-> + * @default_desc: default <color:function> tuple, for backwards compatibility
-> + *		  with in-driver hard-coded LED names used as a fallback when
-> + *		  "label" DT property was absent; it should be set to NULL
-> + *		  in new LED class drivers
-> + * @led_classdev_name: composed LED class device name
-> + *
-> + * Create LED class device name basing on the configuration provided by the
-> + * board firmware. The name can have a legacy form <devicename:color:function>,
-> + * or a new form <color:function>. The latter is chosen if at least one of
-> + * "color" or "function" properties is present in the fwnode, leaving the
-> + * section blank if the related property is absent. The former is applied
-> + * when legacy "label" property is present in the fwnode. In case none of the
-> + * aformentioned properties was found, then, for OF nodes, the node name
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index e74cefeb5b69..ed19cf0d6f9a 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -472,6 +472,8 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 		 drv->bus->name, __func__, drv->name, dev_name(dev));
+ 	WARN_ON(!list_empty(&dev->devres_head));
+ 
++	/* clear async_probe flag as we are no longer deferring driver load */
++	dev->async_probe = false;
+ re_probe:
+ 	dev->driver = drv;
+ 
+@@ -771,6 +773,10 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+ 
+ 	device_lock(dev);
+ 
++	/* nothing to do if async_probe has been cleared */
++	if (!dev->async_probe)
++		goto out_unlock;
++
+ 	if (dev->parent)
+ 		pm_runtime_get_sync(dev->parent);
+ 
+@@ -781,7 +787,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+ 
+ 	if (dev->parent)
+ 		pm_runtime_put(dev->parent);
+-
++out_unlock:
+ 	device_unlock(dev);
+ 
+ 	put_device(dev);
+@@ -826,6 +832,7 @@ static int __device_attach(struct device *dev, bool allow_async)
+ 			 */
+ 			dev_dbg(dev, "scheduling asynchronous probe\n");
+ 			get_device(dev);
++			dev->async_probe = true;
+ 			async_schedule(__device_attach_async_helper, dev);
+ 		} else {
+ 			pm_request_idle(dev);
+@@ -971,62 +978,69 @@ EXPORT_SYMBOL_GPL(driver_attach);
+  */
+ static void __device_release_driver(struct device *dev, struct device *parent)
+ {
+-	struct device_driver *drv;
++	struct device_driver *drv = dev->driver;
+ 
+-	drv = dev->driver;
+-	if (drv) {
+-		while (device_links_busy(dev)) {
+-			__device_driver_unlock(dev, parent);
++	/*
++	 * In the event that we are asked to release the driver on an
++	 * interface that is still waiting on a probe we can just terminate
++	 * the probe by setting async_probe to false. When the async call
++	 * is finally completed it will see this state and just exit.
++	 */
++	dev->async_probe = false;
++	if (!drv)
++		return;
+ 
+-			device_links_unbind_consumers(dev);
++	while (device_links_busy(dev)) {
++		__device_driver_unlock(dev, parent);
+ 
+-			__device_driver_lock(dev, parent);
+-			/*
+-			 * A concurrent invocation of the same function might
+-			 * have released the driver successfully while this one
+-			 * was waiting, so check for that.
+-			 */
+-			if (dev->driver != drv)
+-				return;
+-		}
++		device_links_unbind_consumers(dev);
+ 
+-		pm_runtime_get_sync(dev);
+-		pm_runtime_clean_up_links(dev);
++		__device_driver_lock(dev, parent);
++		/*
++		 * A concurrent invocation of the same function might
++		 * have released the driver successfully while this one
++		 * was waiting, so check for that.
++		 */
++		if (dev->driver != drv)
++			return;
++	}
+ 
+-		driver_sysfs_remove(dev);
++	pm_runtime_get_sync(dev);
++	pm_runtime_clean_up_links(dev);
+ 
+-		if (dev->bus)
+-			blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+-						     BUS_NOTIFY_UNBIND_DRIVER,
+-						     dev);
++	driver_sysfs_remove(dev);
+ 
+-		pm_runtime_put_sync(dev);
++	if (dev->bus)
++		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
++					     BUS_NOTIFY_UNBIND_DRIVER,
++					     dev);
+ 
+-		if (dev->bus && dev->bus->remove)
+-			dev->bus->remove(dev);
+-		else if (drv->remove)
+-			drv->remove(dev);
++	pm_runtime_put_sync(dev);
+ 
+-		device_links_driver_cleanup(dev);
+-		arch_teardown_dma_ops(dev);
++	if (dev->bus && dev->bus->remove)
++		dev->bus->remove(dev);
++	else if (drv->remove)
++		drv->remove(dev);
+ 
+-		devres_release_all(dev);
+-		dev->driver = NULL;
+-		dev_set_drvdata(dev, NULL);
+-		if (dev->pm_domain && dev->pm_domain->dismiss)
+-			dev->pm_domain->dismiss(dev);
+-		pm_runtime_reinit(dev);
+-		dev_pm_set_driver_flags(dev, 0);
++	device_links_driver_cleanup(dev);
++	arch_teardown_dma_ops(dev);
++
++	devres_release_all(dev);
++	dev->driver = NULL;
++	dev_set_drvdata(dev, NULL);
++	if (dev->pm_domain && dev->pm_domain->dismiss)
++		dev->pm_domain->dismiss(dev);
++	pm_runtime_reinit(dev);
++	dev_pm_set_driver_flags(dev, 0);
+ 
+-		klist_remove(&dev->p->knode_driver);
+-		device_pm_check_callbacks(dev);
+-		if (dev->bus)
+-			blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+-						     BUS_NOTIFY_UNBOUND_DRIVER,
+-						     dev);
++	klist_remove(&dev->p->knode_driver);
++	device_pm_check_callbacks(dev);
++	if (dev->bus)
++		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
++					     BUS_NOTIFY_UNBOUND_DRIVER,
++					     dev);
+ 
+-		kobject_uevent(&dev->kobj, KOBJ_UNBIND);
+-	}
++	kobject_uevent(&dev->kobj, KOBJ_UNBIND);
+ }
+ 
+ void device_release_driver_internal(struct device *dev,
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 1b25c7a43f4c..4d2eb2c74149 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -957,6 +957,8 @@ struct dev_links_info {
+  *              device.
+  * @dma_coherent: this particular device is dma coherent, even if the
+  *		architecture supports non-coherent devices.
++ * @async_probe: This device has an asynchronous probe event pending. Should
++ *		 only be updated while holding device lock.
+  *
+  * At the lowest level, every device in a Linux system is represented by an
+  * instance of struct device. The device structure contains the information
+@@ -1051,6 +1053,7 @@ struct device {
+     defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+ 	bool			dma_coherent:1;
+ #endif
++	bool			async_probe:1;
+ };
+ 
+ static inline struct device *kobj_to_dev(struct kobject *kobj)
 
-s/aforementioned
-
-> + * is adopted for LED class device name.
-> + *
-> + * Returns: 0 on success or negative error value on failure
-> + */
-> +extern int led_compose_name(struct fwnode_handle *child, const char *led_hw_name,
-> +			    const char *default_desc, char *led_classdev_name);
-> +
-> +/**
->   * led_sysfs_is_disabled - check if LED sysfs interface is disabled
->   * @led_cdev: the LED to query
->   *
-> @@ -414,6 +440,12 @@ struct led_platform_data {
->  	struct led_info	*leds;
->  };
->  
-> +struct led_properties {
-> +	const char *color;
-> +	const char *function;
-> +	const char *label;
-> +};
-> +
->  struct gpio_desc;
->  typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
->  				unsigned long *delay_on,
-> 
-
-
--- 
-------------------
-Dan Murphy
