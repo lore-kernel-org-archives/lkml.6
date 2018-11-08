@@ -2,251 +2,112 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C351BC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAB6C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8959E20817
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:39:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8959E20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F5F32089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:39:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EEB55nWt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5F32089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeKHLMh (ORCPT
+        id S1728488AbeKHLMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:12:37 -0500
-Received: from mga07.intel.com ([134.134.136.100]:13879 "EHLO mga07.intel.com"
+        Thu, 8 Nov 2018 06:12:52 -0500
+Received: from ozlabs.org ([203.11.71.1]:38061 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727724AbeKHLMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:12:37 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 17:39:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="102501658"
-Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.173])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Nov 2018 17:39:33 -0800
-Date:   Thu, 8 Nov 2018 09:38:00 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v2 3/5] virtio_ring: add packed ring support
-Message-ID: <20181108013759.GA20591@debian>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180711022711.7090-4-tiwei.bie@intel.com>
- <20181107123933-mutt-send-email-mst@kernel.org>
+        id S1728372AbeKHLMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 06:12:51 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42r5Yw0jYnz9sBN;
+        Thu,  8 Nov 2018 12:39:48 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1541641188;
+        bh=AdGGHhKuAVgWB2Bbqg7n9JJfd5clOZe1SuYKufi3Bn8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=EEB55nWtzJmTEqL5zXQBw/rqyDM251gng0tALr14344m1OWxbhfqfRcnKaXJYZ2ku
+         2Pg38HhzrzEL2D0f3bCdbD0urA0jXGQv3KEQ9RR325hmFWByuqb2VtSfluWettkE9f
+         cW/N6GNrBZWyZPAYT+bYg+Sn4J4kgnDSErcl/j7lNSejvsRxbfGRs4JWFPy4swc0jx
+         F7co9y1lmaI6xOWC+qZfmo/qDZo608+dt9xhaIzwF2PHFGEwQBFAjLHyWVawUidiIc
+         6aF1lNQm+ll8UaIL7m1BM7Cb93xQzVzeota1noOx9iCpPEJjBtI69crg9tUklV6pOp
+         7kSMhCTzwinUw==
+Date:   Thu, 8 Nov 2018 12:39:38 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>
+Subject: linux-next: build warning after merge of the iommu tree
+Message-ID: <20181108123938.2026559e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181107123933-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XJ6_I/BrYhA1mqYw6ycAalV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 12:48:46PM -0500, Michael S. Tsirkin wrote:
-> On Wed, Jul 11, 2018 at 10:27:09AM +0800, Tiwei Bie wrote:
-> > This commit introduces the support (without EVENT_IDX) for
-> > packed ring.
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> >  drivers/virtio/virtio_ring.c | 495 ++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 487 insertions(+), 8 deletions(-)
-[...]
-> >  
-> > +static void vring_unmap_state_packed(const struct vring_virtqueue *vq,
-> > +				     struct vring_desc_state_packed *state)
-> > +{
-> > +	u16 flags;
-> > +
-> > +	if (!vring_use_dma_api(vq->vq.vdev))
-> > +		return;
-> > +
-> > +	flags = state->flags;
-> > +
-> > +	if (flags & VRING_DESC_F_INDIRECT) {
-> > +		dma_unmap_single(vring_dma_dev(vq),
-> > +				 state->addr, state->len,
-> > +				 (flags & VRING_DESC_F_WRITE) ?
-> > +				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
-> > +	} else {
-> > +		dma_unmap_page(vring_dma_dev(vq),
-> > +			       state->addr, state->len,
-> > +			       (flags & VRING_DESC_F_WRITE) ?
-> > +			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
-> > +	}
-> > +}
-> > +
-> > +static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
-> > +				   struct vring_packed_desc *desc)
-> > +{
-> > +	u16 flags;
-> > +
-> > +	if (!vring_use_dma_api(vq->vq.vdev))
-> > +		return;
-> > +
-> > +	flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
-> 
-> BTW this stuff is only used on error etc. Is there a way to
-> reuse vring_unmap_state_packed?
+--Sig_/XJ6_I/BrYhA1mqYw6ycAalV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It's also used by the INDIRECT path. We don't allocate desc
-state for INDIRECT descriptors to save DMA addr/len etc.
+Hi Joerg,
 
-> 
-> > +
-> > +	if (flags & VRING_DESC_F_INDIRECT) {
-> > +		dma_unmap_single(vring_dma_dev(vq),
-> > +				 virtio64_to_cpu(vq->vq.vdev, desc->addr),
-> > +				 virtio32_to_cpu(vq->vq.vdev, desc->len),
-> > +				 (flags & VRING_DESC_F_WRITE) ?
-> > +				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
-> > +	} else {
-> > +		dma_unmap_page(vring_dma_dev(vq),
-> > +			       virtio64_to_cpu(vq->vq.vdev, desc->addr),
-> > +			       virtio32_to_cpu(vq->vq.vdev, desc->len),
-> > +			       (flags & VRING_DESC_F_WRITE) ?
-> > +			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
-> > +	}
-> > +}
-[...]
-> > @@ -766,47 +840,449 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
-> >  				       void *ctx,
-> >  				       gfp_t gfp)
-> >  {
-> > +	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	struct vring_packed_desc *desc;
-> > +	struct scatterlist *sg;
-> > +	unsigned int i, n, descs_used, uninitialized_var(prev), err_idx;
-> > +	__virtio16 uninitialized_var(head_flags), flags;
-> > +	u16 head, avail_wrap_counter, id, curr;
-> > +	bool indirect;
-> > +
-> > +	START_USE(vq);
-> > +
-> > +	BUG_ON(data == NULL);
-> > +	BUG_ON(ctx && vq->indirect);
-> > +
-> > +	if (unlikely(vq->broken)) {
-> > +		END_USE(vq);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +#ifdef DEBUG
-> > +	{
-> > +		ktime_t now = ktime_get();
-> > +
-> > +		/* No kick or get, with .1 second between?  Warn. */
-> > +		if (vq->last_add_time_valid)
-> > +			WARN_ON(ktime_to_ms(ktime_sub(now, vq->last_add_time))
-> > +					    > 100);
-> > +		vq->last_add_time = now;
-> > +		vq->last_add_time_valid = true;
-> > +	}
-> > +#endif
-> > +
-> > +	BUG_ON(total_sg == 0);
-> > +
-> > +	head = vq->next_avail_idx;
-> > +	avail_wrap_counter = vq->avail_wrap_counter;
-> > +
-> > +	if (virtqueue_use_indirect(_vq, total_sg))
-> > +		desc = alloc_indirect_packed(_vq, total_sg, gfp);
-> > +	else {
-> > +		desc = NULL;
-> > +		WARN_ON_ONCE(total_sg > vq->vring_packed.num && !vq->indirect);
-> > +	}
-> > +
-> > +	if (desc) {
-> > +		/* Use a single buffer which doesn't continue */
-> > +		indirect = true;
-> > +		/* Set up rest to use this indirect table. */
-> > +		i = 0;
-> > +		descs_used = 1;
-> > +	} else {
-> > +		indirect = false;
-> > +		desc = vq->vring_packed.desc;
-> > +		i = head;
-> > +		descs_used = total_sg;
-> > +	}
-> > +
-> > +	if (vq->vq.num_free < descs_used) {
-> > +		pr_debug("Can't add buf len %i - avail = %i\n",
-> > +			 descs_used, vq->vq.num_free);
-> > +		/* FIXME: for historical reasons, we force a notify here if
-> > +		 * there are outgoing parts to the buffer.  Presumably the
-> > +		 * host should service the ring ASAP. */
-> 
-> I don't think we have a reason to do this for packed ring.
-> No historical baggage there, right?
+After merging the iommu tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Based on the original commit log, it seems that the notify here
-is just an "optimization". But I don't quite understand what does
-the "the heuristics which KVM uses" refer to. If it's safe to drop
-this in packed ring, I'd like to do it.
+In file included from include/linux/bitmap.h:10,
+                 from drivers/iommu/intel-iommu.c:24:
+drivers/iommu/intel-iommu.c: In function 'iommu_calculate_agaw':
+include/linux/kernel.h:845:29: warning: comparison of distinct pointer type=
+s lacks a cast
+   (!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
+                             ^~
+include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
+   (__typecheck(x, y) && __no_side_effects(x, y))
+    ^~~~~~~~~~~
+include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
+  __builtin_choose_expr(__safe_cmp(x, y), \
+                        ^~~~~~~~~~
+include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
+ #define min(x, y) __careful_cmp(x, y, <)
+                   ^~~~~~~~~~~~~
+drivers/iommu/intel-iommu.c:668:9: note: in expansion of macro 'min'
+  mgaw =3D min(cap_mgaw(iommu->cap), DEFAULT_DOMAIN_ADDRESS_WIDTH);
+         ^~~
 
-commit 44653eae1407f79dff6f52fcf594ae84cb165ec4
-Author: Rusty Russell <rusty@rustcorp.com.au>
-Date:   Fri Jul 25 12:06:04 2008 -0500
+Introduced by commit
 
-    virtio: don't always force a notification when ring is full
-    
-    We force notification when the ring is full, even if the host has
-    indicated it doesn't want to know.  This seemed like a good idea at
-    the time: if we fill the transmit ring, we should tell the host
-    immediately.
-    
-    Unfortunately this logic also applies to the receiving ring, which is
-    refilled constantly.  We should introduce real notification thesholds
-    to replace this logic.  Meanwhile, removing the logic altogether breaks
-    the heuristics which KVM uses, so we use a hack: only notify if there are
-    outgoing parts of the new buffer.
-    
-    Here are the number of exits with lguest's crappy network implementation:
-    Before:
-            network xmit 7859051 recv 236420
-    After:
-            network xmit 7858610 recv 118136
-    
-    Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+  248808a0fad0 ("iommu/vt-d: Respect max guest address width in agaw")
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 72bf8bc09014..21d9a62767af 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -87,8 +87,11 @@ static int vring_add_buf(struct virtqueue *_vq,
- 	if (vq->num_free < out + in) {
- 		pr_debug("Can't add buf len %i - avail = %i\n",
- 			 out + in, vq->num_free);
--		/* We notify *even if* VRING_USED_F_NO_NOTIFY is set here. */
--		vq->notify(&vq->vq);
-+		/* FIXME: for historical reasons, we force a notify here if
-+		 * there are outgoing parts to the buffer.  Presumably the
-+		 * host should service the ring ASAP. */
-+		if (out)
-+			vq->notify(&vq->vq);
- 		END_USE(vq);
- 		return -ENOSPC;
- 	}
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/XJ6_I/BrYhA1mqYw6ycAalV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> 
-> > +		if (out_sgs)
-> > +			vq->notify(&vq->vq);
-> > +		if (indirect)
-> > +			kfree(desc);
-> > +		END_USE(vq);
-> > +		return -ENOSPC;
-> > +	}
-> > +
-[...]
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvjk9oACgkQAVBC80lX
+0GwzKwf/ZC9aPWq4mHaEAeRTQCRYNVGK/B3AEpmdVb3gFt7vAXBr0SZNc04+Tupt
+B8/LCRjjVA1YBp5haLUZ8bRls40jXimemFLGwRWKKTg6c6efkNDtCsiqzlwTRzd8
+i6+1pZPvZoyOlPP4C20Qbu/LrQX6l7/4BvbB0fZGmDUSfQ/ooaqtIqlhE1cXJECf
+jnqzCi2zJ/DL++3CKVa6bAbAgt7ca1bcOCWglKaAFShmLKkX9FNlnbn6x75U/xfa
+3S2YG0Cglu9gbT0pM7oFOnaaE7eTd9N3IfQL1YdWWuzN9fZ6QwB1+5fznDwuXHSP
+rFKB3eL2nCMOzjQz96Ci8ayrIhWrIw==
+=2Zdh
+-----END PGP SIGNATURE-----
+
+--Sig_/XJ6_I/BrYhA1mqYw6ycAalV--
