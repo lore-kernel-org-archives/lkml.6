@@ -2,49 +2,50 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56395ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8ABECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 110192081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA3C20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMOIdrX7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110192081D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1OfIIziT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CA3C20857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731272AbeKIHus (ORCPT
+        id S1731672AbeKIHu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:50:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40128 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:50:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731252AbeKIHqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:16 -0500
+        id S1732682AbeKIHqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:46:10 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F76C21019;
-        Thu,  8 Nov 2018 22:08:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFD0D215EA;
+        Thu,  8 Nov 2018 22:08:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714925;
-        bh=zA7eaiAlyd+405dYfLgqY72kd4Njwy2xC7nIzk9sCsQ=;
+        s=default; t=1541714918;
+        bh=K75gvTX5AV3VzBZ+tkC2HEQ6rO0UNgDJOJntQonx4xo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gMOIdrX7f9K/2AnV9HVVjGCoMG2UMdHzeugHWuS4u52t7VS3GdWSh1pXVRq0eGAvB
-         qmo//nN3CuZk3RsLPeJvAOSrsgSp5b7EejvRak0azRMibiL18ZA+cEsNNQHQWW8ZuC
-         cxaxP8QmSYRCn72iH0N6QpiLnvSRroZ3Y/Obil2I=
+        b=1OfIIziTbW8V4x7lViiCh3x4CJUHwAwk0aark2jGwhYJWzxBXr6tBGXJ5n2bbLfEb
+         Phk+XBQ50pCi5yQSetiRQ94RqiNmE4Lz1eocjn5PQZMcXA2raKlhBzYAImpbsDYC7V
+         GqfsrsYshWwN6ELnxa4dV2wRopadvollLmvegQfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 23/31] USB: fix the usbfs flag sanitization for control transfers
-Date:   Thu,  8 Nov 2018 13:52:47 -0800
-Message-Id: <20181108215131.581568107@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 31/31] net: fs_enet: do not call phy_stop() in interrupts
+Date:   Thu,  8 Nov 2018 13:52:55 -0800
+Message-Id: <20181108215132.182156135@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -62,52 +63,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+[ Upstream commit f8b39039cbf2a15f2b8c9f081e1cbd5dee00aaf5 ]
 
-commit 665c365a77fbfeabe52694aedf3446d5f2f1ce42 upstream.
+In case of TX timeout, fs_timeout() calls phy_stop(), which
+triggers the following BUG_ON() as we are in interrupt.
 
-Commit 7a68d9fb8510 ("USB: usbdevfs: sanitize flags more") checks the
-transfer flags for URBs submitted from userspace via usbfs.  However,
-the check for whether the USBDEVFS_URB_SHORT_NOT_OK flag should be
-allowed for a control transfer was added in the wrong place, before
-the code has properly determined the direction of the control
-transfer.  (Control transfers are special because for them, the
-direction is set by the bRequestType byte of the Setup packet rather
-than direction bit of the endpoint address.)
+[92708.199889] kernel BUG at drivers/net/phy/mdio_bus.c:482!
+[92708.204985] Oops: Exception in kernel mode, sig: 5 [#1]
+[92708.210119] PREEMPT
+[92708.212107] CMPC885
+[92708.214216] CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W       4.9.61 #39
+[92708.223227] task: c60f0a40 task.stack: c6104000
+[92708.227697] NIP: c02a84bc LR: c02a947c CTR: c02a93d8
+[92708.232614] REGS: c6105c70 TRAP: 0700   Tainted: G        W        (4.9.61)
+[92708.241193] MSR: 00021032 <ME,IR,DR,RI>[92708.244818]   CR: 24000822  XER: 20000000
+[92708.248767]
+GPR00: c02a947c c6105d20 c60f0a40 c62b4c00 00000005 0000001f c069aad8 0001a688
+GPR08: 00000007 00000100 c02a93d8 00000000 000005fc 00000000 c6213240 c06338e4
+GPR16: 00000001 c06330d4 c0633094 00000000 c0680000 c6104000 c6104000 00000000
+GPR24: 00000200 00000000 ffffffff 00000004 00000078 00009032 00000000 c62b4c00
+NIP [c02a84bc] mdiobus_read+0x20/0x74
+[92708.281517] LR [c02a947c] kszphy_config_intr+0xa4/0xc4
+[92708.286547] Call Trace:
+[92708.288980] [c6105d20] [c6104000] 0xc6104000 (unreliable)
+[92708.294339] [c6105d40] [c02a947c] kszphy_config_intr+0xa4/0xc4
+[92708.300098] [c6105d50] [c02a5330] phy_stop+0x60/0x9c
+[92708.305007] [c6105d60] [c02c84d0] fs_timeout+0xdc/0x110
+[92708.310197] [c6105d80] [c035cd48] dev_watchdog+0x268/0x2a0
+[92708.315593] [c6105db0] [c0060288] call_timer_fn+0x34/0x17c
+[92708.321014] [c6105dd0] [c00605f0] run_timer_softirq+0x21c/0x2e4
+[92708.326887] [c6105e50] [c001e19c] __do_softirq+0xf4/0x2f4
+[92708.332207] [c6105eb0] [c001e3c8] run_ksoftirqd+0x2c/0x40
+[92708.337560] [c6105ec0] [c003b420] smpboot_thread_fn+0x1f0/0x258
+[92708.343405] [c6105ef0] [c003745c] kthread+0xbc/0xd0
+[92708.348217] [c6105f40] [c000c400] ret_from_kernel_thread+0x5c/0x64
+[92708.354275] Instruction dump:
+[92708.357207] 7c0803a6 bbc10018 38210020 4e800020 7c0802a6 9421ffe0 54290024 bfc10018
+[92708.364865] 90010024 7c7f1b78 81290008 552902ee <0f090000> 3bc3002c 7fc3f378 90810008
+[92708.372711] ---[ end trace 42b05441616fafd7 ]---
 
-This patch moves code which sets up the allow_short flag for control
-transfers down after is_in has been set to the correct value.
+This patch moves fs_timeout() actions into an async worker.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+24a30223a4b609bb802e@syzkaller.appspotmail.com
-Fixes: 7a68d9fb8510 ("USB: usbdevfs: sanitize flags more")
-CC: Oliver Neukum <oneukum@suse.com>
-CC: <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: commit 48257c4f168e5 ("Add fs_enet ethernet network driver, for several embedded platforms")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/devio.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../ethernet/freescale/fs_enet/fs_enet-main.c    | 16 +++++++++++++---
+ drivers/net/ethernet/freescale/fs_enet/fs_enet.h |  1 +
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1491,8 +1491,6 @@ static int proc_do_submiturb(struct usb_
- 	u = 0;
- 	switch (uurb->type) {
- 	case USBDEVFS_URB_TYPE_CONTROL:
--		if (is_in)
--			allow_short = true;
- 		if (!usb_endpoint_xfer_control(&ep->desc))
- 			return -EINVAL;
- 		/* min 8 byte setup packet */
-@@ -1522,6 +1520,8 @@ static int proc_do_submiturb(struct usb_
- 			is_in = 0;
- 			uurb->endpoint &= ~USB_DIR_IN;
- 		}
-+		if (is_in)
-+			allow_short = true;
- 		snoop(&ps->dev->dev, "control urb: bRequestType=%02x "
- 			"bRequest=%02x wValue=%04x "
- 			"wIndex=%04x wLength=%04x\n",
+diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+index 753259091b22..28bd4cf61741 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
++++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
+@@ -613,9 +613,11 @@ static int fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	return NETDEV_TX_OK;
+ }
+ 
+-static void fs_timeout(struct net_device *dev)
++static void fs_timeout_work(struct work_struct *work)
+ {
+-	struct fs_enet_private *fep = netdev_priv(dev);
++	struct fs_enet_private *fep = container_of(work, struct fs_enet_private,
++						   timeout_work);
++	struct net_device *dev = fep->ndev;
+ 	unsigned long flags;
+ 	int wake = 0;
+ 
+@@ -627,7 +629,6 @@ static void fs_timeout(struct net_device *dev)
+ 		phy_stop(dev->phydev);
+ 		(*fep->ops->stop)(dev);
+ 		(*fep->ops->restart)(dev);
+-		phy_start(dev->phydev);
+ 	}
+ 
+ 	phy_start(dev->phydev);
+@@ -639,6 +640,13 @@ static void fs_timeout(struct net_device *dev)
+ 		netif_wake_queue(dev);
+ }
+ 
++static void fs_timeout(struct net_device *dev)
++{
++	struct fs_enet_private *fep = netdev_priv(dev);
++
++	schedule_work(&fep->timeout_work);
++}
++
+ /*-----------------------------------------------------------------------------
+  *  generic link-change handler - should be sufficient for most cases
+  *-----------------------------------------------------------------------------*/
+@@ -759,6 +767,7 @@ static int fs_enet_close(struct net_device *dev)
+ 	netif_stop_queue(dev);
+ 	netif_carrier_off(dev);
+ 	napi_disable(&fep->napi);
++	cancel_work_sync(&fep->timeout_work);
+ 	phy_stop(dev->phydev);
+ 
+ 	spin_lock_irqsave(&fep->lock, flags);
+@@ -1019,6 +1028,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
+ 
+ 	ndev->netdev_ops = &fs_enet_netdev_ops;
+ 	ndev->watchdog_timeo = 2 * HZ;
++	INIT_WORK(&fep->timeout_work, fs_timeout_work);
+ 	netif_napi_add(ndev, &fep->napi, fs_enet_napi, fpi->napi_weight);
+ 
+ 	ndev->ethtool_ops = &fs_ethtool_ops;
+diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
+index 168e10ea487f..837c802ca302 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
++++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
+@@ -125,6 +125,7 @@ struct fs_enet_private {
+ 	spinlock_t lock;	/* during all ops except TX pckt processing */
+ 	spinlock_t tx_lock;	/* during fs_start_xmit and fs_tx         */
+ 	struct fs_platform_info *fpi;
++	struct work_struct timeout_work;
+ 	const struct fs_ops *ops;
+ 	int rx_ring, tx_ring;
+ 	dma_addr_t ring_mem_addr;
+-- 
+2.17.1
+
 
 
