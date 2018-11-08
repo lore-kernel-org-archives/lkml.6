@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F51ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0C7ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D46921104
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 418B721104
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvSFAm/i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D46921104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUPrT34o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418B721104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbeKIHcS (ORCPT
+        id S1728402AbeKIHcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 02:32:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47362 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbeKIHcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:17 -0500
+        id S1728358AbeKIHcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:18 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCC682086C;
-        Thu,  8 Nov 2018 21:54:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7055420892;
+        Thu,  8 Nov 2018 21:54:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714090;
-        bh=a/zgkPBVbUtykwZbRWCa0efPEq2znYl8Ks8OOcUFGYI=;
+        s=default; t=1541714091;
+        bh=RX5Y1KwjZx6Jl6NhuWpzynVTFb6Knbxue8nHxk46P+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lvSFAm/i1JK6nvb5vqzOV1q73w1uBTqOVGI6wAEIv3MdezmhC16oDTnS4dEqNMXy3
-         2aL8z4E2az7uVCrmeUxwkV+ugN+0UGt0DHTk1iUzJQxDFY6XXAichd6UHTsznYxeqz
-         y/e9+rlPo8rPWgC+3xv1N//0XcnVynEbkkeYNkC0=
+        b=gUPrT34oCO01wJ12rLjJ5UNcWsRONOBerBnJMy2tBwvJvh+wQnGt2Zypc0gG1kHdm
+         Yk+O0uNIer4J/93Cu+UsC2MIuZZgcyAdKxdF2LDsHqXqqchLnsp3yZshhNLI4B6rVf
+         vM4xytAElnDkY7oWiYaAMUFFQ51L8lsimc1ujYZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabien Proriol <fabien.proriol@jdsu.com>,
-        Jonathan Cameron <jic23@kernel.org>,
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 051/144] iio: iio: Fix iio_channel_read return if channel havnt info
-Date:   Thu,  8 Nov 2018 13:50:22 -0800
-Message-Id: <20181108215058.534135979@linuxfoundation.org>
+Subject: [PATCH 3.18 034/144] s390/kvm: REPLACE barrier fixup with READ_ONCE
+Date:   Thu,  8 Nov 2018 13:50:05 -0800
+Message-Id: <20181108215057.350078086@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -63,35 +64,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 65de7654d39c70c2b942f801cea01590cf7e3458 ]
+[ Upstream commit 5de72a2247ac05bde7c89039631b3d0c6186fafb ]
 
-When xilinx-xadc is used with hwmon driver to read voltage, offset used
-for temperature is always applied whatever the channel.
+ACCESS_ONCE does not work reliably on non-scalar types. For
+example gcc 4.6 and 4.7 might remove the volatile tag for such
+accesses during the SRA (scalar replacement of aggregates) step
+(https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145)
 
-iio_channel_read must return an error to avoid offset for channel
-without IIO_CHAN_INFO_OFFSET property.
+Commit 1365039d0cb3 ("KVM: s390: Fix ipte locking") replace
+ACCESS_ONCE with barriers. Lets use READ_ONCE instead.
 
-Signed-off-by: Fabien Proriol <fabien.proriol@jdsu.com>
-Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/inkern.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/kvm/gaccess.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-index f0846108d006..d33590e89337 100644
---- a/drivers/iio/inkern.c
-+++ b/drivers/iio/inkern.c
-@@ -426,6 +426,9 @@ static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
- 	if (val2 == NULL)
- 		val2 = &unused;
+diff --git a/arch/s390/kvm/gaccess.c b/arch/s390/kvm/gaccess.c
+index 6dc0ad9c7050..8f195fa904a1 100644
+--- a/arch/s390/kvm/gaccess.c
++++ b/arch/s390/kvm/gaccess.c
+@@ -229,12 +229,10 @@ static void ipte_lock_simple(struct kvm_vcpu *vcpu)
+ 		goto out;
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		while (old.k) {
+ 			cond_resched();
+-			old = *ic;
+-			barrier();
++			old = READ_ONCE(*ic);
+ 		}
+ 		new = old;
+ 		new.k = 1;
+@@ -253,8 +251,7 @@ static void ipte_unlock_simple(struct kvm_vcpu *vcpu)
+ 		goto out;
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		new = old;
+ 		new.k = 0;
+ 	} while (cmpxchg(&ic->val, old.val, new.val) != old.val);
+@@ -269,12 +266,10 @@ static void ipte_lock_siif(struct kvm_vcpu *vcpu)
  
-+	if(!iio_channel_has_info(chan->channel, info))
-+		return -EINVAL;
-+
- 	if (chan->indio_dev->info->read_raw_multi) {
- 		ret = chan->indio_dev->info->read_raw_multi(chan->indio_dev,
- 					chan->channel, INDIO_MAX_RAW_ELEMENTS,
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		while (old.kg) {
+ 			cond_resched();
+-			old = *ic;
+-			barrier();
++			old = READ_ONCE(*ic);
+ 		}
+ 		new = old;
+ 		new.k = 1;
+@@ -288,8 +283,7 @@ static void ipte_unlock_siif(struct kvm_vcpu *vcpu)
+ 
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		new = old;
+ 		new.kh--;
+ 		if (!new.kh)
 -- 
 2.17.1
 
