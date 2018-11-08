@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82551ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49139ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CE620892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E09820892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2hHnv5Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40CE620892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xU3lpBMh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E09820892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728473AbeKIHcV (ORCPT
+        id S1728495AbeKIHcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:32:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47466 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:32:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728380AbeKIHcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:21 -0500
+        id S1728358AbeKIHcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:22 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 493162145D;
+        by mail.kernel.org (Postfix) with ESMTPSA id D27CF21104;
         Thu,  8 Nov 2018 21:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714094;
-        bh=3uQAofjn341EXCo8HgnZPxXRA1/mlBWVNaUladPEY7w=;
+        bh=FI+E/0K28wiLQyrGKQEJCfK002ZteUBrfsFay7j3Hho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M2hHnv5QXlXv1GMHwY0pgY7q+EYjWWwzfeawtIWYOsy1bOw7YhMK96ZSdCHJpUfiD
-         yXEaGpKHaND9bDJmWwuNr1z55PfkNpZOp1Nt6TfQoMxqaYUqux7pWCTsHBIKOeYPpe
-         PpumeB4ltKuePaNH4ACAX+e++j+f/dm41aiDFpwo=
+        b=xU3lpBMhU6ApYRteH/887wpY1ZoDkCgsAWwZI0UwN1+gNW8T37abXB6yoHsONRkgd
+         BuRYoE9cZZQOt+UHrLp4r4LjPVF+c8scg93aUxKKQuUuTTOQrnfL2LOwOr8gUsSXoV
+         eLiSnbIvqSg7PqxHMar+rPMqAtNSVeC25vQPkzDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>,
+        Ludovic Desroches <ludovic.desroches@atmel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 037/144] s390/ftrace/jprobes: Fix conflict between jprobes and function graph tracing
-Date:   Thu,  8 Nov 2018 13:50:08 -0800
-Message-Id: <20181108215057.544813888@linuxfoundation.org>
+Subject: [PATCH 3.18 038/144] mmc: sdhci: restore behavior when setting VDD via external regulator
+Date:   Thu,  8 Nov 2018 13:50:09 -0800
+Message-Id: <20181108215057.615363616@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,55 +64,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e64a5470dcd2900ab8f8f83638c00098b10e6300 ]
+[ Upstream commit 918f4cbd4340ddd1eb389cd8efa3b07ac74ec4c0 ]
 
-This fixes the same issue Steven already fixed for x86
-in following commit:
+After commit 52221610dd84 ("mmc: sdhci: Improve external VDD regulator
+support"), for the VDD is supplied via external regulators, we ignore
+the code to convert a VDD voltage request into one of the standard
+SDHCI voltage levels, then program it in the SDHCI_POWER_CONTROL. This
+brings two issues:
 
-  237d28db036e ftrace/jprobes/x86: Fix conflict between jprobes and function graph tracing
+1. SDHCI_QUIRK2_CARD_ON_NEEDS_BUS_ON quirk isn't handled properly any
+more.
 
-It fixes the crash, that happens when function graph tracing
-and jprobes are used simultaneously. Please refer to above
-commit for details.
+2. What's more, once SDHCI_POWER_ON bit is set, some controllers such
+as the sdhci-pxav3 used in marvell berlin SoCs require the voltage
+levels programming in the SDHCI_POWER_CONTROL register, even the VDD
+is supplied by external regulator. So the host in marvell berlin SoCs
+still works fine after the commit. However, commit 3cbc6123a93d ("mmc:
+sdhci: Set SDHCI_POWER_ON with external vmmc") sets the SDHCI_POWER_ON
+bit, this would make the host in marvell berlin SoCs won't work any
+more with external vmmc.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
+This patch restores the behavior when setting VDD through external
+regulator by moving the call of mmc_regulator_set_ocr() to the end
+of sdhci_set_power() function.
+
+After this patch, the sdcard on Marvell Berlin SoC boards work again.
+
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+Fixes: 52221610dd84 ("mmc: sdhci: Improve external VDD ...")
+Reviewed-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+Tested-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/kprobes.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/mmc/host/sdhci.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
-index 014d4729b134..ee03d8f0ee60 100644
---- a/arch/s390/kernel/kprobes.c
-+++ b/arch/s390/kernel/kprobes.c
-@@ -633,6 +633,15 @@ int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
- 	stack = (unsigned long) regs->gprs[15];
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 56578504fd24..2295bf6e94a1 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1248,19 +1248,6 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+ 	struct mmc_host *mmc = host->mmc;
+ 	u8 pwr = 0;
  
- 	memcpy(kcb->jprobes_stack, (void *) stack, MIN_STACK_SIZE(stack));
+-	if (!IS_ERR(mmc->supply.vmmc)) {
+-		spin_unlock_irq(&host->lock);
+-		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
+-		spin_lock_irq(&host->lock);
+-
+-		if (mode != MMC_POWER_OFF)
+-			sdhci_writeb(host, SDHCI_POWER_ON, SDHCI_POWER_CONTROL);
+-		else
+-			sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
+-
+-		return;
+-	}
+-
+ 	if (mode != MMC_POWER_OFF) {
+ 		switch (1 << vdd) {
+ 		case MMC_VDD_165_195:
+@@ -1319,6 +1306,12 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+ 		if (host->quirks & SDHCI_QUIRK_DELAY_AFTER_POWER)
+ 			mdelay(10);
+ 	}
 +
-+	/*
-+	 * jprobes use jprobe_return() which skips the normal return
-+	 * path of the function, and this messes up the accounting of the
-+	 * function graph tracer to get messed up.
-+	 *
-+	 * Pause function graph tracing while performing the jprobe function.
-+	 */
-+	pause_graph_tracing();
- 	return 1;
++	if (!IS_ERR(mmc->supply.vmmc)) {
++		spin_unlock_irq(&host->lock);
++		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
++		spin_lock_irq(&host->lock);
++	}
  }
  
-@@ -646,6 +655,9 @@ int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
- 	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
- 	unsigned long stack;
- 
-+	/* It's OK to start function graph tracing again */
-+	unpause_graph_tracing();
-+
- 	stack = (unsigned long) kcb->jprobe_saved_regs.gprs[15];
- 
- 	/* Put the regs back */
+ /*****************************************************************************\
 -- 
 2.17.1
 
