@@ -4,262 +4,227 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1E1ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E787FECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D162086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D162086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id B396620825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B396620825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbeKHX6t (ORCPT
+        id S1726932AbeKIAAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:58:49 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59270 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHX6t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:58:49 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8EN0sr086106;
-        Thu, 8 Nov 2018 08:23:00 -0600
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8EMx05081752
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 08:23:00 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 08:22:59 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 08:22:59 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8EMvRc003140;
-        Thu, 8 Nov 2018 08:22:57 -0600
-Subject: Re: [RFC PATCH v1 14/14] usb:cdns3: Feature for changing role
-To:     Pawel Laszczak <pawell@cadence.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-References: <1541267487-3664-1-git-send-email-pawell@cadence.com>
- <1541267487-3664-15-git-send-email-pawell@cadence.com>
- <5BE1AA81.3030107@ti.com>
- <BYAPR07MB4709524FC194D27BE6128ABADDC50@BYAPR07MB4709.namprd07.prod.outlook.com>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5BE446C0.6080706@ti.com>
-Date:   Thu, 8 Nov 2018 16:22:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 8 Nov 2018 19:00:39 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32723 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726417AbeKIAAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:00:38 -0500
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id B760AD2DF87B5;
+        Thu,  8 Nov 2018 14:24:51 +0000 (GMT)
+Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 8 Nov
+ 2018 14:24:47 +0000
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+ <20181108134651.GA8922@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <de240805-d5a3-e1a8-1f26-0320d7125594@huawei.com>
+Date:   Thu, 8 Nov 2018 15:24:46 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <BYAPR07MB4709524FC194D27BE6128ABADDC50@BYAPR07MB4709.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20181108134651.GA8922@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.204.65.142]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/18 13:51, Pawel Laszczak wrote:
->> On 03/11/18 19:51, Pawel Laszczak wrote:
->>> Patch adds feature that allow to change role from user space.
->>>
->>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->>> ---
->>>  drivers/usb/cdns3/Makefile  |  2 +-
->>>  drivers/usb/cdns3/core.c    |  2 +
->>>  drivers/usb/cdns3/debugfs.c | 94 +++++++++++++++++++++++++++++++++++++
->>>  drivers/usb/cdns3/drd.h     |  3 ++
->>>  4 files changed, 100 insertions(+), 1 deletion(-)
->>>  create mode 100644 drivers/usb/cdns3/debugfs.c
->>>
->>> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
->>> index 34e60d03c4ec..08e6cdbebd46 100644
->>> --- a/drivers/usb/cdns3/Makefile
->>> +++ b/drivers/usb/cdns3/Makefile
->>> @@ -1,7 +1,7 @@
->>>  obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
->>>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
->>>
->>> -cdns3-y					:= core.o drd.o
->>> +cdns3-y					:= core.o drd.o debugfs.o
->>>  cdns3-$(CONFIG_USB_CDNS3_GADGET)	+= gadget.o ep0.o debug.o
->>>  cdns3-$(CONFIG_USB_CDNS3_HOST)		+= host.o
->>>  cdns3-pci-y		 		:= cdns3-pci-wrap.o
->>> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
->>> index 20ae9e76940e..4012f1007da9 100644
->>> --- a/drivers/usb/cdns3/core.c
->>> +++ b/drivers/usb/cdns3/core.c
->>> @@ -309,6 +309,7 @@ static int cdns3_probe(struct platform_device *pdev)
->>>  	if (ret)
->>>  		goto err4;
->>>
->>> +	cdns3_debugfs_init(cdns);
->>>  	device_set_wakeup_capable(dev, true);
->>>  	pm_runtime_set_active(dev);
->>>  	pm_runtime_enable(dev);
->>> @@ -346,6 +347,7 @@ static int cdns3_remove(struct platform_device *pdev)
->>>  	pm_runtime_get_sync(&pdev->dev);
->>>  	pm_runtime_disable(&pdev->dev);
->>>  	pm_runtime_put_noidle(&pdev->dev);
->>> +	cdns3_debugfs_exit(cdns);
->>>  	cdns3_remove_roles(cdns);
->>>  	usb_phy_shutdown(cdns->usbphy);
->>>
->>> diff --git a/drivers/usb/cdns3/debugfs.c b/drivers/usb/cdns3/debugfs.c
->>> new file mode 100644
->>> index 000000000000..d4871bc1a69d
->>> --- /dev/null
->>> +++ b/drivers/usb/cdns3/debugfs.c
->>> @@ -0,0 +1,94 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Cadence USBSS DRD Controller DebugFS filer.
->>> + *
->>> + * Copyright (C) 2018 Cadence.
->>> + *
->>> + * Author: Pawel Laszczak <pawell@cadence.com>
->>> + */
->>> +
->>> +#include <linux/types.h>
->>> +#include <linux/debugfs.h>
->>> +#include <linux/seq_file.h>
->>> +#include <linux/uaccess.h>
->>> +
->>> +#include "core.h"
->>> +#include "gadget.h"
->>> +
->>> +static int cdns3_mode_show(struct seq_file *s, void *unused)
->>> +{
->>> +	struct cdns3		*cdns = s->private;
->>> +
->>> +	switch (cdns->role) {
->>> +	case CDNS3_ROLE_HOST:
->>> +		seq_puts(s, "host\n");
->>> +		break;
->>> +	case CDNS3_ROLE_GADGET:
->>> +		seq_puts(s, "device\n");
->>> +		break;
->>> +	case CDNS3_ROLE_OTG:
->>> +	case CDNS3_ROLE_END:
->>> +		seq_puts(s, "otg\n");
->>> +		break;
->>> +	default:
->>> +		seq_puts(s, "UNKNOWN mode\n");
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int cdns3_mode_open(struct inode *inode, struct file *file)
->>> +{
->>> +	return single_open(file, cdns3_mode_show, inode->i_private);
->>> +}
->>> +
->>> +static ssize_t cdns3_mode_write(struct file *file,
->>> +				const char __user *ubuf,
->>> +				size_t count, loff_t *ppos)
->>> +{
->>> +	struct seq_file		*s = file->private_data;
->>> +	struct cdns3		*cdns = s->private;
->>> +	u32			mode = 0;
->>> +	char			buf[32];
->>> +
->>> +	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
->>> +		return -EFAULT;
->>> +
->>> +	if (!strncmp(buf, "host", 4))
->>> +		mode = USB_DR_MODE_HOST;
->>> +
->>> +	if (!strncmp(buf, "device", 6))
->>> +		mode = USB_DR_MODE_PERIPHERAL;
->>> +
->>> +	if (!strncmp(buf, "otg", 3))
->>> +		mode = USB_DR_MODE_OTG;
->>> +
->>> +	cdns->desired_role = mode;
->>> +	queue_work(system_freezable_wq, &cdns->role_switch_wq);
+On 11/8/2018 2:46 PM, Jarkko Sakkinen wrote:
+> Orrayn Tue, Nov 06, 2018 at 04:01:54PM +0100, Roberto Sassu wrote:
+>> This patch removes the hard-coded limit of the active_banks array size.
+>> It stores in the tpm_chip structure the number of active PCR banks,
+>> determined in tpm2_get_pcr_allocation(), and replaces the static array
+>> with a pointer to a dynamically allocated array.
 >>
->> If we start with OTG mode and user says change mode to device will we still
->> switch to host based on ID pin change?
+>> As a consequence of the introduction of nr_active_banks, tpm_pcr_extend()
+>> does not check anymore if the algorithm stored in tpm_chip is equal to
+>> zero. The active_banks array always contains valid algorithms.
 >>
->> If it does then this isn't working correctly.
->> We need to stop processing ID interrupts and keep the role static till
->> the user switches it back to otg.
-> 
-> Switching role form user space will limited driver only to selected mode. 
-> Only for USB_DR_MODE_OTG driver should base on ID pin. 
-> That's my intension.
-> 
-
-User space setting should override ID if it was OTG mode. At least this is how
-it is for dwc3. That way it is useful for testing role swap.
-
-cheers,
--roger
-
->>> +	return count;
->>> +}
->>> +
->>> +static const struct file_operations cdns3_mode_fops = {
->>> +	.open			= cdns3_mode_open,
->>> +	.write			= cdns3_mode_write,
->>> +	.read			= seq_read,
->>> +	.llseek			= seq_lseek,
->>> +	.release		= single_release,
->>> +};
->>> +
->>> +void cdns3_debugfs_init(struct cdns3 *cdns)
->>> +{
->>> +	struct dentry *root;
->>> +
->>> +	root = debugfs_create_dir(dev_name(cdns->dev), NULL);
->>> +	cdns->root = root;
->>> +	if (IS_ENABLED(CONFIG_USB_CDNS3_GADGET) &&
->>> +	    IS_ENABLED(CONFIG_USB_CDNS3_HOST))
->>> +		debugfs_create_file("mode", 0644, root, cdns,
->>> +				    &cdns3_mode_fops);
->>> +}
->>> +
->>> +void cdns3_debugfs_exit(struct cdns3 *cdns)
->>> +{
->>> +	debugfs_remove_recursive(cdns->root);
->>> +}
->>> diff --git a/drivers/usb/cdns3/drd.h b/drivers/usb/cdns3/drd.h
->>> index 85731f3b693c..5344290c76f2 100644
->>> --- a/drivers/usb/cdns3/drd.h
->>> +++ b/drivers/usb/cdns3/drd.h
->>> @@ -119,4 +119,7 @@ int cdns3_drd_probe(struct cdns3 *cdns);
->>>  void cdns3_set_hw_mode(struct cdns3 *cdns, u32 mode);
->>>  irqreturn_t cdns3_drd_irq(struct cdns3 *cdns);
->>>
->>> +void cdns3_debugfs_init(struct cdns3 *cdns);
->>> +void cdns3_debugfs_exit(struct cdns3 *cdns);
->>> +
->>>  #endif /* __LINUX_CDNS3_DRD */
->>>
+>> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+>> PCR banks")
 >>
->> cheers,
->> -roger
->> --
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   drivers/char/tpm/tpm-chip.c      |  1 +
+>>   drivers/char/tpm/tpm-interface.c | 19 ++++++++++++-------
+>>   drivers/char/tpm/tpm.h           |  3 ++-
+>>   drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++---------
+>>   4 files changed, 23 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index 46caadca916a..2a9e8b744436 100644
+>> --- a/drivers/char/tpm/tpm-chip.c
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>>   	kfree(chip->log.bios_event_log);
+>>   	kfree(chip->work_space.context_buf);
+>>   	kfree(chip->work_space.session_buf);
+>> +	kfree(chip->active_banks);
+>>   	kfree(chip);
+>>   }
+>>   
+>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+>> index 1a803b0cf980..ba7ca6b3e664 100644
+>> --- a/drivers/char/tpm/tpm-interface.c
+>> +++ b/drivers/char/tpm/tpm-interface.c
+>> @@ -1039,8 +1039,7 @@ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+>>   int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>>   {
+>>   	int rc;
+>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+>> -	u32 count = 0;
+>> +	struct tpm2_digest *digest_list;
+>>   	int i;
+>>   
+>>   	chip = tpm_find_get_ops(chip);
+>> @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>>   		return -ENODEV;
 > 
+> Should take digest_list as input. Probably callers could re-use the
+> same digest_list array multiple times?
+
+Should I include the patch for tpm_pcr_extend() in this patch set, even
+if the set fixes the digest size issue?
+
+Roberto
+
+
+> Move struct tpm_chip to include/linux/tpm.h so that the caller can query
+> nr_active_banks and active_banks and can create the digest array by
+> itself. Lets do this right at once now that this is being restructured.
 > 
-> Thanks,
-> Cheers,
-> Pawel
+>>   
+>>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>> -		memset(digest_list, 0, sizeof(digest_list));
+>> +		digest_list = kmalloc_array(chip->nr_active_banks,
+>> +					    sizeof(*digest_list), GFP_KERNEL);
+>> +		if (!digest_list)
+>> +			return -ENOMEM;
+>>   
+>> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+>> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+>> +		memset(digest_list, 0,
+>> +		       chip->nr_active_banks * sizeof(*digest_list));
+> 
+> You should use kcalloc() to allocate digest_list.
+> 
+>> +
+>> +		for (i = 0; i < chip->nr_active_banks; i++) {
+>>   			digest_list[i].alg_id = chip->active_banks[i];
+>>   			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+>> -			count++;
+>>   		}
+>>   
+>> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+>> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_active_banks,
+>> +				     digest_list);
+>> +		kfree(digest_list);
+>>   		tpm_put_ops(chip);
+>>   		return rc;
+>>   	}
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index f3501d05264f..98368c3a6ff7 100644
+>> --- a/drivers/char/tpm/tpm.h
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -248,7 +248,8 @@ struct tpm_chip {
+>>   	const struct attribute_group *groups[3];
+>>   	unsigned int groups_cnt;
+>>   
+>> -	u16 active_banks[7];
+>> +	u32 nr_active_banks;
+>> +	u16 *active_banks;
+>>   #ifdef CONFIG_ACPI
+>>   	acpi_handle acpi_dev_handle;
+>>   	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>> index c31b490bd41d..533089cede07 100644
+>> --- a/drivers/char/tpm/tpm2-cmd.c
+>> +++ b/drivers/char/tpm/tpm2-cmd.c
+>> @@ -242,7 +242,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>>   	int i;
+>>   	int j;
+>>   
+>> -	if (count > ARRAY_SIZE(chip->active_banks))
+>> +	if (count > chip->nr_active_banks)
+>>   		return -EINVAL;
+>>   
+>>   	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+>> @@ -859,7 +859,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	void *marker;
+>>   	void *end;
+>>   	void *pcr_select_offset;
+>> -	unsigned int count;
+>>   	u32 sizeof_pcr_selection;
+>>   	u32 rsp_len;
+>>   	int rc;
+>> @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	if (rc)
+>>   		goto out;
+>>   
+>> -	count = be32_to_cpup(
+>> +	chip->nr_active_banks = be32_to_cpup(
+>>   		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+>>   
+>> -	if (count > ARRAY_SIZE(chip->active_banks)) {
+>> -		rc = -ENODEV;
+>> +	chip->active_banks = kmalloc_array(chip->nr_active_banks,
+>> +					   sizeof(*chip->active_banks),
+>> +					   GFP_KERNEL);
+>> +	if (!chip->active_banks) {
+>> +		rc = -ENOMEM;
+>>   		goto out;
+>>   	}
+>>   
+>> @@ -891,7 +893,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+>>   	end = &buf.data[rsp_len];
+>>   
+>> -	for (i = 0; i < count; i++) {
+>> +	for (i = 0; i < chip->nr_active_banks; i++) {
+>>   		pcr_select_offset = marker +
+>>   			offsetof(struct tpm2_pcr_selection, size_of_select);
+>>   		if (pcr_select_offset >= end) {
+>> @@ -908,9 +910,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	}
+>>   
+>>   out:
+>> -	if (i < ARRAY_SIZE(chip->active_banks))
+>> -		chip->active_banks[i] = TPM2_ALG_ERROR;
+>> -
+>>   	tpm_buf_destroy(&buf);
+>>   
+>>   	return rc;
+>> -- 
+>> 2.17.1
+>>
+> 
+> /Jarkko
 > 
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
