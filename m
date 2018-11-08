@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D16ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BCAECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC3420844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A112081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMUSHrbl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC3420844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b50Kpa/t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A112081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeKIHas (ORCPT
+        id S1727482AbeKIHau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45184 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:30:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbeKIHas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:30:48 -0500
+        id S1727371AbeKIHat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:30:49 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BE342081C;
-        Thu,  8 Nov 2018 21:53:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09F5D20840;
+        Thu,  8 Nov 2018 21:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714001;
-        bh=xSp/rUUeJZpmFBd7LlQJtvBzb4pKqBVjLxeT79U9d64=;
+        s=default; t=1541714002;
+        bh=r64OId9Su5hiV8b0Yii8snPU5PlA5SLteJ7qymSDurQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YMUSHrblyE1XFFrwadYpTnwUR6CBqzlxrWNWOYO+MvMFJRy5EXzef1/keP4jwS3F7
-         wBrug+At9EGAnIlyj2xW0RgSXB+EFwmKUpAruVUFuyuG7Cr4HDWrFl+/+ZwBl4Bktg
-         G58DLVLu1prBb8iApRxC79IJ7D2In5MUHgDplSlw=
+        b=b50Kpa/tTRVa8N6UnqHcZX0htxEFA4+ZgQxdN/Ey+OygN6OTa7aw+f4vju1+IUv41
+         l37B+sV+7yVtqma7mkbz9hSMgv+BaQWNg2Je++AlvfEHbtO6GyDuLhlWaGCjhnMTmy
+         0mIuvj+teZE/Oi7TcvRkqclhQ4JuslhbTAWNpSSQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
+        stable@vger.kernel.org, Shahed Shaikh <shahed.shaikh@cavium.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 010/144] net/usb: cancel pending work when unbinding smsc75xx
-Date:   Thu,  8 Nov 2018 13:49:41 -0800
-Message-Id: <20181108215055.557187324@linuxfoundation.org>
+Subject: [PATCH 3.18 011/144] qlcnic: fix Tx descriptor corruption on 82xx devices
+Date:   Thu,  8 Nov 2018 13:49:42 -0800
+Message-Id: <20181108215055.619192454@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -62,46 +62,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yu Zhao <yuzhao@google.com>
+From: Shahed Shaikh <shahed.shaikh@cavium.com>
 
-[ Upstream commit f7b2a56e1f3dcbdb4cf09b2b63e859ffe0e09df8 ]
+[ Upstream commit c333fa0c4f220f8f7ea5acd6b0ebf3bf13fd684d ]
 
-Cancel pending work before freeing smsc75xx private data structure
-during binding. This fixes the following crash in the driver:
+In regular NIC transmission flow, driver always configures MAC using
+Tx queue zero descriptor as a part of MAC learning flow.
+But with multi Tx queue supported NIC, regular transmission can occur on
+any non-zero Tx queue and from that context it uses
+Tx queue zero descriptor to configure MAC, at the same time TX queue
+zero could be used by another CPU for regular transmission
+which could lead to Tx queue zero descriptor corruption and cause FW
+abort.
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
-IP: mutex_lock+0x2b/0x3f
-<snipped>
-Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
-task: ffff8caa83e85700 task.stack: ffff948b80518000
-RIP: 0010:mutex_lock+0x2b/0x3f
-<snipped>
-Call Trace:
- smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
- process_one_work+0x18d/0x2fc
- worker_thread+0x1a2/0x269
- ? pr_cont_work+0x58/0x58
- kthread+0xfa/0x10a
- ? pr_cont_work+0x58/0x58
- ? rcu_read_unlock_sched_notrace+0x48/0x48
- ret_from_fork+0x22/0x40
+This patch fixes this in such a way that driver always configures
+learned MAC address from the same Tx queue which is used for
+regular transmission.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
+Fixes: 7e2cf4feba05 ("qlcnic: change driver hardware interface mechanism")
+Signed-off-by: Shahed Shaikh <shahed.shaikh@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/smsc75xx.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic.h         |    8 +++++---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |    3 ++-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h |    3 ++-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h      |    3 ++-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c      |   12 ++++++------
+ 5 files changed, 17 insertions(+), 12 deletions(-)
 
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -1506,6 +1506,7 @@ static void smsc75xx_unbind(struct usbne
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+@@ -1796,7 +1796,8 @@ struct qlcnic_hardware_ops {
+ 	int (*config_loopback) (struct qlcnic_adapter *, u8);
+ 	int (*clear_loopback) (struct qlcnic_adapter *, u8);
+ 	int (*config_promisc_mode) (struct qlcnic_adapter *, u32);
+-	void (*change_l2_filter) (struct qlcnic_adapter *, u64 *, u16);
++	void (*change_l2_filter)(struct qlcnic_adapter *adapter, u64 *addr,
++				 u16 vlan, struct qlcnic_host_tx_ring *tx_ring);
+ 	int (*get_board_info) (struct qlcnic_adapter *);
+ 	void (*set_mac_filter_count) (struct qlcnic_adapter *);
+ 	void (*free_mac_list) (struct qlcnic_adapter *);
+@@ -2038,9 +2039,10 @@ static inline int qlcnic_nic_set_promisc
+ }
+ 
+ static inline void qlcnic_change_filter(struct qlcnic_adapter *adapter,
+-					u64 *addr, u16 id)
++					u64 *addr, u16 vlan,
++					struct qlcnic_host_tx_ring *tx_ring)
  {
- 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
- 	if (pdata) {
-+		cancel_work_sync(&pdata->set_multicast);
- 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
- 		kfree(pdata);
- 		pdata = NULL;
+-	adapter->ahw->hw_ops->change_l2_filter(adapter, addr, id);
++	adapter->ahw->hw_ops->change_l2_filter(adapter, addr, vlan, tx_ring);
+ }
+ 
+ static inline int qlcnic_get_board_info(struct qlcnic_adapter *adapter)
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -2132,7 +2132,8 @@ out:
+ }
+ 
+ void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *adapter, u64 *addr,
+-				  u16 vlan_id)
++				  u16 vlan_id,
++				  struct qlcnic_host_tx_ring *tx_ring)
+ {
+ 	u8 mac[ETH_ALEN];
+ 	memcpy(&mac, addr, ETH_ALEN);
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
+@@ -549,7 +549,8 @@ int qlcnic_83xx_wrt_reg_indirect(struct
+ int qlcnic_83xx_nic_set_promisc(struct qlcnic_adapter *, u32);
+ int qlcnic_83xx_config_hw_lro(struct qlcnic_adapter *, int);
+ int qlcnic_83xx_config_rss(struct qlcnic_adapter *, int);
+-void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *, u64 *, u16);
++void qlcnic_83xx_change_l2_filter(struct qlcnic_adapter *adapter, u64 *addr,
++				  u16 vlan, struct qlcnic_host_tx_ring *ring);
+ int qlcnic_83xx_get_pci_info(struct qlcnic_adapter *, struct qlcnic_pci_info *);
+ int qlcnic_83xx_set_nic_info(struct qlcnic_adapter *, struct qlcnic_info *);
+ void qlcnic_83xx_initialize_nic(struct qlcnic_adapter *, int);
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.h
+@@ -172,7 +172,8 @@ int qlcnic_82xx_napi_add(struct qlcnic_a
+ 			 struct net_device *netdev);
+ void qlcnic_82xx_get_beacon_state(struct qlcnic_adapter *);
+ void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter,
+-			       u64 *uaddr, u16 vlan_id);
++			       u64 *uaddr, u16 vlan_id,
++			       struct qlcnic_host_tx_ring *tx_ring);
+ int qlcnic_82xx_config_intr_coalesce(struct qlcnic_adapter *,
+ 				     struct ethtool_coalesce *);
+ int qlcnic_82xx_set_rx_coalesce(struct qlcnic_adapter *);
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c
+@@ -268,13 +268,12 @@ static void qlcnic_add_lb_filter(struct
+ }
+ 
+ void qlcnic_82xx_change_filter(struct qlcnic_adapter *adapter, u64 *uaddr,
+-			       u16 vlan_id)
++			       u16 vlan_id, struct qlcnic_host_tx_ring *tx_ring)
+ {
+ 	struct cmd_desc_type0 *hwdesc;
+ 	struct qlcnic_nic_req *req;
+ 	struct qlcnic_mac_req *mac_req;
+ 	struct qlcnic_vlan_req *vlan_req;
+-	struct qlcnic_host_tx_ring *tx_ring = adapter->tx_ring;
+ 	u32 producer;
+ 	u64 word;
+ 
+@@ -301,7 +300,8 @@ void qlcnic_82xx_change_filter(struct ql
+ 
+ static void qlcnic_send_filter(struct qlcnic_adapter *adapter,
+ 			       struct cmd_desc_type0 *first_desc,
+-			       struct sk_buff *skb)
++			       struct sk_buff *skb,
++			       struct qlcnic_host_tx_ring *tx_ring)
+ {
+ 	struct vlan_ethhdr *vh = (struct vlan_ethhdr *)(skb->data);
+ 	struct ethhdr *phdr = (struct ethhdr *)(skb->data);
+@@ -335,7 +335,7 @@ static void qlcnic_send_filter(struct ql
+ 		    tmp_fil->vlan_id == vlan_id) {
+ 			if (jiffies > (QLCNIC_READD_AGE * HZ + tmp_fil->ftime))
+ 				qlcnic_change_filter(adapter, &src_addr,
+-						     vlan_id);
++						     vlan_id, tx_ring);
+ 			tmp_fil->ftime = jiffies;
+ 			return;
+ 		}
+@@ -350,7 +350,7 @@ static void qlcnic_send_filter(struct ql
+ 	if (!fil)
+ 		return;
+ 
+-	qlcnic_change_filter(adapter, &src_addr, vlan_id);
++	qlcnic_change_filter(adapter, &src_addr, vlan_id, tx_ring);
+ 	fil->ftime = jiffies;
+ 	fil->vlan_id = vlan_id;
+ 	memcpy(fil->faddr, &src_addr, ETH_ALEN);
+@@ -766,7 +766,7 @@ netdev_tx_t qlcnic_xmit_frame(struct sk_
+ 	}
+ 
+ 	if (adapter->drv_mac_learn)
+-		qlcnic_send_filter(adapter, first_desc, skb);
++		qlcnic_send_filter(adapter, first_desc, skb, tx_ring);
+ 
+ 	tx_ring->tx_stats.tx_bytes += skb->len;
+ 	tx_ring->tx_stats.xmit_called++;
 
 
