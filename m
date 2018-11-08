@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DBDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF44C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B04520883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3067D20883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcpI0IBC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B04520883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OG3E14Nz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3067D20883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731417AbeKIHw1 (ORCPT
+        id S1732540AbeKIHpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:52:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:45:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730242AbeKIHpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:51 -0500
+        id S1730116AbeKIHpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:45:49 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7190E21019;
-        Thu,  8 Nov 2018 22:08:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 255FA2147A;
+        Thu,  8 Nov 2018 22:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714900;
-        bh=qFaSgKlw9dIcFjf9ttffpe3f7VBUhuVCfTSQG6OwGiI=;
+        s=default; t=1541714898;
+        bh=HWJGo94LqWIhk+0ntU1S6DQ28RE2euU6cuqHdEnta5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pcpI0IBCnU2sFYfUCM9bBfOg5vEnofM2cYBRDssUiRACbVx85Z7Oe1SmwTHuSLqGx
-         c4EOL8zhulc2rBqgqYulolg5njOK2PSvhc9lU6LrX89jZbTmsappoZqiVdmxogij/O
-         +UzAMuUCEqyKxCcBZGi9BeIvyo7wHIJa3u88mHvE=
+        b=OG3E14NzfJ5VggnDLzDXAmeTdtTKR5nGbEr2U9fBU5W+WrRr1mAl+Zc/DPQLUsl8X
+         7NX0f3uwluX0Ioe5hs4OLtpfN7LJumFAgMeNQBeF7Goksf/Z0/Mr1ndt/kKSZRRYq9
+         uFQ9XQvmRX8Hs29nM+GJQwvyScArWPE/3Fil7JfE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 17/31] IB/ucm: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Nov 2018 13:52:41 -0800
-Message-Id: <20181108215131.106849673@linuxfoundation.org>
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.14 13/31] drm/edid: Add 6 bpc quirk for BOE panel in HP Pavilion 15-n233sl
+Date:   Thu,  8 Nov 2018 13:52:37 -0800
+Message-Id: <20181108215130.807002649@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -63,54 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 0295e39595e1146522f2722715dba7f7fba42217 upstream.
+commit 0711a43b6d84ff9189adfbf83c8bbf56eef794bf upstream.
 
-hdr.cmd can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+There's another panel that reports "DFP 1.x compliant TMDS" but it
+supports 6bpc instead of 8 bpc.
 
-This issue was detected with the help of Smatch:
+Apply 6 bpc quirk for the panel to fix it.
 
-drivers/infiniband/core/ucm.c:1127 ib_ucm_write() warn: potential
-spectre issue 'ucm_cmd_table' [r] (local cap)
-
-Fix this by sanitizing hdr.cmd before using it to index
-ucm_cmd_table.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+BugLink: https://bugs.launchpad.net/bugs/1794387
+Cc: <stable@vger.kernel.org> # v4.8+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181002152911.4370-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucm.c |    3 +++
+ drivers/gpu/drm/drm_edid.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/core/ucm.c
-+++ b/drivers/infiniband/core/ucm.c
-@@ -46,6 +46,8 @@
- #include <linux/mutex.h>
- #include <linux/slab.h>
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -111,6 +111,9 @@ static const struct edid_quirk {
+ 	/* AEO model 0 reports 8 bpc, but is a 6 bpc panel */
+ 	{ "AEO", 0, EDID_QUIRK_FORCE_6BPC },
  
-+#include <linux/nospec.h>
++	/* BOE model on HP Pavilion 15-n233sl reports 8 bpc, but is a 6 bpc panel */
++	{ "BOE", 0x78b, EDID_QUIRK_FORCE_6BPC },
 +
- #include <linux/uaccess.h>
+ 	/* CPT panel of Asus UX303LA reports 8 bpc, but is a 6 bpc panel */
+ 	{ "CPT", 0x17df, EDID_QUIRK_FORCE_6BPC },
  
- #include <rdma/ib.h>
-@@ -1118,6 +1120,7 @@ static ssize_t ib_ucm_write(struct file
- 
- 	if (hdr.cmd >= ARRAY_SIZE(ucm_cmd_table))
- 		return -EINVAL;
-+	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucm_cmd_table));
- 
- 	if (hdr.in + sizeof(hdr) > len)
- 		return -EINVAL;
 
 
