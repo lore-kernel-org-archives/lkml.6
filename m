@@ -2,122 +2,144 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77D5C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A248C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41FC020857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:24:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ZNUTWV5U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41FC020857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 58E3420837
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:24:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E3420837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbeKHL57 (ORCPT
+        id S1728649AbeKHL57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 8 Nov 2018 06:57:59 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:45045 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbeKHL56 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mga04.intel.com ([192.55.52.120]:28532 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728586AbeKHL56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Nov 2018 06:57:58 -0500
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wA82OcX4017986;
-        Thu, 8 Nov 2018 11:24:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wA82OcX4017986
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541643879;
-        bh=FzkD13h1/QJSOXHOh6YknjUjQcwUZFOxzHd/uHqnNSs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZNUTWV5UZ8SyUIZUS2NJifkUoNK9fFiKmXL1aSnTBmXd7BSWnJxmElah52cNrE0Li
-         KZPwz4HnzjUYXTDyH/oQNCFMTkDIPFp6AgU7Khdm33TLBnNjPhbqA6qDNNOfXkRjNm
-         50OUMExjzT/mwD8RR9BpwJp9pNrX3pExuNrpJzuo+Cfg+5hdQFI7TIJCiEq01Do11O
-         EgW8TtWHn/vgf46kmFDdtKFgw9bAFYGnCQPpX4hDa+1y7BDFAg5k07s826EDvojNT3
-         +SnAPUeAAnuxdJbKaLADHIesW5lA8v3FCtMCHlROTOGqitTievu+bPY6ZQ0S88yfuZ
-         9CQIElySaPoTg==
-X-Nifty-SrcIP: [209.85.217.53]
-Received: by mail-vs1-f53.google.com with SMTP id x1so4367531vsc.10;
-        Wed, 07 Nov 2018 18:24:39 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJ+GD0IRoeLGRPMac5nwa4xe9kLR/8l56rm5rG57P87UrlIF07O
-        4pdo0JrvD+8dSm88HDUkipdad7zI7WJw4u6J5+c=
-X-Google-Smtp-Source: AJdET5eysM5ZyWkSgc+anFkaocl8ivOXl3gUA8vEv017XtN+hOqjLzpnuP9xlU6P11OLI4K3DhMLH33WC3FzfOIVjCw=
-X-Received: by 2002:a67:485:: with SMTP id 127mr1217641vse.54.1541643877935;
- Wed, 07 Nov 2018 18:24:37 -0800 (PST)
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 18:24:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
+   d="scan'208";a="94534666"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Nov 2018 18:24:45 -0800
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 05/12] iommu/vt-d: Reserve a domain id for FL and PT
+ modes
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
+ <20181105053151.7173-6-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439D5FAE7@SHSMSX104.ccr.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <855f56ac-80be-8179-ba99-45ef99ccb87f@linux.intel.com>
+Date:   Thu, 8 Nov 2018 10:22:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CA+7wUsw9a3ecPHtPsMF71zjzmNqyASFP-X6Z_DVa108akVcN-g@mail.gmail.com>
-In-Reply-To: <CA+7wUsw9a3ecPHtPsMF71zjzmNqyASFP-X6Z_DVa108akVcN-g@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 8 Nov 2018 11:24:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASUbPF+QB7zjEjc2q=UQp4NGxrh3O33ML=bdtziER2gmA@mail.gmail.com>
-Message-ID: <CAK7LNASUbPF+QB7zjEjc2q=UQp4NGxrh3O33ML=bdtziER2gmA@mail.gmail.com>
-Subject: Re: Makefile:611: include/config/auto.conf: No such file or directory
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <A2975661238FB949B60364EF0F2C257439D5FAE7@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
+Hi,
 
-On Thu, Nov 8, 2018 at 4:48 AM Mathieu Malaterre <malat@debian.org> wrote:
->
-> Hi Yamada-san,
->
-> Since commit:
->
-> 80463f1b7bf9 kbuild: add --include-dir flag only for out-of-tree build
->
-> I can no longer run the bindeb-pkg rule. For example:
->
-> $ make O=wii ARCH=powerpc wii_defconfig
-> $ make -j8 O=wii ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- bindeb-pkg
-> ...
->   WRAP    arch/powerpc/boot/dtbImage.wii
-> INFO: Uncompressed kernel (size 0x89aa8c) overlaps the address of the
-> wrapper(0x600000)
-> INFO: Fixing the link_address of wrapper to (0x900000)
-> rm arch/powerpc/boot/wii.dtb
->  fakeroot -u debian/rules binary
-> make KERNELRELEASE=4.19.0-rc3-wii+ ARCH=powerpc KBUILD_SRC= intdeb-pkg
-> /bin/bash ../scripts/package/builddeb
-> Makefile:611: include/config/auto.conf: No such file or directory
-> ***
-> *** Configuration file ".config" not found!
-> ***
-> *** Please run some configurator (e.g. "make oldconfig" or
-> *** "make menuconfig" or "make xconfig").
-> ***
-> make[11]: *** [syncconfig] Error 1
-> make[10]: *** [syncconfig] Error 2
-> make[9]: *** [include/config/auto.conf] Error 2
-> make[8]: *** [__sub-make] Error 2
-> cp: cannot stat '/tmp/linux/scripts/kconfig/Makefile:69: recipe for
-> target '\''syncconfig'\'' failed'$'\n''/tmp/linux/Makefile:555: recipe
-> for target '\''syncconfig'\'' failed'$'\n''Makefile:646: recipe for
-> target '\''include/config/auto.conf'\'' failed'$'\n''Makefile:24:
-> recipe for target '\''__sub-make'\'' failed': No such file or
-> directory
->
-> Would you be able to provide a patch to fix this ?
+On 11/7/18 2:55 PM, Liu, Yi L wrote:
+> Hi Baolu,
+> 
+>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>> Sent: Monday, November 5, 2018 1:32 PM
+>> Subject: [PATCH v4 05/12] iommu/vt-d: Reserve a domain id for FL and PT modes
+>>
+>> Vt-d spec rev3.0 (section 6.2.3.1) requires that each pasid
+>> entry for first-level or pass-through translation should be
+>> programmed with a domain id different from those used for
+>> second-level or nested translation. It is recommended that
+>> software could use a same domain id for all first-only and
+>> pass-through translations.
+>>
+>> This reserves a domain id for first-level and pass-through
+>> translations.
+>>
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Cc: Kevin Tian <kevin.tian@intel.com>
+>> Cc: Liu Yi L <yi.l.liu@intel.com>
+>> Cc: Sanjay Kumar <sanjay.k.kumar@intel.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel-iommu.c | 10 ++++++++++
+>>   drivers/iommu/intel-pasid.h |  6 ++++++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index 9331240c70b8..2f7455ee4e7a 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -1618,6 +1618,16 @@ static int iommu_init_domains(struct intel_iommu
+>> *iommu)
+>>   	 */
+>>   	set_bit(0, iommu->domain_ids);
+>>
+>> +	/*
+>> +	 * Vt-d spec rev3.0 (section 6.2.3.1) requires that each pasid
+>> +	 * entry for first-level or pass-through translation modes should
+>> +	 * be programmed with a domain id different from those used for
+>> +	 * second-level or nested translation. We reserve a domain id for
+>> +	 * this purpose.
+>> +	 */
+>> +	if (sm_supported(iommu))
+>> +		set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
+> 
+> "FLPT_DEFAULT_DID" looks very likely for first level translation. How about
+> "PT_FL_DEFAULT_DID"?
 
+We have comments above it, so people won't be confused.
 
-This is the one:
-https://patchwork.kernel.org/patch/10667541/
+> 
+>>   	return 0;
+>>   }
+>>
+>> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
+>> index 12f480c2bb8b..03c1612d173c 100644
+>> --- a/drivers/iommu/intel-pasid.h
+>> +++ b/drivers/iommu/intel-pasid.h
+>> @@ -17,6 +17,12 @@
+>>   #define PDE_PFN_MASK			PAGE_MASK
+>>   #define PASID_PDE_SHIFT			6
+>>
+>> +/*
+>> + * Domain ID reserved for pasid entries programmed for first-level
+>> + * only and pass-through transfer modes.
+>> + */
+>> +#define FLPT_DEFAULT_DID		1
+> 
+> Would be helpful to elaborate why DID 1 is selected in the patch
+> description.
 
+Yeah. DID 0 has been caved out for caching mode and we start from 1 for
+this.
 
-It is already sitting in linux-next,
-and I will also send a pull request to Linus shortly.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Best regards,
+Lu Baolu
