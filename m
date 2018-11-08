@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28C5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF798C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8326E20818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82DF120818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x6zaQRQG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8326E20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGBgX9io"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DF120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731143AbeKIIBf (ORCPT
+        id S1731565AbeKIHmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:01:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34608 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729920AbeKIHmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:42:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731548AbeKIHmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:42:38 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D958920844;
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FD5820892;
         Thu,  8 Nov 2018 22:05:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714709;
-        bh=FP3TBXnOhvI8T1AdM9Ak+R2URZWoCismJhDM5v6dYeo=;
+        s=default; t=1541714708;
+        bh=MkguXUI+2WAlfWLnc899SWDXrSSnG0eqFEz2NsPSIAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x6zaQRQGlZy9P+/3+oIQg3LBqXPu+jIN993U7YXrM9GI3DP+uClabHlmb92qB5r9G
-         jMpjF3H4WL7ceb3+T44P1OyPBP/Py3jmRKVslHgl9a4pRGWGUGT1DbeUDrSqxAlLq3
-         VT4ant64FnZ9bJMurNw1ftoeuIakmIwMrAvdwVKM=
+        b=hGBgX9ioso3v7mfdu5x33SLjb1iQBkhwfMuaARwsxKgM9JPHdaAyFmQdBi0kAA7If
+         Sp6yYjgniVVMxmC8XhuB6PwGO7BlNLyJiul844nq3mpyRn+lT3g8O2GeejFhMbkiKt
+         jPQKM86pUUDjMb48jVIisXRwymO7iPHUeMFI5weg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 045/171] IB/ipoib: Do not warn if IPoIB debugfs doesnt exist
-Date:   Thu,  8 Nov 2018 13:50:15 -0800
-Message-Id: <20181108215130.775099388@linuxfoundation.org>
+Subject: [PATCH 4.9 054/171] bnxt_en: Dont use rtnl lock to protect link change logic in workqueue.
+Date:   Thu,  8 Nov 2018 13:50:24 -0800
+Message-Id: <20181108215131.407370576@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,38 +63,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 14fa91e0fef8e4d6feb8b1fa2a807828e0abe815 ]
+[ Upstream commit e2dc9b6e38fa3919e63d6d7905da70ca41cbf908 ]
 
-netdev_wait_allrefs() could rebroadcast NETDEV_UNREGISTER event
-multiple times until all refs are gone, which will result in calling
-ipoib_delete_debug_files multiple times and printing a warning.
+As a further improvement to the PF/VF link change logic, use a private
+mutex instead of the rtnl lock to protect link change logic.  With the
+new mutex, we don't have to take the rtnl lock in the workqueue when
+we have to handle link related functions.  If the VF and PF drivers
+are running on the same host and both take the rtnl lock and one is
+waiting for the other, it will cause timeout.  This patch fixes these
+timeouts.
 
-Remove the WARN_ONCE since checks of NULL pointers before calling
-debugfs_remove are not needed.
-
-Fixes: 771a52584096 ("IB/IPoIB: ibX: failed to create mcg debug file")
-Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 90c694bb7181 ("bnxt_en: Fix RTNL lock usage on bnxt_update_link().")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_fs.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 25 ++++++++++---------
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  4 +++
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c |  4 +++
+ 3 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_fs.c b/drivers/infiniband/ulp/ipoib/ipoib_fs.c
-index 09396bd7b02d..63be3bcdc0e3 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_fs.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_fs.c
-@@ -281,8 +281,6 @@ void ipoib_delete_debug_files(struct net_device *dev)
- {
- 	struct ipoib_dev_priv *priv = netdev_priv(dev);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 208e9dacfd34..a036f7039d76 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -5580,7 +5580,9 @@ static int __bnxt_open_nic(struct bnxt *bp, bool irq_re_init, bool link_re_init)
+ 	}
  
--	WARN_ONCE(!priv->mcg_dentry, "null mcg debug file\n");
--	WARN_ONCE(!priv->path_dentry, "null path debug file\n");
- 	debugfs_remove(priv->mcg_dentry);
- 	debugfs_remove(priv->path_dentry);
- 	priv->mcg_dentry = priv->path_dentry = NULL;
+ 	if (link_re_init) {
++		mutex_lock(&bp->link_lock);
+ 		rc = bnxt_update_phy_setting(bp);
++		mutex_unlock(&bp->link_lock);
+ 		if (rc)
+ 			netdev_warn(bp->dev, "failed to update phy settings\n");
+ 	}
+@@ -6230,30 +6232,28 @@ static void bnxt_sp_task(struct work_struct *work)
+ 	if (test_and_clear_bit(BNXT_PERIODIC_STATS_SP_EVENT, &bp->sp_event))
+ 		bnxt_hwrm_port_qstats(bp);
+ 
+-	/* These functions below will clear BNXT_STATE_IN_SP_TASK.  They
+-	 * must be the last functions to be called before exiting.
+-	 */
+ 	if (test_and_clear_bit(BNXT_LINK_CHNG_SP_EVENT, &bp->sp_event)) {
+-		int rc = 0;
++		int rc;
+ 
++		mutex_lock(&bp->link_lock);
+ 		if (test_and_clear_bit(BNXT_LINK_SPEED_CHNG_SP_EVENT,
+ 				       &bp->sp_event))
+ 			bnxt_hwrm_phy_qcaps(bp);
+ 
+-		bnxt_rtnl_lock_sp(bp);
+-		if (test_bit(BNXT_STATE_OPEN, &bp->state))
+-			rc = bnxt_update_link(bp, true);
+-		bnxt_rtnl_unlock_sp(bp);
++		rc = bnxt_update_link(bp, true);
++		mutex_unlock(&bp->link_lock);
+ 		if (rc)
+ 			netdev_err(bp->dev, "SP task can't update link (rc: %x)\n",
+ 				   rc);
+ 	}
+ 	if (test_and_clear_bit(BNXT_HWRM_PORT_MODULE_SP_EVENT, &bp->sp_event)) {
+-		bnxt_rtnl_lock_sp(bp);
+-		if (test_bit(BNXT_STATE_OPEN, &bp->state))
+-			bnxt_get_port_module_status(bp);
+-		bnxt_rtnl_unlock_sp(bp);
++		mutex_lock(&bp->link_lock);
++		bnxt_get_port_module_status(bp);
++		mutex_unlock(&bp->link_lock);
+ 	}
++	/* These functions below will clear BNXT_STATE_IN_SP_TASK.  They
++	 * must be the last functions to be called before exiting.
++	 */
+ 	if (test_and_clear_bit(BNXT_RESET_TASK_SP_EVENT, &bp->sp_event))
+ 		bnxt_reset(bp, false);
+ 
+@@ -6788,6 +6788,7 @@ static int bnxt_probe_phy(struct bnxt *bp)
+ 			   rc);
+ 		return rc;
+ 	}
++	mutex_init(&bp->link_lock);
+ 
+ 	rc = bnxt_update_link(bp, false);
+ 	if (rc) {
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+index 666bc0608ed7..017c10c53715 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -1109,6 +1109,10 @@ struct bnxt {
+ 	unsigned long		*ntp_fltr_bmap;
+ 	int			ntp_fltr_count;
+ 
++	/* To protect link related settings during link changes and
++	 * ethtool settings changes.
++	 */
++	struct mutex		link_lock;
+ 	struct bnxt_link_info	link_info;
+ 	struct ethtool_eee	eee;
+ 	u32			lpi_tmr_lo;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index cde4b96f3153..3a352f76e633 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -793,6 +793,7 @@ static int bnxt_get_link_ksettings(struct net_device *dev,
+ 	u32 ethtool_speed;
+ 
+ 	ethtool_link_ksettings_zero_link_mode(lk_ksettings, supported);
++	mutex_lock(&bp->link_lock);
+ 	bnxt_fw_to_ethtool_support_spds(link_info, lk_ksettings);
+ 
+ 	ethtool_link_ksettings_zero_link_mode(lk_ksettings, advertising);
+@@ -840,6 +841,7 @@ static int bnxt_get_link_ksettings(struct net_device *dev,
+ 			base->port = PORT_FIBRE;
+ 	}
+ 	base->phy_address = link_info->phy_addr;
++	mutex_unlock(&bp->link_lock);
+ 
+ 	return 0;
+ }
+@@ -926,6 +928,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
+ 	if (!BNXT_SINGLE_PF(bp))
+ 		return -EOPNOTSUPP;
+ 
++	mutex_lock(&bp->link_lock);
+ 	if (base->autoneg == AUTONEG_ENABLE) {
+ 		BNXT_ETHTOOL_TO_FW_SPDS(fw_advertising, lk_ksettings,
+ 					advertising);
+@@ -970,6 +973,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
+ 		rc = bnxt_hwrm_set_link_setting(bp, set_pause, false);
+ 
+ set_setting_exit:
++	mutex_unlock(&bp->link_lock);
+ 	return rc;
+ }
+ 
 -- 
 2.17.1
 
