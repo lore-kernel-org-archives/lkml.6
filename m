@@ -2,54 +2,50 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5725C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28809C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A4520883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1F8820883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:16:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOYYXWmK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A4520883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="thbIrqBt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F8820883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbeKIHpi (ORCPT
+        id S1732346AbeKIHo7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:45:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38942 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732451AbeKIHpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:36 -0500
+        id S1727468AbeKIHo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:58 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87C0B2147D;
-        Thu,  8 Nov 2018 22:08:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86183214DA;
+        Thu,  8 Nov 2018 22:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714884;
-        bh=WGubkUxUQiNQ8uTLD3gU7ElS7npVglnzDkRy8tqwes0=;
+        s=default; t=1541714846;
+        bh=YEuizLTSzu9N3G16PENkUb6yGSm/aP0GuDOewwxtISQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DOYYXWmK45EohWfa9VjKALSpfzF5HBh7y8W8sj0S9i0DooxAn0yjqbNvDc1OCVWH7
-         g6L58hNhGebdO6a5nmlOL7eunSI0v4N8G+Qhd+PDtAMUTOtYnp3XuT61FvBqArylla
-         ZiKXDi7qDZ+/4oykqNppFgstDrWGvB7r+5BomvTU=
+        b=thbIrqBtrRN/9Xnyd0Gc11eeNkuhx6IV3EV7sugqh/ed3AYjMjX+58X1II+O/IkHB
+         cymtUUafDuemA1DmLqzCkV6oU7pv8AcAtpErvSYEAl7Y3PhlCcjVqr1pFAoxfJ8q8l
+         zrLK4iOkdw/I1JT0DZUxwvnPQWIRVJAGAF5Us6x4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Team OWL337 <icytxw@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 171/171] posix-timers: Sanitize overrun handling
-Date:   Thu,  8 Nov 2018 13:52:21 -0800
-Message-Id: <20181108215139.300639655@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 136/171] ipv6: mcast: fix a use-after-free in inet6_mc_check
+Date:   Thu,  8 Nov 2018 13:51:46 -0800
+Message-Id: <20181108215136.914098880@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -67,152 +63,173 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 78c9c4dfbf8c04883941445a195276bb4bb92c76 ]
+From: Eric Dumazet <edumazet@google.com>
 
-The posix timer overrun handling is broken because the forwarding functions
-can return a huge number of overruns which does not fit in an int. As a
-consequence timer_getoverrun(2) and siginfo::si_overrun can turn into
-random number generators.
+[ Upstream commit dc012f3628eaecfb5ba68404a5c30ef501daf63d ]
 
-The k_clock::timer_forward() callbacks return a 64 bit value now. Make
-k_itimer::ti_overrun[_last] 64bit as well, so the kernel internal
-accounting is correct. 3Remove the temporary (int) casts.
+syzbot found a use-after-free in inet6_mc_check [1]
 
-Add a helper function which clamps the overrun value returned to user space
-via timer_getoverrun(2) or siginfo::si_overrun limited to a positive value
-between 0 and INT_MAX. INT_MAX is an indicator for user space that the
-overrun value has been clamped.
+The problem here is that inet6_mc_check() uses rcu
+and read_lock(&iml->sflock)
 
-Reported-by: Team OWL337 <icytxw@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: John Stultz <john.stultz@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Link: https://lkml.kernel.org/r/20180626132705.018623573@linutronix.de
-[florian: Make patch apply to v4.9.135]
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+So the fact that ip6_mc_leave_src() is called under RTNL
+and the socket lock does not help us, we need to acquire
+iml->sflock in write mode.
+
+In the future, we should convert all this stuff to RCU.
+
+[1]
+BUG: KASAN: use-after-free in ipv6_addr_equal include/net/ipv6.h:521 [inline]
+BUG: KASAN: use-after-free in inet6_mc_check+0xae7/0xb40 net/ipv6/mcast.c:649
+Read of size 8 at addr ffff8801ce7f2510 by task syz-executor0/22432
+
+CPU: 1 PID: 22432 Comm: syz-executor0 Not tainted 4.19.0-rc7+ #280
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+ print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+ ipv6_addr_equal include/net/ipv6.h:521 [inline]
+ inet6_mc_check+0xae7/0xb40 net/ipv6/mcast.c:649
+ __raw_v6_lookup+0x320/0x3f0 net/ipv6/raw.c:98
+ ipv6_raw_deliver net/ipv6/raw.c:183 [inline]
+ raw6_local_deliver+0x3d3/0xcb0 net/ipv6/raw.c:240
+ ip6_input_finish+0x467/0x1aa0 net/ipv6/ip6_input.c:345
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:426
+ ip6_mc_input+0x48a/0xd20 net/ipv6/ip6_input.c:503
+ dst_input include/net/dst.h:450 [inline]
+ ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ ipv6_rcv+0x120/0x640 net/ipv6/ip6_input.c:271
+ __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
+ netif_receive_skb_internal+0x12c/0x620 net/core/dev.c:5126
+ napi_frags_finish net/core/dev.c:5664 [inline]
+ napi_gro_frags+0x75a/0xc90 net/core/dev.c:5737
+ tun_get_user+0x3189/0x4250 drivers/net/tun.c:1923
+ tun_chr_write_iter+0xb9/0x154 drivers/net/tun.c:1968
+ call_write_iter include/linux/fs.h:1808 [inline]
+ do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+ do_iter_write+0x185/0x5f0 fs/read_write.c:959
+ vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+ do_writev+0x11a/0x310 fs/read_write.c:1039
+ __do_sys_writev fs/read_write.c:1112 [inline]
+ __se_sys_writev fs/read_write.c:1109 [inline]
+ __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457421
+Code: 75 14 b8 14 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 b5 fb ff c3 48 83 ec 08 e8 1a 2d 00 00 48 89 04 24 b8 14 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 63 2d 00 00 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007f2d30ecaba0 EFLAGS: 00000293 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 000000000000003e RCX: 0000000000457421
+RDX: 0000000000000001 RSI: 00007f2d30ecabf0 RDI: 00000000000000f0
+RBP: 0000000020000500 R08: 00000000000000f0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007f2d30ecb6d4
+R13: 00000000004c4890 R14: 00000000004d7b90 R15: 00000000ffffffff
+
+Allocated by task 22437:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+ __do_kmalloc mm/slab.c:3718 [inline]
+ __kmalloc+0x14e/0x760 mm/slab.c:3727
+ kmalloc include/linux/slab.h:518 [inline]
+ sock_kmalloc+0x15a/0x1f0 net/core/sock.c:1983
+ ip6_mc_source+0x14dd/0x1960 net/ipv6/mcast.c:427
+ do_ipv6_setsockopt.isra.9+0x3afb/0x45d0 net/ipv6/ipv6_sockglue.c:743
+ ipv6_setsockopt+0xbd/0x170 net/ipv6/ipv6_sockglue.c:933
+ rawv6_setsockopt+0x59/0x140 net/ipv6/raw.c:1069
+ sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+ __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
+ __do_sys_setsockopt net/socket.c:1913 [inline]
+ __se_sys_setsockopt net/socket.c:1910 [inline]
+ __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 22430:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+ __cache_free mm/slab.c:3498 [inline]
+ kfree+0xcf/0x230 mm/slab.c:3813
+ __sock_kfree_s net/core/sock.c:2004 [inline]
+ sock_kfree_s+0x29/0x60 net/core/sock.c:2010
+ ip6_mc_leave_src+0x11a/0x1d0 net/ipv6/mcast.c:2448
+ __ipv6_sock_mc_close+0x20b/0x4e0 net/ipv6/mcast.c:310
+ ipv6_sock_mc_close+0x158/0x1d0 net/ipv6/mcast.c:328
+ inet6_release+0x40/0x70 net/ipv6/af_inet6.c:452
+ __sock_release+0xd7/0x250 net/socket.c:579
+ sock_close+0x19/0x20 net/socket.c:1141
+ __fput+0x385/0xa30 fs/file_table.c:278
+ ____fput+0x15/0x20 fs/file_table.c:309
+ task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+ exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+ prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+ do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801ce7f2500
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 16 bytes inside of
+ 192-byte region [ffff8801ce7f2500, ffff8801ce7f25c0)
+The buggy address belongs to the page:
+page:ffffea000739fc80 count:1 mapcount:0 mapping:ffff8801da800040 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0006f6e548 ffffea000737b948 ffff8801da800040
+raw: 0000000000000000 ffff8801ce7f2000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801ce7f2400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8801ce7f2480: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff8801ce7f2500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff8801ce7f2580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8801ce7f2600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/posix-timers.h   |  4 ++--
- kernel/time/posix-cpu-timers.c |  2 +-
- kernel/time/posix-timers.c     | 29 +++++++++++++++++++----------
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ net/ipv6/mcast.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
-index 62d44c176071..e4b8678183f5 100644
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -65,8 +65,8 @@ struct k_itimer {
- 	spinlock_t it_lock;
- 	clockid_t it_clock;		/* which timer type */
- 	timer_t it_id;			/* timer id */
--	int it_overrun;			/* overrun on pending signal  */
--	int it_overrun_last;		/* overrun on last delivered signal */
-+	s64 it_overrun;			/* overrun on pending signal  */
-+	s64 it_overrun_last;		/* overrun on last delivered signal */
- 	int it_requeue_pending;		/* waiting to requeue this timer */
- #define REQUEUE_PENDING 1
- 	int it_sigev_notify;		/* notify word of sigevent struct */
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 39008d78927a..21a27bb73587 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -103,7 +103,7 @@ static void bump_cpu_timer(struct k_itimer *timer,
- 			continue;
- 
- 		timer->it.cpu.expires += incr;
--		timer->it_overrun += 1 << i;
-+		timer->it_overrun += 1LL << i;
- 		delta -= incr;
- 	}
- }
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index fc7c37ad90a0..0e6ed2e7d066 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -355,6 +355,17 @@ static __init int init_posix_timers(void)
- 
- __initcall(init_posix_timers);
- 
-+/*
-+ * The siginfo si_overrun field and the return value of timer_getoverrun(2)
-+ * are of type int. Clamp the overrun value to INT_MAX
-+ */
-+static inline int timer_overrun_to_int(struct k_itimer *timr, int baseval)
-+{
-+	s64 sum = timr->it_overrun_last + (s64)baseval;
-+
-+	return sum > (s64)INT_MAX ? INT_MAX : (int)sum;
-+}
-+
- static void schedule_next_timer(struct k_itimer *timr)
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -2413,17 +2413,17 @@ static int ip6_mc_leave_src(struct sock
  {
- 	struct hrtimer *timer = &timr->it.real.timer;
-@@ -362,12 +373,11 @@ static void schedule_next_timer(struct k_itimer *timr)
- 	if (timr->it.real.interval.tv64 == 0)
- 		return;
+ 	int err;
  
--	timr->it_overrun += (unsigned int) hrtimer_forward(timer,
--						timer->base->get_time(),
--						timr->it.real.interval);
-+	timr->it_overrun += hrtimer_forward(timer, timer->base->get_time(),
-+					    timr->it.real.interval);
- 
- 	timr->it_overrun_last = timr->it_overrun;
--	timr->it_overrun = -1;
-+	timr->it_overrun = -1LL;
- 	++timr->it_requeue_pending;
- 	hrtimer_restart(timer);
- }
-@@ -396,7 +406,7 @@ void do_schedule_next_timer(struct siginfo *info)
- 		else
- 			schedule_next_timer(timr);
- 
--		info->si_overrun += timr->it_overrun_last;
-+		info->si_overrun = timer_overrun_to_int(timr, info->si_overrun);
+-	/* callers have the socket lock and rtnl lock
+-	 * so no other readers or writers of iml or its sflist
+-	 */
++	write_lock_bh(&iml->sflock);
+ 	if (!iml->sflist) {
+ 		/* any-source empty exclude case */
+-		return ip6_mc_del_src(idev, &iml->addr, iml->sfmode, 0, NULL, 0);
++		err = ip6_mc_del_src(idev, &iml->addr, iml->sfmode, 0, NULL, 0);
++	} else {
++		err = ip6_mc_del_src(idev, &iml->addr, iml->sfmode,
++				iml->sflist->sl_count, iml->sflist->sl_addr, 0);
++		sock_kfree_s(sk, iml->sflist, IP6_SFLSIZE(iml->sflist->sl_max));
++		iml->sflist = NULL;
  	}
+-	err = ip6_mc_del_src(idev, &iml->addr, iml->sfmode,
+-		iml->sflist->sl_count, iml->sflist->sl_addr, 0);
+-	sock_kfree_s(sk, iml->sflist, IP6_SFLSIZE(iml->sflist->sl_max));
+-	iml->sflist = NULL;
++	write_unlock_bh(&iml->sflock);
+ 	return err;
+ }
  
- 	if (timr)
-@@ -491,8 +501,7 @@ static enum hrtimer_restart posix_timer_fn(struct hrtimer *timer)
- 					now = ktime_add(now, kj);
- 			}
- #endif
--			timr->it_overrun += (unsigned int)
--				hrtimer_forward(timer, now,
-+			timr->it_overrun += hrtimer_forward(timer, now,
- 						timr->it.real.interval);
- 			ret = HRTIMER_RESTART;
- 			++timr->it_requeue_pending;
-@@ -633,7 +642,7 @@ SYSCALL_DEFINE3(timer_create, const clockid_t, which_clock,
- 	it_id_set = IT_ID_SET;
- 	new_timer->it_id = (timer_t) new_timer_id;
- 	new_timer->it_clock = which_clock;
--	new_timer->it_overrun = -1;
-+	new_timer->it_overrun = -1LL;
- 
- 	if (timer_event_spec) {
- 		if (copy_from_user(&event, timer_event_spec, sizeof (event))) {
-@@ -762,7 +771,7 @@ common_timer_get(struct k_itimer *timr, struct itimerspec *cur_setting)
- 	 */
- 	if (iv.tv64 && (timr->it_requeue_pending & REQUEUE_PENDING ||
- 			timr->it_sigev_notify == SIGEV_NONE))
--		timr->it_overrun += (unsigned int) hrtimer_forward(timer, now, iv);
-+		timr->it_overrun += hrtimer_forward(timer, now, iv);
- 
- 	remaining = __hrtimer_expires_remaining_adjusted(timer, now);
- 	/* Return 0 only, when the timer is expired and not pending */
-@@ -824,7 +833,7 @@ SYSCALL_DEFINE1(timer_getoverrun, timer_t, timer_id)
- 	if (!timr)
- 		return -EINVAL;
- 
--	overrun = timr->it_overrun_last;
-+	overrun = timer_overrun_to_int(timr, 0);
- 	unlock_timer(timr, flags);
- 
- 	return overrun;
--- 
-2.17.1
-
 
 
