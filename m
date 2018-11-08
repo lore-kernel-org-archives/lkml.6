@@ -2,151 +2,143 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A95C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61877C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57CD22086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:02:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CD22086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 22DEA2089A
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:03:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SzE+QGGP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pu2A6DCW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DEA2089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeKHThA (ORCPT
+        id S1726924AbeKHThv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:37:00 -0500
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:22681 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726283AbeKHThA (ORCPT
+        Thu, 8 Nov 2018 14:37:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50296 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbeKHThv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:37:00 -0500
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id wA8A2PS2059702;
-        Thu, 8 Nov 2018 18:02:25 +0800 (GMT-8)
-        (envelope-from nylon7@andestech.com)
-Received: from app09.andestech.com (10.0.15.117) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 8 Nov 2018
- 18:02:09 +0800
-From:   Nylon Chen <nylon7@andestech.com>
-To:     <green.hu@gmail.com>, <deanbo422@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     <nylon7717@gmail.com>, Nylon Chen <nylon7@andestech.com>
-Subject: [PATCH v2 2/2] nds32: support hardware prefetcher
-Date:   Thu, 8 Nov 2018 18:00:12 +0800
-Message-ID: <20181108100012.2519-1-nylon7@andestech.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 8 Nov 2018 14:37:51 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A29F560A98; Thu,  8 Nov 2018 10:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541671388;
+        bh=6IDd1Jq2sv4LEEOynU038asATcnpHpWcOhDj9SU8c4Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SzE+QGGP4kai8vTOtJQvvX4II0qxQp2GmfrSHtGJ271NkZa4m+uCapmjAH5BSAzbD
+         zoPZ4XylLo+b7dKLku8TaQdIUjk9Vz9AbrSd3q+vZpieKWtuTgdRLeqoIsRkuRv++q
+         lwz1g6xug1cXcl2x49joaEcAHjD3nnHMdcYF9+Cc=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C50B1601A8;
+        Thu,  8 Nov 2018 10:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541671386;
+        bh=6IDd1Jq2sv4LEEOynU038asATcnpHpWcOhDj9SU8c4Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Pu2A6DCWZQdErSxudGMm8elQ5mxaYDHJY1ilQWYnvpVlinniL0vyTbdbCsAInYHNH
+         Jqh40/RTsM4Iyt+WpMYnJoZz+mUHeFfXSKg6ek5nH0cBT6FSpZTySlAk7s1PsDl1mw
+         zeQEcKeUVKQMcHwdwtJ/KATeAngTeH3q8f5koOBQ=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.117]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com wA8A2PS2059702
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 08 Nov 2018 15:33:06 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        khlebnikov@yandex-team.ru, minchan@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, getarunks@gmail.com
+Subject: Re: [PATCH v3 4/4] mm: Remove managed_page_count spinlock
+In-Reply-To: <20181108083400.GQ27423@dhcp22.suse.cz>
+References: <1541665398-29925-1-git-send-email-arunks@codeaurora.org>
+ <1541665398-29925-5-git-send-email-arunks@codeaurora.org>
+ <20181108083400.GQ27423@dhcp22.suse.cz>
+Message-ID: <4e5e2923a424ab2e2c50e56b2e538a3c@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We add a config for user to enable or disable this feature.
-It can be used to control the hardware prefetch function.
+On 2018-11-08 14:04, Michal Hocko wrote:
+> On Thu 08-11-18 13:53:18, Arun KS wrote:
+>> Now totalram_pages and managed_pages are atomic varibles. No need
+>> of managed_page_count spinlock.
+> 
+> As explained earlier. Please add a motivation here. Feel free to reuse
+> wording from 
+> http://lkml.kernel.org/r/20181107103630.GF2453@dhcp22.suse.cz
 
-Signed-off-by: Nylon Chen <nylon7@andestech.com>
----
- arch/nds32/Kconfig.cpu            | 7 +++++++
- arch/nds32/include/asm/bitfield.h | 6 ++++++
- arch/nds32/kernel/head.S          | 2 +-
- arch/nds32/kernel/setup.c         | 7 +++++++
- 4 files changed, 21 insertions(+), 1 deletion(-)
+Sure. Will add in next spin.
 
-diff --git a/arch/nds32/Kconfig.cpu b/arch/nds32/Kconfig.cpu
-index b8c8984d1456..8fd1236db3fa 100644
---- a/arch/nds32/Kconfig.cpu
-+++ b/arch/nds32/Kconfig.cpu
-@@ -143,6 +143,13 @@ config CACHE_L2
- 	  Say Y here to enable L2 cache if your SoC are integrated with L2CC.
- 	  If unsure, say N.
- 
-+config HW_PRE
-+	bool "Enable hardware prefetcher"
-+        default y
-+	help
-+	  Say Y here to enable hardware prefetcher feature.
-+	  Only when CPU_VER.REV >= 0x09 can support.
-+
- menu "Memory configuration"
- 
- choice
-diff --git a/arch/nds32/include/asm/bitfield.h b/arch/nds32/include/asm/bitfield.h
-index 8e84fc385b94..2a33700e7ffa 100644
---- a/arch/nds32/include/asm/bitfield.h
-+++ b/arch/nds32/include/asm/bitfield.h
-@@ -735,14 +735,20 @@
- #define N13MISC_CTL_offRTP	1	/* Disable Return Target Predictor */
- #define N13MISC_CTL_offPTEPF	2	/* Disable HPTWK L2 PTE pefetch */
- #define N13MISC_CTL_offSP_SHADOW_EN	4	/* Enable shadow stack pointers */
-+#define MISC_CTL_offHWPRE      11      /* Enable HardWare PREFETCH */
- /* bit 6, 9:31 reserved */
- 
- #define N13MISC_CTL_makBTB	( 0x1  << N13MISC_CTL_offBTB )
- #define N13MISC_CTL_makRTP	( 0x1  << N13MISC_CTL_offRTP )
- #define N13MISC_CTL_makPTEPF	( 0x1  << N13MISC_CTL_offPTEPF )
- #define N13MISC_CTL_makSP_SHADOW_EN	( 0x1  << N13MISC_CTL_offSP_SHADOW_EN )
-+#define MISC_CTL_makHWPRE_EN     ( 0x1  << MISC_CTL_offHWPRE )
- 
-+#ifdef CONFIG_HW_PRE
-+#define MISC_init	(N13MISC_CTL_makBTB|N13MISC_CTL_makRTP|N13MISC_CTL_makSP_SHADOW_EN|MISC_CTL_makHWPRE_EN)
-+#else
- #define MISC_init	(N13MISC_CTL_makBTB|N13MISC_CTL_makRTP|N13MISC_CTL_makSP_SHADOW_EN)
-+#endif
- 
- /******************************************************************************
-  * PRUSR_ACC_CTL (Privileged Resource User Access Control Registers)
-diff --git a/arch/nds32/kernel/head.S b/arch/nds32/kernel/head.S
-index c5fdae174ced..029e27fb0d71 100644
---- a/arch/nds32/kernel/head.S
-+++ b/arch/nds32/kernel/head.S
-@@ -160,7 +160,7 @@ _tlb:
- #endif
- 	mtsr    $r3, $TLB_MISC
- 
--	mfsr    $r0, $MISC_CTL      ! Enable BTB and RTP and shadow sp
-+	mfsr    $r0, $MISC_CTL      ! Enable BTB, RTP, shadow sp and HW_PRE
- 	ori     $r0, $r0, #MISC_init
- 	mtsr    $r0, $MISC_CTL
- 
-diff --git a/arch/nds32/kernel/setup.c b/arch/nds32/kernel/setup.c
-index 87683583f206..637f4e2f6577 100644
---- a/arch/nds32/kernel/setup.c
-+++ b/arch/nds32/kernel/setup.c
-@@ -39,6 +39,7 @@
- #define HWCAP_FPU_DP		0x040000
- #define HWCAP_V2		0x080000
- #define HWCAP_DX_REGS		0x100000
-+#define HWCAP_HWPRE		0x200000
- 
- unsigned long cpu_id, cpu_rev, cpu_cfgid;
- char cpu_series;
-@@ -74,6 +75,7 @@ static const char *hwcap_str[] = {
- 	"fpu_dp",
- 	"v2",
- 	"dx_regs",
-+	"hw_pre",
- 	NULL,
- };
- 
-@@ -214,6 +216,11 @@ static void __init setup_cpuinfo(void)
- 	if (__nds32__mfsr(NDS32_SR_MSC_CFG) & MSC_CFG_mskL2C)
- 		elf_hwcap |= HWCAP_L2C;
- 
-+#ifdef CONFIG_HW_PRE
-+	if (__nds32__mfsr(NDS32_SR_MISC_CTL) & MISC_CTL_makHWPRE_EN)
-+		elf_hwcap |= HWCAP_HWPRE;
-+#endif
-+
- 	tmp = __nds32__mfsr(NDS32_SR_CACHE_CTL);
- 	if (!IS_ENABLED(CONFIG_CPU_DCACHE_DISABLE))
- 		tmp |= CACHE_CTL_mskDC_EN;
--- 
-2.18.0
-
+Regards,
+Arun
+> 
+>> 
+>> Signed-off-by: Arun KS <arunks@codeaurora.org>
+>> Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>> Acked-by: Michal Hocko <mhocko@suse.com>
+>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  include/linux/mmzone.h | 6 ------
+>>  mm/page_alloc.c        | 5 -----
+>>  2 files changed, 11 deletions(-)
+>> 
+>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> index e73dc31..c71b4d9 100644
+>> --- a/include/linux/mmzone.h
+>> +++ b/include/linux/mmzone.h
+>> @@ -428,12 +428,6 @@ struct zone {
+>>  	 * Write access to present_pages at runtime should be protected by
+>>  	 * mem_hotplug_begin/end(). Any reader who can't tolerant drift of
+>>  	 * present_pages should get_online_mems() to get a stable value.
+>> -	 *
+>> -	 * Read access to managed_pages should be safe because it's unsigned
+>> -	 * long. Write access to zone->managed_pages and totalram_pages are
+>> -	 * protected by managed_page_count_lock at runtime. Idealy only
+>> -	 * adjust_managed_page_count() should be used instead of directly
+>> -	 * touching zone->managed_pages and totalram_pages.
+>>  	 */
+>>  	atomic_long_t		managed_pages;
+>>  	unsigned long		spanned_pages;
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index f8b64cc..26c5e14 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -122,9 +122,6 @@
+>>  };
+>>  EXPORT_SYMBOL(node_states);
+>> 
+>> -/* Protect totalram_pages and zone->managed_pages */
+>> -static DEFINE_SPINLOCK(managed_page_count_lock);
+>> -
+>>  atomic_long_t _totalram_pages __read_mostly;
+>>  EXPORT_SYMBOL(_totalram_pages);
+>>  unsigned long totalreserve_pages __read_mostly;
+>> @@ -7065,14 +7062,12 @@ static int __init 
+>> cmdline_parse_movablecore(char *p)
+>> 
+>>  void adjust_managed_page_count(struct page *page, long count)
+>>  {
+>> -	spin_lock(&managed_page_count_lock);
+>>  	atomic_long_add(count, &page_zone(page)->managed_pages);
+>>  	totalram_pages_add(count);
+>>  #ifdef CONFIG_HIGHMEM
+>>  	if (PageHighMem(page))
+>>  		totalhigh_pages_add(count);
+>>  #endif
+>> -	spin_unlock(&managed_page_count_lock);
+>>  }
+>>  EXPORT_SYMBOL(adjust_managed_page_count);
+>> 
+>> --
+>> 1.9.1
