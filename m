@@ -2,171 +2,122 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B52ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F33EECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CBFB2081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:43:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qiMOeM1/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CBFB2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E7A32086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:44:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E7A32086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeKIATN (ORCPT
+        id S1727037AbeKIAU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:19:13 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38197 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeKIATN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:19:13 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p4-v6so7250288plo.5;
-        Thu, 08 Nov 2018 06:43:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vxBQF0dRycqPAI+VQ2b6lcauq3UFaNK9t6RBJmGboRo=;
-        b=qiMOeM1/SRnEzVb1mu+meJt7JF3I6SihxbCjYz54cN7aYc1GeW9WAG1BcWzdp1k0g5
-         U665cC9UHDXeEyUC0FSFYRdRlDWtZy/gXeVtopYcvhNOD709R+KNEDpZmC4wdEFyQKHl
-         vSaATeWrsftXGX1/Erf7WeQOWtLn5a1u/A1Pb4rdFeOIee/gOrstDCBsS0cZ3WDtVlSz
-         +u/q96UzlBdCFqJ/DX2pUQvtzXkXdqF6qG089Veox6w7Z94K5GfPpvPppN0LdwyGUYDL
-         +bLmYnGMybj3EoncTSNIAu8v1auR72MHtoCo1pb1ZMTe37+5dSDLeUpruebW8DT0zsH9
-         UM3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vxBQF0dRycqPAI+VQ2b6lcauq3UFaNK9t6RBJmGboRo=;
-        b=FUW2bUEB1QriB54yOAKFkeFK1g1AO4Sp6QOegs+C7yfsNFqW+2gRl7KGb8GAj6miAd
-         R2MbP+jAzWBDmrRUE2bLjChIIGA76IUkm0qRsJmGIjSD5BCuoEHRNn2r3WziphrMTXBj
-         fHJdy295729t2GQrWZUheXgDCYGZkt+80St/XGg/cKR0SxJAZcGUhUkhgs88fNt4xl8x
-         6di44GX6+ReIdH1rsh8WOeW8KDRHA503v+RSjs0YoT6X1e2+QbK+JQ+ihptGreTcxZfS
-         FpiBDD7buP2Sa0IIu/YgFCIZ8HcXbERedEM3TXGKkKp/dCteI8dI7sSemqPXMTlq1mhp
-         tCxw==
-X-Gm-Message-State: AGRZ1gIsNuqlQynmBHXTkh0MYzHD4fXvP3uoMD4QoPFjwGJliJdTE8HG
-        Nq7ETEQ5ss/V86sIKSnBy90=
-X-Google-Smtp-Source: AJdET5exlz1SZ+ZiRFduKTmQ+stN9ujPhv6GOCDd3Pk1/rZFJygsbx+IqcZ1JrQMsjVlfARg3K4wdw==
-X-Received: by 2002:a17:902:8689:: with SMTP id g9-v6mr4736173plo.44.1541688204606;
-        Thu, 08 Nov 2018 06:43:24 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([2404:f801:9000:18:d9bf:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id p62-v6sm4053565pfp.111.2018.11.08.06.43.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 06:43:23 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
-        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
-        devel@linuxdriverproject.org, haiyangz@microsoft.com,
-        hpa@zytor.com, jhogan@kernel.org, kvmarm@lists.cs.columbia.edu,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, kys@microsoft.com,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linuxppc-dev@lists.ozlabs.org, marc.zyngier@arm.com,
-        mingo@redhat.com, mpe@ellerman.id.au, paul.burton@mips.com,
-        paulus@ozlabs.org, pbonzini@redhat.com, ralf@linux-mips.org,
-        rkrcmar@redhat.com, sthemmin@microsoft.com, tglx@linutronix.de,
-        will.deacon@arm.com, x86@kernel.org,
-        michael.h.kelley@microsoft.com, vkuznets@redhat.com
-Subject: [PATCH V5 00/10] x86/KVM/Hyper-v: Add HV ept tlb range flush hypercall support in KVM
-Date:   Thu,  8 Nov 2018 22:42:59 +0800
-Message-Id: <20181108144259.10817-1-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 8 Nov 2018 19:20:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52532 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726359AbeKIAUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:20:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C5844AEB2;
+        Thu,  8 Nov 2018 14:44:35 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Cc:     rppt@linux.vnet.ibm.com
+Subject: [[PATCH]] mips: Fix switch to NO_BOOTMEM for SGI-IP27/loongons3 NUMA
+Date:   Thu,  8 Nov 2018 15:44:28 +0100
+Message-Id: <20181108144428.28149-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+Commit bcec54bf3118 ("mips: switch to NO_BOOTMEM") broke SGI-IP27
+and NUMA enabled loongson3 by doing memblock_set_current_limit()
+before max_low_pfn has been evaluated. Both platforms need to do the
+memblock_set_current_limit() in platform specific code. For
+consistency the call to memblock_set_current_limit() is moved
+to the common bootmem_init(), where max_low_pfn is calculated
+for non NUMA enabled platforms.
 
-Sorry. Some patches was blocked and I try to resend via another account.
+Fixes: bcec54bf3118 ("mips: switch to NO_BOOTMEM")
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ arch/mips/kernel/setup.c               | 18 +++++++++---------
+ arch/mips/loongson64/loongson-3/numa.c |  1 +
+ arch/mips/sgi-ip27/ip27-memory.c       |  1 +
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
-For nested memory virtualization, Hyper-v doesn't set write-protect
-L1 hypervisor EPT page directory and page table node to track changes 
-while it relies on guest to tell it changes via HvFlushGuestAddressLlist
-hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
-EPT page table with ranges which are specified by L1 hypervisor.
-
-If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
-flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
-and sync L1's EPT table when next EPT page fault is triggered.
-HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
-page fault and synchronization of shadow page table.
-
-This patchset is rebased on the Linux 4.20-rc1 and Patch "KVM/VMX: Check
-ept_pointer before flushing ept tlb".(https://www.mail-archive.com/linux
--kernel@vger.kernel.org/msg1798827.html).
-
-Change since v4:
-       1) Split flush address and flush list patches. This patchset only contains
-       flush address patches. Will post flush list patches later.
-       2) Expose function hyperv_fill_flush_guest_mapping_list()
-       out of hyperv file
-       3) Adjust parameter of hyperv_flush_guest_mapping_range()
-       4) Reorder patchset and move Hyper-V and VMX changes ahead.
-
-Change since v3:
-        1) Remove code of updating "tlbs_dirty" in kvm_flush_remote_tlbs_with_range()
-        2) Remove directly tlb flush in the kvm_handle_hva_range()
-        3) Move tlb flush in kvm_set_pte_rmapp() to kvm_mmu_notifier_change_pte()
-        4) Combine Vitaly's "don't pass EPT configuration info to
-vmx_hv_remote_flush_tlb()" fix
-
-Change since v2:
-       1) Fix comment in the kvm_flush_remote_tlbs_with_range()
-       2) Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
-        hyperv-tlfs.h.
-       3) Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
-       4) Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
-        struct hv_guest_mapping_flush_list.
-
-Change since v1:
-       1) Convert "end_gfn" of struct kvm_tlb_range to "pages" in order
-          to avoid confusion as to whether "end_gfn" is inclusive or exlusive.
-       2) Add hyperv tlb range struct and replace kvm tlb range struct
-          with new struct in order to avoid using kvm struct in the hyperv
-          code directly.
-
-
-Lan Tianyu (10):
-  KVM: Add tlb_remote_flush_with_range callback in kvm_x86_ops
-  x86/hyper-v: Add HvFlushGuestAddressList hypercall support
-  x86/Hyper-v: Add trace in the
-    hyperv_nested_flush_guest_mapping_range()
-  KVM/VMX: Add hv tlb range flush support
-  KVM/MMU: Add tlb flush with range helper function
-  KVM: Replace old tlb flush function with new one to flush a specified
-    range.
-  KVM: Make kvm_set_spte_hva() return int
-  KVM/MMU: Move tlb flush in kvm_set_pte_rmapp() to
-    kvm_mmu_notifier_change_pte()
-  KVM/MMU: Flush tlb directly in the kvm_set_pte_rmapp()
-  KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
-
- arch/arm/include/asm/kvm_host.h     |  2 +-
- arch/arm64/include/asm/kvm_host.h   |  2 +-
- arch/mips/include/asm/kvm_host.h    |  2 +-
- arch/mips/kvm/mmu.c                 |  3 +-
- arch/powerpc/include/asm/kvm_host.h |  2 +-
- arch/powerpc/kvm/book3s.c           |  3 +-
- arch/powerpc/kvm/e500_mmu_host.c    |  3 +-
- arch/x86/hyperv/nested.c            | 80 +++++++++++++++++++++++++++++++
- arch/x86/include/asm/hyperv-tlfs.h  | 32 +++++++++++++
- arch/x86/include/asm/kvm_host.h     |  9 +++-
- arch/x86/include/asm/mshyperv.h     | 15 ++++++
- arch/x86/include/asm/trace/hyperv.h | 14 ++++++
- arch/x86/kvm/mmu.c                  | 96 +++++++++++++++++++++++++++++--------
- arch/x86/kvm/paging_tmpl.h          |  3 +-
- arch/x86/kvm/vmx.c                  | 69 ++++++++++++++++++--------
- virt/kvm/arm/mmu.c                  |  6 ++-
- virt/kvm/kvm_main.c                 |  5 +-
- 17 files changed, 295 insertions(+), 51 deletions(-)
-
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index ea09ed6a80a9..b5167b198231 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -576,6 +576,15 @@ static void __init bootmem_init(void)
+ 	 * Reserve initrd memory if needed.
+ 	 */
+ 	finalize_initrd();
++
++	/*
++	 * Prevent memblock from allocating high memory.
++	 * This cannot be done before max_low_pfn is detected, so up
++	 * to this point is possible to only reserve physical memory
++	 * with memblock_reserve; memblock_alloc* can be used
++	 * only after this point
++	 */
++	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
+ }
+ 
+ #endif	/* CONFIG_SGI_IP27 */
+@@ -854,15 +863,6 @@ static void __init arch_mem_init(char **cmdline_p)
+ 
+ 	bootmem_init();
+ 
+-	/*
+-	 * Prevent memblock from allocating high memory.
+-	 * This cannot be done before max_low_pfn is detected, so up
+-	 * to this point is possible to only reserve physical memory
+-	 * with memblock_reserve; memblock_alloc* can be used
+-	 * only after this point
+-	 */
+-	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
+-
+ #ifdef CONFIG_PROC_VMCORE
+ 	if (setup_elfcorehdr && setup_elfcorehdr_size) {
+ 		printk(KERN_INFO "kdump reserved memory at %lx-%lx\n",
+diff --git a/arch/mips/loongson64/loongson-3/numa.c b/arch/mips/loongson64/loongson-3/numa.c
+index 622761878cd1..5593a8e3cd88 100644
+--- a/arch/mips/loongson64/loongson-3/numa.c
++++ b/arch/mips/loongson64/loongson-3/numa.c
+@@ -265,6 +265,7 @@ void __init paging_init(void)
+ 	zones_size[ZONE_DMA32] = MAX_DMA32_PFN;
+ #endif
+ 	zones_size[ZONE_NORMAL] = max_low_pfn;
++	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
+ 	free_area_init_nodes(zones_size);
+ }
+ 
+diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+index d8b8444d6795..0d0deeae1f47 100644
+--- a/arch/mips/sgi-ip27/ip27-memory.c
++++ b/arch/mips/sgi-ip27/ip27-memory.c
+@@ -468,6 +468,7 @@ void __init paging_init(void)
+ 			max_low_pfn = end_pfn;
+ 	}
+ 	zones_size[ZONE_NORMAL] = max_low_pfn;
++	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
+ 	free_area_init_nodes(zones_size);
+ }
+ 
 -- 
-2.14.4
+2.13.7
 
