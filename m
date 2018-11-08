@@ -2,151 +2,108 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32519C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFE2C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED2032081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179712081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKOq2TG9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2032081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NTan8Eet";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NztbZo/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179712081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbeKHQRv (ORCPT
+        id S1726920AbeKHQRy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:17:51 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46115 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKHQRv (ORCPT
+        Thu, 8 Nov 2018 11:17:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37712 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeKHQRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Nov 2018 11:17:51 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c13-v6so9060406plz.13
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 22:43:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ImWfqAgLxY3HQ/tm7TK4IQzGtz5NhygKjUEhDAWLQz0=;
-        b=PKOq2TG99CkefDfL7G1e3sJ0lcAlGPzcoNMFgHTG35fzhR49IRonBFSrj+bhBzQrQc
-         5FEnhBgNIbgDAUSYSx/LFfZKxRrwTs36KuI4Hs1dfKXU3Y1rFl10qNtEQD/53U2WVueZ
-         93gSJQ4t8LLFOkPD6hjvIhRljUYcBqRe22mjU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ImWfqAgLxY3HQ/tm7TK4IQzGtz5NhygKjUEhDAWLQz0=;
-        b=RhIb8zHnrSAksVAPbHak4JpPpgomj6/zY3tMuU3ScAiv8C04HsOx9OsjQDhMydGs53
-         Q6TuLnz7LmYJAQk6T1eKLMJnDT1q7BNDzt2CPjVHdjrqWAUvXxSpNu740COKxUZYvU69
-         w7Z1FU2f1v+/d6Fze+4garCR/x7Yhd1B6Xx3+6FIuBy+FRsABw2pGUh6yY6kGUXE5Kol
-         f25TMz/JfgiL+QjvWkN9CujS0fmDSUfPUKAYGVr8GB1pHvyKQskmEkqWGrNHTZguqBP6
-         3vm4AjzBPi0x5Vu9/Kd/nc6vmZsH8B734lYSH1we92YVlnzHIIB7LrggYbEXHdTyHAz7
-         /KFg==
-X-Gm-Message-State: AGRZ1gJXfbS4yg/DvcqtrE6NYndG1Wq0EHDwWt8b3QkXd+X3DoVC5bKp
-        7IE+oh3DZqlKShxB47g+Vu83/Q==
-X-Google-Smtp-Source: AJdET5fUZ59AxKvNhcaJTxBN3y0BgAjGiPL2oi7uLTzZIwz+DSAUlNJ07HUx+Hm+IY0HsIOgpAVyHQ==
-X-Received: by 2002:a17:902:22cc:: with SMTP id o12-v6mr3420993plg.108.1541659431146;
-        Wed, 07 Nov 2018 22:43:51 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm2909421pfe.178.2018.11.07.22.43.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 22:43:50 -0800 (PST)
-Date:   Wed, 7 Nov 2018 22:47:35 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        alexandre.torgue@st.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH 2/5] hwspinlock: add STM32 hwspinlock device
-Message-ID: <20181108064735.GB12063@builder>
-References: <20181031093032.20386-1-benjamin.gaignard@st.com>
- <20181031093032.20386-3-benjamin.gaignard@st.com>
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 590A360AD8; Thu,  8 Nov 2018 06:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541659432;
+        bh=3inbthz8hOoH85wJGGAIHX3K/WUArUfXN+jv7SNV4QY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NTan8Eetx82HCACzXsvrIpo5AQwvWxsXSnt1yxbZXzpiL43MayvkhZpOhfU1b2O7O
+         NAiUmnbSwGfv+cUJW/BR1vCkZV9tG+Yp96ieNGcoKyVwgsyIZ4Ry+C6Dmmg3oRW/ys
+         Bb9t9vzKn03oNbqrNfeK1YJIBa7eHAtuQgi1EjZc=
+Received: from [10.79.174.12] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B23A360131;
+        Thu,  8 Nov 2018 06:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541659431;
+        bh=3inbthz8hOoH85wJGGAIHX3K/WUArUfXN+jv7SNV4QY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NztbZo/RhxeDVfDYGeXhqnLIC2qsWxrReSPH3ajGDFQoepB0rq+DCHdZvuEbPxsjU
+         KV8YvB1vNGY+sAGKVA2ugk48OsM9o1EHcG56//8mYGe1vkqDEufpLgOgJfMG/10pUH
+         7cKe2jOt4YT0EwPzCwsjNMoSEZ3nDZaChqfIHVEc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B23A360131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
+ <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
+ <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
+ <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
+ <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
+Date:   Thu, 8 Nov 2018 12:13:43 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031093032.20386-3-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31 Oct 02:30 PDT 2018, Benjamin Gaignard wrote:
-> diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-> index e895d29500ee..e1a20b460590 100644
-> --- a/drivers/hwspinlock/Kconfig
-> +++ b/drivers/hwspinlock/Kconfig
-> @@ -59,3 +59,12 @@ config HSEM_U8500
->  	  SoC.
->  
->  	  If unsure, say N.
-> +
-> +config HWSPINLOCK_STM32
+Thanks Stephen.
 
-Please keep these alphabetically sorted.
+On 11/6/2018 10:46 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-11-02 20:16:20)
+>> On 11/2/2018 10:08 PM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-10-28 00:35:40)
+>>>
+>>
+>> How about moving the QSPI clocks too under this qcom property? Later
+>> could add the support?
+> 
+> Yes the plan would be to have QSPI clks there too. Bjorn has sent the
+> patch now.
+> 
+>   https://lkml.kernel.org/r/20181106055013.11271-1-bjorn.andersson@linaro.org
+> 
+Would you be merging the code soon and then I should submit the cleaned 
+up LPASS next series?
 
-> +	tristate "STM32 Hardware Spinlock device"
-> +	depends on MACH_STM32MP157
-> +	depends on HWSPINLOCK
-> +	help
-> +	  Say y here to support the STM32 Hardware Spinlock device.
-> +
-> +	  If unsure, say N.
-> diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
-> index b87c01a506a4..c0a9505b4dcf 100644
-> --- a/drivers/hwspinlock/Makefile
-> +++ b/drivers/hwspinlock/Makefile
-> @@ -9,3 +9,4 @@ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
->  obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
->  obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
->  obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
-> +obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
+Please suggest.
 
-Ditto.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-> diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-> new file mode 100644
-> index 000000000000..6a0fafac7389
-> --- /dev/null
-> +++ b/drivers/hwspinlock/stm32_hwspinlock.c
-> @@ -0,0 +1,147 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) STMicroelectronics SA 2018
-> + * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
-> + * License terms:  GNU General Public License (GPL), version 2
-
-Didn't you already state your license terms with the SPDX header above?
-
-> + */
-[..]
-> +static int stm32_hwspinlock_remove(struct platform_device *pdev)
-> +{
-> +	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
-> +	int ret;
-> +
-> +	ret = hwspin_lock_unregister(&hw->bank);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
-> +		return ret;
-
-The return value of platform_device is ignored, so printing an error
-message is fine, but don't "abort".
-
-> +	}
-> +
-> +	pm_runtime_disable(&pdev->dev);
-> +
-> +	return 0;
-> +}
-
-Regards,
-Bjorn
+--
