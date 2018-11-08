@@ -2,121 +2,75 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390B8ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A32ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0462920840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B69620827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="opa/tp9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0462920840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2dvMqqx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B69620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbeKIDez (ORCPT
+        id S1727251AbeKIDfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:34:55 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36653 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeKIDez (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:34:55 -0500
-Received: by mail-it1-f193.google.com with SMTP id w7-v6so3012228itd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:58:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u2C9BFnX69+5tYG6rABPSOlAzOnR2G+kP+ZKrGFL+Ao=;
-        b=opa/tp9JE8bKUPdHbZ2dpSa10Cm6RxyKP4tW47TegsCWMDY/V9Sm6KfgPnHE/8ZoG0
-         1lnub6JTM1JqKpHgWXi7wYy0ADRhmrgZlQKiemaApcvBZeb3GYqpBhPTfKObS65tkkOz
-         L6rPVLD1skyD4LfOPrT7zfNEVUMtFhk9sbKUclXOLCi8RA76gMFCdJh6mr1lwdF95Frs
-         uETq28plQ322hQCO/KblMFpy/znS1sDUOoTkHbF9zXVWAal7mGOd415zofKvOZCbOEAi
-         x93US8Ppgi+JPG5AbUQnYIcNKjusk0syy8HPSoz4/2hkqXE1foIRzAswjwGkx1SwYkUP
-         Epdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u2C9BFnX69+5tYG6rABPSOlAzOnR2G+kP+ZKrGFL+Ao=;
-        b=B+bc9fyEYOGW/T6AHLAtlYgGS2jVdlsPdvSWXbmZbE0g5F3G/rsJsG4iqTqxIoerPF
-         yYelHkoJq87vO/nxELz19PrExiyZPVi7yFAGIdptjLeBN3VYJ8N1yA71kIq/z6Dqyd7a
-         5g60TB3qjeiRe2z2xlDrDL0lOc45eYWeQeW1hMfbMdUhzKXK01mvSO6XCr5jAP8SO57h
-         Ayy2WELdMSAg8j8ZjDAbvUjdhUH5HYxfk3kysoh1GTwEeN8Qsi/uahZKLjSa/pNrmrhD
-         OriIS9vuLKxP/2Qyc6dmS2VUWdfY5VT+/mw87Ws1+Ek3eztnbsWsEgX7fmZQbT+cYNW0
-         gbFQ==
-X-Gm-Message-State: AGRZ1gIf4Zn0e44osxnQkCT7nHG2f65FAYXsPj7WhJwnb5izcVw4jq69
-        1KR7+Vm546OW+JZlgg9DcIX8bUteBc0awDj0/do=
-X-Google-Smtp-Source: AJdET5c8UNDpcnoKweYIJdRw9qoPG172FDyRsDlv3XxTl7VeoBkEV5okYxs+s0cz6xIdTJpMvzlFIUzaalWGyidMqbg=
-X-Received: by 2002:a24:f941:: with SMTP id l62-v6mr1975796ith.78.1541699897526;
- Thu, 08 Nov 2018 09:58:17 -0800 (PST)
+        Thu, 8 Nov 2018 22:35:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbeKIDfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:35:38 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A98EC20684;
+        Thu,  8 Nov 2018 17:59:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541699940;
+        bh=/UQ5kXSREVXmmDR4mcxngH5b6he6OImqJSc0kMNEIRU=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=X2dvMqqx3k4kjXjzDOmUdU83PG3Go/q1zgKKRZFxGkdo1qCWBT2fHK+Sun5RAS4aL
+         zecOsaV7hD//uJbiJ7FqRtwE+tyRCftU8fPJOhyJcIOPBpYE61EcpXKJ8R8Ylb/xqo
+         Rg+p0K8dszT9JfULFUE/Vv4vhPZc53ADCm5sBROA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181103172602.1917-1-tiny.windzz@gmail.com>
-In-Reply-To: <20181103172602.1917-1-tiny.windzz@gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Fri, 9 Nov 2018 01:58:02 +0800
-Message-ID: <CAEExFWtRODbGeeP=hNDm9FQz-MRb5Dp+Ph=7a_Yb5WGrEjND0A@mail.gmail.com>
-Subject: Re: [PATCH] sched/core: remove unnecessary unlikely() in push_xx_task
-To:     mingo@redhat.com, peterz@infradead.org, mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <efa13e0b-0daf-3bf3-27ba-ed90f15c7dfe@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <20181106183609.207702-1-sboyd@kernel.org>
+ <20181106183609.207702-2-sboyd@kernel.org>
+ <efa13e0b-0daf-3bf3-27ba-ed90f15c7dfe@gmail.com>
+Message-ID: <154169993998.88331.10494065577891939152@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+Date:   Thu, 08 Nov 2018 09:58:59 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi mingo:
-    What is your point of view?
---Yangtao
+Quoting Matthias Brugger (2018-11-08 00:29:46)
+> On 06/11/2018 19:36, Stephen Boyd wrote:
+> > +int platform_driver_probe_by_of_match_data(struct platform_device *pde=
+v)
+> > +{
+> > +     int (*probe_func)(struct platform_device *pdev);
+> > +
+> > +     probe_func =3D of_device_get_match_data(&pdev->dev);
+> =
 
-On Sun, Nov 4, 2018 at 1:26 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
->
-> WARN_ON() already contains an unlikely(), so it's not necessary to
-> use WARN_ON(1).
->
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  kernel/sched/deadline.c | 4 +---
->  kernel/sched/rt.c       | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 91e4202b0634..8b5d964d59c5 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2041,10 +2041,8 @@ static int push_dl_task(struct rq *rq)
->                 return 0;
->
->  retry:
-> -       if (unlikely(next_task == rq->curr)) {
-> -               WARN_ON(1);
-> +       if (WARN_ON(next_task == rq->curr))
->                 return 0;
-> -       }
->
->         /*
->          * If next_task preempts rq->curr, and rq->curr
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 2e2955a8cf8f..0efd58563c80 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1810,10 +1810,8 @@ static int push_rt_task(struct rq *rq)
->                 return 0;
->
->  retry:
-> -       if (unlikely(next_task == rq->curr)) {
-> -               WARN_ON(1);
-> +       if (WARN_ON(next_task == rq->curr))
->                 return 0;
-> -       }
->
->         /*
->          * It's possible that the next_task slipped in of
-> --
-> 2.17.0
->
+> Shouldn't we check if probe_func is not NULL?
+
+Is the oops from the NULL pointer deref insufficient?
+
