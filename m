@@ -2,189 +2,118 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03B8C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B59AC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75A220685
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28E5F20685
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:38:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mJrGY9Lt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75A220685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qkg5ydbD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E5F20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbeKHULz (ORCPT
+        id S1726906AbeKHUNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:11:55 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52458 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeKHULz (ORCPT
+        Thu, 8 Nov 2018 15:13:24 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42328 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKHUNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:11:55 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8AagPe025320;
-        Thu, 8 Nov 2018 04:36:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1541673402;
-        bh=XuDMRopSgPrsNOHjWn5CvcleVHxhfIg8XLdX4pSoK0g=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=mJrGY9LtmPDZdREiJADKWc2oUdQfbJZEkKuZi3jMOmI1rTaqncM9TvXEBNQCzZ13C
-         K4STfbHaQ8bUSjVlycGX+qVl6QfOPeBoJBmFf+WL99D7+SIhDRhdwz5h7YMa1wPmIA
-         3adHYAPQQvbcbG9Ka+rDQnflEonk9iTDWtnSMLic=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8AagP2102591
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 04:36:42 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 04:36:41 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 04:36:41 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8Aabp0028880;
-        Thu, 8 Nov 2018 04:36:38 -0600
-Subject: Re: [PATCH 1/2] clk: ti: add a usecount for autoidle
-To:     Andreas Kemnade <andreas@kemnade.info>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>, <tony@atomide.com>,
-        <letux-kernel@openphoenux.org>
-References: <20181004203817.22101-1-andreas@kemnade.info>
- <20181004203817.22101-2-andreas@kemnade.info>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <23cbfc19-20d9-99f0-c086-e782cc36de34@ti.com>
-Date:   Thu, 8 Nov 2018 12:36:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 15:13:24 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n46so13437405otb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 02:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yIPOAKMwJeHPUZIv+fRJ7M0KKDeAFvDEIIu4jLul4ts=;
+        b=Qkg5ydbDOPXjxWc2y9lflI940ZAqznNhW0Zwj7/SMbTmfKbRYLYb0vCU90yM06dmbb
+         FpFlsJhOy14jvenujSV+9YUzk3OVUWNn/37WctUxAePQJnoEFaPed0jrjo8JFsm0l6vT
+         jSICY09sGLdL/u9DFvIuAph7ZrxPyCZYxzNsvjYGH2uAZRbUDHWnFr7OtQE0cLRnp2pD
+         KAfOI2zywl4K0HIDZQQ7vuXHI8qMMl4Zqykt/Gml26NunQusfQIq+ktTTE+rsEKtdpwY
+         bqOUYu0inAc0zGbxQtsdBmiZIeqbSGCahKwXhrRTD42vFw7l1c7W4aL8dOZe6hE+HhCu
+         6cbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yIPOAKMwJeHPUZIv+fRJ7M0KKDeAFvDEIIu4jLul4ts=;
+        b=IUlDlqh6Tk9yk24x9E7Cn97p/av53KRKUZmCj7p+Qy1Ngc9fCQkLr5eCybzj/zQtau
+         yVYw2JMDXWm2AgW3ye4vnTUY5els/+xB835/W0U+DJcspbJPiMlF/gAHjmHAKx5uRTvx
+         Bnf0EhpcCZCTQESXdUG0mPxycPLZ2uYchhPi9oreI5sZ5UGA0vXygxT3S3mykfvROPRu
+         ACBAOZ/2toleESfR2uSv0AP3zTfERcSDh1d2l8gybcYFdFQ4rR4e7Wnm3tkUyiJ8JHTs
+         TjDcYIvyORe6A99jI9ZMI1El/2cjS53D2dmt8VBVdFoqUSqctmoWVU8/xOHBz2NhNWeR
+         rfGg==
+X-Gm-Message-State: AGRZ1gJ/XkJi6jzkv3AWZl5EcB/Db5Q2TiJBImNl0HqO55BlzMhqLjsK
+        km17MCTWyuS99vIlH75fxc9OYPKnTYXHgeDtuKI=
+X-Google-Smtp-Source: AJdET5ecBAYdZh/BBViixUSEzOUpNE/adi4HGCg8qjrX1rrQLGkj+J1CzIFzGaUzsfDxww+3QrEwvLSz2qa5grIUjOI=
+X-Received: by 2002:a9d:2fac:: with SMTP id r41mr2256574otb.169.1541673513329;
+ Thu, 08 Nov 2018 02:38:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181004203817.22101-2-andreas@kemnade.info>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <CAK8P3a30Dmq3vp-+=jvVu8VMe+GKc9dU=+ZF0rzhFiUq2NuJ_w@mail.gmail.com>
+ <mhng-23f94805-b961-4e68-a4c1-7d79b60bd925@palmer-si-x1c4>
+In-Reply-To: <mhng-23f94805-b961-4e68-a4c1-7d79b60bd925@palmer-si-x1c4>
+From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
+Date:   Thu, 8 Nov 2018 11:38:22 +0100
+Message-ID: <CAEn-LTqCT-u0_QNdOSf3bLKYa5S2vz4T0X5yKmnS1AE4pDYOkg@mail.gmail.com>
+Subject: Re: [PATCH] riscv: add asm/unistd.h UAPI header
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 23:38, Andreas Kemnade wrote:
-> We have the scenario that first autoidle is disabled for all clocks,
-> then it is disabled for selected ones and then enabled for all. So
-> we should have some counting here, also according to the
-> comment in  _setup_iclk_autoidle()
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->   drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++--------
->   include/linux/clk/ti.h    |  1 +
->   2 files changed, 25 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
-> index 7bb9afbe4058..bb6cff168e73 100644
-> --- a/drivers/clk/ti/autoidle.c
-> +++ b/drivers/clk/ti/autoidle.c
-> @@ -37,6 +37,14 @@ struct clk_ti_autoidle {
->   static LIST_HEAD(autoidle_clks);
->   static LIST_HEAD(clk_hw_omap_clocks);
->   
-> +/*
-> + * we have some non-atomic read/write
-> + * operations behind it, so lets
-> + * take one mutex for handling autoidle
-> + * of all clocks
-> + */
-> +static DEFINE_MUTEX(autoidle_mutex);
+On Thu, Nov 8, 2018 at 3:10 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+>
+> On Wed, 07 Nov 2018 13:09:39 PST (-0800), Arnd Bergmann wrote:
+> > On Wed, Nov 7, 2018 at 7:30 PM David Abdurachmanov
+> > <david.abdurachmanov@gmail.com> wrote:
+> >> On Wed, Nov 7, 2018 at 1:08 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+> >> > On Mon, 05 Nov 2018 12:56:15 PST (-0800), Arnd Bergmann wrote:
+> >
+> >> > The target is still the next glibc release (Feb 1st) for a stable RV32I ABI.
+> >> > That's progressing well, with one last blocking issue related to some of our
+> >> > floating-point emulation routines before we can submit the port.  This should
+> >> > give us ample time to line up the ABIs correctly so everything works.
+> >> >
+> >> > So I think the correct answer here is to drop __ARCH_WANT_STAT64 from RISC-V.
+> >> >
+> >>
+> >> Then if you agree I could do and send v2:
+> >>
+> >> +#ifdef __LP64__
+> >> +#define __ARCH_WANT_NEW_STAT
+> >> +#endif /* __LP64__ */
+> >
+> > Looks good to me.
+>
+> This is a bit pedantic, but I'm not sure what the right answer is here:
+> "-march=rv64gc -mabi=ilp32d" will not define __LP64__, but will define
+> "__riscv_xlen == 64".  I actually don't know enough about how an rv64gc/ilp32d
+> ABI would work to answer this: would we have "long long" all over our syscalls?
+>
+> Probably not worth worrying about for now, as we'll have to go audit all of
+> these if we ever end up with an ilp32 ABI.  So just go for it and we'll throw
+> this on the pile to deal with later :)
 
-Why mutex? This prevents calling the autoidle APIs from atomic context. 
-Did you check the mutex debug kernel configs with this?
+GCC will not allow "-march=rv64gc -mabi=ilp32d":
 
-This may cause problems with the runtime PM entries to the code at least.
+    cc1: error: ABI requires -march=rv32
 
+I see that arch/riscv/include/uapi/asm/elf.h already use __riscv_xlen so to be
+consistent I will use it too (but I like __LP64__ more as it is well
+known macro).
 
-> +
->   /**
->    * omap2_clk_deny_idle - disable autoidle on an OMAP clock
->    * @clk: struct clk * to disable autoidle for
-> @@ -48,8 +56,13 @@ int omap2_clk_deny_idle(struct clk *clk)
->   	struct clk_hw_omap *c;
->   
->   	c = to_clk_hw_omap(__clk_get_hw(clk));
-> -	if (c->ops && c->ops->deny_idle)
-> -		c->ops->deny_idle(c);
-> +	if (c->ops && c->ops->deny_idle) {
-> +		mutex_lock(&autoidle_mutex);
-> +		c->autoidle_count--;
-> +		if (c->autoidle_count == -1)
-
-I think you should swap the arithmetics here, all the other usecounters 
-use positive values, here you enter deep to the negative side when 
-autoidle is denied by multiple users, which might be confusing.
-
--Tero
-
-> +			c->ops->deny_idle(c);
-> +		mutex_unlock(&autoidle_mutex);
-> +	}
->   	return 0;
->   }
->   
-> @@ -64,8 +77,13 @@ int omap2_clk_allow_idle(struct clk *clk)
->   	struct clk_hw_omap *c;
->   
->   	c = to_clk_hw_omap(__clk_get_hw(clk));
-> -	if (c->ops && c->ops->allow_idle)
-> -		c->ops->allow_idle(c);
-> +	if (c->ops && c->ops->allow_idle) {
-> +		mutex_lock(&autoidle_mutex);
-> +		c->autoidle_count++;
-> +		if (c->autoidle_count == 0)
-> +			c->ops->allow_idle(c);
-> +		mutex_unlock(&autoidle_mutex);
-> +	}
->   	return 0;
->   }
->   
-> @@ -201,8 +219,7 @@ int omap2_clk_enable_autoidle_all(void)
->   	struct clk_hw_omap *c;
->   
->   	list_for_each_entry(c, &clk_hw_omap_clocks, node)
-> -		if (c->ops && c->ops->allow_idle)
-> -			c->ops->allow_idle(c);
-> +		omap2_clk_allow_idle(c->hw.clk);
->   
->   	_clk_generic_allow_autoidle_all();
->   
-> @@ -223,8 +240,7 @@ int omap2_clk_disable_autoidle_all(void)
->   	struct clk_hw_omap *c;
->   
->   	list_for_each_entry(c, &clk_hw_omap_clocks, node)
-> -		if (c->ops && c->ops->deny_idle)
-> -			c->ops->deny_idle(c);
-> +		omap2_clk_deny_idle(c->hw.clk);
->   
->   	_clk_generic_deny_autoidle_all();
->   
-> diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-> index a8faa38b1ed6..c460355419c0 100644
-> --- a/include/linux/clk/ti.h
-> +++ b/include/linux/clk/ti.h
-> @@ -159,6 +159,7 @@ struct clk_hw_omap {
->   	const char		*clkdm_name;
->   	struct clockdomain	*clkdm;
->   	const struct clk_hw_omap_ops	*ops;
-> +	int autoidle_count;
->   };
->   
->   /*
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Looking at other UAPI headers I see that include/uapi/linux/rseq.h is using
+__LP64__ macro. This header is installed on riscv.
