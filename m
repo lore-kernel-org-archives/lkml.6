@@ -2,143 +2,289 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1B5ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFACECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC5F2077B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DC232077B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:11:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A7dK8Npy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC5F2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MF+Ux7k2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC232077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbeKICrA (ORCPT
+        id S1727078AbeKICrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:47:00 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34340 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbeKICq6 (ORCPT
+        Thu, 8 Nov 2018 21:47:51 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42085 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbeKICru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:46:58 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u6-v6so18698867ljd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:10:31 -0800 (PST)
+        Thu, 8 Nov 2018 21:47:50 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u10-v6so3829522pfn.9
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:11:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z0vATZAVKWZJzs8dQw40UbQUkQVwB6LY+8/ipn/unQM=;
-        b=A7dK8NpypGsvhlwb/g58OxKEI6PL2eL81NmdrhPdhLlJevdQ3+5NPTJsv8iVgDlmQH
-         LT1FapHFI0O6/BUUmhKOeMX37nGZn+fAeeM2570IyrgneSO7V8stf0hu6/VXPOAyk7Da
-         +Z48Xcz7HUXoEYlQowJdQ7Hs84rQFxwMKqWwQ=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/7QJD6QyN4a7tCGv0UAwEV35V+U7OQLpTdnOlwe/UIk=;
+        b=MF+Ux7k2StOreuROdRCMWZIJI9kOkmgExm0GoIPapVQY/fph+Kh8mjLOGEGKFBvYzu
+         qC7+HVHvZR8Ai990c/tL22zlIHNPRxh2R0uPBaOMv0fIQlbpuh8IZ1os9od/6MtAriiq
+         rEM0b+/4pLKXIPSJv5wPjmz/U39XEIoRAV99U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z0vATZAVKWZJzs8dQw40UbQUkQVwB6LY+8/ipn/unQM=;
-        b=OGhirnfUEnXz5ZHjtiyv17h1lywWzBOZtshCHApHQ1SefcB8FehdtwH1C3xl0w/7Lu
-         BELUWibZ9S0njfXl7zzEudQ1dfwjvBpcY+Eqp9HbSiGApmeSBEPYsCJ+Hd2WdpSeSCgC
-         Hc/fOw8Sg0O7rTKX9j/2NSHIkJiCCMmBGzZ0SYsnGumEVrKSHkwxFMfpuVxtaShJK2DM
-         XfSXWDgHgzFkk6YuOCjhcCuzYApAGImapIrazy27fUkm2C3Zkf0btCd1WkLyGG6KjgkD
-         6h2z62AD975STr6Zo5AxK8pG0bgPNQtuf9uiAQquavJxb0hbg13PTddLO42Rwt0BOGfn
-         AXnQ==
-X-Gm-Message-State: AGRZ1gLkSsbmfgsCa17Q8JkPxGskcIk3ZeuhI6NRxQKoZ7Pmb9qiH5Xa
-        4HhRacb2EkJsjfz/1jsMol5cE1wVFry0K1kUML+dXg==
-X-Google-Smtp-Source: AJdET5fHMUjyW2d2s8UGGtSlK5QyeumdK7VqbdkLJt3NCXP12Pyytb6A8TPeuOOw/AocrWapzmT6q+dkxZZgNOg/hrg=
-X-Received: by 2002:a2e:9c08:: with SMTP id s8-v6mr2930268lji.149.1541697030329;
- Thu, 08 Nov 2018 09:10:30 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/7QJD6QyN4a7tCGv0UAwEV35V+U7OQLpTdnOlwe/UIk=;
+        b=scssYjfH+OUzQ6TKjxU6b1GX0hOXIZhgBzt1sXgvfXSmu69cvM66moEHuPotVoxFfH
+         Q3Lkwe/eQxD9CckeJqF+rbHctiEIaOVNOHjNtOxwjKkzFItvUtkghc8ANgEmdhIS60AM
+         BUh8h1LNoD4n35p8hxk6YDn+3WOpq+7DSUlqf2ZtrFbeqAcQ92qX42l3zHg0+BOSu+8q
+         s3eVjYM46rFWCh5mQ0qSzAzqaTkZrRqPeSwLJitSMA6oTACwZqP3Dk35fHrsWh1bKPI2
+         r2TqUJAy22yALzuCRt9J1Nd7qRsOglp627fv8CDaAJnaIx1Dh3QqyaKqZKAbbRwupSgc
+         j9lg==
+X-Gm-Message-State: AGRZ1gIBuwxktbWU6bJs/ONiEqR0HIYtgOk0xuWiHV84RVK1cZRVntsG
+        ptF2AfB33tQ5yMA7BwfXjSCUzg==
+X-Google-Smtp-Source: AJdET5e+x/8kNitiv3lRCTXGBPMnZK9QLKHxzYzCswFeEQ+WdxERpnNjuhl045XAP2dRK9qIRWx43w==
+X-Received: by 2002:a65:664e:: with SMTP id z14-v6mr4250026pgv.347.1541697083998;
+        Thu, 08 Nov 2018 09:11:23 -0800 (PST)
+Received: from zsm-linux.mtv.corp.google.com ([2620:15c:202:201:1b7c:8280:c835:b226])
+        by smtp.googlemail.com with ESMTPSA id s86-v6sm9586941pfa.137.2018.11.08.09.11.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 09:11:23 -0800 (PST)
+From:   Zubin Mithra <zsm@chromium.org>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        hch@infradead.org, bhelgaas@google.com
+Cc:     groeck@chromium.org, keescook@chromium.org, zsm@chromium.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: [RFC] x86/pci: Mark pci_root_ops as const
+Date:   Thu,  8 Nov 2018 09:11:15 -0800
+Message-Id: <20181108171115.216060-1-zsm@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-References: <1541456790-28282-1-git-send-email-mathieu.poirier@linaro.org>
- <1541456790-28282-4-git-send-email-mathieu.poirier@linaro.org>
- <20181107032350.GH3983@leoy-ThinkPad-X240s> <054f82c1-451f-3c82-d5ab-e156c50e0c10@arm.com>
-In-Reply-To: <054f82c1-451f-3c82-d5ab-e156c50e0c10@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Thu, 8 Nov 2018 10:10:19 -0700
-Message-ID: <CANLsYkyi_0hzJ5fXFfq6FrsebFMCATQP3oqeU6aBmAw6BTGuGQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] coresight: etm3x: Release CLAIM tag when operated
- from perf
-To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        coresight@lists.linaro.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018 at 02:49, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> Leo,
->
-> On 07/11/2018 03:23, leo.yan@linaro.org wrote:
-> > Hi Mathieu,
-> >
-> > On Mon, Nov 05, 2018 at 03:26:30PM -0700, Mathieu Poirier wrote:
-> >> This patch deals with the release of the CLAIM tag when the ETM is
-> >> operated from perf.  Otherwise the tag is left asserted and subsequent
-> >> requests to use the device fail.
-> >>
-> >> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> ---
-> >>   drivers/hwtracing/coresight/coresight-etm3x.c | 2 ++
-> >>   1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
-> >> index fd5c4cca7db5..000796394662 100644
-> >> --- a/drivers/hwtracing/coresight/coresight-etm3x.c
-> >> +++ b/drivers/hwtracing/coresight/coresight-etm3x.c
-> >> @@ -603,6 +603,8 @@ static void etm_disable_perf(struct coresight_device *csdev)
-> >>       */
-> >>      etm_set_pwrdwn(drvdata);
-> >>
-> >> +    coresight_disclaim_device_unlocked(drvdata->base);
-> >> +
->
->
-> >
-> > Just remind, this isn't consistent with the sequency in function
-> > etm_disable_hw(), which has the reversed sequence between
-> > etm_set_pwrdwn() and coresight_disclaim_device_unlocked().
-> >
-> > Not sure which one sequence is more suitable, at the first glance,
-> > accessing register after pwrdwn related operation might have risk for
-> > deadlock?
->
-> Good point.
->
-> I assume that the CLAIMSET/CLR registers are in the same power domain as
-> the LAR (Software Lock Access register) accessed below. But I will
-> confirm this with the architect. Based on the response, we could
-> streamline both the sequences.
+pci_root_ops is only written to from within intel_mid_pci_init. This
+is linked in only when CONFIG_X86_INTEL_MID is set. If not for this,
+pci_root_ops could be marked as const.
 
-In this case etm_set_pwrdwn() sets bit 0 of ETMCR, which disables the
-ETM.  That being said the Embedded Trace Macrocell Architecture
-Specification (ID101211) mentions in section 3.5.1 that despite ETMCR
-bit 0 being set to 1, it is always possible to write to the claim set
-registers.  As such I moved the release of the claim tag in function
-etm_disable_hw() below etm_set_pwrdwn() in the second revision of this
-set [1].
+Fix this by replacing pci_root_ops usage with pci_root_ops_ptr. If
+CONFIG_X86_INTEL_MID is set, pci_root_ops_ptr will be set to
+intel_mid_pci_ops inside intel_mid_pci_init.
 
-[1]. https://lkml.org/lkml/2018/11/8/223
+Introduce pci_acpi_set_ops for intel_mid_pci_init to set
+acpi_pci_root_ops.pci_ops.
 
->
-> Suzuki
->
-> >
-> > Thanks,
-> > Leo Yan
-> >
-> >>      CS_LOCK(drvdata->base);
-> >>   }
-> >>
-> >> --
-> >> 2.7.4
-> >>
+This also means that intel_mid_pci_ops cannot be freed after init, hence
+remove __initconst.
+
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
+---
+ arch/x86/include/asm/pci_x86.h |  4 +++-
+ arch/x86/pci/acpi.c            |  5 +++++
+ arch/x86/pci/common.c          |  5 +++--
+ arch/x86/pci/intel_mid_pci.c   |  5 +++--
+ drivers/pci/access.c           |  4 ++--
+ drivers/pci/probe.c            |  4 ++--
+ include/linux/pci-acpi.h       |  2 +-
+ include/linux/pci.h            | 11 ++++++-----
+ 8 files changed, 25 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
+index 959d618dbb17..1e82ddaeb52f 100644
+--- a/arch/x86/include/asm/pci_x86.h
++++ b/arch/x86/include/asm/pci_x86.h
+@@ -58,7 +58,8 @@ void pcibios_set_cache_line_size(void);
+ /* pci-pc.c */
+ 
+ extern int pcibios_last_bus;
+-extern struct pci_ops pci_root_ops;
++extern const struct pci_ops pci_root_ops;
++extern const struct pci_ops *pci_root_ops_ptr;
+ 
+ void pcibios_scan_specific_bus(int busn);
+ 
+@@ -122,6 +123,7 @@ extern void __init dmi_check_skip_isa_align(void);
+ 
+ /* some common used subsys_initcalls */
+ extern int __init pci_acpi_init(void);
++extern void __init pci_acpi_set_ops(const struct pci_ops *ops);
+ extern void __init pcibios_irq_init(void);
+ extern int __init pcibios_init(void);
+ extern int pci_legacy_init(void);
+diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
+index 948656069cdd..63ebac5fa212 100644
+--- a/arch/x86/pci/acpi.c
++++ b/arch/x86/pci/acpi.c
+@@ -397,6 +397,11 @@ int pcibios_root_bridge_prepare(struct pci_host_bridge *bridge)
+ 	return 0;
+ }
+ 
++void __init pci_acpi_set_ops(const struct pci_ops *ops)
++{
++	acpi_pci_root_ops.pci_ops = ops;
++}
++
+ int __init pci_acpi_init(void)
+ {
+ 	struct pci_dev *dev = NULL;
+diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
+index d4ec117c1142..747a8e9fd430 100644
+--- a/arch/x86/pci/common.c
++++ b/arch/x86/pci/common.c
+@@ -67,10 +67,11 @@ static int pci_write(struct pci_bus *bus, unsigned int devfn, int where, int siz
+ 				  devfn, where, size, value);
+ }
+ 
+-struct pci_ops pci_root_ops = {
++const struct pci_ops pci_root_ops = {
+ 	.read = pci_read,
+ 	.write = pci_write,
+ };
++const struct pci_ops *pci_root_ops_ptr = &pci_root_ops;
+ 
+ /*
+  * This interrupt-safe spinlock protects all accesses to PCI configuration
+@@ -467,7 +468,7 @@ void pcibios_scan_root(int busnum)
+ 	sd->node = x86_pci_root_bus_node(busnum);
+ 	x86_pci_root_bus_resources(busnum, &resources);
+ 	printk(KERN_DEBUG "PCI: Probing PCI hardware (bus %02x)\n", busnum);
+-	bus = pci_scan_root_bus(NULL, busnum, &pci_root_ops, sd, &resources);
++	bus = pci_scan_root_bus(NULL, busnum, pci_root_ops_ptr, sd, &resources);
+ 	if (!bus) {
+ 		pci_free_resource_list(&resources);
+ 		kfree(sd);
+diff --git a/arch/x86/pci/intel_mid_pci.c b/arch/x86/pci/intel_mid_pci.c
+index 43867bc85368..b79c469afd57 100644
+--- a/arch/x86/pci/intel_mid_pci.c
++++ b/arch/x86/pci/intel_mid_pci.c
+@@ -280,7 +280,7 @@ static void intel_mid_pci_irq_disable(struct pci_dev *dev)
+ 	}
+ }
+ 
+-static const struct pci_ops intel_mid_pci_ops __initconst = {
++static const struct pci_ops intel_mid_pci_ops = {
+ 	.read = pci_read,
+ 	.write = pci_write,
+ };
+@@ -297,7 +297,8 @@ int __init intel_mid_pci_init(void)
+ 	pci_mmcfg_late_init();
+ 	pcibios_enable_irq = intel_mid_pci_irq_enable;
+ 	pcibios_disable_irq = intel_mid_pci_irq_disable;
+-	pci_root_ops = intel_mid_pci_ops;
++	pci_root_ops_ptr = &intel_mid_pci_ops;
++	pci_acpi_set_ops(&intel_mid_pci_ops);
+ 	pci_soc_mode = 1;
+ 	/* Continue with standard init */
+ 	acpi_noirq_set();
+diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+index 544922f097c0..ca9d3cbc5541 100644
+--- a/drivers/pci/access.c
++++ b/drivers/pci/access.c
+@@ -180,9 +180,9 @@ EXPORT_SYMBOL_GPL(pci_generic_config_write32);
+  *
+  * Return previous raw operations
+  */
+-struct pci_ops *pci_bus_set_ops(struct pci_bus *bus, struct pci_ops *ops)
++const struct pci_ops *pci_bus_set_ops(struct pci_bus *bus, const struct pci_ops *ops)
+ {
+-	struct pci_ops *old_ops;
++	const struct pci_ops *old_ops;
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&pci_lock, flags);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b1c05b5054a0..c66c84ef070a 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2915,7 +2915,7 @@ void __weak pcibios_remove_bus(struct pci_bus *bus)
+ }
+ 
+ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+-		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++		const struct pci_ops *ops, void *sysdata, struct list_head *resources)
+ {
+ 	int error;
+ 	struct pci_host_bridge *bridge;
+@@ -3079,7 +3079,7 @@ int pci_scan_root_bus_bridge(struct pci_host_bridge *bridge)
+ EXPORT_SYMBOL(pci_scan_root_bus_bridge);
+ 
+ struct pci_bus *pci_scan_root_bus(struct device *parent, int bus,
+-		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++		const struct pci_ops *ops, void *sysdata, struct list_head *resources)
+ {
+ 	struct resource_entry *window;
+ 	bool found = false;
+diff --git a/include/linux/pci-acpi.h b/include/linux/pci-acpi.h
+index 8082b612f561..e2c80f2edbe8 100644
+--- a/include/linux/pci-acpi.h
++++ b/include/linux/pci-acpi.h
+@@ -69,7 +69,7 @@ struct acpi_pci_root_info {
+ };
+ 
+ struct acpi_pci_root_ops {
+-	struct pci_ops *pci_ops;
++	const struct pci_ops *pci_ops;
+ 	int (*init_info)(struct acpi_pci_root_info *info);
+ 	void (*release_info)(struct acpi_pci_root_info *info);
+ 	int (*prepare_resources)(struct acpi_pci_root_info *info);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 11c71c4ecf75..994a4418a3c4 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -474,7 +474,7 @@ static inline int pci_channel_offline(struct pci_dev *pdev)
+ struct pci_host_bridge {
+ 	struct device	dev;
+ 	struct pci_bus	*bus;		/* Root bus */
+-	struct pci_ops	*ops;
++	const struct pci_ops	*ops;
+ 	void		*sysdata;
+ 	int		busnr;
+ 	struct list_head windows;	/* resource_entry */
+@@ -558,7 +558,7 @@ struct pci_bus {
+ 	struct list_head resources;	/* Address space routed to this bus */
+ 	struct resource busn_res;	/* Bus numbers routed to this bus */
+ 
+-	struct pci_ops	*ops;		/* Configuration access functions */
++	const struct pci_ops	*ops;	/* Configuration access functions */
+ 	struct msi_controller *msi;	/* MSI controller */
+ 	void		*sysdata;	/* Hook for sys-specific extension */
+ 	struct proc_dir_entry *procdir;	/* Directory entry in /proc/bus/pci */
+@@ -913,14 +913,14 @@ struct pci_bus *pci_find_bus(int domain, int busnr);
+ void pci_bus_add_devices(const struct pci_bus *bus);
+ struct pci_bus *pci_scan_bus(int bus, struct pci_ops *ops, void *sysdata);
+ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+-				    struct pci_ops *ops, void *sysdata,
++				    const struct pci_ops *ops, void *sysdata,
+ 				    struct list_head *resources);
+ int pci_host_probe(struct pci_host_bridge *bridge);
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int busmax);
+ int pci_bus_update_busn_res_end(struct pci_bus *b, int busmax);
+ void pci_bus_release_busn_res(struct pci_bus *b);
+ struct pci_bus *pci_scan_root_bus(struct device *parent, int bus,
+-				  struct pci_ops *ops, void *sysdata,
++				  const struct pci_ops *ops, void *sysdata,
+ 				  struct list_head *resources);
+ int pci_scan_root_bus_bridge(struct pci_host_bridge *bridge);
+ struct pci_bus *pci_add_new_bus(struct pci_bus *parent, struct pci_dev *dev,
+@@ -1010,7 +1010,8 @@ int pci_generic_config_read32(struct pci_bus *bus, unsigned int devfn,
+ int pci_generic_config_write32(struct pci_bus *bus, unsigned int devfn,
+ 			       int where, int size, u32 val);
+ 
+-struct pci_ops *pci_bus_set_ops(struct pci_bus *bus, struct pci_ops *ops);
++const struct pci_ops *pci_bus_set_ops(struct pci_bus *bus,
++				      const struct pci_ops *ops);
+ 
+ int pci_read_config_byte(const struct pci_dev *dev, int where, u8 *val);
+ int pci_read_config_word(const struct pci_dev *dev, int where, u16 *val);
+-- 
+2.19.1.930.g4563a0d9d0-goog
+
