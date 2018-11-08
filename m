@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A542ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D95BECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0487720844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 273502086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LldsiAng"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0487720844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLgC+sxt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273502086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731154AbeKIHkg (ORCPT
+        id S1731164AbeKIHkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:40:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60302 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:40:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727045AbeKIHkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:40:35 -0500
+        id S1731153AbeKIHkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:40:36 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5983120844;
+        by mail.kernel.org (Postfix) with ESMTPSA id EB76D20844;
         Thu,  8 Nov 2018 22:03:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714586;
-        bh=vrnXDzELgf1o1wqNjg9rYi671cmwztHW2WC8jedm078=;
+        s=default; t=1541714587;
+        bh=l2KaRL6xiwoCINiUgVLIwghPBRh099PjVlgrwjIoMJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LldsiAngTh4ve9QTQwwdfdDfCUSrByG33fBMmqzhNKzxslyhLEoWX/Dp5HpJNJKJo
-         ZAlTqkkugnVALti5/44FeaIbIKx6dTc8nchFrmyKt1m8TmkS0NKnnHLpmKZKwBLaet
-         NFwkt2dtO4ocAZvmNNqGkFQXjtwCDQMqWNJAyzeI=
+        b=JLgC+sxtUL9d+XguDfQ099xzhXYriqnQig9C7Wg4+hSvb/RE8U/S4OoFnk0IpcCbr
+         spmNs6jufWdmvFgc0AKk7xDhBnWLRCxrA1COQ+BGiObhO1rjJ7aRvqdI5Tyh3afUQK
+         /gcB73+OcgnDEZ60YXFx6g/xiXoDBrvWXT56AS8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masashi Honma <masashi.honma@gmail.com>,
+        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 014/171] nl80211: Fix possible Spectre-v1 for NL80211_TXRATE_HT
-Date:   Thu,  8 Nov 2018 13:49:44 -0800
-Message-Id: <20181108215128.308420942@linuxfoundation.org>
+Subject: [PATCH 4.9 015/171] mac80211_hwsim: do not omit multicast announce of first added radio
+Date:   Thu,  8 Nov 2018 13:49:45 -0800
+Message-Id: <20181108215128.372499826@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,29 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 30fe6d50eb088783c8729c7d930f65296b2b3fa7 ]
+[ Upstream commit 28ef8b49a338dc1844e86b7954cfffc7dfa2660a ]
 
-Use array_index_nospec() to sanitize ridx with respect to speculation.
+The allocation of hwsim radio identifiers uses a post-increment from 0,
+so the first radio has idx 0. This idx is explicitly excluded from
+multicast announcements ever since, but it is unclear why.
 
-Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+Drop that idx check and announce the first radio as well. This makes
+userspace happy if it relies on these events.
+
+Signed-off-by: Martin Willi <martin@strongswan.org>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/mac80211_hwsim.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 0e91ec49d3da..549d0a4083b3 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -3422,6 +3422,7 @@ static bool ht_rateset_to_mask(struct ieee80211_supported_band *sband,
- 			return false;
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 4bb36dc73433..cbb3e902e347 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2665,8 +2665,7 @@ static int mac80211_hwsim_new_radio(struct genl_info *info,
+ 	list_add_tail(&data->list, &hwsim_radios);
+ 	spin_unlock_bh(&hwsim_radio_lock);
  
- 		/* check availability */
-+		ridx = array_index_nospec(ridx, IEEE80211_HT_MCS_MASK_LEN);
- 		if (sband->ht_cap.mcs.rx_mask[ridx] & rbit)
- 			mcs[ridx] |= rbit;
- 		else
+-	if (idx > 0)
+-		hwsim_mcast_new_radio(idx, info, param);
++	hwsim_mcast_new_radio(idx, info, param);
+ 
+ 	return idx;
+ 
 -- 
 2.17.1
 
