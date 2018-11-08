@@ -4,71 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B861ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DFFECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20932081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7218D20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MU90ALHJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20932081C
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JDjSIy6J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7218D20827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeKHXBu (ORCPT
+        id S1726929AbeKHXCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:01:50 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37178 "EHLO
+        Thu, 8 Nov 2018 18:02:33 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56112 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeKHXBu (ORCPT
+        with ESMTP id S1726509AbeKHXCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:01:50 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p2-v6so1193431wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:26:20 -0800 (PST)
+        Thu, 8 Nov 2018 18:02:33 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s10-v6so1256543wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:27:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=KezX1PXaieHOZcVFn+1NcfNi1YwhyP1SN67jpP5MQmo=;
-        b=MU90ALHJUaKYApkhWfxENJpXVhIO07cnn05ZDID7GGAlUURs8R3qYLmNJysx9A+nn5
-         NH1JzB5IpmfSUf6fbuLOY7Fb0daGPOTWNp7wzF9TVmZ9PaaHIDlWAC7dXyhkACypWEVe
-         mAlp4UxsmbsCoHrLz3nXkSeAGoDwwIgY4lWw+LgwpkMymEaf95s+xMxSbWmrUGmc8h/K
-         YLDGlMWwnOiNsNeBlRtUOxMEheXQH7nb9AktK6Gil5wQxLFugzE/BbK0gsS04cgEZ1SR
-         IVrT3QWh7PIpW1EEPufqtzdj6YsUWoDylPr4gS2mU2xKC1kd3apP/gJJiWPsiMfj55Ws
-         UzBA==
+        bh=U7old8aK++kAGhulGpjkuVOMdIcvE/PUtm614UA0/Es=;
+        b=JDjSIy6JO4q57RFlJ5L5BYm62NLJwwhuZAsSAuGuSjN1hDkgeQXsAiALcmhjoElvxp
+         soOGUbDQKVfo4/xuuuzZ29z+JHfyO9nNuh34OtJM4DAuxptx9ZcGVZcvU/PfdNYpA2aH
+         dNNMq2VWLg4hn3X5RldFyR/mM3pErnc07VxAfGJkTUp94a6h7CKX0ezsyPZjyvPIRL+R
+         63zhdJnN/ngIkrLh7IbmK9gB2yDAYs2CboeKhwdVO5wNY4wkuiRyoPAKkthWMPiK+Bzl
+         OsQYn1aKv20cARJMoUfGW2fsA/3emKOWBpSdHSyPXoYNWpEqmob9+WcV5gtw4WDkmSEU
+         P/Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=KezX1PXaieHOZcVFn+1NcfNi1YwhyP1SN67jpP5MQmo=;
-        b=aRfVYZf7ujpsdVzRDHFzrzltBLUQJR8IBAu6/ENPKih8JzOruaqlLgxT3az3X7Qh5C
-         7D1y2qFiwf31nrjQxdqH9LRH7viHWWk8F/hMPOApe/dKdd2pK/44PCUt698nNkmEyXrJ
-         8hf7EIFztsP3Q7ec6t9cbCm/LtAcu/Qxwp31qORAykqC4cUVmgSCSjqXHKnKdxb23yNi
-         TXZES2IDNjxysCUASg8cv0ClhyKs7FlQW2nJhZCV7MzCHWTFzzUSVYbOst1N/Dv1egAs
-         zHeIrqkpjDipfE4DAT7y8WOzDgheRJRr+wJI4W7lo1DI8InTqEznVbVkEdbHxiWEUq7R
-         neTg==
-X-Gm-Message-State: AGRZ1gIKX5/HDwRsIGR+RJQQoqdQ6eHFgy0BHQ6bHtC43uyGmZ7xZQuA
-        4NRLaoHvbLSOxFkqi9eg1GCRdQWvSCM=
-X-Google-Smtp-Source: AJdET5cKxGPidDZ0CvLI8cHwD2/u1cfhlTIZjY6OJeRJC5w4iGLEcplYPiDJ7QHA0RVTowkT1YSIqQ==
-X-Received: by 2002:a1c:f008:: with SMTP id a8-v6mr1169160wmb.5.1541683579742;
-        Thu, 08 Nov 2018 05:26:19 -0800 (PST)
+        bh=U7old8aK++kAGhulGpjkuVOMdIcvE/PUtm614UA0/Es=;
+        b=pxm+3PCgjil25EcxF/icGTiZ29y9NZHHFYRfJNlvMDorVoxEP0K1SelKh/GvlXNYZo
+         QLV/jGXanV8Vyqp3CbuQMetpjmRuuynBWbbbzsc0TEHihZrFq/zEOsr7jIdYFHlr54Xh
+         N/oh52N4vkLakEko9XgkygFUMPjnQjhbXPnIwh2nSGFaGopwHG9TXsWkaoZLx0zT3TyH
+         /ScrLxvV68v6ErhWAud3teiyMN4km4saG0iaoqAONFBRihjhWSrSjcnBqXOxh4JO4iVr
+         fdLgrbKqIAFZIJeAhfc3iR1ETzrGFIhesohanJ4y4cii3oev5HMxSZVOw6IEdimmP1UZ
+         KpKA==
+X-Gm-Message-State: AGRZ1gIeyCAQWoJvzWhnlBLMl2C1xHoDoSvhq9Em8VVkjeLo3rgWocCW
+        EHYzqiaSJ7Uh0iQJXZJp4/mdnugmm3A=
+X-Google-Smtp-Source: AJdET5crXW5dWNl9vZtRwmF/lmlQZ91muYIxRkcxAY4S5vyauXXavIbPvS4dM+wCN5YzEkbJHT/PJQ==
+X-Received: by 2002:a1c:2b03:: with SMTP id r3-v6mr1256051wmr.131.1541683621263;
+        Thu, 08 Nov 2018 05:27:01 -0800 (PST)
 Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x65-v6sm4274769wmg.9.2018.11.08.05.26.18
+        by smtp.gmail.com with ESMTPSA id l5-v6sm4780111wrv.84.2018.11.08.05.27.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 05:26:19 -0800 (PST)
-Subject: Re: [PATCH] arm64: dts: meson-axg: s400: add cts-rts to the bluetooth
- uart
+        Thu, 08 Nov 2018 05:27:00 -0800 (PST)
+Subject: Re: [PATCH] clk: meson: axg: mark fdiv2 and fdiv3 as critical
 To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20181108095640.27876-1-jbrunet@baylibre.com>
+References: <20181108093123.21498-1-jbrunet@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -96,12 +97,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <79dd5a96-b7e1-31ed-745f-5ba05ba30173@baylibre.com>
-Date:   Thu, 8 Nov 2018 14:26:18 +0100
+Message-ID: <59cda050-988f-20b9-b211-e6a426139665@baylibre.com>
+Date:   Thu, 8 Nov 2018 14:26:59 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181108095640.27876-1-jbrunet@baylibre.com>
+In-Reply-To: <20181108093123.21498-1-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -110,30 +111,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/2018 10:56, Jerome Brunet wrote:
-> The uart used with bluetooth chipset on the s400 has flow control
-> available. Let's enable it.
+On 08/11/2018 10:31, Jerome Brunet wrote:
+> Similar to gxbb and gxl platforms, axg SCPI Cortex-M co-processor
+> uses the fdiv2 and fdiv3 to, among other things, provide the cpu
+> clock.
 > 
+> Until clock hand-off mechanism makes its way to CCF and the generic
+> SCPI claims platform specific clocks, these clocks must be marked as
+> critical to make sure they are never disabled when needed by the
+> co-processor.
+> 
+> Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> index ba44b0419404..29ccb8ad0de6 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> @@ -543,8 +543,9 @@
->  
->  &uart_A {
->  	status = "okay";
-> -	pinctrl-0 = <&uart_a_pins>;
-> +	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
->  	pinctrl-names = "default";
-> +	uart-has-rtscts;
+> Hi Stephen,
+> 
+> If you can put this one in clk-fixes as well, it would be awesome.
+> It is basically the same thing as the change you took this Tuesday.
+> 
+> Since then, we had reports the same problem with SCPI was happening
+> on the axg, calling for the same fixup.
+> 
+> Cheers
+> Jerome
+> 
+>  drivers/clk/meson/axg.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index c981159b02c0..792735d7e46e 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -325,6 +325,7 @@ static struct clk_regmap axg_fclk_div2 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_names = (const char *[]){ "fclk_div2_div" },
+>  		.num_parents = 1,
+> +		.flags = CLK_IS_CRITICAL,
+>  	},
 >  };
 >  
->  &uart_AO {
+> @@ -349,6 +350,18 @@ static struct clk_regmap axg_fclk_div3 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_names = (const char *[]){ "fclk_div3_div" },
+>  		.num_parents = 1,
+> +		/*
+> +		 * FIXME:
+> +		 * This clock, as fdiv2, is used by the SCPI FW and is required
+> +		 * by the platform to operate correctly.
+> +		 * Until the following condition are met, we need this clock to
+> +		 * be marked as critical:
+> +		 * a) The SCPI generic driver claims and enable all the clocks
+> +		 *    it needs
+> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+> +		 *    clock stays on until the proper driver comes along
+> +		 */
+> +		.flags = CLK_IS_CRITICAL,
+>  	},
+>  };
+>  
 > 
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
