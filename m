@@ -2,108 +2,142 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFE2C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09636C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179712081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B4C82081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NTan8Eet";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NztbZo/R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179712081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="iAWrKSDw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B4C82081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeKHQRy (ORCPT
+        id S1726927AbeKHQSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:17:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37712 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeKHQRv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:17:51 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 590A360AD8; Thu,  8 Nov 2018 06:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541659432;
-        bh=3inbthz8hOoH85wJGGAIHX3K/WUArUfXN+jv7SNV4QY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NTan8Eetx82HCACzXsvrIpo5AQwvWxsXSnt1yxbZXzpiL43MayvkhZpOhfU1b2O7O
-         NAiUmnbSwGfv+cUJW/BR1vCkZV9tG+Yp96ieNGcoKyVwgsyIZ4Ry+C6Dmmg3oRW/ys
-         Bb9t9vzKn03oNbqrNfeK1YJIBa7eHAtuQgi1EjZc=
-Received: from [10.79.174.12] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B23A360131;
-        Thu,  8 Nov 2018 06:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541659431;
-        bh=3inbthz8hOoH85wJGGAIHX3K/WUArUfXN+jv7SNV4QY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NztbZo/RhxeDVfDYGeXhqnLIC2qsWxrReSPH3ajGDFQoepB0rq+DCHdZvuEbPxsjU
-         KV8YvB1vNGY+sAGKVA2ugk48OsM9o1EHcG56//8mYGe1vkqDEufpLgOgJfMG/10pUH
-         7cKe2jOt4YT0EwPzCwsjNMoSEZ3nDZaChqfIHVEc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B23A360131
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for
- SDM845
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
- <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
- <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
- <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
- <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
-Date:   Thu, 8 Nov 2018 12:13:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 11:18:22 -0500
+Received: from mail-ty1jpn01on0109.outbound.protection.outlook.com ([104.47.93.109]:37968
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725724AbeKHQSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 11:18:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LIglWt7mtaXGg1k1ODTBFcA4iM1aw6UP1Mblp4+4zyA=;
+ b=iAWrKSDwXp9ImVApUICwqGVQMr1GM984pN+d7neMP7N7tZgMbxacqFKBjsMzAjebWGUzX+zZj5HhUT6zzH30JJPADO9DtqjvNh/+cSxTr+v0y8OS5Jt9yhyAnmQWMAopeMWp+MVUwkPtrJCl/92o//lt2FmJq8KOdkwVOVFt7GU=
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSAPR01MB3314.jpnprd01.prod.outlook.com (2603:1096:604:52::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Thu, 8 Nov 2018 06:44:19 +0000
+Message-ID: <878t24yt3k.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH] regulator: bd9571mwv: convert to SPDX identifiers
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Thu, 8 Nov 2018 06:44:19 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: TY2PR04CA0004.apcprd04.prod.outlook.com
+ (2603:1096:404:f6::16) To OSAPR01MB3314.jpnprd01.prod.outlook.com
+ (2603:1096:604:52::19)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7b478577-91dd-4334-952a-08d645459c24
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB3314;
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB3314;3:uae2BaCK0PgkqUQewDwJW11FN+PCrboyOAa3SrOxxzy3xjGdAgLZlOdVLW9trSKy4NsB38LdN2hKMQ+gDjQioGuTuyFMvM0I990rc/Z0SYty2gMKl6Aru5grTuWTRUI+sqU9pJ/42oaFrEF9hoeniyvc0hHdEeJktZdaipOz3gSVlXuXtXorv9MSxKgUANRdVMaDY5SJxD7/LVyh8IQTP1R3eTNT6pLY4OKU429hIcWKmr+hMPvmDheTcdUC9zWM;25:j8uoBBJx1RQauTEKF4AKfYVBhNOVWjz7C0RJNbPUvbBrJhGXEOW2zXoS0jiVkA2AxG7k5d1UwDC4Fn25zJFYFShqcsqQe30WkpgQmEtjq7Bkx2ZvgsFY9ADfvUGr59Sj5k4264DEclhLHImcRN5BprMx1fccHDLm0+13ML6ET16AY1VqanqeCHC3hDmwb29gUpCiNRmmkBeJLf41R3bMYVgP7assQCv8ezUtI7dVIL0UTJaS5TL2V3EB9Kn1x4veODTNQYt7qSsoc8F5Er4LVWxnYbj9iGROg3RK6Ow8ygWBK5A0OsfpvkWaCPHpjF5RYDArg8GcfpZq9LeV3TcKrQ==;31:r2oqfi8CYih/kh3GHQtaPmdojszaSGBQM+Hc8H9jqGBKv5c0fITvtD0me0mZpF4ryzzVE2cT3SldM1IvITtwZm7BIgxaNNK404mrGdL/8wMNh9BYL4tUUl9rBY6w1Ui91V/nCjN1cA7GgKyCDkUahk2AzrKan6rEWiUp66gJBKhbgL09DPCDHB34xmlYWUO7iSb+SU24oEVVAHS9obYBKKY2qxOz0Gfsb5dxUNXK9cQ=
+X-MS-TrafficTypeDiagnostic: OSAPR01MB3314:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB3314;20:Z+lgL5WChCdQ2yC8dkryPOMlh5zwCHi5ajrFLju8cM+0mn85/PvVXtWJt+DCJNCkzFJ63bjX7/ycpcuIDL4k+nACjghURoSK5l4t2GcrSlNAVFOzxnQTGWHPhLeWpmFMHdiJ+J74AfOV2UtsYi8kVZePXPrSqK8EJV+fSAzJFZpp1UHEaKxO40hSLXoVxRTKPelDlhM+6GnsCPNYs89KN+4Y3Ef31Dvgg6VXpsyySP4LjzmT/WGtHYyi+dFo0ZMav9nU+vr47rroXJtq476+HvjTIvzG+QKEIGi0DuukMs9coXGRzD4/Ak3K+VQulWzCM7qrEjA0TkJvUK3Yvpedr74J4AbnOuO7TTKpu0cu048kVdKcC1WRTdCDjOfo0CNhVpv2Euka9xCKsWaUaBaSMITYMdvABgH38O5tbv6pUXpZTrsrCFfGYT7yrrbT0HS3nroQi5BDx+qw1vTcGDqehfkuZ6OmZu82gtCjyGO6B8LVYYLPaZmAl4iOFUZyQGXX;4:nwfh77Iy5UKf7KfCr3R4vMtBbNguZRw+qpnfsdtZDYujDniiZYGCmzGLaqoCe9zfnZy1JZzAeIstmR8Za09lsFolqdrW41/jFGs62krrh/dOwSOIru7L3AQlcplO5PKQAHpbMe8voSjLIB88NMA8kdNkEKuYnxDAsW5ojFEV/FVRiNFF30wK6gv3NUdf0saF1gTdiwDTOpD4sy6GbEuYZed02OcbjgJO9YN7ie/ODJsUTIbbXM1/s7eLodxH8V6/iK/bjsdWY8sQ7X6V74ndh45Pd1Q/EVrilbhOgkjlMDqbryPP3RjTp2zb3hckeT5B
+X-Microsoft-Antispam-PRVS: <OSAPR01MB3314F2405B2B35BD80AA215CD4C50@OSAPR01MB3314.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:OSAPR01MB3314;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB3314;
+X-Forefront-PRVS: 0850800A29
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(136003)(396003)(39860400002)(189003)(199004)(86362001)(106356001)(36756003)(53936002)(7696005)(52116002)(476003)(956004)(6486002)(486006)(2906002)(305945005)(2616005)(47776003)(3846002)(4326008)(23726003)(6116002)(7736002)(66066001)(97736004)(25786009)(478600001)(58126008)(50466002)(16586007)(68736007)(53416004)(8936002)(110136005)(186003)(16526019)(5660300001)(81166006)(1857600001)(81156014)(105586002)(316002)(69596002)(386003)(39060400002)(8676002)(26005)(2004002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB3314;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB3314;23:QsyoNeZ2iu7s+D/sxwI1YhGl0ypn+7yJZnK3cBDzO?=
+ =?us-ascii?Q?OXJxEWPfVLuV5D+VedbaSHHNiomkQkhx/V78B9TWRO/ginVCbxO3VnaxGqNp?=
+ =?us-ascii?Q?Xi1BR6gEigQVa9eDY3rfUp9MDV9J35QVnNpddzlPyRoCt75rqKuap8Nfg4hv?=
+ =?us-ascii?Q?00UKU4gUrcm9XZ/JvjiM53su01ubIpVWSDjdrIxq0jGvy3xn6pysEJ3hL5bL?=
+ =?us-ascii?Q?YVg+KS7iMlhFMwZOL91jk/oarUgQG68rwUuCkL4xi7+vxUMaln3Ha9rtSV7d?=
+ =?us-ascii?Q?ctgvJ/HdmpYt5tw7hsbshJzV9QotmNa+9hhjfq03+/UYV7gg02YcfWjhoajl?=
+ =?us-ascii?Q?OzsljMptNkmakVxvrNbKstz1QqjUW1Zky06iLMr+b/R3G88NUG+gR3Srw2os?=
+ =?us-ascii?Q?qsMhfsa+xCu0PXHgWRohF5zKzmbumWx2r7DQAkooesDFHh9p5y5WaIYrlCff?=
+ =?us-ascii?Q?r69FGIyZ3wubForerXznE6HCqb62ZDjLZEFpwvgKrJLXbfStceXsMPo/Ul2D?=
+ =?us-ascii?Q?EhsugwvENFJAJNxh9Ltg1wjFdPaiSx4xNtnwDGhRFdtBpzEaD/SQarKH86cB?=
+ =?us-ascii?Q?szppYltUQR44g0M8K5juQJpExwhgOjBNZzOY7xcFmrVPO/dbLUJKiZjowKMZ?=
+ =?us-ascii?Q?nbayTDvw3WR2PbIM3OZYZxobpS3iKptB/BUQIW9NcHaKHarGAvKWwPAMvZ2i?=
+ =?us-ascii?Q?UWPHwrCy/pNAXmLhAwwR+HTLY5w8bfh3MQbfDFG6KpF/jKx6E8XKpCNTpF+M?=
+ =?us-ascii?Q?YfCn7tdT1Zhw6YI0bVxvs7L1G2Y8tNFqgomsDIIYwPRrhXQErWAAIIRBoasZ?=
+ =?us-ascii?Q?t7X/zunNZyXe9CqU8Q1vXBtyAUFZ5h6XPhOh1IkiL/QmWY86piP8ATvSnHsF?=
+ =?us-ascii?Q?qQUFBKGXlCgM7+dcELChPPSjrMF8xv45OddZfJmrGqulcyNcqslrb36Crl29?=
+ =?us-ascii?Q?nFsyg9rTkDCl7BQAzMNR54GN7GaEXUEs433aVy6wfzkGXx20tB/Ey+0GDPPp?=
+ =?us-ascii?Q?4c/wvj57GVaBwC+6qQCRavesxcn63Wcl2yS62Q/LWm+uqRx2BlvDjWn9xcTd?=
+ =?us-ascii?Q?iqkeyQ1dGhzCKAur4S/DADAfZc/xM3dPXmEtJOIs/KT8hy9/K0Y3uupnc0fE?=
+ =?us-ascii?Q?oqEcEafktzS4BCNCTZboYZT6SOk6R6fd0VhR4aKAmBFwV6QEzmicX9b6ifxx?=
+ =?us-ascii?Q?k6s3r7JSHl8BrM=3D?=
+X-Microsoft-Antispam-Message-Info: uU7Pv0iyDSrXPKkAJA6H0F2r/kWCyG7VSj19J/chuH9bYeOUlAjItVIi/3y7010QQARKX8indNxd9lLNJciShMuKMFJ+AdhnMMNNxaav6M+z96VqIcjFl+wOhlhYwnwthSiTvVleeZk39Ap26GgGdZayPkGUkZ/zgiX/OTCH7UYX1dDG+bgaHeNdTLN+Uc0d7AnBPd7+0HtU+jzwu7Ms0l+ocOtcBPqNpZGiUotpjWm4lA4iQiDZqWsVpSdbOlX7Tscq2v3Lh9UoRxPEMuGzNkjtCZa4hjB8/VzV1KOSIHxMdLofza40h5tEXYjGygVvJDpUbtYCVOW3Roz4jdsuYzGTGfg+1dVQ285e9tjhcG8=
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB3314;6:UtMIpCy9FcnOgmyRE/yLtWjYcf2mUsE84EaySWXpGfJQhaFwJfQuj4finLlb7aC9r/oMOQnHK8Rox2AnpbS9fwR6dju2B7FuaO2zauckdJF1rM732xuRtMG+oL8XX/taBVlcH0ZoQk0qPkkgjheECjJALtPYr4n7qS067Ovc7/KYJSFKGXy9PGjmHBtG+j5EX9/b7ujjri4rbv1IK91B1I9i2S0RdCNn53+3VG09iRciDz6CA+omEJZTzJmaYr3ssvQMFmKRGJJl53dcTZZ+OGpH0HYNfOMlzaSO4P4XAeNKxGF19SlyKFqMieHCo1BFL+EfedeGFWybhCNvkFUvtoY6I3/Zb8e++u7OEEe0NkOHMD0/52KGozDaYTVckyr+A3l3In2dnGn61M2YmZMtRBbMjPUXvGX7ekb1yJZWJC4jaQIYrfpmrIaSc3aCZgAZVONWRvOarEtiee5vHxmBig==;5:TK/j/FM54hBPlQUeJB3rWs3EMtNpXUQFeVQ2+56WSvpm1qziKcLXhY1ZDe+JljbvNAd3VKOGSf/jnTQmSUnSkPod2cxVHj7inxkfXXbN1zBGPGXXLtmfEtlTQHE/jl5ZF9mWYcGJFClhVoAehll2+KwUv1tDXM6hXLhPf410HbE=;7:RGaSi+wf4g7/Ek/N65dZ8nkhM6ca7CsRdZ98cGS+nX9u+kVn1Stlj7ltySox5sSuRJ5zvMgzl6ADR7GPB5v3UCwaT/mixZKxs1KLpfUUN0dc6FdsSz1Nb3/vqJ8BxRzk/PG2s02yupjCYfnivwGW6A==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB3314;20:z5iNOBydmkAxArBVv6ncuttcQyOlmJ6OON2C67N+6sdD0sfXeUq1tAlnRXwyfPg7ZHBaTyGYkp1ZwzecyVRRsN+vxdYrBYQMRRr+Wd11XIgsTXomuix9x/5UCvcLhEzprGFq64E38QiASltyX7hKB3R7puywjLzXbxLIWuZVV9s=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2018 06:44:19.2957 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b478577-91dd-4334-952a-08d645459c24
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3314
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Stephen.
 
-On 11/6/2018 10:46 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-11-02 20:16:20)
->> On 11/2/2018 10:08 PM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-10-28 00:35:40)
->>>
->>
->> How about moving the QSPI clocks too under this qcom property? Later
->> could add the support?
-> 
-> Yes the plan would be to have QSPI clks there too. Bjorn has sent the
-> patch now.
-> 
->   https://lkml.kernel.org/r/20181106055013.11271-1-bjorn.andersson@linaro.org
-> 
-Would you be merging the code soon and then I should submit the cleaned 
-up LPASS next series?
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Please suggest.
+This patch updates license to use SPDX-License-Identifier
+instead of verbose license text.
 
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ drivers/regulator/bd9571mwv-regulator.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index 274c5ed..e12dd1f 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * ROHM BD9571MWV-M regulator driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+- * kind, whether expressed or implied; without even the implied warranty
+- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License version 2 for more details.
+- *
+  * Based on the TPS65086 driver
+  *
+  * NOTE: VD09 is missing
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.7.4
 
---
