@@ -6,81 +6,56 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5326ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E565DECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964CB20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964CB20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B980F20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:10:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B980F20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeKHXpQ (ORCPT
+        id S1727306AbeKHXqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:45:16 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39511 "EHLO mail.bootlin.com"
+        Thu, 8 Nov 2018 18:46:11 -0500
+Received: from 8bytes.org ([81.169.241.247]:46514 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeKHXpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:45:16 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EC7002080C; Thu,  8 Nov 2018 15:09:34 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C0F4E206A1;
-        Thu,  8 Nov 2018 15:09:34 +0100 (CET)
-Date:   Thu, 8 Nov 2018 15:09:35 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexander Dahl <ada@thorsis.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] clocksource: rework Atmel TCB timer driver
-Message-ID: <20181108140935.GI21694@piout.net>
-References: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
- <5f19043a-3be3-e25a-849f-6ca610ed6da2@linaro.org>
- <20180925201456.GD3112@piout.net>
- <20181108124327.iqdiif6atfrxdkef@linutronix.de>
+        id S1726848AbeKHXqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:46:11 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 284361A4; Thu,  8 Nov 2018 15:10:30 +0100 (CET)
+Date:   Thu, 8 Nov 2018 15:10:29 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
+Message-ID: <20181108141029.GG19831@8bytes.org>
+References: <1534516265-10059-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1534516265-10059-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB177011B91A9CA579E01760A4C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20181108124530.dgbucminxi3z63gx@verge.net.au>
+ <TY1PR01MB17708164ACBFB62E8FB4947EC0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181108124327.iqdiif6atfrxdkef@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <TY1PR01MB17708164ACBFB62E8FB4947EC0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/2018 13:43:27+0100, Sebastian Andrzej Siewior wrote:
-> On 2018-09-25 22:14:56 [+0200], Alexandre Belloni wrote:
-> > On 22/09/2018 13:29:48+0200, Daniel Lezcano wrote:
-> > > You say for rt the PIT is not suitable because of the shared irq but in
-> > > the driver, the interrupt is flagged as shared.
-> > > 
-> > 
-> > Well, it is not simply sharing the interrupt that is an issue, it is the
-> > mismatch between the PIT and the UART interrupt flags and that only
-> > happens when using preempt-rt.
-> 
-> This should also happen on !RT with the threadedirq command line switch.
-> The UART will be threaded and the PIT will not, and this is the problem.
-> So we need to split those or disable the UART. The other important thing
-> for RT is the higher resolution of the clocksource/clockevents device (I
-> don't know if this is part of the series or not…).
-> 
+On Thu, Nov 08, 2018 at 02:03:33PM +0000, Fabrizio Castro wrote:
+> Joerg, does this patch look ok to you?
 
-It is not part of that series as I prefer to keep the discussion of how
-to configure that for later. This has been raised previously without any
-conclusion and I'd really like to see this rework enter upstream soon.
-
-> I'm currently replacing the v6 with this v7 in my RT tree. What is the
-> status of this series upstream wise?
-> 
-
-I'll send v8 sometimes next week.
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Applied both patches, thanks Fabrizio.
