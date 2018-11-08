@@ -2,186 +2,115 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FEEECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D9BECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D006A20817
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8785820827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sHVViSG3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D006A20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvkLkTNK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8785820827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeKIFwX (ORCPT
+        id S1727229AbeKIFxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:52:23 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:34190 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbeKIFwX (ORCPT
+        Fri, 9 Nov 2018 00:53:12 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44664 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbeKIFxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:52:23 -0500
-Received: by mail-yb1-f193.google.com with SMTP id n140-v6so8887437yba.1;
-        Thu, 08 Nov 2018 12:15:19 -0800 (PST)
+        Fri, 9 Nov 2018 00:53:12 -0500
+Received: by mail-qk1-f196.google.com with SMTP id n12so28764009qkh.11;
+        Thu, 08 Nov 2018 12:16:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BxbFJOzRVuNYYE5nClkVAe8F5JFbtv/j1hv7sF2oke4=;
-        b=sHVViSG38AH29tX4KYViKHyE5I0BS8AxKoHFzPXi9B1F5NSPn2W/o+307GGO5968Oi
-         0ey++lvswOOWgEctbhBXCNTrlDgaztC7HVXUUejF3yEEeeLMzPC5pENVpw103gcRZUps
-         Yti1YtoCZFmihDrzIm9YWCBnRIfl3GGGRV5/oz6wLt0NrmuWtYJL957ui1qVOIIg6Iwd
-         QdBfcr4crf/RVck6eYfcgahkbwa5ZgEGc2fbBIF/p1+K5fP+mUJaoeAPVCK3WbKOnF3D
-         KPYJRGyffsyiPt4lg+2aucEjzxmUflGpcWItxqkYY/MZ0njVxSFww6ofeInLlB34Typi
-         N4fg==
+        h=from:to:cc:subject:date:message-id;
+        bh=AVWov9oTOLa0o8ptLdw/1Bm5RUGAQRjdANBdPA/XZu4=;
+        b=hvkLkTNKujjz1aQzDBYFbCmLaXzD+yTIu3FChGLjWGDvmmiNsi9heX0jIAjT15BS9e
+         qKlaAeXp4T4btrSWM15KEdJKp8CtS99coEP4tLaSKhKL6+ipdm6Ke4lrmRWjIHaRA0wD
+         X0zzHC9bsfBQkKi4rsmrTCaUy13i0XJ4f2rSJ2APnyN43mS/LxB69+tZT63X3qzD23Ce
+         XgMe/aKfRN/dHFy6rFrOTGaTAHLfq8DHnfaVsPIsJj43R3qUQQJi44+egSm9cEtEBgfe
+         H/4R1JDfWvj0ep/0w+9hfNC0ngqCm0AKDbmLJ642Q/r1oX7fAyAqIx4LMULrd9+RuNP5
+         sE/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BxbFJOzRVuNYYE5nClkVAe8F5JFbtv/j1hv7sF2oke4=;
-        b=n1l2bTnAak9rh5MHzyms+iSP5m12kQrO7BqCE2DPZTI7RTNgFX099zMmA8VoqeXYjf
-         rdIaYYnumwAF7YmWC070ZiKflGZddr0Q43T1fWBA4g8BuTV5+miWpKFKpxs3Oxe6Im6M
-         +bNMqyJEZzuxJ5fdAfu0BzidxKp0xMGJ0v6wB65F4NvnZ5RJYj/sdMlwBqtjfZo65nLD
-         rOezbepinm+QIU4iRXAqdo1q3lp+L+aco0WBU2HBCNfIPzUPwzXMPNkoT/gPJR7HHlra
-         5uQHQci55Q7VZTvPEI0vnkzlwzI+bpHcxb+8Z2Vuat+eLkhj+EYkZxtOyNbDyfAYJdhD
-         tkKg==
-X-Gm-Message-State: AGRZ1gL204pNSWagbHnh+zU3xKNkbPGiHvjsWiaQcY3+vmNcMlPFjvAp
-        qCFxeFcx/lRuDzJk3JZQdHdYgL4q
-X-Google-Smtp-Source: AJdET5dAbF8AjbaGBEe3dObJ/zDl74BxxqxRyuuQh5d5st+KVfGGhWhxh69jeVgdkfr9QsAC4BI6IQ==
-X-Received: by 2002:a25:4d41:: with SMTP id a62-v6mr5865686ybb.409.1541708118808;
-        Thu, 08 Nov 2018 12:15:18 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::4:7f75])
-        by smtp.gmail.com with ESMTPSA id u134-v6sm5826738ywf.86.2018.11.08.12.15.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 12:15:17 -0800 (PST)
-Date:   Thu, 8 Nov 2018 12:15:15 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Subject: [PATCH for-4.20-fixes] cgroup: fix CSS_TASK_ITER_PROCS
-Message-ID: <20181108201515.GC2509588@devbig004.ftw2.facebook.com>
-References: <fdb057a2-342a-d49e-587a-f1ca8680033e@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdb057a2-342a-d49e-587a-f1ca8680033e@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AVWov9oTOLa0o8ptLdw/1Bm5RUGAQRjdANBdPA/XZu4=;
+        b=jk3r1hNugdG2Qxa8g0jjJIUnIT3PoQKGHNxhSTjCn/TllfIc/O9UK0dfH0jLguBo9/
+         r7WxhXAYhAPA2b+C1Zw3nglUBO82BBNVuGXeVOxF2Z3UiknHEqc8RQCyEtl1rvex/xga
+         95V/5kVOthLuwpMkQ6h0t8X27RRErTfegACmoIPYa08zg+r+qZMlrN+2QLO49ImNHW06
+         LXkrlwa1c4FVdASiXcN4vHV9A9U4nDWkMikXRgABOdd41C55i0Iw7Amu4hwcMkzdpWx8
+         QF23uBUBAw4+JKJzFrn4NGnwpZeke1OJX5lMoY8Da9MwmPgi+fjmz/uuTvgbhGOyTjFt
+         x6bA==
+X-Gm-Message-State: AGRZ1gJvIx5lClECqlShwvglYrriY4OYJwD8Uwz+I+qMU0FchZwQtzXb
+        Mmi2J+4+8lfRMef95WNqOFmztybPUvM=
+X-Google-Smtp-Source: AJdET5fu9WEkqkI5ksSrZq6NjXQ9y3clnycPoIV4NKIYxJO1bcQJiu3aX1PfU0snmKoKRetm4x/gYw==
+X-Received: by 2002:a37:9b82:: with SMTP id d124mr5613161qke.172.1541708167466;
+        Thu, 08 Nov 2018 12:16:07 -0800 (PST)
+Received: from castle.thefacebook.com ([2620:10d:c091:200::4:4cb1])
+        by smtp.gmail.com with ESMTPSA id k38sm3399381qkh.72.2018.11.08.12.16.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 12:16:06 -0800 (PST)
+From:   Roman Gushchin <guroan@gmail.com>
+X-Google-Original-From: Roman Gushchin <guro@fb.com>
+To:     cgroups@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Roman Gushchin <guro@fb.com>
+Subject: [PATCH 0/5] freezer for cgroup v2
+Date:   Thu,  8 Nov 2018 15:15:55 -0500
+Message-Id: <20181108201600.9129-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CSS_TASK_ITER_PROCS implements process-only iteration by making
-css_task_iter_advance() skip tasks which aren't threadgroup leaders;
-however, when an iteration is started css_task_iter_start() calls the
-inner helper function css_task_iter_advance_css_set() instead of
-css_task_iter_advance().  As the helper doesn't have the skip logic,
-when the first task to visit is a non-leader thread, it doesn't get
-skipped correctly as shown in the following example.
+This patchset implements freezer for cgroup v2.
 
-  # ps -L 2030
-    PID   LWP TTY      STAT   TIME COMMAND
-   2030  2030 pts/0    Sl+    0:00 ./test-thread
-   2030  2031 pts/0    Sl+    0:00 ./test-thread
-  # mkdir -p /sys/fs/cgroup/x/a/b
-  # echo threaded > /sys/fs/cgroup/x/a/cgroup.type
-  # echo threaded > /sys/fs/cgroup/x/a/b/cgroup.type
-  # echo 2030 > /sys/fs/cgroup/x/a/cgroup.procs
-  # cat /sys/fs/cgroup/x/a/cgroup.threads
-  2030
-  2031
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2030
-  # echo 2030 > /sys/fs/cgroup/x/a/b/cgroup.threads
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2031
-  2030
+It provides similar functionality as v1 freezer, but the interface
+conforms to the cgroup v2 interface design principles, and it
+provides a better user experience: tasks can be killed, ptrace works,
+there is no separate controller, which has to be enabled, etc.
 
-The last read of cgroup.procs is incorrectly showing non-leader 2031
-in cgroup.procs output.
+Patches (1) and (2) are some preparational work, patch (3) contains
+the implementation, patch (4) is a small cgroup kselftest fix,
+patch (5) covers freezer adds 6 new kselftests to cover the freezer
+functionality.
 
-This can be fixed by updating css_task_iter_advance() to handle the
-first advance and css_task_iters_tart() to call
-css_task_iter_advance() instead of the inner helper.  After the fix,
-the same commands result in the following (correct) result:
+Roman Gushchin (5):
+  cgroup: rename freezer.c into legacy_freezer.c
+  cgroup: implement __cgroup_task_count() helper
+  cgroup: cgroup v2 freezer
+  kselftests: cgroup: don't fail on cg_kill_all() error in cg_destroy()
+  kselftests: cgroup: add freezer controller self-tests
 
-  # ps -L 2062
-    PID   LWP TTY      STAT   TIME COMMAND
-   2062  2062 pts/0    Sl+    0:00 ./test-thread
-   2062  2063 pts/0    Sl+    0:00 ./test-thread
-  # mkdir -p /sys/fs/cgroup/x/a/b
-  # echo threaded > /sys/fs/cgroup/x/a/cgroup.type
-  # echo threaded > /sys/fs/cgroup/x/a/b/cgroup.type
-  # echo 2062 > /sys/fs/cgroup/x/a/cgroup.procs
-  # cat /sys/fs/cgroup/x/a/cgroup.threads
-  2062
-  2063
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2062
-  # echo 2062 > /sys/fs/cgroup/x/a/b/cgroup.threads
-  # cat /sys/fs/cgroup/x/cgroup.procs
-  2062
+ include/linux/cgroup-defs.h                   |  33 +
+ include/linux/cgroup.h                        |  42 ++
+ include/linux/sched.h                         |   5 +-
+ include/linux/sched/jobctl.h                  |   5 +-
+ kernel/cgroup/Makefile                        |   4 +-
+ kernel/cgroup/cgroup-internal.h               |   1 +
+ kernel/cgroup/cgroup-v1.c                     |  16 -
+ kernel/cgroup/cgroup.c                        | 132 +++-
+ kernel/cgroup/freezer.c                       | 590 +++++----------
+ kernel/cgroup/legacy_freezer.c                | 481 ++++++++++++
+ kernel/ptrace.c                               |   6 +
+ kernel/signal.c                               |  51 +-
+ tools/testing/selftests/cgroup/.gitignore     |   1 +
+ tools/testing/selftests/cgroup/Makefile       |   2 +
+ tools/testing/selftests/cgroup/cgroup_util.c  |  85 ++-
+ tools/testing/selftests/cgroup/cgroup_util.h  |   7 +
+ tools/testing/selftests/cgroup/test_freezer.c | 685 ++++++++++++++++++
+ 17 files changed, 1695 insertions(+), 451 deletions(-)
+ create mode 100644 kernel/cgroup/legacy_freezer.c
+ create mode 100644 tools/testing/selftests/cgroup/test_freezer.c
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Fixes: 8cfd8147df67 ("cgroup: implement cgroup v2 thread support")
-Cc: stable@vger.kernel.org # v4.14+
----
- kernel/cgroup/cgroup.c |   29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+-- 
+2.17.2
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 6aaf5dd5383b..1f84977fab47 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4202,20 +4202,25 @@ static void css_task_iter_advance(struct css_task_iter *it)
- 
- 	lockdep_assert_held(&css_set_lock);
- repeat:
--	/*
--	 * Advance iterator to find next entry.  cset->tasks is consumed
--	 * first and then ->mg_tasks.  After ->mg_tasks, we move onto the
--	 * next cset.
--	 */
--	next = it->task_pos->next;
-+	if (it->task_pos) {
-+		/*
-+		 * Advance iterator to find next entry.  cset->tasks is
-+		 * consumed first and then ->mg_tasks.  After ->mg_tasks,
-+		 * we move onto the next cset.
-+		 */
-+		next = it->task_pos->next;
- 
--	if (next == it->tasks_head)
--		next = it->mg_tasks_head->next;
-+		if (next == it->tasks_head)
-+			next = it->mg_tasks_head->next;
- 
--	if (next == it->mg_tasks_head)
-+		if (next == it->mg_tasks_head)
-+			css_task_iter_advance_css_set(it);
-+		else
-+			it->task_pos = next;
-+	} else {
-+		/* called from start, proceed to the first cset */
- 		css_task_iter_advance_css_set(it);
--	else
--		it->task_pos = next;
-+	}
- 
- 	/* if PROCS, skip over tasks which aren't group leaders */
- 	if ((it->flags & CSS_TASK_ITER_PROCS) && it->task_pos &&
-@@ -4255,7 +4260,7 @@ void css_task_iter_start(struct cgroup_subsys_state *css, unsigned int flags,
- 
- 	it->cset_head = it->cset_pos;
- 
--	css_task_iter_advance_css_set(it);
-+	css_task_iter_advance(it);
- 
- 	spin_unlock_irq(&css_set_lock);
- }
