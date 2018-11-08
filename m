@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D14F4ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58128ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4C620989
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D4F21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8UtW9TG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4C620989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNCFSNEj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D4F21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbeKIHg7 (ORCPT
+        id S1730058AbeKIHhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:36:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:37:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728345AbeKIHg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728724AbeKIHg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:36:59 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B068D208E3;
-        Thu,  8 Nov 2018 21:59:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 550D020989;
+        Thu,  8 Nov 2018 21:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714370;
-        bh=oxptC3DU+aXULO+nkHfn8CSX64/lxmzS4RAePucuhE4=;
+        s=default; t=1541714371;
+        bh=EIlcazQBV/H/KNr8H1ywpxQG0RszHI5VwZBtjB/oWto=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l8UtW9TGtTNO6VWejRM+U6pb5wZcJcbHSyo85sL+Eh4In9DvI/Et+ZZtqzeZZAds0
-         U74QktToFd3Ixgsd2Kac8fQ+/bS4OyQgBQsYMDOPzVNT1w5mzM+8m+pzxbEHBobxKH
-         AiilPEuKdZlXDpDt7ORCsuEdyGxnHRJbmhWd6EJA=
+        b=rNCFSNEjG17DP8ZiyInld+t2uAG69HmqsOH8v5qaU0f1XNvDfOOphPKGAt5LEfxPC
+         e5CphWEIFN3Wf1bImctXcaEsgRGAK8jiekpScbyKTunSMAVS/6hu6kAKZel+BKDCm9
+         UU2lwctJLa4dTlPbaseU9f1fchYwSwMSOCMYX4og=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 015/114] smsc75xx: Check for Wake-on-LAN modes
-Date:   Thu,  8 Nov 2018 13:50:30 -0800
-Message-Id: <20181108215100.573622059@linuxfoundation.org>
+Subject: [PATCH 4.4 016/114] smsc95xx: Check for Wake-on-LAN modes
+Date:   Thu,  8 Nov 2018 13:50:31 -0800
+Message-Id: <20181108215100.645804003@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,26 +63,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9c734b2769a73eea2e9e9767c0e0bf839ff23679 ]
+[ Upstream commit c530c471ba37bdd9fe1c7185b01455c00ae606fb ]
 
 The driver does not check for Wake-on-LAN modes specified by an user,
 but will conditionally set the device as wake-up enabled or not based on
 that, which could be a very confusing user experience.
 
-Fixes: 6c636503260d ("smsc75xx: add wol magic packet support")
+Fixes: e0e474a83c18 ("smsc95xx: add wol magic packet support")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc75xx.c | 3 +++
+ drivers/net/usb/smsc95xx.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
-index 8dbe086e0a96..234febc6e1d9 100644
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -728,6 +728,9 @@ static int smsc75xx_ethtool_set_wol(struct net_device *net,
- 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 66b3ab9f614e..7cee7777d13f 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -727,6 +727,9 @@ static int smsc95xx_ethtool_set_wol(struct net_device *net,
+ 	struct smsc95xx_priv *pdata = (struct smsc95xx_priv *)(dev->data[0]);
  	int ret;
  
 +	if (wolinfo->wolopts & ~SUPPORTED_WAKE)
