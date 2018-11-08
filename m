@@ -2,220 +2,102 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510DCECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4B5ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158A820825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:35:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158A820825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DF4A20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:35:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="0H3dHthp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF4A20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbeKHXLO (ORCPT
+        id S1727029AbeKHXLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:11:14 -0500
-Received: from mga03.intel.com ([134.134.136.65]:3211 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbeKHXLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:11:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 05:35:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="98643530"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2018 05:35:43 -0800
-Received: from [10.251.4.32] (kliang2-mobl1.ccr.corp.intel.com [10.251.4.32])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id A0323580444;
-        Thu,  8 Nov 2018 05:35:42 -0800 (PST)
-Subject: Re: [PATCH 1/2] perf/x86/intel/uncore: Add more IMC PCI IDs for
- KabyLake and CoffeeLake
-To:     tglx@linutronix.de, peterz@infradead.org, acme@redhat.com,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Cc:     ak@linux.intel.com
-References: <20181019170419.378-1-kan.liang@linux.intel.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <5f37bea5-51ce-5216-31f0-ee67773f2c12@linux.intel.com>
-Date:   Thu, 8 Nov 2018 08:35:40 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181019170419.378-1-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 18:11:21 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45699 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHXLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:11:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id k15-v6so18296935wre.12
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=385oGMXjfTu5juuCHtT+aHsKY76Dx3tjl7MO1N8tJvI=;
+        b=0H3dHthpjafwHV9/wxF6+5JKJ+12dy8H2FPbilKM1OyjTCNGYZJwyYxG2iF8a+qOKD
+         3iu8rcqIIuh66b4PAr0wpNs4q6+Sea8ldHjlRXQ17Sm7qpVN7SUtgH8+13AybeGhogX6
+         p8rfocZaf7MvLRpHj66333Lnr8RvffDgLm5RgUPpoizGasuDH6h+VbArr3q9uTMJ8r21
+         tEoUydP7h2Lu4Cv7rZnUPyeA4Ypx0RZ53dHB242FCWnPll30Tt6v/L4ZljN7J9GsbIJU
+         xaRk63wzAzh8ze64sGT9PoXg44NPdsJhoqcqnCVK1vhwXdsgyvnBD0uQv3vrKBqyGTNR
+         0svQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=385oGMXjfTu5juuCHtT+aHsKY76Dx3tjl7MO1N8tJvI=;
+        b=NJ+9I/cT0CGjmrb/X4xTFJkZ+X+iAk2Wn56t/wCL1Xs3EVn/QhTEXijsNIafefs3sl
+         ul5wDPv6gDbJVx1Zs0nZMgI8spM9RSBnaK7Jj3rlnp6XKsrG2XI7OnGAoiAOi5MHvdMK
+         /2zOojie1wbUDyfPfXiUp8p4fuWMj7tYYQ+HrrFg2VRr6ZyAQt/VOcSqUhTVQgMl8/fB
+         mOiHTasF6HoA4ML4jGoQSJz8FisMvkzUVlYw/aVURBA0G6D1HYSIfmVhgLRSJBuNU8JN
+         eqSsH5+TEz+B47RI6IN/fGgWPVq6cNsmE8+uFq7ED+TPIv6BdHixImFNUXdl7861HGZj
+         e/nw==
+X-Gm-Message-State: AGRZ1gLEH3yP9pcDe5de9HIoU03Ty8od5qwcuSCw1xpWyKqLZy+t276f
+        neyjhpckTKSWDP5CXmQReRCtvg==
+X-Google-Smtp-Source: AJdET5dLUWEtsJUy8PlP8NczXJQl8cNB1vOx/W3RlraTOON47Bmlj+zs03hENNI9sw3gdmdwnuitLQ==
+X-Received: by 2002:adf:9403:: with SMTP id 3-v6mr4178716wrq.54.1541684148666;
+        Thu, 08 Nov 2018 05:35:48 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id m9-v6sm4367807wrn.36.2018.11.08.05.35.47
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 08 Nov 2018 05:35:47 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Rob Herring <robherring2@gmail.com>
+Cc:     monstr@monstr.eu, Olof Johansson <olof@lixom.net>,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Manish Narani <manish.narani@xilinx.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: dts: Add missing gpio-controller to ps gpio
+Date:   Thu,  8 Nov 2018 14:35:46 +0100
+Message-Id: <74a9934eab231714e65f74e442ad79cab0475267.1541684144.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Add missing gpio-controller property to ps gpio.
+This was found via DT schema validation.
 
-Ping.
-Any comments for the series.
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-Thanks,
-Kan
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 10/19/2018 1:04 PM, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> KabyLake and CoffeeLake has the same client uncore events as SkyLake.
-> 
-> Add the PCI IDs for KabyLake Y, U, S processor line and CoffeeLake U,
-> H, S processor line.
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->   arch/x86/events/intel/uncore_snb.c | 115 ++++++++++++++++++++++++++++-
->   1 file changed, 114 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-> index 8527c3e1038b..bfa25814fe5f 100644
-> --- a/arch/x86/events/intel/uncore_snb.c
-> +++ b/arch/x86/events/intel/uncore_snb.c
-> @@ -15,6 +15,25 @@
->   #define PCI_DEVICE_ID_INTEL_SKL_HQ_IMC	0x1910
->   #define PCI_DEVICE_ID_INTEL_SKL_SD_IMC	0x190f
->   #define PCI_DEVICE_ID_INTEL_SKL_SQ_IMC	0x191f
-> +#define PCI_DEVICE_ID_INTEL_KBL_Y_IMC	0x590c
-> +#define PCI_DEVICE_ID_INTEL_KBL_U_IMC	0x5904
-> +#define PCI_DEVICE_ID_INTEL_KBL_UQ_IMC	0x5914
-> +#define PCI_DEVICE_ID_INTEL_KBL_SD_IMC	0x590f
-> +#define PCI_DEVICE_ID_INTEL_KBL_SQ_IMC	0x591f
-> +#define PCI_DEVICE_ID_INTEL_CFL_2U_IMC	0x3ecc
-> +#define PCI_DEVICE_ID_INTEL_CFL_4U_IMC	0x3ed0
-> +#define PCI_DEVICE_ID_INTEL_CFL_4H_IMC	0x3e10
-> +#define PCI_DEVICE_ID_INTEL_CFL_6H_IMC	0x3ec4
-> +#define PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC	0x3e0f
-> +#define PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC	0x3e1f
-> +#define PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC	0x3ec2
-> +#define PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC	0x3e30
-> +#define PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC	0x3e18
-> +#define PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC	0x3ec6
-> +#define PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC	0x3e31
-> +#define PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC	0x3e33
-> +#define PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC	0x3eca
-> +#define PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC	0x3e32
->   
->   /* SNB event control */
->   #define SNB_UNC_CTL_EV_SEL_MASK			0x000000ff
-> @@ -569,7 +588,82 @@ static const struct pci_device_id skl_uncore_pci_ids[] = {
->   		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SKL_SQ_IMC),
->   		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
->   	},
-> -
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_Y_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_U_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_UQ_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SD_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SQ_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2U_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4U_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4H_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6H_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
-> +	{ /* IMC */
-> +		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC),
-> +		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-> +	},
->   	{ /* end: all zeroes */ },
->   };
->   
-> @@ -618,6 +712,25 @@ static const struct imc_uncore_pci_dev desktop_imc_pci_ids[] = {
->   	IMC_DEV(SKL_HQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core H Quad Core */
->   	IMC_DEV(SKL_SD_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Dual Core */
->   	IMC_DEV(SKL_SQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Quad Core */
-> +	IMC_DEV(KBL_Y_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core Y */
-> +	IMC_DEV(KBL_U_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U */
-> +	IMC_DEV(KBL_UQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U Quad Core */
-> +	IMC_DEV(KBL_SD_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Dual Core */
-> +	IMC_DEV(KBL_SQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Quad Core */
-> +	IMC_DEV(CFL_2U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 2 Cores */
-> +	IMC_DEV(CFL_4U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 4 Cores */
-> +	IMC_DEV(CFL_4H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 4 Cores */
-> +	IMC_DEV(CFL_6H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 6 Cores */
-> +	IMC_DEV(CFL_2S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 2 Cores Desktop */
-> +	IMC_DEV(CFL_4S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Desktop */
-> +	IMC_DEV(CFL_6S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Desktop */
-> +	IMC_DEV(CFL_8S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Desktop */
-> +	IMC_DEV(CFL_4S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Work Station */
-> +	IMC_DEV(CFL_6S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Work Station */
-> +	IMC_DEV(CFL_8S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Work Station */
-> +	IMC_DEV(CFL_4S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Server */
-> +	IMC_DEV(CFL_6S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Server */
-> +	IMC_DEV(CFL_8S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Server */
->   	{  /* end marker */ }
->   };
->   
-> 
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+index 07f2dd13ab33..ae3c1b929648 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
++++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+@@ -410,6 +410,7 @@
+ 			compatible = "xlnx,zynqmp-gpio-1.0";
+ 			status = "disabled";
+ 			#gpio-cells = <0x2>;
++			gpio-controller;
+ 			interrupt-parent = <&gic>;
+ 			interrupts = <0 16 4>;
+ 			interrupt-controller;
+-- 
+1.9.1
+
