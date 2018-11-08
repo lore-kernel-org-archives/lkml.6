@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2D1ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EB4ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC910208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 494D320989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH006TlA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC910208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/B1vQjF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 494D320989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732750AbeKIHq3 (ORCPT
+        id S1732756AbeKIHqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:46:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:46:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727215AbeKIHq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:29 -0500
+        id S1727215AbeKIHqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:46:34 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6874A2089F;
-        Thu,  8 Nov 2018 22:08:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08E90208A3;
+        Thu,  8 Nov 2018 22:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714937;
-        bh=s2mI98JnojUSX8zM88FJmvYDej55M9g2dtjNbYC/i7k=;
+        s=default; t=1541714943;
+        bh=4UOfSLgupma2J4HcPdiycwDQTkzJ6KtZGslsHN4y978=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pH006TlAx7JPqsfskgcupe2LmPl89TxeBT0qo9kgBf8ShVR5WctCYPVsVHQCRaQEI
-         PVBkYTEra5XRVojzX3gZcAbCg9GL1x1OcMcv8HwlHhKgk2d1lnukzSwTrNQkaSq+7g
-         5IP/044kHvOjhkDjRsn3I7KocHRwzu5VNT2rCrI8=
+        b=K/B1vQjFuMS/PH5Yc2g75lBdwKBIwp2CL/FuWd9OS5VRdiDHU5YWuTkU/NilSQiFp
+         JJ2Hh63bKZCXV7GvicmTEos1hNR0cdE5yuy79DkatGSvz2o3s+AZi+6MB4G0iIRKi3
+         yzMeiTQS1adznGOtV7lYXfqmZfjkLxtnlmRCYd2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhimin Gu <kookoo.gu@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 27/31] x86, hibernate: Fix nosave_regions setup for hibernation
-Date:   Thu,  8 Nov 2018 13:52:51 -0800
-Message-Id: <20181108215131.904582752@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        eric.dumazet@gmail.com, bp@alien8.de
+Subject: [PATCH 4.14 28/31] x86/percpu: Fix this_cpu_read()
+Date:   Thu,  8 Nov 2018 13:52:52 -0800
+Message-Id: <20181108215131.950921065@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -63,83 +63,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhimin Gu <kookoo.gu@intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit cc55f7537db6af371e9c1c6a71161ee40f918824 upstream.
+commit b59167ac7bafd804c91e49ad53c6d33a7394d4c8 upstream.
 
-On 32bit systems, nosave_regions(non RAM areas) located between
-max_low_pfn and max_pfn are not excluded from hibernation snapshot
-currently, which may result in a machine check exception when
-trying to access these unsafe regions during hibernation:
+Eric reported that a sequence count loop using this_cpu_read() got
+optimized out. This is wrong, this_cpu_read() must imply READ_ONCE()
+because the interface is IRQ-safe, therefore an interrupt can have
+changed the per-cpu value.
 
-[  612.800453] Disabling lock debugging due to kernel taint
-[  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
-[  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
-[  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
-[  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
-[  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-[  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
-[  612.853380] Kernel panic - not syncing: Fatal machine check
-[  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
-
-This is because on 32bit systems, pages above max_low_pfn are regarded
-as high memeory, and accessing unsafe pages might cause expected MCE.
-On the problematic 32bit system, there are reserved memory above low
-memory, which triggered the MCE:
-
-e820 memory mapping:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable
-[    0.000000] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000d160cfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d160d000-0x00000000d1613fff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000d1614000-0x00000000d1a44fff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d1a45000-0x00000000d1ecffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d1ed0000-0x00000000d7eeafff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d7eeb000-0x00000000d7ffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8000000-0x00000000d875ffff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8760000-0x00000000d87fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8800000-0x00000000d8fadfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8fae000-0x00000000d8ffffff] ACPI data
-[    0.000000] BIOS-e820: [mem 0x00000000d9000000-0x00000000da71bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000da71c000-0x00000000da7fffff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000da800000-0x00000000dbb8bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000dbb8c000-0x00000000dbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000041edfffff] usable
-
-Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
-This fix does not impact 64bit system because on 64bit max_low_pfn
-is the same as max_pfn.
-
-Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 7c3576d261ce ("[PATCH] i386: Convert PDA into the percpu section")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Cc: hpa@zytor.com
+Cc: eric.dumazet@gmail.com
+Cc: bp@alien8.de
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181011104019.748208519@infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/percpu.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1287,7 +1287,7 @@ void __init setup_arch(char **cmdline_p)
- 	kvm_guest_init();
- 
- 	e820__reserve_resources();
--	e820__register_nosave_regions(max_low_pfn);
-+	e820__register_nosave_regions(max_pfn);
- 
- 	x86_init.resources.reserve_resources();
- 
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -185,22 +185,22 @@ do {									\
+ 	typeof(var) pfo_ret__;				\
+ 	switch (sizeof(var)) {				\
+ 	case 1:						\
+-		asm(op "b "__percpu_arg(1)",%0"		\
++		asm volatile(op "b "__percpu_arg(1)",%0"\
+ 		    : "=q" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 2:						\
+-		asm(op "w "__percpu_arg(1)",%0"		\
++		asm volatile(op "w "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 4:						\
+-		asm(op "l "__percpu_arg(1)",%0"		\
++		asm volatile(op "l "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 8:						\
+-		asm(op "q "__percpu_arg(1)",%0"		\
++		asm volatile(op "q "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
 
 
