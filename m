@@ -2,50 +2,52 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D951ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB63ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 052E5208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B5952089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpO7gzWb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052E5208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0pfmGG9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5952089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732393AbeKIHpK (ORCPT
+        id S1732404AbeKIHpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:45:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38498 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:45:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730886AbeKIHpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:10 -0500
+        id S1730686AbeKIHpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:45:11 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF785208A3;
-        Thu,  8 Nov 2018 22:07:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C40672089F;
+        Thu,  8 Nov 2018 22:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714859;
-        bh=tC3YHIvhII9MJ5JlslBPNsJD85z13YIbSOgpzCGFUA4=;
+        bh=RrNOp3au6IDTWVvs9JWcWjUFGN4stASVMVGe9RrYbVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IpO7gzWbt6tQa2pV6OVTc3BOjeisjOjpDH5ik77F77zjIYTWlFNW/Pxpp9SCXIxSb
-         pzOYY0bHWOs35jkRSoOUc/KGQNSJsRWLMxeCoNgO5Yd6GoIfYVCh4Ga8zZq80aKYqU
-         DM7J+4Vvc03wOyCeNZghUVhqGCZPdgdBngMpSVy0=
+        b=P0pfmGG9o8aOv0IQWOQtv94vV0nBMp2cRA7FZ+yYdz5xq9BnDfqeQVpcMkVO5/Ez0
+         qSOFKWrnJ0jjggVxVXtDVQ+p0Vmb+/0LJk5+3JQJ1BBCOCeHp5p6ki9SHgNBfgQkHJ
+         82ZhRAWRGAzOdFBt17W272sRB48UlOdefcAzpAh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 140/171] net: sched: gred: pass the right attribute to gred_change_table_def()
-Date:   Thu,  8 Nov 2018 13:51:50 -0800
-Message-Id: <20181108215137.128769187@linuxfoundation.org>
+        Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Adrian Bunk <bunk@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 131/171] mtd: spi-nor: Add support for is25wp series chips
+Date:   Thu,  8 Nov 2018 13:51:41 -0800
+Message-Id: <20181108215136.663266388@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,54 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+[ Upstream commit d616f81cdd2a21edfa90a595a4e9b143f5ba8414 ]
 
-[ Upstream commit 38b4f18d56372e1e21771ab7b0357b853330186c ]
+Added support for is25wp032, is25wp064 and is25wp128.
 
-gred_change_table_def() takes a pointer to TCA_GRED_DPS attribute,
-and expects it will be able to interpret its contents as
-struct tc_gred_sopt.  Pass the correct gred attribute, instead of
-TCA_OPTIONS.
-
-This bug meant the table definition could never be changed after
-Qdisc was initialized (unless whatever TCA_OPTIONS contained both
-passed netlink validation and was a valid struct tc_gred_sopt...).
-
-Old behaviour:
-$ ip link add type dummy
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-RTNETLINK answers: Invalid argument
-
-Now:
-$ ip link add type dummy
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-
-Fixes: f62d6b936df5 ("[PKT_SCHED]: GRED: Use central VQ change procedure")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+[ Adrian Bunk: Trivial adaption to changed context. ]
+Signed-off-by: Adrian Bunk <bunk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_gred.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/spi-nor/spi-nor.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/sched/sch_gred.c
-+++ b/net/sched/sch_gred.c
-@@ -411,7 +411,7 @@ static int gred_change(struct Qdisc *sch
- 	if (tb[TCA_GRED_PARMS] == NULL && tb[TCA_GRED_STAB] == NULL) {
- 		if (tb[TCA_GRED_LIMIT] != NULL)
- 			sch->limit = nla_get_u32(tb[TCA_GRED_LIMIT]);
--		return gred_change_table_def(sch, opt);
-+		return gred_change_table_def(sch, tb[TCA_GRED_DPS]);
- 	}
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 21dde5249085..c42523b7d5ed 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -858,6 +858,12 @@ static const struct flash_info spi_nor_ids[] = {
  
- 	if (tb[TCA_GRED_PARMS] == NULL ||
+ 	/* ISSI */
+ 	{ "is25cd512", INFO(0x7f9d20, 0, 32 * 1024,   2, SECT_4K) },
++	{ "is25wp032", INFO(0x9d7016, 0, 64 * 1024,  64,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "is25wp064", INFO(0x9d7017, 0, 64 * 1024, 128,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
++	{ "is25wp128", INFO(0x9d7018, 0, 64 * 1024, 256,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 
+ 	/* Macronix */
+ 	{ "mx25l512e",   INFO(0xc22010, 0, 64 * 1024,   1, SECT_4K) },
+-- 
+2.17.1
+
 
 
