@@ -2,123 +2,117 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D03C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CA1C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08DEC2086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25E4620892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:27:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FJ4LsXki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08DEC2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gPLqYPgh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E4620892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726929AbeKHWBe (ORCPT
+        id S1726834AbeKHWDM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:01:34 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41873 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeKHWBe (ORCPT
+        Thu, 8 Nov 2018 17:03:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34490 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeKHWDM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:01:34 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v18-v6so1735824wrt.8
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 04:26:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=mniJ0igHPGZh+8A6l+B8DDrahafLN8APE03nMO7Ahh8=;
-        b=FJ4LsXkifUsqSONm8fH02wUT+xRmm8XHN4wZU/fCNsipQB5QUfDP7je95/DKRNYPN+
-         bWVRPbgzp+fpySap3Xpaq2ELPLB8xJShPre44o86twOynCuAAmkt2TCJwarRo8eUyx1E
-         CMJyCBJLbHr55xdkDExrqre+ul3k+6OEMi2lA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
-        bh=mniJ0igHPGZh+8A6l+B8DDrahafLN8APE03nMO7Ahh8=;
-        b=QYSB/6A6XQcI5PpPk3P+Q2EqzLDdbSfwGfwCeCzoDYSwNpy4GHSH9MpKJ2g0tOJ8uZ
-         OXFfn9/w/0sGXB2bEwUohq0KmIJqAhrv4cQLayIBoUaSdgmXAQ9nWx4Y+3pk07BZLzkU
-         jYHZzTfL0GRbsar/v4M4rOzx8psrLPHNvfjDohjAtwLXT+A/J2/HVOtCUQdGoJ0ky8Fd
-         wgpHkkFAKZoBt58rtwrsKgnO7ZTtwK+2d4D9XRo5wsy04znI5WWHkryV3yEK1jCk3D4U
-         /HKoqrRAJV6kpeNF5SMwcF0M5e4UgZ+ucEa/T20y/Xrd0TS+md+Hq9pobM1GE0boAxn8
-         CAzA==
-X-Gm-Message-State: AGRZ1gKsUsGOd7Nx5p1e2amPDEK6p0PR9MakqJM3EOAih9kNwr53xszf
-        Cc5vTnhAvdKyivnEX3QXrtauzw==
-X-Google-Smtp-Source: AJdET5etXJJLDeIRZ10L8te/AGttLdmbfy/YBVeFgu279PZ2Kw5lfAHoXqSUPMFImFV3+AF1a0Nc8w==
-X-Received: by 2002:adf:9245:: with SMTP id 63-v6mr3830299wrj.130.1541679977669;
-        Thu, 08 Nov 2018 04:26:17 -0800 (PST)
-Received: from zen.linaro.local ([81.128.185.34])
-        by smtp.gmail.com with ESMTPSA id u4-v6sm3595389wrt.89.2018.11.08.04.26.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 04:26:17 -0800 (PST)
-Received: from zen (localhost [127.0.0.1])
-        by zen.linaro.local (Postfix) with ESMTPS id 5C92D3E03FE;
-        Thu,  8 Nov 2018 12:26:16 +0000 (GMT)
-References: <20181107171031.22573-1-alex.bennee@linaro.org> <CAFEAcA8LL0uC6o1V3W2T=2P47xZ0zGhMR5mEE+x=8qwmDKZL_g@mail.gmail.com> <CAFEAcA8mKCTeswpiznVWR3kSfVfjbot1aTSfemFVNjzXYdSJwA@mail.gmail.com>
-User-agent: mu4e 1.1.0; emacs 26.1.50
-From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
-To:     Peter Maydell <peter.maydell@linaro.org>
-Cc:     kvm-devel <kvm@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] KVM: arm64: don't single-step for non-emulated faults
-In-reply-to: <CAFEAcA8mKCTeswpiznVWR3kSfVfjbot1aTSfemFVNjzXYdSJwA@mail.gmail.com>
-Date:   Thu, 08 Nov 2018 12:26:16 +0000
-Message-ID: <87sh0b69hz.fsf@linaro.org>
+        Thu, 8 Nov 2018 17:03:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7j5d88Q/iIP3Vh0jE+BHQjAFVnGes3gX6JwGr4dy4Vo=; b=gPLqYPghJwIQMH3ovYWGP+v22
+        XIqlMfpWb0LSguiXXvgdc0KmTNWVYZDlLx7Sc6VLvTnDp4RveEffe8c/HJthaGTM8NED9zkhWvWSr
+        o23oIiCi4yCUXMBNjFxGLZ1FCreDZ8bbVbGulTMJ8I/lkgwdGT9PgXbGJbVYsAqUBpUZj6iAp0cWV
+        oloYl2Vj8jXivd9/YBh1a8TMQx/qa1f9MKBjAkjeiGEywZTU8pd1zKvhu4s29ZiGm0OXzIbcnKc5i
+        JVi3AFofC0tApI13ntGhdUWy/7Zy5FX3LRS11+rReKov5Gry8pSTFiHvRoaKjNUVALjqs0D2g3wKj
+        T2JhgPVTg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKjPX-0007dc-W7; Thu, 08 Nov 2018 12:27:48 +0000
+Date:   Thu, 8 Nov 2018 04:27:47 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Martin Steigerwald' <martin@lichtvoll.de>,
+        Michal Hocko <mhocko@kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+Message-ID: <20181108122747.GM3074@bombadil.infradead.org>
+References: <20181031150625.147369-1-dancol@google.com>
+ <CAKOZueu5aDtHDBzp6qKECTHEejjb=dyegQkuHh8NfwgNktzFow@mail.gmail.com>
+ <20181107160015.GI27423@dhcp22.suse.cz>
+ <4536090.43ZsV6LvYe@merkaba>
+ <0c5610f128fa49fb9d8f7859e6f61b90@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c5610f128fa49fb9d8f7859e6f61b90@AcuMS.aculab.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 08, 2018 at 12:02:49PM +0000, David Laight wrote:
+> From: Martin Steigerwald
+> > Sent: 07 November 2018 17:05
+> ...
+> > Its not quite on-topic, but I am curious now: AFAIK PID limit is 16
+> > bits. Right? Could it be raised to 32 bits? I bet it would be a major
+> > change throughout different parts of the kernel.
+> 
+> It is probably 15 bits (since -ve pid numbers are used for process groups).
+> 
+> My guess is that userspace and the system call interface will handle 32bit
+> (signed) pid numbers.
+> (I don't remember 'linux emulation' being one of the emulations that
+> would truncate 32bit pids when one of the BDSs went to 32bit pids.)
+> The main problem will be that big numbers will mess up the alignment
+> of printouts from ps and top (etc).
+> This can be mitigated by only allocating 'big' numbers on systems
+> that have a lot of pids.
+> You also really want an O(1) allocator.
 
-Peter Maydell <peter.maydell@linaro.org> writes:
+The allocator is O(log n) -- it's the IDR allocator, used in cyclic mode.
+n in this case is the highest ID which is still in use.  The tree is
+log_64(n) levels high.  It walks to the bottom of the tree and puts a
+pointer into the tree.  If the cursor has wrapped to the beginning of
+the tree, it may encounter a PID which is still in use; if it does,
+it does a bitmap scan of that node, and will then walk up the tree,
+doing a bitmap scan forward at each level until it finds a free PID.
 
-> On 7 November 2018 at 17:39, Peter Maydell <peter.maydell@linaro.org> wro=
-te:
->> On 7 November 2018 at 17:10, Alex Benn=C3=A9e <alex.bennee@linaro.org> w=
-rote:
->>> Not all faults handled by handle_exit are instruction emulations. For
->>> example a ESR_ELx_EC_IABT will result in the page tables being updated
->>> but the instruction that triggered the fault hasn't actually executed
->>> yet. We use the simple heuristic of checking for a changed PC before
->>> seeing if kvm_arm_handle_step_debug wants to claim we stepped an
->>> instruction.
->>>
->>> Signed-off-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
->>
->> What's the rationale for this change? Presumably it's fixing
->> something, but the commit message doesn't really say what...
->>
->> This feels to me like it's working around the fact that
->> we've separated two things ("advance pc (or set it if we're
->> going to make the guest take an exception)" and "notice that
->> we have completed a single step") that should be handled
->> at one point in the code.
->
-> ...so for instance if your guest PC is at the entrypoint for
-> an exception, and you singlestep and take the same exception
-> again, this should count as a single step completed, even
-> though the PC has not changed. Granted, that's a little
-> contrived, but it can happen in cases where the guest gets
-> completely confused and is sitting in a tight loop taking
-> exceptions because there's no ram at the vector table
-> address, or whatever.
+So it's not exactly O(log(n)), but it's close enough for all practical
+purposes.  And more importantly, it doesn't touch a lot of cachelines.
+Two or three at each level of the tree that it accesses.  If we went
+all the way to a 32-bit PID, the tree would grow to 6 levels deep,
+and worst-case would touch 6 + 5 + 4 levels of the tree (starting with
+trying to allocate PID 0xffffffff, failing, trying to allocate PID 300,
+then having to walk all the way forward to find PID 0xe0000000), so
+that's only 45 cachelines.
 
-The alternative I thought of as I was hacking^H^H^H^H^H^H carefully
-engineering this was to expand arm_exit_handlers[] and tag each handler
-that was an instruction emulation and gate on that.
-
---
-Alex Benn=C3=A9e
+People care a little too much about O(1)/O(n) behaviour.  Cacheline
+behaviour, and good average-case performance without falling off a cliff
+in the worst case is much more important.
