@@ -2,184 +2,199 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D566BC46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C43EAC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 993B22086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 785BE2081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:12:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K4WzW+WP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993B22086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oFyiAISU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785BE2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeKHRot (ORCPT
+        id S1726684AbeKHRqb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:44:49 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33822 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbeKHRot (ORCPT
+        Thu, 8 Nov 2018 12:46:31 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54472 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbeKHRqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:44:49 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j26-v6so20190430wre.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 00:10:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aczT1AI8ofSXeg8XIZJpSK1FfsNvEbjAoYiBYGwb8gY=;
-        b=K4WzW+WP8kkw319lIXo8aLnc/x17nP7W60kRoQxBEUHvUdniOYZzFbcCv2UgnxO2sU
-         ttYJ/kwoseu5eqyMzARYXRe/BU6WsEl8ubjPcFH+HL4H/OefU35BBxbkhCXT8FYViPpL
-         k1M1RAU1uFYBLSoEgA0rNe1Ap43aQm0Xc2XQc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aczT1AI8ofSXeg8XIZJpSK1FfsNvEbjAoYiBYGwb8gY=;
-        b=IvecbO/HRTERCadMS83lsgElztVORcRbBLuIEhVCtFx6Uhsln0KB0U3rujfzUUIdju
-         DaGNmt1q6Qa8WqJWCAvQJcv0t9N1D+zawOoExobwqs4PEKvE4vsoh8I+P5QRMfSSDYwm
-         0OfoTDGDiaIaAPeWgarjmJBHoRQTMhO4HigWmptuiKlta6c7qhw/ieX5py94hsS92GM6
-         mpitiJ5T9NwoXlEKTi8rvkyfpR1IGrbukt8D5K3LxzMvl5sNpVSs2IOTSbfk3iOsFdKf
-         TKNZckN11pRQXyY2H1hUbzCsY9XLMwCkIbz2K3A1EThVe9UqK8EeYl9QQwec2/nEPGgr
-         m2wA==
-X-Gm-Message-State: AGRZ1gKttc0eWQejsfwDDyknzudkISRVgdh55rqteu4Lku0/TpnxbWfq
-        8rWCC1duVY9BNEg8T2Fd2O4mHA==
-X-Google-Smtp-Source: AJdET5f8JNaYfmTXWA6V6VZlThP99ox3sT+uC19uD9zyqt2eYJT3LQ2KqOAh+W3b6jdFjzj7/Pv9Ng==
-X-Received: by 2002:a5d:66d0:: with SMTP id k16-v6mr3399438wrw.154.1541664629295;
-        Thu, 08 Nov 2018 00:10:29 -0800 (PST)
-Received: from [192.168.0.40] (48.243.136.77.rev.sfr.net. [77.136.243.48])
-        by smtp.googlemail.com with ESMTPSA id x6-v6sm3242763wrq.52.2018.11.08.00.10.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 00:10:28 -0800 (PST)
-Subject: Re: [PATCH] irq/timings: Fix model validity
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>
-References: <1556808.yKVbhZSazi@aspire.rjw.lan>
- <20181106170442.GC9781@hirez.programming.kicks-ass.net>
- <CAJZ5v0hmm2UWRt1j6hQo14nZLgPrE3DZkOznfo2kMxsZ1spo-Q@mail.gmail.com>
- <20181106195127.GD9781@hirez.programming.kicks-ass.net>
- <CAJZ5v0iPs8Wt0PneBVWptqJPP6dEze+=GvxjU=dHBRbmty+kOw@mail.gmail.com>
- <20181107085936.GI9781@hirez.programming.kicks-ass.net>
- <20181107094624.GB9828@hirez.programming.kicks-ass.net>
- <ab9e60d7-e2d3-7d0c-dbf1-c0bed7bdb516@linaro.org>
- <20181107130507.GD9761@hirez.programming.kicks-ass.net>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c9d8152a-566e-7ae6-e41c-5817c884c277@linaro.org>
-Date:   Thu, 8 Nov 2018 09:10:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181107130507.GD9761@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 8 Nov 2018 12:46:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Mime-Version:Content-Type:References:
+        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2a6lqJSX/9OmZmxgra2lNTIoZvJPqZckk5Zn/qUbZw4=; b=oFyiAISUeymo5cX4i14GYKlMO
+        oomeRiioHi6Ptw1dAsSUfpmfN36scN6REwVxPDn21j398RwWakaXV5QSwQXGhXVFBgHt0fQ6+rZ8R
+        kY6//wY1Nz5uq4TciMAQFTlmaSYCdht9uagFdIkbyvZ3Y5txwqym7pQUHKzIaYySsIwOhDwxYw7yI
+        1BMwwrtM/XnYXkWaKz6pBFNUHZozD3KirF4JmhGlbpr4aPerK6tPWHKseBb47rDhf5zQ1l2K9w6+g
+        gmV45h3s8cZ3KxWc3iuZpMmQtzwGcr3GEL4KULEjMYrJBdqESyDKS3n1ie+3Et5o9VyN7n5MhYfsg
+        6tdUlSPBQ==;
+Received: from [2001:8b0:10b:1:4a2a:e3ff:fe14:8625] (helo=u3832b3a9db3152.ant.amazon.com)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKfPw-000729-N1; Thu, 08 Nov 2018 08:12:06 +0000
+Message-ID: <01b82f6eb37b674effc6c8b0fa4a014deb401a85.camel@infradead.org>
+Subject: Re: [PATCH] jffs2: implement mount option to configure endianness
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Richard Weinberger <richard.weinberger@gmail.com>, nkela@cisco.com
+Cc:     "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, xe-linux-external@cisco.com
+Date:   Thu, 08 Nov 2018 09:11:54 +0100
+In-Reply-To: <CAFLxGvz8QgK1P6d-_biSRk4fyYEobio315_tUP+cRXTvt+m1hA@mail.gmail.com>
+References: <20181106214928.40020-1-nkela@cisco.com>
+         <921b0f78cf67d7307a0555e1fd6f2c2976310adc.camel@infradead.org>
+         <591D4732-BC3E-4F85-9277-25E049FFF4BA@cisco.com>
+         <CAFLxGvz8QgK1P6d-_biSRk4fyYEobio315_tUP+cRXTvt+m1hA@mail.gmail.com>
+Content-Type: multipart/signed; micalg="sha-256";
+        protocol="application/x-pkcs7-signature";
+        boundary="=-xqj7a11PysCa4CftIt/R"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 14:05, Peter Zijlstra wrote:
-> On Wed, Nov 07, 2018 at 11:52:31AM +0100, Daniel Lezcano wrote:
->>> @@ -146,11 +152,38 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
->>>  	 */
->>>  	diff = interval - irqs->avg;
->>>  
->>> +	/*
->>> +	 * Online average algorithm:
->>> +	 *
->>> +	 *  new_average = average + ((value - average) / count)
->>> +	 *
->>> +	 * The variance computation depends on the new average
->>> +	 * to be computed here first.
->>> +	 *
->>> +	 */
->>> +	irqs->avg = irqs->avg + (diff >> IRQ_TIMINGS_SHIFT);
->>> +
->>> +	/*
->>> +	 * Online variance algorithm:
->>> +	 *
->>> +	 *  new_variance = variance + (value - average) x (value - new_average)
->>> +	 *
->>> +	 * Warning: irqs->avg is updated with the line above, hence
->>> +	 * 'interval - irqs->avg' is no longer equal to 'diff'
->>> +	 */
->>> +	irqs->variance = irqs->variance + (diff * (interval - irqs->avg));
->>> +
->>>  	/*
->>>  	 * Increment the number of samples.
->>>  	 */
->>>  	irqs->nr_samples++;
-> 
-> FWIW, I'm confused on this. The normal (Welford's) online algorithm
-> does:
-> 
-> 	count++;
-> 	delta = value - mean;
-> 	mean += delta / count;
-> 	M2 += delta * (value - mean);
-> 
-> But the above uses:
-> 
-> 	mean += delta / 32;
-> 
-> Which, for count >> 32, over-estimates the mean adjustment. But worse,
-> it significantly under-estimates the mean during training.
-> 
-> How is the computed variance still correct with this? I can not find any
-> comments that clarifies this. I'm thinking that since the mean will
-> slowly wander towards it's actual location (assuming an actual standard
-> distribution input) the resulting variance will be far too large, since
-> the (value - mean) term will be much larger than 'expected'.
 
-You are right, initially it was divided by min(count, 32) but for
-optimization reason, we decided to change that by a power of two
-constant assuming the number of samples will reach quickly 32 and the
-compiler will replace that by a shift.
+--=-xqj7a11PysCa4CftIt/R
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-https://lkml.org/lkml/2017/3/23/696
+On Wed, 2018-11-07 at 19:14 +0100, Richard Weinberger wrote:
+> On Wed, Nov 7, 2018 at 7:05 PM Nikunj Kela (nkela) <nkela@cisco.com> wrot=
+e:
+> > I had tried to use configs to start with via the following patch howeve=
+r I was advised to have a mount option:
+> > http://lists.infradead.org/pipermail/linux-mtd/2018-November/085126.htm=
+l
+>=20
+> Just show performance numbers on how your implementation has an impact or=
+ not.
+> So far your implementation is also not much optimized, maybe likely()
+> or static keys can help...
 
->>> @@ -158,16 +191,12 @@ static void irqs_update(struct irqt_stat *irqs, u64 ts)
->>>  	 * more than 32 and dividing by 32 instead of 31 is enough
->>>  	 * precise.
->>>  	 */
->>> +	variance = irqs->variance >> IRQ_TIMINGS_SHIFT;
-> 
-> Worse; variance is actually (as the comment states):
-> 
-> 	s^2 = M2 / (count -1)
-> 
-> But instead you compute:
-> 
-> 	s^2 = M2 / 32;
-> 
-> Which is again much larger than the actual result; assuming count >> 32.
-> 
-> So you compute a variance that is inflated in two different ways.
-> 
-> 
-> I'm not seeing how this thing works reliably.
+Using likely() for the native case might help. Static keys might help a
+little more, but could only work if every file system has the *same*
+endianness. Unless we end up with three variants, for native vs. swap
+vs. runtime checking.
 
-I have to revisit this part of code soon, I will double check that.
+We also lose a bunch of the optimisations that we gained from using
+__builtin_swab functions, which let the compiler see what was going on.
+
+But we can hypothesise and handwave about it until the cows come home;
+I'd like to see a real test of whether it actually makes a difference
+that we care about.
+
+If it does, one option might be to just build separate versions of
+scan.c for each endianness, since that's the critical path we care
+about.
+
+--=-xqj7a11PysCa4CftIt/R
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODExMDgwODExNTRaMC8GCSqG
+SIb3DQEJBDEiBCD7bcptkCnATJg8ZI3lMxbn/BxoS/LvkvWRoOH5HBP/njCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBABcDPbqVMtTy
+XCoYjAQ5YcEJ0Ivtq8bmPOs5Ble1zmLebOLZ4fhDZyCU/HlcgxkD8tnEjPulWRIR8jFevPegwHrb
+Ac+5n7U75DBG9kYBzqs6jNvpIo4sQLbhxpPvZNzeFuHMNbfT1posRKLnc7Ne+kulLlwidLVmmfEp
+QN3XKVtNZVtLYucibktDsLPwDwVX73DA4ZJfUwCRBXDQPfUM9aFObVJKXb64wiLsiVFlJmZn+zh8
+VAigaqX8kFAxLSGNIvGfYhFh0JpM9TnkHQDmGaJAeP4o16vvnVIxiG1/xEX2DEcg0ewdNiPv9WHT
+PiJ171C/dAdjTE8AZZJkg/IlrxQAAAAAAAA=
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=-xqj7a11PysCa4CftIt/R--
 
