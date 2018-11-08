@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4869FECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C95ECDE4D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD602086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87662081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeUa2r9F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD602086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMRrEuDV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87662081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731231AbeKIHkw (ORCPT
+        id S1731258AbeKIHkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:40:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60628 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:40:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbeKIHku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:40:50 -0500
+        id S1727514AbeKIHkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:40:52 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C5992086C;
-        Thu,  8 Nov 2018 22:03:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0227B208E3;
+        Thu,  8 Nov 2018 22:03:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714601;
-        bh=ZFCKKlRgz6t+uzrigy/a7x05DGwHukpLnnsnKQFWpQA=;
+        s=default; t=1541714603;
+        bh=8SaVQCYyGTBLgf2bwckgxS/HgkE57P+W9kLrJl+C9UA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LeUa2r9FzuhjelyrZjj2AdtXgHjT/gJZc96rUMoZ8QRKERmcPJakq8VImnnhAVeU+
-         +XsDjHMoI1MzP2raSyCdGVjM4/2QTKlBRO6sblAN7KNZknf+Iso3NMbwXJb2SolY4I
-         Z+hlmpg8udbn1D4V4CvbgY/uyRlkX3RPLoloPFWs=
+        b=PMRrEuDVgiMDMIj2ACPkBYtFqkWHtY+IUzeN5RZjnHvocT0GODQgbi8L21QgICR6k
+         iiaw0eOKDStu+3hlwhdGmchf7APlXehb4mnk/3/9LS7UWf3AnhMcxNPeBf6p0wQ1x0
+         Cnne4K5WJkjquPKOU4I7h74RS1R+rADjmicd9opc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rickard x Andersson <rickaran@axis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 029/171] net: fec: fix rare tx timeout
-Date:   Thu,  8 Nov 2018 13:49:59 -0800
-Message-Id: <20181108215129.434702688@linuxfoundation.org>
+Subject: [PATCH 4.9 040/171] PCI: Disable MSI for HiSilicon Hip06/Hip07 only in Root Port mode
+Date:   Thu,  8 Nov 2018 13:50:10 -0800
+Message-Id: <20181108215130.357291687@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,64 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 657ade07df72847f591ccdb36bd9b91ed0edbac3 ]
+[ Upstream commit deb86999323661c019ef2740eb9d479d1e526b5c ]
 
-During certain heavy network loads TX could time out
-with TX ring dump.
-TX is sometimes never restarted after reaching
-"tx_stop_threshold" because function "fec_enet_tx_queue"
-only tests the first queue.
+HiSilicon Hip06/Hip07 can operate as either a Root Port or an Endpoint.  It
+always advertises an MSI capability, but it can only generate MSIs when in
+Endpoint mode.
 
-In addition the TX timeout callback function failed to
-recover because it also operated only on the first queue.
+The device has the same Vendor and Device IDs in both modes, so check the
+Class Code and disable MSI only when operating as a Root Port.
 
-Signed-off-by: Rickard x Andersson <rickaran@axis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[bhelgaas: changelog]
+Fixes: 72f2ff0deb87 ("PCI: Disable MSI for HiSilicon Hip06/Hip07 Root Ports")
+Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Zhou Wang <wangzhou1@hisilicon.com>
+Cc: stable@vger.kernel.org	# v4.11+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index fe00f71bc6b4..051ecc76a7ef 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1152,7 +1152,7 @@ static void fec_enet_timeout_work(struct work_struct *work)
- 		napi_disable(&fep->napi);
- 		netif_tx_lock_bh(ndev);
- 		fec_restart(ndev);
--		netif_wake_queue(ndev);
-+		netif_tx_wake_all_queues(ndev);
- 		netif_tx_unlock_bh(ndev);
- 		napi_enable(&fep->napi);
- 	}
-@@ -1267,7 +1267,7 @@ skb_done:
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index c7a695c2303a..2250f0d33481 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -1634,8 +1634,8 @@ static void quirk_pcie_mch(struct pci_dev *pdev)
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7520_MCH,	quirk_pcie_mch);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7320_MCH,	quirk_pcie_mch);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7525_MCH,	quirk_pcie_mch);
+-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI,	0x1610,	quirk_pcie_mch);
  
- 		/* Since we have freed up a buffer, the ring is no longer full
- 		 */
--		if (netif_queue_stopped(ndev)) {
-+		if (netif_tx_queue_stopped(nq)) {
- 			entries_free = fec_enet_get_free_txdesc_num(txq);
- 			if (entries_free >= txq->tx_wake_threshold)
- 				netif_tx_wake_queue(nq);
-@@ -1744,7 +1744,7 @@ static void fec_enet_adjust_link(struct net_device *ndev)
- 			napi_disable(&fep->napi);
- 			netif_tx_lock_bh(ndev);
- 			fec_restart(ndev);
--			netif_wake_queue(ndev);
-+			netif_tx_wake_all_queues(ndev);
- 			netif_tx_unlock_bh(ndev);
- 			napi_enable(&fep->napi);
- 		}
-@@ -2247,7 +2247,7 @@ static int fec_enet_set_pauseparam(struct net_device *ndev,
- 		napi_disable(&fep->napi);
- 		netif_tx_lock_bh(ndev);
- 		fec_restart(ndev);
--		netif_wake_queue(ndev);
-+		netif_tx_wake_all_queues(ndev);
- 		netif_tx_unlock_bh(ndev);
- 		napi_enable(&fep->napi);
- 	}
++DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_HUAWEI, 0x1610, PCI_CLASS_BRIDGE_PCI, 8, quirk_pcie_mch);
+ 
+ /*
+  * It's possible for the MSI to get corrupted if shpc and acpi
 -- 
 2.17.1
 
