@@ -2,217 +2,66 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B917AECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96121ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8513920684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:40:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8513920684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 41E2C2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:40:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E2C2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeKIERf (ORCPT
+        id S1727413AbeKIERk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:17:35 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45030 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726860AbeKIERe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:17:34 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id k7qA7i0n08wW; Thu,  8 Nov 2018 19:40:46 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC9881EC0779;
-        Thu,  8 Nov 2018 19:40:45 +0100 (CET)
-Date:   Thu, 8 Nov 2018 19:40:38 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
- shadow stack
-Message-ID: <20181108184038.GJ7543@zn.tnic>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-5-yu-cheng.yu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181011151523.27101-5-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 8 Nov 2018 23:17:40 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:34186 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbeKIERk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:17:40 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5CED41451A893;
+        Thu,  8 Nov 2018 10:34:31 -0800 (PST)
+Date:   Thu, 08 Nov 2018 10:34:28 -0800 (PST)
+Message-Id: <20181108.103428.494936194513918478.davem@davemloft.net>
+To:     suraj1998@gmail.com
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        edumazet@google.com
+Subject: Re: [PATCH] staging: net: ipv4: tcp_vegas: fixed checks and
+ warnings
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1541665792-5888-1-git-send-email-suraj1998@gmail.com>
+References: <1541665792-5888-1-git-send-email-suraj1998@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 08 Nov 2018 10:34:31 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 08:15:00AM -0700, Yu-cheng Yu wrote:
-> Intel Control-flow Enforcement Technology (CET) introduces the
-> following MSRs into the XSAVES system states.
+From: Suraj Singh <suraj1998@gmail.com>
+Date: Thu,  8 Nov 2018 13:59:52 +0530
+
+> Fixed checks and warnings in TCP Vegas
 > 
->     IA32_U_CET (user-mode CET settings),
->     IA32_PL3_SSP (user-mode shadow stack),
->     IA32_PL0_SSP (kernel-mode shadow stack),
->     IA32_PL1_SSP (ring-1 shadow stack),
->     IA32_PL2_SSP (ring-2 shadow stack).
+> Signed-off-by: Suraj Singh <suraj1998@gmail.com>
 
-And?
+Once again, please explain why you are putting "staging: " into the subject
+line of your TCP congestion control patches.
 
-That commit message got chopped off here, it seems.
+If you do not answer this question and fix your Subject lines, I will
+really have no choice but to ignore your submissions as you are
+ignoring our feedback.
 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> ---
->  arch/x86/include/asm/fpu/types.h            | 22 +++++++++++++++++++++
->  arch/x86/include/asm/fpu/xstate.h           |  4 +++-
->  arch/x86/include/uapi/asm/processor-flags.h |  2 ++
->  arch/x86/kernel/fpu/xstate.c                | 10 ++++++++++
->  4 files changed, 37 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-> index 202c53918ecf..e55d51d172f1 100644
-> --- a/arch/x86/include/asm/fpu/types.h
-> +++ b/arch/x86/include/asm/fpu/types.h
-> @@ -114,6 +114,9 @@ enum xfeature {
->  	XFEATURE_Hi16_ZMM,
->  	XFEATURE_PT_UNIMPLEMENTED_SO_FAR,
->  	XFEATURE_PKRU,
-> +	XFEATURE_RESERVED,
-> +	XFEATURE_SHSTK_USER,
-> +	XFEATURE_SHSTK_KERNEL,
->  
->  	XFEATURE_MAX,
->  };
-> @@ -128,6 +131,8 @@ enum xfeature {
->  #define XFEATURE_MASK_Hi16_ZMM		(1 << XFEATURE_Hi16_ZMM)
->  #define XFEATURE_MASK_PT		(1 << XFEATURE_PT_UNIMPLEMENTED_SO_FAR)
->  #define XFEATURE_MASK_PKRU		(1 << XFEATURE_PKRU)
-> +#define XFEATURE_MASK_SHSTK_USER	(1 << XFEATURE_SHSTK_USER)
-> +#define XFEATURE_MASK_SHSTK_KERNEL	(1 << XFEATURE_SHSTK_KERNEL)
->  
->  #define XFEATURE_MASK_FPSSE		(XFEATURE_MASK_FP | XFEATURE_MASK_SSE)
->  #define XFEATURE_MASK_AVX512		(XFEATURE_MASK_OPMASK \
-> @@ -229,6 +234,23 @@ struct pkru_state {
->  	u32				pad;
->  } __packed;
->  
-> +/*
-> + * State component 11 is Control flow Enforcement user states
-
-Why the Camel-cased naming?
-
-"Control" then "flow" then capitalized again "Enforcement".
-
-Fix all occurrences pls, especially the user-visible strings.
-
-> + */
-> +struct cet_user_state {
-> +	u64 u_cet;	/* user control flow settings */
-> +	u64 user_ssp;	/* user shadow stack pointer */
-
-Prefix both with "usr_" instead.
-
-> +} __packed;
-> +
-> +/*
-> + * State component 12 is Control flow Enforcement kernel states
-> + */
-> +struct cet_kernel_state {
-> +	u64 kernel_ssp;	/* kernel shadow stack */
-> +	u64 pl1_ssp;	/* ring-1 shadow stack */
-> +	u64 pl2_ssp;	/* ring-2 shadow stack */
-
-Just write "privilege level" everywhere - not "ring".
-
-Btw, do you see how the type and the name of all those other fields in
-that file are tabulated? Except yours...
-
-> +} __packed;
-> +
->  struct xstate_header {
->  	u64				xfeatures;
->  	u64				xcomp_bv;
-> diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-> index d8e2ec99f635..18b60748a34d 100644
-> --- a/arch/x86/include/asm/fpu/xstate.h
-> +++ b/arch/x86/include/asm/fpu/xstate.h
-> @@ -28,7 +28,9 @@
->  				  XFEATURE_MASK_Hi16_ZMM | \
->  				  XFEATURE_MASK_PKRU | \
->  				  XFEATURE_MASK_BNDREGS | \
-> -				  XFEATURE_MASK_BNDCSR)
-> +				  XFEATURE_MASK_BNDCSR | \
-> +				  XFEATURE_MASK_SHSTK_USER | \
-> +				  XFEATURE_MASK_SHSTK_KERNEL)
->  
->  #ifdef CONFIG_X86_64
->  #define REX_PREFIX	"0x48, "
-> diff --git a/arch/x86/include/uapi/asm/processor-flags.h b/arch/x86/include/uapi/asm/processor-flags.h
-> index bcba3c643e63..25311ec4b731 100644
-> --- a/arch/x86/include/uapi/asm/processor-flags.h
-> +++ b/arch/x86/include/uapi/asm/processor-flags.h
-> @@ -130,6 +130,8 @@
->  #define X86_CR4_SMAP		_BITUL(X86_CR4_SMAP_BIT)
->  #define X86_CR4_PKE_BIT		22 /* enable Protection Keys support */
->  #define X86_CR4_PKE		_BITUL(X86_CR4_PKE_BIT)
-> +#define X86_CR4_CET_BIT		23 /* enable Control flow Enforcement */
-> +#define X86_CR4_CET		_BITUL(X86_CR4_CET_BIT)
->  
->  /*
->   * x86-64 Task Priority Register, CR8
-> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-> index 605ec6decf3e..ad36ea28bfd1 100644
-> --- a/arch/x86/kernel/fpu/xstate.c
-> +++ b/arch/x86/kernel/fpu/xstate.c
-> @@ -35,6 +35,9 @@ static const char *xfeature_names[] =
->  	"Processor Trace (unused)"	,
->  	"Protection Keys User registers",
->  	"unknown xstate feature"	,
-> +	"Control flow User registers"	,
-> +	"Control flow Kernel registers"	,
-> +	"unknown xstate feature"	,
-
-So there are two "unknown xstate feature" array elems now...
-
->  static short xsave_cpuid_features[] __initdata = {
-> @@ -48,6 +51,9 @@ static short xsave_cpuid_features[] __initdata = {
->  	X86_FEATURE_AVX512F,
->  	X86_FEATURE_INTEL_PT,
->  	X86_FEATURE_PKU,
-> +	0,		   /* Unused */
-
-What's that for?
-
-> +	X86_FEATURE_SHSTK, /* XFEATURE_SHSTK_USER */
-> +	X86_FEATURE_SHSTK, /* XFEATURE_SHSTK_KERNEL */
->  };
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thank you.
