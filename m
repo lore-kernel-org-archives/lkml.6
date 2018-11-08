@@ -2,77 +2,98 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EA5ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F52DECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1E62081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1E62081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 3142220827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:04:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3142220827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeKIAjP (ORCPT
+        id S1727078AbeKIAkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:39:15 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35206 "EHLO mail.skyhub.de"
+        Thu, 8 Nov 2018 19:40:13 -0500
+Received: from mga14.intel.com ([192.55.52.115]:13569 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbeKIAjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:39:15 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id lXBDOdHRiHvi; Thu,  8 Nov 2018 16:03:19 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C1D351EC03C8;
-        Thu,  8 Nov 2018 16:03:19 +0100 (CET)
-Date:   Thu, 8 Nov 2018 16:03:18 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yi Wang <wang.yi59@zte.com.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, suravee.suthikulpanit@amd.com, puwen@hygon.cn,
-        davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn
-Subject: Re: [PATCH v2] x86/cpu: fix prototype warning
-Message-ID: <20181108150318.GD7543@zn.tnic>
-References: <1541639548-11149-1-git-send-email-wang.yi59@zte.com.cn>
+        id S1726469AbeKIAkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:40:13 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:04:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="106544802"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by orsmga001.jf.intel.com with ESMTP; 08 Nov 2018 07:04:06 -0800
+Date:   Thu, 8 Nov 2018 17:04:05 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108150405.GB14072@linux.intel.com>
+References: <CALCETrV=iodOQhvXAyjs0TQNbCaFdkhrZqRHvWTnBfo2m0qXpA@mail.gmail.com>
+ <1541541565.8854.13.camel@intel.com>
+ <7FF4802E-FBC5-4E6D-A8F6-8A65114F18C7@amacapital.net>
+ <20181106233515.GB11101@linux.intel.com>
+ <CALCETrVySfV64YN7DWf3rsAxfiugJKsRJCNmEn-AKQ4dPYeG4Q@mail.gmail.com>
+ <20181107000235.GC11101@linux.intel.com>
+ <CALCETrV_sMOeQGRkxoA8KMxEizagB9bD-mB2T-ro3F6O6OX9Xw@mail.gmail.com>
+ <20181107153452.GB22972@linux.intel.com>
+ <20181107190114.GA26603@linux.intel.com>
+ <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1541639548-11149-1-git-send-email-wang.yi59@zte.com.cn>
+In-Reply-To: <662fa2c8-c9a8-b2a8-ee8b-92a8a89c0630@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 09:12:28AM +0800, Yi Wang wrote:
-> This patch fix the following build warnings which because of missing
-> include file:
+On Wed, Nov 07, 2018 at 12:56:58PM -0800, Dave Hansen wrote:
+> On 11/7/18 11:01 AM, Sean Christopherson wrote:
+> > Going off comments in similar code related to UMIP, we'd need to figure
+> > out how to handle protection keys.
 > 
-> arch/x86/kernel/cpu/cacheinfo.c:647:6: warning: no previous prototype for ‘cacheinfo_amd_init_llc_id’ [-Wmissing-prototypes]
-> arch/x86/kernel/cpu/cacheinfo.c:686:6: warning: no previous prototype for ‘cacheinfo_hygon_init_llc_id’ [-Wmissing-prototypes]
-> arch/x86/kernel/cpu/scattered.c:37:6: warning: no previous prototype for ‘init_scattered_cpuid_features’ [-Wmissing-prototypes]
-> arch/x86/kernel/cpu/scattered.c:60:5: warning: no previous prototype for ‘get_scattered_cpuid_leaf’ [-Wmissing-prototypes]
+> There are two options:
+> 1. Don't depend on the userspace mapping.  Do get_user_pages() to find
+>    the instruction in the kernel direct map, and use that.
+> 2. Do a WRPKRU that allows read access, do the read, then put PKRU back.
+>    This is a pain because of preemption and all that jazz.
+> 
+> Right now, we just let the prefetch instruction detection fail if you
+> mark it unreadable with pkeys.  Tough cookies, basically.  But, that's
+> just the kernel being nice, but you need it for functionality, so it's
+> tougher.
 
-That function is gone in:
+I would go with one because it is the stable way to do it and we are
+100% sure to not conflict with pk's.
 
-https://git.kernel.org/tip/43500e6f294d175602606c77bfb0d8cd4ea88b4f
-
-You probably should run your test against tip/master.
-
-Also, you should say in your commit message that this is an extra
-warning - -Wmissing-prototypes - which is not enabled by default but a
-W=1 one.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
