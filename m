@@ -2,102 +2,130 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE1ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CA3ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB15720684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB15720684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CDBB20684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDBB20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeKID3l (ORCPT
+        id S1727255AbeKIDaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:29:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58352 "EHLO mx1.suse.de"
+        Thu, 8 Nov 2018 22:30:21 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59068 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726801AbeKID3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:29:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BFA67AD5C;
-        Thu,  8 Nov 2018 17:53:03 +0000 (UTC)
-Date:   Thu, 8 Nov 2018 18:53:01 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        dan.j.williams@intel.com, linux@dominikbrodowski.net,
-        dave.hansen@linux.intel.com, dwmw@amazon.co.uk, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: mmap: remove verify_mm_writelocked()
-Message-ID: <20181108175301.GC18390@dhcp22.suse.cz>
-References: <20181108174856.10811-1-tiny.windzz@gmail.com>
+        id S1726781AbeKIDaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:30:21 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 86CCF341B93CD;
+        Fri,  9 Nov 2018 01:53:40 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 9 Nov 2018 01:53:30 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <joro@8bytes.org>
+CC:     <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <will.deacon@arm.com>,
+        <ganapatrao.kulkarni@cavium.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] iommu/dma: Use NUMA aware memory allocations in __iommu_dma_alloc_pages()
+Date:   Fri, 9 Nov 2018 01:55:09 +0800
+Message-ID: <1541699709-25474-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108174856.10811-1-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 08-11-18 12:48:56, Yangtao Li wrote:
-> We should get rid of this function. It no longer serves its purpose.This
-> is a historical artifact from 2005 where do_brk was called outside of
-> the core mm.We do have a proper abstraction in vm_brk_flags and that one
-> does the locking properly.So there is no need to use this function.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Change function __iommu_dma_alloc_pages() to allocate memory/pages
+for DMA from respective device NUMA node.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+Originally-from: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
 
-> ---
->  mm/mmap.c | 16 ----------------
->  1 file changed, 16 deletions(-)
-> 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index f7cd9cb966c0..1cee506494d2 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2910,16 +2910,6 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
->  	return ret;
->  }
->  
-> -static inline void verify_mm_writelocked(struct mm_struct *mm)
-> -{
-> -#ifdef CONFIG_DEBUG_VM
-> -	if (unlikely(down_read_trylock(&mm->mmap_sem))) {
-> -		WARN_ON(1);
-> -		up_read(&mm->mmap_sem);
-> -	}
-> -#endif
-> -}
-> -
->  /*
->   *  this is really a simplified "do_mmap".  it only handles
->   *  anonymous maps.  eventually we may be able to do some
-> @@ -2946,12 +2936,6 @@ static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long fla
->  	if (error)
->  		return error;
->  
-> -	/*
-> -	 * mm->mmap_sem is required to protect against another thread
-> -	 * changing the mappings in case we sleep.
-> -	 */
-> -	verify_mm_writelocked(mm);
-> -
->  	/*
->  	 * Clear old maps.  this also does some error checking for us
->  	 */
-> -- 
-> 2.17.0
-> 
+This patch was originally posted by Ganapatrao in [1] *.
 
+However, after initial review, it was never reposted (due to lack of
+cycles, I think). In addition, the functionality in its sibling patches
+were merged through patches, as mentioned in [2]; this also refers to a
+discussion on device local allocations vs CPU local allocations for DMA
+pool, and which is better [3].
+
+However, as mentioned in [3], dma_alloc_coherent() uses the locality
+information from the device - as in direct DMA - so this patch is just
+applying this same policy.
+
+[1] https://lore.kernel.org/patchwork/patch/833004/
+[2] https://lkml.org/lkml/2018/8/22/391
+[3] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1692998.html
+
+* Authorship on this updated patch may need to be fixed - I add not want to
+  add Ganapatrao's SOB without permission.
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index d1b0475..ada00bc 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -449,20 +449,17 @@ static void __iommu_dma_free_pages(struct page **pages, int count)
+ 	kvfree(pages);
+ }
+ 
+-static struct page **__iommu_dma_alloc_pages(unsigned int count,
+-		unsigned long order_mask, gfp_t gfp)
++static struct page **__iommu_dma_alloc_pages(struct device *dev,
++		unsigned int count, unsigned long order_mask, gfp_t gfp)
+ {
+ 	struct page **pages;
+-	unsigned int i = 0, array_size = count * sizeof(*pages);
++	unsigned int i = 0, nid = dev_to_node(dev);
+ 
+ 	order_mask &= (2U << MAX_ORDER) - 1;
+ 	if (!order_mask)
+ 		return NULL;
+ 
+-	if (array_size <= PAGE_SIZE)
+-		pages = kzalloc(array_size, GFP_KERNEL);
+-	else
+-		pages = vzalloc(array_size);
++	pages = kvzalloc_node(count * sizeof(*pages), GFP_KERNEL, nid);
+ 	if (!pages)
+ 		return NULL;
+ 
+@@ -483,8 +480,10 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
+ 			unsigned int order = __fls(order_mask);
+ 
+ 			order_size = 1U << order;
+-			page = alloc_pages((order_mask - order_size) ?
+-					   gfp | __GFP_NORETRY : gfp, order);
++			page = alloc_pages_node(nid,
++						(order_mask - order_size) ?
++						gfp | __GFP_NORETRY : gfp,
++						order);
+ 			if (!page)
+ 				continue;
+ 			if (!order)
+@@ -569,7 +568,8 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+ 		alloc_sizes = min_size;
+ 
+ 	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
++	pages = __iommu_dma_alloc_pages(dev, count, alloc_sizes >> PAGE_SHIFT,
++					gfp);
+ 	if (!pages)
+ 		return NULL;
+ 
 -- 
-Michal Hocko
-SUSE Labs
+1.9.1
+
