@@ -2,85 +2,102 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2D3ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E27ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5020120825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5020120825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FDF620857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:05:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="PwkNx8vr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDF620857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maine.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeKIBlN (ORCPT
+        id S1727603AbeKIBlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:41:13 -0500
-Received: from foss.arm.com ([217.140.101.70]:44402 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeKIBlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:41:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1511480D;
-        Thu,  8 Nov 2018 08:05:04 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9033F3F5CF;
-        Thu,  8 Nov 2018 08:05:02 -0800 (PST)
-Date:   Thu, 8 Nov 2018 16:04:57 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 3/4] Documentation: bindings: Add missing Amlogic SCPI
- sensor bindings
-Message-ID: <20181108160457.GA10953@e107155-lin>
-References: <20181108135352.8459-1-jbrunet@baylibre.com>
- <20181108135352.8459-4-jbrunet@baylibre.com>
+        Thu, 8 Nov 2018 20:41:20 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39225 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeKIBlT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 20:41:19 -0500
+Received: by mail-qk1-f195.google.com with SMTP id e4so27332551qkh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:05:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=IEMbJENmoZLXKePiWek5YqrFsU33ooTt7wfBA1G1VSY=;
+        b=PwkNx8vrBlgieU8m3kuvtkzAQjQL7vkh05q4nO/teL8G+OwxQVmUS4o988lNW7Ds0M
+         ozZGNCI4FM55CRmy2X5CbF7MrIWKcbA7+xT1AzxZQysOD2uer8Ugs8D5JaIlzoChrYXn
+         tMXRpVvD54gI2Kl4xt9xGHfKTXBHNquWTGYm4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=IEMbJENmoZLXKePiWek5YqrFsU33ooTt7wfBA1G1VSY=;
+        b=ZhbAxSM/KP6RxLt3ch8ZK9N7ZYSyHuZR7iu7zUTY4nOcdndPSXBNHX3HN2+aa/rxVB
+         E252KtY3DO0rq3ToW1DnnML9dFo5yTU+P3yOdAFy9efJ+zkPGdNoNCjuNPzxcSPMLlAo
+         rxHctlOf2RmHqLxjMazX3wYVadAlXng0MSZxXNzHFJ0c9nK6V930CWkDwRNMYZfxcb1r
+         hbXmWtkLUX4CjpKPAU3L7SDLh84tZUD+3Xb7xrE0Xins8SXdLLGRGhAWUOh8jsfmY//c
+         +kLKv9K+Z2B4Tks+FkSSeumqnzxLveirmwCxegyp27KNREay0syOK0A+i+AP5U/0ywoD
+         Gzrg==
+X-Gm-Message-State: AGRZ1gJfzX1LLNqerZD3yS9IlHobC0IBd3GVQDMnO9WSlWodUs49UQUU
+        Ycl5myibT7os5fe+H2yCi0Heuw==
+X-Google-Smtp-Source: AJdET5dA0sJivKAz2CJ9ieeU8+fA6MHJY304XXauK7SlFiCe29jdMbuXWp9eSPA/xkEms5Z8+Dv+Ag==
+X-Received: by 2002:a0c:d7d1:: with SMTP id g17mr4987933qvj.183.1541693109861;
+        Thu, 08 Nov 2018 08:05:09 -0800 (PST)
+Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id f30-v6sm3506210qtf.50.2018.11.08.08.05.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 08:05:08 -0800 (PST)
+From:   Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date:   Thu, 8 Nov 2018 11:05:07 -0500 (EST)
+X-X-Sender: vince@macbook-air
+To:     Vince Weaver <vincent.weaver@maine.edu>
+cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        torvalds@linux-foundation.org
+Subject: Re: perf: perf_fuzzer triggers NULL pointer dereference
+In-Reply-To: <alpine.DEB.2.21.1811081041070.7406@macbook-air>
+Message-ID: <alpine.DEB.2.21.1811081100490.7406@macbook-air>
+References: <alpine.DEB.2.21.1811081041070.7406@macbook-air>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108135352.8459-4-jbrunet@baylibre.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 02:53:51PM +0100, Jerome Brunet wrote:
-> amlogic,meson-gxbb-scpi-sensors is both the driver and DT but is not
-> documented. Just add it to amlogic's scpi documentation
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/arm/amlogic,scpi.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/amlogic,scpi.txt b/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
-> index 7b9a861e9306..5ab59da052df 100644
-> --- a/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
-> +++ b/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
-> @@ -17,4 +17,11 @@ Required sub-node properties:
->  - compatible : should be "amlogic,meson-gxbb-scp-shmem" for SRAM based shared
->  		memory on Amlogic GXBB SoC.
->  
-> +Sensor bindings for the sensors based on SCPI Message Protocol
-> +--------------------------------------------------------------
-> +SCPI provides an API to access the various sensors on the SoC.
-> +
-> +Required properties:
-> +- compatible : should be "amlogic,meson-gxbb-scpi-sensors".
-> +
+On Thu, 8 Nov 2018, Vince Weaver wrote:
 
-Not sure if it's worth mentioning the reason for being able to identify
-amlogic,meson-gxbb sensors from generic scpi ones. IIRC it was for the
-unit values of these sensors are different ? But I will leave that to
-DT or platform maintainers' taste.
+> [91760.326510] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> [91760.334876] PGD 0 P4D 0 
+> [91760.337596] Oops: 0000 [#1] SMP PTI
+> [91760.341332] CPU: 6 PID: 0 Comm: swapper/6 Tainted: G        W         4.20.0-rc1+ #119
+> [91760.349816] Hardware name: LENOVO 10AM000AUS/SHARKBAY, BIOS FBKT72AUS 01/26/2014
+> [91760.357723] RIP: 0010:perf_prepare_sample+0x82/0x4a0
 
---
-Regards,
-Sudeep
+so what's the best way to do the equivelent of addr2line on something like 
+this, now that we aren't allowed to know the RIP anymore?
+
+I probably knew at one point but I've spent the last 3 months doing 6502 
+assembly language Demoscene coding and so apparently I've forgotten 
+everything I once knew about x86_64 kernel interfaces.  (As can be 
+imagined, Demoscene coding work is a lot more mentally rewarding than 
+perf_fuzzer work).
+
+Vince
+
+
