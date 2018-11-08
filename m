@@ -2,52 +2,53 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DC6ECDE47
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2F0ECDE4C
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E178B20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24C9E21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vt6RX3Nw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E178B20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCpAhwaP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C9E21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730968AbeKIHja (ORCPT
+        id S1730994AbeKIHja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 02:39:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59128 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730953AbeKIHj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:39:29 -0500
+        id S1728072AbeKIHj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:39:28 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50D6121486;
-        Thu,  8 Nov 2018 22:02:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DE9221019;
+        Thu,  8 Nov 2018 22:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714520;
-        bh=SHaZf5qieokGJmi7i14awTMCp1/Urhs+3hqYSvUjXU8=;
+        s=default; t=1541714519;
+        bh=LOKI/ylXW7fTq4Ff8c4QOMFbxdDHv5cXkGQN7iRQc3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vt6RX3Nw65cSvrMhDNB29C8/niNnvmmLPzDE1qyUyoybcXJnblpNmO0JAP6xmYB49
-         3P2X2B+odWspp1TGTJaxDrH3Kd3E68Cl7g+x72pJoQlZ9Bri8X62N8bNxtRmOT4pDR
-         X5LIhpJ0RCVE3C36T+se2ekNGDt2LdfEIlhk/lGc=
+        b=jCpAhwaPlH6zvSkxnAw/oGSwQKEoiRFPtsP+sODG/T//dl04plLfoAQhUGxMJKs1F
+         FTlEYYlb8aLmiZg342DmsK+eFQU9jh/HHTMhB0rd4U0NLlydqjQN1ttv2lJHQVAAsz
+         vZYfEOTgpwotUlsvieV39GxXBvgOPswQ/bhTFERk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 010/171] ARM: dts: BCM63xx: Fix incorrect interrupt specifiers
-Date:   Thu,  8 Nov 2018 13:49:40 -0800
-Message-Id: <20181108215127.991527487@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.4 106/114] RDMA/ucma: Fix Spectre v1 vulnerability
+Date:   Thu,  8 Nov 2018 13:52:01 -0800
+Message-Id: <20181108215110.346546717@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
-References: <20181108215127.257643509@linuxfoundation.org>
+In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
+References: <20181108215059.051093652@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -58,83 +59,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit 3ab97942d0213b6583a5408630a8cbbfbf54730f ]
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-A number of our interrupts were incorrectly specified, fix both the PPI
-and SPI interrupts to be correct.
+commit a3671a4f973ee9d9621d60166cc3b037c397d604 upstream.
 
-Fixes: b5762cacc411 ("ARM: bcm63138: add NAND DT support")
-Fixes: 46d4bca0445a ("ARM: BCM63XX: add BCM63138 minimal Device Tree")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+hdr.cmd can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
+
+This issue was detected with the help of Smatch:
+
+drivers/infiniband/core/ucma.c:1686 ucma_write() warn: potential
+spectre issue 'ucma_cmd_table' [r] (local cap)
+
+Fix this by sanitizing hdr.cmd before using it to index
+ucm_cmd_table.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/bcm63138.dtsi | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/infiniband/core/ucma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
-index d0560e8cd6de..547369c69e96 100644
---- a/arch/arm/boot/dts/bcm63138.dtsi
-+++ b/arch/arm/boot/dts/bcm63138.dtsi
-@@ -105,21 +105,23 @@
- 		global_timer: timer@1e200 {
- 			compatible = "arm,cortex-a9-global-timer";
- 			reg = <0x1e200 0x20>;
--			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
- 			clocks = <&axi_clk>;
- 		};
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -44,6 +44,8 @@
+ #include <linux/module.h>
+ #include <linux/nsproxy.h>
  
- 		local_timer: local-timer@1e600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x1e600 0x20>;
--			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_EDGE_RISING)>;
- 			clocks = <&axi_clk>;
- 		};
++#include <linux/nospec.h>
++
+ #include <rdma/rdma_user_cm.h>
+ #include <rdma/ib_marshall.h>
+ #include <rdma/rdma_cm.h>
+@@ -1627,6 +1629,7 @@ static ssize_t ucma_write(struct file *f
  
- 		twd_watchdog: watchdog@1e620 {
- 			compatible = "arm,cortex-a9-twd-wdt";
- 			reg = <0x1e620 0x20>;
--			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+ 	if (hdr.cmd >= ARRAY_SIZE(ucma_cmd_table))
+ 		return -EINVAL;
++	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucma_cmd_table));
  
- 		armpll: armpll {
-@@ -157,7 +159,7 @@
- 		serial0: serial@600 {
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x600 0x1b>;
--			interrupts = <GIC_SPI 32 0>;
-+			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&periph_clk>;
- 			clock-names = "periph";
- 			status = "disabled";
-@@ -166,7 +168,7 @@
- 		serial1: serial@620 {
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x620 0x1b>;
--			interrupts = <GIC_SPI 33 0>;
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&periph_clk>;
- 			clock-names = "periph";
- 			status = "disabled";
-@@ -179,7 +181,7 @@
- 			reg = <0x2000 0x600>, <0xf0 0x10>;
- 			reg-names = "nand", "nand-int-base";
- 			status = "disabled";
--			interrupts = <GIC_SPI 38 0>;
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "nand";
- 		};
- 
--- 
-2.17.1
-
+ 	if (hdr.in + sizeof(hdr) > len)
+ 		return -EINVAL;
 
 
