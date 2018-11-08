@@ -2,60 +2,51 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D141ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4848BECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B0A20840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0564D2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNBWUpFd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B0A20840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V58P75IY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0564D2086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeKIHbl (ORCPT
+        id S1728099AbeKIHbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:31:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46306 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:31:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728003AbeKIHbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:31:40 -0500
+        id S1728072AbeKIHbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:31:42 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 456052081C;
-        Thu,  8 Nov 2018 21:54:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1939A20883;
+        Thu,  8 Nov 2018 21:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714053;
-        bh=iunFs9zRDgeIS8K8tMOC4VZPpUMBuTRj8QOpRbEGfWs=;
+        s=default; t=1541714055;
+        bh=ZhrsslNy1CcLEdVuuAIh/5KqLfIfi14CNRbtwI36oec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fNBWUpFdGZC+jvdLP/VGGLgzcHMLL08ONYgC4fJ43RLjF6XJN/Sc1Fb0gLfRe3ceY
-         FDXVflyn+vg0vNs9+EeI1pP1tc6cr8sax0It0xMgZ+il2g7YTvpZev5+rqOrycTRiR
-         jpuYGJ7J8cQSjuOQvV3XeXQUfVh+rgOw0/ks5Rdo=
+        b=V58P75IY1lNkQBRJaCC5efPV+7CvMEI1W2/+QR0v+2ipbvwE3hXfLF9mavUZ2Tj+i
+         pIrh9jLJ3ys3Jv64QP2tcC2oGuDwIO37B9wOo/EY6isJTFpoZcITl+KCHkWXytoE2l
+         RKDwusn5i9EXdCMxg01uT9Rlji0iWoswnms+jnkk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Vagin <avagin@openvz.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 030/144] perf/ring_buffer: Prevent concurent ring buffer access
-Date:   Thu,  8 Nov 2018 13:50:01 -0800
-Message-Id: <20181108215057.028725354@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 016/144] ip6_tunnel: be careful when accessing the inner header
+Date:   Thu,  8 Nov 2018 13:49:47 -0800
+Message-Id: <20181108215055.960631415@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -73,107 +64,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
+From: Paolo Abeni <pabeni@redhat.com>
 
-Some of the scheduling tracepoints allow the perf_tp_event
-code to write to ring buffer under different cpu than the
-code is running on.
+[ Upstream commit 76c0ddd8c3a683f6e2c6e60e11dc1a1558caf4bc ]
 
-This results in corrupted ring buffer data demonstrated in
-following perf commands:
+the ip6 tunnel xmit ndo assumes that the processed skb always
+contains an ip[v6] header, but syzbot has found a way to send
+frames that fall short of this assumption, leading to the following splat:
 
-  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
-  # Running 'sched/messaging' benchmark:
-  # 20 sender and receiver processes per group
-  # 10 groups == 400 processes run
+BUG: KMSAN: uninit-value in ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307
+[inline]
+BUG: KMSAN: uninit-value in ip6_tnl_start_xmit+0x7d2/0x1ef0
+net/ipv6/ip6_tunnel.c:1390
+CPU: 0 PID: 4504 Comm: syz-executor558 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1307 [inline]
+  ip6_tnl_start_xmit+0x7d2/0x1ef0 net/ipv6/ip6_tunnel.c:1390
+  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
+  xmit_one net/core/dev.c:3026 [inline]
+  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
+  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c70/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x441819
+RSP: 002b:00007ffe58ee8268 EFLAGS: 00000213 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441819
+RDX: 0000000000000002 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000402510
+R13: 00000000004025a0 R14: 0000000000000000 R15: 0000000000000000
 
-       Total time: 0.383 [sec]
-  [ perf record: Woken up 8 times to write data ]
-  0x42b890 [0]: failed to process type: -1765585640
-  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6454/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmmsg+0x42d/0x800 net/socket.c:2136
+  SYSC_sendmmsg+0xc4/0x110 net/socket.c:2167
+  SyS_sendmmsg+0x63/0x90 net/socket.c:2162
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-  # perf report --stdio
-  0x42b890 [0]: failed to process type: -1765585640
+This change addresses the issue adding the needed check before
+accessing the inner header.
 
-The reason for the corruption are some of the scheduling tracepoints,
-that have __perf_task dfined and thus allow to store data to another
-cpu ring buffer:
+The ipv4 side of the issue is apparently there since the ipv4 over ipv6
+initial support, and the ipv6 side predates git history.
 
-  sched_waking
-  sched_wakeup
-  sched_wakeup_new
-  sched_stat_wait
-  sched_stat_sleep
-  sched_stat_iowait
-  sched_stat_blocked
-
-The perf_tp_event function first store samples for current cpu
-related events defined for tracepoint:
-
-    hlist_for_each_entry_rcu(event, head, hlist_entry)
-      perf_swevent_event(event, count, &data, regs);
-
-And then iterates events of the 'task' and store the sample
-for any task's event that passes tracepoint checks:
-
-  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
-
-  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-    if (event->attr.type != PERF_TYPE_TRACEPOINT)
-      continue;
-    if (event->attr.config != entry->type)
-      continue;
-
-    perf_swevent_event(event, count, &data, regs);
-  }
-
-Above code can race with same code running on another cpu,
-ending up with 2 cpus trying to store under the same ring
-buffer, which is specifically not allowed.
-
-This patch prevents the problem, by allowing only events with the same
-current cpu to receive the event.
-
-NOTE: this requires the use of (per-task-)per-cpu buffers for this
-feature to work; perf-record does this.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-[peterz: small edits to Changelog]
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrew Vagin <avagin@openvz.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
-Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: c4d3efafcc93 ("[IPV6] IP6TUNNEL: Add support to IPv4 over IPv6 tunnel.")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+3fde91d4d394747d6db4@syzkaller.appspotmail.com
+Tested-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv6/ip6_tunnel.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f08f691de59..98ec8186b7d6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6351,6 +6351,8 @@ void perf_tp_event(u64 addr, u64 count, void *record, int entry_size,
- 			goto unlock;
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1083,13 +1083,19 @@ static inline int
+ ip4ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	const struct iphdr  *iph = ip_hdr(skb);
++	const struct iphdr  *iph;
+ 	int encap_limit = -1;
+ 	struct flowi6 fl6;
+ 	__u8 dsfield;
+ 	__u32 mtu;
+ 	int err;
  
- 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-+			if (event->cpu != smp_processor_id())
-+				continue;
- 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
- 				continue;
- 			if (event->attr.config != entry->type)
--- 
-2.17.1
-
++	/* ensure we can access the full inner ip header */
++	if (!pskb_may_pull(skb, sizeof(struct iphdr)))
++		return -1;
++
++	iph = ip_hdr(skb);
++
+ 	if ((t->parms.proto != IPPROTO_IPIP && t->parms.proto != 0) ||
+ 	    !ip6_tnl_xmit_ctl(t))
+ 		return -1;
+@@ -1124,7 +1130,7 @@ static inline int
+ ip6ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+-	struct ipv6hdr *ipv6h = ipv6_hdr(skb);
++	struct ipv6hdr *ipv6h;
+ 	int encap_limit = -1;
+ 	__u16 offset;
+ 	struct flowi6 fl6;
+@@ -1132,6 +1138,10 @@ ip6ip6_tnl_xmit(struct sk_buff *skb, str
+ 	__u32 mtu;
+ 	int err;
+ 
++	if (unlikely(!pskb_may_pull(skb, sizeof(*ipv6h))))
++		return -1;
++
++	ipv6h = ipv6_hdr(skb);
+ 	if ((t->parms.proto != IPPROTO_IPV6 && t->parms.proto != 0) ||
+ 	    !ip6_tnl_xmit_ctl(t) || ip6_tnl_addr_conflict(t, ipv6h))
+ 		return -1;
 
 
