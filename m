@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A765C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A282C0044B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E69420818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D43D20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:27:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qen99xgr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E69420818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXIK2TOt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D43D20857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbeKIHko (ORCPT
+        id S1730650AbeKIIEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:40:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60476 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:04:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727853AbeKIHkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:40:43 -0500
+        id S1727285AbeKIHko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:40:44 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C10AF20883;
-        Thu,  8 Nov 2018 22:03:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6302120892;
+        Thu,  8 Nov 2018 22:03:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714593;
-        bh=stoz+FCVHPNoI1Kz7kTPrir9Wu6DGJIZGdbcfYRGYBY=;
+        s=default; t=1541714594;
+        bh=POCkLxyMovQ/ZYSlv5w1K2rUgKxnbcbcr7VWEq7pnvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qen99xgrWOR5mnv6NHyyH8paWL6Y71cL1IzyRnItcXB+HqHfo5DqAmz7NrvcR+fMZ
-         bNQROfFwIh7Hj2YPyO8cbtL7jh+k4pb37OWBrCXttjViFejcNumZbe1UidJAukXMej
-         FvJq2uN1wTrvPjMH2kPXcLmXd/lpWF44VV0Ga14g=
+        b=bXIK2TOthxhGc4N64/EWmv0pWeZRiSCJdXs/KEg6O2i2Vj8SV8Kyrj/ecsNULVOZ9
+         4NFuXDOiUlj7vJrLHI6aroE2Xwy0MddChin38WaMXl8cUT+tD0noTKywKFHoalVs8S
+         PMQXTC0mF6WbObP8qO/c9Pcy8NUAv0/DaQxcuPQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nathan Chancellor <natechancellor@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 018/171] qed: Avoid implicit enum conversion in qed_roce_mode_to_flavor
-Date:   Thu,  8 Nov 2018 13:49:48 -0800
-Message-Id: <20181108215128.586309990@linuxfoundation.org>
+Subject: [PATCH 4.9 019/171] qed: Avoid constant logical operation warning in qed_vf_pf_acquire
+Date:   Thu,  8 Nov 2018 13:49:49 -0800
+Message-Id: <20181108215128.650516042@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,70 +64,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d3a315795b4ce8b105a64a90699103121bde04a8 ]
+[ Upstream commit 1c492a9d55ba99079210ed901dd8a5423f980487 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+Clang warns when a constant is used in a boolean context as it thinks a
+bitwise operation may have been intended.
 
-drivers/net/ethernet/qlogic/qed/qed_roce.c:153:12: warning: implicit
-conversion from enumeration type 'enum roce_mode' to different
-enumeration type 'enum roce_flavor' [-Wenum-conversion]
-                flavor = ROCE_V2_IPV6;
-                       ~ ^~~~~~~~~~~~
-drivers/net/ethernet/qlogic/qed/qed_roce.c:156:12: warning: implicit
-conversion from enumeration type 'enum roce_mode' to different
-enumeration type 'enum roce_flavor' [-Wenum-conversion]
-                flavor = MAX_ROCE_MODE;
-                       ~ ^~~~~~~~~~~~~
-2 warnings generated.
+drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: warning: use of logical
+'&&' with constant operand [-Wconstant-logical-operand]
+        if (!p_iov->b_pre_fp_hsi &&
+                                 ^
+drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: note: use '&' for a
+bitwise operation
+        if (!p_iov->b_pre_fp_hsi &&
+                                 ^~
+                                 &
+drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: note: remove constant
+to silence this warning
+        if (!p_iov->b_pre_fp_hsi &&
+                                ~^~
+1 warning generated.
 
-Use the appropriate values from the expected type, roce_flavor:
+This has been here since commit 1fe614d10f45 ("qed: Relax VF firmware
+requirements") and I am not entirely sure why since 0 isn't a special
+case. Just remove the statement causing Clang to warn since it isn't
+required.
 
-ROCE_V2_IPV6 = RROCE_IPV6 = 2
-MAX_ROCE_MODE = MAX_ROCE_FLAVOR = 3
-
-While we're add it, ditch the local variable flavor, we can just return
-the value directly from the switch statement.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Link: https://github.com/ClangBuiltLinux/linux/issues/126
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_roce.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_vf.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
-index d9dcb0d1714c..07783d13df71 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
-@@ -1059,23 +1059,16 @@ static void qed_rdma_copy_gids(struct qed_rdma_qp *qp, __le32 *src_gid,
- 
- static enum roce_flavor qed_roce_mode_to_flavor(enum roce_mode roce_mode)
- {
--	enum roce_flavor flavor;
--
- 	switch (roce_mode) {
- 	case ROCE_V1:
--		flavor = PLAIN_ROCE;
--		break;
-+		return PLAIN_ROCE;
- 	case ROCE_V2_IPV4:
--		flavor = RROCE_IPV4;
--		break;
-+		return RROCE_IPV4;
- 	case ROCE_V2_IPV6:
--		flavor = ROCE_V2_IPV6;
--		break;
-+		return RROCE_IPV6;
- 	default:
--		flavor = MAX_ROCE_MODE;
--		break;
-+		return MAX_ROCE_FLAVOR;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+index faf8215872de..9cc02b94328a 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -295,7 +295,6 @@ static int qed_vf_pf_acquire(struct qed_hwfn *p_hwfn)
  	}
--	return flavor;
- }
  
- static int qed_roce_alloc_cid(struct qed_hwfn *p_hwfn, u16 *cid)
+ 	if (!p_iov->b_pre_fp_hsi &&
+-	    ETH_HSI_VER_MINOR &&
+ 	    (resp->pfdev_info.minor_fp_hsi < ETH_HSI_VER_MINOR)) {
+ 		DP_INFO(p_hwfn,
+ 			"PF is using older fastpath HSI; %02x.%02x is configured\n",
 -- 
 2.17.1
 
