@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF558ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF25ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75BF0208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875A12089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:12:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuHT+6mF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BF0208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjIsRNRI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 875A12089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731978AbeKIHtr (ORCPT
+        id S1732091AbeKIHuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:49:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41338 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732089AbeKIHrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:47:35 -0500
+        id S1730654AbeKIHr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:47:29 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 002232089F;
-        Thu,  8 Nov 2018 22:10:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28E99208A3;
+        Thu,  8 Nov 2018 22:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541715004;
-        bh=xAaC0PX3DpXt1VbrktvX3gWRg9i5jqNAw5Ooi3sASUw=;
+        s=default; t=1541714997;
+        bh=x90ORX4s+u52P4dF98f/FM1dr+Gkw4qq6ZklxNeWG8M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UuHT+6mFMOo6Nle7vFW3exPyUUc5sQ+DzVtfYmo2HpOkU87rNXIGWQI3WnUOQDst/
-         0XBaqHYc67RUNWblPLl87PUalZO929Kd4Yv+ZYz6meOLdIXvD0CekzlIXiGSxIdUJi
-         Ipq37k/evgUTGAhSrKxDIjEG3VFx75k0CIOo/ouk=
+        b=tjIsRNRIdqHelBByq86jYduS4C4AC+jzg9JSMjW8yoL6r53Ka0kGVVj24yEkL06mm
+         TlzDD7FXPccKDwXkPnyfD8MYxWbN4YXWlNVeLpOPKpH+Pzp9xjK1yNvUMNzZvR5izj
+         JfEhDUE9qEuECEBKex0xwnEmVZ5l9K/yvx0CTa4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lin <ming.l@ssi.samsung.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Xiao Ni <xni@redhat.com>,
-        Mariusz Dabrowski <mariusz.dabrowski@intel.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 23/34] block: dont deal with discard limit in blkdev_issue_discard()
-Date:   Thu,  8 Nov 2018 13:52:52 -0800
-Message-Id: <20181108215140.348449135@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>
+Subject: [PATCH 4.18 20/34] usb: roles: intel_xhci: Fix Unbalanced pm_runtime_enable
+Date:   Thu,  8 Nov 2018 13:52:49 -0800
+Message-Id: <20181108215140.176881646@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -65,85 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>
 
-commit 744889b7cbb56a64f957e65ade7cb65fe3f35714 upstream.
+commit 009b1948e153ae448f62f1887e2b58d0e05db51b upstream.
 
-blk_queue_split() does respect this limit via bio splitting, so no
-need to do that in blkdev_issue_discard(), then we can align to
-normal bio submit(bio_add_page() & submit_bio()).
+Add missing pm_runtime_disable() to remove(), in order to avoid
+an Unbalanced pm_runtime_enable when the module is removed and
+re-probed.
 
-More importantly, this patch fixes one issue introduced in a22c4d7e34402cc
-("block: re-add discard_granularity and alignment checks"), in which
-zero discard bio may be generated in case of zero alignment.
+Error log:
+root@intel-corei7-64:~# modprobe -r intel_xhci_usb_role_switch
+root@intel-corei7-64:~# modprobe intel_xhci_usb_role_switch
+intel_xhci_usb_sw intel_xhci_usb_sw: Unbalanced pm_runtime_enable!
 
-Fixes: a22c4d7e34402ccdf3 ("block: re-add discard_granularity and alignment checks")
-Cc: stable@vger.kernel.org
-Cc: Ming Lin <ming.l@ssi.samsung.com>
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Xiao Ni <xni@redhat.com>
-Tested-by: Mariusz Dabrowski <mariusz.dabrowski@intel.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: cb2968468605 (usb: roles: intel_xhci: Enable runtime PM)
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-lib.c |   28 ++--------------------------
- 1 file changed, 2 insertions(+), 26 deletions(-)
+ drivers/usb/roles/intel-xhci-usb-role-switch.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -29,9 +29,7 @@ int __blkdev_issue_discard(struct block_
+--- a/drivers/usb/roles/intel-xhci-usb-role-switch.c
++++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+@@ -161,6 +161,8 @@ static int intel_xhci_usb_remove(struct
  {
- 	struct request_queue *q = bdev_get_queue(bdev);
- 	struct bio *bio = *biop;
--	unsigned int granularity;
- 	unsigned int op;
--	int alignment;
- 	sector_t bs_mask;
+ 	struct intel_xhci_usb_data *data = platform_get_drvdata(pdev);
  
- 	if (!q)
-@@ -54,38 +52,16 @@ int __blkdev_issue_discard(struct block_
- 	if ((sector | nr_sects) & bs_mask)
- 		return -EINVAL;
- 
--	/* Zero-sector (unknown) and one-sector granularities are the same.  */
--	granularity = max(q->limits.discard_granularity >> 9, 1U);
--	alignment = (bdev_discard_alignment(bdev) >> 9) % granularity;
--
- 	while (nr_sects) {
--		unsigned int req_sects;
--		sector_t end_sect, tmp;
-+		unsigned int req_sects = nr_sects;
-+		sector_t end_sect;
- 
--		/*
--		 * Issue in chunks of the user defined max discard setting,
--		 * ensuring that bi_size doesn't overflow
--		 */
--		req_sects = min_t(sector_t, nr_sects,
--					q->limits.max_discard_sectors);
- 		if (!req_sects)
- 			goto fail;
- 		if (req_sects > UINT_MAX >> 9)
- 			req_sects = UINT_MAX >> 9;
- 
--		/*
--		 * If splitting a request, and the next starting sector would be
--		 * misaligned, stop the discard at the previous aligned sector.
--		 */
- 		end_sect = sector + req_sects;
--		tmp = end_sect;
--		if (req_sects < nr_sects &&
--		    sector_div(tmp, granularity) != alignment) {
--			end_sect = end_sect - alignment;
--			sector_div(end_sect, granularity);
--			end_sect = end_sect * granularity + alignment;
--			req_sects = end_sect - sector;
--		}
- 
- 		bio = next_bio(bio, 0, gfp_mask);
- 		bio->bi_iter.bi_sector = sector;
++	pm_runtime_disable(&pdev->dev);
++
+ 	usb_role_switch_unregister(data->role_sw);
+ 	return 0;
+ }
 
 
