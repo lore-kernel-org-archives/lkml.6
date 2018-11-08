@@ -2,67 +2,98 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6428CC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9331C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E51F20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E51F20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B40D2086A
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B40D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbeKHTsr (ORCPT
+        id S1726944AbeKHTs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:48:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59814 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726405AbeKHTsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:48:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 44C91AFF0;
-        Thu,  8 Nov 2018 10:14:01 +0000 (UTC)
-Date:   Thu, 8 Nov 2018 11:14:00 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Arun KS <arunks@codeaurora.org>
-Cc:     akpm@linux-foundation.org, keescook@chromium.org,
-        khlebnikov@yandex-team.ru, minchan@kernel.org, vbabka@suse.cz,
-        osalvador@suse.de, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, getarunks@gmail.com
-Subject: Re: [PATCH v3 4/4] mm: Remove managed_page_count spinlock
-Message-ID: <20181108101400.GU27423@dhcp22.suse.cz>
-References: <1541665398-29925-1-git-send-email-arunks@codeaurora.org>
- <1541665398-29925-5-git-send-email-arunks@codeaurora.org>
- <20181108083400.GQ27423@dhcp22.suse.cz>
- <4e5e2923a424ab2e2c50e56b2e538a3c@codeaurora.org>
+        Thu, 8 Nov 2018 14:48:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:37618 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726405AbeKHTs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 14:48:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F5BF80D;
+        Thu,  8 Nov 2018 02:14:14 -0800 (PST)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97BFA3F5CF;
+        Thu,  8 Nov 2018 02:14:13 -0800 (PST)
+Date:   Thu, 8 Nov 2018 10:14:10 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/9] arm64: defconfig: Drop NF_CONNTRACK_IPV{4,6}
+Message-ID: <20181108101410.ir3tws7wduxtdsay@salmiak>
+References: <8b49a92b-ca92-1fca-cd09-3bcd7a3dcbb9@free.fr>
+ <ddf4d390-c631-c5ef-03dc-a0579a21d484@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e5e2923a424ab2e2c50e56b2e538a3c@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ddf4d390-c631-c5ef-03dc-a0579a21d484@free.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 08-11-18 15:33:06, Arun KS wrote:
-> On 2018-11-08 14:04, Michal Hocko wrote:
-> > On Thu 08-11-18 13:53:18, Arun KS wrote:
-> > > Now totalram_pages and managed_pages are atomic varibles. No need
-> > > of managed_page_count spinlock.
-> > 
-> > As explained earlier. Please add a motivation here. Feel free to reuse
-> > wording from
-> > http://lkml.kernel.org/r/20181107103630.GF2453@dhcp22.suse.cz
+On Wed, Nov 07, 2018 at 09:15:29PM +0100, Marc Gonzalez wrote:
+> Commit a0ae2562c6c4 ("netfilter: conntrack: remove l3proto abstraction")
 > 
-> Sure. Will add in next spin.
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-Andrew usually updates changelogs if you give him the full wording.
-I would wait few days before resubmitting, if that is needed at all.
-0day will throw a lot of random configs which can reveal some leftovers.
--- 
-Michal Hocko
-SUSE Labs
+Again, please describe things in the commit message, e.g.
+
+  CONFIG_NF_CONNTRACK_IPV4 and CONFIG_NF_CONNTRACK_IPV6 haven't existed since
+  commit:
+
+    a0ae2562c6c4 ("netfilter: conntrack: remove l3proto abstraction")
+
+  ... so we can remove them from the arm64 defconfig.
+
+With that:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+For the rest of this series, please update the commit messages to describe why
+the cited commit means it's safe to drop the option.
+
+Thanks,
+Mark.
+
+> ---
+>  arch/arm64/configs/defconfig | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 8d6878c1e794..58741c07a6ef 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -156,14 +156,12 @@ CONFIG_NETFILTER_XT_TARGET_CHECKSUM=m
+>  CONFIG_NETFILTER_XT_TARGET_LOG=m
+>  CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
+>  CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
+> -CONFIG_NF_CONNTRACK_IPV4=m
+>  CONFIG_IP_NF_IPTABLES=m
+>  CONFIG_IP_NF_FILTER=m
+>  CONFIG_IP_NF_TARGET_REJECT=m
+>  CONFIG_IP_NF_NAT=m
+>  CONFIG_IP_NF_TARGET_MASQUERADE=m
+>  CONFIG_IP_NF_MANGLE=m
+> -CONFIG_NF_CONNTRACK_IPV6=m
+>  CONFIG_IP6_NF_IPTABLES=m
+>  CONFIG_IP6_NF_FILTER=m
+>  CONFIG_IP6_NF_TARGET_REJECT=m
+> -- 
+> 2.17.1
