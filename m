@@ -2,61 +2,57 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C04ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CE4ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13AE420818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23E6A20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaKbZYKQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AE420818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVD9jd4A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E6A20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbeKIHgY (ORCPT
+        id S1729862AbeKIHgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 02:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:53764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729813AbeKIHgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:36:23 -0500
+        id S1728496AbeKIHgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:36:22 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D26DD20989;
-        Thu,  8 Nov 2018 21:58:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F8932146D;
+        Thu,  8 Nov 2018 21:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714334;
-        bh=0dM+xYm/f/D9pxB/cB8FqX2UbBEcrt6BGu71oMMU/Gc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eaKbZYKQCOCuQPuK6Vbu+cD11fNHvZX+qpgDB7YWiuSn9Ol7kJm5pMywXciLWUZRx
-         9RgQ9j422XQR/ykeOhTmsc6DH8kRm0LYJE16oNPnqDl0oS68TslQXzHOyp1hQPi7XK
-         SGPYQLf07ZwECtTzxeb2a6Gg43WGukUft7jDR7Zs=
+        bh=39/T3iRdmRUKhFcaZrKfSQmCdXeQ7wG2GOroB8g6qAM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NVD9jd4ATwKnJU/lcnu1Spt+Ekl/nbnChzvFSlWVBqFePJA06IDb7zA35WtIcRNBY
+         wO8yMNkWbB8dutRYfSZO38FQe7GJVzagcVWu9+VKfySqgKRuQgnu/QE9tuwZVExVog
+         fCriHZXa5MXjo+iaFkm15wSVSNzzbPqL//CMOf2s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 000/114] 4.4.163-stable review
-Date:   Thu,  8 Nov 2018 13:50:15 -0800
-Message-Id: <20181108215059.051093652@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Woojung Huh <Woojung.Huh@Microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 012/114] lan78xx: Check for supported Wake-on-LAN modes
+Date:   Thu,  8 Nov 2018 13:50:27 -0800
+Message-Id: <20181108215100.081022026@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
+References: <20181108215059.051093652@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.163-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.163-rc1
-X-KernelTest-Deadline: 2018-11-10T21:51+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,511 +60,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.163 release.
-There are 114 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+[ Upstream commit eb9ad088f96653a26b340f7c447c44cf023d5cdc ]
+
+The driver supports a fair amount of Wake-on-LAN modes, but is not
+checking that the user specified one that is supported.
+
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Woojung Huh <Woojung.Huh@Microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/usb/lan78xx.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 1aede726052c..45a6a7cae4bf 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -1051,19 +1051,10 @@ static int lan78xx_set_wol(struct net_device *netdev,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	pdata->wol = 0;
+-	if (wol->wolopts & WAKE_UCAST)
+-		pdata->wol |= WAKE_UCAST;
+-	if (wol->wolopts & WAKE_MCAST)
+-		pdata->wol |= WAKE_MCAST;
+-	if (wol->wolopts & WAKE_BCAST)
+-		pdata->wol |= WAKE_BCAST;
+-	if (wol->wolopts & WAKE_MAGIC)
+-		pdata->wol |= WAKE_MAGIC;
+-	if (wol->wolopts & WAKE_PHY)
+-		pdata->wol |= WAKE_PHY;
+-	if (wol->wolopts & WAKE_ARP)
+-		pdata->wol |= WAKE_ARP;
++	if (wol->wolopts & ~WAKE_ALL)
++		return -EINVAL;
++
++	pdata->wol = wol->wolopts;
+ 
+ 	device_set_wakeup_enable(&dev->udev->dev, (bool)wol->wolopts);
+ 
+-- 
+2.17.1
 
-Responses should be made by Sat Nov 10 21:50:28 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.163-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.163-rc1
-
-Nathan Chancellor <natechancellor@gmail.com>
-    x86/time: Correct the attribute on jiffies' definition
-
-Peter Zijlstra <peterz@infradead.org>
-    x86/percpu: Fix this_cpu_read()
-
-Phil Auld <pauld@redhat.com>
-    sched/fair: Fix throttle_list starvation with low CFS quota
-
-Mikhail Nikiforov <jackxviichaos@gmail.com>
-    Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15IGM
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: fix the usbfs flag sanitization for control transfers
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    usb: gadget: storage: Fix Spectre v1 vulnerability
-
-Tobias Herzog <t-herzog@gmx.de>
-    cdc-acm: correct counting of UART states in serial state notification
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    IB/ucm: Fix Spectre v1 vulnerability
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    RDMA/ucma: Fix Spectre v1 vulnerability
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    ptp: fix Spectre v1 vulnerability
-
-Al Viro <viro@zeniv.linux.org.uk>
-    cachefiles: fix the race between cachefiles_bury_object() and rmdir(2)
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    ahci: don't ignore result code of ahci_reset_controller()
-
-Jia-Ju Bai <baijiaju1990@163.com>
-    crypto: shash - Fix a sleep-in-atomic bug in shash_setkey_unaligned
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    mremap: properly flush TLB before releasing the page
-
-Ido Schimmel <idosch@mellanox.com>
-    rtnetlink: Disallow FDB configuration for non-Ethernet device
-
-Jason Wang <jasowang@redhat.com>
-    vhost: Fix Spectre V1 vulnerability
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    net: drop skb on failure in ip_check_defrag()
-
-Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-    sctp: fix race on sctp_id2asoc
-
-Heiner Kallweit <hkallweit1@gmail.com>
-    r8169: fix NAPI handling under high load
-
-Niklas Cassel <niklas.cassel@linaro.org>
-    net: stmmac: Fix stmmac_mdio_reset() when building stmmac as modules
-
-Wenwen Wang <wang6495@umn.edu>
-    net: socket: fix a missing-check bug
-
-Jakub Kicinski <jakub.kicinski@netronome.com>
-    net: sched: gred: pass the right attribute to gred_change_table_def()
-
-David Ahern <dsahern@gmail.com>
-    net/ipv6: Fix index counter for unicast addresses in in6_dump_addrs
-
-Stefano Brivio <sbrivio@redhat.com>
-    ipv6/ndisc: Preserve IPv6 control buffer if protocol error handlers are called
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: mcast: fix a use-after-free in inet6_mc_check
-
-Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-    net: bridge: remove ipv6 zero address check in mcast queries
-
-Hangbin Liu <liuhangbin@gmail.com>
-    bridge: do not add port to router list when receives query with source 0.0.0.0
-
-Rasmus Villemoes <linux@rasmusvillemoes.dk>
-    perf tools: Disable parallelism for 'make clean'
-
-Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>
-    mtd: spi-nor: Add support for is25wp series chips
-
-Khazhismel Kumykov <khazhy@google.com>
-    fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
-
-Sascha Hauer <s.hauer@pengutronix.de>
-    ARM: dts: imx53-qsb: disable 1.2GHz OPP
-
-Maciej W. Rozycki <macro@linux-mips.org>
-    MIPS: DEC: Fix an int-handler.S CPU_DADDI_WORKAROUNDS regression
-
-Christian Grönke <c.groenke@infodas.de>
-    igb: Remove superfluous reset to PHY and page 0 selection
-
-Matt Redfearn <matt.redfearn@imgtec.com>
-    MIPS: microMIPS: Fix decoding of swsp16 instruction
-
-Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-    scsi: aacraid: Fix typo in blink status
-
-Paolo Abeni <pabeni@redhat.com>
-    bonding: avoid defaulting hard_header_len to ETH_HLEN on slave removal
-
-Gustavo A. R. Silva <garsilva@embeddedor.com>
-    PM / devfreq: tegra: fix error return code in tegra_devfreq_probe()
-
-Gustavo A. R. Silva <garsilva@embeddedor.com>
-    ASoC: spear: fix error return code in spdif_in_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    spi: xlp: fix error return code in xlp_spi_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    spi/bcm63xx: fix error return code in bcm63xx_spi_probe()
-
-Matt Redfearn <matt.redfearn@imgtec.com>
-    MIPS: Handle non word sized instructions when examining frame
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    spi/bcm63xx-hspi: fix error return code in bcm63xx_hsspi_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    usb: dwc3: omap: fix error return code in dwc3_omap_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    usb: ehci-omap: fix error return code in ehci_hcd_omap_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    usb: imx21-hcd: fix error return code in imx21_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    gpio: msic: fix error return code in platform_msic_gpio_probe()
-
-David S. Miller <davem@davemloft.net>
-    sparc64: Fix exception handling in UltraSPARC-III memcpy.
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    gpu: host1x: fix error return code in host1x_probe()
-
-Mike Kravetz <mike.kravetz@oracle.com>
-    sparc64 mm: Fix more TSB sizing issues
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    video: fbdev: pxa3xx_gcu: fix error return code in pxa3xx_gcu_probe()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    tty: serial: sprd: fix error return code in sprd_probe()
-
-Guillaume Nault <g.nault@alphalink.fr>
-    l2tp: hold socket before dropping lock in l2tp_ip{, 6}_recv()
-
-Peter S. Housel <housel@acm.org>
-    brcmfmac: Fix glom_skb leak in brcmf_sdiod_recv_chain
-
-Alexander Duyck <aduyck@mirantis.com>
-    gro: Allow tunnel stacking in the case of FOU/GUE
-
-Nicolas Dichtel <nicolas.dichtel@6wind.com>
-    vti6: flush x-netns xfrm cache when vti interface is removed
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: timer: Fix zero-division by continue of uninitialized instance
-
-Mark Rustad <mark.d.rustad@intel.com>
-    ixgbe: Correct X550EM_x revision check
-
-Emil Tantilov <emil.s.tantilov@intel.com>
-    ixgbe: fix RSS limit for X550
-
-Tariq Toukan <tariqt@mellanox.com>
-    net/mlx5e: Correctly handle RSS indirection table when changing number of channels
-
-Tariq Toukan <tariqt@mellanox.com>
-    net/mlx5e: Fix LRO modify
-
-William Dauchy <william@gandi.net>
-    ixgbevf: Fix handling of NAPI budget when multiple queues are enabled per vector
-
-Ashish Samant <ashish.samant@oracle.com>
-    fuse: Dont call set_page_dirty_lock() for ITER_BVEC pages for async_dio
-
-Pavel Roskin <plroskin@gmail.com>
-    drm/nouveau/fbcon: fix oops without fbdev emulation
-
-Daniel Borkmann <daniel@iogearbox.net>
-    bpf: generally move prog destruction to RCU deferral
-
-Alan Stern <stern@rowland.harvard.edu>
-    usb-storage: fix bogus hardware error messages for ATA pass-thru devices
-
-WANG Cong <xiyou.wangcong@gmail.com>
-    sch_red: update backlog as well
-
-Sowmini Varadhan <sowmini.varadhan@oracle.com>
-    sparc/pci: Refactor dev_archdata initialization into pci_init_dev_archdata
-
-Ewan D. Milne <emilne@redhat.com>
-    scsi: Add STARGET_CREATED_REMOVE state to scsi_target_state
-
-Jonathan Basseri <misterikkit@google.com>
-    xfrm: Clear sk_dst_cache when applying per-socket policy.
-
-Catalin Marinas <catalin.marinas@arm.com>
-    arm64: Fix potential race with hardware DBM in ptep_set_access_flags()
-
-Mark Syms <mark.syms@citrix.com>
-    CIFS: handle guest access errors to Windows shares
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    ASoC: wm8940: Enable cache usage to fix crashes on resume
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    ASoC: ak4613: Enable cache usage to fix crashes on resume
-
-Maciej W. Rozycki <macro@imgtec.com>
-    MIPS: Fix FCSR Cause bit handling for correct SIGFPE issue
-
-Vladis Dronov <vdronov@redhat.com>
-    usbvision: revert commit 588afcc1
-
-Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    perf/core: Don't leak event in the syscall error path
-
-Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-    aacraid: Start adapter after updating number of MSIX vectors
-
-Prarit Bhargava <prarit@redhat.com>
-    x86/PCI: Mark Broadwell-EP Home Agent 1 as having non-compliant BARs
-
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-    tpm: fix: return rc when devm_add_action() fails
-
-Arnd Bergmann <arnd@arndb.de>
-    thermal: allow u8500-thermal driver to be a module
-
-Arnd Bergmann <arnd@arndb.de>
-    thermal: allow spear-thermal driver to be a module
-
-Jeff Mahoney <jeffm@suse.com>
-    btrfs: don't create or leak aliased root while cleaning up orphans
-
-Peter Zijlstra <peterz@infradead.org>
-    sched/cgroup: Fix cgroup entity load tracking tear-down
-
-Florian Fainelli <f.fainelli@gmail.com>
-    um: Avoid longjmp/setjmp symbol clashes with libpthread.a
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: orphan skbs in reassembly unit
-
-Eugenia Emantayev <eugenia@mellanox.com>
-    net/mlx4_en: Resolve dividing by zero in 32-bit system
-
-Mateusz Jurczyk <mjurczyk@google.com>
-    af_iucv: Move sockaddr length checks to before accessing sa_family in bind and connect handlers
-
-Andrey Ryabinin <aryabinin@virtuozzo.com>
-    radix-tree: fix radix_tree_iter_retry() for tagged iterators.
-
-Jiri Kosina <jkosina@suse.cz>
-    btrfs: cleaner_kthread() doesn't need explicit freeze
-
-Matt Fleming <matt@codeblueprint.co.uk>
-    x86/mm/pat: Prevent hang during boot when mapping pages
-
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-    ARM: dts: apq8064: add ahci ports-implemented mask
-
-Steven Rostedt (Red Hat) <rostedt@goodmis.org>
-    tracing: Skip more functions when doing stack tracing of events
-
-Paul Bolle <pebolle@tiscali.nl>
-    ser_gigaset: use container_of() instead of detour
-
-David Herrmann <dh.herrmann@gmail.com>
-    net: drop write-only stack variable
-
-Johannes Berg <johannes.berg@intel.com>
-    ipv6: suppress sparse warnings in IP6_ECN_set_ce()
-
-Eric Biggers <ebiggers@google.com>
-    KEYS: put keyring if install_session_keyring_to_cred() fails
-
-Wenwen Wang <wang6495@umn.edu>
-    net: cxgb3_main: fix a missing-check bug
-
-Jiri Olsa <jolsa@redhat.com>
-    perf/ring_buffer: Prevent concurent ring buffer access
-
-Florian Fainelli <f.fainelli@gmail.com>
-    smsc95xx: Check for Wake-on-LAN modes
-
-Florian Fainelli <f.fainelli@gmail.com>
-    smsc75xx: Check for Wake-on-LAN modes
-
-Florian Fainelli <f.fainelli@gmail.com>
-    r8152: Check for supported Wake-on-LAN Modes
-
-Florian Fainelli <f.fainelli@gmail.com>
-    sr9800: Check for supported Wake-on-LAN modes
-
-Florian Fainelli <f.fainelli@gmail.com>
-    lan78xx: Check for supported Wake-on-LAN modes
-
-Florian Fainelli <f.fainelli@gmail.com>
-    ax88179_178a: Check for supported Wake-on-LAN modes
-
-Florian Fainelli <f.fainelli@gmail.com>
-    asix: Check for supported Wake-on-LAN modes
-
-Lubomir Rintel <lkundrak@v3.sk>
-    pxa168fb: prepare the clock
-
-Matias Karhumaa <matias.karhumaa@gmail.com>
-    Bluetooth: SMP: fix crash in unpairing
-
-Martin Willi <martin@strongswan.org>
-    mac80211_hwsim: do not omit multicast announce of first added radio
-
-Sean Tranchetti <stranche@codeaurora.org>
-    xfrm: validate template mode
-
-Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-    ARM: 8799/1: mm: fix pci_ioremap_io() offset check
-
-Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-    cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
-
-Andrei Otcheretianski <andrei.otcheretianski@intel.com>
-    mac80211: Always report TX status
-
-Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-    xfrm6: call kfree_skb when skb is toobig
-
-Steffen Klassert <steffen.klassert@secunet.com>
-    xfrm: Validate address prefix lengths in the xfrm selector.
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/arm/boot/dts/imx53-qsb-common.dtsi            | 11 ++++
- arch/arm/boot/dts/qcom-apq8064.dtsi                |  3 +-
- arch/arm/mm/ioremap.c                              |  2 +-
- arch/arm64/mm/fault.c                              | 15 ++---
- arch/mips/dec/int-handler.S                        | 34 ++--------
- arch/mips/include/asm/fpu_emulator.h               | 13 ++++
- arch/mips/include/asm/switch_to.h                  | 18 ++++++
- arch/mips/include/uapi/asm/inst.h                  |  2 +-
- arch/mips/kernel/mips-r2-to-r6-emul.c              | 10 +--
- arch/mips/kernel/process.c                         | 11 ++--
- arch/mips/kernel/ptrace.c                          |  7 +--
- arch/mips/kernel/traps.c                           | 72 ++++++++++++----------
- arch/sparc/include/asm/page_64.h                   |  1 +
- arch/sparc/kernel/pci.c                            | 29 ++++++---
- arch/sparc/lib/U3memcpy.S                          |  4 +-
- arch/sparc/mm/fault_64.c                           |  1 +
- arch/sparc/mm/tlb.c                                | 35 +++++++++--
- arch/sparc/mm/tsb.c                                | 18 ++++--
- arch/um/Makefile                                   |  4 ++
- arch/x86/include/asm/percpu.h                      |  8 +--
- arch/x86/kernel/time.c                             |  2 +-
- arch/x86/mm/pageattr.c                             | 21 ++++---
- arch/x86/pci/fixup.c                               |  7 +++
- arch/x86/um/setjmp_32.S                            | 16 ++---
- arch/x86/um/setjmp_64.S                            | 16 ++---
- crypto/shash.c                                     |  2 +-
- drivers/ata/ahci.c                                 |  5 +-
- drivers/char/tpm/tpm-chip.c                        |  6 +-
- drivers/devfreq/tegra-devfreq.c                    |  6 +-
- drivers/gpio/gpio-msic.c                           |  4 +-
- drivers/gpu/drm/nouveau/nouveau_fbcon.c            |  7 ++-
- drivers/gpu/host1x/dev.c                           |  4 +-
- drivers/infiniband/core/ucm.c                      |  3 +
- drivers/infiniband/core/ucma.c                     |  3 +
- drivers/input/mouse/elan_i2c_core.c                |  1 +
- drivers/isdn/gigaset/ser-gigaset.c                 |  9 +--
- drivers/media/usb/usbvision/usbvision-video.c      |  7 ---
- drivers/mfd/db8500-prcmu.c                         |  3 +
- drivers/mtd/spi-nor/spi-nor.c                      |  6 ++
- drivers/net/bonding/bond_main.c                    |  2 +-
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c    | 17 +++++
- drivers/net/ethernet/intel/igb/e1000_82575.c       | 11 ----
- drivers/net/ethernet/intel/ixgbe/ixgbe.h           |  2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_type.h      |  2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c      |  9 +--
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c  |  2 +
- drivers/net/ethernet/mellanox/mlx4/en_clock.c      |  5 +-
- drivers/net/ethernet/mellanox/mlx5/core/en.h       |  2 +
- .../net/ethernet/mellanox/mlx5/core/en_ethtool.c   |  2 +
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c  | 30 ++++++---
- drivers/net/ethernet/realtek/r8169.c               |  8 +--
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |  2 +-
- drivers/net/usb/asix_common.c                      |  3 +
- drivers/net/usb/ax88179_178a.c                     |  3 +
- drivers/net/usb/lan78xx.c                          | 17 ++---
- drivers/net/usb/r8152.c                            |  3 +
- drivers/net/usb/smsc75xx.c                         |  3 +
- drivers/net/usb/smsc95xx.c                         |  3 +
- drivers/net/usb/sr9800.c                           |  3 +
- drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c   |  7 +--
- drivers/net/wireless/mac80211_hwsim.c              |  3 +-
- drivers/ptp/ptp_chardev.c                          |  4 ++
- drivers/scsi/aacraid/linit.c                       |  2 +-
- drivers/scsi/aacraid/src.c                         |  2 +-
- drivers/scsi/scsi_scan.c                           |  5 +-
- drivers/scsi/scsi_sysfs.c                          |  8 ++-
- drivers/spi/spi-bcm63xx-hsspi.c                    |  4 +-
- drivers/spi/spi-bcm63xx.c                          |  4 +-
- drivers/spi/spi-xlp.c                              |  4 +-
- drivers/thermal/Kconfig                            |  6 +-
- drivers/tty/serial/sprd_serial.c                   |  4 +-
- drivers/usb/class/cdc-acm.c                        | 14 ++---
- drivers/usb/core/devio.c                           |  4 +-
- drivers/usb/dwc3/dwc3-omap.c                       |  4 +-
- drivers/usb/gadget/function/f_mass_storage.c       |  3 +
- drivers/usb/host/ehci-omap.c                       |  4 +-
- drivers/usb/host/imx21-hcd.c                       |  6 +-
- drivers/usb/storage/transport.c                    | 14 ++++-
- drivers/vhost/vhost.c                              |  2 +
- drivers/video/fbdev/pxa168fb.c                     |  6 +-
- drivers/video/fbdev/pxa3xx-gcu.c                   |  4 +-
- fs/btrfs/disk-io.c                                 |  6 +-
- fs/btrfs/disk-io.h                                 |  2 +
- fs/btrfs/root-tree.c                               | 27 +++++---
- fs/cachefiles/namei.c                              |  2 +-
- fs/cifs/connect.c                                  |  3 +
- fs/fat/fatent.c                                    |  1 +
- fs/fuse/file.c                                     |  6 +-
- fs/fuse/fuse_i.h                                   |  1 +
- include/linux/bpf.h                                |  5 --
- include/linux/radix-tree.h                         |  1 +
- include/net/inet_ecn.h                             |  3 +-
- include/scsi/scsi_device.h                         |  1 +
- kernel/bpf/arraymap.c                              |  4 +-
- kernel/bpf/syscall.c                               | 13 +---
- kernel/events/core.c                               |  5 +-
- kernel/sched/core.c                                |  4 +-
- kernel/sched/fair.c                                | 59 ++++++++++++------
- kernel/sched/sched.h                               |  4 +-
- kernel/trace/trace.c                               | 19 +++++-
- mm/huge_memory.c                                   |  6 +-
- mm/mremap.c                                        | 21 +++++--
- net/bluetooth/mgmt.c                               |  7 +--
- net/bluetooth/smp.c                                | 29 +++++++--
- net/bluetooth/smp.h                                |  3 +-
- net/bridge/br_multicast.c                          |  9 ++-
- net/core/rtnetlink.c                               | 10 +++
- net/ipv4/fou.c                                     | 16 +++++
- net/ipv4/ip_fragment.c                             | 12 ++--
- net/ipv6/addrconf.c                                |  6 +-
- net/ipv6/ip6_vti.c                                 | 31 ++++++++++
- net/ipv6/mcast.c                                   | 16 ++---
- net/ipv6/ndisc.c                                   |  3 +-
- net/ipv6/netfilter/nf_conntrack_reasm.c            |  1 +
- net/ipv6/xfrm6_output.c                            |  2 +
- net/iucv/af_iucv.c                                 |  8 +--
- net/l2tp/l2tp_ip.c                                 | 11 ++--
- net/l2tp/l2tp_ip6.c                                | 11 ++--
- net/mac80211/status.c                              |  7 +--
- net/sched/sch_gred.c                               |  2 +-
- net/sched/sch_red.c                                |  4 ++
- net/sctp/socket.c                                  |  5 +-
- net/socket.c                                       | 11 +++-
- net/unix/af_unix.c                                 |  5 +-
- net/wireless/reg.c                                 |  1 +
- net/xfrm/xfrm_state.c                              |  1 +
- net/xfrm/xfrm_user.c                               | 15 +++++
- security/keys/process_keys.c                       |  7 ++-
- sound/core/timer.c                                 | 14 +++++
- sound/soc/codecs/ak4613.c                          |  1 +
- sound/soc/codecs/wm8940.c                          |  1 +
- sound/soc/spear/spdif_in.c                         |  6 +-
- tools/perf/Makefile                                |  4 +-
- 134 files changed, 737 insertions(+), 388 deletions(-)
 
 
