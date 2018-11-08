@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986D8C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AC4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5494720883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B92820818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:22:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXlEOlmG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5494720883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="np4ucDB9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B92820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731480AbeKIH73 (ORCPT
+        id S1731729AbeKIHnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:59:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35480 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:43:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728539AbeKIHnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:43:13 -0500
+        id S1731701AbeKIHnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:04 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F09A2146E;
-        Thu,  8 Nov 2018 22:05:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EAA1214DA;
+        Thu,  8 Nov 2018 22:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714743;
-        bh=TY2IMHbXlgPE1YegVrkNSWuklb7LorFE4YBhSRGXitI=;
+        s=default; t=1541714734;
+        bh=FkMiRXPiytHYfjJlFfwx5fUjhYWSWn6uXB2bP9W6I/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VXlEOlmGzk3QHMxfKyv0b9Gis8MiCvQKKFu9gPmypszKYt6UeXYepSrz6WAJA6jmn
-         pT7/K665BirqJG/+zXBD/fBRj1yRf63C75HNJj1wAJ4CnUPy1CLMHnPTGAXnlEeYd7
-         cwnZmNuOqSuV1zQXBVQP3VEZ4ez+YESVBTmkMVJg=
+        b=np4ucDB9/1/AW8MMzY4kI8fbaI90gvfIibdQch1iwgUeXtLDx51QvegEuoDqAKe7f
+         6ISitDgjwCfTpc0D6ghPT17S4m9ELZUbUJOojNAvs9ODsuW6ymuhFDCVqTsVBaDwvs
+         lU3LvxZ7IQXkbhO8f+4KLmQBG2vcZ3/84+v1igiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+        stable@vger.kernel.org, Alex Vesker <valex@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 100/171] drm: bochs: Dont remove uninitialized fbdev framebuffer
-Date:   Thu,  8 Nov 2018 13:51:10 -0800
-Message-Id: <20181108215134.708410882@linuxfoundation.org>
+Subject: [PATCH 4.9 094/171] IB/ipoib: Fix lockdep issue found on ipoib_ib_dev_heavy_flush
+Date:   Thu,  8 Nov 2018 13:51:04 -0800
+Message-Id: <20181108215134.307913529@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,109 +64,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4fa13dbe8c86382a846584e65c47bce09297f75b ]
+[ Upstream commit 1f80bd6a6cc8358b81194e1f5fc16449947396ec ]
 
-In the same spirit of the fix for QXL in commit 861078381ba5 ("drm: qxl:
-Don't alloc fbdev if emulation is not supported"), prevent the Oops in
-the unbind path of Bochs if fbdev emulation is disabled.
+The locking order of vlan_rwsem (LOCK A) and then rtnl (LOCK B),
+contradicts other flows such as ipoib_open possibly causing a deadlock.
+To prevent this deadlock heavy flush is called with RTNL locked and
+only then tries to acquire vlan_rwsem.
+This deadlock is possible only when there are child interfaces.
 
-[  112.176009] Oops: 0002 [#1] SMP
-[  112.176009] Modules linked in: bochs_drm
-[  112.176009] CPU: 0 PID: 3002 Comm: bash Not tainted 4.11.0-rc1+ #111
-[  112.176009] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.9.3-20161025_171302-gandalf 04/01/2014
-[  112.176009] task: ffff8800743bbac0 task.stack: ffffc90000b5c000
-[  112.176009] RIP: 0010:mutex_lock+0x18/0x30
-[  112.176009] RSP: 0018:ffffc90000b5fc78 EFLAGS: 00010246
-[  112.176009] RAX: 0000000000000000 RBX: 0000000000000260 RCX: 0000000000000000
-[  112.176009] RDX: ffff8800743bbac0 RSI: ffff8800787176e0 RDI: 0000000000000260
-[  112.176009] RBP: ffffc90000b5fc80 R08: ffffffff00000000 R09: 00000000ffffffff
-[  112.176009] R10: ffff88007b463650 R11: 0000000000000000 R12: 0000000000000260
-[  112.176009] R13: ffff8800787176e0 R14: ffffffffa0003068 R15: 0000000000000060
-[  112.176009] FS:  00007f20564c7b40(0000) GS:ffff88007ce00000(0000) knlGS:0000000000000000
-[  112.176009] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  112.176009] CR2: 0000000000000260 CR3: 000000006b89c000 CR4: 00000000000006f0
-[  112.176009] Call Trace:
-[  112.176009]  drm_mode_object_unregister+0x1e/0x50
-[  112.176009]  drm_framebuffer_unregister_private+0x15/0x20
-[  112.176009]  bochs_fbdev_fini+0x57/0x70 [bochs_drm]
-[  112.176009]  bochs_unload+0x16/0x50 [bochs_drm]
-[  112.176009]  drm_dev_unregister+0x37/0xd0
-[  112.176009]  drm_put_dev+0x31/0x60
-[  112.176009]  bochs_pci_remove+0x10/0x20 [bochs_drm]
-[  112.176009]  pci_device_remove+0x34/0xb0
-[  112.176009]  device_release_driver_internal+0x150/0x200
-[  112.176009]  device_release_driver+0xd/0x10
-[  112.176009]  unbind_store+0x108/0x150
-[  112.176009]  drv_attr_store+0x20/0x30
-[  112.176009]  sysfs_kf_write+0x32/0x40
-[  112.176009]  kernfs_fop_write+0x10b/0x190
-[  112.176009]  __vfs_write+0x23/0x120
-[  112.176009]  ? security_file_permission+0x36/0xb0
-[  112.176009]  ? rw_verify_area+0x49/0xb0
-[  112.176009]  vfs_write+0xb0/0x190
-[  112.176009]  SyS_write+0x41/0xa0
-[  112.176009]  entry_SYSCALL_64_fastpath+0x1a/0xa9
-[  112.176009] RIP: 0033:0x7f2055bd5620
-[  112.176009] RSP: 002b:00007ffed2f487d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[  112.176009] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2055bd5620
-[  112.176009] RDX: 000000000000000d RSI: 0000000000ee0008 RDI: 0000000000000001
-[  112.176009] RBP: 0000000000000001 R08: 00007f2055e94760 R09: 00007f20564c7b40
-[  112.176009] R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000000
-[  112.176009] R13: 00007ffed2f48d70 R14: 0000000000000000 R15: 0000000000000000
-[  112.176009] Code: 00 00 00 55 be 02 00 00 00 48 89 e5 e8 62 fb ff ff 5d c3 55 48 89 e5 53 48 89 fb e8 53 e9 ff ff 65 48 8b 14 25 40 c4 00 00 31 c0 <f0> 48 0f b1 13 48 85 c0 74 08 48 89 df e8c6 ff ff ff 5b 5d c3
-[  112.176009] RIP: mutex_lock+0x18/0x30 RSP: ffffc90000b5fc78
-[  112.176009] CR2: 0000000000000260
-[  112.205622] ---[ end trace 76189cd7a9bdd155 ]---
+[  140.941758] ======================================================
+[  140.946276] WARNING: possible circular locking dependency detected
+[  140.950950] 4.15.0-rc1+ #9 Tainted: G           O
+[  140.954797] ------------------------------------------------------
+[  140.959424] kworker/u32:1/146 is trying to acquire lock:
+[  140.963450]  (rtnl_mutex){+.+.}, at: [<ffffffffc083516a>] __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
+[  140.970006]
+but task is already holding lock:
+[  140.975141]  (&priv->vlan_rwsem){++++}, at: [<ffffffffc0834ee1>] __ipoib_ib_dev_flush+0x51/0x4e0 [ib_ipoib]
+[  140.982105]
+which lock already depends on the new lock.
+[  140.990023]
+the existing dependency chain (in reverse order) is:
+[  140.998650]
+-> #1 (&priv->vlan_rwsem){++++}:
+[  141.005276]        down_read+0x4d/0xb0
+[  141.009560]        ipoib_open+0xad/0x120 [ib_ipoib]
+[  141.014400]        __dev_open+0xcb/0x140
+[  141.017919]        __dev_change_flags+0x1a4/0x1e0
+[  141.022133]        dev_change_flags+0x23/0x60
+[  141.025695]        devinet_ioctl+0x704/0x7d0
+[  141.029156]        sock_do_ioctl+0x20/0x50
+[  141.032526]        sock_ioctl+0x221/0x300
+[  141.036079]        do_vfs_ioctl+0xa6/0x6d0
+[  141.039656]        SyS_ioctl+0x74/0x80
+[  141.042811]        entry_SYSCALL_64_fastpath+0x1f/0x96
+[  141.046891]
+-> #0 (rtnl_mutex){+.+.}:
+[  141.051701]        lock_acquire+0xd4/0x220
+[  141.055212]        __mutex_lock+0x88/0x970
+[  141.058631]        __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
+[  141.063160]        __ipoib_ib_dev_flush+0x71/0x4e0 [ib_ipoib]
+[  141.067648]        process_one_work+0x1f5/0x610
+[  141.071429]        worker_thread+0x4a/0x3f0
+[  141.074890]        kthread+0x141/0x180
+[  141.078085]        ret_from_fork+0x24/0x30
+[  141.081559]
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Link: http://patchwork.freedesktop.org/patch/msgid/20170317181409.4183-1-krisman@collabora.co.uk
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+other info that might help us debug this:
+[  141.088967]  Possible unsafe locking scenario:
+[  141.094280]        CPU0                    CPU1
+[  141.097953]        ----                    ----
+[  141.101640]   lock(&priv->vlan_rwsem);
+[  141.104771]                                lock(rtnl_mutex);
+[  141.109207]                                lock(&priv->vlan_rwsem);
+[  141.114032]   lock(rtnl_mutex);
+[  141.116800]
+ *** DEADLOCK ***
+
+Fixes: b4b678b06f6e ("IB/ipoib: Grab rtnl lock on heavy flush when calling ndo_open/stop")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bochs/bochs_fbdev.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
-index e1ec498a6b6e..35f40255644d 100644
---- a/drivers/gpu/drm/bochs/bochs_fbdev.c
-+++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
-@@ -138,6 +138,7 @@ static int bochsfb_create(struct drm_fb_helper *helper,
- 	info->fix.smem_start = 0;
- 	info->fix.smem_len = size;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+index 34122c96522b..3dd5bf6c6c7a 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -1190,13 +1190,10 @@ static void __ipoib_ib_dev_flush(struct ipoib_dev_priv *priv,
+ 		ipoib_ib_dev_down(dev);
  
-+	bochs->fb.initialized = true;
- 	return 0;
+ 	if (level == IPOIB_FLUSH_HEAVY) {
+-		rtnl_lock();
+ 		if (test_bit(IPOIB_FLAG_INITIALIZED, &priv->flags))
+ 			ipoib_ib_dev_stop(dev);
+ 
+-		result = ipoib_ib_dev_open(dev);
+-		rtnl_unlock();
+-		if (result)
++		if (ipoib_ib_dev_open(dev))
+ 			return;
+ 
+ 		if (netif_queue_stopped(dev))
+@@ -1236,7 +1233,9 @@ void ipoib_ib_dev_flush_heavy(struct work_struct *work)
+ 	struct ipoib_dev_priv *priv =
+ 		container_of(work, struct ipoib_dev_priv, flush_heavy);
+ 
++	rtnl_lock();
+ 	__ipoib_ib_dev_flush(priv, IPOIB_FLUSH_HEAVY, 0);
++	rtnl_unlock();
  }
  
-@@ -155,7 +156,6 @@ static int bochs_fbdev_destroy(struct bochs_device *bochs)
- 		gfb->obj = NULL;
- 	}
- 
--	drm_fb_helper_fini(&bochs->fb.helper);
- 	drm_framebuffer_unregister_private(&gfb->base);
- 	drm_framebuffer_cleanup(&gfb->base);
- 
-@@ -188,7 +188,6 @@ int bochs_fbdev_init(struct bochs_device *bochs)
- 	if (ret)
- 		goto fini;
- 
--	bochs->fb.initialized = true;
- 	return 0;
- 
- fini:
-@@ -198,9 +197,9 @@ fini:
- 
- void bochs_fbdev_fini(struct bochs_device *bochs)
- {
--	if (!bochs->fb.initialized)
--		return;
-+	if (bochs->fb.initialized)
-+		bochs_fbdev_destroy(bochs);
- 
--	bochs_fbdev_destroy(bochs);
-+	drm_fb_helper_fini(&bochs->fb.helper);
- 	bochs->fb.initialized = false;
- }
+ void ipoib_ib_dev_cleanup(struct net_device *dev)
 -- 
 2.17.1
 
