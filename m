@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BB7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB307C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2FB620844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B22C220844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aN4VcGnf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2FB620844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MV+P+FbG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B22C220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeKIHdn (ORCPT
+        id S1728734AbeKIISs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:33:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49794 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:18:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729066AbeKIHdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727980AbeKIHdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:33:43 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1A0821104;
-        Thu,  8 Nov 2018 21:56:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39F6B2089A;
+        Thu,  8 Nov 2018 21:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714175;
-        bh=zy0wBWQZSp+DSESzmyU1yVbn7SjcLyLKV+klaklbx54=;
+        s=default; t=1541714176;
+        bh=n5moNBIBP0E545aGh0Q3Tcnu7qn04I/gXJR+sPY0Yco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aN4VcGnfzSHBc9H0jTTiaCrpwoXhNBO4MMdlcqfVB4FxOvv11s1KskZN6hL3GPXiX
-         vgivBmagPb3BAEQerd+wm8uLEkfS817TigebDdkg+oYnSGrfsNSWscQDU7572J1+1P
-         gQsCVBbAdZ5wBBRUoMVqb5F+DgiugD+oaBAUIJvI=
+        b=MV+P+FbGJavdCzzmJ50Y7u7tEqYdhbpH+RNlBN4Z9eDiPGLmzGw8WBw6GhglRHDkE
+         4NqIkTX+9lI+xWaFuz2BKa0HnTPBcDIvWY5EDVJ28yAF4AMN9crhlk5XixVT6UvEUE
+         UIS7ghbco4nHYQJQ0o8kj3KfcbDhhJBQKlI15bkc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Carvalho <carlos@fisica.ufpr.br>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 081/144] quota: Fix maximum quota limit settings
-Date:   Thu,  8 Nov 2018 13:50:52 -0800
-Message-Id: <20181108215101.225793829@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 082/144] rtnl: dont account unused struct ifla_port_vsi in rtnl_port_size
+Date:   Thu,  8 Nov 2018 13:50:53 -0800
+Message-Id: <20181108215101.316953995@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -62,55 +63,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7e08da50cf706151f324349f9235ebd311226997 ]
+[ Upstream commit 025331df34f6722f86b467cb13a69326444ab1bc ]
 
-Currently quota format that supports 64-bit usage sets maximum quota
-limit as 2^64-1. However quota core code uses signed numbers to track
-usage and even limits themselves are stored in long long. Checking of
-maximum allowable limits worked by luck until commit 14bf61ffe6ac
-(quota: Switch ->get_dqblk() and ->set_dqblk() to use bytes as space
-units) because variable we compared with was unsigned. After that commit
-the type we compared against changed to signed and thus checks for
-maximum limits with the newest VFS quota format started to refuse any
-non-negative value. Later the problem was inadvertedly fixed by commit
-b10a08194c2b (quota: Store maximum space limit in bytes) because we
-started to compare against unsigned type as well.
+When allocating rtnl dump messages, struct ifla_port_vsi is never dumped,
+so we can save header plus payload in rtnl_port_size(). Infact, attribute
+IFLA_PORT_VSI_TYPE and struct ifla_port_vsi are not used anywhere in
+the kernel. We only need to keep the nla policy should applications in
+user space be filling this out. Same NLA_BINARY issue exists as was fixed
+in 364d5716a7ad ("rtnetlink: ifla_vf_policy: fix misuses of NLA_BINARY")
+and others, but then again IFLA_PORT_VSI_TYPE is not used anywhere, so
+just add a comment that it's unused.
 
-Fix possible future problems of this kind by setting maximum limits to
-2^63-1 to avoid overflow issues.
-
-Reported-by: Carlos Carvalho <carlos@fisica.ufpr.br>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/quota/quota_v2.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/core/rtnetlink.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/quota/quota_v2.c b/fs/quota/quota_v2.c
-index d1a8054bba9a..5d9fc7918e24 100644
---- a/fs/quota/quota_v2.c
-+++ b/fs/quota/quota_v2.c
-@@ -117,12 +117,16 @@ static int v2_read_file_info(struct super_block *sb, int type)
- 	qinfo = info->dqi_priv;
- 	if (version == 0) {
- 		/* limits are stored as unsigned 32-bit data */
--		info->dqi_max_spc_limit = 0xffffffffULL << QUOTABLOCK_BITS;
-+		info->dqi_max_spc_limit = 0xffffffffLL << QUOTABLOCK_BITS;
- 		info->dqi_max_ino_limit = 0xffffffff;
- 	} else {
--		/* used space is stored as unsigned 64-bit value in bytes */
--		info->dqi_max_spc_limit = 0xffffffffffffffffULL; /* 2^64-1 */
--		info->dqi_max_ino_limit = 0xffffffffffffffffULL;
-+		/*
-+		 * Used space is stored as unsigned 64-bit value in bytes but
-+		 * quota core supports only signed 64-bit values so use that
-+		 * as a limit
-+		 */
-+		info->dqi_max_spc_limit = 0x7fffffffffffffffLL; /* 2^63-1 */
-+		info->dqi_max_ino_limit = 0x7fffffffffffffffLL;
- 	}
- 	info->dqi_bgrace = le32_to_cpu(dinfo.dqi_bgrace);
- 	info->dqi_igrace = le32_to_cpu(dinfo.dqi_igrace);
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 51301ad3c2d9..cd09f85ba8d6 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -817,8 +817,6 @@ static size_t rtnl_port_size(const struct net_device *dev,
+ {
+ 	size_t port_size = nla_total_size(4)		/* PORT_VF */
+ 		+ nla_total_size(PORT_PROFILE_MAX)	/* PORT_PROFILE */
+-		+ nla_total_size(sizeof(struct ifla_port_vsi))
+-							/* PORT_VSI_TYPE */
+ 		+ nla_total_size(PORT_UUID_MAX)		/* PORT_INSTANCE_UUID */
+ 		+ nla_total_size(PORT_UUID_MAX)		/* PORT_HOST_UUID */
+ 		+ nla_total_size(1)			/* PROT_VDP_REQUEST */
+@@ -1231,14 +1229,19 @@ static const struct nla_policy ifla_port_policy[IFLA_PORT_MAX+1] = {
+ 	[IFLA_PORT_VF]		= { .type = NLA_U32 },
+ 	[IFLA_PORT_PROFILE]	= { .type = NLA_STRING,
+ 				    .len = PORT_PROFILE_MAX },
+-	[IFLA_PORT_VSI_TYPE]	= { .type = NLA_BINARY,
+-				    .len = sizeof(struct ifla_port_vsi)},
+ 	[IFLA_PORT_INSTANCE_UUID] = { .type = NLA_BINARY,
+ 				      .len = PORT_UUID_MAX },
+ 	[IFLA_PORT_HOST_UUID]	= { .type = NLA_STRING,
+ 				    .len = PORT_UUID_MAX },
+ 	[IFLA_PORT_REQUEST]	= { .type = NLA_U8, },
+ 	[IFLA_PORT_RESPONSE]	= { .type = NLA_U16, },
++
++	/* Unused, but we need to keep it here since user space could
++	 * fill it. It's also broken with regard to NLA_BINARY use in
++	 * combination with structs.
++	 */
++	[IFLA_PORT_VSI_TYPE]	= { .type = NLA_BINARY,
++				    .len = sizeof(struct ifla_port_vsi) },
+ };
+ 
+ static int rtnl_dump_ifinfo(struct sk_buff *skb, struct netlink_callback *cb)
 -- 
 2.17.1
 
