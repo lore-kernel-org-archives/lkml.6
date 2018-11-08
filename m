@@ -2,48 +2,50 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E01ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4B8ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45282089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC932089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lF7+jHUq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45282089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dtig/kbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC932089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbeKIHp6 (ORCPT
+        id S1732621AbeKIHqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:45:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39504 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:46:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbeKIHp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731252AbeKIHp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:45:58 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4AB22089F;
-        Thu,  8 Nov 2018 22:08:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45A37208A3;
+        Thu,  8 Nov 2018 22:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714906;
-        bh=XQWzjO+RlHr4gPlXrLaVLkJagg/3BLTUMZNeFpFP+AQ=;
+        s=default; t=1541714907;
+        bh=XQeppcl6sbWMT85j6NMgNs+opRWnFyS72lC9cSgSRkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lF7+jHUqJdGSxN3Vf7j5QL/5LzfuU3nwBNBtnrab0Ex5EDituh6nm33GgOBGHj1aF
-         ZiZmuMPdOcfgVMvuvlVeUIokBHMbDzDHIkhh3p+G+dzKbstWot4LJoeLNjEVxAjQoL
-         H2S3AE2St19ZTX7bCzaeEo47SoAgAf2p1qcXh5E0=
+        b=Dtig/kbfeF9onOoR+Oo7WJU7yoQVrY58G7zS5vtLI59yGI5Xti/aYvDzeiUwOoeZ0
+         mNDp8k/xURv2l6UKOCOjFf04aXuHKXpV8vYBPJdiVdfKHqehkr8EMZ7V7zD0nQm/ga
+         zDfpuDt68+sbPMIgFs060I8BJri+FC8fpQb2ek9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tobias Herzog <t-herzog@gmx.de>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 19/31] cdc-acm: correct counting of UART states in serial state notification
-Date:   Thu,  8 Nov 2018 13:52:43 -0800
-Message-Id: <20181108215131.257481337@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 02/31] vfs: swap names of {do,vfs}_clone_file_range()
+Date:   Thu,  8 Nov 2018 13:52:26 -0800
+Message-Id: <20181108215129.833437540@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -61,55 +63,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tobias Herzog <t-herzog@gmx.de>
+commit a725356b6659469d182d662f22d770d83d3bc7b5 upstream.
 
-commit f976d0e5747ca65ccd0fb2a4118b193d70aa1836 upstream.
+Commit 031a072a0b8a ("vfs: call vfs_clone_file_range() under freeze
+protection") created a wrapper do_clone_file_range() around
+vfs_clone_file_range() moving the freeze protection to former, so
+overlayfs could call the latter.
 
-The usb standard ("Universal Serial Bus Class Definitions for Communication
-Devices") distiguishes between "consistent signals" (DSR, DCD), and
-"irregular signals" (break, ring, parity error, framing error, overrun).
-The bits of "irregular signals" are set, if this error/event occurred on
-the device side and are immeadeatly unset, if the serial state notification
-was sent.
-Like other drivers of real serial ports do, just the occurence of those
-events should be counted in serial_icounter_struct (but no 1->0
-transitions).
+The more common vfs practice is to call do_xxx helpers from vfs_xxx
+helpers, where freeze protecction is taken in the vfs_xxx helper, so
+this anomality could be a source of confusion.
 
-Signed-off-by: Tobias Herzog <t-herzog@gmx.de>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+It seems that commit 8ede205541ff ("ovl: add reflink/copyfile/dedup
+support") may have fallen a victim to this confusion -
+ovl_clone_file_range() calls the vfs_clone_file_range() helper in the
+hope of getting freeze protection on upper fs, but in fact results in
+overlayfs allowing to bypass upper fs freeze protection.
 
+Swap the names of the two helpers to conform to common vfs practice
+and call the correct helpers from overlayfs and nfsd.
+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 031a072a0b8a ("vfs: call vfs_clone_file_range() under freeze...")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/class/cdc-acm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/ioctl.c             |  2 +-
+ fs/nfsd/vfs.c          |  3 ++-
+ fs/overlayfs/copy_up.c |  2 +-
+ fs/read_write.c        | 17 +++++++++++++++--
+ include/linux/fs.h     | 17 +++--------------
+ 5 files changed, 22 insertions(+), 19 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -322,17 +322,17 @@ static void acm_process_notification(str
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 5ace7efb0d04..9db5ddaf7ef0 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -229,7 +229,7 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
+ 	ret = -EXDEV;
+ 	if (src_file.file->f_path.mnt != dst_file->f_path.mnt)
+ 		goto fdput;
+-	ret = do_clone_file_range(src_file.file, off, dst_file, destoff, olen);
++	ret = vfs_clone_file_range(src_file.file, off, dst_file, destoff, olen);
+ fdput:
+ 	fdput(src_file);
+ 	return ret;
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index a3c9bfa77def..f55527ef21e8 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -541,7 +541,8 @@ __be32 nfsd4_set_nfs4_label(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ __be32 nfsd4_clone_file_range(struct file *src, u64 src_pos, struct file *dst,
+ 		u64 dst_pos, u64 count)
+ {
+-	return nfserrno(do_clone_file_range(src, src_pos, dst, dst_pos, count));
++	return nfserrno(vfs_clone_file_range(src, src_pos, dst, dst_pos,
++					     count));
+ }
  
- 		if (difference & ACM_CTRL_DSR)
- 			acm->iocount.dsr++;
--		if (difference & ACM_CTRL_BRK)
--			acm->iocount.brk++;
--		if (difference & ACM_CTRL_RI)
--			acm->iocount.rng++;
- 		if (difference & ACM_CTRL_DCD)
- 			acm->iocount.dcd++;
--		if (difference & ACM_CTRL_FRAMING)
-+		if (newctrl & ACM_CTRL_BRK)
-+			acm->iocount.brk++;
-+		if (newctrl & ACM_CTRL_RI)
-+			acm->iocount.rng++;
-+		if (newctrl & ACM_CTRL_FRAMING)
- 			acm->iocount.frame++;
--		if (difference & ACM_CTRL_PARITY)
-+		if (newctrl & ACM_CTRL_PARITY)
- 			acm->iocount.parity++;
--		if (difference & ACM_CTRL_OVERRUN)
-+		if (newctrl & ACM_CTRL_OVERRUN)
- 			acm->iocount.overrun++;
- 		spin_unlock(&acm->read_lock);
+ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index c441f9387a1b..321eae740148 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -157,7 +157,7 @@ static int ovl_copy_up_data(struct path *old, struct path *new, loff_t len)
+ 	}
  
+ 	/* Try to use clone_file_range to clone up within the same fs */
+-	error = vfs_clone_file_range(old_file, 0, new_file, 0, len);
++	error = do_clone_file_range(old_file, 0, new_file, 0, len);
+ 	if (!error)
+ 		goto out;
+ 	/* Couldn't clone, so now we try to copy the data */
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 0046d72efe94..57a00ef895b2 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1812,8 +1812,8 @@ int vfs_clone_file_prep_inodes(struct inode *inode_in, loff_t pos_in,
+ }
+ EXPORT_SYMBOL(vfs_clone_file_prep_inodes);
+ 
+-int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+-		struct file *file_out, loff_t pos_out, u64 len)
++int do_clone_file_range(struct file *file_in, loff_t pos_in,
++			struct file *file_out, loff_t pos_out, u64 len)
+ {
+ 	struct inode *inode_in = file_inode(file_in);
+ 	struct inode *inode_out = file_inode(file_out);
+@@ -1860,6 +1860,19 @@ int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(do_clone_file_range);
++
++int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
++			 struct file *file_out, loff_t pos_out, u64 len)
++{
++	int ret;
++
++	file_start_write(file_out);
++	ret = do_clone_file_range(file_in, pos_in, file_out, pos_out, len);
++	file_end_write(file_out);
++
++	return ret;
++}
+ EXPORT_SYMBOL(vfs_clone_file_range);
+ 
+ /*
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index cc613f20e5a6..7374639f0aa0 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1792,8 +1792,10 @@ extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
+ extern int vfs_clone_file_prep_inodes(struct inode *inode_in, loff_t pos_in,
+ 				      struct inode *inode_out, loff_t pos_out,
+ 				      u64 *len, bool is_dedupe);
++extern int do_clone_file_range(struct file *file_in, loff_t pos_in,
++			       struct file *file_out, loff_t pos_out, u64 len);
+ extern int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+-		struct file *file_out, loff_t pos_out, u64 len);
++				struct file *file_out, loff_t pos_out, u64 len);
+ extern int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 					 struct inode *dest, loff_t destoff,
+ 					 loff_t len, bool *is_same);
+@@ -2712,19 +2714,6 @@ static inline void file_end_write(struct file *file)
+ 	__sb_end_write(file_inode(file)->i_sb, SB_FREEZE_WRITE);
+ }
+ 
+-static inline int do_clone_file_range(struct file *file_in, loff_t pos_in,
+-				      struct file *file_out, loff_t pos_out,
+-				      u64 len)
+-{
+-	int ret;
+-
+-	file_start_write(file_out);
+-	ret = vfs_clone_file_range(file_in, pos_in, file_out, pos_out, len);
+-	file_end_write(file_out);
+-
+-	return ret;
+-}
+-
+ /*
+  * get_write_access() gets write permission for a file.
+  * put_write_access() releases this write permission.
+-- 
+2.17.1
+
 
 
