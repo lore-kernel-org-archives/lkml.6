@@ -1,280 +1,460 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A247C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45325C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7BE20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:04:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJxVkMPY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7BE20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B173520857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:05:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B173520857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbeKHRi2 (ORCPT
+        id S1726682AbeKHRj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:38:28 -0500
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:37775 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbeKHRi2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:38:28 -0500
-Received: by mail-wr1-f49.google.com with SMTP id o15-v6so16515327wrv.4
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 00:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YxroUeNPICO/rCxEgqoF0BHm0TTc28cjP21bUB6hMP8=;
-        b=ZJxVkMPYXbe+8HpIR3zoUC0cKKUqx4zaLLNKufjXvF7LsoqSi500Zav/wHvaDmWHic
-         1yIj5fAlsxYeq/G7MssPvvBCInvNE5AbFsf78vrSvQn5RZlLd/65PBVIY3YwvQvti4O9
-         md3PeUBjFPkffauviUA7m7iGAy81L5qTLebCfVgIPJ6iSCq74xOxRmic6EQ/7P3zy84x
-         NVytLDwEAaGHeiQouQsXZfwBuOWjPjJ0ZmUfnCb0PWJSu4Tuf7cDeWepNSNNFd4RJNxy
-         jw6Ns0MWDGcBK1x5b+6BhGsfyPnsOIpT7WUnysjp8XwV0ifW/RLpqLoEcKFhR9rwW4HD
-         w+hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YxroUeNPICO/rCxEgqoF0BHm0TTc28cjP21bUB6hMP8=;
-        b=ACb6WZoCgMlGZuwB0f9Go+F8TYvRSdFweiVyd4o1hN6qDKJPfOMcJhRZw83tUoiXTi
-         YkseV/r4Dj5sn5I8nak8CjS9VC/AQVoMCC8t6vf5UfjTj2OTqQvhz9Z+7lC6u1Iol27o
-         qwpcHnXmcf9s+ipao7kQupdN63udpvw26wY4I2kdOwbBO5JJY+RIhLF768kjWbzlgP2D
-         QwAJpLmo215PuY3bHhRf5tRQPVXNhQPpYMjyuEw1rK6E2wZ/hzjH3HGyOGy8oVB/kfBI
-         uzO6wmyERTvLQCVFgJCF1mkEpYh8lgVQMoRpPZavKa1nTwSlybKb2lfG398lpfAUkFI1
-         zfVw==
-X-Gm-Message-State: AGRZ1gJ3r0GlNcj+1m5bHcIER5NYw9DHF2CCYX7bwpPF6+TfV6Mx1ifY
-        6i84r1x4RPnHe6t/UqvU+ILBfkGQ
-X-Google-Smtp-Source: AJdET5ezjVP0AgqLSmk4pSYqGMD/sOy2UZXRgoQnf769l6nAJqE7WdVMs9L89Bt5YXVw9YHA0+hOkQ==
-X-Received: by 2002:adf:8c09:: with SMTP id z9-v6mr3058661wra.82.1541664249526;
-        Thu, 08 Nov 2018 00:04:09 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j203-v6sm5112032wmd.46.2018.11.08.00.04.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 00:04:08 -0800 (PST)
-Date:   Thu, 8 Nov 2018 09:04:06 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
+        Thu, 8 Nov 2018 12:39:28 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:31744 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726252AbeKHRj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 12:39:28 -0500
+Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 2F61BA1366;
+        Thu,  8 Nov 2018 09:05:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id Kvl1KGWPqzja; Thu,  8 Nov 2018 09:05:04 +0100 (CET)
+Date:   Thu, 8 Nov 2018 19:04:48 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108080406.GF20032@gmail.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181108080448.rggfn4zawi3por23@yavin>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+ <20181101083551.3805-2-cyphar@cyphar.com>
+ <20181101204720.6ed3fe37@vmware.local.home>
+ <20181102050509.tw3dhvj5urudvtjl@yavin>
+ <20181102065932.bdt4pubbrkvql4mp@yavin>
+ <20181102091658.1bc979a4@gandalf.local.home>
+ <20181103070253.ajrqzs5xu2vf5stu@yavin>
+ <20181104115913.74l4yzecisvtt2j5@yavin>
+ <20181106171501.59ccabbc@gandalf.local.home>
+ <20181108074612.ldy6rozdpsdps6bf@yavin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ldmjptfwpt2e5bta"
 Content-Disposition: inline
-In-Reply-To: <20181107171149.165693799@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181108074612.ldy6rozdpsdps6bf@yavin>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+--ldmjptfwpt2e5bta
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +Variable types
-> +^^^^^^^^^^^^^^
-> +
-> +Please use the proper u8, u16, u32, u64 types for variables which are meant
-> +to describe hardware or are used as arguments for functions which access
-> +hardware. These types are clearly defining the bit width and avoid
-> +truncation, expansion and 32/64 bit confusion.
-> +
-> +u64 is also recommended in code which would become ambiguous for 32bit when
-> +'unsigned long' would be used instead. While in such situations 'unsigned
-> +long long' could be used as well, u64 is shorter and also clearly shows
-> +that the operation is required to be 64bit wide independent of the target
-> +CPU.
-> +
-> +Please use 'unsigned int' instead of 'unsigned'.
+On 2018-11-08, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> I will attach what I have at the moment to hopefully explain what the
+> issue I've found is (re-using the kretprobe architecture but with the
+> shadow-stack idea).
 
-s/for 32bit
- /for 32-bit kernels
+Here is the patch I have at the moment (it works, except for the
+question I have about how to handle the top-level pt_regs -- I've marked
+that code with XXX).
 
-s/64bit wide
- /64 bits wide
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-> +Constants
-> +^^^^^^^^^
-> +
-> +Please do not use literal (hexa)decimal numbers in code or initializers.
-> +Either use proper defines which have descriptive names or consider using
-> +an enum.
+--8<---------------------------------------------------------------------
 
-I believe there should be an exception for 'obvious' literal values like 
-0 and 1.
+Since the return address is modified by kretprobe, the various unwinders
+can produce invalid and confusing stack traces. ftrace mostly solved
+this problem by teaching each unwinder how to find the original return
+address for stack trace purposes. This same technique can be applied to
+kretprobes by simply adding a pointer to where the return address was
+replaced in the stack, and then looking up the relevant
+kretprobe_instance when a stack trace is requested.
 
-I.e. the above is mostly a rule that is intended to cover undocumented 
-'magic' numbers.
+[WIP: This is currently broken because the *first entry* will not be
+      overwritten since it looks like the stack pointer is different
+      when we are provided pt_regs. All other addresses are correctly
+      handled.]
 
-I.e. how about this wording:
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ arch/x86/events/core.c         |  6 +++-
+ arch/x86/include/asm/ptrace.h  |  1 +
+ arch/x86/kernel/kprobes/core.c |  5 ++--
+ arch/x86/kernel/stacktrace.c   | 10 +++++--
+ arch/x86/kernel/unwind_frame.c |  2 ++
+ arch/x86/kernel/unwind_guess.c |  5 +++-
+ arch/x86/kernel/unwind_orc.c   |  2 ++
+ include/linux/kprobes.h        | 15 +++++++++-
+ kernel/kprobes.c               | 55 ++++++++++++++++++++++++++++++++++
+ 9 files changed, 93 insertions(+), 8 deletions(-)
 
-  +Constants
-  +^^^^^^^^^
-  +
-  +Please do not use magic literal (hexa)decimal numbers when interfacing
-  +with hardware where the number has an unclear origin in code or 
-  +initializers. I.e. "no magic numbers".
-  +
-  +Either use proper defines which have descriptive names or use an enum.
-  +
-  +Using obvious 0/1 literal values is fine in most cases.
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index de32741d041a..d71062702179 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2371,7 +2371,11 @@ perf_callchain_kernel(struct perf_callchain_entry_ct=
+x *entry, struct pt_regs *re
+ 		return;
+ 	}
+=20
+-	if (perf_callchain_store(entry, regs->ip))
++	/* XXX: Currently broken -- stack_addr(regs) doesn't match entry. */
++	addr =3D regs->ip;
++	//addr =3D ftrace_graph_ret_addr(current, &state.graph_idx, addr, stack_a=
+ddr(regs));
++	addr =3D kretprobe_ret_addr(current, addr, stack_addr(regs));
++	if (perf_callchain_store(entry, addr))
+ 		return;
+=20
+ 	for (unwind_start(&state, current, regs, NULL); !unwind_done(&state);
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index ee696efec99f..c4dfafd43e11 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -172,6 +172,7 @@ static inline unsigned long kernel_stack_pointer(struct=
+ pt_regs *regs)
+ 	return regs->sp;
+ }
+ #endif
++#define stack_addr(regs) ((unsigned long *) kernel_stack_pointer(regs))
+=20
+ #define GET_IP(regs) ((regs)->ip)
+ #define GET_FP(regs) ((regs)->bp)
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index b0d1e81c96bb..eb4da885020c 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -69,8 +69,6 @@
+ DEFINE_PER_CPU(struct kprobe *, current_kprobe) =3D NULL;
+ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+=20
+-#define stack_addr(regs) ((unsigned long *)kernel_stack_pointer(regs))
+-
+ #define W(row, b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, ba, bb, bc, bd, be,=
+ bf)\
+ 	(((b0##UL << 0x0)|(b1##UL << 0x1)|(b2##UL << 0x2)|(b3##UL << 0x3) |   \
+ 	  (b4##UL << 0x4)|(b5##UL << 0x5)|(b6##UL << 0x6)|(b7##UL << 0x7) |   \
+@@ -568,7 +566,8 @@ void arch_prepare_kretprobe(struct kretprobe_instance *=
+ri, struct pt_regs *regs)
+ {
+ 	unsigned long *sara =3D stack_addr(regs);
+=20
+-	ri->ret_addr =3D (kprobe_opcode_t *) *sara;
++	ri->ret_addrp =3D (kprobe_opcode_t **) sara;
++	ri->ret_addr =3D *ri->ret_addrp;
+=20
+ 	/* Replace the return addr with trampoline addr */
+ 	*sara =3D (unsigned long) &kretprobe_trampoline;
+diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+index 7627455047c2..8a4fb3109d6b 100644
+--- a/arch/x86/kernel/stacktrace.c
++++ b/arch/x86/kernel/stacktrace.c
+@@ -8,6 +8,7 @@
+ #include <linux/sched/task_stack.h>
+ #include <linux/stacktrace.h>
+ #include <linux/export.h>
++#include <linux/kprobes.h>
+ #include <linux/uaccess.h>
+ #include <asm/stacktrace.h>
+ #include <asm/unwind.h>
+@@ -37,8 +38,13 @@ static void noinline __save_stack_trace(struct stack_tra=
+ce *trace,
+ 	struct unwind_state state;
+ 	unsigned long addr;
+=20
+-	if (regs)
+-		save_stack_address(trace, regs->ip, nosched);
++	if (regs) {
++		/* XXX: Currently broken -- stack_addr(regs) doesn't match entry. */
++		addr =3D regs->ip;
++		//addr =3D ftrace_graph_ret_addr(current, &state.graph_idx, addr, stack_=
+addr(regs));
++		addr =3D kretprobe_ret_addr(current, addr, stack_addr(regs));
++		save_stack_address(trace, addr, nosched);
++	}
+=20
+ 	for (unwind_start(&state, task, regs, NULL); !unwind_done(&state);
+ 	     unwind_next_frame(&state)) {
+diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
+index 3dc26f95d46e..47062427e9a3 100644
+--- a/arch/x86/kernel/unwind_frame.c
++++ b/arch/x86/kernel/unwind_frame.c
+@@ -1,4 +1,5 @@
+ #include <linux/sched.h>
++#include <linux/kprobes.h>
+ #include <linux/sched/task.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/interrupt.h>
+@@ -270,6 +271,7 @@ static bool update_stack_state(struct unwind_state *sta=
+te,
+ 		addr =3D READ_ONCE_TASK_STACK(state->task, *addr_p);
+ 		state->ip =3D ftrace_graph_ret_addr(state->task, &state->graph_idx,
+ 						  addr, addr_p);
++		state->ip =3D kretprobe_ret_addr(state->task, state->ip, addr_p);
+ 	}
+=20
+ 	/* Save the original stack pointer for unwind_dump(): */
+diff --git a/arch/x86/kernel/unwind_guess.c b/arch/x86/kernel/unwind_guess.c
+index 4f0e17b90463..554fd7c5c331 100644
+--- a/arch/x86/kernel/unwind_guess.c
++++ b/arch/x86/kernel/unwind_guess.c
+@@ -1,5 +1,6 @@
+ #include <linux/sched.h>
+ #include <linux/ftrace.h>
++#include <linux/kprobes.h>
+ #include <asm/ptrace.h>
+ #include <asm/bitops.h>
+ #include <asm/stacktrace.h>
+@@ -14,8 +15,10 @@ unsigned long unwind_get_return_address(struct unwind_st=
+ate *state)
+=20
+ 	addr =3D READ_ONCE_NOCHECK(*state->sp);
+=20
+-	return ftrace_graph_ret_addr(state->task, &state->graph_idx,
++	addr =3D ftrace_graph_ret_addr(state->task, &state->graph_idx,
+ 				     addr, state->sp);
++	addr =3D kretprobe_ret_addr(state->task, addr, state->sp);
++	return addr;
+ }
+ EXPORT_SYMBOL_GPL(unwind_get_return_address);
+=20
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index 26038eacf74a..b6393500d505 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -1,5 +1,6 @@
+ #include <linux/module.h>
+ #include <linux/sort.h>
++#include <linux/kprobes.h>
+ #include <asm/ptrace.h>
+ #include <asm/stacktrace.h>
+ #include <asm/unwind.h>
+@@ -462,6 +463,7 @@ bool unwind_next_frame(struct unwind_state *state)
+=20
+ 		state->ip =3D ftrace_graph_ret_addr(state->task, &state->graph_idx,
+ 						  state->ip, (void *)ip_p);
++		state->ip =3D kretprobe_ret_addr(state->task, state->ip, (void *)ip_p);
+=20
+ 		state->sp =3D sp;
+ 		state->regs =3D NULL;
+diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+index e909413e4e38..3a01f9998064 100644
+--- a/include/linux/kprobes.h
++++ b/include/linux/kprobes.h
+@@ -172,6 +172,7 @@ struct kretprobe_instance {
+ 	struct hlist_node hlist;
+ 	struct kretprobe *rp;
+ 	kprobe_opcode_t *ret_addr;
++	kprobe_opcode_t **ret_addrp;
+ 	struct task_struct *task;
+ 	char data[0];
+ };
+@@ -203,6 +204,7 @@ static inline int kprobes_built_in(void)
+ extern void arch_prepare_kretprobe(struct kretprobe_instance *ri,
+ 				   struct pt_regs *regs);
+ extern int arch_trampoline_kprobe(struct kprobe *p);
++extern void kretprobe_trampoline(void);
+ #else /* CONFIG_KRETPROBES */
+ static inline void arch_prepare_kretprobe(struct kretprobe *rp,
+ 					struct pt_regs *regs)
+@@ -212,6 +214,9 @@ static inline int arch_trampoline_kprobe(struct kprobe =
+*p)
+ {
+ 	return 0;
+ }
++static inline void kretprobe_trampoline(void)
++{
++}
+ #endif /* CONFIG_KRETPROBES */
+=20
+ extern struct kretprobe_blackpoint kretprobe_blacklist[];
+@@ -341,7 +346,7 @@ struct kprobe *get_kprobe(void *addr);
+ void kretprobe_hash_lock(struct task_struct *tsk,
+ 			 struct hlist_head **head, unsigned long *flags);
+ void kretprobe_hash_unlock(struct task_struct *tsk, unsigned long *flags);
+-struct hlist_head * kretprobe_inst_table_head(struct task_struct *tsk);
++struct hlist_head *kretprobe_inst_table_head(struct task_struct *tsk);
+=20
+ /* kprobe_running() will just return the current_kprobe on this CPU */
+ static inline struct kprobe *kprobe_running(void)
+@@ -371,6 +376,9 @@ void unregister_kretprobe(struct kretprobe *rp);
+ int register_kretprobes(struct kretprobe **rps, int num);
+ void unregister_kretprobes(struct kretprobe **rps, int num);
+=20
++unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned long re=
+t,
++				 unsigned long *retp);
++
+ void kprobe_flush_task(struct task_struct *tk);
+ void recycle_rp_inst(struct kretprobe_instance *ri, struct hlist_head *hea=
+d);
+=20
+@@ -425,6 +433,11 @@ static inline void unregister_kretprobe(struct kretpro=
+be *rp)
+ static inline void unregister_kretprobes(struct kretprobe **rps, int num)
+ {
+ }
++unsigned long kretprobe_ret_addr(struct task_struct *task, unsigned long r=
+et,
++				 unsigned long *retp)
++{
++	return ret;
++}
+ static inline void kprobe_flush_task(struct task_struct *tk)
+ {
+ }
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 90e98e233647..ed78141664ec 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -83,6 +83,11 @@ static raw_spinlock_t *kretprobe_table_lock_ptr(unsigned=
+ long hash)
+ 	return &(kretprobe_table_locks[hash].lock);
+ }
+=20
++struct hlist_head *kretprobe_inst_table_head(struct task_struct *tsk)
++{
++	return &kretprobe_inst_table[hash_ptr(tsk, KPROBE_HASH_BITS)];
++}
++
+ /* Blacklist -- list of struct kprobe_blacklist_entry */
+ static LIST_HEAD(kprobe_blacklist);
+=20
+@@ -1206,6 +1211,15 @@ __releases(hlist_lock)
+ }
+ NOKPROBE_SYMBOL(kretprobe_table_unlock);
+=20
++static bool kretprobe_hash_is_locked(struct task_struct *tsk)
++{
++	unsigned long hash =3D hash_ptr(tsk, KPROBE_HASH_BITS);
++	raw_spinlock_t *hlist_lock =3D kretprobe_table_lock_ptr(hash);
++
++	return raw_spin_is_locked(hlist_lock);
++}
++NOKPROBE_SYMBOL(kretprobe_hash_is_locked);
++
+ /*
+  * This function is called from finish_task_switch when task tk becomes de=
+ad,
+  * so that we can recycle any function-return probe instances associated
+@@ -1856,6 +1870,41 @@ static int pre_handler_kretprobe(struct kprobe *p, s=
+truct pt_regs *regs)
+ }
+ NOKPROBE_SYMBOL(pre_handler_kretprobe);
+=20
++unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned long re=
+t,
++				 unsigned long *retp)
++{
++	struct kretprobe_instance *ri;
++	unsigned long flags =3D 0;
++	struct hlist_head *head;
++	bool need_lock;
++
++	if (likely(ret !=3D (unsigned long) &kretprobe_trampoline))
++		return ret;
++
++	need_lock =3D !kretprobe_hash_is_locked(tsk);
++	if (WARN_ON(need_lock))
++		kretprobe_hash_lock(tsk, &head, &flags);
++	else
++		head =3D kretprobe_inst_table_head(tsk);
++
++	hlist_for_each_entry(ri, head, hlist) {
++		if (ri->task !=3D current)
++			continue;
++		if (ri->ret_addr =3D=3D (kprobe_opcode_t *) &kretprobe_trampoline)
++			continue;
++		if (ri->ret_addrp =3D=3D (kprobe_opcode_t **) retp) {
++			ret =3D (unsigned long) ri->ret_addr;
++			goto out;
++		}
++	}
++
++out:
++	if (need_lock)
++		kretprobe_hash_unlock(tsk, &flags);
++	return ret;
++}
++NOKPROBE_SYMBOL(kretprobe_ret_addr);
++
+ bool __weak arch_kprobe_on_func_entry(unsigned long offset)
+ {
+ 	return !offset;
+@@ -2005,6 +2054,12 @@ static int pre_handler_kretprobe(struct kprobe *p, s=
+truct pt_regs *regs)
+ }
+ NOKPROBE_SYMBOL(pre_handler_kretprobe);
+=20
++unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned long re=
+t,
++				 unsigned long *retp)
++{
++	return ret;
++}
++NOKPROBE_SYMBOL(kretprobe_ret_addr);
+ #endif /* CONFIG_KRETPROBES */
+=20
+ /* Set the kprobe gone and remove its instruction buffer. */
+--=20
+2.19.1
 
-?
+--ldmjptfwpt2e5bta
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +
-> +Struct declarations and initializers
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +
-> +Struct declarations should align the struct member names in a tabular
-> +fashion::
-> +
-> +	struct bar_order {
-> +		unsigned int	guest_id;
-> +		int		ordered_item;
-> +		struct menu	*menu;
-> +	};
-> +
-> +Please avoid documenting struct members within the declaration, because
-> +this often results in strangely formatted comments and the struct members
-> +become obfuscated::
-> +
-> + 	struct bar_order {
-> +  		unsigned int	guest_id; /* Unique guest id */
+-----BEGIN PGP SIGNATURE-----
 
-[ Sidenote: there's whitespace damage (extra spaces) in the text here. ]
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvj7iAACgkQSnvnv3De
+m5+qFw//b4RzBGK6rMMeSQ85mttp7KvxRMiOIjY7TB/mRDaRjr2C8Bh+QyviJ8l1
+iodXMm2DWkm4g9QCL8/YKKCnyGSgIr4iHuQtMgpeeY+QlH93nEjNVV3DbLBwVqnb
+Kt+wVx5nMiVwxqPgOCpG9pNxvTZIYojUo9v6SYgioqizDd+6oXrBS4IdcICB0whL
+sg8lxwLHSwGEP4mIe8AAZ4gi09OlKVX1ytMtdV36gCF152dnGAUvLKTjJsNTMmEk
+ifbraKQnTiP/U2zIzI15kLTScjh9edXAD8T+sydjN6w9iHBTQLqVyUVT6EBqnIKl
+D3Z691ovCdWZPHML/0H2+gwDgTQb6LDaTSxDV0hG8NI1sSm0XD3uuYgRroP56+tQ
+gcTez72dmzgRbplH06gQOW6o80jqtJzdmVQR1jI/OvLW0yDEUiuCPe+Mo6ZRjvSf
+zCYCrIUVg4dBc6oF0PbOC/wYso+L8KLuomngKs3vvFjvNl6w3iGGGW0ycuhVP2d2
+t3Fslqvk4h/QS4XLKkuifAag7Zbts9yX39n6zGuCz2nQDoNtvFpiNROyD+r8wJpA
+faD+3WEg0tFoicSPeOVI+QDyTzFOzddqux3RDp4qteYhztHcbvPXe67KcY3o48QL
+jAsTKx2Mlayx2+moZw9WCM9GFxZf9seD/4fBxq/9DvupbokgEiY=
+=5X/l
+-----END PGP SIGNATURE-----
 
-> +		int		ordered_item;
-> +		/* Pointer to a menu instance which contains all the drinks */
-> +		struct menu	*menu;
-> +	};
-> +
-> +Instead, please consider using the kernel-doc format in a comment preceding
-> +the struct declaration, which is easier to read and has the added advantage
-> +of including the information in the kernel documentation, for example, as
-> +follows::
-
-I disagree slightly here. While adding kernel-doc format is fine of 
-course, so are in-line comments which I frequently use.
-
-This form is particularly helpful for more complex structures. Have a 
-look at 'struct fpu' for example:
-
-
-/*
- * Highest level per task FPU state data structure that
- * contains the FPU register state plus various FPU
- * state fields:
- */
-struct fpu {
-	/*
-	 * @last_cpu:
-	 *
-	 * Records the last CPU on which this context was loaded into
-	 * FPU registers. (In the lazy-restore case we might be
-	 * able to reuse FPU registers across multiple context switches
-	 * this way, if no intermediate task used the FPU.)
-	 *
-	 * A value of -1 is used to indicate that the FPU state in context
-	 * memory is newer than the FPU state in registers, and that the
-	 * FPU state should be reloaded next time the task is run.
-	 */
-	unsigned int			last_cpu;
-
-	/*
-	 * @initialized:
-	 *
-	 * This flag indicates whether this context is initialized: if the task
-	 * is not running then we can restore from this context, if the task
-	 * is running then we should save into this context.
-	 */
-	unsigned char			initialized;
-
-	/*
-	 * @state:
-	 *
-	 * In-memory copy of all FPU registers that we save/restore
-	 * over context switches. If the task is using the FPU then
-	 * the registers in the FPU are more recent than this state
-	 * copy. If the task context-switches away then they get
-	 * saved here and represent the FPU state.
-	 */
-	union fpregs_state		state;
-	/*
-	 * WARNING: 'state' is dynamically-sized.  Do not put
-	 * anything after it here.
-	 */
-};
-
-The in-line freestanding comments is perfectly structured and readable as 
-well, and this is analogous to the 'freestanding comments' style for C 
-statements.
-
-We also have occasional examples where tail comments are fine, such as:
-
-/*
- * The legacy x87 FPU state format, as saved by FSAVE and
- * restored by the FRSTOR instructions:
- */
-struct fregs_state {
-	u32			cwd;	/* FPU Control Word		*/
-	u32			swd;	/* FPU Status Word		*/
-	u32			twd;	/* FPU Tag Word			*/
-	u32			fip;	/* FPU IP Offset		*/
-	u32			fcs;	/* FPU IP Selector		*/
-	u32			foo;	/* FPU Operand Pointer Offset	*/
-	u32			fos;	/* FPU Operand Pointer Selector	*/
-
-	/* 8*10 bytes for each FP-reg = 80 bytes:			*/
-	u32			st_space[20];
-
-	/* Software status information [not touched by FSAVE]:		*/
-	u32			status;
-};
-
-But I'd not complicate the style guide with that.
-
-> +Static struct initializers must use C99 initializers and should also be
-> +aligned in a tabular fashion::
-> +
-> +	static struct foo statfoo = {
-> +		.a		= 0,
-> +		.plain_integer	= CONSTANT_DEFINE_OR_ENUM,
-> +		.bar		= &statbar,
-> +	};
-> +
-
-Yeah, and maybe also add a note about the final comma:
-
-  + Note that while C99 syntax allows the omission of the final comma, we 
-  + recommend the use of a comma on the last line because it makes 
-  + reordering and addition of new lines easier, and makes such future 
-  + patches slightly easier to read as well.
-
-?
-
-Thanks,
-
-	Ingo
+--ldmjptfwpt2e5bta--
