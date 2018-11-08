@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 479EBECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D515ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 066D420892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AE1620989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vo1svrfY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 066D420892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMW0NC0s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE1620989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbeKIHjj (ORCPT
+        id S1731083AbeKIHjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:39:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59332 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:39:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731005AbeKIHjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:39:37 -0500
+        id S1731061AbeKIHjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:39:45 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B70020892;
-        Thu,  8 Nov 2018 22:02:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 496ED21019;
+        Thu,  8 Nov 2018 22:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714528;
-        bh=+JTlosB5QgRESJFQW6u8ogOK8bU8EFj2ReQ+lHEjtQ0=;
+        s=default; t=1541714536;
+        bh=PEiZqX/dTSF1px0cnTGwg++L+CZFAA5BVh9WYRKr2AY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vo1svrfYqW5zg0nQ78AMK7qArbR/l2Dc1dJrHe4Hy6NLFkrswIvMZFv2OnnYbla5Q
-         26QDbY6udCnmSLAhvkH1l4Y8PXMquKOEG4dhQoaqyx1WAmDfK4ztchkxI+ZzK/9Odz
-         11yl/GISa8mCVpvWuMAidcqrZzPoTXKyrrz6Z150=
+        b=uMW0NC0svbILqMXlXo2d7ZpMihnZMN7ImkUbV+FHS6b3fQI9HXlxOUg5yCxuc1LtS
+         kfoedyYOhpopuJnaS1IXaQ1lNiQRgu9FtAk5d/vXSGDBjDGp40Tv1HECeUxGyiHzvd
+         HK8t3KV15rcZG4pJ2xULP9trNoQs01ruFrpK6yq4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Roy Pledge <roy.pledge@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 006/171] cfg80211: Address some corner cases in scan result channel updating
-Date:   Thu,  8 Nov 2018 13:49:36 -0800
-Message-Id: <20181108215127.674830614@linuxfoundation.org>
+Subject: [PATCH 4.9 012/171] soc: fsl: qbman: qman: avoid allocating from non existing gen_pool
+Date:   Thu,  8 Nov 2018 13:49:42 -0800
+Message-Id: <20181108215128.141248662@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,138 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 119f94a6fefcc76d47075b83d2b73d04c895df78 ]
+[ Upstream commit 64e9e22e68512da8df3c9a7430f07621e48db3c2 ]
 
-cfg80211_get_bss_channel() is used to update the RX channel based on the
-available frame payload information (channel number from DSSS Parameter
-Set element or HT Operation element). This is needed on 2.4 GHz channels
-where frames may be received on neighboring channels due to overlapping
-frequency range.
+If the qman driver didn't probe, calling qman_alloc_fqid_range,
+qman_alloc_pool_range or qman_alloc_cgrid_range (as done in dpaa_eth) will
+pass a NULL pointer to gen_pool_alloc, leading to a NULL pointer
+dereference.
 
-This might of some use on the 5 GHz band in some corner cases, but
-things are more complex there since there is no n:1 or 1:n mapping
-between channel numbers and frequencies due to multiple different
-starting frequencies in different operating classes. This could result
-in ieee80211_channel_to_frequency() returning incorrect frequency and
-ieee80211_get_channel() returning incorrect channel information (or
-indication of no match). In the previous implementation, this could
-result in some scan results being dropped completely, e.g., for the 4.9
-GHz channels. That prevented connection to such BSSs.
-
-Fix this by using the driver-provided channel pointer if
-ieee80211_get_channel() does not find matching channel data for the
-channel number in the frame payload and if the scan is done with 5 MHz
-or 10 MHz channel bandwidth. While doing this, also add comments
-describing what the function is trying to achieve to make it easier to
-understand what happens here and why.
-
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Roy Pledge <roy.pledge@nxp.com>
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
+(cherry picked from commit f72487a2788aa70c3aee1d0ebd5470de9bac953a)
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/scan.c | 58 ++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 49 insertions(+), 9 deletions(-)
+ drivers/soc/fsl/qbman/qman.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index 35ad69fd0838..435f904c1be5 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -978,13 +978,23 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
- 	return NULL;
- }
- 
-+/*
-+ * Update RX channel information based on the available frame payload
-+ * information. This is mainly for the 2.4 GHz band where frames can be received
-+ * from neighboring channels and the Beacon frames use the DSSS Parameter Set
-+ * element to indicate the current (transmitting) channel, but this might also
-+ * be needed on other bands if RX frequency does not match with the actual
-+ * operating channel of a BSS.
-+ */
- static struct ieee80211_channel *
- cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
--			 struct ieee80211_channel *channel)
-+			 struct ieee80211_channel *channel,
-+			 enum nl80211_bss_scan_width scan_width)
+diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
+index 2caacd9d2526..2cc82ed6433a 100644
+--- a/drivers/soc/fsl/qbman/qman.c
++++ b/drivers/soc/fsl/qbman/qman.c
+@@ -2713,6 +2713,9 @@ static int qman_alloc_range(struct gen_pool *p, u32 *result, u32 cnt)
  {
- 	const u8 *tmp;
- 	u32 freq;
- 	int channel_number = -1;
-+	struct ieee80211_channel *alt_channel;
+ 	unsigned long addr;
  
- 	tmp = cfg80211_find_ie(WLAN_EID_DS_PARAMS, ie, ielen);
- 	if (tmp && tmp[1] == 1) {
-@@ -998,16 +1008,45 @@ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
- 		}
- 	}
- 
--	if (channel_number < 0)
-+	if (channel_number < 0) {
-+		/* No channel information in frame payload */
- 		return channel;
-+	}
- 
- 	freq = ieee80211_channel_to_frequency(channel_number, channel->band);
--	channel = ieee80211_get_channel(wiphy, freq);
--	if (!channel)
--		return NULL;
--	if (channel->flags & IEEE80211_CHAN_DISABLED)
-+	alt_channel = ieee80211_get_channel(wiphy, freq);
-+	if (!alt_channel) {
-+		if (channel->band == NL80211_BAND_2GHZ) {
-+			/*
-+			 * Better not allow unexpected channels when that could
-+			 * be going beyond the 1-11 range (e.g., discovering
-+			 * BSS on channel 12 when radio is configured for
-+			 * channel 11.
-+			 */
-+			return NULL;
-+		}
++	if (!p)
++		return -ENODEV;
 +
-+		/* No match for the payload channel number - ignore it */
-+		return channel;
-+	}
-+
-+	if (scan_width == NL80211_BSS_CHAN_WIDTH_10 ||
-+	    scan_width == NL80211_BSS_CHAN_WIDTH_5) {
-+		/*
-+		 * Ignore channel number in 5 and 10 MHz channels where there
-+		 * may not be an n:1 or 1:n mapping between frequencies and
-+		 * channel numbers.
-+		 */
-+		return channel;
-+	}
-+
-+	/*
-+	 * Use the channel determined through the payload channel number
-+	 * instead of the RX channel reported by the driver.
-+	 */
-+	if (alt_channel->flags & IEEE80211_CHAN_DISABLED)
- 		return NULL;
--	return channel;
-+	return alt_channel;
- }
- 
- /* Returned bss is reference counted and must be cleaned up appropriately. */
-@@ -1032,7 +1071,8 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
- 		    (data->signal < 0 || data->signal > 100)))
- 		return NULL;
- 
--	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan);
-+	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan,
-+					   data->scan_width);
- 	if (!channel)
- 		return NULL;
- 
-@@ -1130,7 +1170,7 @@ cfg80211_inform_bss_frame_data(struct wiphy *wiphy,
- 		return NULL;
- 
- 	channel = cfg80211_get_bss_channel(wiphy, mgmt->u.beacon.variable,
--					   ielen, data->chan);
-+					   ielen, data->chan, data->scan_width);
- 	if (!channel)
- 		return NULL;
- 
+ 	addr = gen_pool_alloc(p, cnt);
+ 	if (!addr)
+ 		return -ENOMEM;
 -- 
 2.17.1
 
