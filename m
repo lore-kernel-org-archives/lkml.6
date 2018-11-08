@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A706ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AD0ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36DDB2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B434921019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETKH021w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DDB2086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGrBI3l5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B434921019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731626AbeKIHmr (ORCPT
+        id S1731634AbeKIHmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:42:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34842 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:42:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728790AbeKIHmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:42:47 -0500
+        id S1728225AbeKIHmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:42:52 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D58322086C;
-        Thu,  8 Nov 2018 22:05:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7595520844;
+        Thu,  8 Nov 2018 22:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714716;
-        bh=x7g0PcWDMmWKp0EiuVs1vokctitPjGao4afGn1b6NBw=;
+        s=default; t=1541714722;
+        bh=iUDu25NN232zrLOhWQJhLf5sIa6tvFCCtQ6y+a8Xga8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ETKH021wPARl7us1c4B76nps/xa9F5Jlx+7B5vv91HX23vI+dUJUCWJH2s8qEfw1z
-         aJKb3YfcEQImluOJtr1F3g+2cUidxE+PAMhDOb+mlGUkJyspBhY8BVV8EVlUx77Ygn
-         9K0sU2UZ6RP7Up4zguL6I+ozH+MnE/iXmnvlg57E=
+        b=NGrBI3l5+LrOMPXJdV8xMz5nvgPf16cG4e5Qq1UGcW0iVGhrWacHzxzI0wdztVPOa
+         hoZy719FT3rB164CbiilF7IFxioBvuym4sv3ftecwmN4CQ7ittIyy/TyZEMpA7Kd2S
+         VUeHMlMBgbX2idqzUakN2B1RtkCBcRsLIL2m5Ki0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org,
+        Aditya Shankar <aditya.shankar@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 083/171] ptr_ring: fix up after recent ptr_ring changes
-Date:   Thu,  8 Nov 2018 13:50:53 -0800
-Message-Id: <20181108215133.522643936@linuxfoundation.org>
+Subject: [PATCH 4.9 084/171] staging: wilc1000: Fix problem with wrong vif index
+Date:   Thu,  8 Nov 2018 13:50:54 -0800
+Message-Id: <20181108215133.574744598@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -62,69 +63,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5790eabc6e7c3ce2d6ca2e3bbf4de467ce2b64b3 ]
+[ Upstream commit 0e490657c7214cce33fbca3d88227298c5c968ae ]
 
-Add more stubs to make it build.
+The vif->idx value is always 0 for two interfaces.
 
-Fixes: 81fbfe8a ("ptr_ring: use kmalloc_array()")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+wl->vif_num = 0;
+
+loop {
+     ...
+
+     vif->idx = wl->vif_num;
+     ...
+     wl->vif_num = i;
+      ....
+     i++;
+     ...
+}
+
+At present, vif->idx is assigned the value of wl->vif_num
+at the beginning of this block and device is initialized
+based on this index value.
+In the next iteration, wl->vif_num is still 0 as it is only updated
+later but gets assigned to vif->idx in the beginning. This causes problems
+later when we try to reference a particular interface and also while
+configuring the firmware.
+
+This patch moves the assignment to vif->idx from the beginning
+of the block to after wl->vif_num is updated with latest value of i.
+
+Fixes: commit 735bb39ca3be ("staging: wilc1000: simplify vif[i]->ndev accesses")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Aditya Shankar <aditya.shankar@microchip.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/virtio/ringtest/ptr_ring.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+ drivers/staging/wilc1000/linux_wlan.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/virtio/ringtest/ptr_ring.c b/tools/virtio/ringtest/ptr_ring.c
-index 635b07b4fdd3..b4a2e6af515f 100644
---- a/tools/virtio/ringtest/ptr_ring.c
-+++ b/tools/virtio/ringtest/ptr_ring.c
-@@ -15,24 +15,41 @@
- #define unlikely(x)    (__builtin_expect(!!(x), 0))
- #define likely(x)    (__builtin_expect(!!(x), 1))
- #define ALIGN(x, a) (((x) + (a) - 1) / (a) * (a))
-+#define SIZE_MAX        (~(size_t)0)
-+
- typedef pthread_spinlock_t  spinlock_t;
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 07d6e4824a9d..2e5e3b368532 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -1260,11 +1260,12 @@ int wilc_netdev_init(struct wilc **wilc, struct device *dev, int io_type,
+ 		else
+ 			strcpy(ndev->name, "p2p%d");
  
- typedef int gfp_t;
--static void *kmalloc(unsigned size, gfp_t gfp)
--{
--	return memalign(64, size);
--}
-+#define __GFP_ZERO 0x1
- 
--static void *kzalloc(unsigned size, gfp_t gfp)
-+static void *kmalloc(unsigned size, gfp_t gfp)
- {
- 	void *p = memalign(64, size);
- 	if (!p)
- 		return p;
--	memset(p, 0, size);
- 
-+	if (gfp & __GFP_ZERO)
-+		memset(p, 0, size);
- 	return p;
- }
- 
-+static inline void *kzalloc(unsigned size, gfp_t flags)
-+{
-+	return kmalloc(size, flags | __GFP_ZERO);
-+}
+-		vif->idx = wl->vif_num;
+ 		vif->wilc = *wilc;
+ 		vif->ndev = ndev;
+ 		wl->vif[i] = vif;
+ 		wl->vif_num = i;
++		vif->idx = wl->vif_num;
 +
-+static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
-+{
-+	if (size != 0 && n > SIZE_MAX / size)
-+		return NULL;
-+	return kmalloc(n * size, flags);
-+}
-+
-+static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
-+{
-+	return kmalloc_array(n, size, flags | __GFP_ZERO);
-+}
-+
- static void kfree(void *p)
- {
- 	if (p)
+ 		ndev->netdev_ops = &wilc_netdev_ops;
+ 
+ 		{
 -- 
 2.17.1
 
