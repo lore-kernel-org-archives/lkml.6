@@ -2,115 +2,101 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC72ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC87ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB86204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFC23204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:32:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtTe3Vyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB86204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GSeGubkS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC23204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbeKIFGO (ORCPT
+        id S1726915AbeKIFJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:06:14 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37659 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeKIFGO (ORCPT
+        Fri, 9 Nov 2018 00:09:51 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37445 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbeKIFJv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:06:14 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e5-v6so14922399lja.4;
-        Thu, 08 Nov 2018 11:29:19 -0800 (PST)
+        Fri, 9 Nov 2018 00:09:51 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u13-v6so9754558pfm.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 11:32:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=96XksKF66So0MldFrodJPIL7MvbSVAgZNb6Ic+qZpoc=;
-        b=HtTe3VygohsBVCuFE5XJdvJQlE+NQpO5mBhuHTnBh7cuWdGkcCMmSZSXbLacl38yu3
-         d9RlAQNskzEUNBcXMLH8Zfk/yDsLCstHan/c7YZcJy71Alw2/rEjFNlPxa4LfqWo6pWk
-         dKERhdEv75EK32e8CLLwumoHYp3oaE4RAvfTaLLpf7rw8nXjI/lkBNjQrfF8F14EPFkR
-         ZrvdpglJwAnrRGfH7Ac6cMAb/YFWKgj2EKCVd+w+CpNqr0wkwDPWDyy1L8ENK0ia0sdO
-         1HWTqCcMrjPUB/O26oLLCpz4K9GnTjJ6C2eidua0N9/z+zmzles/h4MNVhxU4ktyUO4d
-         759w==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TIK2R+2irgTzLBZnutnmO7Lc4vftZqOCApHzyog2wpk=;
+        b=GSeGubkSB+I4iOXXfYrgyGhmdpepc2pi4ErUd+gTvHpg6iaU1Cr2zplCKZ5rhqWYGj
+         vs0zeZcNqw6FiaIohWO/QBY1GffRWhj9seYod5IIOUcNWTku2fUkU7rDAWMMvB114k0J
+         99mpw2lQ7SRp0xlbP6NyN5cqQr7yhdutsk7pr3zb9AE5R/8WPYOWdlvP8CM64HTcK30W
+         VS8SnOGSrAMtaNJdLkKjP8zGlMT686KUuWwt7SGM51tXg5RS+FdpGUqeyQYDl9Tpetj+
+         p5w6rGKu1WpmrUeJZY8Iy4upsBKzM+5o+FncLHxrZfbnXa9ESvMkdz3ImpNSi1iv04ko
+         Y6PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=96XksKF66So0MldFrodJPIL7MvbSVAgZNb6Ic+qZpoc=;
-        b=ORwZBG0uCXm3vy/UmCRdBL6mebmhJz3UXjucSW6IoO1dtoQn5jEBIYnkknd9vKMRj+
-         APpBDFpfT79l3fUDB707su0izEcHdthyt5s1yWpvjJYvQ1Sq64C5A23ruJQXbDizeB5T
-         VhcJrT2iCABKolVVN+qQ2ItxGV7LopCHCCR739CZmd89dT+wvl6LrsA9tS4mQlbRw0E/
-         qhiSDmL5MqNSfCXhkhoktYKQ1SgdVmpMJgMVDewn5s50oKomOdB3q7bYjU248XcwFLm2
-         ejpzEcKp16s5N/xt5t3dlcJhDh2gSMYRpCWvnH/sZDiRoHTg2KgBvzxBVZ7QQRSxBrMN
-         A8xQ==
-X-Gm-Message-State: AGRZ1gIjcKz5b6use5HYbNlp+vU5oNJ4kxsNwOh7LZyh9OZFcNE/dPii
-        Eziqv2PARewEA9V3b13UzwM=
-X-Google-Smtp-Source: AJdET5cnpP7XJ3J4H+iY5ZcN2xl4jJ3DFdf8vGvnE2McWGS70tLTeeepbNKw3GLckjdbY5QJk+2xRA==
-X-Received: by 2002:a2e:45d:: with SMTP id 90-v6mr3742514lje.110.1541705358790;
-        Thu, 08 Nov 2018 11:29:18 -0800 (PST)
-Received: from i4790k.home (dkl219.neoplus.adsl.tpnet.pl. [83.24.15.219])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm802954ljw.11.2018.11.08.11.29.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 11:29:18 -0800 (PST)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        jacek.anaszewski@gmail.com, baolin.wang@linaro.org,
-        geert+renesas@glider.be, pavel@ucw.cz
-Subject: [GIT PULL] LED fixes for 4.20-rc2
-Date:   Thu,  8 Nov 2018 20:29:08 +0100
-Message-Id: <1541705348-4615-1-git-send-email-jacek.anaszewski@gmail.com>
-X-Mailer: git-send-email 2.1.4
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=TIK2R+2irgTzLBZnutnmO7Lc4vftZqOCApHzyog2wpk=;
+        b=df1xADtP9KML2zbEb8Wyfmga5EN+YI8FDzCBK+YGvzf6tuwl7/BbNnBCU2AH2gAUwV
+         RxS2khdWe+xOq0Cd3QSUihVvR6A2fHo/pOrRRrTh0pNXBZOeySVaWiEYGb0SCkV7opSP
+         opjqL5A5bFCjx4FHhu1zV/qX5zCJWHv43z6FlEZNyUdADI9BaH0LYrfzW2dpM5dnkReR
+         GcvglsmrpHklbqegn1e+R/UDqGDeeLlpLPJcSsDW38Z11SBs74rZJrh6oEDAXJ55PfSK
+         jFiD400TtnrXslkTKcjdfdD6slYFaEFYRFPgn60D19GJIOKI56+Nd2AdsB5s548S19X0
+         lcxQ==
+X-Gm-Message-State: AGRZ1gKboiE9YU2MHF1wB29TdQQcj4F1ZVMUohRD+/EgDYMQSChTbG5E
+        3wnrNMjjZ8Hh5p8WTJKv5lZTbA==
+X-Google-Smtp-Source: AJdET5d7IC22PPnlCqw2sFPla48l+0M4VDStY8BscG5Wi7dSvTRoNl4ETKw6Sy1MCDVTJeKMUlVuJg==
+X-Received: by 2002:a62:3241:: with SMTP id y62-v6mr5921005pfy.218.1541705576361;
+        Thu, 08 Nov 2018 11:32:56 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm5046601pff.29.2018.11.08.11.32.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 11:32:55 -0800 (PST)
+Date:   Thu, 08 Nov 2018 11:32:55 -0800 (PST)
+X-Google-Original-Date: Thu, 08 Nov 2018 11:26:45 PST (-0800)
+Subject:     Re: [PATCH] riscv: fix warning in arch/riscv/include/asm/module.h
+In-Reply-To: <20181108190700.30825-1-david.abdurachmanov@gmail.com>
+CC:     aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, david.abdurachmanov@gmail.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     david.abdurachmanov@gmail.com
+Message-ID: <mhng-1888c072-5274-457c-aa26-b9fa9cb246dd@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, 08 Nov 2018 11:07:00 PST (-0800), david.abdurachmanov@gmail.com wrote:
+> Fixes warning: 'struct module' declared inside parameter list will not be
+> visible outside of this definition or declaration
+>
+> Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+> ---
+>  arch/riscv/include/asm/module.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/riscv/include/asm/module.h b/arch/riscv/include/asm/module.h
+> index 349df33808c4..cd2af4b013e3 100644
+> --- a/arch/riscv/include/asm/module.h
+> +++ b/arch/riscv/include/asm/module.h
+> @@ -8,6 +8,7 @@
+>
+>  #define MODULE_ARCH_VERMAGIC    "riscv"
+>
+> +struct module;
+>  u64 module_emit_got_entry(struct module *mod, u64 val);
+>  u64 module_emit_plt_entry(struct module *mod, u64 val);
 
-Please pull LED fixes for 4.20-rc2.
+Works for me.  Looks like arm64 might have exactly the same issue.  I'll roll 
+it up into the next RC.
 
-All three fixes are related to the newly added pattern trigger:
-
-- remove mutex_lock() from timer callback, which would trigger problems
-  related to sleeping in atomic context, the removal is harmless since
-  mutex protection turned out to be redundant in this case
-- fix pattern parsing to properly handle intervals with brightness == 0
-- fix typos in the ABI documentation
-
-The following changes since commit 8dbac65f5c181e4723586ab738b703bb23bc3f2a:
-
-  leds: sc27xx: Add pattern_set/clear interfaces for LED controller (2018-10-11 21:59:11 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-4.20-rc2
-
-for you to fetch changes up to 406e7f986b2e4499295351bcfff5c93b0d34022a:
-
-  Documentation: ABI: led-trigger-pattern: Fix typos (2018-11-07 21:43:46 +0100)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LED fixes for 4.20-rc2
-----------------------------------------------------------------
-Baolin Wang (1):
-      leds: trigger: Fix sleeping function called from invalid context
-
-Geert Uytterhoeven (1):
-      Documentation: ABI: led-trigger-pattern: Fix typos
-
-Pavel Machek (1):
-      Fix pattern handling optimalization
-
- .../ABI/testing/sysfs-class-led-trigger-pattern    |  4 ++--
- drivers/leds/trigger/ledtrig-pattern.c             | 27 +++++++---------------
- 2 files changed, 10 insertions(+), 21 deletions(-)
+Thanks!
