@@ -2,111 +2,307 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822E9ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5607ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522CF208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522CF208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7189F20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ee/Wwj3b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7189F20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbeKIHlu (ORCPT
+        id S1731410AbeKIHlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:41:50 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46002 "EHLO mga03.intel.com"
+        Fri, 9 Nov 2018 02:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730305AbeKIHls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:41:48 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 14:04:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="104641689"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Nov 2018 14:04:17 -0800
-Date:   Thu, 8 Nov 2018 14:04:16 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181108220416.GA18263@linux.intel.com>
-References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
- <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
- <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
- <20181108211600.GA17167@linux.intel.com>
- <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
+        id S1728174AbeKIHlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:41:52 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64F9C20989;
+        Thu,  8 Nov 2018 22:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541714662;
+        bh=li0H8Grcs9QCGJRxsQxAWLA/0Np45LIbYCtDEOBwong=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ee/Wwj3ba2scClrCe6/ur0ozO9IFcPl0qD+GUQKVGOVm2UXnz4ttn6svNJAp2RINi
+         DB5NMXiJmSROFdg2FVDjQ1YjL/naED/sf+LEZBKJgtxARPJBvExpoVbdXVs4rjs/au
+         Ke7+yXvfQUMzZOeeS0v8MtVYVTaJ56jKOwUEFq2k=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Qu Wenruo <quwenruo@cn.fujitsu.com>,
+        Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 057/171] btrfs: fiemap: Cache and merge fiemap extent before submit it to user
+Date:   Thu,  8 Nov 2018 13:50:27 -0800
+Message-Id: <20181108215131.647642947@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
+References: <20181108215127.257643509@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:50:31PM -0800, Dave Hansen wrote:
-> On 11/8/18 1:16 PM, Sean Christopherson wrote:
-> > On Thu, Nov 08, 2018 at 12:10:30PM -0800, Dave Hansen wrote:
-> >> On 11/8/18 12:05 PM, Andy Lutomirski wrote:
-> >>> Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
-> >>> not the most terrible thing in the world.  But could the SDK live with
-> >>> something more like my suggestion where the vDSO supplies a normal
-> >>> function that takes a struct containing registers that are visible to
-> >>> the enclave?  This would make it extremely awkward for the enclave to
-> >>> use the untrusted stack per se, but it would make it quite easy (I
-> >>> think) for the untrusted part of the SDK to allocate some extra memory
-> >>> and just tell the enclave that *that* memory is the stack.
-> >>
-> >> I really think the enclave should keep its grubby mitts off the
-> >> untrusted stack.  There are lots of ways to get memory, even with
-> >> stack-like semantics, that don't involve mucking with the stack itself.
-> >>
-> >> I have not heard a good, hard argument for why there is an absolute
-> >> *need* to store things on the actual untrusted stack.
-> > 
-> > Convenience and performance are the only arguments I've heard, e.g. so
-> > that allocating memory doesn't require an extra EEXIT->EENTER round trip.
-> 
-> Well, for the first access, it's going to cost a bunch asynchronous
-> exits to fault in all the stack pages.  Instead of that, if you had a
-> single area, or an explicit out-call to allocate and populate the area,
-> you could do it in a single EEXIT and zero asynchronous exits for demand
-> page faults.
-> 
-> So, it might be convenient, but I'm rather suspicious of any performance
-> arguments.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Ya, I meant versus doing an EEXIT on every allocation, i.e. a very
-naive allocation scheme.
+------------------
+
+[ Upstream commit 4751832da990a927c37526ae67b9226ea01eb99e ]
+
+[BUG]
+Cycle mount btrfs can cause fiemap to return different result.
+Like:
+ # mount /dev/vdb5 /mnt/btrfs
+ # dd if=/dev/zero bs=16K count=4 oflag=dsync of=/mnt/btrfs/file
+ # xfs_io -c "fiemap -v" /mnt/btrfs/file
+ /mnt/test/file:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..127]:        25088..25215       128   0x1
+ # umount /mnt/btrfs
+ # mount /dev/vdb5 /mnt/btrfs
+ # xfs_io -c "fiemap -v" /mnt/btrfs/file
+ /mnt/test/file:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..31]:         25088..25119        32   0x0
+   1: [32..63]:        25120..25151        32   0x0
+   2: [64..95]:        25152..25183        32   0x0
+   3: [96..127]:       25184..25215        32   0x1
+But after above fiemap, we get correct merged result if we call fiemap
+again.
+ # xfs_io -c "fiemap -v" /mnt/btrfs/file
+ /mnt/test/file:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..127]:        25088..25215       128   0x1
+
+[REASON]
+Btrfs will try to merge extent map when inserting new extent map.
+
+btrfs_fiemap(start=0 len=(u64)-1)
+|- extent_fiemap(start=0 len=(u64)-1)
+   |- get_extent_skip_holes(start=0 len=64k)
+   |  |- btrfs_get_extent_fiemap(start=0 len=64k)
+   |     |- btrfs_get_extent(start=0 len=64k)
+   |        |  Found on-disk (ino, EXTENT_DATA, 0)
+   |        |- add_extent_mapping()
+   |        |- Return (em->start=0, len=16k)
+   |
+   |- fiemap_fill_next_extent(logic=0 phys=X len=16k)
+   |
+   |- get_extent_skip_holes(start=0 len=64k)
+   |  |- btrfs_get_extent_fiemap(start=0 len=64k)
+   |     |- btrfs_get_extent(start=16k len=48k)
+   |        |  Found on-disk (ino, EXTENT_DATA, 16k)
+   |        |- add_extent_mapping()
+   |        |  |- try_merge_map()
+   |        |     Merge with previous em start=0 len=16k
+   |        |     resulting em start=0 len=32k
+   |        |- Return (em->start=0, len=32K)    << Merged result
+   |- Stripe off the unrelated range (0~16K) of return em
+   |- fiemap_fill_next_extent(logic=16K phys=X+16K len=16K)
+      ^^^ Causing split fiemap extent.
+
+And since in add_extent_mapping(), em is already merged, in next
+fiemap() call, we will get merged result.
+
+[FIX]
+Here we introduce a new structure, fiemap_cache, which records previous
+fiemap extent.
+
+And will always try to merge current fiemap_cache result before calling
+fiemap_fill_next_extent().
+Only when we failed to merge current fiemap extent with cached one, we
+will call fiemap_fill_next_extent() to submit cached one.
+
+So by this method, we can merge all fiemap extents.
+
+It can also be done in fs/ioctl.c, however the problem is if
+fieinfo->fi_extents_max == 0, we have no space to cache previous fiemap
+extent.
+So I choose to merge it in btrfs.
+
+Signed-off-by: Qu Wenruo <quwenruo@cn.fujitsu.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/btrfs/extent_io.c | 124 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 122 insertions(+), 2 deletions(-)
+
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 2b96ca68dc10..5feaef9bcbda 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4377,6 +4377,123 @@ static struct extent_map *get_extent_skip_holes(struct inode *inode,
+ 	return NULL;
+ }
+ 
++/*
++ * To cache previous fiemap extent
++ *
++ * Will be used for merging fiemap extent
++ */
++struct fiemap_cache {
++	u64 offset;
++	u64 phys;
++	u64 len;
++	u32 flags;
++	bool cached;
++};
++
++/*
++ * Helper to submit fiemap extent.
++ *
++ * Will try to merge current fiemap extent specified by @offset, @phys,
++ * @len and @flags with cached one.
++ * And only when we fails to merge, cached one will be submitted as
++ * fiemap extent.
++ *
++ * Return value is the same as fiemap_fill_next_extent().
++ */
++static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
++				struct fiemap_cache *cache,
++				u64 offset, u64 phys, u64 len, u32 flags)
++{
++	int ret = 0;
++
++	if (!cache->cached)
++		goto assign;
++
++	/*
++	 * Sanity check, extent_fiemap() should have ensured that new
++	 * fiemap extent won't overlap with cahced one.
++	 * Not recoverable.
++	 *
++	 * NOTE: Physical address can overlap, due to compression
++	 */
++	if (cache->offset + cache->len > offset) {
++		WARN_ON(1);
++		return -EINVAL;
++	}
++
++	/*
++	 * Only merges fiemap extents if
++	 * 1) Their logical addresses are continuous
++	 *
++	 * 2) Their physical addresses are continuous
++	 *    So truly compressed (physical size smaller than logical size)
++	 *    extents won't get merged with each other
++	 *
++	 * 3) Share same flags except FIEMAP_EXTENT_LAST
++	 *    So regular extent won't get merged with prealloc extent
++	 */
++	if (cache->offset + cache->len  == offset &&
++	    cache->phys + cache->len == phys  &&
++	    (cache->flags & ~FIEMAP_EXTENT_LAST) ==
++			(flags & ~FIEMAP_EXTENT_LAST)) {
++		cache->len += len;
++		cache->flags |= flags;
++		goto try_submit_last;
++	}
++
++	/* Not mergeable, need to submit cached one */
++	ret = fiemap_fill_next_extent(fieinfo, cache->offset, cache->phys,
++				      cache->len, cache->flags);
++	cache->cached = false;
++	if (ret)
++		return ret;
++assign:
++	cache->cached = true;
++	cache->offset = offset;
++	cache->phys = phys;
++	cache->len = len;
++	cache->flags = flags;
++try_submit_last:
++	if (cache->flags & FIEMAP_EXTENT_LAST) {
++		ret = fiemap_fill_next_extent(fieinfo, cache->offset,
++				cache->phys, cache->len, cache->flags);
++		cache->cached = false;
++	}
++	return ret;
++}
++
++/*
++ * Sanity check for fiemap cache
++ *
++ * All fiemap cache should be submitted by emit_fiemap_extent()
++ * Iteration should be terminated either by last fiemap extent or
++ * fieinfo->fi_extents_max.
++ * So no cached fiemap should exist.
++ */
++static int check_fiemap_cache(struct btrfs_fs_info *fs_info,
++			       struct fiemap_extent_info *fieinfo,
++			       struct fiemap_cache *cache)
++{
++	int ret;
++
++	if (!cache->cached)
++		return 0;
++
++	/* Small and recoverbale problem, only to info developer */
++#ifdef CONFIG_BTRFS_DEBUG
++	WARN_ON(1);
++#endif
++	btrfs_warn(fs_info,
++		   "unhandled fiemap cache detected: offset=%llu phys=%llu len=%llu flags=0x%x",
++		   cache->offset, cache->phys, cache->len, cache->flags);
++	ret = fiemap_fill_next_extent(fieinfo, cache->offset, cache->phys,
++				      cache->len, cache->flags);
++	cache->cached = false;
++	if (ret > 0)
++		ret = 0;
++	return ret;
++}
++
+ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		__u64 start, __u64 len, get_extent_t *get_extent)
+ {
+@@ -4394,6 +4511,7 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	struct extent_state *cached_state = NULL;
+ 	struct btrfs_path *path;
+ 	struct btrfs_root *root = BTRFS_I(inode)->root;
++	struct fiemap_cache cache = { 0 };
+ 	int end = 0;
+ 	u64 em_start = 0;
+ 	u64 em_len = 0;
+@@ -4573,8 +4691,8 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			flags |= FIEMAP_EXTENT_LAST;
+ 			end = 1;
+ 		}
+-		ret = fiemap_fill_next_extent(fieinfo, em_start, disko,
+-					      em_len, flags);
++		ret = emit_fiemap_extent(fieinfo, &cache, em_start, disko,
++					   em_len, flags);
+ 		if (ret) {
+ 			if (ret == 1)
+ 				ret = 0;
+@@ -4582,6 +4700,8 @@ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		}
+ 	}
+ out_free:
++	if (!ret)
++		ret = check_fiemap_cache(root->fs_info, fieinfo, &cache);
+ 	free_extent_map(em);
+ out:
+ 	btrfs_free_path(path);
+-- 
+2.17.1
+
+
+
