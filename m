@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCA9ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2294ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBA72086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A95208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnZFeW9A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBA72086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1tqk0js"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A95208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731197AbeKIHko (ORCPT
+        id S1731204AbeKIHku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:40:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60452 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:40:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbeKIHkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:40:43 -0500
+        id S1727514AbeKIHkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:40:49 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F7132086C;
-        Thu,  8 Nov 2018 22:03:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 016B52086C;
+        Thu,  8 Nov 2018 22:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714593;
-        bh=uPJt81IEHBt2Lg2e2j/ON/JYiXWLxBa1lD+zpFxE1A8=;
+        s=default; t=1541714600;
+        bh=3tio9pX4Fdoyj4OsEwis2BKHBRE05dp+FjwA3O4nixI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PnZFeW9A0j1y8jYVsMwjBjF6vU4FRVypvnBwF5gAUNKrI/U5cPUd2XjOIEo2GibcC
-         x0lyz3n/vZDvoOZSX3OVS4nQnlMvY977h8YZ6IiJd/ZsDDsdKZKzt5ST46+qzba1Vg
-         I+6ODrtDkAXmwb7KecWou9u+ZH2ZEZYpxTWr4Bqg=
+        b=W1tqk0jsxZIbzuU47y+o+tGAJ6tkOaUZY2BZtVX1v6tU2SOjMCbhQWbv3WLkjXqzW
+         +knQmJxs60d0USnE7AVKZ6e6P9f4Pm0J4fO7NnPda+zxtuEjbOYIRAoTgJlVwyJaYy
+         KTtQi7172gEq44yo9Jjj+UPeHQlnwXhrBr1V+2Lk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 017/171] pxa168fb: prepare the clock
-Date:   Thu,  8 Nov 2018 13:49:47 -0800
-Message-Id: <20181108215128.499950807@linuxfoundation.org>
+Subject: [PATCH 4.9 020/171] asix: Check for supported Wake-on-LAN modes
+Date:   Thu,  8 Nov 2018 13:49:50 -0800
+Message-Id: <20181108215128.712625017@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,78 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d85536cde91fcfed6fb8d983783bd2b92c843939 ]
+[ Upstream commit c4ce446e33d7a0e978256ac6fea4c80e59d9de5f ]
 
-Add missing prepare/unprepare operations for fbi->clk,
-this fixes following kernel warning:
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:874 clk_core_enable+0x2c/0x1b0
-  Enabling unprepared disp0_clk
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.18.0-rc8-00032-g02b43ddd4f21-dirty #25
-  Hardware name: Marvell MMP2 (Device Tree Support)
-  [<c010f7cc>] (unwind_backtrace) from [<c010cc6c>] (show_stack+0x10/0x14)
-  [<c010cc6c>] (show_stack) from [<c011dab4>] (__warn+0xd8/0xf0)
-  [<c011dab4>] (__warn) from [<c011db10>] (warn_slowpath_fmt+0x44/0x6c)
-  [<c011db10>] (warn_slowpath_fmt) from [<c043898c>] (clk_core_enable+0x2c/0x1b0)
-  [<c043898c>] (clk_core_enable) from [<c0439ec8>] (clk_core_enable_lock+0x18/0x2c)
-  [<c0439ec8>] (clk_core_enable_lock) from [<c0436698>] (pxa168fb_probe+0x464/0x6ac)
-  [<c0436698>] (pxa168fb_probe) from [<c04779a0>] (platform_drv_probe+0x48/0x94)
-  [<c04779a0>] (platform_drv_probe) from [<c0475bec>] (driver_probe_device+0x328/0x470)
-  [<c0475bec>] (driver_probe_device) from [<c0475de4>] (__driver_attach+0xb0/0x124)
-  [<c0475de4>] (__driver_attach) from [<c0473c38>] (bus_for_each_dev+0x64/0xa0)
-  [<c0473c38>] (bus_for_each_dev) from [<c0474ee0>] (bus_add_driver+0x1b8/0x230)
-  [<c0474ee0>] (bus_add_driver) from [<c0476a20>] (driver_register+0xac/0xf0)
-  [<c0476a20>] (driver_register) from [<c0102dd4>] (do_one_initcall+0xb8/0x1f0)
-  [<c0102dd4>] (do_one_initcall) from [<c0b010a0>] (kernel_init_freeable+0x294/0x2e0)
-  [<c0b010a0>] (kernel_init_freeable) from [<c07e9eb8>] (kernel_init+0x8/0x10c)
-  [<c07e9eb8>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-  Exception stack(0xd008bfb0 to 0xd008bff8)
-  bfa0:                                     00000000 00000000 00000000 00000000
-  bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-  bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-  ---[ end trace c0af40f9e2ed7cb4 ]---
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-[b.zolnierkie: enhance patch description a bit]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 2e55cc7210fe ("[PATCH] USB: usbnet (3/9) module for ASIX Ethernet adapters")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/pxa168fb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/usb/asix_common.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
-index def3a501acd6..d059d04c63ac 100644
---- a/drivers/video/fbdev/pxa168fb.c
-+++ b/drivers/video/fbdev/pxa168fb.c
-@@ -712,7 +712,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
- 	/*
- 	 * enable controller clock
- 	 */
--	clk_enable(fbi->clk);
-+	clk_prepare_enable(fbi->clk);
+diff --git a/drivers/net/usb/asix_common.c b/drivers/net/usb/asix_common.c
+index 125cff57c759..3dbb0646b024 100644
+--- a/drivers/net/usb/asix_common.c
++++ b/drivers/net/usb/asix_common.c
+@@ -575,6 +575,9 @@ int asix_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
  
- 	pxa168fb_set_par(info);
- 
-@@ -767,7 +767,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
- failed_free_cmap:
- 	fb_dealloc_cmap(&info->cmap);
- failed_free_clk:
--	clk_disable(fbi->clk);
-+	clk_disable_unprepare(fbi->clk);
- failed_free_fbmem:
- 	dma_free_coherent(fbi->dev, info->fix.smem_len,
- 			info->screen_base, fbi->fb_start_dma);
-@@ -807,7 +807,7 @@ static int pxa168fb_remove(struct platform_device *pdev)
- 	dma_free_wc(fbi->dev, PAGE_ALIGN(info->fix.smem_len),
- 		    info->screen_base, info->fix.smem_start);
- 
--	clk_disable(fbi->clk);
-+	clk_disable_unprepare(fbi->clk);
- 
- 	framebuffer_release(info);
- 
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
++
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= AX_MONITOR_LINK;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
