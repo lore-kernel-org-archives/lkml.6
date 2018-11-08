@@ -2,163 +2,228 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9314ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ED0ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C8420827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uWrWN162"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C8420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DCFF2081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DCFF2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbeKIAhR (ORCPT
+        id S1727188AbeKIAhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:37:17 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40069 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeKIAhR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:37:17 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b203-v6so1498965wme.5;
-        Thu, 08 Nov 2018 07:01:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1sKunXkCnbt4d4DCRYomB2Du9d0WmVfFrUlP7zNSSxs=;
-        b=uWrWN162PhEPlt5U65i3uibUivtA1eXT3I//Nl3cSLJGYL13g5k28vV3Xbb9JUc+cP
-         FJLiDa+7nP2jzJ3Zd5/axo6jpch+sQdOzZHdusuBE8djTxNowWZ/Jb9AOogua1U+DtL5
-         tCh6OZduV+FntrAiYIWWA3s4nWLJIpFLTsyZVY7mYm23upQzRZS1ihRlw7/WLV4DW83M
-         8wq9ZBCaDlEgsSNeizq0xaJ5PA30IOz+QCnxYBBa4iq0PPas/37CQ+71H2+HXSU2ikyV
-         Yh7nkBOsF8x3Dg5Zy+wtVwyiNEC3ayvLdRsd1I/ySFykv3hi8Mh0GgXEROp8egSSEcOc
-         asiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1sKunXkCnbt4d4DCRYomB2Du9d0WmVfFrUlP7zNSSxs=;
-        b=QelZz2Zn+nKavkID1uNqkv5UtqaTA9v7IlUuJwYUThAjdFr0hF0ZBX5NWkf5BkRjHa
-         Z9J+PDI7jHz6VsWGm4PDnHXjqMf3dmcBmPnEys3HVYndlyrTpcTgVHLqREn5yLIu8ZBd
-         oAFfx3X+q5pcmqJ1IJscQ0HCOqrazLPhSY/jtbOCcey9UZpJU8ihWIM6cck9p8EZSpSv
-         JlNVFHBpOfuwdpU1A3BwKVacH4C1j2yRJKEIa2/Rgw6i04Ly1tjdknTq3aIfcrUJtGPX
-         IdSp8LTuz0EkVRASW8zw+1xfdBhFP6827NOB40QKRIDSM/ZjWaExSWQQnno6iP9Uk0nT
-         7Zng==
-X-Gm-Message-State: AGRZ1gJSqAdUZcjhbQOP4HZtKWKZkjXDSVu/nbODzvQVCSUeHK2sEw80
-        6nCRf6WVAoHcLoFdOHku3p5vi8lpwCo=
-X-Google-Smtp-Source: AJdET5fPsjSL4r7o8hdiqWT9k2lcGL76RMQPyN6FD+KVg93cn34WJc7DCK81qry2WKEcETpk1osINQ==
-X-Received: by 2002:a1c:61d6:: with SMTP id v205-v6mr1605273wmb.10.1541689281171;
-        Thu, 08 Nov 2018 07:01:21 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z6-v6sm5354027wrs.19.2018.11.08.07.01.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 07:01:18 -0800 (PST)
-Date:   Thu, 8 Nov 2018 08:01:16 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
- PIN_CONFIG_IO_STANDARD
-Message-ID: <20181108150116.GA2830@flashbox>
-References: <20181101005724.9622-1-natechancellor@gmail.com>
- <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
- <20181107085503.GA31517@flashbox>
- <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
- <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
- <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
+        Thu, 8 Nov 2018 19:37:34 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14630 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726469AbeKIAhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:37:34 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 802FDA61D1582;
+        Thu,  8 Nov 2018 23:01:29 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
+ 23:01:22 +0800
+Subject: Re: [PATCH v2] of, numa: Validate some distance map rules
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        <robh+dt@kernel.org>, <frowand.list@gmail.com>
+References: <1541672223-131326-1-git-send-email-john.garry@huawei.com>
+ <ee4cc102-6602-9f4f-d00c-d07ad7567401@arm.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <ec84abdd-ad11-329c-e859-20bfe71d5771@huawei.com>
+Date:   Thu, 8 Nov 2018 15:01:16 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ee4cc102-6602-9f4f-d00c-d07ad7567401@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 07:45:42AM +0100, Michal Simek wrote:
-> On 07. 11. 18 18:48, Nick Desaulniers wrote:
-> > On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> >>
-> >> On 07. 11. 18 9:55, Nathan Chancellor wrote:
-> >>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
-> >>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
-> >>>>> Clang warns when one enumerated type is implicitly converted to another:
-> >>>>>
-> >>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
-> >>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> >>>>> type 'enum pin_config_param' [-Wenum-conversion]
-> >>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
-> >>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
-> >>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
-> >>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> >>>>> type 'enum pin_config_param' [-Wenum-conversion]
-> >>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-> >>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-> >>>>> macro 'PCONFDUMP'
-> >>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
-> >>>>>                  ^
-> >>>>> 2 warnings generated.
-> >>>>
-> >>>> This is interesting. I have never tried to use llvm for building the
-> >>>> kernel. Do you have any description how this can be done?
-> >>>>
-> >>>
-> >>> Depending on what version of Clang you have access to, it is usually just as
-> >>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
-> >>>
-> >>> Clang 7.0+ is recommended but 6.0 might work too.
-> >>
-> >> TBH I would expect to download container and run this there to make sure
-> >> that I don't break anything else.
-> > 
-> > This is the first request we've had for a container in order to test a
-> > patch.  If it comes up again from other folks, I think it makes sense
-> > to create one.  Until then, its nice to have.  It's definitely
-> > overkill for this patch.
-> 
-> I have played with it to see that error and here are some steps I did.
-> 
-> docker run --name test-clang -it --rm debian:latest bash
-> apt-get update
-> apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
-> build-essential bison flex make llvm vim libssl-dev sparse
-> 
-> git clone
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
-> cd linux
-> 
-> export ARCH=arm64
-> export CROSS_COMPILE=aarch64-linux-gnu-
-> 
-> make defconfig
+On 08/11/2018 13:41, Anshuman Khandual wrote:
+> On 11/08/2018 03:47 PM, John Garry wrote:
+>> Currently the NUMA distance map parsing does not validate the distance
+>> table for the distance-matrix rules 1-2 in [1].
+>
+> Right.
+>
+>>
+>> However the arch NUMA code may enforce some of these rules, but not all.
+>
+> Either it does enforce all these rules again or it does not. What is the
+> purpose it serves when enforcing parts of it ! Rather it should focus on
+> looking for boundary conditions (e.g maximum number of nodes supported
+> on a platform against whats present on the table) which are important
+> from kernel point of view.
+>
+>> Such is the case for the arm64 port, which does not enforce the rule that
+>> the distance between separates nodes cannot equal LOCAL_DISTANCE.
+>>
+>> The patch adds the following rules validation:
+>> - distance of node to self equals LOCAL_DISTANCE
+>> - distance of separate nodes > LOCAL_DISTANCE
+>
+> Which exactly corresponds to first two rules as mentioned in the DT doc
+> (Documents/devicetree/bindings/numa.txt)
+>
+>         1. Each entry represents distance from first node to second node.
+>         The distances are equal in either direction.
+>         2. The distance from a node to self (local distance) is represented
+>         with value 10 and all internode distance should be represented with
+>         a value greater than 10.
+>
+>>
 
-This should also have 'CC=clang' because compiler detection happens in
-Kconfig now so compiler flags get properly set. Other than that, looks
-good and I was able to build pinctrl-zynq.o without any issues with
-those commands.
+Not exactly. As you know, it does not add validation of distance 
+equality in either direction (for values present in the table).
 
-Cheers!
-Nathan
+>> This change avoids a yet-unresolved crash reported in [2].
+>>
+>> A note on dealing with symmetrical distances between nodes:
+>>
+>> Validating symmetrical distances between nodes is difficult. If it were
+>> mandated in the bindings that every distance must be recorded in the
+>> table, then it would be easy. However, it isn't.
+>
+> But if [a, b] and [b, a] both are present, they must be equal.
+>
+>>
+>> In addition to this, it is also possible to record [b, a] distance only
+>> (and not [a, b]). So, when processing the table for [b, a], we cannot
+>> assert that current distance of [a, b] != [b, a] as invalid, as [a, b]
+>> distance may not be present in the table and current distance would be
+>> default at REMOTE_DISTANCE.
+>
+> Falling back to REMOTE_DISTANCE is right in case one of the symmetrical
+> distances is not present. But it must abort if they are present and not
+> identical. That rule should be enforced here while processing DT.
 
-> make CC=clang drivers/pinctrl/pinctrl-zynq.o C=1 V=1
-> 
-> There was not a problem to run it for arm64 but I had issues to run this
-> for arm32.
-> Do you see any problem with above steps?
-> 
-> Thanks,
-> Michal
-> 
+Do you really think it's worth the effort?
+
+For this, we would need something considerably more complicated than 
+what we have today. Maybe similar to the arm64 NUMA code does, in 
+allocating a memblock and then doing some 2-phase table parsing. But 
+then we're just replicated this same functionality.
+
+On this point, I will also note that there is another problem with the 
+DT NUMA bindings (first problem being that both distance entries are not 
+required to be present in the table).
+
+That is, it's inconsistency with ACPI SLIT. ACPI SLIT allows 
+asymmetrical distance. So that's why I'm not too hung up on this issue 
+of validating equality of distances.
+
+This patch does not change the current kernel policy: if the table has 
+entries with unequal distances, then it's not rejected nor fixed up.
+
+>
+>>
+>> As such, we maintain the policy that we overwrite distance [a, b] = [b, a]
+>> for b > a. This policy is different to kernel ACPI SLIT validation, which
+>> allows non-symmetrical distances (ACPI spec SLIT rules allow it). However,
+>> the distance debug message is dropped as it may be misleading (for a distance
+>> which is later overwritten).
+>
+> We could override but if the DT passed table is inconsistent then it must
+> abort as non-symmetrical distance is not supported. Hence overriding the
+> distance should happen only in case the inverse set is absent (probably
+> outside the first loop).
+>
+>>
+>> Some final notes on semantics:
+>>
+>> - It is implied that it is the responsibility of the arch NUMA code to
+>>   reset the NUMA distance map for an error in distance map parsing.
+>
+> Right.
+>
+>>
+>> - It is the responsibility of the FW NUMA topology parsing (whether OF or
+>>   ACPI) to enforce NUMA distance rules, and not arch NUMA code.
+>
+> This is where we still have some inconsistencies. Arch NUMA code on arm64
+> should either enforce rule 1 and 2 as stated above or should not at all.
+
+It was implied that any validation can be later dropped from the arch 
+NUMA code.
+
+  As
+> discussed previously numa_set_distance() enforces first part of rule 2
+> (self distance should be 10) but not the second part of rule 2 (internode
+> distance > 10). So either the following condition should be dropped from
+>
+> (from == to && distance != LOCAL_DISTANCE)
+>
+> or the following condition should be added to
+>
+> (from != to && distance <= LOCAL_DISTANCE)
+>
+> numa_set_distance() in order to conform to the semantics described above.
+> But thats for a separate discussion how much and what should be enforced
+> in any given DT compatible arch NUMA node. May not be part of this patch.
+>
+>>
+>> [1] Documents/devicetree/bindings/numa.txt
+>> [2] https://www.spinics.net/lists/arm-kernel/msg683304.html
+>>
+>> Cc: stable@vger.kernel.org # 4.7
+>> Signed-off-by: John Garry <john.garry@huawei.com>
+>> Acked-by: Will Deacon <will.deacon@arm.com>
+>> ---
+>> Changes from v1:
+>> - Add note on masking crash reported
+>> - Add Will's tag
+>> - Add cc stable
+>>
+>> diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
+>> index 35c64a4295e0..fe6b13608e51 100644
+>> --- a/drivers/of/of_numa.c
+>> +++ b/drivers/of/of_numa.c
+>> @@ -104,9 +104,14 @@ static int __init of_numa_parse_distance_map_v1(struct device_node *map)
+>>  		distance = of_read_number(matrix, 1);
+>>  		matrix++;
+>>
+>> +		if ((nodea == nodeb && distance != LOCAL_DISTANCE) ||
+>> +		    (nodea != nodeb && distance <= LOCAL_DISTANCE)) {
+>> +			pr_err("Invalid distance[node%d -> node%d] = %d\n",
+>> +			       nodea, nodeb, distance);
+>> +			return -EINVAL;
+>> +		}
+>> +
+>>  		numa_set_distance(nodea, nodeb, distance);
+>> -		pr_debug("distance[node%d -> node%d] = %d\n",
+>> -			 nodea, nodeb, distance);
+>
+> It makes sense to go through the table and print the finalized values
+> (being passed to arch NUMA) out side of this loop after any identical
+> replacement is done.
+>>
+>>  		/* Set default distance of node B->A same as A->B */
+>>  		if (nodeb > nodea)
+>>
+>
+> As mentioned before it should invalidate the table [a, b] != [b, a] in
+> case they are present and not equal.
+>
+
+I think that most of these comments are related to earlier points.
+
+> .
+>
+
+Thanks,
+John
+
+
