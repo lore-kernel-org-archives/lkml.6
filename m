@@ -2,88 +2,86 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75902C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A747C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4732E20685
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:16:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4732E20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FDA620685
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:17:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZQEYtut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FDA620685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeKHSvS (ORCPT
+        id S1727175AbeKHSvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:51:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbeKHSvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:51:17 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 117C87F3E1;
-        Thu,  8 Nov 2018 09:16:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 71E216871F;
-        Thu,  8 Nov 2018 09:16:39 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu,  8 Nov 2018 10:16:43 +0100 (CET)
-Date:   Thu, 8 Nov 2018 10:16:38 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Elvira Khabirova <lineprinter@altlinux.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>, rostedt@goodmis.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org, ldv@altlinux.org,
-        esyr@redhat.com, luto@kernel.org, strace-devel@lists.strace.io
-Subject: Re: [RFC PATCH] ptrace: add PTRACE_GET_SYSCALL_INFO request
-Message-ID: <20181108091638.GA9939@redhat.com>
-References: <20181107042751.3b519062@akathisia>
- <20181107112100.GA20419@redhat.com>
- <3BDB914D-12F3-4703-A033-EBE02226EC45@amacapital.net>
- <20181107164443.GA8726@redhat.com>
- <20181107210251.542cf8a1@akathisia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107210251.542cf8a1@akathisia>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 08 Nov 2018 09:16:44 +0000 (UTC)
+        Thu, 8 Nov 2018 13:51:52 -0500
+Received: from mail-pl1-f169.google.com ([209.85.214.169]:44418 "EHLO
+        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbeKHSvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:51:52 -0500
+Received: by mail-pl1-f169.google.com with SMTP id s5-v6so9244582plq.11;
+        Thu, 08 Nov 2018 01:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=OjSNxab0dulnRx7IrdL9nFcuFNvWc9J5o9tlVktOsII=;
+        b=RZQEYtutxYI/HJnMGfl1VBk3TP3b2n0nNRzcBkwoILJQJGeRynrdZAjQGenfOh40E5
+         Ac+FoirbzsK++ru3U1AEEocdXgy2uF84horzTLLYbClOuhj6LkWOo690fE1wG0MzS0XA
+         vENkBZO64gjk2cihwdPfoy72/+2DvSBAOWjgTianf6BtFCtWPEaOt0RkmCCD4qaJb3A7
+         9RSNBfvn5xaeg5YkWTCGAkzTQQlmbc/qphPKo4txg3w1DOX5UVFKhIWL5yOteB0/fIAF
+         HmAjZdcHyR/Go/Pd3+Ps5+rZQO9yuJ7pABbR1A7xXD8ZGniay7HMW+M6NrV+NUJUGmy0
+         i2pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=OjSNxab0dulnRx7IrdL9nFcuFNvWc9J5o9tlVktOsII=;
+        b=gXqQc6reYMHFPFQBm/1K+PRpq7STXIjrppktQLVlja55C+g6/T4KSIz/b1j3xQk4jX
+         pZMncEkrILiel+b9oKL+Tg4dx/lKrHzPDvisRiBgr5kIWnuCqFSAdLRjixTf/xz8Me+J
+         XvaewTDtXIQYeAc303VTs0yBFZ8dXa+RPHCcjfwSSYWeBcwFUBM5pYBPZJ3wrCfR2cJL
+         LnPVXf7nkRe7/Y2J1T3wTmVOjQpESwmKMdBtUJ/Yx6rg0mj78RczL2JWvaDso0jVo2A5
+         QyTK/gu/KhbnF9mlZUM2SchEHducteQFKNzTz3DOonh1w53eY35tOy/DU5PH5BsaIZvS
+         znbQ==
+X-Gm-Message-State: AGRZ1gJ++kPNz15095scwnaa58F9Fmte5Xc47439M/wUsPDDrzXsjByh
+        8BB9rasucpDg4YDwkPd0OSWQGbalUK0=
+X-Google-Smtp-Source: AJdET5e3qjuIYLipsvdNYQYqo7LfszV3cogDp3+jwSUV9JtGa0kugC3gjWYC19wpNqDxH4XNUOL13A==
+X-Received: by 2002:a17:902:930a:: with SMTP id bc10-v6mr3882065plb.17.1541668636914;
+        Thu, 08 Nov 2018 01:17:16 -0800 (PST)
+Received: from localhost.localdomain ([2405:204:54a3:4742:28e4:be46:8b17:69ab])
+        by smtp.gmail.com with ESMTPSA id 27-v6sm4278815pfm.36.2018.11.08.01.17.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Nov 2018 01:17:16 -0800 (PST)
+From:   Suraj Singh <suraj1998@gmail.com>
+To:     davem@davemloft.net
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        suraj1998@gmail.com, Suraj Singh <suraj998@gmail.com>
+Subject: Re: net: ipv4: tcp_westwood: fixed warnings and checks
+Date:   Thu,  8 Nov 2018 14:46:56 +0530
+Message-Id: <1541668616-9229-1-git-send-email-suraj1998@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1541425985-31869-1-git-send-email-suraj1998@gmail.com>
+References: <1541425985-31869-1-git-send-email-suraj1998@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07, Elvira Khabirova wrote:
->
-> On Wed, 7 Nov 2018 17:44:44 +0100
-> Oleg Nesterov <oleg@redhat.com> wrote:
->
-> > To me PT_IN_SYSCALL_STOP makes no real sense, but I won't argue.
-> >
-> > At least I'd ask to not abuse task->ptrace. ptrace_report_syscall() can clear
-> > ->ptrace_message on exit if we really want PTRACE_GET_SYSCALL_INFO to fail after
-> > that.
->
-> I really would not like to rely on ->ptrace_message remaining empty;
-> this looks too fragile.
+From: Suraj Singh <suraj998@gmail.com>
 
-Well. I do not understand why this is fragile. And certainly this is not more
-fragile than
+Regrding why I used "staging: " in the commmit message, I was following Greg Kroah-Hartman's video on YouTube on how to submit your first patch, and in his sample commit, he'd started his commit message with "staging: ", and so I thought it was convention to do so. I'll remove that immediately. I made this same mistake in another patch that I just sent for TCP Vegas, I'll make the change there as well.
 
-	current->ptrace |= PT_IN_SYSCALL_STOP;
-	trace_notify();
-	current->ptrace &= ~PT_IN_SYSCALL_STOP;
+I didn't consider the complexities of calling the same function twice. I was looking more towards satisying the scriptpatch.pl's requirements. 
 
-simply because both ->ptrace updates are technically wrong. The tracee can race
-with the exiting tracer which clears ->ptrace.
+-		tp->snd_cwnd = tp->snd_ssthresh = tcp_westwood_bw_rttmin(sk);
++		tp->snd_cwnd = tcp_westwood_bw_rttmin(sk);
++		tp->snd_ssthresh = tcp_westwood_bw_rttmin(sk);
 
-But even if this was correct. This patch manipulates ->ptrace_message anyway,
-I do not understand why should we abuse ->ptrace too just to for the sanity
-check in PTRACE_GET_SYSCALL_INFO.
-
-Oleg.
-
+I've made the same mistake here. I'll make these changes and resubmit. Is there anything else that's wrong? 
