@@ -2,122 +2,133 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1706CECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44A0ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A599320857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D9E520827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:22:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="DjjupvJH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A599320857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YW49QpB+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D9E520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeKIB6S (ORCPT
+        id S1727055AbeKIB6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:58:18 -0500
-Received: from imap.thunk.org ([74.207.234.97]:54842 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbeKIB6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:58:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=PFLlX9kGzsRha38kaC7YKCB7s91CgNS00CBEVXb1BH4=; b=DjjupvJHz/bm3Hlqh0ZJ8rVXrS
-        RUSYxFd5zVKe526nTBqfN+GMErTS7THeSGenU5e26w8YelxItZpUjGrSLA1UNDS1hB2a97UvQ82Ht
-        xEld4kHwuum5p2+ivb9ihj3pkoxZrIEfltxAmH4aiW3oLDB3+XSPfEpJK7i19KEUbZKY=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gKn3m-0007FA-Gs; Thu, 08 Nov 2018 16:21:34 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id B1CE07A7D24; Thu,  8 Nov 2018 11:21:33 -0500 (EST)
-Date:   Thu, 8 Nov 2018 11:21:33 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        john.stultz@linaro.org, acme@redhat.com, frederic@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>, daniel.lezcano@linaro.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
-Message-ID: <20181108162133.GC1080@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        john.stultz@linaro.org, acme@redhat.com, frederic@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>, daniel.lezcano@linaro.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>
-References: <20181107171010.421878737@linutronix.de>
- <20181107124855.328133e7@lwn.net>
- <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
- <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
- <20181108074920.4c601ee3@lwn.net>
- <20181108150517.GV9761@hirez.programming.kicks-ass.net>
+        Thu, 8 Nov 2018 20:58:30 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37568 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726914AbeKIB63 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 20:58:29 -0500
+Received: by mail-it1-f196.google.com with SMTP id j79-v6so2491284itb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:22:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zJatf1SYn/FvaC1RYDdgmhgiDS3qWSlKrIj2bmEua5E=;
+        b=YW49QpB+WN/vrgzqIrW6opoRIjJH7L65p4FM+okzvotUU2zGCJCrp2MFh9zc7Txyi9
+         DSaWX5362r1ytwQLR16Yh5UqdgKvDDTEQVh9shlwZODcZdwzdwMLkTEy7tl41bjSLu6O
+         FNzEyWvdHcHVrjuVERdINvXBy/jUrngX71/UY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zJatf1SYn/FvaC1RYDdgmhgiDS3qWSlKrIj2bmEua5E=;
+        b=uhdZ0EkuDRyHi34mb8CAFGri2LKSJrGntEEt4V9a4VekQjdkYtZURo1Wkq75KYV6tz
+         qg90KtBBO7dtRCyJ7wrx5/5rmv8TCrsVZpQqtnBujvQ2CL/6nqZ5TvIRsvD6ipHat981
+         uVVwoVZ0p+MehpNlsLGwecdY+sS5w9wHTjz2/pNKGnu5ACulffV44DjXayZpyNREBiOJ
+         qqlLQSDzemvU5JzFHUDDss0nif8eU3dAMessJnqQV0SpprDAcqDwS3mrf8Jlvj7a+n0D
+         dh+XYj+O5OgHLtouFWAFj/mZIEyZWYWLu3ugmeMkVi77VjuCAnpnWuTITBSmOArwkkUc
+         11ag==
+X-Gm-Message-State: AGRZ1gIauGQrURdD47fE5YHt/65duS6124eEzy2Cv584bjFE9QO1talA
+        3eJ2IAEk8V52MOOgl5v+e3soGpkFpOs=
+X-Google-Smtp-Source: AJdET5d29stiP/cX+K5EJ61bp+4zCYsdcIOpSgtqkRorHu/KQeQTQPdDoLfKaGj40OuX0cTtK+vFrg==
+X-Received: by 2002:a24:4052:: with SMTP id n79-v6mr1504106ita.99.1541694135124;
+        Thu, 08 Nov 2018 08:22:15 -0800 (PST)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id o131-v6sm2049666itb.37.2018.11.08.08.22.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 08:22:14 -0800 (PST)
+Subject: Re: [RFC PATCH 12/12] soc: qcom: ipa: build and "ipa_i.h"
+To:     Randy Dunlap <rdunlap@infradead.org>, davem@davemloft.net,
+        arnd@arndb.de, bjorn.andersson@linaro.org,
+        ilias.apalodimas@linaro.org
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        syadagir@codeaurora.org, mjavid@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+References: <20181107003250.5832-1-elder@linaro.org>
+ <20181107003250.5832-13-elder@linaro.org>
+ <cebe0d3c-4a24-60a4-88c8-5195a5d0da4b@infradead.org>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <dd788545-a369-684e-3d57-b0b8a98b407a@linaro.org>
+Date:   Thu, 8 Nov 2018 10:22:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108150517.GV9761@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <cebe0d3c-4a24-60a4-88c8-5195a5d0da4b@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 04:05:17PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 08, 2018 at 07:49:20AM -0700, Jonathan Corbet wrote:
-> > Might it be worth asking Ted for a kernel summit slot to talk about this
-> > next week?
+On 11/6/18 6:40 PM, Randy Dunlap wrote:
+> Hi-
+
+Thanks Randy, I've fixed this in my own tree.	-Alex
+
 > 
-> Ah, on that, let me complain :-)
+> On 11/6/18 4:32 PM, Alex Elder wrote:
+>> diff --git a/drivers/net/ipa/Kconfig b/drivers/net/ipa/Kconfig
+>> new file mode 100644
+>> index 000000000000..f8ea9363f532
+>> --- /dev/null
+>> +++ b/drivers/net/ipa/Kconfig
+>> @@ -0,0 +1,30 @@
+>> +config IPA
+>> +	tristate "Qualcomm IPA support"
+>> +	depends on NET
+>> +	select QCOM_QMI_HELPERS
+>> +	select QCOM_MDT_LOADER
+>> +	default n
+>> +	help
+>> +	  Choose Y here to include support for the Qualcomm IP
+>> +	  Accelerator (IPA), a hardware block present in some
+>> +	  Qualcomm SoCs.  The IPA is a programmable protocol
+>> +	  processor that is capable of generic hardware handling
+>> +	  of IP packets, including routing, filtering, and NAT.
+>> +	  Currently the IPA driver supports only basic transport
+>> +	  of network traffic between the AP and modem, on the
+>> +	  Qualcomm SDM845 SoC.
+>> +
+>> +	  If unsure, say N.
+>> +
+>> +config IPA_ASSERT
+>> +	bool "Enable IPA assertions"
+>> +	depends on IPA
+>> +	default y
+>> +	help
+>> +	 Incorporate IPA assertion verification in the build.  This
+>> +	 cause various design assumptions to be checked at runtime,
 > 
-> My plumbers schedule is already 100% booked with MCs and other things.
-> There is no kernel-summit schedule details available as of yet, but it
-> is already almost certain that I will not have time for anything in that
-> track anyway :/
+> 	 causes
 > 
-
-I thought there was a slot already scheduled on the refereed track,
-"Towards a Linux Kernel Mainainer Handbook" (Tuesday at 4:45pm) for
-this purpose?
-
-A draft kernel summit schedule was released yesterday on the
-kernel-summit mailing list.  I haven't populated the web site yet
-because I haven't had the time, and it's a lot easier to edit a text
-file than to make changes using Indico.  :-)
-
-Please take a look at it and let me know if there are conflicts; there
-is still time to make changes, although trying to satisfy all of the
-*other* scheduling constraints I know of is going to be tricky, so I
-make no promises that I can satisfy any additional scheduling
-requests/constraints.
-
-Cheers,
-
-						- Ted
+>> +	 generating a report (and a crash) if any assumed condition
+>> +	 does not hold.  You may wish to disable this to avoid the
+>> +	 overhead of checking.
+>> +
+>> +	 If unsure doubt, say "Y" here.
+> 
+> 
 
