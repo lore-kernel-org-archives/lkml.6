@@ -2,191 +2,173 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74012C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE866C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 267C020817
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CC9C20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Jy7vvrb7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267C020817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F2gF5iYU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC9C20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeKHOOV (ORCPT
+        id S1728857AbeKHOSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 09:14:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:49967 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbeKHOOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 09:14:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42r9Zd2NZJz9sC7;
-        Thu,  8 Nov 2018 15:40:41 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1541652041;
-        bh=IKsMkZtE/XDcWycF8+JjzQy7Yuo4zLvqYBtl5S7QQiI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Jy7vvrb72hHmxA1u8xcX2PUnUFcSbVlKqTo6nS00yf0N3FDHsXCRPJPxx0XF+yctX
-         MFW1VHoW8F2Q2rFC5laytM8zoBZrBE+JHBWv7uY7nXl/ZVEYg1Q/rvZl1XB02Xwm6N
-         TI070nZOOu84KysFlFLxawwW7lr25iIkw2jRn1KGij58UBGMRPVaEBoAl11vAIywLI
-         emNexNuc5H62dA3V91Bjb64UO1STlwf8Z5BpkoQ/pTL5ZB/fAk53/gkkRGCCPmGRY+
-         +2Udd3J+DOQ2zGmu06RfrIe7WytmzCbQNfL3r2p0BfuEZAK5GsJWvJtQr1If/p38Om
-         wzwztB6F6nUIQ==
-Date:   Thu, 8 Nov 2018 15:40:36 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: stats (Was: Linux 4.20-rc1)
-Message-ID: <20181108154036.69bc4e0f@canb.auug.org.au>
-In-Reply-To: <CAHk-=whDiwASMgw8Q7TNA2MJhf3s=ouK4+_3ioqmobs-yagnkQ@mail.gmail.com>
-References: <CAHk-=whDiwASMgw8Q7TNA2MJhf3s=ouK4+_3ioqmobs-yagnkQ@mail.gmail.com>
+        Thu, 8 Nov 2018 09:18:43 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38706 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728499AbeKHOSn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 09:18:43 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b11-v6so8746370pfi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 20:45:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xV9MY+QCgsbC06VkvFXZ/syTFu6zWUVr0mQ1PV7wA18=;
+        b=F2gF5iYUQnkc/peq7+ZxuDpcip9l50BHXhs7k/CXmu0tR2b2/MQUlukT4gUWQZ8v0W
+         VExXho3RWxyWrRmSwSxD5WWl4spAOStWWM9YSy8zKzKa8YC7sLT6QMiO/+wyiDRRR+dU
+         oYIwQm3U5fudDG3dRt5zFzlBQzzzg3SqsGym8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xV9MY+QCgsbC06VkvFXZ/syTFu6zWUVr0mQ1PV7wA18=;
+        b=Ou7W9EGXr+Ye51hLpQ5LAvjePRta7hoQG57FFVoybmEo2pnqILgdVm1062C/PuQCph
+         rm8qDuS+aqVh9Az/j2X0ZKgM4WYn1yJB8A59rY7FQi/cO4wSpxTxRoU+xJb9pJIGJsu9
+         g3d9EtUO9a9hAFsD51IiAtSLJzRM34sPlFnjTPqAEyuMDq6E05Gurzj/w3Qi7jjaKcia
+         s9ZiWLdEaS0pqDS26nv9fCuJhLw/BQ82AjanFRhxdmMMt580coZ1fnaa7gzSJxjSj6fb
+         Sfujg3ABLNdojlrvhmycGMyVKbly+ZFwYL4ywRIEt+kTgpAB0BH2Nv49cbuBCp0X9qQq
+         5FTg==
+X-Gm-Message-State: AGRZ1gIiSD3sqlnvTuYoNoMUflYaouqz4dqDdYbsEMQC5KdEeYosRjUM
+        ESH2Ob2f0XjBTOMuvQQx4nnsrQ==
+X-Google-Smtp-Source: AJdET5ezZASTNVceoUPAlHzRKfhzmR6BXvP36bnPwJPafcjLZVZ7mbbuC/ma7Mqd1kA/kCVw9v8Rnw==
+X-Received: by 2002:a62:65c3:: with SMTP id z186-v6mr3186208pfb.206.1541652306276;
+        Wed, 07 Nov 2018 20:45:06 -0800 (PST)
+Received: from localhost ([171.61.116.174])
+        by smtp.gmail.com with ESMTPSA id o30-v6sm1949552pgm.89.2018.11.07.20.45.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 20:45:05 -0800 (PST)
+Date:   Thu, 8 Nov 2018 10:15:03 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: s3c24xx: Change to use DEFINE_SHOW_ATTRIBUTE
+ macro
+Message-ID: <20181108044503.7zqgi3cjsxnsziuo@vireshk-i7>
+References: <20181107161346.9887-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CyxnKmrtWcX5cokb8GQEwO7"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107161346.9887-1-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CyxnKmrtWcX5cokb8GQEwO7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 07-11-18, 11:13, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/cpufreq/s3c24xx-cpufreq-debugfs.c | 46 +++--------------------
+>  1 file changed, 6 insertions(+), 40 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> index 4d976e8dbb2f..0df87b6480fe 100644
+> --- a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> +++ b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> @@ -63,18 +63,7 @@ static int board_show(struct seq_file *seq, void *p)
+>  	return 0;
+>  }
+>  
+> -static int fops_board_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, board_show, NULL);
+> -}
+> -
+> -static const struct file_operations fops_board = {
+> -	.open		= fops_board_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -	.owner		= THIS_MODULE,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(board);
+>  
+>  static int info_show(struct seq_file *seq, void *p)
+>  {
+> @@ -105,18 +94,7 @@ static int info_show(struct seq_file *seq, void *p)
+>  	return 0;
+>  }
+>  
+> -static int fops_info_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, info_show, NULL);
+> -}
+> -
+> -static const struct file_operations fops_info = {
+> -	.open		= fops_info_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -	.owner		= THIS_MODULE,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(info);
+>  
+>  static int io_show(struct seq_file *seq, void *p)
+>  {
+> @@ -162,19 +140,7 @@ static int io_show(struct seq_file *seq, void *p)
+>  	return 0;
+>  }
+>  
+> -static int fops_io_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, io_show, NULL);
+> -}
+> -
+> -static const struct file_operations fops_io = {
+> -	.open		= fops_io_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -	.owner		= THIS_MODULE,
+> -};
+> -
+> +DEFINE_SHOW_ATTRIBUTE(io);
+>  
+>  static int __init s3c_freq_debugfs_init(void)
+>  {
+> @@ -185,13 +151,13 @@ static int __init s3c_freq_debugfs_init(void)
+>  	}
+>  
+>  	dbgfs_file_io = debugfs_create_file("io-timing", S_IRUGO, dbgfs_root,
+> -					    NULL, &fops_io);
+> +					    NULL, &io_fops);
+>  
+>  	dbgfs_file_info = debugfs_create_file("info", S_IRUGO, dbgfs_root,
+> -					      NULL, &fops_info);
+> +					      NULL, &info_fops);
+>  
+>  	dbgfs_file_board = debugfs_create_file("board", S_IRUGO, dbgfs_root,
+> -					       NULL, &fops_board);
+> +					       NULL, &board_fops);
+>  
+>  	return 0;
+>  }
 
-Hi all,
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-As usual, the executive friendly graph is at
-http://neuling.org/linux-next-size.html :-)
-
-(No merge commits counted, next-20181019 was the last linux-next before
-the merge window opened.)
-
-Commits in v4.20-rc1 (relative to v4.19):          12125
-Commits in next-20181019:                          11296
-Commits with the same SHA1:                        10466
-Commits with the same patch_id:                      526 (1)
-Commits with the same subject line:                   56 (1)
-
-(1) not counting those in the lines above.
-
-So commits in -rc1 that were in next-20181019:     11048 91%
-
-Some breakdown of the list of extra commits (relative to next-20181019)
-in -rc1:
-
-Top ten first word of commit summary:
-
-     86 net
-     60 powerpc
-     56 perf
-     54 media
-     36 drm
-     33 pci
-     32 thermal
-     32 bpf
-     23 ubifs
-     21 selftests
-
-Top ten authors:
-
-     36 hans.verkuil@cisco.com
-     28 darrick.wong@oracle.com
-     28 acme@redhat.com
-     25 dhowells@redhat.com
-     24 s.hauer@pengutronix.de
-     23 christophe.leroy@c-s.fr
-     21 kishon@ti.com
-     21 davem@davemloft.net
-     21 daniel@iogearbox.net
-     21 bvanassche@acm.org
-
-Top ten commiters:
-
-    161 davem@davemloft.net
-     72 mpe@ellerman.id.au
-     65 acme@redhat.com
-     54 mchehab+samsung@kernel.org
-     41 edubezval@gmail.com
-     33 lorenzo.pieralisi@arm.com
-     32 broonie@kernel.org
-     31 hch@lst.de
-     31 ast@kernel.org
-     29 richard@nod.at
-
-There are also 250 commits in next-20181019 that didn't make it into
-v4.20-rc1.
-
-Top ten first word of commit summary:
-
-     28 vfs
-     21 mm
-     18 leaking_addresses
-     14 arm
-     11 nfc
-     10 interconnect
-     10 btrfs
-      9 xtensa
-      7 arm-soc
-      6 drm
-
-Top ten authors:
-
-     38 dhowells@redhat.com
-     19 akpm@linux-foundation.org
-     18 me@tobin.cc
-     11 arnd@arndb.de
-      9 jcmvbkbc@gmail.com
-      9 georgi.djakov@linaro.org
-      7 nborisov@suse.com
-      6 hannes@cmpxchg.org
-      5 wens@csie.org
-      5 sfr@canb.auug.org.au
-
-Some of Andrew's patches are fixes for other patches in his tree (and
-have been merged into those).
-
-Top ten commiters:
-
-     75 sfr@canb.auug.org.au
-     40 dhowells@redhat.com
-     18 me@tobin.cc
-     13 georgi.djakov@linaro.org
-     11 sameo@linux.intel.com
-     10 dsterba@suse.com
-      9 shuah@kernel.org
-      9 jcmvbkbc@gmail.com
-      7 paulmck@linux.vnet.ibm.com
-      7 maxime.ripard@bootlin.com
-
-Those commits by me are from the quilt series (mainly Andrew's mmotm
-tree).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CyxnKmrtWcX5cokb8GQEwO7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvjvkQACgkQAVBC80lX
-0Gx0jQf/WVVgd88XcTxwzllA3kRr0jt5GMD/mkg/uXP+nZtiR54Gz2cFTnUdGN2j
-2486eMFuK71qFgnfUJfHic7IVNxKq9mxiRN50fU0Vw2lEMlbqzLHqYKdDgKvN7Vv
-+uIEWQm4xlkcnmIATnkN24uUAy/8qxV/R6s0Q+VgCTXS4XpOzO2gyFjD/Pe5+X8u
-Gcovn5N1STtwDEmzqV/aD+5GNY2uGwxkLhxSed5gKDtGcHbdn7vy/y5gnvAwvFBd
-PQtigP6g9DgJOtpQ8K3C8f7fHYhzDpyRfjZMc2HmV9+WmuIVL0dz7s+snRMKQwsb
-0Q8ucCRVxo5GIxwrn3BBxNIumH2peA==
-=6RZg
------END PGP SIGNATURE-----
-
---Sig_/CyxnKmrtWcX5cokb8GQEwO7--
+-- 
+viresh
