@@ -2,91 +2,77 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540D9ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8637ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 138742081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:45:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138742081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 693DB204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:46:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hP+5Id/1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693DB204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeKIEV4 (ORCPT
+        id S1727419AbeKIEWw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:21:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 23:22:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeKIEV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:21:56 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727005AbeKIEWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:22:52 -0500
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B7FC204FD;
-        Thu,  8 Nov 2018 18:45:08 +0000 (UTC)
-Date:   Thu, 8 Nov 2018 13:45:07 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     vincent@bernat.ch, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] tracing: Fix NULL pointer bug in hist key
- expressions
-Message-ID: <20181108134507.2c343e6b@gandalf.local.home>
-In-Reply-To: <cover.1541687121.git.tom.zanussi@linux.intel.com>
-References: <cover.1541687121.git.tom.zanussi@linux.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45A0020857
+        for <linux-kernel@vger.kernel.org>; Thu,  8 Nov 2018 18:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541702764;
+        bh=pioQnMAPS1lpghmgomUHcHmT7Y1jAg5LnSVhR/vOdjM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hP+5Id/1tIkFH9uBgoyS3OslVYe4LmYHK0yAUKkqDwhvD0AmK3OLl9/4UFeXJ+0j9
+         pdO2FOjzvHdMWv7QJ0g9G4cumre+vpj4XNyJZwDSmwljrVSZ4myJcO3OjLFXhCbsuC
+         bZKJHixw4P3vquseVxPyq5uTr+WiTAfuASMAxkCs=
+Received: by mail-wr1-f51.google.com with SMTP id z16-v6so22382825wrv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 10:46:04 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKZEt9fp7BJuAHR7/mbdZW6UwWrIRkUw5kotXIOcRpre+I4KAJE
+        oK1VVmPzhkmu9k+BNDMq9RmO5TL73fr/+F/hPLAjaA==
+X-Google-Smtp-Source: AJdET5d5V39pv9xAzh9vqkbAfkJMB+NXdzltb2tJbpZApcHalNG6KJYudy1XTaCKdQir5sbXSGlSB3nFG+eqiIjP+e0=
+X-Received: by 2002:adf:97d3:: with SMTP id t19-v6mr5409613wrb.283.1541702762746;
+ Thu, 08 Nov 2018 10:46:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181107194858.9380-1-bigeasy@linutronix.de> <20181107194858.9380-5-bigeasy@linutronix.de>
+In-Reply-To: <20181107194858.9380-5-bigeasy@linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 8 Nov 2018 10:45:50 -0800
+X-Gmail-Original-Message-ID: <CALCETrW5Ct9oLceGtOWhOz0MW-ieZmHNvqFtR5WV56NMHpzEvA@mail.gmail.com>
+Message-ID: <CALCETrW5Ct9oLceGtOWhOz0MW-ieZmHNvqFtR5WV56NMHpzEvA@mail.gmail.com>
+Subject: Re: [PATCH 04/23] x86/entry/32: Remove asm/math_emu.h include
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  8 Nov 2018 08:41:47 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
+On Wed, Nov 7, 2018 at 11:49 AM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> The math_emu.h header files contains the definition of struct
+> math_emu_info. It is not used in this file.
+>
+> Remove asm/math_emu.h include.
+>
 
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Hi Steve,
-> 
-> This is a fix for a user-reported bug in the hist triggers, where if a
-> variable reference is used in an expression in a histogram key, it
-> results in a NULL pointer dereference and subsequent Oops.
-
-How does one add a variable reference as an expression in a
-histogram key?
-
-Can you show an example?
-
--- Steve
-
-> 
-> I separated the fix into two small patches, the first preventing the
-> immediate problem bu disallowing a var_ref from ever accessing a NULL
-> element, and the second disallowing a user from ever constructing such
-> a key.
-> 
-> Thanks,
-> 
-> Tom
-> 
-> The following changes since commit ee474b81fe5aa5dc0faae920bf66240fbf55f891:
-> 
->   tracing/kprobes: Fix strpbrk() argument order (2018-11-05 09:47:14 -0500)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/key-ref-fix
-> 
-> Tom Zanussi (2):
->   tracing: Prevent hist_field_var_ref() from accessing NULL
->     tracing_map_elts
->   tracing: Check keys for variable references in expressions too
-> 
->  kernel/trace/trace_events_hist.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
