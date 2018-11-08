@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2876EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA69BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDACC20818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8968820883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:20:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNwn4wWV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDACC20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXggYPhO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8968820883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbeKIH51 (ORCPT
+        id S1731610AbeKIH5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:57:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36470 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:57:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731255AbeKIHnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:43:51 -0500
+        id S1729664AbeKIHnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:49 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C169214DA;
-        Thu,  8 Nov 2018 22:06:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1D6D21019;
+        Thu,  8 Nov 2018 22:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714780;
-        bh=hgKRAlybfqIFwJ2obvNr7mrheJjKUw8DjgxGqjJUDdQ=;
+        s=default; t=1541714778;
+        bh=ZT/oeyjeNzx4Ru2HM/uQsI7pKJyS2Q/oAN6XXDqpnm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lNwn4wWVT+V4Z8WyqkLC1pTPigleUFK/GioqOCfZDKVEiPefKpVdg/2QSNQE7JUk0
-         NDARXXNPN5OMFNrvdQj5UbHWvxEF3E3KhtP6Yu3z0j0sTji0gYMlPGJ9HQ9WjtcF1k
-         3dZd9Bp378onKWiS+NgPOQ/4B9gtZNPT9FVd35Ws=
+        b=QXggYPhO5A4r5ialw/6Rql/K51qFUe2gPnyu3nqkhe4xjGElWsd3xvv+acpigxmOK
+         U00pQNdd4fXr4hhCl4NI5j5EF/kfpGqfv3/Sz/HOMrFIRrZGtH0t/aivK/QzzGCSGT
+         aXN0sVibRFE3idQcuvdtwXMKWijfnLt+3bIXfnQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Phil Reid <preid@electromag.com.au>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 122/171] IB/mlx4: Fix an error handling path in mlx4_ib_rereg_user_mr()
-Date:   Thu,  8 Nov 2018 13:51:32 -0800
-Message-Id: <20181108215136.101662646@linuxfoundation.org>
+Subject: [PATCH 4.9 120/171] iio: buffer: fix the function signature to match implementation
+Date:   Thu,  8 Nov 2018 13:51:30 -0800
+Message-Id: <20181108215135.963830543@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,37 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3dc7c7badb7502ec3e3aa817a8bdd9e53aa54c52 ]
+[ Upstream commit 92397a6c38d139d50fabbe9e2dc09b61d53b2377 ]
 
-Before returning -EPERM we should release some resources, as already done
-in the other error handling path of the function.
+linux/iio/buffer-dma.h was not updated to when length was changed to
+unsigned int.
 
-Fixes: d8f9cc328c88 ("IB/mlx4: Mark user MR as writable if actual virtual memory is writable")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: c043ec1ca5ba ("iio:buffer: make length types match kfifo types")
+Signed-off-by: Phil Reid <preid@electromag.com.au>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx4/mr.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ include/linux/iio/buffer-dma.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mr.c b/drivers/infiniband/hw/mlx4/mr.c
-index 0d4878efd643..ddd3182138ac 100644
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -247,8 +247,11 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *mr, int flags,
- 	}
+diff --git a/include/linux/iio/buffer-dma.h b/include/linux/iio/buffer-dma.h
+index 767467d886de..67c75372b691 100644
+--- a/include/linux/iio/buffer-dma.h
++++ b/include/linux/iio/buffer-dma.h
+@@ -141,7 +141,7 @@ int iio_dma_buffer_read(struct iio_buffer *buffer, size_t n,
+ 	char __user *user_buffer);
+ size_t iio_dma_buffer_data_available(struct iio_buffer *buffer);
+ int iio_dma_buffer_set_bytes_per_datum(struct iio_buffer *buffer, size_t bpd);
+-int iio_dma_buffer_set_length(struct iio_buffer *buffer, int length);
++int iio_dma_buffer_set_length(struct iio_buffer *buffer, unsigned int length);
+ int iio_dma_buffer_request_update(struct iio_buffer *buffer);
  
- 	if (flags & IB_MR_REREG_ACCESS) {
--		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
--			return -EPERM;
-+		if (ib_access_writable(mr_access_flags) &&
-+		    !mmr->umem->writable) {
-+			err = -EPERM;
-+			goto release_mpt_entry;
-+		}
- 
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
+ int iio_dma_buffer_init(struct iio_dma_buffer_queue *queue,
 -- 
 2.17.1
 
