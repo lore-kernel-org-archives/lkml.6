@@ -2,112 +2,130 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5F0C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60475C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B32C92086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BC282086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:49:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JI1syW+y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B32C92086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u1jMf6jG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC282086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeKHKPW (ORCPT
+        id S1728334AbeKHKWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 05:15:22 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49456 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727786AbeKHKPW (ORCPT
+        Thu, 8 Nov 2018 05:22:39 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37167 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeKHKWj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 05:15:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=el+2X9GjGB7/TK25hQe9aQnDcc1Ul3bzoa1BfeVgask=; b=JI1syW+yF1YCaYp5BgXeX9wDH
-        jJTbD2/qc2fNRnYB4VlvQjy8oVJ5ESoXY21f2w0fhiPom+hmj71rnF/ka/5uDkVa5XTtf4YN+if1W
-        kWtCleBYeDiY2E1kJytUkfhGvyMpIpJfhwQ/cOafYYh1me9qkg7Ci3VrdqihwmvIUuTM4=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:53564)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gKYOj-0000v3-8r; Thu, 08 Nov 2018 00:42:13 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gKYOa-00015U-TQ; Thu, 08 Nov 2018 00:42:05 +0000
-Date:   Thu, 8 Nov 2018 00:42:00 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>, netdev@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@free-electrons.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        linux-mediatek@lists.infradead.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 2/5] phy: core: add PHY_MODE_ETHERNET
-Message-ID: <20181108004200.GW30658@n2100.armlinux.org.uk>
-References: <20181108003617.10334-1-grygorii.strashko@ti.com>
- <20181108003617.10334-3-grygorii.strashko@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108003617.10334-3-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 8 Nov 2018 05:22:39 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p6-v6so8663979pll.4
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 16:49:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=SAI/qhIspGkU24feKQaREDDTBaq4w1zpaqs865bdTWA=;
+        b=u1jMf6jGFVSk8wvoN0ht+DWvnn2cAyP2RqynnIGPE4xQ5j4kqJ6197qnZT2yysJ7I3
+         4oypq8fsVWqIe2Z3iS4ZK7T0CU+WqaD1PGExiIWZOv1stskzl4uAIsoUvXaH7ymO9kjO
+         MAHjtHw2VYVyXCOb4IB2iHl+6/+OkPJmRSOJKrcoIjRnS2IRzoJ0hhZXfS5ymexhUh3b
+         V50UivR+ZqOKYhpIyy3MCq/+84uMJGUiMAtqBVUd266c0BI4JepBmQKMBlpUz4KjJPyo
+         9U4Vu+/Q+/rF72J2sgcQ8hifym5ysE5IA4EDHMP4OnGA2SjYhDzeY880YZIzaYAp22qG
+         MR8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=SAI/qhIspGkU24feKQaREDDTBaq4w1zpaqs865bdTWA=;
+        b=uATlRmWVpig9/PLC91EuOMGLcx2GPH2FTEcAAHMLu7GLWo7Xdm6BbwEyZCfkCTdvl5
+         6xHqBHtSi1U6pMoHVKiOEc+dyIHILM3EgphiZmI7MjTQaqivdbPUy6gbOHZG5sLZWAx8
+         0zXFDIq4bfK+rtzH9o/9ONnSK7+v/VSk7qSuvQfyJApKrOoeHMDWyq3mw4JDILW1saro
+         Q41QKltsoywkjqF7bIsPLMx3igW8s4CjCBXo2WoBqV5U+TT9BSANCYkjQDDKUuevxH0j
+         h8/9CWrIBu/0Ned5U/bOIteSFQPv5DxmDMRK9FQBod4l0XyLPYAB9UnRpNzXnAwLC2W5
+         GxoQ==
+X-Gm-Message-State: AGRZ1gKlKUg4zLTIb3j1ihTD/V1auhD5J8OWRvBIcz20Qva5LwYd2XKg
+        l77DUePiM5OQchM4ThedNng=
+X-Google-Smtp-Source: AJdET5cwwHevNc00warMbdp7hu0E8NL14HgkiTjMzXmVrkeXZ82B0hGrFs85jQaYTqMf77zVljHOeg==
+X-Received: by 2002:a17:902:6bc9:: with SMTP id m9-v6mr2576165plt.106.1541638184856;
+        Wed, 07 Nov 2018 16:49:44 -0800 (PST)
+Received: from [172.17.196.190] ([123.51.210.126])
+        by smtp.gmail.com with ESMTPSA id d24-v6sm3107747pfe.40.2018.11.07.16.49.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 16:49:44 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v3] driver-staging: vsoc.c: Add sysfs support for
+ examining the permissions of regions.
+From:   wahahab <wahahab11@gmail.com>
+In-Reply-To: <20181107091504.GD31015@kroah.com>
+Date:   Thu, 8 Nov 2018 08:49:41 +0800
+Cc:     =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>, astrachan@google.com,
+        ghartman@google.com, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F0E33A6C-B2CC-4D8F-8B98-AE096704E038@gmail.com>
+References: <20181107023043.GA18052@ubuntu> <20181107091504.GD31015@kroah.com>
+To:     Greg Kroah-Hartman <greg@kroah.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 06:36:14PM -0600, Grygorii Strashko wrote:
-> Add new PHY's mode to be used by Ethernet PHY interface drivers or
-> multipurpose PHYs like serdes. It will be reused in further changes.
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
->  include/linux/phy/phy.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index b17e770..02c9ef0 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -42,6 +42,7 @@ enum phy_mode {
->  	PHY_MODE_UFS_HS_A,
->  	PHY_MODE_UFS_HS_B,
->  	PHY_MODE_PCIE,
-> +	PHY_MODE_ETHERNET,
 
-Are you sure about this - we already have a bunch of "ethernet" modes
-that are more specific, like PHY_MODE_SGMII, PHY_MODE_2500SGMII and
-PHY_MODE_10GKR which require PHYs to be configured differently.  Having
-a very generic "ethernet" mode brings up questions about when it should
-be used vs the more specific modes.
+> On 7 Nov 2018, at 5:15 PM, Greg Kroah-Hartman <greg@kroah.com> wrote:
+>=20
+> On Wed, Nov 07, 2018 at 10:30:43AM +0800, Jerry Lin wrote:
+>> Add a attribute called permissions under vsoc device node for =
+examining
+>> current granted permissions in vsoc_device.
+>>=20
+>> This file will display permissions in following format:
+>> begin_offset  end_offset  owner_offset  owned_value
+>>           %x          %x            %x           %x
+>>=20
+>> Signed-off-by: Jerry Lin <wahahab11@gmail.com>
+>> ---
+>> drivers/staging/android/vsoc.c | 48 =
++++++++++++++++++++++++++++++++++++++++---
+>> 1 file changed, 45 insertions(+), 3 deletions(-)
+>=20
+> What changed from v2?  And where was v2?  What about v1?
+>=20
+> You need a change log here of what you did different from the previous
+> patches.
 
-(I've already mentioned that the SGMII modes are mis-named, since
-they also apply to 1000base-X and 2500base-X - the only difference
-is how one 16-bit word in the data stream is used which has no effect
-on the PHY.)
+Sorry for the mistakes I made, I shall read the document about patches =
+more carefully.
+Here is the change logs:
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Changes in v2:
+	- Display permissions information in sysfs insureds of debufs.
+Changes in v3:
+	- Remove unnecessary null terminator after snprintf.
+
+>=20
+> And why ignore my response saying that this type of sysfs file is not =
+ok
+> at all?
+>=20
+
+I didn=E2=80=99t mean to ignore it but I haven=E2=80=99t receive the =
+response you described,
+May you send the response to me again so I can do further revision as =
+well as
+change logs and resubmit the patch again?
+
+Thanks for your patience
+
+Jerry=
