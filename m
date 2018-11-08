@@ -2,187 +2,120 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A029CC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AF2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D41E2081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:11:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D41E2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E9C02081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:13:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9C02081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbeKHQqB (ORCPT
+        id S1726757AbeKHQrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:46:01 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35613 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeKHQqB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:46:01 -0500
-Received: by mail-ed1-f68.google.com with SMTP id e18-v6so4102111eds.2;
-        Wed, 07 Nov 2018 23:11:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QGE1zq6WIscQJ/i/2eSho8DZ1cEBYdVFOD9tCiOz6d0=;
-        b=SBoLxnhYUDrrNRLBeyjlF3NVNSFD6xlzUZpb02a1+klHdKl89BjO306X2KoodPgRuQ
-         DEIcEw/ETuiTzoPMi7RLw4m1DGKMq0P1X/ME0sa1BHHGps++2Ld1VcVO+7OieFDKhYQk
-         DeLrH8bkYLLhmje04Qm8xc51x033xR/4Y4cQdZIxSR43oC00FJ+pq24polxyYhdcp6Rm
-         yPEF3/clfJsldcFykY1tchq+VcZz2tSD+zvzpaUD1R2Fo66Fmn512nJoXIahzAijYi76
-         XK65UG4nojwPTAaBKJKH5/leliiHzY1A2H4rGzbI6jarIsQRbRLt22MYoQHt94MO4VQv
-         woXg==
-X-Gm-Message-State: AGRZ1gIZBAT7HO8xpAAo6TNfH5h5yrXwZHMCDPzTnsEw+rsI3O1TBAYY
-        Iyw+i6l93JPBzxw07uizXACymLa0DII=
-X-Google-Smtp-Source: AJdET5cxBcfMCQSv9MwG5mU3Cvftj5HnFNMtXarHiNDHAUYemkwJRltSgh0LjJqddILTv0ko/L3+MQ==
-X-Received: by 2002:a05:6402:1509:: with SMTP id f9mr2579268edw.286.1541661114128;
-        Wed, 07 Nov 2018 23:11:54 -0800 (PST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id j26-v6sm897846ede.73.2018.11.07.23.11.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 23:11:53 -0800 (PST)
-Received: by mail-wr1-f50.google.com with SMTP id o15-v6so16375153wrv.4;
-        Wed, 07 Nov 2018 23:11:53 -0800 (PST)
-X-Received: by 2002:adf:e307:: with SMTP id b7-v6mr3118521wrj.91.1541661113350;
- Wed, 07 Nov 2018 23:11:53 -0800 (PST)
+        Thu, 8 Nov 2018 11:47:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45930 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725724AbeKHQrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 11:47:12 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B763308625C;
+        Thu,  8 Nov 2018 07:13:07 +0000 (UTC)
+Received: from krava (ovpn-204-110.brq.redhat.com [10.40.204.110])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7397F1F8;
+        Thu,  8 Nov 2018 07:13:05 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 08:13:03 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        jolsa@kernel.org
+Subject: Re: [PATCH RFC] hist lookups
+Message-ID: <20181108071303.GB29732@krava>
+References: <20181106.221349.1296959035550004994.davem@davemloft.net>
+ <20181107083217.GA12870@krava>
+ <20181107194344.GA29732@krava>
+ <20181107.120154.1747291861102322855.davem@davemloft.net>
 MIME-Version: 1.0
-References: <20181108063929.29720-1-anarsoul@gmail.com> <20181108063929.29720-3-anarsoul@gmail.com>
-In-Reply-To: <20181108063929.29720-3-anarsoul@gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 8 Nov 2018 15:11:40 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64GUsd2gsZ8B-4AJodJN5_rfafGAiaOng5HsphkGJYxGA@mail.gmail.com>
-Message-ID: <CAGb2v64GUsd2gsZ8B-4AJodJN5_rfafGAiaOng5HsphkGJYxGA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] arm64: dts: allwinner: a64: enable sound on Pine64
- and SoPine
-To:     Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107.120154.1747291861102322855.davem@davemloft.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 08 Nov 2018 07:13:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 2:42 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
->
-> This commit enables I2S, digital and analog parts of audiocodec on
-> Pine64 and SoPine boards.
->
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> ---
->  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 28 +++++++++++++++++++
->  .../allwinner/sun50i-a64-sopine-baseboard.dts | 28 +++++++++++++++++++
->  2 files changed, 56 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> index c077b6c1f458..ff352bdfbb93 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> @@ -75,6 +75,18 @@
->         };
->  };
->
-> +&codec {
-> +       status = "okay";
-> +};
-> +
-> +&codec_analog {
-> +       status = "okay";
-> +};
-> +
-> +&dai {
-> +       status = "okay";
-> +};
-> +
->  &de {
->         status = "okay";
->  };
-> @@ -264,6 +276,22 @@
->         status = "disabled";
->  };
->
-> +&sound {
-> +       status = "okay";
-> +       simple-audio-card,widgets = "Microphone", "Microphone Jack",
-> +                                   "Headphone", "Headphone Jack";
-> +       simple-audio-card,routing =
-> +                       "Left DAC", "AIF1 Slot 0 Left",
-> +                       "Right DAC", "AIF1 Slot 0 Right",
-> +                       "Headphone Jack", "HP",
-> +                       "AIF1 Slot 0 Left ADC", "Left ADC",
-> +                       "AIF1 Slot 0 Right ADC", "Right ADC",
-> +                       "Left ADC", "ADC",
-> +                       "Right ADC", "ADC",
+On Wed, Nov 07, 2018 at 12:01:54PM -0800, David Miller wrote:
+> From: Jiri Olsa <jolsa@redhat.com>
+> Date: Wed, 7 Nov 2018 20:43:44 +0100
+> 
+> > I pushed new version in my perf/fixes branch
+> 
+> Thanks, I'll check it out later today for sure!  This is pretty exciting
+> work.
+> 
+> Just some random thoughts as I've been thinking about this whole
+> situation a lot lately:
+> 
+> Something to consider might be consolidating all of the event rings
+> into one.  This would force perf to process all events in "system
+> order", ie. what order they actually occurred in the machine.
+> 
+> Yes, this means more contention for the entities inside the kernel
+> queueing up the events, however the benefits are enormous.
 
-As mentioned the above two don't belong in the device tree.
+yes, perf's ring buffer is real fast because it's per-cpu
 
-> +                       "Microphone Jack", "HBIAS",
+> 
+> Right now we go forwards and backwards in time as we move from one
+> event ring to another, as you know.
+> 
+> However, we have to reconcile with the need we have to separate "high
+> priority" (ie. cannot really lose) events like fork, mmap2, etc.  with
+> "low priority" ones such as IP samples.
+> 
+> Perhaps another way to think about this is to go to the one huge mmap
+> ring model, and do the prioritization internally in perf.
+> 
+> Actually, this opens up tons of possibilities in my mind.
+> 
+> Perf can queue to an internal high priority queue for fork and mmap2
+> events, and never drop them.  Whilst at the same time queueing low
+> priority events like IP samples into a low priority queue and dropping
+> with whatever policy it wants when overloaded (f.e. drop older events
+> before newer ones).
 
-Schematics says this is NC or not connected by default.
-You may want to ask Pine64 about this?
+I think I can see the processing thread overloaded with data in tests,
+I'll add some counters for it some we can see how much behind it gets
 
-Same comments for SoPine.
+we could separated fork/mmaps to separate dummy event map, or just
+parse them out in the read thread and create special queue for them
+and drop just samples in case we are behind
 
-> +                       "MIC2", "Microphone Jack";
-> +};
-> +
->  /* On Exp and Euler connectors */
->  &uart0 {
->         pinctrl-names = "default";
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> index 53fcc9098df3..25d732df37c4 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> @@ -80,6 +80,18 @@
->         };
->  };
->
-> +&codec {
-> +       status = "okay";
-> +};
-> +
-> +&codec_analog {
-> +       status = "okay";
-> +};
-> +
-> +&dai {
-> +       status = "okay";
-> +};
-> +
->  &de {
->         status = "okay";
->  };
-> @@ -164,6 +176,22 @@
->         vcc-hdmi-supply = <&reg_dldo1>;
->  };
->
-> +&sound {
-> +       status = "okay";
-> +       simple-audio-card,widgets = "Microphone", "Microphone Jack",
-> +                                   "Headphone", "Headphone Jack";
-> +       simple-audio-card,routing =
-> +                       "Left DAC", "AIF1 Slot 0 Left",
-> +                       "Right DAC", "AIF1 Slot 0 Right",
-> +                       "Headphone Jack", "HP",
-> +                       "AIF1 Slot 0 Left ADC", "Left ADC",
-> +                       "AIF1 Slot 0 Right ADC", "Right ADC",
-> +                       "Left ADC", "ADC",
-> +                       "Right ADC", "ADC",
-> +                       "Microphone Jack", "HBIAS",
-> +                       "MIC2", "Microphone Jack";
-> +};
-> +
->  &uart0 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&uart0_pb_pins>;
-> --
-> 2.19.1
->
+jirka
+
+> 
+> I do not like the overwrite ring buffer mode that was implemented
+> because it enforeces an entire set of policy decisions upon the user.
+> Either the model works for you (which it currently does not for perf)
+> or you can't use it at all.
+> 
+> If the issue is that newer events are more interesting than old ones,
+> that is entirely perf's businness.  And it can implement this policy
+> %100 internally to itself.  No kernel changes were ever needed to do
+> this, as explained above.
+> 
+> Please, let's abandon this whole overwrite mode of the ring buffer.
+> The old one works perfectly fine, we just have to use it properly.
+> We should never have to shut off kernel side event queueing just
+> because we are processing the event ring on the user side.
+> 
+> Thanks.
