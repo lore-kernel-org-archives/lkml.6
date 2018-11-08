@@ -2,88 +2,202 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14280C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBD5C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D584B20837
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D584B20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id CF01820827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:27:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZUsYaxda"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF01820827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbeKHL70 (ORCPT
+        id S1728670AbeKHMAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:59:26 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33369 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbeKHL70 (ORCPT
+        Thu, 8 Nov 2018 07:00:13 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43376 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeKHMAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:59:26 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q5-v6so8176024pgv.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 18:26:15 -0800 (PST)
+        Thu, 8 Nov 2018 07:00:12 -0500
+Received: by mail-io1-f68.google.com with SMTP id t81-v6so13512674iod.10
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 18:27:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=csi6QKEF2b4SeReeT+7meXgfI+dHcf6fIMotUt4qfRk=;
+        b=ZUsYaxdaGTfq5sTTB+1/e6FMGo5jg4bCNFiCwQV78qKBf7ch4uAJqOQRIZr5A7jpHw
+         vgsVgJ39lhE3JFJFkdBxrb06DApDsGkm0W+D616/8E2BZod0JOuNAhcqK9i+1FCe+OnB
+         tvp9lS8gBL82mLL3Zn92SQA2KREEbc8XrQ7VA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d1wTShLA8tfcEf/d3Ubsk49/Ldf123MkB0jTx9bO5CA=;
-        b=sD4Nn0YONL2FMtFPK8NDQYo+sXDtlj2Jof0YDFIM9zvBCR8e7VT3Yk09fNzKG8b7bI
-         GhAlGdEVSVdN+7irJMBn5NgtpZAexaBBejXuItcwqb7V0OlInmEY3psFq8fmxk3BVSdL
-         kbJ2sdR9UqEw6gWU7TmIWuzM63h52Z8zYjQBEzO0Fxv+nGdw74zzGS+HYLSTU9sqeSjY
-         xRw7a5Wgci2/w2Fahnyc0wGVD+V4fGGlMVmyAHbMLXkom00lhL2+awH6F37uPRg+v3k9
-         gNvhDg4ohjHQUYAQIRr/jAwadHYRUsd/YXmPxDHlaOs7tzw/uN+6RFIgfivlBx86hQgs
-         aiJw==
-X-Gm-Message-State: AGRZ1gJLMfPq/wPgzT3tai2h2xVGfTFQgKFItB9Mv5AFiM1ZClGXIcU4
-        UqpG+PJeliDgjaMGbi8rWlzRnoY/
-X-Google-Smtp-Source: AJdET5fpPJMeaJPSzL8d2PWWMluRecKECqyXUohXFYcfWqMPNcBtPIJFOxrYMtPyfVpYCU0riegTbA==
-X-Received: by 2002:a62:85:: with SMTP id 127-v6mr2758556pfa.24.1541643974876;
-        Wed, 07 Nov 2018 18:26:14 -0800 (PST)
-Received: from asus.site ([2601:647:4601:5d98:fb3c:91c5:1423:24cd])
-        by smtp.gmail.com with ESMTPSA id z8sm1827440pgz.53.2018.11.07.18.26.12
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=csi6QKEF2b4SeReeT+7meXgfI+dHcf6fIMotUt4qfRk=;
+        b=J6pGVST/jv2udZ39u1Duxmamg9J3XgskckqNBSOEFkGoiEdrauOeXW/5ELIb8cv9A2
+         bFLgts3CdCP5M2plqeFpU2ttnYCL6fwuOuSadALRZhiY4kCCm6JHEvI4hiB3Z5g0wvp/
+         ODGl2Q42ts0v0wAfj9YDpl44gLn+eI0P55nA43rZelb27enksN2ehC+bicsXawL+hrai
+         M7putx2LiBbqS3mPn/2p3ksp0WlkGp4mkBtmzBOScIiHoAyRqgTxnqlJVticT/AjfLu6
+         Hf0F0wy3I1NX8mQ0Z91mL+SkTJxF0KHNzwymb1ysxYO3RrUSBduW++qG7XLIfEycztyT
+         u07g==
+X-Gm-Message-State: AGRZ1gI8YMSCsfNn/jBN/k1493Q71xybMjpH7LhQuanOXev3klBiRzxF
+        flQbqRCJo6L+8D5nfDUrWLa9jcyyqrM=
+X-Google-Smtp-Source: AJdET5dgfO72eZd33z9PVreQ8uRe4IAi8flmocNKAKc0Wya2i3CVuEXKq6IREvgRPBsn+jYQ6tcVHA==
+X-Received: by 2002:a6b:bf44:: with SMTP id p65-v6mr2114016iof.225.1541644019760;
+        Wed, 07 Nov 2018 18:26:59 -0800 (PST)
+Received: from mail-it1-f179.google.com (mail-it1-f179.google.com. [209.85.166.179])
+        by smtp.gmail.com with ESMTPSA id a134-v6sm1759889itc.33.2018.11.07.18.26.57
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 18:26:13 -0800 (PST)
-Subject: Re: [LKP] [drivers/base] 1431aa42b3:
- WARNING:at_drivers/base.c:#device_bind_driver
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bart Van Assche <bart.vanassche@sandisk.com>, lkp@01.org
-References: <20181108002442.GH24195@shao2-debian>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <78791260-c029-4ce8-d44a-61f3a9b392d1@acm.org>
-Date:   Wed, 7 Nov 2018 18:26:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 07 Nov 2018 18:26:58 -0800 (PST)
+Received: by mail-it1-f179.google.com with SMTP id k206-v6so26021455ite.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 18:26:57 -0800 (PST)
+X-Received: by 2002:a02:c85:: with SMTP id 5-v6mr2554453jan.87.1541644017331;
+ Wed, 07 Nov 2018 18:26:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181108002442.GH24195@shao2-debian>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181108013005.37362-1-briannorris@chromium.org>
+In-Reply-To: <20181108013005.37362-1-briannorris@chromium.org>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Wed, 7 Nov 2018 18:26:45 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXNJdbUNw3FX8HL7V2OFwkE8eqLnhHOt+CWELP2a_RzY8Q@mail.gmail.com>
+Message-ID: <CA+ASDXNJdbUNw3FX8HL7V2OFwkE8eqLnhHOt+CWELP2a_RzY8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/chrome: fixup cros_ec_get_next_event() error codes
+To:     bleung@chromium.org
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>, olof@lixom.net,
+        Shawn N <shawnn@chromium.org>,
+        Alexandru M Stan <amstan@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>, egranata@chromium.org,
+        ravisadineni@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/18 4:24 PM, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 1431aa42b3afc1dd50b292abcc68ccdc3193da63 ("drivers/base: Verify struct device locking requirements at runtime")
-> https://github.com/bvanassche/linux for-next
-> 
-> in testcase: boot
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu IvyBridge -smp 2 -m 2G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> [ ... ]
+On Wed, Nov 7, 2018 at 5:30 PM Brian Norris <briannorris@chromium.org> wrote:
+>
+> cros_ec_get_next_event() is documented to return 0 for success and
+> negative for errors. It currently returns negative for some errors, and
+> non-negative (number of bytes received) for success (including some "no
+> data available" responses as zero). This works out OK, because the
+> callers were more or less ignoring the documentation, and only treating
+> positive values as success (and indepdently checking the modification of
+> 'wakeup').
 
-A fix has already been pushed out, so I think this report can be ignored.
+Hmm, I realized there's a problem with this: I'd need to change
+get_keyboard_state_event() too, if I want to do this right.
 
-Bart.
+I think maybe it'll be better to leave this alone, and just fix up the
+documentation and a few corner cases.
+
+> This is difficult to reason about though, and it makes it harder to
+> refactor cros_ec_get_next_event() without breaking its users. So
+> instead, I
+> (a) make cros_ec_get_next_event() match its documentation and
+> (b) change the users to treat non-negative as success.
+>
+> This change tries to match a roughly similar pattern to
+> cros_ec_cmd_xfer_status(), where most non-zero result codes are treated
+> as an error -- in this case, all protocol errors (including
+> EC_RES_UNAVAILABLE) are treated as "no data available."
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> This barely touches MFD code, but overall this series should probably go
+> through the platform/chrome maintenance, IMO.
+> ---
+>  drivers/mfd/cros_ec.c                   |  4 ++--
+
+I may end up dropping the MFD changes from the next version, so I
+might drop Lee from the list too.
+
+Everyone else...stay tuned for v2.
+
+Thanks,
+Brian
+
+>  drivers/platform/chrome/cros_ec_lpc.c   |  2 +-
+>  drivers/platform/chrome/cros_ec_proto.c | 13 ++++++++++---
+>  3 files changed, 13 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index fe6f83766144..807a5870198d 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -67,7 +67,7 @@ static irqreturn_t ec_irq_thread(int irq, void *data)
+>         if (wake_event && device_may_wakeup(ec_dev->dev))
+>                 pm_wakeup_event(ec_dev->dev, 0);
+>
+> -       if (ret > 0)
+> +       if (ret >= 0)
+>                 blocking_notifier_call_chain(&ec_dev->event_notifier,
+>                                              0, ec_dev);
+>         return IRQ_HANDLED;
+> @@ -219,7 +219,7 @@ EXPORT_SYMBOL(cros_ec_suspend);
+>  static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
+>  {
+>         while (ec_dev->mkbp_event_supported &&
+> -              cros_ec_get_next_event(ec_dev, NULL) > 0)
+> +              cros_ec_get_next_event(ec_dev, NULL) >= 0)
+
+
+
+>                 blocking_notifier_call_chain(&ec_dev->event_notifier,
+>                                              1, ec_dev);
+>  }
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+> index e1b75775cd4a..292408eefe43 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -235,7 +235,7 @@ static void cros_ec_lpc_acpi_notify(acpi_handle device, u32 value, void *data)
+>         struct cros_ec_device *ec_dev = data;
+>
+>         if (ec_dev->mkbp_event_supported &&
+> -           cros_ec_get_next_event(ec_dev, NULL) > 0)
+> +           cros_ec_get_next_event(ec_dev, NULL) >= 0)
+>                 blocking_notifier_call_chain(&ec_dev->event_notifier, 0,
+>                                              ec_dev);
+>
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+> index b6fd4838f60f..49625836fdd6 100644
+> --- a/drivers/platform/chrome/cros_ec_proto.c
+> +++ b/drivers/platform/chrome/cros_ec_proto.c
+> @@ -541,8 +541,12 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+>         if (cmd_version == 1) {
+>                 ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+>                                 sizeof(struct ec_response_get_next_event_v1));
+> -               if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
+> +               if (ret < 0)
+>                         return ret;
+> +               if (msg->result == EC_RES_SUCCESS)
+> +                       return 0;
+> +               if (msg->result != EC_RES_INVALID_VERSION)
+> +                       return -ENODATA;
+>
+>                 /* Fallback to version 0 for future send attempts */
+>                 cmd_version = 0;
+> @@ -550,8 +554,11 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+>
+>         ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+>                                   sizeof(struct ec_response_get_next_event));
+> -
+> -       return ret;
+> +       if (ret < 0)
+> +               return ret;
+> +       if (msg->result != EC_RES_SUCCESS)
+> +               return -ENODATA;
+> +       return 0;
+>  }
+>
+>  static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
+> --
+> 2.19.1.930.g4563a0d9d0-goog
+>
