@@ -2,226 +2,135 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EE4ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD63ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A012081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A012081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 81D992081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="CA6uxHWX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D992081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeKIFbU (ORCPT
+        id S1727290AbeKIFb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:31:20 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38603 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbeKIFbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:31:20 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:54:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="90566834"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2018 11:54:20 -0800
-Date:   Thu, 8 Nov 2018 11:54:20 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Fri, 9 Nov 2018 00:31:29 -0500
+Received: from mail-eopbgr740055.outbound.protection.outlook.com ([40.107.74.55]:6690
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726140AbeKIFb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:31:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Oy+EHUew50a4WwzzL+iPFE1YWFo4MV1tfsCf6ow14A=;
+ b=CA6uxHWXY15M1TxhrZ0P9yxn3MTyhf3m6P5+q5/oivfq58ME5xAK+BIxkBMBgUdR0jHGxTejJAD/xrBBKYi85cDbvyv4GSecBO8JeoFvxgKNTw1qLNlfvqbsLxhDJnEZj+Sw6/y3KPLCOlZ1o5mk2I6x3bb05IK2O/T9d/B9O+I=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5911.namprd05.prod.outlook.com (20.178.50.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.16; Thu, 8 Nov 2018 19:54:22 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1339.009; Thu, 8 Nov 2018
+ 19:54:22 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
+CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Carlos O'Donell <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181108195420.GA14715@linux.intel.com>
-References: <1541518670.7839.31.camel@intel.com>
- <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com>
- <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
- <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
- <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
- <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
+ asm
+Thread-Topic: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
+ asm
+Thread-Index: AQHUW2CZ0dZfAolPxUG9hT8O5ZUp5qVDToGAgAAFpACAAAwfgIABcMKAgAAOcACAAAERgIAALpuAgAAB5wCAAI3zgIAAt2kAgAAshwA=
+Date:   Thu, 8 Nov 2018 19:54:22 +0000
+Message-ID: <080748A5-2588-47C9-BC2A-E643630FB9A7@vmware.com>
+References: <20181003213100.189959-1-namit@vmware.com>
+ <20181003213100.189959-3-namit@vmware.com>
+ <89262174-6f15-6116-e67f-436f7c1bfe99@deltatee.com>
+ <6651971B-E3AB-4CDD-868C-2338593F7D83@vmware.com>
+ <d0812681-4a8f-8cc4-24ce-d02002ee34d2@deltatee.com>
+ <DC1EA50F-FAC3-4750-BCF7-0622D1FB4756@vmware.com>
+ <a3902c4c-64b1-9c49-02fb-d5e4c9b04314@deltatee.com>
+ <192946CF-8543-4CF5-B2A3-93674FCD07E2@vmware.com>
+ <7bc80811-8ab3-d26a-6fb3-b7aeebcfce43@deltatee.com>
+ <85B77A64-5FF3-4B82-8A07-E045E259C985@zytor.com>
+ <3B824A03-AB76-4B34-B1CA-F27C0F1B0575@vmware.com>
+ <2c022676-9299-bb5f-023b-5c114cd79f81@deltatee.com>
+In-Reply-To: <2c022676-9299-bb5f-023b-5c114cd79f81@deltatee.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [2601:647:4580:b719:dc2c:5266:45a2:22ce]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5911;20:dsVqQPQrYdFEx5Ui2EStRMMdcXUgnTnZ1R6ipJDwXxLKqqd+TV6dvfUqupOs2f20Zu85/tMeBL/K5DZGGjRAysEq8lBUNnyyJAX03QMSNKJbNZNZWQDIzv9LDBnjrO500/ZscdXZJmTIFA61+N3cNp+MWjd5TJCRKi+0RP/wec4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3f20f170-941a-4f0d-3883-08d645b3fa94
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5911;
+x-ms-traffictypediagnostic: BYAPR05MB5911:
+x-microsoft-antispam-prvs: <BYAPR05MB5911621C0F981C06E2142B70D0C50@BYAPR05MB5911.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150)(9452136761055);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5911;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5911;
+x-forefront-prvs: 0850800A29
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(366004)(39860400002)(396003)(199004)(189003)(46003)(6116002)(25786009)(186003)(2906002)(68736007)(2900100001)(71200400001)(106356001)(7416002)(86362001)(6436002)(71190400001)(82746002)(256004)(11346002)(2616005)(8936002)(8676002)(446003)(486006)(81156014)(54906003)(105586002)(110136005)(81166006)(305945005)(4326008)(5660300001)(7736002)(316002)(102836004)(99286004)(97736004)(93886005)(53936002)(229853002)(2501003)(83716004)(6486002)(6246003)(36756003)(478600001)(6506007)(14454004)(76176011)(33656002)(53546011)(6512007)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5911;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: VQ19Mh88K0XpXGUlsh8ExwqL7ZpscEz5gpsCeY5lY+K9K7T2pSiTHH6L+l3WiBI79mScIXQ+Fw/nmtZkL4GcBdZEZl/BKe74pOx1t8R/Opl5Pl5vG/erENRLC5aQDrvQJ8EpVWme3E5201jKBY5Cpz8JnUyMpYzxxVMHBNNVda+0bnPIw7qT6P8hpDS8t/s5LGIlEMwgzgOIhkKeS5IHerhu1V1a8AxP74FSOhGvzewEhNfLMgH65AM07oWgp5MCpzwRZE6T32OxzNZvSCljX0uja5My7oAoTsc8Wdj7vJvzID6PYBVxElTqDRK99Si7Zi4RxvWEs8rLNr/NDtRHSDzD5d2+3kWGxQZNa/kNbwU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <12F5485F1E903D4CB4E7F8EFC9A3B29E@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f20f170-941a-4f0d-3883-08d645b3fa94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 19:54:22.3421
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5911
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 01:07:54PM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
-> > 
-> >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
-> >> True, but what if we have a nasty enclave that writes to memory just
-> >> below SP *before* decrementing SP?
-> > 
-> > Yeah, that would be unfortunate.  If an enclave did this (roughly):
-> > 
-> >    1. EENTER
-> >    2. Hardware sets eenter_hwframe->sp = %sp
-> >    3. Enclave runs... wants to do out-call
-> >    4. Enclave sets up parameters:
-> >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
-> >        ...
-> >    5. Enclave sets eenter_hwframe->sp -= offset
-> > 
-> > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
-> > was on the stack.  The enclave could easily fix this by moving ->sp first.
-> > 
-> > But, this is one of those "fun" parts of the ABI that I think we need to
-> > talk about.  If we do this, we also basically require that the code
-> > which handles asynchronous exits must *not* write to the stack.  That's
-> > not hard because it's typically just a single ERESUME instruction, but
-> > it *is* a requirement.
-> > 
-> 
-> I was assuming that the async exit stuff was completely hidden by the
-> API.  The AEP code would decide whether the exit got fixed up by the
-> kernel (which may or may not be easy to tell — can the code even tell
-> without kernel help whether it was, say, an IRQ vs #UD?) and then either
-> do ERESUME or cause sgx_enter_enclave() to return with an appropriate
-> return value.
-
-Ok, SDK folks came up with an idea that would allow them to use vDSO,
-albeit with a bit of ugliness and potentially a ROP-attack issue.
-Definitely some weirdness, but the weirdness is well contained, unlike
-the magic prefix approach.
-
-Provide two enter_enclave() vDSO "functions".  The first is a normal
-function with a normal C interface.  The second is a blob of code that
-is "called" and "returns" via indirect jmp, and can be used by SGX
-runtimes that want to use the untrusted stack for out-calls from the
-enclave.
-
-For the indirect jmp "function", use %rbp to stash the return address
-of the caller (either in %rbp itself or in memory pointed to by %rbp).
-It works because hardware also saves/restores %rbp along with %rsp when
-doing enclave transitions, and the SDK can live with %rbp being
-off-limits.  Fault info is passed via registers.
-
-Basic idea for the "functions" below.  The fixup stuff is obviously not
-wired up correctly, just trying to convey the concept.
-
-
-
-struct enclu_fault_info {
-	unsigned int	leaf;
-	unsigned int	trapnr;
-	unsigned int	error_code;
-	unsigned long	address;
-};
-
-int __vdso_enter_enclave(void *tcs, struct enclu_fault_info *fault_info)
-{
-	unsigned int leaf, trapnr;
-
-	asm volatile (
-		"lea	2f(%%rip), %%rcx\n\t"
-		"1:	enclu\n\t"
-		"jmp	3f\n\t"
-
-		/* ERESUME trampoline */
-		"2:	enclu\n\t"
-		"ud2\n\t"
-
-		/* out: */
-		"3:\n"
-
-		/* EENTER fixup */
-		".pushsection .fixup,\"ax\"\n\t"
-		"4:\n\t"
-		"mov	%%eax, %%edi\n\t"
-		"movl	$"__stringify(SGX_EENTER)", %%eax\n\t"
-		"jmp	3b\n\t"
-		".popsection\n\t"
-		_ASM_EXTABLE_FAULT(1b, 4b)
-
-		/* ERESUME FIXUP */
-		".pushsection .fixup,\"ax\"\n\t"
-		"5:\n\t"
-		"mov	%%eax, %%edi\n\t"
-		"movl	$"__stringify(SGX_ERESUME)", %%eax\n\t"
-		"jmp	3b\n\t"
-		".popsection\n\t"
-		_ASM_EXTABLE_FAULT(2b, 5b)
-
-		: "=a"(leaf), "=D" (trapnr)
-		: "a" (SGX_EENTER), "b" (tcs)
-		: "cc", "memory", "rcx", "rdx", "rsi", "r8", "r9", "r10",
-		  "r11", "r12", "r13", "r14", "r15"
-	);
-
-	if (leaf == SGX_EEXIT)
-		return 0;
-
-	if (fault_info) {
-		fault_info->leaf = leaf;
-		fault_info->trapnr = trapnr;
-		fault_info->error_code = 0;
-		fault_info->address = 0;
-	}
-
-	return -EFAULT;
-}
-
-
-GLOBAL(__vdso_enter_enclave_no_stack)
-        endbr64
-
-        /* %rbp = return target, %rbx = tcs */
-        leaq    3f(%rip), %rcx
-        movl    $2, %eax
-1:      enclu
-
-        /* "return" to "caller" */
-2:      jmp     *%rbp
-
-        /* ERESUME trampoline */
-3:      enclu
-        ud2
-
-        /* EENTER fixup handler */
-4:      movq    %rax, %rdi
-        movl    $2, %eax
-        /* %rsi = error code, %rdx = address */
-        jmp     2b
-
-        /* ERESUME fixup handler */
-5:      movq    %rax, %rdi
-        movl    $3, %eax
-        /* %rsi = error code, %rdx = address */
-        jmp     2b
-
-
+RnJvbTogTG9nYW4gR3VudGhvcnBlDQpTZW50OiBOb3ZlbWJlciA4LCAyMDE4IGF0IDU6MTQ6NTgg
+UE0gR01UDQo+IFRvOiBOYWRhdiBBbWl0IDxuYW1pdEB2bXdhcmUuY29tPiwgaHBhQHp5dG9yLmNv
+bSA8aHBhQHp5dG9yLmNvbT4sIEluZ28gTW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPg0KPiBDYzog
+TEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4sIFg4NiBNTCA8eDg2QGtlcm5lbC5v
+cmc+LCBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+LCBNaWNoYWwgTWFyZWsgPG1pY2hh
+bC5sa21sQG1hcmtvdmkubmV0PiwgVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+
+LCBMaW51eCBLYnVpbGQgbWFpbGluZyBsaXN0IDxsaW51eC1rYnVpbGRAdmdlci5rZXJuZWwub3Jn
+PiwgU3RlcGhlbiBCYXRlcyA8c2JhdGVzQHJhaXRobGluLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
+QVRDSCB2OSAwMi8xMF0gTWFrZWZpbGU6IFByZXBhcmUgZm9yIHVzaW5nIG1hY3JvcyBmb3IgaW5s
+aW5lIGFzbQ0KPiANCj4gDQo+IA0KPiANCj4gT24gMjAxOC0xMS0wNyAxMToxOCBwLm0uLCBOYWRh
+diBBbWl0IHdyb3RlOg0KPj4+IEFwcGFyZW50bHkgZ2NjIHdpbGwgdHJlYXQgdGhlbSBsaWtlIGJh
+c2ljIGJsb2NrcyBhbmQgcG9zc2libHkgbW92ZSB0aGVtIGFyb3VuZC4NCj4+IA0KPj4gTWF5YmUg
+aXQgaXMgcG9zc2libGUgdG8gYnJlYWsgdGhlIGNvbXBpbGF0aW9uIG9mIGVhY2ggb2JqZWN0IGlu
+dG8gdHdvDQo+PiBzdGFnZXM6IGZpcnN0LCBjb21waWxlIHRoZSBzb3VyY2Ugd2l0aG91dCBhc3Nl
+bWJseSwgYW5kIHRoZW4gdGFrZSB0aGUNCj4+IGdlbmVyYXRlZCAucyBmaWxlIGFuZCBhc3NlbWJs
+ZSBpdCB3aXRoIHRoZSAucyBmaWxlIG9mIHRoZSBtYWNyb3MuDQo+PiANCj4+IERvZXMgaXQgc291
+bmRzIGFzIHNvbWV0aGluZyB0aGF0IG1heSB3b3JrPyBJIGd1ZXNzIGl0IHNob3VsZCBvbmx5IGJl
+IGRvbmUNCj4+IHdoZW4gZGlzdGNjIGlzIHVzZWQuDQo+IA0KPiBJbiB0aGVvcnkgaXQgd291bGQg
+YXQgbGVhc3QgYWxsb3cgdGhlIGNvbXBpbGUgc3RlcCB0byBiZSBkaXN0cmlidXRlZCwNCj4gdGhl
+IGFzc2VtYmx5IHN0ZXAgd291bGQgc3RpbGwgaGF2ZSB0byBiZSBkb25lIGxvY2FsbHkuLi4gSXQn
+ZCBiZSBiZXR0ZXINCj4gdGhhbiBub3RoaW5nLCBJIGd1ZXNzLg0KDQpJIGRvbuKAmXQgdGhpbmsg
+dGhlIGFzc2VtYmx5IHN0YWdlIG5lZWRzIHRvIGJlIGRvbmUgbG9jYWxseS4gZ2NjIGNhbiBzdGls
+bCBiZQ0KdXNlZCB0byBkZXBsb3kgdGhlIGFzc2VtYmxlci4gSSBhbSBub3QgdG9vIGZhbWlsaWFy
+IHdpdGggZGlzdGNjLCBzbyBJIGRvbuKAmXQNCmtub3cgd2hldGhlciB0aGUgcHJlcHJvY2Vzc2lu
+ZyBzdXBwb3J0cyBtdWx0aXBsZSBzb3VyY2UtZmlsZXMsIGFuZCB3aGV0aGVyDQppdCBoYXMgc29t
+ZSBzdHJhbmdlLWJlaGF2aW9yIHdoZW4gaXQgY29tZXMgdG8gLlMvLnMgZmlsZXMuDQoNCldlbGws
+IEnigJlsbCBnaXZlIGl0IGEgdHJ5Lg0KDQo=
