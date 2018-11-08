@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEEBECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D3CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1204D208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3CB120892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdMR/+Ay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1204D208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7JxMDOp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3CB120892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbeKIHll (ORCPT
+        id S1731360AbeKIHlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:41:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33360 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:41:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbeKIHlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:41:40 -0500
+        id S1727984AbeKIHlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:41:46 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 932C520844;
-        Thu,  8 Nov 2018 22:04:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B14420844;
+        Thu,  8 Nov 2018 22:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714650;
-        bh=jNrj7N0IdW2yYLU3csbHdj3bjbypHl/R0LYXxh7dXmM=;
+        s=default; t=1541714656;
+        bh=yY/ueFuPDBNJhim7+la0mG/TVhw6cmfIL098JDX/t9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VdMR/+AyJxPKgxru/tUxGT8iHVLYPUtqoEtu+88nIALuP3i3Au0MuRhlbJce+55X5
-         qJn4Tzi/wcSRN2wtqwfDegB3grnZfI/dRRQwJkS6BGj72gL4JNmDZ4ALfAneM0KPWb
-         wZVvnbzg+nkAzaG9YQ09ZQdyGZzZDDKz/baIcTM0=
+        b=a7JxMDOp7FLDUfS5FBWB0OR4NXExL7yQU89WDXEOwLSUc1jLFmU2e2oiJyO96gbUc
+         SMi1Yi1p1iZ9MuBzZFDENDKWo2WyZHJ9DTC2Hb1WI3IzIXvIgov2r3Dp5KAnTo/W7i
+         bmly3Myu4oFWRzqtCCB+4eI1Kv0gyFHKOANt9CDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Noa Osherovich <noaos@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org,
+        Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 046/171] IB/core: Fix the validations of a multicast LID in attach or detach operations
-Date:   Thu,  8 Nov 2018 13:50:16 -0800
-Message-Id: <20181108215130.847648701@linuxfoundation.org>
+Subject: [PATCH 4.9 055/171] ath10k: fix NAPI enable/disable symmetry for AHB interface
+Date:   Thu,  8 Nov 2018 13:50:25 -0800
+Message-Id: <20181108215131.477232231@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,96 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5236333592244557a19694a51337df6ac018f0a7 ]
+[ Upstream commit a7595a820b07db9ac0d8f479ff62002bdd32a05a ]
 
-RoCE Annex (A16.9.10/11) declares that during attach (detach) QP to a
-multicast group, if the QP is associated with a RoCE port, the
-multicast group MLID is unused and is ignored.
+Move NAPI enable to 'ath10k_ahb_hif_start' from
+'ath10k_ahb_hif_power_up'. This is to maintain the symmetry
+of calling napi_enable() from ath10k_ahb_hif_start() so that it
+matches with  napi_disable() being called from ath10k_pci_hif_stop().
 
-During attach or detach multicast, when the QP is associated with a
-port, it is enough to check the port's link layer and validate the
-LID only if it is Infiniband. Otherwise, avoid validating the
-multicast LID.
+This change is based on the crash fix from Kalle for PCI interface in
+commit 1427228d5869 ("ath10k: fix napi crash during rmmod when probe
+firmware fails").
 
-Fixes: 8561eae60ff9 ("IB/core: For multicast functions, verify that LIDs are multicast LIDs")
-Signed-off-by: Noa Osherovich <noaos@mellanox.com>
-Reviewed-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/verbs.c | 44 ++++++++++++++++++++++++++++++---
- 1 file changed, 40 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/ahb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/core/verbs.c b/drivers/infiniband/core/verbs.c
-index 0e64b52af5b2..d28c4cf7c1ee 100644
---- a/drivers/infiniband/core/verbs.c
-+++ b/drivers/infiniband/core/verbs.c
-@@ -1510,6 +1510,44 @@ EXPORT_SYMBOL(ib_dealloc_fmr);
- 
- /* Multicast groups */
- 
-+static bool is_valid_mcast_lid(struct ib_qp *qp, u16 lid)
-+{
-+	struct ib_qp_init_attr init_attr = {};
-+	struct ib_qp_attr attr = {};
-+	int num_eth_ports = 0;
-+	int port;
-+
-+	/* If QP state >= init, it is assigned to a port and we can check this
-+	 * port only.
-+	 */
-+	if (!ib_query_qp(qp, &attr, IB_QP_STATE | IB_QP_PORT, &init_attr)) {
-+		if (attr.qp_state >= IB_QPS_INIT) {
-+			if (qp->device->get_link_layer(qp->device, attr.port_num) !=
-+			    IB_LINK_LAYER_INFINIBAND)
-+				return true;
-+			goto lid_check;
-+		}
-+	}
-+
-+	/* Can't get a quick answer, iterate over all ports */
-+	for (port = 0; port < qp->device->phys_port_cnt; port++)
-+		if (qp->device->get_link_layer(qp->device, port) !=
-+		    IB_LINK_LAYER_INFINIBAND)
-+			num_eth_ports++;
-+
-+	/* If we have at lease one Ethernet port, RoCE annex declares that
-+	 * multicast LID should be ignored. We can't tell at this step if the
-+	 * QP belongs to an IB or Ethernet port.
-+	 */
-+	if (num_eth_ports)
-+		return true;
-+
-+	/* If all the ports are IB, we can check according to IB spec. */
-+lid_check:
-+	return !(lid < be16_to_cpu(IB_MULTICAST_LID_BASE) ||
-+		 lid == be16_to_cpu(IB_LID_PERMISSIVE));
-+}
-+
- int ib_attach_mcast(struct ib_qp *qp, union ib_gid *gid, u16 lid)
+diff --git a/drivers/net/wireless/ath/ath10k/ahb.c b/drivers/net/wireless/ath/ath10k/ahb.c
+index 45226dbee5ce..da770af83036 100644
+--- a/drivers/net/wireless/ath/ath10k/ahb.c
++++ b/drivers/net/wireless/ath/ath10k/ahb.c
+@@ -640,6 +640,7 @@ static int ath10k_ahb_hif_start(struct ath10k *ar)
  {
- 	int ret;
-@@ -1517,8 +1555,7 @@ int ib_attach_mcast(struct ib_qp *qp, union ib_gid *gid, u16 lid)
- 	if (!qp->device->attach_mcast)
- 		return -ENOSYS;
- 	if (gid->raw[0] != 0xff || qp->qp_type != IB_QPT_UD ||
--	    lid < be16_to_cpu(IB_MULTICAST_LID_BASE) ||
--	    lid == be16_to_cpu(IB_LID_PERMISSIVE))
-+	    !is_valid_mcast_lid(qp, lid))
- 		return -EINVAL;
+ 	ath10k_dbg(ar, ATH10K_DBG_BOOT, "boot ahb hif start\n");
  
- 	ret = qp->device->attach_mcast(qp, gid, lid);
-@@ -1535,8 +1572,7 @@ int ib_detach_mcast(struct ib_qp *qp, union ib_gid *gid, u16 lid)
- 	if (!qp->device->detach_mcast)
- 		return -ENOSYS;
- 	if (gid->raw[0] != 0xff || qp->qp_type != IB_QPT_UD ||
--	    lid < be16_to_cpu(IB_MULTICAST_LID_BASE) ||
--	    lid == be16_to_cpu(IB_LID_PERMISSIVE))
-+	    !is_valid_mcast_lid(qp, lid))
- 		return -EINVAL;
++	napi_enable(&ar->napi);
+ 	ath10k_ce_enable_interrupts(ar);
+ 	ath10k_pci_enable_legacy_irq(ar);
  
- 	ret = qp->device->detach_mcast(qp, gid, lid);
+@@ -692,7 +693,6 @@ static int ath10k_ahb_hif_power_up(struct ath10k *ar)
+ 		ath10k_err(ar, "could not wake up target CPU: %d\n", ret);
+ 		goto err_ce_deinit;
+ 	}
+-	napi_enable(&ar->napi);
+ 
+ 	return 0;
+ 
 -- 
 2.17.1
 
