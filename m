@@ -2,135 +2,217 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 982B4ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B917AECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3687320684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:39:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="iuglz0Ei"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3687320684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 8513920684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:40:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8513920684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeKIEQN (ORCPT
+        id S1727289AbeKIERf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:16:13 -0500
-Received: from mail-eopbgr720108.outbound.protection.outlook.com ([40.107.72.108]:50816
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727099AbeKIEQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:16:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0+gYm7C181WsjsJPkeWXfwpAjLCCnBEKEHNw07Nlzew=;
- b=iuglz0Ei4NSOr3f8pzmIdjOavJMMMjRKjRM12rovwsYqk5uoEFKGYcu/lQe73zGqWBOGHVyu387JAI/+t7pcuyXJiu9En/wr1PjbjRfOeacPNXHR25ReVmH9GMqjKv/64CPZh34iyW9ArU4Fj6sexnWETy5IRjgUE+2Q36hDV0Q=
-Received: from MWHSPR00MB117.namprd22.prod.outlook.com (10.175.52.23) by
- MWHPR2201MB1069.namprd22.prod.outlook.com (10.174.169.143) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.27; Thu, 8 Nov 2018 18:30:16 +0000
-Received: from MWHSPR00MB117.namprd22.prod.outlook.com
- ([fe80::b95a:a3f9:be06:b045]) by MWHSPR00MB117.namprd22.prod.outlook.com
- ([fe80::b95a:a3f9:be06:b045%2]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 18:30:16 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Maksym Kokhan <maksym.kokhan@globallogic.com>
-CC:     "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "sergei.shtylyov@cogentembedded.com" 
-        <sergei.shtylyov@cogentembedded.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Andrii Bordunov <andrew.bordunov@gmail.com>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mips: delete duplication of BUILTIN_DTB selection
-Thread-Topic: [PATCH] mips: delete duplication of BUILTIN_DTB selection
-Thread-Index: AQHUWz3bgRsL2oi9cUCrYH81tJ5YT6UOxDmAgAAKoYCAAC/xgIA0FcoAgANXHQA=
-Date:   Thu, 8 Nov 2018 18:30:16 +0000
-Message-ID: <20181108183014.gjzmquibbjvysui7@pburton-laptop>
-References: <1538587415-24126-1-git-send-email-maksym.kokhan@globallogic.com>
- <de95ca86-014d-77f6-6e2b-24f191147487@cogentembedded.com>
- <CAMuHMdWK0CsNsq7Sb8oG4ZvNFS3S1=8O_pUQHrY54KBV7a24FQ@mail.gmail.com>
- <CAMT6-xhP=2wjsKJFumKUsUGVL6U_BynMv6RE0cxXgk6cyfjJkw@mail.gmail.com>
- <CAMT6-xji=XrteXm6KbUYLiKqSH_-RHzXzwn3zi5hYbtq_R_sRg@mail.gmail.com>
-In-Reply-To: <CAMT6-xji=XrteXm6KbUYLiKqSH_-RHzXzwn3zi5hYbtq_R_sRg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR1701CA0020.namprd17.prod.outlook.com
- (2603:10b6:301:14::30) To MWHSPR00MB117.namprd22.prod.outlook.com
- (2603:10b6:300:10c::23)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1069;6:Rr6qNhOGX/48t4uxzmWJSy/UqQ7VZKwH3pyNs2d8yU1WD0NsyNvG0R4H2v0DQX33P40esPZt/DBwjwqW+Xu03ujARZCFn2zOQ7jyqNgOmzNaIqffrz7JnnLuxwLn+eKy9PBiHWAbzG7bJMIUyTnR/8xq+GUfcSJ/cg2Sq6Su/7wJjYBHDFzKffR0y+NYgBmsCS5M6g5+RtmWrBpUTuNG8aDVgMTarpTdsqqe5pry3Ffs9lTTgsHZBmHdl/aV++yVG2KZ6wRZo2hMaOwSaFw8DLytVlV9YEOqglq0O5M2/9RF/d16XVpcHuvtLJHjr5FPxaS4x9njsrB7szVhL0Oi12rR8AOoIZ/iOrNoasDztsm7tFzQ6R61isO61oLt0lxVQZbZrlTjRZQtsXb8j+g/NCdobkLVVyKkifEXlAzaOqZ7WYGv6ueilC+ROKzm0CjYYx0Khw2bZ8+UHwkqom+6CA==;5:bSRGABxqXfHc3g/JwMgE2wvsqoAAO/D7JDZRHJWYV5UexiN3ZdXsyBfOXwCYdI3rNdSLmmadJUZ+sU0OgBUc66Tsqpdlpv/JAEL5PMvLPNEEaM0E9WR3NpnYoddHmaxCmaX73AMmXzQQIZC96nQpnZMlfHnL1M9gdBL83qAKxvU=;7:2LifET/MYrsV9jb1+bBbF7TC/iSckufkfp+O0KNLE++LR7WPczNMzSViK1mzrRmoRYxToGNkV/yLFCbbJZ0da45bMp+qbNZOs+AU09BnUBtDozhXAPz+Ylzluzmdv40ThwnryyQJ4mLipMQY3WhdvA==
-x-ms-office365-filtering-correlation-id: d7befda2-aa87-401e-cf9e-08d645a83a59
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1069;
-x-ms-traffictypediagnostic: MWHPR2201MB1069:
-x-microsoft-antispam-prvs: <MWHPR2201MB106951F54537520A2DD5B5C6C1C50@MWHPR2201MB1069.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231382)(944501410)(52105095)(10201501046)(93006095)(148016)(149066)(150057)(6041310)(2016111802025)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1069;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1069;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39840400004)(136003)(396003)(346002)(376002)(366004)(189003)(199004)(71190400001)(71200400001)(105586002)(3846002)(99286004)(52116002)(33896004)(76176011)(6116002)(26005)(229853002)(186003)(6486002)(1076002)(6506007)(106356001)(256004)(14444005)(102836004)(386003)(2906002)(39060400002)(66066001)(81166006)(8936002)(93886005)(8676002)(4326008)(2900100001)(5660300001)(42882007)(81156014)(486006)(6246003)(476003)(11346002)(44832011)(7736002)(446003)(33716001)(305945005)(9686003)(6512007)(316002)(54906003)(53936002)(97736004)(58126008)(6916009)(14454004)(25786009)(6436002)(68736007)(508600001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1069;H:MWHSPR00MB117.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EwJjpcQqFY3blrFpxBpD0cGH3S5DYxZUGKKqMifMH6ma4x7i1JVFtZJhgs3E3VhJLkEfsEQXgPw6/MKExHqxJNtnJuRDZ6b2Mit24XSjnznXtGLeYBzDNjsoEbqP2qFfnXLi5Ml1g4dIS7M4kD5+EMHeFPDCBSvHMo531+QnQnmHUX8BihZyVHWHStT1niWt/6v3NoAOGZRyuXeVp/mbt/rKzGPKkN48/M+f2kwI95f+kmn0AhnhoruC6FHLL37/xa65RngH7Uehju/EpiBl9HGfI5HuRT5/PVCcfISHFvuodHkBzFh8iF1iEgjIbQZl4QqN9E258usNUSGllf3nMCD0n4tHV/bw6GX2quHF+ls=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <66C803BA24E8F3479DEF13F6043ACF75@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 8 Nov 2018 23:17:35 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:45030 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726860AbeKIERe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:17:34 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id k7qA7i0n08wW; Thu,  8 Nov 2018 19:40:46 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC9881EC0779;
+        Thu,  8 Nov 2018 19:40:45 +0100 (CET)
+Date:   Thu, 8 Nov 2018 19:40:38 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+Message-ID: <20181108184038.GJ7543@zn.tnic>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-5-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7befda2-aa87-401e-cf9e-08d645a83a59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 18:30:16.4818
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1069
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181011151523.27101-5-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maksym,
+On Thu, Oct 11, 2018 at 08:15:00AM -0700, Yu-cheng Yu wrote:
+> Intel Control-flow Enforcement Technology (CET) introduces the
+> following MSRs into the XSAVES system states.
+> 
+>     IA32_U_CET (user-mode CET settings),
+>     IA32_PL3_SSP (user-mode shadow stack),
+>     IA32_PL0_SSP (kernel-mode shadow stack),
+>     IA32_PL1_SSP (ring-1 shadow stack),
+>     IA32_PL2_SSP (ring-2 shadow stack).
 
-On Tue, Nov 06, 2018 at 05:29:40PM +0200, Maksym Kokhan wrote:
-> > > > > diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> > > > > index 3551199..71d6549 100644
-> > > > > --- a/arch/mips/Kconfig
-> > > > > +++ b/arch/mips/Kconfig
-> > > > > @@ -539,7 +539,6 @@ config MIPS_MALTA
-> > > > >       select USE_OF
-> > > > >       select LIBFDT
-> > > > >       select ZONE_DMA32 if 64BIT
-> > > > > -     select BUILTIN_DTB
-> > > > >       select LIBFDT
-> > > >
-> > > >     LIBFDT seems duplicated too.
-> > >
-> > > Using random sort order doesn't help. Keep them sorted, please?
-> >
-> > We are going to deal with it in the separate patch.
->=20
-> Is it OK to leave this patch as it is and make another patch/patches
-> for other changes or it would be better to modify it to remove
-> duplication of LIBFDT too and sort this list of configs?
+And?
 
-My preference would be that you remove all the duplicates as one patch,
-then sort the selects alphabetically in a second patch. That should be
-granular enough to make it easy to review, but not so fine-grained that
-it becomes annoying.
+That commit message got chopped off here, it seems.
 
-Thanks,
-    Paul
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/include/asm/fpu/types.h            | 22 +++++++++++++++++++++
+>  arch/x86/include/asm/fpu/xstate.h           |  4 +++-
+>  arch/x86/include/uapi/asm/processor-flags.h |  2 ++
+>  arch/x86/kernel/fpu/xstate.c                | 10 ++++++++++
+>  4 files changed, 37 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+> index 202c53918ecf..e55d51d172f1 100644
+> --- a/arch/x86/include/asm/fpu/types.h
+> +++ b/arch/x86/include/asm/fpu/types.h
+> @@ -114,6 +114,9 @@ enum xfeature {
+>  	XFEATURE_Hi16_ZMM,
+>  	XFEATURE_PT_UNIMPLEMENTED_SO_FAR,
+>  	XFEATURE_PKRU,
+> +	XFEATURE_RESERVED,
+> +	XFEATURE_SHSTK_USER,
+> +	XFEATURE_SHSTK_KERNEL,
+>  
+>  	XFEATURE_MAX,
+>  };
+> @@ -128,6 +131,8 @@ enum xfeature {
+>  #define XFEATURE_MASK_Hi16_ZMM		(1 << XFEATURE_Hi16_ZMM)
+>  #define XFEATURE_MASK_PT		(1 << XFEATURE_PT_UNIMPLEMENTED_SO_FAR)
+>  #define XFEATURE_MASK_PKRU		(1 << XFEATURE_PKRU)
+> +#define XFEATURE_MASK_SHSTK_USER	(1 << XFEATURE_SHSTK_USER)
+> +#define XFEATURE_MASK_SHSTK_KERNEL	(1 << XFEATURE_SHSTK_KERNEL)
+>  
+>  #define XFEATURE_MASK_FPSSE		(XFEATURE_MASK_FP | XFEATURE_MASK_SSE)
+>  #define XFEATURE_MASK_AVX512		(XFEATURE_MASK_OPMASK \
+> @@ -229,6 +234,23 @@ struct pkru_state {
+>  	u32				pad;
+>  } __packed;
+>  
+> +/*
+> + * State component 11 is Control flow Enforcement user states
+
+Why the Camel-cased naming?
+
+"Control" then "flow" then capitalized again "Enforcement".
+
+Fix all occurrences pls, especially the user-visible strings.
+
+> + */
+> +struct cet_user_state {
+> +	u64 u_cet;	/* user control flow settings */
+> +	u64 user_ssp;	/* user shadow stack pointer */
+
+Prefix both with "usr_" instead.
+
+> +} __packed;
+> +
+> +/*
+> + * State component 12 is Control flow Enforcement kernel states
+> + */
+> +struct cet_kernel_state {
+> +	u64 kernel_ssp;	/* kernel shadow stack */
+> +	u64 pl1_ssp;	/* ring-1 shadow stack */
+> +	u64 pl2_ssp;	/* ring-2 shadow stack */
+
+Just write "privilege level" everywhere - not "ring".
+
+Btw, do you see how the type and the name of all those other fields in
+that file are tabulated? Except yours...
+
+> +} __packed;
+> +
+>  struct xstate_header {
+>  	u64				xfeatures;
+>  	u64				xcomp_bv;
+> diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+> index d8e2ec99f635..18b60748a34d 100644
+> --- a/arch/x86/include/asm/fpu/xstate.h
+> +++ b/arch/x86/include/asm/fpu/xstate.h
+> @@ -28,7 +28,9 @@
+>  				  XFEATURE_MASK_Hi16_ZMM | \
+>  				  XFEATURE_MASK_PKRU | \
+>  				  XFEATURE_MASK_BNDREGS | \
+> -				  XFEATURE_MASK_BNDCSR)
+> +				  XFEATURE_MASK_BNDCSR | \
+> +				  XFEATURE_MASK_SHSTK_USER | \
+> +				  XFEATURE_MASK_SHSTK_KERNEL)
+>  
+>  #ifdef CONFIG_X86_64
+>  #define REX_PREFIX	"0x48, "
+> diff --git a/arch/x86/include/uapi/asm/processor-flags.h b/arch/x86/include/uapi/asm/processor-flags.h
+> index bcba3c643e63..25311ec4b731 100644
+> --- a/arch/x86/include/uapi/asm/processor-flags.h
+> +++ b/arch/x86/include/uapi/asm/processor-flags.h
+> @@ -130,6 +130,8 @@
+>  #define X86_CR4_SMAP		_BITUL(X86_CR4_SMAP_BIT)
+>  #define X86_CR4_PKE_BIT		22 /* enable Protection Keys support */
+>  #define X86_CR4_PKE		_BITUL(X86_CR4_PKE_BIT)
+> +#define X86_CR4_CET_BIT		23 /* enable Control flow Enforcement */
+> +#define X86_CR4_CET		_BITUL(X86_CR4_CET_BIT)
+>  
+>  /*
+>   * x86-64 Task Priority Register, CR8
+> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+> index 605ec6decf3e..ad36ea28bfd1 100644
+> --- a/arch/x86/kernel/fpu/xstate.c
+> +++ b/arch/x86/kernel/fpu/xstate.c
+> @@ -35,6 +35,9 @@ static const char *xfeature_names[] =
+>  	"Processor Trace (unused)"	,
+>  	"Protection Keys User registers",
+>  	"unknown xstate feature"	,
+> +	"Control flow User registers"	,
+> +	"Control flow Kernel registers"	,
+> +	"unknown xstate feature"	,
+
+So there are two "unknown xstate feature" array elems now...
+
+>  static short xsave_cpuid_features[] __initdata = {
+> @@ -48,6 +51,9 @@ static short xsave_cpuid_features[] __initdata = {
+>  	X86_FEATURE_AVX512F,
+>  	X86_FEATURE_INTEL_PT,
+>  	X86_FEATURE_PKU,
+> +	0,		   /* Unused */
+
+What's that for?
+
+> +	X86_FEATURE_SHSTK, /* XFEATURE_SHSTK_USER */
+> +	X86_FEATURE_SHSTK, /* XFEATURE_SHSTK_KERNEL */
+>  };
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
