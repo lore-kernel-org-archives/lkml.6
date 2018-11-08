@@ -4,84 +4,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A830C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F30C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2259C2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2259C2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C12E720825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:10:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12E720825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbeKHTo3 (ORCPT
+        id S1726910AbeKHTou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:44:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37548 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbeKHTo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:44:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EEEC80D;
-        Thu,  8 Nov 2018 02:09:46 -0800 (PST)
-Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051753F5CF;
-        Thu,  8 Nov 2018 02:09:44 -0800 (PST)
-Date:   Thu, 8 Nov 2018 10:09:42 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/9] arm64: defconfig: Drop ARM_BIG_LITTLE_CPUFREQ
-Message-ID: <20181108100941.f7vv5pivq24vz7kx@salmiak>
-References: <8b49a92b-ca92-1fca-cd09-3bcd7a3dcbb9@free.fr>
- <596a4b64-e2ef-878d-0873-dd59d14c2d85@free.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <596a4b64-e2ef-878d-0873-dd59d14c2d85@free.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Thu, 8 Nov 2018 14:44:50 -0500
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:59412 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726758AbeKHTot (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 14:44:49 -0500
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.52 with ESMTP; 8 Nov 2018 19:10:03 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO kernel.lge.com) (165.186.175.97)
+        by 156.147.1.121 with ESMTP; 8 Nov 2018 19:10:03 +0900
+X-Original-SENDERIP: 165.186.175.97
+X-Original-MAILFROM: chanho.min@lge.com
+From:   Chanho Min <chanho.min@lge.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Seungho Park <seungho1.park@lge.com>,
+        Chanho Min <chanho.min@lge.com>
+Subject: [PATCH] freezer: fix freeze timeout on exec
+Date:   Thu,  8 Nov 2018 19:09:55 +0900
+Message-Id: <1541671796-8725-1-git-send-email-chanho.min@lge.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 09:14:57PM +0100, Marc Gonzalez wrote:
-> Commit a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
-> 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Suspend fails due to the exec family of fuctnions blocking the freezer.
+This issue has been found that it is mentioned in the ancient mail thread.
+The casue is that de_thread() sleeps in TASK_UNINTERRUPTIBLE waiting for all
+sub-threads to die, and we have the "deadlock" if one of them is frozen.
+It causes freeze timeout as bellows.
 
-Please elaborate the situation in the commit message, e.g.
+Freezing of tasks failed after 20.010 seconds (1 tasks refusing to freeze, wq_busy=0):
+setcpushares-ls D ffffffc00008ed70     0  5817   1483 0x0040000d
+ Call trace:
+[<ffffffc00008ed70>] __switch_to+0x88/0xa0
+[<ffffffc000d1c30c>] __schedule+0x1bc/0x720
+[<ffffffc000d1ca90>] schedule+0x40/0xa8
+[<ffffffc0001cd784>] flush_old_exec+0xdc/0x640
+[<ffffffc000220360>] load_elf_binary+0x2a8/0x1090
+[<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
+[<ffffffc00021c584>] load_script+0x20c/0x228
+[<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
+[<ffffffc0001ce8e0>] do_execveat_common.isra.14+0x4f8/0x6e8
+[<ffffffc0001cedd0>] compat_SyS_execve+0x38/0x48
+[<ffffffc00008de30>] el0_svc_naked+0x24/0x28
 
-  The big.LITTLE cpufreq driver has been banned for arm64 since commit:
+To fix this, I suggest a patch by emboding the mentioned solution.
+First, revive and rework cancel_freezing_and_thaw() function whitch stops the
+task from sleeping in refrigirator reliably. And, The task to be killed does not
+allow to freeze.
 
-  a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
+Reference:
+http://lkml.iu.edu/hypermail//linux/kernel/0702.2/1300.html
 
-  ... so it can be removed from defconfig.
+Signed-off-by: Chanho Min <chanho.min@lge.com>
+---
+ include/linux/freezer.h |  7 +++++++
+ kernel/freezer.c        | 14 ++++++++++++++
+ kernel/signal.c         |  7 +++++++
+ 3 files changed, 28 insertions(+)
 
-With that:
+diff --git a/include/linux/freezer.h b/include/linux/freezer.h
+index 21f5aa0..1c1e3cb 100644
+--- a/include/linux/freezer.h
++++ b/include/linux/freezer.h
+@@ -57,6 +57,12 @@ static inline bool try_to_freeze_unsafe(void)
+ 	might_sleep();
+ 	if (likely(!freezing(current)))
+ 		return false;
++	/*
++	 * we are going to call do_exit() really soon,
++	 * we have a pending SIGKILL
++	 */
++	if (unlikely(current->signal->flags & SIGNAL_GROUP_EXIT))
++		return false;
+ 	return __refrigerator(false);
+ }
+ 
+@@ -68,6 +74,7 @@ static inline bool try_to_freeze(void)
+ }
+ 
+ extern bool freeze_task(struct task_struct *p);
++extern void cancel_freezing_thaw_task(struct task_struct *p);
+ extern bool set_freezable(void);
+ 
+ #ifdef CONFIG_CGROUP_FREEZER
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index b162b74..584c5c8 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -148,6 +148,20 @@ bool freeze_task(struct task_struct *p)
+ 	return true;
+ }
+ 
++void cancel_freezing_thaw_task(struct task_struct *p)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&freezer_lock, flags);
++	if (freezing(p)) {
++		spin_lock(&p->sighand->siglock);
++		recalc_sigpending_and_wake(p);
++		spin_unlock(&p->sighand->siglock);
++	} else if (frozen(p))
++		wake_up_process(p);
++	spin_unlock_irqrestore(&freezer_lock, flags);
++}
++
+ void __thaw_task(struct task_struct *p)
+ {
+ 	unsigned long flags;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 5843c54..ca9b25b 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -41,6 +41,7 @@
+ #include <linux/compiler.h>
+ #include <linux/posix-timers.h>
+ #include <linux/livepatch.h>
++#include <linux/freezer.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/signal.h>
+@@ -1273,6 +1274,12 @@ int zap_other_threads(struct task_struct *p)
+ 		/* Don't bother with already dead threads */
+ 		if (t->exit_state)
+ 			continue;
++
++		/*
++		 * we can check sig->group_exit_task to detect de_thread,
++		 * but perhaps it doesn't hurt if the caller is do_group_exit
++		 */
++		cancel_freezing_thaw_task(t);
+ 		sigaddset(&t->pending.signal, SIGKILL);
+ 		signal_wake_up(t, 1);
+ 	}
+-- 
+2.7.4
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
-> ---
->  arch/arm64/configs/defconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index f786c95504d3..8d6878c1e794 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -107,7 +107,6 @@ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
->  CONFIG_CPUFREQ_DT=y
->  CONFIG_ACPI_CPPC_CPUFREQ=m
->  CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
-> -CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
->  CONFIG_ARM_SCPI_CPUFREQ=y
->  CONFIG_ARM_TEGRA186_CPUFREQ=y
->  CONFIG_ARM_SCPI_PROTOCOL=y
-> -- 
-> 2.17.1
