@@ -2,58 +2,50 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA29DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA21C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD3D20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248EE20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8HSH8sW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD3D20844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS7TfYhn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248EE20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbeKIIKS (ORCPT
+        id S1729948AbeKIIKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:10:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56126 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:10:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730324AbeKIHhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:37 -0500
+        id S1728162AbeKIHh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:29 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2C7620818;
-        Thu,  8 Nov 2018 22:00:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90F3320818;
+        Thu,  8 Nov 2018 22:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714408;
-        bh=YJgSIwq/FHbuX/oxEIw8zmLh5sJhbf6uRrGthG7iKQU=;
+        s=default; t=1541714400;
+        bh=S0CNCWfSjsRdsBymq8tpcGU1DcMCmeY34XOBZhtfV+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q8HSH8sWjq6kgIAJGcBy6z9zpvyI9xVKQzyYJo1pAa0HmYPfqvG1LbwwwU7QNKjlh
-         dFRQwPmO3HVAatNsoA0bACeKFht0xz+wBDgUT0+2SysjlcsZKTnQPdCLhogii0OBbP
-         MZlAR5gvy2Y/eqqZBkI5jJEWL5RgSs/kRLpIG6JA=
+        b=ZS7TfYhn0Or24XWWKHFEtPezeAfv38Yi44TacsECgAS81/L/nje01zguk9LfQ9NjM
+         sbVk2z4Ua+/GkDQymbiXlaDmpFlliuPs//doQPyhEkhmakOOW/E2V/wDEXRn1p1xgM
+         pVb82uCrmE8rZAluvc7tBHnf1QjZvzzPJHqyKi0Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Yu <chianglungyu@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 039/114] perf/core: Dont leak event in the syscall error path
-Date:   Thu,  8 Nov 2018 13:50:54 -0800
-Message-Id: <20181108215104.648898045@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Duyck <aduyck@mirantis.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 061/114] gro: Allow tunnel stacking in the case of FOU/GUE
+Date:   Thu,  8 Nov 2018 13:51:16 -0800
+Message-Id: <20181108215106.615048628@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -71,40 +63,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 201c2f85bd0bc13b712d9c0b3d11251b182e06ae ]
+[ Upstream commit c3483384ee511ee2af40b4076366cd82a6a47b86 ]
 
-In the error path, event_file not being NULL is used to determine
-whether the event itself still needs to be free'd, so fix it up to
-avoid leaking.
+This patch should fix the issues seen with a recent fix to prevent
+tunnel-in-tunnel frames from being generated with GRO.  The fix itself is
+correct for now as long as we do not add any devices that support
+NETIF_F_GSO_GRE_CSUM.  When such a device is added it could have the
+potential to mess things up due to the fact that the outer transport header
+points to the outer UDP header and not the GRE header as would be expected.
 
-Reported-by: Leon Yu <chianglungyu@gmail.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 130056275ade ("perf: Do not double free")
-Link: http://lkml.kernel.org/r/87twk06yxp.fsf@ashishki-desk.ger.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: fac8e0f579695 ("tunnels: Don't apply GRO to multiple layers of encapsulation.")
+Signed-off-by: Alexander Duyck <aduyck@mirantis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/fou.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8532,6 +8532,7 @@ SYSCALL_DEFINE5(perf_event_open,
- 					f_flags);
- 	if (IS_ERR(event_file)) {
- 		err = PTR_ERR(event_file);
-+		event_file = NULL;
- 		goto err_context;
+diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
+index 08d8ee124538..d83888bc33d3 100644
+--- a/net/ipv4/fou.c
++++ b/net/ipv4/fou.c
+@@ -195,6 +195,14 @@ static struct sk_buff **fou_gro_receive(struct sk_buff **head,
+ 	u8 proto = NAPI_GRO_CB(skb)->proto;
+ 	const struct net_offload **offloads;
+ 
++	/* We can clear the encap_mark for FOU as we are essentially doing
++	 * one of two possible things.  We are either adding an L4 tunnel
++	 * header to the outer L3 tunnel header, or we are are simply
++	 * treating the GRE tunnel header as though it is a UDP protocol
++	 * specific header such as VXLAN or GENEVE.
++	 */
++	NAPI_GRO_CB(skb)->encap_mark = 0;
++
+ 	rcu_read_lock();
+ 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+ 	ops = rcu_dereference(offloads[proto]);
+@@ -354,6 +362,14 @@ static struct sk_buff **gue_gro_receive(struct sk_buff **head,
+ 		}
  	}
  
++	/* We can clear the encap_mark for GUE as we are essentially doing
++	 * one of two possible things.  We are either adding an L4 tunnel
++	 * header to the outer L3 tunnel header, or we are are simply
++	 * treating the GRE tunnel header as though it is a UDP protocol
++	 * specific header such as VXLAN or GENEVE.
++	 */
++	NAPI_GRO_CB(skb)->encap_mark = 0;
++
+ 	rcu_read_lock();
+ 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+ 	ops = rcu_dereference(offloads[guehdr->proto_ctype]);
+-- 
+2.17.1
+
 
 
