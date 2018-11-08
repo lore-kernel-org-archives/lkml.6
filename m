@@ -2,113 +2,121 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22FFECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE36ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8003120825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:41:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DZKJQxFy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SSjtN0wB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8003120825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D4C732081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:42:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4C732081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbeKHXRY (ORCPT
+        id S1727055AbeKHXSN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:17:24 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38740 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHXRY (ORCPT
+        Thu, 8 Nov 2018 18:18:13 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:58772 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726618AbeKHXSM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:17:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3D7266085F; Thu,  8 Nov 2018 13:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541684512;
-        bh=4oiIGpiJtpEwziwSD/eEgiV3Q9ELAM3npTOPrHigjDQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DZKJQxFyafFUdwO8fIzK/rE1wosT1qNYZxdzOWvvZPQ/grjEs7F5Pei2KZHvfUeDi
-         kb2DXygTT8+vjt3TVJ0ad525Lwm+U4rGpxF1GhUPeBqG3MS2set+NxJmj8o5+YB+dI
-         pHV+jXUMONq8RMxSNScJJuxOrQ8lDhRmyUa23AI0=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE392601D7;
-        Thu,  8 Nov 2018 13:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541684510;
-        bh=4oiIGpiJtpEwziwSD/eEgiV3Q9ELAM3npTOPrHigjDQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SSjtN0wB089Slwx+syysgF2eF36l7VO/oLEvwuSCPx5aDMSx64BmIh8s66FWXJSh5
-         saDYOy4JezbTOcHujFbaSdjXnu4MSGOOKcyVH3Bb2Wc9gNt/MWvwDAFTFD1/uyBhuk
-         n01xNnuXbnoKE7RGqI33egTd7UzP7a8zrO8fQNww=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE392601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     plai@codeaurora.org, bgoswami@codeaurora.org, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org
-Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH] ASoC: qcom: Set dai_link id to each dai_link
-Date:   Thu,  8 Nov 2018 19:11:40 +0530
-Message-Id: <1541684500-32728-1-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 8 Nov 2018 18:18:12 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by dkim.mimecast.com with ESMTP id
+ uk-mta-115-7KhyVomYNzueKujuIcXFdA-1; Thu, 08 Nov 2018 13:42:36 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
+ 8 Nov 2018 13:42:41 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 8 Nov 2018 13:42:41 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Matthew Wilcox' <willy@infradead.org>
+CC:     'Martin Steigerwald' <martin@lichtvoll.de>,
+        Michal Hocko <mhocko@kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        "Suren Baghdasaryan" <surenb@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        "Mike Rapoport" <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH v2] Document /proc/pid PID reuse behavior
+Thread-Topic: [PATCH v2] Document /proc/pid PID reuse behavior
+Thread-Index: AQHUdrwX3PD+XlfhcUeFEtVp7YMP66VFxCRggAALTYCAABOvMA==
+Date:   Thu, 8 Nov 2018 13:42:41 +0000
+Message-ID: <47072118046a450b904556ca8154f5c9@AcuMS.aculab.com>
+References: <20181031150625.147369-1-dancol@google.com>
+ <CAKOZueu5aDtHDBzp6qKECTHEejjb=dyegQkuHh8NfwgNktzFow@mail.gmail.com>
+ <20181107160015.GI27423@dhcp22.suse.cz> <4536090.43ZsV6LvYe@merkaba>
+ <0c5610f128fa49fb9d8f7859e6f61b90@AcuMS.aculab.com>
+ <20181108122747.GM3074@bombadil.infradead.org>
+In-Reply-To: <20181108122747.GM3074@bombadil.infradead.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: 7KhyVomYNzueKujuIcXFdA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frontend dai_link id is used for closing ADM sessions.
-During concurrent usecase when one session is closed,
-it closes other ADM session associated with other usecase
-too. Dai_link->id should always point to Frontend dai id.
-Set cpu_dai id as dai_link id to fix the issue.
+From: Matthew Wilcox
+> Sent: 08 November 2018 12:28
+>
+> On Thu, Nov 08, 2018 at 12:02:49PM +0000, David Laight wrote:
+> > From: Martin Steigerwald
+> > > Sent: 07 November 2018 17:05
+> > ...
+> > > Its not quite on-topic, but I am curious now: AFAIK PID limit is 16
+> > > bits. Right? Could it be raised to 32 bits? I bet it would be a major
+> > > change throughout different parts of the kernel.
+> >
+> > It is probably 15 bits (since -ve pid numbers are used for process groups).
+> >
+> > My guess is that userspace and the system call interface will handle 32bit
+> > (signed) pid numbers.
+> > (I don't remember 'linux emulation' being one of the emulations that
+> > would truncate 32bit pids when one of the BDSs went to 32bit pids.)
+> > The main problem will be that big numbers will mess up the alignment
+> > of printouts from ps and top (etc).
+> > This can be mitigated by only allocating 'big' numbers on systems
+> > that have a lot of pids.
+> > You also really want an O(1) allocator.
+> 
+> The allocator is O(log n) -- it's the IDR allocator, used in cyclic mode.
+> n in this case is the highest ID which is still in use.  The tree is
+> log_64(n) levels high.  It walks to the bottom of the tree and puts a
+> pointer into the tree.  If the cursor has wrapped to the beginning of
+> the tree, it may encounter a PID which is still in use; if it does,
+> it does a bitmap scan of that node, and will then walk up the tree,
+> doing a bitmap scan forward at each level until it finds a free PID.
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
- sound/soc/qcom/common.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Right, but you can choose the pid so that you get a perfect hash.
+You can then put a FIFO free list through the unused entries of
+the hash table (just an array).
+Then pid allocate just picks the oldest free entry and ups the
+high bits (that the hash masks out) to make the old value stale.
+Almost no cache lines are involved in the whole operation.
 
-diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
-index eb1b9da..4715527 100644
---- a/sound/soc/qcom/common.c
-+++ b/sound/soc/qcom/common.c
-@@ -13,6 +13,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
- 	struct device_node *cpu = NULL;
- 	struct device *dev = card->dev;
- 	struct snd_soc_dai_link *link;
-+	struct of_phandle_args args;
- 	int ret, num_links;
- 
- 	ret = snd_soc_of_parse_card_name(card, "model");
-@@ -47,12 +48,14 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
- 			goto err;
- 		}
- 
--		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
--		if (!link->cpu_of_node) {
-+		ret = of_parse_phandle_with_args(cpu, "sound-dai",
-+					"#sound-dai-cells", 0, &args);
-+		if (ret) {
- 			dev_err(card->dev, "error getting cpu phandle\n");
--			ret = -EINVAL;
- 			goto err;
- 		}
-+		link->cpu_of_node = args.np;
-+		link->id = args.args[0];
- 
- 		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
- 		if (ret) {
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
