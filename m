@@ -2,95 +2,81 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB59C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADF2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2CD320685
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:18:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2CD320685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 4805C20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:22:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PDRIfdpU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4805C20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeKHSx2 (ORCPT
+        id S1726895AbeKHS4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:53:28 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43252 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeKHSx1 (ORCPT
+        Thu, 8 Nov 2018 13:56:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35560 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbeKHS4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:53:27 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA89ImRm122138;
-        Thu, 8 Nov 2018 03:18:48 -0600
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA89Imgt044006
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 03:18:48 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 03:18:48 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 03:18:48 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA89Ia9D010737;
-        Thu, 8 Nov 2018 03:18:45 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Tony Lindgren <tony@atomide.com>
-CC:     Vignesh R <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 3/3] MAINTAINERS: Add entry for i2c-omap driver
-Date:   Thu, 8 Nov 2018 14:49:31 +0530
-Message-ID: <20181108091931.3342-4-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108091931.3342-1-vigneshr@ti.com>
-References: <20181108091931.3342-1-vigneshr@ti.com>
+        Thu, 8 Nov 2018 13:56:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EJsKISGxYo4H2RYZRbLqy+Y+g60nV2TrympHApZXX/Y=; b=PDRIfdpUYxX2BoW6QzNPIRrxx
+        I44lQ64A18R56SFuBXPDtOTY1yHLWnCc4ns35Sjx10ejPt02zekpcwBsxsQ6MGFI9Zmwa4SXeL9ku
+        bJvWNdlSCkKDfAzE1ujt14SroGJrKX3gPOnz+DNzRAxSl1OjJAaXp3zAUkoo98/tbMREI5KIEB9ir
+        io3dSyU/Uf6TqDjWfASwSEvllqeTqUuaNDrv76LzFKh/b04p8qdbF1kN6sJv72im7K3MWAxsu56b6
+        RotCEMQGghNgBZ1u5lZ4Mhais1yOLtpZDyQvyHzXy2lbTpCsbl0eabHm3FPIT5B+5cKzoklcBzdtO
+        iXOR7xMnw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKgVd-0001TG-Dz; Thu, 08 Nov 2018 09:21:53 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 336BE20284F98; Thu,  8 Nov 2018 10:21:51 +0100 (CET)
+Date:   Thu, 8 Nov 2018 10:21:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: Question on comment header for for_each_domain()
+Message-ID: <20181108092151.GM9761@hirez.programming.kicks-ass.net>
+References: <20181107230002.GA15577@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107230002.GA15577@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add separate entry for i2c-omap and add my name as reviewer for this
-driver.
+On Wed, Nov 07, 2018 at 03:00:02PM -0800, Paul E. McKenney wrote:
+> Hello!
+> 
+> The header comment for for_each_domain() talks about a call to
+> synchronize_sched() within detach_destroy_domains(), but I am not
+> seeing any such call.  Because synchronize_sched() is now folded into
+> synchronize_rcu(), I have a patch that edits the comment, but it looks
+> like a larger change is needed.
+> 
+> Or am I blind today?
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I think you're quite right and that comment is a wee bit stale.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8d4c874a5d6e..6519eea4813e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10821,6 +10821,14 @@ L:	linux-omap@vger.kernel.org
- S:	Maintained
- F:	arch/arm/mach-omap2/omap_hwmod.*
- 
-+OMAP I2C DRIVER
-+R:	Vignesh R <vigneshr@ti.com>
-+L:	linux-omap@vger.kernel.org
-+L:	linux-i2c@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i2c/i2c-omap.txt
-+F:	drivers/i2c/busses/i2c-omap.c
-+
- OMAP IMAGING SUBSYSTEM (OMAP3 ISP and OMAP4 ISS)
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- L:	linux-media@vger.kernel.org
--- 
-2.19.1
+The sched domain tree is indeed protected by regular RCU (not RCU-sched
+as the comment seems to imply) and this is per destroy_sched_domains()
+using call_rcu().
+
+And most (I didn't look at all) uses for the sched-domain tree do indeed
+employ rcu_read_lock().
+
 
