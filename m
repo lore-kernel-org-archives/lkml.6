@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1ECECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3367ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA56920989
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C6A20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="heMQCu+o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA56920989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVJlsU2P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C6A20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731992AbeKIHoG (ORCPT
+        id S1732015AbeKIHoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36802 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730393AbeKIHoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:05 -0500
+        id S1730393AbeKIHoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:07 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8FA020892;
-        Thu,  8 Nov 2018 22:06:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDC2920892;
+        Thu,  8 Nov 2018 22:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714794;
-        bh=54X5ZQQHgvNKlQkpYE1jtpR4ficko2bHi9HxFh/LgXQ=;
+        s=default; t=1541714796;
+        bh=8Pc36kETOyESt388nlIfWSxxlhJZ+1Q4vx8l3GJ4suo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=heMQCu+o8LTap9CBRuDCB40ujD9gtowpvi1GTXRjkPsei40ebycUdGcwFGX0TfVcK
-         9nsV5B+1EVMTy0xOnmfY+k7CuO5pJlBI9Yi9fc6BPt1hE0v8iyBRgL1mjx0Ap5zoj3
-         PB6n46AiznlvaZJZ6BVNJMZbxjHoZafzD7dYaERI=
+        b=gVJlsU2P3RdaSJyLm83y4hnvI1p4J9KJ7f7Xah/uHcs+SRaAFHp1Putryshb5miLg
+         QqOHpo4lNrQl+E1bljTQ6cCeey4k+TmltYJ2fba0z3xmphK3AjG3dxbNYGB5/0irwg
+         mUSlPQ58Ch/owPnXsDCMRrvQgHnW5pGeAGYa0Fm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 129/171] net: ena: fix NULL dereference due to untimely napi initialization
-Date:   Thu,  8 Nov 2018 13:51:39 -0800
-Message-Id: <20181108215136.567594550@linuxfoundation.org>
+Subject: [PATCH 4.9 104/171] drm/msm: Fix possible null dereference on failure of get_pages()
+Date:   Thu,  8 Nov 2018 13:51:14 -0800
+Message-Id: <20181108215134.936530591@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,48 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 78a55d05def95144ca5fa9a64c49b2a0636a9866 ]
+[ Upstream commit 3976626ea3d2011f8fd3f3a47070a8b792018253 ]
 
-napi poll functions should be initialized before running request_irq(),
-to handle a rare condition where there is a pending interrupt, causing
-the ISR to fire immediately while the poll function wasn't set yet,
-causing a NULL dereference.
+Commit 62e3a3e342af changed get_pages() to initialise
+msm_gem_object::pages before trying to initialise msm_gem_object::sgt,
+so that put_pages() would properly clean up pages in the failure
+case.
 
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+However, this means that put_pages() now needs to check that
+msm_gem_object::sgt is not null before trying to clean it up, and
+this check was only applied to part of the cleanup code.  Move
+it all into the conditional block.  (Strictly speaking we don't
+need to make the kfree() conditional, but since we can't avoid
+checking for null ourselves we may as well do so.)
+
+Fixes: 62e3a3e342af ("drm/msm: fix leak in failed get_pages")
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/msm_gem.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index 1d92e034febc..0c298878bf46 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -1482,8 +1482,6 @@ static int ena_up_complete(struct ena_adapter *adapter)
- 	if (rc)
- 		return rc;
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index 7145127513c4..795660e29b2c 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -118,17 +118,19 @@ static void put_pages(struct drm_gem_object *obj)
+ 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
  
--	ena_init_napi(adapter);
+ 	if (msm_obj->pages) {
+-		/* For non-cached buffers, ensure the new pages are clean
+-		 * because display controller, GPU, etc. are not coherent:
+-		 */
+-		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+-			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
+-					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++		if (msm_obj->sgt) {
++			/* For non-cached buffers, ensure the new
++			 * pages are clean because display controller,
++			 * GPU, etc. are not coherent:
++			 */
++			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
++				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
++					     msm_obj->sgt->nents,
++					     DMA_BIDIRECTIONAL);
+ 
+-		if (msm_obj->sgt)
+ 			sg_free_table(msm_obj->sgt);
 -
- 	ena_change_mtu(adapter->netdev, adapter->netdev->mtu);
+-		kfree(msm_obj->sgt);
++			kfree(msm_obj->sgt);
++		}
  
- 	ena_refill_all_rx_bufs(adapter);
-@@ -1643,6 +1641,13 @@ static int ena_up(struct ena_adapter *adapter)
- 
- 	ena_setup_io_intr(adapter);
- 
-+	/* napi poll functions should be initialized before running
-+	 * request_irq(), to handle a rare condition where there is a pending
-+	 * interrupt, causing the ISR to fire immediately while the poll
-+	 * function wasn't set yet, causing a null dereference
-+	 */
-+	ena_init_napi(adapter);
-+
- 	rc = ena_request_io_irq(adapter);
- 	if (rc)
- 		goto err_req_irq;
+ 		if (use_pages(obj))
+ 			drm_gem_put_pages(obj, msm_obj->pages, true, false);
 -- 
 2.17.1
 
