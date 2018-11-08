@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F4CECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F0CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FC52081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF2352081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:54:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mB3UV0Ts"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FC52081D
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WIwmr0Tv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2352081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeKHX3i (ORCPT
+        id S1727080AbeKHX3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:29:38 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33230 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeKHX3h (ORCPT
+        Thu, 8 Nov 2018 18:29:40 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37602 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeKHX3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:29:37 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u9-v6so11005098wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:54:01 -0800 (PST)
+        Thu, 8 Nov 2018 18:29:39 -0500
+Received: by mail-wr1-f66.google.com with SMTP id o15-v6so17709869wrv.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:54:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jmLKsj8MdV/bQegPzrUFYLlxjsgIqYnOv75dL5siDLw=;
-        b=mB3UV0Tsm6oLqjrVTx5217FgZFpvk4ew+1cqZjqJzhyZGMiWtI6dPobpW7W+8tXl8j
-         9EcgGt6Abb8iCn2RWF9S9H1rj/9U3DHMLBqieQnhu+shLVfCtFEzt/3KWLHAr7LVsVaE
-         /MBi7lWmhbf5KE+3feyy2nl4EjwF4L1tpAnn5xW7DgxObTC/294IaPcD2axz/GKXb5dk
-         QpBIw5cviPZhN2nsJ/eRDj7MXbO5M/8xNy95YLkBjt2OoGC9gTVPCkWJWdUy9F7YhTwZ
-         rFmW0PB24rwmIbEAkH2+wo7Y14cD3/mtqXvjZCADyV863hUnV9EYxcsCPb0MJAoEvt3V
-         CF2A==
+        bh=biN48QhXjlPL6+PrPs5FkgLNiaQcQ3d8ZapoGQWwDGM=;
+        b=WIwmr0TvCycOt/qTQMnImtNWfSsE8wfhPg+OZYIUHU7dF1uxIXJBU+Kjug3kbINQSR
+         nFLTcq/bYxIUsJKbgOigtBhhcBz6X91UNLkYudIsG9F1G1OO+Fsc9i+3HGqPNBHh6wJk
+         tVJv5abV5I1RqYUM7QhtQCZlJzRhV0REasGEM2tYE/Ds7E4UZzJcutDZKZxcP9URWNhS
+         AyymguUpHNdED3uu/Q0yuSxdlSNqXxx8TP0qkl9xh5xdFW4lmnuQMVzUrrsHLqlBsdU9
+         Z1BHniOysRurxp78mfuTEtX2rvMzd/A/+aQIxzHWiclcMnHH+6xuusgHIeWXke3CnOGL
+         mOkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jmLKsj8MdV/bQegPzrUFYLlxjsgIqYnOv75dL5siDLw=;
-        b=rz+1Pmh02VHTwcuPiJ3mkCbuhgtSzNHVTnfMNzR5P+KAjD4E1QJ148apBNeq4wwdXh
-         5cGNUuvkf3SDIK7Z4FvHx437UmIKw5xKUxpENEzDJceoRyLN2TQo2PsQHusT8fcs1uIi
-         QPGJ36t9skFWtjNiHOBwHd9v0QOTfNNB/vj91zzRCyM811OgYWfCQ2jcrgcF1I8c3eAh
-         j2NgEokl8Y5mcutC7EtoXlL6z2zly0fTOnZ7I3yr80JvH42dzej5vhQD0hNLY4kaoLpR
-         R4Bw2Ju/sPJJOBrDqokR8M1hX86vL8DhU+Iyq+ERirqW5UPVZz6r326fVA1mhWZ728zj
-         4WvQ==
-X-Gm-Message-State: AGRZ1gLe3RJrCqI7FdiBN6ZacQSGJuoSlBjNoLR+92iXHzakprTDCjP4
-        OfDU/B0/xzS3/Dmg1iO3ZhSq4w==
-X-Google-Smtp-Source: AJdET5fG2F9vW2BLLbxBe9ho4kr7vSWp85lKizQ0SfM1KaALQ9Vx1rn3dASEu1r5Ne9T8aKysI4kwA==
-X-Received: by 2002:a5d:6a0e:: with SMTP id m14-v6mr4359472wru.76.1541685240652;
-        Thu, 08 Nov 2018 05:54:00 -0800 (PST)
+        bh=biN48QhXjlPL6+PrPs5FkgLNiaQcQ3d8ZapoGQWwDGM=;
+        b=jdPVYYrCojJ2hAZubj4bBfGpP9Ucx6WkFBJxogTuQqbPfgdLb8nlD6XxhDGozQABeY
+         a2OR4PM2RabyCz9ELzPnRwOvyPYGsUdBZ8pP6T/yo3kHqejw0x52wcERvGpz2u1Olttv
+         bkgPkYPMnMUZPYyUBteNIbMh8yQ/DlQ3bwBAo15gW09///bWaNGMEcvoNpW4mrQtSSox
+         BDjddhXb+A0rnE4ytYpSR3OWentkA3X0V3l2Y/1Q+JFEGp1mlGD2RaSn3MZMTomFl/TA
+         H4YXwbAKv1dKhezughLOicA3bFp5I9tB1uCvBg+im6eBgzT9q1bvcQVs5M8U37KbRdE0
+         /0PQ==
+X-Gm-Message-State: AGRZ1gINl3T0G3Op2g6SoF7OGYKEbKlp31L6eGu4hGjEowvJyFnSbgSX
+        NlPZSzp7E+TzTRLOWxO5ADmVgTCaQME=
+X-Google-Smtp-Source: AJdET5cl0XBF1MHr71F3J01006i/ZUwHebSImNSp1gw6J43kwYWHcHBE93zs6DBj/D9ONmHJkntb9w==
+X-Received: by 2002:adf:fb89:: with SMTP id a9-v6mr4046902wrr.219.1541685242649;
+        Thu, 08 Nov 2018 05:54:02 -0800 (PST)
 Received: from boomer.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id p6sm2740329wrx.39.2018.11.08.05.53.59
+        by smtp.googlemail.com with ESMTPSA id p6sm2740329wrx.39.2018.11.08.05.54.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 05:54:00 -0800 (PST)
+        Thu, 08 Nov 2018 05:54:02 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/4] arm64: dts: meson-axg: fix mailbox address
-Date:   Thu,  8 Nov 2018 14:53:49 +0100
-Message-Id: <20181108135352.8459-2-jbrunet@baylibre.com>
+Subject: [PATCH 3/4] Documentation: bindings: Add missing Amlogic SCPI sensor bindings
+Date:   Thu,  8 Nov 2018 14:53:51 +0100
+Message-Id: <20181108135352.8459-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108135352.8459-1-jbrunet@baylibre.com>
 References: <20181108135352.8459-1-jbrunet@baylibre.com>
@@ -78,31 +78,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MHU mailbox address is wrong. Fixing it enables the mailboxes on the A113.
-These mailboxes are needed for SCPI
+amlogic,meson-gxbb-scpi-sensors is both the driver and DT but is not
+documented. Just add it to amlogic's scpi documentation
 
-Fixes: 9d59b708500f ("arm64: dts: meson-axg: add initial A113D SoC DT support")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/amlogic,scpi.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 3cc0044d3468..ff8b3406aff6 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1067,9 +1067,9 @@
- 			};
- 		};
+diff --git a/Documentation/devicetree/bindings/arm/amlogic,scpi.txt b/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
+index 7b9a861e9306..5ab59da052df 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
++++ b/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
+@@ -17,4 +17,11 @@ Required sub-node properties:
+ - compatible : should be "amlogic,meson-gxbb-scp-shmem" for SRAM based shared
+ 		memory on Amlogic GXBB SoC.
  
--		mailbox: mailbox@ff63dc00 {
-+		mailbox: mailbox@ff63c404 {
- 			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
--			reg = <0 0xff63dc00 0 0x400>;
-+			reg = <0 0xff63c404 0 0x4c>;
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>;
++Sensor bindings for the sensors based on SCPI Message Protocol
++--------------------------------------------------------------
++SCPI provides an API to access the various sensors on the SoC.
++
++Required properties:
++- compatible : should be "amlogic,meson-gxbb-scpi-sensors".
++
+ [0] Documentation/devicetree/bindings/arm/arm,scpi.txt
 -- 
 2.19.1
 
