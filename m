@@ -2,107 +2,208 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF625ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B5CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A431C20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:07:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qtgZpzN2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A431C20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 49EF420827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:07:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49EF420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeKHXmw (ORCPT
+        id S1727473AbeKHXn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:42:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58586 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbeKHXmv (ORCPT
+        Thu, 8 Nov 2018 18:43:27 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33640 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeKHXn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:42:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DTB5Db2QQGkl5qIo6RBvU8cT7ULvRooewpvdpybfBlc=; b=qtgZpzN24OGaQGpEG0gcHxOXX
-        4q5sJ/7lr+vCr2TJ62vWILyHEyF2qzBalDvyExPK+QtUV79BIyOyBLBOdR8nkbtLJnFokqOpMEtFT
-        yd5B6qbzQ7sNOIiaLo7FeIp+mBE1YqezvNct1bahCH7+Z+N+tuDuDn4QDvp2zYmN6BzgmgHW4Bqh/
-        eHYMDespxt/ZF6ToIiA+rjuzKLWlNy5atzwYUip4/TCJQuecljm3y5LCjxXMjXc6O1hCLeZMgjVlr
-        mRb5b3C4a8eRFMRqONijMLIfjpnpCYmRlSDc9TH5uh4F+oNMEiPtNHgAfh7ZHf6qHolEVQOz+xm+O
-        0ryH9WegA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKkxf-0002os-TG; Thu, 08 Nov 2018 14:07:07 +0000
-Date:   Thu, 8 Nov 2018 06:07:07 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Martin Steigerwald' <martin@lichtvoll.de>,
-        Michal Hocko <mhocko@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
-Message-ID: <20181108140707.GO3074@bombadil.infradead.org>
-References: <20181031150625.147369-1-dancol@google.com>
- <CAKOZueu5aDtHDBzp6qKECTHEejjb=dyegQkuHh8NfwgNktzFow@mail.gmail.com>
- <20181107160015.GI27423@dhcp22.suse.cz>
- <4536090.43ZsV6LvYe@merkaba>
- <0c5610f128fa49fb9d8f7859e6f61b90@AcuMS.aculab.com>
- <20181108122747.GM3074@bombadil.infradead.org>
- <47072118046a450b904556ca8154f5c9@AcuMS.aculab.com>
+        Thu, 8 Nov 2018 18:43:27 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o89so26663129qko.0;
+        Thu, 08 Nov 2018 06:07:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cmq8Z0t3Y75ezhc956JefSNbsuMUAafAojsLMquh094=;
+        b=IPIBXIV/ep/RDOcv3F9zFRmceMoJZqUb2X9ZrdbNcdVYeGs/3qHIfL8W04jcqIFGuW
+         EIEHUcWG4rtoyq8fXBToBhqA83agjuBZFaj+woNnEXxW+5JwRs/9A8Bwky0JaFGa4dyI
+         XTk6CbkEkcBg10YSsi5wyxtyJCOUGiSacYGJTCER5hIGNcpxWZktG2rGnZoALOv+uOPs
+         MWzayxDYCP8IZ6wOTMfgS2/yd6DEeOmCOPhw8F++Mq+rbiWDOLoXxg8rXmbZpfj8+BSU
+         W82qWPYyj97fZiWfe1lLwhFdPsWlmxjN36EuWcCnF6PHo/umUAuuf0YiY6PSMmwS6DOm
+         I83g==
+X-Gm-Message-State: AGRZ1gLxJxOw1hzK9hEKQ0Tk0OjwIkK8ZGrZSpcMcAcIy36T8w0zqmXt
+        Xuu2nGSbyqZob6aafdkG/GgQTrL+HZKRg7fh3PA=
+X-Google-Smtp-Source: AJdET5eG18D9cs1PiXm7ZSsgZXikMxz1ig9A5aZECjeCdB1mHLbOxd39CIXmFoA822IHM966WyMv9Nh4alu0O+Tl90s=
+X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr4426963qvk.40.1541686067792;
+ Thu, 08 Nov 2018 06:07:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47072118046a450b904556ca8154f5c9@AcuMS.aculab.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20181104155501.14767-1-TheSven73@googlemail.com> <20181104155501.14767-5-TheSven73@googlemail.com>
+In-Reply-To: <20181104155501.14767-5-TheSven73@googlemail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 8 Nov 2018 15:07:24 +0100
+Message-ID: <CAK8P3a3DnKcRxL5dG_pvBVTngFh5eDL2JdEqZzgL0RXJy5dZGw@mail.gmail.com>
+Subject: Re: [PATCH anybus v3 4/6] bus: support HMS Anybus-S bus
+To:     thesven73@gmail.com
+Cc:     svendev@arcx.com, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>, noralf@tronnes.org,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        gregkh <gregkh@linuxfoundation.org>,
+        John Garry <john.garry@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:42:41PM +0000, David Laight wrote:
-> From: Matthew Wilcox
-> > On Thu, Nov 08, 2018 at 12:02:49PM +0000, David Laight wrote:
-> > > This can be mitigated by only allocating 'big' numbers on systems
-> > > that have a lot of pids.
-> > > You also really want an O(1) allocator.
-> > 
-> > The allocator is O(log n) -- it's the IDR allocator, used in cyclic mode.
-> > n in this case is the highest ID which is still in use.  The tree is
-> > log_64(n) levels high.  It walks to the bottom of the tree and puts a
-> > pointer into the tree.  If the cursor has wrapped to the beginning of
-> > the tree, it may encounter a PID which is still in use; if it does,
-> > it does a bitmap scan of that node, and will then walk up the tree,
-> > doing a bitmap scan forward at each level until it finds a free PID.
-> 
-> Right, but you can choose the pid so that you get a perfect hash.
-> You can then put a FIFO free list through the unused entries of
-> the hash table (just an array).
-> Then pid allocate just picks the oldest free entry and ups the
-> high bits (that the hash masks out) to make the old value stale.
-> Almost no cache lines are involved in the whole operation.
+On Sun, Nov 4, 2018 at 4:55 PM <thesven73@gmail.com> wrote:
+> From: Sven Van Asbroeck <svendev@arcx.com>
 
-You'd be looking for something like dynamic perfect hashing then?
-I think that'd make a great project for someone to try out.  I don't
-have the time to look into it myself, and I'm not convinced there's
-a real workload that would benefit.  But it'd be a great project for
-a university student.
+> +struct anybus_mbox_hdr {
+> +       u16 id;
+> +       u16 info;
+> +       u16 cmd_num;
+> +       u16 data_size;
+> +       u16 frame_count;
+> +       u16 frame_num;
+> +       u16 offset_high;
+> +       u16 offset_low;
+> +       u16 extended[8];
+> +} __packed;
 
+I don't think you want this to be __packed, it won't change the layout
+but instead force byte accesses on architectures that don't have
+fast unaligned load/store instructions.
+
+Instead of the __packed, it's almost always better to ensure that
+the structure itself is aligned to a 16-bit address.
+
+> +static struct ab_task *ab_task_create_get(struct kmem_cache *cache,
+> +                       ab_task_fn_t task_fn)
+> +{
+> +       struct ab_task *t;
+> +
+> +       t = kmem_cache_alloc(cache, GFP_KERNEL);
+> +       if (!t)
+> +               return NULL;
+> +       t->cache = cache;
+> +       refcount_set(&t->refcnt, 1);
+> +       t->task_fn = task_fn;
+> +       t->done_fn = NULL;
+> +       t->result = 0;
+> +       init_completion(&t->done);
+> +       return t;
+> +}
+
+It looks like you build your own object management here. Maybe
+use kobject, or at least kref instead of the refcount_t based
+low-level implementation?
+
+> +struct anybuss_host {
+> +       struct device *dev;
+> +       struct anybuss_client *client;
+> +       struct reset_control *reset;
+> +       struct regmap *regmap;
+> +       int irq;
+> +       struct task_struct *qthread;
+> +       wait_queue_head_t wq;
+> +       struct completion card_boot;
+> +       atomic_t ind_ab;
+> +       spinlock_t qlock;
+> +       struct kmem_cache *qcache;
+> +       struct kfifo qs[3];
+> +       struct kfifo *powerq;
+> +       struct kfifo *mboxq;
+> +       struct kfifo *areaq;
+> +       bool power_on;
+> +       bool softint_pending;
+> +       atomic_t dc_event;
+> +       wait_queue_head_t dc_wq;
+> +       atomic_t fieldbus_online;
+> +       struct kernfs_node *fieldbus_online_sd;
+> +};
+
+Similarly, should that anybuss_host sturcture maybe be based on
+a 'struct device' itself? What is the hierarchy of devices in sysfs?
+
+> +
+> +static int read_ind_ab(struct regmap *regmap)
+> +{
+> +       unsigned long timeout = jiffies + HZ/2;
+> +       unsigned int a, b;
+> +
+> +       while (time_before_eq(jiffies, timeout)) {
+> +               regmap_read(regmap, REG_IND_AB, &a);
+> +               regmap_read(regmap, REG_IND_AB, &b);
+> +               if (likely(a == b))
+> +                       return (int)a;
+> +               cpu_relax();
+> +       }
+> +       WARN(1, "IND_AB register not stable");
+> +       return -ETIMEDOUT;
+> +}
+
+500ms is an awfully long time for a busy loop. Can you change the
+cpu_relax() into a msleep() or usleep_range() to let other processes
+get some time?
+
+I see this is called from the interrupt handler at the moment, which
+means you cannot call sleeping functions, but it also means that
+the timeout may never happen because the timer tick IRQ cannot
+get through. That means you may have to change the irq handler
+logic, e.g. to try this a few times but then defer to a bottom half
+if it fails for a long time.
+
+> +/* -------------------------- mailbox tasks ----------------------- */
+> +
+> +struct msgAnybusInit {
+> +       u16 input_io_len;
+> +       u16 input_dpram_len;
+> +       u16 input_total_len;
+> +       u16 output_io_len;
+> +       u16 output_dpram_len;
+> +       u16 output_total_len;
+> +       u16 op_mode;
+> +       u16 notif_config;
+> +       u16 wd_val;
+> +} __packed;
+
+Again, probably not __packed here.
+
+> +static int task_fn_mbox_2(struct anybuss_host *cd, struct ab_task *t)
+> +{
+> +       struct mbox_priv *pd = &t->mbox_pd;
+> +       unsigned int ind_ap;
+> +
+> +       if (!cd->power_on)
+> +               return -EIO;
+> +       regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
+> +       if (((atomic_read(&cd->ind_ab) ^ ind_ap) & IND_AX_MOUT) == 0) {
+> +               /* output message not here */
+> +               if (time_after(jiffies, t->start_jiffies + TIMEOUT))
+> +                       return -ETIMEDOUT;
+> +               return -EINPROGRESS;
+> +       }
+
+Again, avoid busy loops with long timeouts like this.
+
+       Arnd
