@@ -2,104 +2,112 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DFFECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3230ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE1E2081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:03:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE1E2081D
+	by mail.kernel.org (Postfix) with ESMTP id 767BF2081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 767BF2081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeKHXiq (ORCPT
+        id S1727244AbeKHXi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:38:46 -0500
-Received: from mga02.intel.com ([134.134.136.20]:40165 "EHLO mga02.intel.com"
+        Thu, 8 Nov 2018 18:38:59 -0500
+Received: from mga18.intel.com ([134.134.136.126]:55397 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbeKHXiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:38:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726359AbeKHXi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:38:59 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 06:03:09 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 06:03:21 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="106531013"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga001.jf.intel.com with ESMTP; 08 Nov 2018 06:03:07 -0800
-Subject: Re: [RFC PATCH v1 2/2] proc: add /proc/<pid>/thread_state
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, ak@linux.intel.com,
-        tim.c.chen@linux.intel.com, arjan@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <1541528590-30296-1-git-send-email-aubrey.li@intel.com>
- <1541528590-30296-2-git-send-email-aubrey.li@intel.com>
- <20181108063246.GA13233@gmail.com>
- <20181108101729.GP9761@hirez.programming.kicks-ass.net>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <977bf7ee-deb3-0c9f-def5-7bb04d2e78ae@linux.intel.com>
-Date:   Thu, 8 Nov 2018 22:03:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+   d="scan'208";a="94660587"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 06:03:19 -0800
+Date:   Thu, 8 Nov 2018 16:03:18 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v4 2/6] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+Message-ID: <20181108140318.GD8922@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-3-roberto.sassu@huawei.com>
+ <20181108140208.GC8922@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181108101729.GP9761@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108140208.GC8922@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/8 18:17, Peter Zijlstra wrote:
-> On Thu, Nov 08, 2018 at 07:32:46AM +0100, Ingo Molnar wrote:
->>
->> * Aubrey Li <aubrey.li@intel.com> wrote:
->>
->>> Expose the per-task cpu specific thread state value, it's helpful
->>> for userland to classify and schedule the tasks by different policies
->>
->> That's pretty vague - what exactly would use this information? I'm sure 
->> you have a usecase in mind - could you please describe it?
+On Thu, Nov 08, 2018 at 04:02:08PM +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 06, 2018 at 04:01:55PM +0100, Roberto Sassu wrote:
+> > tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
+> > for a list of hash algorithms used for event logs and event log digests.
+> > However, according to TCG EFI Protocol Specification, these arrays have
+> > variable sizes and are not suitable for parsing events with type casting.
+> > 
+> > Since declaring static arrays with hard-coded sizes does not help to parse
+> > data after these arrays, this patch removes the declaration of
+> > TPM2_ACTIVE_PCR_BANKS and sets the size of the arrays above to zero.
+> > 
+> > Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
+> > event log")
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  include/linux/tpm_eventlog.h | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+> > index 20d9da77fc11..3d5d162f09cc 100644
+> > --- a/include/linux/tpm_eventlog.h
+> > +++ b/include/linux/tpm_eventlog.h
+> > @@ -8,7 +8,6 @@
+> >  #define TCG_EVENT_NAME_LEN_MAX	255
+> >  #define MAX_TEXT_EVENT		1000	/* Max event string length */
+> >  #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+> > -#define TPM2_ACTIVE_PCR_BANKS	3
+> >  
+> >  #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+> >  #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+> > @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
+> >  	u8 spec_errata;
+> >  	u8 uintnsize;
+> >  	u32 num_algs;
+> > -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+> > +	struct tcg_efi_specid_event_algs digest_sizes[0];
+> >  	u8 vendor_info_size;
+> >  	u8 vendor_info[0];
+> >  } __packed;
+> > @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
+> >  	u32 pcr_idx;
+> >  	u32 event_type;
+> >  	u32 count;
+> > -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+> > +	struct tpm2_digest digests[0];
+> >  	struct tcg_event_field event;
 > 
-> Yeah, "thread_state" is a pretty terrible name for this.
+> Last two fields make sense at least without comment as they overlap.
 
-task_struct has a CPU specific element "thread", I quote it to here to 
-create a generic interface to expose CPU specific state of the task.
-Like /proc/<pid>/stat, I plan to use this "thread_state" to host any CPU
-specific state, including AVX state(now only), and any other states(may come
-soon). So this interface may be extended in future like the following:
+i.e. would be semantically equal to
 
-#cat /proc/<pid>/thread_state
-1 0 0
+union {
+	struct tpm2_digest digests[0];
+	struct tcg_event_field event;
+};
 
-
->
- The use-case is
-> detectoring which tasks use AVX3 such that a userspace component (think
-> job scheduler) can cluster them together.> 
-> The 'problem' is that running AVX2+ code drops the max clock, because
-> you light up the massive wide (and thus large area) paths.
-
-Thanks to explain this.
-
-> 
-> So maybe something like "simd_active" is a better name, dunno.
-
-As above, maybe the name can be hidden by thread_state?
-
-> 
-> Or maybe "simd_class" and we can write out 0,1,2,3 depending on the AVX
-> class being used, dunno. It might make sense to look at what other arch
-> SIMD stuff looks like to form this interface.
-> 
-A task may use 1,2,3 simultaneously, as a scheduler hint, it's just cluster
-or not, so 0/1 may be good enough.
-
-Thanks,
--Aubrey
+/Jarkko
