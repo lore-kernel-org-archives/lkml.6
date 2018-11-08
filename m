@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D8EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAED6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1958920844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0F7220857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwyhEX3G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1958920844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkAQoCSq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0F7220857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeKIIRX (ORCPT
+        id S1729264AbeKIIRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:17:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50470 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:17:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727463AbeKIHeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:34:02 -0500
+        id S1729189AbeKIHeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:34:01 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9538920892;
-        Thu,  8 Nov 2018 21:56:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F5EF2089A;
+        Thu,  8 Nov 2018 21:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714194;
-        bh=ZExUvJSTwHCZ3mlAePFowVOgZZOjZDF1gWFERXCa2Qk=;
+        s=default; t=1541714193;
+        bh=wfWM3X4a4cbs600ZtWALGJaXie3pjlc7r37Lg8AyCa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uwyhEX3GZ04XALR0namjrU75Nfjfj5d4BmUA7AqlAcXRPfrVKlPDC/pvwkl/k5OAI
-         v3jfg8J3SYhXQNJA4jCYng9/xb4XSve4bmleib92Z7dTDu5qpVs35800YoNCYV8sgX
-         CsOtYYL6mDBChu/SG21pyt2LSiTB0Kh+zYU2UWn4=
+        b=PkAQoCSq5Kb5jrRE/V1iCMR1bgfGy4V9qfPK5Fm95SIlmO6L8xjxJoatLqzzdpAsF
+         gNB6veqRDoIofpJyKugBAJ+G4XYWxZtmuNwzOdDnMjbqE1dt5EQoWC2ck9qmRrMeXH
+         ieKPHuBL46gkFVvfiivXXW76nimo2OnIikezD5c8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Myron Stowe <myron.stowe@redhat.com>,
-        Mark Rustad <mark.d.rustad@intel.com>,
+        stable@vger.kernel.org, Ken Xue <Ken.Xue@amd.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Xiangliang Yu <Xiangliang.Yu@amd.com>,
+        "James E.J. Bottomley" <JBottomley@odin.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Michael Terry <Michael.terry@canonical.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 116/144] PCI: Fix devfn for VPD access through function 0
-Date:   Thu,  8 Nov 2018 13:51:27 -0800
-Message-Id: <20181108215106.388149049@linuxfoundation.org>
+Subject: [PATCH 3.18 114/144] Revert "SCSI: Fix NULL pointer dereference in runtime PM"
+Date:   Thu,  8 Nov 2018 13:51:25 -0800
+Message-Id: <20181108215106.202460357@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -66,60 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9d9240756e63dd87d6cbf5da8b98ceb8f8192b55 ]
+[ Upstream commit 1c69d3b6eb73e466ecbb8edaf1bc7fd585b288da ]
 
-Commit 932c435caba8 ("PCI: Add dev_flags bit to access VPD through function
-0") passes PCI_SLOT(devfn) for the devfn parameter of pci_get_slot().
-Generally this works because we're fairly well guaranteed that a PCIe
-device is at slot address 0, but for the general case, including
-conventional PCI, it's incorrect.  We need to get the slot and then convert
-it back into a devfn.
+This reverts commit 49718f0fb8c9 ("SCSI: Fix NULL pointer dereference in
+runtime PM")
 
-Fixes: 932c435caba8 ("PCI: Add dev_flags bit to access VPD through function 0")
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-Acked-by: Myron Stowe <myron.stowe@redhat.com>
-Acked-by: Mark Rustad <mark.d.rustad@intel.com>
-CC: stable@vger.kernel.org
+The old commit may lead to a issue that blk_{pre|post}_runtime_suspend and
+blk_{pre|post}_runtime_resume may not be called in pairs.
+
+Take sr device as example, when sr device goes to runtime suspend,
+blk_{pre|post}_runtime_suspend will be called since sr device defined
+pm->runtime_suspend. But blk_{pre|post}_runtime_resume will not be called
+since sr device doesn't have pm->runtime_resume. so, sr device can not
+resume correctly anymore.
+
+More discussion can be found from below link.
+http://marc.info/?l=linux-scsi&m=144163730531875&w=2
+
+Signed-off-by: Ken Xue <Ken.Xue@amd.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Xiangliang Yu <Xiangliang.Yu@amd.com>
+Cc: James E.J. Bottomley <JBottomley@odin.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Michael Terry <Michael.terry@canonical.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/access.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/scsi/scsi_pm.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/access.c b/drivers/pci/access.c
-index 7f249b9ab2ce..2f15e7bb9f44 100644
---- a/drivers/pci/access.c
-+++ b/drivers/pci/access.c
-@@ -355,7 +355,8 @@ static const struct pci_vpd_ops pci_vpd_pci22_ops = {
- static ssize_t pci_vpd_f0_read(struct pci_dev *dev, loff_t pos, size_t count,
- 			       void *arg)
- {
--	struct pci_dev *tdev = pci_get_slot(dev->bus, PCI_SLOT(dev->devfn));
-+	struct pci_dev *tdev = pci_get_slot(dev->bus,
-+					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
- 	ssize_t ret;
+diff --git a/drivers/scsi/scsi_pm.c b/drivers/scsi/scsi_pm.c
+index a2dcf6a54ec6..75320dad9677 100644
+--- a/drivers/scsi/scsi_pm.c
++++ b/drivers/scsi/scsi_pm.c
+@@ -221,13 +221,13 @@ static int sdev_runtime_suspend(struct device *dev)
+ 	struct scsi_device *sdev = to_scsi_device(dev);
+ 	int err = 0;
  
- 	if (!tdev)
-@@ -369,7 +370,8 @@ static ssize_t pci_vpd_f0_read(struct pci_dev *dev, loff_t pos, size_t count,
- static ssize_t pci_vpd_f0_write(struct pci_dev *dev, loff_t pos, size_t count,
- 				const void *arg)
- {
--	struct pci_dev *tdev = pci_get_slot(dev->bus, PCI_SLOT(dev->devfn));
-+	struct pci_dev *tdev = pci_get_slot(dev->bus,
-+					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
- 	ssize_t ret;
+-	if (pm && pm->runtime_suspend) {
+-		err = blk_pre_runtime_suspend(sdev->request_queue);
+-		if (err)
+-			return err;
++	err = blk_pre_runtime_suspend(sdev->request_queue);
++	if (err)
++		return err;
++	if (pm && pm->runtime_suspend)
+ 		err = pm->runtime_suspend(dev);
+-		blk_post_runtime_suspend(sdev->request_queue, err);
+-	}
++	blk_post_runtime_suspend(sdev->request_queue, err);
++
+ 	return err;
+ }
  
- 	if (!tdev)
-@@ -388,7 +390,8 @@ static const struct pci_vpd_ops pci_vpd_f0_ops = {
+@@ -250,11 +250,11 @@ static int sdev_runtime_resume(struct device *dev)
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+ 	int err = 0;
  
- static int pci_vpd_f0_dev_check(struct pci_dev *dev)
- {
--	struct pci_dev *tdev = pci_get_slot(dev->bus, PCI_SLOT(dev->devfn));
-+	struct pci_dev *tdev = pci_get_slot(dev->bus,
-+					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
- 	int ret = 0;
+-	if (pm && pm->runtime_resume) {
+-		blk_pre_runtime_resume(sdev->request_queue);
++	blk_pre_runtime_resume(sdev->request_queue);
++	if (pm && pm->runtime_resume)
+ 		err = pm->runtime_resume(dev);
+-		blk_post_runtime_resume(sdev->request_queue, err);
+-	}
++	blk_post_runtime_resume(sdev->request_queue, err);
++
+ 	return err;
+ }
  
- 	if (!tdev)
 -- 
 2.17.1
 
