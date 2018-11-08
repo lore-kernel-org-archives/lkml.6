@@ -2,137 +2,173 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8022CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986D8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21CA420818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5494720883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="D3/CX1LN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CA420818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXlEOlmG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5494720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbeKIH7S (ORCPT
+        id S1731480AbeKIH73 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:59:18 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:36210 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeKIH7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:59:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zZXmITg4kc3K/wcdLi/pAdqyUz4PEZBt00gTQPPymRs=; b=D3/CX1LN/QYhS2eMnGH1iDOds
-        +C9AQn6PcYIy9m+FOYRKlyMy7wMfAIFgZSbOLBA47lh3UxGz5/OyzM7Sg7ELNpov7VG093unQD7Rs
-        4YIphNH7PreB6feozIWl6LDDbeCmVcpMzTt/p9MgXJoTLAgMmLClW2PzOX/v5cJhf9EfU=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:34582)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gKsg6-0006h5-6v; Thu, 08 Nov 2018 22:21:30 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gKsg1-0005SP-UU; Thu, 08 Nov 2018 22:21:26 +0000
-Date:   Thu, 8 Nov 2018 22:21:23 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>, netdev@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@free-electrons.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        linux-mediatek@lists.infradead.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 4/5] phy: mvebu-cp110-comphy: convert to use eth phy mode
- and submode
-Message-ID: <20181108222123.GZ30658@n2100.armlinux.org.uk>
-References: <20181108003617.10334-1-grygorii.strashko@ti.com>
- <20181108003617.10334-5-grygorii.strashko@ti.com>
+        Fri, 9 Nov 2018 02:59:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728539AbeKIHnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:13 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F09A2146E;
+        Thu,  8 Nov 2018 22:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541714743;
+        bh=TY2IMHbXlgPE1YegVrkNSWuklb7LorFE4YBhSRGXitI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VXlEOlmGzk3QHMxfKyv0b9Gis8MiCvQKKFu9gPmypszKYt6UeXYepSrz6WAJA6jmn
+         pT7/K665BirqJG/+zXBD/fBRj1yRf63C75HNJj1wAJ4CnUPy1CLMHnPTGAXnlEeYd7
+         cwnZmNuOqSuV1zQXBVQP3VEZ4ez+YESVBTmkMVJg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 100/171] drm: bochs: Dont remove uninitialized fbdev framebuffer
+Date:   Thu,  8 Nov 2018 13:51:10 -0800
+Message-Id: <20181108215134.708410882@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
+References: <20181108215127.257643509@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108003617.10334-5-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 06:36:16PM -0600, Grygorii Strashko wrote:
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> index 7a37a37..fb28b71 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> @@ -1165,28 +1165,17 @@ static void mvpp22_gop_setup_irq(struct mvpp2_port *port)
->   */
->  static int mvpp22_comphy_init(struct mvpp2_port *port)
->  {
-> -	enum phy_mode mode;
-> +	int submode;
->  	int ret;
->  
->  	if (!port->comphy)
->  		return 0;
->  
-> -	switch (port->phy_interface) {
-> -	case PHY_INTERFACE_MODE_SGMII:
-> -	case PHY_INTERFACE_MODE_1000BASEX:
-> -		mode = PHY_MODE_SGMII;
-> -		break;
-> -	case PHY_INTERFACE_MODE_2500BASEX:
-> -		mode = PHY_MODE_2500SGMII;
-> -		break;
-> -	case PHY_INTERFACE_MODE_10GKR:
-> -		mode = PHY_MODE_10GKR;
-> -		break;
-> -	default:
-> -		return -EINVAL;
-> -	}
-> +	submode = port->phy_interface;
-> +	if (submode == PHY_INTERFACE_MODE_1000BASEX)
-> +		submode = PHY_INTERFACE_MODE_SGMII;
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-If the intention is to move the ethernet PHY mode into the generic PHY
-layer, I'd suggest that the equivalence of 1000base-X and SGMII is
-handled in the generic PHY driver rather than ethernet drivers.  Just
-move this into this hunk of the comphy driver:
+------------------
 
-> @@ -517,10 +519,14 @@ static int mvebu_comphy_set_mode(struct phy *phy,
->  {
->  	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
->  
-> -	if (mvebu_comphy_get_mux(lane->id, lane->port, mode) < 0)
-> +	if (mode != PHY_MODE_ETHERNET)
-> +		return -EINVAL;
-> +
-> +	if (mvebu_comphy_get_mux(lane->id, lane->port, mode, submode) < 0)
->  		return -EINVAL;
->  
->  	lane->mode = mode;
-> +	lane->submode = submode;
->  	return 0;
->  }
+[ Upstream commit 4fa13dbe8c86382a846584e65c47bce09297f75b ]
 
+In the same spirit of the fix for QXL in commit 861078381ba5 ("drm: qxl:
+Don't alloc fbdev if emulation is not supported"), prevent the Oops in
+the unbind path of Bochs if fbdev emulation is disabled.
+
+[  112.176009] Oops: 0002 [#1] SMP
+[  112.176009] Modules linked in: bochs_drm
+[  112.176009] CPU: 0 PID: 3002 Comm: bash Not tainted 4.11.0-rc1+ #111
+[  112.176009] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.9.3-20161025_171302-gandalf 04/01/2014
+[  112.176009] task: ffff8800743bbac0 task.stack: ffffc90000b5c000
+[  112.176009] RIP: 0010:mutex_lock+0x18/0x30
+[  112.176009] RSP: 0018:ffffc90000b5fc78 EFLAGS: 00010246
+[  112.176009] RAX: 0000000000000000 RBX: 0000000000000260 RCX: 0000000000000000
+[  112.176009] RDX: ffff8800743bbac0 RSI: ffff8800787176e0 RDI: 0000000000000260
+[  112.176009] RBP: ffffc90000b5fc80 R08: ffffffff00000000 R09: 00000000ffffffff
+[  112.176009] R10: ffff88007b463650 R11: 0000000000000000 R12: 0000000000000260
+[  112.176009] R13: ffff8800787176e0 R14: ffffffffa0003068 R15: 0000000000000060
+[  112.176009] FS:  00007f20564c7b40(0000) GS:ffff88007ce00000(0000) knlGS:0000000000000000
+[  112.176009] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  112.176009] CR2: 0000000000000260 CR3: 000000006b89c000 CR4: 00000000000006f0
+[  112.176009] Call Trace:
+[  112.176009]  drm_mode_object_unregister+0x1e/0x50
+[  112.176009]  drm_framebuffer_unregister_private+0x15/0x20
+[  112.176009]  bochs_fbdev_fini+0x57/0x70 [bochs_drm]
+[  112.176009]  bochs_unload+0x16/0x50 [bochs_drm]
+[  112.176009]  drm_dev_unregister+0x37/0xd0
+[  112.176009]  drm_put_dev+0x31/0x60
+[  112.176009]  bochs_pci_remove+0x10/0x20 [bochs_drm]
+[  112.176009]  pci_device_remove+0x34/0xb0
+[  112.176009]  device_release_driver_internal+0x150/0x200
+[  112.176009]  device_release_driver+0xd/0x10
+[  112.176009]  unbind_store+0x108/0x150
+[  112.176009]  drv_attr_store+0x20/0x30
+[  112.176009]  sysfs_kf_write+0x32/0x40
+[  112.176009]  kernfs_fop_write+0x10b/0x190
+[  112.176009]  __vfs_write+0x23/0x120
+[  112.176009]  ? security_file_permission+0x36/0xb0
+[  112.176009]  ? rw_verify_area+0x49/0xb0
+[  112.176009]  vfs_write+0xb0/0x190
+[  112.176009]  SyS_write+0x41/0xa0
+[  112.176009]  entry_SYSCALL_64_fastpath+0x1a/0xa9
+[  112.176009] RIP: 0033:0x7f2055bd5620
+[  112.176009] RSP: 002b:00007ffed2f487d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[  112.176009] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2055bd5620
+[  112.176009] RDX: 000000000000000d RSI: 0000000000ee0008 RDI: 0000000000000001
+[  112.176009] RBP: 0000000000000001 R08: 00007f2055e94760 R09: 00007f20564c7b40
+[  112.176009] R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000000
+[  112.176009] R13: 00007ffed2f48d70 R14: 0000000000000000 R15: 0000000000000000
+[  112.176009] Code: 00 00 00 55 be 02 00 00 00 48 89 e5 e8 62 fb ff ff 5d c3 55 48 89 e5 53 48 89 fb e8 53 e9 ff ff 65 48 8b 14 25 40 c4 00 00 31 c0 <f0> 48 0f b1 13 48 85 c0 74 08 48 89 df e8c6 ff ff ff 5b 5d c3
+[  112.176009] RIP: mutex_lock+0x18/0x30 RSP: ffffc90000b5fc78
+[  112.176009] CR2: 0000000000000260
+[  112.205622] ---[ end trace 76189cd7a9bdd155 ]---
+
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Link: http://patchwork.freedesktop.org/patch/msgid/20170317181409.4183-1-krisman@collabora.co.uk
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/bochs/bochs_fbdev.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
+index e1ec498a6b6e..35f40255644d 100644
+--- a/drivers/gpu/drm/bochs/bochs_fbdev.c
++++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
+@@ -138,6 +138,7 @@ static int bochsfb_create(struct drm_fb_helper *helper,
+ 	info->fix.smem_start = 0;
+ 	info->fix.smem_len = size;
+ 
++	bochs->fb.initialized = true;
+ 	return 0;
+ }
+ 
+@@ -155,7 +156,6 @@ static int bochs_fbdev_destroy(struct bochs_device *bochs)
+ 		gfb->obj = NULL;
+ 	}
+ 
+-	drm_fb_helper_fini(&bochs->fb.helper);
+ 	drm_framebuffer_unregister_private(&gfb->base);
+ 	drm_framebuffer_cleanup(&gfb->base);
+ 
+@@ -188,7 +188,6 @@ int bochs_fbdev_init(struct bochs_device *bochs)
+ 	if (ret)
+ 		goto fini;
+ 
+-	bochs->fb.initialized = true;
+ 	return 0;
+ 
+ fini:
+@@ -198,9 +197,9 @@ fini:
+ 
+ void bochs_fbdev_fini(struct bochs_device *bochs)
+ {
+-	if (!bochs->fb.initialized)
+-		return;
++	if (bochs->fb.initialized)
++		bochs_fbdev_destroy(bochs);
+ 
+-	bochs_fbdev_destroy(bochs);
++	drm_fb_helper_fini(&bochs->fb.helper);
+ 	bochs->fb.initialized = false;
+ }
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.17.1
+
+
+
