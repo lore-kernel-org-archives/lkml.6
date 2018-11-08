@@ -2,102 +2,112 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFCDECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8121ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7909620817
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 738FE20817
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:17:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="aCYQCjm/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7909620817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gn58IVl2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 738FE20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeKICwD (ORCPT
+        id S1726922AbeKICxu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:52:03 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:39164 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbeKICwD (ORCPT
+        Thu, 8 Nov 2018 21:53:50 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:37446 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbeKICxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:52:03 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 184A124E0B36;
-        Thu,  8 Nov 2018 09:15:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1541697336; bh=YMV2EFBoLYhOoKnOkwbzZ1n4tuSmXuF/10Wz9MAagG0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aCYQCjm/6bYsV6EwP5uqYY0zdkGzSUS0js26+8TIRyybfjWUTy/q3JG+sjGfcESbL
-         Ugdu9mAbxRs8jEcomku9fx55ulBsQOUKXi5slZ18J11dX1liRQ4jtCgdJDyph3195e
-         U2b47FjCVecUgkZN8HPz+MCwxqJjAb3V5pZZHNe91+x9EI0YAckkfEX2X+CKYdKqVp
-         skCdogRCais9jS88wAqOhZPPqt+2dhaWe72R7LcMvfA93L/UVqj/6GcgSkSAVpE4Sb
-         6dZRiuNc6y3pEH4pvORebhKsIGPQ97O/Qtd+dp2EHLSFTVsv21Ek0rjtck4MT7A96m
-         yQvIV68RWwNVw==
-Received: from vitor-VirtualBox.internal.synopsys.com (soares-e7470.internal.synopsys.com [10.107.19.145])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CCD9657F7;
-        Thu,  8 Nov 2018 09:15:28 -0800 (PST)
-From:   Vitor soares <vitor.soares@synopsys.com>
-To:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
-        arnd@arndb.de
-Cc:     psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com,
-        bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com,
-        cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com,
-        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vitor.soares@synopsys.com, geert@linux-m68k.org,
-        linus.walleij@linaro.org, Xiang.Lin@synaptics.com,
-        linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com,
-        peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org,
-        joao.pinto@synopsys.com
-Subject: [PATCH v3 3/3] MAINTAINERS: Add myself as the dw-i3c-master module maintainer
-Date:   Thu,  8 Nov 2018 17:14:11 +0000
-Message-Id: <1541697251-20392-4-git-send-email-soares@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541697251-20392-1-git-send-email-soares@synopsys.com>
-References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+        Thu, 8 Nov 2018 21:53:49 -0500
+Received: by mail-vs1-f66.google.com with SMTP id h18so12053679vsj.4;
+        Thu, 08 Nov 2018 09:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=/dhd2ueTuNqkusoDQzQ2yNn/NgzjYx2rSwp0ao+rnsQ=;
+        b=gn58IVl2Zy3BlUK+Tb+I7rNAVuJqMxtsOSCTpT5kVgW4dfuNMCLU+pPXlXbInybuii
+         flUBsfeKMUDqreb1Wj0tjzYO6hLKrEmUQZn+s0UHIIv+i7qN2SYZS9r1Lus991uL8V39
+         SF38zZCKS+jOmzU3mCC9pSHf7pMsbiJlZDdlnQARRp+Fvai4hyuDdIMJiUuJbgdgAt5f
+         eyjPEcnBdQ5IoavHfV1cDwDnDQn6vyPw+NuJJ9Rm9NO6lP5S4S9hm95UcAuA4KvbF6c0
+         KWQN1pLNBzot45g4T4B/+YMg09QbAzHF1NGTIrubA0+teLVkvr6zs6BBmsL8DR3mXHW2
+         hlDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=/dhd2ueTuNqkusoDQzQ2yNn/NgzjYx2rSwp0ao+rnsQ=;
+        b=CyynCdYxeLcfWZ9KluGWKueohgolkI0Tdxai658qfyaAu8WxSnKcPsnBquZGvE4EXP
+         cTRsGb7+Dz0w6roem6D9TqHRbNt9JM/1ENKsqf+85YvY6xzXEU6DUVBD4F+0jJO/DznT
+         wM6poGnGmCgDAZbDcmeYfMsu09hEdCyvX1OcA7o+IPswN1LKMkkqFZvDjPK/8C+bUyi5
+         0qXser21QcBg5N0HYf7FDvBf/mqcwoVjugyDxDHQaEIreGIhwkuTAHoWJSZiJ6qew9Os
+         av0JJPjQcd3u48XG5Gr5aZftuB7/vaYMEKI65SckXA0oADzM2OcGyZXK3pIy3RQ5eaD8
+         UvMw==
+X-Gm-Message-State: AGRZ1gLLLl8Bjf28+P8iFFZSDpWQMC2rKA8M8Bdj1kuegcc+QCESanrK
+        yZiBpBroMuQRSDr6gs9VgA==
+X-Google-Smtp-Source: AJdET5f33bwOXte1yUcWGhx3buziHDh67zI1LiFtk1eayy0xlDN9tRonClHVXbahwRwAkCncybvQxg==
+X-Received: by 2002:a67:7106:: with SMTP id m6mr2274513vsc.67.1541697441153;
+        Thu, 08 Nov 2018 09:17:21 -0800 (PST)
+Received: from localhost.localdomain ([2601:902:c200:6512:a50b:fc5d:3604:d966])
+        by smtp.gmail.com with ESMTPSA id y195sm1792776vkd.0.2018.11.08.09.17.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 09:17:20 -0800 (PST)
+From:   Ayman Bagabas <ayman.bagabas@gmail.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: [PATCH v3 0/3] Huawei laptops
+Date:   Thu,  8 Nov 2018 12:16:52 -0500
+Message-Id: <20181108171701.4444-1-ayman.bagabas@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Vitor soares <soares@synopsys.com>
----
-Change in v3:
-- Remove dummy characters
+Changes from v2:
+* Support for Huawei MBX
+* Style and formating issues
 
-Change in v2:
-- None
+[PATCH v3 1/3] 
+The first patch adds support for missing hotkeys on some models.
 
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+[PATCH v3 2/3]
+This one enables the front speakers on the Huawei Matebook X Pro (MBXP). This
+solves bug 200501 https://bugzilla.kernel.org/show_bug.cgi?id=200501
+It simply uses the pins configurations generated by hdajackretast using the
+settings posted on the bug page https://imgur.com/a/N1xsCVZ
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 293c863..39910b3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6930,6 +6930,12 @@ F:	drivers/i3c/
- F:	include/linux/i3c/
- F:	include/dt-bindings/i3c/
- 
-+I3C DRIVER FOR SYNOPSYS DESIGNWARE
-+M:	Vitor Soares <soares@synopsys.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-+F:	drivers/i3c/master/dw*
-+
- IA64 (Itanium) PLATFORM
- M:	Tony Luck <tony.luck@intel.com>
- M:	Fenghua Yu <fenghua.yu@intel.com>
+[PATCH v3 3/3]
+This enables the micmute LED on Huawei laptops using ACPI calls.
+
+Ayman Bagabas (3):
+  x86: add support for Huawei WMI hotkeys.
+  ALSA: hda: fix front speakers on Huawei MBXP.
+  ALSA: hda: add support for Huawei WMI micmute LED
+
+ drivers/platform/x86/Kconfig                 |  11 +
+ drivers/platform/x86/Makefile                |   1 +
+ drivers/platform/x86/huawei_wmi.c            | 236 +++++++++++++++++++
+ include/linux/platform_data/x86/huawei_wmi.h |   9 +
+ sound/pci/hda/huawei_wmi_helper.c            |  47 ++++
+ sound/pci/hda/patch_realtek.c                |  29 +++
+ 6 files changed, 333 insertions(+)
+ create mode 100644 drivers/platform/x86/huawei_wmi.c
+ create mode 100644 include/linux/platform_data/x86/huawei_wmi.h
+ create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+
 -- 
-2.7.4
-
+2.17.2
 
