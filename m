@@ -2,127 +2,195 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4106ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD77AECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7B7620825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7B7620825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 6DD6F20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:45:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYZCBrVM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD6F20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbeKHXUM (ORCPT
+        id S1727132AbeKHXUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:20:12 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34868 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeKHXUM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:20:12 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w204so1475299qka.2;
-        Thu, 08 Nov 2018 05:44:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wmW3VXBdEG/An6Vi6pFiTiY5lFgggTsH1mO/MwSlq9k=;
-        b=JhGFGSjpughrHVEqMEP6G7xqFHl5sbMeyHcI0pqWLd20fO6r3SDH+idj6NEdB/Nhi3
-         INHv1Ni6INfqF5EiWtFChpMdHxo+ybMlyoGStj9hRfev+IrzEr6ZHZILccgJqBtwkcOj
-         jPs0BN1lxQxWWkOc3NtkK0jNXie7f2HNowY0n881gl5p5Y6LFUtdrtzA9gn2AEEP43u3
-         3i+lS4SVlZf645OF2VxognBv7/hsylio5X3BAVpq7hk3tQM5546AjzkHrut/WnQzdxTx
-         RN/DZwhCGHEMqeZ3XQFGNobpgd0wie7KZGW14XyFhyjEvv8rBaFIN6q9BLA67l11Dda0
-         XR3A==
-X-Gm-Message-State: AGRZ1gKa/t7/qrcLwB+dQyIQdPmVH8U7xXZOHpJIiUMkdXyGAlfBMRhK
-        ODWIAhJ/8Nus3lw5BNRfjRLf/VcoqOonbvIYoyM=
-X-Google-Smtp-Source: AJdET5fVFXI5FFsDLjGADTBKpuZKZ2LNMIKKK8HeFv2JxkMSeS5HSi7WbTZUrXcPYsIKIc0UYAUM0d9zY0FEkbjQfg4=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr4247384qtr.319.1541684677976;
- Thu, 08 Nov 2018 05:44:37 -0800 (PST)
+        Thu, 8 Nov 2018 18:20:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726469AbeKHXUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:20:38 -0500
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FA2220825;
+        Thu,  8 Nov 2018 13:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541684704;
+        bh=ROj+ZL+d4mDvNAoRK4w+YlUCWvUL5IWBf/602BMNBh4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rYZCBrVMRdyeA9RETAGGYZ1kFlgni6j7IVro1KpsHo8IEUZzoc7wI6yBXrvYC0Xd5
+         74MRKFzPke3R/ixf0owKZC/S1GaBjE4wxIiJDVV0fjdMhWKZU69IIp5T9bCx5m0Tz4
+         xfztxeCOXeLJkYTYxkqud7ZjTsMdqrwU3YieSXoc=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id EFA0D142D3F; Thu,  8 Nov 2018 10:45:00 -0300 (-03)
+Date:   Thu, 8 Nov 2018 10:45:00 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     akpm@linux-foundation.org, jbaron@akamai.com,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/2] perf-bench: Add epoll parallel epoll_wait benchmark
+Message-ID: <20181108134500.GA15568@kernel.org>
+References: <20181106152226.20883-1-dave@stgolabs.net>
+ <20181106152226.20883-2-dave@stgolabs.net>
+ <20181106182349.thdkpvshkna5vd7o@linux-r8p5>
+ <20181106191325.GM7077@kernel.org>
 MIME-Version: 1.0
-References: <1540530552-3652-1-git-send-email-firoz.khan@linaro.org>
- <1540530552-3652-4-git-send-email-firoz.khan@linaro.org> <a04a6d10-d6d7-3ead-3b1e-68d87e1ea931@monstr.eu>
- <CALxhOnjWHVfVVi5aN5OAr4AN13NfktNVOarvnoAAWYgj9fYr6g@mail.gmail.com>
-In-Reply-To: <CALxhOnjWHVfVVi5aN5OAr4AN13NfktNVOarvnoAAWYgj9fYr6g@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 8 Nov 2018 14:44:21 +0100
-Message-ID: <CAK8P3a2h1sdM62r6TjwWf9E-h9A4pUNR69XbbGbPSpPaub7DVg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] microblaze: generate uapi header and system call
- table files
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Michal Simek <monstr@monstr.eu>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106191325.GM7077@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 11:26 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> On Mon, 5 Nov 2018 at 14:46, Michal Simek <monstr@monstr.eu> wrote:
-> > On 26. 10. 18 7:09, Firoz Khan wrote:
+Em Tue, Nov 06, 2018 at 04:13:25PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Tue, Nov 06, 2018 at 10:23:49AM -0800, Davidlohr Bueso escreveu:
+> > Mind this fixlet for using et/oneshot and the multiq option.
+> 
+> Yes sir, applied the fixup to the first patch in the series, applied the
+> second, tested, merged.
 
-> > > -     .long sys_rseq
-> > > +#include <asm/syscall_table.h>
-> > > +#undef __SYSCALL
-> > >
-> >
-> > I still don't think this is correct.
-> >
-> > I have done these steps
-> >
-> > make mrproper
-> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/ && move
-> > Applied 1/3
-> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/ && move
-> > Applied 2/3
-> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/ && move
-> > Applied 3/3
-> > make ARCH=microblaze headers_install INSTALL_HDR_PATH=/tmp/ && move
-> >
-> > And compare all these versions. Till 2/3 all is fine but when 3/3 is
-> > applied
-> >
-> > include/asm/unistd.h contains
-> > #include <asm/unistd_32.h>
-> >
-> > Then include/asm/unistd_32.h contains
-> > #include <asm-generic/unistd_32.h>
-> > which is different syscalls table.
-> >
-> > I didn't play with it for a long time but removing generic unistd_32.h
-> > is fixing it. Please take a look.
->
-> Sure, I'll check and update you ASAP.
->
-> >
-> > diff --git a/arch/microblaze/include/uapi/asm/Kbuild
-> > b/arch/microblaze/include/uapi/asm/Kbuild
-> > index cda864f4b62e..2c6a6bffea32 100644
-> > --- a/arch/microblaze/include/uapi/asm/Kbuild
-> > +++ b/arch/microblaze/include/uapi/asm/Kbuild
-> > @@ -28,4 +28,3 @@ generic-y += termbits.h
-> >  generic-y += termios.h
-> >  generic-y += types.h
-> >  generic-y += ucontext.h
-> > -generic-y += unistd_32.h
->
-> AFAIK, If I apply the above fix; the generated file - unistd_32.h will
-> get removed.
-> No longer present in arch/microblaze/include/generated/uapi/asm.
+So, one of these two is making the build to fail in all the Alpine Linux
+(3.4 -- 3.8 and edge) and also on some others
 
-It certainly must be 'generated-y', not 'generic-y', since you are
-generating an architecture specific file, not taking the one
-from asm-generic. I think this was correct in an earlier version.
+On Alpine the error is:
 
-       Arnd
+  CC       /tmp/build/perf/bench/futex-lock-pi.o
+  CC       /tmp/build/perf/bench/epoll-wait.o
+bench/epoll-wait.c: In function 'do_threads':
+bench/epoll-wait.c:345:10: error: implicit declaration of function 'pthread_attr_setaffinity_np' [-Werror=implicit-function-declaration]
+    ret = pthread_attr_setaffinity_np(&thread_attr, sizeof(cpu_set_t), &cpuset);
+          ^
+bench/epoll-wait.c:345:4: error: nested extern declaration of 'pthread_attr_setaffinity_np' [-Werror=nested-externs]
+    ret = pthread_attr_setaffinity_np(&thread_attr, sizeof(cpu_set_t), &cpuset);
+    ^
+bench/epoll-wait.c: In function 'bench_epoll_wait':
+bench/epoll-wait.c:462:12: error: format '%lu' expects argument of type 'long unsigned int', but argument 2 has type 'rlim_t {aka long long unsigned int}' [-Werror=format=]
+  printinfo("Setting RLIMIT_NOFILE rlimit from %lu to: %lu\n", prevrl.rlim_max, rl.rlim_max);
+            ^
+bench/epoll-wait.c:85:31: note: in definition of macro 'printinfo'
+  do { if (__verbose) { printf(fmt, ## arg); fflush(stdout); } } while (0)
+                               ^
+bench/epoll-wait.c:462:12: error: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'rlim_t {aka long long unsigned int}' [-Werror=format=]
+  printinfo("Setting RLIMIT_NOFILE rlimit from %lu to: %lu\n", prevrl.rlim_max, rl.rlim_max);
+            ^
+bench/epoll-wait.c:85:31: note: in definition of macro 'printinfo'
+  do { if (__verbose) { printf(fmt, ## arg); fflush(stdout); } } while (0)
+                               ^
+  CC       /tmp/build/perf/util/trace-event-info.o
+  CC       /tmp/build/perf/perf.o
+cc1: all warnings being treated as errors
+mv: can't rename '/tmp/build/perf/bench/.epoll-wait.o.tmp': No such file or directory
+/git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/bench/epoll-wait.o' failed
+make[4]: *** [/tmp/build/perf/bench/epoll-wait.o] Error 1
+/git/linux/tools/build/Makefile.build:139: recipe for target 'bench' failed
+make[3]: *** [bench] Error 2
+make[3]: *** Waiting for unfinished jobs....
+  CC       /tmp/build/perf/util/trace-event-scripting.o
+
+
+On AmazonLinux 1 and 2, oops, these are mine:
+
+  LINK     /tmp/build/perf/perf
+/tmp/build/perf/perf-in.o: In function `bpf_map__set_filter_pids':
+/git/linux/tools/perf/builtin-trace.c:2573: undefined reference to `bpf_map(float, double)'
+/tmp/build/perf/perf-in.o: In function `cmd_trace':
+(.text+0x4c71e): undefined reference to `bpf_map_update_elem'
+/tmp/build/perf/perf-in.o: In function `cmd_trace':
+(.text+0x4cab6): undefined reference to `bpf_map(float, double)'
+/tmp/build/perf/perf-in.o: In function `cmd_trace':
+(.text+0x4cae8): undefined reference to `bpf_map_update_elem'
+collect2: error: ld returned 1 exit status
+make[2]: *** [/tmp/build/perf/perf] Error 1
+make[1]: *** [sub-make] Error 2
+make: *** [all] Error 2
+make: Leaving directory `/git/linux/tools/perf'
+[root@seventh ~]# 
+
+I need to do that conditionally, i.e. it seems libbpf is not being built
+in that distro...
+
+centos:5 is about perf bench:
+
+  CC       /tmp/build/perf/bench/epoll-wait.o
+bench/epoll-wait.c:74:25: error: sys/eventfd.h: No such file or directory
+cc1: warnings being treated as errors
+bench/epoll-wait.c: In function 'do_threads':
+bench/epoll-wait.c:328: warning: implicit declaration of function 'eventfd'
+bench/epoll-wait.c:328: warning: nested extern declaration of 'eventfd'
+bench/epoll-wait.c:328: error: 'EFD_NONBLOCK' undeclared (first use in this function)
+bench/epoll-wait.c:328: error: (Each undeclared identifier is reported only once
+bench/epoll-wait.c:328: error: for each function it appears in.)
+mv: cannot stat `/tmp/build/perf/bench/.epoll-wait.o.tmp': No such file or directory
+make[4]: *** [/tmp/build/perf/bench/epoll-wait.o] Error 1
+make[3]: *** [bench] Error 2
+make[3]: *** Waiting for unfinished jobs....
+  MKDIR    /tmp/build/perf/tests/
+
+
+centos:6 and 7 are ok with perf bench, not so much with my bpf changes :-\
+
+  LINK     /tmp/build/perf/libperf-gtk.so
+/tmp/build/perf/perf-in.o: In function `bpf_map__set_filter_pids':
+/git/linux/tools/perf/builtin-trace.c:2573: undefined reference to `bpf_map(float, double)'
+/git/linux/tools/perf/builtin-trace.c:2577: undefined reference to `bpf_map_update_elem'
+/git/linux/tools/perf/builtin-trace.c:2573: undefined reference to `bpf_map(float, double)'
+/git/linux/tools/perf/builtin-trace.c:2577: undefined reference to `bpf_map_update_elem'
+collect2: ld returned 1 exit status
+make[2]: *** [/tmp/build/perf/perf] Error 1
+make[1]: *** [sub-make] Error 2
+make: *** [all] Error 2
+make: Leaving directory `/git/linux/tools/perf'
+[root@seventh ~]# 
+[root@seventh ~]#
+
+- Arnaldo
+ 
+> - Arnaldo
+>  
+> > diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-wait.c
+> > index c4c5ef60feb4..4e4efc5cfe22 100644
+> > --- a/tools/perf/bench/epoll-wait.c
+> > +++ b/tools/perf/bench/epoll-wait.c
+> > @@ -215,13 +215,13 @@ static void *workerfn(void *arg)
+> > 
+> > 		if (et) {
+> > 			ev.events = EPOLLIN | EPOLLET;
+> > -			ret = epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
+> > +			ret = epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
+> > 		}
+> > 
+> > 		if (oneshot) {
+> > 			/* rearm the file descriptor with a new event mask */
+> > 			ev.events |= EPOLLIN | EPOLLONESHOT;
+> > -			ret = epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev);
+> > +			ret = epoll_ctl(efd, EPOLL_CTL_MOD, fd, &ev);
+> > 		}
+> > 
+> > 		ops++;
+> > @@ -249,7 +249,7 @@ static void nest_epollfd(struct worker *w)
+> > 
+> > 	for (i = 0; i < nested; i++) {
+> > 		epollfdp[i] = epoll_create(1);
+> > -		if (epollfd < 0)
+> > +		if (epollfdp[i] < 0)
+> > 			err(EXIT_FAILURE, "epoll_create");
+> > 	}
+> > 
