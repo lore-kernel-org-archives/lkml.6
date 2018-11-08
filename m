@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AE0ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5338ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7899120818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F2520892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ur5xhDQp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7899120818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kjs69boJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F2520892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbeKIHg1 (ORCPT
+        id S1729903AbeKIHgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:36:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:36:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729845AbeKIHgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:36:24 -0500
+        id S1729261AbeKIHgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:36:31 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E5002133D;
-        Thu,  8 Nov 2018 21:58:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C4C820818;
+        Thu,  8 Nov 2018 21:59:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714336;
-        bh=5LMhdRRLzeBnCtPhpVS6D4IrFPclTwkSS/sRQvz2qEo=;
+        s=default; t=1541714342;
+        bh=UIf7AzYqLiq8H0MOc8czjaVvqWU/7o+lM8RoXQt9TBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ur5xhDQpMTGPum7vSY9B/FQFfvRtgdclGV3svJLz9oRqi0ImLw5VJO27zy2119fsg
-         uuYMKqlVWI80mswePMa6FKNi4ij973eTIijECvmw5XeiBAoW2AN5a7qjPxo2OOINx+
-         QAxzHwiHCMAvI2/t8R7qDjja4j4uxxGH8nRiXlzs=
+        b=Kjs69boJPvAJY/79s3OMMYYJwVKMbb2sXYJXFSrKLfZTbGKs9sWylP5HUkOrURdvT
+         Jbhb95vJc4ngt/Hy8o39upiuFuEhAmR/fc20Sby62nvQe3G0l7IyFoSKU8jJ+WCUzY
+         njNmzgref6Y/z3OENIUW4i/r+k7Hb6GK/0snKzxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Waiman Long <waiman.long@hpe.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Theodore Tso <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Scott J Norton <scott.norton@hpe.com>,
+        Douglas Hatch <doug.hatch@hpe.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 023/114] tracing: Skip more functions when doing stack tracing of events
-Date:   Thu,  8 Nov 2018 13:50:38 -0800
-Message-Id: <20181108215101.247647473@linuxfoundation.org>
+Subject: [PATCH 4.4 025/114] x86/mm/pat: Prevent hang during boot when mapping pages
+Date:   Thu,  8 Nov 2018 13:50:40 -0800
+Message-Id: <20181108215101.398014379@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,118 +69,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit be54f69c26193de31053190761e521903b89d098 ]
+[ Upstream commit e535ec0899d1fe52ec3a84c9bc03457ac67ad6f7 ]
 
- # echo 1 > options/stacktrace
- # echo 1 > events/sched/sched_switch/enable
- # cat trace
-          <idle>-0     [002] d..2  1982.525169: <stack trace>
- => save_stack_trace
- => __ftrace_trace_stack
- => trace_buffer_unlock_commit_regs
- => event_trigger_unlock_commit
- => trace_event_buffer_commit
- => trace_event_raw_event_sched_switch
- => __schedule
- => schedule
- => schedule_preempt_disabled
- => cpu_startup_entry
- => start_secondary
+There's a mixture of signed 32-bit and unsigned 32-bit and 64-bit data
+types used for keeping track of how many pages have been mapped.
 
-The above shows that we are seeing 6 functions before ever making it to the
-caller of the sched_switch event.
+This leads to hangs during boot when mapping large numbers of pages
+(multiple terabytes, as reported by Waiman) because those values are
+interpreted as being negative.
 
- # echo stacktrace > events/sched/sched_switch/trigger
- # cat trace
-          <idle>-0     [002] d..3  2146.335208: <stack trace>
- => trace_event_buffer_commit
- => trace_event_raw_event_sched_switch
- => __schedule
- => schedule
- => schedule_preempt_disabled
- => cpu_startup_entry
- => start_secondary
+commit 742563777e8d ("x86/mm/pat: Avoid truncation when converting
+cpa->numpages to address") fixed one of those bugs, but there is
+another lurking in __change_page_attr_set_clr().
 
-The stacktrace trigger isn't as bad, because it adds its own skip to the
-stacktracing, but still has two events extra.
+Additionally, the return value type for the populate_*() functions can
+return negative values when a large number of pages have been mapped,
+triggering the error paths even though no error occurred.
 
-One issue is that if the stacktrace passes its own "regs" then there should
-be no addition to the skip, as the regs will not include the functions being
-called. This was an issue that was fixed by commit 7717c6be6999 ("tracing:
-Fix stacktrace skip depth in trace_buffer_unlock_commit_regs()" as adding
-the skip number for kprobes made the probes not have any stack at all.
+Consistently use 64-bit types on 64-bit platforms when counting pages.
+Even in the signed case this gives us room for regions 8PiB
+(pebibytes) in size whilst still allowing the usual negative value
+error checking idiom.
 
-But since this is only an issue when regs is being used, a skip should be
-added if regs is NULL. Now we have:
-
- # echo 1 > options/stacktrace
- # echo 1 > events/sched/sched_switch/enable
- # cat trace
-          <idle>-0     [000] d..2  1297.676333: <stack trace>
- => __schedule
- => schedule
- => schedule_preempt_disabled
- => cpu_startup_entry
- => rest_init
- => start_kernel
- => x86_64_start_reservations
- => x86_64_start_kernel
-
- # echo stacktrace > events/sched/sched_switch/trigger
- # cat trace
-          <idle>-0     [002] d..3  1370.759745: <stack trace>
- => __schedule
- => schedule
- => schedule_preempt_disabled
- => cpu_startup_entry
- => start_secondary
-
-And kprobes are not touched.
-
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Reported-by: Waiman Long <waiman.long@hpe.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Theodore Ts'o <tytso@mit.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Scott J Norton <scott.norton@hpe.com>
+Cc: Douglas Hatch <doug.hatch@hpe.com>
+Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ arch/x86/mm/pageattr.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index e409ddce8754..1a47a64d623f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1757,7 +1757,17 @@ void trace_buffer_unlock_commit_regs(struct trace_array *tr,
- {
- 	__buffer_unlock_commit(buffer, event);
- 
--	ftrace_trace_stack(tr, buffer, flags, 0, pc, regs);
-+	/*
-+	 * If regs is not set, then skip the following callers:
-+	 *   trace_buffer_unlock_commit_regs
-+	 *   event_trigger_unlock_commit
-+	 *   trace_event_buffer_commit
-+	 *   trace_event_raw_event_sched_switch
-+	 * Note, we can still get here via blktrace, wakeup tracer
-+	 * and mmiotrace, but that's ok if they lose a function or
-+	 * two. They are that meaningful.
-+	 */
-+	ftrace_trace_stack(tr, buffer, flags, regs ? 0 : 4, pc, regs);
- 	ftrace_trace_userstack(buffer, flags, pc);
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 0e1dd7d47f05..26598e08666c 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -955,11 +955,11 @@ static void populate_pte(struct cpa_data *cpa,
+ 	}
  }
- EXPORT_SYMBOL_GPL(trace_buffer_unlock_commit_regs);
-@@ -1815,6 +1825,13 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
- 	trace.nr_entries	= 0;
- 	trace.skip		= skip;
  
-+	/*
-+	 * Add two, for this function and the call to save_stack_trace()
-+	 * If regs is set, then these functions will not be in the way.
-+	 */
-+	if (!regs)
-+		trace.skip += 2;
-+
- 	/*
- 	 * Since events can happen in NMIs there's no safe way to
- 	 * use the per cpu ftrace_stacks. We reserve it and if an interrupt
+-static int populate_pmd(struct cpa_data *cpa,
+-			unsigned long start, unsigned long end,
+-			unsigned num_pages, pud_t *pud, pgprot_t pgprot)
++static long populate_pmd(struct cpa_data *cpa,
++			 unsigned long start, unsigned long end,
++			 unsigned num_pages, pud_t *pud, pgprot_t pgprot)
+ {
+-	unsigned int cur_pages = 0;
++	long cur_pages = 0;
+ 	pmd_t *pmd;
+ 	pgprot_t pmd_pgprot;
+ 
+@@ -1029,12 +1029,12 @@ static int populate_pmd(struct cpa_data *cpa,
+ 	return num_pages;
+ }
+ 
+-static int populate_pud(struct cpa_data *cpa, unsigned long start, pgd_t *pgd,
+-			pgprot_t pgprot)
++static long populate_pud(struct cpa_data *cpa, unsigned long start, pgd_t *pgd,
++			 pgprot_t pgprot)
+ {
+ 	pud_t *pud;
+ 	unsigned long end;
+-	int cur_pages = 0;
++	long cur_pages = 0;
+ 	pgprot_t pud_pgprot;
+ 
+ 	end = start + (cpa->numpages << PAGE_SHIFT);
+@@ -1090,7 +1090,7 @@ static int populate_pud(struct cpa_data *cpa, unsigned long start, pgd_t *pgd,
+ 
+ 	/* Map trailing leftover */
+ 	if (start < end) {
+-		int tmp;
++		long tmp;
+ 
+ 		pud = pud_offset(pgd, start);
+ 		if (pud_none(*pud))
+@@ -1116,7 +1116,7 @@ static int populate_pgd(struct cpa_data *cpa, unsigned long addr)
+ 	pgprot_t pgprot = __pgprot(_KERNPG_TABLE);
+ 	pud_t *pud = NULL;	/* shut up gcc */
+ 	pgd_t *pgd_entry;
+-	int ret;
++	long ret;
+ 
+ 	pgd_entry = cpa->pgd + pgd_index(addr);
+ 
+@@ -1351,7 +1351,8 @@ static int cpa_process_alias(struct cpa_data *cpa)
+ 
+ static int __change_page_attr_set_clr(struct cpa_data *cpa, int checkalias)
+ {
+-	int ret, numpages = cpa->numpages;
++	unsigned long numpages = cpa->numpages;
++	int ret;
+ 
+ 	while (numpages) {
+ 		/*
 -- 
 2.17.1
 
