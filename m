@@ -1,121 +1,180 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AF2C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A76C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E9C02081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9C02081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 145232081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:14:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HA55w6V2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145232081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbeKHQrM (ORCPT
+        id S1726788AbeKHQsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:47:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45930 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725724AbeKHQrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:47:12 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B763308625C;
-        Thu,  8 Nov 2018 07:13:07 +0000 (UTC)
-Received: from krava (ovpn-204-110.brq.redhat.com [10.40.204.110])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7397F1F8;
-        Thu,  8 Nov 2018 07:13:05 +0000 (UTC)
-Date:   Thu, 8 Nov 2018 08:13:03 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [PATCH RFC] hist lookups
-Message-ID: <20181108071303.GB29732@krava>
-References: <20181106.221349.1296959035550004994.davem@davemloft.net>
- <20181107083217.GA12870@krava>
- <20181107194344.GA29732@krava>
- <20181107.120154.1747291861102322855.davem@davemloft.net>
+        Thu, 8 Nov 2018 11:48:24 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:39567 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeKHQsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 11:48:24 -0500
+Received: by mail-wm1-f52.google.com with SMTP id u13-v6so139705wmc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 23:14:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IOI5Byqvujf9twcMR9hcxIR2eQ4JMv8fiW+U6OB0WBw=;
+        b=HA55w6V2dj4hxK6twAz2ZtVrr6IXDQKFP3B0XZ9zucuwINhz96xajjwoTjZrm2DXEH
+         PR0mkd26DMS+XNoQdrjOvt51wVtfYrFGDa5YwAgfAoubiMxWyoX5tGqgi2ApF0j0pcde
+         /PsjEOEK37qsI74gXZH9D30P/j4ds+0j9BQRCageqmJS3uaZzWH+A7k0T3qwUIjV9kmJ
+         zmo8klzx+dK1ApZEj71RkTLFsbn/24yD+omJ18PXbLCOpv3hZ/bCF260G6iuxT7AZ/yB
+         6y9gu8nusR5Cqm0oZgOxjDNLUqGJrn55k1ez3jn7sWF0bVzYsO/lnJzERQ1JzWcqpx0/
+         afuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IOI5Byqvujf9twcMR9hcxIR2eQ4JMv8fiW+U6OB0WBw=;
+        b=SmENvOZw7Y6UnK+zL+98pSp8Jk5iOIdcTc+1YI2ifHkZlXTz4rT6g/Vc6pOqBcGezf
+         gCJ6NogDht6kRX+Ns6+IhcGmQiN5TEOxXTqfkMdforYQ+uHGDoHqSEcxTTLRXzMV+F8N
+         7VGzYaTnJr/rumv2ZRFTnT6TtTmqYBfEp/rWyXu4j+whAqv5ltQuV4Lb27Qe7SUa4QHE
+         WGlZhlnm1DNjYp2Ur2nEp0aONtg/2l/26jeG+hbDCF3izmwNQtyceN2Ahk1wcyzAVGXR
+         LN+6nsSXaw4OCYCjPl9jyuS5FsMxyi2DZv33B6FYmXFwQNfB+C9p82SWstwX0/jrclTK
+         3XHg==
+X-Gm-Message-State: AGRZ1gK0p/p28PRvdovcWIldB/xuAcuCuhn1KIQCJKcFiCY4OxVzyyDC
+        PpriNRC3Io3/1lCdtvObM0A=
+X-Google-Smtp-Source: AJdET5dNTAwirRt6uo1feLrEj0jQjnvPxnrtnvJHZi8lEwqrkyl3F17pSLOoxZH60qwD+PhJRpThdQ==
+X-Received: by 2002:a1c:ce0e:: with SMTP id e14-v6mr113652wmg.45.1541661256470;
+        Wed, 07 Nov 2018 23:14:16 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id a127-v6sm2974340wmh.24.2018.11.07.23.14.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 23:14:15 -0800 (PST)
+Date:   Thu, 8 Nov 2018 08:14:13 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
+Message-ID: <20181108071413.GA25195@gmail.com>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107171149.165693799@linutronix.de>
+ <20181108070547.GA20032@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181107.120154.1747291861102322855.davem@davemloft.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 08 Nov 2018 07:13:07 +0000 (UTC)
+In-Reply-To: <20181108070547.GA20032@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 12:01:54PM -0800, David Miller wrote:
-> From: Jiri Olsa <jolsa@redhat.com>
-> Date: Wed, 7 Nov 2018 20:43:44 +0100
-> 
-> > I pushed new version in my perf/fixes branch
-> 
-> Thanks, I'll check it out later today for sure!  This is pretty exciting
-> work.
-> 
-> Just some random thoughts as I've been thinking about this whole
-> situation a lot lately:
-> 
-> Something to consider might be consolidating all of the event rings
-> into one.  This would force perf to process all events in "system
-> order", ie. what order they actually occurred in the machine.
-> 
-> Yes, this means more contention for the entities inside the kernel
-> queueing up the events, however the benefits are enormous.
 
-yes, perf's ring buffer is real fast because it's per-cpu
+* Ingo Molnar <mingo@kernel.org> wrote:
 
+> With tail comments the code looks like this:
 > 
-> Right now we go forwards and backwards in time as we move from one
-> event ring to another, as you know.
+> 	res = dostuff(); /* We explain something here. */
 > 
-> However, we have to reconcile with the need we have to separate "high
-> priority" (ie. cannot really lose) events like fork, mmap2, etc.  with
-> "low priority" ones such as IP samples.
+> 	seed = 1; /* Another explanation. */
 > 
-> Perhaps another way to think about this is to go to the one huge mmap
-> ring model, and do the prioritization internally in perf.
+> 	mod_timer(&our_object->our_timer, jiffies + OUR_INTERVAL); /* We like to talk */
 > 
-> Actually, this opens up tons of possibilities in my mind.
+> 	res = check_stuff(our_object); /* We explain something here. */
+> 	if (res)
+> 		return -EINVAL;
 > 
-> Perf can queue to an internal high priority queue for fork and mmap2
-> events, and never drop them.  Whilst at the same time queueing low
-> priority events like IP samples into a low priority queue and dropping
-> with whatever policy it wants when overloaded (f.e. drop older events
-> before newer ones).
+> 	interval = nontrivial_calculation(); /* Another explanation. */
+> 
+> 	mod_timer(&our_object->our_timer, jiffies + interval); /* This doesn't race, because. */
+> 
+> ... while with freestanding comments it's:
+> 
+> 	/* We explain something here: */
+> 	res = check_stuff(our_object);
+> 	if (res)
+> 		return -EINVAL;
+> 
+> 	/* Another explanation: */
+> 	interval = nontrivial_calculation();
+> 
+> 	/* This doesn't race with init_our_stuff(), because: */
+> 	mod_timer(&our_object->our_timer, jiffies + interval);
+> 
+> This comment placement style has several advantages:
+> 
+>   - Comments precede actual code - while in tail comments it's exactly
+>     the wrong way around.
+> 
+>   - We don't create over-long lines nor artificially short tail comments 
+>     just because we were trying to stay within the col80 limit with the 
+>     "this doesn't race" comment. The full-line comment was able to 
+>     explain that the race is with init_our_stuff().
+> 
+>   - Freestanding oneliner comments are much better aligned as well: note 
+>     how ever comment starts at the exact same column, making it very easy 
+>     to read (or not to read) these comments.
+> 
+>   - In short: predictable visual parsing rules and proper semantic 
+>     ordering of information is good, random joining of typographical 
+>     elements just to create marginally more compact source code is bad.
+> 
+>   - Just *look* at the tail comments example: it's a visually diffuse, 
+>     jumble of statements and misaligned comments with good structure.
 
-I think I can see the processing thread overloaded with data in tests,
-I'll add some counters for it some we can see how much behind it gets
+Forgot to mention the role of punctuation:
 
-we could separated fork/mmaps to separate dummy event map, or just
-parse them out in the read thread and create special queue for them
-and drop just samples in case we are behind
+    - Also note how punctuation actually *helps* the integration of 
+      comments and code. The ":" will direct attention to the code that 
+      follows, making it clear that the sentence explains the next 
+      statement. There are exceptions for when different type of 
+      punctuation is a better choice, for example:
 
-jirka
+	/* TODO: convert the code to our newest calc API ASAP. */
+	interval = nontrivial_calculation();
 
-> 
-> I do not like the overwrite ring buffer mode that was implemented
-> because it enforeces an entire set of policy decisions upon the user.
-> Either the model works for you (which it currently does not for perf)
-> or you can't use it at all.
-> 
-> If the issue is that newer events are more interesting than old ones,
-> that is entirely perf's businness.  And it can implement this policy
-> %100 internally to itself.  No kernel changes were ever needed to do
-> this, as explained above.
-> 
-> Please, let's abandon this whole overwrite mode of the ring buffer.
-> The old one works perfectly fine, we just have to use it properly.
-> We should never have to shut off kernel side event queueing just
-> because we are processing the event ring on the user side.
-> 
-> Thanks.
+      Here we don't explain the statement but document a TODO entry. 
+
+      Also, it's frequent practice to use multi-line comments to explain 
+      the next section of code, with a particular note about the first 
+      statement. Proper punctuation helps there too:
+
+	/*
+	 * Establish the timeout interval and use it to set up
+	 * the timer of our object. The object is going to be
+	 * freed when the last reference is released.
+	 *
+	 * Note, the initial calculation is non-trivial, because
+	 * our timeout rules have complexity A), B) and C):
+	 */
+	interval = nontrivial_calculation();
+
+      Note how part of the multi-line comment describes overall 
+      principles of the code to follow, while the last sentence 
+      describes a noteworthy aspect of the next C statement.
+
+Thanks,
+
+	Ingo
