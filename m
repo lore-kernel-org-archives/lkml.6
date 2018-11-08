@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76DDECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AA8ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF1420883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F8882081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:41:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wxfSEfjd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF1420883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yaNWa9Ya"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F8882081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeKIERt (ORCPT
+        id S1727747AbeKIERy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:17:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59632 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 23:17:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726860AbeKIERt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:17:49 -0500
+        id S1727691AbeKIERy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:17:54 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0CA420684;
-        Thu,  8 Nov 2018 18:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E07C520857;
+        Thu,  8 Nov 2018 18:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541702462;
-        bh=GMg1XEoOp0IvjcuhyeNGWYKWecigbIiHWp3bML/11Ns=;
+        s=default; t=1541702466;
+        bh=rBdiDcXhGABoXowC2nl0Oxd/IOB5n6ZwwrLs1n2op7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wxfSEfjdoYtksHx04Y+MvUKFxOOZIVPKh2SaHS9LvnnuqRcSX3PxctI5swAEq6wlF
-         INusxWqkTcKligPd8ovHTwOOUTVaiDrUtRUxIjkYEiWLVBQGwgV2sdpcIJRlftI6KB
-         D9O96L97VCmVTPeIgKH/Sap4l9eMWhlYFnXFb+J8=
+        b=yaNWa9YaQpdQDDDlnirL2OnQjh9RJKgZoAzh+Hmc8vErS74omf+eRB5aG1BALssUd
+         6m0cLJJI3LrgCRt1q53OgOLHYQLG6/Gs/RSqswwOnQN6kpm0ak6Fi9AtMczegHXHrl
+         azuptdPiBrxIf6XHx7p9wg7SEmZOEop8tQsvroQQ=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
@@ -43,10 +44,11 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v4 02/18] arm64: dts: qcom: qcs404-evb: add dts files for EVBs
-Date:   Fri,  9 Nov 2018 00:09:53 +0530
-Message-Id: <20181108184009.18430-3-vkoul@kernel.org>
+Subject: [PATCH v4 03/18] arm64: dts: qcom: qcs404: Add reserved-memory regions
+Date:   Fri,  9 Nov 2018 00:09:54 +0530
+Message-Id: <20181108184009.18430-4-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181108184009.18430-1-vkoul@kernel.org>
 References: <20181108184009.18430-1-vkoul@kernel.org>
@@ -55,87 +57,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QCS404 has two EVBs, EVB-1000 and EVB-4000. These boards are mostly
-similar with few differences in the peripherals used.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-So use a common qcs404-evb.dtsi which contains the common parts and use
-qcs404-evb-1000.dts and qcs404-evb-4000.dts for diffs
+Add the reserved memory regions in QCS404
 
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/Makefile            |  2 ++
- arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts | 11 +++++++++++
- arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts | 11 +++++++++++
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi     | 14 ++++++++++++++
- 4 files changed, 38 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
- create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
- create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 41 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index a658c07652a7..21d548f02d39 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -8,3 +8,5 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-mtp.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts b/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
-new file mode 100644
-index 000000000000..2c14903d808e
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, Linaro Limited
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index b77d1198ba79..58aa1f989089 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -73,6 +73,47 @@
+ 		method = "smc";
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
 +
-+/dts-v1/;
++		memory@85600000 {
++			reg = <0 0x85600000 0 0x90000>;
++			no-map;
++		};
 +
-+#include "qcs404-evb.dtsi"
++		smem_region: memory@85f00000 {
++			reg = <0 0x85f00000 0 0x200000>;
++			no-map;
++		};
 +
-+/ {
-+	model = "Qualcomm Technologies, Inc. QCS404 EVB 1000";
-+	compatible = "qcom,qcs404-evb";
-+};
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts b/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
-new file mode 100644
-index 000000000000..11269ad3de0d
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, Linaro Limited
++		memory@86100000 {
++			reg = <0 0x86100000 0 0x300000>;
++			no-map;
++		};
 +
-+/dts-v1/;
++		wlan_fw_mem: memory@86400000 {
++			reg = <0 0x86400000 0 0x1c00000>;
++			no-map;
++		};
 +
-+#include "qcs404-evb.dtsi"
++		adsp_fw_mem: memory@88000000 {
++			reg = <0 0x88000000 0 0x1a00000>;
++			no-map;
++		};
 +
-+/ {
-+	model = "Qualcomm Technologies, Inc. QCS404 EVB 4000";
-+	compatible = "qcom,qcs404-evb";
-+};
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-new file mode 100644
-index 000000000000..91ecbdf0ecda
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, Linaro Limited
++		cdsp_fw_mem: memory@89a00000 {
++			reg = <0 0x89a00000 0 0x600000>;
++			no-map;
++		};
 +
-+#include "qcs404.dtsi"
-+
-+/ {
-+	aliases {
-+		serial0 = &blsp1_uart2;
++		wlan_msa_mem: memory@8a000000 {
++			reg = <0 0x8a000000 0 0x100000>;
++			no-map;
++		};
 +	};
 +
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+};
+ 	soc: soc@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
 2.14.4
 
