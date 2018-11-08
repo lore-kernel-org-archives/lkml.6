@@ -2,140 +2,231 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801AAECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30145ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F3D20840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1E822081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmvo/hml"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F3D20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GMfWyq+i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E822081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeKIGpq (ORCPT
+        id S1727265AbeKIGsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:45:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbeKIGpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:45:45 -0500
-Received: from localhost (unknown [208.72.13.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81EB32081C;
-        Thu,  8 Nov 2018 21:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541711308;
-        bh=0FCJO6of94dflib1N81VdKGKxwPLfueMDNzxES8bLOY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dmvo/hmlyXY+1aGUFq6JIkSqBfk3tjvzWtCX2bWrNkbtt+KXQ28jRELWIWHZjr4TG
-         oRC+x8gMdQHUtqAUYcSMg2iDyUr6HLshCjKEJX6bvW03xrrVDro2v82mJz5kQPHyjn
-         Ej/9MNcfFMA0XOD8sUtMnUUJpchCGSgTS4OKBYVI=
-Date:   Thu, 8 Nov 2018 13:08:28 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, John Stultz <john.stultz@linaro.org>,
-        acme@redhat.com, frederic@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108210828.GD22691@kroah.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
- <20181108074012.GD20032@gmail.com>
- <20181108091251.GL9761@hirez.programming.kicks-ass.net>
- <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
- <20181108174006.GP4170@linux.ibm.com>
- <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
- <20181108210615.GC22691@kroah.com>
+        Fri, 9 Nov 2018 01:48:30 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:46566 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbeKIGsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:48:30 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8LB66U078519;
+        Thu, 8 Nov 2018 15:11:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1541711466;
+        bh=TV7x3WCU22TIU4GajKiEiF9JKQgo58Q/s81rAT3Gfms=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=GMfWyq+iNnKa5wq2eOxxc2IeNZA1xNFWrNHm1En9TynJo5bl8EK8cadNvvTeC09vu
+         0wK95Z/iNfevaFbMnhulFtwO2yI9Oili/8JznDLQ7wjoNzBlYOLSN3zy/R5agAwyge
+         Aey+giXqiZKnCsfzp/hKkXKiRi+lnuB3N3ZyE4ss=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8LB6CB071854
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 15:11:06 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
+ 2018 15:11:06 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 8 Nov 2018 15:11:06 -0600
+Received: from [172.22.187.225] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8LB6k1006809;
+        Thu, 8 Nov 2018 15:11:06 -0600
+Subject: Re: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <linux-leds@vger.kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <pavel@ucw.cz>, <robh@kernel.org>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+ <d1267477-e000-f392-290f-2546f8ee379c@ti.com>
+ <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <8584e8a2-44df-33b1-4d9e-9fb3fb2cb98d@ti.com>
+Date:   Thu, 8 Nov 2018 15:11:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108210615.GC22691@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:06:15PM -0800, Greg KH wrote:
-> On Thu, Nov 08, 2018 at 08:58:32PM +0100, Thomas Gleixner wrote:
-> > On Thu, 8 Nov 2018, Paul E. McKenney wrote:
-> > > On Thu, Nov 08, 2018 at 09:19:33AM -0800, Dan Williams wrote:
-> > > > On Thu, Nov 8, 2018 at 1:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > >
-> > > > > On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
-> > > > > > > + - Cc: ``cc-ed-person <person@mail>``
-> > > > > > > +
-> > > > > > > +   If the patch should be backported to stable, then please add a '``Cc:
-> > > > > > > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
-> > > > > > > +   mail.
-> > > > > >
-> > > > > > Can I suggest a more canonical form:
-> > > > > >
-> > > > > >       Cc: <stable@vger.kernel.org> # v4.18 and later kernels
-> > > > > >
-> > > > > > It would be nice if people adding Cc: stable lines would actually try to
-> > > > > > figure out which exact kernel versions are affected.
-> > > > 
-> > > > I know at least StGit mail does not grok that "#"notation. I've
-> > > > stopped using it in favor of a "Fixes:" tag. I would think "Fixes:" is
-> > > > preferred over "# <KVER>" if only because it can be used to track
-> > > > fixes to commits that have been backported to stable. Is there any
-> > > > reason for "# <KVER>" to continue in a world where we have "Fixes:"?
-> > > 
-> > > I sometimes have fixes that need to be different for different past
-> > > releases.  And there have been cases where RCU patches would apply and
-> > > build cleanly against releases for which it was not appropriate, but
-> > > would have some low-probability failure.  Which meant that it could be
-> > > expected to pass light testing.  :-/
-> > > 
-> > > So I sometimes need a way of saying which versions a given patch applies
-> > > to, independent of the version into which the bug was introduced.
-> > 
-> > I can understand that you want to limit the scope of automatic backports.
-> > 
-> > But we really should try to always use of the Fixes: tag. In most cases the
-> > SHA1 of the commit in the fixes tag defines the backport scope. 
-> > 
-> > For the rare cases where the buggy commit is really old, but you want to
-> > limit the backport scope for a reason then I really like to avoid to
-> > overload the Cc stable tag and have a dedicated tag instead. Something
-> > like:
-> > 
-> >     Fixes: 1234567890AB ("subsys/comp: Short summary")
-> >     Backport-to: 4.14
+Jacek
+
+On 11/08/2018 02:48 PM, Jacek Anaszewski wrote:
+> Dan,
 > 
-> Ick, no.  Just stick to the "Fixes:" tag.  My scripts can now track when
-> a patch is backported to a stable tree so that I know to apply it to
-> older ones despite the original patch showing up in a newer release.
+> On 11/08/2018 07:14 PM, Dan Murphy wrote:
+>> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
+>>> Switch to using generic LED support for composing LED class
+>>> device name.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> Cc: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>  drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
+>>>  1 file changed, 20 insertions(+), 19 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+>>> index 4f413a7..9dfc0f2 100644
+>>> --- a/drivers/leds/leds-lm3692x.c
+>>> +++ b/drivers/leds/leds-lm3692x.c
+>>> @@ -13,7 +13,6 @@
+>>>  #include <linux/regmap.h>
+>>>  #include <linux/regulator/consumer.h>
+>>>  #include <linux/slab.h>
+>>> -#include <uapi/linux/uleds.h>
+>>>  
+>>>  #define LM36922_MODEL	0
+>>>  #define LM36923_MODEL	1
+>>> @@ -95,6 +94,9 @@
+>>>  #define LM3692X_FAULT_FLAG_SHRT BIT(3)
+>>>  #define LM3692X_FAULT_FLAG_OPEN BIT(4)
+>>>  
+>>> +#define LM36922_NAME "lm36922"
+>>> +#define LM36923_NAME "lm36923"
+>>> +
+>>>  /**
+>>>   * struct lm3692x_led -
+>>>   * @lock - Lock for reading/writing the device
+>>> @@ -103,7 +105,6 @@
+>>>   * @regmap - Devices register map
+>>>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>>>   * @regulator - LED supply regulator pointer
+>>> - * @label - LED label
+>>>   * @led_enable - LED sync to be enabled
+>>>   * @model_id - Current device model ID enumerated
+>>>   */
+>>> @@ -114,7 +115,6 @@ struct lm3692x_led {
+>>>  	struct regmap *regmap;
+>>>  	struct gpio_desc *enable_gpio;
+>>>  	struct regulator *regulator;
+>>> -	char label[LED_MAX_NAME_SIZE];
+>>>  	int led_enable;
+>>>  	int model_id;
+>>>  };
+>>> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
+>>>  static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>>  {
+>>>  	struct fwnode_handle *child = NULL;
+>>> -	const char *name;
+>>> +	struct led_init_data init_data;
+>>> +	char *model_name;
+>>>  	int ret;
+>>>  
+>>>  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+>>> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>>  		dev_err(&led->client->dev, "No LED Child node\n");
+>>>  		return -ENODEV;
+>>>  	}
+>>> +	init_data.fwnode = child;
+>>>  
+>>> -	fwnode_property_read_string(child, "linux,default-trigger",
+>>> -				    &led->led_dev.default_trigger);
+>>> +	if (led->model_id == LM36922_MODEL)
+>>> +		model_name =  LM36922_NAME;
+>>> +	else
+>>> +		model_name =  LM36923_NAME;
+>>>  
+>>> -	ret = fwnode_property_read_string(child, "label", &name);
+>>> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
+>>> +			       init_data.name);
+>>>  	if (ret)
+>>> -		snprintf(led->label, sizeof(led->label),
+>>> -			"%s::", led->client->name);
+>>> -	else
+>>> -		snprintf(led->label, sizeof(led->label),
+>>> -			 "%s:%s", led->client->name, name);
+>>> +		return ret;
+>>> +
+>>> +	fwnode_property_read_string(child, "linux,default-trigger",
+>>> +				    &led->led_dev.default_trigger);
+>>>  
+>>>  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+>>>  	if (ret) {
+>>> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>>  		return ret;
+>>>  	}
+>>>  
+>>> -	led->led_dev.name = led->label;
+>>> -
+>>> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
+>>> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
+>>> +					     &init_data);
+>>>  	if (ret) {
+>>>  		dev_err(&led->client->dev, "led register err: %d\n", ret);
+>>>  		return ret;
+>>>  	}
+>>>  
+>>> -	led->led_dev.dev->of_node = to_of_node(child);
+>>> -
+>>>  	return 0;
+>>>  }
+>>>  
+>>> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
+>>>  }
+>>>  
+>>>  static const struct i2c_device_id lm3692x_id[] = {
+>>> -	{ "lm36922", LM36922_MODEL },
+>>> -	{ "lm36923", LM36923_MODEL },
+>>> +	{ LM36922_NAME, LM36922_MODEL },
+>>> +	{ LM36923_NAME, LM36923_MODEL },
+>>
+>> How is this change relevant?
+>> No mention in the comments about this change.
 > 
-> And yes, those scripts are new, as Sasha is about to point out all of
-> the places where I missed this in the past :)
+> Unrelated. It is a remnant from the stage of development, where I had
+> an impression that i2c_client name is taken from this array
+> somehow. Only later I learned that it is taken from OF compatible
+> property after removing vendor prefix with comma.
+> 
+> Afterwards I decide to abide by this change since it seems to be
+> just an improvement - if I'm adding the string definition anyway,
+> then why not replace other matching literals?
+> 
+> I will add the explanation if the commit message if there are no
+> other objections.
 
-Here's the script if others are curious:
-	https://github.com/gregkh/gregkh-linux/blob/master/scripts/fix_in_what_release
+That works for me.  Just did not want the change to be "hidden" even without
+the intent of hiding it.
 
-Yes, I know it's horrid, I abuse the fact that 'git grep' is very fast
-on the stable-queue repo :)
+Dan
 
-thanks,
+> 
+>>>  	{ }
+>>>  };
+>>>  MODULE_DEVICE_TABLE(i2c, lm3692x_id);
+>>>
+>>
+>>
+> 
 
-greg k-h
+
+-- 
+------------------
+Dan Murphy
