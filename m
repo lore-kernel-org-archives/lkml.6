@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9219EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558A6C0044B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588E220844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 112FA20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:34:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaZeAR+K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588E220844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2Kn5m1zx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 112FA20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbeKIHhV (ORCPT
+        id S1729415AbeKIILk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:37:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55182 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:11:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730201AbeKIHhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:19 -0500
+        id S1730169AbeKIHhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:18 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25B192146E;
-        Thu,  8 Nov 2018 21:59:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FE462146D;
+        Thu,  8 Nov 2018 21:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714391;
-        bh=XxOfmgCzmOkJ0Urq4aL12+m9+6VvRGsZhZynZUEKqM4=;
+        s=default; t=1541714390;
+        bh=fDAXGmdFOH0dYlE/vo6yrtZNBCOCKEnKPvD8wuoxm64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RaZeAR+K5XDlvRN0Kt9sfrP8ozN9YL+kWBCPgbDQQ6vaI63XN6vI9QRdMGBTzvg5J
-         2UmZrxDH49YFCFvbt9RdEThOUkszjMTZO27dGLi+jCxo7HcaHsXD8WrdoRn3wCNi+x
-         E4ei+KfGH5SBshBTK+434nXS6QoTyJFQbGXoOyv0=
+        b=2Kn5m1zx11ucvXkjNCqdPJt4VcRcBDAG6419LyNhAHOybPZhzNDdtQ5uN3hKlUPcK
+         0ee+IQPI7f1qx9Lki2T5pTvRVQxzgbenUXgjx7iU7sDHEJLCfsG40dbfcLuRGiQo+6
+         G4dqU7q49RfKvLSbxs59Hx+iosrvj8ao/lXgbxYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, William Dauchy <william@gandi.net>,
+        Phil Schmitt <phillip.j.schmitt@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 055/114] net/mlx5e: Fix LRO modify
-Date:   Thu,  8 Nov 2018 13:51:10 -0800
-Message-Id: <20181108215106.095773567@linuxfoundation.org>
+Subject: [PATCH 4.4 054/114] ixgbevf: Fix handling of NAPI budget when multiple queues are enabled per vector
+Date:   Thu,  8 Nov 2018 13:51:09 -0800
+Message-Id: <20181108215106.020910985@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -64,71 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ab0394fe2c258fdb5086c51a251b28f8ee7ab35c ]
+[ Upstream commit d0f71afffa1c3d5a36a4a278f1dbbd2643176dc3 ]
 
-Ethtool LRO enable/disable is broken, as of today we only modify TCP
-TIRs in order to apply the requested configuration.
+This is the same patch as for ixgbe but applied differently according to
+busy polling.  See commit 5d6002b7b822c74 ("ixgbe: Fix handling of NAPI
+budget when multiple queues are enabled per vector")
 
-Hardware requires that all TIRs pointing to the same RQ should share the
-same LRO configuration. For that all other TIRs' LRO fields must be
-modified as well.
-
-Fixes: 5c50368f3831 ('net/mlx5e: Light-weight netdev open/stop')
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: William Dauchy <william@gandi.net>
+Tested-by: Phil Schmitt <phillip.j.schmitt@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index 90e876ecc720..765b069d6a90 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -1304,7 +1304,7 @@ static void mlx5e_build_tir_ctx_lro(void *tirc, struct mlx5e_priv *priv)
- 			      lro_timer_supported_periods[2]));
- }
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 50bbad37d640..723bda33472a 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -1014,6 +1014,8 @@ static int ixgbevf_poll(struct napi_struct *napi, int budget)
+ 	ixgbevf_for_each_ring(ring, q_vector->tx)
+ 		clean_complete &= ixgbevf_clean_tx_irq(q_vector, ring);
  
--static int mlx5e_modify_tir_lro(struct mlx5e_priv *priv, int tt)
-+static int mlx5e_modify_tirs_lro(struct mlx5e_priv *priv)
- {
- 	struct mlx5_core_dev *mdev = priv->mdev;
- 
-@@ -1312,6 +1312,7 @@ static int mlx5e_modify_tir_lro(struct mlx5e_priv *priv, int tt)
- 	void *tirc;
- 	int inlen;
- 	int err;
-+	int tt;
- 
- 	inlen = MLX5_ST_SZ_BYTES(modify_tir_in);
- 	in = mlx5_vzalloc(inlen);
-@@ -1323,7 +1324,11 @@ static int mlx5e_modify_tir_lro(struct mlx5e_priv *priv, int tt)
- 
- 	mlx5e_build_tir_ctx_lro(tirc, priv);
- 
--	err = mlx5_core_modify_tir(mdev, priv->tirn[tt], in, inlen);
-+	for (tt = 0; tt < MLX5E_NUM_TT; tt++) {
-+		err = mlx5_core_modify_tir(mdev, priv->tirn[tt], in, inlen);
-+		if (err)
-+			break;
-+	}
- 
- 	kvfree(in);
- 
-@@ -1870,8 +1875,10 @@ static int mlx5e_set_features(struct net_device *netdev,
- 			mlx5e_close_locked(priv->netdev);
- 
- 		priv->params.lro_en = !!(features & NETIF_F_LRO);
--		mlx5e_modify_tir_lro(priv, MLX5E_TT_IPV4_TCP);
--		mlx5e_modify_tir_lro(priv, MLX5E_TT_IPV6_TCP);
-+		err = mlx5e_modify_tirs_lro(priv);
-+		if (err)
-+			mlx5_core_warn(priv->mdev, "lro modify failed, %d\n",
-+				       err);
- 
- 		if (was_opened)
- 			err = mlx5e_open_locked(priv->netdev);
++	if (budget <= 0)
++		return budget;
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	if (!ixgbevf_qv_lock_napi(q_vector))
+ 		return budget;
 -- 
 2.17.1
 
