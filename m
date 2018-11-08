@@ -2,112 +2,140 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAB6C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030A9C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5F32089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5863208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:40:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EEB55nWt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5F32089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCnd/rE5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5863208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeKHLMw (ORCPT
+        id S1728505AbeKHLNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:12:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:38061 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728372AbeKHLMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:12:51 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42r5Yw0jYnz9sBN;
-        Thu,  8 Nov 2018 12:39:48 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1541641188;
-        bh=AdGGHhKuAVgWB2Bbqg7n9JJfd5clOZe1SuYKufi3Bn8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EEB55nWtzJmTEqL5zXQBw/rqyDM251gng0tALr14344m1OWxbhfqfRcnKaXJYZ2ku
-         2Pg38HhzrzEL2D0f3bCdbD0urA0jXGQv3KEQ9RR325hmFWByuqb2VtSfluWettkE9f
-         cW/N6GNrBZWyZPAYT+bYg+Sn4J4kgnDSErcl/j7lNSejvsRxbfGRs4JWFPy4swc0jx
-         F7co9y1lmaI6xOWC+qZfmo/qDZo608+dt9xhaIzwF2PHFGEwQBFAjLHyWVawUidiIc
-         6aF1lNQm+ll8UaIL7m1BM7Cb93xQzVzeota1noOx9iCpPEJjBtI69crg9tUklV6pOp
-         7kSMhCTzwinUw==
-Date:   Thu, 8 Nov 2018 12:39:38 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: linux-next: build warning after merge of the iommu tree
-Message-ID: <20181108123938.2026559e@canb.auug.org.au>
+        Thu, 8 Nov 2018 06:13:21 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38506 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728372AbeKHLNU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 06:13:20 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p4-v6so6341019plo.5;
+        Wed, 07 Nov 2018 17:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jeqY7eFzEKBYQPj+khgCjKjeM43EIFozZ8l2056K7eM=;
+        b=iCnd/rE5PC+xeDoTFurFN9es+d64VclCudvsfPv5/mQ3qLO62fZfIa++91Qd5Vpam8
+         ONPlr9FLZkr86aKY8F6pT77YkRmq8s4RLKzlFNVU9RR/KNRlkodt6EvEOZSTQWnCTQVJ
+         8+xNcStzc+Fq+AunPpVoXwtQQmVsUFkO5q62B9YHKXP/wWxsp2I2xJaPmYTaSJByy8M6
+         lhYWVphKIK5kYTODm+UaQ8urFTLspyiKDL3xdDv6kFhJf5wYDry3ZQNMZwuLgVbBTAbW
+         WobG74ueElb/iARN/t9fQY1EiCrkw2MMcVgaRfA9FY2Y3IouIHsgz1xPxuMgyxupaENk
+         WjQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jeqY7eFzEKBYQPj+khgCjKjeM43EIFozZ8l2056K7eM=;
+        b=n+wkxU/ttEIT4+zoC07rNrVN427WuLOTFU6E7u3Fp0OMW9F9xott/s11g6cZzLCVN1
+         20A2u2vvS5B8sTyS6992nNy2fcBlkdrJhnhCqPnpSGCoBoG1CXHzbheevi4e7rbKaWam
+         yZ/x82/DHY+wqEsYq08ZCU4bgZXYy5KlfTp9w7c+sN/uwp3FO494yOHxKefKU+VwkihY
+         47nOuxI2gxv3Wrb6lcRkOjJuRZXL5HQKGvrHjW0QQYUd2an1BvVYhuhxpmQWdmzlnJi5
+         kNRlDaaZNoCKpoDh5p82hZEgw8nDtWUGyJxGQS7BHVY4Du0TVJqQuqe4iINQEnXTE1gy
+         bdrA==
+X-Gm-Message-State: AGRZ1gJtVo7W6Lt1eNrc39+Eo233R9Q1lNmYUaB6h6blp4/lMRcsLA07
+        lVOjll79gqFM9oaLwj+g8rKkvKWW
+X-Google-Smtp-Source: AJdET5eV2hXvshwIRSrkwqcxWqilU5tXX0iRtQJ8zdcMYuZWFZ2Qc02PoPGx2h0aaGtLXqqwcedDWQ==
+X-Received: by 2002:a17:902:7a2:: with SMTP id 31-v6mr2562567plj.277.1541641218379;
+        Wed, 07 Nov 2018 17:40:18 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 3-v6sm2049338pga.12.2018.11.07.17.40.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Nov 2018 17:40:17 -0800 (PST)
+Subject: Re: [PATCH 2/4] x86/amd_nb: add support for newer PCI topologies
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        "Woods, Brian" <Brian.Woods@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>, Pu Wen <puwen@hygon.cn>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Myron Stowe <myron.stowe@redhat.com>,
+        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+References: <20181102195925.GB160487@google.com>
+ <20181102232948.GC26770@zn.tnic> <20181105214537.GA19420@google.com>
+ <20181105215650.GG26868@zn.tnic> <20181106214256.GA65443@google.com>
+ <20181106220059.GA4139@zn.tnic> <20181106232040.GA85755@google.com>
+ <75748b089ee696d5cbaa5c0ce68bad228699894c.camel@linux.intel.com>
+ <20181107213103.GA41183@google.com>
+ <baf4b2e9c9b7cb2f827fd3bffce4b72f6d9376a8.camel@linux.intel.com>
+ <20181107231411.GB41183@google.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <2c4b9e7e-6558-e5ce-50e6-58aaec22fd1c@roeck-us.net>
+Date:   Wed, 7 Nov 2018 17:40:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XJ6_I/BrYhA1mqYw6ycAalV"; protocol="application/pgp-signature"
+In-Reply-To: <20181107231411.GB41183@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XJ6_I/BrYhA1mqYw6ycAalV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/7/18 3:14 PM, Bjorn Helgaas wrote:
+>
+>>
+>> There is no INT3401 on any newer atom or core platforms, so you can't
+>> enumerate on this device. We don't control what ACPI device is present
+>> on a system. It depends on what the other non-Linux OS is using.
+> 
+> Sure, you can't *force* OEMs to supply a given ACPI device, but you
+> can certainly say "if you want this functionality, supply INT3401
+> devices."  That's what you do with PNP0A03 (PCI host bridges), for
+> example.  If an OEM doesn't supply PNP0A03 devices, the system can
+> boot just fine as long as you don't need PCI.
+> 
+> This model of using the PCI IDs forces OS vendors to release updates
+> for every new platform.  I guess you must have considered that and
+> decided whatever benefit you're getting was worth the cost.
+> 
 
-Hi Joerg,
+I really dislike where this is going. Board vendors - and that included
+Intel when Intel was still selling boards - have a long history of only
+making mandatory methods available in ACPI. Pretty much all of them don't
+make hardware monitoring information available via ACPI. This is a pain
+especially for laptops where the information is provided by an embedded
+controller. On systems with Super-IO chips with dedicated hardware
+monitoring functionality, they often go as far as signing mutual NDAs
+with chip vendors, which lets both the board and the chip vendor claim
+that they can not provide chip specifications to third parties, aka
+users.
 
-After merging the iommu tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+You are pretty much extending that to CPU temperature monitoring. The
+fallout, if adopted, will be that it will effectively no longer be
+possible to monitor the temperature on chips supporting this
+"feature".
 
-In file included from include/linux/bitmap.h:10,
-                 from drivers/iommu/intel-iommu.c:24:
-drivers/iommu/intel-iommu.c: In function 'iommu_calculate_agaw':
-include/linux/kernel.h:845:29: warning: comparison of distinct pointer type=
-s lacks a cast
-   (!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
-                             ^~
-include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
-   (__typecheck(x, y) && __no_side_effects(x, y))
-    ^~~~~~~~~~~
-include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
-  __builtin_choose_expr(__safe_cmp(x, y), \
-                        ^~~~~~~~~~
-include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
- #define min(x, y) __careful_cmp(x, y, <)
-                   ^~~~~~~~~~~~~
-drivers/iommu/intel-iommu.c:668:9: note: in expansion of macro 'min'
-  mgaw =3D min(cap_mgaw(iommu->cap), DEFAULT_DOMAIN_ADDRESS_WIDTH);
-         ^~~
+I do not think that would be a good idea.
 
-Introduced by commit
-
-  248808a0fad0 ("iommu/vt-d: Respect max guest address width in agaw")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XJ6_I/BrYhA1mqYw6ycAalV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvjk9oACgkQAVBC80lX
-0GwzKwf/ZC9aPWq4mHaEAeRTQCRYNVGK/B3AEpmdVb3gFt7vAXBr0SZNc04+Tupt
-B8/LCRjjVA1YBp5haLUZ8bRls40jXimemFLGwRWKKTg6c6efkNDtCsiqzlwTRzd8
-i6+1pZPvZoyOlPP4C20Qbu/LrQX6l7/4BvbB0fZGmDUSfQ/ooaqtIqlhE1cXJECf
-jnqzCi2zJ/DL++3CKVa6bAbAgt7ca1bcOCWglKaAFShmLKkX9FNlnbn6x75U/xfa
-3S2YG0Cglu9gbT0pM7oFOnaaE7eTd9N3IfQL1YdWWuzN9fZ6QwB1+5fznDwuXHSP
-rFKB3eL2nCMOzjQz96Ci8ayrIhWrIw==
-=2Zdh
------END PGP SIGNATURE-----
-
---Sig_/XJ6_I/BrYhA1mqYw6ycAalV--
+Guenter
