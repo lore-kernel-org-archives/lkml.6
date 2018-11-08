@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BA2ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B87ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B370F20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F04E820892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRnRnIy4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B370F20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1bKUfKW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F04E820892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbeKIHgC (ORCPT
+        id S1729767AbeKIHgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:36:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53154 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:36:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729729AbeKIHgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:36:01 -0500
+        id S1728347AbeKIHgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:36:07 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F7D020989;
-        Thu,  8 Nov 2018 21:58:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80BBB208E3;
+        Thu,  8 Nov 2018 21:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714313;
-        bh=yXi4AQtyOFnB57K8JLPOS6NKAneqxIQFrDeqkAktRWc=;
+        s=default; t=1541714319;
+        bh=qTKF1X5OXMvJMIsBcwqOgAKtCt58TOa4GEoyO6H/+qw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XRnRnIy4zYiT0hMoeT2jBsPZBv/IE2FZpgvotSMqmOIgt0NJX051LosjXdBq5WQE1
-         G2awHjYrrsbsGzlRazckF4VqkoPRIXxwZhjRHgKfviubmWn/YHsztIgZN8+jHVaxws
-         BvAV5KMFXdD9OfU5faLCf/4/rm1aS3e22zr+6dsk=
+        b=o1bKUfKWejkU2ty76pmpMZqJL5SF2kXVHoDRGGmiTOAjGQKg2lYpBJ/xit/Tus2sA
+         k6wVqDxEJgQLly5Itrbb7DANKo/n5pOTND5kT9vs1jcbUZBpfLOwVjTKQRm5pR4CxH
+         JpMJsZht2zGoCJCM53MkxTzZ+JuYyXMc9z3UXVrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 010/114] asix: Check for supported Wake-on-LAN modes
-Date:   Thu,  8 Nov 2018 13:50:25 -0800
-Message-Id: <20181108215059.872482060@linuxfoundation.org>
+Subject: [PATCH 4.4 003/114] mac80211: Always report TX status
+Date:   Thu,  8 Nov 2018 13:50:18 -0800
+Message-Id: <20181108215059.304209937@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,34 +65,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c4ce446e33d7a0e978256ac6fea4c80e59d9de5f ]
+[ Upstream commit 8682250b3c1b75a45feb7452bc413d004cfe3778 ]
 
-The driver currently silently accepts unsupported Wake-on-LAN modes
-(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
-which is confusing.
+If a frame is dropped for any reason, mac80211 wouldn't report the TX
+status back to user space.
 
-Fixes: 2e55cc7210fe ("[PATCH] USB: usbnet (3/9) module for ASIX Ethernet adapters")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+As the user space may rely on the TX_STATUS to kick its state
+machines, resends etc, it's better to just report this frame as not
+acked instead.
+
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/asix_common.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/mac80211/status.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/usb/asix_common.c b/drivers/net/usb/asix_common.c
-index 7fbd8f044207..2092ef6431f2 100644
---- a/drivers/net/usb/asix_common.c
-+++ b/drivers/net/usb/asix_common.c
-@@ -449,6 +449,9 @@ int asix_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
- 	struct usbnet *dev = netdev_priv(net);
- 	u8 opt = 0;
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 45fb1abdb265..2731cf5bf052 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -466,11 +466,6 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 	if (!skb)
+ 		return;
  
-+	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
-+		return -EINVAL;
-+
- 	if (wolinfo->wolopts & WAKE_PHY)
- 		opt |= AX_MONITOR_LINK;
- 	if (wolinfo->wolopts & WAKE_MAGIC)
+-	if (dropped) {
+-		dev_kfree_skb_any(skb);
+-		return;
+-	}
+-
+ 	if (info->flags & IEEE80211_TX_INTFL_NL80211_FRAME_TX) {
+ 		u64 cookie = IEEE80211_SKB_CB(skb)->ack.cookie;
+ 		struct ieee80211_sub_if_data *sdata;
+@@ -491,6 +486,8 @@ static void ieee80211_report_ack_skb(struct ieee80211_local *local,
+ 		}
+ 		rcu_read_unlock();
+ 
++		dev_kfree_skb_any(skb);
++	} else if (dropped) {
+ 		dev_kfree_skb_any(skb);
+ 	} else {
+ 		/* consumes skb */
 -- 
 2.17.1
 
