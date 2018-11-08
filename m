@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F7FECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFD9ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C852148E
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671382147A
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MU+kD0p6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C852148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXUTmTUD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 671382147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733022AbeKIHsB (ORCPT
+        id S1733048AbeKIHsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:48:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42002 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:48:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730929AbeKIHsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:48:00 -0500
+        id S1730929AbeKIHsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:48:01 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11C4D20989;
-        Thu,  8 Nov 2018 22:10:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBA132147D;
+        Thu,  8 Nov 2018 22:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541715028;
-        bh=Yu5faCKIDDs5zOjbfuH6L83JWni1bzQkvUmlBQsFSQo=;
+        s=default; t=1541715030;
+        bh=DAKxtlLfhicPPRa1cqw0vFEjY6al64YV1NcrjXwZruY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MU+kD0p6DozDnwDKHPctXJ4hQuaGK08KM6/91n3s8TqUqGS6yfFYKKCjmBrTLvSYQ
-         oNvBTPOpmqvsYyfQqyfbTIC5abQ5B15XQ5qLUsGc9DPjhD+4JAeKLRJOxT610Lbqlj
-         h7bXhnUQ6sK0QHoBKpam0QQpBMR4osbql0iB38cs=
+        b=VXUTmTUD21+ee0U4/g4fGbtO+RF4WPox0fuGi29d74m+GFiIU2iIqoPsjOtQ4CBLy
+         LBtZGRh3kVAnS1yJ4HjI/r43/7Ti2RORi8dx7ZkNmkcaG0IhgkbEgRMYODCSPsLjOa
+         LO9cwoj6RkFEnrJrtESvydUTzTHrqqnXAitD0gxA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhimin Gu <kookoo.gu@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 30/34] x86, hibernate: Fix nosave_regions setup for hibernation
-Date:   Thu,  8 Nov 2018 13:52:59 -0800
-Message-Id: <20181108215140.736117265@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Whitehead <tedheadster@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>, konrad.wilk@oracle.com,
+        iommu@lists.linux-foundation.org, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 33/34] x86/swiotlb: Enable swiotlb for > 4GiG RAM on 32-bit kernels
+Date:   Thu,  8 Nov 2018 13:53:02 -0800
+Message-Id: <20181108215140.924758534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -64,83 +64,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhimin Gu <kookoo.gu@intel.com>
+From: Christoph Hellwig <hch@lst.de>
 
-commit cc55f7537db6af371e9c1c6a71161ee40f918824 upstream.
+commit 485734f3fc77c1eb77ffe138c027b9a4bf0178f3 upstream.
 
-On 32bit systems, nosave_regions(non RAM areas) located between
-max_low_pfn and max_pfn are not excluded from hibernation snapshot
-currently, which may result in a machine check exception when
-trying to access these unsafe regions during hibernation:
+We already build the swiotlb code for 32-bit kernels with PAE support,
+but the code to actually use swiotlb has only been enabled for 64-bit
+kernels for an unknown reason.
 
-[  612.800453] Disabling lock debugging due to kernel taint
-[  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
-[  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
-[  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
-[  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
-[  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-[  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
-[  612.853380] Kernel panic - not syncing: Fatal machine check
-[  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
+Before Linux v4.18 we paper over this fact because the networking code,
+the SCSI layer and some random block drivers implemented their own
+bounce buffering scheme.
 
-This is because on 32bit systems, pages above max_low_pfn are regarded
-as high memeory, and accessing unsafe pages might cause expected MCE.
-On the problematic 32bit system, there are reserved memory above low
-memory, which triggered the MCE:
+[ mingo: Changelog fixes. ]
 
-e820 memory mapping:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable
-[    0.000000] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000d160cfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d160d000-0x00000000d1613fff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000d1614000-0x00000000d1a44fff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d1a45000-0x00000000d1ecffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d1ed0000-0x00000000d7eeafff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d7eeb000-0x00000000d7ffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8000000-0x00000000d875ffff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8760000-0x00000000d87fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8800000-0x00000000d8fadfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8fae000-0x00000000d8ffffff] ACPI data
-[    0.000000] BIOS-e820: [mem 0x00000000d9000000-0x00000000da71bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000da71c000-0x00000000da7fffff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000da800000-0x00000000dbb8bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000dbb8c000-0x00000000dbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000041edfffff] usable
-
-Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
-This fix does not impact 64bit system because on 64bit max_low_pfn
-is the same as max_pfn.
-
-Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 21e07dba9fb1 ("scsi: reduce use of block bounce buffers")
+Fixes: ab74cfebafa3 ("net: remove the PCI_DMA_BUS_IS_PHYS check in illegal_highdma")
+Reported-by: Matthew Whitehead <tedheadster@gmail.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Matthew Whitehead <tedheadster@gmail.com>
+Cc: konrad.wilk@oracle.com
+Cc: iommu@lists.linux-foundation.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181014075208.2715-1-hch@lst.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/pci-swiotlb.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1258,7 +1258,7 @@ void __init setup_arch(char **cmdline_p)
- 	x86_init.hyper.guest_late_init();
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -42,10 +42,8 @@ IOMMU_INIT_FINISH(pci_swiotlb_detect_ove
+ int __init pci_swiotlb_detect_4gb(void)
+ {
+ 	/* don't initialize swiotlb if iommu=off (no_iommu=1) */
+-#ifdef CONFIG_X86_64
+ 	if (!no_iommu && max_possible_pfn > MAX_DMA32_PFN)
+ 		swiotlb = 1;
+-#endif
  
- 	e820__reserve_resources();
--	e820__register_nosave_regions(max_low_pfn);
-+	e820__register_nosave_regions(max_pfn);
- 
- 	x86_init.resources.reserve_resources();
- 
+ 	/*
+ 	 * If SME is active then swiotlb will be set to 1 so that bounce
 
 
