@@ -2,98 +2,127 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FDCECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABAAECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0E52081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0E52081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 4055320827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4055320827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbeKIFdd (ORCPT
+        id S1727029AbeKIFfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:33:33 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:47808 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725764AbeKIFdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:33:33 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id RgchpIW6QK3B; Thu,  8 Nov 2018 20:56:32 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DE1E91EC0755;
-        Thu,  8 Nov 2018 20:56:31 +0100 (CET)
-From:   Borislav Petkov <bp@alien8.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org
-Subject: [PATCH] kbuild/builddeb: Fix building .deb packages out-of-tree
-Date:   Thu,  8 Nov 2018 20:56:24 +0100
-Message-Id: <20181108195624.25410-1-bp@alien8.de>
-X-Mailer: git-send-email 2.19.1
+        Fri, 9 Nov 2018 00:35:47 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45153 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeKIFfq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:35:46 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gKqRq-0000TW-8d; Thu, 08 Nov 2018 20:58:38 +0100
+Date:   Thu, 8 Nov 2018 20:58:32 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+cc:     Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, John Stultz <john.stultz@linaro.org>,
+        acme@redhat.com, frederic@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
+In-Reply-To: <20181108174006.GP4170@linux.ibm.com>
+Message-ID: <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
+References: <20181107171010.421878737@linutronix.de> <20181107171149.165693799@linutronix.de> <20181108074012.GD20032@gmail.com> <20181108091251.GL9761@hirez.programming.kicks-ass.net> <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
+ <20181108174006.GP4170@linux.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Thu, 8 Nov 2018, Paul E. McKenney wrote:
+> On Thu, Nov 08, 2018 at 09:19:33AM -0800, Dan Williams wrote:
+> > On Thu, Nov 8, 2018 at 1:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
+> > > > > + - Cc: ``cc-ed-person <person@mail>``
+> > > > > +
+> > > > > +   If the patch should be backported to stable, then please add a '``Cc:
+> > > > > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
+> > > > > +   mail.
+> > > >
+> > > > Can I suggest a more canonical form:
+> > > >
+> > > >       Cc: <stable@vger.kernel.org> # v4.18 and later kernels
+> > > >
+> > > > It would be nice if people adding Cc: stable lines would actually try to
+> > > > figure out which exact kernel versions are affected.
+> > 
+> > I know at least StGit mail does not grok that "#"notation. I've
+> > stopped using it in favor of a "Fixes:" tag. I would think "Fixes:" is
+> > preferred over "# <KVER>" if only because it can be used to track
+> > fixes to commits that have been backported to stable. Is there any
+> > reason for "# <KVER>" to continue in a world where we have "Fixes:"?
+> 
+> I sometimes have fixes that need to be different for different past
+> releases.  And there have been cases where RCU patches would apply and
+> build cleanly against releases for which it was not appropriate, but
+> would have some low-probability failure.  Which meant that it could be
+> expected to pass light testing.  :-/
+> 
+> So I sometimes need a way of saying which versions a given patch applies
+> to, independent of the version into which the bug was introduced.
 
-When building a .deb package with
+I can understand that you want to limit the scope of automatic backports.
 
-  make O=/tmp/b oldconfig
-  cd /tmp/b
-  make bindeb-pkg
+But we really should try to always use of the Fixes: tag. In most cases the
+SHA1 of the commit in the fixes tag defines the backport scope. 
 
-the build fails with
+For the rare cases where the buggy commit is really old, but you want to
+limit the backport scope for a reason then I really like to avoid to
+overload the Cc stable tag and have a dedicated tag instead. Something
+like:
 
-   fakeroot -u debian/rules binary
-  ***
-  *** Configuration file ".config" not found!
-  ***
-  *** Please run some configurator (e.g. "make oldconfig" or
-  *** "make menuconfig" or "make xconfig").
-  ***
-  make[12]: *** [/mnt/kernel/kernel/linux/scripts/kconfig/Makefile:69: syncconfig] Error 1
-  make[11]: *** [/mnt/kernel/kernel/linux/Makefile:544: syncconfig] Error 2
-  make[10]: *** [Makefile:640: include/config/auto.conf] Error 2
-  make[9]: *** [Makefile:15: __sub-make] Error 2
+    Fixes: 1234567890AB ("subsys/comp: Short summary")
+    Backport-to: 4.14
 
-because ($MAKE -s image_name) in the subshell is missing KBUILD_SRC and
-cannot find .config. Passing in KBUILD_SRC= for the current pwd fixes
-the build.
+and have that backport tag right under the Fixes tag. If the Backport-to
+tag is ommitted, the SHA1 defines the scope, but I'm fine with making it
+mandatory.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: <linux-kbuild@vger.kernel.org>
----
- scripts/package/builddeb | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If there is really the special RCU case where each and every stable version
+needs some special treatment then say:
 
-diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index 90c9a8ac7adb..149bbbd8e98d 100755
---- a/scripts/package/builddeb
-+++ b/scripts/package/builddeb
-@@ -81,7 +81,7 @@ else
- 	cp System.map "$tmpdir/boot/System.map-$version"
- 	cp $KCONFIG_CONFIG "$tmpdir/boot/config-$version"
- fi
--cp "$($MAKE -s image_name)" "$tmpdir/$installed_image_path"
-+cp "$($MAKE KBUILD_SRC= -s image_name)" "$tmpdir/$installed_image_path"
- 
- if grep -q "^CONFIG_OF=y" $KCONFIG_CONFIG ; then
- 	# Only some architectures with OF support have this target
--- 
-2.19.1
+    Backport-to: Manual
+
+or whatever sensible word would express it correctly.
+
+The Fixes tag is really valuable when you need to make connections and I
+know that the people who are looking into safety-critical Linux value the
+tag because it can be used for tracking and for metrics.
+
+Thanks,
+
+	tglx
 
