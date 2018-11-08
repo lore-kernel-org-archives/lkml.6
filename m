@@ -2,130 +2,74 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CA3ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4907ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDBB20684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:53:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDBB20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A745120684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:57:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSoZ5SVH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A745120684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeKIDaV (ORCPT
+        id S1726995AbeKIDe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:30:21 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59068 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726781AbeKIDaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:30:21 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 86CCF341B93CD;
-        Fri,  9 Nov 2018 01:53:40 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 9 Nov 2018 01:53:30 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <joro@8bytes.org>
-CC:     <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] iommu/dma: Use NUMA aware memory allocations in __iommu_dma_alloc_pages()
-Date:   Fri, 9 Nov 2018 01:55:09 +0800
-Message-ID: <1541699709-25474-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        Thu, 8 Nov 2018 22:34:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726585AbeKIDe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:34:26 -0500
+Received: from localhost (unknown [171.76.98.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D049320684;
+        Thu,  8 Nov 2018 17:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541699868;
+        bh=nl/LWSJQlY368GrGavLMCwT7STv00Vf6HqGoplg7PAQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RSoZ5SVHLrWSpdSZ+wFgs+8gm1jZJM+Vlk98JzoMHfrR7B39huqApfDP93ikyAXPE
+         tB8iAZ41pGph2JEggZtrYD8v7YT13bdD/Kanvwefi7R0xjRCHfLEm0GcPdo+SRhAGa
+         yfRgIugd39/J2GY1poNTBhwGcNBBjJQiZ7NJ5U4w=
+Date:   Thu, 8 Nov 2018 23:27:39 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/18] arm64: dts: qcom: qcs404: Add Device tree nodes
+Message-ID: <20181108175739.GG12092@vkoul-mobl>
+References: <20181108175049.7090-1-vkoul@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108175049.7090-1-vkoul@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change function __iommu_dma_alloc_pages() to allocate memory/pages
-for DMA from respective device NUMA node.
+On 08-11-18, 23:20, Vinod Koul wrote:
+> This series adds support for various nodes for QCS404-EVB.
+> 
+> Based on v4.20-rc1
+> 
+> Changes in v3:
+>  - Make the DTS files sorted alphabetcially and by node addresses
+>  - Add reviewed by from Bjorn
+>  - Split out the DTS files for EVB 1000 and EVB 4000 boards and add common
+>    evb dts files for common part
 
-Originally-from: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
+Sorry I sent out the wrong branch :( will send updated one shortly,
+apologies for the noise
 
-This patch was originally posted by Ganapatrao in [1] *.
-
-However, after initial review, it was never reposted (due to lack of
-cycles, I think). In addition, the functionality in its sibling patches
-were merged through patches, as mentioned in [2]; this also refers to a
-discussion on device local allocations vs CPU local allocations for DMA
-pool, and which is better [3].
-
-However, as mentioned in [3], dma_alloc_coherent() uses the locality
-information from the device - as in direct DMA - so this patch is just
-applying this same policy.
-
-[1] https://lore.kernel.org/patchwork/patch/833004/
-[2] https://lkml.org/lkml/2018/8/22/391
-[3] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1692998.html
-
-* Authorship on this updated patch may need to be fixed - I add not want to
-  add Ganapatrao's SOB without permission.
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index d1b0475..ada00bc 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -449,20 +449,17 @@ static void __iommu_dma_free_pages(struct page **pages, int count)
- 	kvfree(pages);
- }
- 
--static struct page **__iommu_dma_alloc_pages(unsigned int count,
--		unsigned long order_mask, gfp_t gfp)
-+static struct page **__iommu_dma_alloc_pages(struct device *dev,
-+		unsigned int count, unsigned long order_mask, gfp_t gfp)
- {
- 	struct page **pages;
--	unsigned int i = 0, array_size = count * sizeof(*pages);
-+	unsigned int i = 0, nid = dev_to_node(dev);
- 
- 	order_mask &= (2U << MAX_ORDER) - 1;
- 	if (!order_mask)
- 		return NULL;
- 
--	if (array_size <= PAGE_SIZE)
--		pages = kzalloc(array_size, GFP_KERNEL);
--	else
--		pages = vzalloc(array_size);
-+	pages = kvzalloc_node(count * sizeof(*pages), GFP_KERNEL, nid);
- 	if (!pages)
- 		return NULL;
- 
-@@ -483,8 +480,10 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
- 			unsigned int order = __fls(order_mask);
- 
- 			order_size = 1U << order;
--			page = alloc_pages((order_mask - order_size) ?
--					   gfp | __GFP_NORETRY : gfp, order);
-+			page = alloc_pages_node(nid,
-+						(order_mask - order_size) ?
-+						gfp | __GFP_NORETRY : gfp,
-+						order);
- 			if (!page)
- 				continue;
- 			if (!order)
-@@ -569,7 +568,8 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
- 		alloc_sizes = min_size;
- 
- 	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
-+	pages = __iommu_dma_alloc_pages(dev, count, alloc_sizes >> PAGE_SHIFT,
-+					gfp);
- 	if (!pages)
- 		return NULL;
- 
 -- 
-1.9.1
-
+~Vinod
