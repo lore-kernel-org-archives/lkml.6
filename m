@@ -2,224 +2,133 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17014C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7CCC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B95682081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E03DA20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:46:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="ajHhd4ew"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95682081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ra623z5B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03DA20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbeKHQUE (ORCPT
+        id S1726895AbeKHQUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:20:04 -0500
-Received: from mail-eopbgr690048.outbound.protection.outlook.com ([40.107.69.48]:54260
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725972AbeKHQUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:20:03 -0500
+        Thu, 8 Nov 2018 11:20:15 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41354 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbeKHQUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 11:20:15 -0500
+Received: by mail-pf1-f195.google.com with SMTP id e22-v6so8863682pfn.8
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 22:46:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xod7BGFQhx7RSAO0RzeTZbLBPPQL+Zemvvj8a8xSMNY=;
- b=ajHhd4ew8SOK9rQCsYQrp5lCnojHovZvXmNFTByLuwu0qqzR/7jJ+Ugb/SF0qfvnEQLpXiak/IYzIoVj8QV5h7eVEQmdnjyzxAQp4Lpv8zXu+8VUk0xXBfNzPz0seaOJjlBZc0d0Ox4XNRgGIWrj/iTkrmgJ8GoPBl8IIS4zDLk=
-Received: from SN4PR0201CA0009.namprd02.prod.outlook.com
- (2603:10b6:803:2b::19) by SN4PR0201MB3518.namprd02.prod.outlook.com
- (2603:10b6:803:44::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.30; Thu, 8 Nov
- 2018 06:46:01 +0000
-Received: from CY1NAM02FT044.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::203) by SN4PR0201CA0009.outlook.office365.com
- (2603:10b6:803:2b::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.21 via Frontend
- Transport; Thu, 8 Nov 2018 06:46:01 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT044.mail.protection.outlook.com (10.152.75.137) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.11
- via Frontend Transport; Thu, 8 Nov 2018 06:46:00 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1gKe4m-0001Wt-40; Wed, 07 Nov 2018 22:46:00 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1gKe4g-0001IO-W9; Wed, 07 Nov 2018 22:45:55 -0800
-Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wA86jiew006703;
-        Wed, 7 Nov 2018 22:45:44 -0800
-Received: from [172.30.17.111]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1gKe4W-0001Fs-Fb; Wed, 07 Nov 2018 22:45:44 -0800
-Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
- PIN_CONFIG_IO_STANDARD
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        <michal.simek@xilinx.com>
-CC:     Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181101005724.9622-1-natechancellor@gmail.com>
- <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
- <20181107085503.GA31517@flashbox>
- <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
- <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
-Date:   Thu, 8 Nov 2018 07:45:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2py9g/WxCC/8+NYN6GcLnzqYLoq8C594WmwkFNfAQOg=;
+        b=Ra623z5Bk7IL9kh0bt+B3BsbbDNxTm6OBdLwV4wAOmejB+25m/BNMaMc73uWXl+Cni
+         TTuKkPpCBy8PFx+vEmn7bbyO3nHAaCdhoL483+q24qBZKdOVMZyfTBk4/w3+NzKDBA0+
+         1n5gGnPXShtax+8lEAJERfULRW73FB2BTur/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2py9g/WxCC/8+NYN6GcLnzqYLoq8C594WmwkFNfAQOg=;
+        b=rjg66/TtDbykzkbCMxasuSPV9eGoUN3hZ2Bqe6crfJZTJ6gj9I0ZqiMfjpmhRYewjq
+         e3VaFoDBAR9sMxaNUh/52v6ubJjIIiU7vCt8ajq8qVC9RvDsPPGlD9Uzxf3LENmkoY0r
+         8W5tb/Cd3oeVi+MLW7QWYSfeEBUUqng1E2H0hshDljcVzM/2de0n+QmJbc0KQYUdwr7a
+         Lin8xQIsMojgUBsgSdcWb9SCslaAojjV2q6dy6vKeCAhhBdE72PkiBlyDGeC9jiB6v/8
+         aMczA4yJfvOicM4p0ApgJuRWWuEqdxXukq+yPx42Ge3E2s7Wz3WJbYyCpgIAh3sXwXYZ
+         a9aA==
+X-Gm-Message-State: AGRZ1gJnhH57BjEkKgSQt2w49LiqAaYkVe5DRH4JQjjAfk2QTYgPgfwx
+        EK4lrcOdG2EOOJU0YyPtZN3Cuw==
+X-Google-Smtp-Source: AJdET5e6QSTM4HlrGZ+F6F8p5VgpUslRV+U4NSrt+5AJGQ1WdbdYarVgiRDIcZMmAO9oiSiY7TOdeg==
+X-Received: by 2002:a62:1896:: with SMTP id 144-v6mr3527816pfy.88.1541659575207;
+        Wed, 07 Nov 2018 22:46:15 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m5-v6sm4513204pfc.188.2018.11.07.22.46.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 22:46:14 -0800 (PST)
+Date:   Wed, 7 Nov 2018 22:49:59 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        alexandre.torgue@st.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH 1/5] dt-bindings: hwlock: Document STM32 hwspinlock
+ bindings
+Message-ID: <20181108064959.GC12063@builder>
+References: <20181031093032.20386-1-benjamin.gaignard@st.com>
+ <20181031093032.20386-2-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(396003)(376002)(2980300002)(438002)(189003)(199004)(26005)(65826007)(63266004)(305945005)(64126003)(53546011)(36756003)(39060400002)(23676004)(2486003)(106466001)(31686004)(81156014)(81166006)(8676002)(50466002)(2906002)(4326008)(93886005)(31696002)(54906003)(9786002)(110136005)(44832011)(186003)(486006)(426003)(47776003)(77096007)(65806001)(478600001)(65956001)(2616005)(356004)(336012)(14444005)(126002)(476003)(58126008)(5660300001)(8936002)(76176011)(36386004)(316002)(6246003)(230700001)(106002)(11346002)(229853002)(446003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3518;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT044;1:z+MvFYsIr19Vte0/Bt4o/wYXSd3ewns+4Z7wwv7IfRKLMpavCFN16THF2j+tBr/7y0tU2ZYXRl3HmFNS1iuhlhUQuapwjAmFp+5kHUPJrlW0VMoCDvLw3dvfkEnf7ilv
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 69b79594-23ed-45b8-06a0-08d64545d8a6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN4PR0201MB3518;
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;3:C/3JB8GVZCuKxHaJbKkbokjyL59K7S3CoCterEXi44A8GIolEAH7pM+PB5VBLypbyt4aHQTvqA7YsSK31GcT7ctCbZUaR7RqrDCo51fpw7HxhjWpsryrr2uTW2Grv4JHtMKLv+pC/dp8SybbsIHikOoVXWNfTL71DFK3ehW4G5BD5jJok9heNervHdW/fEmzcM6LD9tMx4G3J3rh3VHsJCL+AkjtwPvnd9q6juicKu5Y40nuh5kipsKItltLvBIN1eoYlAF5T2JGvfEeG36UaizmG5Cihza5NgOyUtypZw+A1/Mc8Cu5f1qOM54wrXdAgApQ0VkTgM7I4vQm1waQNDhf70a7fy/U+MV3/bjuQrI=;25:3adbsNkAGkkpkZi3xACAB82nj63f4Tm8e2N9dIJbxA2QYM4B4aLdzGS6JK+506FekI6kOVmGHUtaEq0WSKWa355Hpwpj5WlaQDI5vYfJmLdvdcxn0Q/+UbLDc13eWPsatD0RI4pgHLQkdts/FycVoE/LqkiZaY1S4rsLadcY6ObcuNNQSIWZJRvZpkC5F4vb5qrih6dF9bAuhtGLuOhZcgonxKDiWbCW/iqdunAzP7Jm0GIYHsn3nNdvK0uEpZPq9Rk0eSpG6VXZltIJxHDiYZ4t0OPKYextSLUS6TH+Rs9rgwsuunIKE7urV5IhJepY1svyMdJijimg3SUDdcg8zA==
-X-MS-TrafficTypeDiagnostic: SN4PR0201MB3518:
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;31:DVIARz1/AsktgGLs4xKbKkvNaCUnhRpex9YCaTU55MN8557kdETnlX0XuswQ/yRnxUz7mrr8dHtb6+KY1GfyexUc11PNSEWQchYHfBOOLuZ46Hq9YQ45ef+Cl857dhw5VvDGRWU08+OIvcp1ijhKsYyKdfTMBIbsNuiMSnozTRr8VAY3xgE9b8OTSetGwHntCKTffS9F1/4hQt+3yw2yA/3qm2YEeu3GNLMg2MuHSXc=;20:W4rC0fXOWnOgtc84AERhqd5zFxhd2JxpvNadxhYr36jhDx6oBQSd/ZZ4nDHjGdpyQOiwH+sGRD9W5QINORdrchmcolsk8yNXFfcxvCKCtpGz+AinlTjUf0p2m9+O1PI+lt24zPNwtx5312dgctgKVOc/Kp8sVlgsazOhMfH74K0JQdR0fmDkBgN1vYdPF0znNdLkFXQGS40WxlmQwAoamkoX4yfmtYQwLoh5icLsrS6+RZulefgdjxoz253pZWXm3e6S449DERutbZkGYWAWy7pTx9SXeniaEc8rZXAYUsKLqhxD2czd0Ln8obZ5w405M4NtG0+6Xv8pH1YIQ38ilG0FgqhvyVDs3yiC9E6JYVTyWbBtQXKssZyj9wPSri41f4KRNiwRvwBLBlfKuS/fHSDarRzPxB7BV/mnVX1rwJxSO2Sbt+rE9u2ws1U0smu66rOuA1XrnkcBSPj+4sE40GOFSd4NGzqLYqB0RL+dJBqH0Eognrd8DsWQktx4gAf7
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN4PR0201MB3518A6D4D0965EB9196CD80DC6C50@SN4PR0201MB3518.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(84791874153150);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:SN4PR0201MB3518;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3518;
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;4:9yhvOuqxB1jhPP33BQm8aHPQn9B9eQDlXJvRDt2XMp+PplBAPnHyep83Lwg9e/Ga/tMM4bmEy0EOEvXjnJEYhE5m2SSzwqjgKF5sxU68FmGuK8I0iRdcH6RqRcdoCFNsrr8RlN8W8Fbakq6aE5Cm3YpYvp4qxJoHOXcMiTY8r/0XL6tHymVLs96Py88I5USfJ7iLw+fvpcG8EZBZxsLCoESbaUUA2LMrME7t+ZWmsJQ9yEGZpUBfhhW+eQWp986o+IYqNluHUCw79KkshleSZYjY9MErYRKShQ0tBlStWiS6sJpaCmHCpIuR3qZrMqL0UTD+2GUMuOVnhQ1d6qa5QnKvgUmeekR1QaSaLfn7lrM=
-X-Forefront-PRVS: 0850800A29
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjRQUjAyMDFNQjM1MTg7MjM6Wktna0VTbkVld3g3SVcralo2MEt1YW5r?=
- =?utf-8?B?Q3hwNXIyWGhuV3NsWG1JUDZLdVpWZDFmSXJzYk5TUnZwYVJ4bFFaTUFhc3BZ?=
- =?utf-8?B?SXRvR1BDSktnV0tSUmM1NSs3a21PMXgrVG5zTi9KNXFLbUo2T0RobE1FdUto?=
- =?utf-8?B?UVU4K205QmI1ZllqWXF6bGZpeVp3b3phNTMxQVROdG5VaGRkVXB4dWs4dEJY?=
- =?utf-8?B?dXlQbi9CckJtTDB1bzNudG8wLzc1NTErQzVnYktaR2VIQTNmb1o0TzNhdnZm?=
- =?utf-8?B?WmxnZWJ2NndycGExbkZ6UDZrQWlIK3U4RWYwdDNoTk9HMlpnQnRpb1ZrZ3Aw?=
- =?utf-8?B?anBEY1ZHTHQ4bWpKRktKZDNxeDFuSGpmeDVQdzlPOWN0d1ZERTBNRS9EcUtJ?=
- =?utf-8?B?QnhIOWFZc3dUZTRKVXlkd1pmZzFkMThHYjJ2SW44Z3FiSGQxb3k1dnp2KzA0?=
- =?utf-8?B?anhCeFVZRm5SRHRhb2x6NXhVTjNTMDFUK3Nib3ZhWVdZRk84aGpydjBPUzk2?=
- =?utf-8?B?UmsrUVZpMWp0V1oxUUh4VUpkdmk5WVRxeXBONnVlN3k5d0NXYXIrWmlhODA3?=
- =?utf-8?B?NDZlSUVXdnAzK29NQUJqbU8wNGFicldML0pqbVRLU3hhSmM0Qmdjb3hVaEpG?=
- =?utf-8?B?Z3BuVDloeUVmRTB5WGxJbFZKK2pObWpHQ1FqTEtjY1hHajBLMEtMMDcwcWl3?=
- =?utf-8?B?Q3cydjNrT3lOSnFvd3RHaFg5bkFncW1oTTFLazJJa1FOSlRZWGM3RUdVVVFZ?=
- =?utf-8?B?ZnVsdHl6eTRmS3FUQzVqUkozZzgrWE9JT1pRZDFleUxRTXdoUktBT1U4czdn?=
- =?utf-8?B?eFhGemRBNzFlNnpoaklWdDJscGgwM2xIYVFuWEt1Ty85bENrR1N1WCt5RURR?=
- =?utf-8?B?b3JWcVAwbSs4eXhjeTdscHVqNmVGYVVkUSswbDFqa0ZjdW5oSGhyc2dscDkw?=
- =?utf-8?B?dUIzRHVPWDNtdE1yS3dJUjVkdjJIMXlzRUdLRjBlQnB4OFpNWGptTSs3aEMv?=
- =?utf-8?B?VUZPclV1d0FOeW1MNE1RWXlEa0JwQTlFZVZoWWVBZHdCQkYrcFFoRHZYb1hY?=
- =?utf-8?B?OS9mVWswNXVRd3V4MHI4WXJyelBSL0tveDJTb2w3MUZBOFpHaU5RWjZ5Q0F1?=
- =?utf-8?B?WWZOb0ZlekpPRHNQVlU0RDE4Yk5DTytYb1BHZHlFMlBkQ1BGQzA3K2JYRnFC?=
- =?utf-8?B?NXI5Syt5UXpzcEFxUjlMeXNnbHhRejR1d0RpY0hFdERCT0xNaStkSG1HcXYz?=
- =?utf-8?B?UFFqNDlLWDR1cHhXUi82SkR0VjdGQURpdWsrOVVIYWtvdjBIVnIydS9iMVJL?=
- =?utf-8?B?NUdtOFpHbUZENUhwV25kUitQbFBFaUV6cmNsVTQ0eTIwdFc2QksvajhBZndo?=
- =?utf-8?B?RWhzc1hCMzg0L084SUpzaCtUYzlmcEkxODZVdzZuR2hnWGsrRTZmcHo1MEtI?=
- =?utf-8?B?MU1TQ1kyWnNUS1pTMHRuMWhsNVNHcytvVEtSdStVTlR1SDRjTU1Lc1MwS1pM?=
- =?utf-8?B?aDI1dVYrcHN2UEdIYzYxb1J2WG5wbXpMdXlFQnJWMWNhWWZtL2FxRnpyUW5j?=
- =?utf-8?B?NzhIYzJiWkk2NmNGNjI2enlHWFdKYUZOaVJSallWWjdkc3JHMlowVUNycGlH?=
- =?utf-8?B?bzd2SlZidlJOc1RYMUxjMmFmME91Z0NEcmViZDhKUDRhZnZGQkhMbklsRVV0?=
- =?utf-8?B?SzJnVDNNVi9xMmlaSGE4bnVWYjZ1SkV3REd6a24rMFI0VVpHTGIrRkd6Q25K?=
- =?utf-8?B?enNMaENhdzVmZW1iOXVXWDVqUVloSDQ1b2h2OTVEeHRyVnZUSUdkNXlTUGVS?=
- =?utf-8?Q?aUn4RpzcdsNYtzj?=
-X-Microsoft-Antispam-Message-Info: Ucb9jbEGJ7IqCJVTEZwtPAmCCjWUNS44aS48r6CWpKwdXs++LC3vuD8Z8e3xHpMZqfM5DS2YhcH8gRYO1aLaK97IfI+rYyMZEucv0D6gk/o6BMW2afkRNRdSHkmVfGXphq8dqMIHazE+o0m4F1RrKFDoOGWoS4ZI/7Fq5Ygo4UrlXQcZvnIsI9SmcLZTnXmKgci/lcxEFsM3b2F3XzMB4mfymEtFEesyTNdo9Rad9i4LPqEqaZFZuZ4hpQMs2We5FAmUUW6R7zJtXWZtVNC/ohdkUbHlyVcqr+daLsJln1BwdGDLdfu2ATLvK73uy8bnDweeA29hmG2vpt4Ut5OOf9SULnsTdVG+SLY3irAJJDM=
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;6:i4Au7Q+XfUnXLAKMsDZxxkfnEpgeKHfRvFb5Dc7qpj+xuWqPcw0YA4G6s3qJqGikbLS5GP4jrLidxw/mK/LYCAIntIs3NIZA5xEYthhgPhxDK4mHXQVc2PAL2hoHtkbN060PcVnLFiFfoR5FzjbwKN98+7epTlnJlY4Ya3dkYrugV8l3em/Q+JAuh9fOBUVjarfGVb1jmBoWnZFFL4Gfx9c3TPmXvGWHuJzU0nFLWy3p3fRkTonRV3Rn6i9GzT90oabPE7RBud6TsymDYWjuZwPeLuiERqoZ1Jsdb6K2C9j/h6CvGOANvmxo2iYrBRMM6Hwuftw7rKmL2aBD2fpHbQxtUzUSYtuE58iAvmBNCW77tvAHyV+223MNqkpodVw+ZsPYDtcFFRLybB5oB9edLVeA76MJCNALp7AxGw6i/Vva4zEIz4b1qsDBFD5Ot5r0Du7nSaWGIKtKQC7z2tw8Uw==;5:h2bmstadMS0fFRIrLdO4IwYJRjlUhRbUidIa6swmccouRZP/Id060BkQC4wbMaqTnsRozdMDX+LG7UpZGYKcG5cDRGe9kOBXKLkZLKkn83qMMeojku+OhU/q2u2VYhj94fgneG77AtOS0o4BcYvmmzKonMD+nhwIM2FLiBAy1Do=;7:oz+hPQ8nuztxHH+CeMpl9F0Rim4DwlFconDdI/cebYmtk+LGm5LAiguuTAm6OYCk6gfpUFt2ve21pIJKGSqcT5Kz8LobdYeuugKRyT8qo6kDcfMEv4u8i0ZE4IMj2nnzHTRI01MP7Acs6WXQnHZiEw==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2018 06:46:00.5104
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69b79594-23ed-45b8-06a0-08d64545d8a6
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3518
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031093032.20386-2-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07. 11. 18 18:48, Nick Desaulniers wrote:
-> On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
->>
->> On 07. 11. 18 9:55, Nathan Chancellor wrote:
->>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
->>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
->>>>> Clang warns when one enumerated type is implicitly converted to another:
->>>>>
->>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
->>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
->>>>> type 'enum pin_config_param' [-Wenum-conversion]
->>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
->>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
->>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
->>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
->>>>> type 'enum pin_config_param' [-Wenum-conversion]
->>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
->>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
->>>>> macro 'PCONFDUMP'
->>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
->>>>>                  ^
->>>>> 2 warnings generated.
->>>>
->>>> This is interesting. I have never tried to use llvm for building the
->>>> kernel. Do you have any description how this can be done?
->>>>
->>>
->>> Depending on what version of Clang you have access to, it is usually just as
->>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
->>>
->>> Clang 7.0+ is recommended but 6.0 might work too.
->>
->> TBH I would expect to download container and run this there to make sure
->> that I don't break anything else.
+On Wed 31 Oct 02:30 PDT 2018, Benjamin Gaignard wrote:
+
+> Add bindings for STM32 hardware spinlock device
 > 
-> This is the first request we've had for a container in order to test a
-> patch.  If it comes up again from other folks, I think it makes sense
-> to create one.  Until then, its nice to have.  It's definitely
-> overkill for this patch.
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+>  .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> new file mode 100644
+> index 000000000000..7a999479d802
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> @@ -0,0 +1,23 @@
+> +STM32 Hardware Spinlock Device Binding
+> +-------------------------------------
+> +
+> +Required properties :
+> +- compatible : should be "st,stm32-hwspinlock".
+> +- reg : the register address of hwspinlock.
+> +- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
+> +	hwlock, so the number of cells should be <1> here.
+> +- clock-names : Must contain "hwspinlock".
 
-I have played with it to see that error and here are some steps I did.
+This is supposed to be the name of the clock signal of this hardware
+block, is it really named "hwspinlock"? Note that you can probably omit
+the clock-names property, as you only have a single clock...
 
-docker run --name test-clang -it --rm debian:latest bash
-apt-get update
-apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
-build-essential bison flex make llvm vim libssl-dev sparse
+Apart from that, I think the binding looks good.
 
-git clone
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
-cd linux
+Regards,
+Bjorn
 
-export ARCH=arm64
-export CROSS_COMPILE=aarch64-linux-gnu-
-
-make defconfig
-make CC=clang drivers/pinctrl/pinctrl-zynq.o C=1 V=1
-
-There was not a problem to run it for arm64 but I had issues to run this
-for arm32.
-Do you see any problem with above steps?
-
-Thanks,
-Michal
-
+> +- clocks : Must contain a phandle entry for the clock in clock-names, see the
+> +	common clock bindings.
+> +
+> +Please look at the generic hwlock binding for usage information for consumers,
+> +"Documentation/devicetree/bindings/hwlock/hwlock.txt"
+> +
+> +Example of hwlock provider:
+> +	hwspinlock@4c000000 {
+> +		compatible = "st,stm32-hwspinlock";
+> +		#hwlock-cells = <1>;
+> +		reg = <0x4c000000 0x400>;
+> +		clocks = <&rcc HSEM>;
+> +		clock-names = "hwspinlock";
+> +	};
+> -- 
+> 2.15.0
+> 
