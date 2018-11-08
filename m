@@ -2,215 +2,354 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6316ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDA3ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC3C206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3356C206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGHGqcM1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CC3C206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rw6lo1lo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3356C206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeKIGZh (ORCPT
+        id S1727638AbeKIGZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:25:37 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39884 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbeKIGZg (ORCPT
+        Fri, 9 Nov 2018 01:25:44 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37199 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbeKIGZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:25:36 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t9-v6so16063545ljh.6;
-        Thu, 08 Nov 2018 12:48:23 -0800 (PST)
+        Fri, 9 Nov 2018 01:25:44 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 80so1410653pge.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 12:48:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZEAb8a06qInxWuiMjjmz5pzpMnMpEyz+usuJwsrzs2o=;
-        b=JGHGqcM19zsHm0lBsqXTxHkZJOwJHfAQcIcf3fDk5Ruwz6gffo8T7cQKLy6R4fHg+7
-         f4tuIfn5tarSC8txr8YTWPwJ3JyqqpXdmJfnV5YFzpq6EuInrkCRpCBRDw7e1Ovbtb3w
-         obatWGBtn/J333SXU6DJTh/evAoXShdHx5aOXFB9j+G/Dy7zjOQsWQWimR91hKVvG4CO
-         AnpWgizE9hw1FaHtkSJU6mrBQ8z6+GrtkoI1ibs9WmO4Uu9cfrT7nBeaAb/qNaCYNZsS
-         5ekTKvC4PciwRWIVGmKa5YUYmKgjk2bpZMyLOuS+saq5uE7GO1HECLRew4WeVZFaufp1
-         SIuQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tQdrhWVuUgfVOc66oJo72n/UTGMQIqcrCEIaN2wTDnw=;
+        b=Rw6lo1loIvJB1Jf28DJUkINncxT0ASbUznIUXE1X1A6ECtwDQ9PI67Q7Je8OHYQPQp
+         uJBPq7hVtMdea65uhfbsmzrW2ga5+q9xACYouc8MQ6vzXTvruY+k/1P2+hC1EU2rmtxD
+         RMXJ6o/Lv+I/RM67BFgUAh06asEKuRrOUArVs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZEAb8a06qInxWuiMjjmz5pzpMnMpEyz+usuJwsrzs2o=;
-        b=KfLfRCHtHgdj2JwMytVTQjAbf8eDvK5vQAJA1O3vGp0QaHPvx3GR/EtL9NsWtey9F/
-         WQPTmX2zwLxea51AJoxbPgdyLg1wuUpCOBT0Tuwy3qiwRxQmjC4TpK67cp7jY96Z2PtT
-         gX97VE1ozqb6YOIuQrsAQhBWY4KSdFvpcC0gTM8hOoPsZzCLH+uYdO6fxOCX3DEpRvmj
-         4XMnTFcL1HiQEoDwXSPLaX92GRLXGqpA96iLXwuOWt0Q3HhnILDhGXIAWCgxAie3xQKl
-         JJv5tnpMpwIuJi7xgfjIbvWWqlj48IF4mMmvotOwexDkmgB8Q4A4GNGJt+muPqQslC8O
-         lsuQ==
-X-Gm-Message-State: AGRZ1gI9m7TcZbUIPScnlROtq9fAKWBE1Sdml65lad6/Di46fU8JtaTA
-        X4P2Bo3uTeiKSAE37GWHYMw=
-X-Google-Smtp-Source: AJdET5fP6pugFqVVN+vClT0FX2H27M9UUrHEsO4+BBeC7GnijX78fbmhL579xEhr+dqSgdbfIBaapg==
-X-Received: by 2002:a2e:8007:: with SMTP id j7-v6mr3987514ljg.22.1541710102533;
-        Thu, 08 Nov 2018 12:48:22 -0800 (PST)
-Received: from [192.168.1.18] (dkl219.neoplus.adsl.tpnet.pl. [83.24.15.219])
-        by smtp.gmail.com with ESMTPSA id r76-v6sm870436ljr.83.2018.11.08.12.48.20
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tQdrhWVuUgfVOc66oJo72n/UTGMQIqcrCEIaN2wTDnw=;
+        b=dH6X38o8/vWO9w63TEhUgeIM3+ZVtlH6ASf+up4qxPcdhphAQEsiMW1qWrt5ENi8BL
+         XQLvjWuQV++7SN6Gzity0lFd5jwnWh7gBFSf8vhDmq4999vZewyiClw6CA5tk4r3Odts
+         0f//1nKDjDYf3+N+BYKbzsQWcGaoodEiCL6UYWEBMd4Z02k2TH0jVs3XqH2zkdsaa7+x
+         dXXYRrbmDqiQrysLNjC8kYevnVaUfiIcuaNLNhVSSqwvKo7F8AKYtFAXQeeSpBQau1TR
+         cZslw9ZkO9bq8LXx/nMaJUctVifKfAh1hD0/8FmnPum6vQMcDpoy/Ocu1cmk3/L5NiKW
+         xi0A==
+X-Gm-Message-State: AGRZ1gLNvDSefJMb2k/EJX+G/z7MYsbS56/rCzhQ4B0hg72Y3jOKJLYr
+        lPanTDAYEOSNxXRTxNc57B3lew==
+X-Google-Smtp-Source: AJdET5eSByUI1/51ScZ8q9dxtD4epojSxhDNTNCGKuWVu3C52GPrOSACe8DFkCNv+fp1tXwErqtZ2A==
+X-Received: by 2002:a63:396:: with SMTP id 144mr5105644pgd.68.1541710111045;
+        Thu, 08 Nov 2018 12:48:31 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id g3-v6sm4482649pgr.40.2018.11.08.12.48.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 12:48:21 -0800 (PST)
-Subject: Re: [PATCH 10/24] leds: lp8860: Use led_compose_name()
-To:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-11-git-send-email-jacek.anaszewski@gmail.com>
- <d0d4eff7-5840-95d7-a1a1-104188d1b619@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <bfa4cf6d-1d78-3d48-4846-eb4bcc9e8a98@gmail.com>
-Date:   Thu, 8 Nov 2018 21:48:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 08 Nov 2018 12:48:30 -0800 (PST)
+Date:   Thu, 8 Nov 2018 13:48:27 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Robert Walker <robert.walker@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        CoreSight@lists.linaro.org
+Subject: Re: [PATCH v4] perf: Support for Arm A32/T32 instruction sets in
+ CoreSight trace
+Message-ID: <20181108204827.GA19009@xps15>
+References: <1541588652-17380-1-git-send-email-robert.walker@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <d0d4eff7-5840-95d7-a1a1-104188d1b619@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541588652-17380-1-git-send-email-robert.walker@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
+Hi Robert,
 
-On 11/08/2018 07:16 PM, Dan Murphy wrote:
-> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->> Switch to using generic LED support for composing LED class
->> device name.
->>
->> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>  drivers/leds/leds-lp8860.c | 38 +++++++++++++++++++-------------------
->>  1 file changed, 19 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
->> index 39c72a9..7c12ccd 100644
->> --- a/drivers/leds/leds-lp8860.c
->> +++ b/drivers/leds/leds-lp8860.c
->> @@ -22,7 +22,6 @@
->>  #include <linux/of_gpio.h>
->>  #include <linux/gpio/consumer.h>
->>  #include <linux/slab.h>
->> -#include <uapi/linux/uleds.h>
->>  
->>  #define LP8860_DISP_CL1_BRT_MSB		0x00
->>  #define LP8860_DISP_CL1_BRT_LSB		0x01
->> @@ -87,6 +86,8 @@
->>  
->>  #define LP8860_CLEAR_FAULTS		0x01
->>  
->> +#define LP8860_NAME			"lp8860"
->> +
->>  /**
->>   * struct lp8860_led -
->>   * @lock - Lock for reading/writing the device
->> @@ -96,7 +97,6 @@
->>   * @eeprom_regmap - EEPROM register map
->>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->>   * @regulator - LED supply regulator pointer
->> - * @label - LED label
->>   */
->>  struct lp8860_led {
->>  	struct mutex lock;
->> @@ -106,7 +106,6 @@ struct lp8860_led {
->>  	struct regmap *eeprom_regmap;
->>  	struct gpio_desc *enable_gpio;
->>  	struct regulator *regulator;
->> -	char label[LED_MAX_NAME_SIZE];
->>  };
->>  
->>  struct lp8860_eeprom_reg {
->> @@ -387,25 +386,26 @@ static int lp8860_probe(struct i2c_client *client,
->>  	struct lp8860_led *led;
->>  	struct device_node *np = client->dev.of_node;
->>  	struct device_node *child_node;
->> -	const char *name;
->> +	struct led_init_data init_data;
->>  
->>  	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
->>  	if (!led)
->>  		return -ENOMEM;
->>  
->> -	for_each_available_child_of_node(np, child_node) {
->> -		led->led_dev.default_trigger = of_get_property(child_node,
->> -						    "linux,default-trigger",
->> -						    NULL);
->> -
->> -		ret = of_property_read_string(child_node, "label", &name);
->> -		if (!ret)
->> -			snprintf(led->label, sizeof(led->label), "%s:%s",
->> -				 id->name, name);
->> -		else
->> -			snprintf(led->label, sizeof(led->label),
->> -				"%s::display_cluster", id->name);
->> -	}
+On Wed, Nov 07, 2018 at 11:04:12AM +0000, Robert Walker wrote:
+> This patch adds support for generating instruction samples from trace of
+> AArch32 programs using the A32 and T32 instruction sets.
 > 
-> We need to keep a loop here looking for additional nodes as this device has string support and just
-> not cluster support.
+> T32 has variable 2 or 4 byte instruction size, so the conversion between
+> addresses and instruction counts requires extra information from the trace
+> decoder, requiring version 0.10.0 of OpenCSD.  A check for the OpenCSD
+> library version has been added to the feature check for OpenCSD.
 > 
-> Just need to get the other LED patches done.
-
-In the current shape only the properties from the last parsed child node
-will be used for initializing the LED class device. So, this should be
-meant also a fix removing this obscurity. Worth mentioning in the commit
-message. Or I'm not getting it right?
-
->> +	child_node = of_get_next_available_child(np, NULL);
->> +	if (!child_node)
->> +		return -EINVAL;
->> +
->> +	init_data.fwnode = of_fwnode_handle(child_node),
->> +
->> +	led->led_dev.default_trigger = of_get_property(child_node,
->> +					    "linux,default-trigger",
->> +					    NULL);
->> +
->> +	ret = led_compose_name(init_data.fwnode, LP8860_NAME,
->> +			       ":display_cluster", init_data.name);
+> Signed-off-by: Robert Walker <robert.walker@arm.com>
+> ---
+>  tools/build/feature/test-libopencsd.c           |  8 +++
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 29 ++++++++++
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 10 ++++
+>  tools/perf/util/cs-etm.c                        | 71 +++++++++++--------------
+>  4 files changed, 78 insertions(+), 40 deletions(-)
 > 
-> Should we use the #defines here for display_cluster?
+> diff --git a/tools/build/feature/test-libopencsd.c b/tools/build/feature/test-libopencsd.c
+> index 5ff1246..d68eb4f 100644
+> --- a/tools/build/feature/test-libopencsd.c
+> +++ b/tools/build/feature/test-libopencsd.c
+> @@ -1,6 +1,14 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <opencsd/c_api/opencsd_c_api.h>
+>  
+> +/*
+> + * Check OpenCSD library version is sufficient to provide required features
+> + */
+> +#define OCSD_MIN_VER ((0 << 16) | (10 << 8) | (0))
+> +#if !defined(OCSD_VER_NUM) || (OCSD_VER_NUM < OCSD_MIN_VER)
+> +#error "OpenCSD >= 0.10.0 is required"
+> +#endif
+> +
+>  int main(void)
+>  {
+>  	(void)ocsd_get_version();
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> index 938def6..5efb616 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> @@ -263,9 +263,12 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
+>  	decoder->tail = 0;
+>  	decoder->packet_count = 0;
+>  	for (i = 0; i < MAX_BUFFER; i++) {
+> +		decoder->packet_buffer[i].isa = CS_ETM_ISA_UNKNOWN;
+>  		decoder->packet_buffer[i].start_addr = CS_ETM_INVAL_ADDR;
+>  		decoder->packet_buffer[i].end_addr = CS_ETM_INVAL_ADDR;
+> +		decoder->packet_buffer[i].instr_count = 0;
+>  		decoder->packet_buffer[i].last_instr_taken_branch = false;
+> +		decoder->packet_buffer[i].last_instr_size = 0;
+>  		decoder->packet_buffer[i].exc = false;
+>  		decoder->packet_buffer[i].exc_ret = false;
+>  		decoder->packet_buffer[i].cpu = INT_MIN;
+> @@ -294,11 +297,15 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+>  	decoder->packet_count++;
+>  
+>  	decoder->packet_buffer[et].sample_type = sample_type;
+> +	decoder->packet_buffer[et].isa = CS_ETM_ISA_UNKNOWN;
+>  	decoder->packet_buffer[et].exc = false;
+>  	decoder->packet_buffer[et].exc_ret = false;
+>  	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
+>  	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
+>  	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
+> +	decoder->packet_buffer[et].instr_count = 0;
+> +	decoder->packet_buffer[et].last_instr_taken_branch = false;
+> +	decoder->packet_buffer[et].last_instr_size = 0;
+>  
+>  	if (decoder->packet_count == MAX_BUFFER - 1)
+>  		return OCSD_RESP_WAIT;
+> @@ -321,8 +328,28 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+>  
+>  	packet = &decoder->packet_buffer[decoder->tail];
+>  
+> +	switch (elem->isa) {
+> +	case ocsd_isa_aarch64:
+> +		packet->isa = CS_ETM_ISA_A64;
+> +		break;
+> +	case ocsd_isa_arm:
+> +		packet->isa = CS_ETM_ISA_A32;
+> +		break;
+> +	case ocsd_isa_thumb2:
+> +		packet->isa = CS_ETM_ISA_T32;
+> +		break;
+> +	case ocsd_isa_tee:
+> +	case ocsd_isa_jazelle:
+> +	case ocsd_isa_custom:
+> +	case ocsd_isa_unknown:
+> +	default:
+> +		packet->isa = CS_ETM_ISA_UNKNOWN;
+> +	}
+> +
+>  	packet->start_addr = elem->st_addr;
+>  	packet->end_addr = elem->en_addr;
+> +	packet->instr_count = elem->num_instr_range;
+> +
+>  	switch (elem->last_i_type) {
+>  	case OCSD_INSTR_BR:
+>  	case OCSD_INSTR_BR_INDIRECT:
+> @@ -336,6 +363,8 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+>  		break;
+>  	}
+>  
+> +	packet->last_instr_size = elem->last_instr_sz;
+> +
+>  	return ret;
+>  }
+>  
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> index 612b575..9351bd1 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> @@ -28,11 +28,21 @@ enum cs_etm_sample_type {
+>  	CS_ETM_TRACE_ON = 1 << 1,
+>  };
+>  
+> +enum cs_etm_isa {
+> +	CS_ETM_ISA_UNKNOWN,
+> +	CS_ETM_ISA_A64,
+> +	CS_ETM_ISA_A32,
+> +	CS_ETM_ISA_T32,
+> +};
+> +
+>  struct cs_etm_packet {
+>  	enum cs_etm_sample_type sample_type;
+> +	enum cs_etm_isa isa;
+>  	u64 start_addr;
+>  	u64 end_addr;
+> +	u32 instr_count;
+>  	u8 last_instr_taken_branch;
+> +	u8 last_instr_size;
+>  	u8 exc;
+>  	u8 exc_ret;
+>  	int cpu;
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index 73430b7..cad133c 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -31,14 +31,6 @@
+>  
+>  #define MAX_TIMESTAMP (~0ULL)
+>  
+> -/*
+> - * A64 instructions are always 4 bytes
+> - *
+> - * Only A64 is supported, so can use this constant for converting between
+> - * addresses and instruction counts, calculting offsets etc
+> - */
+> -#define A64_INSTR_SIZE 4
+> -
+>  struct cs_etm_auxtrace {
+>  	struct auxtrace auxtrace;
+>  	struct auxtrace_queues queues;
+> @@ -510,21 +502,16 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
+>  	etmq->last_branch_rb->nr = 0;
+>  }
+>  
+> -static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+> -{
+> -	/* Returns 0 for the CS_ETM_TRACE_ON packet */
+> -	if (packet->sample_type == CS_ETM_TRACE_ON)
+> -		return 0;
+> +static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
+> +					 u64 addr) {
+> +	u8 instrBytes[2];
+>  
+> -	/*
+> -	 * The packet records the execution range with an exclusive end address
+> -	 *
+> -	 * A64 instructions are constant size, so the last executed
+> -	 * instruction is A64_INSTR_SIZE before the end address
+> -	 * Will need to do instruction level decode for T32 instructions as
+> -	 * they can be variable size (not yet supported).
+> +	cs_etm__mem_access(etmq, addr, ARRAY_SIZE(instrBytes), instrBytes);
+> +	/* T32 instruction size is indicated by bits[15:11] of the first
+> +	 * 16-bit word of the instruction: 0b11101, 0b11110 and 0b11111
+> +	 * denote a 32-bit instruction.
+>  	 */
 
-Right, will fix in the next version.
+Event if checkpatch doesn't complain the opening of a multi-line comment should
+sit on a line by itself, like below: 
 
->> +	if (ret)
->> +		return ret;
->>  
->>  	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
->>  						   "enable", GPIOD_OUT_LOW);
->> @@ -420,7 +420,6 @@ static int lp8860_probe(struct i2c_client *client,
->>  		led->regulator = NULL;
->>  
->>  	led->client = client;
->> -	led->led_dev.name = led->label;
->>  	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
->>  
->>  	mutex_init(&led->lock);
->> @@ -447,7 +446,8 @@ static int lp8860_probe(struct i2c_client *client,
->>  	if (ret)
->>  		return ret;
->>  
->> -	ret = devm_led_classdev_register(&client->dev, &led->led_dev);
->> +	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev,
->> +					     &init_data);
->>  	if (ret) {
->>  		dev_err(&client->dev, "led register err: %d\n", ret);
->>  		return ret;
->>
+
+	/*
+         * T32 instruction size is indicated by bits[15:11] of the first
+	 * 16-bit word of the instruction: 0b11101, 0b11110 and 0b11111
+         * denote a 32-bit instruction.
+         */
+
+Please address and resend.
+
+Thanks,
+Mathieu
+
+> -	return packet->end_addr - A64_INSTR_SIZE;
+> +	return ((instrBytes[1] & 0xF8) >= 0xE8) ? 4 : 2;
+>  }
+>  
+>  static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+> @@ -536,27 +523,32 @@ static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+>  	return packet->start_addr;
+>  }
+>  
+> -static inline u64 cs_etm__instr_count(const struct cs_etm_packet *packet)
+> +static inline
+> +u64 cs_etm__last_executed_instr(const struct cs_etm_packet *packet)
+>  {
+> -	/*
+> -	 * Only A64 instructions are currently supported, so can get
+> -	 * instruction count by dividing.
+> -	 * Will need to do instruction level decode for T32 instructions as
+> -	 * they can be variable size (not yet supported).
+> -	 */
+> -	return (packet->end_addr - packet->start_addr) / A64_INSTR_SIZE;
+> +	/* Returns 0 for the CS_ETM_TRACE_ON packet */
+> +	if (packet->sample_type == CS_ETM_TRACE_ON)
+> +		return 0;
+> +
+> +	return packet->end_addr - packet->last_instr_size;
+>  }
+>  
+> -static inline u64 cs_etm__instr_addr(const struct cs_etm_packet *packet,
+> +static inline u64 cs_etm__instr_addr(struct cs_etm_queue *etmq,
+> +				     const struct cs_etm_packet *packet,
+>  				     u64 offset)
+>  {
+> -	/*
+> -	 * Only A64 instructions are currently supported, so can get
+> -	 * instruction address by muliplying.
+> -	 * Will need to do instruction level decode for T32 instructions as
+> -	 * they can be variable size (not yet supported).
+> -	 */
+> -	return packet->start_addr + offset * A64_INSTR_SIZE;
+> +	if (packet->isa == CS_ETM_ISA_T32) {
+> +		u64 addr = packet->start_addr;
+> +
+> +		while (offset > 0) {
+> +			addr += cs_etm__t32_instr_size(etmq, addr);
+> +			offset--;
+> +		}
+> +		return addr;
+> +	}
+> +
+> +	/* Assume a 4 byte instruction size (A32/A64) */
+> +	return packet->start_addr + offset * 4;
+>  }
+>  
+>  static void cs_etm__update_last_branch_rb(struct cs_etm_queue *etmq)
+> @@ -888,9 +880,8 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+>  	struct cs_etm_auxtrace *etm = etmq->etm;
+>  	struct cs_etm_packet *tmp;
+>  	int ret;
+> -	u64 instrs_executed;
+> +	u64 instrs_executed = etmq->packet->instr_count;
+>  
+> -	instrs_executed = cs_etm__instr_count(etmq->packet);
+>  	etmq->period_instructions += instrs_executed;
+>  
+>  	/*
+> @@ -920,7 +911,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+>  		 * executed, but PC has not advanced to next instruction)
+>  		 */
+>  		u64 offset = (instrs_executed - instrs_over - 1);
+> -		u64 addr = cs_etm__instr_addr(etmq->packet, offset);
+> +		u64 addr = cs_etm__instr_addr(etmq, etmq->packet, offset);
+>  
+>  		ret = cs_etm__synth_instruction_sample(
+>  			etmq, addr, etm->instructions_sample_period);
+> -- 
+> 2.7.4
 > 
-> 
-
--- 
-Best regards,
-Jacek Anaszewski
