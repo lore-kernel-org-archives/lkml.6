@@ -2,103 +2,82 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B27AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B930ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C3E220857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 359A720883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:46:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWIGuw95"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C3E220857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vuIC7TsB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 359A720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeKIBWc (ORCPT
+        id S1727180AbeKIBWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:22:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbeKIBWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:22:31 -0500
-Received: from localhost (unknown [63.64.74.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F79620827;
-        Thu,  8 Nov 2018 15:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541691986;
-        bh=kRFugjfvWuqdDl3LsfXmYiIg3gJ2bJePGUZstk7YSZk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LWIGuw95HtqlpXKAkUiKwCkilZjKkpvubtAnrgoVoqGB5clVLTWz+kFUilnsXSXnC
-         LEsjXjojDmmLDl24eZdulUM1qsfneAazi0DFIGLoynBjDePHKTHvACar6F4sfX6koN
-         lgs1EPaN9Ue3anl87rVTDUdX0k+UT+teseV1N8bg=
-Date:   Thu, 8 Nov 2018 10:46:25 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>,
-        stable@vger.kernel.org, gregkh@linuxfoundation.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: [PATCH stable 4.9] posix-timers: Sanitize overrun handling
-Message-ID: <20181108154625.GC8097@sasha-vm>
-References: <1541102558-14839-1-git-send-email-f.fainelli@gmail.com>
- <6341cf9e-b2aa-9447-88e9-ad89ab42a641@gmail.com>
- <alpine.DEB.2.21.1811080747450.1666@nanos.tec.linutronix.de>
+        Thu, 8 Nov 2018 20:22:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:38742 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeKIBWn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 20:22:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zRIBLWsw80zYbxzgs3jgsZeBfHdU+bZkwp0KRbzrlWU=; b=vuIC7TsB1/mdZF2zuBxuSbC60
+        kLh7CERmaQnIb9yqgVlwa5V7CypLACpvgBQDgRxRVeSUhIrXjL8ToG9CkR9RBPUi9prQag4gJ0Dkw
+        M8KeUG/xNBGsb+vZ5Q98UGB+aJ7QtaNDVobHS2EnKLSMEUngDSwrlg5zFJUcmOqtVqeS7SfwP8sRG
+        WK0GR3DwoDq5ZPxxurG8kNpRQH/JsBwecQ8Z0meZtpriC6MSRkFwIoCsuHvJLa6OS/hrMa8vdq9VF
+        49LvCBIvbWf99fA8EBDXi8sEsG7pov1JF0PmKbAYveJdtbY735u/OyQ/8hL/vkN9A1928mT5r+LNk
+        JeN6tUoRg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKmVe-000317-T8; Thu, 08 Nov 2018 15:46:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0D05520284F98; Thu,  8 Nov 2018 16:46:17 +0100 (CET)
+Date:   Thu, 8 Nov 2018 16:46:17 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>
+Subject: Re: [PATCH v15 12/12] cpuset: Expose cpuset.cpus.subpartitions with
+ cgroup_debug
+Message-ID: <20181108154617.GX9761@hirez.programming.kicks-ass.net>
+References: <1541689726-20088-1-git-send-email-longman@redhat.com>
+ <1541689726-20088-13-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811080747450.1666@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1541689726-20088-13-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 07:48:16AM +0100, Thomas Gleixner wrote:
->Florian,
->
->On Wed, 7 Nov 2018, Florian Fainelli wrote:
->> On 11/1/18 1:02 PM, Florian Fainelli wrote:
->> > From: Thomas Gleixner <tglx@linutronix.de>
->> >
->> > [ Upstream commit 78c9c4dfbf8c04883941445a195276bb4bb92c76 ]
->> >
->> > The posix timer overrun handling is broken because the forwarding functions
->> > can return a huge number of overruns which does not fit in an int. As a
->> > consequence timer_getoverrun(2) and siginfo::si_overrun can turn into
->> > random number generators.
->> >
->> > The k_clock::timer_forward() callbacks return a 64 bit value now. Make
->> > k_itimer::ti_overrun[_last] 64bit as well, so the kernel internal
->> > accounting is correct. 3Remove the temporary (int) casts.
->> >
->> > Add a helper function which clamps the overrun value returned to user space
->> > via timer_getoverrun(2) or siginfo::si_overrun limited to a positive value
->> > between 0 and INT_MAX. INT_MAX is an indicator for user space that the
->> > overrun value has been clamped.
->> >
->> > Reported-by: Team OWL337 <icytxw@gmail.com>
->> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> > Acked-by: John Stultz <john.stultz@linaro.org>
->> > Cc: Peter Zijlstra <peterz@infradead.org>
->> > Cc: Michael Kerrisk <mtk.manpages@gmail.com>
->> > Link: https://lkml.kernel.org/r/20180626132705.018623573@linutronix.de
->> > [florian: Make patch apply to v4.9.135]
->> > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> > ---
->> > Thomas, can you review for correctness? Thanks!
->>
->> Thomas, John, does that look like a reasonable backport for 4.9?
->
->Looks correct.
+On Thu, Nov 08, 2018 at 10:08:46AM -0500, Waiman Long wrote:
+> For debugging purpose, it will be useful to expose the content of the
+> subparts_cpus as a read-only file to see if the code work correctly.
+> However, subparts_cpus will not be used at all in most use cases. So
+> adding a new cpuset file that clutters the cgroup directory may not be
+> desirable.  This is now being done by using the hidden "cgroup_debug"
+> kernel command line option to expose a new "cpuset.cpus.subpartitions"
+> file.
 
-Queued for 4.9, thanks all.
-
---
-Thanks,
-Sasha
+One thought I had; would it make sense to make these debug files hidden
+("." prefix) ?
