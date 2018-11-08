@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6501FC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19695C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1627C20883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:30:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D45412086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 01:30:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NItIiraf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1627C20883
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Sk+o5pG4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45412086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeKHLDc (ORCPT
+        id S1728424AbeKHLDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:03:32 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41151 "EHLO
+        Thu, 8 Nov 2018 06:03:33 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45891 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbeKHLDb (ORCPT
+        with ESMTP id S1727724AbeKHLDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:03:31 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p16-v6so8717582plr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 17:30:32 -0800 (PST)
+        Thu, 8 Nov 2018 06:03:33 -0500
+Received: by mail-pl1-f194.google.com with SMTP id o19-v6so8698675pll.12
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 17:30:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=x4pFw2vdIAJVQqz/kIg/xicKAgUdzsboEqQHhul6Xyw=;
-        b=NItIirafl+BUiRmWKOg2ujLPSohIb+81UXbkcFWJaX0gqZu4GwBel6khTSnWKxUKyw
-         C9X3/P5KGHC6CS399PYYPw4kXYorHKby3Oz2RGD59p8CjsWRcLK1fsY3WZN9rKiDKu0u
-         7iZyH+VC8jI/j8+Rm6BZozC9UkDtMT9hpV+BU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=PZM37ydsAhx9pb+GHNLecqfSXNwveIWhX5+XzvfOUiE=;
+        b=Sk+o5pG4etRdpHiTtcrVfO+bMRQ4jdAODTCyAGpW8xzWFOvoEHvLhvF0DxWv9JNJ7A
+         3Idag2NEhY1Id3kO5ostkMtcPIBdWzcyONI73uNHFvHx0AHLXPJSLlH7MEAyYX6hpHYh
+         rDU1dhI5W48xlsijr6HsFrfEv0CX9uZz0ppKc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=x4pFw2vdIAJVQqz/kIg/xicKAgUdzsboEqQHhul6Xyw=;
-        b=B4LCFBAKZjc9VP4LEF28LlFV8SwT9hjTmOUFOJtkWHEkITvHbd7cPK5qRPk9kwUTHy
-         v9e/x+jrqnv8cTDg9Twd7lazTOr9eAvZMCWxHQVr5irm5l7nEO/jAYyeOT5ykZya/bAd
-         kBGq2TxERqyoCj8NfOnEdUIfjzXtLXEVWbj0L8C8vj3GyuKLFr22ZRWmZYNHrdo1i0UQ
-         g6ie3e0F+ufAAo7Gkm4jWYnvrSqsO+Ttc1RdflRpqCZVm4+jo725DyW7QxQ2mijaV6FY
-         WLAeH06LhLPBc5NKGzalp/dh/gZWmsWtxPldnpJD439Xv4NML9u929L0bXHuTYVUfaQh
-         ZbBQ==
-X-Gm-Message-State: AGRZ1gJNpVNFAXbbqoqJkxvJrTC94kStVi5F2UWoTqOK9Y37GecBHi+c
-        cSnftXTRD7pOL+XSIBOxq2o4UA==
-X-Google-Smtp-Source: AJdET5fbIDq/90MJ6KK2zE0YYz0Rr44nNIINP+F3jDmJVoJskP47ol45xw1/z/QZhl948hY41YIRlw==
-X-Received: by 2002:a17:902:a9cb:: with SMTP id b11-v6mr2577029plr.219.1541640631504;
-        Wed, 07 Nov 2018 17:30:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PZM37ydsAhx9pb+GHNLecqfSXNwveIWhX5+XzvfOUiE=;
+        b=rfVJRRMlADfMbDrzfd6ieNMYccq2wBpqF6PzmFRSI7RjJ03ER011P0eVRv7+rBwa/F
+         g2L1E8uHHmYJEhGlkI2i2FE96m88vY4xQn0ARoZ/Z8064gM5mUlDi5hdXN6LbQ4otsw4
+         6nDGUzuJquYHyGda86VYg5D8stlNlLzbXiu32marMydV0UbJWqsEJgtf3/sUMRQpOQft
+         naB2LfX0xqTbzwM9OOJTCzNnS6tIptJweSr0cIeHwapRuOHJr6LPgMRaiHsxgJuBE74i
+         2psFyiuMooFgwyXRH8mnMjghEP/QMBOa9iBn20gUsx32meOKoS8C3gHh3Ba2mYOeBRJX
+         NMOw==
+X-Gm-Message-State: AGRZ1gL2yhM6kHdjLRzeGS40aw724gpBfJRbGeAvdi/Akr4BBR9AT5aw
+        PC5CllnIkbg8l/6cX4zVSBsu8A==
+X-Google-Smtp-Source: AJdET5cCQqxAEK19G+Ln7prH2lvUrUKFkcS3iffMQ3KclO4nDqV5OumJPa/6OQBvpERGvuyd7qIy8A==
+X-Received: by 2002:a17:902:6b88:: with SMTP id p8-v6mr2514280plk.19.1541640633019;
+        Wed, 07 Nov 2018 17:30:33 -0800 (PST)
 Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id l72-v6sm2323193pfi.149.2018.11.07.17.30.30
+        by smtp.gmail.com with ESMTPSA id l72-v6sm2323193pfi.149.2018.11.07.17.30.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 17:30:30 -0800 (PST)
+        Wed, 07 Nov 2018 17:30:32 -0800 (PST)
 From:   Brian Norris <briannorris@chromium.org>
 To:     Benson Leung <bleung@chromium.org>
 Cc:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
@@ -66,10 +66,12 @@ Cc:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
         Enrico Granata <egranata@chromium.org>,
         RaviChandra Sadineni <ravisadineni@chromium.org>,
         Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 1/2] platform/chrome: fixup cros_ec_get_next_event() error codes
-Date:   Wed,  7 Nov 2018 17:30:04 -0800
-Message-Id: <20181108013005.37362-1-briannorris@chromium.org>
+Subject: [PATCH 2/2] platform/chrome: don't report EC_MKBP_EVENT_SENSOR_FIFO as wakeup
+Date:   Wed,  7 Nov 2018 17:30:05 -0800
+Message-Id: <20181108013005.37362-2-briannorris@chromium.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+In-Reply-To: <20181108013005.37362-1-briannorris@chromium.org>
+References: <20181108013005.37362-1-briannorris@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,102 +79,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cros_ec_get_next_event() is documented to return 0 for success and
-negative for errors. It currently returns negative for some errors, and
-non-negative (number of bytes received) for success (including some "no
-data available" responses as zero). This works out OK, because the
-callers were more or less ignoring the documentation, and only treating
-positive values as success (and indepdently checking the modification of
-'wakeup').
+EC_MKBP_EVENT_SENSOR_FIFO events can be triggered for a variety of
+reasons, and there are very few cases in which they should be treated as
+wakeup interrupts (particularly, when a certain
+MOTIONSENSE_MODULE_FLAG_* is set, but this is not even supported in the
+mainline cros_ec_sensor driver yet). Most of the time, they are benign
+sensor readings. In any case, the top-level cros_ec device doesn't know
+enough to determine that they should wake the system, and so it should
+not report the event. This would be the job of the cros_ec_sensors
+driver to parse.
 
-This is difficult to reason about though, and it makes it harder to
-refactor cros_ec_get_next_event() without breaking its users. So
-instead, I
-(a) make cros_ec_get_next_event() match its documentation and
-(b) change the users to treat non-negative as success.
+This patch adds checks to cros_ec_get_next_event() such that it doesn't
+signal 'wakeup' for events of type EC_MKBP_EVENT_SENSOR_FIFO.
 
-This change tries to match a roughly similar pattern to
-cros_ec_cmd_xfer_status(), where most non-zero result codes are treated
-as an error -- in this case, all protocol errors (including
-EC_RES_UNAVAILABLE) are treated as "no data available."
+This patch is particularly relevant on devices like Scarlet (Rockchip
+RK3399 tablet, known as Acer Chromebook Tab 10), where the EC firmware
+reports sensor events much more frequently. This was causing
+/sys/power/wakeup_count to increase very frequently, often needlessly
+interrupting our ability to suspend the system.
 
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
-This barely touches MFD code, but overall this series should probably go
-through the platform/chrome maintenance, IMO.
----
- drivers/mfd/cros_ec.c                   |  4 ++--
- drivers/platform/chrome/cros_ec_lpc.c   |  2 +-
- drivers/platform/chrome/cros_ec_proto.c | 13 ++++++++++---
- 3 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/platform/chrome/cros_ec_proto.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index fe6f83766144..807a5870198d 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -67,7 +67,7 @@ static irqreturn_t ec_irq_thread(int irq, void *data)
- 	if (wake_event && device_may_wakeup(ec_dev->dev))
- 		pm_wakeup_event(ec_dev->dev, 0);
- 
--	if (ret > 0)
-+	if (ret >= 0)
- 		blocking_notifier_call_chain(&ec_dev->event_notifier,
- 					     0, ec_dev);
- 	return IRQ_HANDLED;
-@@ -219,7 +219,7 @@ EXPORT_SYMBOL(cros_ec_suspend);
- static void cros_ec_report_events_during_suspend(struct cros_ec_device *ec_dev)
- {
- 	while (ec_dev->mkbp_event_supported &&
--	       cros_ec_get_next_event(ec_dev, NULL) > 0)
-+	       cros_ec_get_next_event(ec_dev, NULL) >= 0)
- 		blocking_notifier_call_chain(&ec_dev->event_notifier,
- 					     1, ec_dev);
- }
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index e1b75775cd4a..292408eefe43 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -235,7 +235,7 @@ static void cros_ec_lpc_acpi_notify(acpi_handle device, u32 value, void *data)
- 	struct cros_ec_device *ec_dev = data;
- 
- 	if (ec_dev->mkbp_event_supported &&
--	    cros_ec_get_next_event(ec_dev, NULL) > 0)
-+	    cros_ec_get_next_event(ec_dev, NULL) >= 0)
- 		blocking_notifier_call_chain(&ec_dev->event_notifier, 0,
- 					     ec_dev);
- 
 diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index b6fd4838f60f..49625836fdd6 100644
+index 49625836fdd6..d2a372453628 100644
 --- a/drivers/platform/chrome/cros_ec_proto.c
 +++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -541,8 +541,12 @@ static int get_next_event(struct cros_ec_device *ec_dev)
- 	if (cmd_version == 1) {
- 		ret = get_next_event_xfer(ec_dev, msg, cmd_version,
- 				sizeof(struct ec_response_get_next_event_v1));
--		if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
-+		if (ret < 0)
- 			return ret;
-+		if (msg->result == EC_RES_SUCCESS)
-+			return 0;
-+		if (msg->result != EC_RES_INVALID_VERSION)
-+			return -ENODATA;
+@@ -582,6 +582,7 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
  
- 		/* Fallback to version 0 for future send attempts */
- 		cmd_version = 0;
-@@ -550,8 +554,11 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
+ {
++	u8 event_type;
+ 	u32 host_event;
+ 	int ret;
  
- 	ret = get_next_event_xfer(ec_dev, msg, cmd_version,
- 				  sizeof(struct ec_response_get_next_event));
--
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	if (msg->result != EC_RES_SUCCESS)
-+		return -ENODATA;
-+	return 0;
- }
+@@ -601,11 +602,22 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
+ 		return ret;
  
- static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
+ 	if (wake_event) {
++		event_type = ec_dev->event_data.event_type;
+ 		host_event = cros_ec_get_host_event(ec_dev);
+ 
+-		/* Consider non-host_event as wake event */
+-		*wake_event = !host_event ||
+-			      !!(host_event & ec_dev->host_event_wake_mask);
++		/*
++		 * Sensor events need to be parsed by the sensor sub-device.
++		 * Defer them, and don't report the wakeup here.
++		 */
++		if (event_type == EC_MKBP_EVENT_SENSOR_FIFO)
++			*wake_event = false;
++		/* Masked host-events should not count as wake events. */
++		else if (host_event &&
++			 !(host_event & ec_dev->host_event_wake_mask))
++			*wake_event = false;
++		/* Consider all other events as wake events. */
++		else
++			*wake_event = true;
+ 	}
+ 
+ 	return ret;
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
