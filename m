@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED51ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFCDECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B887920827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7909620817
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:15:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="FOrfKMg/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B887920827
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="aCYQCjm/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7909620817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeKICv6 (ORCPT
+        id S1727413AbeKICwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:51:58 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:39122 "EHLO
+        Thu, 8 Nov 2018 21:52:03 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:39164 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbeKICv5 (ORCPT
+        with ESMTP id S1727253AbeKICwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:51:57 -0500
+        Thu, 8 Nov 2018 21:52:03 -0500
 Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 697CB24E0A3F;
-        Thu,  8 Nov 2018 09:15:28 -0800 (PST)
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 184A124E0B36;
+        Thu,  8 Nov 2018 09:15:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1541697330; bh=qVtF7vWHWZeNlCTIaCpsKWl3dh9738MJPCMxjNuA/xc=;
+        t=1541697336; bh=YMV2EFBoLYhOoKnOkwbzZ1n4tuSmXuF/10Wz9MAagG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FOrfKMg/qVYtBGxYJCGZ4ja94JF6vwXvTiaPTBXvM9uFSo51MvkWrobNw+nL0krtP
-         Iv6Ei7B/UQMiT12nz0PomBkgvZwxjxp7jMk/L1EsRNI4EYBsVrUYrKK3zk465A5Wcg
-         SnCb6YDkRkliMQGRMu1Hlb6TbL2/0LSXtB2RJ6xhGh3CTpAHvE/Anlg0WnWOIufjQs
-         3N52UPltgyPISPT0LSF1cox1ulaJhzpM84CPcLK2NCNhbH+huzl40KTKXRR6wZVsWF
-         OahmdZV/L1ng66fT8a/Le3l1xZGLR1eNCIDzg2Dfl3ffaLWMTelOLhClkG4aWV0MPt
-         aHVI6FBceC9iw==
+        b=aCYQCjm/6bYsV6EwP5uqYY0zdkGzSUS0js26+8TIRyybfjWUTy/q3JG+sjGfcESbL
+         Ugdu9mAbxRs8jEcomku9fx55ulBsQOUKXi5slZ18J11dX1liRQ4jtCgdJDyph3195e
+         U2b47FjCVecUgkZN8HPz+MCwxqJjAb3V5pZZHNe91+x9EI0YAckkfEX2X+CKYdKqVp
+         skCdogRCais9jS88wAqOhZPPqt+2dhaWe72R7LcMvfA93L/UVqj/6GcgSkSAVpE4Sb
+         6dZRiuNc6y3pEH4pvORebhKsIGPQ97O/Qtd+dp2EHLSFTVsv21Ek0rjtck4MT7A96m
+         yQvIV68RWwNVw==
 Received: from vitor-VirtualBox.internal.synopsys.com (soares-e7470.internal.synopsys.com [10.107.19.145])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 5336457AD;
-        Thu,  8 Nov 2018 09:15:20 -0800 (PST)
+        by mailhost.synopsys.com (Postfix) with ESMTP id CCD9657F7;
+        Thu,  8 Nov 2018 09:15:28 -0800 (PST)
 From:   Vitor soares <vitor.soares@synopsys.com>
 To:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
         linux-i2c@vger.kernel.org, corbet@lwn.net,
@@ -58,9 +58,9 @@ Cc:     psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com,
         linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com,
         peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org,
         joao.pinto@synopsys.com
-Subject: [PATCH v3 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C master bindings
-Date:   Thu,  8 Nov 2018 17:14:10 +0000
-Message-Id: <1541697251-20392-3-git-send-email-soares@synopsys.com>
+Subject: [PATCH v3 3/3] MAINTAINERS: Add myself as the dw-i3c-master module maintainer
+Date:   Thu,  8 Nov 2018 17:14:11 +0000
+Message-Id: <1541697251-20392-4-git-send-email-soares@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541697251-20392-1-git-send-email-soares@synopsys.com>
 References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
@@ -69,69 +69,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document Synopsys DesignWare I3C master module
-
 Signed-off-by: Vitor soares <soares@synopsys.com>
 ---
-Changes in v3:
+Change in v3:
 - Remove dummy characters
 
-Changes in v2:
-- Address the changes in Documentation/devicetree/bindings/i3c/i3c.txt
-- Add controller version on compatible string
+Change in v2:
+- None
 
- .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-new file mode 100644
-index 0000000..b930c09
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-@@ -0,0 +1,42 @@
-+Bindings for Synopsys DesignWare I3C master block
-+=================================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 293c863..39910b3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6930,6 +6930,12 @@ F:	drivers/i3c/
+ F:	include/linux/i3c/
+ F:	include/dt-bindings/i3c/
+ 
++I3C DRIVER FOR SYNOPSYS DESIGNWARE
++M:	Vitor Soares <soares@synopsys.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
++F:	drivers/i3c/master/dw*
 +
-+Required properties:
-+--------------------
-+- compatible: shall be "snps,dw-i3c-master-1.00a"
-+- clocks: shall reference the core_clk
-+- interrupts: the interrupt line connected to this I3C master
-+- reg: Offset and length of I3C master registers
-+
-+Mandatory properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- #address-cells: shall be set to 3
-+- #size-cells: shall be set to 0
-+
-+Optional properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- i2c-scl-hz
-+- i3c-scl-hz
-+
-+I3C device connected on the bus follow the generic description (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details).
-+
-+Example:
-+
-+	i3c-master@2000 {
-+		compatible = "snps,dw-i3c-master-1.00a";
-+		#address-cells = <3>;
-+		#size-cells = <0>;
-+		reg = <0x02000 0x1000>;
-+		interrupts = <0>;
-+		clocks = <&i3cclk>;
-+
-+		eeprom@57{
-+			compatible = "atmel,24c01";
-+			reg = < 0x57 0x0 0x10>;
-+			pagesize = <0x8>;
-+		};
-+	};
-+
+ IA64 (Itanium) PLATFORM
+ M:	Tony Luck <tony.luck@intel.com>
+ M:	Fenghua Yu <fenghua.yu@intel.com>
 -- 
 2.7.4
 
