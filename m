@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF034C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CB8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A62F120844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0681C20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:25:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="IjDQLDoW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A62F120844
+	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="G8/FE/FE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0681C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbeKIJC6 (ORCPT
+        id S1727463AbeKIJDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 04:02:58 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:58596 "EHLO mx.kolabnow.com"
+        Fri, 9 Nov 2018 04:03:02 -0500
+Received: from mx.kolabnow.com ([95.128.36.42]:34730 "EHLO mx.kolabnow.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbeKIJC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 04:02:58 -0500
+        id S1725922AbeKIJDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 04:03:00 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out001.mykolab.com (Postfix) with ESMTP id B2770804;
-        Fri,  9 Nov 2018 00:25:05 +0100 (CET)
+        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id 9C48D40498;
+        Fri,  9 Nov 2018 00:25:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
         content-transfer-encoding:content-type:content-type:mime-version
         :references:in-reply-to:message-id:date:date:subject:subject
         :from:from:received:received:received; s=dkim20160331; t=
-        1541719504; x=1543533905; bh=S4P+esw0e3XxDpKRX8/3D8RiUBSmReRCOUO
-        AxxnySAo=; b=IjDQLDoWAEtJBu1D8VzXrbLJfI12MgVaztitgi3pH81WUPORLAF
-        62YUL4uvLqlQfeivyeWWHngfPOAyKTk/vi2v6b5YA7CE5eEs989u/7w6H2JqQSaF
-        WaebE6d1uV4nOh06i+Lo4aAH54/byELZTbJkljZgYdTyY8qLx3/wKPO8WE1qmQOV
-        G02DHibOcRvPPQmEdICulghviKI+WQEtJs3LmkXzZqZ9/lrfM16QYjofbVeQ0sIZ
-        ir8NPIUEVToGVxRMtQvAZJ4bkq9h8PazQc+nHxxkMCC8sbkYx6/sVZ3F9dmf9oW3
-        aMTKZWQoavVFtvFv2FF1Rc32yidcdY/Bcoon4eTbvdN/wSFkaatEnFnqmwF2tVMp
-        3ybCvONGMGj1ioV27JtpnUYFNqC4gLstc2vMS/cAId69EoXm8zL8ZdLCmPG+KpMl
-        ntDauCNekGGO1wbBGFXgdVk3qMxJiFNe93rLNmXl8XxkoyPLFPj7M972ooet8u8i
-        DdPk/sH1gybhwjDCHM/B+mMJmcQOhV9K0efGWO6/RueC1z79RD/6R02gbbM9PCKj
-        c7d5caZNhzkeAdhWhBsiDUnm1bHepLia9IIdGVwZYfIPC62MSlEG2lZGKM605JAA
-        2rk2Mv8BnRA4IRY5iDJL71HAmiJvDeFJK0DvJgWZOUkLiTX224AJaVyo=
+        1541719507; x=1543533908; bh=sosOOG4S7ZVAH0KBW1GrMurDPj+6dQqHbNp
+        ziQe8Xw0=; b=G8/FE/FELZ+iFc9m0PvSGx2e3piq/HQZQJYY0+ZyU8xplndcxO9
+        O3GhqgcxgkpIzfRxKqnEmeIH1sIERbGVm4r9yD1g6Uh9zum23jydJgwa6asdlCzz
+        1ApSc4IfXaE9328PWxFzcDjT/yk2QBEz8rsYn9eLrdXzvc/ob2yGPGtYgYxbx1JE
+        Z24gUV/wNuCo//plNQG56BhTaDqiv1fI/qpC5SDIOzT3sv+QiXPVmDIjvgXCIRms
+        6J6T5PwAUke+yS1QyWRFkqONLsFCQN6RGlVTahI1WMQd3wU0Cd77m1buo2E8gh/g
+        dk3MMXYvqO9XqzsJdOcDyeZmzB2iAmLlVOr4FcgmUfJMgRlTofq7kN4IDA94I4jg
+        IWXT9wEZne+A/8fgJw6SKqIlOK0SFUpowx4rcbFvyqY86qjSMDIkgTK35XsMxD7T
+        My8PMFksycGb7IUK+0X3SxGZu8mGlXy9vzHeznTywnReQ/IuJHGYi6C8HraoapBm
+        mgxW1sYSOdu0tpQdczRnzuxiiB4fo7fTZeX9rVt6fEbP+44mlyvju0pRlxgwOimt
+        aQTuYzxzadyAVgdhIQUWvhB1mRrPF6O5IBXnpqwXMjtDnKrAzRnNYmksUF0M5wDU
+        MNoPtiUa/XiIQQ3qC2jOQDfPofsspXDjBmCE7+1SHUNTEvEqlP1aRWh8=
 X-Virus-Scanned: amavisd-new at mykolab.com
 Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out001.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6JHcxClbMaAj; Fri,  9 Nov 2018 00:25:04 +0100 (CET)
-Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
-        by ext-mx-out001.mykolab.com (Postfix) with ESMTPS id C20BB2ED;
-        Fri,  9 Nov 2018 00:25:04 +0100 (CET)
+        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TEBKA5R9TNJr; Fri,  9 Nov 2018 00:25:07 +0100 (CET)
+Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
+        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id 059A0403A1;
+        Fri,  9 Nov 2018 00:25:07 +0100 (CET)
 Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
-        by int-mx003.mykolab.com (Postfix) with ESMTPS id 32DFCA87;
-        Fri,  9 Nov 2018 00:25:04 +0100 (CET)
+        by int-mx001.mykolab.com (Postfix) with ESMTPS id A32CC2CB;
+        Fri,  9 Nov 2018 00:25:06 +0100 (CET)
 From:   Federico Vaga <federico.vaga@vaga.pv.it>
 To:     Jonathan Corbet <corbet@lwn.net>
 Cc:     Alessia Mantegazza <amantegazza@vaga.pv.it>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH 2/3] doc:it_IT: fix locking.rst section title
-Date:   Fri,  9 Nov 2018 00:24:16 +0100
-Message-Id: <20181108232417.14982-3-federico.vaga@vaga.pv.it>
+Subject: [PATCH 3/3] doc:it_IT:doc-guide: fix reference to foobar
+Date:   Fri,  9 Nov 2018 00:24:17 +0100
+Message-Id: <20181108232417.14982-4-federico.vaga@vaga.pv.it>
 In-Reply-To: <20181108232417.14982-1-federico.vaga@vaga.pv.it>
 References: <20181108232417.14982-1-federico.vaga@vaga.pv.it>
 MIME-Version: 1.0
@@ -71,28 +71,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This title was still in English. I just translated it
+Replicate the following patch into italian translation
+
+1bb37a35671c  doc-guide:kernel-doc.rst: Reference to foobar
 
 Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 ---
- Documentation/translations/it_IT/kernel-hacking/locking.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/translations/it_IT/doc-guide/kernel-doc.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/translations/it_IT/kernel-hacking/locking.rst b/Documentation/translations/it_IT/kernel-hacking/locking.rst
-index 753643622c23..0ef31666663b 100644
---- a/Documentation/translations/it_IT/kernel-hacking/locking.rst
-+++ b/Documentation/translations/it_IT/kernel-hacking/locking.rst
-@@ -593,8 +593,8 @@ l'opzione ``GFP_KERNEL`` che è permessa solo in contesto utente. Ho supposto
- che :c:func:`cache_add()` venga chiamata dal contesto utente, altrimenti
- questa opzione deve diventare un parametro di :c:func:`cache_add()`.
- 
--Exposing Objects Outside This File
------------------------------------
-+Esporre gli oggetti al di fuori del file
-+----------------------------------------
- 
- Se i vostri oggetti contengono più informazioni, potrebbe non essere
- sufficiente copiare i dati avanti e indietro: per esempio, altre parti del
+diff --git a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
+index 2bf1c1e2f394..a4ecd8f27631 100644
+--- a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
++++ b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
+@@ -107,7 +107,7 @@ macro simil-funzioni è il seguente::
+    * Context: Describes whether the function can sleep, what locks it takes,
+    *          releases, or expects to be held. It can extend over multiple
+    *          lines.
+-   * Return: Describe the return value of foobar.
++   * Return: Describe the return value of function_name.
+    *
+    * The return value description can also have multiple paragraphs, and should
+    * be placed at the end of the comment block.
 -- 
 2.19.1
 
