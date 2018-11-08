@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E02ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF36ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13BF520827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D03F020827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfFL32Wy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13BF520827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEBZdGtg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03F020827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeKID2i (ORCPT
+        id S1727517AbeKID2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:28:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40466 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 22:28:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeKID2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:28:37 -0500
+        id S1726672AbeKID2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:28:42 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6267D20827;
-        Thu,  8 Nov 2018 17:51:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 549BB20840;
+        Thu,  8 Nov 2018 17:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541699521;
-        bh=BvWmTYwG/te/rEc4vfHZJKVLXzNq82zOpHsOhYLG51M=;
+        s=default; t=1541699526;
+        bh=zZpXSbmNbp/b/hkBQO15rUMRnsw6ga9X7VfhMkxt3Y8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XfFL32WyO60stmztJXU+cdxnoPztkMMQDEcAPF1NLGrXYhAgOpjn1bKTF3kA6HRZI
-         rU9pLdKvPmVHjiiPZDiACH2j3ki99kM1WBw9Ak1QnmNy5bxR18wfUFcY66w1nYK+yo
-         4Rma++ZfI6n+b+7TuiX2Dk4hJeKNnRtwbyHPpX5k=
+        b=tEBZdGtga7mil3B0DoRbPvjTEf6aBS2krx6YYgiPsIrP/yhBItpEJYCfxmGXgdNrL
+         il+f91CqnaDpcMWKinkPlrCUCdaUjER8zNUlXJpxDmginy/7TzKtOmY7z0Czq39Xzx
+         hv16rQESgl6RO8sqGkv/x3bOXqo68jJeyNXKLkMQ=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
@@ -44,11 +44,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v3 05/18] arm64: dts: qcom: qcs404: Add PMS405 RPM regulators
-Date:   Thu,  8 Nov 2018 23:20:36 +0530
-Message-Id: <20181108175049.7090-6-vkoul@kernel.org>
+Subject: [PATCH v3 06/18] arm64: dts: qcom: qcs404: add smp2p nodes
+Date:   Thu,  8 Nov 2018 23:20:37 +0530
+Message-Id: <20181108175049.7090-7-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181108175049.7090-1-vkoul@kernel.org>
 References: <20181108175049.7090-1-vkoul@kernel.org>
@@ -57,119 +56,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Add the smp2p-adsp, smp2p-cdsp and smp2p-wcss nodes found in QCS404.
 
-Add the RPM regulators found in PMS405 which is used in qcs404-evb
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 97 ++++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 60 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index 91ecbdf0ecda..fc83e935aaa1 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -11,4 +11,101 @@
- 	chosen {
- 		stdout-path = "serial0";
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index e21b4a549e75..cc4dd3186ae9 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -257,4 +257,64 @@
+ 			     <GIC_PPI 4 0xff08>,
+ 			     <GIC_PPI 1 0xff08>;
  	};
 +
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-always-on;
-+		regulator-boot-on;
++	smp2p-adsp {
++		compatible = "qcom,smp2p";
++		qcom,smem = <443>, <429>;
++		interrupts = <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&apcs_glb 10>;
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <2>;
++
++		adsp_smp2p_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		adsp_smp2p_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
 +	};
-+};
 +
-+&rpm_requests {
-+	pms405-regulators {
-+		compatible = "qcom,rpm-pms405-regulators";
++	smp2p-cdsp {
++		compatible = "qcom,smp2p";
++		qcom,smem = <94>, <432>;
++		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&apcs_glb 14>;
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <5>;
 +
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+		vdd_s5-supply = <&vph_pwr>;
-+		vdd_l1_l2-supply = <&vreg_s5_1p35>;
-+		vdd_l3_l8-supply = <&vreg_s5_1p35>;
-+		vdd_l4-supply = <&vreg_s5_1p35>;
-+		vdd_l5_l6-supply = <&vreg_s4_1p8>;
-+		vdd_l7-supply = <&vph_pwr>;
-+		vdd_l9-supply = <&vreg_s5_1p35>;
-+		vdd_l10_l11_l12_l13-supply = <&vph_pwr>;
-+
-+		vreg_s4_1p8: s4 {
-+			regulator-min-microvolt = <1728000>;
-+			regulator-max-microvolt = <1920000>;
++		cdsp_smp2p_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
 +		};
 +
-+		vreg_s5_1p35: s5 {
-+			regulator-min-microvolt = <>;
-+			regulator-max-microvolt = <>;
++		cdsp_smp2p_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	smp2p-wcss {
++		compatible = "qcom,smp2p";
++		qcom,smem = <435>, <428>;
++		interrupts = <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>;
++		mboxes = <&apcs_glb 18>;
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <1>;
++
++		wcss_smp2p_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
 +		};
 +
-+		vreg_l1_1p3: l1 {
-+			regulator-min-microvolt = <1240000>;
-+			regulator-max-microvolt = <1352000>;
-+		};
-+
-+		vreg_l2_1p275: l2 {
-+			regulator-min-microvolt = <1048000>;
-+			regulator-max-microvolt = <1280000>;
-+		};
-+
-+		vreg_l3_1p05: l3 {
-+			regulator-min-microvolt = <976000>;
-+			regulator-max-microvolt = <1160000>;
-+		};
-+
-+		vreg_l4_1p2: l4 {
-+			regulator-min-microvolt = <1144000>;
-+			regulator-max-microvolt = <1256000>;
-+		};
-+
-+		vreg_l5_1p8: l5 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		vreg_l6_1p8: l6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+		};
-+
-+		vreg_l7_1p8: l7 {
-+			regulator-min-microvolt = <1616000>;
-+			regulator-max-microvolt = <3000000>;
-+		};
-+
-+		vreg_l8_1p2: l8 {
-+			regulator-min-microvolt = <1136000>;
-+			regulator-max-microvolt = <1352000>;
-+		};
-+
-+		vreg_l10_3p3: l10 {
-+			regulator-min-microvolt = <2936000>;
-+			regulator-max-microvolt = <3088000>;
-+		};
-+
-+		vreg_l11_sdc2: l11 {
-+			regulator-min-microvolt = <2696000>;
-+			regulator-max-microvolt = <3304000>;
-+		};
-+
-+		vreg_l12_3p3: l12 {
-+			regulator-min-microvolt = <2968000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		vreg_l13_3p3: l13 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3300000>;
++		wcss_smp2p_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
 +		};
 +	};
  };
