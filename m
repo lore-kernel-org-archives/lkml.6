@@ -1,180 +1,144 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A76C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B93C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 145232081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:14:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HA55w6V2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145232081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EC7812081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7812081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeKHQsY (ORCPT
+        id S1726642AbeKHQu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:48:24 -0500
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:39567 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeKHQsY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:48:24 -0500
-Received: by mail-wm1-f52.google.com with SMTP id u13-v6so139705wmc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 23:14:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IOI5Byqvujf9twcMR9hcxIR2eQ4JMv8fiW+U6OB0WBw=;
-        b=HA55w6V2dj4hxK6twAz2ZtVrr6IXDQKFP3B0XZ9zucuwINhz96xajjwoTjZrm2DXEH
-         PR0mkd26DMS+XNoQdrjOvt51wVtfYrFGDa5YwAgfAoubiMxWyoX5tGqgi2ApF0j0pcde
-         /PsjEOEK37qsI74gXZH9D30P/j4ds+0j9BQRCageqmJS3uaZzWH+A7k0T3qwUIjV9kmJ
-         zmo8klzx+dK1ApZEj71RkTLFsbn/24yD+omJ18PXbLCOpv3hZ/bCF260G6iuxT7AZ/yB
-         6y9gu8nusR5Cqm0oZgOxjDNLUqGJrn55k1ez3jn7sWF0bVzYsO/lnJzERQ1JzWcqpx0/
-         afuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IOI5Byqvujf9twcMR9hcxIR2eQ4JMv8fiW+U6OB0WBw=;
-        b=SmENvOZw7Y6UnK+zL+98pSp8Jk5iOIdcTc+1YI2ifHkZlXTz4rT6g/Vc6pOqBcGezf
-         gCJ6NogDht6kRX+Ns6+IhcGmQiN5TEOxXTqfkMdforYQ+uHGDoHqSEcxTTLRXzMV+F8N
-         7VGzYaTnJr/rumv2ZRFTnT6TtTmqYBfEp/rWyXu4j+whAqv5ltQuV4Lb27Qe7SUa4QHE
-         WGlZhlnm1DNjYp2Ur2nEp0aONtg/2l/26jeG+hbDCF3izmwNQtyceN2Ahk1wcyzAVGXR
-         LN+6nsSXaw4OCYCjPl9jyuS5FsMxyi2DZv33B6FYmXFwQNfB+C9p82SWstwX0/jrclTK
-         3XHg==
-X-Gm-Message-State: AGRZ1gK0p/p28PRvdovcWIldB/xuAcuCuhn1KIQCJKcFiCY4OxVzyyDC
-        PpriNRC3Io3/1lCdtvObM0A=
-X-Google-Smtp-Source: AJdET5dNTAwirRt6uo1feLrEj0jQjnvPxnrtnvJHZi8lEwqrkyl3F17pSLOoxZH60qwD+PhJRpThdQ==
-X-Received: by 2002:a1c:ce0e:: with SMTP id e14-v6mr113652wmg.45.1541661256470;
-        Wed, 07 Nov 2018 23:14:16 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id a127-v6sm2974340wmh.24.2018.11.07.23.14.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 23:14:15 -0800 (PST)
-Date:   Thu, 8 Nov 2018 08:14:13 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108071413.GA25195@gmail.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
- <20181108070547.GA20032@gmail.com>
+        Thu, 8 Nov 2018 11:50:59 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35502 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725724AbeKHQu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 11:50:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57416A78;
+        Wed,  7 Nov 2018 23:16:52 -0800 (PST)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 499363F5BD;
+        Wed,  7 Nov 2018 23:16:50 -0800 (PST)
+Subject: Re: [RFC PATCH 5/5] mm, memory_hotplug: be more verbose for memory
+ offline failures
+To:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Baoquan He <bhe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+References: <20181107101830.17405-1-mhocko@kernel.org>
+ <20181107101830.17405-6-mhocko@kernel.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <b23ebcb3-e4f1-be78-bd5f-84c685979ab7@arm.com>
+Date:   Thu, 8 Nov 2018 12:46:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108070547.GA20032@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181107101830.17405-6-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Ingo Molnar <mingo@kernel.org> wrote:
 
-> With tail comments the code looks like this:
+On 11/07/2018 03:48 PM, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> 	res = dostuff(); /* We explain something here. */
+> There is only very limited information printed when the memory offlining
+> fails:
+> [ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed due to signal backoff
 > 
-> 	seed = 1; /* Another explanation. */
+> This tells us that the failure is triggered by the userspace
+> intervention but it doesn't tell us much more about the underlying
+> reason. It might be that the page migration failes repeatedly and the
+> userspace timeout expires and send a signal or it might be some of the
+> earlier steps (isolation, memory notifier) takes too long.
 > 
-> 	mod_timer(&our_object->our_timer, jiffies + OUR_INTERVAL); /* We like to talk */
+> If the migration failes then it would be really helpful to see which
+> page that and its state. The same applies to the isolation phase. If we
+> fail to isolate a page from the allocator then knowing the state of the
+> page would be helpful as well.
 > 
-> 	res = check_stuff(our_object); /* We explain something here. */
-> 	if (res)
-> 		return -EINVAL;
+> Dump the page state that fails to get isolated or migrated. This will
+> tell us more about the failure and what to focus on during debugging.
 > 
-> 	interval = nontrivial_calculation(); /* Another explanation. */
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/memory_hotplug.c | 12 ++++++++----
+>  mm/page_alloc.c     |  1 +
+>  2 files changed, 9 insertions(+), 4 deletions(-)
 > 
-> 	mod_timer(&our_object->our_timer, jiffies + interval); /* This doesn't race, because. */
-> 
-> ... while with freestanding comments it's:
-> 
-> 	/* We explain something here: */
-> 	res = check_stuff(our_object);
-> 	if (res)
-> 		return -EINVAL;
-> 
-> 	/* Another explanation: */
-> 	interval = nontrivial_calculation();
-> 
-> 	/* This doesn't race with init_our_stuff(), because: */
-> 	mod_timer(&our_object->our_timer, jiffies + interval);
-> 
-> This comment placement style has several advantages:
-> 
->   - Comments precede actual code - while in tail comments it's exactly
->     the wrong way around.
-> 
->   - We don't create over-long lines nor artificially short tail comments 
->     just because we were trying to stay within the col80 limit with the 
->     "this doesn't race" comment. The full-line comment was able to 
->     explain that the race is with init_our_stuff().
-> 
->   - Freestanding oneliner comments are much better aligned as well: note 
->     how ever comment starts at the exact same column, making it very easy 
->     to read (or not to read) these comments.
-> 
->   - In short: predictable visual parsing rules and proper semantic 
->     ordering of information is good, random joining of typographical 
->     elements just to create marginally more compact source code is bad.
-> 
->   - Just *look* at the tail comments example: it's a visually diffuse, 
->     jumble of statements and misaligned comments with good structure.
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 1badac89c58e..bf214beccda3 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1388,10 +1388,8 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  						    page_is_file_cache(page));
+>  
+>  		} else {
+> -#ifdef CONFIG_DEBUG_VM
+> -			pr_alert("failed to isolate pfn %lx\n", pfn);
+> +			pr_warn("failed to isolate pfn %lx\n", pfn)>  			dump_page(page, "isolation failed");
+> -#endif
+>  			put_page(page);
+>  			/* Because we don't have big zone->lock. we should
+>  			   check this again here. */
+> @@ -1411,8 +1409,14 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  		/* Allocate a new page from the nearest neighbor node */
+>  		ret = migrate_pages(&source, new_node_page, NULL, 0,
+>  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
+> -		if (ret)
+> +		if (ret) {
+> +			list_for_each_entry(page, &source, lru) {
+> +				pr_warn("migrating pfn %lx failed ",
+> +				       page_to_pfn(page), ret);
 
-Forgot to mention the role of punctuation:
+Seems like pr_warn() needs to have %d in here to print 'ret'. Though
+dumping return code from migrate_pages() makes sense, wondering if
+it is required for each and every page which failed to migrate here
+or just one instance is enough.
 
-    - Also note how punctuation actually *helps* the integration of 
-      comments and code. The ":" will direct attention to the code that 
-      follows, making it clear that the sentence explains the next 
-      statement. There are exceptions for when different type of 
-      punctuation is a better choice, for example:
+> +				dump_page(page, NULL);
+> +			}
 
-	/* TODO: convert the code to our newest calc API ASAP. */
-	interval = nontrivial_calculation();
+s/NULL/failed to migrate/ for dump_page().
 
-      Here we don't explain the statement but document a TODO entry. 
+>  			putback_movable_pages(&source);
+> +		}
+>  	}
+>  out:
+>  	return ret;
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index a919ba5cb3c8..23267767bf98 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7845,6 +7845,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+>  	return false;
+>  unmovable:
+>  	WARN_ON_ONCE(zone_idx(zone) == ZONE_MOVABLE);
+> +	dump_page(pfn_to_page(pfn+iter), "has_unmovable_pages");
 
-      Also, it's frequent practice to use multi-line comments to explain 
-      the next section of code, with a particular note about the first 
-      statement. Proper punctuation helps there too:
+s/has_unmovable_pages/is unmovable/
 
-	/*
-	 * Establish the timeout interval and use it to set up
-	 * the timer of our object. The object is going to be
-	 * freed when the last reference is released.
-	 *
-	 * Note, the initial calculation is non-trivial, because
-	 * our timeout rules have complexity A), B) and C):
-	 */
-	interval = nontrivial_calculation();
+If we eally care about the function name, then dump_page() should be
+followed by dump_stack() like the case in some other instances.
 
-      Note how part of the multi-line comment describes overall 
-      principles of the code to follow, while the last sentence 
-      describes a noteworthy aspect of the next C statement.
+>  	return true;
 
-Thanks,
-
-	Ingo
+This will be dumped from HugeTLB and CMA allocation paths as well through
+alloc_contig_range(). But it should be okay as those occurrences should be
+rare and dumping page state then will also help.
