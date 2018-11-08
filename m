@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA206ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CD6ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF512081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0408020840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VM/nfZSn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF512081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEZt5Ual"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0408020840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeKIHbH (ORCPT
+        id S1727704AbeKIHbN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:31:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45598 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:31:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbeKIHbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727285AbeKIHbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:31:07 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 874CC2081C;
-        Thu,  8 Nov 2018 21:53:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FAA920857;
+        Thu,  8 Nov 2018 21:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714020;
-        bh=0/fplM3A0e8O6rFr5ZLfsvMRrwOWSaqTQSd5DmjVgm4=;
+        s=default; t=1541714021;
+        bh=jCzUWTM/DAP1GgLuvW0otbMXL7SfchvtpgpgK8ciK/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VM/nfZSnvPxYT8NfoABPL5tQYSi44mjZ1NF/UefdY71DtLNvwLcW39Dxt6HHLeit0
-         Dk5D9rID9Va0FwpQlanNoR8K2DDy57vfGU9xyzXI04ti/8JbszExHLOAZtil9dZQ0m
-         S8iZ2jMhOXn08xxOHjbs7WNdihAa2tEM3I+FRL4w=
+        b=ZEZt5Ual1Lt91xpBtApCpDPiewzr5jGOx3nyFo66nQsRXlAPzN3z8xMW1H6WuJ4z8
+         IGpRGICWyuRejvH7gHlv1AfH+IvKteKqaCROQ2+uwb0lrCTqR5nr0h6ZwDNpUQPbNp
+         xidn/4+rqiFQo+VZWOJTP93Vd4Fgy3iJCQIBiZLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ross Zwisler <zwisler@google.com>
-Subject: [PATCH 3.18 006/144] xhci: Dont print a warning when setting link state for disabled ports
-Date:   Thu,  8 Nov 2018 13:49:37 -0800
-Message-Id: <20181108215055.277446882@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 007/144] ip_tunnel: be careful when accessing the inner header
+Date:   Thu,  8 Nov 2018 13:49:38 -0800
+Message-Id: <20181108215055.332851215@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,61 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 1208d8a84fdcae6b395c57911cdf907450d30e70 upstream.
+[ Upstream commit ccfec9e5cb2d48df5a955b7bf47f7782157d3bc2]
 
-When disabling a USB3 port the hub driver will set the port link state to
-U3 to prevent "ejected" or "safely removed" devices that are still
-physically connected from immediately re-enumerating.
+Cong noted that we need the same checks introduced by commit 76c0ddd8c3a6
+("ip6_tunnel: be careful when accessing the inner header")
+even for ipv4 tunnels.
 
-If the device was really unplugged, then error messages were printed
-as the hub tries to set the U3 link state for a port that is no longer
-enabled.
-
-xhci-hcd ee000000.usb: Cannot set link state.
-usb usb8-port1: cannot disable (err = -32)
-
-Don't print error message in xhci-hub if hub tries to set port link state
-for a disabled port. Return -ENODEV instead which also silences hub driver.
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ross Zwisler <zwisler@google.com>
+Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
+Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/host/xhci-hub.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ net/ipv4/ip_tunnel.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -926,17 +926,17 @@ int xhci_hub_control(struct usb_hcd *hcd
- 				temp = readl(port_array[wIndex]);
- 				break;
- 			}
--
--			/* Software should not attempt to set
--			 * port link state above '3' (U3) and the port
--			 * must be enabled.
--			 */
--			if ((temp & PORT_PE) == 0 ||
--				(link_state > USB_SS_PORT_LS_U3)) {
--				xhci_warn(xhci, "Cannot set link state.\n");
-+			/* Port must be enabled */
-+			if (!(temp & PORT_PE)) {
-+				retval = -ENODEV;
-+				break;
-+			}
-+			/* Can't set port link state above '3' (U3) */
-+			if (link_state > USB_SS_PORT_LS_U3) {
-+				xhci_warn(xhci, "Cannot set port %d link state %d\n",
-+					 wIndex, link_state);
- 				goto error;
- 			}
--
- 			if (link_state == USB_SS_PORT_LS_U3) {
- 				slot_id = xhci_find_slot_id_by_port(hcd, xhci,
- 						wIndex + 1);
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -641,6 +641,7 @@ void ip_tunnel_xmit(struct sk_buff *skb,
+ 		    const struct iphdr *tnl_params, u8 protocol)
+ {
+ 	struct ip_tunnel *tunnel = netdev_priv(dev);
++	unsigned int inner_nhdr_len = 0;
+ 	const struct iphdr *inner_iph;
+ 	struct flowi4 fl4;
+ 	u8     tos, ttl;
+@@ -651,6 +652,14 @@ void ip_tunnel_xmit(struct sk_buff *skb,
+ 	int err;
+ 	bool connected;
+ 
++	/* ensure we can access the inner net header, for several users below */
++	if (skb->protocol == htons(ETH_P_IP))
++		inner_nhdr_len = sizeof(struct iphdr);
++	else if (skb->protocol == htons(ETH_P_IPV6))
++		inner_nhdr_len = sizeof(struct ipv6hdr);
++	if (unlikely(!pskb_may_pull(skb, inner_nhdr_len)))
++		goto tx_error;
++
+ 	inner_iph = (const struct iphdr *)skb_inner_network_header(skb);
+ 	connected = (tunnel->parms.iph.daddr != 0);
+ 
 
 
