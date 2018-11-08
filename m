@@ -2,92 +2,177 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EE2ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5305FECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F9C206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CBF4206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsyJe1az"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F9C206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f4qP/MHY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CBF4206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeKIGFz (ORCPT
+        id S1727252AbeKIGIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:05:55 -0500
-Received: from mail-yw1-f51.google.com ([209.85.161.51]:34838 "EHLO
-        mail-yw1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeKIGFy (ORCPT
+        Fri, 9 Nov 2018 01:08:06 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41238 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeKIGIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:05:54 -0500
-Received: by mail-yw1-f51.google.com with SMTP id w135-v6so8540387ywd.2;
-        Thu, 08 Nov 2018 12:28:48 -0800 (PST)
+        Fri, 9 Nov 2018 01:08:06 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z80-v6so19194718ljb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 12:30:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oFvXt1P0vn6sjABmGNaUrUlafHub2RfoXmi03uK+8m4=;
-        b=nsyJe1azy7g8xkNeQnKWBS/6x1Y+xiykM9A/ifEMUFKl9tg2Rr1io4dMm+mCuY4Z3E
-         f4U+AQtISuiAUwf63xbkTYq1W+nJgx7yQ56IZ5S8u0BuL0dUVjwQkqEVCtDzak/Vh5Xh
-         Wt3MV56PQGBfy9gLi8DiyR1IGQSRBvhLPQrBOqZ+DFlpjhxdEKrxa1rwzGqLsOjM5azF
-         rx0HO5XijYzqXJThN6qo0RKo2YEL/BeJ0bLzfxxox8PexvifGqK/NvPIM3xkeZGTiqDM
-         0xm1NRao+0QCPIL+iK7Mk3F47APbv2ymemdu0AXUnYP+4dZeRehIyYyPdC/31LHO8S56
-         DTzA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=13fmXxWmftXhEDSnWFmDK5Up8/fCtI/KaeACOLnShgU=;
+        b=f4qP/MHYRZeGIZvc4O6WKahXitIihqJx61HfnKdELNwcRlCytmEHdzaHPiE5ASiZPf
+         E9j5maiv2z1YYa2EWN5N79clqCjkjVeU/pWORCZu+YwNyhtwD4uXIwUME8M2u98HpRKG
+         TNKcVTSzU+E6EO+XPZ/I+0mvEodw3xuwlDDkA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oFvXt1P0vn6sjABmGNaUrUlafHub2RfoXmi03uK+8m4=;
-        b=ppzmQZxCkTLA/Roe8sp4N3CakFohlr0rxHbhG6JatczjpvD8bnZ/yC4mDHZIFAV4i2
-         DYccYCDf95le0RoMFvNyee+Au5K4uX2YHJ0OKrdk7RS2BDRc7pLMrbD4fkppBJkwBzar
-         7lsfu4sCjvdR3Jkv5Xh4rOx2QALa36JDG4ff5L8NbV5iiUvD0HUBuE/EAfMKPvUiJi3p
-         WrACTybGdQmmnHhaJo4cD80hlL9N8+8sGJZGJgcmVNiTcqOrcmaLIY96FGnhAyxLNFVZ
-         XOgVf6GAMnNEw/zApgLOX5vglPvtLjoxwFZdWy5N7qboaSfqVkHdyYjGDh1qlPojnkOO
-         +z8g==
-X-Gm-Message-State: AGRZ1gI8KX305oof768zSV6+WGB6yYHqbdWLqLGwofpZ31tLSaV8nrO6
-        w0GeiYFAbD/+NjLX6ahov+4=
-X-Google-Smtp-Source: AJdET5dMsqxK9bVF8Mtwgo1HosnIx3zI1dBj9gwbXPAJiXZFEMX7P6iFXm0HhkTIcJFhDW5m2HKnMA==
-X-Received: by 2002:a81:ad58:: with SMTP id l24-v6mr5711350ywk.64.1541708927442;
-        Thu, 08 Nov 2018 12:28:47 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::4:7f75])
-        by smtp.gmail.com with ESMTPSA id o66-v6sm2259342ywo.39.2018.11.08.12.28.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=13fmXxWmftXhEDSnWFmDK5Up8/fCtI/KaeACOLnShgU=;
+        b=EfIGaxBL9Uzr8C+eIYe8lMppZxsW8vITNnT6REkTFBrlSB6Auw+oMfcUsDPiHxvpiG
+         Fv4+rfaMFfFGKyPAqKBifyZUn+X2FIJFH4ijjwP5wKRlW/YMe462+CJBb5GJ0Y/yMqB8
+         p51hYfy0kicZyuN0YWTIh2pvTP5F5OD9wjrmNds32rL/5kglwPmW+z1HjbvFldYiJ4Xa
+         RdthAgNBsUEF9Xrze96kUOEPpsl49S2ukWimUBM2H9sA/vqMsO0QazGkhue8hbmfoTxl
+         5flwoqVWxZw6JhKMqaCa33RhofvWlZ7ABVauS0lAz1H5k8XCSZdwxi+u11q+I1KCW3Hf
+         Xykg==
+X-Gm-Message-State: AGRZ1gKL3GNzkmq0hSXTIlC9+5r0OTL2drRQHPCHGlmwrEc7Zx5otBAe
+        HrNxuDAH4293mSgREKcVqH0wNg==
+X-Google-Smtp-Source: AJdET5d59tVICs8iwsqwRJ162OyriR70xS34ftHWWub95jRfwZ41FfdvvRTsWj4LYf8zMbxBIWLUrA==
+X-Received: by 2002:a2e:59ca:: with SMTP id g71-v6mr3857856ljf.79.1541709056566;
+        Thu, 08 Nov 2018 12:30:56 -0800 (PST)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id w9sm809250lfc.66.2018.11.08.12.30.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 12:28:46 -0800 (PST)
-Date:   Thu, 8 Nov 2018 12:28:44 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>
-Subject: Re: [PATCH v15 00/12] Enable cpuset controller in default hierarchy
-Message-ID: <20181108202844.GD2509588@devbig004.ftw2.facebook.com>
-References: <1541689726-20088-1-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541689726-20088-1-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 08 Nov 2018 12:30:55 -0800 (PST)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com,
+        bjorn@mork.no, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v2 net-next 0/4] net: ethernet: ti: cpsw: fix vlan mcast
+Date:   Thu,  8 Nov 2018 22:27:53 +0200
+Message-Id: <20181108202757.30110-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied to cgroup/for-4.21.
+The cpsw holds separate mcast entires for vlan entries. At this moment
+driver adds only not vlan mcast addresses, omitting vlan/mcast entries.
+As result mcast for vlans doesn't work. It can be fixed by adding same
+mcast entries for every created vlan, but this patchseries uses more
+sophisticated way and allows to create mcast entries only for vlans
+that really require it. Generic functions from this series can be
+reused for fixing vlan and macvlan unicast.
 
-Thanks a lot, Waiman!
+Simple example of ALE table before and after this series, having same
+mcast entries as for vlan 100 as for real device (reserved vlan 2),
+and one mcast address only for vlan 100 - 01:1b:19:00:00:00.
+
+<---- Before this patchset ---->
+vlan , vid = 2, untag_force = 0x5, reg_mcast = 0x5, mem_list = 0x5
+mcast, vid = 2, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+ucast, vid = 2, addr = 74:da:ea:47:7d:9d, persistant, port_num = 0x0
+vlan , vid = 0, untag_force = 0x7, reg_mcast = 0x0, mem_list = 0x7
+mcast, vid = 2, addr = 33:33:00:00:00:01, port_mask = 0x1
+mcast, vid = 2, addr = 01:00:5e:00:00:01, port_mask = 0x1
+vlan , vid = 1, untag_force = 0x3, reg_mcast = 0x3, mem_list = 0x3
+mcast, vid = 1, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+ucast, vid = 1, addr = 74:da:ea:47:7d:9c, persistant, port_num = 0x0
+mcast, vid = 1, addr = 33:33:00:00:00:01, port_mask = 0x1
+mcast, vid = 1, addr = 01:00:5e:00:00:01, port_mask = 0x1
+mcast, vid = 2, addr = 01:80:c2:00:00:00, port_mask = 0x1
+mcast, vid = 2, addr = 01:80:c2:00:00:03, port_mask = 0x1
+mcast, vid = 2, addr = 01:80:c2:00:00:0e, port_mask = 0x1
+mcast, vid = 1, addr = 01:80:c2:00:00:00, port_mask = 0x1
+mcast, vid = 1, addr = 01:80:c2:00:00:03, port_mask = 0x1
+mcast, vid = 1, addr = 01:80:c2:00:00:0e, port_mask = 0x1
+mcast, vid = 2, addr = 33:33:ff:47:7d:9d, port_mask = 0x1
+mcast, vid = 2, addr = 33:33:00:00:00:fb, port_mask = 0x1
+mcast, vid = 2, addr = 33:33:00:01:00:03, port_mask = 0x1
+mcast, vid = 1, addr = 33:33:ff:47:7d:9c, port_mask = 0x1
+mcast, vid = 1, addr = 33:33:00:00:00:fb, port_mask = 0x1
+mcast, vid = 1, addr = 33:33:00:01:00:03, port_mask = 0x1
+mcast, vid = 1, addr = 01:00:5e:00:00:fb, port_mask = 0x1
+mcast, vid = 1, addr = 01:00:5e:00:00:fc, port_mask = 0x1
+vlan , vid = 100, untag_force = 0x0, reg_mcast = 0x5, mem_list = 0x5
+ucast, vid = 100, addr = 74:da:ea:47:7d:9d, persistant, port_num = 0x0
+mcast, vid = 100, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+mcast, vid = 2, addr = 01:1b:19:00:00:00, port_mask = 0x1
+			 ^^^
+ Here mcast entry (ptpl2), has to be added only for vlan 100
+ but added for reserved vlan 2...that's not enough.
+
+<---- After this patchset ---->
+vlan , vid = 2, untag_force = 0x5, reg_mcast = 0x5, mem_list = 0x5
+mcast, vid = 2, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+ucast, vid = 2, addr = 74:da:ea:47:7d:9d, persistant, port_num = 0x0
+vlan , vid = 0, untag_force = 0x7, reg_mcast = 0x0, mem_list = 0x7
+mcast, vid = 2, addr = 33:33:00:00:00:01, port_mask = 0x1
+mcast, vid = 2, addr = 01:00:5e:00:00:01, port_mask = 0x1
+vlan , vid = 1, untag_force = 0x3, reg_mcast = 0x3, mem_list = 0x3
+mcast, vid = 1, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+ucast, vid = 1, addr = 74:da:ea:47:7d:9c, persistant, port_num = 0x0
+mcast, vid = 1, addr = 33:33:00:00:00:01, port_mask = 0x1
+mcast, vid = 1, addr = 01:00:5e:00:00:01, port_mask = 0x1
+mcast, vid = 2, addr = 01:80:c2:00:00:00, port_mask = 0x1
+mcast, vid = 2, addr = 01:80:c2:00:00:03, port_mask = 0x1
+mcast, vid = 2, addr = 01:80:c2:00:00:0e, port_mask = 0x1
+mcast, vid = 1, addr = 01:80:c2:00:00:00, port_mask = 0x1
+mcast, vid = 1, addr = 01:80:c2:00:00:03, port_mask = 0x1
+mcast, vid = 1, addr = 01:80:c2:00:00:0e, port_mask = 0x1
+mcast, vid = 2, addr = 33:33:ff:47:7d:9d, port_mask = 0x1
+mcast, vid = 1, addr = 33:33:ff:47:7d:9c, port_mask = 0x1
+mcast, vid = 2, addr = 33:33:00:00:00:fb, port_mask = 0x1
+mcast, vid = 2, addr = 33:33:00:01:00:03, port_mask = 0x1
+mcast, vid = 1, addr = 33:33:00:00:00:fb, port_mask = 0x1
+mcast, vid = 1, addr = 33:33:00:01:00:03, port_mask = 0x1
+vlan , vid = 100, untag_force = 0x0, reg_mcast = 0x5, mem_list = 0x5
+ucast, vid = 100, addr = 74:da:ea:47:7d:9d, persistant, port_num = 0x0
+mcast, vid = 100, addr = ff:ff:ff:ff:ff:ff, port_mask = 0x1
+mcast, vid = 100, addr = 33:33:00:00:00:01, port_mask = 0x1
+mcast, vid = 100, addr = 01:00:5e:00:00:01, port_mask = 0x1
+mcast, vid = 100, addr = 33:33:ff:47:7d:9d, port_mask = 0x1
+mcast, vid = 100, addr = 01:80:c2:00:00:00, port_mask = 0x1
+mcast, vid = 100, addr = 01:80:c2:00:00:03, port_mask = 0x1
+mcast, vid = 100, addr = 01:80:c2:00:00:0e, port_mask = 0x1
+mcast, vid = 100, addr = 33:33:00:00:00:fb, port_mask = 0x1
+mcast, vid = 100, addr = 33:33:00:01:00:03, port_mask = 0x1
+mcast, vid = 100, addr = 01:1b:19:00:00:00, port_mask = 0x1
+			 ^^^
+    Here mcast entry (ptpl2), is added only for vlan 100
+    as it should be.
+
+Based on net-next/master
+
+v2..v1:
+  net: ethernet: ti: cpsw: fix vlan mcast
+	- removed limit for legacy switch cpsw mode
+
+Ivan Khoronzhuk (4):
+  net: core: dev_addr_lists: add auxiliary func to handle reference
+    address updates
+  net: 8021q: vlan_core: allow use list of vlans for real device
+  net: ethernet: ti: cpsw: fix vlan mcast
+  net: ethernet: ti: cpsw: fix vlan configuration while down/up
+
+ drivers/net/ethernet/ti/cpsw.c | 186 +++++++++++++++++++++++++++------
+ include/linux/if_vlan.h        |  11 ++
+ include/linux/netdevice.h      |  10 ++
+ net/8021q/vlan_core.c          |  27 +++++
+ net/core/dev_addr_lists.c      |  97 +++++++++++++++++
+ 5 files changed, 300 insertions(+), 31 deletions(-)
 
 -- 
-tejun
+2.17.1
+
