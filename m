@@ -2,121 +2,117 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E95C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00C6C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB92B2077B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A35682086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:41:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZuZ7hp1E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB92B2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="ejM+C0I7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wdaPGbVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35682086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aj.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbeKHKN7 (ORCPT
+        id S1728369AbeKHKOl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 05:13:59 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36421 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbeKHKN6 (ORCPT
+        Thu, 8 Nov 2018 05:14:41 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:47967 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727786AbeKHKOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 05:13:58 -0500
-Received: by mail-pl1-f196.google.com with SMTP id w24-v6so8662504plq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 16:41:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HiC88We3WtpUAK5UV/yHi4vzd4IqfUz6PzgP46+jcjE=;
-        b=ZuZ7hp1EkYQNcLT34WLFWbsiCign2BgHoy5e064xMbYbuoekBFt/PVP6DReHUq+L63
-         wI/rmwEX7ecROgoCb3kPQ5RNoYj3pV1z7IC7kwffdTkwkbLYNSRU4JS2SlnqL49tCSEf
-         81x/CZleQbgKPqsXXq0wglyoyA5MhexZOORu8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HiC88We3WtpUAK5UV/yHi4vzd4IqfUz6PzgP46+jcjE=;
-        b=kLMb0YunzI16j/ENYkdsb2ehtLvWnBLPuDISCVGhyLS029micOuTE1EzxYZl6pLQYA
-         VtPfXeZi3HKamH7kFhT4N22i9IbfmC/BdEuVmCUh/GqAj3H/fDVIG634U6hpRXK5EZGC
-         Mvlmll2P1/W5wKpngCF9Sru4enG1OCRu5AEOmAR+4tjMqnGWN1EXJY07gfezb094rrgX
-         3paisXU1w/9ybz8FCa3rYcNUxs9jrx09obKr3hQ8ccj2REpnJKthGZwv9YIXh6VPIzqg
-         aeQYSp3DLPjoyPgh8xEHzWVdMkoZrmWF3d42R30e9KruR492lKzqdCVdm8gH4W8zj7MN
-         dZWQ==
-X-Gm-Message-State: AGRZ1gKq/q/f44Wq2aHryX+fC+Q4+7Wz627PkaIlI8atNGeHC7l9U8jq
-        M8JZ/fAa+uyCnvcVtXlSW/6O/0kdt6M=
-X-Google-Smtp-Source: AJdET5fDSeW+md94UsjROkNazMSwESUTRyifgc8hzYp7ckSLaTutptA9SeBZt+h+vXkji/aqr3yuCg==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34-v6mr2519684pld.318.1541637665599;
-        Wed, 07 Nov 2018 16:41:05 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id x63-v6sm2244685pfk.14.2018.11.07.16.41.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Nov 2018 16:41:04 -0800 (PST)
-From:   Brian Norris <briannorris@chromium.org>
-To:     ath10k@lists.infradead.org
-Cc:     linux-wireless@vger.kernel.org,
-        Grant Grundler <grundler@chromium.org>,
-        Wen Gong <wgong@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.20] ath10k: don't assume 'vif' is non-NULL in flush()
-Date:   Wed,  7 Nov 2018 16:40:35 -0800
-Message-Id: <20181108004035.136050-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+        Thu, 8 Nov 2018 05:14:41 -0500
+X-Greylist: delayed 391 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Nov 2018 05:14:40 EST
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id F1C5E21D07;
+        Wed,  7 Nov 2018 19:35:18 -0500 (EST)
+Received: from web3 ([10.202.2.213])
+  by compute4.internal (MEProxy); Wed, 07 Nov 2018 19:35:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        message-id:from:to:cc:mime-version:content-transfer-encoding
+        :content-type:date:in-reply-to:subject:references; s=fm1; bh=Cpd
+        eR+5f5k+fLW+3h2NLtz/RbLYBe2uG5dh0Y/J1mLI=; b=ejM+C0I7Eri069us7zS
+        /k2kn9OnjqGGoW+Jx7LjOLfC8yOS4H37B2Q3wBB7cOW44RTvXbBHb1b8YHV7z4D3
+        Zm0QZBGUq7sUTzJ+KUpb21sGgcjDx9JQpfbFojyZnwI7nGeIc5jaOfv9Bjgfm+fc
+        b20u//vG9tIzcWq3tiBFseJi8Jta6E029Qdz8uyshbOt4fKAtZlZELv/M0Cyye88
+        RrJ2yOUkekEI4wT+4TUq/1njTlLEgs3Iw+r9tV+4LRQYSQBlpXLt6wjUXWfKu9Dv
+        8ofCDp2lotGiTv4usemFx2BGpw8erfZPxzeTWITntrmUfd/2fs+YrZfZqEJOnQkO
+        9Hg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=CpdeR+5f5k+fLW+3h2NLtz/RbLYBe2uG5dh0Y/J1m
+        LI=; b=wdaPGbVE8teFCftGMUpL4/q6kVloatO0sFCE8DIIdPeaRnlrH2337UUtG
+        +V+fz8RqjEv0CcsoEnB3ZY2Xf660xb+eyzx2+sYS8GDhJMtB1otJ22LXK00b5oUT
+        EJ9HZ0comDz/SXkSn7rPXIfmrYP1yG0k/4EkFNh7huPsPAN+HN+lTFPi5rXmKRMS
+        efL7bTSIi4Q2KzCS2sMKd9pouCAnLMu3czZJUa6xAuFZPmYV9IMb3ohpPccZ1fZg
+        hmVWtGECnhNwpr+4FjZEKsPxd/NA20JPtMvLScZj9cA3p0212roP5T3nE8C7YQr5
+        wqm/c2ATiZ8A4BPgEXSYleQ4nOt3A==
+X-ME-Sender: <xms:xITjWwrTrVYc13HJk4OxVPMa_zgUsGNaeDYiUcRW_JSZ1Y_MHbJS9g>
+X-ME-Proxy: <xmx:xITjW1q2cfYBi9eo-LTTDC7eQrvdEEBoJILvrNcMn4F-9Gs1_UYhlw>
+    <xmx:xITjW8MTsyGopdYqY3QTYBusp183Wif_M38fpWTa39OvcwMdCTHQKg>
+    <xmx:xYTjW_Ubpc_GZ3h-pE4S89ehBgTMiUeLDaeA8GQ4V7_U75yOZkFfkg>
+    <xmx:xYTjW3uWAj_M6AF_pFAnf05ig1nM14yTGuAepBVyU-YfKsNNP5axGg>
+    <xmx:xYTjWy2p5RHJ_BR_duhStK8eiFyeTbvnltSElW1AypINWBk8YNG4Bg>
+    <xmx:xoTjW34TkGhjrafecQUpzVyFD_7-ZOhC2LeVGeX-JnxhRBPWHZbj5g>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id D47769E4F3; Wed,  7 Nov 2018 19:35:16 -0500 (EST)
+Message-Id: <1541637316.1471870.1569457840.5A56DC54@webmail.messagingengine.com>
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-d469da0c
+Date:   Thu, 08 Nov 2018 11:05:16 +1030
+In-Reply-To: <1540916399-22426-1-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: [PATCH] usb: gadget: aspeed-vhub: constify usb_gadget_ops structure
+References: <1540916399-22426-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mac80211 may call us with vif == NULL, if the station is not currently
-active (e.g., not associated). It is trivially easy to reproduce a crash
-by suspending the system when not connected to an AP:
+On Wed, 31 Oct 2018, at 02:49, Julia Lawall wrote:
+> The usb_gadget_ops structure can be const as it is only stored in
+> the ops field of a usb_gadget structure and this field is const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[   65.533934] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-...
-[   65.574521] pc : ath10k_flush+0x30/0xd0 [ath10k_core]
-[   65.574538] lr : __ieee80211_flush_queues+0x180/0x244 [mac80211]
-[   65.599680] Process kworker/u12:1 (pid: 57, stack limit = 0x(____ptrval____))
-[   65.599682] Call trace:
-[   65.599695]  ath10k_flush+0x30/0xd0 [ath10k_core]
-[   65.642064]  __ieee80211_flush_queues+0x180/0x244 [mac80211]
-[   65.642079]  ieee80211_flush_queues+0x34/0x40 [mac80211]
-[   65.642095]  __ieee80211_suspend+0xfc/0x47c [mac80211]
-[   65.658611]  ieee80211_suspend+0x30/0x3c [mac80211]
-[   65.658627]  wiphy_suspend+0x15c/0x3a8 [cfg80211]
-[   65.672810]  dpm_run_callback+0xf0/0x1f0
-[   65.672814]  __device_suspend+0x3ac/0x4f8
-[   65.672819]  async_suspend+0x34/0xbc
-[   65.684096]  async_run_entry_fn+0x54/0x104
-[   65.684099]  worker_thread+0x4cc/0x72c
-[   65.684102]  kthread+0x134/0x13c
-[   65.684105]  ret_from_fork+0x10/0x18
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-Fixes: 9de4162f0999 ("ath10k: add peer flush in ath10k_flush for STATION")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/net/wireless/ath/ath10k/mac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index a1c2801ded10..7e49342bae38 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6867,7 +6867,7 @@ static void ath10k_flush(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
- 	u32 bitmap;
- 
- 	if (drop) {
--		if (vif->type == NL80211_IFTYPE_STATION) {
-+		if (vif && vif->type == NL80211_IFTYPE_STATION) {
- 			bitmap = ~(1 << WMI_MGMT_TID);
- 			list_for_each_entry(arvif, &ar->arvifs, list) {
- 				if (arvif->vdev_type == WMI_VDEV_TYPE_STA)
--- 
-2.19.1.930.g4563a0d9d0-goog
-
+> 
+> ---
+>  drivers/usb/gadget/udc/aspeed-vhub/dev.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/aspeed-vhub/dev.c b/drivers/usb/
+> gadget/udc/aspeed-vhub/dev.c
+> index f0233912bace..6b1b16b17d7d 100644
+> --- a/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> +++ b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> @@ -438,7 +438,7 @@ static int ast_vhub_udc_stop(struct usb_gadget 
+> *gadget)
+>  	return 0;
+>  }
+>  
+> -static struct usb_gadget_ops ast_vhub_udc_ops = {
+> +static const struct usb_gadget_ops ast_vhub_udc_ops = {
+>  	.get_frame	= ast_vhub_udc_get_frame,
+>  	.wakeup		= ast_vhub_udc_wakeup,
+>  	.pullup		= ast_vhub_udc_pullup,
+> 
