@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF024ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D1CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 720E920825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB99220825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:19:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dDyl9Au6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720E920825
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Hu5POv+q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB99220825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbeKIBzM (ORCPT
+        id S1727762AbeKIBzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:55:12 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46520 "EHLO
+        Thu, 8 Nov 2018 20:55:19 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46370 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726860AbeKIBzM (ORCPT
+        with ESMTP id S1727711AbeKIBzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:55:12 -0500
+        Thu, 8 Nov 2018 20:55:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=wXS0Ho0F+tDND9if3IAjYfX/4lIDKAPlY9og1cqkxGs=; b=dDyl9Au6cysr
-        GvMWd0dp4yJl6kM793TtjJI/VjzJZVFq23X6/TE60wnL5EjVrPqj86C7bjrXQpiPqnwVGCnzuaixV
-        AsfmSo8C+cSxN/MDpDpCXZtlBBzET1GqrLirYAr9Rn5jAbkIRPcYfuRcxr8hnCjXI3NYdfndFB4ST
-        C9QsU=;
+        List-Archive; bh=cxckrSSde2Ng7b8iFTGFgJilO8+UNWWl+89KEZbanJg=; b=Hu5POv+q0WGP
+        y3Oq8sLvOnyf424KHNFgSyi2UVhbqMmBj2sqrl5sM/c0joX3YRD7SltcHzROqL1fKcBbt811aWOJ7
+        7S9VX3+aNMl03/fBHPzEkDrd6VIEmtnvAgAvEpFwSs1KIdWhrtw4bO8YHQbBTwDg7QbNuq92jDJfJ
+        mY0kI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gKn1A-0000Cz-K7; Thu, 08 Nov 2018 16:18:52 +0000
+        id 1gKn19-0000Ct-0N; Thu, 08 Nov 2018 16:18:51 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5092F1124D9E; Thu,  8 Nov 2018 16:18:52 +0000 (GMT)
+        id AF6EA1124D9E; Thu,  8 Nov 2018 16:18:50 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: lochnagar: Explicitly include register headers" to the regulator tree
+Subject: Applied "regulator: bd718x7: add missing linux/of.h inclusion (deja-vu)" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181108161852.5092F1124D9E@debutante.sirena.org.uk>
-Date:   Thu,  8 Nov 2018 16:18:52 +0000 (GMT)
+Message-Id: <20181108161850.AF6EA1124D9E@debutante.sirena.org.uk>
+Date:   Thu,  8 Nov 2018 16:18:50 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: lochnagar: Explicitly include register headers
+   regulator: bd718x7: add missing linux/of.h inclusion (deja-vu)
 
 has been applied to the regulator tree at
 
@@ -80,34 +80,36 @@ to this mail.
 Thanks,
 Mark
 
-From fa2bb8b97d77b4b91658e448e7701d6a432e5b6f Mon Sep 17 00:00:00 2001
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Date: Thu, 8 Nov 2018 10:14:00 +0000
-Subject: [PATCH] regulator: lochnagar: Explicitly include register headers
+From 9cce72448364675ed5d4c793cf546023c003fdd6 Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Mon, 29 Oct 2018 14:16:30 +0200
+Subject: [PATCH] regulator: bd718x7: add missing linux/of.h inclusion
+ (deja-vu)
 
-Review of the MFD component has stated we should not include the
-register headers through lochnagar.h and thus removed them from that
-header. Explicitly include them in the end drivers manually.
+0-Day tests found compilation error on x86.
+Driver won't compile on x86_64 as "of_match_ptr" is
+not found. Add missing include <linux/of.h>
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+At some point this fix was lost. So re-apply it.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/lochnagar-regulator.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/regulator/bd718x7-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
-index 2b5073b9ff86..182198246479 100644
---- a/drivers/regulator/lochnagar-regulator.c
-+++ b/drivers/regulator/lochnagar-regulator.c
-@@ -20,6 +20,8 @@
- #include <linux/regulator/of_regulator.h>
- 
- #include <linux/mfd/lochnagar.h>
-+#include <linux/mfd/lochnagar1_regs.h>
-+#include <linux/mfd/lochnagar2_regs.h>
- 
- static const struct regulator_ops lochnagar_micvdd_ops = {
- 	.enable = regulator_enable_regmap,
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 3a47e0372e77..7ba14dae5848 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -9,6 +9,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/rohm-bd718x7.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
 -- 
 2.19.0.rc2
 
