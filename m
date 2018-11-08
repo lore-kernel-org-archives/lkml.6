@@ -2,122 +2,91 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754D1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EF4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3821E20883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5727521104
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ct+NNSih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3821E20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="guU2xxIa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5727521104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732252AbeKIHvb (ORCPT
+        id S1732334AbeKIHve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:51:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39796 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:51:34 -0500
+Received: from ozlabs.org ([203.11.71.1]:38561 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732633AbeKIHqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:07 -0500
-Received: from localhost (unknown [208.72.13.198])
+        id S1731884AbeKIHve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:51:34 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8EF420989;
-        Thu,  8 Nov 2018 22:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714915;
-        bh=DE7Bkjn2vn/MJEGj2ozEuEkZlpH5oigDUiRUN7GdeHw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ct+NNSihbjcc6p616wgb4g03UkW+mUzrm2HKAaRT0vYX4LTeYjFrUMYB/cMlytX2W
-         hPUKrYPt5gqFLlLOKXY5dtCtYsaLNRX+vZ3hijoB5YzGzVlQM2aiIurlwjRpOaBXVG
-         5a644D5WS3P6CYwgZLZ2Nvhyz9RtUDwbmCG78zBM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 08/31] fsnotify: fix ignore mask logic in fsnotify()
-Date:   Thu,  8 Nov 2018 13:52:32 -0800
-Message-Id: <20181108215130.389974170@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
-References: <20181108215129.641434673@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        by ozlabs.org (Postfix) with ESMTPSA id 42rcxz2g8zz9s8r;
+        Fri,  9 Nov 2018 09:13:59 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1541715239;
+        bh=aX5C6HKqPRlaWReiWNgq1mm4fNSPkOCItnkxyILSeP4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=guU2xxIajpIDCJxXX3TDN2RB5lVOcz74FHl0F/5A80B2bI59kMseBQezuPqXA3JDA
+         eILwwv73304Yz+YvfMHnSL023mHVubwk3Mc1f5ViU0b9sINrOvAmOGKAM3ZYRODawi
+         APQ4X9c3XOP0uCvJqQmff24GIBR6Vf8xQB6mzZ/AhipAk5d+E1JU86+66NfZ+DluUa
+         Ri7g1CX6onQ4gaHxYCdfnBpcvqxyw8mLWT7CKjbNlAcumQOKn3+sEcxkO2VaCjWKXc
+         MzbAHuXcCOxFZAk1ocCroYTir1g3T4ZCZ4B62LrrWc2w9NovsyXC5QPSJBluWih0bb
+         WnqwmX4Bh/ZXw==
+Date:   Fri, 9 Nov 2018 09:13:53 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the rdma tree
+Message-ID: <20181109091353.00e022f3@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Pid=n+5Z5sVIJlYcSH1KY0u"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+--Sig_/Pid=n+5Z5sVIJlYcSH1KY0u
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-------------------
+Hi all,
 
-[ Upstream commit 9bdda4e9cf2dcecb60a0683b10ffb8cd7e5f2f45 ]
+Commit
 
-Commit 92183a42898d ("fsnotify: fix ignore mask logic in
-send_to_group()") acknoledges the use case of ignoring an event on
-an inode mark, because of an ignore mask on a mount mark of the same
-group (i.e. I want to get all events on this file, except for the events
-that came from that mount).
+  5736c7c499f1 ("RDMA/rxe: Distinguish between down links and disabled link=
+s")
 
-This change depends on correctly merging the inode marks and mount marks
-group lists, so that the mount mark ignore mask would be tested in
-send_to_group(). Alas, the merging of the lists did not take into
-account the case where event in question is not in the mask of any of
-the mount marks.
+is missing a Signed-off-by from its committer.
 
-To fix this, completely remove the tests for inode and mount event masks
-from the lists merging code.
+--=20
+Cheers,
+Stephen Rothwell
 
-Fixes: 92183a42898d ("fsnotify: fix ignore mask logic in send_to_group")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-[amir: backport to v4.14.y]
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/notify/fsnotify.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+--Sig_/Pid=n+5Z5sVIJlYcSH1KY0u
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index d76c81323dc1..2bc61e7543dd 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -286,17 +286,13 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
- 
- 	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
- 
--	if ((mask & FS_MODIFY) ||
--	    (test_mask & to_tell->i_fsnotify_mask)) {
--		inode_conn = srcu_dereference(to_tell->i_fsnotify_marks,
-+	inode_conn = srcu_dereference(to_tell->i_fsnotify_marks,
-+				      &fsnotify_mark_srcu);
-+	if (inode_conn)
-+		inode_node = srcu_dereference(inode_conn->list.first,
- 					      &fsnotify_mark_srcu);
--		if (inode_conn)
--			inode_node = srcu_dereference(inode_conn->list.first,
--						      &fsnotify_mark_srcu);
--	}
- 
--	if (mnt && ((mask & FS_MODIFY) ||
--		    (test_mask & mnt->mnt_fsnotify_mask))) {
-+	if (mnt) {
- 		inode_conn = srcu_dereference(to_tell->i_fsnotify_marks,
- 					      &fsnotify_mark_srcu);
- 		if (inode_conn)
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvktSEACgkQAVBC80lX
+0GzVkwf/YWwSaf+8TP+fdm14RH0T37cMV/fvse/3AiVPU5ffaimTR3IPz+3UEEop
+xbch5uVZuyqZy5+KJavJAhLvEati8lLS+h4Pj6lTV0YGRwSIHUh1pI5Bxwyj8Ycr
+z6Uv7xC60uSyjx6zB+0EOyEVZ5GVsDuBHz3hY8RoGKVY6qOG4IM8dZdaOeL9b4Sj
+NjLmAMXkNleUAFFki5wihC2wUrAvX2vniJKquXnGTkPSaK2u0fr8CMyp9NbCQbwr
+c8WjKYGgP/yiD1A5ogavaf5rr4oDwBoWwQhcZdeZm1yv54kzUsZVQIzhdTp/Ckvv
+Wl0nwopu4YRow6Vw2ZpBLBN9vJbiWg==
+=GjKo
+-----END PGP SIGNATURE-----
 
-
+--Sig_/Pid=n+5Z5sVIJlYcSH1KY0u--
