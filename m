@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4685FECDE4B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45ACECDE4C
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E6D72089A
+	by mail.kernel.org (Postfix) with ESMTP id A88CC2148E
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oA2sXKD1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6D72089A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgJ37fdw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A88CC2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbeKIHeA (ORCPT
+        id S1729251AbeKIHeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:34:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50198 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:34:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729189AbeKIHdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:33:54 -0500
+        id S1728103AbeKIHeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:34:01 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 390D420892;
-        Thu,  8 Nov 2018 21:56:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0707221104;
+        Thu,  8 Nov 2018 21:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714187;
-        bh=TDwxN8a2Cl6OVpmax91PTFxvW7LqOwHe/+wxo65Qi+o=;
+        s=default; t=1541714194;
+        bh=Xiir64usdaUv84kM1vP2AR6koDe2+w5g6wAyQtEzN64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oA2sXKD1tzir9owIOa7Y0NJ6pd3zZCnU/PPvf93a5scq3upIeRh62JvgSGRdUeAst
-         owLdgjyia4qb1yHI98isBKY0a+MBcJOz+p5nFJq4X+2xIuqGEnWm/2N9KyB+y6Qxrs
-         A4Qy4mJ27hexynhUqEUWWwBtXp6VZaKR4NvjT5rk=
+        b=FgJ37fdwqN/mkjW51fg70Y/YcQQDgpk0pHQQsTS3YzspRh5TnMqRypOc0jkrDf0Hb
+         nJSKCz3HbbUUj918MQ9xp2dx7TmHqFGK3m4RKZu+72XVPL//SJcW4tMTL7czZgYAZA
+         5HIXnuyhfK8tH8JtnLbaHnTYACs69+h3WTs7qFLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Potapenko <glider@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kostya Serebryany <kcc@google.com>,
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Vrabel <david.vrabel@citrix.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sasha.levin@oracle.com>,
-        Stephane Eranian <eranian@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 112/144] perf: Fix PERF_EVENT_IOC_PERIOD deadlock
-Date:   Thu,  8 Nov 2018 13:51:23 -0800
-Message-Id: <20181108215105.986230598@linuxfoundation.org>
+Subject: [PATCH 3.18 115/144] x86/ldt: Fix small LDT allocation for Xen
+Date:   Thu,  8 Nov 2018 13:51:26 -0800
+Message-Id: <20181108215106.300920029@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -74,55 +74,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 642c2d671ceff40e9453203ea0c66e991e11e249 ]
+[ Upstream commit f454b478861325f067fd58ba7ee9f1b5c4a9d6a0 ]
 
-Dmitry reported a fairly silly recursive lock deadlock for
-PERF_EVENT_IOC_PERIOD, fix this by explicitly doing the inactive part of
-__perf_event_period() instead of calling that function.
+While the following commit:
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kostya Serebryany <kcc@google.com>
+  37868fe113 ("x86/ldt: Make modify_ldt synchronous")
+
+added a nice comment explaining that Xen needs page-aligned
+whole page chunks for guest descriptor tables, it then
+nevertheless used kzalloc() on the small size path.
+
+As I'm unaware of guarantees for kmalloc(PAGE_SIZE, ) to return
+page-aligned memory blocks, I believe this needs to be switched
+back to __get_free_page() (or better get_zeroed_page()).
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Vrabel <david.vrabel@citrix.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sasha Levin <sasha.levin@oracle.com>
-Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: c7999c6f3fed ("perf: Fix PERF_EVENT_IOC_PERIOD migration race")
-Link: http://lkml.kernel.org/r/20151130115615.GJ17308@twins.programming.kicks-ass.net
+Link: http://lkml.kernel.org/r/55E735D6020000780009F1E6@prv-mh.provo.novell.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/x86/kernel/ldt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f08f691de59..7b2f9d432fe7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3929,7 +3929,14 @@ retry:
- 		goto retry;
- 	}
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 2bcc0525f1c1..6acc9dd91f36 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -58,7 +58,7 @@ static struct ldt_struct *alloc_ldt_struct(int size)
+ 	if (alloc_size > PAGE_SIZE)
+ 		new_ldt->entries = vzalloc(alloc_size);
+ 	else
+-		new_ldt->entries = kzalloc(PAGE_SIZE, GFP_KERNEL);
++		new_ldt->entries = (void *)get_zeroed_page(GFP_KERNEL);
  
--	__perf_event_period(&pe);
-+	if (event->attr.freq) {
-+		event->attr.sample_freq = value;
-+	} else {
-+		event->attr.sample_period = value;
-+		event->hw.sample_period = value;
-+	}
-+
-+	local64_set(&event->hw.period_left, 0);
- 	raw_spin_unlock_irq(&ctx->lock);
+ 	if (!new_ldt->entries) {
+ 		kfree(new_ldt);
+@@ -95,7 +95,7 @@ static void free_ldt_struct(struct ldt_struct *ldt)
+ 	if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)
+ 		vfree(ldt->entries);
+ 	else
+-		kfree(ldt->entries);
++		free_page((unsigned long)ldt->entries);
+ 	kfree(ldt);
+ }
  
- 	return 0;
 -- 
 2.17.1
 
