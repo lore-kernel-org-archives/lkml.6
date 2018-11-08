@@ -6,81 +6,106 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F81C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653F2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B88B82081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:46:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B88B82081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C9482081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 06:47:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9482081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeKHQUf (ORCPT
+        id S1726948AbeKHQU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 11:20:35 -0500
-Received: from relay.sw.ru ([185.231.240.75]:60708 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbeKHQUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 11:20:35 -0500
-Received: from [172.16.24.21]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1gKe5H-0005Zg-IF; Thu, 08 Nov 2018 09:46:32 +0300
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v2] ext4: missing !bh check in ext4_xattr_inode_write()
-To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-kernel@vger.kernel.org
-References: <20181107163346.GH9919@thunk.org>
-Message-ID: <a3f1e28c-fba0-2b07-b710-c559fab555b8@virtuozzo.com>
-Date:   Thu, 8 Nov 2018 09:46:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 11:20:57 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52203 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeKHQU5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 11:20:57 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA86jrAS1805135
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 7 Nov 2018 22:45:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA86jppg1805132;
+        Wed, 7 Nov 2018 22:45:51 -0800
+Date:   Wed, 7 Nov 2018 22:45:51 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Juri Lelli <tipbot@zytor.com>
+Message-ID: <tip-e6a2d72c10405b30ddba5af2e44a9d3d925a56d3@git.kernel.org>
+Cc:     hpa@zytor.com, mathieu.poirier@linaro.org, tglx@linutronix.de,
+        rostedt@goodmis.org, bristot@redhat.com, claudio@evidence.eu.com,
+        juri.lelli@redhat.com, peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it
+Reply-To: mathieu.poirier@linaro.org, hpa@zytor.com, bristot@redhat.com,
+          rostedt@goodmis.org, tglx@linutronix.de, peterz@infradead.org,
+          juri.lelli@redhat.com, claudio@evidence.eu.com, mingo@kernel.org,
+          luca.abeni@santannapisa.it, linux-kernel@vger.kernel.org
+In-Reply-To: <20181107111032.32291-1-juri.lelli@redhat.com>
+References: <20181107111032.32291-1-juri.lelli@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] posix-cpu-timers: Remove useless call to
+ check_dl_overrun()
+Git-Commit-ID: e6a2d72c10405b30ddba5af2e44a9d3d925a56d3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20181107163346.GH9919@thunk.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to Ted Ts'o ext4_getblk() called in ext4_xattr_inode_write()
-should not return bh = NULL
+Commit-ID:  e6a2d72c10405b30ddba5af2e44a9d3d925a56d3
+Gitweb:     https://git.kernel.org/tip/e6a2d72c10405b30ddba5af2e44a9d3d925a56d3
+Author:     Juri Lelli <juri.lelli@redhat.com>
+AuthorDate: Wed, 7 Nov 2018 12:10:32 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 8 Nov 2018 07:43:35 +0100
 
-The only time that bh could be NULL, then, would be in the case of
-something really going wrong; a programming error elsewhere (perhaps a
-wild pointer dereference) or I/O error causing on-disk file system
-corruption (although that would be highly unlikely given that we had
-*just* allocated the blocks and so the metadata blocks in question
-probably would still be in the cache).
+posix-cpu-timers: Remove useless call to check_dl_overrun()
 
-Fixes e50e5129f384 ("ext4: xattr-in-inode support")
-Cc: stable@kernel.org # 4.13
+check_dl_overrun() is used to send a SIGXCPU to users that asked to be
+informed when a SCHED_DEADLINE runtime overruns occur.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+The function is called by check_thread_timers() already, so the call in
+check_process_timers() is redundant/wrong (even though harmless).
+
+Remove it.
+
+Fixes: 34be39305a77 ("sched/deadline: Implement "runtime overrun signal" support")
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: linux-rt-users@vger.kernel.org
+Cc: mtk.manpages@gmail.com
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Luca Abeni <luca.abeni@santannapisa.it>
+Cc: Claudio Scordino <claudio@evidence.eu.com>
+Link: https://lkml.kernel.org/r/20181107111032.32291-1-juri.lelli@redhat.com
+
 ---
- fs/ext4/xattr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/time/posix-cpu-timers.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 0b9688683526..415f73d4c9e6 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1384,6 +1384,12 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
- 		bh = ext4_getblk(handle, ea_inode, block, 0);
- 		if (IS_ERR(bh))
- 			return PTR_ERR(bh);
-+		if (!bh) {
-+			WARN_ON_ONCE(1);
-+			__ext4_error_inode(ea_inode, __func__, __LINE__, 0,
-+					   "ext4_getblk() return bh = NULL");
-+			return -EFSCORRUPTED;
-+		}
- 		ret = ext4_journal_get_write_access(handle, bh);
- 		if (ret)
- 			goto out;
--- 
-2.17.1
-
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index ce32cf741b25..8f0644af40be 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -917,9 +917,6 @@ static void check_process_timers(struct task_struct *tsk,
+ 	struct task_cputime cputime;
+ 	unsigned long soft;
+ 
+-	if (dl_task(tsk))
+-		check_dl_overrun(tsk);
+-
+ 	/*
+ 	 * If cputimer is not running, then there are no active
+ 	 * process wide timers (POSIX 1.b, itimers, RLIMIT_CPU).
