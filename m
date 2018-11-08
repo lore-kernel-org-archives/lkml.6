@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BE6ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD93ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA0252081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05C062086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:36:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hTQIa3cT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0252081D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g1wof77b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C062086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeKIAMK (ORCPT
+        id S1727079AbeKIAMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:12:10 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39858 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeKIAMJ (ORCPT
+        Thu, 8 Nov 2018 19:12:12 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37672 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbeKIAMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:12:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10-v6so21491165wrv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 06:36:22 -0800 (PST)
+        Thu, 8 Nov 2018 19:12:10 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p2-v6so1414734wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 06:36:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CyHAJ7bm8yqliTwjL59/PERrC1/EJlU4Hst47qO5nm4=;
-        b=hTQIa3cT8mQ6PRrw+ArPxNwUIt8G3xNjt0LPrCZ2+3MjH5B+tB03HhLfo9JtaDflG7
-         1WS5ukgZJKhb3Ft+7oWDzcuhvWXYYqx0oGvId1rHas5NYbuZlzgh+jsCM0J8W0xqrJa0
-         OhmkLb2QT3xrgFMUjfPkpf38HSHLQ5o2uSKcXbsGzJDAc1p3wW4syg78MncnKzkxdlQ2
-         jTset9xpCPu5advaWYtuw31DIxNZhkWjXoUPz18Ntq6yzfcR8/4GKmf2sUarr6Qq88IJ
-         IhHrM2tjOxLBZ3p5PAc6ad18rgsGMiuDoHvHKgFHyyMONd2xM9xj5Hbiv/hkt+t/CGAx
-         Vh+Q==
+        bh=/pjzuvui9d85lC6ebp/JjM8l8T1XFTIxfHxdlRMSnSU=;
+        b=g1wof77b/ahW159tl/OaMLW0P96a0/zVeZFYRh5g6v6wbToBXd28iFvOASCK8yKV5Y
+         xHNqterZqD2KmkFcVcFGm+gkEQeG54Jf/H+takvz8wjdH3wdoMPjV1aR/aoFl8xbW+mR
+         3CDZOO7tD7iSEUdTMb+jOu+oyFpmUCbQR6pdxco9Vh1tL70iQ5jUycXJ0G3WmOgyULXv
+         HP7R7bmaLmZ4EHXVI9J9sCIzpUalSy8bFlzRzUf2kwtLgyxlzPRWUrnL1K4XN9LUvolW
+         Y96dsy0e/tD1Mz+ow6abkTbXTuAvzZ6CsMX4iIrftNJRgkfaRW/cIVRWqwbUc26iosdQ
+         6XAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CyHAJ7bm8yqliTwjL59/PERrC1/EJlU4Hst47qO5nm4=;
-        b=P4SEcwjCChIUJAFYCbMRC8uSfatgQm5Aiv3ZqfNfdcV8ozKD74jW8xqYrf1LBSOm/X
-         00+CeE3WEsDa4tda60VM9lzpawLzBqBlWXPSveK0uKddFZDbnKArcqBTPYe1qfdVUswn
-         knGoXOwtdSRhJY5TaAorH3l/vxDX6izGowddxr2Mv52DxxeEPf6edGk9win+fPKZlu95
-         etJUnHkwCCEZVAEmWMjiJjLFcq0YUugmuOV3yCiCvQOfAzFGMtdkH7IzWdwbwWvLwSlu
-         5Yvz1Gtkhp7+ChMte+IhgPrU3H+Vriyy51rhQuG/cT9mk3Oqn8+ey+DzZH1iWR1N3Wk/
-         a1rg==
-X-Gm-Message-State: AGRZ1gJdbnGP5tIXFLAh8/PQZGOstxD1/1N5l7hxzI6Oe/sJ1Cd95E8n
-        wJQXmjgw3P6Ze61RGn3Zyd/Nqg==
-X-Google-Smtp-Source: AJdET5d0FY6pZsoxQnT5NEn9m/O0HpttSzArfI8Y3zJIn/M/EFbpljwG8ooaFhLFbogzGGQcdQFN0w==
-X-Received: by 2002:adf:c752:: with SMTP id b18-v6mr4088793wrh.197.1541687781406;
-        Thu, 08 Nov 2018 06:36:21 -0800 (PST)
+        bh=/pjzuvui9d85lC6ebp/JjM8l8T1XFTIxfHxdlRMSnSU=;
+        b=Qly5a8xHOVfp2OHUU31XvXr8JDRpNSFqlWawrXPmDKq9fZKTafWStqNMOn/Pk8ScwZ
+         qnnpPnZRoMYTKfo3AOkzoq1agE1yuy4pE8NRghGEWj4Syj1Fh4IUQOHLaWsS2lAy38DG
+         08ndrIPQqKCRZRVlKY7duZe9L1cIeJMiwHRA6lrauJ0fP0bU9vB1/Zfks6jnImDn77a1
+         4smQd4C5gFn+zXdHYgNxjLTXse+I6EsOu5qz7O9E10X04mKI6hdddEw5Nrz98KOPpYBJ
+         jX0guKBwTT08iiWWdFwCoAJ7o8Zv+v5UcSRguSkLK2F5Yr/y9G85IIcteR8+lSFQIMc5
+         Ec7g==
+X-Gm-Message-State: AGRZ1gLzV7ndu2uGZKw8aAc1EsCkfBoHABdnyH7Mw7Ee31gDFsXdZOui
+        hSRAW9yat9ztKvtTaLBiTOOG7MBYRCIG4A==
+X-Google-Smtp-Source: AJdET5fJjnrcqJrwZDIF+kL6S1eyNF+VEauTvj/4nlfwZhoIa13mwXNXonwu4vWqr6lN/+fSYDs+KQ==
+X-Received: by 2002:a1c:13d2:: with SMTP id 201-v6mr1411054wmt.58.1541687782962;
+        Thu, 08 Nov 2018 06:36:22 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id k5-v6sm5421068wre.82.2018.11.08.06.36.19
+        by smtp.gmail.com with ESMTPSA id k5-v6sm5421068wre.82.2018.11.08.06.36.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 06:36:20 -0800 (PST)
+        Thu, 08 Nov 2018 06:36:22 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v8 1/8] arm64: add type casts to untagged_addr macro
-Date:   Thu,  8 Nov 2018 15:36:08 +0100
-Message-Id: <4a4063a3e074608b99cf22ab447fecc36d056251.1541687720.git.andreyknvl@google.com>
+Subject: [PATCH v8 2/8] uaccess: add untagged_addr definition for other arches
+Date:   Thu,  8 Nov 2018 15:36:09 +0100
+Message-Id: <c9028422854fb5bfb79d798397b30d4701207062.1541687720.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <cover.1541687720.git.andreyknvl@google.com>
 References: <cover.1541687720.git.andreyknvl@google.com>
@@ -97,29 +97,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes the untagged_addr macro accept all kinds of address types
-(void *, unsigned long, etc.) and allows not to specify type casts in each
-place where it is used. This is done by using __typeof__.
+To allow arm64 syscalls accept tagged pointers from userspace, we must
+untag them when they are passed to the kernel. Since untagging is done in
+generic parts of the kernel, the untagged_addr macro needs to be defined
+for all architectures.
+
+Define it as a noop for other architectures besides arm64.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/uaccess.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/uaccess.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 07c34087bd5e..c1325271e368 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -101,7 +101,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
-  * up with a tagged userland pointer. Clear the tag to get a sane pointer to
-  * pass on to access_ok(), for instance.
-  */
--#define untagged_addr(addr)		sign_extend64(addr, 55)
-+#define untagged_addr(addr)		\
-+	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index efe79c1cdd47..c045b4eff95e 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -13,6 +13,10 @@
  
- #define access_ok(type, addr, size)	__range_ok(addr, size)
- #define user_addr_max			get_fs
+ #include <asm/uaccess.h>
+ 
++#ifndef untagged_addr
++#define untagged_addr(addr) addr
++#endif
++
+ /*
+  * Architectures should provide two primitives (raw_copy_{to,from}_user())
+  * and get rid of their private instances of copy_{to,from}_user() and
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
