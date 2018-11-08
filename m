@@ -2,93 +2,112 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FE0C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD947C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205C720825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92C9120825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="qAznThQT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205C720825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5dcgvQx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C9120825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeKHVxL (ORCPT
+        id S1726881AbeKHVyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 16:53:11 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:57674 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHVxL (ORCPT
+        Thu, 8 Nov 2018 16:54:38 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46091 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbeKHVyi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 16:53:11 -0500
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id F2795460901;
-        Thu,  8 Nov 2018 13:17:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1541679475;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references;
-        bh=+ktdjOJID9J95uDUA6oZ6OQ4LzjRRpQiDyqagK5FdUs=;
-        b=qAznThQT72ZHYOKXZ39EAX84UkUFaJNN8MTCGZDcxv1oBK0soVpLcDMN+Nm8v22SUf0nqT
-        FJzT/auV7Mvpg6scXvVptqZMa3FjRrCgf4nEqd1wFbYRFDV4y/EWZbgUCw4hLC9uJObOr8
-        gKZg0gPQ+R0qVRzOAzXA6pTmXiFZuKQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name F2795460901
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Thu, 8 Nov 2018 16:54:38 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q1so25935821qkf.13;
+        Thu, 08 Nov 2018 04:19:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=m7swSWtNShO9i3P/CEEBFYSk1B4dBrgZU/HlWhtMzGs=;
+        b=G5dcgvQxDXKET9OX1fAJuta1JaVXBfieRR1t2B4vYSzJ9vNfVXpGYrqe/MO5h/K/Rm
+         Q1FZtKykRIsHKz7TuibYGE+h3NKRwj/ThFS+yNf4Ive4jzgVlAWv1Hs+iGie9SEOaFit
+         jQDMYXjt4Pn6CYn8Mv9zIMC/J0PlDyDOfreeorK4itf47MLY7zkPfAL8xj9snUBOL35V
+         wQpjfKAWq7Jrqi2am3Ci5ltO3VkZqgDDjDCuYHlhjndEuEVkKDtSe6T3pSOnqX9vq/U9
+         hCqnCRTAjUhqLsdGavdAlp7ixTYNsUNC+IYVnGmXAYPc8zfUmXALzh7XTH3wOl7hUooL
+         gH7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=m7swSWtNShO9i3P/CEEBFYSk1B4dBrgZU/HlWhtMzGs=;
+        b=rKjLhEEEZTUgPzscTJJnifx/qIEuaFu2fg3zEoJF29nQZSl63w4EWieeA4gZCOaxzz
+         Ov3oSqMU/TUFk7MXTArji5MSgq1ZSxCtOYuB9R03/LDhHnqnamr2j8R1KEfwSkgNDeuX
+         wSECOA0fPqBqo6v5PLyUHd7C8KvH3usmZiKxH4PGUaOeCl27D0lQBvZ9uq7JswgSCoAy
+         Pff6+KHjunUtVOZVwRjPRTQh/Sin2gT7cjWY8qUS4b1wV555aOmsQ30z8jVZdh8xlfue
+         k5WLWg0QG5SBdByoPAu5x7V1c7Hd5PWrO7RdG5l6c5SRnU7QkacbkAxhS6twTfI76Pvg
+         KTMA==
+X-Gm-Message-State: AGRZ1gJJpKjy8jyiUnpOptc70aOV678Lcpf1HX3w7/AB5iB1o870DOci
+        tBBSLOhufT5MDktf0td9Q41B0RVdUxejC41bSs4=
+X-Google-Smtp-Source: AJdET5dlo7PmXo909695Y1DUdGvqSMt2DsDsMoSSig9ufUAVmiyR2FQQ2GSfZdLcYA7PTN1JoawTa2BiGa3RTMsMtxQ=
+X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr3633804qkc.219.1541679564011;
+ Thu, 08 Nov 2018 04:19:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 08 Nov 2018 13:17:54 +0100
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     kai.heng.feng@canonical.com
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        stern@rowland.harvard.edu, ulf.hansson@linaro.org
-Subject: Re: [PATCH 0/5 v7] Keep rtsx_usb suspended when there's no card
-In-Reply-To:  <<20181105084506.6476-1-kai.heng.feng@canonical.com>>
-Message-ID: <58a96c0933bf4c812fa2dd382e6cb377@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.8
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1541679475;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references;
-        bh=+ktdjOJID9J95uDUA6oZ6OQ4LzjRRpQiDyqagK5FdUs=;
-        b=FwN6BJfO0oqEJAK/NthG6tHLgU3f2qjM34Gyn1sAgOe+5j58UAZ3RDKtrqMouP12pZwGHs
-        8bJ4b2tKNh6XUpR46RGUy9ZScke9sEz5xtWWkGz/TqAKVca96c2YwBVRZMuZmovvOzHqGE
-        e0dLE45idB+EUAynDuZjma26H3kKUDg=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1541679475; a=rsa-sha256;
-        cv=none;
-        b=uld86ex1TFcuUEy3XjgjYQuzzC+ifd8Fzn01VMAyX67kvhlwKTw1/4AjYdBzrKphs0wiMpqJXLIki3izQ+3AgzqdPB+bCxgKFy0P8XYMWFIWwP428LfhQ8oEejuJS+OSRdxOU7r3exzHYrxnrs6ePFstEFqv9gpkIpimAxMWrM0=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+References: <20181107195856.43223-1-andriy.shevchenko@linux.intel.com> <20181108100555.GB27328@kroah.com>
+In-Reply-To: <20181108100555.GB27328@kroah.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 8 Nov 2018 14:19:12 +0200
+Message-ID: <CAHp75Vf7YJ=Yzo51yw1J+K2irshqve0rr6RN0UqneXCo7aRVCA@mail.gmail.com>
+Subject: Re: [PATCH v1] PCI: Move Rohm vendor ID to generic list
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Brown <broonie@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This is based on Ulf's work [1] [2].
-> 
-> This patch series can keep rtsx_usb suspended, to save ~0.5W on Intel
-> platforms and ~1.5W on AMD platforms.
-> 
-> [1] https://patchwork.kernel.org/patch/10440583/
-> [2] https://patchwork.kernel.org/patch/10445725/
+On Thu, Nov 8, 2018 at 12:10 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Nov 07, 2018 at 09:58:56PM +0200, Andy Shevchenko wrote:
+> > Move the Rohm vendor ID to pci_ids.h from dozen of drivers.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >
+> > I believe the best chance to get it merged and be less intrusive to ong=
+oing
+> > work is through PCI subsystem as a _fix_ for v4.20.
+>
+> What?  Why?  Who cares?
 
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+> This can trickle in over the next year or never, as it isn't a bugfix,
+> or "necessary" at all.  Just add it to pci_ids.h and when that gets
+> merged, you can try to remove it from the individual drivers if it
+> really is annoying to you.
+>
 
--- 
-   Oleksandr Natalenko (post-factum)
+> But this is _NOT_ a fix for anything, don't try to mask it as one, that
+> feels like "crying wolf" here :(
+
+It doesn't fix anything, indeed. But since it touches 9 drivers
+simultaneously, it might be easier to push it earlier, or other way
+around =E2=80=94 at the end of the cycle.
+OTOH, I don't think there would be conflicts if it goes normal way
+through PCI subsystem.
+
+--=20
+With Best Regards,
+Andy Shevchenko
