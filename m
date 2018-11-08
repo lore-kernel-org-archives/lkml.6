@@ -2,192 +2,107 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D2EECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A75ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 967B920818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:15:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Wl/l0FtB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967B920818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 73B3F20840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:16:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B3F20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbeKIGxD (ORCPT
+        id S1727376AbeKIGxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:53:03 -0500
-Received: from imap.thunk.org ([74.207.234.97]:56340 "EHLO imap.thunk.org"
+        Fri, 9 Nov 2018 01:53:20 -0500
+Received: from mga05.intel.com ([192.55.52.43]:61568 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726831AbeKIGxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:53:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=ENZUxapedznnnNYetdr3XDMyh7vYvS9oimznGcBczxo=; b=Wl/l0FtB4EdYpN7zpHbXUjqoYM
-        tJR1BkvPgh0ayrB+9/vIRdCHh6sWl2s0GbZSN+lfuq4Pxgga7rOzoF/pJ20N3ZLucsnZ+we32TQqw
-        hjtzAQApqShT1bRNVCgiNQPG/sVzaM3w4LF/oq4gfV88U5Uu9YGJBSPqhddS0v/2KPts=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gKreP-0001gM-5v; Thu, 08 Nov 2018 21:15:41 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 2D35A7A7D24; Thu,  8 Nov 2018 16:15:40 -0500 (EST)
-Date:   Thu, 8 Nov 2018 16:15:40 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Mario.Limonciello@dell.com
-Cc:     mika.westerberg@linux.intel.com, whitequark@whitequark.org,
-        heikki.krogerus@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: A different PD controller firmware problem?
-Message-ID: <20181108211540.GG1080@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Mario.Limonciello@dell.com, mika.westerberg@linux.intel.com,
-        whitequark@whitequark.org, heikki.krogerus@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
- <20180905132429.GB25121@kuha.fi.intel.com>
- <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
- <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
- <3a666f66d6e342e2971b800caae7c889@whitequark.org>
- <3b76178ca0de4990a38362cfd4836fdc@ausx13mpc120.AMER.DELL.COM>
- <20180911093239.GW14465@lahna.fi.intel.com>
- <fd00612c1bb94f69820be2b1f1e171f9@ausx13mpc120.AMER.DELL.COM>
- <20181006060121.GA4050@thunk.org>
- <d92aef18a8ac4ef5ab3fcafaaf03afec@ausx13mpc120.AMER.DELL.COM>
+        id S1726182AbeKIGxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:53:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:16:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="102760809"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Nov 2018 13:16:00 -0800
+Date:   Thu, 8 Nov 2018 13:16:00 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108211600.GA17167@linux.intel.com>
+References: <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <20181108195420.GA14715@linux.intel.com>
+ <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+ <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d92aef18a8ac4ef5ab3fcafaaf03afec@ausx13mpc120.AMER.DELL.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 06:00:59PM +0000, Mario.Limonciello@dell.com wrote:
-> > Sortly after 12:30am US/Eastern, I got a low power warning on my
-> > system, and the battery power had dropped below 10%.  Apparently the
-> > laptop was not accepting any charge any more.  I tried doing a suspend
-> > to ram, and then unsuspended it, and it still wasn't accepting any
-> > charge, even though the adapter indicated it was plugged in and
-> > supplying power.  I then did a power cycle, and still the laptop
-> > didn't indicate it was charging with a USB C 45W power supply plugged
-> > in.
+On Thu, Nov 08, 2018 at 12:10:30PM -0800, Dave Hansen wrote:
+> On 11/8/18 12:05 PM, Andy Lutomirski wrote:
+> > Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
+> > not the most terrible thing in the world.  But could the SDK live with
+> > something more like my suggestion where the vDSO supplies a normal
+> > function that takes a struct containing registers that are visible to
+> > the enclave?  This would make it extremely awkward for the enclave to
+> > use the untrusted stack per se, but it would make it quite easy (I
+> > think) for the untrusted part of the SDK to allocate some extra memory
+> > and just tell the enclave that *that* memory is the stack.
 > 
-> Just to be clear was this a Dell adapter or another manufacturer?
+> I really think the enclave should keep its grubby mitts off the
+> untrusted stack.  There are lots of ways to get memory, even with
+> stack-like semantics, that don't involve mucking with the stack itself.
 > 
-> If it's non-Dell, there could easily be an untested combination of controllers
-> and one getting into a bad state.
+> I have not heard a good, hard argument for why there is an absolute
+> *need* to store things on the actual untrusted stack.
 
-It was multiple non-Dell adapters --- but normally unplugging and
-re-pluggin a USB C port *should* be enough to get the port back into a
-sane state; a power down and unplugging the power should not be
-required!  (A power down was not enough, and unplugging the power
-supply and trying a different USB adapter was also not enough.)
+Convenience and performance are the only arguments I've heard, e.g. so
+that allocating memory doesn't require an extra EEXIT->EENTER round trip.
 
-Adapters which I tried included the Innergie 45W[1] (which does have
-some USB Compliance issues), the original Google Universal Type C
-Charger 60W[2], and BatPower ProE plus USB C adapter.  The last hasn't
-gotten a USB C conformance review published, but I took that last one
-to Benson Leung's lab and he tested it using his USB C analyzer.  The
-ProE w/ USB C adapter passed with only one nit (apparently on
-disconnection it didn't drop down below 5 volts fast enough to be
-within spec; so if you unplugged it from a laptop and immediately
-jammed it into a phone which only accepted 5V input, there might be
-issues.  :-)
+> We could quite easily have the untrusted code just promise to allocate a
+> stack-sized virtual area (even derived from the stack rlimit size) and
+> pass that into the enclave for parameter use.
 
-[1] https://gtrusted.com/review/innergie-powergear-usb-c-45
-[2] https://gtrusted.com/review/the-microsoft-surface-book-2-charges-fine-with-the-google-universal-type-c-charger-60w-over-usb-power-delivery
-
-The problem with the Dell XPS 13 not accepting power first showed up
-while attached to the Google 60W USB power adapter.
-
-Unfortunately, it's never happend again since in the past month, so
-there's not much I can report.
-
-> > I have noticed other problems where a USB C to HDMI adapter doesn't
-> > quite work right (the laptop refuses to talk to the display), and the
-> > *only* way to fix things is to powerdown Linux and then remove the
-> > power plug.  
-> 
-> Is this with the DA200 or DA300?  Or something else?
-
-It was with something else.  The problem stopped happening after I
-stopped using a Dell Ultrasharp 30" monitor.  I've noticed that
-Linux's drm support for that particular monitor has always been
-marginal, and the problem would happen either when connecting to the
-Dell Ultrasharp 30, or after it had been connected to the Dell
-Ultrasharp 30 and going into work and connecting to a lesser Dell 24"
-monitor (at $WORK they're too cheap to buy Ultrasharp's :-).  When I
-upgraded my home display to be a 34" 4k display, this particular
-problem went away.
-
-The only thing that was interesting about it other than "random drm
-bug; MST support in Linux marginal[1], film at 11" (I've been having
-problems with the Dell Ultrasharp 30 connected from a Thinkpad Dock
-ever since I got it), was that with the Dell XPS 13, it was the first
-time where powering down *and* removing the power adapter made a
-difference.   That was unique and surprising to me.
-
-[1] https://www.youtube.com/watch?v=6301tGNs9Dc
-
-I still have the Dell Ultrasharp 30", so I could try some experiments,
-but since I'm not using it these days, it's been must less important
-to me, since I'm not a DRM developer.  :-)   (And yes, it's possible
-that the timing was a coincidence where it was something else, like
-going to a newer kernel, not stopping the use of the Dell U30 that
-made the key difference.  Give all of the Linux problems I've seen
-with the Dell U30, over the past few years, I'm less convinced, but I
-admit I haven't done a fully controlled experiment yet.)
-
-> It sounds like this one might be more reproducible.  If it's a Dell
-> peripheral I think it should be pretty easy for support to reproduce
-> and escalate.
-
-When I have time (probably after Vancouver at this point), I can drag
-my Dell TB16 dock home, and try an experiment with the Dell XPS 13,
-connecting to the Dell Ultrasharp via a TB16 dock.  And I can it with
-a bleeding-edge kernel as well as the Debian 4.18.0-2 kernel.
-
-Given that the Dell Ultrasharp 30 is an older monitor, it might be
-less urgent to track this down, though.
-
-Cheers,
-
-					- Ted
-
-P.S.  Linux support for 4k monitors are still marginal.  I very often
-need to configure to 2560x1600/60Hz, and *then* reconfigure to
-3840x2160 with a 59Hz refresh (that's important, usually it won't work
-with 60Hz refresh).  And if the laptop display ever goes to sleep, I
-need to repeat the "configure to 2560x1600, then reconfigure to
-3840x2160@59Hz" dance.  These problems go away if I use an USB C /
-HDMI adapter which only supports 4k @ 30Hz, but I want a faster
-refresh rate than that.  :-)   (And yes, I've tried multiple USB C /
-HDMI adapters; I have a whole collection.)
-
-And this is something I can reproduce with a TB16 dock at work,
-although I don't have a Dell 4k monitor, so I can't do a 100% Dell
-repro on this particular 4k@60Hz (almost never works) / 4k@59Hz
-(usually works, although I can't let the display sleep) exernal
-monitor problem.  This particular problem does reproduce on a Acer 32"
-4k screen at work, as well as LG 32" 4k monitor at home, though.
-
-P.P.S.  Then there are the problems with using a TB16 at work, and
-suspending, then going home and using a USB-C hub/adapter at home.
-And after getting two TB16 for home use from Amazon, both of which
-didn't work, although the TB16 at work did, I gave up with trying to
-get a second TB16 for home use.  So normally I don't use the TB16 at
-work, because things are much more stable if I don't use Thunderbolt
-at all, unless I want to reboot after every commute.
-
-Ah, life at the bleeding edge.  :-)
+I agree more and more the further I dig.  AFAIK there is no need to for
+the enclave to actually load %rsp.  The initial EENTER can pass in the
+base/top of the pseudo-stack and from there the enclave can manage it
+purely in software.
