@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF716ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB2DECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 978A120825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47D5920825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:46:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MpwfSApe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978A120825
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dVKAD9Xm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D5920825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeKHXVc (ORCPT
+        id S1727289AbeKHXVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 8 Nov 2018 18:21:32 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55129 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbeKHXVa (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54478 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727042AbeKHXVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:21:30 -0500
+        Thu, 8 Nov 2018 18:21:31 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181108134556euoutp01bca31f16902bbc0331d97b2159239642~lKh4OwcLf0570905709euoutp01J;
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181108134556euoutp028d97dae99fa13e9c8e861907da0a8765~lKh4aMS2h2165821658euoutp02H;
         Thu,  8 Nov 2018 13:45:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181108134556euoutp01bca31f16902bbc0331d97b2159239642~lKh4OwcLf0570905709euoutp01J
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181108134556euoutp028d97dae99fa13e9c8e861907da0a8765~lKh4aMS2h2165821658euoutp02H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1541684756;
-        bh=bFujyy0o4H8gCi49hkwnl6cUPt+eOaf+xnWYuyuPuT0=;
+        bh=SpTUG4XNSxiy49yB/2ovPC56gqyCOSPQBOPdlQJuoeM=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=MpwfSApe8DTJd+rQxywpYzY7F83E0jrhRg7YHes/3SyJrd8rIz3uIw5f/26dNDY11
-         XSgcG6AzQneZPy34e6M/1tyk+r4U2ZfmJkVZs2Pt23/TLmqN9+VoINAZwu5lY23/tY
-         e/Hb7wJKGSiOnIAUqDKfumhH3FopUwm/TY74ubVI=
+        b=dVKAD9XmEF3+d3kxShl01HghVsn1twQ6FGoPYol8LeBHjdHnw3xlA8amM8NTVpGVk
+         oO2KIvLQPQjtGLZ1AokDnce/KEcPWkQNtPhArhhy4KRec8ajp7cCQQ8PuWUv2DxZoy
+         2HgBfJ8lXaI4aBPbYPe+aFZVAf2rAaFY8NBG05Ng=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181108134555eucas1p1734d251d6854d0bbc67a7ed70e07b54e~lKh32ZQvg0883808838eucas1p1d;
-        Thu,  8 Nov 2018 13:45:55 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6C.7A.04806.31E34EB5; Thu,  8
-        Nov 2018 13:45:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181108134554eucas1p26363910951ef941a3b80f47a1c0006c2~lKh3JD2b11557415574eucas1p20;
-        Thu,  8 Nov 2018 13:45:54 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-b6-5be43e1384e6
+        20181108134555eucas1p21c794ef065f61e18ad16fdba54a9d58b~lKh4CydKR1373213732eucas1p2-;
+        Thu,  8 Nov 2018 13:45:55 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id FC.7A.04806.31E34EB5; Thu,  8
+        Nov 2018 13:45:55 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181108134555eucas1p10f126bdad7538c224d97be4f7e31e4bb~lKh3ibjE21719217192eucas1p1B;
+        Thu,  8 Nov 2018 13:45:55 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-b9-5be43e13fa88
 Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 47.70.04284.21E34EB5; Thu,  8
-        Nov 2018 13:45:54 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2A.F3.04128.31E34EB5; Thu,  8
+        Nov 2018 13:45:55 +0000 (GMT)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PHV00GNNNKETS20@eusync1.samsung.com>;
-        Thu, 08 Nov 2018 13:45:54 +0000 (GMT)
+        Thu, 08 Nov 2018 13:45:55 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -63,40 +63,39 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/4] extcon: max14577: Avoid forcing UART path on drive
- probe
-Date:   Thu, 08 Nov 2018 14:45:47 +0100
-Message-id: <20181108134548.31140-4-m.szyprowski@samsung.com>
+Subject: [PATCH 4/4] extcon: max8997: Avoid forcing UART path on drive probe
+Date:   Thu, 08 Nov 2018 14:45:48 +0100
+Message-id: <20181108134548.31140-5-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-reply-to: <20181108134548.31140-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7djP87rCdk+iDRb95rfYOGM9q8X1L89Z
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7djPc7rCdk+iDRZNULPYOGM9q8X1L89Z
         Lc6f38BucXnXHDaLGef3MVmsPXKX3eJ24wo2B3aPTas62Tz6tqxi9Pi8SS6AOYrLJiU1J7Ms
-        tUjfLoEr4/6eVraCCYIVa68eZm9gXMfXxcjJISFgInF53SGWLkYuDiGBFYwSe1c/Z4NwPjNK
-        PDr+nAWm6ufkSawQiWWMEuem3GGCcBqYJB7+3M4OUsUmYCjR9baLDcQWEXCWuP3hG1g3s8BD
-        RoktVxVAbGEBf4krj9+zgtgsAqoSz/6vA6vhFbCVmPtpC9Q2eYnVGw4wg9icAnYS1959ATtJ
-        QuAnq8Tk6a+BNnMAOS4Scz9UQNQLS7w6voUdwpaR6Ow4yARR38wo0T5jFjuE08MosXXODjaI
-        KmuJw8cvskJcxycxadt0ZoihvBIdbUIQpofExXtyEE9OZJRo2XmLfQKj5AJGhlWM4qmlxbnp
-        qcXGeanlesWJucWleel6yfm5mxiB0Xb63/GvOxj3/Uk6xCjAwajEwyuh+DhaiDWxrLgy9xCj
-        BAezkgjvJp0n0UK8KYmVValF+fFFpTmpxYcYpTlYlMR5qxkeRAsJpCeWpGanphakFsFkmTg4
-        pRoY989s3qm1M341q6LW8tM6/7sfN4ZuOu/30OWkw5LbtzJE7TV9TQTEd8yL/T/Dxcr+sebD
-        gvwnMVpvcu4zrr9j/UhmRvB/C80HR5Y722Tz2F9Q1DCIuj9piWzIe54dxg8+HWqR+ZS2mpt/
-        48r7NdllGx6EKu+YNcfU5JHitGdFSeqpjpaWpxRmK7EUZyQaajEXFScCAOb1FYiyAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLJMWRmVeSWpSXmKPExsVy+t/xy7pCdk+iDW5+MLLYOGM9q8X1L89Z
+        tUjfLoErY8bxhIKZghXvdlo2MG7m62Lk5JAQMJF4/W0rSxcjF4eQwApGidurHkM5nxklrk2c
+        ywpTteXuMqjEMkaJSb/msUE4DUwSBzpms4NUsQkYSnS97WIDsUUEnCVuf/jGAmIzCzxklNhy
+        VQHEFhbwkXjUPZERxGYRUJXomb+ECcTmFbCV6Dm8lRlim7zE6g0HwGxOATuJa+++gC2TEPjK
+        KjF3xjKoIheJPxuPskDYwhKvjm9hh7BlJC5P7maBaGhmlGifMYsdwulhlNg6ZwcbRJW1xOHj
+        F1khzuOTmLRtOtBUDqA4r0RHmxBEiYfEzrsbwC4VEpjIKDFtee0ERskFjAyrGMVTS4tz01OL
+        jfNSy/WKE3OLS/PS9ZLzczcxAmPt9L/jX3cw7vuTdIhRgINRiYdXQvFxtBBrYllxZe4hRgkO
+        ZiUR3k06T6KFeFMSK6tSi/Lji0pzUosPMUpzsCiJ81YzPIgWEkhPLEnNTk0tSC2CyTJxcEo1
+        MMbp3BFZ+v9ippEXF98VdZbau2FH1qfpFU2vt3TlKd8/b3n0lc+zL2WkTvOImnbo0cU0t6Y0
+        qSXm6mceronamLRzX/+tD8xT0xd0cuxg+7Jb2tWb4VGE9NKgvPLMPU2xB034z3ysuJK886lD
+        a2eTu/3dve8jS3cVKR2vvhrlueqFhtl89xVVx5VYijMSDbWYi4oTAYImvq2xAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNJMWRmVeSWpSXmKPExsVy+t/xy7rCdk+iDc7v47HYOGM9q8X1L89Z
         Lc6f38BucXnXHDaLGef3MVmsPXKX3eJ24wo2B3aPTas62Tz6tqxi9Pi8SS6AOYrLJiU1J7Ms
-        tUjfLoEr4/6eVraCCYIVa68eZm9gXMfXxcjJISFgIvFz8iTWLkYuDiGBJYwSXzc9g3KamCTW
-        Nj5kBaliEzCU6HrbxQZiiwg4S9z+8I0FpIhZ4CGjxKstRxhBEsICvhL9Ly4yg9gsAqoSz/6v
-        YwGxeQVsJeZ+2sICsU5eYvWGA2A1nAJ2EtfefQEaygG0zVZi+VWuCYw8CxgZVjGKpJYW56bn
-        FhvqFSfmFpfmpesl5+duYgQGyrZjPzfvYLy0MfgQowAHoxIP7wG5x9FCrIllxZW5hxglOJiV
-        RHg36TyJFuJNSaysSi3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cDI
-        u18nVaIlQnx7xd9fr29XWOXtSGsIWu2yV/d35n3Bzw/7I9fds+F1TJh5xsL59qOMo8dvTyoL
-        Lpr1jke+9Rav4S9zedfeh+tnv+IoaW3SNLNblGi+bEvn5Gs7tlkyO2/K3SF9eFI454sXrSXG
-        TipP5oVrPzZZKz5pxo/06wFzxPr99UKMtrMpsRRnJBpqMRcVJwIAHcIfJhACAAA=
-X-CMS-MailID: 20181108134554eucas1p26363910951ef941a3b80f47a1c0006c2
+        tUjfLoErY8bxhIKZghXvdlo2MG7m62Lk5JAQMJHYcncZSxcjF4eQwBJGibctG9ghnCYmiRuf
+        DrGCVLEJGEp0ve1iA7FFBJwlbn/4BtbBLPCQUeLVliOMIAlhAR+JR90TwWwWAVWJnvlLmEBs
+        XgFbiZ7DW5kh1slLrN5wAMzmFLCTuPbuC9BQDqBtthLLr3JNYORZwMiwilEktbQ4Nz232Eiv
+        ODG3uDQvXS85P3cTIzBIth37uWUHY9e74EOMAhyMSjy8B+QeRwuxJpYVV+YeYpTgYFYS4d2k
+        8yRaiDclsbIqtSg/vqg0J7X4EKM0B4uSOO95g8ooIYH0xJLU7NTUgtQimCwTB6dUA+OhKbFx
+        Lg+Y/Hq7P79LLptsx7FWlru68t6Xp6de7ytP8Pi2duo2uYTrM7q+G1xgUi7ecS+fPXz91Ssz
+        T51utM7gkzjdaGG0j90xbWfe5N8Xheal16wXt7nHkCnqFDPtl56g3tcLzQUXGren7Lx/9fRs
+        NqGMFWbVer5X/sXbpOev+/uU6UuikY0SS3FGoqEWc1FxIgB4o9G1DgIAAA==
+X-CMS-MailID: 20181108134555eucas1p10f126bdad7538c224d97be4f7e31e4bb
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181108134554eucas1p26363910951ef941a3b80f47a1c0006c2
+X-CMS-RootMailID: 20181108134555eucas1p10f126bdad7538c224d97be4f7e31e4bb
 References: <20181108134548.31140-1-m.szyprowski@samsung.com>
-        <CGME20181108134554eucas1p26363910951ef941a3b80f47a1c0006c2@eucas1p2.samsung.com>
+        <CGME20181108134555eucas1p10f126bdad7538c224d97be4f7e31e4bb@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -117,42 +116,42 @@ possible, set UART path only when USB ID reports UART capable cable.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/extcon/extcon-max14577.c | 15 +++++++++++++--
+ drivers/extcon/extcon-max8997.c | 15 +++++++++++++--
  1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/extcon/extcon-max14577.c b/drivers/extcon/extcon-max14577.c
-index 22d2feb1f8bc..32f663436e6e 100644
---- a/drivers/extcon/extcon-max14577.c
-+++ b/drivers/extcon/extcon-max14577.c
-@@ -657,6 +657,8 @@ static int max14577_muic_probe(struct platform_device *pdev)
- 	struct max14577 *max14577 = dev_get_drvdata(pdev->dev.parent);
- 	struct max14577_muic_info *info;
+diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
+index bdabb2479e0d..632192d027bf 100644
+--- a/drivers/extcon/extcon-max8997.c
++++ b/drivers/extcon/extcon-max8997.c
+@@ -632,6 +632,8 @@ static int max8997_muic_probe(struct platform_device *pdev)
+ 	struct max8997_platform_data *pdata = dev_get_platdata(max8997->dev);
+ 	struct max8997_muic_info *info;
  	int delay_jiffies;
 +	int cable_type;
 +	bool attached;
- 	int ret;
- 	int i;
- 	u8 id;
-@@ -725,8 +727,17 @@ static int max14577_muic_probe(struct platform_device *pdev)
- 	info->path_uart = CTRL1_SW_UART;
- 	delay_jiffies = msecs_to_jiffies(DELAY_MS_DEFAULT);
+ 	int ret, i;
+ 
+ 	info = devm_kzalloc(&pdev->dev, sizeof(struct max8997_muic_info),
+@@ -724,8 +726,17 @@ static int max8997_muic_probe(struct platform_device *pdev)
+ 		delay_jiffies = msecs_to_jiffies(DELAY_MS_DEFAULT);
+ 	}
  
 -	/* Set initial path for UART */
--	max14577_muic_set_path(info, info->path_uart, true);
+-	 max8997_muic_set_path(info, info->path_uart, true);
 +	/* Set initial path for UART when JIG is connected to get serial logs */
-+	ret = max14577_bulk_read(info->max14577->regmap,
-+			MAX14577_MUIC_REG_STATUS1, info->status, 2);
++	ret = max8997_bulk_read(info->muic, MAX8997_MUIC_REG_STATUS1,
++				2, info->status);
 +	if (ret) {
-+		dev_err(info->dev, "Cannot read STATUS registers\n");
++		dev_err(info->dev, "failed to read MUIC register\n");
 +		return ret;
 +	}
-+	cable_type = max14577_muic_get_cable_type(info, MAX14577_CABLE_GROUP_ADC,
-+					 &attached);
-+	if (attached && cable_type == MAX14577_MUIC_ADC_FACTORY_MODE_UART_OFF)
-+		max14577_muic_set_path(info, info->path_uart, true);
++	cable_type = max8997_muic_get_cable_type(info,
++					   MAX8997_CABLE_GROUP_ADC, &attached);
++	if (attached && cable_type == MAX8997_MUIC_ADC_FACTORY_MODE_UART_OFF)
++		max8997_muic_set_path(info, info->path_uart, true);
  
- 	/* Check revision number of MUIC device*/
- 	ret = max14577_read_reg(info->max14577->regmap,
+ 	/* Set ADC debounce time */
+ 	max8997_muic_set_debounce_time(info, ADC_DEBOUNCE_TIME_25MS);
 -- 
 2.17.1
 
