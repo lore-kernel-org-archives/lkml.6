@@ -2,102 +2,140 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D233ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59515ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7073820827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7073820827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 29ABC20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:23:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29ABC20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeKHRze (ORCPT
+        id S1726744AbeKHR6B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:55:34 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56679 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeKHRze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:55:34 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9B8962072D; Thu,  8 Nov 2018 09:21:11 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6DDF22039F;
-        Thu,  8 Nov 2018 09:21:11 +0100 (CET)
-Date:   Thu, 8 Nov 2018 09:21:11 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-sunxi@googlegroups.com, loic.poulain@gmail.com,
-        linux-bluetooth@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 11/15] Bluetooth: hci_bcm: Add BCM20702A1 variant
-Message-ID: <20181108082111.3jt3eukjzfy46kv4@flea>
-References: <20181107101308.7626-1-wens@csie.org>
- <20181107101308.7626-12-wens@csie.org>
- <20181107203608.ff32gmb4u54kcvep@flea>
- <CAGb2v64asgNbYch6gwj0BTTz84=Jfbmu9th0Dyfdx_o8N5tNXg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gpfwphpxwbmirm24"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64asgNbYch6gwj0BTTz84=Jfbmu9th0Dyfdx_o8N5tNXg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Thu, 8 Nov 2018 12:58:01 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:32566 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726162AbeKHR6A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 12:58:00 -0500
+X-IronPort-AV: E=Sophos;i="5.54,478,1534789800"; 
+   d="scan'208";a="233229"
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 08 Nov 2018 13:53:23 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9070"; a="5699120"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 08 Nov 2018 13:53:22 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id 137E923A8; Thu,  8 Nov 2018 13:53:21 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     akpm@linux-foundation.org, keescook@chromium.org,
+        khlebnikov@yandex-team.ru, minchan@kernel.org, mhocko@kernel.org,
+        vbabka@suse.cz, osalvador@suse.de, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
+Subject: [PATCH v3 0/4] mm: convert totalram_pages, totalhigh_pages and managed pages to atomic
+Date:   Thu,  8 Nov 2018 13:53:14 +0530
+Message-Id: <1541665398-29925-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series convert totalram_pages, totalhigh_pages and
+zone->managed_pages to atomic variables.
 
---gpfwphpxwbmirm24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch was comiple tested on x86(x86_64_defconfig & i386_defconfig)
+on 4.20-rc1. And memory hotplug tested on arm64, but on an older version
+of kernel.
 
-On Thu, Nov 08, 2018 at 02:53:33PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Nov 8, 2018 at 4:36 AM Maxime Ripard <maxime.ripard@bootlin.com> =
-wrote:
-> >
-> > Hi!
-> >
-> > On Wed, Nov 07, 2018 at 06:13:04PM +0800, Chen-Yu Tsai wrote:
-> > > From: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > >
-> > > The BCM20702A1 chip is a single-chip Bluetooth 4.0 controller and
-> > > transceiver. It is found in the AMPAK AP6210 WiFi+BT package.
-> > >
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >
-> > if you resubmit it, could you do s/free-electrons/bootlin/ ?
->=20
-> OK. And for the author as well?
+totalram_pages, zone->managed_pages and totalhigh_pages updates
+are protected by managed_page_count_lock, but readers never care
+about it. Convert these variables to atomic to avoid readers
+potentially seeing a store tear.
 
-Yes, please :)
+Main motivation was that managed_page_count_lock handling was
+complicating things. It was discussed in length here,
+https://lore.kernel.org/patchwork/patch/995739/#1181785
+It seemes better to remove the lock and convert variables
+to atomic. With the change, preventing poteintial store-to-read
+tearing comes as a bonus.
 
-Maxime
+Changes in v3:
+- Fixed kbuild test robot errors.
+- Modifed changelogs to be more clear.
+- EXPORT_SYMBOL for _totalram_pages and _totalhigh_pages.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Arun KS (4):
+  mm: reference totalram_pages and managed_pages once per function
+  mm: convert zone->managed_pages to atomic variable
+  mm: convert totalram_pages and totalhigh_pages variables to atomic
+  mm: Remove managed_page_count spinlock
 
---gpfwphpxwbmirm24
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/csky/mm/init.c                           |  4 +-
+ arch/powerpc/platforms/pseries/cmm.c          | 10 ++--
+ arch/s390/mm/init.c                           |  2 +-
+ arch/um/kernel/mem.c                          |  3 +-
+ arch/x86/kernel/cpu/microcode/core.c          |  5 +-
+ drivers/char/agp/backend.c                    |  4 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_crat.c         |  2 +-
+ drivers/gpu/drm/i915/i915_gem.c               |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_gtt.c |  4 +-
+ drivers/hv/hv_balloon.c                       | 19 +++----
+ drivers/md/dm-bufio.c                         |  2 +-
+ drivers/md/dm-crypt.c                         |  2 +-
+ drivers/md/dm-integrity.c                     |  2 +-
+ drivers/md/dm-stats.c                         |  2 +-
+ drivers/media/platform/mtk-vpu/mtk_vpu.c      |  2 +-
+ drivers/misc/vmw_balloon.c                    |  2 +-
+ drivers/parisc/ccio-dma.c                     |  4 +-
+ drivers/parisc/sba_iommu.c                    |  4 +-
+ drivers/staging/android/ion/ion_system_heap.c |  2 +-
+ drivers/xen/xen-selfballoon.c                 |  6 +--
+ fs/ceph/super.h                               |  2 +-
+ fs/file_table.c                               |  7 +--
+ fs/fuse/inode.c                               |  2 +-
+ fs/nfs/write.c                                |  2 +-
+ fs/nfsd/nfscache.c                            |  2 +-
+ fs/ntfs/malloc.h                              |  2 +-
+ fs/proc/base.c                                |  2 +-
+ include/linux/highmem.h                       | 28 ++++++++++-
+ include/linux/mm.h                            | 27 +++++++++-
+ include/linux/mmzone.h                        | 15 +++---
+ include/linux/swap.h                          |  1 -
+ kernel/fork.c                                 |  5 +-
+ kernel/kexec_core.c                           |  5 +-
+ kernel/power/snapshot.c                       |  2 +-
+ lib/show_mem.c                                |  2 +-
+ mm/highmem.c                                  |  5 +-
+ mm/huge_memory.c                              |  2 +-
+ mm/kasan/quarantine.c                         |  2 +-
+ mm/memblock.c                                 |  6 +--
+ mm/mm_init.c                                  |  2 +-
+ mm/oom_kill.c                                 |  2 +-
+ mm/page_alloc.c                               | 72 +++++++++++++--------------
+ mm/shmem.c                                    |  7 +--
+ mm/slab.c                                     |  2 +-
+ mm/swap.c                                     |  2 +-
+ mm/util.c                                     |  2 +-
+ mm/vmalloc.c                                  |  4 +-
+ mm/vmstat.c                                   |  4 +-
+ mm/workingset.c                               |  2 +-
+ mm/zswap.c                                    |  4 +-
+ net/dccp/proto.c                              |  7 +--
+ net/decnet/dn_route.c                         |  2 +-
+ net/ipv4/tcp_metrics.c                        |  2 +-
+ net/netfilter/nf_conntrack_core.c             |  7 +--
+ net/netfilter/xt_hashlimit.c                  |  5 +-
+ net/sctp/protocol.c                           |  7 +--
+ security/integrity/ima/ima_kexec.c            |  2 +-
+ 57 files changed, 195 insertions(+), 142 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+1.9.1
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+Px9wAKCRDj7w1vZxhR
-xZjOAQDnZIAeel1CWH3cfJfECDCzeyv5UI9PcpCEDOmk4eZvogEAwDcRw7W/oeLc
-FEwL4guBiDAUo7VZxnTPRkrEU1AWggQ=
-=qoGZ
------END PGP SIGNATURE-----
-
---gpfwphpxwbmirm24--
