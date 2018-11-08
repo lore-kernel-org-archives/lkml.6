@@ -2,153 +2,152 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC713ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CD1ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F84220825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:29:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F84220825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E3FF20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:30:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3FF20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeKIHHH convert rfc822-to-8bit (ORCPT
+        id S1727311AbeKIHHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:07:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45654 "EHLO mx1.redhat.com"
+        Fri, 9 Nov 2018 02:07:53 -0500
+Received: from fieldses.org ([173.255.197.46]:39158 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeKIHHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:07:06 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EA24F307D857;
-        Thu,  8 Nov 2018 21:29:43 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 39262600D4;
-        Thu,  8 Nov 2018 21:29:42 +0000 (UTC)
-Subject: Re: [PATCH v10 1/4] ipc: Allow boot time extension of IPCMNI from 32k
- to 8M
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
-        Manfred Spraul <manfred@colorfullife.com>
-References: <1541432626-27780-1-git-send-email-longman@redhat.com>
- <1541432626-27780-2-git-send-email-longman@redhat.com>
- <20181106132059.GD3074@bombadil.infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <f1267a9d-fb6c-72f6-8909-4e32b5bf6d6d@redhat.com>
-Date:   Thu, 8 Nov 2018 16:29:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725882AbeKIHHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:07:53 -0500
+Received: by fieldses.org (Postfix, from userid 2815)
+        id D0AF32014; Thu,  8 Nov 2018 16:30:30 -0500 (EST)
+Date:   Thu, 8 Nov 2018 16:30:30 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/12] fs/locks: create a tree of dependent requests.
+Message-ID: <20181108213030.GF6090@fieldses.org>
+References: <154138128401.31651.1381177427603557514.stgit@noble>
+ <154138144796.31651.14201944346371750178.stgit@noble>
 MIME-Version: 1.0
-In-Reply-To: <20181106132059.GD3074@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 08 Nov 2018 21:29:44 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154138144796.31651.14201944346371750178.stgit@noble>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/2018 08:20 AM, Matthew Wilcox wrote:
-> On Mon, Nov 05, 2018 at 10:43:43AM -0500, Waiman Long wrote:
->> The maximum number of unique System V IPC identifiers was limited to
->> 32k.  That limit should be big enough for most use cases.
->>
->> However, there are some users out there requesting for more, especially
->> those that are migrating from Solaris which uses 24 bits for unique
->> identifiers. To satisfy the need of those users, a new boot time kernel
->> option "ipcmni_extend" is added to extend the IPCMNI value to 8M. This
->> is a 256X increase which hopefully is big enough for them.
-> Why go to 23 bits when people are coming from systems with 24 bits?
-> Let's just go to 24 bits.  This happens to fit well with the underlying
-> data structure which uses 6 bits per layer of the tree.
+On Mon, Nov 05, 2018 at 12:30:48PM +1100, NeilBrown wrote:
+> When we find an existing lock which conflicts with a request,
+> and the request wants to wait, we currently add the request
+> to a list.  When the lock is removed, the whole list is woken.
+> This can cause the thundering-herd problem.
+> To reduce the problem, we make use of the (new) fact that
+> a pending request can itself have a list of blocked requests.
+> When we find a conflict, we look through the existing blocked requests.
+> If any one of them blocks the new request, the new request is attached
+> below that request, otherwise it is added to the list of blocked
+> requests, which are now known to be mutually non-conflicting.
+> 
+> This way, when the lock is released, only a set of non-conflicting
+> locks will be woken, the rest can stay asleep.
+> If the lock request cannot be granted and the request needs to be
+> requeued, all the other requests it blocks will then be woken
 
-Sure. I can move it up to 24 bits leave 7 bits for the sequence number.
+So, to make sure I understand: the tree of blocking locks only ever has
+three levels (the active lock, the locks blocking on it, and their
+children?)
 
->
->> The use of this new option will change the pattern of the IPC identifiers
->> returned by functions like shmget(2). An application that depends on
->> such pattern may not work properly.  So it should only be used if the
->> users really need more than 32k of unique IPC numbers.
-> Are there applications out there that rely on the internal structure of
-> the IPC identifiers?!
+--b.
 
-That is a question that may not have a clear answer. Most applications
-won't do that, but there are always some outliners that do crazy thing.
-So you never know for sure.
-
->
-> How about scrapping all this and just doing the following:
->
-> Allocate 24 bits of the ID cyclically.  Increment the top 7 bits of the
-> ID every time the cursor wraps.  That's not going to give us a perfect
-> progression from 0-2 billion, because it'll skip the ones in use.
-> But it'll ensure the ID isn't reused particularly quickly unless the
-> application is really using millions of IDs.
-
-Eric Biederman had sent out a patch somewhat like that before. Again,
-there is a slight chance that it may break existing applications. So the
-question is whether we are willing to take the risk. I won't mind if
-upstream decide to go this route.
-
-Cheers,
-Longman
-
-
+> 
+> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+>  fs/locks.c |   29 +++++++++++++++++++++++------
+>  1 file changed, 23 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 802d5853acd5..1b0eac6b2918 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -715,11 +715,25 @@ static void locks_delete_block(struct file_lock *waiter)
+>   * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
+>   * that the flc_lock is also held on insertions we can avoid taking the
+>   * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
+> + *
+> + * Rather than just adding to the list, we check for conflicts with any existing
+> + * waiters, and add beneath any waiter that blocks the new waiter.
+> + * Thus wakeups don't happen until needed.
+>   */
+>  static void __locks_insert_block(struct file_lock *blocker,
+> -					struct file_lock *waiter)
+> +				 struct file_lock *waiter,
+> +				 bool conflict(struct file_lock *,
+> +					       struct file_lock *))
+>  {
+> +	struct file_lock *fl;
+>  	BUG_ON(!list_empty(&waiter->fl_block));
+> +
+> +new_blocker:
+> +	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
+> +		if (conflict(fl, waiter)) {
+> +			blocker =  fl;
+> +			goto new_blocker;
+> +		}
+>  	waiter->fl_blocker = blocker;
+>  	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
+>  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
+> @@ -734,10 +748,12 @@ static void __locks_insert_block(struct file_lock *blocker,
+>  
+>  /* Must be called with flc_lock held. */
+>  static void locks_insert_block(struct file_lock *blocker,
+> -					struct file_lock *waiter)
+> +			       struct file_lock *waiter,
+> +			       bool conflict(struct file_lock *,
+> +					     struct file_lock *))
+>  {
+>  	spin_lock(&blocked_lock_lock);
+> -	__locks_insert_block(blocker, waiter);
+> +	__locks_insert_block(blocker, waiter, conflict);
+>  	spin_unlock(&blocked_lock_lock);
+>  }
+>  
+> @@ -996,7 +1012,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+>  		if (!(request->fl_flags & FL_SLEEP))
+>  			goto out;
+>  		error = FILE_LOCK_DEFERRED;
+> -		locks_insert_block(fl, request);
+> +		locks_insert_block(fl, request, flock_locks_conflict);
+>  		goto out;
+>  	}
+>  	if (request->fl_flags & FL_ACCESS)
+> @@ -1071,7 +1087,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+>  			spin_lock(&blocked_lock_lock);
+>  			if (likely(!posix_locks_deadlock(request, fl))) {
+>  				error = FILE_LOCK_DEFERRED;
+> -				__locks_insert_block(fl, request);
+> +				__locks_insert_block(fl, request,
+> +						     posix_locks_conflict);
+>  			}
+>  			spin_unlock(&blocked_lock_lock);
+>  			goto out;
+> @@ -1542,7 +1559,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+>  		break_time -= jiffies;
+>  	if (break_time == 0)
+>  		break_time++;
+> -	locks_insert_block(fl, new_fl);
+> +	locks_insert_block(fl, new_fl, leases_conflict);
+>  	trace_break_lease_block(inode, new_fl);
+>  	spin_unlock(&ctx->flc_lock);
+>  	percpu_up_read_preempt_enable(&file_rwsem);
+> 
