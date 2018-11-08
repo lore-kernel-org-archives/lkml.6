@@ -2,51 +2,50 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573F4ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C55ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1484C20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D8F20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJrgK7Gq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1484C20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1RXxM8Xm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D8F20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbeKIHfN (ORCPT
+        id S1729577AbeKIHfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:35:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:35:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbeKIHfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:35:12 -0500
+        id S1726926AbeKIHfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:35:17 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E97420892;
-        Thu,  8 Nov 2018 21:57:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C030520892;
+        Thu,  8 Nov 2018 21:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714264;
-        bh=H2noGOQP/QYpIKUqFTHz/2cHqjtgGEITEiikjQeKbyE=;
+        s=default; t=1541714269;
+        bh=fXSRXYrpKzRgBIkDzAyGAfElRUhlJ0Edfl87yHLH3vY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJrgK7GqPhrh0YbnjD8e7tn84KLy3/1QvTk8LGfqty3DZk8FXvXPv7/QLJ0FbYREW
-         /tUPA4iToldg2Zgj8kSLTAwK/1c293WJIMt33sbm0sujBQ/byuDYC8Zbre/P2lzn/g
-         X5qWxa+BcOICK19JeoVT7suutVoL2aYEyg1u9ysw=
+        b=1RXxM8XmzIHyWPMlnzoSRgmUdtdSHGatqvioGI+m1cRALqrlln8BcQWCWm3A6uQFn
+         c/yO5THnn+DcDcl2dwpqetaFq+9hIvTLWhM9S+J5A7mZYLNFolFZG5hDa15d78Yuib
+         WHIO0SBoBDD6LE+oSvRyz8qvzqF0PuZPiszX/ISQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.l.morris@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 122/144] KEYS: put keyring if install_session_keyring_to_cred() fails
-Date:   Thu,  8 Nov 2018 13:51:33 -0800
-Message-Id: <20181108215106.897907073@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 140/144] net: sched: gred: pass the right attribute to gred_change_table_def()
+Date:   Thu,  8 Nov 2018 13:51:51 -0800
+Message-Id: <20181108215108.317772647@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,56 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d636bd9f12a66ea3775c9fabbf3f8e118253467a ]
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-In join_session_keyring(), if install_session_keyring_to_cred() were to
-fail, we would leak the keyring reference, just like in the bug fixed by
-commit 23567fd052a9 ("KEYS: Fix keyring ref leak in
-join_session_keyring()").  Fortunately this cannot happen currently, but
-we really should be more careful.  Do this by adding and using a new
-error label at which the keyring reference is dropped.
+[ Upstream commit 38b4f18d56372e1e21771ab7b0357b853330186c ]
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: James Morris <james.l.morris@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+gred_change_table_def() takes a pointer to TCA_GRED_DPS attribute,
+and expects it will be able to interpret its contents as
+struct tc_gred_sopt.  Pass the correct gred attribute, instead of
+TCA_OPTIONS.
+
+This bug meant the table definition could never be changed after
+Qdisc was initialized (unless whatever TCA_OPTIONS contained both
+passed netlink validation and was a valid struct tc_gred_sopt...).
+
+Old behaviour:
+$ ip link add type dummy
+$ tc qdisc replace dev dummy0 parent root handle 7: \
+     gred setup vqs 4 default 0
+$ tc qdisc replace dev dummy0 parent root handle 7: \
+     gred setup vqs 4 default 0
+RTNETLINK answers: Invalid argument
+
+Now:
+$ ip link add type dummy
+$ tc qdisc replace dev dummy0 parent root handle 7: \
+     gred setup vqs 4 default 0
+$ tc qdisc replace dev dummy0 parent root handle 7: \
+     gred setup vqs 4 default 0
+$ tc qdisc replace dev dummy0 parent root handle 7: \
+     gred setup vqs 4 default 0
+
+Fixes: f62d6b936df5 ("[PKT_SCHED]: GRED: Use central VQ change procedure")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/keys/process_keys.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/sched/sch_gred.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 85b61a3ac981..6f32ca53456a 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -808,15 +808,14 @@ long join_session_keyring(const char *name)
- 		ret = PTR_ERR(keyring);
- 		goto error2;
- 	} else if (keyring == new->session_keyring) {
--		key_put(keyring);
- 		ret = 0;
--		goto error2;
-+		goto error3;
- 	}
+--- a/net/sched/sch_gred.c
++++ b/net/sched/sch_gred.c
+@@ -437,7 +437,7 @@ static int gred_change(struct Qdisc *sch
+ 		return err;
  
- 	/* we've got a keyring - now to install it */
- 	ret = install_session_keyring_to_cred(new, keyring);
- 	if (ret < 0)
--		goto error2;
-+		goto error3;
+ 	if (tb[TCA_GRED_PARMS] == NULL && tb[TCA_GRED_STAB] == NULL)
+-		return gred_change_table_def(sch, opt);
++		return gred_change_table_def(sch, tb[TCA_GRED_DPS]);
  
- 	commit_creds(new);
- 	mutex_unlock(&key_session_mutex);
-@@ -826,6 +825,8 @@ long join_session_keyring(const char *name)
- okay:
- 	return ret;
- 
-+error3:
-+	key_put(keyring);
- error2:
- 	mutex_unlock(&key_session_mutex);
- error:
--- 
-2.17.1
-
+ 	if (tb[TCA_GRED_PARMS] == NULL ||
+ 	    tb[TCA_GRED_STAB] == NULL)
 
 
