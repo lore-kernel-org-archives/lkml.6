@@ -2,58 +2,61 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F45FECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C04ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1642146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13AE420818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:58:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+TjeZ4a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1642146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaKbZYKQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AE420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbeKIHgW (ORCPT
+        id S1729850AbeKIHgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:36:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53650 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:36:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbeKIHgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:36:21 -0500
+        id S1729813AbeKIHgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:36:23 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9420F20892;
-        Thu,  8 Nov 2018 21:58:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D26DD20989;
+        Thu,  8 Nov 2018 21:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714332;
-        bh=OQauAC/jLnPObn5Ju+2WAfmmFPcLswf9h3jDnRPwOiI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+TjeZ4a5RbI1Ol9DNuv4HrFsT+4TltoI7h8kGdEDEuvlE3Cb2z5WuKugRUII3KMF
-         FK9EPzkdn1XYIjrHGvrDH5lIh8OrdliKvq0WLZfm2UaGIGiyNe31+kRgPgLcXJgeTf
-         VIui6KAXi2tYz2qmSXfnDxYlaV8RlThi3kDbI2/s=
+        s=default; t=1541714334;
+        bh=0dM+xYm/f/D9pxB/cB8FqX2UbBEcrt6BGu71oMMU/Gc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eaKbZYKQCOCuQPuK6Vbu+cD11fNHvZX+qpgDB7YWiuSn9Ol7kJm5pMywXciLWUZRx
+         9RgQ9j422XQR/ykeOhTmsc6DH8kRm0LYJE16oNPnqDl0oS68TslQXzHOyp1hQPi7XK
+         SGPYQLf07ZwECtTzxeb2a6Gg43WGukUft7jDR7Zs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pekka Oikarainen <pekka.oikarainen@synopsys.com>,
-        Matias Karhumaa <matias.karhumaa@gmail.com>,
-        Johan Hedberg <johan.hedberg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 008/114] Bluetooth: SMP: fix crash in unpairing
-Date:   Thu,  8 Nov 2018 13:50:23 -0800
-Message-Id: <20181108215059.672996439@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 000/114] 4.4.163-stable review
+Date:   Thu,  8 Nov 2018 13:50:15 -0800
+Message-Id: <20181108215059.051093652@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
-References: <20181108215059.051093652@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.163-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.163-rc1
+X-KernelTest-Deadline: 2018-11-10T21:51+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,198 +64,511 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.4.163 release.
+There are 114 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Nov 10 21:50:28 UTC 2018.
+Anything received after that time might be too late.
 
-[ Upstream commit cb28c306b93b71f2741ce1a5a66289db26715f4d ]
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.163-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-In case unpair_device() was called through mgmt interface at the same time
-when pairing was in progress, Bluetooth kernel module crash was seen.
+thanks,
 
-[  600.351225] general protection fault: 0000 [#1] SMP PTI
-[  600.351235] CPU: 1 PID: 11096 Comm: btmgmt Tainted: G           OE     4.19.0-rc1+ #1
-[  600.351238] Hardware name: Dell Inc. Latitude E5440/08RCYC, BIOS A18 05/14/2017
-[  600.351272] RIP: 0010:smp_chan_destroy.isra.10+0xce/0x2c0 [bluetooth]
-[  600.351276] Code: c0 0f 84 b4 01 00 00 80 78 28 04 0f 84 53 01 00 00 4d 85 ed 0f 85 ab 00 00 00 48 8b 08 48 8b 50 08 be 10 00 00 00 48 89 51 08 <48> 89 0a 48 b9 00 02 00 00 00 00 ad de 48 89 48 08 48 8b 83 00 01
-[  600.351279] RSP: 0018:ffffa9be839b3b50 EFLAGS: 00010246
-[  600.351282] RAX: ffff9c999ac565a0 RBX: ffff9c9996e98c00 RCX: ffff9c999aa28b60
-[  600.351285] RDX: dead000000000200 RSI: 0000000000000010 RDI: ffff9c999e403500
-[  600.351287] RBP: ffffa9be839b3b70 R08: 0000000000000000 R09: ffffffff92a25c00
-[  600.351290] R10: ffffa9be839b3ae8 R11: 0000000000000001 R12: ffff9c995375b800
-[  600.351292] R13: 0000000000000000 R14: ffff9c99619a5000 R15: ffff9c9962a01c00
-[  600.351295] FS:  00007fb2be27c700(0000) GS:ffff9c999e880000(0000) knlGS:0000000000000000
-[  600.351298] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  600.351300] CR2: 00007fb2bdadbad0 CR3: 000000041c328001 CR4: 00000000001606e0
-[  600.351302] Call Trace:
-[  600.351325]  smp_failure+0x4f/0x70 [bluetooth]
-[  600.351345]  smp_cancel_pairing+0x74/0x80 [bluetooth]
-[  600.351370]  unpair_device+0x1c1/0x330 [bluetooth]
-[  600.351399]  hci_sock_sendmsg+0x960/0x9f0 [bluetooth]
-[  600.351409]  ? apparmor_socket_sendmsg+0x1e/0x20
-[  600.351417]  sock_sendmsg+0x3e/0x50
-[  600.351422]  sock_write_iter+0x85/0xf0
-[  600.351429]  do_iter_readv_writev+0x12b/0x1b0
-[  600.351434]  do_iter_write+0x87/0x1a0
-[  600.351439]  vfs_writev+0x98/0x110
-[  600.351443]  ? ep_poll+0x16d/0x3d0
-[  600.351447]  ? ep_modify+0x73/0x170
-[  600.351451]  do_writev+0x61/0xf0
-[  600.351455]  ? do_writev+0x61/0xf0
-[  600.351460]  __x64_sys_writev+0x1c/0x20
-[  600.351465]  do_syscall_64+0x5a/0x110
-[  600.351471]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  600.351474] RIP: 0033:0x7fb2bdb62fe0
-[  600.351477] Code: 73 01 c3 48 8b 0d b8 6e 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 69 c7 2c 00 00 75 10 b8 14 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 de 80 01 00 48 89 04 24
-[  600.351479] RSP: 002b:00007ffe062cb8f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-[  600.351484] RAX: ffffffffffffffda RBX: 000000000255b3d0 RCX: 00007fb2bdb62fe0
-[  600.351487] RDX: 0000000000000001 RSI: 00007ffe062cb920 RDI: 0000000000000004
-[  600.351490] RBP: 00007ffe062cb920 R08: 000000000255bd80 R09: 0000000000000000
-[  600.351494] R10: 0000000000000353 R11: 0000000000000246 R12: 0000000000000001
-[  600.351497] R13: 00007ffe062cbbe0 R14: 0000000000000000 R15: 0000000000000000
-[  600.351501] Modules linked in: algif_hash algif_skcipher af_alg cmac ipt_MASQUERADE nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo iptable_nat nf_nat_ipv4 xt_addrtype iptable_filter ip_tables xt_conntrack x_tables nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c br_netfilter bridge stp llc overlay arc4 nls_iso8859_1 dm_crypt intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp dell_laptop kvm_intel crct10dif_pclmul dell_smm_hwmon crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper intel_cstate intel_rapl_perf uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media hid_multitouch input_leds joydev serio_raw dell_wmi snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic dell_smbios dcdbas sparse_keymap
-[  600.351569]  snd_hda_intel btusb snd_hda_codec btrtl btbcm btintel snd_hda_core bluetooth(OE) snd_hwdep snd_pcm iwlmvm ecdh_generic wmi_bmof dell_wmi_descriptor snd_seq_midi mac80211 snd_seq_midi_event lpc_ich iwlwifi snd_rawmidi snd_seq snd_seq_device snd_timer cfg80211 snd soundcore mei_me mei dell_rbtn dell_smo8800 mac_hid parport_pc ppdev lp parport autofs4 hid_generic usbhid hid i915 nouveau kvmgt vfio_mdev mdev vfio_iommu_type1 vfio kvm irqbypass i2c_algo_bit ttm drm_kms_helper syscopyarea sysfillrect sysimgblt mxm_wmi psmouse ahci sdhci_pci cqhci libahci fb_sys_fops sdhci drm e1000e video wmi
-[  600.351637] ---[ end trace e49e9f1df09c94fb ]---
-[  600.351664] RIP: 0010:smp_chan_destroy.isra.10+0xce/0x2c0 [bluetooth]
-[  600.351666] Code: c0 0f 84 b4 01 00 00 80 78 28 04 0f 84 53 01 00 00 4d 85 ed 0f 85 ab 00 00 00 48 8b 08 48 8b 50 08 be 10 00 00 00 48 89 51 08 <48> 89 0a 48 b9 00 02 00 00 00 00 ad de 48 89 48 08 48 8b 83 00 01
-[  600.351669] RSP: 0018:ffffa9be839b3b50 EFLAGS: 00010246
-[  600.351672] RAX: ffff9c999ac565a0 RBX: ffff9c9996e98c00 RCX: ffff9c999aa28b60
-[  600.351674] RDX: dead000000000200 RSI: 0000000000000010 RDI: ffff9c999e403500
-[  600.351676] RBP: ffffa9be839b3b70 R08: 0000000000000000 R09: ffffffff92a25c00
-[  600.351679] R10: ffffa9be839b3ae8 R11: 0000000000000001 R12: ffff9c995375b800
-[  600.351681] R13: 0000000000000000 R14: ffff9c99619a5000 R15: ffff9c9962a01c00
-[  600.351684] FS:  00007fb2be27c700(0000) GS:ffff9c999e880000(0000) knlGS:0000000000000000
-[  600.351686] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  600.351689] CR2: 00007fb2bdadbad0 CR3: 000000041c328001 CR4: 00000000001606e0
+greg k-h
 
-Crash happened because list_del_rcu() was called twice for smp->ltk. This
-was possible if unpair_device was called right after ltk was generated
-but before keys were distributed.
+-------------
+Pseudo-Shortlog of commits:
 
-In this commit smp_cancel_pairing was refactored to cancel pairing if it
-is in progress and otherwise just removes keys. Once keys are removed from
-rcu list, pointers to smp context's keys are set to NULL to make sure
-removed list items are not accessed later.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.163-rc1
 
-This commit also adjusts the functionality of mgmt unpair_device() little
-bit. Previously pairing was canceled only if pairing was in state that
-keys were already generated. With this commit unpair_device() cancels
-pairing already in earlier states.
+Nathan Chancellor <natechancellor@gmail.com>
+    x86/time: Correct the attribute on jiffies' definition
 
-Bug was found by fuzzing kernel SMP implementation using Synopsys
-Defensics.
+Peter Zijlstra <peterz@infradead.org>
+    x86/percpu: Fix this_cpu_read()
 
-Reported-by: Pekka Oikarainen <pekka.oikarainen@synopsys.com>
-Signed-off-by: Matias Karhumaa <matias.karhumaa@gmail.com>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/bluetooth/mgmt.c |  7 ++-----
- net/bluetooth/smp.c  | 29 +++++++++++++++++++++++++----
- net/bluetooth/smp.h  |  3 ++-
- 3 files changed, 29 insertions(+), 10 deletions(-)
+Phil Auld <pauld@redhat.com>
+    sched/fair: Fix throttle_list starvation with low CFS quota
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index b1b0a1c0bd8d..ecc3da6a14a1 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -3083,9 +3083,8 @@ static int unpair_device(struct sock *sk, struct hci_dev *hdev, void *data,
- 	/* LE address type */
- 	addr_type = le_addr_type(cp->addr.type);
- 
--	hci_remove_irk(hdev, &cp->addr.bdaddr, addr_type);
--
--	err = hci_remove_ltk(hdev, &cp->addr.bdaddr, addr_type);
-+	/* Abort any ongoing SMP pairing. Removes ltk and irk if they exist. */
-+	err = smp_cancel_and_remove_pairing(hdev, &cp->addr.bdaddr, addr_type);
- 	if (err < 0) {
- 		err = mgmt_cmd_complete(sk, hdev->id, MGMT_OP_UNPAIR_DEVICE,
- 					MGMT_STATUS_NOT_PAIRED, &rp,
-@@ -3099,8 +3098,6 @@ static int unpair_device(struct sock *sk, struct hci_dev *hdev, void *data,
- 		goto done;
- 	}
- 
--	/* Abort any ongoing SMP pairing */
--	smp_cancel_pairing(conn);
- 
- 	/* Defer clearing up the connection parameters until closing to
- 	 * give a chance of keeping them if a repairing happens.
-diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-index 0dc27d2e8f18..bedfaef2c59e 100644
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -2371,30 +2371,51 @@ unlock:
- 	return ret;
- }
- 
--void smp_cancel_pairing(struct hci_conn *hcon)
-+int smp_cancel_and_remove_pairing(struct hci_dev *hdev, bdaddr_t *bdaddr,
-+				  u8 addr_type)
- {
--	struct l2cap_conn *conn = hcon->l2cap_data;
-+	struct hci_conn *hcon;
-+	struct l2cap_conn *conn;
- 	struct l2cap_chan *chan;
- 	struct smp_chan *smp;
-+	int err;
-+
-+	err = hci_remove_ltk(hdev, bdaddr, addr_type);
-+	hci_remove_irk(hdev, bdaddr, addr_type);
-+
-+	hcon = hci_conn_hash_lookup_le(hdev, bdaddr, addr_type);
-+	if (!hcon)
-+		goto done;
- 
-+	conn = hcon->l2cap_data;
- 	if (!conn)
--		return;
-+		goto done;
- 
- 	chan = conn->smp;
- 	if (!chan)
--		return;
-+		goto done;
- 
- 	l2cap_chan_lock(chan);
- 
- 	smp = chan->data;
- 	if (smp) {
-+		/* Set keys to NULL to make sure smp_failure() does not try to
-+		 * remove and free already invalidated rcu list entries. */
-+		smp->ltk = NULL;
-+		smp->slave_ltk = NULL;
-+		smp->remote_irk = NULL;
-+
- 		if (test_bit(SMP_FLAG_COMPLETE, &smp->flags))
- 			smp_failure(conn, 0);
- 		else
- 			smp_failure(conn, SMP_UNSPECIFIED);
-+		err = 0;
- 	}
- 
- 	l2cap_chan_unlock(chan);
-+
-+done:
-+	return err;
- }
- 
- static int smp_cmd_encrypt_info(struct l2cap_conn *conn, struct sk_buff *skb)
-diff --git a/net/bluetooth/smp.h b/net/bluetooth/smp.h
-index ffcc70b6b199..993cbd7bcfe7 100644
---- a/net/bluetooth/smp.h
-+++ b/net/bluetooth/smp.h
-@@ -180,7 +180,8 @@ enum smp_key_pref {
- };
- 
- /* SMP Commands */
--void smp_cancel_pairing(struct hci_conn *hcon);
-+int smp_cancel_and_remove_pairing(struct hci_dev *hdev, bdaddr_t *bdaddr,
-+				  u8 addr_type);
- bool smp_sufficient_security(struct hci_conn *hcon, u8 sec_level,
- 			     enum smp_key_pref key_pref);
- int smp_conn_security(struct hci_conn *hcon, __u8 sec_level);
--- 
-2.17.1
+Mikhail Nikiforov <jackxviichaos@gmail.com>
+    Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15IGM
 
+Alan Stern <stern@rowland.harvard.edu>
+    USB: fix the usbfs flag sanitization for control transfers
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    usb: gadget: storage: Fix Spectre v1 vulnerability
+
+Tobias Herzog <t-herzog@gmx.de>
+    cdc-acm: correct counting of UART states in serial state notification
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    IB/ucm: Fix Spectre v1 vulnerability
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    RDMA/ucma: Fix Spectre v1 vulnerability
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    ptp: fix Spectre v1 vulnerability
+
+Al Viro <viro@zeniv.linux.org.uk>
+    cachefiles: fix the race between cachefiles_bury_object() and rmdir(2)
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    ahci: don't ignore result code of ahci_reset_controller()
+
+Jia-Ju Bai <baijiaju1990@163.com>
+    crypto: shash - Fix a sleep-in-atomic bug in shash_setkey_unaligned
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    mremap: properly flush TLB before releasing the page
+
+Ido Schimmel <idosch@mellanox.com>
+    rtnetlink: Disallow FDB configuration for non-Ethernet device
+
+Jason Wang <jasowang@redhat.com>
+    vhost: Fix Spectre V1 vulnerability
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    net: drop skb on failure in ip_check_defrag()
+
+Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+    sctp: fix race on sctp_id2asoc
+
+Heiner Kallweit <hkallweit1@gmail.com>
+    r8169: fix NAPI handling under high load
+
+Niklas Cassel <niklas.cassel@linaro.org>
+    net: stmmac: Fix stmmac_mdio_reset() when building stmmac as modules
+
+Wenwen Wang <wang6495@umn.edu>
+    net: socket: fix a missing-check bug
+
+Jakub Kicinski <jakub.kicinski@netronome.com>
+    net: sched: gred: pass the right attribute to gred_change_table_def()
+
+David Ahern <dsahern@gmail.com>
+    net/ipv6: Fix index counter for unicast addresses in in6_dump_addrs
+
+Stefano Brivio <sbrivio@redhat.com>
+    ipv6/ndisc: Preserve IPv6 control buffer if protocol error handlers are called
+
+Eric Dumazet <edumazet@google.com>
+    ipv6: mcast: fix a use-after-free in inet6_mc_check
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: remove ipv6 zero address check in mcast queries
+
+Hangbin Liu <liuhangbin@gmail.com>
+    bridge: do not add port to router list when receives query with source 0.0.0.0
+
+Rasmus Villemoes <linux@rasmusvillemoes.dk>
+    perf tools: Disable parallelism for 'make clean'
+
+Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>
+    mtd: spi-nor: Add support for is25wp series chips
+
+Khazhismel Kumykov <khazhy@google.com>
+    fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
+
+Sascha Hauer <s.hauer@pengutronix.de>
+    ARM: dts: imx53-qsb: disable 1.2GHz OPP
+
+Maciej W. Rozycki <macro@linux-mips.org>
+    MIPS: DEC: Fix an int-handler.S CPU_DADDI_WORKAROUNDS regression
+
+Christian Grönke <c.groenke@infodas.de>
+    igb: Remove superfluous reset to PHY and page 0 selection
+
+Matt Redfearn <matt.redfearn@imgtec.com>
+    MIPS: microMIPS: Fix decoding of swsp16 instruction
+
+Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+    scsi: aacraid: Fix typo in blink status
+
+Paolo Abeni <pabeni@redhat.com>
+    bonding: avoid defaulting hard_header_len to ETH_HLEN on slave removal
+
+Gustavo A. R. Silva <garsilva@embeddedor.com>
+    PM / devfreq: tegra: fix error return code in tegra_devfreq_probe()
+
+Gustavo A. R. Silva <garsilva@embeddedor.com>
+    ASoC: spear: fix error return code in spdif_in_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    spi: xlp: fix error return code in xlp_spi_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    spi/bcm63xx: fix error return code in bcm63xx_spi_probe()
+
+Matt Redfearn <matt.redfearn@imgtec.com>
+    MIPS: Handle non word sized instructions when examining frame
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    spi/bcm63xx-hspi: fix error return code in bcm63xx_hsspi_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    usb: dwc3: omap: fix error return code in dwc3_omap_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    usb: ehci-omap: fix error return code in ehci_hcd_omap_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    usb: imx21-hcd: fix error return code in imx21_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    gpio: msic: fix error return code in platform_msic_gpio_probe()
+
+David S. Miller <davem@davemloft.net>
+    sparc64: Fix exception handling in UltraSPARC-III memcpy.
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    gpu: host1x: fix error return code in host1x_probe()
+
+Mike Kravetz <mike.kravetz@oracle.com>
+    sparc64 mm: Fix more TSB sizing issues
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    video: fbdev: pxa3xx_gcu: fix error return code in pxa3xx_gcu_probe()
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    tty: serial: sprd: fix error return code in sprd_probe()
+
+Guillaume Nault <g.nault@alphalink.fr>
+    l2tp: hold socket before dropping lock in l2tp_ip{, 6}_recv()
+
+Peter S. Housel <housel@acm.org>
+    brcmfmac: Fix glom_skb leak in brcmf_sdiod_recv_chain
+
+Alexander Duyck <aduyck@mirantis.com>
+    gro: Allow tunnel stacking in the case of FOU/GUE
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    vti6: flush x-netns xfrm cache when vti interface is removed
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: timer: Fix zero-division by continue of uninitialized instance
+
+Mark Rustad <mark.d.rustad@intel.com>
+    ixgbe: Correct X550EM_x revision check
+
+Emil Tantilov <emil.s.tantilov@intel.com>
+    ixgbe: fix RSS limit for X550
+
+Tariq Toukan <tariqt@mellanox.com>
+    net/mlx5e: Correctly handle RSS indirection table when changing number of channels
+
+Tariq Toukan <tariqt@mellanox.com>
+    net/mlx5e: Fix LRO modify
+
+William Dauchy <william@gandi.net>
+    ixgbevf: Fix handling of NAPI budget when multiple queues are enabled per vector
+
+Ashish Samant <ashish.samant@oracle.com>
+    fuse: Dont call set_page_dirty_lock() for ITER_BVEC pages for async_dio
+
+Pavel Roskin <plroskin@gmail.com>
+    drm/nouveau/fbcon: fix oops without fbdev emulation
+
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf: generally move prog destruction to RCU deferral
+
+Alan Stern <stern@rowland.harvard.edu>
+    usb-storage: fix bogus hardware error messages for ATA pass-thru devices
+
+WANG Cong <xiyou.wangcong@gmail.com>
+    sch_red: update backlog as well
+
+Sowmini Varadhan <sowmini.varadhan@oracle.com>
+    sparc/pci: Refactor dev_archdata initialization into pci_init_dev_archdata
+
+Ewan D. Milne <emilne@redhat.com>
+    scsi: Add STARGET_CREATED_REMOVE state to scsi_target_state
+
+Jonathan Basseri <misterikkit@google.com>
+    xfrm: Clear sk_dst_cache when applying per-socket policy.
+
+Catalin Marinas <catalin.marinas@arm.com>
+    arm64: Fix potential race with hardware DBM in ptep_set_access_flags()
+
+Mark Syms <mark.syms@citrix.com>
+    CIFS: handle guest access errors to Windows shares
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    ASoC: wm8940: Enable cache usage to fix crashes on resume
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    ASoC: ak4613: Enable cache usage to fix crashes on resume
+
+Maciej W. Rozycki <macro@imgtec.com>
+    MIPS: Fix FCSR Cause bit handling for correct SIGFPE issue
+
+Vladis Dronov <vdronov@redhat.com>
+    usbvision: revert commit 588afcc1
+
+Alexander Shishkin <alexander.shishkin@linux.intel.com>
+    perf/core: Don't leak event in the syscall error path
+
+Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+    aacraid: Start adapter after updating number of MSIX vectors
+
+Prarit Bhargava <prarit@redhat.com>
+    x86/PCI: Mark Broadwell-EP Home Agent 1 as having non-compliant BARs
+
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+    tpm: fix: return rc when devm_add_action() fails
+
+Arnd Bergmann <arnd@arndb.de>
+    thermal: allow u8500-thermal driver to be a module
+
+Arnd Bergmann <arnd@arndb.de>
+    thermal: allow spear-thermal driver to be a module
+
+Jeff Mahoney <jeffm@suse.com>
+    btrfs: don't create or leak aliased root while cleaning up orphans
+
+Peter Zijlstra <peterz@infradead.org>
+    sched/cgroup: Fix cgroup entity load tracking tear-down
+
+Florian Fainelli <f.fainelli@gmail.com>
+    um: Avoid longjmp/setjmp symbol clashes with libpthread.a
+
+Eric Dumazet <edumazet@google.com>
+    ipv6: orphan skbs in reassembly unit
+
+Eugenia Emantayev <eugenia@mellanox.com>
+    net/mlx4_en: Resolve dividing by zero in 32-bit system
+
+Mateusz Jurczyk <mjurczyk@google.com>
+    af_iucv: Move sockaddr length checks to before accessing sa_family in bind and connect handlers
+
+Andrey Ryabinin <aryabinin@virtuozzo.com>
+    radix-tree: fix radix_tree_iter_retry() for tagged iterators.
+
+Jiri Kosina <jkosina@suse.cz>
+    btrfs: cleaner_kthread() doesn't need explicit freeze
+
+Matt Fleming <matt@codeblueprint.co.uk>
+    x86/mm/pat: Prevent hang during boot when mapping pages
+
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+    ARM: dts: apq8064: add ahci ports-implemented mask
+
+Steven Rostedt (Red Hat) <rostedt@goodmis.org>
+    tracing: Skip more functions when doing stack tracing of events
+
+Paul Bolle <pebolle@tiscali.nl>
+    ser_gigaset: use container_of() instead of detour
+
+David Herrmann <dh.herrmann@gmail.com>
+    net: drop write-only stack variable
+
+Johannes Berg <johannes.berg@intel.com>
+    ipv6: suppress sparse warnings in IP6_ECN_set_ce()
+
+Eric Biggers <ebiggers@google.com>
+    KEYS: put keyring if install_session_keyring_to_cred() fails
+
+Wenwen Wang <wang6495@umn.edu>
+    net: cxgb3_main: fix a missing-check bug
+
+Jiri Olsa <jolsa@redhat.com>
+    perf/ring_buffer: Prevent concurent ring buffer access
+
+Florian Fainelli <f.fainelli@gmail.com>
+    smsc95xx: Check for Wake-on-LAN modes
+
+Florian Fainelli <f.fainelli@gmail.com>
+    smsc75xx: Check for Wake-on-LAN modes
+
+Florian Fainelli <f.fainelli@gmail.com>
+    r8152: Check for supported Wake-on-LAN Modes
+
+Florian Fainelli <f.fainelli@gmail.com>
+    sr9800: Check for supported Wake-on-LAN modes
+
+Florian Fainelli <f.fainelli@gmail.com>
+    lan78xx: Check for supported Wake-on-LAN modes
+
+Florian Fainelli <f.fainelli@gmail.com>
+    ax88179_178a: Check for supported Wake-on-LAN modes
+
+Florian Fainelli <f.fainelli@gmail.com>
+    asix: Check for supported Wake-on-LAN modes
+
+Lubomir Rintel <lkundrak@v3.sk>
+    pxa168fb: prepare the clock
+
+Matias Karhumaa <matias.karhumaa@gmail.com>
+    Bluetooth: SMP: fix crash in unpairing
+
+Martin Willi <martin@strongswan.org>
+    mac80211_hwsim: do not omit multicast announce of first added radio
+
+Sean Tranchetti <stranche@codeaurora.org>
+    xfrm: validate template mode
+
+Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+    ARM: 8799/1: mm: fix pci_ioremap_io() offset check
+
+Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+    cfg80211: reg: Init wiphy_idx in regulatory_hint_core()
+
+Andrei Otcheretianski <andrei.otcheretianski@intel.com>
+    mac80211: Always report TX status
+
+Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+    xfrm6: call kfree_skb when skb is toobig
+
+Steffen Klassert <steffen.klassert@secunet.com>
+    xfrm: Validate address prefix lengths in the xfrm selector.
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/arm/boot/dts/imx53-qsb-common.dtsi            | 11 ++++
+ arch/arm/boot/dts/qcom-apq8064.dtsi                |  3 +-
+ arch/arm/mm/ioremap.c                              |  2 +-
+ arch/arm64/mm/fault.c                              | 15 ++---
+ arch/mips/dec/int-handler.S                        | 34 ++--------
+ arch/mips/include/asm/fpu_emulator.h               | 13 ++++
+ arch/mips/include/asm/switch_to.h                  | 18 ++++++
+ arch/mips/include/uapi/asm/inst.h                  |  2 +-
+ arch/mips/kernel/mips-r2-to-r6-emul.c              | 10 +--
+ arch/mips/kernel/process.c                         | 11 ++--
+ arch/mips/kernel/ptrace.c                          |  7 +--
+ arch/mips/kernel/traps.c                           | 72 ++++++++++++----------
+ arch/sparc/include/asm/page_64.h                   |  1 +
+ arch/sparc/kernel/pci.c                            | 29 ++++++---
+ arch/sparc/lib/U3memcpy.S                          |  4 +-
+ arch/sparc/mm/fault_64.c                           |  1 +
+ arch/sparc/mm/tlb.c                                | 35 +++++++++--
+ arch/sparc/mm/tsb.c                                | 18 ++++--
+ arch/um/Makefile                                   |  4 ++
+ arch/x86/include/asm/percpu.h                      |  8 +--
+ arch/x86/kernel/time.c                             |  2 +-
+ arch/x86/mm/pageattr.c                             | 21 ++++---
+ arch/x86/pci/fixup.c                               |  7 +++
+ arch/x86/um/setjmp_32.S                            | 16 ++---
+ arch/x86/um/setjmp_64.S                            | 16 ++---
+ crypto/shash.c                                     |  2 +-
+ drivers/ata/ahci.c                                 |  5 +-
+ drivers/char/tpm/tpm-chip.c                        |  6 +-
+ drivers/devfreq/tegra-devfreq.c                    |  6 +-
+ drivers/gpio/gpio-msic.c                           |  4 +-
+ drivers/gpu/drm/nouveau/nouveau_fbcon.c            |  7 ++-
+ drivers/gpu/host1x/dev.c                           |  4 +-
+ drivers/infiniband/core/ucm.c                      |  3 +
+ drivers/infiniband/core/ucma.c                     |  3 +
+ drivers/input/mouse/elan_i2c_core.c                |  1 +
+ drivers/isdn/gigaset/ser-gigaset.c                 |  9 +--
+ drivers/media/usb/usbvision/usbvision-video.c      |  7 ---
+ drivers/mfd/db8500-prcmu.c                         |  3 +
+ drivers/mtd/spi-nor/spi-nor.c                      |  6 ++
+ drivers/net/bonding/bond_main.c                    |  2 +-
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c    | 17 +++++
+ drivers/net/ethernet/intel/igb/e1000_82575.c       | 11 ----
+ drivers/net/ethernet/intel/ixgbe/ixgbe.h           |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_type.h      |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c      |  9 +--
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c  |  2 +
+ drivers/net/ethernet/mellanox/mlx4/en_clock.c      |  5 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en.h       |  2 +
+ .../net/ethernet/mellanox/mlx5/core/en_ethtool.c   |  2 +
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  | 30 ++++++---
+ drivers/net/ethernet/realtek/r8169.c               |  8 +--
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |  2 +-
+ drivers/net/usb/asix_common.c                      |  3 +
+ drivers/net/usb/ax88179_178a.c                     |  3 +
+ drivers/net/usb/lan78xx.c                          | 17 ++---
+ drivers/net/usb/r8152.c                            |  3 +
+ drivers/net/usb/smsc75xx.c                         |  3 +
+ drivers/net/usb/smsc95xx.c                         |  3 +
+ drivers/net/usb/sr9800.c                           |  3 +
+ drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c   |  7 +--
+ drivers/net/wireless/mac80211_hwsim.c              |  3 +-
+ drivers/ptp/ptp_chardev.c                          |  4 ++
+ drivers/scsi/aacraid/linit.c                       |  2 +-
+ drivers/scsi/aacraid/src.c                         |  2 +-
+ drivers/scsi/scsi_scan.c                           |  5 +-
+ drivers/scsi/scsi_sysfs.c                          |  8 ++-
+ drivers/spi/spi-bcm63xx-hsspi.c                    |  4 +-
+ drivers/spi/spi-bcm63xx.c                          |  4 +-
+ drivers/spi/spi-xlp.c                              |  4 +-
+ drivers/thermal/Kconfig                            |  6 +-
+ drivers/tty/serial/sprd_serial.c                   |  4 +-
+ drivers/usb/class/cdc-acm.c                        | 14 ++---
+ drivers/usb/core/devio.c                           |  4 +-
+ drivers/usb/dwc3/dwc3-omap.c                       |  4 +-
+ drivers/usb/gadget/function/f_mass_storage.c       |  3 +
+ drivers/usb/host/ehci-omap.c                       |  4 +-
+ drivers/usb/host/imx21-hcd.c                       |  6 +-
+ drivers/usb/storage/transport.c                    | 14 ++++-
+ drivers/vhost/vhost.c                              |  2 +
+ drivers/video/fbdev/pxa168fb.c                     |  6 +-
+ drivers/video/fbdev/pxa3xx-gcu.c                   |  4 +-
+ fs/btrfs/disk-io.c                                 |  6 +-
+ fs/btrfs/disk-io.h                                 |  2 +
+ fs/btrfs/root-tree.c                               | 27 +++++---
+ fs/cachefiles/namei.c                              |  2 +-
+ fs/cifs/connect.c                                  |  3 +
+ fs/fat/fatent.c                                    |  1 +
+ fs/fuse/file.c                                     |  6 +-
+ fs/fuse/fuse_i.h                                   |  1 +
+ include/linux/bpf.h                                |  5 --
+ include/linux/radix-tree.h                         |  1 +
+ include/net/inet_ecn.h                             |  3 +-
+ include/scsi/scsi_device.h                         |  1 +
+ kernel/bpf/arraymap.c                              |  4 +-
+ kernel/bpf/syscall.c                               | 13 +---
+ kernel/events/core.c                               |  5 +-
+ kernel/sched/core.c                                |  4 +-
+ kernel/sched/fair.c                                | 59 ++++++++++++------
+ kernel/sched/sched.h                               |  4 +-
+ kernel/trace/trace.c                               | 19 +++++-
+ mm/huge_memory.c                                   |  6 +-
+ mm/mremap.c                                        | 21 +++++--
+ net/bluetooth/mgmt.c                               |  7 +--
+ net/bluetooth/smp.c                                | 29 +++++++--
+ net/bluetooth/smp.h                                |  3 +-
+ net/bridge/br_multicast.c                          |  9 ++-
+ net/core/rtnetlink.c                               | 10 +++
+ net/ipv4/fou.c                                     | 16 +++++
+ net/ipv4/ip_fragment.c                             | 12 ++--
+ net/ipv6/addrconf.c                                |  6 +-
+ net/ipv6/ip6_vti.c                                 | 31 ++++++++++
+ net/ipv6/mcast.c                                   | 16 ++---
+ net/ipv6/ndisc.c                                   |  3 +-
+ net/ipv6/netfilter/nf_conntrack_reasm.c            |  1 +
+ net/ipv6/xfrm6_output.c                            |  2 +
+ net/iucv/af_iucv.c                                 |  8 +--
+ net/l2tp/l2tp_ip.c                                 | 11 ++--
+ net/l2tp/l2tp_ip6.c                                | 11 ++--
+ net/mac80211/status.c                              |  7 +--
+ net/sched/sch_gred.c                               |  2 +-
+ net/sched/sch_red.c                                |  4 ++
+ net/sctp/socket.c                                  |  5 +-
+ net/socket.c                                       | 11 +++-
+ net/unix/af_unix.c                                 |  5 +-
+ net/wireless/reg.c                                 |  1 +
+ net/xfrm/xfrm_state.c                              |  1 +
+ net/xfrm/xfrm_user.c                               | 15 +++++
+ security/keys/process_keys.c                       |  7 ++-
+ sound/core/timer.c                                 | 14 +++++
+ sound/soc/codecs/ak4613.c                          |  1 +
+ sound/soc/codecs/wm8940.c                          |  1 +
+ sound/soc/spear/spdif_in.c                         |  6 +-
+ tools/perf/Makefile                                |  4 +-
+ 134 files changed, 737 insertions(+), 388 deletions(-)
 
 
