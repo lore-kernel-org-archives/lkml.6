@@ -2,122 +2,192 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED10ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D2EECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44F820818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44F820818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 967B920818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:15:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Wl/l0FtB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967B920818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeKIGvV (ORCPT
+        id S1727137AbeKIGxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:51:21 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57387 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeKIGvV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:51:21 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKrcm-0002Sz-KS; Thu, 08 Nov 2018 22:14:00 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKrcl-0007bu-Pp; Thu, 08 Nov 2018 22:13:59 +0100
-Date:   Thu, 8 Nov 2018 22:13:59 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] gpio: mockup: add locking
-Message-ID: <20181108211359.44scwickq4pxsuqy@pengutronix.de>
-References: <20181108165255.9940-1-brgl@bgdev.pl>
- <20181108165255.9940-3-brgl@bgdev.pl>
+        Fri, 9 Nov 2018 01:53:03 -0500
+Received: from imap.thunk.org ([74.207.234.97]:56340 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726831AbeKIGxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:53:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ENZUxapedznnnNYetdr3XDMyh7vYvS9oimznGcBczxo=; b=Wl/l0FtB4EdYpN7zpHbXUjqoYM
+        tJR1BkvPgh0ayrB+9/vIRdCHh6sWl2s0GbZSN+lfuq4Pxgga7rOzoF/pJ20N3ZLucsnZ+we32TQqw
+        hjtzAQApqShT1bRNVCgiNQPG/sVzaM3w4LF/oq4gfV88U5Uu9YGJBSPqhddS0v/2KPts=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKreP-0001gM-5v; Thu, 08 Nov 2018 21:15:41 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 2D35A7A7D24; Thu,  8 Nov 2018 16:15:40 -0500 (EST)
+Date:   Thu, 8 Nov 2018 16:15:40 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mario.Limonciello@dell.com
+Cc:     mika.westerberg@linux.intel.com, whitequark@whitequark.org,
+        heikki.krogerus@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: A different PD controller firmware problem?
+Message-ID: <20181108211540.GG1080@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mario.Limonciello@dell.com, mika.westerberg@linux.intel.com,
+        whitequark@whitequark.org, heikki.krogerus@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
+ <20180905132429.GB25121@kuha.fi.intel.com>
+ <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
+ <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
+ <3a666f66d6e342e2971b800caae7c889@whitequark.org>
+ <3b76178ca0de4990a38362cfd4836fdc@ausx13mpc120.AMER.DELL.COM>
+ <20180911093239.GW14465@lahna.fi.intel.com>
+ <fd00612c1bb94f69820be2b1f1e171f9@ausx13mpc120.AMER.DELL.COM>
+ <20181006060121.GA4050@thunk.org>
+ <d92aef18a8ac4ef5ab3fcafaaf03afec@ausx13mpc120.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181108165255.9940-3-brgl@bgdev.pl>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <d92aef18a8ac4ef5ab3fcafaaf03afec@ausx13mpc120.AMER.DELL.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 05:52:54PM +0100, Bartosz Golaszewski wrote:
-> While no user reported any race condition problems with gpio-mockup,
-> let's be on the safe side and use a mutex when performing any changes
-> on the dummy chip structures.
+On Thu, Nov 08, 2018 at 06:00:59PM +0000, Mario.Limonciello@dell.com wrote:
+> > Sortly after 12:30am US/Eastern, I got a low power warning on my
+> > system, and the battery power had dropped below 10%.  Apparently the
+> > laptop was not accepting any charge any more.  I tried doing a suspend
+> > to ram, and then unsuspended it, and it still wasn't accepting any
+> > charge, even though the adapter indicated it was plugged in and
+> > supplying power.  I then did a power cycle, and still the laptop
+> > didn't indicate it was charging with a USB C 45W power supply plugged
+> > in.
 > 
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
->  1 file changed, 43 insertions(+), 7 deletions(-)
+> Just to be clear was this a Dell adapter or another manufacturer?
 > 
-> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> index 6a50f9f59c90..3cd92912c414 100644
-> --- a/drivers/gpio/gpio-mockup.c
-> +++ b/drivers/gpio/gpio-mockup.c
-> @@ -54,6 +54,7 @@ struct gpio_mockup_chip {
->  	struct gpio_mockup_line_status *lines;
->  	struct irq_sim irqsim;
->  	struct dentry *dbg_dir;
-> +	struct mutex lock;
->  };
->  
->  struct gpio_mockup_dbgfs_private {
-> @@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
->  	return gpio_mockup_ranges[index * 2 + 1];
->  }
->  
-> -static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-> +static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
->  {
->  	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
->  
->  	return chip->lines[offset].value;
->  }
->  
-> -static void gpio_mockup_set(struct gpio_chip *gc,
-> -			    unsigned int offset, int value)
-> +static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-> +	int val;
-> +
-> +	mutex_lock(&chip->lock);
-> +	val = __gpio_mockup_get(gc, offset);
-> +	mutex_unlock(&chip->lock);
-> +
-> +	return val;
-> +}
+> If it's non-Dell, there could easily be an untested combination of controllers
+> and one getting into a bad state.
 
-I think this function doesn't need locking. I returns a single value and
-if there is a race and some other process currently changes the value it
-matters little if the return value is zero or not.
+It was multiple non-Dell adapters --- but normally unplugging and
+re-pluggin a USB C port *should* be enough to get the port back into a
+sane state; a power down and unplugging the power should not be
+required!  (A power down was not enough, and unplugging the power
+supply and trying a different USB adapter was also not enough.)
 
-But even with this kept unchanged the patch looks good.
+Adapters which I tried included the Innergie 45W[1] (which does have
+some USB Compliance issues), the original Google Universal Type C
+Charger 60W[2], and BatPower ProE plus USB C adapter.  The last hasn't
+gotten a USB C conformance review published, but I took that last one
+to Benson Leung's lab and he tested it using his USB C analyzer.  The
+ProE w/ USB C adapter passed with only one nit (apparently on
+disconnection it didn't drop down below 5 volts fast enough to be
+within spec; so if you unplugged it from a laptop and immediately
+jammed it into a phone which only accepted 5V input, there might be
+issues.  :-)
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+[1] https://gtrusted.com/review/innergie-powergear-usb-c-45
+[2] https://gtrusted.com/review/the-microsoft-surface-book-2-charges-fine-with-the-google-universal-type-c-charger-60w-over-usb-power-delivery
 
-Thanks
-Uwe
+The problem with the Dell XPS 13 not accepting power first showed up
+while attached to the Google 60W USB power adapter.
 
+Unfortunately, it's never happend again since in the past month, so
+there's not much I can report.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> > I have noticed other problems where a USB C to HDMI adapter doesn't
+> > quite work right (the laptop refuses to talk to the display), and the
+> > *only* way to fix things is to powerdown Linux and then remove the
+> > power plug.  
+> 
+> Is this with the DA200 or DA300?  Or something else?
+
+It was with something else.  The problem stopped happening after I
+stopped using a Dell Ultrasharp 30" monitor.  I've noticed that
+Linux's drm support for that particular monitor has always been
+marginal, and the problem would happen either when connecting to the
+Dell Ultrasharp 30, or after it had been connected to the Dell
+Ultrasharp 30 and going into work and connecting to a lesser Dell 24"
+monitor (at $WORK they're too cheap to buy Ultrasharp's :-).  When I
+upgraded my home display to be a 34" 4k display, this particular
+problem went away.
+
+The only thing that was interesting about it other than "random drm
+bug; MST support in Linux marginal[1], film at 11" (I've been having
+problems with the Dell Ultrasharp 30 connected from a Thinkpad Dock
+ever since I got it), was that with the Dell XPS 13, it was the first
+time where powering down *and* removing the power adapter made a
+difference.   That was unique and surprising to me.
+
+[1] https://www.youtube.com/watch?v=6301tGNs9Dc
+
+I still have the Dell Ultrasharp 30", so I could try some experiments,
+but since I'm not using it these days, it's been must less important
+to me, since I'm not a DRM developer.  :-)   (And yes, it's possible
+that the timing was a coincidence where it was something else, like
+going to a newer kernel, not stopping the use of the Dell U30 that
+made the key difference.  Give all of the Linux problems I've seen
+with the Dell U30, over the past few years, I'm less convinced, but I
+admit I haven't done a fully controlled experiment yet.)
+
+> It sounds like this one might be more reproducible.  If it's a Dell
+> peripheral I think it should be pretty easy for support to reproduce
+> and escalate.
+
+When I have time (probably after Vancouver at this point), I can drag
+my Dell TB16 dock home, and try an experiment with the Dell XPS 13,
+connecting to the Dell Ultrasharp via a TB16 dock.  And I can it with
+a bleeding-edge kernel as well as the Debian 4.18.0-2 kernel.
+
+Given that the Dell Ultrasharp 30 is an older monitor, it might be
+less urgent to track this down, though.
+
+Cheers,
+
+					- Ted
+
+P.S.  Linux support for 4k monitors are still marginal.  I very often
+need to configure to 2560x1600/60Hz, and *then* reconfigure to
+3840x2160 with a 59Hz refresh (that's important, usually it won't work
+with 60Hz refresh).  And if the laptop display ever goes to sleep, I
+need to repeat the "configure to 2560x1600, then reconfigure to
+3840x2160@59Hz" dance.  These problems go away if I use an USB C /
+HDMI adapter which only supports 4k @ 30Hz, but I want a faster
+refresh rate than that.  :-)   (And yes, I've tried multiple USB C /
+HDMI adapters; I have a whole collection.)
+
+And this is something I can reproduce with a TB16 dock at work,
+although I don't have a Dell 4k monitor, so I can't do a 100% Dell
+repro on this particular 4k@60Hz (almost never works) / 4k@59Hz
+(usually works, although I can't let the display sleep) exernal
+monitor problem.  This particular problem does reproduce on a Acer 32"
+4k screen at work, as well as LG 32" 4k monitor at home, though.
+
+P.P.S.  Then there are the problems with using a TB16 at work, and
+suspending, then going home and using a USB-C hub/adapter at home.
+And after getting two TB16 for home use from Amazon, both of which
+didn't work, although the TB16 at work did, I gave up with trying to
+get a second TB16 for home use.  So normally I don't use the TB16 at
+work, because things are much more stable if I don't use Thunderbolt
+at all, unless I want to reboot after every commute.
+
+Ah, life at the bleeding edge.  :-)
