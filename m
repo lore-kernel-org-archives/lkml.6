@@ -8,69 +8,69 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC24C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7397DC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CDCC20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3865920825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdEPqE/B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDCC20825
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDUHPDrp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3865920825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeKHWiv (ORCPT
+        id S1727128AbeKHWjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:38:51 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38063 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHWiv (ORCPT
+        Thu, 8 Nov 2018 17:39:11 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46436 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHWjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:38:51 -0500
-Received: by mail-qk1-f195.google.com with SMTP id d19so26239423qkg.5;
-        Thu, 08 Nov 2018 05:03:26 -0800 (PST)
+        Thu, 8 Nov 2018 17:39:11 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q1so26154979qkf.13;
+        Thu, 08 Nov 2018 05:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=CSTyTQVebQoEyb5YW7uEXU9YiShfNNKeiURGdRFNLfI=;
-        b=MdEPqE/B1Wtw1OYqbGAW7Lj/WKKQpHBYYd0PUOkrnX+b190sKb2OVhqQ8VyaIPaXdF
-         cXd++AtOAlrnujv8SjdrmKPktMVtol8tIuv8YG+rp3m0j+FJ+EpJDH9GxnmLwMkCVoZA
-         AS/D9UG6AttwXzeASvaxMBn5I9YYhls5g+KWf56U8e0lGlr4oWKEUQeFwF7legBWa4e+
-         iY2+TH8l3X7ALfJ7ASwX/kYrZ1kgTvDyuF+mfMAtxkJRFjwyn7uNlc4Lf+YGmNE9U/KM
-         /5SkDLoelN7LxwTuum9tgLflPbcZ2ougWYom+zJcoIQQ7LgdKado/tJh0zHTibS71MiV
-         xXZQ==
+        bh=3AHy7MMTomAjTExN8gkJTDSMBOsSXEc0gUcgV1m0kfY=;
+        b=XDUHPDrpCfpI2cd84CEQF0Riccpjge+pk5THXZwS0ydEKtSelfqMZ/+R3RFU5tmHYM
+         b1C53dJn2KCNZTl2VkLX9gQzVJ9kqDH646Wv26kEwVYf9msPDDBox6SvUXFBbKqrOqNm
+         cIJ9V4yZf9Q49hn6Y8Y0R3Etc2GO0IqzNluDH+UD5rN8sVbuvHuCGqINJDYdamcAcBhz
+         YVqi+zv589BV9fS7sCunKkWCGTERaGFIaSrrDzQKEqleF/wW3rMb0xSbrNQ7KBEreFlY
+         jmJzWIUQ/ltuRrrnrVWM6AYBOgP9yla05gI9TrUwts3RxdwoCGumdApi1lp55bRfTbe5
+         XXEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CSTyTQVebQoEyb5YW7uEXU9YiShfNNKeiURGdRFNLfI=;
-        b=M60Xgs5/TtkfRuGLBFJ6kyiQXjAcFcI5RJYaGrExm51PqEaBANU/Tew27pl6b272al
-         Jh4ZwP6H/bnzQh75p/Ut6dJxDuNO79u2xIl6A8AekbUn1/WhLBhriaiOmvFptExKElfH
-         xKMmR5JqKk97xj1H7GJpC2A4BdJWnTiIKcBvDIyvR/vwNGIC7Ydoj8f6scW9/8V3sSqj
-         7pIaCHc6JJqZc0nG9qzB8XDCFx6nxY3L7I6dmEoT1AgYoSL2dqbGMjw198CACR2CHqUK
-         ZS64vpnngchf8HnZTbfo41x3nSz/gA9yUFauoBT54KH/DzFlGy527Ci2ssPtfmJt32Il
-         3Z/Q==
-X-Gm-Message-State: AGRZ1gI2v4fGdMzpzh23EU3+JL4l7Qbyg0xZ3DAkpQjIUIUR4FxsqtIh
-        vmqJe1/qTXyeyfIW4d8xOiw=
-X-Google-Smtp-Source: AJdET5fNc/a3SPtBSNZIqg7QhoeagN6KPuracQDOYFH4n8QH3YXe4moAdKY10ZQpFzcOTLubwdIgnA==
-X-Received: by 2002:ac8:17f0:: with SMTP id r45mr4124425qtk.206.1541682206102;
-        Thu, 08 Nov 2018 05:03:26 -0800 (PST)
+        bh=3AHy7MMTomAjTExN8gkJTDSMBOsSXEc0gUcgV1m0kfY=;
+        b=q6k+bpZNZUalptrcbLw3ptG7mawhYkwj2dXL39ZFD/f6tnRaQNO1/re704fPARFxYL
+         fjTyV8qELA0HPVtGMPJvotuF32oSTDRCLdWltOd5aZ2Y6Qua9eVJWFWymGTUrMPt+kaz
+         QyDH9q6gXmMjTFNRc0XwsIed6yh81XaR6ShbQqTVsFV1JtTWdxVLRuD8zmiq/cP7lBuc
+         Fsq+EdA83nUSl5a7VlsA8i8HpD/Yi9rJKQaikfmjK4EHPASap1rsD992ISoSOossbB6D
+         n/UvF/q2jFBhPn1LreS+NXzDq2DE9ppa+Nc2OxUL3o0WisOqoT7ptrMz1ktPrDMReW82
+         k2Hg==
+X-Gm-Message-State: AGRZ1gJ4DLnrv7ogAFor1SycnPs8y3mwDkaxDlE0DyLABFzQuOMw/pKc
+        xDVK9l0o6kmgLgTpJDqtHr4=
+X-Google-Smtp-Source: AJdET5dXN4MnYGmB71vsHF+mZjZTpYFJGSAS2W0rsKbFoalH8b1i6MenvlvwHTb6GkDqvsiPFM7Rlg==
+X-Received: by 2002:a37:1054:: with SMTP id a81mr3844521qkh.150.1541682226465;
+        Thu, 08 Nov 2018 05:03:46 -0800 (PST)
 Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id h66-v6sm1920259qkc.53.2018.11.08.05.03.22
+        by smtp.gmail.com with ESMTPSA id m61-v6sm2174953qte.30.2018.11.08.05.03.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 05:03:25 -0800 (PST)
+        Thu, 08 Nov 2018 05:03:46 -0800 (PST)
 From:   Giuliano Belinassi <giuliano.belinassi@gmail.com>
 X-Google-Original-From: Giuliano Belinassi <giuliano.belinassi@usp.br>
-Date:   Thu, 8 Nov 2018 11:03:20 -0200
+Date:   Thu, 8 Nov 2018 11:03:40 -0200
 To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
         renatogeh@gmail.com
 Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v2 1/2] staging: iio: ad7780: check if ad778x before gain
- update
-Message-ID: <762e851dd819f27e3955cb695cd8422d84a19438.1541681371.git.giuliano.belinassi@usp.br>
+Subject: [PATCH v2 2/2] staging: iio: ad7780: generates pattern_mask from PAT
+ bits
+Message-ID: <ce8ebadd1638810eaaa3b0b30a961a7b3f88ae34.1541681371.git.giuliano.belinassi@usp.br>
 References: <cover.1541681371.git.giuliano.belinassi@usp.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -82,73 +82,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only the ad778x have the 'gain' status bit. Check it before updating
-through a new variable is_ad778x in chip_info.
+Previously, all pattern_masks and patterns in the chip_info table were
+hardcoded. Now they are generated using the PAT macros, as described in
+the datasheets.
 
 Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
 ---
 Changes in v2:
-	- Squashed is_ad778x declaration commit with the ad778x checkage
-	- Changed is_ad778x type to bool
- 
- drivers/staging/iio/adc/ad7780.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+	- Added the PATTERN and PATTERN_MASK macros
+	- Update BIT macros alignment to match with PATTERN
+	- Generate pattern mask with PATTERN_MASK macros.
+
+drivers/staging/iio/adc/ad7780.c | 40 +++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index 91e016d534ed..9ec2b002539e 100644
+index 9ec2b002539e..ff8e3b2d0efc 100644
 --- a/drivers/staging/iio/adc/ad7780.c
 +++ b/drivers/staging/iio/adc/ad7780.c
-@@ -35,6 +35,7 @@ struct ad7780_chip_info {
+@@ -22,14 +22,22 @@
+ #include <linux/iio/sysfs.h>
+ #include <linux/iio/adc/ad_sigma_delta.h>
+ 
+-#define AD7780_RDY	BIT(7)
+-#define AD7780_FILTER	BIT(6)
+-#define AD7780_ERR	BIT(5)
+-#define AD7780_ID1	BIT(4)
+-#define AD7780_ID0	BIT(3)
+-#define AD7780_GAIN	BIT(2)
+-#define AD7780_PAT1	BIT(1)
+-#define AD7780_PAT0	BIT(0)
++#define AD7780_RDY		BIT(7)
++#define AD7780_FILTER		BIT(6)
++#define AD7780_ERR		BIT(5)
++#define AD7780_ID1		BIT(4)
++#define AD7780_ID0		BIT(3)
++#define AD7780_GAIN		BIT(2)
++#define AD7780_PAT1		BIT(1)
++#define AD7780_PAT0		BIT(0)
++
++#define AD7780_PATTERN		(AD7780_PAT0)
++#define AD7780_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1)
++
++#define AD7170_PAT2		BIT(2)
++
++#define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
++#define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)
+ 
+ struct ad7780_chip_info {
  	struct iio_chan_spec	channel;
- 	unsigned int		pattern_mask;
- 	unsigned int		pattern;
-+	bool			is_ad778x;
- };
- 
- struct ad7780_state {
-@@ -113,10 +114,12 @@ static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
- 	    ((raw_sample & chip_info->pattern_mask) != chip_info->pattern))
- 		return -EIO;
- 
--	if (raw_sample & AD7780_GAIN)
--		st->gain = 1;
--	else
--		st->gain = 128;
-+	if (chip_info->is_ad778x) {
-+		if (raw_sample & AD7780_GAIN)
-+			st->gain = 1;
-+		else
-+			st->gain = 128;
-+	}
- 
- 	return 0;
- }
-@@ -135,21 +138,25 @@ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
+@@ -136,26 +144,26 @@ static const struct ad_sigma_delta_info ad7780_sigma_delta_info = {
+ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
+ 	[ID_AD7170] = {
  		.channel = AD7780_CHANNEL(12, 24),
- 		.pattern = 0x5,
- 		.pattern_mask = 0x7,
-+		.is_ad778x = false,
+-		.pattern = 0x5,
+-		.pattern_mask = 0x7,
++		.pattern = AD7170_PATTERN,
++		.pattern_mask = AD7170_PATTERN_MASK,
+ 		.is_ad778x = false,
  	},
  	[ID_AD7171] = {
  		.channel = AD7780_CHANNEL(16, 24),
- 		.pattern = 0x5,
- 		.pattern_mask = 0x7,
-+		.is_ad778x = false,
+-		.pattern = 0x5,
+-		.pattern_mask = 0x7,
++		.pattern = AD7170_PATTERN,
++		.pattern_mask = AD7170_PATTERN_MASK,
+ 		.is_ad778x = false,
  	},
  	[ID_AD7780] = {
  		.channel = AD7780_CHANNEL(24, 32),
- 		.pattern = 0x1,
- 		.pattern_mask = 0x3,
-+		.is_ad778x = true,
+-		.pattern = 0x1,
+-		.pattern_mask = 0x3,
++		.pattern = AD7780_PATTERN,
++		.pattern_mask = AD7780_PATTERN_MASK,
+ 		.is_ad778x = true,
  	},
  	[ID_AD7781] = {
  		.channel = AD7780_CHANNEL(20, 32),
- 		.pattern = 0x1,
- 		.pattern_mask = 0x3,
-+		.is_ad778x = true,
+-		.pattern = 0x1,
+-		.pattern_mask = 0x3,
++		.pattern = AD7780_PATTERN,
++		.pattern_mask = AD7780_PATTERN_MASK,
+ 		.is_ad778x = true,
  	},
  };
- 
 -- 
 2.19.1
 
