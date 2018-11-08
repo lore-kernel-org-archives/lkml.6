@@ -2,176 +2,455 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56231ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC023ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087892077B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BE2520827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:09:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="CJlBMWv8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087892077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="taDaUdki"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE2520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeKIFm6 (ORCPT
+        id S1726999AbeKIFqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:42:58 -0500
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:42502 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725199AbeKIFm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:42:58 -0500
-Received: by mail-wr1-f49.google.com with SMTP id y15-v6so22571820wru.9
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 12:05:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UL5+Om8tKNJ8qo7eHj5jspqPtmEW4GhB5eb+rBLE75E=;
-        b=CJlBMWv8wLviKdsfsx4K4VEc4/KIHyCa3u/9O+dSsS1bRwx/ZRZIdviuTTeZhl55Hg
-         JjJTN0DcIxYadpK/Obp5Z9KU7f7vazfUcQJQTJuUHLPHdXFeRelrAFzACYkGpOSGNliW
-         2a3qGudWTfbAG8tv2lCuZpN5QDZplS6aekTOXaG+jA82tDiN8k8vVHaxKnYprpezr5FJ
-         mepCX1lN+dG4kFoX06rwrT5CAyzVdJmg09aqEzQn1F3fzInW0FyT7H3uMquQYZOgaEDh
-         n1JhvvXkIGRa60A4QVRrcWloWh6irawhf11K7SmUJNYB6wlxFQb9WQLHmTYcGNdplpTL
-         AKEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UL5+Om8tKNJ8qo7eHj5jspqPtmEW4GhB5eb+rBLE75E=;
-        b=bwlWv/5V+kX1U1ICRRAO+fHKCs3QO2qUxdei9o8q3Dr+6ngPpronMtAqSjxkVU8wQJ
-         CzegbFXxytPvFPPR5zOBTnEcXtkPwkIzRClw34XMvNWAlnnDe+dCBVQv2jSlTSzBROfe
-         GujXsxeDGvdnpYNDjFDDDSNv6CN1RtY0SZ3cU6mJzqalRpJVugrSH5Xm7PWQrwvaNqSL
-         MpO/xbv3+r5nqqD9YbDVF8QjuS7HXMQeSjm61JqgoM0M2v4kP0qeaG3k7l+ZOg2SpN1G
-         TpLY08KZQ5eJmdxLz3qMI9zP0M1eQ8yeF1VCxhRO/dH2a0WRowKfVjduNp0dGuaxVGVk
-         Ibjg==
-X-Gm-Message-State: AGRZ1gIa520U5atbytpKydvLcLkqwZCN/KXoP8ZnHlBoebd5mv6W8Qki
-        MVGxp7DFfg1LxNr7xdxV2isuc8BJxH9zcdC+hRhCwg==
-X-Google-Smtp-Source: AJdET5ckJTIf3NzC/aG0lZ2YlAxhUyvyejRiKZNdsf1QoQjQlaxPeOJr+GQXz5ZwrtQ/8fIaWtrX0HqBmlDsr53n664=
-X-Received: by 2002:a5d:4450:: with SMTP id x16-v6mr5412203wrr.308.1541707554882;
- Thu, 08 Nov 2018 12:05:54 -0800 (PST)
+        Fri, 9 Nov 2018 00:46:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbeKIFqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:46:25 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 389A02077B;
+        Thu,  8 Nov 2018 20:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541707762;
+        bh=fUpLikS75hrABD8vxw9zvtufFSADWcBzJRzlonifLH8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=taDaUdkiM0/XCziA9N0wGLLQbGy3VKkFAoHuy/jDgLpuqJAdJ0T78MGIshxRhT0E1
+         xLFT1aW9kC0g6a+s0xaJucCGwZMuNX3WS77cBnDaUVMXjFAAhuMEC0CVktQ36TY/zQ
+         p9rzRQDUKF0nPcpJC72UX95eOE245wQ3yPVo9Tr8=
+Date:   Thu, 8 Nov 2018 14:09:17 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     linux-pci@vger.kernel.org, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, linux-kernel@vger.kernel.org,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Message-ID: <20181108200855.GE41183@google.com>
+References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
+ <20181107234257.GC41183@google.com>
 MIME-Version: 1.0
-References: <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
- <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
- <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
- <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com> <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
- <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com> <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
- <20181108195420.GA14715@linux.intel.com>
-In-Reply-To: <20181108195420.GA14715@linux.intel.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Thu, 8 Nov 2018 12:05:42 -0800
-Message-ID: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rich Felker <dalias@libc.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        adhemerval.zanella@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107234257.GC41183@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 11:54 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Tue, Nov 06, 2018 at 01:07:54PM -0800, Andy Lutomirski wrote:
-> >
-> >
-> > > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote=
-:
-> > >
-> > >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
-> > >> True, but what if we have a nasty enclave that writes to memory just
-> > >> below SP *before* decrementing SP?
-> > >
-> > > Yeah, that would be unfortunate.  If an enclave did this (roughly):
-> > >
-> > >    1. EENTER
-> > >    2. Hardware sets eenter_hwframe->sp =3D %sp
-> > >    3. Enclave runs... wants to do out-call
-> > >    4. Enclave sets up parameters:
-> > >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
-> > >        ...
-> > >    5. Enclave sets eenter_hwframe->sp -=3D offset
-> > >
-> > > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' t=
-hat
-> > > was on the stack.  The enclave could easily fix this by moving ->sp f=
-irst.
-> > >
-> > > But, this is one of those "fun" parts of the ABI that I think we need=
- to
-> > > talk about.  If we do this, we also basically require that the code
-> > > which handles asynchronous exits must *not* write to the stack.  That=
-'s
-> > > not hard because it's typically just a single ERESUME instruction, bu=
-t
-> > > it *is* a requirement.
-> > >
-> >
-> > I was assuming that the async exit stuff was completely hidden by the
-> > API.  The AEP code would decide whether the exit got fixed up by the
-> > kernel (which may or may not be easy to tell =E2=80=94 can the code eve=
-n tell
-> > without kernel help whether it was, say, an IRQ vs #UD?) and then eithe=
-r
-> > do ERESUME or cause sgx_enter_enclave() to return with an appropriate
-> > return value.
->
-> Ok, SDK folks came up with an idea that would allow them to use vDSO,
-> albeit with a bit of ugliness and potentially a ROP-attack issue.
-> Definitely some weirdness, but the weirdness is well contained, unlike
-> the magic prefix approach.
->
-> Provide two enter_enclave() vDSO "functions".  The first is a normal
-> function with a normal C interface.  The second is a blob of code that
-> is "called" and "returns" via indirect jmp, and can be used by SGX
-> runtimes that want to use the untrusted stack for out-calls from the
-> enclave.
->
-> For the indirect jmp "function", use %rbp to stash the return address
-> of the caller (either in %rbp itself or in memory pointed to by %rbp).
-> It works because hardware also saves/restores %rbp along with %rsp when
-> doing enclave transitions, and the SDK can live with %rbp being
-> off-limits.  Fault info is passed via registers.
+[+cc Jonathan, Greg, Lukas, Russell, Sam, Oliver for discussion about
+PCI error recovery in general]
 
-Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
-not the most terrible thing in the world.  But could the SDK live with
-something more like my suggestion where the vDSO supplies a normal
-function that takes a struct containing registers that are visible to
-the enclave?  This would make it extremely awkward for the enclave to
-use the untrusted stack per se, but it would make it quite easy (I
-think) for the untrusted part of the SDK to allocate some extra memory
-and just tell the enclave that *that* memory is the stack.
+On Wed, Nov 07, 2018 at 05:42:57PM -0600, Bjorn Helgaas wrote:
+> On Tue, Sep 18, 2018 at 05:15:00PM -0500, Alexandru Gagniuc wrote:
+> > When a PCI device is gone, we don't want to send IO to it if we can
+> > avoid it. We expose functionality via the irq_chip structure. As
+> > users of that structure may not know about the underlying PCI device,
+> > it's our responsibility to guard against removed devices.
+> > 
+> > .irq_write_msi_msg() is already guarded inside __pci_write_msi_msg().
+> > .irq_mask/unmask() are not. Guard them for completeness.
+> > 
+> > For example, surprise removal of a PCIe device triggers teardown. This
+> > touches the irq_chips ops some point to disable the interrupts. I/O
+> > generated here can crash the system on firmware-first machines.
+> > Not triggering the IO in the first place greatly reduces the
+> > possibility of the problem occurring.
+> > 
+> > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> 
+> Applied to pci/misc for v4.21, thanks!
 
-AFAFICS we do have two registers that genuinely are preserved: FSBASE
-and GSBASE.  Which is a good thing, because otherwise SGX enablement
-would currently be a privilege escalation issue due to making GSBASE
-writable when it should not be.
+I'm having second thoughts about this.  One thing I'm uncomfortable
+with is that sprinkling pci_dev_is_disconnected() around feels ad hoc
+instead of systematic, in the sense that I don't know how we convince
+ourselves that this (and only this) is the correct place to put it.
 
-This whole thing is a mess.  I'm starting to think that the cleanest
-solution would be to provide a way to just tell the kernel that
-certain RIP values have exception fixups.
+Another is that the only place we call pci_dev_set_disconnected() is
+in pciehp and acpiphp, so the only "disconnected" case we catch is if
+hotplug happens to be involved.  Every MMIO read from the device is an
+opportunity to learn whether it is reachable (a read from an
+unreachable device typically returns ~0 data), but we don't do
+anything at all with those.
+
+The config accessors already check pci_dev_is_disconnected(), so this
+patch is really aimed at MMIO accesses.  I think it would be more
+robust if we added wrappers for readl() and writel() so we could
+notice read errors and avoid future reads and writes.
+
+Two compiled but untested patches below for your comments.  You can
+mostly ignore the first; it's just boring interface changes.  The
+important part is the second, which adds the wrappers.
+
+These would be an alternative to the (admittedly much shorter) patch
+here.  The wrappers are independent of MSI and could potentially be
+exported from the PCI core for use by drivers.  I think it would be
+better for drivers to use something like this instead of calling
+pci_device_is_present() or pci_dev_is_disconnected() directly.
+
+> > ---
+> >  drivers/pci/msi.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> > index f2ef896464b3..f31058fd2260 100644
+> > --- a/drivers/pci/msi.c
+> > +++ b/drivers/pci/msi.c
+> > @@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
+> >  {
+> >  	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> >  
+> > +	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))
+> > +		return;
+> > +
+> >  	if (desc->msi_attrib.is_msix) {
+> >  		msix_mask_irq(desc, flag);
+> >  		readl(desc->mask_base);		/* Flush write to device */
+
+
+commit 150346e09edbcaedc520a6d7dec2b16f3a53afa1
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Thu Nov 8 09:17:51 2018 -0600
+
+    PCI/MSI: Pass pci_dev into IRQ mask interfaces
+    
+    Add the struct pci_dev pointer to these interfaces:
+    
+      __pci_msix_desc_mask_irq()
+      __pci_msi_desc_mask_irq()
+      msix_mask_irq
+      msi_mask_irq()
+    
+    The pci_dev pointer is currently unused, so there's no functional change
+    intended with this patch.  A subsequent patch will use the pointer to
+    improve error detection.
+
+diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+index 9f6f392a4461..56bbee2cf761 100644
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -462,9 +462,9 @@ void arch_teardown_msi_irqs(struct pci_dev *pdev)
+ 		if (!msi->irq)
+ 			continue;
+ 		if (msi->msi_attrib.is_msix)
+-			__pci_msix_desc_mask_irq(msi, 1);
++			__pci_msix_desc_mask_irq(pdev, msi, 1);
+ 		else
+-			__pci_msi_desc_mask_irq(msi, 1, 1);
++			__pci_msi_desc_mask_irq(pdev, msi, 1, 1);
+ 		irq_set_msi_desc(msi->irq, NULL);
+ 		irq_free_desc(msi->irq);
+ 		msi->msg.address_lo = 0;
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index af24ed50a245..d46ae506e296 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -170,7 +170,8 @@ static inline __attribute_const__ u32 msi_mask(unsigned x)
+  * reliably as devices without an INTx disable bit will then generate a
+  * level IRQ which will never be cleared.
+  */
+-u32 __pci_msi_desc_mask_irq(struct msi_desc *desc, u32 mask, u32 flag)
++u32 __pci_msi_desc_mask_irq(struct pci_dev *dev, struct msi_desc *desc,
++			    u32 mask, u32 flag)
+ {
+ 	u32 mask_bits = desc->masked;
+ 
+@@ -179,15 +180,15 @@ u32 __pci_msi_desc_mask_irq(struct msi_desc *desc, u32 mask, u32 flag)
+ 
+ 	mask_bits &= ~mask;
+ 	mask_bits |= flag;
+-	pci_write_config_dword(msi_desc_to_pci_dev(desc), desc->mask_pos,
+-			       mask_bits);
++	pci_write_config_dword(dev, desc->mask_pos, mask_bits);
+ 
+ 	return mask_bits;
+ }
+ 
+-static void msi_mask_irq(struct msi_desc *desc, u32 mask, u32 flag)
++static void msi_mask_irq(struct pci_dev *dev, struct msi_desc *desc, u32 mask,
++			 u32 flag)
+ {
+-	desc->masked = __pci_msi_desc_mask_irq(desc, mask, flag);
++	desc->masked = __pci_msi_desc_mask_irq(dev, desc, mask, flag);
+ }
+ 
+ static void __iomem *pci_msix_desc_addr(struct msi_desc *desc)
+@@ -203,7 +204,8 @@ static void __iomem *pci_msix_desc_addr(struct msi_desc *desc)
+  * file.  This saves a few milliseconds when initialising devices with lots
+  * of MSI-X interrupts.
+  */
+-u32 __pci_msix_desc_mask_irq(struct msi_desc *desc, u32 flag)
++u32 __pci_msix_desc_mask_irq(struct pci_dev *dev, struct msi_desc *desc,
++			     u32 flag)
+ {
+ 	u32 mask_bits = desc->masked;
+ 
+@@ -218,21 +220,22 @@ u32 __pci_msix_desc_mask_irq(struct msi_desc *desc, u32 flag)
+ 	return mask_bits;
+ }
+ 
+-static void msix_mask_irq(struct msi_desc *desc, u32 flag)
++static void msix_mask_irq(struct pci_dev *dev, struct msi_desc *desc, u32 flag)
+ {
+-	desc->masked = __pci_msix_desc_mask_irq(desc, flag);
++	desc->masked = __pci_msix_desc_mask_irq(dev, desc, flag);
+ }
+ 
+ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
+ {
+ 	struct msi_desc *desc = irq_data_get_msi_desc(data);
++	struct pci_dev *dev = msi_desc_to_pci_dev(desc);
+ 
+ 	if (desc->msi_attrib.is_msix) {
+-		msix_mask_irq(desc, flag);
++		msix_mask_irq(dev, desc, flag);
+ 		readl(desc->mask_base);		/* Flush write to device */
+ 	} else {
+ 		unsigned offset = data->irq - desc->irq;
+-		msi_mask_irq(desc, 1 << offset, flag << offset);
++		msi_mask_irq(dev, desc, 1 << offset, flag << offset);
+ 	}
+ }
+ 
+@@ -401,7 +404,7 @@ static void __pci_restore_msi_state(struct pci_dev *dev)
+ 	arch_restore_msi_irqs(dev);
+ 
+ 	pci_read_config_word(dev, dev->msi_cap + PCI_MSI_FLAGS, &control);
+-	msi_mask_irq(entry, msi_mask(entry->msi_attrib.multi_cap),
++	msi_mask_irq(dev, entry, msi_mask(entry->msi_attrib.multi_cap),
+ 		     entry->masked);
+ 	control &= ~PCI_MSI_FLAGS_QSIZE;
+ 	control |= (entry->msi_attrib.multiple << 4) | PCI_MSI_FLAGS_ENABLE;
+@@ -423,7 +426,7 @@ static void __pci_restore_msix_state(struct pci_dev *dev)
+ 
+ 	arch_restore_msi_irqs(dev);
+ 	for_each_pci_msi_entry(entry, dev)
+-		msix_mask_irq(entry, entry->masked);
++		msix_mask_irq(dev, entry, entry->masked);
+ 
+ 	pci_msix_clear_and_set_ctrl(dev, PCI_MSIX_FLAGS_MASKALL, 0);
+ }
+@@ -612,28 +615,28 @@ static int msi_capability_init(struct pci_dev *dev, int nvec,
+ 
+ 	/* All MSIs are unmasked by default, Mask them all */
+ 	mask = msi_mask(entry->msi_attrib.multi_cap);
+-	msi_mask_irq(entry, mask, mask);
++	msi_mask_irq(dev, entry, mask, mask);
+ 
+ 	list_add_tail(&entry->list, dev_to_msi_list(&dev->dev));
+ 
+ 	/* Configure MSI capability structure */
+ 	ret = pci_msi_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSI);
+ 	if (ret) {
+-		msi_mask_irq(entry, mask, ~mask);
++		msi_mask_irq(dev, entry, mask, ~mask);
+ 		free_msi_irqs(dev);
+ 		return ret;
+ 	}
+ 
+ 	ret = msi_verify_entries(dev);
+ 	if (ret) {
+-		msi_mask_irq(entry, mask, ~mask);
++		msi_mask_irq(dev, entry, mask, ~mask);
+ 		free_msi_irqs(dev);
+ 		return ret;
+ 	}
+ 
+ 	ret = populate_msi_sysfs(dev);
+ 	if (ret) {
+-		msi_mask_irq(entry, mask, ~mask);
++		msi_mask_irq(dev, entry, mask, ~mask);
+ 		free_msi_irqs(dev);
+ 		return ret;
+ 	}
+@@ -721,7 +724,7 @@ static void msix_program_entries(struct pci_dev *dev,
+ 			entries[i++].vector = entry->irq;
+ 		entry->masked = readl(pci_msix_desc_addr(entry) +
+ 				PCI_MSIX_ENTRY_VECTOR_CTRL);
+-		msix_mask_irq(entry, 1);
++		msix_mask_irq(dev, entry, 1);
+ 	}
+ }
+ 
+@@ -895,7 +898,7 @@ static void pci_msi_shutdown(struct pci_dev *dev)
+ 	/* Return the device with MSI unmasked as initial states */
+ 	mask = msi_mask(desc->msi_attrib.multi_cap);
+ 	/* Keep cached state to be restored */
+-	__pci_msi_desc_mask_irq(desc, mask, ~mask);
++	__pci_msi_desc_mask_irq(dev, desc, mask, ~mask);
+ 
+ 	/* Restore dev->irq to its default pin-assertion irq */
+ 	dev->irq = desc->msi_attrib.default_irq;
+@@ -982,7 +985,7 @@ static void pci_msix_shutdown(struct pci_dev *dev)
+ 	/* Return the device with MSI-X masked as initial states */
+ 	for_each_pci_msi_entry(entry, dev) {
+ 		/* Keep cached states to be restored */
+-		__pci_msix_desc_mask_irq(entry, 1);
++		__pci_msix_desc_mask_irq(dev, entry, 1);
+ 	}
+ 
+ 	pci_msix_clear_and_set_ctrl(dev, PCI_MSIX_FLAGS_ENABLE, 0);
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index 0e9c50052ff3..1525ec9457a4 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -141,8 +141,9 @@ void free_msi_entry(struct msi_desc *entry);
+ void __pci_read_msi_msg(struct msi_desc *entry, struct msi_msg *msg);
+ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg);
+ 
+-u32 __pci_msix_desc_mask_irq(struct msi_desc *desc, u32 flag);
+-u32 __pci_msi_desc_mask_irq(struct msi_desc *desc, u32 mask, u32 flag);
++u32 __pci_msix_desc_mask_irq(struct pci_dev *, struct msi_desc *desc, u32 flag);
++u32 __pci_msi_desc_mask_irq(struct pci_dev *, struct msi_desc *desc, u32 mask,
++			    u32 flag);
+ void pci_msi_mask_irq(struct irq_data *data);
+ void pci_msi_unmask_irq(struct irq_data *data);
+ 
+
+commit 9b51617cc910b5facdb4ab0442d6562422c916d7
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Thu Nov 8 08:34:07 2018 -0600
+
+    PCI/MSI: Avoid MMIO accesses to device if it's unreachable
+    
+    Add wrappers around MMIO accesses (readl/writel) to the device.  If we
+    already know the device is unreachable because of hot-removal or a bus
+    error, skip the MMIO access.
+    
+    In addition, if we're doing an MMIO read, check whether it returns ~0 data.
+    If a read fails because of a bus error, host bridges typically synthesize
+    ~0 data to complete the CPU's read.  If a read returns ~0, do a config read
+    to determine whether the device is still reachable.  If the config read is
+    successful, the ~0 data is probably valid data from the device.  If the
+    config read fails, the device is unreachable, so mark it as disconnected.
+
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index d46ae506e296..0cf095eef69d 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -31,6 +31,38 @@ int pci_msi_ignore_mask;
+ 
+ #define msix_table_size(flags)	((flags & PCI_MSIX_FLAGS_QSIZE) + 1)
+ 
++static u32 mmio_readl(struct pci_dev *dev, const volatile void __iomem *addr)
++{
++	u32 val, id;
++
++	if (pci_dev_is_disconnected(dev))
++		return ~0;
++
++	val = readl(addr);
++
++	/*
++	 * If an MMIO read from the device returns ~0 data, that data may
++	 * be valid, or it may indicate a bus error.  If config space is
++	 * readable, assume it's valid data; otherwise, assume a bus error.
++	 */
++	if (val == ~0) {
++		pci_read_config_dword(dev, PCI_VENDOR_ID, &id);
++		if (id == ~0)
++			pci_dev_set_disconnected(dev, NULL);
++	}
++
++	return val;
++}
++
++static void mmio_writel(struct pci_dev *dev, u32 val,
++			volatile void __iomem *addr)
++{
++	if (pci_dev_is_disconnected(dev))
++		return;
++
++	writel(val, addr);
++}
++
+ #ifdef CONFIG_PCI_MSI_IRQ_DOMAIN
+ static int pci_msi_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+ {
+@@ -215,7 +247,8 @@ u32 __pci_msix_desc_mask_irq(struct pci_dev *dev, struct msi_desc *desc,
+ 	mask_bits &= ~PCI_MSIX_ENTRY_CTRL_MASKBIT;
+ 	if (flag)
+ 		mask_bits |= PCI_MSIX_ENTRY_CTRL_MASKBIT;
+-	writel(mask_bits, pci_msix_desc_addr(desc) + PCI_MSIX_ENTRY_VECTOR_CTRL);
++	mmio_writel(dev, mask_bits,
++		    pci_msix_desc_addr(desc) + PCI_MSIX_ENTRY_VECTOR_CTRL);
+ 
+ 	return mask_bits;
+ }
+@@ -232,7 +265,7 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
+ 
+ 	if (desc->msi_attrib.is_msix) {
+ 		msix_mask_irq(dev, desc, flag);
+-		readl(desc->mask_base);		/* Flush write to device */
++		mmio_readl(dev, desc->mask_base); /* Flush write to device */
+ 	} else {
+ 		unsigned offset = data->irq - desc->irq;
+ 		msi_mask_irq(dev, desc, 1 << offset, flag << offset);
+@@ -276,9 +309,11 @@ void __pci_read_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+ 	if (entry->msi_attrib.is_msix) {
+ 		void __iomem *base = pci_msix_desc_addr(entry);
+ 
+-		msg->address_lo = readl(base + PCI_MSIX_ENTRY_LOWER_ADDR);
+-		msg->address_hi = readl(base + PCI_MSIX_ENTRY_UPPER_ADDR);
+-		msg->data = readl(base + PCI_MSIX_ENTRY_DATA);
++		msg->address_lo = mmio_readl(dev,
++					     base + PCI_MSIX_ENTRY_LOWER_ADDR);
++		msg->address_hi = mmio_readl(dev,
++					     base + PCI_MSIX_ENTRY_UPPER_ADDR);
++		msg->data = mmio_readl(dev, base + PCI_MSIX_ENTRY_DATA);
+ 	} else {
+ 		int pos = dev->msi_cap;
+ 		u16 data;
+@@ -306,9 +341,11 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+ 	} else if (entry->msi_attrib.is_msix) {
+ 		void __iomem *base = pci_msix_desc_addr(entry);
+ 
+-		writel(msg->address_lo, base + PCI_MSIX_ENTRY_LOWER_ADDR);
+-		writel(msg->address_hi, base + PCI_MSIX_ENTRY_UPPER_ADDR);
+-		writel(msg->data, base + PCI_MSIX_ENTRY_DATA);
++		mmio_writel(dev, msg->address_lo,
++			    base + PCI_MSIX_ENTRY_LOWER_ADDR);
++		mmio_writel(dev, msg->address_hi,
++			    base + PCI_MSIX_ENTRY_UPPER_ADDR);
++		mmio_writel(dev, msg->data, base + PCI_MSIX_ENTRY_DATA);
+ 	} else {
+ 		int pos = dev->msi_cap;
+ 		u16 msgctl;
+@@ -722,8 +759,8 @@ static void msix_program_entries(struct pci_dev *dev,
+ 	for_each_pci_msi_entry(entry, dev) {
+ 		if (entries)
+ 			entries[i++].vector = entry->irq;
+-		entry->masked = readl(pci_msix_desc_addr(entry) +
+-				PCI_MSIX_ENTRY_VECTOR_CTRL);
++		entry->masked = mmio_readl(dev, pci_msix_desc_addr(entry) +
++					   PCI_MSIX_ENTRY_VECTOR_CTRL);
+ 		msix_mask_irq(dev, entry, 1);
+ 	}
+ }
