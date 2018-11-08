@@ -2,128 +2,204 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA068C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91462C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB5302086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:10:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5302086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 46F0B20817
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:11:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N5UCVEdf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F0B20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=whitewaterfoundry.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbeKHOoG (ORCPT
+        id S1729059AbeKHOp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 09:44:06 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:45010 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKHOoG (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 8 Nov 2018 09:44:06 -0500
-Received: from linux-r8p5.suse.de (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 07 Nov 2018 22:10:17 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     akpm@linux-foundation.org
-Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk, dave@stgolabs.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 1/6] fs/epoll: remove max_nests argument from ep_call_nested()
-Date:   Wed,  7 Nov 2018 21:10:01 -0800
-Message-Id: <20181108051006.18751-2-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181108051006.18751-1-dave@stgolabs.net>
-References: <20181108051006.18751-1-dave@stgolabs.net>
+        Thu, 8 Nov 2018 09:45:28 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50393 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726145AbeKHOp2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 09:45:28 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id CF1AA21F49
+        for <linux-kernel@vger.kernel.org>; Thu,  8 Nov 2018 00:11:47 -0500 (EST)
+Received: from web4 ([10.202.2.214])
+  by compute1.internal (MEProxy); Thu, 08 Nov 2018 00:11:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=tfDMUC
+        2ykUsXRQ+42/y5Ab9luo5eOkcge3dGsDt+cN4=; b=N5UCVEdf+RnMcNFzfO4gkB
+        KFLW9M3WzMMdZzqu2leou1c+hvreT92b1ZoJq2X6vLknb9RvrKSMlgoZVE11abdX
+        Ke2dgk6jeETDI63DO9cKKQmupkzPKzCGKSinG5IZ3vebjUhpSFZe+A1jeb0gQU/E
+        u4yZiLqPH1DavsvdS/B/cfS4d2Yq7lktFDfBeREI6ad3bSlGIsHKe/NOPYUheAMT
+        jbBBGqszGxTPo3ttQms63pZbR2daYJUaxe9RmJpOclaoewc96r+aJsPf22OdkN9q
+        dOM8brt1NUXTxYEoadKLTcpKdZox8ighSO+WAhDse+CcKCLgcjKWXUBf0O7czAIQ
+        ==
+X-ME-Sender: <xms:k8XjW25UAv3ILHJSqBFHp-atFrBcarxGDRgWvqcvcgQQQbPMr71s3A>
+X-ME-Proxy: <xmx:k8XjW6yWdr55n6dhVxyoIoSxJyLI-1LONG_UmbBgUzDMY8TyPpQ0qg>
+    <xmx:k8XjW_e4HQKJNFqHYPsAm16NR5wi9bp6zjkUP3OvvpRVuEqdGlhqCQ>
+    <xmx:k8XjW2eMN04Wb5ezRvXh4CY9IZOPRoUfppH-c1cqz6ZrBEt8CssnbA>
+    <xmx:k8XjWxal4jMUGhNTtf43fLShlDjnUmQ3TFP-FPj895EkkDDG6sOL3g>
+    <xmx:k8XjW3_41OA1xm4Uha67RSeosNGGH6l8eoxzdS5XzbkXWFE4aMlHAg>
+    <xmx:k8XjW6XmcPl29s4Ydw6yIDi1EIxpBjJBskJT5raQxzu1g7dFkJeODQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id 8D979BA7C4; Thu,  8 Nov 2018 00:11:47 -0500 (EST)
+Message-Id: <1541653907.680493.1569636320.38B54221@webmail.messagingengine.com>
+From:   Hayden Barnes <hayden@whitewaterfoundry.com>
+To:     linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-c0552f07
+Subject: Re: [QUESTION] Microsoft, WSL,
+ and the Linux trademark (Edited For Readability)
+Date:   Wed, 07 Nov 2018 21:11:47 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All callers pass the EP_MAX_NESTS constant already, so lets
-simplify this a tad and get rid of the redundant parameter
-for nested eventpolls.
+Mr. Caputo,
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- fs/eventpoll.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+> In reading the news today, I stumbled across an article talking about a $=
+20=20
+> "linux-based distro" app for Windows 10.
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 42bbe6824b4b..7ad020f1353b 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -471,7 +471,6 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
-  *                  no re-entered.
-  *
-  * @ncalls: Pointer to the nested_calls structure to be used for this call.
-- * @max_nests: Maximum number of allowed nesting calls.
-  * @nproc: Nested call core function pointer.
-  * @priv: Opaque data to be passed to the @nproc callback.
-  * @cookie: Cookie to be used to identify this nested call.
-@@ -480,7 +479,7 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
-  * Returns: Returns the code returned by the @nproc callback, or -1 if
-  *          the maximum recursion limit has been exceeded.
-  */
--static int ep_call_nested(struct nested_calls *ncalls, int max_nests,
-+static int ep_call_nested(struct nested_calls *ncalls,
- 			  int (*nproc)(void *, void *, int), void *priv,
- 			  void *cookie, void *ctx)
- {
-@@ -499,7 +498,7 @@ static int ep_call_nested(struct nested_calls *ncalls, int max_nests,
- 	 */
- 	list_for_each_entry(tncur, lsthead, llink) {
- 		if (tncur->ctx == ctx &&
--		    (tncur->cookie == cookie || ++call_nests > max_nests)) {
-+		    (tncur->cookie == cookie || ++call_nests > EP_MAX_NESTS)) {
- 			/*
- 			 * Ops ... loop detected or maximum nest level reached.
- 			 * We abort this wake by breaking the cycle itself.
-@@ -573,7 +572,7 @@ static void ep_poll_safewake(wait_queue_head_t *wq)
- {
- 	int this_cpu = get_cpu();
- 
--	ep_call_nested(&poll_safewake_ncalls, EP_MAX_NESTS,
-+	ep_call_nested(&poll_safewake_ncalls,
- 		       ep_poll_wakeup_proc, NULL, wq, (void *) (long) this_cpu);
- 
- 	put_cpu();
-@@ -1333,7 +1332,6 @@ static int reverse_path_check_proc(void *priv, void *cookie, int call_nests)
- 				}
- 			} else {
- 				error = ep_call_nested(&poll_loop_ncalls,
--							EP_MAX_NESTS,
- 							reverse_path_check_proc,
- 							child_file, child_file,
- 							current);
-@@ -1367,7 +1365,7 @@ static int reverse_path_check(void)
- 	/* let's call this for all tfiles */
- 	list_for_each_entry(current_file, &tfile_check_list, f_tfile_llink) {
- 		path_count_init();
--		error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
-+		error = ep_call_nested(&poll_loop_ncalls,
- 					reverse_path_check_proc, current_file,
- 					current_file, current);
- 		if (error)
-@@ -1876,7 +1874,7 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
- 			ep_tovisit = epi->ffd.file->private_data;
- 			if (ep_tovisit->visited)
- 				continue;
--			error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
-+			error = ep_call_nested(&poll_loop_ncalls,
- 					ep_loop_check_proc, epi->ffd.file,
- 					ep_tovisit, current);
- 			if (error != 0)
-@@ -1916,7 +1914,7 @@ static int ep_loop_check(struct eventpoll *ep, struct file *file)
- 	int ret;
- 	struct eventpoll *ep_cur, *ep_next;
- 
--	ret = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
-+	ret = ep_call_nested(&poll_loop_ncalls,
- 			      ep_loop_check_proc, file, ep, current);
- 	/* clear visited list */
- 	list_for_each_entry_safe(ep_cur, ep_next, &visited_list,
--- 
-2.16.4
+Hello. That was my idea. Please allow me to address some of the concerns yo=
+u raised.=20
 
+> This is just a bundled userspace for WSL, there is no actual Linux in thi=
+s thing,=20
+> yet the trademarked Linux name is used throughout.
+> Did Microsoft license the trademark or something?  Did I miss a memo?
+> Does their joining the Linux Foundation as a Platinum member two years ag=
+o=20
+> include such use of the trademark?=20
+> I'm confused by what seems to be total silence about what _appears_ to be=
+ an=20
+> obvious large-scale trademark abuse in everything WSL-related.
+> Could somebody informed please shed some light on this?
+
+The Linux trademark is owned by Linus Torvalds and administered by the Linu=
+x Foundation=20
+through the Linux Mark Institute: https://www.linuxmark.org. The Linux trad=
+emark can be=20
+used by third parties subject to a Sublicense Agreement:=20
+https://www.linuxmark.org/programs/legal/trademark/sublicense-agreement.=20
+
+The terms of the Sublicense Agreement permit the use of the Linux trademark=
+ for derivative=20
+goods and services that deploy, document, facilitate the use of, or enhance=
+ Linux=C2=AD-based goods.
+
+WLinux does contain a bootable Linux kernel in a base image.  The criticism=
+ that 'WSL is=20
+not Linux' is because the kernel is not executed when the base image is ins=
+talled and run=20
+from within the WSL layer on Windows 10. But WLinux can be used to patch an=
+d build the=20
+Linux kernel from sources to install on other devices, assist in deploying =
+and configuring=20
+Linux on other devices, and can cross-compile software using standard Linux=
+ libraries,=20
+all when running on WSL. For more about how WSL works for those unfamiliar:=
+=20
+https://github.com/sirredbeard/Awesome-WSL#overview. WLinux unquestionably =
+contains=20
+derivations of the Linux kernel, relies on the WSL re-implementation of Lin=
+ux kernel syscalls,=20
+and facilitates the use of and enhances Linux-based goods, all within the t=
+erms of the=20
+Linux Sublicense Agreement.
+
+We obtained a valid Sublicense Agreement for the use of the Linux trademark=
+ for WLinux=20
+from the Linux Foundation before launching WLinux. All of our intellectual =
+property=20
+compliance disclosures are here:=20
+https://github.com/WhitewaterFoundry/WLinux/blob/master/LICENSE.md
+
+> The situation strikes me as harmful to the kernel as the majority of folk=
+s being=20
+introduced to "Linux" this way will be tricked into thinking they're using/=
+supporting Linux.
+
+Users who purchase WLinux from the Microsoft Store are supporting the Linux=
+ ecosystem=20
+and free software generally. Everyone working on WLinux are Windows and Lin=
+ux users
+who are committed to making the Linux software ecosystem accessible to as m=
+any people=20
+as possible regardless of what device or operating system they are on. WLin=
+ux and WSL=20
+generally opens up new possibilities for bringing people to the Linux ecosy=
+stem,=20
+cross-platform development, and expanding access to free software and free =
+software=20
+development tools.=20
+
+WLinux builds in a number of value-added enhancements and features, we prov=
+ide=20
+end user support, and work with various developer communities and other ope=
+n source=20
+companies to try to make it easy to get into the Linux ecosystem from Windo=
+ws 10.  We=20
+make it easy to get up and running with Go, Ruby, other dev toolchains, soo=
+n Docker, install=20
+various editors, configure predictive text input for non-Latin input, and i=
+mplement a handful=20
+of other tweaks to defaults. I personally do not believe a frontend dev ste=
+pping into Linux=20
+should have to know how to partition and dual-boot a system, or even have t=
+o learn Docker,=20
+to get started using node.js and trying different packages off npm. They wi=
+ll get to that.
+
+Many WLinux users are going to end up working on traditional server Linux e=
+ventually,=20
+if they don't already, as many of our users seem to work in hybrid environm=
+ents as it is.=20
+I imagine a few will end up trying and then switching to desktop Linux, aga=
+in if they don't=20
+use it already. But desktop Linux is just one small part of Linux, WLinux i=
+s not here to=20
+replace it, and WSL is not capable of doing so in it's current limitations.=
+ Users are not being
+ 'tricked'. Free upstream distros from Canonical, Debian, SuSE, and Kali ar=
+e available where=20
+you can implement our tweaks and custom packages manually. Of the many copi=
+es we have
+ sold we have only had two refund requests which we have promptly honored. =
+Users always=20
+have the option of building WLinux from source using instructions we provid=
+e. WLinux is also=20
+heavily discounted or free in many less developed countries.
+
+We turn the funds WLinux earns around to hire open source developers, spons=
+or bug and=20
+feature bounties, donate to upstream projects, and cover overhead. We are p=
+rofitable and=20
+expect to pay out over $2,000 USD in bounties this month alone after being =
+on the store for
+ just six weeks. We are focused on building a sustainable commercial open s=
+ource project=20
+that can direct our own development resources where we see fit to improve t=
+he Linux=20
+experience on WSL for us, the users of Linux on WSL. Microsoft has had abso=
+lutely zero=20
+input into how we have evolved WLinux besides open source code of theirs we=
+ have used.
+
+Hayden Barnes
+Whitewater Foundry, Ltd. Co.
+hayden@whitewaterfoundry.com
+https://www.whitewaterfoundry.com
+https://twitter.com/WLinuxApp
+https://github.com/sirredbeard
+https://github.com/WhitewaterFoundry/WLinux
