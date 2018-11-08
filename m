@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DBCECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 479EBECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC1F20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 066D420892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzXPQVic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC1F20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vo1svrfY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 066D420892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731058AbeKIHjj (ORCPT
+        id S1731046AbeKIHjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 02:39:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59396 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730196AbeKIHji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:39:38 -0500
+        id S1731005AbeKIHjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:39:37 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72D3820892;
-        Thu,  8 Nov 2018 22:02:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B70020892;
+        Thu,  8 Nov 2018 22:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714529;
-        bh=yS+9UMgrXr3dK1c6kcAlnm7LKebWIMXMVaIgDemnXqs=;
+        s=default; t=1541714528;
+        bh=+JTlosB5QgRESJFQW6u8ogOK8bU8EFj2ReQ+lHEjtQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jzXPQVicZ56EGdcvKheTv6CBcsRWnAuhSdtHeT3Ku3Zjwhik35v4e05gS/XE9As/I
-         5TQY27Hv1oIRvgNNswcKYN7POaSblOvCYubT5Bn8/pIRMsg/pQk7IIYz2EcJ2A0k2T
-         L6ZE/JENqGKREOIvYSb4d8qWinoGyM/WqjgM2+oQ=
+        b=vo1svrfYqW5zg0nQ78AMK7qArbR/l2Dc1dJrHe4Hy6NLFkrswIvMZFv2OnnYbla5Q
+         26QDbY6udCnmSLAhvkH1l4Y8PXMquKOEG4dhQoaqyx1WAmDfK4ztchkxI+ZzK/9Odz
+         11yl/GISa8mCVpvWuMAidcqrZzPoTXKyrrz6Z150=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 008/171] ARM: 8799/1: mm: fix pci_ioremap_io() offset check
-Date:   Thu,  8 Nov 2018 13:49:38 -0800
-Message-Id: <20181108215127.839846773@linuxfoundation.org>
+Subject: [PATCH 4.9 006/171] cfg80211: Address some corner cases in scan result channel updating
+Date:   Thu,  8 Nov 2018 13:49:36 -0800
+Message-Id: <20181108215127.674830614@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,43 +63,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3a58ac65e2d7969bcdf1b6acb70fa4d12a88e53e ]
+[ Upstream commit 119f94a6fefcc76d47075b83d2b73d04c895df78 ]
 
-IO_SPACE_LIMIT is the ending address of the PCI IO space, i.e
-something like 0xfffff (and not 0x100000).
+cfg80211_get_bss_channel() is used to update the RX channel based on the
+available frame payload information (channel number from DSSS Parameter
+Set element or HT Operation element). This is needed on 2.4 GHz channels
+where frames may be received on neighboring channels due to overlapping
+frequency range.
 
-Therefore, when offset = 0xf0000 is passed as argument, this function
-fails even though the offset + SZ_64K fits below the
-IO_SPACE_LIMIT. This makes the last chunk of 64 KB of the I/O space
-not usable as it cannot be mapped.
+This might of some use on the 5 GHz band in some corner cases, but
+things are more complex there since there is no n:1 or 1:n mapping
+between channel numbers and frequencies due to multiple different
+starting frequencies in different operating classes. This could result
+in ieee80211_channel_to_frequency() returning incorrect frequency and
+ieee80211_get_channel() returning incorrect channel information (or
+indication of no match). In the previous implementation, this could
+result in some scan results being dropped completely, e.g., for the 4.9
+GHz channels. That prevented connection to such BSSs.
 
-This patch fixes that by substracing 1 to offset + SZ_64K, so that we
-compare the addrss of the last byte of the I/O space against
-IO_SPACE_LIMIT instead of the address of the first byte of what is
-after the I/O space.
+Fix this by using the driver-provided channel pointer if
+ieee80211_get_channel() does not find matching channel data for the
+channel number in the frame payload and if the scan is done with 5 MHz
+or 10 MHz channel bandwidth. While doing this, also add comments
+describing what the function is trying to achieve to make it easier to
+understand what happens here and why.
 
-Fixes: c2794437091a4 ("ARM: Add fixed PCI i/o mapping")
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/scan.c | 58 ++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 49 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-index ff0eed23ddf1..66e5d8765601 100644
---- a/arch/arm/mm/ioremap.c
-+++ b/arch/arm/mm/ioremap.c
-@@ -473,7 +473,7 @@ void pci_ioremap_set_mem_type(int mem_type)
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index 35ad69fd0838..435f904c1be5 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -978,13 +978,23 @@ cfg80211_bss_update(struct cfg80211_registered_device *rdev,
+ 	return NULL;
+ }
  
- int pci_ioremap_io(unsigned int offset, phys_addr_t phys_addr)
++/*
++ * Update RX channel information based on the available frame payload
++ * information. This is mainly for the 2.4 GHz band where frames can be received
++ * from neighboring channels and the Beacon frames use the DSSS Parameter Set
++ * element to indicate the current (transmitting) channel, but this might also
++ * be needed on other bands if RX frequency does not match with the actual
++ * operating channel of a BSS.
++ */
+ static struct ieee80211_channel *
+ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
+-			 struct ieee80211_channel *channel)
++			 struct ieee80211_channel *channel,
++			 enum nl80211_bss_scan_width scan_width)
  {
--	BUG_ON(offset + SZ_64K > IO_SPACE_LIMIT);
-+	BUG_ON(offset + SZ_64K - 1 > IO_SPACE_LIMIT);
+ 	const u8 *tmp;
+ 	u32 freq;
+ 	int channel_number = -1;
++	struct ieee80211_channel *alt_channel;
  
- 	return ioremap_page_range(PCI_IO_VIRT_BASE + offset,
- 				  PCI_IO_VIRT_BASE + offset + SZ_64K,
+ 	tmp = cfg80211_find_ie(WLAN_EID_DS_PARAMS, ie, ielen);
+ 	if (tmp && tmp[1] == 1) {
+@@ -998,16 +1008,45 @@ cfg80211_get_bss_channel(struct wiphy *wiphy, const u8 *ie, size_t ielen,
+ 		}
+ 	}
+ 
+-	if (channel_number < 0)
++	if (channel_number < 0) {
++		/* No channel information in frame payload */
+ 		return channel;
++	}
+ 
+ 	freq = ieee80211_channel_to_frequency(channel_number, channel->band);
+-	channel = ieee80211_get_channel(wiphy, freq);
+-	if (!channel)
+-		return NULL;
+-	if (channel->flags & IEEE80211_CHAN_DISABLED)
++	alt_channel = ieee80211_get_channel(wiphy, freq);
++	if (!alt_channel) {
++		if (channel->band == NL80211_BAND_2GHZ) {
++			/*
++			 * Better not allow unexpected channels when that could
++			 * be going beyond the 1-11 range (e.g., discovering
++			 * BSS on channel 12 when radio is configured for
++			 * channel 11.
++			 */
++			return NULL;
++		}
++
++		/* No match for the payload channel number - ignore it */
++		return channel;
++	}
++
++	if (scan_width == NL80211_BSS_CHAN_WIDTH_10 ||
++	    scan_width == NL80211_BSS_CHAN_WIDTH_5) {
++		/*
++		 * Ignore channel number in 5 and 10 MHz channels where there
++		 * may not be an n:1 or 1:n mapping between frequencies and
++		 * channel numbers.
++		 */
++		return channel;
++	}
++
++	/*
++	 * Use the channel determined through the payload channel number
++	 * instead of the RX channel reported by the driver.
++	 */
++	if (alt_channel->flags & IEEE80211_CHAN_DISABLED)
+ 		return NULL;
+-	return channel;
++	return alt_channel;
+ }
+ 
+ /* Returned bss is reference counted and must be cleaned up appropriately. */
+@@ -1032,7 +1071,8 @@ cfg80211_inform_bss_data(struct wiphy *wiphy,
+ 		    (data->signal < 0 || data->signal > 100)))
+ 		return NULL;
+ 
+-	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan);
++	channel = cfg80211_get_bss_channel(wiphy, ie, ielen, data->chan,
++					   data->scan_width);
+ 	if (!channel)
+ 		return NULL;
+ 
+@@ -1130,7 +1170,7 @@ cfg80211_inform_bss_frame_data(struct wiphy *wiphy,
+ 		return NULL;
+ 
+ 	channel = cfg80211_get_bss_channel(wiphy, mgmt->u.beacon.variable,
+-					   ielen, data->chan);
++					   ielen, data->chan, data->scan_width);
+ 	if (!channel)
+ 		return NULL;
+ 
 -- 
 2.17.1
 
