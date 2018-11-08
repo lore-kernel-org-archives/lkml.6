@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2037BECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25499ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5A620883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E121120857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwTk+o/g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5A620883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPNaM9xN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E121120857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbeKIHbS (ORCPT
+        id S1727851AbeKIHbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:31:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45798 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:31:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbeKIHbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:31:18 -0500
+        id S1727765AbeKIHbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:31:20 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B0252081C;
-        Thu,  8 Nov 2018 21:53:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BAEE20857;
+        Thu,  8 Nov 2018 21:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714032;
-        bh=6tTcfYevycYaeVK1ct5LG2hzmM8GdPG9Q4BTZzK2DZY=;
+        s=default; t=1541714033;
+        bh=1gi5CcXdD8djwcRXtymG0X2sEhVZVCYJc6ahvjrOo7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FwTk+o/gjezjwI6lQKMyi4J9OFr6pOTZe0EeR1MbUbk8c0/FEMySos3gwdSiFV3oI
-         4xCD/cL+ZyjHO61QiDxxhOR3oMxqD798ndYP5aPS32U37DlT9MD0q36+fN0BSGBxze
-         D+OT6VNtGraYA45tFZRZMDS07zeR5UIXwqp1iJUo=
+        b=XPNaM9xNs9AbUdiTZ6wPifyNct84re3MeZOOnO5Qwlkr8wy4kG7OpocQPtbOmHEeU
+         XwKgyWhZDy5lFJdBbzw1nDaaHQvb4aILR6NHLcQ+eUzop3KEx3AAcEVgOOmc01eRuU
+         rWfviR9o/teIZrRpW2yQP48VBysz+r8x+JyhMe4Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 009/144] netlabel: check for IPV4MASK in addrinfo_get
-Date:   Thu,  8 Nov 2018 13:49:40 -0800
-Message-Id: <20181108215055.475987914@linuxfoundation.org>
+Subject: [PATCH 3.18 014/144] net: systemport: Fix wake-up interrupt race during resume
+Date:   Thu,  8 Nov 2018 13:49:45 -0800
+Message-Id: <20181108215055.824490259@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -62,61 +62,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit f88b4c01b97e09535505cf3c327fdbce55c27f00 ]
+[ Upstream commit 45ec318578c0c22a11f5b9927d064418e1ab1905 ]
 
-netlbl_unlabel_addrinfo_get() assumes that if it finds the
-NLBL_UNLABEL_A_IPV4ADDR attribute, it must also have the
-NLBL_UNLABEL_A_IPV4MASK attribute as well. However, this is
-not necessarily the case as the current checks in
-netlbl_unlabel_staticadd() and friends are not sufficent to
-enforce this.
+The AON_PM_L2 is normally used to trigger and identify the source of a
+wake-up event. Since the RX_SYS clock is no longer turned off, we also
+have an interrupt being sent to the SYSTEMPORT INTRL_2_0 controller, and
+that interrupt remains active up until the magic packet detector is
+disabled which happens much later during the driver resumption.
 
-If passed a netlink message with NLBL_UNLABEL_A_IPV4ADDR,
-NLBL_UNLABEL_A_IPV6ADDR, and NLBL_UNLABEL_A_IPV6MASK attributes,
-these functions will all call netlbl_unlabel_addrinfo_get() which
-will then attempt dereference NULL when fetching the non-existent
-NLBL_UNLABEL_A_IPV4MASK attribute:
+The race happens if we have a CPU that is entering the SYSTEMPORT
+INTRL2_0 handler during resume, and another CPU has managed to clear the
+wake-up interrupt during bcm_sysport_resume_from_wol(). In that case, we
+have the first CPU stuck in the interrupt handler with an interrupt
+cause that has been cleared under its feet, and so we keep returning
+IRQ_NONE and we never make any progress.
 
-Unable to handle kernel NULL pointer dereference at virtual address 0
-Process unlab (pid: 31762, stack limit = 0xffffff80502d8000)
-Call trace:
-	netlbl_unlabel_addrinfo_get+0x44/0xd8
-	netlbl_unlabel_staticremovedef+0x98/0xe0
-	genl_rcv_msg+0x354/0x388
-	netlink_rcv_skb+0xac/0x118
-	genl_rcv+0x34/0x48
-	netlink_unicast+0x158/0x1f0
-	netlink_sendmsg+0x32c/0x338
-	sock_sendmsg+0x44/0x60
-	___sys_sendmsg+0x1d0/0x2a8
-	__sys_sendmsg+0x64/0xb4
-	SyS_sendmsg+0x34/0x4c
-	el0_svc_naked+0x34/0x38
-Code: 51001149 7100113f 540000a0 f9401508 (79400108)
----[ end trace f6438a488e737143 ]---
-Kernel panic - not syncing: Fatal exception
+This was not a problem before because we would always turn off the
+RX_SYS clock during WoL, so the SYSTEMPORT INTRL2_0 would also be turned
+off as well, thus not latching the interrupt.
 
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+The fix is to make sure we do not enable either the MPD or
+BRCM_TAG_MATCH interrupts since those are redundant with what the
+AON_PM_L2 interrupt controller already processes and they would cause
+such a race to occur.
 
+Fixes: bb9051a2b230 ("net: systemport: Add support for WAKE_FILTER")
+Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlabel/netlabel_unlabeled.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -787,7 +787,8 @@ static int netlbl_unlabel_addrinfo_get(s
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -769,14 +769,22 @@ static void bcm_sysport_resume_from_wol(
  {
- 	u32 addr_len;
+ 	u32 reg;
  
--	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR]) {
-+	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR] &&
-+	    info->attrs[NLBL_UNLABEL_A_IPV4MASK]) {
- 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
- 		if (addr_len != sizeof(struct in_addr) &&
- 		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]))
+-	/* Stop monitoring MPD interrupt */
+-	intrl2_0_mask_set(priv, INTRL2_0_MPD);
+-
+ 	/* Clear the MagicPacket detection logic */
+ 	reg = umac_readl(priv, UMAC_MPD_CTRL);
+ 	reg &= ~MPD_EN;
+ 	umac_writel(priv, reg, UMAC_MPD_CTRL);
+ 
++	reg = intrl2_0_readl(priv, INTRL2_CPU_STATUS);
++	if (reg & INTRL2_0_MPD)
++		netdev_info(priv->netdev, "Wake-on-LAN (MPD) interrupt!\n");
++
++	if (reg & INTRL2_0_BRCM_MATCH_TAG) {
++		reg = rxchk_readl(priv, RXCHK_BRCM_TAG_MATCH_STATUS) &
++				  RXCHK_BRCM_TAG_MATCH_MASK;
++		netdev_info(priv->netdev,
++			    "Wake-on-LAN (filters 0x%02x) interrupt!\n", reg);
++	}
++
+ 	netif_dbg(priv, wol, priv->netdev, "resumed from WOL\n");
+ }
+ 
+@@ -809,11 +817,6 @@ static irqreturn_t bcm_sysport_rx_isr(in
+ 	if (priv->irq0_stat & INTRL2_0_TX_RING_FULL)
+ 		bcm_sysport_tx_reclaim_all(priv);
+ 
+-	if (priv->irq0_stat & INTRL2_0_MPD) {
+-		netdev_info(priv->netdev, "Wake-on-LAN interrupt!\n");
+-		bcm_sysport_resume_from_wol(priv);
+-	}
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -1786,9 +1789,6 @@ static int bcm_sysport_suspend_to_wol(st
+ 	/* UniMAC receive needs to be turned on */
+ 	umac_enable_set(priv, CMD_RX_EN, 1);
+ 
+-	/* Enable the interrupt wake-up source */
+-	intrl2_0_mask_clear(priv, INTRL2_0_MPD);
+-
+ 	netif_dbg(priv, wol, ndev, "entered WOL mode\n");
+ 
+ 	return 0;
 
 
