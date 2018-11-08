@@ -2,112 +2,166 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF788ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B616AECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F7120840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:32:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="OvWpKhjq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F7120840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 84F132089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F132089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeKIDJB (ORCPT
+        id S1727124AbeKIDKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:09:01 -0500
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:46610 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbeKIDJA (ORCPT
+        Thu, 8 Nov 2018 22:10:21 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726634AbeKIDKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:09:00 -0500
-Received: by mail-oi1-f172.google.com with SMTP id e19-v6so1843292oii.13
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:32:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jhr3DtJr5hHG40nJ43PZkz4HjRD/MEosnMu6p+jKu7s=;
-        b=OvWpKhjq8+ogeWawJE9I/rdBQqXBwGERKQbm0lV31BcZvk2XiZR5fP9uVN6kKY8deB
-         jW+mMIyfiaknnPN7lsMNvG8dLt51tJFyXOru9+c7aUp1oiEAZcGO11lFiNniCtHDIR66
-         +wbD7vSG+FGxIK6mCWTUlf/q0RC0XNROoNP5jshC4/RT/Ntj0041OLFfUN0Jn4mfRwYM
-         nY6gw39Xe2cG2EMCT96Tju5V7s3LQAMVBTNZz6dwWymbgNAasG3LSez//JkR3q/mzPF8
-         ma5623Ru4UDYB7aY8KEDGdVtNPk89OOkjWJRPRThpf4pxOWlUg3tWPu/fDSEZEUdCGXY
-         1jSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jhr3DtJr5hHG40nJ43PZkz4HjRD/MEosnMu6p+jKu7s=;
-        b=lIvdsfOh2K3cyNTG9gP/KQdvdOq/ZX/gYsUo5/taXZH15K6x/DgiAGhNfteK0dySKH
-         X/aKoWphqMY1nA+QWs9flYV3YmzQIFez7ciy5/Z+lp+uQDmTHyWOh0AeaDI5Kr436gAd
-         riyZ7SNwkT+vAwDrtl27WdU//l3JZ+LaYTnfnQgZvMHzTouDCaIkloWEOoqNfB3JF8QI
-         CKlD4LrYVyenD6/LDdTifQZ64dRAHwerL7AYExOPbRYU0snKFjqLiL1ynB9MmhWwYpdn
-         AZZZdd+LA0TjvwQYy0YKIYJeHQWytHBJNK48gBihy9nWpaVt7Z8bpjKhT2ysBqT0hJSu
-         HFTg==
-X-Gm-Message-State: AGRZ1gJ88/6D0s9aa+IyMOZWO7kQiFVWhjAABHvCuibLejei/IwtKP7X
-        METqjr4MK/NKOotJjf7Qbz8mxH6vJll5nMo6SRIOLQ==
-X-Google-Smtp-Source: AJdET5e2KwN4nyhCA6bgt4OfNQ8rUOjZnrFsSMXxuufyCDXxORZBCJ0GCvwo0OXlw+xrazct/Icfza6akCpw9yxL9C0=
-X-Received: by 2002:aca:5204:: with SMTP id g4-v6mr3264326oib.149.1541698349024;
- Thu, 08 Nov 2018 09:32:29 -0800 (PST)
+        Thu, 8 Nov 2018 22:10:21 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8HStxN008005
+        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 12:33:49 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmqtq5j39-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 12:33:49 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 8 Nov 2018 17:33:48 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 8 Nov 2018 17:33:46 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8HXj8128835960
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 17:33:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5AC80B2065;
+        Thu,  8 Nov 2018 17:33:45 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26271B2066;
+        Thu,  8 Nov 2018 17:33:45 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.215.156])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Nov 2018 17:33:45 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B840716C35ED; Thu,  8 Nov 2018 09:33:44 -0800 (PST)
+Date:   Thu, 8 Nov 2018 09:33:44 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: EXP rcu: Revert expedited GP parallelization cleverness
+Reply-To: paulmck@linux.ibm.com
+References: <20181101233031.GA13002@linux.ibm.com>
+ <20181108165845.bzx6pjtmm3u7yur7@linutronix.de>
 MIME-Version: 1.0
-References: <20181107171010.421878737@linutronix.de> <20181107124855.328133e7@lwn.net>
- <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
- <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
- <20181108074920.4c601ee3@lwn.net> <20181108150517.GV9761@hirez.programming.kicks-ass.net>
- <20181108162133.GC1080@thunk.org> <20181108163223.GH6675@sirena.org.uk>
-In-Reply-To: <20181108163223.GH6675@sirena.org.uk>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 8 Nov 2018 09:32:18 -0800
-Message-ID: <CAPcyv4h1ABBz7OaZB5d--fjtwvfrM=TZs7XFCG54PYRm_Fr8WQ@mail.gmail.com>
-Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
-To:     Mark Brown <broonie@kernel.org>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, acme@redhat.com,
-        frederic@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108165845.bzx6pjtmm3u7yur7@linutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110817-0052-0000-0000-00000352BE16
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000269; SDB=6.01114539; UDB=6.00577845; IPR=6.00894638;
+ MB=3.00024077; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 17:33:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110817-0053-0000-0000-00005EB31054
+Message-Id: <20181108173344.GN4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 8:32 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Thu, Nov 08, 2018 at 11:21:33AM -0500, Theodore Y. Ts'o wrote:
-> > On Thu, Nov 08, 2018 at 04:05:17PM +0100, Peter Zijlstra wrote:
->
-> > > My plumbers schedule is already 100% booked with MCs and other things.
-> > > There is no kernel-summit schedule details available as of yet, but it
-> > > is already almost certain that I will not have time for anything in that
-> > > track anyway :/
->
-> > I thought there was a slot already scheduled on the refereed track,
-> > "Towards a Linux Kernel Mainainer Handbook" (Tuesday at 4:45pm) for
-> > this purpose?
->
-> I'm not 100% sure that people will pick up that the topic is about a
-> handbook for working with maintainers rather than a handbook for being a
-> maintainer from that title...
+On Thu, Nov 08, 2018 at 05:58:45PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2018-11-01 16:30:31 [-0700], Paul E. McKenney wrote:
+> > > (Commit 258ba8e089db23f760139266c232f01bad73f85c from linux-rcu)
+> > > 
+> > > This commit reverts a series of commits starting with fcc635436501 ("rcu:
+> > > Make expedited GPs handle CPU 0 being offline") and its successors, thus
+> > > queueing each rcu_node structure's expedited grace-period initialization
+> > > work on the first CPU of that rcu_node structure.
+> > > 
+> > > Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > 
+> > > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > > index 0b2c2ad69629..a0486414edb4 100644
+> > > --- a/kernel/rcu/tree_exp.h
+> > > +++ b/kernel/rcu/tree_exp.h
+> > > @@ -472,7 +472,6 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
+> > >  static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
+> > >  				     smp_call_func_t func)
+> > >  {
+> > > -	int cpu;
+> > >  	struct rcu_node *rnp;
+> > >  
+> > >  	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
+> > > @@ -494,13 +493,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
+> > >  			continue;
+> > >  		}
+> > >  		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
+> > > -		preempt_disable();
+> > > -		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
+> > > -		/* If all offline, queue the work on an unbound CPU. */
+> > > -		if (unlikely(cpu > rnp->grphi))
+> > > -			cpu = WORK_CPU_UNBOUND;
+> > > -		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
+> > > -		preempt_enable();
+> > > +		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
+> > >  		rnp->exp_need_flush = true;
+> > >  	}
+> > 
+> > How about instead changing the earlier "if" statement to read as follows?
+> > 
+> > 		if (!READ_ONCE(rcu_par_gp_wq) ||
+> > 		    rcu_scheduler_active != RCU_SCHEDULER_RUNNING ||
+> > 		    rcu_is_last_leaf_node(rnp) ||
+> > 		    IS_ENABLED(CONFIG_PREEMPT_RT_FULL)) {
+> > 			/* No workqueues yet or last leaf, do direct call. */
+> > 			sync_rcu_exp_select_node_cpus(&rnp->rew.rew_work);
+> > 			continue;
+> > 		}
+> > 
+> > This just adds the "|| IS_ENABLED(CONFIG_PREEMPT_RT_FULL)" to the "if"
+> > condition.
+> > 
+> > The advantage of this approach is that it leaves the parallelization
+> > alone for mainline, and avoids the overhead of the workqueues for -rt.
+> 
+> I don't oppose to the workqueue approach. It is just preempt_disable() +
+> workqueue don't work on -RT. And if I remember correctly, we can't take
+> CPU hotplug lock for other reasons (which woould make the
+> preempt_disable() go away). Also the original argument why that patch
+> went in was not solid so I though removing the extra complexity would be
+> a good thing.
 
-The intent is a handbook for being a maintainer. However, in the
-process of describing how a given sub-system is maintained one also
-needs to describe the local rules. So contributors should be able to
-glean what matters to a sub-system from a description of how that
-sub-system is maintained. In other words the direct audience is
-maintainers, but it also hopefully makes the process more transparent
-for contributors.
+From what I can see, always using the unbound workqueue can serialize
+things on some platforms, which kind of defeats the whole purpose of
+using the workqueues in the first place.
+
+> However using sync_rcu_exp_select_node_cpus() (based von v4.20-rc1)
+> should work on -RT from what I can see. And performance wise it should
+> not matter for -RT because the whole synchronize_.*_expedited() is
+> disabled on -RT anyway. So it should be used only during boot-up.
+
+Agreed, which was why I proposed making -RT use the boot-time code path,
+given that -RT only uses this code during boot.  ;-)
+
+							Thanx, Paul
+
