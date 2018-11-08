@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ECDECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E43FECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E42C5214DB
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29B5B21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x9byEub/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42C5214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUJpBDCG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B5B21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbeKIHo5 (ORCPT
+        id S1732333AbeKIHo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 02:44:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38232 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbeKIHo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:56 -0500
+        id S1728355AbeKIHo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:57 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E6FB20989;
+        by mail.kernel.org (Postfix) with ESMTPSA id E2E1F21019;
         Thu,  8 Nov 2018 22:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714845;
-        bh=TJNeulwiDrV7iG0S4P8HiTqzwuUZSQ4dwvxmV203Jb4=;
+        s=default; t=1541714846;
+        bh=Og3Yms7yOKX6qkgQZ+iK8SVVpW0JZbw6wuHtQhQFHi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x9byEub/RwvtgXs4npkCppvhTrMtvEc+MPWbqRsZ8mdNEGreN5jSByNKv8XvvCxyb
-         /UpWhZ5MIbzqsI7tk95hj0Gvl2do9X4eJI9/7MzKVxhENpf4niXNUF6KTpBqrPfWkj
-         2F1tsYGUIKVpa4+k35L4zTfEK630qQjn6DTBw62o=
+        b=OUJpBDCGynBom7Ia/KOvPCda0Pfpbi098VK3bocT+NqKgT5XkgDiXuw0SNzTirqzW
+         cbgFylOmojXLEeXOLPxOOnHsS29RBDIaZISAZsxWOzWoJ6/sqSmzUOWD6Lrn6gLu/J
+         D9Yt5hgbbL+Pt4XKwLtmR4s57hWuG+dqToWJwPBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 162/171] IB/ucm: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Nov 2018 13:52:12 -0800
-Message-Id: <20181108215138.652601648@linuxfoundation.org>
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCH 4.9 135/171] net: bridge: remove ipv6 zero address check in mcast queries
+Date:   Thu,  8 Nov 2018 13:51:45 -0800
+Message-Id: <20181108215136.866417765@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -62,54 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-commit 0295e39595e1146522f2722715dba7f7fba42217 upstream.
+commit 0fe5119e267f3e3d8ac206895f5922195ec55a8a upstream.
 
-hdr.cmd can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Recently a check was added which prevents marking of routers with zero
+source address, but for IPv6 that cannot happen as the relevant RFCs
+actually forbid such packets:
+RFC 2710 (MLDv1):
+"To be valid, the Query message MUST
+ come from a link-local IPv6 Source Address, be at least 24 octets
+ long, and have a correct MLD checksum."
 
-This issue was detected with the help of Smatch:
+Same goes for RFC 3810.
 
-drivers/infiniband/core/ucm.c:1127 ib_ucm_write() warn: potential
-spectre issue 'ucm_cmd_table' [r] (local cap)
+And also it can be seen as a requirement in ipv6_mc_check_mld_query()
+which is used by the bridge to validate the message before processing
+it. Thus any queries with :: source address won't be processed anyway.
+So just remove the check for zero IPv6 source address from the query
+processing function.
 
-Fix this by sanitizing hdr.cmd before using it to index
-ucm_cmd_table.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: 5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Hangbin Liu <liuhangbin@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/bridge/br_multicast.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/ucm.c
-+++ b/drivers/infiniband/core/ucm.c
-@@ -46,6 +46,8 @@
- #include <linux/mutex.h>
- #include <linux/slab.h>
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -1293,8 +1293,7 @@ static void br_multicast_query_received(
+ 	 * is 0.0.0.0 should not be added to router port list.
+ 	 */
+ 	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
+-	    (saddr->proto == htons(ETH_P_IPV6) &&
+-	     !ipv6_addr_any(&saddr->u.ip6)))
++	    saddr->proto == htons(ETH_P_IPV6))
+ 		br_multicast_mark_router(br, port);
+ }
  
-+#include <linux/nospec.h>
-+
- #include <asm/uaccess.h>
- 
- #include <rdma/ib.h>
-@@ -1115,6 +1117,7 @@ static ssize_t ib_ucm_write(struct file
- 
- 	if (hdr.cmd >= ARRAY_SIZE(ucm_cmd_table))
- 		return -EINVAL;
-+	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucm_cmd_table));
- 
- 	if (hdr.in + sizeof(hdr) > len)
- 		return -EINVAL;
 
 
