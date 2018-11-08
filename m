@@ -2,125 +2,132 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C019ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036B8ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F226920684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:01:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="DZamx/oD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F226920684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id CDC7320684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:01:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC7320684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeKIDiD (ORCPT
+        id S1727445AbeKIDiK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:38:03 -0500
-Received: from rcdn-iport-2.cisco.com ([173.37.86.73]:12241 "EHLO
-        rcdn-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbeKIDiD (ORCPT
+        Thu, 8 Nov 2018 22:38:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37992 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726672AbeKIDiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:38:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2336; q=dns/txt; s=iport;
-  t=1541700085; x=1542909685;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=3IMbY4oi/HwUZsztMu3eSOUbBEj/tbdueVU2bY1+D5U=;
-  b=DZamx/oD4Am/g8gW3ZdRgMcVNyHXJHotwBgKSkUk61ZOaW98rcg7vdSn
-   JDF+u1SoxNe0gmeLYYerbCajV2nAm5vlFpQsvuhRnohHqscCZOWlqmZAH
-   DsJm4LAApAQbik56mq/yJThv2Ht7Cwayjn5TDKRcRlAk60nsy9JrxDQkb
-   Y=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ADAACdeORb/5FdJa1kGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAQGBUQQBAQEBAQsBggNmgQInCoNuiBiLe4FoJZcygXoLAQE?=
- =?us-ascii?q?YDYRHAheDASI0DQ0BAwEBAgEBAm0cDIU7AQEEASIROA0QAgEIDgoCAiYCAgI?=
- =?us-ascii?q?mChUQAgQBDQWDIQGCAQ+oWIEuhC0BhXwUd4puF4FBP4E4DBOCTIMbAwKBXoM?=
- =?us-ascii?q?EMYImAp9ICQKGcIYNhBcYgiOOSY0giikCERSBJh04gVVwFUgTCgGCQQmLE4U?=
- =?us-ascii?q?+QTEBjDGBHwEB?=
-X-IronPort-AV: E=Sophos;i="5.54,480,1534809600"; 
-   d="scan'208";a="481963065"
-Received: from rcdn-core-9.cisco.com ([173.37.93.145])
-  by rcdn-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 18:01:24 +0000
-Received: from XCH-RTP-004.cisco.com (xch-rtp-004.cisco.com [64.101.220.144])
-        by rcdn-core-9.cisco.com (8.15.2/8.15.2) with ESMTPS id wA8I1OSo024711
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 22:38:10 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8HxHJ6016094
+        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 13:01:30 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmrc5cv10-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 13:01:29 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 8 Nov 2018 18:01:27 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 8 Nov 2018 18:01:25 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8I1Oe73473792
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Thu, 8 Nov 2018 18:01:24 GMT
-Received: from xch-rtp-001.cisco.com (64.101.220.141) by XCH-RTP-004.cisco.com
- (64.101.220.144) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 8 Nov
- 2018 13:01:23 -0500
-Received: from xch-rtp-001.cisco.com ([64.101.220.141]) by
- XCH-RTP-001.cisco.com ([64.101.220.141]) with mapi id 15.00.1395.000; Thu, 8
- Nov 2018 13:01:23 -0500
-From:   "Nikunj Kela (nkela)" <nkela@cisco.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-CC:     "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
-Subject: Re: [PATCH] jffs2: implement mount option to configure endianness
-Thread-Topic: [PATCH] jffs2: implement mount option to configure endianness
-Thread-Index: AQHUdhqbTj/3Cc5mIU2fPUfH4B/ycqVEWbYAgACWlICAAAK6AIAA6gMAgACks4A=
-Date:   Thu, 8 Nov 2018 18:01:23 +0000
-Message-ID: <B1D7CC34-C9D3-4745-94A1-3F713C1CB216@cisco.com>
-References: <20181106214928.40020-1-nkela@cisco.com>
- <921b0f78cf67d7307a0555e1fd6f2c2976310adc.camel@infradead.org>
- <591D4732-BC3E-4F85-9277-25E049FFF4BA@cisco.com>
- <CAFLxGvz8QgK1P6d-_biSRk4fyYEobio315_tUP+cRXTvt+m1hA@mail.gmail.com>
- <01b82f6eb37b674effc6c8b0fa4a014deb401a85.camel@infradead.org>
-In-Reply-To: <01b82f6eb37b674effc6c8b0fa4a014deb401a85.camel@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.41.48.184]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D0D312EDA69CD6469B06F9880DD80453@emea.cisco.com>
-Content-Transfer-Encoding: base64
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7D5DEA4055;
+        Thu,  8 Nov 2018 18:01:24 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3918A405D;
+        Thu,  8 Nov 2018 18:01:23 +0000 (GMT)
+Received: from [9.148.204.197] (unknown [9.148.204.197])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Nov 2018 18:01:23 +0000 (GMT)
+Date:   Thu, 08 Nov 2018 20:01:21 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181108175217.f55065d6115edbafd6aa3487@suse.de>
+References: <20181108144428.28149-1-tbogendoerfer@suse.de> <20181108161823.GB15707@rapoport-lnx> <20181108175217.f55065d6115edbafd6aa3487@suse.de>
 MIME-Version: 1.0
-X-Outbound-SMTP-Client: 64.101.220.144, xch-rtp-004.cisco.com
-X-Outbound-Node: rcdn-core-9.cisco.com
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [[PATCH]] mips: Fix switch to NO_BOOTMEM for SGI-IP27/loongons3 NUMA
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, rppt@linux.vnet.ibm.com
+From:   Mike Rapoport <rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18110818-4275-0000-0000-000002DD66E2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110818-4276-0000-0000-000037EA8DB9
+Message-Id: <43783525-DEC2-46A5-A61E-4C3BF3DDE4A0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiAxMS84LzE4LCAxMjoxMiBBTSwgIkRhdmlkIFdvb2Rob3VzZSIgPGR3bXcyQGluZnJhZGVh
-ZC5vcmc+IHdyb3RlOg0KDQogICAgT24gV2VkLCAyMDE4LTExLTA3IGF0IDE5OjE0ICswMTAwLCBS
-aWNoYXJkIFdlaW5iZXJnZXIgd3JvdGU6DQogICAgPiBPbiBXZWQsIE5vdiA3LCAyMDE4IGF0IDc6
-MDUgUE0gTmlrdW5qIEtlbGEgKG5rZWxhKSA8bmtlbGFAY2lzY28uY29tPiB3cm90ZToNCiAgICA+
-ID4gSSBoYWQgdHJpZWQgdG8gdXNlIGNvbmZpZ3MgdG8gc3RhcnQgd2l0aCB2aWEgdGhlIGZvbGxv
-d2luZyBwYXRjaCBob3dldmVyIEkgd2FzIGFkdmlzZWQgdG8gaGF2ZSBhIG1vdW50IG9wdGlvbjoN
-CiAgICA+ID4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJtYWlsL2xpbnV4LW10ZC8y
-MDE4LU5vdmVtYmVyLzA4NTEyNi5odG1sDQogICAgPiANCiAgICA+IEp1c3Qgc2hvdyBwZXJmb3Jt
-YW5jZSBudW1iZXJzIG9uIGhvdyB5b3VyIGltcGxlbWVudGF0aW9uIGhhcyBhbiBpbXBhY3Qgb3Ig
-bm90Lg0KICAgID4gU28gZmFyIHlvdXIgaW1wbGVtZW50YXRpb24gaXMgYWxzbyBub3QgbXVjaCBv
-cHRpbWl6ZWQsIG1heWJlIGxpa2VseSgpDQogICAgPiBvciBzdGF0aWMga2V5cyBjYW4gaGVscC4u
-Lg0KICAgIA0KICAgIFVzaW5nIGxpa2VseSgpIGZvciB0aGUgbmF0aXZlIGNhc2UgbWlnaHQgaGVs
-cC4gU3RhdGljIGtleXMgbWlnaHQgaGVscCBhDQogICAgbGl0dGxlIG1vcmUsIGJ1dCBjb3VsZCBv
-bmx5IHdvcmsgaWYgZXZlcnkgZmlsZSBzeXN0ZW0gaGFzIHRoZSAqc2FtZSoNCiAgICBlbmRpYW5u
-ZXNzLiBVbmxlc3Mgd2UgZW5kIHVwIHdpdGggdGhyZWUgdmFyaWFudHMsIGZvciBuYXRpdmUgdnMu
-IHN3YXANCiAgICB2cy4gcnVudGltZSBjaGVja2luZy4NCiAgICANCiAgICBXZSBhbHNvIGxvc2Ug
-YSBidW5jaCBvZiB0aGUgb3B0aW1pc2F0aW9ucyB0aGF0IHdlIGdhaW5lZCBmcm9tIHVzaW5nDQog
-ICAgX19idWlsdGluX3N3YWIgZnVuY3Rpb25zLCB3aGljaCBsZXQgdGhlIGNvbXBpbGVyIHNlZSB3
-aGF0IHdhcyBnb2luZyBvbi4NCiAgICANCiAgICBCdXQgd2UgY2FuIGh5cG90aGVzaXNlIGFuZCBo
-YW5kd2F2ZSBhYm91dCBpdCB1bnRpbCB0aGUgY293cyBjb21lIGhvbWU7DQogICAgSSdkIGxpa2Ug
-dG8gc2VlIGEgcmVhbCB0ZXN0IG9mIHdoZXRoZXIgaXQgYWN0dWFsbHkgbWFrZXMgYSBkaWZmZXJl
-bmNlDQogICAgdGhhdCB3ZSBjYXJlIGFib3V0Lg0KICAgIA0KICAgIElmIGl0IGRvZXMsIG9uZSBv
-cHRpb24gbWlnaHQgYmUgdG8ganVzdCBidWlsZCBzZXBhcmF0ZSB2ZXJzaW9ucyBvZg0KICAgIHNj
-YW4uYyBmb3IgZWFjaCBlbmRpYW5uZXNzLCBzaW5jZSB0aGF0J3MgdGhlIGNyaXRpY2FsIHBhdGgg
-d2UgY2FyZQ0KICAgIGFib3V0Lg0KDQpJIHdvbmRlciBpZiB0aGlzIGZlYXR1cmUgaXMgcmVhbGx5
-IHRoYXQgaW1wb3J0YW50IHRoYXQgd2UgbmVlZCB0byBkdXBsaWNhdGUgdGhlIGRyaXZlcnMuDQpB
-bHNvLCBpdCBtaWdodCB0YWtlIHNvbWUgdGltZSBmb3IgbWUgdG8gZmluZCBzb21lIGRldmljZSB0
-aGF0IEkgY2FuIHJ1biB0aGUgdGVzdHMgd2l0aCBhbmQgd2l0aG91dCB0aGlzIHBhdGNoLg0KSSBh
-bSB3b25kZXJpbmcgaWYgd2UgY2FuIHN0aWxsIGNvbnNpZGVyIG15IGZpcnN0IHBhdGNoIHdpdGgg
-Y29uZmlnIG9wdGlvbnMgYXMgYSBnb29kIGNvbXByb21pc2Ugb24gaXQ/DQogICAgDQoNCg==
+
+
+On November 8, 2018 6:52:17 PM GMT+02:00, Thomas Bogendoerfer <tbogendoerfer@suse.de> wrote:
+>On Thu, 8 Nov 2018 18:18:23 +0200
+>Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+>> On Thu, Nov 08, 2018 at 03:44:28PM +0100, Thomas Bogendoerfer wrote:
+>> > Commit bcec54bf3118 ("mips: switch to NO_BOOTMEM") broke SGI-IP27
+>> > and NUMA enabled loongson3 by doing memblock_set_current_limit()
+>> > before max_low_pfn has been evaluated. Both platforms need to do
+>the
+>> > memblock_set_current_limit() in platform specific code. For
+>> > consistency the call to memblock_set_current_limit() is moved
+>> > to the common bootmem_init(), where max_low_pfn is calculated
+>> > for non NUMA enabled platforms.
+>> [..]
+>> 
+>> As for SGI-IP27, the initialization of max_low_pfn as late as in
+>> paging_init() seems to be broken because it's value is used in
+>> arch_mem_init() and in finalize_initrd() anyway.
+>
+>well, the patch is tested on real hardware and the first caller of
+>a memblock_alloc* function is in a function called by
+>free_area_init_nodes().
+ 
+Then, apparently, I've missed something else.
+The Onyx2 I worked on is dead for a couple of years now ;-)
+
+>> AFAIU, both platforms set max_low_pfn to last available pfn, so it
+>seems we
+>> can simply do
+>> 
+>> 	max_low_pfn = PFN_PHYS(memblock_end_of_DRAM())
+>>
+
+Should have been PHYS_PFN, sorry.
+
+>> in the prom_meminit() function for both platforms and drop the loop
+>> evaluating max_low_pfn in paging_init().
+>
+>sounds like a better plan. I'll prepare a new patch.
+>
+>Thomas.
+
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
+
