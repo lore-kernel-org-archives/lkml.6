@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D685C0044B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D0AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6F3A20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFD2E20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:42:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0TgYZxVp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F3A20857
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HS2fwmY1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD2E20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeKIIT2 (ORCPT
+        id S1728931AbeKIHdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:19:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49484 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:33:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728952AbeKIHdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:33:39 -0500
+        id S1727979AbeKIHdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:33:35 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AF2921019;
-        Thu,  8 Nov 2018 21:56:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6614220989;
+        Thu,  8 Nov 2018 21:56:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714171;
-        bh=4ydZzn2d/FUpijWjbzl9GPUV72FYUWxOGZWcUTpPawQ=;
+        s=default; t=1541714168;
+        bh=/eN8I6diW1pbQM6bLYyyyNPM2u62KXmSQuctOGPD1TU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0TgYZxVp7a4Yy9bvJojqHk99suG0X4b/8NZy71riy8Cw076bEEf/UyEvUUhNk38WD
-         6prEYBhEof27b3v34AiLMz02auJGAOXp7VFJhNxrVkr0iHiEE5muIX2E5vqn4psXwJ
-         hLt5dBPAcl5izpIDq6x7ayqmqCqvwT3XqdXYQaG8=
+        b=HS2fwmY1j5BZ3eBk2tGQjhe2ZBs/luHWHAiCUyimhxGJl8tUyMaSvdhIqfaAny8Dk
+         +0dI/AIPO8c6EVySW+e2FWjMnlbRlNp1lbuElqm8jQj9k4e93/DehJeeIVoraGg9QT
+         pYyutr32csWtHE8ogzFdaWap+nDCGD+up7rMsnjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>,
-        len.brown@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 094/144] x86/idle: Restore trace_cpu_idle to mwait_idle() calls
-Date:   Thu,  8 Nov 2018 13:51:05 -0800
-Message-Id: <20181108215104.216320008@linuxfoundation.org>
+Subject: [PATCH 3.18 089/144] dm: fix AB-BA deadlock in __dm_destroy()
+Date:   Thu,  8 Nov 2018 13:51:00 -0800
+Message-Id: <20181108215101.858874763@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -63,47 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e43d0189ac02415fe4487f79fc35e8f147e9ea0d ]
+[ Upstream commit 2a708cff93f1845b9239bc7d6310aef54e716c6a ]
 
-Commit b253149b843f ("sched/idle/x86: Restore mwait_idle() to fix boot
-hangs, to improve power savings and to improve performance") restores
-mwait_idle(), but the trace_cpu_idle related calls are missing. This
-causes powertop on my old desktop powered by Intel Core2 E6550 to
-report zero wakeups and zero events.
+__dm_destroy() takes io_barrier SRCU lock (dm_get_live_table) and
+suspend_lock in reverse order.  Doing so can cause AB-BA deadlock:
 
-Add them back to restore the proper behaviour.
+  __dm_destroy                    dm_swap_table
+  ---------------------------------------------------
+                                  mutex_lock(suspend_lock)
+  dm_get_live_table()
+    srcu_read_lock(io_barrier)
+                                  dm_sync_table()
+                                    synchronize_srcu(io_barrier)
+                                      .. waiting for dm_put_live_table()
+  mutex_lock(suspend_lock)
+    .. waiting for suspend_lock
 
-Fixes: b253149b843f ("sched/idle/x86: Restore mwait_idle() to ...")
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Cc: <len.brown@intel.com>
-Cc: stable@vger.kernel.org # 4.1
-Link: http://lkml.kernel.org/r/1440046479-4262-1-git-send-email-jszhang@marvell.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Fix this by taking the locks in proper order.
+
+Signed-off-by: Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Fixes: ab7c7bb6f4ab ("dm: hold suspend_lock while suspending device during device deletion")
+Acked-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/process.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/md/dm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index a388bb883128..54499d34cf55 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -430,6 +430,7 @@ static int prefer_mwait_c1_over_halt(const struct cpuinfo_x86 *c)
- static void mwait_idle(void)
- {
- 	if (!current_set_polling_and_test()) {
-+		trace_cpu_idle_rcuidle(1, smp_processor_id());
- 		if (this_cpu_has(X86_BUG_CLFLUSH_MONITOR)) {
- 			smp_mb(); /* quirk */
- 			clflush((void *)&current_thread_info()->flags);
-@@ -441,6 +442,7 @@ static void mwait_idle(void)
- 			__sti_mwait(0, 0);
- 		else
- 			local_irq_enable();
-+		trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
- 	} else {
- 		local_irq_enable();
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 1d08dc6fa0b5..00c86ff3c721 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2599,14 +2599,14 @@ static void __dm_destroy(struct mapped_device *md, bool wait)
+ 	 * do not race with internal suspend.
+ 	 */
+ 	mutex_lock(&md->suspend_lock);
++	map = dm_get_live_table(md, &srcu_idx);
+ 	if (!dm_suspended_md(md)) {
+ 		dm_table_presuspend_targets(map);
+ 		dm_table_postsuspend_targets(map);
  	}
+-	mutex_unlock(&md->suspend_lock);
+-
+ 	/* dm_put_live_table must be before msleep, otherwise deadlock is possible */
+ 	dm_put_live_table(md, srcu_idx);
++	mutex_unlock(&md->suspend_lock);
+ 
+ 	/*
+ 	 * Rare, but there may be I/O requests still going to complete,
 -- 
 2.17.1
 
