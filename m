@@ -2,110 +2,200 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92230ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 910ADECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6069E2077B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:42:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6069E2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F777208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:46:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="naS9MWxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F777208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbeKICTK (ORCPT
+        id S1726845AbeKICWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:19:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51172 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726811AbeKICTK (ORCPT
+        Thu, 8 Nov 2018 21:22:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50280 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbeKICWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:19:10 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8GYCN5096116
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 11:42:50 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmqh4c7gh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 11:42:50 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 8 Nov 2018 16:42:50 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 16:42:48 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8Ggldk38076418
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 16:42:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 495FDB2065;
-        Thu,  8 Nov 2018 16:42:47 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 291A4B2064;
-        Thu,  8 Nov 2018 16:42:47 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.215.156])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 16:42:47 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0CC4116C35E9; Thu,  8 Nov 2018 08:42:47 -0800 (PST)
-Date:   Thu, 8 Nov 2018 08:42:47 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: rcu: Merge RCU-bh into RCU-preempt
-Reply-To: paulmck@linux.ibm.com
-References: <20181101231804.GA11280@linux.ibm.com>
- <20181108160256.xpawe65h5lm65soi@linutronix.de>
+        Thu, 8 Nov 2018 21:22:36 -0500
+Received: by mail-wm1-f68.google.com with SMTP id 124-v6so1960610wmw.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:46:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BXL2oXxjpuNjWt/hucj26s9Y9MA48Yp9jON68YMd/JY=;
+        b=naS9MWxJPZEYXzoKH9Lz5a5eMGeiH3wAk9e8Nxn/wOkBj/rGu/L5uD8VNzAD5BimjC
+         MJ3W/JVGZGUdZsVFH9VmC6Da4gJY/wbIfkQGCwd0Tk0W/LiNaB0EelpIRcIr7UIg1Q/u
+         rPEqPruWf52tDD7u4fdH4veOzpoFVi+4m3lgRyJLdYlIrO1/OixqbsSA6booJjCh5xbP
+         t9cu/3nhBd7vO5R2hry0i+1uEVGX9Z9lt++Z4P/vb6CE4HMqa4zscq3j3Gk8i+09JcBs
+         i3m/WgvjXbuqr8RBRtyzkumjPofShHpnspjLISZxK0Espfn1ZsFW2nSHvAO10RpT30lK
+         tQyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BXL2oXxjpuNjWt/hucj26s9Y9MA48Yp9jON68YMd/JY=;
+        b=AFHlJosGj3g86oap9AeAxwpO4y5BaYm4pet+nULRu/aKGvCoVisno8bi1d7G9Z3rlP
+         VJWqDP/0QrQ9fUikV+ZuRf9QBB45l0R15LVVV2oaXU1nmHNrPdj6VbnZBOZKWk4VRp2T
+         jVlsjpMWBFXzutXAzv1fejXGxwCztABWBhThRpMafhDIGg81G/TquDg9H4lAdI6D18DU
+         LSsyehAW6VY0E4Q/z8Dp9tuX2sLRm9y9318XA6cSLUf80mmbh2Yk/LjvbDJJLcXtwrKl
+         50Q/H7R4YnnMuJDqFDPyGSP9MMCp55q7FZ53l/Fk3P6NFe9Mw0NQ8HDrIsNGxhw0SxrR
+         80aw==
+X-Gm-Message-State: AGRZ1gI44jdPYhBmTNsJGDcywNZ0ME2oL3Gwmw630vSaO3mxVe/Ea8d7
+        ykUMIG9OWH0WwRPGb/WhSKQsmQ==
+X-Google-Smtp-Source: AJdET5dkkzKokK3Z155wSb+6AwD4tAbKJWqacEhRDjkG8vRFf6PWTyj/qcRV6jvo1ZeYOsukRRNl5w==
+X-Received: by 2002:a1c:ce0e:: with SMTP id e14-v6mr1781539wmg.45.1541695575251;
+        Thu, 08 Nov 2018 08:46:15 -0800 (PST)
+Received: from debian-brgl.lan ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id w11-v6sm4425591wrr.96.2018.11.08.08.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 08:46:14 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] mailbox: tegra-hsp: use devm_kstrdup_const()
+Date:   Thu,  8 Nov 2018 17:46:10 +0100
+Message-Id: <20181108164610.28361-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108160256.xpawe65h5lm65soi@linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110816-0072-0000-0000-000003C593FB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114522; UDB=6.00577118; IPR=6.00894621;
- MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 16:42:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110816-0073-0000-0000-00004A0B2581
-Message-Id: <20181108164247.GL4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=648 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080140
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 05:02:57PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2018-11-01 16:18:04 [-0700], Paul E. McKenney wrote:
-> > The need for this goes away as of the current merge window because
-> > RCU-bh has gone away.  (Aside from still being able to do things
-> > like rcu_read_lock_bh() as a documentation device.)
-> 
-> So in -RT rcu_read_lock_bh() does
->  { local_bh_disable() ;  rcu_read_lock() }
-> 
-> So you are saying that this is also the case in v4.20?
+Use devm_kstrdup_const() in the tegra-hsp driver. This mostly serves as
+an example of how to use this new routine to shrink driver code.
 
-No, rcu_read_lock_bh() and rcu_read_unlock_bh() are unchanged in v4.20.
-With the new RCU grace-period mechanism, local_bh_disable() blocks future
-grace periods on its own.
+Also use devm_kzalloc() instead of regular kzalloc() to shrink the
+driver even more.
 
-Unless I am missing something (quite probable, actually), the v4.20
-definitions of rcu_read_lock_bh() and rcu_read_unlock_bh() should work
-as-is for -rt.
+Doorbell objects are only removed in the driver's remove callback so
+it's safe to convert all memory allocations to devres.
 
-							Thanx, Paul
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/mailbox/tegra-hsp.c | 41 ++++++++-----------------------------
+ 1 file changed, 9 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 0cde356c11ab..106c94dedbf1 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -183,14 +183,15 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
+ }
+ 
+ static struct tegra_hsp_channel *
+-tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+-			  unsigned int master, unsigned int index)
++tegra_hsp_doorbell_create(struct device *dev, struct tegra_hsp *hsp,
++			  const char *name, unsigned int master,
++			  unsigned int index)
+ {
+ 	struct tegra_hsp_doorbell *db;
+ 	unsigned int offset;
+ 	unsigned long flags;
+ 
+-	db = kzalloc(sizeof(*db), GFP_KERNEL);
++	db = devm_kzalloc(dev, sizeof(*db), GFP_KERNEL);
+ 	if (!db)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -200,7 +201,7 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+ 	db->channel.regs = hsp->regs + offset;
+ 	db->channel.hsp = hsp;
+ 
+-	db->name = kstrdup_const(name, GFP_KERNEL);
++	db->name = devm_kstrdup_const(dev, name, GFP_KERNEL);
+ 	db->master = master;
+ 	db->index = index;
+ 
+@@ -211,13 +212,6 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+ 	return &db->channel;
+ }
+ 
+-static void __tegra_hsp_doorbell_destroy(struct tegra_hsp_doorbell *db)
+-{
+-	list_del(&db->list);
+-	kfree_const(db->name);
+-	kfree(db);
+-}
+-
+ static int tegra_hsp_doorbell_send_data(struct mbox_chan *chan, void *data)
+ {
+ 	struct tegra_hsp_doorbell *db = chan->con_priv;
+@@ -332,31 +326,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
+ 	return chan ?: ERR_PTR(-EBUSY);
+ }
+ 
+-static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
+-{
+-	struct tegra_hsp_doorbell *db, *tmp;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&hsp->lock, flags);
+-
+-	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
+-		__tegra_hsp_doorbell_destroy(db);
+-
+-	spin_unlock_irqrestore(&hsp->lock, flags);
+-}
+-
+-static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
++static int tegra_hsp_add_doorbells(struct device *dev, struct tegra_hsp *hsp)
+ {
+ 	const struct tegra_hsp_db_map *map = hsp->soc->map;
+ 	struct tegra_hsp_channel *channel;
+ 
+ 	while (map->name) {
+-		channel = tegra_hsp_doorbell_create(hsp, map->name,
++		channel = tegra_hsp_doorbell_create(dev, hsp, map->name,
+ 						    map->master, map->index);
+-		if (IS_ERR(channel)) {
+-			tegra_hsp_remove_doorbells(hsp);
++		if (IS_ERR(channel))
+ 			return PTR_ERR(channel);
+-		}
+ 
+ 		map++;
+ 	}
+@@ -412,7 +391,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	if (!hsp->mbox.chans)
+ 		return -ENOMEM;
+ 
+-	err = tegra_hsp_add_doorbells(hsp);
++	err = tegra_hsp_add_doorbells(&pdev->dev, hsp);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
+ 		return err;
+@@ -423,7 +402,6 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	err = mbox_controller_register(&hsp->mbox);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
+-		tegra_hsp_remove_doorbells(hsp);
+ 		return err;
+ 	}
+ 
+@@ -443,7 +421,6 @@ static int tegra_hsp_remove(struct platform_device *pdev)
+ 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
+ 
+ 	mbox_controller_unregister(&hsp->mbox);
+-	tegra_hsp_remove_doorbells(hsp);
+ 
+ 	return 0;
+ }
+-- 
+2.19.1
 
