@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2263ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F6AECDE4D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1D02147D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27213214DB
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wOZavfY5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1D02147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iC/18oS3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27213214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbeKIHh4 (ORCPT
+        id S1730520AbeKIHh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:37:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56650 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:37:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbeKIHhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:54 -0500
+        id S1730487AbeKIHh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:56 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7730620892;
-        Thu,  8 Nov 2018 22:00:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C5BC20989;
+        Thu,  8 Nov 2018 22:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714425;
-        bh=aKoEw8oP+Jgel6C28qhr9GK8pSof0pSC8i0lpUSwko4=;
+        s=default; t=1541714427;
+        bh=qh/itS1sUc+hgT3Vk5UI+RKtFPsW0Z72Db7BN3jzqwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wOZavfY5JNKa9affXm2zevc+meE4uzD7KnQb5dzXc8V8h/3EJMdjPdUpWIIwEGSWZ
-         eS/hVZIojUNd+x1RlxgLkpvrJ1Qk/jLPj8fxww9cIvdasbuWYlTFCaDqE6mIuzMDf/
-         L8nIlirl6gNu1JpfaZ9Tc1T5Ivxe4wiMBtiAGkPw=
+        b=iC/18oS3QfjNMcWz6yRxtw0M9CSLgbPilmj8lhQ93jYjTJ8GybLA2SnqMUY6/w2IN
+         3gApwHrDK1mW9YP2lgK6RHGOVSUpKV9RhIYUsdnmUe+35400Z4AtMY+mhtsDuvZcNQ
+         +j6DcT5zD2vzHyDDzbrr7S9vAFLS/Fu6HT4jINd0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>,
+        Matt Redfearn <matt.redfearn@imgtec.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
+        Miodrag Dinic <miodrag.dinic@imgtec.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Daney <david.daney@cavium.com>,
+        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 045/114] arm64: Fix potential race with hardware DBM in ptep_set_access_flags()
-Date:   Thu,  8 Nov 2018 13:51:00 -0800
-Message-Id: <20181108215105.255949409@linuxfoundation.org>
+Subject: [PATCH 4.4 081/114] MIPS: microMIPS: Fix decoding of swsp16 instruction
+Date:   Thu,  8 Nov 2018 13:51:36 -0800
+Message-Id: <20181108215108.269018818@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -65,78 +69,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6d332747fa5f0a6843b56b5b129168ba909336d1 ]
+[ Upstream commit cea8cd498f4f1c30ea27e3664b3c671e495c4fce ]
 
-In a system with DBM (dirty bit management) capable agents there is a
-possible race between a CPU executing ptep_set_access_flags() (maybe
-non-DBM capable) and a hardware update of the dirty state (clearing of
-PTE_RDONLY). The scenario:
+When the immediate encoded in the instruction is accessed, it is sign
+extended due to being a signed value being assigned to a signed integer.
+The ISA specifies that this operation is an unsigned operation.
+The sign extension leads us to incorrectly decode:
 
-a) the pte is writable (PTE_WRITE set), clean (PTE_RDONLY set) and old
-   (PTE_AF clear)
-b) ptep_set_access_flags() is called as a result of a read access and it
-   needs to set the pte to writable, clean and young (PTE_AF set)
-c) a DBM-capable agent, as a result of a different write access, is
-   marking the entry as young (setting PTE_AF) and dirty (clearing
-   PTE_RDONLY)
+801e9c8e:       cbf1            sw      ra,68(sp)
 
-The current ptep_set_access_flags() implementation would set the
-PTE_RDONLY bit in the resulting value overriding the DBM update and
-losing the dirty state.
+As having an immediate of 1073741809.
 
-This patch fixes such race by setting PTE_RDONLY to the most permissive
-(lowest value) of the current entry and the new one.
+Since the instruction format does not specify signed/unsigned, and this
+is currently the only location to use this instuction format, change it
+to an unsigned immediate.
 
-Fixes: 66dbd6e61a52 ("arm64: Implement ptep_set_access_flags() for hardware AF/DBM")
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Steve Capper <steve.capper@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: bb9bc4689b9c ("MIPS: Calculate microMIPS ra properly when unwinding the stack")
+Suggested-by: Paul Burton <paul.burton@imgtec.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Reviewed-by: James Hogan <james.hogan@imgtec.com>
+Cc: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+Cc: Miodrag Dinic <miodrag.dinic@imgtec.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: David Daney <david.daney@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/16957/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/mm/fault.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ arch/mips/kernel/process.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 86485415c5f0..be7f8416809f 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -107,26 +107,27 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
- 	/* only preserve the access flags and write permission */
- 	pte_val(entry) &= PTE_AF | PTE_WRITE | PTE_DIRTY;
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index 9b44d5a816fa..1b6f2f219298 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -846,7 +846,7 @@ struct mm16_r3_format {		/* Load from global pointer format */
+ struct mm16_r5_format {		/* Load/store from stack pointer format */
+ 	__BITFIELD_FIELD(unsigned int opcode : 6,
+ 	__BITFIELD_FIELD(unsigned int rt : 5,
+-	__BITFIELD_FIELD(signed int simmediate : 5,
++	__BITFIELD_FIELD(unsigned int imm : 5,
+ 	__BITFIELD_FIELD(unsigned int : 16, /* Ignored */
+ 	;))))
+ };
+diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
+index a9cc74354df8..ebd8a715fe38 100644
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -207,7 +207,7 @@ static inline int is_ra_save_ins(union mips_instruction *ip, int *poff)
+ 			if (ip->mm16_r5_format.rt != 31)
+ 				return 0;
  
--	/*
--	 * PTE_RDONLY is cleared by default in the asm below, so set it in
--	 * back if necessary (read-only or clean PTE).
--	 */
-+	/* set PTE_RDONLY if actual read-only or clean PTE */
- 	if (!pte_write(entry) || !pte_sw_dirty(entry))
- 		pte_val(entry) |= PTE_RDONLY;
+-			*poff = ip->mm16_r5_format.simmediate;
++			*poff = ip->mm16_r5_format.imm;
+ 			*poff = (*poff << 2) / sizeof(ulong);
+ 			return 1;
  
- 	/*
- 	 * Setting the flags must be done atomically to avoid racing with the
--	 * hardware update of the access/dirty state.
-+	 * hardware update of the access/dirty state. The PTE_RDONLY bit must
-+	 * be set to the most permissive (lowest value) of *ptep and entry
-+	 * (calculated as: a & b == ~(~a | ~b)).
- 	 */
-+	pte_val(entry) ^= PTE_RDONLY;
- 	asm volatile("//	ptep_set_access_flags\n"
- 	"	prfm	pstl1strm, %2\n"
- 	"1:	ldxr	%0, %2\n"
--	"	and	%0, %0, %3		// clear PTE_RDONLY\n"
-+	"	eor	%0, %0, %3		// negate PTE_RDONLY in *ptep\n"
- 	"	orr	%0, %0, %4		// set flags\n"
-+	"	eor	%0, %0, %3		// negate final PTE_RDONLY\n"
- 	"	stxr	%w1, %0, %2\n"
- 	"	cbnz	%w1, 1b\n"
- 	: "=&r" (old_pteval), "=&r" (tmp), "+Q" (pte_val(*ptep))
--	: "L" (~PTE_RDONLY), "r" (pte_val(entry)));
-+	: "L" (PTE_RDONLY), "r" (pte_val(entry)));
- 
- 	flush_tlb_fix_spurious_fault(vma, address);
- 	return 1;
 -- 
 2.17.1
 
