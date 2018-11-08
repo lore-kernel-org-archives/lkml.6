@@ -2,186 +2,197 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030F2C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE72C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B242F20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:40:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ML5e/bHN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B242F20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EBF1220825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBF1220825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbeKHROa (ORCPT
+        id S1726831AbeKHRQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:14:30 -0500
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:44709 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKHRO3 (ORCPT
+        Thu, 8 Nov 2018 12:16:13 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:41022 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbeKHRQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:14:29 -0500
-Received: by mail-wr1-f46.google.com with SMTP id j17-v6so14940943wrq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 23:40:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E0zepbe2I6n9EZ/qXBTetrsRCKJL36jojbMpCxIqrlk=;
-        b=ML5e/bHNeiYFg+hfKIJXU5ZSOkPJfbI8xhZNFyTXsI+f97FJd4k0r6ltUH9ciksLDJ
-         viwx2Vsil30MwDa+tUiFBtLqo4iB6cCJIdTybQWGGqT/BLle/HYAUYhFtxNxsXuA60Ys
-         CSJ5WSYSpRMhGh3hMLFAXtJSJV8LF8VGmksDtHdEcGQLlkEup8rYElMwsQv7Edq/MYRv
-         W1CK4elUmV1MS0cp9UgLiMJb/suJbQfmko+xzGefY0XlLSWE2GiFBdEzLaF0Vng13f5v
-         9tWldQIjzP7Q60uVv2spFhTXeiHXV2YjtgVH8hjb+u0VnpQcypcQzGrFXi+DLLcr2Ssx
-         kpPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E0zepbe2I6n9EZ/qXBTetrsRCKJL36jojbMpCxIqrlk=;
-        b=LpDCQljT5Vtfl0b04IwEdeLeGsQONDJZ+Xq2ioKAsE87CnjRjocOGJOBm6qa0xoIXE
-         ZyrXkrf8II8V9FS4J4YDdoWOpWC9nZq5QfUTjxjgkuMpPgNe0c2eEWZgQ/J0wiBPUJai
-         ZzMJXSk959EIJgU/9bkyAZelVp0Emi7UfBuvJJ3ZVg/ob77LzznTRz7c6u81U6k0Tc4v
-         fmcUyR5qz2YF+5MDkhyw96IdHih3V1163OwohoWB5N8r0LaoDWSsb71uagmVnpUDgYjv
-         j3XOz/aZulNbqjzhpBXn+U/LzTLjCz0YjO6qczzHIn6jn59TlDKFTlENrIaS3Qm30PWY
-         7BUA==
-X-Gm-Message-State: AGRZ1gJQ59hi7X3IXGfPCCFu3IMvjhXAzDDrv5Ok8sHtXR13RTnyZIHI
-        nlYPZ9QKqQBWTWgO3hbTJK4=
-X-Google-Smtp-Source: AJdET5fLtxRKtXs5HFwhqAfkB5FudanxnTh2XByubRs5MhH3vICVbbNyrwK9MLXdjtYthN5w5cBHFQ==
-X-Received: by 2002:adf:b716:: with SMTP id l22-v6mr3243656wre.157.1541662815837;
-        Wed, 07 Nov 2018 23:40:15 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id e8-v6sm3449534wmf.22.2018.11.07.23.40.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 23:40:15 -0800 (PST)
-Date:   Thu, 8 Nov 2018 08:40:12 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108074012.GD20032@gmail.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
+        Thu, 8 Nov 2018 12:16:13 -0500
+Received: from [10.28.18.137] (10.28.18.137) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 8 Nov 2018
+ 15:41:53 +0800
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic NAND
+ flash controller
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
+ <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181105165321.7ea2b45f@bbrezillon>
+ <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
+ <20181106102851.61deb97a@bbrezillon>
+ <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
+ <20181106112206.65a70a81@bbrezillon>
+ <99475361-0115-7c16-3b7e-8f0d3a779446@amlogic.com>
+ <20181106171655.3808d8eb@bbrezillon>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <7afe4622-7233-3266-51dd-a764458e5d34@amlogic.com>
+Date:   Thu, 8 Nov 2018 15:41:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107171149.165693799@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181106171655.3808d8eb@bbrezillon>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.137]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+On 2018/11/7 0:16, Boris Brezillon wrote:
+> On Tue, 6 Nov 2018 19:08:27 +0800
+> Liang Yang <liang.yang@amlogic.com> wrote:
+> 
+>> On 2018/11/6 18:22, Boris Brezillon wrote:
+>>> On Tue, 6 Nov 2018 18:00:37 +0800
+>>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>>    
+>>>> On 2018/11/6 17:28, Boris Brezillon wrote:
+>>>>> On Tue, 6 Nov 2018 17:08:00 +0800
+>>>>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>>>>       
+>>>>>> On 2018/11/5 23:53, Boris Brezillon wrote:
+>>>>>>> On Fri, 2 Nov 2018 00:42:21 +0800
+>>>>>>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+>>>>>>>          
+>>>>>>>> +
+>>>>>>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
+>>>>>>>> +{
+>>>>>>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
+>>>>>>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+>>>>>>>> +	u32 cmd;
+>>>>>>>> +
+>>>>>>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
+>>>>>>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+>>>>>>>> +
+>>>>>>>> +	meson_nfc_drain_cmd(nfc);
+>>>>>>>
+>>>>>>> You probably don't want to drain the FIFO every time you read a byte on
+>>>>>>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
+>>>>>>> FIFO, right? If that's the case, you should queue as much DRD cmd as
+>>>>>>> possible and only sync when the user explicitly requests it or when
+>>>>>>> the INPUT/READ FIFO is full.
+>>>>>>>          
+>>>>>> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
+>>>>>> nand cycle to read one byte and covers the 1st byte every time reading.
+>>>>>> i think nfc controller is faster than nand cycle, but really it is not
+>>>>>> high efficiency when reading so many bytes once.
+>>>>>> Or use dma command here like read_page and read_page_raw.
+>>>>>
+>>>>> Yep, that's also an alternative, though you'll have to make sure the
+>>>>> buffer passed through the nand_op_inst is DMA-safe, and use a bounce
+>>>>> buffer when that's not the case.
+>>>>>       
+>>>> ok, i will try dma here.
+>>>
+>>> We should probably expose the bounce buf handling as generic helpers at
+>>> the rawnand level:
+>>>
+>>> void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
+>>> {
+>>> 	void *buf;
+>>>
+>>> 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
+>>> 		return NULL;
+>>>
+>>> 	if (virt_addr_valid(instr->data.in) &&
+>>> 	    !object_is_on_stack(instr->data.buf.in))
+>>> 		return instr->data.buf.in;
+>>>
+>>> 	return kzalloc(instr->data.len, GFP_KERNEL);
+>>> }
+>>>
+>>> void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
+>>> 				    void *buf)
+>>> {
+>>> 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
+>>> 	    WARN_ON(!buf))
+>>> 		return;
+>>>
+>>> 	if (buf == instr->data.buf.in)
+>>> 		return;
+>>>
+>>> 	memcpy(instr->data.buf.in, buf, instr->data.len);
+>>> 	kfree(buf);
+>>> }
+>>>
+>>> const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
+>>> {
+>>> 	void *buf;
+>>>
+>>> 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+>>> 		return NULL;
+>>>
+>>> 	if (virt_addr_valid(instr->data.out) &&
+>>> 	    !object_is_on_stack(instr->data.buf.out))
+>>> 		return instr->data.buf.out;
+>>>
+>>> 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
+>>> }
+>>>
+>>> void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
+>>> 				    void *buf)
+>>> {
+>>> 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
+>>> 	    WARN_ON(!buf))
+>>> 		return;
+>>>
+>>> 	if (buf != instr->data.buf.out)
+>>> 		kfree(buf);
+>>> }
+>>>   
+>>
+>> that is more convenient.
+>> i will use meson_chip->databuf as the bounce mid-buffer now.
+> 
+> It won't work: the bounce buffer is allocated after the detection, and
+> the detection code is calling ->exec_op().
+> 
+> Just add a new patch to you series adding these helpers to nand_base.c.
+> 
 
-> + - Signed-off-by: ``Patch handler <handler@mail>``
-> +
-> +   SOBs after the author SOB are from people handling and transporting the
-> +   patch, but were not involved in development. If the handler made
-> +   modifications to the patch or the changelog, then this should be
-> +   mentioned **after** the changelog text and **above** all commit tags in
-> +   the following format::
-> +
-> +     ... changelog text ends.
-> +
-> +     [ handler: Replaced foo by bar and updated changelog ]
-> +
-> +     First-tag: .....
-> +
-> +   Note the two empty new lines which separate the changelog text and the
-> +   commit tags from that notice.
+when using these helpers, i finally find that i still need a *info 
+buffer* which is used to get status and ecc counter. even i don't need
+to check *info buffer*, it is still needed. i just malloc *info_buffer* 
+in driver now. and then i think some dedicated dma may need a minimum 
+size(such as 4 bytes). it is luckly that meson nfc is not limited about 
+the minimum size and i tested it.
+so what is your suggestion about it?
 
-Even after a decade of introducing Git I still see Signed-off-by used as 
-an Acked-by or Reviewed-by substitutes, so I'd suggest adding this small 
-explanation as well:
-
-  +   SOB chains should reflect the *real* route a patch took as it was 
-  +   propagated to us, with the first SOB entry signalling primary
-  +   authorship of a single author. Acks should be given as Acked-by 
-  +   lines and review approvals as Reviewed-by lines.
-
-
-> +   If a patch is sent to the mailing list by a handler then the author has
-> +   to be noted in the first line of the changelog with::
-> +
-> +     From: ``Author <author@mail>``
-> +
-> +     Changelog text starts here....
-> +
-> +   so the authorship is preserved. The 'From:' line has to be followed by a
-> +   empty newline. If that 'From:' line is missing, then the patch would be
-> +   attributed to the person who sent (transported) it. The 'From:' line is
-> +   automatically removed when the patch is applied and does not show up in
-> +   the final git changelog. It merely affects the authorship information of
-> +   the resulting git commit.
-
-s/(transported)
- /(transported, handled)
-
-to connect the text with the whole 'handler' language used before?
-
-and since we are not talking about the 'git command', maybe also:
-
-s/git
- /Git
-
-?
-
-> + - Cc: ``cc-ed-person <person@mail>``
-> +
-> +   If the patch should be backported to stable, then please add a '``Cc:
-> +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
-> +   mail.
-
-Can I suggest a more canonical form:
-
-	Cc: <stable@vger.kernel.org> # v4.18 and later kernels
-
-It would be nice if people adding Cc: stable lines would actually try to 
-figure out which exact kernel versions are affected.
-
-Also the '<>' form makes it easier to read and my email client will also 
-syntax highlight it in that case. ;-)
-
-
-> + - Link: ``https://link/to/information``
-> +
-> +   For referring to email on LKML or other kernel mailing lists, please use
-> +   the lkml.kernel.org redirector URL::
-
-s/referring to email
- /referring to an email
-
-> +
-> +     https://lkml.kernel.org/r/email-message@id
-> +
-> +   The kernel.org redirector is considered a stable URL unlike other email
-> +   archives.
-
-s/URL unlike
- /URL, unlike
-
-?
-
-Thanks,
-
-	Ingo
+> .
+> 
