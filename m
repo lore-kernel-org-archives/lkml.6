@@ -2,94 +2,82 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CB8C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A56C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07AAE20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:56:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AAE20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E429E20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:56:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E429E20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbeKHSaf (ORCPT
+        id S1726861AbeKHSbP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:30:35 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:46635 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKHSaf (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 8 Nov 2018 13:30:35 -0500
-Received: from Alpha.suse.asia (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (NOT encrypted); Thu, 08 Nov 2018 01:55:55 -0700
-From:   Larry Chen <lchen@suse.com>
-To:     mark@fasheh.com, jlbec@evilplan.org
-Cc:     linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        akpm@linux-foundation.org
-Subject: [PATCH] ocfs2: Improve ocfs2 Makefile
-Date:   Thu,  8 Nov 2018 16:55:46 +0800
-Message-Id: <20181108085546.15149-1-lchen@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Thu, 8 Nov 2018 13:31:15 -0500
+Received: from mga02.intel.com ([134.134.136.20]:60690 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726145AbeKHSbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:31:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 00:56:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
+   d="scan'208";a="272358766"
+Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
+  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2018 00:56:44 -0800
+Subject: Re: [PATCH] lib/genaloc: Fix allocation of aligned buffer from
+ non-aligned chunk
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     sbates@raithlin.com, logang@deltatee.com, danielmentz@google.com,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        labbott@redhat.com
+References: <1541506853-10685-1-git-send-email-alexey.skidanov@intel.com>
+ <20181106141131.76e94f6b1ff2859d96792aca@linux-foundation.org>
+ <d76d64cf-70a9-9c1f-6f11-2d812aacaaef@intel.com>
+ <20181107141428.bd1f8b1a989449633394d8c1@linux-foundation.org>
+From:   Alexey Skidanov <alexey.skidanov@intel.com>
+Message-ID: <7c902049-4fc4-7c13-2ee3-c0a198767359@intel.com>
+Date:   Thu, 8 Nov 2018 10:58:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181107141428.bd1f8b1a989449633394d8c1@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Included file path was fixed in ocfs2 makefile, which might causes some
-confusion when compiling ocfs2 as an external module.
 
-Say if we compile ocfs2 module as following.
-cp -r /kernel/tree/fs/ocfs2 /other/dir/ocfs2
-cd /other/dir/ocfs2
-make -C /path/to/kernel_source M=`pwd` modules
 
-Acutally, the compiler wil try to find included file in
-/kernel/tree/fs/ocfs2, rather than the directory /other/dir/ocfs2.
+On 11/8/18 00:14, Andrew Morton wrote:
+> On Wed, 7 Nov 2018 08:21:07 +0200 Alexey Skidanov <alexey.skidanov@intel.com> wrote:
+> 
+>>> Why does this need "fixing"?  Are there current callers which can
+>>> misalign chunk_start_addr?  Or is there a requirement that future
+>>> callers can misalign chunk_start_addr?
+>>>
+>> I work on adding aligned allocation support for ION heaps
+>> (https://www.spinics.net/lists/linux-driver-devel/msg118754.html). Two
+>> of these heaps use genpool internally.
+>>
+>> If you want to have an ability to allocate buffers aligned on different
+>> boundaries (for example, 4K, 1MB, ...), this fix actually removes the
+>> requirement for chunk_start_addr to be aligned on the max possible
+>> alignment.
+> 
+> OK.  This sort of information should be in the changelog, please.  In
+> much detail.
+> 
+Sure, I'll add this information and resend the patch.
 
-To fix this little bug, we introduce the var $(src) provided by kbuild.
-$(src) means the absolute path of the running kbuild file.
-
-Signed-off-by: Larry Chen <lchen@suse.com>
----
- fs/ocfs2/Makefile       | 2 +-
- fs/ocfs2/dlm/Makefile   | 2 +-
- fs/ocfs2/dlmfs/Makefile | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
-index 99ee093182cb..cc9b32b9db7c 100644
---- a/fs/ocfs2/Makefile
-+++ b/fs/ocfs2/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)
- 
- obj-$(CONFIG_OCFS2_FS) += 	\
- 	ocfs2.o			\
-diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
-index bd1aab1f49a4..ef2854422a6e 100644
---- a/fs/ocfs2/dlm/Makefile
-+++ b/fs/ocfs2/dlm/Makefile
-@@ -1,4 +1,4 @@
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)/..
- 
- obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
- 
-diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
-index eed3db8c5b49..33431a0296a3 100644
---- a/fs/ocfs2/dlmfs/Makefile
-+++ b/fs/ocfs2/dlmfs/Makefile
-@@ -1,4 +1,4 @@
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)/..
- 
- obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
- 
--- 
-2.16.4
-
+Thanks,
+Alexey
