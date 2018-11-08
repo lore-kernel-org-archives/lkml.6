@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37935C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAB6C0044B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F254A20840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:43:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA57220840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDi7Emuu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F254A20840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGGW0oyR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA57220840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbeKIHdG (ORCPT
+        id S1728856AbeKIIVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:33:06 -0500
+        Fri, 9 Nov 2018 03:21:23 -0500
 Received: from mail.kernel.org ([198.145.29.99]:48464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728659AbeKIHdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728660AbeKIHdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:33:06 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE4B021019;
-        Thu,  8 Nov 2018 21:55:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE6D2089A;
+        Thu,  8 Nov 2018 21:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714139;
-        bh=NMx5FNaGB9k2DKYhh5mmzXt3tz8ezrAU4lUTxecau/o=;
+        bh=DDzLlFpvM/CqpKIjMH0Uy2prPhQf4Qrf4cZmKe5TK2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UDi7EmuunT5Je0YCxUe9PJYk7rWYP/jYMRB+NkPWUE4T4i30a0JsU5CtTu/QfGNLp
-         ER5fBv40fkahYfFzI3k2dWNh6f5Hl88GvtDUC0TzupgGF55BTO3dFnU7ghvNrZNKVX
-         yffDIpGdNBRPRPxlRFhD7jq9awHUw7ynkj8EugQQ=
+        b=NGGW0oyRK1HDecB4FzezFh0RSE1DB+UkNLoGD1ZrYlddNr54qGxed3t4ammdaLwIO
+         ic0NlfT5ZRfm/bX0CCe6gApggzAu92E19kNqvswQmvK3Pg1X3dPXb+B4A6qEzoDS+k
+         xr/irIrbDUji0R+1VJLDnZwWJkcwb06jfsDN7fW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 073/144] perf/x86/intel: Fix bug for "cycles:p" and "cycles:pp" on SLM
-Date:   Thu,  8 Nov 2018 13:50:44 -0800
-Message-Id: <20181108215100.573106577@linuxfoundation.org>
+        stable@vger.kernel.org, Dai Ngo <dai.ngo@oracle.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 056/144] NFS: Ignore transport protocol when detecting server trunking
+Date:   Thu,  8 Nov 2018 13:50:27 -0800
+Message-Id: <20181108215058.897159886@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -65,48 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 33636732dcd7cc738a5913bb730d663c6b03c8fb ]
+[ Upstream commit 7a01edf0058df98d6cc734c5a4ecc51f929a86ec ]
 
-cycles:p and cycles:pp do not work on SLM since commit:
+Detect server trunking across transport protocols. Otherwise, an
+RDMA mount and a TCP mount of the same server will end up with
+separate nfs_clients using the same clientid4.
 
-   86a04461a99f ("perf/x86: Revamp PEBS event selection")
-
-UOPS_RETIRED.ALL is not a PEBS capable event, so it should not be used
-to count cycle number.
-
-Actually SLM calls intel_pebs_aliases_core2() which uses INST_RETIRED.ANY_P
-to count the number of cycles. It's a PEBS capable event. But inv and
-cmask must be set to count cycles.
-
-Considering SLM allows all events as PEBS with no flags, only
-INST_RETIRED.ANY_P, inv=1, cmask=16 needs to handled specially.
-
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1421084541-31639-1-git-send-email-kan.liang@intel.com
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Dai Ngo <dai.ngo@oracle.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/perf_event_intel_ds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/nfs4client.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/perf_event_intel_ds.c b/arch/x86/kernel/cpu/perf_event_intel_ds.c
-index 46211bcc813e..423cbd9bea3e 100644
---- a/arch/x86/kernel/cpu/perf_event_intel_ds.c
-+++ b/arch/x86/kernel/cpu/perf_event_intel_ds.c
-@@ -568,8 +568,8 @@ struct event_constraint intel_atom_pebs_event_constraints[] = {
- };
+diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
+index a8a9be4c6cf4..eb8777eb4d2b 100644
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -495,9 +495,6 @@ int nfs40_walk_client_list(struct nfs_client *new,
+ 		if (pos->rpc_ops != new->rpc_ops)
+ 			continue;
  
- struct event_constraint intel_slm_pebs_event_constraints[] = {
--	/* UOPS_RETIRED.ALL, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c2, 0xf),
-+	/* INST_RETIRED.ANY_P, inv=1, cmask=16 (cycles:p). */
-+	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x1),
- 	/* Allow all events as PEBS with no flags */
- 	INTEL_ALL_EVENT_CONSTRAINT(0, 0x1),
- 	EVENT_CONSTRAINT_END
+-		if (pos->cl_proto != new->cl_proto)
+-			continue;
+-
+ 		if (pos->cl_minorversion != new->cl_minorversion)
+ 			continue;
+ 
+@@ -633,9 +630,6 @@ int nfs41_walk_client_list(struct nfs_client *new,
+ 		if (pos->rpc_ops != new->rpc_ops)
+ 			continue;
+ 
+-		if (pos->cl_proto != new->cl_proto)
+-			continue;
+-
+ 		if (pos->cl_minorversion != new->cl_minorversion)
+ 			continue;
+ 
 -- 
 2.17.1
 
