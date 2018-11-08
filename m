@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB24ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDA8ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 364D620840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2669C20817
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qG5jOd3G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364D620840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKHI/Eno"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2669C20817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeKID20 (ORCPT
+        id S1727408AbeKID2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:28:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40362 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 22:28:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbeKID20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:28:26 -0500
+        id S1726672AbeKID2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:28:31 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D08D320827;
-        Thu,  8 Nov 2018 17:51:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE4E920817;
+        Thu,  8 Nov 2018 17:51:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541699510;
-        bh=rBdiDcXhGABoXowC2nl0Oxd/IOB5n6ZwwrLs1n2op7o=;
+        s=default; t=1541699515;
+        bh=j02WZI3ikVXnVLlObiEjwEHtq082QKo839BSlKlwFLs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qG5jOd3GDH6FMKSAz3mz3k+JFqryij7okWaa6+Zn8/3hootG0miDCruqXP4u468RR
-         uTsF8GAQytOIMXLdEsqlDNV0dA4y7ZOMVl0sXw1y/c9J2udLaDY4MkDNI67Wgu7yUc
-         UlCslax+ZvPTwSD5B/sCAWc+KJoX3y9J25gpA1fU=
+        b=mKHI/EnoKlgIACO/8+6nqI1zRK8Luk3nEFS1Bsk9a5If3/Sno1HYib0Bw8agLQARY
+         pAGtPsKDOzpNc9LkGBE69rJy04xvPZksHj4tDTkDQRdlNvP9PNJaZo6FLEvsr23PPf
+         uUsEO4aFkj/wcBsdymkmtrHvwRtuuDW23EDGQNc4=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
@@ -46,9 +46,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v3 03/18] arm64: dts: qcom: qcs404: Add reserved-memory regions
-Date:   Thu,  8 Nov 2018 23:20:34 +0530
-Message-Id: <20181108175049.7090-4-vkoul@kernel.org>
+Subject: [PATCH v3 04/18] arm64: dts: qcom: qcs404: Add RPM GLINK related nodes
+Date:   Thu,  8 Nov 2018 23:20:35 +0530
+Message-Id: <20181108175049.7090-5-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181108175049.7090-1-vkoul@kernel.org>
 References: <20181108175049.7090-1-vkoul@kernel.org>
@@ -59,66 +59,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Add the reserved memory regions in QCS404
+Add RPM GLINK node and the RPM message ram, hwspinlock, APCS apps global
+and smem nodes it depends on.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 41 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 44 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index b77d1198ba79..58aa1f989089 100644
+index 58aa1f989089..e21b4a549e75 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -73,6 +73,47 @@
- 		method = "smc";
+@@ -114,12 +114,45 @@
+ 		};
  	};
  
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
++	rpm-glink {
++		compatible = "qcom,glink-rpm";
 +
-+		memory@85600000 {
-+			reg = <0 0x85600000 0 0x90000>;
-+			no-map;
-+		};
++		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++		qcom,rpm-msg-ram = <&rpm_msg_ram>;
++		mboxes = <&apcs_glb 0>;
 +
-+		smem_region: memory@85f00000 {
-+			reg = <0 0x85f00000 0 0x200000>;
-+			no-map;
++		rpm_requests: glink-channel {
++			compatible = "qcom,rpm-qcs404";
++			qcom,glink-channels = "rpm_requests";
 +		};
++	};
 +
-+		memory@86100000 {
-+			reg = <0 0x86100000 0 0x300000>;
-+			no-map;
-+		};
++	smem {
++		compatible = "qcom,smem";
 +
-+		wlan_fw_mem: memory@86400000 {
-+			reg = <0 0x86400000 0 0x1c00000>;
-+			no-map;
-+		};
++		memory-region = <&smem_region>;
++		qcom,rpm-msg-ram = <&rpm_msg_ram>;
 +
-+		adsp_fw_mem: memory@88000000 {
-+			reg = <0 0x88000000 0 0x1a00000>;
-+			no-map;
-+		};
++		hwlocks = <&tcsr_mutex 3>;
++	};
 +
-+		cdsp_fw_mem: memory@89a00000 {
-+			reg = <0 0x89a00000 0 0x600000>;
-+			no-map;
-+		};
-+
-+		wlan_msa_mem: memory@8a000000 {
-+			reg = <0 0x8a000000 0 0x100000>;
-+			no-map;
-+		};
++	tcsr_mutex: hwlock {
++		compatible = "qcom,tcsr-mutex";
++		syscon = <&tcsr_mutex_regs 0 0x1000>;
++		#hwlock-cells = <1>;
 +	};
 +
  	soc: soc@0 {
  		#address-cells = <1>;
  		#size-cells = <1>;
+ 		ranges = <0 0 0 0xffffffff>;
+ 		compatible = "simple-bus";
+ 
++		rpm_msg_ram: memory@60000 {
++			compatible = "qcom,rpm-msg-ram";
++			reg = <0x00060000 0x6000>;
++		};
++
+ 		gcc: clock-controller@1800000 {
+ 			compatible = "qcom,gcc-qcs404";
+ 			reg = <0x01800000 0x80000>;
+@@ -129,6 +162,11 @@
+ 			assigned-clock-rates = <19200000>;
+ 		};
+ 
++		tcsr_mutex_regs: syscon@1905000 {
++			compatible = "syscon";
++			reg = <0x01905000 0x20000>;
++		};
++
+ 		blsp1_uart2: serial@78b1000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0x078b1000 0x200>;
+@@ -146,6 +184,12 @@
+ 			      <0x0b002000 0x1000>;
+ 		};
+ 
++		apcs_glb: mailbox@b011000 {
++			compatible = "qcom,qcs404-apcs-apps-global", "syscon";
++			reg = <0x0b011000 0x1000>;
++			#mbox-cells = <1>;
++		};
++
+ 		timer@b120000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
 -- 
 2.14.4
 
