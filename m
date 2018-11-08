@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390C4ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9320ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0912B20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0912B20827
+	by mail.kernel.org (Postfix) with ESMTP id 8B6E720827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B6E720827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeKHXwO (ORCPT
+        id S1727541AbeKHXwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:52:14 -0500
-Received: from mga05.intel.com ([192.55.52.43]:25148 "EHLO mga05.intel.com"
+        Thu, 8 Nov 2018 18:52:24 -0500
+Received: from mga18.intel.com ([134.134.136.126]:56451 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbeKHXwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:52:14 -0500
+        id S1726541AbeKHXwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:52:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 06:16:33 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 06:16:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="94663846"
+   d="scan'208";a="94663874"
 Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 06:16:26 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 06:16:35 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 05/17] tpm: print tpm2_commit_space() error inside tpm2_commit_space()
-Date:   Thu,  8 Nov 2018 16:15:26 +0200
-Message-Id: <20181108141541.12832-6-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v5 06/17] tpm: clean up tpm_try_transmit() error handling flow
+Date:   Thu,  8 Nov 2018 16:15:27 +0200
+Message-Id: <20181108141541.12832-7-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
 References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
@@ -57,71 +57,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The error logging for tpm2_commit_space() is in a wrong place. This
-commit moves it inside that function.
+Move locking, locality handling and power management to tpm_transmit()
+in order to simplify the flow.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm-interface.c | 8 ++------
- drivers/char/tpm/tpm2-space.c    | 9 ++++++---
- 2 files changed, 8 insertions(+), 9 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 71 ++++++++++++++++----------------
+ 1 file changed, 35 insertions(+), 36 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index c9efd1b9fd2c..7ffb16edab6f 100644
+index 7ffb16edab6f..28d48799b044 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -268,14 +268,10 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 		rc = -EFAULT;
+@@ -171,7 +171,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	ssize_t len = 0;
+ 	u32 count, ordinal;
+ 	unsigned long stop;
+-	bool need_locality;
  
- out_space:
--	if (rc) {
-+	if (rc)
- 		tpm2_flush_space(chip);
--	} else {
-+	else
- 		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
--		if (rc)
--			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
--				rc);
+ 	rc = tpm_validate_command(chip, space, buf, bufsiz);
+ 	if (rc == -EINVAL)
+@@ -201,30 +200,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		return -E2BIG;
+ 	}
+ 
+-	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
+-		mutex_lock(&chip->tpm_mutex);
+-
+-	if (chip->ops->clk_enable != NULL)
+-		chip->ops->clk_enable(chip, true);
+-
+-	/* Store the decision as chip->locality will be changed. */
+-	need_locality = chip->locality == -1;
+-
+-	if (need_locality) {
+-		rc = tpm_request_locality(chip, flags);
+-		if (rc < 0) {
+-			need_locality = false;
+-			goto out_locality;
+-		}
 -	}
+-
+-	rc = tpm_cmd_ready(chip, flags);
+-	if (rc)
+-		goto out_locality;
+-
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+-		goto out_idle;
++		return rc;
  
- out_idle:
- 	/* may fail but do not override previous error value in rc */
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index d53c882268ff..3d5f9577e5de 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
+ 	rc = chip->ops->send(chip, buf, count);
+ 	if (rc < 0) {
+@@ -273,19 +251,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	else
+ 		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
  
- 	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	rc = tpm2_save_space(chip);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	*bufsiz = be32_to_cpu(header->length);
-@@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
- 
- 	return 0;
-+out:
-+	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-+	return rc;
+-out_idle:
+-	/* may fail but do not override previous error value in rc */
+-	tpm_go_idle(chip, flags);
+-
+-out_locality:
+-	if (need_locality)
+-		tpm_relinquish_locality(chip, flags);
+-
+-	if (chip->ops->clk_enable != NULL)
+-		chip->ops->clk_enable(chip, false);
+-
+-	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
+-		mutex_unlock(&chip->tpm_mutex);
+ 	return rc ? rc : len;
  }
+ 
+@@ -315,6 +280,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	/* space for header and handles */
+ 	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+ 	unsigned int delay_msec = TPM2_DURATION_SHORT;
++	bool has_locality = false;
+ 	u32 rc = 0;
+ 	ssize_t ret;
+ 	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
+@@ -330,7 +296,40 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	memcpy(save, buf, save_size);
+ 
+ 	for (;;) {
++		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
++		    !(flags & TPM_TRANSMIT_NESTED))
++			mutex_lock(&chip->tpm_mutex);
++
++		if (chip->ops->clk_enable != NULL)
++			chip->ops->clk_enable(chip, true);
++
++		if (chip->locality == -1) {
++			ret = tpm_request_locality(chip, flags);
++			if (ret)
++				goto out_locality;
++			has_locality = true;
++		}
++
++		ret = tpm_cmd_ready(chip, flags);
++		if (ret)
++			goto out_locality;
++
+ 		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
++
++		/* This may fail but do not override ret. */
++		tpm_go_idle(chip, flags);
++
++out_locality:
++		if (has_locality)
++			tpm_relinquish_locality(chip, flags);
++
++		if (chip->ops->clk_enable != NULL)
++			chip->ops->clk_enable(chip, false);
++
++		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
++		    !(flags & TPM_TRANSMIT_NESTED))
++			mutex_unlock(&chip->tpm_mutex);
++
+ 		if (ret < 0)
+ 			break;
+ 		rc = be32_to_cpu(header->return_code);
 -- 
 2.19.1
 
