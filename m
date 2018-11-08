@@ -2,78 +2,624 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F223AC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EFBC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA46320857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:38:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CWraBq44"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA46320857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 122EA20684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:46:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122EA20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbeKHNLw (ORCPT
+        id S1728734AbeKHNTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 08:11:52 -0500
-Received: from imap.thunk.org ([74.207.234.97]:51976 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728499AbeKHNLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 08:11:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=VdnifWpRuHlJSdG5kgRUk1JXaAPnOVejGDxqroOywzw=; b=CWraBq44Ht+15jUo8my/SBn/rM
-        HKzdZohJO/NdcFUhbHF5s80n6CizYcmRq88D2xlumxwKsNuStAiLSlOVwMJCDEqh9kqfgYZQngFZM
-        JBPx9LY3W9FJZrnwAxSW/ZgiBqbbr0GmmAPogiXQmbJRUsu5gSUGAwr6Jq4H8EreLzlE=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gKb9H-0005r9-2o; Thu, 08 Nov 2018 03:38:27 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A7F017A7D2B; Wed,  7 Nov 2018 22:38:25 -0500 (EST)
-Date:   Wed, 7 Nov 2018 22:38:25 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ext4: lost brelse in __ext4_read_dirblock()
-Message-ID: <20181108033825.GD22459@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org
-References: <6e5c9e17-5916-7296-35a0-cc0600a79f27@virtuozzo.com>
- <e269cf8c-b5ca-3eed-bd60-a8629378db8b@virtuozzo.com>
+        Thu, 8 Nov 2018 08:19:46 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14194 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728611AbeKHNTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 08:19:45 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E2A7DAF91C2E9;
+        Thu,  8 Nov 2018 11:46:15 +0800 (CST)
+Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 8 Nov 2018
+ 11:46:08 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, Chao Yu <yuchao0@huawei.com>,
+        Chao Yu <chao@kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Miao Xie" <miaoxie@huawei.com>,
+        <weidu.du@huawei.com>, Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH] staging: erofs: use the new LZ4_decompress_safe_partial()
+Date:   Thu, 8 Nov 2018 12:00:36 +0800
+Message-ID: <20181108040036.13671-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e269cf8c-b5ca-3eed-bd60-a8629378db8b@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 08:30:17PM +0300, Vasily Averin wrote:
-> Fixes dc6982ff4db1 ("ext4: refactor code to read directory blocks ...")
-> Cc: stable@kernel.org # 3.9
-> 
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+LZ4_decompress_safe_partial() can now decode exactly the nb of bytes
+requested after the upstreamed commit 2209fda323e2 ("lib/lz4: update LZ4
+decompressor module"), remove the erofs hacked lz4 decompression code.
 
-Thanks, applied.  I used the commit description:
+A more cleaned compressor wrapper will be introduced in the subsequent
+patches in order to prepare for supporting multiple compression algorithms.
 
-    ext4: fix buffer leak in __ext4_read_dirblock() on error path
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
 
-	      	     			    - Ted
+Hi Chao,
+ Could you please kindly confirm (review) this before merging into the staging tree?
+
+Thanks,
+Gao Xiang
+
+ drivers/staging/erofs/Makefile        |   2 +-
+ drivers/staging/erofs/lz4defs.h       | 227 ------------------------------
+ drivers/staging/erofs/unzip_lz4.c     | 251 ----------------------------------
+ drivers/staging/erofs/unzip_vle_lz4.c |  25 +++-
+ 4 files changed, 24 insertions(+), 481 deletions(-)
+ delete mode 100644 drivers/staging/erofs/lz4defs.h
+ delete mode 100644 drivers/staging/erofs/unzip_lz4.c
+
+diff --git a/drivers/staging/erofs/Makefile b/drivers/staging/erofs/Makefile
+index 9a766eb7ed75..c91b65223f99 100644
+--- a/drivers/staging/erofs/Makefile
++++ b/drivers/staging/erofs/Makefile
+@@ -9,5 +9,5 @@ obj-$(CONFIG_EROFS_FS) += erofs.o
+ ccflags-y += -I$(src)/include
+ erofs-objs := super.o inode.o data.o namei.o dir.o utils.o
+ erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
+-erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_lz4.o unzip_vle_lz4.o
++erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o
+ 
+diff --git a/drivers/staging/erofs/lz4defs.h b/drivers/staging/erofs/lz4defs.h
+deleted file mode 100644
+index 00a0b58a0871..000000000000
+--- a/drivers/staging/erofs/lz4defs.h
++++ /dev/null
+@@ -1,227 +0,0 @@
+-#ifndef __LZ4DEFS_H__
+-#define __LZ4DEFS_H__
+-
+-/*
+- * lz4defs.h -- common and architecture specific defines for the kernel usage
+-
+- * LZ4 - Fast LZ compression algorithm
+- * Copyright (C) 2011-2016, Yann Collet.
+- * BSD 2-Clause License (http://www.opensource.org/licenses/bsd-license.php)
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions are
+- * met:
+- *	* Redistributions of source code must retain the above copyright
+- *	  notice, this list of conditions and the following disclaimer.
+- *	* Redistributions in binary form must reproduce the above
+- * copyright notice, this list of conditions and the following disclaimer
+- * in the documentation and/or other materials provided with the
+- * distribution.
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- * You can contact the author at :
+- *	- LZ4 homepage : http://www.lz4.org
+- *	- LZ4 source repository : https://github.com/lz4/lz4
+- *
+- *	Changed for kernel usage by:
+- *	Sven Schmidt <4sschmid@informatik.uni-hamburg.de>
+- */
+-
+-#include <asm/unaligned.h>
+-#include <linux/string.h>	 /* memset, memcpy */
+-
+-#define FORCE_INLINE __always_inline
+-
+-/*-************************************
+- *	Basic Types
+- **************************************/
+-#include <linux/types.h>
+-
+-typedef	uint8_t BYTE;
+-typedef uint16_t U16;
+-typedef uint32_t U32;
+-typedef	int32_t S32;
+-typedef uint64_t U64;
+-typedef uintptr_t uptrval;
+-
+-/*-************************************
+- *	Architecture specifics
+- **************************************/
+-#if defined(CONFIG_64BIT)
+-#define LZ4_ARCH64 1
+-#else
+-#define LZ4_ARCH64 0
+-#endif
+-
+-#if defined(__LITTLE_ENDIAN)
+-#define LZ4_LITTLE_ENDIAN 1
+-#else
+-#define LZ4_LITTLE_ENDIAN 0
+-#endif
+-
+-/*-************************************
+- *	Constants
+- **************************************/
+-#define MINMATCH 4
+-
+-#define WILDCOPYLENGTH 8
+-#define LASTLITERALS 5
+-#define MFLIMIT (WILDCOPYLENGTH + MINMATCH)
+-
+-/* Increase this value ==> compression run slower on incompressible data */
+-#define LZ4_SKIPTRIGGER 6
+-
+-#define HASH_UNIT sizeof(size_t)
+-
+-#define KB (1 << 10)
+-#define MB (1 << 20)
+-#define GB (1U << 30)
+-
+-#define MAXD_LOG 16
+-#define MAX_DISTANCE ((1 << MAXD_LOG) - 1)
+-#define STEPSIZE sizeof(size_t)
+-
+-#define ML_BITS	4
+-#define ML_MASK	((1U << ML_BITS) - 1)
+-#define RUN_BITS (8 - ML_BITS)
+-#define RUN_MASK ((1U << RUN_BITS) - 1)
+-
+-/*-************************************
+- *	Reading and writing into memory
+- **************************************/
+-static FORCE_INLINE U16 LZ4_read16(const void *ptr)
+-{
+-	return get_unaligned((const U16 *)ptr);
+-}
+-
+-static FORCE_INLINE U32 LZ4_read32(const void *ptr)
+-{
+-	return get_unaligned((const U32 *)ptr);
+-}
+-
+-static FORCE_INLINE size_t LZ4_read_ARCH(const void *ptr)
+-{
+-	return get_unaligned((const size_t *)ptr);
+-}
+-
+-static FORCE_INLINE void LZ4_write16(void *memPtr, U16 value)
+-{
+-	put_unaligned(value, (U16 *)memPtr);
+-}
+-
+-static FORCE_INLINE void LZ4_write32(void *memPtr, U32 value)
+-{
+-	put_unaligned(value, (U32 *)memPtr);
+-}
+-
+-static FORCE_INLINE U16 LZ4_readLE16(const void *memPtr)
+-{
+-	return get_unaligned_le16(memPtr);
+-}
+-
+-static FORCE_INLINE void LZ4_writeLE16(void *memPtr, U16 value)
+-{
+-	return put_unaligned_le16(value, memPtr);
+-}
+-
+-static FORCE_INLINE void LZ4_copy8(void *dst, const void *src)
+-{
+-#if LZ4_ARCH64
+-	U64 a = get_unaligned((const U64 *)src);
+-
+-	put_unaligned(a, (U64 *)dst);
+-#else
+-	U32 a = get_unaligned((const U32 *)src);
+-	U32 b = get_unaligned((const U32 *)src + 1);
+-
+-	put_unaligned(a, (U32 *)dst);
+-	put_unaligned(b, (U32 *)dst + 1);
+-#endif
+-}
+-
+-/*
+- * customized variant of memcpy,
+- * which can overwrite up to 7 bytes beyond dstEnd
+- */
+-static FORCE_INLINE void LZ4_wildCopy(void *dstPtr,
+-	const void *srcPtr, void *dstEnd)
+-{
+-	BYTE *d = (BYTE *)dstPtr;
+-	const BYTE *s = (const BYTE *)srcPtr;
+-	BYTE *const e = (BYTE *)dstEnd;
+-
+-	do {
+-		LZ4_copy8(d, s);
+-		d += 8;
+-		s += 8;
+-	} while (d < e);
+-}
+-
+-static FORCE_INLINE unsigned int LZ4_NbCommonBytes(register size_t val)
+-{
+-#if LZ4_LITTLE_ENDIAN
+-	return __ffs(val) >> 3;
+-#else
+-	return (BITS_PER_LONG - 1 - __fls(val)) >> 3;
+-#endif
+-}
+-
+-static FORCE_INLINE unsigned int LZ4_count(
+-	const BYTE *pIn,
+-	const BYTE *pMatch,
+-	const BYTE *pInLimit)
+-{
+-	const BYTE *const pStart = pIn;
+-
+-	while (likely(pIn < pInLimit - (STEPSIZE - 1))) {
+-		size_t const diff = LZ4_read_ARCH(pMatch) ^ LZ4_read_ARCH(pIn);
+-
+-		if (!diff) {
+-			pIn += STEPSIZE;
+-			pMatch += STEPSIZE;
+-			continue;
+-		}
+-
+-		pIn += LZ4_NbCommonBytes(diff);
+-
+-		return (unsigned int)(pIn - pStart);
+-	}
+-
+-#if LZ4_ARCH64
+-	if ((pIn < (pInLimit - 3))
+-		&& (LZ4_read32(pMatch) == LZ4_read32(pIn))) {
+-		pIn += 4;
+-		pMatch += 4;
+-	}
+-#endif
+-
+-	if ((pIn < (pInLimit - 1))
+-		&& (LZ4_read16(pMatch) == LZ4_read16(pIn))) {
+-		pIn += 2;
+-		pMatch += 2;
+-	}
+-
+-	if ((pIn < pInLimit) && (*pMatch == *pIn))
+-		pIn++;
+-
+-	return (unsigned int)(pIn - pStart);
+-}
+-
+-typedef enum { noLimit = 0, limitedOutput = 1 } limitedOutput_directive;
+-typedef enum { byPtr, byU32, byU16 } tableType_t;
+-
+-typedef enum { noDict = 0, withPrefix64k, usingExtDict } dict_directive;
+-typedef enum { noDictIssue = 0, dictSmall } dictIssue_directive;
+-
+-typedef enum { endOnOutputSize = 0, endOnInputSize = 1 } endCondition_directive;
+-typedef enum { full = 0, partial = 1 } earlyEnd_directive;
+-
+-#endif
+diff --git a/drivers/staging/erofs/unzip_lz4.c b/drivers/staging/erofs/unzip_lz4.c
+deleted file mode 100644
+index b1ea23f66c4e..000000000000
+--- a/drivers/staging/erofs/unzip_lz4.c
++++ /dev/null
+@@ -1,251 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+-/*
+- * linux/drivers/staging/erofs/unzip_lz4.c
+- *
+- * Copyright (C) 2018 HUAWEI, Inc.
+- *             http://www.huawei.com/
+- * Created by Gao Xiang <gaoxiang25@huawei.com>
+- *
+- * Original code taken from 'linux/lib/lz4/lz4_decompress.c'
+- */
+-
+-/*
+- * LZ4 - Fast LZ compression algorithm
+- * Copyright (C) 2011 - 2016, Yann Collet.
+- * BSD 2 - Clause License (http://www.opensource.org/licenses/bsd - license.php)
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions are
+- * met:
+- *	* Redistributions of source code must retain the above copyright
+- *	  notice, this list of conditions and the following disclaimer.
+- *	* Redistributions in binary form must reproduce the above
+- * copyright notice, this list of conditions and the following disclaimer
+- * in the documentation and/or other materials provided with the
+- * distribution.
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- * You can contact the author at :
+- *	- LZ4 homepage : http://www.lz4.org
+- *	- LZ4 source repository : https://github.com/lz4/lz4
+- *
+- *	Changed for kernel usage by:
+- *	Sven Schmidt <4sschmid@informatik.uni-hamburg.de>
+- */
+-#include "internal.h"
+-#include <asm/unaligned.h>
+-#include "lz4defs.h"
+-
+-/*
+- * no public solution to solve our requirement yet.
+- * see: <required buffer size for LZ4_decompress_safe_partial>
+- *      https://groups.google.com/forum/#!topic/lz4c/_3kkz5N6n00
+- */
+-static FORCE_INLINE int customized_lz4_decompress_safe_partial(
+-	const void * const source,
+-	void * const dest,
+-	int inputSize,
+-	int outputSize)
+-{
+-	/* Local Variables */
+-	const BYTE *ip = (const BYTE *) source;
+-	const BYTE * const iend = ip + inputSize;
+-
+-	BYTE *op = (BYTE *) dest;
+-	BYTE * const oend = op + outputSize;
+-	BYTE *cpy;
+-
+-	static const unsigned int dec32table[] = { 0, 1, 2, 1, 4, 4, 4, 4 };
+-	static const int dec64table[] = { 0, 0, 0, -1, 0, 1, 2, 3 };
+-
+-	/* Empty output buffer */
+-	if (unlikely(outputSize == 0))
+-		return ((inputSize == 1) && (*ip == 0)) ? 0 : -1;
+-
+-	/* Main Loop : decode sequences */
+-	while (1) {
+-		size_t length;
+-		const BYTE *match;
+-		size_t offset;
+-
+-		/* get literal length */
+-		unsigned int const token = *ip++;
+-
+-		length = token>>ML_BITS;
+-
+-		if (length == RUN_MASK) {
+-			unsigned int s;
+-
+-			do {
+-				s = *ip++;
+-				length += s;
+-			} while ((ip < iend - RUN_MASK) & (s == 255));
+-
+-			if (unlikely((size_t)(op + length) < (size_t)(op))) {
+-				/* overflow detection */
+-				goto _output_error;
+-			}
+-			if (unlikely((size_t)(ip + length) < (size_t)(ip))) {
+-				/* overflow detection */
+-				goto _output_error;
+-			}
+-		}
+-
+-		/* copy literals */
+-		cpy = op + length;
+-		if ((cpy > oend - WILDCOPYLENGTH) ||
+-			(ip + length > iend - (2 + 1 + LASTLITERALS))) {
+-			if (cpy > oend) {
+-				memcpy(op, ip, length = oend - op);
+-				op += length;
+-				break;
+-			}
+-
+-			if (unlikely(ip + length > iend)) {
+-				/*
+-				 * Error :
+-				 * read attempt beyond
+-				 * end of input buffer
+-				 */
+-				goto _output_error;
+-			}
+-
+-			memcpy(op, ip, length);
+-			ip += length;
+-			op += length;
+-
+-			if (ip > iend - 2)
+-				break;
+-			/* Necessarily EOF, due to parsing restrictions */
+-			/* break; */
+-		} else {
+-			LZ4_wildCopy(op, ip, cpy);
+-			ip += length;
+-			op = cpy;
+-		}
+-
+-		/* get offset */
+-		offset = LZ4_readLE16(ip);
+-		ip += 2;
+-		match = op - offset;
+-
+-		if (unlikely(match < (const BYTE *)dest)) {
+-			/* Error : offset outside buffers */
+-			goto _output_error;
+-		}
+-
+-		/* get matchlength */
+-		length = token & ML_MASK;
+-		if (length == ML_MASK) {
+-			unsigned int s;
+-
+-			do {
+-				s = *ip++;
+-
+-				if (ip > iend - LASTLITERALS)
+-					goto _output_error;
+-
+-				length += s;
+-			} while (s == 255);
+-
+-			if (unlikely((size_t)(op + length) < (size_t)op)) {
+-				/* overflow detection */
+-				goto _output_error;
+-			}
+-		}
+-
+-		length += MINMATCH;
+-
+-		/* copy match within block */
+-		cpy = op + length;
+-
+-		if (unlikely(cpy >= oend - WILDCOPYLENGTH)) {
+-			if (cpy >= oend) {
+-				while (op < oend)
+-					*op++ = *match++;
+-				break;
+-			}
+-			goto __match;
+-		}
+-
+-		/* costs ~1%; silence an msan warning when offset == 0 */
+-		LZ4_write32(op, (U32)offset);
+-
+-		if (unlikely(offset < 8)) {
+-			const int dec64 = dec64table[offset];
+-
+-			op[0] = match[0];
+-			op[1] = match[1];
+-			op[2] = match[2];
+-			op[3] = match[3];
+-			match += dec32table[offset];
+-			memcpy(op + 4, match, 4);
+-			match -= dec64;
+-		} else {
+-			LZ4_copy8(op, match);
+-			match += 8;
+-		}
+-
+-		op += 8;
+-
+-		if (unlikely(cpy > oend - 12)) {
+-			BYTE * const oCopyLimit = oend - (WILDCOPYLENGTH - 1);
+-
+-			if (op < oCopyLimit) {
+-				LZ4_wildCopy(op, match, oCopyLimit);
+-				match += oCopyLimit - op;
+-				op = oCopyLimit;
+-			}
+-__match:
+-			while (op < cpy)
+-				*op++ = *match++;
+-		} else {
+-			LZ4_copy8(op, match);
+-
+-			if (length > 16)
+-				LZ4_wildCopy(op + 8, match + 8, cpy);
+-		}
+-
+-		op = cpy; /* correction */
+-	}
+-	DBG_BUGON((void *)ip - source > inputSize);
+-	DBG_BUGON((void *)op - dest > outputSize);
+-
+-	/* Nb of output bytes decoded */
+-	return (int) ((void *)op - dest);
+-
+-	/* Overflow error detected */
+-_output_error:
+-	return -ERANGE;
+-}
+-
+-int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen)
+-{
+-	int ret = customized_lz4_decompress_safe_partial(in,
+-		out, inlen, outlen);
+-
+-	if (ret >= 0)
+-		return ret;
+-
+-	/*
+-	 * LZ4_decompress_safe will return an error code
+-	 * (< 0) if decompression failed
+-	 */
+-	errln("%s, failed to decompress, in[%p, %zu] outlen[%p, %zu]",
+-	      __func__, in, inlen, out, outlen);
+-	WARN_ON(1);
+-	print_hex_dump(KERN_DEBUG, "raw data [in]: ", DUMP_PREFIX_OFFSET,
+-		16, 1, in, inlen, true);
+-	print_hex_dump(KERN_DEBUG, "raw data [out]: ", DUMP_PREFIX_OFFSET,
+-		16, 1, out, outlen, true);
+-	return -EIO;
+-}
+-
+diff --git a/drivers/staging/erofs/unzip_vle_lz4.c b/drivers/staging/erofs/unzip_vle_lz4.c
+index 1a428658cbea..de0a5d1365a4 100644
+--- a/drivers/staging/erofs/unzip_vle_lz4.c
++++ b/drivers/staging/erofs/unzip_vle_lz4.c
+@@ -11,6 +11,28 @@
+  * distribution for more details.
+  */
+ #include "unzip_vle.h"
++#include <linux/lz4.h>
++
++int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen)
++{
++	int ret = LZ4_decompress_safe_partial(in, out, inlen, outlen, outlen);
++
++	if (ret >= 0)
++		return ret;
++
++	/*
++	 * LZ4_decompress_safe_partial will return an error code
++	 * (< 0) if decompression failed
++	 */
++	errln("%s, failed to decompress, in[%p, %zu] outlen[%p, %zu]",
++	      __func__, in, inlen, out, outlen);
++	WARN_ON(1);
++	print_hex_dump(KERN_DEBUG, "raw data [in]: ", DUMP_PREFIX_OFFSET,
++		       16, 1, in, inlen, true);
++	print_hex_dump(KERN_DEBUG, "raw data [out]: ", DUMP_PREFIX_OFFSET,
++		       16, 1, out, outlen, true);
++	return -EIO;
++}
+ 
+ #if Z_EROFS_CLUSTER_MAX_PAGES > Z_EROFS_VLE_INLINE_PAGEVECS
+ #define EROFS_PERCPU_NR_PAGES   Z_EROFS_CLUSTER_MAX_PAGES
+@@ -99,8 +121,6 @@ int z_erofs_vle_plain_copy(struct page **compressed_pages,
+ 	return 0;
+ }
+ 
+-extern int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen);
+-
+ int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+ 				  unsigned int clusterpages,
+ 				  struct page **pages,
+@@ -206,3 +226,4 @@ int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
+ 	}
+ 	return ret;
+ }
++
+-- 
+2.14.4
+
