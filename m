@@ -2,96 +2,108 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 780A1ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264F1ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4392B2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E018020827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:47:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K11mL6AJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4392B2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzVaN6M/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E018020827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbeKIBXP (ORCPT
+        id S1727349AbeKIBXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:23:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58032 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbeKIBXP (ORCPT
+        Thu, 8 Nov 2018 20:23:38 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39101 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeKIBXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:23:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/MZukFSpCuBEoizT4c3YKDQ8IZGjR9aSJBXouowbvFw=; b=K11mL6AJsm3afKC8+M6MIP5WZ
-        ba5Qf1PXbPmZrNC5EpDox1ovrSTfkwD6lWLFdmLDJ1JCjIvHZ1Bxk0Vj4Vsl9FKG1YhVXLmiX7+t6
-        YaCvEDwG6IMkghBmld8l/NdJWAAeZpee9yJrht+CE/HqBl9fbzsdiMJksB+ibIhS25P8LHeA14Fy5
-        DfvS22Sdn6Qtazpt9/KP4VWjUDzFVa2jYlKqQTrtOfLYpPtYnjF0GgWyq5DzICJM3aTwfpechuHb+
-        x6bUFy214XKuINqMhS+DKeQxZBPnOVTV+Gm/nBkoCqcI42fUAqK6Vk5xySegDekYCWFp7mIGTWVJg
-        Z3c6MnAHg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKmWL-0003xk-8S; Thu, 08 Nov 2018 15:47:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 94BA920284F98; Thu,  8 Nov 2018 16:46:58 +0100 (CET)
-Date:   Thu, 8 Nov 2018 16:46:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>
-Subject: Re: [PATCH v15 00/12] Enable cpuset controller in default hierarchy
-Message-ID: <20181108154658.GY9761@hirez.programming.kicks-ass.net>
-References: <1541689726-20088-1-git-send-email-longman@redhat.com>
+        Thu, 8 Nov 2018 20:23:37 -0500
+Received: by mail-oi1-f193.google.com with SMTP id 192-v6so16518958oii.6;
+        Thu, 08 Nov 2018 07:47:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ciwv79TtyNdFbxrLpQ5enUh1V3zn2yEjwbjmR2qn4G4=;
+        b=LzVaN6M/OHxKUwkmrn7r2yrJumhwyKMM9G2wPEV3wybAzZtS1wCtjP+jhVxNxJI8s/
+         bu3ERhb11k0dq1+q0B6meRT4koc3/DJn3ukYWIsfK08WEdOt+McZl7yt7aeTjwvLN22I
+         cPL9U1L5AMKX7JEUsc6TLMvTVpd/EBarCWASkQOfGh8zqJRM+Au/H6ms1V7upQmri6y8
+         mYHV8NIQ67rjs7eOvHyzN5BKAsQ+/DXVCQUmAD2A1c/5PtSHqDKFlYsAWtSKo6959Afs
+         R4ZGm00C2KVZZ0dDRWcRtQV8/OI7dgrBWB5LYAqKUz1eOI6oSmHHkKJHmasGkIP2IFL8
+         Md/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ciwv79TtyNdFbxrLpQ5enUh1V3zn2yEjwbjmR2qn4G4=;
+        b=V9LVTbKPoRbNEzB2yZGHV7eAh7/OHqRK2rxJpO0OQAkH4y2ja5plUdXYtZRjU05U9K
+         Otl4Xl9RebrFwr+it5531wq8XfiaPMo6Z6bnEQGWwi0vRL1H0XezK/xHPHPIIxlA66rP
+         Nc9zi6CKrbWiS+scWM206D7W0qHPrEPZufRLFjVSVCdyz60u414aMFi1EUO8ChAyTmmd
+         WLZfeG+pSZMxpUsQfsorZw/MGuuqHaEAra2FsYREoWEZSGi/DKRDBr4nIUDVQf86w0ew
+         ij3Ang4yHNiNHlJlrqcVm2EjCJxwOdcWBQpRNS7bCR8AcOlUy3Br1goJYwTPfU+Apmum
+         uuvg==
+X-Gm-Message-State: AGRZ1gLzm/fR2Krh5CHfpJQ6SoftPtbvdwD2kQwmnxaWMx6dJYsoMneb
+        Ij/CYm9PlU+oetKv/Q+ThIhr3GOcRVmXCJm52I8=
+X-Google-Smtp-Source: AJdET5dAgLB9s6g9fL8EkL60PA6O71GSuG0QvQUG2TTU1G3Z6/dIcJiLlF31CjuHveaZdbTuTvtdc/lqvzJdOENyUyQ=
+X-Received: by 2002:a54:458c:: with SMTP id z12-v6mr2901021oib.297.1541692051369;
+ Thu, 08 Nov 2018 07:47:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541689726-20088-1-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181104155501.14767-1-TheSven73@googlemail.com>
+ <20181104155501.14767-5-TheSven73@googlemail.com> <CAK8P3a3DnKcRxL5dG_pvBVTngFh5eDL2JdEqZzgL0RXJy5dZGw@mail.gmail.com>
+In-Reply-To: <CAK8P3a3DnKcRxL5dG_pvBVTngFh5eDL2JdEqZzgL0RXJy5dZGw@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Thu, 8 Nov 2018 10:47:20 -0500
+Message-ID: <CAGngYiXEsg-6MXK60s8gOq2d8LGq+USTk1FC3GYqy2TQheaxHg@mail.gmail.com>
+Subject: Re: [PATCH anybus v3 4/6] bus: support HMS Anybus-S bus
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        treding@nvidia.com, David Lechner <david@lechnology.com>,
+        noralf@tronnes.org, johan@kernel.org,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:08:34AM -0500, Waiman Long wrote:
-> Waiman Long (12):
->   cpuset: Enable cpuset controller in default hierarchy
->   cpuset: Define data structures to support scheduling partition
->   cpuset: Simply allocation and freeing of cpumasks
->   cpuset: Add new v2 cpuset.sched.partition flag
->   cpuset: Add an error state to cpuset.sched.partition
->   cpuset: Track cpusets that use parent's effective_cpus
->   cpuset: Make CPU hotplug work with partition
->   cpuset: Make generate_sched_domains() work with partition
->   cpuset: Expose cpus.effective and mems.effective on cgroup v2 root
->   cpuset: Use descriptive text when reading/writing
->     cpuset.sched.partition
->   cpuset: Add documentation about the new "cpuset.sched.partition" flag
->   cpuset: Expose cpuset.cpus.subpartitions with cgroup_debug
-> 
->  Documentation/admin-guide/cgroup-v2.rst | 182 +++++-
->  include/linux/cgroup-defs.h             |   1 +
->  kernel/cgroup/cgroup-internal.h         |   2 +
->  kernel/cgroup/cgroup.c                  |  14 +-
->  kernel/cgroup/cpuset.c                  | 942 +++++++++++++++++++++++++++++---
->  kernel/cgroup/debug.c                   |   4 +-
->  6 files changed, 1070 insertions(+), 75 deletions(-)
+On Thu, Nov 8, 2018 at 9:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> It looks like you build your own object management here. Maybe
+> use kobject, or at least kref instead of the refcount_t based
+> low-level implementation?
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Excellent point. I'll replace with krefs.
 
-Thanks Waiman!
+>
+>
+> I see this is called from the interrupt handler at the moment, which
+> means you cannot call sleeping functions, but it also means that
+> the timeout may never happen because the timer tick IRQ cannot
+> get through. That means you may have to change the irq handler
+> logic, e.g. to try this a few times but then defer to a bottom half
+> if it fails for a long time.
+
+Touche ! Yes, this is very likely a big problem.
+
+What if I converted the interrupt handler into a threaded interrupt handler?
+That would allow the timer tick to get through, correct?
+
+Point taken about cpu_relax(), I will fix.
