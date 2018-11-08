@@ -2,102 +2,133 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4B5ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB26BECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF4A20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:35:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="0H3dHthp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF4A20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id B287E20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B287E20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeKHXLV (ORCPT
+        id S1726869AbeKHXO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:11:21 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45699 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHXLU (ORCPT
+        Thu, 8 Nov 2018 18:14:28 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:47953 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeKHXO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:11:20 -0500
-Received: by mail-wr1-f67.google.com with SMTP id k15-v6so18296935wre.12
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:35:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=385oGMXjfTu5juuCHtT+aHsKY76Dx3tjl7MO1N8tJvI=;
-        b=0H3dHthpjafwHV9/wxF6+5JKJ+12dy8H2FPbilKM1OyjTCNGYZJwyYxG2iF8a+qOKD
-         3iu8rcqIIuh66b4PAr0wpNs4q6+Sea8ldHjlRXQ17Sm7qpVN7SUtgH8+13AybeGhogX6
-         p8rfocZaf7MvLRpHj66333Lnr8RvffDgLm5RgUPpoizGasuDH6h+VbArr3q9uTMJ8r21
-         tEoUydP7h2Lu4Cv7rZnUPyeA4Ypx0RZ53dHB242FCWnPll30Tt6v/L4ZljN7J9GsbIJU
-         xaRk63wzAzh8ze64sGT9PoXg44NPdsJhoqcqnCVK1vhwXdsgyvnBD0uQv3vrKBqyGTNR
-         0svQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=385oGMXjfTu5juuCHtT+aHsKY76Dx3tjl7MO1N8tJvI=;
-        b=NJ+9I/cT0CGjmrb/X4xTFJkZ+X+iAk2Wn56t/wCL1Xs3EVn/QhTEXijsNIafefs3sl
-         ul5wDPv6gDbJVx1Zs0nZMgI8spM9RSBnaK7Jj3rlnp6XKsrG2XI7OnGAoiAOi5MHvdMK
-         /2zOojie1wbUDyfPfXiUp8p4fuWMj7tYYQ+HrrFg2VRr6ZyAQt/VOcSqUhTVQgMl8/fB
-         mOiHTasF6HoA4ML4jGoQSJz8FisMvkzUVlYw/aVURBA0G6D1HYSIfmVhgLRSJBuNU8JN
-         eqSsH5+TEz+B47RI6IN/fGgWPVq6cNsmE8+uFq7ED+TPIv6BdHixImFNUXdl7861HGZj
-         e/nw==
-X-Gm-Message-State: AGRZ1gLEH3yP9pcDe5de9HIoU03Ty8od5qwcuSCw1xpWyKqLZy+t276f
-        neyjhpckTKSWDP5CXmQReRCtvg==
-X-Google-Smtp-Source: AJdET5dLUWEtsJUy8PlP8NczXJQl8cNB1vOx/W3RlraTOON47Bmlj+zs03hENNI9sw3gdmdwnuitLQ==
-X-Received: by 2002:adf:9403:: with SMTP id 3-v6mr4178716wrq.54.1541684148666;
-        Thu, 08 Nov 2018 05:35:48 -0800 (PST)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id m9-v6sm4367807wrn.36.2018.11.08.05.35.47
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 05:35:47 -0800 (PST)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Rob Herring <robherring2@gmail.com>
-Cc:     monstr@monstr.eu, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Manish Narani <manish.narani@xilinx.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: dts: Add missing gpio-controller to ps gpio
-Date:   Thu,  8 Nov 2018 14:35:46 +0100
-Message-Id: <74a9934eab231714e65f74e442ad79cab0475267.1541684144.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 8 Nov 2018 18:14:28 -0500
+Received: from stefan-Vostro-260.fritz.box ([109.104.42.245]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MeToK-1fkaMB2Xw4-00aVS7; Thu, 08 Nov 2018 14:38:51 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Michael Heimpold <michael.heimpold@i2se.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH net-next] net: qca_spi: Add available buffer space verification
+Date:   Thu,  8 Nov 2018 14:38:21 +0100
+Message-Id: <1541684301-15824-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:9zpyaVlgkVrImLr6vqY24pxVFL2gKar0IhwRASfl8YzquB8rojv
+ PWQANDDEB89xU7mPjML4dE9Ctat8oX2bJHZF63ZEf/qPt5ZDBbABoHB3QzhYntIh01lFAeo
+ SsyWylLr/3vNnGhTKhaju2tJj8/1uAhe/6E5bJZcsv6CoIuqCAIod+NGASLtphD2OFG+Oij
+ t6/xkNn2Ai6e+r5c0ET0A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zlm/KCpZ3/o=:u0vSTVXi1qsfqkYCkweG6H
+ oV0UUSP2o0PE096ukP6tzlVZlErgzE7tNjy0KWecyE57JbvkcdVWZk8uWGlgiIajcOY3WTrNq
+ btWwOn1MxRRvazXsGdqilzlXQ9KG2rf1Fl4K3WBRKA0MPXjlFE1Foop59RN6XCyJW86SqhpXV
+ rHLIsMakupZ05B0aYXY6kaz7lnfFPtYRk1gWBkHkVFiBQbNa+n/ty0jK3b3SUtCbMMFFOFSRK
+ 0o+ZgxdXeLgQpQ9M9eyXHp78VRi8IbOCBj3gj39OkFwO968q3MsIOx08KrJ0WELN4vZA0C5le
+ xkOz08rcCtVWFL93XLCW3oDFn4KBMSwB2ogzVcoFWnSpUadsT0EgGWpT6HtE+4WzHVVJdkU+c
+ IRD6lArLKpRlO1n7ogo76Z5Q7/m4RGSh7p7GEg4F/Kn+dGEmJDFkV+4wa6eoRDfNEJ3dcOg0Y
+ t2OJ+XTMfHB/vNiU1hrw1hOoNf5yFTMD/6O7WNQja/n1Jqm09b7ovfhjXCH67vreLTNf1VPCQ
+ TQ4FR7dy2lfBpw2MbGXHIHLBMcull0itvmIxe/+OTDpFBO3wrakzafYPqRl9Ke1sisxNC/7Dj
+ ikr7d82qzanW9sZ3/U3ts9111Q9wIVa24N71A8UmmRLTeEAhitJnw2rq9m+kERh+vgfE8FC9b
+ iwufi+ufddTP2cvZd8j9ClxHy0wxzCS+QnuhZEJww/JNdBE8Pldc4fPIUwFV8iXfkPMZNOXph
+ zp7ArKd2bvm6AVbMrK7usj+DOQ+DioDIJArJOblTNoGNHyCDwpPQLgB0jrqmqbh0TrGdzOG9C
+ hgPib+IEV2FZcZUfIkdYbvJZACRlg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing gpio-controller property to ps gpio.
-This was found via DT schema validation.
+Interferences on the SPI line could distort the response of
+available buffer space. So at least we should check that the
+response doesn't exceed the maximum available buffer space.
+In error case increase a new error counter and retry it later.
+This behavior avoids buffer errors in the QCA7000, which
+results in an unnecessary chip reset including packet loss.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 ---
+ drivers/net/ethernet/qualcomm/qca_debug.c |  1 +
+ drivers/net/ethernet/qualcomm/qca_spi.c   | 16 +++++++++++++++-
+ drivers/net/ethernet/qualcomm/qca_spi.h   |  1 +
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-index 07f2dd13ab33..ae3c1b929648 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-@@ -410,6 +410,7 @@
- 			compatible = "xlnx,zynqmp-gpio-1.0";
- 			status = "disabled";
- 			#gpio-cells = <0x2>;
-+			gpio-controller;
- 			interrupt-parent = <&gic>;
- 			interrupts = <0 16 4>;
- 			interrupt-controller;
+diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ethernet/qualcomm/qca_debug.c
+index a9f1bc0..1450f38 100644
+--- a/drivers/net/ethernet/qualcomm/qca_debug.c
++++ b/drivers/net/ethernet/qualcomm/qca_debug.c
+@@ -61,6 +61,7 @@ static const char qcaspi_gstrings_stats[][ETH_GSTRING_LEN] = {
+ 	"Transmit ring full",
+ 	"SPI errors",
+ 	"Write verify errors",
++	"Buffer available errors",
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
+index d531050..97f9295 100644
+--- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -289,6 +289,14 @@ qcaspi_transmit(struct qcaspi *qca)
+ 
+ 	qcaspi_read_register(qca, SPI_REG_WRBUF_SPC_AVA, &available);
+ 
++	if (available > QCASPI_HW_BUF_LEN) {
++		/* This could only happen by interferences on the SPI line.
++		 * So retry later ...
++		 */
++		qca->stats.buf_avail_err++;
++		return -1;
++	}
++
+ 	while (qca->txr.skb[qca->txr.head]) {
+ 		pkt_len = qca->txr.skb[qca->txr.head]->len + QCASPI_HW_PKT_LEN;
+ 
+@@ -355,7 +363,13 @@ qcaspi_receive(struct qcaspi *qca)
+ 	netdev_dbg(net_dev, "qcaspi_receive: SPI_REG_RDBUF_BYTE_AVA: Value: %08x\n",
+ 		   available);
+ 
+-	if (available == 0) {
++	if (available > QCASPI_HW_BUF_LEN) {
++		/* This could only happen by interferences on the SPI line.
++		 * So retry later ...
++		 */
++		qca->stats.buf_avail_err++;
++		return -1;
++	} else if (available == 0) {
+ 		netdev_dbg(net_dev, "qcaspi_receive called without any data being available!\n");
+ 		return -1;
+ 	}
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/ethernet/qualcomm/qca_spi.h
+index 2d2c497..eb9af45 100644
+--- a/drivers/net/ethernet/qualcomm/qca_spi.h
++++ b/drivers/net/ethernet/qualcomm/qca_spi.h
+@@ -74,6 +74,7 @@ struct qcaspi_stats {
+ 	u64 ring_full;
+ 	u64 spi_err;
+ 	u64 write_verify_failed;
++	u64 buf_avail_err;
+ };
+ 
+ struct qcaspi {
 -- 
-1.9.1
+2.7.4
 
