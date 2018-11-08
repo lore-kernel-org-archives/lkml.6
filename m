@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4B8ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F46ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC932089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B1B92089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dtig/kbf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC932089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1goWcKWB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1B92089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732621AbeKIHqB (ORCPT
+        id S1732632AbeKIHqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:46:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39534 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731252AbeKIHp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:58 -0500
+        id S1731252AbeKIHqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:46:05 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A37208A3;
-        Thu,  8 Nov 2018 22:08:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D6882089F;
+        Thu,  8 Nov 2018 22:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714907;
-        bh=XQeppcl6sbWMT85j6NMgNs+opRWnFyS72lC9cSgSRkA=;
+        s=default; t=1541714913;
+        bh=LO346Av21OvbT+uppmB8O9ZMiVG+7JLa228iiOb1JUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dtig/kbfeF9onOoR+Oo7WJU7yoQVrY58G7zS5vtLI59yGI5Xti/aYvDzeiUwOoeZ0
-         mNDp8k/xURv2l6UKOCOjFf04aXuHKXpV8vYBPJdiVdfKHqehkr8EMZ7V7zD0nQm/ga
-         zDfpuDt68+sbPMIgFs060I8BJri+FC8fpQb2ek9A=
+        b=1goWcKWB+WarfjU8d6UL+PCKCyk8+FDm8ocFNMZDzr4eoJYwniTpcc+MDbg/Uelme
+         qMoCTkCdppPDUxXizxHhVGxzfgxxgi5Z9+SnR7tj/uOCr0qSmoiUVlL9ih4ciSPAgx
+         elMbJ56ezKpTsfFY0laOKJgV4560mVast5GXeSbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org,
+        Kristian Evensen <kristian.evensen@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 02/31] vfs: swap names of {do,vfs}_clone_file_range()
-Date:   Thu,  8 Nov 2018 13:52:26 -0800
-Message-Id: <20181108215129.833437540@linuxfoundation.org>
+Subject: [PATCH 4.14 04/31] USB: serial: option: add two-endpoints device-id flag
+Date:   Thu,  8 Nov 2018 13:52:28 -0800
+Message-Id: <20181108215129.992313687@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -63,150 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit a725356b6659469d182d662f22d770d83d3bc7b5 upstream.
+commit 35aecc02b5b621782111f64cbb032c7f6a90bb32 upstream
 
-Commit 031a072a0b8a ("vfs: call vfs_clone_file_range() under freeze
-protection") created a wrapper do_clone_file_range() around
-vfs_clone_file_range() moving the freeze protection to former, so
-overlayfs could call the latter.
+Allow matching on interfaces having two endpoints by adding a new
+device-id flag.
 
-The more common vfs practice is to call do_xxx helpers from vfs_xxx
-helpers, where freeze protecction is taken in the vfs_xxx helper, so
-this anomality could be a source of confusion.
+This allows for the handling of devices whose interface numbers can
+change (e.g. Quectel EP06) to be contained in the device-id table.
 
-It seems that commit 8ede205541ff ("ovl: add reflink/copyfile/dedup
-support") may have fallen a victim to this confusion -
-ovl_clone_file_range() calls the vfs_clone_file_range() helper in the
-hope of getting freeze protection on upper fs, but in fact results in
-overlayfs allowing to bypass upper fs freeze protection.
+The upstream commit removes a variable that is still in use in the 4.14
+version of the option-driver, so the removal is undone.
 
-Swap the names of the two helpers to conform to common vfs practice
-and call the correct helpers from overlayfs and nfsd.
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 031a072a0b8a ("vfs: call vfs_clone_file_range() under freeze...")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Tested-by: Kristian Evensen <kristian.evensen@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ioctl.c             |  2 +-
- fs/nfsd/vfs.c          |  3 ++-
- fs/overlayfs/copy_up.c |  2 +-
- fs/read_write.c        | 17 +++++++++++++++--
- include/linux/fs.h     | 17 +++--------------
- 5 files changed, 22 insertions(+), 19 deletions(-)
+ drivers/usb/serial/option.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 5ace7efb0d04..9db5ddaf7ef0 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -229,7 +229,7 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 	ret = -EXDEV;
- 	if (src_file.file->f_path.mnt != dst_file->f_path.mnt)
- 		goto fdput;
--	ret = do_clone_file_range(src_file.file, off, dst_file, destoff, olen);
-+	ret = vfs_clone_file_range(src_file.file, off, dst_file, destoff, olen);
- fdput:
- 	fdput(src_file);
- 	return ret;
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index a3c9bfa77def..f55527ef21e8 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -541,7 +541,8 @@ __be32 nfsd4_set_nfs4_label(struct svc_rqst *rqstp, struct svc_fh *fhp,
- __be32 nfsd4_clone_file_range(struct file *src, u64 src_pos, struct file *dst,
- 		u64 dst_pos, u64 count)
- {
--	return nfserrno(do_clone_file_range(src, src_pos, dst, dst_pos, count));
-+	return nfserrno(vfs_clone_file_range(src, src_pos, dst, dst_pos,
-+					     count));
- }
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index d8d3cb18e9ea..392fddc80c44 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -564,6 +564,9 @@ static void option_instat_callback(struct urb *urb);
+ /* Interface is reserved */
+ #define RSVD(ifnum)	((BIT(ifnum) & 0xff) << 0)
  
- ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index c441f9387a1b..321eae740148 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -157,7 +157,7 @@ static int ovl_copy_up_data(struct path *old, struct path *new, loff_t len)
- 	}
- 
- 	/* Try to use clone_file_range to clone up within the same fs */
--	error = vfs_clone_file_range(old_file, 0, new_file, 0, len);
-+	error = do_clone_file_range(old_file, 0, new_file, 0, len);
- 	if (!error)
- 		goto out;
- 	/* Couldn't clone, so now we try to copy the data */
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 0046d72efe94..57a00ef895b2 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1812,8 +1812,8 @@ int vfs_clone_file_prep_inodes(struct inode *inode_in, loff_t pos_in,
- }
- EXPORT_SYMBOL(vfs_clone_file_prep_inodes);
- 
--int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
--		struct file *file_out, loff_t pos_out, u64 len)
-+int do_clone_file_range(struct file *file_in, loff_t pos_in,
-+			struct file *file_out, loff_t pos_out, u64 len)
- {
- 	struct inode *inode_in = file_inode(file_in);
- 	struct inode *inode_out = file_inode(file_out);
-@@ -1860,6 +1860,19 @@ int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL(do_clone_file_range);
++/* Interface must have two endpoints */
++#define NUMEP2		BIT(16)
 +
-+int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
-+			 struct file *file_out, loff_t pos_out, u64 len)
-+{
-+	int ret;
-+
-+	file_start_write(file_out);
-+	ret = do_clone_file_range(file_in, pos_in, file_out, pos_out, len);
-+	file_end_write(file_out);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(vfs_clone_file_range);
  
- /*
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index cc613f20e5a6..7374639f0aa0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1792,8 +1792,10 @@ extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
- extern int vfs_clone_file_prep_inodes(struct inode *inode_in, loff_t pos_in,
- 				      struct inode *inode_out, loff_t pos_out,
- 				      u64 *len, bool is_dedupe);
-+extern int do_clone_file_range(struct file *file_in, loff_t pos_in,
-+			       struct file *file_out, loff_t pos_out, u64 len);
- extern int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
--		struct file *file_out, loff_t pos_out, u64 len);
-+				struct file *file_out, loff_t pos_out, u64 len);
- extern int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- 					 struct inode *dest, loff_t destoff,
- 					 loff_t len, bool *is_same);
-@@ -2712,19 +2714,6 @@ static inline void file_end_write(struct file *file)
- 	__sb_end_write(file_inode(file)->i_sb, SB_FREEZE_WRITE);
- }
+ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
+@@ -1085,7 +1088,7 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0xff, 0xff),
+-	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) },
++	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) | NUMEP2 },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0, 0) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
+ 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
+@@ -2012,16 +2015,11 @@ static int option_probe(struct usb_serial *serial,
+ 		return -ENODEV;
  
--static inline int do_clone_file_range(struct file *file_in, loff_t pos_in,
--				      struct file *file_out, loff_t pos_out,
--				      u64 len)
--{
--	int ret;
--
--	file_start_write(file_out);
--	ret = vfs_clone_file_range(file_in, pos_in, file_out, pos_out, len);
--	file_end_write(file_out);
--
--	return ret;
--}
--
- /*
-  * get_write_access() gets write permission for a file.
-  * put_write_access() releases this write permission.
+ 	/*
+-	 * Don't bind to the QMI device of the Quectel EP06/EG06/EM06. Class,
+-	 * subclass and protocol is 0xff for both the diagnostic port and the
+-	 * QMI interface, but the diagnostic port only has two endpoints (QMI
+-	 * has three).
++	 * Allow matching on bNumEndpoints for devices whose interface numbers
++	 * can change (e.g. Quectel EP06).
+ 	 */
+-	if (dev_desc->idVendor == cpu_to_le16(QUECTEL_VENDOR_ID) &&
+-	    dev_desc->idProduct == cpu_to_le16(QUECTEL_PRODUCT_EP06) &&
+-	    iface_desc->bInterfaceSubClass && iface_desc->bNumEndpoints == 3) {
++	if (device_flags & NUMEP2 && iface_desc->bNumEndpoints != 2)
+ 		return -ENODEV;
+-	}
+ 
+ 	/* Store the device flags so we can use them during attach. */
+ 	usb_set_serial_data(serial, (void *)device_flags);
 -- 
 2.17.1
 
