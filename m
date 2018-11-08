@@ -2,218 +2,282 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E110AECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606CAECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA8B20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:46:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA8B20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 18C4C20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:47:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C4C20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ics.forth.gr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbeKHXWb (ORCPT
+        id S1727081AbeKHXX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:22:31 -0500
-Received: from mga05.intel.com ([192.55.52.43]:22951 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbeKHXWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:22:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 05:46:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="272413498"
-Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
-  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2018 05:46:53 -0800
-Date:   Thu, 8 Nov 2018 15:46:51 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
-Message-ID: <20181108134651.GA8922@linux.intel.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-2-roberto.sassu@huawei.com>
+        Thu, 8 Nov 2018 18:23:27 -0500
+Received: from mailgate-4.ics.forth.gr ([139.91.1.7]:30450 "EHLO
+        mailgate-4.ics.forth.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHXX0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:23:26 -0500
+Received: from av1.ics.forth.gr (av3in.ics.forth.gr. [139.91.1.77])
+        by mailgate-4.ics.forth.gr (8.14.5/ICS-FORTH/V10-1.9-GATE-OUT) with ESMTP id wA8DjXMZ004131;
+        Thu, 8 Nov 2018 15:45:38 +0200 (EET)
+X-AuditID: 8b5b9d4d-903ff70000000e62-25-5be43e02af50
+Received: from enigma.ics.forth.gr (enigma.ics.forth.gr [139.91.1.35])
+        by av1.ics.forth.gr (SMTP Outbound / FORTH / ICS) with SMTP id 52.BB.03682.20E34EB5; Thu,  8 Nov 2018 15:45:38 +0200 (EET)
+Received: from webmail.ics.forth.gr (localhost [127.0.0.1])
+        by enigma.ics.forth.gr (8.15.1//ICS-FORTH/V10.5.0C-EXTNULL-SSL-SASL) with ESMTP id wA8DjaA8011444;
+        Thu, 8 Nov 2018 15:45:37 +0200
+X-ICS-AUTH-INFO: Authenticated user:  at ics.forth.gr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106150159.1136-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 08 Nov 2018 15:45:36 +0200
+From:   Nick Kossifidis <mick@ics.forth.gr>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Nick Kossifidis <mick@ics.forth.gr>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Damien.LeMoal@wdc.com, alankao@andestech.com, zong@andestech.com,
+        anup@brainfault.org, palmer@sifive.com,
+        linux-kernel@vger.kernel.org, hch@infradead.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Subject: Re: [RFC 0/2] Add RISC-V cpu topology
+Organization: FORTH
+In-Reply-To: <20181107120645.sc3wjgr2yakvxktl@lakrids.cambridge.arm.com>
+References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
+ <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
+ <20181106141331.GA28458@e107155-lin>
+ <969fc2a5198984e0dfe8c3f585dc65f9@mailhost.ics.forth.gr>
+ <20181106162051.w7fyweuxrl7ujzuz@lakrids.cambridge.arm.com>
+ <abcae019e6ae749b17ecb0c721fd3177@mailhost.ics.forth.gr>
+ <20181107120645.sc3wjgr2yakvxktl@lakrids.cambridge.arm.com>
+Message-ID: <b3a38a178699278c09a9c9ce6421ddd8@mailhost.ics.forth.gr>
+X-Sender: mick@mailhost.ics.forth.gr
+User-Agent: Roundcube Webmail/1.1.2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsXSHc2orMtk9yTaYO5fEYttS1azWrR8eMdq
+        sWjFdxaL1vZvTBbzj5xjtTg9YRGTxeVdc9gstn1uYbNYev0ik0Xzu3PsFpsnLGC1aN17hN1i
+        +akdLBabN01ltni+spfNgd9jz+lZzB5r5q1h9Jj6+wyLx8NNl5g8Nq/Q8ti0qpPN4925c+we
+        m5fUe1xqvs7u8XmTnEf7gW6mAO4oLpuU1JzMstQifbsEroz9h5YwFexxrHixXLmB8bdxFyMn
+        h4SAicS/fW+Yuxi5OIQEDjNKPLo/lwnCOcgo8X3bVhaIKlOJ2Xs7GUFsXgFBiZMzn4DFmQUs
+        JKZe2c8IYctLNG+dzQxiswioSuw728MGYrMJaErMv3QQrF5EQF2iZ9cXFpAFzALzmCVO9q0E
+        KxIW0JNo2nCTFcTmFxCW+HT3IpjNKeAh8eDsE6jzpjNL9OzsYoK4wkWi999cNojrVCQ+/H7A
+        DmKLCihLvDgxnXUCo9AsJMfOQnLsLCTHLmBkXsUokFhmrJeZXKyXll9UkqGXXrSJERyXc313
+        MJ5bYH+IUYCDUYmHV0LxcbQQa2JZcWXuIUYJDmYlEd5NOk+ihXhTEiurUovy44tKc1KLDzFK
+        c7AoifMefhEeJCSQnliSmp2aWpBaBJNl4uCUamBs0Nd+JjPdrMtsOdsFld/eEkmnE77YFW3N
+        KpCo3WFvu3nT0ZBNDg6ma2+e38BxyoX/z7bLc5TYjfyXzrscNsWP82N9dLuA34rbz9dtD7Yo
+        5r9ql1Nf0//wqpvi0WUhPndcGKM/Lryv+lHy3+t1Uq566Ytz17l8SFFPufT9XL/BCWfeHK8D
+        +/qUWIozEg21mIuKEwGttQ8RxwIAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Orrayn Tue, Nov 06, 2018 at 04:01:54PM +0100, Roberto Sassu wrote:
-> This patch removes the hard-coded limit of the active_banks array size.
-> It stores in the tpm_chip structure the number of active PCR banks,
-> determined in tpm2_get_pcr_allocation(), and replaces the static array
-> with a pointer to a dynamically allocated array.
+Στις 2018-11-07 14:06, Mark Rutland έγραψε:
+> On Wed, Nov 07, 2018 at 04:31:34AM +0200, Nick Kossifidis wrote:
+>> Mark and Sundeep thanks a lot for your feedback, I guess you convinced
+>> me that having a device tree binding for the scheduler is not a
+>> correct approach. It's not a device after all and I agree that the
+>> device tree shouldn't become an OS configuration file.
 > 
-> As a consequence of the introduction of nr_active_banks, tpm_pcr_extend()
-> does not check anymore if the algorithm stored in tpm_chip is equal to
-> zero. The active_banks array always contains valid algorithms.
+> Good to hear.
 > 
-> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
-> PCR banks")
+>> Regarding multiple levels of shared resources my point is that since
+>> cpu-map doesn't contain any information of what is shared among the
+>> cluster/core members it's not easy to do any further translation. Last
+>> time I checked the arm code that uses cpu-map, it only defines one
+>> domain for SMT, one for MC and then everything else is ignored. No
+>> matter how many clusters have been defined, anything above the core
+>> level is the same (and then I guess you started talking about adding
+>> "packages" on the representation side).
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  drivers/char/tpm/tpm-chip.c      |  1 +
->  drivers/char/tpm/tpm-interface.c | 19 ++++++++++++-------
->  drivers/char/tpm/tpm.h           |  3 ++-
->  drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++---------
->  4 files changed, 23 insertions(+), 17 deletions(-)
+> While cpu-map doesn't contain that information today, we can *add* that
+> information to the cpu-map binding if necessary.
 > 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 46caadca916a..2a9e8b744436 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->  	kfree(chip->log.bios_event_log);
->  	kfree(chip->work_space.context_buf);
->  	kfree(chip->work_space.session_buf);
-> +	kfree(chip->active_banks);
->  	kfree(chip);
->  }
->  
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1a803b0cf980..ba7ca6b3e664 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -1039,8 +1039,7 @@ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
->  int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
->  {
->  	int rc;
-> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> -	u32 count = 0;
-> +	struct tpm2_digest *digest_list;
->  	int i;
->  
->  	chip = tpm_find_get_ops(chip);
-> @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
->  		return -ENODEV;
-
-Should take digest_list as input. Probably callers could re-use the
-same digest_list array multiple times?
-
-Move struct tpm_chip to include/linux/tpm.h so that the caller can query
-nr_active_banks and active_banks and can create the digest array by
-itself. Lets do this right at once now that this is being restructured.
-
->  
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		memset(digest_list, 0, sizeof(digest_list));
-> +		digest_list = kmalloc_array(chip->nr_active_banks,
-> +					    sizeof(*digest_list), GFP_KERNEL);
-> +		if (!digest_list)
-> +			return -ENOMEM;
->  
-> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
-> +		memset(digest_list, 0,
-> +		       chip->nr_active_banks * sizeof(*digest_list));
-
-You should use kcalloc() to allocate digest_list.
-
-> +
-> +		for (i = 0; i < chip->nr_active_banks; i++) {
->  			digest_list[i].alg_id = chip->active_banks[i];
->  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> -			count++;
->  		}
->  
-> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_active_banks,
-> +				     digest_list);
-> +		kfree(digest_list);
->  		tpm_put_ops(chip);
->  		return rc;
->  	}
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index f3501d05264f..98368c3a6ff7 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -248,7 +248,8 @@ struct tpm_chip {
->  	const struct attribute_group *groups[3];
->  	unsigned int groups_cnt;
->  
-> -	u16 active_banks[7];
-> +	u32 nr_active_banks;
-> +	u16 *active_banks;
->  #ifdef CONFIG_ACPI
->  	acpi_handle acpi_dev_handle;
->  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index c31b490bd41d..533089cede07 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -242,7 +242,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->  	int i;
->  	int j;
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks))
-> +	if (count > chip->nr_active_banks)
->  		return -EINVAL;
->  
->  	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> @@ -859,7 +859,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	void *marker;
->  	void *end;
->  	void *pcr_select_offset;
-> -	unsigned int count;
->  	u32 sizeof_pcr_selection;
->  	u32 rsp_len;
->  	int rc;
-> @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	if (rc)
->  		goto out;
->  
-> -	count = be32_to_cpup(
-> +	chip->nr_active_banks = be32_to_cpup(
->  		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks)) {
-> -		rc = -ENODEV;
-> +	chip->active_banks = kmalloc_array(chip->nr_active_banks,
-> +					   sizeof(*chip->active_banks),
-> +					   GFP_KERNEL);
-> +	if (!chip->active_banks) {
-> +		rc = -ENOMEM;
->  		goto out;
->  	}
->  
-> @@ -891,7 +893,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
->  	end = &buf.data[rsp_len];
->  
-> -	for (i = 0; i < count; i++) {
-> +	for (i = 0; i < chip->nr_active_banks; i++) {
->  		pcr_select_offset = marker +
->  			offsetof(struct tpm2_pcr_selection, size_of_select);
->  		if (pcr_select_offset >= end) {
-> @@ -908,9 +910,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	}
->  
->  out:
-> -	if (i < ARRAY_SIZE(chip->active_banks))
-> -		chip->active_banks[i] = TPM2_ALG_ERROR;
-> -
->  	tpm_buf_destroy(&buf);
->  
->  	return rc;
-> -- 
-> 2.17.1
+>> The reason I proposed to have a binding for the scheduler directly is
+>> not only because it's simpler and closer to what really happens in the
+>> code, it also makes more sense to me than the combination of cpu-map
+>> with all the related mappings e.g.  for numa or caches or power
+>> domains etc.
+>> 
+>> However you are right we could definitely augment cpu-map to include
+>> support for what I'm saying and clean things up, and since you are
+>> open about improving it here is a proposal that I hope you find
+>> interesting:
+>> 
+>> At first let's get rid of the <thread> nodes, they don't make sense:
+>> 
+>> thread0 {
+>>  cpu = <&CPU0>;
+>> };
+>> 
+>> A thread node can't have more than one cpu entry and any properties
+>> should be on the cpu node itself, so it doesn't / can't add any
+>> more information. We could just have an array of cpu nodes on the
+>> <core> node, it's much cleaner this way.
+>> 
+>> core0 {
+>>  members = <&CPU0>, <&CPU1>;
+>> };
+> 
+> Hold on. Rather than reinventing things from first principles, can we
+> please discuss what you want to *achieve*, i.e. what information you
+> need?
+> 
+> Having a node is not a significant cost, and there are reasons we may
+> want thread nodes. For example, it means that we can always refer to 
+> any
+> level of topology with a phandle, and we might want to describe
+> thread-affine devices in future.
 > 
 
-/Jarkko
+You can use the phandle of the cpu node, the thread node doesn't add
+anything more than complexity to the representation.
 
+> There are a tonne of existing bindings that are ugly, but re-inventing
+> them for taste reasons alone is more costly to the ecosystem than 
+> simply
+> using the existing bindings. We avoid re-inventing bindings unless 
+> there
+> is a functional problem e.g. cases which they cannot possibly describe.
+> 
+
+We are talking about using something for RISC-V and possibly common 
+across
+different archs and, I don't see why we should keep the ugliness of a
+binding spec plus in this case the <trhead> node can't possibly describe
+anything else than a cpu=<node> alias, it's redundant.
+
+>> Then let's allow the cluster and core nodes to accept attributes that 
+>> are
+>> common for the cpus they contain. Right now this is considered 
+>> invalid.
+>> 
+>> For power domains we have a generic binding described on
+>> Documentation/devicetree/bindings/power/power_domain.txt
+>> which basically says that we need to put power-domains = <power domain
+>> specifiers>
+>> attribute on each of the cpu nodes.
+> 
+> FWIW, given this is arguably topological, I'm not personally averse to
+> describing this in the cpu-map, if that actually gains us more than the
+> complexity require to support it.
+> 
+> Given we don't do this for device power domains, I suspect that it's
+> simpler to stick with the existing binding.
+> 
+>> The same happens with the capacity binding specified for arm on
+>> Documentation/devicetree/bindings/arm/cpu-capacity.txt
+>> which says we should add the capacity-dmips-mhz on each of the cpu 
+>> nodes.
+> 
+> The cpu-map was intended to expose topological dtails, and this isn't
+> really a topological property. For example, Arm DynamIQ systems can 
+> have
+> heterogeneous CPUs within clusters.
+> 
+> I do not think it's worth moving this, tbh.
+> 
+>> The same also happens with the generic numa binding on
+>> Documentation/devicetree/bindings/numa.txt
+>> which says we should add the nuna-node-id on each of the cpu nodes.
+> 
+> Is there a strong gain from moving this?
+> 
+> [...]
+> 
+
+Right now with the device tree spec and the above bindings we can
+use the information from cpu nodes to infer the cache topology,
+the memory topology, the power domain topology etc.
+
+We have of_find_next_cache_node and of_find_last_cache_level for example
+that use "next-level-cache" and are used on powerpc (where this spec 
+comes
+from), that we can further build on top of them (since this is now part
+of the  device tree spec anyway), to e.g. populate the levels of cache,
+the levels of shared cache and finally create cpu masks for the 
+different
+cache sharing levels.
+
+This is standards-compliant, arch-independent (they are on of/base.c), 
+and
+it provides a concrete hint on CPU topology rather grouping harts to 
+classes
+like "core", "package", "socket", "cluster" etc that don't mean anything
+specific and we assume to map to specific levels of cache sharing.
+
+The same goes for the power domain topology, numa topology, or for 
+understanding
+how the cpus are grouped in terms of capacity, we can always just use 
+the
+above bindings on cpu nodes and be done with it.
+
+The way I see it cpu-map doesn't add anything new to the spec at this
+point, it's just there for convenience so that people don't have to add 
+all
+these infos on the cpu nodes. Instead of adding cache nodes and use the
+next-level-cache property like the device tree spec says, we have 
+cpu-map
+that presents how the harts are "packed" inside the chip, assuming that
+their packing also aligns on how they share their caches (they say
+nothing about how they share their power domain or other attributes).
+
+In a sense it goes against your rule of "re-inventing them for taste 
+reasons
+alone is more costly to the ecosystem than simply using the existing 
+bindings",
+I fail to see anything else than "taste reasons" when it comes to 
+cpu-map,
+since there are existing bindings for inferring the CPU topology 
+already,
+they are just not that convenient.
+
+I'm proposing to add the option (not enforce) of adding those attributes
+that are meant to be used on cpu nodes, on the various groups/classes
+of the cpu-map, this way cpu-map will provide something more meaningful
+and at least improve the representation side of things. On the 
+implementation
+side it might save us the burden of infering the topology from parsing 
+all cpu
+nodes each time. It's also backwards compatible with what you already
+have, the only thing that's not backwards compatible is the removal
+of the <thread> node, which I don't think is such a big deal to fix.
+
+>> Finally from the examples above I'd like to stress out that the 
+>> distinction
+>> between a cluster and a core doesn't make much sense and it also makes 
+>> the
+>> representation more complicated. To begin with, how would you call the 
+>> setup
+>> on HiFive Unleashed ? A cluster of 4 cores that share the same L3 
+>> cache ?
+> 
+> Not knowing much about the hardware, I can't really say.
+> 
+> I'm not sure I follow why the distinction between a cluster and a core
+> is non-sensical. A cluster is always a collection of cores.
+> 
+> A hart could be a core in its own right, or it could be a thread under 
+> a
+> core, which shares functional units with other harts within that core.
+> 
+> Arguably, we could have mandated that the topology always needed to
+> describe down to a thread, even if a core only had a single thread. 
+> That
+> ship has sailed, however.
+> 
+
+So we agree, the "core" doesn't say anything useful regarding the 
+topology,
+why keep using this distinction on a binding for RISC-V and possibly 
+other
+archs (since we are also talking on an arch-independent approach) ?
+
+Regards,
+Nick
