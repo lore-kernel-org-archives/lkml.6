@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FC4ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 391E5ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB3B20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F25B420844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldRVmfjc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB3B20844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBxsPsBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25B420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbeKIHlT (ORCPT
+        id S1731308AbeKIHlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:41:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:41:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727992AbeKIHlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:41:18 -0500
+        id S1727992AbeKIHlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:41:24 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA49B20844;
-        Thu,  8 Nov 2018 22:03:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64F6C20892;
+        Thu,  8 Nov 2018 22:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714628;
-        bh=UxZvcv8ABelrSp5nV/dvhaKH0XEtq6rpQ2XQTkFu360=;
+        s=default; t=1541714634;
+        bh=0P9BQypE6U2Mpm8VgkNfEdt7PUUkxGFLvml4Zf+JPtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ldRVmfjcUqzYhedCNmL45vDv6O8GNz15oSIiUXtIP9rX4UKKTAqhnGp7p55mMKqIe
-         /lvwNvvk6eWOGCnIfXOcyXCG9InXFYAcQmLnfcltWJ44lZr1tSPSr3T66OYA1GHMVl
-         ftA+0A6nalqynpaj6XSvOqbarF8vYzLghj63rQ90=
+        b=jBxsPsBlkezOic7rj8oUblnow/miuMYmoNttNFVjPcFeNgvB6OZQ6q81ZE3eQkSNt
+         KKpGrxAcuvsXrdno5oEkLNCbuqhgEXZwX5FVQz2heFbpiZuSKt5GusTOA9ZLHyVpJZ
+         iIUrpLZiiRpplIllEpeqd2KrkuY5LxbMwQn5X4ps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>,
-        Matt Redfearn <matt.redfearn@imgtec.com>,
-        James Hogan <james.hogan@imgtec.com>,
+        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>,
         Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
-        Miodrag Dinic <miodrag.dinic@imgtec.com>,
+        James Hogan <james.hogan@imgtec.com>,
         Ingo Molnar <mingo@kernel.org>,
-        David Daney <david.daney@cavium.com>,
+        Paul Burton <paul.burton@imgtec.com>,
         linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 034/171] MIPS: microMIPS: Fix decoding of swsp16 instruction
-Date:   Thu,  8 Nov 2018 13:50:04 -0800
-Message-Id: <20181108215129.820561095@linuxfoundation.org>
+Subject: [PATCH 4.9 035/171] MIPS: Handle non word sized instructions when examining frame
+Date:   Thu,  8 Nov 2018 13:50:05 -0800
+Message-Id: <20181108215129.916890419@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -69,65 +67,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cea8cd498f4f1c30ea27e3664b3c671e495c4fce ]
+[ Upstream commit 11887ed172a6960673f130dad8f8fb42778f64d7 ]
 
-When the immediate encoded in the instruction is accessed, it is sign
-extended due to being a signed value being assigned to a signed integer.
-The ISA specifies that this operation is an unsigned operation.
-The sign extension leads us to incorrectly decode:
+Commit 34c2f668d0f6b ("MIPS: microMIPS: Add unaligned access support.")
+added fairly broken support for handling 16bit microMIPS instructions in
+get_frame_info(). It adjusts the instruction pointer by 16bits in the
+case of a 16bit sp move instruction, but not any other 16bit
+instruction.
 
-801e9c8e:       cbf1            sw      ra,68(sp)
+Commit b6c7a324df37 ("MIPS: Fix get_frame_info() handling of microMIPS
+function size") goes some way to fixing get_frame_info() to iterate over
+microMIPS instuctions, but the instruction pointer is still manipulated
+using a postincrement, and is of union mips_instruction type. Since the
+union is sized to the largest member (a word), but microMIPS
+instructions are a mix of halfword and word sizes, the function does not
+always iterate correctly, ending up misaligned with the instruction
+stream and interpreting it incorrectly.
 
-As having an immediate of 1073741809.
+Since the instruction modifying the stack pointer is usually the first
+in the function, that one is usually handled correctly. But the
+instruction which saves the return address to the sp is some variable
+number of instructions into the frame and is frequently missed due to
+not being on a word boundary, leading to incomplete walking of the
+stack.
 
-Since the instruction format does not specify signed/unsigned, and this
-is currently the only location to use this instuction format, change it
-to an unsigned immediate.
+Fix this by incrementing the instruction pointer based on the size of
+the previously decoded instruction (& remove the hack introduced by
+commit 34c2f668d0f6b ("MIPS: microMIPS: Add unaligned access support.")
+which adjusts the instruction pointer in the case of a 16bit sp move
+instruction, but not any other).
 
-Fixes: bb9bc4689b9c ("MIPS: Calculate microMIPS ra properly when unwinding the stack")
-Suggested-by: Paul Burton <paul.burton@imgtec.com>
+Fixes: 34c2f668d0f6b ("MIPS: microMIPS: Add unaligned access support.")
 Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
-Reviewed-by: James Hogan <james.hogan@imgtec.com>
 Cc: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
-Cc: Miodrag Dinic <miodrag.dinic@imgtec.com>
+Cc: James Hogan <james.hogan@imgtec.com>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: David Daney <david.daney@cavium.com>
+Cc: Paul Burton <paul.burton@imgtec.com>
 Cc: linux-mips@linux-mips.org
 Cc: linux-kernel@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/16957/
+Patchwork: https://patchwork.linux-mips.org/patch/16953/
 Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/uapi/asm/inst.h | 2 +-
- arch/mips/kernel/process.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/kernel/process.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
-index 77429d1622b3..711d9b8465b8 100644
---- a/arch/mips/include/uapi/asm/inst.h
-+++ b/arch/mips/include/uapi/asm/inst.h
-@@ -964,7 +964,7 @@ struct mm16_r3_format {		/* Load from global pointer format */
- struct mm16_r5_format {		/* Load/store from stack pointer format */
- 	__BITFIELD_FIELD(unsigned int opcode : 6,
- 	__BITFIELD_FIELD(unsigned int rt : 5,
--	__BITFIELD_FIELD(signed int simmediate : 5,
-+	__BITFIELD_FIELD(unsigned int imm : 5,
- 	__BITFIELD_FIELD(unsigned int : 16, /* Ignored */
- 	;))))
- };
 diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
-index ba315e523b33..0211dc737a21 100644
+index 0211dc737a21..1cc133e7026f 100644
 --- a/arch/mips/kernel/process.c
 +++ b/arch/mips/kernel/process.c
-@@ -212,7 +212,7 @@ static inline int is_ra_save_ins(union mips_instruction *ip, int *poff)
- 			if (ip->mm16_r5_format.rt != 31)
- 				return 0;
+@@ -346,6 +346,7 @@ static int get_frame_info(struct mips_frame_info *info)
+ 	bool is_mmips = IS_ENABLED(CONFIG_CPU_MICROMIPS);
+ 	union mips_instruction insn, *ip, *ip_end;
+ 	const unsigned int max_insns = 128;
++	unsigned int last_insn_size = 0;
+ 	unsigned int i;
  
--			*poff = ip->mm16_r5_format.simmediate;
-+			*poff = ip->mm16_r5_format.imm;
- 			*poff = (*poff << 2) / sizeof(ulong);
- 			return 1;
+ 	info->pc_offset = -1;
+@@ -357,15 +358,19 @@ static int get_frame_info(struct mips_frame_info *info)
  
+ 	ip_end = (void *)ip + info->func_size;
+ 
+-	for (i = 0; i < max_insns && ip < ip_end; i++, ip++) {
++	for (i = 0; i < max_insns && ip < ip_end; i++) {
++		ip = (void *)ip + last_insn_size;
+ 		if (is_mmips && mm_insn_16bit(ip->halfword[0])) {
+ 			insn.halfword[0] = 0;
+ 			insn.halfword[1] = ip->halfword[0];
++			last_insn_size = 2;
+ 		} else if (is_mmips) {
+ 			insn.halfword[0] = ip->halfword[1];
+ 			insn.halfword[1] = ip->halfword[0];
++			last_insn_size = 4;
+ 		} else {
+ 			insn.word = ip->word;
++			last_insn_size = 4;
+ 		}
+ 
+ 		if (is_jump_ins(&insn))
+@@ -387,8 +392,6 @@ static int get_frame_info(struct mips_frame_info *info)
+ 						tmp = (ip->halfword[0] >> 1);
+ 						info->frame_size = -(signed short)(tmp & 0xf);
+ 					}
+-					ip = (void *) &ip->halfword[1];
+-					ip--;
+ 				} else
+ #endif
+ 				info->frame_size = - ip->i_format.simmediate;
 -- 
 2.17.1
 
