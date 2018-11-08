@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2155FECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05099ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D94CB21019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2A5F20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAbSMFt7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94CB21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHKUxFsX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2A5F20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbeKIHh2 (ORCPT
+        id S1730298AbeKIHha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55672 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:37:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728100AbeKIHh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:27 -0500
+        id S1728100AbeKIHh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:28 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A72722147A;
-        Thu,  8 Nov 2018 21:59:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F138220892;
+        Thu,  8 Nov 2018 21:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714398;
-        bh=ZtMDOTuDGnMVsAFdDQ07K4NQz2w2uQcscC42rGfIoyc=;
+        s=default; t=1541714400;
+        bh=wD6hG8fg5ofn4jNYV25c+VuTV3Dlxq1WJXD90xgfqbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SAbSMFt7c8mPY+KbRqcIT7OJzdlar3LLBjyMFFJLVzEP3Of4ZqmXkqh1UvvGvlPBM
-         wmLtNLqbd0EQ1lyg1iujtZ0B39+EYMLo7jzy6RknAaMjvpH647EHtYgzREA3u1RMqm
-         aYG0GFQqmx6qixS5GG2X9y8pTMrH4i/Q4fDcrTJQ=
+        b=dHKUxFsXPGgjHMN2kg7wp0ckXaT+iresYYF5QQxOInMCz5CQMB7aXSfUnB/56fwH7
+         v/LElBffE0oTz2fB2Gd6daLkUihj1nefK11xe9NFVLT68KbqELe9oRUUA0Cr7pKJP/
+         xCoV56xknu7TBmNJuhKnQK/YEonLDfte+JNz7tFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rustad <mark.d.rustad@intel.com>,
-        Phil Schmitt <phillip.j.schmitt@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Lance Richardson <lrichard@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 058/114] ixgbe: Correct X550EM_x revision check
-Date:   Thu,  8 Nov 2018 13:51:13 -0800
-Message-Id: <20181108215106.363357833@linuxfoundation.org>
+Subject: [PATCH 4.4 060/114] vti6: flush x-netns xfrm cache when vti interface is removed
+Date:   Thu,  8 Nov 2018 13:51:15 -0800
+Message-Id: <20181108215106.521100197@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -64,62 +64,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3ca2b2506ec9a3b1615930a6810d30ec9aba10a1 ]
+[ Upstream commit 7f92083eb58f85ea114d97f65fcbe22be5b0468d ]
 
-The X550EM_x revision check needs to check a value, not just a bit.
-Use a mask and check the value. Also remove the redundant check
-inside the ixgbe_enter_lplu_t_x550em, because it can only be called
-when both the mac type and revision check pass.
+This is the same fix than commit a5d0dc810abf ("vti: flush x-netns xfrm
+cache when vti interface is removed")
 
-Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-Tested-by: Phil Schmitt <phillip.j.schmitt@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+This patch fixes a refcnt problem when a x-netns vti6 interface is removed:
+unregister_netdevice: waiting for vti6_test to become free. Usage count = 1
+
+Here is a script to reproduce the problem:
+
+ip link set dev ntfp2 up
+ip addr add dev ntfp2 2001::1/64
+ip link add vti6_test type vti6 local 2001::1 remote 2001::2 key 1
+ip netns add secure
+ip link set vti6_test netns secure
+ip netns exec secure ip link set vti6_test up
+ip netns exec secure ip link s lo up
+ip netns exec secure ip addr add dev vti6_test 2003::1/64
+ip -6 xfrm policy add dir out tmpl src 2001::1 dst 2001::2 proto esp \
+	   mode tunnel mark 1
+ip -6 xfrm policy add dir in tmpl src 2001::2 dst 2001::1 proto esp \
+	   mode tunnel mark 1
+ip xfrm state add src 2001::1 dst 2001::2 proto esp spi 1 mode tunnel \
+	   enc des3_ede 0x112233445566778811223344556677881122334455667788 mark 1
+ip xfrm state add src 2001::2 dst 2001::1 proto esp spi 1 mode tunnel \
+	   enc des3_ede 0x112233445566778811223344556677881122334455667788 mark 1
+ip netns exec secure  ping6 -c 4 2003::2
+ip netns del secure
+
+CC: Lance Richardson <lrichard@redhat.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Acked-by: Lance Richardson <lrichard@redhat.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_type.h | 2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 9 +++------
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ net/ipv6/ip6_vti.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-index 995f03107eac..04bc4df82fa7 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-@@ -3508,7 +3508,7 @@ struct ixgbe_info {
+diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
+index 60d4052d97a6..51da5987952c 100644
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -1140,6 +1140,33 @@ static struct xfrm6_protocol vti_ipcomp6_protocol __read_mostly = {
+ 	.priority	=	100,
+ };
  
- #define IXGBE_FUSES0_GROUP(_i)		(0x11158 + ((_i) * 4))
- #define IXGBE_FUSES0_300MHZ		BIT(5)
--#define IXGBE_FUSES0_REV1		BIT(6)
-+#define IXGBE_FUSES0_REV_MASK		(3 << 6)
++static bool is_vti6_tunnel(const struct net_device *dev)
++{
++	return dev->netdev_ops == &vti6_netdev_ops;
++}
++
++static int vti6_device_event(struct notifier_block *unused,
++			     unsigned long event, void *ptr)
++{
++	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
++	struct ip6_tnl *t = netdev_priv(dev);
++
++	if (!is_vti6_tunnel(dev))
++		return NOTIFY_DONE;
++
++	switch (event) {
++	case NETDEV_DOWN:
++		if (!net_eq(t->net, dev_net(dev)))
++			xfrm_garbage_collect(t->net);
++		break;
++	}
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block vti6_notifier_block __read_mostly = {
++	.notifier_call = vti6_device_event,
++};
++
+ /**
+  * vti6_tunnel_init - register protocol and reserve needed resources
+  *
+@@ -1150,6 +1177,8 @@ static int __init vti6_tunnel_init(void)
+ 	const char *msg;
+ 	int err;
  
- #define IXGBE_KRM_PORT_CAR_GEN_CTRL(P)	((P) ? 0x8010 : 0x4010)
- #define IXGBE_KRM_LINK_CTRL_1(P)	((P) ? 0x820C : 0x420C)
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-index a75f2e3ce86f..ffd2e74e5638 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-@@ -1873,10 +1873,6 @@ static s32 ixgbe_enter_lplu_t_x550em(struct ixgbe_hw *hw)
- 	u32 save_autoneg;
- 	bool link_up;
++	register_netdevice_notifier(&vti6_notifier_block);
++
+ 	msg = "tunnel device";
+ 	err = register_pernet_device(&vti6_net_ops);
+ 	if (err < 0)
+@@ -1182,6 +1211,7 @@ xfrm_proto_ah_failed:
+ xfrm_proto_esp_failed:
+ 	unregister_pernet_device(&vti6_net_ops);
+ pernet_dev_failed:
++	unregister_netdevice_notifier(&vti6_notifier_block);
+ 	pr_err("vti6 init: failed to register %s\n", msg);
+ 	return err;
+ }
+@@ -1196,6 +1226,7 @@ static void __exit vti6_tunnel_cleanup(void)
+ 	xfrm6_protocol_deregister(&vti_ah6_protocol, IPPROTO_AH);
+ 	xfrm6_protocol_deregister(&vti_esp6_protocol, IPPROTO_ESP);
+ 	unregister_pernet_device(&vti6_net_ops);
++	unregister_netdevice_notifier(&vti6_notifier_block);
+ }
  
--	/* SW LPLU not required on later HW revisions. */
--	if (IXGBE_FUSES0_REV1 & IXGBE_READ_REG(hw, IXGBE_FUSES0_GROUP(0)))
--		return 0;
--
- 	/* If blocked by MNG FW, then don't restart AN */
- 	if (ixgbe_check_reset_blocked(hw))
- 		return 0;
-@@ -2030,8 +2026,9 @@ static s32 ixgbe_init_phy_ops_X550em(struct ixgbe_hw *hw)
- 		}
- 
- 		/* setup SW LPLU only for first revision */
--		if (!(IXGBE_FUSES0_REV1 & IXGBE_READ_REG(hw,
--							IXGBE_FUSES0_GROUP(0))))
-+		if (hw->mac.type == ixgbe_mac_X550EM_x &&
-+		    !(IXGBE_READ_REG(hw, IXGBE_FUSES0_GROUP(0)) &
-+		      IXGBE_FUSES0_REV_MASK))
- 			phy->ops.enter_lplu = ixgbe_enter_lplu_t_x550em;
- 
- 		phy->ops.handle_lasi = ixgbe_handle_lasi_ext_t_x550em;
+ module_init(vti6_tunnel_init);
 -- 
 2.17.1
 
