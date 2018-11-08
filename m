@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49139ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2F6ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E09820892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18BF521104
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xU3lpBMh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E09820892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wqRcsHar"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18BF521104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeKIHcW (ORCPT
+        id S1728520AbeKIHc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:32:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:32:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbeKIHcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:22 -0500
+        id S1728358AbeKIHc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:27 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D27CF21104;
-        Thu,  8 Nov 2018 21:54:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B90E2133D;
+        Thu,  8 Nov 2018 21:55:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714094;
-        bh=FI+E/0K28wiLQyrGKQEJCfK002ZteUBrfsFay7j3Hho=;
+        s=default; t=1541714100;
+        bh=rZG9v41Og7wkbtp7TLVPOx/7qsmUab2zsng+y7buxx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xU3lpBMhU6ApYRteH/887wpY1ZoDkCgsAWwZI0UwN1+gNW8T37abXB6yoHsONRkgd
-         BuRYoE9cZZQOt+UHrLp4r4LjPVF+c8scg93aUxKKQuUuTTOQrnfL2LOwOr8gUsSXoV
-         eLiSnbIvqSg7PqxHMar+rPMqAtNSVeC25vQPkzDw=
+        b=wqRcsHar8O17dQCVCRO7oRn9/TBJLaqaJJpiZGwjTRfGyjgHAGEXyxOrDPexgjZV7
+         aRd4Sn89JJD6JBLjeeXhXE6gMF5mssVphKfgqHrFjaXPfVy7bZaTMJMivauFiTm3Yd
+         PguipblpyyiSVlu8eGBgtd87oSOFrFHjbXcVF7KU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>,
-        Ludovic Desroches <ludovic.desroches@atmel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 038/144] mmc: sdhci: restore behavior when setting VDD via external regulator
-Date:   Thu,  8 Nov 2018 13:50:09 -0800
-Message-Id: <20181108215057.615363616@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Felipe Balbi <balbi@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 039/144] usb: gadget: gadgetfs: fix an oops in ep_write()
+Date:   Thu,  8 Nov 2018 13:50:10 -0800
+Message-Id: <20181108215057.681903481@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,79 +62,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 918f4cbd4340ddd1eb389cd8efa3b07ac74ec4c0 ]
+[ Upstream commit 42d6cfa0caec4b68a7f17147fbf13a36e94a8bf2 ]
 
-After commit 52221610dd84 ("mmc: sdhci: Improve external VDD regulator
-support"), for the VDD is supplied via external regulators, we ignore
-the code to convert a VDD voltage request into one of the standard
-SDHCI voltage levels, then program it in the SDHCI_POWER_CONTROL. This
-brings two issues:
+We try to free an ERR_PTR on this error path.
 
-1. SDHCI_QUIRK2_CARD_ON_NEEDS_BUS_ON quirk isn't handled properly any
-more.
-
-2. What's more, once SDHCI_POWER_ON bit is set, some controllers such
-as the sdhci-pxav3 used in marvell berlin SoCs require the voltage
-levels programming in the SDHCI_POWER_CONTROL register, even the VDD
-is supplied by external regulator. So the host in marvell berlin SoCs
-still works fine after the commit. However, commit 3cbc6123a93d ("mmc:
-sdhci: Set SDHCI_POWER_ON with external vmmc") sets the SDHCI_POWER_ON
-bit, this would make the host in marvell berlin SoCs won't work any
-more with external vmmc.
-
-This patch restores the behavior when setting VDD through external
-regulator by moving the call of mmc_regulator_set_ocr() to the end
-of sdhci_set_power() function.
-
-After this patch, the sdcard on Marvell Berlin SoC boards work again.
-
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Fixes: 52221610dd84 ("mmc: sdhci: Improve external VDD ...")
-Reviewed-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Tested-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: b44be2462dbe ('usb: gadget: gadgetfs: Free memory allocated by memdup_user()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ drivers/usb/gadget/legacy/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 56578504fd24..2295bf6e94a1 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1248,19 +1248,6 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
- 	struct mmc_host *mmc = host->mmc;
- 	u8 pwr = 0;
- 
--	if (!IS_ERR(mmc->supply.vmmc)) {
--		spin_unlock_irq(&host->lock);
--		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
--		spin_lock_irq(&host->lock);
--
--		if (mode != MMC_POWER_OFF)
--			sdhci_writeb(host, SDHCI_POWER_ON, SDHCI_POWER_CONTROL);
--		else
--			sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
--
--		return;
--	}
--
- 	if (mode != MMC_POWER_OFF) {
- 		switch (1 << vdd) {
- 		case MMC_VDD_165_195:
-@@ -1319,6 +1306,12 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
- 		if (host->quirks & SDHCI_QUIRK_DELAY_AFTER_POWER)
- 			mdelay(10);
+diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
+index e2d57e3d67c7..7974956e8ded 100644
+--- a/drivers/usb/gadget/legacy/inode.c
++++ b/drivers/usb/gadget/legacy/inode.c
+@@ -442,6 +442,7 @@ ep_write (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
+ 	kbuf = memdup_user(buf, len);
+ 	if (IS_ERR(kbuf)) {
+ 		value = PTR_ERR(kbuf);
++		kbuf = NULL;
+ 		goto free1;
  	}
-+
-+	if (!IS_ERR(mmc->supply.vmmc)) {
-+		spin_unlock_irq(&host->lock);
-+		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
-+		spin_lock_irq(&host->lock);
-+	}
- }
  
- /*****************************************************************************\
 -- 
 2.17.1
 
