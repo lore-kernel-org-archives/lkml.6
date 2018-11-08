@@ -2,113 +2,111 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF6BC0044B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84117C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75F620892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DA5E20818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="LpUlIYwt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75F620892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQJMhtFg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA5E20818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731645AbeKIH5r (ORCPT
+        id S1731759AbeKIH5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:57:47 -0500
-Received: from imap.thunk.org ([74.207.234.97]:57216 "EHLO imap.thunk.org"
+        Fri, 9 Nov 2018 02:57:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728473AbeKIH5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:57:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=XKH6YiJaZqayXgHcy/bwtS0zJABlCqn/xMsfief3KdM=; b=LpUlIYwt2wPbxDmXOGTBYrVfOa
-        2cfeAOQCByN5E15+/j5yVYt7uSjJ32BjEYQBZP5P2bh9gCMVbS0sKLifuma2Op9BLkd3mQWPBmrCO
-        M8paFG3rXdEiw7qlveUjyzqtUTai377FZoshANBaHHTvcoDU0K6Bjz8dEE2h7OPK9BnA=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gKseS-0002Wq-M2; Thu, 08 Nov 2018 22:19:48 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 90C2A7A7D24; Thu,  8 Nov 2018 17:19:47 -0500 (EST)
-Date:   Thu, 8 Nov 2018 17:19:47 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, acme@redhat.com,
-        frederic@kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108221947.GJ1080@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, acme@redhat.com,
-        frederic@kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
- <20181108074012.GD20032@gmail.com>
- <20181108091251.GL9761@hirez.programming.kicks-ass.net>
- <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
- <20181108201425.GF1080@thunk.org>
- <20181108210449.GB22691@kroah.com>
+        id S1730850AbeKIHns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:48 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9816F21019;
+        Thu,  8 Nov 2018 22:06:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541714777;
+        bh=n3aeXXiZlJMJTmyJ7CWWK7L52nB/kdzUx1ej7Zf3igQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hQJMhtFggMUOPGDGMlaDdSyFzZIwaLda3j+v2L+xniJlRXhmqRzAUH/EmX/emoWSr
+         8R4RnExULB5o983RkKWCtCG6DuA+imBn1LKhRXnOaZPJFLvWEE+ZO8LXyxOGhc7zZz
+         fjJaYAVvE+hkt5jDCdk+xMg7DeP+iJC9WOk58Dnc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andreas Born <futur.andy@googlemail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 118/171] bonding: ratelimit failed speed/duplex update warning
+Date:   Thu,  8 Nov 2018 13:51:28 -0800
+Message-Id: <20181108215135.853334124@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
+References: <20181108215127.257643509@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108210449.GB22691@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:04:49PM -0800, Greg KH wrote:
-> > (Also note that even with fast SSD's and/or everything in page cache,
-> > runnning "tag --contains <COMMITID>" will take a good 3-4 seconds, and
-> > if the git packs are not in the page cache, and/or you're unfortunate
-> > enough to have your git trees on an HDD.... it's not pretty.)
-> 
-> I recommend the "static cache" or whatever that thing is called, that
-> helps out a _LOT_ with stuff like this.  For the kernel tree, which is
-> never rebased, it speeds up this so much.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-At the risk of asking a stupid question, which cache is this?  I don't
-think it's the untrackedCache; is it the BitmapHashCache?
+------------------
 
-Thanks,
+[ Upstream commit 11e9d7829dd08dbafb24517fe922f11c3a8a9dc2 ]
 
-      	       		       	     - Ted
+bond_miimon_commit() handles the UP transition for each slave of a bond
+in the case of MII. It is triggered 10 times per second for the default
+MII Polling interval of 100ms. For device drivers that do not implement
+__ethtool_get_link_ksettings() the call to bond_update_speed_duplex()
+fails persistently while the MII status could remain UP. That is, in
+this and other cases where the speed/duplex update keeps failing over a
+longer period of time while the MII state is UP, a warning is printed
+every MII polling interval.
+
+To address these excessive warnings net_ratelimit() should be used.
+Printing a warning once would not be sufficient since the call to
+bond_update_speed_duplex() could recover to succeed and fail again
+later. In that case there would be no new indication what went wrong.
+
+Fixes: b5bf0f5b16b9c (bonding: correctly update link status during mii-commit phase)
+Signed-off-by: Andreas Born <futur.andy@googlemail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/bonding/bond_main.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index b1ea29d8ad1a..389d1db69a32 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2132,9 +2132,10 @@ static void bond_miimon_commit(struct bonding *bond)
+ 			if (bond_update_speed_duplex(slave) &&
+ 			    bond_needs_speed_duplex(bond)) {
+ 				slave->link = BOND_LINK_DOWN;
+-				netdev_warn(bond->dev,
+-					    "failed to get link speed/duplex for %s\n",
+-					    slave->dev->name);
++				if (net_ratelimit())
++					netdev_warn(bond->dev,
++						    "failed to get link speed/duplex for %s\n",
++						    slave->dev->name);
+ 				continue;
+ 			}
+ 			bond_set_slave_link_state(slave, BOND_LINK_UP,
+-- 
+2.17.1
+
+
+
