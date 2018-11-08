@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2EFECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA1FECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF1482147A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9FED21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeZaPn/B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1482147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ck8+O/DS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FED21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbeKIHdm (ORCPT
+        id S1729104AbeKIHdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:33:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49644 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:33:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728976AbeKIHdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:33:41 -0500
+        id S1729035AbeKIHdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:33:43 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD6F321104;
-        Thu,  8 Nov 2018 21:56:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09EB921479;
+        Thu,  8 Nov 2018 21:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714173;
-        bh=HRT0bCCN9wABFP7MvpsVPJAKwFcOpA3aeaP4+cqP/p8=;
+        s=default; t=1541714175;
+        bh=jeSS1fh388oTuNBSX4IRZnmetc6p+5YOgSMUnQo90bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AeZaPn/BITZthm7IPOw94hk9b0sq2VmnFMmNeSIHm3kOEa2FFDl6ePrHerkNyReWK
-         kXnw3DwtXi07XjB2Yhkk/9K3vluYmUJHpOtHxL6N1WK8wkF0i3yjEWY0Rumct9dZqn
-         l9nAG2BTiOVjtLdH6h6DdHXPipDNe8u3rFVQurF8=
+        b=Ck8+O/DSORx4LLXVRiqoAplF54WJwL0I/HpYFnd/cYDzo902Ym/GtzctC+a5WfZEL
+         WRFDzBRPFHw7+GPZMCRY152gy2agEVusPMJwEUclAlM9mAEBtQoKhUjCPdNzyqzdyP
+         Ih+yYsnZCE1SvJkwHGLqnNdsrJbSsGdmyconjSxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Vinson Lee <vlee@twitter.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 097/144] perf bench numa: Fix to show proper convergence stats
-Date:   Thu,  8 Nov 2018 13:51:08 -0800
-Message-Id: <20181108215104.660939658@linuxfoundation.org>
+Subject: [PATCH 3.18 080/144] clk: rockchip: fix deadlock possibility in cpuclk
+Date:   Thu,  8 Nov 2018 13:50:51 -0800
+Message-Id: <20181108215101.127234986@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -68,52 +64,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2b42b09b88c831ba4da2d669581dde371c38c2af ]
+[ Upstream commit a5e1baf7dca10f8cf945394034013260297bc416 ]
 
-With commit: e1e455f4f4d3 (perf tools: Work around lack of sched_getcpu
-in glibc < 2.6), perf_bench numa mem with -c or -m option is not able to
-correctly calculate convergence.
+Lockdep reported a possible deadlock between the cpuclk lock and for example
+the i2c driver.
 
-With the above commit, sched_getcpu always seems to return -1. The
-intention of commit e1e455f was to add a sched_getcpu in glibc < 2.6.
-Hence keep the sched_getcpu definition under an ifdef.
+       CPU0                    CPU1
+       ----                    ----
+  lock(clk_lock);
+                               local_irq_disable();
+                               lock(&(&i2c->lock)->rlock);
+                               lock(clk_lock);
+  <Interrupt>
+    lock(&(&i2c->lock)->rlock);
 
-This regression happened occurred between v4.0 and v4.1
+ *** DEADLOCK ***
 
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Vinson Lee <vlee@twitter.com>
-Fixes:  e1e455f4f4d3 ("perf tools: Work around lack of sched_getcpu in glibc < 2.6")
-Link: http://lkml.kernel.org/r/20150624111004.GA5220@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+The generic clock-types of the core ccf already use spin_lock_irqsave when
+touching clock registers, so do the same for the cpuclk.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Michael Turquette <mturquette@linaro.org>
+[mturquette@linaro.org: removed initialization of "flags"]
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/cloexec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/rockchip/clk-cpu.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/cloexec.c b/tools/perf/util/cloexec.c
-index 85b523885f9d..2babddaa2481 100644
---- a/tools/perf/util/cloexec.c
-+++ b/tools/perf/util/cloexec.c
-@@ -7,11 +7,15 @@
- 
- static unsigned long flag = PERF_FLAG_FD_CLOEXEC;
- 
-+#ifdef __GLIBC_PREREQ
-+#if !__GLIBC_PREREQ(2, 6)
- int __weak sched_getcpu(void)
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 75c8c45ef728..8539c4fd34cc 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -124,10 +124,11 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
  {
- 	errno = ENOSYS;
- 	return -1;
+ 	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
+ 	unsigned long alt_prate, alt_div;
++	unsigned long flags;
+ 
+ 	alt_prate = clk_get_rate(cpuclk->alt_parent);
+ 
+-	spin_lock(cpuclk->lock);
++	spin_lock_irqsave(cpuclk->lock, flags);
+ 
+ 	/*
+ 	 * If the old parent clock speed is less than the clock speed
+@@ -164,7 +165,7 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
+ 			cpuclk->reg_base + reg_data->core_reg);
+ 	}
+ 
+-	spin_unlock(cpuclk->lock);
++	spin_unlock_irqrestore(cpuclk->lock, flags);
+ 	return 0;
  }
-+#endif
-+#endif
  
- static int perf_flag_probe(void)
+@@ -173,6 +174,7 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
  {
+ 	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
+ 	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
+ 
+ 	rate = rockchip_get_cpuclk_settings(cpuclk, ndata->new_rate);
+ 	if (!rate) {
+@@ -181,7 +183,7 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
+ 		return -EINVAL;
+ 	}
+ 
+-	spin_lock(cpuclk->lock);
++	spin_lock_irqsave(cpuclk->lock, flags);
+ 
+ 	if (ndata->old_rate < ndata->new_rate)
+ 		rockchip_cpuclk_set_dividers(cpuclk, rate);
+@@ -201,7 +203,7 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
+ 	if (ndata->old_rate > ndata->new_rate)
+ 		rockchip_cpuclk_set_dividers(cpuclk, rate);
+ 
+-	spin_unlock(cpuclk->lock);
++	spin_unlock_irqrestore(cpuclk->lock, flags);
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
