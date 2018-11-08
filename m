@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE784C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03212C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7206420844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD6E320844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7nOTdPJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7206420844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuPu58oW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6E320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbeKIIGg (ORCPT
+        id S1730039AbeKIIGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:06:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58112 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:06:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729550AbeKIHij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:38:39 -0500
+        id S1728491AbeKIHii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:38:38 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 827042147D;
-        Thu,  8 Nov 2018 22:01:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42B5A21479;
+        Thu,  8 Nov 2018 22:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714470;
-        bh=tTXxsua6lbTzqyWANVp/yIqb2tG8b3SrAFoJ4H6q95M=;
+        s=default; t=1541714469;
+        bh=JQeSYdHZs6lW9p/bVCWuYVS9Lz02X1PgU4UBC75vd+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r7nOTdPJzQmfW2CcC3nNkZtFGrkuSSmwGYsDWJ8nUnCjvcbuq/7z4oO6Uc5G6ry8v
-         fsZ8XUsFrxzdF9pEOhrlm9gmh1Qp3+Iuneebjq9ply+0nC++Qcf0rCi0FbujoGnFLZ
-         j1sAhh9c80Lcm1/h76DtoGfK4UQFTKBZOvbUHTFs=
+        b=cuPu58oW3U96IydayyMS8AHHbdESrL6xF/+tle87A0sQXrRUEFDw1tQ6e3+awpKvn
+         dY2G5vS05zAu6l0/xpqxQZKJUhS35Dcl7hZ4viTkSWEdAvvLbmlBougcPssnwPFbaN
+         KsFZTNNMSBpWCwQ1u5JOLcpxaNR3iLFKpCm92eNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 077/114] ASoC: spear: fix error return code in spdif_in_probe()
-Date:   Thu,  8 Nov 2018 13:51:32 -0800
-Message-Id: <20181108215107.938021386@linuxfoundation.org>
+Subject: [PATCH 4.4 075/114] spi/bcm63xx: fix error return code in bcm63xx_spi_probe()
+Date:   Thu,  8 Nov 2018 13:51:30 -0800
+Message-Id: <20181108215107.776162596@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -64,42 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 27d30400c448264c1ac9434cb836de0c230af213 ]
+[ Upstream commit ba8afe94723e9ba665aee9cca649fb2c80f7304c ]
 
-platform_get_irq() returns an error code, but the spdif_in driver
-ignores it and always returns -EINVAL. This is not correct, and
+platform_get_irq() returns an error code, but the spi-bcm63xx driver
+ignores it and always returns -ENXIO. This is not correct and,
 prevents -EPROBE_DEFER from being propagated properly.
 
 Notice that platform_get_irq() no longer returns 0 on error:
 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
 
-Print error message and propagate the return value of platform_get_irq
-on failure.
+Print and propagate the return value of platform_get_irq on failure.
 
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+This issue was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/spear/spdif_in.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/spi/spi-bcm63xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/spear/spdif_in.c b/sound/soc/spear/spdif_in.c
-index 977a078eb92f..7f32527fc3c8 100644
---- a/sound/soc/spear/spdif_in.c
-+++ b/sound/soc/spear/spdif_in.c
-@@ -223,8 +223,10 @@ static int spdif_in_probe(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
+index bf9a610e5b89..f14500910bc2 100644
+--- a/drivers/spi/spi-bcm63xx.c
++++ b/drivers/spi/spi-bcm63xx.c
+@@ -496,8 +496,8 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
  
- 	host->io_base = io_base;
- 	host->irq = platform_get_irq(pdev, 0);
--	if (host->irq < 0)
--		return -EINVAL;
-+	if (host->irq < 0) {
-+		dev_warn(&pdev->dev, "failed to get IRQ: %d\n", host->irq);
-+		return host->irq;
-+	}
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+-		dev_err(dev, "no irq\n");
+-		return -ENXIO;
++		dev_err(dev, "no irq: %d\n", irq);
++		return irq;
+ 	}
  
- 	host->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(host->clk))
+ 	clk = devm_clk_get(dev, "spi");
 -- 
 2.17.1
 
