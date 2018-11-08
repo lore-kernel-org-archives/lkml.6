@@ -2,79 +2,87 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD03CECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97515ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD3E2081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:54:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD3E2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 556DC2081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:54:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CRkvQKyn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556DC2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbeKIAaI (ORCPT
+        id S1726932AbeKIAaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:30:08 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:41968 "EHLO mail.bootlin.com"
+        Thu, 8 Nov 2018 19:30:24 -0500
+Received: from imap.thunk.org ([74.207.234.97]:54324 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbeKIAaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:30:08 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E55D720970; Thu,  8 Nov 2018 15:54:14 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A0E6720510;
-        Thu,  8 Nov 2018 15:54:14 +0100 (CET)
-Date:   Thu, 8 Nov 2018 15:54:14 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <yogeshnarayan.gaur@nxp.com>, <cyrille.pitchen@wedev4u.fr>
-Subject: Re: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Message-ID: <20181108155414.48b64084@bbrezillon>
-In-Reply-To: <4de81d92-ca8e-34f1-55b2-ef1b6b9dcec7@microchip.com>
-References: <20181108110653.21063-1-tudor.ambarus@microchip.com>
-        <20181108110653.21063-4-tudor.ambarus@microchip.com>
-        <20181108135447.36a0314c@bbrezillon>
-        <86d16e39-15df-c12c-7bf3-25996db0c3a9@microchip.com>
-        <20181108151509.364e3a85@bbrezillon>
-        <4de81d92-ca8e-34f1-55b2-ef1b6b9dcec7@microchip.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726421AbeKIAaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:30:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=4eNQaYl+Bvq4EwJ6ScMXyJFtmkmXBC9lp9Ce4bkfQyU=; b=CRkvQKynKDTo7+54Ts5wkmijGk
+        VFDd5Enmyb8JPLdXMsMjYXHdNH6MKAo0TLrtDX8INge5xXSyG785G/tD0mGJcyuU7EbYUo5CLm5MQ
+        d2pF9bATEo7Xsnm+4vYRGmjLWvsb7ze36KhTyEkqh14LpYTDZw4/DfR+w6Jgyh0JMU8w=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKlhX-0006Kj-6F; Thu, 08 Nov 2018 14:54:31 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id EF6467A7D2B; Thu,  8 Nov 2018 09:54:29 -0500 (EST)
+Date:   Thu, 8 Nov 2018 09:54:29 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: missing !bh check in ext4_xattr_inode_write()
+Message-ID: <20181108145429.GE22459@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+References: <20181107163346.GH9919@thunk.org>
+ <a3f1e28c-fba0-2b07-b710-c559fab555b8@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3f1e28c-fba0-2b07-b710-c559fab555b8@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018 14:48:11 +0000
-<Tudor.Ambarus@microchip.com> wrote:
-  
-> >>>> +    
-> >>>
-> >>> Maybe I missed something but it sounds like this change is just
-> >>> optimizing the SPMT parsing a bit, and to be honest, I'm not sure this
-> >>> is really needed. Most of the time, smpt_len will be rather small, so
-> >>> trying to bail out earlier is not bringing much perf improvements.    
-> >>
-> >> It's rather a smtp validity check. I want to return an error if there are not
-> >> enough detection commands to identify the map id.  
-> > 
-> > You would have failed the same way without this validity check after a
-> > maximum of smpt_len iterations, right?
-> >   
-> 
-> Right. The correct fix would be to count nmaps in a loop, then do these checks,
-> and if all ok, search for the map_id in another loop :).
+On Thu, Nov 08, 2018 at 09:46:30AM +0300, Vasily Averin wrote:
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 0b9688683526..415f73d4c9e6 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -1384,6 +1384,12 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
+>  		bh = ext4_getblk(handle, ea_inode, block, 0);
+>  		if (IS_ERR(bh))
+>  			return PTR_ERR(bh);
+> +		if (!bh) {
+> +			WARN_ON_ONCE(1);
+> +			__ext4_error_inode(ea_inode, __func__, __LINE__, 0,
+> +					   "ext4_getblk() return bh = NULL");
 
-Or just error out when !ncmds && nmaps > 1.
+You should use EXT4_ERROR_INODE(), defined in ext4.h, not
+__ext4_error_inode().  That way you don't need to explicitly specify
+__func__ and __LINE__, and we the compiler will correctly do printf
+format checking even when CONFIG_PRINTK is not set.
 
-If you insist on keeping the ncmds && nmaps >= (1 << (ncmds + 1))
-check, that's fine, but it's not replacing the consistency check I was
-doing ;-).
+						- Ted
