@@ -6,46 +6,49 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1B5ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5686CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3A120989
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13CDD21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSez7Mab"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3A120989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1M0VqFN/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13CDD21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730725AbeKIHi3 (ORCPT
+        id S1730737AbeKIHia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57676 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:38:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730694AbeKIHi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:38:28 -0500
+        id S1729760AbeKIHia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:38:30 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5ED22146E;
-        Thu,  8 Nov 2018 22:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBD4F20892;
+        Thu,  8 Nov 2018 22:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714459;
-        bh=g7Sve0LJH5rpIbkWRSoFigHVxE6cSOoi+A6wLoFLJgM=;
+        s=default; t=1541714461;
+        bh=KTC0HapOIpY91OaCWbHZKr2fZ2fv4buoK8yW1C3/71c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mSez7Mab8oY3h6JiIsDbeVwo66RFEV34RKlCxqoZyCGI795f1df3WCybibqrP3iUl
-         0v7TJHsvZjXLixGrcMCpDP1SogDSni5wbWid0bhW99Oac+8VCWeHSoW+PC0ZdwbuMn
-         vQTAy3YHduCupXddlBAtaeLtYbhzO9Rm1FMt/M2U=
+        b=1M0VqFN/Uy5+K6pxEdgw9qM496YQ/ao4Nvh5sbi5Aeo8h1OfrzPoBxxrNm/tghIYC
+         1VYhEHrb1LGoVU7XVv+P7W7c+idDQkv/Rvaxa07ud5o5B7ymJKId9mT3bQp+tzqR9k
+         +qscOxpfPTLcvzcNeaypxmDKJPVS0MU1QxhvDX3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 100/114] rtnetlink: Disallow FDB configuration for non-Ethernet device
-Date:   Thu,  8 Nov 2018 13:51:55 -0800
-Message-Id: <20181108215109.748279597@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "stable@vger.kernel.org, linux-kernel@vger.kernel.org, jannh@google.com,
+        mingo@kernel.org, peterz@infradead.org, torvalds@linux-foundation.org,
+        Will Deacon" <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.4 101/114] mremap: properly flush TLB before releasing the page
+Date:   Thu,  8 Nov 2018 13:51:56 -0800
+Message-Id: <20181108215109.820959929@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,124 +66,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit da71577545a52be3e0e9225a946e5fd79cfab015 ]
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-When an FDB entry is configured, the address is validated to have the
-length of an Ethernet address, but the device for which the address is
-configured can be of any type.
+Commit eb66ae030829605d61fbef1909ce310e29f78821 upstream.
 
-The above can result in the use of uninitialized memory when the address
-is later compared against existing addresses since 'dev->addr_len' is
-used and it may be greater than ETH_ALEN, as with ip6tnl devices.
+This is a backport to stable 4.4.y.
 
-Fix this by making sure that FDB entries are only configured for
-Ethernet devices.
+Jann Horn points out that our TLB flushing was subtly wrong for the
+mremap() case.  What makes mremap() special is that we don't follow the
+usual "add page to list of pages to be freed, then flush tlb, and then
+free pages".  No, mremap() obviously just _moves_ the page from one page
+table location to another.
 
-BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
-CPU: 1 PID: 4318 Comm: syz-executor998 Not tainted 4.19.0-rc3+ #49
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x14b/0x190 lib/dump_stack.c:113
-  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
-  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
-  memcmp+0x11d/0x180 lib/string.c:863
-  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
-  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
-  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
-  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
-  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
-  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
-  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
-  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
-  __sys_sendmsg net/socket.c:2152 [inline]
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
-  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440ee9
-Code: e8 cc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff6a93b518 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440ee9
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 000000000000b4b0
-R13: 0000000000401ec0 R14: 0000000000000000 R15: 0000000000000000
+That matters, because mremap() thus doesn't directly control the
+lifetime of the moved page with a freelist: instead, the lifetime of the
+page is controlled by the page table locking, that serializes access to
+the entry.
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
-  kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
-  kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:100
-  slab_post_alloc_hook mm/slab.h:446 [inline]
-  slab_alloc_node mm/slub.c:2718 [inline]
-  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:996 [inline]
-  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
-  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
-  __sys_sendmsg net/socket.c:2152 [inline]
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
-  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+As a result, we need to flush the TLB not just before releasing the lock
+for the source location (to avoid any concurrent accesses to the entry),
+but also before we release the destination page table lock (to avoid the
+TLB being flushed after somebody else has already done something to that
+page).
 
-v2:
-* Make error message more specific (David)
+This also makes the whole "need_flush" logic unnecessary, since we now
+always end up flushing the TLB for every valid entry.
 
-Fixes: 090096bf3db1 ("net: generic fdb support for drivers without ndo_fdb_<op>")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-and-tested-by: syzbot+3a288d5f5530b901310e@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+d53ab4e92a1db04110ff@syzkaller.appspotmail.com
-Cc: Vlad Yasevich <vyasevich@gmail.com>
-Cc: David Ahern <dsahern@gmail.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-and-tested-by: Jann Horn <jannh@google.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[will: backport to 4.4 stable]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ mm/huge_memory.c |    6 +++++-
+ mm/mremap.c      |   21 ++++++++++++++++-----
+ 2 files changed, 21 insertions(+), 6 deletions(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2734,6 +2734,11 @@ static int rtnl_fdb_add(struct sk_buff *
- 		return -EINVAL;
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1511,7 +1511,7 @@ int move_huge_pmd(struct vm_area_struct
+ 	spinlock_t *old_ptl, *new_ptl;
+ 	int ret = 0;
+ 	pmd_t pmd;
+-
++	bool force_flush = false;
+ 	struct mm_struct *mm = vma->vm_mm;
+ 
+ 	if ((old_addr & ~HPAGE_PMD_MASK) ||
+@@ -1539,6 +1539,8 @@ int move_huge_pmd(struct vm_area_struct
+ 		if (new_ptl != old_ptl)
+ 			spin_lock_nested(new_ptl, SINGLE_DEPTH_NESTING);
+ 		pmd = pmdp_huge_get_and_clear(mm, old_addr, old_pmd);
++		if (pmd_present(pmd))
++			force_flush = true;
+ 		VM_BUG_ON(!pmd_none(*new_pmd));
+ 
+ 		if (pmd_move_must_withdraw(new_ptl, old_ptl)) {
+@@ -1547,6 +1549,8 @@ int move_huge_pmd(struct vm_area_struct
+ 			pgtable_trans_huge_deposit(mm, new_pmd, pgtable);
+ 		}
+ 		set_pmd_at(mm, new_addr, new_pmd, pmd_mksoft_dirty(pmd));
++		if (force_flush)
++			flush_tlb_range(vma, old_addr, old_addr + PMD_SIZE);
+ 		if (new_ptl != old_ptl)
+ 			spin_unlock(new_ptl);
+ 		spin_unlock(old_ptl);
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -96,6 +96,8 @@ static void move_ptes(struct vm_area_str
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	pte_t *old_pte, *new_pte, pte;
+ 	spinlock_t *old_ptl, *new_ptl;
++	bool force_flush = false;
++	unsigned long len = old_end - old_addr;
+ 
+ 	/*
+ 	 * When need_rmap_locks is true, we take the i_mmap_rwsem and anon_vma
+@@ -143,12 +145,26 @@ static void move_ptes(struct vm_area_str
+ 		if (pte_none(*old_pte))
+ 			continue;
+ 		pte = ptep_get_and_clear(mm, old_addr, old_pte);
++		/*
++		 * If we are remapping a valid PTE, make sure
++		 * to flush TLB before we drop the PTL for the PTE.
++		 *
++		 * NOTE! Both old and new PTL matter: the old one
++		 * for racing with page_mkclean(), the new one to
++		 * make sure the physical page stays valid until
++		 * the TLB entry for the old mapping has been
++		 * flushed.
++		 */
++		if (pte_present(pte))
++			force_flush = true;
+ 		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
+ 		pte = move_soft_dirty_pte(pte);
+ 		set_pte_at(mm, new_addr, new_pte, pte);
  	}
  
-+	if (dev->type != ARPHRD_ETHER) {
-+		pr_info("PF_BRIDGE: FDB add only supported for Ethernet devices");
-+		return -EINVAL;
-+	}
-+
- 	addr = nla_data(tb[NDA_LLADDR]);
+ 	arch_leave_lazy_mmu_mode();
++	if (force_flush)
++		flush_tlb_range(vma, old_end - len, old_end);
+ 	if (new_ptl != old_ptl)
+ 		spin_unlock(new_ptl);
+ 	pte_unmap(new_pte - 1);
+@@ -168,7 +184,6 @@ unsigned long move_page_tables(struct vm
+ {
+ 	unsigned long extent, next, old_end;
+ 	pmd_t *old_pmd, *new_pmd;
+-	bool need_flush = false;
+ 	unsigned long mmun_start;	/* For mmu_notifiers */
+ 	unsigned long mmun_end;		/* For mmu_notifiers */
  
- 	err = fdb_vid_parse(tb[NDA_VLAN], &vid);
-@@ -2836,6 +2841,11 @@ static int rtnl_fdb_del(struct sk_buff *
- 		return -EINVAL;
+@@ -207,7 +222,6 @@ unsigned long move_page_tables(struct vm
+ 					anon_vma_unlock_write(vma->anon_vma);
+ 			}
+ 			if (err > 0) {
+-				need_flush = true;
+ 				continue;
+ 			} else if (!err) {
+ 				split_huge_page_pmd(vma, old_addr, old_pmd);
+@@ -224,10 +238,7 @@ unsigned long move_page_tables(struct vm
+ 			extent = LATENCY_LIMIT;
+ 		move_ptes(vma, old_pmd, old_addr, old_addr + extent,
+ 			  new_vma, new_pmd, new_addr, need_rmap_locks);
+-		need_flush = true;
  	}
+-	if (likely(need_flush))
+-		flush_tlb_range(vma, old_end-len, old_addr);
  
-+	if (dev->type != ARPHRD_ETHER) {
-+		pr_info("PF_BRIDGE: FDB delete only supported for Ethernet devices");
-+		return -EINVAL;
-+	}
-+
- 	addr = nla_data(tb[NDA_LLADDR]);
+ 	mmu_notifier_invalidate_range_end(vma->vm_mm, mmun_start, mmun_end);
  
- 	err = fdb_vid_parse(tb[NDA_VLAN], &vid);
 
 
