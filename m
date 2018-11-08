@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE09DECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19305ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999D720840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:42:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A1F20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:45:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1wNA+eQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999D720840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuQh/MiZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A1F20844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeKIHTj (ORCPT
+        id S1727227AbeKIHXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:19:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41026 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeKIHTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:19:39 -0500
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        id S1726140AbeKIHXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:23:06 -0500
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54F1120840;
-        Thu,  8 Nov 2018 21:42:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F7B32081C;
+        Thu,  8 Nov 2018 21:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541713334;
-        bh=yn+R3U8VEdQCXLTuQjQr/tLZiE53ikIyiSiIoX70mK0=;
+        s=default; t=1541713540;
+        bh=3hRuEueFWIpYrJxje7Y95tqVKrazAjZ1LCzmEIxqJAs=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=n1wNA+eQ9Ta+9cN/6R55gCRHJEzlQIiKF+C4Ww6JLF4f9l0HrMHpKMYgQm9e816Ko
-         9fYs75nhfgarEGWghPdKPaFyH8x7scVxuK2S7/PYCSmYhYg67mfRCRaS0OmbEgAnCt
-         GdjYsRKtFAqdNXDS7VEL9xw8y7PqYnLhxyR3+sqw=
-Received: by mail-qk1-f173.google.com with SMTP id e4so29247157qkh.6;
-        Thu, 08 Nov 2018 13:42:14 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJ8riYz2QZQrov2vVAkFddAN8nCbz7nto2n0B7+6P3NqBrZzFuf
-        MfQGLEP3dVDmpICeafl0bY71w4cSYcva4YrsnQ==
-X-Google-Smtp-Source: AJdET5fBz41FpSlKcF/OOg7qW4JLfXYh2fwBybUyU8PqmMQvycOPXz+X7JiO5SaLy6lJcPpgFZ1CFasFRC1P0apJS2E=
-X-Received: by 2002:a37:9201:: with SMTP id u1-v6mr5681911qkd.29.1541713333546;
- Thu, 08 Nov 2018 13:42:13 -0800 (PST)
+        b=EuQh/MiZBLVJD4+JrNQr4Te42+A9M9AKVvu6V3YYZ+ebUUyIJL4uyQPuxptHkuxl9
+         SB7Fh5eUaB4sjXVYJLbf6B/Yz1NEG8hBaGAWbhXHAOir5kPtFmjJIyhTZHV0S/AtqC
+         glbkUOWGgIQ5N1kUKeHmuEeupUz8Bd8zzvYD10Wo=
+Received: by mail-yb1-f177.google.com with SMTP id t13-v6so8966356ybb.8;
+        Thu, 08 Nov 2018 13:45:40 -0800 (PST)
+X-Gm-Message-State: AGRZ1gK8npocx6Oly7NClfBdVK3Pv1RjjbmZaNFBitjvY71BPyUOviWu
+        g79m8SsPBwAcbkFlqjilghNJgZfYQTAVXsjidw==
+X-Google-Smtp-Source: AJdET5eS+ReyITnV7vV086fuk4XK6GdUNWW50GcvOC8R+PVDYTohJSZ1u/FVUEAxdi0DpAq0Hstk1NvNOeUx7csFWtE=
+X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr6585470qvl.77.1541713539354;
+ Thu, 08 Nov 2018 13:45:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20181108184009.18430-1-vkoul@kernel.org> <20181108184009.18430-13-vkoul@kernel.org>
-In-Reply-To: <20181108184009.18430-13-vkoul@kernel.org>
+References: <20181108184009.18430-1-vkoul@kernel.org> <20181108184009.18430-2-vkoul@kernel.org>
+In-Reply-To: <20181108184009.18430-2-vkoul@kernel.org>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 8 Nov 2018 15:42:02 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJSszvQ0QC0LLT4ho+xMgiMJRVJyrM93OgH21Neu6xMqw@mail.gmail.com>
-Message-ID: <CAL_JsqJSszvQ0QC0LLT4ho+xMgiMJRVJyrM93OgH21Neu6xMqw@mail.gmail.com>
-Subject: Re: [PATCH v4 12/18] arm64: dts: qcom: pms405: add gpios
+Date:   Thu, 8 Nov 2018 15:45:28 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKsCpofdsP_TojGxeCkv59r5Ce7-4Sz1B1V_QCL1eQDVg@mail.gmail.com>
+Message-ID: <CAL_JsqKsCpofdsP_TojGxeCkv59r5Ce7-4Sz1B1V_QCL1eQDVg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/18] arm64: dts: qcom: qcs404: add base dts files
 To:     Vinod <vkoul@kernel.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -65,48 +65,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 12:41 PM Vinod Koul <vkoul@kernel.org> wrote:
+On Thu, Nov 8, 2018 at 12:40 PM Vinod Koul <vkoul@kernel.org> wrote:
 >
-> Add the GPIOs present on PMS405 chip.
+> Add base dts files for QCS404 chipset along with cpu, timer,
+> gcc and uart2 nodes.
 >
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
->  arch/arm64/boot/dts/qcom/pms405.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+>  arch/arm64/boot/dts/qcom/qcs404.dtsi | 175 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 175 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404.dtsi
 >
-> diff --git a/arch/arm64/boot/dts/qcom/pms405.dtsi b/arch/arm64/boot/dts/qcom/pms405.dtsi
-> index 2b275bbdafa3..85a3228abaf9 100644
-> --- a/arch/arm64/boot/dts/qcom/pms405.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pms405.dtsi
-> @@ -10,6 +10,25 @@
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> +               pms405_gpios: gpios@c000 {
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> new file mode 100644
+> index 000000000000..b77d1198ba79
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> @@ -0,0 +1,175 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, Linaro Limited
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,gcc-qcs404.h>
+> +
+> +/ {
+> +       interrupt-parent = <&intc>;
+> +
+> +       #address-cells = <2>;
+> +       #size-cells = <2>;
+> +
+> +       chosen { };
+> +
+> +       clocks {
+> +               xo_board: xo_board {
 
-gpio@...
+Build your dtbs with "W=12" and fix any warnings. You should get a
+warning about '_'.
 
-> +                       compatible = "qcom,pms405-gpio";
-> +                       reg = <0xc000>;
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +                       interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc1 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc2 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc3 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc4 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc5 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc6 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc7 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc8 0 IRQ_TYPE_NONE>,
-> +                               <0 0xc9 0 IRQ_TYPE_NONE>,
-> +                               <0 0xca 0 IRQ_TYPE_NONE>,
-> +                               <0 0xcb 0 IRQ_TYPE_NONE>;
+> +                       compatible = "fixed-clock";
+> +                       #clock-cells = <0>;
+> +                       clock-frequency = <19200000>;
+> +               };
+> +       };
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               CPU0: cpu@0 {
+
+unit address is wrong.
+
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a53";
+> +                       reg = <0x100>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_0>;
 > +               };
 > +
->                 rtc@6000 {
->                         compatible = "qcom,pm8941-rtc";
->                         reg = <0x6000>;
+> +               CPU1: cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a53";
+> +                       reg = <0x101>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_0>;
+> +               };
+> +
+> +               CPU2: cpu@2 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a53";
+> +                       reg = <0x102>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_0>;
+> +               };
+> +
+> +               CPU3: cpu@3 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a53";
+> +                       reg = <0x103>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_0>;
+> +               };
+> +
+> +               L2_0: l2-cache {
+> +                       compatible = "cache";
+> +                       cache-level = <2>;
+> +               };
+> +       };
+> +
+> +       memory@80000000 {
+> +               device_type = "memory";
+> +               /* We expect the bootloader to fill in the reg */
+
+Can't you put in a default or base address at least.
+
+> +               reg = <0 0x0 0 0>;
+> +       };
+> +
+> +       psci {
+> +               compatible = "arm,psci-1.0";
+> +               method = "smc";
+> +       };
+> +
+> +       soc: soc@0 {
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0 0 0 0xffffffff>;
+> +               compatible = "simple-bus";
+> +
+> +               gcc: clock-controller@1800000 {
+> +                       compatible = "qcom,gcc-qcs404";
+> +                       reg = <0x01800000 0x80000>;
+> +                       #clock-cells = <1>;
+> +
+> +                       assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
+> +                       assigned-clock-rates = <19200000>;
+> +               };
+> +
+> +               blsp1_uart2: serial@78b1000 {
+> +                       compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+> +                       reg = <0x078b1000 0x200>;
+> +                       interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
+> +                       clock-names = "core", "iface";
+> +                       status = "okay";
+> +               };
+> +
+> +               intc: interrupt-controller@b000000 {
+> +                       compatible = "qcom,msm-qgic2";
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <3>;
+> +                       reg = <0x0b000000 0x1000>,
+> +                             <0x0b002000 0x1000>;
+> +               };
+> +
+> +               timer@b120000 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +                       compatible = "arm,armv7-timer-mem";
+> +                       reg = <0x0b120000 0x1000>;
+> +                       clock-frequency = <19200000>;
+> +
+> +                       frame@b121000 {
+> +                               frame-number = <0>;
+> +                               interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                                            <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0x0b121000 0x1000>,
+> +                                     <0x0b122000 0x1000>;
+> +                       };
+> +
+> +                       frame@b123000 {
+> +                               frame-number = <1>;
+> +                               interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0x0b123000 0x1000>;
+> +                               status = "disabled";
+> +                       };
+> +
+> +                       frame@b124000 {
+> +                               frame-number = <2>;
+> +                               interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0x0b124000 0x1000>;
+> +                               status = "disabled";
+> +                       };
+> +
+> +                       frame@b125000 {
+> +                               frame-number = <3>;
+> +                               interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0x0b125000 0x1000>;
+> +                               status = "disabled";
+> +                       };
+> +
+> +                       frame@b126000 {
+> +                               frame-number = <4>;
+> +                               interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0x0b126000 0x1000>;
+> +                               status = "disabled";
+> +                       };
+> +
+> +                       frame@b127000 {
+> +                               frame-number = <5>;
+> +                               interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0xb127000 0x1000>;
+> +                               status = "disabled";
+> +                       };
+> +
+> +                       frame@b128000 {
+> +                               frame-number = <6>;
+> +                               interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+> +                               reg = <0x0b128000 0x1000>;
+> +                               status = "disabled";
+> +                       };
+> +               };
+> +       };
+> +
+> +       timer {
+> +               compatible = "arm,armv8-timer";
+> +               interrupts = <GIC_PPI 2 0xff08>,
+> +                            <GIC_PPI 3 0xff08>,
+> +                            <GIC_PPI 4 0xff08>,
+> +                            <GIC_PPI 1 0xff08>;
+> +       };
+> +};
 > --
 > 2.14.4
 >
