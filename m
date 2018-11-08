@@ -4,114 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6ABDECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD46ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C9820840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C9820840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3108620825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:41:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3108620825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbeKIFSO (ORCPT
+        id S1727082AbeKIFSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:18:14 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39461 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725739AbeKIFSO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:18:14 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKqB3-00024l-B6; Thu, 08 Nov 2018 20:41:17 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gKqB2-0002Ch-R6; Thu, 08 Nov 2018 20:41:16 +0100
-Date:   Thu, 8 Nov 2018 20:41:16 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irq/irq_sim: add locking
-Message-ID: <20181108194116.tjkku7hdqf67awuq@pengutronix.de>
-References: <20181108164748.31222-1-brgl@bgdev.pl>
+        Fri, 9 Nov 2018 00:18:33 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47222 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725739AbeKIFSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:18:33 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 7psjOG2r6ZMX; Thu,  8 Nov 2018 20:41:36 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1FBB11EC02D1;
+        Thu,  8 Nov 2018 20:41:36 +0100 (CET)
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, arnd@arndb.de,
+        aryabinin@virtuozzo.com, Boqun Feng <boqun.feng@gmail.com>,
+        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linuxdrivers@attotech.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH] locking/atomics: Fix out-of-tree build
+Date:   Thu,  8 Nov 2018 20:41:28 +0100
+Message-Id: <20181108194128.13368-1-bp@alien8.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181108164748.31222-1-brgl@bgdev.pl>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Bartosz,
+From: Borislav Petkov <bp@suse.de>
 
-On Thu, Nov 08, 2018 at 05:47:48PM +0100, Bartosz Golaszewski wrote:
-> Two threads can try to fire the irq_sim with different offsets and will
-> end up fighting for the irq_work asignment. To fix it: add a mutex and
-> lock it before firing.
-> 
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  include/linux/irq_sim.h | 1 +
->  kernel/irq/irq_sim.c    | 5 +++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> index 630a57e55db6..676bfa0c12b9 100644
-> --- a/include/linux/irq_sim.h
-> +++ b/include/linux/irq_sim.h
-> @@ -29,6 +29,7 @@ struct irq_sim {
->  	int			irq_base;
->  	unsigned int		irq_count;
->  	struct irq_sim_irq_ctx	*irqs;
-> +	struct mutex		lock;
->  };
->  
->  int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
-> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> index dd20d0d528d4..2f06c24b51a0 100644
-> --- a/kernel/irq/irq_sim.c
-> +++ b/kernel/irq/irq_sim.c
-> @@ -74,6 +74,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
->  	}
->  
->  	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
-> +	mutex_init(&sim->lock);
->  	sim->irq_count = num_irqs;
->  
->  	return sim->irq_base;
-> @@ -142,10 +143,14 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
->   */
->  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
->  {
-> +	mutex_lock(&sim->lock);
-> +
->  	if (sim->irqs[offset].enabled) {
->  		sim->work_ctx.irq = irq_sim_irqnum(sim, offset);
->  		irq_work_queue(&sim->work_ctx.work);
->  	}
-> +
-> +	mutex_unlock(&sim->lock);
+Building a kernel out of tree with:
 
-This doesn't fix the issue I think. irq_work_queue() only schedules the
-work function. If after irq_sim_fire() returned but before the worker
-runs another irq_sim_fire() is issued the value is still overwritten.
+  make O=/tmp/b oldconfig
+  cd /tmp/b
+  make
 
-Best regards
-Uwe
+gives this:
 
+  CALL    /mnt/kernel/kernel/linux/scripts/atomic/check-atomics.sh
+/bin/bash: scripts/atomic/check-atomics.sh: No such file or directory
+make[3]: *** [/mnt/kernel/kernel/linux/./Kbuild:86: old-atomics] Error 127
+make[3]: *** Waiting for unfinished jobs....
+
+Make the command use the proper build prerequisite which is the absolute
+path to the script.
+
+Fixes: 8d32588077bd ("locking/atomics: Check generated headers are up-to-date")
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: arnd@arndb.de
+Cc: aryabinin@virtuozzo.com
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: catalin.marinas@arm.com
+Cc: dvyukov@google.com
+Cc: glider@google.com
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxdrivers@attotech.com
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ Kbuild | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Kbuild b/Kbuild
+index 47c9fe175bd9..780048056ac5 100644
+--- a/Kbuild
++++ b/Kbuild
+@@ -80,7 +80,7 @@ always += old-atomics
+ targets += old-atomics
+ 
+ quiet_cmd_atomics = CALL    $<
+-      cmd_atomics = $(CONFIG_SHELL) scripts/atomic/check-atomics.sh
++      cmd_atomics = $(CONFIG_SHELL) $<
+ 
+ old-atomics: scripts/atomic/check-atomics.sh FORCE
+ 	$(call cmd,atomics)
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.19.1
+
