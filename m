@@ -2,172 +2,130 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3031BECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C5DECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF14F20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BB6220857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSfeWMRQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF14F20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="X+pyiBXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB6220857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbeKICEu (ORCPT
+        id S1726869AbeKICGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:04:50 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45658 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeKICEt (ORCPT
+        Thu, 8 Nov 2018 21:06:08 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54863 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbeKICGH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:04:49 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p144-v6so17382607oic.12;
-        Thu, 08 Nov 2018 08:28:34 -0800 (PST)
+        Thu, 8 Nov 2018 21:06:07 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so1893857wma.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:29:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kqwC/MXTF+MXiQ+QadDmgzWzBhRRPFCZ5JeJPIisQkk=;
-        b=mSfeWMRQIvkWPpWf1maE430x58mCX+qGCZ9UviQ7Z/t56aOS5MBkAmv51OWjx26LOD
-         gs9h9SpYqLkwVlbJRQt8c1UaEy1lnVU4038ztJ2R0CPqEyDAINX8kdU+xp7cxUtitA7B
-         SCYgrpzGceGPMoOEC8VSUgsulnOszWlHLr4MMcEcXlSgiNZWOzn6GFKvbzlr8RqcNabI
-         RxSJmVpZWAyt/XreTRJwH6gJBiiak+f0tRTfxsPj0IjE/GF5xEZMonbCKYwAC/YJMhwp
-         TpeyrDssgY1JBp3VkMzAIVOtBIqSEC30hasA6Zb6LuyhB9vvxTcRX+WTWkKz8mBiSyhG
-         j6rA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=ZCgvZXGzhiPiUR9nmkJpVfvqYrVP3dagzuJ60T+7Hx0=;
+        b=X+pyiBXJ9tqy0a+lzo7aG9XP/Bv4DDfFDsAhar1ng6WWv1pCs9EBNM+EjaYuC/53FV
+         YByvPqfahmC5Y1vx/wfYwccW+pCcEmLqDKqgr+/Alm9gTKrUIcpwXBGIIsqyjRqQ+ee6
+         eG9E8kJudhOK0wU2TEU8mTHcgfMQxUMkpA7kIykMesnwXWR+OZhlupc4c3k1gwxJkZW7
+         KhJNAR41EaHOLHwMJRljNX6NbInRUPSb4gpC3tdBL4CzRYw39j+lGaHbu1wh02RXodOW
+         fatX3JztFYbDA+hm9H4IiasGAmaribgJ90H9k3tAy0cJn4Wou0YTvfEbuf0EtAGqKSni
+         wUNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kqwC/MXTF+MXiQ+QadDmgzWzBhRRPFCZ5JeJPIisQkk=;
-        b=cl+BZAGMtkzYMmOAPwjzcv7MZs/QuIvKmjBlj+ZNIVVx0CJPeBJW9g99/f2a9VPv3H
-         0dGVPsiJCvwF2gDQlArCw7eJOYr4Gxp1Whns57TjpbJ06XXeg6hU+saX0VC1MBUNfY9f
-         3Hf2nk0lO2Td7jRDTH85dGntkffDzv6d9Wom1FUWa6mP+B+M+mvegSZp5EtDww7+qNpj
-         aD6jXoPXOfMP0iyd/vkwe374B+OrHwmGoVCKAFUXBeXQ8K7lqe9bVucHqs8osl/lLMWA
-         qZrQwNhDMugZCm/Vi6NAykScyW8dcCm08vEIv8e1BvyppO0B1vIEV9H1e117GCZZUJ09
-         Wpqg==
-X-Gm-Message-State: AGRZ1gLddmgPBGprR0cKinosis8oXr9qyp9v7z4dy4ugfp7S/Vuk35rh
-        zqviT/5u2K4aEGvXY5I1yvgpr2JUcfVoodi0g7E=
-X-Google-Smtp-Source: AJdET5fY1uhfJsajK+RDLyexjONaqzI0+YS2CHz1W1vmxm5LTBswqdL7JZ/cE2terepb7h1Zlf3zDvGmSrJA+JZcj4M=
-X-Received: by 2002:aca:3441:: with SMTP id b62-v6mr855470oia.145.1541694513687;
- Thu, 08 Nov 2018 08:28:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20181108063929.29720-1-anarsoul@gmail.com> <20181108063929.29720-4-anarsoul@gmail.com>
- <CAGb2v65zb4rXJJv018AfDC-YQgAAmahmQ=-Bb5CyU3kA6wBAqg@mail.gmail.com>
-In-Reply-To: <CAGb2v65zb4rXJJv018AfDC-YQgAAmahmQ=-Bb5CyU3kA6wBAqg@mail.gmail.com>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Thu, 8 Nov 2018 08:28:07 -0800
-Message-ID: <CA+E=qVeG0g1axC1YhAhMOo2xcM3_5RupkiJEu3Aebaomx_7Gww@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] arm64: dts: allwinner: a64: enable sound on Pinebook
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=ZCgvZXGzhiPiUR9nmkJpVfvqYrVP3dagzuJ60T+7Hx0=;
+        b=GdslR3TzWVfSHZ92nwLYzVkiwhg2FRIEQOpOu1lp6h/mV6j7SN+yR7flxQ4gLIv2Cn
+         p8YwJlfQSpr7uEX6ZZQhxTVfRu1nexA8LZ6kRpo5Qox96mRe5SqON4V0KgMe1YN0C4Ry
+         wWXD3uSovQiG91paoNJDPDEfQtY5FfCtvY8WcDDEeOqTD1s6bQG8T4jUn2oJfJXCdIHe
+         DPgT/0lzRSftMCf7b/dqmk2YTH8JS3xruq3mMRF1nY/1mbj7r/Zby/9BV5HTRW+uQFlv
+         IkdD4c7oadLXIERQ+ejHTnLDxCQy/4+TFOv8hDqKTMYSSTuuMPcHhEG/mkLxZZK6iayZ
+         QqSQ==
+X-Gm-Message-State: AGRZ1gLB1KKpWHO2CWI0mWp/Lq/4fQo1/EH+dDAbZtdYg/fvryieoMpu
+        FgE59GqXY/lchEbTt600YC+VKg==
+X-Google-Smtp-Source: AJdET5eOFGG4p/K2+ciW8ctMuWNE7I+hStdNgl6Qproe7IyikKoTMW0HkiP2zx/A3bewcjcW89skCw==
+X-Received: by 2002:a1c:dc86:: with SMTP id t128-v6mr1769455wmg.111.1541694590296;
+        Thu, 08 Nov 2018 08:29:50 -0800 (PST)
+Received: from boomer.baylibre.com ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 67-v6sm4132103wrm.32.2018.11.08.08.29.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 08:29:49 -0800 (PST)
+Message-ID: <a52c64d6159c73e1cb97089ed051321f121f0467.camel@baylibre.com>
+Subject: Re: [PATCH 3/4] Documentation: bindings: Add missing Amlogic SCPI
+ sensor bindings
+From:   jbrunet@baylibre.com
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 08 Nov 2018 17:29:47 +0100
+In-Reply-To: <20181108160457.GA10953@e107155-lin>
+References: <20181108135352.8459-1-jbrunet@baylibre.com>
+         <20181108135352.8459-4-jbrunet@baylibre.com>
+         <20181108160457.GA10953@e107155-lin>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 11:30 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Thu, Nov 8, 2018 at 2:42 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
-> >
-> > This commit enables I2S, digital and analog parts of audiocodec on
-> > Pinebook
-> >
-> > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+On Thu, 2018-11-08 at 16:04 +0000, Sudeep Holla wrote:
+> On Thu, Nov 08, 2018 at 02:53:51PM +0100, Jerome Brunet wrote:
+> > amlogic,meson-gxbb-scpi-sensors is both the driver and DT but is not
+> > documented. Just add it to amlogic's scpi documentation
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > > ---
-> >  .../dts/allwinner/sun50i-a64-pinebook.dts     | 42 +++++++++++++++++++
-> >  1 file changed, 42 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-> > index 77fac84797e9..73f171f4ba9b 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-> > @@ -64,6 +64,23 @@
-> >                 compatible = "mmc-pwrseq-simple";
-> >                 reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> >         };
+> >  Documentation/devicetree/bindings/arm/amlogic,scpi.txt | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
+> > b/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
+> > index 7b9a861e9306..5ab59da052df 100644
+> > --- a/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
+> > +++ b/Documentation/devicetree/bindings/arm/amlogic,scpi.txt
+> > @@ -17,4 +17,11 @@ Required sub-node properties:
+> >  - compatible : should be "amlogic,meson-gxbb-scp-shmem" for SRAM based
+> > shared
+> >  		memory on Amlogic GXBB SoC.
+> >  
+> > +Sensor bindings for the sensors based on SCPI Message Protocol
+> > +--------------------------------------------------------------
+> > +SCPI provides an API to access the various sensors on the SoC.
 > > +
-> > +       speaker_amp: speaker_amp {
-> > +               compatible = "simple-audio-amplifier";
-> > +               enable-gpios = <&pio 7 7 GPIO_ACTIVE_HIGH>; /* PH7 */
->
-> You might want to add a sound-name-prefix property. See
+> > +Required properties:
+> > +- compatible : should be "amlogic,meson-gxbb-scpi-sensors".
+> > +
+> 
+> Not sure if it's worth mentioning the reason for being able to identify
+> amlogic,meson-gxbb sensors from generic scpi ones. IIRC it was for the
+> unit values of these sensors are different ? But I will leave that to
+> DT or platform maintainers' taste.
 
-No need, there's only speaker amplifier in Pinebook.
+Yes Sudeep, the unit are different.
+If we probe on the generic one, it will "work" but the result is just not
+good. 
 
->
->     Documentation/devicetree/bindings/sound/name-prefix.txt
->
-> Also this should have a reference to its power supply regulator.
+BTW, the point of this patch is merely to remove an existing issue.
+The scpi driver and meson-gx.dtsi are both refering to an undocumented
+compatible.
 
-It's powered from V5P0_USB according to schematics, which comes out of
-5V BOOST USB HOST MODE POWER - and it's not controlled by software. So
-there's nothing to reference.
+> 
+> --
+> Regards,
+> Sudeep
 
->
-> > +       };
-> > +};
-> > +
-> > +&codec {
-> > +       status = "okay";
-> > +};
-> > +
-> > +&codec_analog {
-> > +       status = "okay";
-> > +};
-> > +
-> > +&dai {
-> > +       status = "okay";
-> >  };
-> >
-> >  &ehci0 {
-> > @@ -267,6 +284,31 @@
-> >         vcc-hdmi-supply = <&reg_dldo1>;
-> >  };
-> >
-> > +&sound {
-> > +       status = "okay";
-> > +       simple-audio-card,widgets = "Microphone", "Internal Microphone Left",
-> > +                                   "Microphone", "Internal Microphone Right",
-> > +                                   "Headphone", "Headphone Jack",
-> > +                                   "Speaker", "Internal Speaker";
-> > +       simple-audio-card,aux-devs = <&codec_analog>, <&speaker_amp>;
-> > +       simple-audio-card,routing =
-> > +                       "Left DAC", "AIF1 Slot 0 Left",
-> > +                       "Right DAC", "AIF1 Slot 0 Right",
-> > +                       "INL", "LINEOUT",
-> > +                       "INR", "LINEOUT",
-> > +                       "Internal Speaker", "OUTL",
-> > +                       "Internal Speaker", "OUTR",
-> > +                       "Headphone Jack", "HP",
-> > +                       "AIF1 Slot 0 Left ADC", "Left ADC",
-> > +                       "AIF1 Slot 0 Right ADC", "Right ADC",
-> > +                       "Left ADC", "ADC",
-> > +                       "Right ADC", "ADC",
-> > +                       "Internal Microphone Left", "MBIAS",
-> > +                       "MIC1", "Internal Microphone Left",
-> > +                       "Internal Microphone Right", "HBIAS",
-> > +                       "MIC2", "Internal Microphone Right";
->
-> The schematics is missing the actual jack, but this looks to be correct.
->
-> ChenYu
->
-> > +};
-> > +
-> >  &uart0 {
-> >         pinctrl-names = "default";
-> >         pinctrl-0 = <&uart0_pb_pins>;
-> > --
-> > 2.19.1
-> >
+
