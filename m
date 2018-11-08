@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E3BECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F08ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F29A214DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AA7E21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wzvnRhcC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F29A214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0rKt9dI3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA7E21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732839AbeKIHrA (ORCPT
+        id S1732844AbeKIHrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:47:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40788 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:47:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730877AbeKIHq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:59 -0500
+        id S1730057AbeKIHrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:47:06 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC52520989;
-        Thu,  8 Nov 2018 22:09:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 193F221019;
+        Thu,  8 Nov 2018 22:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714968;
-        bh=Iu0ByeQGvht0AYy34sDOMAB2WacFFW7Fgngv0uJBSZ0=;
+        s=default; t=1541714974;
+        bh=WV5Bp7FOvNzUeg+29b3fYKBsd0MrQJGxt1aEEnldADY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wzvnRhcCWplGbozI1GjsF5i4wcWBb2vWbWkxYtHwANkwIgqqelqT/Phoj4fZMMweW
-         SH1i63RFmUlYqNYgzPIo9DHA1srGkP4myID94R3Nlu9F3Q2KP76nN1fA2KE3p1cngd
-         YTnEqvmXph+wTHbnF10fWOf4WaxwJgqE94lRJg9k=
+        b=0rKt9dI3/WXCeGTKjelrmwkFvZoTIgnTgW8NAZyiA6dukihPnrDz+/ou4Dd9V/76r
+         CPp0eb46e1B5wU2KAkvT0IriujKYNY8YEfLSqhdTrQawZq1tgB4qdHM5GGBNEQwt86
+         wvIL5zv+ycuOC5CGnKPP38rWHA4/ESshEEKf0bDo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.18 14/34] IB/ucm: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Nov 2018 13:52:43 -0800
-Message-Id: <20181108215139.787148915@linuxfoundation.org>
+        stable@vger.kernel.org, Tobias Herzog <t-herzog@gmx.de>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.18 16/34] cdc-acm: correct counting of UART states in serial state notification
+Date:   Thu,  8 Nov 2018 13:52:45 -0800
+Message-Id: <20181108215139.917858184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -63,54 +62,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Tobias Herzog <t-herzog@gmx.de>
 
-commit 0295e39595e1146522f2722715dba7f7fba42217 upstream.
+commit f976d0e5747ca65ccd0fb2a4118b193d70aa1836 upstream.
 
-hdr.cmd can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+The usb standard ("Universal Serial Bus Class Definitions for Communication
+Devices") distiguishes between "consistent signals" (DSR, DCD), and
+"irregular signals" (break, ring, parity error, framing error, overrun).
+The bits of "irregular signals" are set, if this error/event occurred on
+the device side and are immeadeatly unset, if the serial state notification
+was sent.
+Like other drivers of real serial ports do, just the occurence of those
+events should be counted in serial_icounter_struct (but no 1->0
+transitions).
 
-This issue was detected with the help of Smatch:
-
-drivers/infiniband/core/ucm.c:1127 ib_ucm_write() warn: potential
-spectre issue 'ucm_cmd_table' [r] (local cap)
-
-Fix this by sanitizing hdr.cmd before using it to index
-ucm_cmd_table.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Tobias Herzog <t-herzog@gmx.de>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/class/cdc-acm.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/infiniband/core/ucm.c
-+++ b/drivers/infiniband/core/ucm.c
-@@ -46,6 +46,8 @@
- #include <linux/mutex.h>
- #include <linux/slab.h>
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -309,17 +309,17 @@ static void acm_process_notification(str
  
-+#include <linux/nospec.h>
-+
- #include <linux/uaccess.h>
+ 		if (difference & ACM_CTRL_DSR)
+ 			acm->iocount.dsr++;
+-		if (difference & ACM_CTRL_BRK)
+-			acm->iocount.brk++;
+-		if (difference & ACM_CTRL_RI)
+-			acm->iocount.rng++;
+ 		if (difference & ACM_CTRL_DCD)
+ 			acm->iocount.dcd++;
+-		if (difference & ACM_CTRL_FRAMING)
++		if (newctrl & ACM_CTRL_BRK)
++			acm->iocount.brk++;
++		if (newctrl & ACM_CTRL_RI)
++			acm->iocount.rng++;
++		if (newctrl & ACM_CTRL_FRAMING)
+ 			acm->iocount.frame++;
+-		if (difference & ACM_CTRL_PARITY)
++		if (newctrl & ACM_CTRL_PARITY)
+ 			acm->iocount.parity++;
+-		if (difference & ACM_CTRL_OVERRUN)
++		if (newctrl & ACM_CTRL_OVERRUN)
+ 			acm->iocount.overrun++;
+ 		spin_unlock(&acm->read_lock);
  
- #include <rdma/ib.h>
-@@ -1123,6 +1125,7 @@ static ssize_t ib_ucm_write(struct file
- 
- 	if (hdr.cmd >= ARRAY_SIZE(ucm_cmd_table))
- 		return -EINVAL;
-+	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucm_cmd_table));
- 
- 	if (hdr.in + sizeof(hdr) > len)
- 		return -EINVAL;
 
 
