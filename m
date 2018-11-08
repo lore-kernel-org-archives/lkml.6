@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467A1ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FC4ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F2620892
+	by mail.kernel.org (Postfix) with ESMTP id EEB3B20844
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpfpbjI+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09F2620892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldRVmfjc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB3B20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbeKIHlS (ORCPT
+        id S1731303AbeKIHlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32942 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:41:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730843AbeKIHlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:41:12 -0500
+        id S1727992AbeKIHlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:41:18 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 371EF208E3;
-        Thu,  8 Nov 2018 22:03:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA49B20844;
+        Thu,  8 Nov 2018 22:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714623;
-        bh=ZQO8ZnxdDvEyIRxWuBmCzesDsKhktkP1Hz6VUDExbAg=;
+        s=default; t=1541714628;
+        bh=UxZvcv8ABelrSp5nV/dvhaKH0XEtq6rpQ2XQTkFu360=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CpfpbjI+ZqQ2ntcxkJk8XWyFYJ2/hvI9vmeElfwhz6DhGvO3cZhPJvOkpP5LNbZNd
-         m1i6ueCbqi2ETFbK3EzetlzayDjdVFjKYD/c3tpuaSoOt4pDMChEHSmwSIfllWNZCm
-         Lb18F31eIBrZuqNcBh7MWh9NDu9/OM1TvKgeUsRA=
+        b=ldRVmfjcUqzYhedCNmL45vDv6O8GNz15oSIiUXtIP9rX4UKKTAqhnGp7p55mMKqIe
+         /lvwNvvk6eWOGCnIfXOcyXCG9InXFYAcQmLnfcltWJ44lZr1tSPSr3T66OYA1GHMVl
+         ftA+0A6nalqynpaj6XSvOqbarF8vYzLghj63rQ90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhong jiang <zhongjiang@huawei.com>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>,
+        Matt Redfearn <matt.redfearn@imgtec.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
+        Miodrag Dinic <miodrag.dinic@imgtec.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Daney <david.daney@cavium.com>,
+        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 033/171] mm/memory_hotplug.c: fix overflow in test_pages_in_a_zone()
-Date:   Thu,  8 Nov 2018 13:50:03 -0800
-Message-Id: <20181108215129.734082951@linuxfoundation.org>
+Subject: [PATCH 4.9 034/171] MIPS: microMIPS: Fix decoding of swsp16 instruction
+Date:   Thu,  8 Nov 2018 13:50:04 -0800
+Message-Id: <20181108215129.820561095@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -67,53 +69,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d6d8c8a48291b929b2e039f220f0b62958cccfea ]
+[ Upstream commit cea8cd498f4f1c30ea27e3664b3c671e495c4fce ]
 
-When mainline introduced commit a96dfddbcc04 ("base/memory, hotplug: fix
-a kernel oops in show_valid_zones()"), it obtained the valid start and
-end pfn from the given pfn range.  The valid start pfn can fix the
-actual issue, but it introduced another issue.  The valid end pfn will
-may exceed the given end_pfn.
+When the immediate encoded in the instruction is accessed, it is sign
+extended due to being a signed value being assigned to a signed integer.
+The ISA specifies that this operation is an unsigned operation.
+The sign extension leads us to incorrectly decode:
 
-Although the incorrect overflow will not result in actual problem at
-present, but I think it need to be fixed.
+801e9c8e:       cbf1            sw      ra,68(sp)
 
-[toshi.kani@hpe.com: remove assumption that end_pfn is aligned by MAX_ORDER_NR_PAGES]
-Fixes: a96dfddbcc04 ("base/memory, hotplug: fix a kernel oops in show_valid_zones()")
-Link: http://lkml.kernel.org/r/1486467299-22648-1-git-send-email-zhongjiang@huawei.com
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+As having an immediate of 1073741809.
+
+Since the instruction format does not specify signed/unsigned, and this
+is currently the only location to use this instuction format, change it
+to an unsigned immediate.
+
+Fixes: bb9bc4689b9c ("MIPS: Calculate microMIPS ra properly when unwinding the stack")
+Suggested-by: Paul Burton <paul.burton@imgtec.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Reviewed-by: James Hogan <james.hogan@imgtec.com>
+Cc: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+Cc: Miodrag Dinic <miodrag.dinic@imgtec.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: David Daney <david.daney@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/16957/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memory_hotplug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ arch/mips/kernel/process.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c9f715b2917f..0f962cc3f1bf 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1508,7 +1508,7 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
- 			while ((i < MAX_ORDER_NR_PAGES) &&
- 				!pfn_valid_within(pfn + i))
- 				i++;
--			if (i == MAX_ORDER_NR_PAGES)
-+			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
- 				continue;
- 			page = pfn_to_page(pfn + i);
- 			if (zone && page_zone(page) != zone)
-@@ -1522,7 +1522,7 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index 77429d1622b3..711d9b8465b8 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -964,7 +964,7 @@ struct mm16_r3_format {		/* Load from global pointer format */
+ struct mm16_r5_format {		/* Load/store from stack pointer format */
+ 	__BITFIELD_FIELD(unsigned int opcode : 6,
+ 	__BITFIELD_FIELD(unsigned int rt : 5,
+-	__BITFIELD_FIELD(signed int simmediate : 5,
++	__BITFIELD_FIELD(unsigned int imm : 5,
+ 	__BITFIELD_FIELD(unsigned int : 16, /* Ignored */
+ 	;))))
+ };
+diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
+index ba315e523b33..0211dc737a21 100644
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -212,7 +212,7 @@ static inline int is_ra_save_ins(union mips_instruction *ip, int *poff)
+ 			if (ip->mm16_r5_format.rt != 31)
+ 				return 0;
  
- 	if (zone) {
- 		*valid_start = start;
--		*valid_end = end;
-+		*valid_end = min(end, end_pfn);
- 		return 1;
- 	} else {
- 		return 0;
+-			*poff = ip->mm16_r5_format.simmediate;
++			*poff = ip->mm16_r5_format.imm;
+ 			*poff = (*poff << 2) / sizeof(ulong);
+ 			return 1;
+ 
 -- 
 2.17.1
 
