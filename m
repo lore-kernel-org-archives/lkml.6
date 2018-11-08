@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F263C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F49DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D010420844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0566E20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:36:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bcq1jgtr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D010420844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrS/RhDm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0566E20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbeKIHgr (ORCPT
+        id S1728833AbeKIINl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:36:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:13:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729197AbeKIHgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:36:47 -0500
+        id S1728109AbeKIHgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:36:43 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 038D52146E;
-        Thu,  8 Nov 2018 21:59:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3AB4208E3;
+        Thu,  8 Nov 2018 21:59:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714358;
-        bh=Bg/LSBpC+opqEjvKAvRVIfEBxGt4UM045FmBWYZ7Blg=;
+        s=default; t=1541714354;
+        bh=KA4p5T/AHZBnuvWp3H2OQZ887cwYTOHwCHoOOQIaZos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bcq1jgtrLPXn2hIVCY2wGs7z6AtKJeX1/2h7ZlSCTGukiGelVEExFILAZYgpBwl5g
-         z+ihR18YDIF7HFja3HENFWIutxCHuS9Kn3y6jAwVqQe5iE0mSb/rrXqcaBZdKg3uDl
-         LSWgpZPFJo2nxJzDFMzmZDFQbbM6gU8hI+GvDVDo=
+        b=qrS/RhDmamgl1LzSHkdhGZ2+uMfr+1OUy7y1EsA1Lg4QXH8kPE/bLbvHnzks+r1h7
+         dE8W5ELoamt/HuW8+eHnjMzfeYEMx3qHkV0w1FYAn3tfyM0jVBJiEBo20UNnFIlerE
+         tx14qNrVjTtzmpnS6O0uTrml4tkqnHnFYPubjdNY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        stable@vger.kernel.org, Eugenia Emantayev <eugenia@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 033/114] btrfs: dont create or leak aliased root while cleaning up orphans
-Date:   Thu,  8 Nov 2018 13:50:48 -0800
-Message-Id: <20181108215102.115959896@linuxfoundation.org>
+Subject: [PATCH 4.4 029/114] net/mlx4_en: Resolve dividing by zero in 32-bit system
+Date:   Thu,  8 Nov 2018 13:50:44 -0800
+Message-Id: <20181108215101.728604370@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,101 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 35bbb97fc898aeb874cb7c8b746f091caa359994 ]
+[ Upstream commit 4850cf4581578216468b7b3c3d06cc5abb0a697d ]
 
-commit 909c3a22da3 (Btrfs: fix loading of orphan roots leading to BUG_ON)
-avoids the BUG_ON but can add an aliased root to the dead_roots list or
-leak the root.
+When doing roundup_pow_of_two for large enough number with
+bit 31, an overflow will occur and a value equal to 1 will
+be returned. In this case 1 will be subtracted from the return
+value and division by zero will be reached.
 
-Since we've already been loading roots into the radix tree, we should
-use it before looking the root up on disk.
-
-Cc: <stable@vger.kernel.org> # 4.5
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Chris Mason <clm@fb.com>
+Fixes: 31c128b66e5b ("net/mlx4_en: Choose time-stamping shift value according to HW frequency")
+Signed-off-by: Eugenia Emantayev <eugenia@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/disk-io.c   |  4 ++--
- fs/btrfs/disk-io.h   |  2 ++
- fs/btrfs/root-tree.c | 27 ++++++++++++++++++---------
- 3 files changed, 22 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_clock.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index a2001abbe379..120363d0f981 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1608,8 +1608,8 @@ fail:
- 	return ret;
- }
- 
--static struct btrfs_root *btrfs_lookup_fs_root(struct btrfs_fs_info *fs_info,
--					       u64 root_id)
-+struct btrfs_root *btrfs_lookup_fs_root(struct btrfs_fs_info *fs_info,
-+					u64 root_id)
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+index 4dccf7287f0f..52e4ed2f639d 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+@@ -251,8 +251,11 @@ static u32 freq_to_shift(u16 freq)
  {
- 	struct btrfs_root *root;
+ 	u32 freq_khz = freq * 1000;
+ 	u64 max_val_cycles = freq_khz * 1000 * MLX4_EN_WRAP_AROUND_SEC;
++	u64 tmp_rounded =
++		roundup_pow_of_two(max_val_cycles) > max_val_cycles ?
++		roundup_pow_of_two(max_val_cycles) - 1 : UINT_MAX;
+ 	u64 max_val_cycles_rounded = is_power_of_2(max_val_cycles + 1) ?
+-		max_val_cycles : roundup_pow_of_two(max_val_cycles) - 1;
++		max_val_cycles : tmp_rounded;
+ 	/* calculate max possible multiplier in order to fit in 64bit */
+ 	u64 max_mul = div_u64(0xffffffffffffffffULL, max_val_cycles_rounded);
  
-diff --git a/fs/btrfs/disk-io.h b/fs/btrfs/disk-io.h
-index adeb31830b9c..3c9819403487 100644
---- a/fs/btrfs/disk-io.h
-+++ b/fs/btrfs/disk-io.h
-@@ -68,6 +68,8 @@ struct extent_buffer *btrfs_find_tree_block(struct btrfs_fs_info *fs_info,
- struct btrfs_root *btrfs_read_fs_root(struct btrfs_root *tree_root,
- 				      struct btrfs_key *location);
- int btrfs_init_fs_root(struct btrfs_root *root);
-+struct btrfs_root *btrfs_lookup_fs_root(struct btrfs_fs_info *fs_info,
-+					u64 root_id);
- int btrfs_insert_fs_root(struct btrfs_fs_info *fs_info,
- 			 struct btrfs_root *root);
- void btrfs_free_fs_roots(struct btrfs_fs_info *fs_info);
-diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
-index 2c849b08a91b..6a6efb26d52f 100644
---- a/fs/btrfs/root-tree.c
-+++ b/fs/btrfs/root-tree.c
-@@ -272,6 +272,23 @@ int btrfs_find_orphan_roots(struct btrfs_root *tree_root)
- 		root_key.objectid = key.offset;
- 		key.offset++;
- 
-+		/*
-+		 * The root might have been inserted already, as before we look
-+		 * for orphan roots, log replay might have happened, which
-+		 * triggers a transaction commit and qgroup accounting, which
-+		 * in turn reads and inserts fs roots while doing backref
-+		 * walking.
-+		 */
-+		root = btrfs_lookup_fs_root(tree_root->fs_info,
-+					    root_key.objectid);
-+		if (root) {
-+			WARN_ON(!test_bit(BTRFS_ROOT_ORPHAN_ITEM_INSERTED,
-+					  &root->state));
-+			if (btrfs_root_refs(&root->root_item) == 0)
-+				btrfs_add_dead_root(root);
-+			continue;
-+		}
-+
- 		root = btrfs_read_fs_root(tree_root, &root_key);
- 		err = PTR_ERR_OR_ZERO(root);
- 		if (err && err != -ENOENT) {
-@@ -310,16 +327,8 @@ int btrfs_find_orphan_roots(struct btrfs_root *tree_root)
- 		set_bit(BTRFS_ROOT_ORPHAN_ITEM_INSERTED, &root->state);
- 
- 		err = btrfs_insert_fs_root(root->fs_info, root);
--		/*
--		 * The root might have been inserted already, as before we look
--		 * for orphan roots, log replay might have happened, which
--		 * triggers a transaction commit and qgroup accounting, which
--		 * in turn reads and inserts fs roots while doing backref
--		 * walking.
--		 */
--		if (err == -EEXIST)
--			err = 0;
- 		if (err) {
-+			BUG_ON(err == -EEXIST);
- 			btrfs_free_fs_root(root);
- 			break;
- 		}
 -- 
 2.17.1
 
