@@ -2,187 +2,154 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20070ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781C4ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B686020825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:18:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B686020825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D2EC20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:18:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="s2lK36Id"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2EC20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeKIByq (ORCPT
+        id S1727115AbeKIByu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:54:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33486 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726421AbeKIByq (ORCPT
+        Thu, 8 Nov 2018 20:54:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45864 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbeKIByu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:54:46 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8GE1Kg056396
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 11:18:32 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmnxf87pp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 11:18:32 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 8 Nov 2018 16:18:29 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 16:18:27 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8GIQGk36896862
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 16:18:26 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 32A07A4055;
-        Thu,  8 Nov 2018 16:18:26 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 81E24A4053;
-        Thu,  8 Nov 2018 16:18:25 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.126])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  8 Nov 2018 16:18:25 +0000 (GMT)
-Date:   Thu, 8 Nov 2018 18:18:23 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, rppt@linux.vnet.ibm.com
-Subject: Re: [[PATCH]] mips: Fix switch to NO_BOOTMEM for SGI-IP27/loongons3
- NUMA
-References: <20181108144428.28149-1-tbogendoerfer@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108144428.28149-1-tbogendoerfer@suse.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18110816-0008-0000-0000-0000028F472E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110816-0009-0000-0000-000021F98C3B
-Message-Id: <20181108161823.GB15707@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080137
+        Thu, 8 Nov 2018 20:54:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=lp8rYOSmREf3JJYK+1R8iTBwioWETEU+TxDlqYf4hPE=; b=s2lK36IdT1cZ
+        OQHzGbO+8XnTg5qVVb5OnGVLRYu/Ah6tMeepukCEQlRlajRS62kq17if69E5G6XW8jFLcrY0exvpM
+        Lc/8nXdOMNNQEbNDUnS5hoGXxoOdNFl23oKt8tfhUD0gpazQbY3pJrFxXUyuP7CYDnqS2xuKPL2R6
+        CQNQA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gKn0u-0000Bz-93; Thu, 08 Nov 2018 16:18:36 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 0744C1124D9E; Thu,  8 Nov 2018 16:18:36 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Decouple regulators on regulator_unregister()" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181108161836.0744C1124D9E@debutante.sirena.org.uk>
+Date:   Thu,  8 Nov 2018 16:18:36 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 03:44:28PM +0100, Thomas Bogendoerfer wrote:
-> Commit bcec54bf3118 ("mips: switch to NO_BOOTMEM") broke SGI-IP27
-> and NUMA enabled loongson3 by doing memblock_set_current_limit()
-> before max_low_pfn has been evaluated. Both platforms need to do the
-> memblock_set_current_limit() in platform specific code. For
-> consistency the call to memblock_set_current_limit() is moved
-> to the common bootmem_init(), where max_low_pfn is calculated
-> for non NUMA enabled platforms.
+The patch
 
-As far as I can tell loongsoon3 initially sets max_low_pfn in
-node_mem_init(0) and then re-evaluates it in paging_init(). So it seems
-that in this case the limit would be wrong for a system with more than one
-node, but it would be set to some usable value.
+   regulator: core: Decouple regulators on regulator_unregister()
 
-As for SGI-IP27, the initialization of max_low_pfn as late as in
-paging_init() seems to be broken because it's value is used in
-arch_mem_init() and in finalize_initrd() anyway.
+has been applied to the regulator tree at
 
-AFAIU, both platforms set max_low_pfn to last available pfn, so it seems we
-can simply do
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-	max_low_pfn = PFN_PHYS(memblock_end_of_DRAM())
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-in the prom_meminit() function for both platforms and drop the loop
-evaluating max_low_pfn in paging_init().
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7b450009d89298e423c1478524519dc0dec5242a Mon Sep 17 00:00:00 2001
+From: Dmitry Osipenko <digetx@gmail.com>
+Date: Fri, 5 Oct 2018 18:36:36 +0300
+Subject: [PATCH] regulator: core: Decouple regulators on
+ regulator_unregister()
+
+Regulators shall be uncoupled if one of the couples disappear.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index ba03bdf3716f..783ec9c74104 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -4518,6 +4518,43 @@ static void regulator_resolve_coupling(struct regulator_dev *rdev)
+ 	}
+ }
  
-> Fixes: bcec54bf3118 ("mips: switch to NO_BOOTMEM")
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> ---
->  arch/mips/kernel/setup.c               | 18 +++++++++---------
->  arch/mips/loongson64/loongson-3/numa.c |  1 +
->  arch/mips/sgi-ip27/ip27-memory.c       |  1 +
->  3 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-> index ea09ed6a80a9..b5167b198231 100644
-> --- a/arch/mips/kernel/setup.c
-> +++ b/arch/mips/kernel/setup.c
-> @@ -576,6 +576,15 @@ static void __init bootmem_init(void)
->  	 * Reserve initrd memory if needed.
->  	 */
->  	finalize_initrd();
-> +
-> +	/*
-> +	 * Prevent memblock from allocating high memory.
-> +	 * This cannot be done before max_low_pfn is detected, so up
-> +	 * to this point is possible to only reserve physical memory
-> +	 * with memblock_reserve; memblock_alloc* can be used
-> +	 * only after this point
-> +	 */
-> +	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
->  }
-> 
->  #endif	/* CONFIG_SGI_IP27 */
-> @@ -854,15 +863,6 @@ static void __init arch_mem_init(char **cmdline_p)
-> 
->  	bootmem_init();
-> 
-> -	/*
-> -	 * Prevent memblock from allocating high memory.
-> -	 * This cannot be done before max_low_pfn is detected, so up
-> -	 * to this point is possible to only reserve physical memory
-> -	 * with memblock_reserve; memblock_alloc* can be used
-> -	 * only after this point
-> -	 */
-> -	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
-> -
->  #ifdef CONFIG_PROC_VMCORE
->  	if (setup_elfcorehdr && setup_elfcorehdr_size) {
->  		printk(KERN_INFO "kdump reserved memory at %lx-%lx\n",
-> diff --git a/arch/mips/loongson64/loongson-3/numa.c b/arch/mips/loongson64/loongson-3/numa.c
-> index 622761878cd1..5593a8e3cd88 100644
-> --- a/arch/mips/loongson64/loongson-3/numa.c
-> +++ b/arch/mips/loongson64/loongson-3/numa.c
-> @@ -265,6 +265,7 @@ void __init paging_init(void)
->  	zones_size[ZONE_DMA32] = MAX_DMA32_PFN;
->  #endif
->  	zones_size[ZONE_NORMAL] = max_low_pfn;
-> +	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
->  	free_area_init_nodes(zones_size);
->  }
-> 
-> diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
-> index d8b8444d6795..0d0deeae1f47 100644
-> --- a/arch/mips/sgi-ip27/ip27-memory.c
-> +++ b/arch/mips/sgi-ip27/ip27-memory.c
-> @@ -468,6 +468,7 @@ void __init paging_init(void)
->  			max_low_pfn = end_pfn;
->  	}
->  	zones_size[ZONE_NORMAL] = max_low_pfn;
-> +	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
->  	free_area_init_nodes(zones_size);
->  }
-> 
-> -- 
-> 2.13.7
-> 
-
++static void regulator_remove_coupling(struct regulator_dev *rdev)
++{
++	struct coupling_desc *__c_desc, *c_desc = &rdev->coupling_desc;
++	struct regulator_dev *__c_rdev, *c_rdev;
++	unsigned int __n_coupled, n_coupled;
++	int i, k;
++
++	n_coupled = c_desc->n_coupled;
++
++	for (i = 1; i < n_coupled; i++) {
++		c_rdev = c_desc->coupled_rdevs[i];
++
++		if (!c_rdev)
++			continue;
++
++		regulator_lock(c_rdev);
++
++		__c_desc = &c_rdev->coupling_desc;
++		__n_coupled = __c_desc->n_coupled;
++
++		for (k = 1; k < __n_coupled; k++) {
++			__c_rdev = __c_desc->coupled_rdevs[k];
++
++			if (__c_rdev == rdev) {
++				__c_desc->coupled_rdevs[k] = NULL;
++				__c_desc->n_resolved--;
++				break;
++			}
++		}
++
++		regulator_unlock(c_rdev);
++
++		c_desc->coupled_rdevs[i] = NULL;
++		c_desc->n_resolved--;
++	}
++}
++
+ static int regulator_init_coupling(struct regulator_dev *rdev)
+ {
+ 	int n_phandles;
+@@ -4776,6 +4813,7 @@ void regulator_unregister(struct regulator_dev *rdev)
+ 	debugfs_remove_recursive(rdev->debugfs);
+ 	flush_work(&rdev->disable_work.work);
+ 	WARN_ON(rdev->open_count);
++	regulator_remove_coupling(rdev);
+ 	unset_regulator_supplies(rdev);
+ 	list_del(&rdev->list);
+ 	regulator_ena_gpio_free(rdev);
 -- 
-Sincerely yours,
-Mike.
+2.19.0.rc2
 
