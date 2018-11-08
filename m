@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FDBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E7CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB7220818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F18C20818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:23:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQVu8NgL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB7220818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhbtbWx9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F18C20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731604AbeKIHmn (ORCPT
+        id S1730907AbeKIIBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:42:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34564 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:01:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731566AbeKIHml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:42:41 -0500
+        id S1730844AbeKIHmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:42:40 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42307208A3;
-        Thu,  8 Nov 2018 22:05:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C62220892;
+        Thu,  8 Nov 2018 22:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714711;
-        bh=zWnltgflHGpdbFAxCfZC48y7rWUoO4iC0vArquteJ/I=;
+        s=default; t=1541714710;
+        bh=Tl/rRj7TewppcGCVf63gxvviTsmzRxdfkMWZzBUbURw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PQVu8NgL+7xRx2vg9qIUJf0HePzTse3snGaXRRFTw0nt7NMoHOwZS9mMy9ZKKMmpH
-         Mlp5iPlMdeaDmCpaHTRNZVE6fzmH9DPswgxGTWjNWBWClmqjRnphhbYTMvw8dXBcrw
-         0lVxEA7dhyxX6XF59c8aUeAgo3M3vGByhd8G5P+k=
+        b=RhbtbWx93OlATe3tTMTV+lz9GAzKBZQ6CT79Dzc6yYOdAVTQtQ6iK3Zpt4NJuz9r4
+         XvVHTRFSne6gn+FpDJpGIdye1IuQZuaPfTNVTY6C/fMBhJb4K/Cc9YdGMBS98GAOob
+         14e20kgISnEfd2WUQrmPqykIGEfN5MVXszzzYnto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 082/171] clk: samsung: Fix m2m scaler clock on Exynos542x
-Date:   Thu,  8 Nov 2018 13:50:52 -0800
-Message-Id: <20181108215133.456439356@linuxfoundation.org>
+Subject: [PATCH 4.9 080/171] usb: renesas_usbhs: gadget: fix unused-but-set-variable warning
+Date:   Thu,  8 Nov 2018 13:50:50 -0800
+Message-Id: <20181108215133.350469484@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,35 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c07c1a0f68d0f2f7ca9aff924e2772526027b019 ]
+[ Upstream commit b7d44c36a6f6d956e1539e0dd42f98b26e5a4684 ]
 
-The TOP "aclk400_mscl" clock should be kept enabled all the time
-to allow proper access to power management control for MSC power
-domain and devices that are a part of it. This change is required
-for the scaler to work properly after domain power on/off sequence.
+The commit b8b9c974afee ("usb: renesas_usbhs: gadget: disable all eps
+when the driver stops") causes the unused-but-set-variable warning.
+But, if the usbhsg_ep_disable() will return non-zero value, udc/core.c
+doesn't clear the ep->enabled flag. So, this driver should not return
+non-zero value, if the pipe is zero because this means the pipe is
+already disabled. Otherwise, the ep->enabled flag is never cleared
+when the usbhsg_ep_disable() is called by the renesas_usbhs driver first.
 
-Fixes: 318fa46cc60d ("clk/samsung: exynos542x: mark some clocks as critical")
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: b8b9c974afee ("usb: renesas_usbhs: gadget: disable all eps when the driver stops")
+Fixes: 11432050f070 ("usb: renesas_usbhs: gadget: fix NULL pointer dereference in ep_disable()")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/renesas_usbhs/mod_gadget.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index cdc092a1d9ef..07fb667e258f 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -987,7 +987,7 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
- 			GATE_BUS_TOP, 16, 0, 0),
- 	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
--			GATE_BUS_TOP, 17, 0, 0),
-+			GATE_BUS_TOP, 17, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
- 			GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index 54a3237aac08..5984fb134cf4 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -639,14 +639,11 @@ static int usbhsg_ep_disable(struct usb_ep *ep)
+ 	struct usbhsg_uep *uep = usbhsg_ep_to_uep(ep);
+ 	struct usbhs_pipe *pipe;
+ 	unsigned long flags;
+-	int ret = 0;
+ 
+ 	spin_lock_irqsave(&uep->lock, flags);
+ 	pipe = usbhsg_uep_to_pipe(uep);
+-	if (!pipe) {
+-		ret = -EINVAL;
++	if (!pipe)
+ 		goto out;
+-	}
+ 
+ 	usbhsg_pipe_disable(uep);
+ 	usbhs_pipe_free(pipe);
 -- 
 2.17.1
 
