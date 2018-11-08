@@ -2,240 +2,136 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE32ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FCBECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55AF420827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55AF420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B921220825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:59:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="MCUGjObE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B921220825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbeKIEfe (ORCPT
+        id S1727238AbeKIEgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:35:34 -0500
-Received: from mga04.intel.com ([192.55.52.120]:34118 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeKIEfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:35:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 10:58:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="279495780"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Nov 2018 10:58:33 -0800
-Date:   Thu, 8 Nov 2018 20:58:32 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 11/17] tpm: move TPM space code out of tpm_transmit()
-Message-ID: <20181108185832.GC20608@linux.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-12-jarkko.sakkinen@linux.intel.com>
- <23545a3e-9792-3a22-97eb-9744079b9ea4@linux.ibm.com>
+        Thu, 8 Nov 2018 23:36:17 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:61701 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbeKIEgR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:36:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1541703567; x=1573239567;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=QXnDituIZ9win6qVC9KoJnjwrBgkMuF0lvbTNnhU0Vg=;
+  b=MCUGjObEcbZ0kIG9K10EuKSp+ZU2vtt3JVTVya3MKAtN3H03O0KTnE9v
+   QXQLZxcsBf8VRuWVXmfbZ3zHwjRUiPImgTxI25/de6jxzg06E2J5XD9mk
+   +Q1OIq7GWF9QJVqwj+PiXYAlRGUdmPL+pDqLB0YGa78HdNEmTwYP1tT+f
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.54,480,1534809600"; 
+   d="scan'208";a="372533464"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Nov 2018 18:59:21 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wA8IxI5T125445
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 18:59:20 GMT
+Received: from EX13D08UEB001.ant.amazon.com (10.43.60.245) by
+ EX13MTAUEB001.ant.amazon.com (10.43.60.96) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 8 Nov 2018 18:59:19 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D08UEB001.ant.amazon.com (10.43.60.245) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 8 Nov 2018 18:59:19 +0000
+Received: from dev-dsk-mheyne-1a-d7497a7f.eu-west-1.amazon.com (10.15.98.203)
+ by mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Thu, 8 Nov 2018 18:59:19 +0000
+Received: by dev-dsk-mheyne-1a-d7497a7f.eu-west-1.amazon.com (Postfix, from userid 5466572)
+        id 62A82B03BF; Thu,  8 Nov 2018 18:59:19 +0000 (UTC)
+From:   Maximilian Heyne <mheyne@amazon.de>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        Torsten Mehlan <tomeh@amazon.de>,
+        Uwe Dannowski <uwed@amazon.de>, Amit Shah <aams@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>, <stable@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] fs: fix lost error code in dio_complete
+Date:   Thu, 8 Nov 2018 18:58:34 +0000
+Message-ID: <20181108185835.17803-1-mheyne@amazon.de>
+X-Mailer: git-send-email 2.16.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23545a3e-9792-3a22-97eb-9744079b9ea4@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:16:54AM -0500, Stefan Berger wrote:
-> On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
-> > Prepare and commit TPM space before and after calling tpm_transmit()
-> > instead of doing that inside tpm_transmit(). After this change we can
-> > remove TPM_TRANSMIT_NESTED flag from tpm2_prepare_space() and
-> > tpm2_commit_space() and replace it with TPM_TRANSMIT_UNLOCKED.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >   drivers/char/tpm/tpm-dev-common.c | 30 ++++++++++++++++++++++++++----
-> >   drivers/char/tpm/tpm-interface.c  | 29 +++--------------------------
-> >   drivers/char/tpm/tpm2-space.c     | 14 +++++++-------
-> >   3 files changed, 36 insertions(+), 37 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> > index cbb0ee30b511..40c1cb09ebd2 100644
-> > --- a/drivers/char/tpm/tpm-dev-common.c
-> > +++ b/drivers/char/tpm/tpm-dev-common.c
-> > @@ -30,13 +30,35 @@ static DEFINE_MUTEX(tpm_dev_wq_lock);
-> >   static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
-> >   				u8 *buf, size_t bufsiz)
-> >   {
-> > -	ssize_t ret;
-> > +	struct tpm_header *header = (void *)buf;
-> > +	ssize_t ret, len;
-> > 
-> >   	mutex_lock(&chip->tpm_mutex);
-> > -	ret = tpm_transmit(chip, space, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
-> > -	mutex_unlock(&chip->tpm_mutex);
-> > +	ret = tpm2_prepare_space(chip, space, buf, bufsiz);
-> > +	/* If the command is not implemented by the TPM, synthesize a
-> > +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> > +	 */
-> > +	if (ret == -EOPNOTSUPP) {
-> > +		header->length = cpu_to_be32(sizeof(*header));
-> > +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> > +		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> > +						  TSS2_RESMGR_TPM_RC_LAYER);
-> > +		ret = sizeof(*header);
-> > +	}
-> > +	if (ret)
-> > +		goto out_lock;
-> > 
-> > -	return ret;
-> > +	len = tpm_transmit(chip, space, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
-> > +	if (len < 0)
-> > +		ret = len;
-> > +
-> > +	if (ret)
-> > +		tpm2_flush_space(chip);
-> > +	else
-> > +		ret = tpm2_commit_space(chip, space, buf, &len);
-> > +out_lock:
-> > +	mutex_unlock(&chip->tpm_mutex);
-> > +	return ret ? ret : len;
-> >   }
-> > 
-> >   static void tpm_dev_async_work(struct work_struct *work)
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index a6ffd0960ae5..7bec03e46043 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -147,27 +147,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> >   		return -E2BIG;
-> >   	}
-> > 
-> > -	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
-> > -	/*
-> > -	 * If the command is not implemented by the TPM, synthesize a
-> > -	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> > -	 */
-> > -	if (rc == -EOPNOTSUPP) {
-> > -		header->length = cpu_to_be32(sizeof(*header));
-> > -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> > -		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> > -						  TSS2_RESMGR_TPM_RC_LAYER);
-> > -		return sizeof(*header);
-> > -	}
-> > -	if (rc)
-> > -		return rc;
-> > -
-> >   	rc = chip->ops->send(chip, buf, count);
-> >   	if (rc < 0) {
-> >   		if (rc != -EPIPE)
-> >   			dev_err(&chip->dev,
-> >   				"%s: tpm_send: error %d\n", __func__, rc);
-> > -		goto out_space;
-> > +		return rc;
-> >   	}
-> > 
-> >   	if (chip->flags & TPM_CHIP_FLAG_IRQ)
-> > @@ -182,8 +167,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> > 
-> >   		if (chip->ops->req_canceled(chip, status)) {
-> >   			dev_err(&chip->dev, "Operation Canceled\n");
-> > -			rc = -ECANCELED;
-> > -			goto out_space;
-> > +			return -ECANCELED;
-> >   		}
-> > 
-> >   		tpm_msleep(TPM_TIMEOUT_POLL);
-> > @@ -192,8 +176,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> > 
-> >   	chip->ops->cancel(chip);
-> >   	dev_err(&chip->dev, "Operation Timed out\n");
-> > -	rc = -ETIME;
-> > -	goto out_space;
-> > +	return -ETIME;
-> > 
-> >   out_recv:
-> >   	len = chip->ops->recv(chip, buf, bufsiz);
-> > @@ -203,12 +186,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> >   	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
-> >   		rc = -EFAULT;
-> > 
-> > -out_space:
-> > -	if (rc)
-> > -		tpm2_flush_space(chip);
-> > -	else
-> > -		rc = tpm2_commit_space(chip, space, buf, &len);
-> > -
-> >   	return rc ? rc : len;
-> >   }
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> > index f35ac941c3a4..9c009db15f88 100644
-> > --- a/drivers/char/tpm/tpm2-space.c
-> > +++ b/drivers/char/tpm/tpm2-space.c
-> > @@ -39,7 +39,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
-> >   	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
-> >   		if (space->session_tbl[i])
-> >   			tpm2_flush_context_cmd(chip, space->session_tbl[i],
-> > -					       TPM_TRANSMIT_NESTED);
-> > +					       TPM_TRANSMIT_UNLOCKED);
-> >   	}
-> >   }
-> > 
-> > @@ -84,7 +84,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
-> >   	tpm_buf_append(&tbuf, &buf[*offset], body_size);
-> > 
-> >   	rc = tpm_transmit_cmd(chip, NULL, &tbuf, 4,
-> > -			      TPM_TRANSMIT_NESTED, NULL);
-> > +			      TPM_TRANSMIT_UNLOCKED, NULL);
-> >   	if (rc < 0) {
-> >   		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
-> >   			 __func__, rc);
-> > @@ -133,7 +133,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
-> >   	tpm_buf_append_u32(&tbuf, handle);
-> > 
-> >   	rc = tpm_transmit_cmd(chip, NULL, &tbuf, 0,
-> > -			      TPM_TRANSMIT_NESTED, NULL);
-> > +			      TPM_TRANSMIT_UNLOCKED, NULL);
-> >   	if (rc < 0) {
-> >   		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
-> >   			 __func__, rc);
-> > @@ -170,7 +170,7 @@ void tpm2_flush_space(struct tpm_chip *chip)
-> >   	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
-> >   		if (space->context_tbl[i] && ~space->context_tbl[i])
-> >   			tpm2_flush_context_cmd(chip, space->context_tbl[i],
-> > -					       TPM_TRANSMIT_NESTED);
-> > +					       TPM_TRANSMIT_UNLOCKED);
-> > 
-> >   	tpm2_flush_sessions(chip, space);
-> >   }
-> > @@ -267,7 +267,7 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
-> >   static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
-> >   				const u8 *cmd, size_t len)
-> >   {
-> > -	const struct tpm_input_header *header = (const void *)cmd;
-> > +	const struct tpm_header *header = (const void *)cmd;
-> 
-> 
-> You'll have to move this...
+commit e259221763a40403d5bb232209998e8c45804ab8 ("fs: simplify the
+generic_write_sync prototype") reworked callers of generic_write_sync(),
+and ended up dropping the error return for the directio path. Prior to
+that commit, in dio_complete(), an error would be bubbled up the stack,
+but after that commit, errors passed on to dio_complete were eaten up.
 
-Thanks, I'll fix it.
+This was reported on the list earlier, and a fix was proposed in
+https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/, but
+never followed up with.  We recently hit this bug in our testing where
+fencing io errors, which were previously erroring out with EIO, were
+being returned as success operations after this commit.
 
-/Jarkko
+The fix proposed on the list earlier was a little short -- it would have
+still called generic_write_sync() in case `ret` already contained an
+error. This fix ensures generic_write_sync() is only called when there's
+no pending error in the write. Additionally, transferred is replaced
+with ret to bring this code in line with other callers.
+
+Reported-by: Ravi Nankani <rnankani@amazon.com>
+Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+CC: Torsten Mehlan <tomeh@amazon.de>
+CC: Uwe Dannowski <uwed@amazon.de>
+CC: Amit Shah <aams@amazon.de>
+CC: David Woodhouse <dwmw@amazon.co.uk>
+CC: stable@vger.kernel.org
+---
+v2: add description for s/transferred/ret/ change
+
+ fs/direct-io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 722d17c88edb..41a0e97252ae 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -325,8 +325,8 @@ static ssize_t dio_complete(struct dio *dio, ssize_t ret, unsigned int flags)
+ 		 */
+ 		dio->iocb->ki_pos += transferred;
+ 
+-		if (dio->op == REQ_OP_WRITE)
+-			ret = generic_write_sync(dio->iocb,  transferred);
++		if (ret > 0 && dio->op == REQ_OP_WRITE)
++			ret = generic_write_sync(dio->iocb, ret);
+ 		dio->iocb->ki_complete(dio->iocb, ret, 0);
+ 	}
+ 
+-- 
+2.16.5
+
+
+
+
+Amazon Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrer: Christian Schlaeger, Ralf Herbrich
+Ust-ID: DE 289 237 879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+
+
