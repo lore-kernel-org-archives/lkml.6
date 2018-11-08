@@ -2,117 +2,132 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330CBC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCBFC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B4120825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:58:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B4120825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B3A6820825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A6820825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeKHWds (ORCPT
+        id S1727084AbeKHWhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:33:48 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30816 "EHLO mga02.intel.com"
+        Thu, 8 Nov 2018 17:37:11 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37073 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbeKHWdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:33:47 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 04:58:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="84930924"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
-  by fmsmga008.fm.intel.com with ESMTP; 08 Nov 2018 04:58:23 -0800
-Date:   Thu, 8 Nov 2018 21:05:03 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] panic: Avoid the extra noise dmesg
-Message-ID: <20181108130503.a35cf6yfbkd232go@shbuild888>
-References: <1539242268-63036-1-git-send-email-feng.tang@intel.com>
- <20181011093500.GB9848@hirez.programming.kicks-ass.net>
- <20181011095941.mlh675ag5v4fpgos@shbuild888>
- <20181022095515.wxq6dhvix4ujkskv@shbuild888>
+        id S1726993AbeKHWhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 17:37:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 92E61224CD; Thu,  8 Nov 2018 14:01:45 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3B010207B0;
+        Thu,  8 Nov 2018 14:01:35 +0100 (CET)
+Date:   Thu, 8 Nov 2018 14:01:35 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <yogeshnarayan.gaur@nxp.com>, <cyrille.pitchen@wedev4u.fr>
+Subject: Re: [PATCH 5/7] mtd: spi_nor: pass DMA-able buffer to
+ spi_nor_read_raw()
+Message-ID: <20181108140135.09a23152@bbrezillon>
+In-Reply-To: <20181108110653.21063-6-tudor.ambarus@microchip.com>
+References: <20181108110653.21063-1-tudor.ambarus@microchip.com>
+        <20181108110653.21063-6-tudor.ambarus@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181022095515.wxq6dhvix4ujkskv@shbuild888>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes when debugging kernel panic, we saw many extra noisy error
-messages after the expected end:
+On Thu, 8 Nov 2018 11:07:16 +0000
+<Tudor.Ambarus@microchip.com> wrote:
 
-[   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
-[   35.749975] ------------[ cut here ]------------
+> spi_nor_read_raw() calls nor->read() which might be implemented
+> by the m25p80 driver. m25p80 uses the spi-mem layer which requires
+> DMA-able in/out buffers. Pass kmalloc'ed dma buffer to spi_nor_read_raw().
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 79ca1102faed..2eaa21c85483 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -2161,7 +2161,7 @@ spi_nor_set_pp_settings(struct spi_nor_pp_command *pp,
+>   * @nor:	pointer to a 'struct spi_nor'
+>   * @addr:	offset in the serial flash memory
+>   * @len:	number of bytes to read
+> - * @buf:	buffer where the data is copied into
+> + * @buf:	buffer where the data is copied into (dma-safe memory)
+>   *
+>   * Return: 0 on success, -errno otherwise.
+>   */
+> @@ -2868,11 +2868,16 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
+>  					 u8 smpt_len)
+>  {
+>  	const u32 *ret;
+> +	u8 *dma_safe;
 
-When panic happens under console mode, the screen will first show the panic
-call stack, but will immediately be overrided by noisy extra messages, like
-this for every CPU except the panic one:
+I'd prefer to have it named buf, data_buf or scratch_buf...
 
-	WARNING: CPU: 1 PID: 280 at kernel/sched/core.c:1198 set_task_cpu+0x183/0x190
-	Call Trace:
-	<IRQ>
-	try_to_wake_up
-	default_wake_function
-	autoremove_wake_function
-	__wake_up_common
-	__wake_up_common_lock
-	__wake_up
-	wake_up_klogd_work_func
-	irq_work_run_list
-	irq_work_tick
-	update_process_times
-	tick_sched_timer
-	__hrtimer_run_queues
-	hrtimer_interrupt
-	smp_apic_timer_interrupt
-	apic_timer_interrupt
+>  	u32 addr;
+>  	int err;
+>  	u8 i, ncmds, nmaps;
+>  	u8 addr_width, read_opcode, read_dummy;
+> -	u8 read_data_mask, data_byte, map_id;
+> +	u8 read_data_mask, map_id;
+> +
 
-Which make debugging more difficult, as the original context is
-lost on screen.
+... and have a comment here explaining why your allocating the buffer
+instead of using a local var placed on the stack.
 
-Keeping the CPU IRQ disabled will void these messages, as we code
-run to this point, the user has chosed not to reboot, nor do
-some extra handling with panic notifier, not much point in
-re-enabling the interrupt.
+> +	dma_safe = kmalloc(sizeof(*dma_safe), GFP_KERNEL | GFP_DMA);
 
-Signed-off-by: Feng Tang <feng.tang@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Borislav Petkov <bp@suse.de>
----
- kernel/panic.c | 1 -
- 1 file changed, 1 deletion(-)
+Please don't use GFP_DMA, kmalloc() should already return a DMA-safe
+buffer (see [1]).
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index f6d549a29a5c..a616e55ab57e 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -295,7 +295,6 @@ void panic(const char *fmt, ...)
- 	}
- #endif
- 	pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
--	local_irq_enable();
- 	for (i = 0; ; i += PANIC_TIMER_STEP) {
- 		touch_softlockup_watchdog();
- 		if (i >= i_next) {
--- 
-2.14.1
+> +	if (!dma_safe)
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	addr_width = nor->addr_width;
+>  	read_dummy = nor->read_dummy;
+> @@ -2890,7 +2895,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
+>  		nor->read_opcode = SMPT_CMD_OPCODE(smpt[i]);
+>  		addr = smpt[i + 1];
+>  
+> -		err = spi_nor_read_raw(nor, addr, 1, &data_byte);
+> +		err = spi_nor_read_raw(nor, addr, 1, dma_safe);
+>  		if (err) {
+>  			ret = ERR_PTR(err);
+>  			goto out;
+> @@ -2900,7 +2905,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
+>  		 * Build an index value that is used to select the Sector Map
+>  		 * Configuration that is currently in use.
+>  		 */
+> -		map_id = map_id << 1 | !!(data_byte & read_data_mask);
+> +		map_id = map_id << 1 | !!(*dma_safe & read_data_mask);
+>  		ncmds++;
+>  	}
+>  
+> @@ -2941,6 +2946,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
+>  
+>  	/* fall through */
+>  out:
+> +	kfree(dma_safe);
+>  	nor->addr_width = addr_width;
+>  	nor->read_dummy = read_dummy;
+>  	nor->read_opcode = read_opcode;
 
+[1]https://elixir.bootlin.com/linux/latest/source/include/linux/gfp.h#L263
