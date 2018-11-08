@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E163ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E1CECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B82208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E49892089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="meYI/vbk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B82208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTJXbnRc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49892089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732937AbeKIHrk (ORCPT
+        id S1732948AbeKIHrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:47:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:47:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732891AbeKIHri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:47:38 -0500
+        id S1729415AbeKIHrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:47:40 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69FFE2147D;
-        Thu,  8 Nov 2018 22:10:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9D4E214DB;
+        Thu,  8 Nov 2018 22:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541715006;
-        bh=lLWi+jf2OiDQfIvO3DXaPe2YaTHsFeamlsFdB4bKVVs=;
+        s=default; t=1541715007;
+        bh=W513KvSHLy0RkfdR6FkAYep0ADwCiL36O+NVb39EkFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=meYI/vbk/qia1w6QFUXxWW4vakbmoAm2P1U8pspFbKIYB/9n4HwZlZ3FiqYMVO1MU
-         A3APmtWLR2H2HdocmLh1AjiSyuPSnWfvG2g3PW1dGfomHDbsBoCoV+rkbrkrT1HvzJ
-         Jku65gUQ9CVuFL5GSOcboDDINJI3VZeHv56pt664=
+        b=bTJXbnRczk3a8xhEeNBNVn/Mh+H0lwNg1PtQK+/9hWvld2zGUKaRbTLRNNAeSBaca
+         748NajbtAooe8T/G/OvAEzvCCCxsVZovhX83cerSswRJZf71fLjdjf8Q0shDe9MyEE
+         aRCDt+ig3pCqT2GoEsBwrRgiuGzmFuZOPVFKDVCI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         syzbot+a95b989b2dde8e806af8@syzkaller.appspotmail.com,
         Eric Sandeen <sandeen@redhat.com>,
         David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.18 06/34] fscache: Fix incomplete initialisation of inline key space
-Date:   Thu,  8 Nov 2018 13:52:35 -0800
-Message-Id: <20181108215139.300568580@linuxfoundation.org>
+Subject: [PATCH 4.18 08/34] fscache: Fix out of bound read in long cookie keys
+Date:   Thu,  8 Nov 2018 13:52:37 -0800
+Message-Id: <20181108215139.425688236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -64,121 +64,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-commit 1ff22883b0b2f7a73eb2609ffe879c9fd96f6328 upstream.
+commit fa520c47eaa15b9baa8ad66ac18da4a31679693b upstream.
 
-The inline key in struct rxrpc_cookie is insufficiently initialized,
-zeroing only 3 of the 4 slots, therefore an index_key_len between 13 and 15
-bytes will end up hashing uninitialized memory because the memcpy only
-partially fills the last buf[] element.
+fscache_set_key() can incur an out-of-bounds read, reported by KASAN:
 
-Fix this by clearing fscache_cookie objects on allocation rather than using
-the slab constructor to initialise them.  We're going to pretty much fill
-in the entire struct anyway, so bringing it into our dcache writably
-shouldn't incur much overhead.
+ BUG: KASAN: slab-out-of-bounds in fscache_alloc_cookie+0x5b3/0x680 [fscache]
+ Read of size 4 at addr ffff88084ff056d4 by task mount.nfs/32615
 
-This removes the need to do clearance in fscache_set_key() (where we aren't
-doing it correctly anyway).
+and also reported by syzbot at https://lkml.org/lkml/2018/7/8/236
 
-Also, we don't need to set cookie->key_len in fscache_set_key() as we
-already did it in the only caller, so remove that.
+  BUG: KASAN: slab-out-of-bounds in fscache_set_key fs/fscache/cookie.c:120 [inline]
+  BUG: KASAN: slab-out-of-bounds in fscache_alloc_cookie+0x7a9/0x880 fs/fscache/cookie.c:171
+  Read of size 4 at addr ffff8801d3cc8bb4 by task syz-executor907/4466
+
+This happens for any index_key_len which is not divisible by 4 and is
+larger than the size of the inline key, because the code allocates exactly
+index_key_len for the key buffer, but the hashing loop is stepping through
+it 4 bytes (u32) at a time in the buf[] array.
+
+Fix this by calculating how many u32 buffers we'll need by using
+DIV_ROUND_UP, and then using kcalloc() to allocate a precleared allocation
+buffer to hold the index_key, then using that same count as the hashing
+index limit.
 
 Fixes: ec0328e46d6e ("fscache: Maintain a catalogue of allocated cookies")
 Reported-by: syzbot+a95b989b2dde8e806af8@syzkaller.appspotmail.com
-Reported-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fscache/cookie.c   |   23 ++++-------------------
- fs/fscache/internal.h |    1 -
- fs/fscache/main.c     |    4 +---
- 3 files changed, 5 insertions(+), 23 deletions(-)
+ fs/fscache/cookie.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 --- a/fs/fscache/cookie.c
 +++ b/fs/fscache/cookie.c
-@@ -70,19 +70,6 @@ void fscache_free_cookie(struct fscache_
+@@ -70,7 +70,7 @@ void fscache_free_cookie(struct fscache_
  }
  
  /*
-- * initialise an cookie jar slab element prior to any use
-- */
--void fscache_cookie_init_once(void *_cookie)
--{
--	struct fscache_cookie *cookie = _cookie;
--
--	memset(cookie, 0, sizeof(*cookie));
--	spin_lock_init(&cookie->lock);
--	spin_lock_init(&cookie->stores_lock);
--	INIT_HLIST_HEAD(&cookie->backing_objects);
--}
--
--/*
-  * Set the index key in a cookie.  The cookie struct has space for a 12-byte
+- * Set the index key in a cookie.  The cookie struct has space for a 12-byte
++ * Set the index key in a cookie.  The cookie struct has space for a 16-byte
   * key plus length and hash, but if that's not big enough, it's instead a
   * pointer to a buffer containing 3 bytes of hash, 1 byte of length and then
-@@ -95,8 +82,6 @@ static int fscache_set_key(struct fscach
+  * the key data.
+@@ -80,10 +80,13 @@ static int fscache_set_key(struct fscach
+ {
+ 	unsigned long long h;
  	u32 *buf;
++	int bufs;
  	int i;
  
--	cookie->key_len = index_key_len;
--
++	bufs = DIV_ROUND_UP(index_key_len, sizeof(*buf));
++
  	if (index_key_len > sizeof(cookie->inline_key)) {
- 		buf = kzalloc(index_key_len, GFP_KERNEL);
+-		buf = kzalloc(index_key_len, GFP_KERNEL);
++		buf = kcalloc(bufs, sizeof(*buf), GFP_KERNEL);
  		if (!buf)
-@@ -104,9 +89,6 @@ static int fscache_set_key(struct fscach
+ 			return -ENOMEM;
  		cookie->key = buf;
- 	} else {
- 		buf = (u32 *)cookie->inline_key;
--		buf[0] = 0;
--		buf[1] = 0;
--		buf[2] = 0;
- 	}
+@@ -98,7 +101,8 @@ static int fscache_set_key(struct fscach
+ 	 */
+ 	h = (unsigned long)cookie->parent;
+ 	h += index_key_len + cookie->type;
+-	for (i = 0; i < (index_key_len + sizeof(u32) - 1) / sizeof(u32); i++)
++
++	for (i = 0; i < bufs; i++)
+ 		h += buf[i];
  
- 	memcpy(buf, index_key, index_key_len);
-@@ -161,7 +143,7 @@ struct fscache_cookie *fscache_alloc_coo
- 	struct fscache_cookie *cookie;
- 
- 	/* allocate and initialise a cookie */
--	cookie = kmem_cache_alloc(fscache_cookie_jar, GFP_KERNEL);
-+	cookie = kmem_cache_zalloc(fscache_cookie_jar, GFP_KERNEL);
- 	if (!cookie)
- 		return NULL;
- 
-@@ -192,6 +174,9 @@ struct fscache_cookie *fscache_alloc_coo
- 	cookie->netfs_data	= netfs_data;
- 	cookie->flags		= (1 << FSCACHE_COOKIE_NO_DATA_YET);
- 	cookie->type		= def->type;
-+	spin_lock_init(&cookie->lock);
-+	spin_lock_init(&cookie->stores_lock);
-+	INIT_HLIST_HEAD(&cookie->backing_objects);
- 
- 	/* radix tree insertion won't use the preallocation pool unless it's
- 	 * told it may not wait */
---- a/fs/fscache/internal.h
-+++ b/fs/fscache/internal.h
-@@ -51,7 +51,6 @@ extern struct fscache_cache *fscache_sel
- extern struct kmem_cache *fscache_cookie_jar;
- 
- extern void fscache_free_cookie(struct fscache_cookie *);
--extern void fscache_cookie_init_once(void *);
- extern struct fscache_cookie *fscache_alloc_cookie(struct fscache_cookie *,
- 						   const struct fscache_cookie_def *,
- 						   const void *, size_t,
---- a/fs/fscache/main.c
-+++ b/fs/fscache/main.c
-@@ -143,9 +143,7 @@ static int __init fscache_init(void)
- 
- 	fscache_cookie_jar = kmem_cache_create("fscache_cookie_jar",
- 					       sizeof(struct fscache_cookie),
--					       0,
--					       0,
--					       fscache_cookie_init_once);
-+					       0, 0, NULL);
- 	if (!fscache_cookie_jar) {
- 		pr_notice("Failed to allocate a cookie jar\n");
- 		ret = -ENOMEM;
+ 	cookie->key_hash = h ^ (h >> 32);
 
 
