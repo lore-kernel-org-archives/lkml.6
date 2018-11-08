@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAEBECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D16ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9562081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECC3420844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSXjE72J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9562081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMUSHrbl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC3420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeKIHam (ORCPT
+        id S1727427AbeKIHas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:30:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45106 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbeKIHam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:30:42 -0500
+        id S1726140AbeKIHas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:30:48 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4A532081C;
-        Thu,  8 Nov 2018 21:53:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BE342081C;
+        Thu,  8 Nov 2018 21:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541713995;
-        bh=8ouKYu6iFxoPfS73s5irfElmsrneRho3SNMDLo+sI4A=;
+        s=default; t=1541714001;
+        bh=xSp/rUUeJZpmFBd7LlQJtvBzb4pKqBVjLxeT79U9d64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sSXjE72JSVQHR2LOwnHpR8ETY5j0dR6rFDqiIqCXUekR44qvjhjb+Ty28OKwelKK6
-         jdmZFlzTjnUTPjHZC11f5ga5gYAr2rxeaySkt4X3Tr0xEJv5OeUqNacoc2hEPm5myn
-         3217yBGCjL2DSK/GOBNOyKlK9fZC7XlPsdzCGFHI=
+        b=YMUSHrblyE1XFFrwadYpTnwUR6CBqzlxrWNWOYO+MvMFJRy5EXzef1/keP4jwS3F7
+         wBrug+At9EGAnIlyj2xW0RgSXB+EFwmKUpAruVUFuyuG7Cr4HDWrFl+/+ZwBl4Bktg
+         G58DLVLu1prBb8iApRxC79IJ7D2In5MUHgDplSlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lei Yang <Lei.Yang@windriver.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 001/144] selftests/efivarfs: add required kernel configs
-Date:   Thu,  8 Nov 2018 13:49:32 -0800
-Message-Id: <20181108215054.896370713@linuxfoundation.org>
+        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 010/144] net/usb: cancel pending work when unbinding smsc75xx
+Date:   Thu,  8 Nov 2018 13:49:41 -0800
+Message-Id: <20181108215055.557187324@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -62,24 +62,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lei Yang <Lei.Yang@windriver.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 53cf59d6c0ad3edc4f4449098706a8f8986258b6 ]
+[ Upstream commit f7b2a56e1f3dcbdb4cf09b2b63e859ffe0e09df8 ]
 
-add config file
+Cancel pending work before freeing smsc75xx private data structure
+during binding. This fixes the following crash in the driver:
 
-Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
+IP: mutex_lock+0x2b/0x3f
+<snipped>
+Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
+task: ffff8caa83e85700 task.stack: ffff948b80518000
+RIP: 0010:mutex_lock+0x2b/0x3f
+<snipped>
+Call Trace:
+ smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
+ process_one_work+0x18d/0x2fc
+ worker_thread+0x1a2/0x269
+ ? pr_cont_work+0x58/0x58
+ kthread+0xfa/0x10a
+ ? pr_cont_work+0x58/0x58
+ ? rcu_read_unlock_sched_notrace+0x48/0x48
+ ret_from_fork+0x22/0x40
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/efivarfs/config |    1 +
+ drivers/net/usb/smsc75xx.c |    1 +
  1 file changed, 1 insertion(+)
- create mode 100644 tools/testing/selftests/efivarfs/config
 
---- /dev/null
-+++ b/tools/testing/selftests/efivarfs/config
-@@ -0,0 +1 @@
-+CONFIG_EFIVAR_FS=y
+--- a/drivers/net/usb/smsc75xx.c
++++ b/drivers/net/usb/smsc75xx.c
+@@ -1506,6 +1506,7 @@ static void smsc75xx_unbind(struct usbne
+ {
+ 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
+ 	if (pdata) {
++		cancel_work_sync(&pdata->set_multicast);
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
+ 		kfree(pdata);
+ 		pdata = NULL;
 
 
