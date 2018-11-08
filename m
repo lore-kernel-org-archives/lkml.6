@@ -2,119 +2,77 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9DEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9A6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7908820844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:59:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RhLOfDDo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7908820844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 95AA920844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AA920844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeKIJhY (ORCPT
+        id S1727634AbeKIJhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 04:37:24 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39975 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbeKIJhY (ORCPT
+        Fri, 9 Nov 2018 04:37:48 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43784 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbeKIJhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 04:37:24 -0500
-Received: by mail-pl1-f193.google.com with SMTP id q19-v6so35956pll.7
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 15:59:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4mDOmHxtHc9ah51l/1sssmVDALU79jF5UEijPBogPM8=;
-        b=RhLOfDDohhu+PV9YUkZLW75wjxjk/JUwkqsf0zgHGgUgdU4ylKtIub6k6xcVJ3O9A3
-         Ubkvs+NxvBTBruJFMCZh0Q0pu4Ln6Rz6Wt1aQU/ueBxEtG8sm02xYIN/8QnLzTO0+AYM
-         qoYgMMLjweAK+SOC9YN95sB7aD4+qlIbIbCp4=
+        Fri, 9 Nov 2018 04:37:48 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g59-v6so30295plb.10;
+        Thu, 08 Nov 2018 15:59:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4mDOmHxtHc9ah51l/1sssmVDALU79jF5UEijPBogPM8=;
-        b=jRAF93+bSEMFXPmXb2GcG61LXImfJ8ek5PtLkkaGhspQGoRHlFT1Nn1YBeIK0OKbrA
-         L+FegtOGNNU+/AMqaVsFK18EFTbErFz8LTDxM2W0F+QrtWVxy6aAow2ddDeSVFktwSq1
-         1cJIPi0FG9orBIcU/d818UY/krpaxObB72oz79KiPwUsiCLZ9Pu9MkUAscelFLWcGK4f
-         yzvlcyeOul6cBPKQXG2273JEHqIQV615AA8mBKinkvhmJbTOOc5x9I6dPnUy4T+IKham
-         M5wtP9hd6Jbb5HfQEB2+Tq3JeDFOMDp1kFUXGgHFCIyzqHnB2b6al61GLmWiczBqeOIG
-         f6IQ==
-X-Gm-Message-State: AGRZ1gJjj72xwgBZtQKUk3unUKfKnhHjWK+bg73me2kWW5tkO6zwzr8M
-        Ob0ADm4ymmfZoFj1/iJ4WeBDBA==
-X-Google-Smtp-Source: AJdET5cEkgOaBGAiOUZDaE2G5trom/qjisMK4qfTueSrJ6oZcsp7ZfyQk0/uypDJzJV3pq8DAAs12w==
-X-Received: by 2002:a17:902:f24:: with SMTP id 33-v6mr6830603ply.228.1541721565125;
-        Thu, 08 Nov 2018 15:59:25 -0800 (PST)
-Received: from decatoncale.mtv.corp.google.com ([2620:15c:202:1:c562:226a:6d78:2ae4])
-        by smtp.gmail.com with ESMTPSA id v84-v6sm5729880pfd.182.2018.11.08.15.59.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 15:59:24 -0800 (PST)
-From:   Benson Leung <bleung@chromium.org>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dtor@chromium.org, dmitry.torokhov@gmail.com,
-        Benson Leung <bleung@chromium.org>
-Subject: [PATCH] HID: input: Ignore battery reported by Symbol DS4308
-Date:   Thu,  8 Nov 2018 15:59:21 -0800
-Message-Id: <20181108235921.62193-1-bleung@chromium.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dMC5yx8l6I+W1MLwZm69Ad0rXggLyhykDJoTEMkI8yg=;
+        b=SgpLH48MOwKYMxGvSOg15zokytvV/vpkTNSG1F9Pt9qQt7NYUzyXlKJ9XlKv1FFvn6
+         WqzsAbdyNtxIFVgI0+ffbVewmQ9XLHsu0KrVaKglRIPEosrOqMc6Idz4AjhTqpG15f1/
+         Z2V9sJ/qPQQdARPIDCWnnonW8t0XSKwkQkR8Yp/ITpVTcomnPSpEDwnmru+1qOSXmpWm
+         a+jrtssSifDuHMobxsAKPlqCScEYUD2naZK4UXYiXssjGu/myquZ8/QNYKXuQoPHHrFL
+         GXYUA/k7ExQtmO9Q7n/UG9zsY3ZiZPMe+YIG0kC+0tWTHhhZO4FcBZI70F49kZbqEvd3
+         5GuA==
+X-Gm-Message-State: AGRZ1gJk05jZHXoxOA2zfa8ypbt8Pd3zFxePxTsvR46QfphnGoVggLTa
+        sJa3dAQHtK9zOwTxjE+6Flo=
+X-Google-Smtp-Source: AJdET5dcAe+5yZ5IVm6BhB/mN8AjAFk2uSqDS40p63EVPBJBYX7YJ9Uomj90rotpBdrEDQtycjC2pQ==
+X-Received: by 2002:a17:902:aa8d:: with SMTP id d13-v6mr6702475plr.74.1541721588502;
+        Thu, 08 Nov 2018 15:59:48 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id q1sm5446088pgs.14.2018.11.08.15.59.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 15:59:47 -0800 (PST)
+Message-ID: <1541721586.196084.241.camel@acm.org>
+Subject: Re: [driver-core PATCH v6 6/9] driver core: Probe devices
+ asynchronously instead of the driver
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com
+Date:   Thu, 08 Nov 2018 15:59:46 -0800
+In-Reply-To: <154170043123.12967.3591757325647337726.stgit@ahduyck-desk1.jf.intel.com>
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+         <154170043123.12967.3591757325647337726.stgit@ahduyck-desk1.jf.intel.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
-which does not have a battery, but reports one anyway that always has
-capacity 2.
+On Thu, 2018-11-08 at 10:07 -0800, Alexander Duyck wrote:
++AD4 Probe devices asynchronously instead of the driver. This results in us
++AD4 seeing the same behavior if the device is registered before the driver or
++AD4 after. This way we can avoid serializing the initialization should the
++AD4 driver not be loaded until after the devices have already been added.
 
-Let's apply the IGNORE quirk to prevent it from being treated like a
-power supply so that userspaces don't get confused that this
-accessory is almost out of power and warn the user that they need to charge
-their wired barcode scanner.
-
-Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
-
-Signed-off-by: Benson Leung <bleung@chromium.org>
----
- drivers/hid/hid-ids.h   | 1 +
- drivers/hid/hid-input.c | 3 +++
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index c0d668944dbe..07f6348b9f86 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1043,6 +1043,7 @@
- #define USB_VENDOR_ID_SYMBOL		0x05e0
- #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
- #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
-+#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
- 
- #define USB_VENDOR_ID_SYNAPTICS		0x06cb
- #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index a2f74e6adc70..44ea8e7c71a9 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -325,6 +325,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
- 		USB_DEVICE_ID_ELECOM_BM084),
- 	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
-+		USB_DEVICE_ID_SYMBOL_SCANNER_3),
-+	  HID_BATTERY_QUIRK_IGNORE },
- 	{}
- };
- 
--- 
-2.19.1.930.g4563a0d9d0-goog
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
 
