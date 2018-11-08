@@ -2,515 +2,151 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74167ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B26ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C4920840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C4920840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C88292081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88292081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeKIGnY (ORCPT
+        id S1727885AbeKIGnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:43:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50466 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727698AbeKIGnF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:43:05 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8L0BFa063474
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 16:05:48 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmudkkf98-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 16:05:48 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Thu, 8 Nov 2018 21:05:47 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 21:05:43 -0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8L5gBk25886764
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 21:05:42 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 603652805E;
-        Thu,  8 Nov 2018 21:05:42 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FABF28064;
-        Thu,  8 Nov 2018 21:05:41 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 21:05:41 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        jdelvare@suse.com, linux-doc@vger.kernel.org,
-        gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux@roeck-us.net, rdunlap@infradead.org,
-        benh@kernel.crashing.org, Eddie James <eajames@linux.vnet.ibm.com>,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH v6 09/10] hwmon (occ): Add sensor attributes and register hwmon device
-Date:   Thu,  8 Nov 2018 15:05:28 -0600
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1541711129-26631-1-git-send-email-eajames@linux.ibm.com>
-References: <1541711129-26631-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18110821-0072-0000-0000-000003C5B0F3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010009; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114610; UDB=6.00577118; IPR=6.00894709;
- MB=3.00024077; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 21:05:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110821-0073-0000-0000-00004A0BB464
-Message-Id: <1541711129-26631-10-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080178
+        Fri, 9 Nov 2018 01:43:37 -0500
+Received: from mga17.intel.com ([192.55.52.151]:55219 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727197AbeKIGng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:43:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:06:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="278274839"
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 13:06:19 -0800
+Message-ID: <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Date:   Thu, 08 Nov 2018 13:01:05 -0800
+In-Reply-To: <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+         <20181011151523.27101-5-yu-cheng.yu@intel.com>
+         <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eddie James <eajames@linux.vnet.ibm.com>
+On Thu, 2018-11-08 at 12:46 -0800, Andy Lutomirski wrote:
+> On Thu, Oct 11, 2018 at 8:20 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > 
+> > Intel Control-flow Enforcement Technology (CET) introduces the
+> > following MSRs into the XSAVES system states.
+> > 
+> >     IA32_U_CET (user-mode CET settings),
+> >     IA32_PL3_SSP (user-mode shadow stack),
+> >     IA32_PL0_SSP (kernel-mode shadow stack),
+> >     IA32_PL1_SSP (ring-1 shadow stack),
+> >     IA32_PL2_SSP (ring-2 shadow stack).
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > ---
+> >  arch/x86/include/asm/fpu/types.h            | 22 +++++++++++++++++++++
+> >  arch/x86/include/asm/fpu/xstate.h           |  4 +++-
+> >  arch/x86/include/uapi/asm/processor-flags.h |  2 ++
+> >  arch/x86/kernel/fpu/xstate.c                | 10 ++++++++++
+> >  4 files changed, 37 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/include/asm/fpu/types.h
+> > b/arch/x86/include/asm/fpu/types.h
+> > index 202c53918ecf..e55d51d172f1 100644
+> > --- a/arch/x86/include/asm/fpu/types.h
+> > +++ b/arch/x86/include/asm/fpu/types.h
+> > @@ -114,6 +114,9 @@ enum xfeature {
+> >         XFEATURE_Hi16_ZMM,
+> >         XFEATURE_PT_UNIMPLEMENTED_SO_FAR,
+> >         XFEATURE_PKRU,
+> > +       XFEATURE_RESERVED,
+> > +       XFEATURE_SHSTK_USER,
+> > +       XFEATURE_SHSTK_KERNEL,
+> > 
+> >         XFEATURE_MAX,
+> >  };
+> > @@ -128,6 +131,8 @@ enum xfeature {
+> >  #define XFEATURE_MASK_Hi16_ZMM         (1 << XFEATURE_Hi16_ZMM)
+> >  #define XFEATURE_MASK_PT               (1 <<
+> > XFEATURE_PT_UNIMPLEMENTED_SO_FAR)
+> >  #define XFEATURE_MASK_PKRU             (1 << XFEATURE_PKRU)
+> > +#define XFEATURE_MASK_SHSTK_USER       (1 << XFEATURE_SHSTK_USER)
+> > +#define XFEATURE_MASK_SHSTK_KERNEL     (1 << XFEATURE_SHSTK_KERNEL)
+> > 
+> >  #define XFEATURE_MASK_FPSSE            (XFEATURE_MASK_FP |
+> > XFEATURE_MASK_SSE)
+> >  #define XFEATURE_MASK_AVX512           (XFEATURE_MASK_OPMASK \
+> > @@ -229,6 +234,23 @@ struct pkru_state {
+> >         u32                             pad;
+> >  } __packed;
+> > 
+> > +/*
+> > + * State component 11 is Control flow Enforcement user states
+> > + */
+> > +struct cet_user_state {
+> > +       u64 u_cet;      /* user control flow settings */
+> > +       u64 user_ssp;   /* user shadow stack pointer */
+> > +} __packed;
+> > +
+> > +/*
+> > + * State component 12 is Control flow Enforcement kernel states
+> > + */
+> > +struct cet_kernel_state {
+> > +       u64 kernel_ssp; /* kernel shadow stack */
+> > +       u64 pl1_ssp;    /* ring-1 shadow stack */
+> > +       u64 pl2_ssp;    /* ring-2 shadow stack */
+> > +} __packed;
+> > +
+> 
+> Why are these __packed?  It seems like it'll generate bad code for no
+> obvious purpose.
 
-Setup the sensor attributes for every OCC sensor found by the first poll
-response. Register the attributes with hwmon.
+That prevents any possibility that the compiler will insert padding, although in
+64-bit kernel this should not happen to either struct.  Also all xstate
+components here are packed.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/hwmon/occ/common.c | 337 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/hwmon/occ/common.h |  16 +++
- 2 files changed, 353 insertions(+)
-
-diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
-index f7220132..c6c8161 100644
---- a/drivers/hwmon/occ/common.c
-+++ b/drivers/hwmon/occ/common.c
-@@ -1,11 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/device.h>
-+#include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- #include <linux/jiffies.h>
- #include <linux/kernel.h>
- #include <linux/math64.h>
- #include <linux/mutex.h>
-+#include <linux/sysfs.h>
- #include <asm/unaligned.h>
- 
- #include "common.h"
-@@ -641,6 +643,324 @@ static ssize_t occ_show_extended(struct device *dev,
- 	return rc;
- }
- 
-+/*
-+ * Some helper macros to make it easier to define an occ_attribute. Since these
-+ * are dynamically allocated, we shouldn't use the existing kernel macros which
-+ * stringify the name argument.
-+ */
-+#define ATTR_OCC(_name, _mode, _show, _store) {				\
-+	.attr	= {							\
-+		.name = _name,						\
-+		.mode = VERIFY_OCTAL_PERMISSIONS(_mode),		\
-+	},								\
-+	.show	= _show,						\
-+	.store	= _store,						\
-+}
-+
-+#define SENSOR_ATTR_OCC(_name, _mode, _show, _store, _nr, _index) {	\
-+	.dev_attr	= ATTR_OCC(_name, _mode, _show, _store),	\
-+	.index		= _index,					\
-+	.nr		= _nr,						\
-+}
-+
-+#define OCC_INIT_ATTR(_name, _mode, _show, _store, _nr, _index)		\
-+	((struct sensor_device_attribute_2)				\
-+		SENSOR_ATTR_OCC(_name, _mode, _show, _store, _nr, _index))
-+
-+/*
-+ * Allocate and instatiate sensor_device_attribute_2s. It's most efficient to
-+ * use our own instead of the built-in hwmon attribute types.
-+ */
-+static int occ_setup_sensor_attrs(struct occ *occ)
-+{
-+	unsigned int i, s, num_attrs = 0;
-+	struct device *dev = occ->bus_dev;
-+	struct occ_sensors *sensors = &occ->sensors;
-+	struct occ_attribute *attr;
-+	struct temp_sensor_2 *temp;
-+	ssize_t (*show_temp)(struct device *, struct device_attribute *,
-+			     char *) = occ_show_temp_1;
-+	ssize_t (*show_freq)(struct device *, struct device_attribute *,
-+			     char *) = occ_show_freq_1;
-+	ssize_t (*show_power)(struct device *, struct device_attribute *,
-+			      char *) = occ_show_power_1;
-+	ssize_t (*show_caps)(struct device *, struct device_attribute *,
-+			     char *) = occ_show_caps_1_2;
-+
-+	switch (sensors->temp.version) {
-+	case 1:
-+		num_attrs += (sensors->temp.num_sensors * 2);
-+		break;
-+	case 2:
-+		num_attrs += (sensors->temp.num_sensors * 4);
-+		show_temp = occ_show_temp_2;
-+		break;
-+	default:
-+		sensors->temp.num_sensors = 0;
-+	}
-+
-+	switch (sensors->freq.version) {
-+	case 2:
-+		show_freq = occ_show_freq_2;
-+		/* fall through */
-+	case 1:
-+		num_attrs += (sensors->freq.num_sensors * 2);
-+		break;
-+	default:
-+		sensors->freq.num_sensors = 0;
-+	}
-+
-+	switch (sensors->power.version) {
-+	case 2:
-+		show_power = occ_show_power_2;
-+		/* fall through */
-+	case 1:
-+		num_attrs += (sensors->power.num_sensors * 4);
-+		break;
-+	case 0xA0:
-+		num_attrs += (sensors->power.num_sensors * 16);
-+		show_power = occ_show_power_a0;
-+		break;
-+	default:
-+		sensors->power.num_sensors = 0;
-+	}
-+
-+	switch (sensors->caps.version) {
-+	case 1:
-+		num_attrs += (sensors->caps.num_sensors * 7);
-+		break;
-+	case 3:
-+		show_caps = occ_show_caps_3;
-+		/* fall through */
-+	case 2:
-+		num_attrs += (sensors->caps.num_sensors * 8);
-+		break;
-+	default:
-+		sensors->caps.num_sensors = 0;
-+	}
-+
-+	switch (sensors->extended.version) {
-+	case 1:
-+		num_attrs += (sensors->extended.num_sensors * 3);
-+		break;
-+	default:
-+		sensors->extended.num_sensors = 0;
-+	}
-+
-+	occ->attrs = devm_kzalloc(dev, sizeof(*occ->attrs) * num_attrs,
-+				  GFP_KERNEL);
-+	if (!occ->attrs)
-+		return -ENOMEM;
-+
-+	/* null-terminated list */
-+	occ->group.attrs = devm_kzalloc(dev, sizeof(*occ->group.attrs) *
-+					num_attrs + 1, GFP_KERNEL);
-+	if (!occ->group.attrs)
-+		return -ENOMEM;
-+
-+	attr = occ->attrs;
-+
-+	for (i = 0; i < sensors->temp.num_sensors; ++i) {
-+		s = i + 1;
-+		temp = ((struct temp_sensor_2 *)sensors->temp.data) + i;
-+
-+		snprintf(attr->name, sizeof(attr->name), "temp%d_label", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_temp, NULL,
-+					     0, i);
-+		attr++;
-+
-+		if (sensors->temp.version > 1 &&
-+		    temp->fru_type == OCC_FRU_TYPE_VRM) {
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "temp%d_alarm", s);
-+		} else {
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "temp%d_input", s);
-+		}
-+
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_temp, NULL,
-+					     1, i);
-+		attr++;
-+
-+		if (sensors->temp.version > 1) {
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "temp%d_fru_type", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_temp, NULL, 2, i);
-+			attr++;
-+
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "temp%d_fault", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_temp, NULL, 3, i);
-+			attr++;
-+		}
-+	}
-+
-+	for (i = 0; i < sensors->freq.num_sensors; ++i) {
-+		s = i + 1;
-+
-+		snprintf(attr->name, sizeof(attr->name), "freq%d_label", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_freq, NULL,
-+					     0, i);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "freq%d_input", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_freq, NULL,
-+					     1, i);
-+		attr++;
-+	}
-+
-+	if (sensors->power.version == 0xA0) {
-+		/*
-+		 * Special case for many-attribute power sensor. Split it into
-+		 * a sensor number per power type, emulating several sensors.
-+		 */
-+		for (i = 0; i < sensors->power.num_sensors; ++i) {
-+			unsigned int j;
-+			unsigned int nr = 0;
-+
-+			s = (i * 4) + 1;
-+
-+			for (j = 0; j < 4; ++j) {
-+				snprintf(attr->name, sizeof(attr->name),
-+					 "power%d_label", s);
-+				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+							     show_power, NULL,
-+							     nr++, i);
-+				attr++;
-+
-+				snprintf(attr->name, sizeof(attr->name),
-+					 "power%d_average", s);
-+				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+							     show_power, NULL,
-+							     nr++, i);
-+				attr++;
-+
-+				snprintf(attr->name, sizeof(attr->name),
-+					 "power%d_average_interval", s);
-+				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+							     show_power, NULL,
-+							     nr++, i);
-+				attr++;
-+
-+				snprintf(attr->name, sizeof(attr->name),
-+					 "power%d_input", s);
-+				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+							     show_power, NULL,
-+							     nr++, i);
-+				attr++;
-+
-+				s++;
-+			}
-+		}
-+	} else {
-+		for (i = 0; i < sensors->power.num_sensors; ++i) {
-+			s = i + 1;
-+
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "power%d_label", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_power, NULL, 0, i);
-+			attr++;
-+
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "power%d_average", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_power, NULL, 1, i);
-+			attr++;
-+
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "power%d_average_interval", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_power, NULL, 2, i);
-+			attr++;
-+
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "power%d_input", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_power, NULL, 3, i);
-+			attr++;
-+		}
-+	}
-+
-+	if (sensors->caps.num_sensors >= 1) {
-+		s = sensors->power.num_sensors + 1;
-+
-+		snprintf(attr->name, sizeof(attr->name), "power%d_label", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
-+					     0, 0);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "power%d_cap", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
-+					     1, 0);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "power%d_input", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
-+					     2, 0);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name),
-+			 "power%d_cap_not_redundant", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
-+					     3, 0);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "power%d_cap_max", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
-+					     4, 0);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "power%d_cap_min", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
-+					     5, 0);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "power%d_cap_user",
-+			 s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0644, show_caps,
-+					     occ_store_caps_user, 6, 0);
-+		attr++;
-+
-+		if (sensors->caps.version > 1) {
-+			snprintf(attr->name, sizeof(attr->name),
-+				 "power%d_cap_user_source", s);
-+			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+						     show_caps, NULL, 7, 0);
-+			attr++;
-+		}
-+	}
-+
-+	for (i = 0; i < sensors->extended.num_sensors; ++i) {
-+		s = i + 1;
-+
-+		snprintf(attr->name, sizeof(attr->name), "extn%d_label", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+					     occ_show_extended, NULL, 0, i);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "extn%d_flags", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+					     occ_show_extended, NULL, 1, i);
-+		attr++;
-+
-+		snprintf(attr->name, sizeof(attr->name), "extn%d_input", s);
-+		attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
-+					     occ_show_extended, NULL, 2, i);
-+		attr++;
-+	}
-+
-+	/* put the sensors in the group */
-+	for (i = 0; i < num_attrs; ++i) {
-+		sysfs_attr_init(&occ->attrs[i].sensor.dev_attr.attr);
-+		occ->group.attrs[i] = &occ->attrs[i].sensor.dev_attr.attr;
-+	}
-+
-+	return 0;
-+}
-+
- /* only need to do this once at startup, as OCC won't change sensors on us */
- static void occ_parse_poll_response(struct occ *occ)
- {
-@@ -704,6 +1024,7 @@ int occ_setup(struct occ *occ, const char *name)
- 	int rc;
- 
- 	mutex_init(&occ->lock);
-+	occ->groups[0] = &occ->group;
- 
- 	/* no need to lock */
- 	rc = occ_poll(occ);
-@@ -718,5 +1039,21 @@ int occ_setup(struct occ *occ, const char *name)
- 
- 	occ_parse_poll_response(occ);
- 
-+	rc = occ_setup_sensor_attrs(occ);
-+	if (rc) {
-+		dev_err(occ->bus_dev, "failed to setup sensor attrs: %d\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	occ->hwmon = devm_hwmon_device_register_with_groups(occ->bus_dev, name,
-+							    occ, occ->groups);
-+	if (IS_ERR(occ->hwmon)) {
-+		rc = PTR_ERR(occ->hwmon);
-+		dev_err(occ->bus_dev, "failed to register hwmon device: %d\n",
-+			rc);
-+		return rc;
-+	}
-+
- 	return 0;
- }
-diff --git a/drivers/hwmon/occ/common.h b/drivers/hwmon/occ/common.h
-index e074251..00ac101 100644
---- a/drivers/hwmon/occ/common.h
-+++ b/drivers/hwmon/occ/common.h
-@@ -3,7 +3,9 @@
- #ifndef OCC_COMMON_H
- #define OCC_COMMON_H
- 
-+#include <linux/hwmon-sysfs.h>
- #include <linux/mutex.h>
-+#include <linux/sysfs.h>
- 
- struct device;
- 
-@@ -76,6 +78,15 @@ struct occ_sensors {
- 	struct occ_sensor extended;
- };
- 
-+/*
-+ * Use our own attribute struct so we can dynamically allocate space for the
-+ * name.
-+ */
-+struct occ_attribute {
-+	char name[32];
-+	struct sensor_device_attribute_2 sensor;
-+};
-+
- struct occ {
- 	struct device *bus_dev;
- 
-@@ -88,6 +99,11 @@ struct occ {
- 
- 	unsigned long last_update;
- 	struct mutex lock;		/* lock OCC access */
-+
-+	struct device *hwmon;
-+	struct occ_attribute *attrs;
-+	struct attribute_group group;
-+	const struct attribute_group *groups[2];
- };
- 
- int occ_setup(struct occ *occ, const char *name);
--- 
-1.8.3.1
-
+Yu-cheng
