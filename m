@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B25DBECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D5DECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C494208E3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C4F320892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sf+C+gzy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C494208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB/KWq1a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4F320892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbeKIHeO (ORCPT
+        id S1729305AbeKIHeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:34:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50738 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:34:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727590AbeKIHeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:34:14 -0500
+        id S1727590AbeKIHeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:34:19 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59AE4208E3;
-        Thu,  8 Nov 2018 21:56:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE8A420892;
+        Thu,  8 Nov 2018 21:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714206;
-        bh=oE9ykIj7bq9CjfPaS0P3Ugq6Y3jHj8HmoxOmwYY4iVA=;
+        s=default; t=1541714212;
+        bh=gio5bY3jcVUwYv2xl6Bl8Pity5JJANLqTPvxJBekw9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sf+C+gzytlQ0iBSquKKvZsCLHpKXiWhjAfQlyjsbPOYmE4LJ23H0u4q5HCiliRNqZ
-         nYqYYYRQY/X96JsK5wBIS/NsfEffi+AwEs0Ct8/KjVVKFCRazALdgWHlYgnc4JPCAg
-         //1BDpv8A+2nWO+9+LxViL7YAQtXC/7PMuTr708A=
+        b=AB/KWq1aOqDtj9MM7VJfr26h15ZEGgXJlsdgQUlksrC429Ek/5AWkU9rvkUkxBMvQ
+         5wZW0IXgK1TYQ7V/2PUPJ0JK3w50nysus4lZoJtbOz61Z9NTnicPVDLeU72cnln5+V
+         r5YD5V1OUg10Ux4jlp8nxzAlX5t0Xzmw7L2gQK10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Arik Nemtsov <arikx.nemtsov@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 118/144] sctp: translate network order to host order when users get a hmacid
-Date:   Thu,  8 Nov 2018 13:51:29 -0800
-Message-Id: <20181108215106.555350281@linuxfoundation.org>
+Subject: [PATCH 3.18 119/144] iwlwifi: pcie: correctly define 7265-D cfg
+Date:   Thu,  8 Nov 2018 13:51:30 -0800
+Message-Id: <20181108215106.629958962@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,51 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7a84bd46647ff181eb2659fdc99590e6f16e501d ]
+[ Upstream commit 2b0e2b0f7bfe9a9098bda6109176adcf78f9b7ac ]
 
-Commit ed5a377d87dc ("sctp: translate host order to network order when
-setting a hmacid") corrected the hmacid byte-order when setting a hmacid.
-but the same issue also exists on getting a hmacid.
+The trans cfg was not replaced for 7265-D cards. This led to a check of
+the min-NVM version against a 7265-C card, causing very-old 7265-D cards
+to operate incorrectly with the driver.
 
-We fix it by changing hmacids to host order when users get them with
-getsockopt.
-
-Fixes: Commit ed5a377d87dc ("sctp: translate host order to network order when setting a hmacid")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 3fd0d3c170ad ("iwlwifi: pcie: support 7265-D devices")
+Signed-off-by: Arik Nemtsov <arikx.nemtsov@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/socket.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/wireless/iwlwifi/pcie/drv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 13693d0adeaf..5c16d0e13987 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -5607,6 +5607,7 @@ static int sctp_getsockopt_hmac_ident(struct sock *sk, int len,
- 	struct sctp_hmac_algo_param *hmacs;
- 	__u16 data_len = 0;
- 	u32 num_idents;
-+	int i;
- 
- 	if (!ep->auth_enable)
- 		return -EACCES;
-@@ -5624,8 +5625,12 @@ static int sctp_getsockopt_hmac_ident(struct sock *sk, int len,
- 		return -EFAULT;
- 	if (put_user(num_idents, &p->shmac_num_idents))
- 		return -EFAULT;
--	if (copy_to_user(p->shmac_idents, hmacs->hmac_ids, data_len))
--		return -EFAULT;
-+	for (i = 0; i < num_idents; i++) {
-+		__u16 hmacid = ntohs(hmacs->hmac_ids[i]);
-+
-+		if (copy_to_user(&p->shmac_idents[i], &hmacid, sizeof(__u16)))
-+			return -EFAULT;
+diff --git a/drivers/net/wireless/iwlwifi/pcie/drv.c b/drivers/net/wireless/iwlwifi/pcie/drv.c
+index 8407ce5f672f..4c7be34219d7 100644
+--- a/drivers/net/wireless/iwlwifi/pcie/drv.c
++++ b/drivers/net/wireless/iwlwifi/pcie/drv.c
+@@ -533,8 +533,10 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	else if (cfg == &iwl7265_n_cfg)
+ 		cfg_7265d = &iwl7265d_n_cfg;
+ 	if (cfg_7265d &&
+-	    (iwl_trans->hw_rev & CSR_HW_REV_TYPE_MSK) == CSR_HW_REV_TYPE_7265D)
++	    (iwl_trans->hw_rev & CSR_HW_REV_TYPE_MSK) == CSR_HW_REV_TYPE_7265D) {
+ 		cfg = cfg_7265d;
++		iwl_trans->cfg = cfg_7265d;
 +	}
- 	return 0;
- }
+ #endif
  
+ 	pci_set_drvdata(pdev, iwl_trans);
 -- 
 2.17.1
 
