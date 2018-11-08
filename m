@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1378C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035B3C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D612086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:15:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D612086A
+	by mail.kernel.org (Postfix) with ESMTP id C81B920825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81B920825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbeKHTto (ORCPT
+        id S1727413AbeKHTuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:49:44 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:32850 "EHLO huawei.com"
+        Thu, 8 Nov 2018 14:50:04 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14615 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726955AbeKHTtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:49:43 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 02E68BBCEB710;
-        Thu,  8 Nov 2018 18:14:56 +0800 (CST)
+        id S1726955AbeKHTuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 14:50:04 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3DADD162ADF3F;
+        Thu,  8 Nov 2018 18:15:16 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 8 Nov 2018 18:14:49 +0800
+ 14.3.408.0; Thu, 8 Nov 2018 18:15:10 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <robh+dt@kernel.org>, <frowand.list@gmail.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <will.deacon@arm.com>,
         <anshuman.khandual@arm.com>, <peterz@infradead.org>
 Subject: [PATCH v2] of, numa: Validate some distance map rules
-Date:   Thu, 8 Nov 2018 18:16:42 +0800
-Message-ID: <1541672202-131229-1-git-send-email-john.garry@huawei.com>
+Date:   Thu, 8 Nov 2018 18:17:03 +0800
+Message-ID: <1541672223-131326-1-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
 Content-Type: text/plain
