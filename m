@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6590DECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F74ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3949B20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:37:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3949B20827
+	by mail.kernel.org (Postfix) with ESMTP id 6D16420818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:39:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D16420818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbeKIDN7 (ORCPT
+        id S1726996AbeKIDQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:13:59 -0500
-Received: from mga06.intel.com ([134.134.136.31]:63187 "EHLO mga06.intel.com"
+        Thu, 8 Nov 2018 22:16:29 -0500
+Received: from mga02.intel.com ([134.134.136.20]:16215 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeKIDN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:13:59 -0500
+        id S1726585AbeKIDQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:16:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 09:37:26 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 09:39:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="94709705"
+   d="scan'208";a="104575958"
 Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 09:37:25 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 08 Nov 2018 09:39:55 -0800
 From:   thor.thayer@linux.intel.com
 To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
         joabreu@synopsys.com, davem@davemloft.net
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Thor Thayer <thor.thayer@linux.intel.com>
 Subject: [PATCHv2] net: stmmac: Fix RX packet size > 8191
-Date:   Thu,  8 Nov 2018 11:39:45 -0600
-Message-Id: <1541698785-9577-1-git-send-email-thor.thayer@linux.intel.com>
+Date:   Thu,  8 Nov 2018 11:42:14 -0600
+Message-Id: <1541698935-9752-1-git-send-email-thor.thayer@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
