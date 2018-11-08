@@ -2,133 +2,226 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCC1ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EE4ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56BCA20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:52:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="adnew7e4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="adnew7e4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56BCA20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 69A012081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A012081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbeKIF3x (ORCPT
+        id S1727255AbeKIFbU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:29:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45642 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725199AbeKIF3x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:29:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D1EA4601D7; Thu,  8 Nov 2018 19:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541706773;
-        bh=XFpxOxE45vJ85tfFSq2rlEM5qRaOaNKq5Ty6GNRkpPg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=adnew7e4AIIJ3f7UHSnHTHcP8mBBq14vF3nj+LG1RJw1piOyGp+xQsYWQMIgC0znN
-         goTxSw4xpS931P0lhEs1QOaAlWQPq8wBKE41kSbpcspdJDRaDsyRdvDVtacykda+Dl
-         6xaGpOEZyTF1gP2OLjNVrC8lPa/wXiIFfFkIXeXU=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 620886029D;
-        Thu,  8 Nov 2018 19:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541706773;
-        bh=XFpxOxE45vJ85tfFSq2rlEM5qRaOaNKq5Ty6GNRkpPg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=adnew7e4AIIJ3f7UHSnHTHcP8mBBq14vF3nj+LG1RJw1piOyGp+xQsYWQMIgC0znN
-         goTxSw4xpS931P0lhEs1QOaAlWQPq8wBKE41kSbpcspdJDRaDsyRdvDVtacykda+Dl
-         6xaGpOEZyTF1gP2OLjNVrC8lPa/wXiIFfFkIXeXU=
+        Fri, 9 Nov 2018 00:31:20 -0500
+Received: from mga04.intel.com ([192.55.52.120]:38603 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726140AbeKIFbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:31:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:54:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="90566834"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2018 11:54:20 -0800
+Date:   Thu, 8 Nov 2018 11:54:20 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108195420.GA14715@linux.intel.com>
+References: <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 08 Nov 2018 11:52:53 -0800
-From:   Rajkumar Manoharan <rmanohar@codeaurora.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     govinds@codeaurora.org, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        yyuwang@codeaurora.org, pillair@codeaurora.org,
-        stable <stable@vger.kernel.org>,
-        linux-wireless-owner@vger.kernel.org
-Subject: Re: [PATCH REGRESSION] Revert "ath10k: add quiet mode support for
- QCA6174/QCA9377"
-In-Reply-To: <CA+ASDXOqJ1-G2amyu7sJCnzKf1oY_2j9Qw4WS0VTf8EqGr6Uqw@mail.gmail.com>
-References: <20181107185643.240346-1-briannorris@chromium.org>
- <7f2ef494f4a2aba1845a157da8fec449@codeaurora.org>
- <b1a64bd66fa25f274af8c018c6fc02f4@codeaurora.org>
- <CA+ASDXOqJ1-G2amyu7sJCnzKf1oY_2j9Qw4WS0VTf8EqGr6Uqw@mail.gmail.com>
-Message-ID: <f1abeef79b579f91850cab298a32fe00@codeaurora.org>
-X-Sender: rmanohar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-08 09:30, Brian Norris wrote:
-> On Wed, Nov 7, 2018 at 8:32 PM Govind Singh <govinds@codeaurora.org> 
-> wrote:
->> On 2018-11-08 03:00, Rajkumar Manoharan wrote:
->> >
->> > The change "ath10k: add quiet mode support for QCA6174/QCA9377" was
->> > merged even
->> > before full WCN3990 device support was added in ath10k. How come it
->> > could be regression
->> > for WCN3990. I know both are sharing same WMI-TLV interface but
->> > reverting this
->> > will break QCA6174/QCA9377. no?
+On Tue, Nov 06, 2018 at 01:07:54PM -0800, Andy Lutomirski wrote:
 > 
-> I don't see how the revert would "break" QCA6174 -- QCA6174 worked
-> just fine without this feature and should continue to do so.
 > 
+> > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> > 
+> >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> >> True, but what if we have a nasty enclave that writes to memory just
+> >> below SP *before* decrementing SP?
+> > 
+> > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> > 
+> >    1. EENTER
+> >    2. Hardware sets eenter_hwframe->sp = %sp
+> >    3. Enclave runs... wants to do out-call
+> >    4. Enclave sets up parameters:
+> >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> >        ...
+> >    5. Enclave sets eenter_hwframe->sp -= offset
+> > 
+> > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' that
+> > was on the stack.  The enclave could easily fix this by moving ->sp first.
+> > 
+> > But, this is one of those "fun" parts of the ABI that I think we need to
+> > talk about.  If we do this, we also basically require that the code
+> > which handles asynchronous exits must *not* write to the stack.  That's
+> > not hard because it's typically just a single ERESUME instruction, but
+> > it *is* a requirement.
+> > 
+> 
+> I was assuming that the async exit stuff was completely hidden by the
+> API.  The AEP code would decide whether the exit got fixed up by the
+> kernel (which may or may not be easy to tell — can the code even tell
+> without kernel help whether it was, say, an IRQ vs #UD?) and then either
+> do ERESUME or cause sgx_enter_enclave() to return with an appropriate
+> return value.
 
-I meant that the revert commit remove quiet mode support from QCA6174 & 
-QCA9377.
+Ok, SDK folks came up with an idea that would allow them to use vDSO,
+albeit with a bit of ugliness and potentially a ROP-attack issue.
+Definitely some weirdness, but the weirdness is well contained, unlike
+the magic prefix approach.
 
->> This regression is found while we switched from 4.18 + WCN3990
->> back-ports to 4.19.
-> 
-> ^^ What Govind said. WCN3990 support has been trickling in over a few
-> releases, and it doesn't seem kosher to allow people to submit
-> regressions in the midst of that.
-> 
-Nobody prefers regression :). WCN3990 support was still in progress, at
-the time the commit got merged into upstream. My point is that we can't 
-expect
-the community to validate the changes against in-progress platform.
+Provide two enter_enclave() vDSO "functions".  The first is a normal
+function with a normal C interface.  The second is a blob of code that
+is "called" and "returns" via indirect jmp, and can be used by SGX
+runtimes that want to use the untrusted stack for out-calls from the
+enclave.
 
->> 
->> IMO, we should use (WMI_SERVICE_THERMAL_MGMT | WMI_SERVICE_THERM_THROT 
->> )
->> service bitmap check and call
->> ath10k_thermal_set_throttling only if fw supports THERMAL THROTTLE
->> feature. But we need to ensure all
->> available ath10k fw's are reporting this service.
-> 
-> And the above notes from Govind highlight this -- if the feature was
-> not protected by the appropriate service flags, then we can't be sure
-> that you didn't break a bunch of other firmware releases out there.
-> Linux should not break for everyone just because you spun a firmware
-> release.
-> 
-That is true. Any new features or interface changes in firmware will be
-advertised by feature bit. But the quiet param was available in firmware
-since first release.
+For the indirect jmp "function", use %rbp to stash the return address
+of the caller (either in %rbp itself or in memory pointed to by %rbp).
+It works because hardware also saves/restores %rbp along with %rsp when
+doing enclave transitions, and the SDK can live with %rbp being
+off-limits.  Fault info is passed via registers.
 
-> Of course, I'll leave it up to Kalle as to how he wants to mediate
-> this. And if you come up with a solid patch soon that can fix this
-> without dropping the feature, then so be it.
-> 
-Govind is working on to handle this properly either by instantiating
-new WMI-TLV table for WCNxxxx or by adding conditional check in exiting 
-path.
+Basic idea for the "functions" below.  The fixup stuff is obviously not
+wired up correctly, just trying to convey the concept.
 
--Rajkumar
+
+
+struct enclu_fault_info {
+	unsigned int	leaf;
+	unsigned int	trapnr;
+	unsigned int	error_code;
+	unsigned long	address;
+};
+
+int __vdso_enter_enclave(void *tcs, struct enclu_fault_info *fault_info)
+{
+	unsigned int leaf, trapnr;
+
+	asm volatile (
+		"lea	2f(%%rip), %%rcx\n\t"
+		"1:	enclu\n\t"
+		"jmp	3f\n\t"
+
+		/* ERESUME trampoline */
+		"2:	enclu\n\t"
+		"ud2\n\t"
+
+		/* out: */
+		"3:\n"
+
+		/* EENTER fixup */
+		".pushsection .fixup,\"ax\"\n\t"
+		"4:\n\t"
+		"mov	%%eax, %%edi\n\t"
+		"movl	$"__stringify(SGX_EENTER)", %%eax\n\t"
+		"jmp	3b\n\t"
+		".popsection\n\t"
+		_ASM_EXTABLE_FAULT(1b, 4b)
+
+		/* ERESUME FIXUP */
+		".pushsection .fixup,\"ax\"\n\t"
+		"5:\n\t"
+		"mov	%%eax, %%edi\n\t"
+		"movl	$"__stringify(SGX_ERESUME)", %%eax\n\t"
+		"jmp	3b\n\t"
+		".popsection\n\t"
+		_ASM_EXTABLE_FAULT(2b, 5b)
+
+		: "=a"(leaf), "=D" (trapnr)
+		: "a" (SGX_EENTER), "b" (tcs)
+		: "cc", "memory", "rcx", "rdx", "rsi", "r8", "r9", "r10",
+		  "r11", "r12", "r13", "r14", "r15"
+	);
+
+	if (leaf == SGX_EEXIT)
+		return 0;
+
+	if (fault_info) {
+		fault_info->leaf = leaf;
+		fault_info->trapnr = trapnr;
+		fault_info->error_code = 0;
+		fault_info->address = 0;
+	}
+
+	return -EFAULT;
+}
+
+
+GLOBAL(__vdso_enter_enclave_no_stack)
+        endbr64
+
+        /* %rbp = return target, %rbx = tcs */
+        leaq    3f(%rip), %rcx
+        movl    $2, %eax
+1:      enclu
+
+        /* "return" to "caller" */
+2:      jmp     *%rbp
+
+        /* ERESUME trampoline */
+3:      enclu
+        ud2
+
+        /* EENTER fixup handler */
+4:      movq    %rax, %rdi
+        movl    $2, %eax
+        /* %rsi = error code, %rdx = address */
+        jmp     2b
+
+        /* ERESUME fixup handler */
+5:      movq    %rax, %rdi
+        movl    $3, %eax
+        /* %rsi = error code, %rdx = address */
+        jmp     2b
+
+
