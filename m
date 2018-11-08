@@ -2,121 +2,149 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3534C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F06C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773D320827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F97020883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:48:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epA3kKF7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773D320827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="WiiLcMzF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F97020883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeKHWXy (ORCPT
+        id S1727029AbeKHWYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:23:54 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52521 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeKHWXy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:23:54 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r11-v6so1133379wmb.2;
-        Thu, 08 Nov 2018 04:48:32 -0800 (PST)
+        Thu, 8 Nov 2018 17:24:12 -0500
+Received: from mail-ty1jpn01on0132.outbound.protection.outlook.com ([104.47.93.132]:34066
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726541AbeKHWYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 17:24:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F3gm0NlI50w7dtXTnr8YUydkUWn8YlB45N6wO1n6b5g=;
-        b=epA3kKF7lkd8zwnjjAjWOhVlT4GgHX9te40c77QDSc4lGPtoY9Qd+vG/dHN7lQSpL8
-         8qLHKD+BhjGyjEFe7yiGaH4qPBYhXFObRMS1kbcUJEWAMWLndPGXwrxsPP9bjgZXdbVo
-         XyhH9od7GfR5nOdPZK0EYw6MI7zpKeIZqPXsURflSW3Qu2RoSclSyo3JRR5JMOkXAiP0
-         PJBdSbcl9LlPzsK/7oltlPRBBYR+NkSmRofed/ApXm8aV5e9iZjCoMhQTOGl5mElJKKh
-         6Mkve0ENbj8tHJrpmpC8pSLoU+e/7ROF3u6fcD5my7XjVEjjqxcyZTzB7wktQZFWQAzZ
-         13mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F3gm0NlI50w7dtXTnr8YUydkUWn8YlB45N6wO1n6b5g=;
-        b=hm6OsNFklfpJV0Kv0qxONFxIRaHYHB6Lan0fwiM+dx9jtabI4HrDLxZXNvPFyCRuv5
-         lKQbnrNy5vGj4K1kDkzDbgev2Ss2WjVgtX6WsHkrqFPqrLiG8GDJECGwloExDlhn5Eke
-         oZlf96TjkHgDKWt6QSoRxlDrjEs7Qi+JBiWdwotSodi6UbuZvLAFO/RmEDTLDzT6tCkc
-         0/ZGmBc0BAXtYp75MesNreO2S8x0RkDXmP7CKfcpMgVXonPtW7SnT+9+XrDE6h8tNnq9
-         Ak0t2bG8QmV+O4Kyqj7jSoa/7AqlMmT9yPVWGCAdYwUVgh1CTdhUqt9YKUm2VLK7InHy
-         I0XA==
-X-Gm-Message-State: AGRZ1gIrzix3PwYDl+c9LMfFbaU8ce3WuaOFDJClAiEU9WIYK89kSi1T
-        NxqQVsSBttzt+svUd8nxf0k=
-X-Google-Smtp-Source: AJdET5c+2Dx3rmrNheQ/g62ggdfHz24Jwsuwea76uaH/TONogHPEs2PoLYufz7t5P18t1fbuIQTxaQ==
-X-Received: by 2002:a1c:8c53:: with SMTP id o80-v6mr1114830wmd.30.1541681311972;
-        Thu, 08 Nov 2018 04:48:31 -0800 (PST)
-Received: from localhost (p200300E41F201D007494A3C25E2F6EAF.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:7494:a3c2:5e2f:6eaf])
-        by smtp.gmail.com with ESMTPSA id g16-v6sm4282531wrr.38.2018.11.08.04.48.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 04:48:31 -0800 (PST)
-Date:   Thu, 8 Nov 2018 13:48:30 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Wei Ni <wni@nvidia.com>
-Cc:     daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org,
-        rui.zhang@intel.com, edubezval@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] thermal: tegra: continue if sensor register fails
-Message-ID: <20181108124830.GF1340@ulmo>
-References: <1541410354-19090-1-git-send-email-wni@nvidia.com>
- <1541410354-19090-2-git-send-email-wni@nvidia.com>
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gC+QfY+LAN901l9znSrQzfISqb3dRKOQtznrzDWujJA=;
+ b=WiiLcMzFaPVMTVLX/nSiKyryn109dkLn/eOTY8JdsfVD7ItbVHfMXLmB62pUcx1kuGsPEw+21ziWfAGvvWEAJ01k7mGJSykRRsCDd5fxQMMHTJpYIoPcEb9S6mvvROrXmOZUc9E9eIJ/gu+SWH3J/Kg60IbnJPLO0FsLQEuOzeA=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
+ TY1PR01MB1500.jpnprd01.prod.outlook.com (52.133.161.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Thu, 8 Nov 2018 12:48:47 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::708f:601d:1cf4:6095]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::708f:601d:1cf4:6095%5]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
+ 12:48:46 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Biju Das <biju.das@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
+ r8a774a1
+Thread-Topic: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
+ r8a774a1
+Thread-Index: AQHUO3/950BhN4Ey1UKDiDbJFMgUuKVGS6ew
+Date:   Thu, 8 Nov 2018 12:48:46 +0000
+Message-ID: <TY1PR01MB1770EDC8696798A93FB7E3D2C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1500;20:W18oiiW/6EEGJjp4+DRx0212PdKQgEJd+yHWJIaLlqe6YIWSU3CdblbsbVKv85MzPrL+AkJMgqBCMbLNpPDWCXvAaTqhJxaSEsINB7P0+yJSZAizTUUMR9M0P4ugvhwIJmWDZ4O+OFAJbjE6UMhvhu0ctR8drXFCooaLnDFL9iM=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: 48494a2b-d9df-4450-95de-08d64578862d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1500;
+x-ms-traffictypediagnostic: TY1PR01MB1500:
+x-microsoft-antispam-prvs: <TY1PR01MB15002A43287B8AEF74024F05C0C50@TY1PR01MB1500.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1500;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1500;
+x-forefront-prvs: 0850800A29
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(376002)(136003)(346002)(199004)(189003)(25786009)(5660300001)(97736004)(33656002)(66066001)(4326008)(2900100001)(7736002)(7416002)(106356001)(305945005)(105586002)(74316002)(26005)(478600001)(413944005)(44832011)(68736007)(8936002)(81156014)(81166006)(8676002)(229853002)(186003)(9686003)(256004)(3846002)(476003)(55016002)(446003)(11346002)(486006)(6246003)(86362001)(6436002)(53936002)(76176011)(6506007)(102836004)(54906003)(7696005)(6116002)(316002)(53546011)(71200400001)(2906002)(71190400001)(110136005)(14454004)(99286004)(138113003)(98903001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1500;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: VuWIrsUpI7NdSlceT6Zyj4vfJFt+j5XsXaQQQKbMOuppDBxwvrCDWFpBJv+nX+EeNLxw7bI52ju8a7FTCHFcnE0ueLk5P0wixlCCzgZZNcDo0NS4KbkMNyLAjNsD0SXkAdRI0qTplYRMC+H9ZTDelaI/Sa7HY5rLcZWLTRU9GnO/MHIUu8CznFDONeuyUA9M0+MacXboZnInoB+4DaEbUSAQCo6/wMhp25TrJtfSfJocogQsUYZRYoYhF6JW+2P/rfLkZS6pKeKjwr39dOWrAjzCuihulhZn6mUc7+uowXb/denyePOxOo1eenhcjqDtUz9f3isWfFHKYu6ztwUA4QTwu9v0xCYUIgPatd+t7G4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CXFpZVxO6m2Ol4tQ"
-Content-Disposition: inline
-In-Reply-To: <1541410354-19090-2-git-send-email-wni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48494a2b-d9df-4450-95de-08d64578862d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 12:48:46.7229
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1500
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear All,
 
---CXFpZVxO6m2Ol4tQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Who is the best person to take this patch?
 
-On Mon, Nov 05, 2018 at 05:32:31PM +0800, Wei Ni wrote:
-> Don't bail when a sensor fails to register with the
-> thermal zone and allow other sensors to register.
-> This allows other sensors to register with thermal
-> framework even if one sensor fails registration.
->=20
-> Signed-off-by: Wei Ni <wni@nvidia.com>
+Thanks,
+Fab
+
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 24 August 2018 08:56
+> Subject: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for r8=
+a774a1
+>
+> From: Biju Das <biju.das@bp.renesas.com>
+>
+> This patch adds binding for r8a774a1 (RZ/G2M).
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > ---
->  drivers/thermal/tegra/soctherm.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> index 482e543..417ca90 100644
+> --- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> +++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> @@ -5,6 +5,7 @@ Required Properties:
+>  Examples with soctypes are:
+>    - "renesas,r8a7743-usb-dmac" (RZ/G1M)
+>    - "renesas,r8a7745-usb-dmac" (RZ/G1E)
+> +  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
+>    - "renesas,r8a7790-usb-dmac" (R-Car H2)
+>    - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
+>    - "renesas,r8a7793-usb-dmac" (R-Car M2-N)
+> --
+> 2.7.4
 
-Acked-by: Thierry Reding <treding@nvidia.com>
 
---CXFpZVxO6m2Ol4tQ
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvkMJ4ACgkQ3SOs138+
-s6H76Q//Xl61SgcHlWOlZTtGrUdMtSNgfPSxn9NLzx3+40d9/xBxl0n8wTxLFd70
-+YBiZQpltYL4Q0riq5NbWTpdCJM9ji6Jevv1Digf22YNb4lh3S0uicAdePry1nZ2
-OuTgZZYSRlHY2wRdzUphauVj3M3S4l/A1KKmln1DHIN61zF00Fo1GEBFMrTsdFHb
-Ypb9unj+HqTk2qOnoXqN9Gl9VwyBs3BRPiv45VjzkYFyvJi/6+vbHlbb5faM/u4b
-bcezKerELV/TiGt41E6eumCSr8y6/mMJH7kpAMNZ7sKORKQih5bBHrDHZkfmkKcf
-OaZv/I0UmRkmMehSncB37sP88YhPr8HKGJHV6jXodm9x5wmDdSb2PM2SjQFb7CBR
-uCbOVu9cMAFIDVWeHatc4KGyLHNjZzq8ImP2qHFSDchBObsI/0Xg607M48EYryYv
-LQrJabHQtrbSpaUr4giIoWAbcbUfQcgc2Gjt31qZ/1f1PLI3/V5IE2EGZgyH1DZE
-0u/+kSzQPsLcFPvyTZyESUPwxaln3BYAGW+RsDip1jgunGCBSOIvtV933qhB6bDC
-NoG4VWN9X13WAlZWyoyJ4DRP7E/1iiF0kKOjQWsNOpHGjZBn4Y18U8FONDWtyVk/
-TVTsUwWcnXVcqOx6ndK6aqh1ba9Zuv/vSeH5dCVG0k+WkwhenW8=
-=TVwF
------END PGP SIGNATURE-----
-
---CXFpZVxO6m2Ol4tQ--
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
