@@ -2,114 +2,114 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4BCC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8921AC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDCB520827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4593E20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:36:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JboGCEOL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCB520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="lSWTo/l5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4593E20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbeKHMGY (ORCPT
+        id S1728672AbeKHMJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 07:06:24 -0500
-Received: from ozlabs.org ([203.11.71.1]:41121 "EHLO ozlabs.org"
+        Thu, 8 Nov 2018 07:09:23 -0500
+Received: from imap.thunk.org ([74.207.234.97]:51768 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728611AbeKHMGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 07:06:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42r6lS2xdtz9sC7;
-        Thu,  8 Nov 2018 13:33:08 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1541644389;
-        bh=Uhw/JuKStGDH/wqjzLBelhfQ3ZRHYZTYLokFoFpilU4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=JboGCEOL9Z7nb5vmNlorl1tPORIzVbShOiQ7rkfsoFVAiNKsB2X56XOhWgQKOlre0
-         sY2Z6QGN2wD9RrkZYr9kcTGazPiEWfz9ykk1gi6GgyFtzQHl1ALmst5EgQ1BYMWqA7
-         o6tR71agHPR77Vf0kHlq/IM+y48fiYaNTXBTMUPQ+2HYtiFtjk6lELFtpHMgC6sWth
-         1+aragLYv6VZO3pFqDsY1brZSLPNhVoy2BtHdZVjag3fHM+TuDxcQzfHqbcJ9dXBwy
-         HWVwrEkdXCAAJlYR0MSOhN1uyj3Pu/7yX5l0Z2SW7s/W+rM1v+Uh5rkOO3D08WZT2Q
-         SbWQ7pkvwcdzg==
-Date:   Thu, 8 Nov 2018 13:33:07 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ioannis Valasakis <code@wizofe.uk>
-Subject: linux-next: build warning after merge of the staging tree
-Message-ID: <20181108133307.5cca74cb@canb.auug.org.au>
+        id S1728611AbeKHMJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 07:09:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=8LJupz1PryDoRgzkcUUNeXGuxp5H6fMM86vYXWhaDgQ=; b=lSWTo/l5w1/6Yi4f1StnO0F4oo
+        PxWAZjlDGfgodpTyZ+72YW3XU1xU1Alch/o8QoUXCv6iFNXYrBepi4aCX0R5b+C0fNfKe5pZEmX0I
+        2CH7MU2eXEjMaBApDXmNVYw5sDUWQrB/3ClqKum49g6+A5qN7D9LkvL+VQQ53VCay+QY=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKaAy-0005Qj-RB; Thu, 08 Nov 2018 02:36:08 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4689E7A7D2C; Wed,  7 Nov 2018 21:36:07 -0500 (EST)
+Date:   Wed, 7 Nov 2018 21:36:07 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Vito Caputo <vcaputo@pengaru.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [QUESTION] Microsoft, WSL, and the Linux trademark
+Message-ID: <20181108023607.GA22459@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20181108010608.mlcjfwwsdwt2nee5@shells.gnugeneration.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SlwN=.sg9eZoil28NjwGF1V"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108010608.mlcjfwwsdwt2nee5@shells.gnugeneration.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SlwN=.sg9eZoil28NjwGF1V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 07, 2018 at 05:06:08PM -0800, Vito Caputo wrote:
+> In reading the news today, I stumbled across an article talking about a
+> $20 "linux-based distro" app for Windows 10.
+> 
+> This is just a bundled userspace for WSL, there is no actual Linux in
+> this thing, yet the trademarked Linux name is used throughout.
+> 
+> Did Microsoft license the trademark or something?  Did I miss a memo?
+> Does their joining the Linux Foundation as a Platinum member two years
+> ago include such use of the trademark?
+> 
+> I'm confused by what seems to be total silence about what _appears_ to
+> be an obvious large-scale trademark abuse in everything WSL-related.
+> 
+> Could somebody informed please shed some light on this?
 
-Hi Greg,
+For information about for the Linux Trademark, please see:
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+	https://www.linuxmark.org/
 
-In file included from include/linux/printk.h:336,
-                 from include/linux/kernel.h:14,
-                 from include/linux/clk.h:16,
-                 from drivers/staging/media/tegra-vde/tegra-vde.c:12:
-drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_i=
-ram_tables':
-drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%d' exp=
-ects argument of type 'int', but argument 6 has type 'long unsigned int' [-=
-Wformat=3D]
-     "\tFrame %d: frame_num =3D %d B_frame =3D %d\n",
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic=
-_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^~~
-include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
-  dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-                       ^~~~~~~
-drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of ma=
-cro 'dev_dbg'
-    dev_dbg(vde->miscdev.parent,
-    ^~~~~~~
+I'll note that while Microsoft's Subsystem for Linux does not
+*contain* Linux, it certainly can run Linux binaries.  WSL is not
+unique in that regard.  Google's gVisor, which is used[1] in Google
+Compute Engine's App Engine is implemented in Go and is a Userspace
+Kernel, that can also run Linux binaries.
 
-Introduced by commit
+[1] https://cloud.google.com/blog/products/gcp/introducing-app-engine-second-generation-runtimes-and-python-3-7
 
-  42e764d05712 ("staging: tegravde: replace bit assignment with macro")
+I can't speak to whether Microsoft registered and received a
+sublicense for WSL, or not.  Per the FAQ[2] on the Linux Mark
+Institute's web site, it would appear that anyone who wants to use
+Linux in a product name, whether it's "Red Hat Enterprise Linux" or
+"SuSE Linux Enterprise Server" must request a free sublicense and
+agree to the terms of the Sublicense Agreement[3].  Technically,
+"Windows Subsystem for Linux" is not product name, but a feature.  I'm
+not a trademark lawyer, so I can't speak to whether this would be
+required or whether it would fall under Fair Use of a trademark.  For
+certain, it would appear to me that "WLinux", Microsoft's distribution
+derived from Debian, would be much like "Red Hat Enterprise Linux" as
+requiring a trademark sublicense.
 
---=20
+If you have further questions that are not answered by the FAQ, the
+web site directs people to send inquiries to
+trademarks@linuxfoundation.org.
+
+[2] https://www.linuxmark.org/programs/legal/trademark/faq
+[3] https://www.linuxmark.org/programs/legal/trademark/sublicense-agreement
+
 Cheers,
-Stephen Rothwell
 
---Sig_/SlwN=.sg9eZoil28NjwGF1V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvjoGMACgkQAVBC80lX
-0GzFTQf/fxQQacT0/1z3/WM1XuEtJhPZJDlZaevKTlvX+a6MimCcKeJJtRsq3I1H
-s2ywSVuErjhGP1xVmHsohNcbGzXH/MUzypje13RBFHNcZ8vPC0N6BGywl9E0V1P6
-nNnBruWQoUrX1bNafEzw2+++1W8YbkVmwTNY4skt6LZnkZaNNW/UWdObjf+MYNUz
-rqimDqcRNGLnEpLFyg+M9/VXhRaKf5OLYliScxgZX0d39weO9Su4V+sk4FdyXKcl
-DojTaX1/Lckgg+0dgNocX4hbl2jEhPGcGRM9KZkIqpHGVJ1A9KYhUFReSU90mmob
-n55UjTtdv1cBR5FcraZmlIhtP8m1tQ==
-=MIAK
------END PGP SIGNATURE-----
-
---Sig_/SlwN=.sg9eZoil28NjwGF1V--
+						- Ted
