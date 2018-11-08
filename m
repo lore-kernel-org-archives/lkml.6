@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6BCECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4960FECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381722089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 103CC2133D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxl8e2fs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381722089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="snOv61Ip"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 103CC2133D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbeKIHdr (ORCPT
+        id S1729157AbeKIHdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:33:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49898 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:33:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729035AbeKIHdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:33:45 -0500
+        id S1727962AbeKIHdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:33:52 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66BCC2089F;
-        Thu,  8 Nov 2018 21:56:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 426EE20892;
+        Thu,  8 Nov 2018 21:56:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714177;
-        bh=rAKqzMvYNkQTsN5e2+HZLSUUokfyyuV+khIFrNS5obY=;
+        s=default; t=1541714184;
+        bh=lqScUk3D5yekfT/16D1F176PqOveAL5tGsvlgL5ik0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxl8e2fsU/2iffJ4LRB75b36P+DfJnLSQSbN+CHhAlbMLTgoGB4PJUQgk94UhAdzx
-         oBYdwjGQJKgnG1nJjsrOLyTVjWCjtWch9XUo8n/hI5Ejw7noSCDcmDguEiFN8LeRIP
-         7S9FuHoEkEGOnaDCAdzKu2cwEpqDK17XN0MNsAaM=
+        b=snOv61IpkPTCTakptOkE0E2nO/QvyAGsj4Vl4JUMQYMF8wU49N8BSiI3Id6vGnv4t
+         yM308rcorS96Wbv6EgHheu2FHqv+5cK4U9+kjNk2QBt2DA7v4Z1YXYLAHyPrTIGqbv
+         7ecRGdPZe1sEPnzWkG0PPVIfskcdieKK6XnQkKxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        stable@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 084/144] rcu: Clear need_qs flag to prevent splat
-Date:   Thu,  8 Nov 2018 13:50:55 -0800
-Message-Id: <20181108215101.510788261@linuxfoundation.org>
+Subject: [PATCH 3.18 099/144] dm9000: Fix irq trigger type setup on non-dt platforms
+Date:   Thu,  8 Nov 2018 13:51:10 -0800
+Message-Id: <20181108215104.854877232@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -63,88 +65,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c0135d07b013fa8f7ba9ec91b4369c372e6a28cb ]
+[ Upstream commit a96d3b7593a3eefab62dd930e5c99201c3678ee4 ]
 
-If the scheduling-clock interrupt sets the current tasks need_qs flag,
-but if the current CPU passes through a quiescent state in the meantime,
-then rcu_preempt_qs() will fail to clear the need_qs flag, which can fool
-RCU into thinking that additional rcu_read_unlock_special() processing
-is needed.  This commit therefore clears the need_qs flag before checking
-for additional processing.
+Commit b5a099c67a1c36b "net: ethernet: davicom: fix devicetree irq
+resource" causes an interrupt storm after the ethernet interface
+is activated on S3C24XX platform (ARM non-dt), due to the interrupt
+trigger type not being set properly.
 
-For this problem to occur, we need rcu_preempt_data.passed_quiesce equal
-to true and current->rcu_read_unlock_special.b.need_qs also equal to true.
-This condition can occur as follows:
+It seems, after adding parsing of IRQ flags in commit 7085a7401ba54e92b
+"drivers: platform: parse IRQ flags from resources", there is no path
+for non-dt platforms where irq_set_type callback could be invoked when
+we don't pass the trigger type flags to the request_irq() call.
 
-1.	CPU 0 is aware of the current preemptible RCU grace period,
-	but has not yet passed through a quiescent state.  Among other
-	things, this means that rcu_preempt_data.passed_quiesce is false.
+In case of a board where the regression is seen the interrupt trigger
+type flags are passed through a platform device's resource and it is
+not currently handled properly without passing the irq trigger type
+flags to the request_irq() call.  In case of OF an of_irq_get() call
+within platform_get_irq() function seems to be ensuring required irq_chip
+setup, but there is no equivalent code for non OF/ACPI platforms.
 
-2.	Task A running on CPU 0 enters a preemptible RCU read-side
-	critical section.
+This patch mostly restores irq trigger type setting code which has been
+removed in commit ("net: ethernet: davicom: fix devicetree irq resource").
 
-3.	CPU 0 takes a scheduling-clock interrupt, which notices the
-	RCU read-side critical section and the need for a quiescent state,
-	and thus sets current->rcu_read_unlock_special.b.need_qs to true.
+Fixes: b5a099c67a1c36b913 ("net: ethernet: davicom: fix devicetree irq resource")
 
-4.	Task A is preempted, enters the scheduler, eventually invoking
-	rcu_preempt_note_context_switch() which in turn invokes
-	rcu_preempt_qs().
-
-	Because rcu_preempt_data.passed_quiesce is false,
-	control enters the body of the "if" statement, which sets
-	rcu_preempt_data.passed_quiesce to true.
-
-5.	At this point, CPU 0 takes an interrupt.  The interrupt
-	handler contains an RCU read-side critical section, and
-	the rcu_read_unlock() notes that current->rcu_read_unlock_special
-	is nonzero, and thus invokes rcu_read_unlock_special().
-
-6.	Once in rcu_read_unlock_special(), the fact that
-	current->rcu_read_unlock_special.b.need_qs is true becomes
-	apparent, so rcu_read_unlock_special() invokes rcu_preempt_qs().
-	Recursively, given that we interrupted out of that same
-	function in the preceding step.
-
-7.	Because rcu_preempt_data.passed_quiesce is now true,
-	rcu_preempt_qs() does nothing, and simply returns.
-
-8.	Upon return to rcu_read_unlock_special(), it is noted that
-	current->rcu_read_unlock_special is still nonzero (because
-	the interrupted rcu_preempt_qs() had not yet gotten around
-	to clearing current->rcu_read_unlock_special.b.need_qs).
-
-9.	Execution proceeds to the WARN_ON_ONCE(), which notes that
-	we are in an interrupt handler and thus duly splats.
-
-The solution, as noted above, is to make rcu_read_unlock_special()
-clear out current->rcu_read_unlock_special.b.need_qs after calling
-rcu_preempt_qs().  The interrupted rcu_preempt_qs() will clear it again,
-but this is harmless.  The worst that happens is that we clobber another
-attempt to set this field, but this is not a problem because we just
-got done reporting a quiescent state.
-
-Reported-by: Sasha Levin <sasha.levin@oracle.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-[ paulmck: Fix embarrassing build bug noted by Sasha Levin. ]
-Tested-by: Sasha Levin <sasha.levin@oracle.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/rcu/tree_plugin.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/davicom/dm9000.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index c1d7f27bd38f..c038831bfa57 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -328,6 +328,7 @@ void rcu_read_unlock_special(struct task_struct *t)
- 	special = t->rcu_read_unlock_special;
- 	if (special.b.need_qs) {
- 		rcu_preempt_qs();
-+		t->rcu_read_unlock_special.b.need_qs = false;
- 		if (!t->rcu_read_unlock_special.s) {
- 			local_irq_restore(flags);
- 			return;
+diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
+index ef24b60b4d3f..d2e0a10a8511 100644
+--- a/drivers/net/ethernet/davicom/dm9000.c
++++ b/drivers/net/ethernet/davicom/dm9000.c
+@@ -1296,6 +1296,7 @@ static int
+ dm9000_open(struct net_device *dev)
+ {
+ 	struct board_info *db = netdev_priv(dev);
++	unsigned int irq_flags = irq_get_trigger_type(dev->irq);
+ 
+ 	if (netif_msg_ifup(db))
+ 		dev_dbg(db->dev, "enabling %s\n", dev->name);
+@@ -1303,9 +1304,11 @@ dm9000_open(struct net_device *dev)
+ 	/* If there is no IRQ type specified, tell the user that this is a
+ 	 * problem
+ 	 */
+-	if (irq_get_trigger_type(dev->irq) == IRQF_TRIGGER_NONE)
++	if (irq_flags == IRQF_TRIGGER_NONE)
+ 		dev_warn(db->dev, "WARNING: no IRQ resource flags set.\n");
+ 
++	irq_flags |= IRQF_SHARED;
++
+ 	/* GPIO0 on pre-activate PHY, Reg 1F is not set by reset */
+ 	iow(db, DM9000_GPR, 0);	/* REG_1F bit0 activate phyxcer */
+ 	mdelay(1); /* delay needs by DM9000B */
+@@ -1313,8 +1316,7 @@ dm9000_open(struct net_device *dev)
+ 	/* Initialize DM9000 board */
+ 	dm9000_init_dm9000(dev);
+ 
+-	if (request_irq(dev->irq, dm9000_interrupt, IRQF_SHARED,
+-			dev->name, dev))
++	if (request_irq(dev->irq, dm9000_interrupt, irq_flags, dev->name, dev))
+ 		return -EAGAIN;
+ 	/* Now that we have an interrupt handler hooked up we can unmask
+ 	 * our interrupts
 -- 
 2.17.1
 
