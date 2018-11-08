@@ -2,71 +2,97 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066E5C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B453ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB45520825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB45520825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 2120120825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:05:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GFUvTNHo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2120120825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeKHSjx (ORCPT
+        id S1727024AbeKHSjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 8 Nov 2018 13:39:55 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54820 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbeKHSjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Nov 2018 13:39:53 -0500
-Received: from relay.sw.ru ([185.231.240.75]:36770 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbeKHSjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:39:52 -0500
-Received: from [172.16.25.169] (helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gKgFc-00062M-9m; Thu, 08 Nov 2018 12:05:20 +0300
-Subject: [PATCH v2 1/5] fuse: Kill fasync only if interrupt is queued in
- queue_interrupt()
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     miklos@szeredi.hu, ktkhai@virtuozzo.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 08 Nov 2018 12:05:20 +0300
-Message-ID: <154166792021.10655.6752271937511795324.stgit@localhost.localdomain>
-In-Reply-To: <154166765576.10655.15178401490817622677.stgit@localhost.localdomain>
-References: <154166765576.10655.15178401490817622677.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Received: by mail-wm1-f68.google.com with SMTP id r63-v6so439515wma.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 01:05:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7C/wrspMfUQvsFMTcgDRLQWNrIa3gG/vxf/pbqlMaK8=;
+        b=GFUvTNHosU9EGyVuBqbiVyi/VR8Q1jV/Q7erazAt4wlxRAbU/4G+zA8uahY1+BZmSF
+         LA9GoVdAOQg+ysjc/Qx1d58HPqtMRA/Z/jA9HnVi2qRMb+oByD6bymWrzK2OzP4pG52g
+         EpzWWHFiljYmWJ847nAWMLssfJo19wqjuMhWg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7C/wrspMfUQvsFMTcgDRLQWNrIa3gG/vxf/pbqlMaK8=;
+        b=Y8wb3Do6Iomj529ruvQ4kzVHg9PtrO6YtZOzA+yPwPkk+T3Yp2NoYG4Fb7BxvpVnD7
+         mAxQBbUWMBFckuPDlXu/+CEwt4pPfOStxF9PiObsaPZdWyLK3izVYQ6O938D4S0S9vOY
+         u3z8IrZG0iiyw2uOAMtVyQYZ54DuoCrD61S2kQ3/FT1pchp6RvVM1ZklDkS3b8AxrpIN
+         mKDq+FtNt8hbIYVahGi70Ny5tdy6s0Hp5iOlt1DchGj93JbdXygdVtqTaIzArD1oGUdC
+         hDmDcOIgifl5aPfFjkWIU6HPNIkh4UjGR0+abY94n5Bn2qA6LBctwNl29A+2ESi7VscF
+         omPQ==
+X-Gm-Message-State: AGRZ1gIr0n7NFcJ1NJ3N1HUpJdEfnbKEm4oh4CHDx3vs8cckpZ3qvBlv
+        7dd2U1Y7uhQn4egGpuPjZIGw3g==
+X-Google-Smtp-Source: AJdET5eo7NLKsq4nCro/TskDB1tEsDKTt/G/XujosQSzN7bJZQt7DssrB8rqYu0lQxZHrJtkrl0aRQ==
+X-Received: by 2002:a1c:84:: with SMTP id 126-v6mr410351wma.96.1541667921577;
+        Thu, 08 Nov 2018 01:05:21 -0800 (PST)
+Received: from lmecxl0911.lme.st.com ([2a04:cec0:1094:149:440c:9368:8cda:a020])
+        by smtp.gmail.com with ESMTPSA id l140-v6sm6974469wmb.24.2018.11.08.01.05.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Nov 2018 01:05:21 -0800 (PST)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, alexandre.torgue@st.com
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v2 4/4] ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+Date:   Thu,  8 Nov 2018 10:05:02 +0100
+Message-Id: <20181108090502.14543-5-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20181108090502.14543-1-benjamin.gaignard@st.com>
+References: <20181108090502.14543-1-benjamin.gaignard@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should sent signal only in case of interrupt is really queued.
-Not a real problem, but this makes the code clearer and intuitive.
+Activate hwspinlock for stm32mp157c-ed1
 
-v2: Move kill_fasync() under fiq->waitq.lock
-
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/stm32mp157c-ed1.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index ae813e609932..1ecec7fcb841 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -476,9 +476,9 @@ static void queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
- 	if (list_empty(&req->intr_entry)) {
- 		list_add_tail(&req->intr_entry, &fiq->interrupts);
- 		wake_up_locked(&fiq->waitq);
-+		kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
- 	}
- 	spin_unlock(&fiq->waitq.lock);
--	kill_fasync(&fiq->fasync, SIGIO, POLL_IN);
- }
- 
- static void request_wait_answer(struct fuse_conn *fc, struct fuse_req *req)
+diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+index f77bea49c079..158a337b3129 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+@@ -94,3 +94,7 @@
+ 	vdda1v1-supply = <&reg11>;
+ 	vdda1v8-supply = <&reg18>;
+ };
++
++&hsem {
++	status = "okay";
++};
+-- 
+2.15.0
 
