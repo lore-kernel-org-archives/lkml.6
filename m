@@ -2,121 +2,128 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694B2ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69549ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E50420825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:35:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E50420825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F02E20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:38:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F02E20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeKIHMt (ORCPT
+        id S1727215AbeKIHPi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:12:49 -0500
-Received: from fieldses.org ([173.255.197.46]:39180 "EHLO fieldses.org"
+        Fri, 9 Nov 2018 02:15:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37940 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbeKIHMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:12:49 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 60FD22014; Thu,  8 Nov 2018 16:35:26 -0500 (EST)
-Date:   Thu, 8 Nov 2018 16:35:26 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/12] Series short description
-Message-ID: <20181108213526.GG6090@fieldses.org>
-References: <154138128401.31651.1381177427603557514.stgit@noble>
+        id S1726599AbeKIHPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:15:38 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4E90030A81A8;
+        Thu,  8 Nov 2018 21:38:14 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F02CB68B13;
+        Thu,  8 Nov 2018 21:38:12 +0000 (UTC)
+Subject: Re: [PATCH v10 4/4] ipc: Add a cyclic mode for id generation
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
+        Manfred Spraul <manfred@colorfullife.com>
+References: <1541432626-27780-1-git-send-email-longman@redhat.com>
+ <1541432626-27780-5-git-send-email-longman@redhat.com>
+ <20181106130252.GC3074@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <655c9c3f-fd53-f932-64fd-cd9fa4d1168c@redhat.com>
+Date:   Thu, 8 Nov 2018 16:38:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154138128401.31651.1381177427603557514.stgit@noble>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181106130252.GC3074@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 08 Nov 2018 21:38:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 12:30:47PM +1100, NeilBrown wrote:
-> Here is the respin on this series with the file_lock properly
-> initlized for unlock requests.
-> I found one that I had missed before - in locks_remove_flock()
-> The change makes this code smaller!
-> 
-> Original series description:
-> 
-> If you have a many-core machine, and have many threads all wanting to
-> briefly lock a give file (udev is known to do this), you can get quite
-> poor performance.
-> 
-> When one thread releases a lock, it wakes up all other threads that
-> are waiting (classic thundering-herd) - one will get the lock and the
-> others go to sleep.
-> When you have few cores, this is not very noticeable: by the time the
-> 4th or 5th thread gets enough CPU time to try to claim the lock, the
-> earlier threads have claimed it, done what was needed, and released.
-> With 50+ cores, the contention can easily be measured.
-> 
-> This patchset creates a tree of pending lock request in which siblings
-> don't conflict and each lock request does conflict with its parent.
-> When a lock is released, only requests which don't conflict with each
-> other a woken.
-> 
-> Testing shows that lock-acquisitions-per-second is now fairly stable even
-> as number of contending process goes to 1000.  Without this patch,
-> locks-per-second drops off steeply after a few 10s of processes.
-> 
-> There is a small cost to this extra complexity.
-> At 20 processes running a particular test on 72 cores, the lock
-> acquisitions per second drops from 1.8 million to 1.4 million with
-> this patch.  For 100 processes, this patch still provides 1.4 million
-> while without this patch there are about 700,000.
+On 11/06/2018 08:02 AM, Matthew Wilcox wrote:
+> On Mon, Nov 05, 2018 at 10:43:46AM -0500, Waiman Long wrote:
+>> The idea of using the cyclic mode to reduce id reuse came from Manfred
+>> Spraul <manfred@colorfullife.com>. There may be a little bit of
+>> additional memory/performance overhead in doing cyclic id allocation,
+>> but it is a slow path anyway and a bit of overhead shouldn't be an issue.
+>>
+>> This patch differs from his as the cyclic mode is not the default and
+>> has to be explicitly opted in for users who want that.
+> I really don't like the "make the sysadmin choose" approach.  It's
+> shifting blame to someone who has no idea what the tradeoffs are.
+> We should try to get it right rather than force more people to learn
+> why we're incapable of making the right decision for them.
+>
+My patch is conservative as there will be no behavior change by default.
+I won't mind changing the default to cyclic if we all agree.
 
-These details are all really useful motivation for the patches.  It'd be
-nice to have them in the permanent record somehow.  Maybe just merge it
-into the changelog on "fs/locks: create a tree of dependent requests."?
+Cheers,
+Longman
 
---b.
 
-> 
-> NeilBrown
-> 
-> 
-> ---
-> 
-> NeilBrown (12):
->       fs/locks: rename some lists and pointers.
->       fs/locks: split out __locks_wake_up_blocks().
->       NFS: use locks_copy_lock() to copy locks.
->       gfs2: properly initial file_lock used for unlock.
->       ocfs2: properly initial file_lock used for unlock.
->       locks: use properly initialized file_lock when unlocking.
->       fs/locks: allow a lock request to block other requests.
->       fs/locks: always delete_block after waiting.
->       fs/locks: change all *_conflict() functions to return bool.
->       fs/locks: create a tree of dependent requests.
->       locks: merge posix_unblock_lock() and locks_delete_block()
->       VFS: locks: remove unnecessary white space.
-> 
-> 
->  fs/cifs/file.c                  |    4 -
->  fs/gfs2/file.c                  |   10 +-
->  fs/lockd/svclock.c              |    2 
->  fs/locks.c                      |  253 +++++++++++++++++++++------------------
->  fs/nfs/nfs4proc.c               |    6 +
->  fs/nfsd/nfs4state.c             |    6 -
->  fs/ocfs2/locks.c                |   10 +-
->  include/linux/fs.h              |   11 +-
->  include/trace/events/filelock.h |   16 +-
->  9 files changed, 173 insertions(+), 145 deletions(-)
-> 
-> --
-> Signature
