@@ -2,95 +2,75 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A6EECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A225ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2F95204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:20:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F95204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 42579204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:24:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42579204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeKIE5n (ORCPT
+        id S1726818AbeKIFBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:57:43 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18972 "EHLO mga18.intel.com"
+        Fri, 9 Nov 2018 00:01:30 -0500
+Received: from ms.lwn.net ([45.79.88.28]:60186 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbeKIE5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:57:42 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:20:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="98724815"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2018 11:20:41 -0800
-Date:   Thu, 8 Nov 2018 21:20:40 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-Message-ID: <20181108192040.GA21685@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
- <20181106054911.GA15575@linux.intel.com>
- <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
- <20181107163019.GA11509@linux.intel.com>
- <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
- <20181108143942.GA13792@linux.intel.com>
+        id S1725723AbeKIFBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:01:30 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 37D1D6EC;
+        Thu,  8 Nov 2018 19:24:36 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 12:24:35 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     linux-mm@kvack.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aarcange@redhat.com,
+        aaron.lu@intel.com, akpm@linux-foundation.org,
+        alex.williamson@redhat.com, bsd@redhat.com,
+        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
+        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
+        mhocko@kernel.org, mike.kravetz@oracle.com,
+        Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
+        rdunlap@infradead.org, steven.sistare@oracle.com,
+        tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz,
+        peterz@infradead.org, dhaval.giani@oracle.com
+Subject: Re: [RFC PATCH v4 01/13] ktask: add documentation
+Message-ID: <20181108122435.65eceefe@lwn.net>
+In-Reply-To: <20181108191553.nu7yn2akmcql2vje@ca-dmjordan1.us.oracle.com>
+References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
+        <20181105165558.11698-2-daniel.m.jordan@oracle.com>
+        <20181108102638.3415ae0b@lwn.net>
+        <20181108191553.nu7yn2akmcql2vje@ca-dmjordan1.us.oracle.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108143942.GA13792@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 04:39:42PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 07, 2018 at 09:09:37AM -0800, Dave Hansen wrote:
-> > On 11/7/18 8:30 AM, Jarkko Sakkinen wrote:
-> > >> Does this code run when I type "make kselftest"?  If not, I think we
-> > >> should rectify that.
-> > > No, it doesn't. It is just my backup for the non-SDK user space code
-> > > that I've made that I will use to fork my user space SGX projects in
-> > > the future.
-> > > 
-> > > I can work-out a selftest (and provide a new patch in the series) but
-> > > I'm still wondering what the enclave should do. I would suggest that
-> > > we start with an enclave that does just EEXIT and nothing else.
-> > 
-> > Yeah, that's a start.  But, a good selftest would include things like
-> > faults and error conditions.
+On Thu, 8 Nov 2018 11:15:53 -0800
+Daniel Jordan <daniel.m.jordan@oracle.com> wrote:
+
+> > - You have kerneldoc comments for the API functions, but you don't pull
+> >   those into the documentation itself.  Adding some kernel-doc directives
+> >   could help to fill things out nicely with little effort.  
 > 
-> Great. We can add more entry points to the enclave for different tests
-> but I'll start with a bare minimum. And yeah but ever goes into next
-> version I'll document the fault handling.
+> I thought this part of ktask.rst handled that, or am I not doing it right?
+> 
+>     Interface
+>     =========
+>     
+>     .. kernel-doc:: include/linux/ktask.h
 
-For the v17 I'll add exactly two test cases:
+Sigh, no, you're doing it just fine, and I clearly wasn't sufficiently
+caffeinated.  Apologies for the noise.
 
-1. EENTER/EEXIT
-2. EENTER/exception
-
-So that it will easier to evaluate and demonstrate exception handling.
-
-/Jarkko
+jon
