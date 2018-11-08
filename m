@@ -2,67 +2,76 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99838ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2BBECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF9520825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:30:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF9520825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0384620825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:31:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0384620825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeKIAFu (ORCPT
+        id S1726860AbeKIAHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:05:50 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44309 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeKIAFu (ORCPT
+        Thu, 8 Nov 2018 19:07:41 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:59702 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeKIAHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:05:50 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gKlJo-0000vA-J4; Thu, 08 Nov 2018 15:30:00 +0100
-Date:   Thu, 8 Nov 2018 15:30:00 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexander Dahl <ada@thorsis.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] clocksource: rework Atmel TCB timer driver
-Message-ID: <20181108143000.ve6d7jhfeno3huk6@linutronix.de>
-References: <20180913113024.3571-1-alexandre.belloni@bootlin.com>
- <5f19043a-3be3-e25a-849f-6ca610ed6da2@linaro.org>
- <20180925201456.GD3112@piout.net>
- <20181108124327.iqdiif6atfrxdkef@linutronix.de>
- <20181108140935.GI21694@piout.net>
+        Thu, 8 Nov 2018 19:07:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 7FCAE609F83B;
+        Thu,  8 Nov 2018 15:31:54 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id yv7Il87dh3tE; Thu,  8 Nov 2018 15:31:54 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 37F056094C32;
+        Thu,  8 Nov 2018 15:31:54 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ku-E7VpfV_2b; Thu,  8 Nov 2018 15:31:54 +0100 (CET)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id EF81B6089E20;
+        Thu,  8 Nov 2018 15:31:53 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     linux-mtd@lists.infradead.org, juergen.lachmann@harman.com,
+        linux-kernel@vger.kernel.org, thomas.roeder@harman.com
+Subject: Re: [PATCH 2/2] ubi: Expose the bitrot interface
+Date:   Thu, 08 Nov 2018 15:31:53 +0100
+Message-ID: <3899237.k0VKClGc8u@blindfold>
+In-Reply-To: <20181108152642.03178c6c@bbrezillon>
+References: <20181107221619.32498-1-richard@nod.at> <20181107221619.32498-2-richard@nod.at> <20181108152642.03178c6c@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181108140935.GI21694@piout.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-08 15:09:35 [+0100], Alexandre Belloni wrote:
-> It is not part of that series as I prefer to keep the discussion of how
-> to configure that for later. This has been raised previously without any
-> conclusion and I'd really like to see this rework enter upstream soon.
-
-Okay. Does it make sense to keep the lower resolution?
-
-> > I'm currently replacing the v6 with this v7 in my RT tree. What is the
-> > status of this series upstream wise?
-> > 
+Am Donnerstag, 8. November 2018, 15:26:42 CET schrieb Boris Brezillon:
+> On Wed,  7 Nov 2018 23:16:19 +0100
+> Richard Weinberger <richard@nod.at> wrote:
 > 
-> I'll send v8 sometimes next week.
-Thanks.
+> > +/**
+> > + * ubi_bitflip_check - Check an eraseblock for bitflips and scrub it if needed.
+> > + * @ubi: UBI device description object
+> > + * @pnum: the physical eraseblock to schedule
+> > + * @force_scrub: force scrubbing if non-zero, schedule erase otherwise
+> 
+> Are you sure about the "schedule erase otherwise"? I'd say force_scrub
+> only influence when the scrub operation is done: either unconditionally
+> or depending on the result of ubi_io_read().
 
-Sebastian
+True. As often, code and documentation diverged a little.
+
+Thanks,
+//richard
+
+
