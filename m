@@ -2,137 +2,139 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58373C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D430C0044B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA9120844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D145120818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="oQ32LbAv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA9120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="JP5CBbu2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D145120818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeKIIeB (ORCPT
+        id S1727523AbeKIIok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:34:01 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:44360 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbeKIIeA (ORCPT
+        Fri, 9 Nov 2018 03:44:40 -0500
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:13571 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725922AbeKIIok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 03:34:00 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D57CA8365D;
-        Fri,  9 Nov 2018 11:56:11 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1541717771;
-        bh=6MFMVJsYOxXnV8yXRYe6WaU0lNWyciNyE5lThyg4Tyo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=oQ32LbAvLa6LaGBQ7VjOzOzMEmId6HC8sP+iMUJ8X+o05JrBkCuK0LEZ0tIjWACJz
-         uzBjgs7Q3NhF8ICP199burvP3S0DjvNcaomnNEc29gGPRHGRcQtUszValVRlAYihge
-         UD+umfVczlIqmF5PsXWZn3B63Q9i1wD6m+T+JInaX11BLmXfTWkN6K3sN8YGp89Pnq
-         XVrnisVj3HHwoS9sRzx/K/98fGmIILtC945pPZE2322cbeqct3dbZkJMVfQvGflCxi
-         33abwDSYaIpgpcEMjwwLqd6ipE5Uz7y9BwwxQ2/hHNBL1IJbDJqPurto1sy9ehwhMT
-         wL+dJldQFDYTQ==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5be4bf0c0001>; Fri, 09 Nov 2018 11:56:12 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id BAE4E13EEA1;
-        Fri,  9 Nov 2018 11:56:16 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 975911E0968; Fri,  9 Nov 2018 11:56:11 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     linux@roeck-us.net, robh+dt@kernel.org, jdelvare@suse.com
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 1/2] dt-bindings: hwmon: add binding documentation for adt7475
-Date:   Fri,  9 Nov 2018 11:56:06 +1300
-Message-Id: <20181108225607.7521-2-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108225607.7521-1-chris.packham@alliedtelesis.co.nz>
-References: <20181108225607.7521-1-chris.packham@alliedtelesis.co.nz>
-MIME-Version: 1.0
+        Fri, 9 Nov 2018 03:44:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1541718394; x=1573254394;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=q1w9LkC4ZTIx5rWLtT8VNvzDkq8GAD9EkKMaQzTUbng=;
+  b=JP5CBbu2uci2iMX5CNu17MSeYgF5paDm3yWnxs4crpNpEZoIqsngvg2z
+   Cp8OttvPmcVs3biVWxcH7DtF8mQ1oiGYk8eF/ZJyib7SHUsRrxptSmUKX
+   0Q/QpenTr1xqNdBP6w+seLgdoUNpabLeKRxQREwduyJU7tBXdFnpU7dCI
+   Y=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EQAAD3wORbhiWd50NkHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUQcBAQsBg2snCowGX4sdgg2XMhSBZgsBAYRsgxsiNA0NAQMBAQIBAQI?=
+ =?us-ascii?q?BAQIQAQEBCgkLCCkvgjYigmQBAQEDEig/EAIBCBgeEFcCBBMIFgSCf4ICnHY?=
+ =?us-ascii?q?CgRCJWAEBAYIciiyLeYIXgRGDEoRmGE2FDgKKfZRLCQWRCSCBV4gjhnKCdJR?=
+ =?us-ascii?q?VAgQCBAUCFIFDgg5wgzyCNRuOCkABMYw2gR8BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2EQAAD3wORbhiWd50NkHAEBAQQBAQcEAQGBUQcBAQsBg?=
+ =?us-ascii?q?2snCowGX4sdgg2XMhSBZgsBAYRsgxsiNA0NAQMBAQIBAQIBAQIQAQEBCgkLC?=
+ =?us-ascii?q?CkvgjYigmQBAQEDEig/EAIBCBgeEFcCBBMIFgSCf4ICnHYCgRCJWAEBAYIci?=
+ =?us-ascii?q?iyLeYIXgRGDEoRmGE2FDgKKfZRLCQWRCSCBV4gjhnKCdJRVAgQCBAUCFIFDg?=
+ =?us-ascii?q?g5wgzyCNRuOCkABMYw2gR8BAQ?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Nov 2018 17:06:34 -0600
+Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8N2m3W184620;
+        Thu, 8 Nov 2018 18:06:50 -0500
+Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nmtq094wp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 08 Nov 2018 18:06:50 -0500
+Cc:     <keith.busch@intel.com>, <helgaas@kernel.org>,
+        <mr.nuke.me@gmail.com>, <linux-pci@vger.kernel.org>,
+        <Austin.Bolen@dell.com>, <Shyam.Iyer@dell.com>,
+        <linux-kernel@vger.kernel.org>, <jonathan.derrick@intel.com>,
+        <lukas@wunner.de>, <ruscur@russell.cc>, <sbobroff@linux.ibm.com>,
+        <oohall@gmail.com>, <linuxppc-dev@lists.ozlabs.org>
+Received: from ausxippc101.us.dell.com ([143.166.85.207])
+  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Nov 2018 05:06:41 +0600
+X-LoopCount0: from 10.166.134.83
+X-IronPort-AV: E=Sophos;i="5.54,481,1534827600"; 
+   d="scan'208";a="1159082747"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Thread-Topic: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Thread-Index: AQHUT50UQ290XPGvJEGnaSTTjbCF+g==
+Date:   Thu, 8 Nov 2018 23:06:47 +0000
+Message-ID: <16bf9d14bc5f4a90b2b88dd2eb165186@ausx13mps321.AMER.DELL.COM>
+References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
+ <20181107234257.GC41183@google.com> <20181108200855.GE41183@google.com>
+ <20181108220117.GA11466@kroah.com>
+ <20181108223258.GD2932@localhost.localdomain>
+ <20181108224255.GA20619@kroah.com>
+ <20d68e586fff4dcca5616d5056f6fc21@ausx13mps321.AMER.DELL.COM>
+ <20181108225109.GA3023@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.177.90.70]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080194
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the addition of the invert-pwm property the adt7475 needs its own
-binding documentation rather being captured under trivial-devices.txt.
-
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
-Changes in v2:
-- use pwm-polarity attiribute to indicate normal or inverted polarity.
-
-=20.../devicetree/bindings/hwmon/adt7475.txt     | 24 +++++++++++++++++++=
-
-=20.../devicetree/bindings/trivial-devices.txt   |  4 ----
-=202 files changed, 24 insertions(+), 4 deletions(-)
-=20create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.txt=
-
-
-diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.txt b/Docume=
-ntation/devicetree/bindings/hwmon/adt7475.txt
-new file mode 100644
-index 000000000000..d9212b5e9036
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/adt7475.txt
-@@ -0,0 +1,24 @@
-+*ADT7475 hwmon sensor.
-+
-+Required properties:
-+- compatible: One of
-+	"adi,adt7473"
-+	"adi,adt7475"
-+	"adi,adt7476"
-+	"adi,adt7490"
-+
-+- reg: I2C address
-+
-+optional properties:
-+
-+- pwm-polarity: This configures the polarity of the PWM. 0
-+		(PWM_POLARITY_NORMAL) uses logic high for 100% duty cycle. 1
-+                (PWM_POLARITY_INVERSED) uses logic low for 100% duty cyc=
-le.
-+
-+Example:
-+
-+hwmon@2e {
-+	compatible =3D ;
-+	reg =3D <0x2e>;
-+	pwm-polarity =3D <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Docu=
-mentation/devicetree/bindings/trivial-devices.txt
-index 69c934aec13b..4f29100d6bbf 100644
---- a/Documentation/devicetree/bindings/trivial-devices.txt
-+++ b/Documentation/devicetree/bindings/trivial-devices.txt
-@@ -14,10 +14,6 @@ ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-P=
-in SOT with SMBus Alert an
-=20ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor-=
-Based Systems
-=20adi,adt7461		+/-1C TDM Extended Temp Range I.C
-=20adt7461			+/-1C TDM Extended Temp Range I.C
--adi,adt7473		+/-1C TDM Extended Temp Range I.C
--adi,adt7475		+/-1C TDM Extended Temp Range I.C
--adi,adt7476		+/-1C TDM Extended Temp Range I.C
--adi,adt7490		+/-1C TDM Extended Temp Range I.C
-=20adi,adxl345		Three-Axis Digital Accelerometer
-=20adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibility =
-value "adi,adxl345" must be listed too)
-=20ams,iaq-core		AMS iAQ-Core VOC Sensor
---=20
-2.19.1
+On 11/08/2018 04:51 PM, Greg KH wrote:=0A=
+> On Thu, Nov 08, 2018 at 10:49:08PM +0000, Alex_Gagniuc@Dellteam.com wrote=
+:=0A=
+>> In the case that we're trying to fix, this code executing is a result of=
+=0A=
+>> the device being gone, so we can guarantee race-free operation. I agree=
+=0A=
+>> that there is a race, in the general case. As far as checking the result=
+=0A=
+>> for all F's, that's not an option when firmware crashes the system as a=
+=0A=
+>> result of the mmio read/write. It's never pretty when firmware gets=0A=
+>> involved.=0A=
+> =0A=
+> If you have firmware that crashes the system when you try to read from a=
+=0A=
+> PCI device that was hot-removed, that is broken firmware and needs to be=
+=0A=
+> fixed.  The kernel can not work around that as again, you will never win=
+=0A=
+> that race.=0A=
+=0A=
+But it's not the firmware that crashes. It's linux as a result of a =0A=
+fatal error message from the firmware. And we can't fix that because FFS =
+=0A=
+handling requires that the system reboots [1].=0A=
+=0A=
+If we're going to say that we don't want to support FFS because it's a =0A=
+separate code path, and different flow, that's fine. I am myself, not a =0A=
+fan of FFS. But if we're going to continue supporting it, I think we'll =0A=
+continue to have to resolve these sort of unintended consequences.=0A=
+=0A=
+Alex=0A=
+=0A=
+[1] ACPI 6.2, 18.1 - Hardware Errors and Error Sources=0A=
