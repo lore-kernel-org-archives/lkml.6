@@ -2,52 +2,50 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4C4ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102FEECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A88521019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB0B220989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZZNHURD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A88521019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvR+uMHX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0B220989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732289AbeKIHos (ORCPT
+        id S1732296AbeKIHot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731329AbeKIHos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732277AbeKIHos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:44:48 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2EC021019;
-        Thu,  8 Nov 2018 22:07:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB1102146E;
+        Thu,  8 Nov 2018 22:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714836;
-        bh=nTrniBm5PmXMueNCXooEys4CDptAjOXL7jLuqn9xXSY=;
+        s=default; t=1541714838;
+        bh=kz4LdBko0k4wbbguXFchMowOfld3PsKV/W9M7B0GMOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pZZNHURDvxvHqT9u8uxZ/W9+sC5+S9PlEO9T8Xyym/4D04y3CYz3JH0SiQBhdPw9F
-         iF/gb3O9C/R1WYsT75iNITvx9a0wPbcbxD+oPYRUPad/R2Odd199h87F8SPAqBJoWe
-         Og+viZCQNVtlWcHQofOtBvcIak04xwU4zJISaX8E=
+        b=TvR+uMHX1GdJPYQrkB8ytWhsY4fFiKkfoNRHd9Saeg7SgK+E3mjNtl8joPwMYlk9J
+         JGdFpD26wAgY5ub1gV4gbxchMcSo8yTvwSd1DZeMubJORQ6NxRCSTenulV0xkXVUTp
+         aLWGXiVKJVwqVnVbmVXcvWSf72weqWvJPyZPCRGs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 157/171] xfs: truncate transaction does not modify the inobt
-Date:   Thu,  8 Nov 2018 13:52:07 -0800
-Message-Id: <20181108215138.086428271@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 159/171] ptp: fix Spectre v1 vulnerability
+Date:   Thu,  8 Nov 2018 13:52:09 -0800
+Message-Id: <20181108215138.331771820@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,74 +63,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a606ebdb859e78beb757dfefa08001df366e2ef5 ]
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-The truncate transaction does not ever modify the inode btree, but
-includes an associated log reservation. Update
-xfs_calc_itruncate_reservation() to remove the reservation
-associated with inobt updates.
+commit efa61c8cf2950ab5c0e66cff3cabe2a2b24e81ba upstream.
 
-[Amir:	This commit was merged for kernel v4.16 and a twin commit was
-	merged for xfsprogs v4.16. As a result, a small xfs filesystem
-	formatted with features -m rmapbt=1,reflink=1 using mkfs.xfs
-	version >= v4.16 cannot be mounted with kernel < v4.16.
+pin_index can be indirectly controlled by user-space, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-	For example, xfstests generic/17{1,2,3} format a small fs and
-	when trying to mount it, they fail with an assert on this very
-	demonic line:
+This issue was detected with the help of Smatch:
 
- XFS (vdc): Log size 3075 blocks too small, minimum size is 3717 blocks
- XFS (vdc): AAIEEE! Log failed size checks. Abort!
- XFS: Assertion failed: 0, file: src/linux/fs/xfs/xfs_log.c, line: 666
+drivers/ptp/ptp_chardev.c:253 ptp_ioctl() warn: potential spectre issue
+'ops->pin_config' [r] (local cap)
 
-	The simple solution for stable kernels is to apply this patch,
-	because mkfs.xfs v4.16 is already in the wild, so we have to
-	assume that xfs filesystems with a "too small" log exist.
-	Regardless, xfsprogs maintainers should also consider reverting
-	the twin patch to stop creating those filesystems for the sake
-	of users with unpatched kernels.]
+Fix this by sanitizing pin_index before using it to index
+ops->pin_config, and before passing it as an argument to
+function ptp_set_pinfunc(), in which it is used to index
+info->pin_config.
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: <stable@vger.kernel.org> # v4.9+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Darrick J . Wong <darrick.wong@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/xfs/libxfs/xfs_trans_resv.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/ptp/ptp_chardev.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/xfs/libxfs/xfs_trans_resv.c b/fs/xfs/libxfs/xfs_trans_resv.c
-index b456cca1bfb2..c0ecdec8e0a9 100644
---- a/fs/xfs/libxfs/xfs_trans_resv.c
-+++ b/fs/xfs/libxfs/xfs_trans_resv.c
-@@ -232,8 +232,6 @@ xfs_calc_write_reservation(
-  *    the super block to reflect the freed blocks: sector size
-  *    worst case split in allocation btrees per extent assuming 4 extents:
-  *		4 exts * 2 trees * (2 * max depth - 1) * block size
-- *    the inode btree: max depth * blocksize
-- *    the allocation btrees: 2 trees * (max depth - 1) * block size
-  */
- STATIC uint
- xfs_calc_itruncate_reservation(
-@@ -245,12 +243,7 @@ xfs_calc_itruncate_reservation(
- 				      XFS_FSB_TO_B(mp, 1))),
- 		    (xfs_calc_buf_res(9, mp->m_sb.sb_sectsize) +
- 		     xfs_calc_buf_res(xfs_allocfree_log_count(mp, 4),
--				      XFS_FSB_TO_B(mp, 1)) +
--		    xfs_calc_buf_res(5, 0) +
--		    xfs_calc_buf_res(xfs_allocfree_log_count(mp, 1),
--				     XFS_FSB_TO_B(mp, 1)) +
--		    xfs_calc_buf_res(2 + mp->m_ialloc_blks +
--				     mp->m_in_maxlevels, 0)));
-+				      XFS_FSB_TO_B(mp, 1))));
- }
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -24,6 +24,8 @@
+ #include <linux/slab.h>
+ #include <linux/timekeeping.h>
  
- /*
--- 
-2.17.1
-
++#include <linux/nospec.h>
++
+ #include "ptp_private.h"
+ 
+ static int ptp_disable_pinfunc(struct ptp_clock_info *ops,
+@@ -248,6 +250,7 @@ long ptp_ioctl(struct posix_clock *pc, u
+ 			err = -EINVAL;
+ 			break;
+ 		}
++		pin_index = array_index_nospec(pin_index, ops->n_pins);
+ 		if (mutex_lock_interruptible(&ptp->pincfg_mux))
+ 			return -ERESTARTSYS;
+ 		pd = ops->pin_config[pin_index];
+@@ -266,6 +269,7 @@ long ptp_ioctl(struct posix_clock *pc, u
+ 			err = -EINVAL;
+ 			break;
+ 		}
++		pin_index = array_index_nospec(pin_index, ops->n_pins);
+ 		if (mutex_lock_interruptible(&ptp->pincfg_mux))
+ 			return -ERESTARTSYS;
+ 		err = ptp_set_pinfunc(ptp, pin_index, pd.func, pd.chan);
 
 
