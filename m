@@ -1,124 +1,164 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92A6C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64EAC46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7D120827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6221220827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:30:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjeJ017R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E7D120827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwOpwpeV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6221220827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbeKHSEx (ORCPT
+        id S1726664AbeKHSFT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:04:53 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42836 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbeKHSEx (ORCPT
+        Thu, 8 Nov 2018 13:05:19 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52745 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbeKHSFT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:04:53 -0500
-Received: by mail-pg1-f195.google.com with SMTP id i4-v6so8546833pgq.9;
-        Thu, 08 Nov 2018 00:30:29 -0800 (PST)
+        Thu, 8 Nov 2018 13:05:19 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r11-v6so344719wmb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 00:30:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1u8wqLq2jfc+Hu+gHhiZiEjFU+PVKToHOLPSYozGJos=;
-        b=cjeJ017R3DYhM53ncHaSzpSpxHyuzKHX0EjliJ5geAkIXNx5I282DD9zf+MWBeuQ9G
-         pfxFulAT4pwWJReC6YwLoYnHkrMx4UeOdCp5a5/Uvj00H99HZ9+6tdBWLe4h48E/HYKZ
-         udllmlIedy2P/4zDtMgAFu4oKnoTUvHbHVcfwbFxrEtvU11s+4nHChd0Vm3Dcm8n4/j0
-         bhljTCwuTSX5QkTzpTeptZ1qLHertvglCH8fTMs8yA1bjE0oGOE87kzRwCU5dNRRDiD1
-         c8J7yhpCUFU1ao3Rf28k0lT7Cls1V/fUAeLUI2Wxle+kTyncmVUu9lhZGxYXRsVLWotd
-         4iPg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LxAmM3G9OkFkIRy3Xv3CcBoUjJ+UpMu9hO52XJNc7/o=;
+        b=AwOpwpeVV5E9Hf1AlRxT/Y65DaygmM1l0FxYn1psGU1rd9Q02LNEfpZq6oOykchIJg
+         0hK15ngHI9/xFuUbUb2Cvc7xwTH6xanYRRHzewsPklWHoIbcJ8vhD5Xlorus8uPMWyii
+         VDxok3xhAFiuzpbVl4X4U4bRKDjh95f9M7kPapfBqnJr+OVZxo9IwL9J+p6G0sF5XU1+
+         9YWXuKQStdD/lQihqA4RP5unuOztOVW8KLzEj0EW9kehc3KlAV013LYAAKET77foIdyp
+         6KpZOt4y2SYX0rpyMM09jfB0nLohSrste/+WYaWFiiPpYGwpiInED8W5GHRct3xIt2BJ
+         n7oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1u8wqLq2jfc+Hu+gHhiZiEjFU+PVKToHOLPSYozGJos=;
-        b=uoLBtpVXD57myNkPt/PvnDv4CXIR0BmEDTuMWOL2SnSPP3fgRqI0FBAe/3TC7F7I/C
-         sZ26qg4uawdtwif7z1RObQENYz05Vgd60V4sh6uUiXbYXQfE7ZVavf/1p2tcP/sVelBC
-         oXws/2VDRkSTii0+EsE27lA1c92yCEKFCvaVI1xhq8x6U4LEi/NeUgX0b6QD+SY9r9Rb
-         tzHHUo2UEgb8poTvFdodWOPLqTMNNv+G6K0JC6sl3q54z6MBpnVJVKCKYFdlkIM/wvXp
-         3bdqiWXTSHUEXkRcmxyzIEFAESmmqNkMfMfArSR6rI7tlD50nqW630TEhoVlyiMy7ivb
-         qRCQ==
-X-Gm-Message-State: AGRZ1gK5ZIoJTxEukN0ORcrBHKOqqshhimZoHzRm/wRzdOjvmiZ4VG3I
-        blI8FtXvZ6/4lwM3eyQL2Ft7zenJ5xk=
-X-Google-Smtp-Source: AJdET5cm2AtYAyPZHDU571No35fnw6s2qrFVfW8q7QMGBHhsRvJN+YlocMUEioAndrWfFKqw/GodgQ==
-X-Received: by 2002:a62:250:: with SMTP id 77-v6mr3773883pfc.16.1541665829307;
-        Thu, 08 Nov 2018 00:30:29 -0800 (PST)
-Received: from localhost.localdomain ([2405:204:54a3:4742:28e4:be46:8b17:69ab])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm5370388pfg.180.2018.11.08.00.30.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 00:30:28 -0800 (PST)
-From:   Suraj Singh <suraj1998@gmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        edumazet@google.com, Suraj Singh <suraj1998@gmail.com>
-Subject: [PATCH] staging: net: ipv4: tcp_vegas: fixed checks and warnings
-Date:   Thu,  8 Nov 2018 13:59:52 +0530
-Message-Id: <1541665792-5888-1-git-send-email-suraj1998@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LxAmM3G9OkFkIRy3Xv3CcBoUjJ+UpMu9hO52XJNc7/o=;
+        b=BDnpYSu1cULgbr1KlPVHGP+U0g/nFGqAFll0tptX3JSPefkL0qqpCLrt4Du1w/wJ8R
+         h54cyMnSGCCZBTByXqiRdQ/XXogNDc1oJfj/2ATJvJN3vb7XvZF+azDhWPdFf34Q4/l0
+         tl6CP12yUfeHF6ZynJTrY49UfLZntQTAQIpzSM3idMCj8in7OjmtbUiDyoC9Z4zmd3M6
+         solIIsb1U3dNCyMtAyS36iy9i9NGemLrbr8D8WW5vmVFXcTCD7HRGXrXmRACj4xJTxkT
+         GVPThVAuoWg6cnrHWVQjcmAUPDWI+pIgU7j4JT9Iwm8F8couQA845biE0K4Utz/BRySn
+         unEQ==
+X-Gm-Message-State: AGRZ1gJpIz3qMPVR5lWzeze2HYR+FkB/aU4hYYkX3wlSEZes0A3alkLy
+        z8POg6Aoo/S25Qqsn+4SORQ=
+X-Google-Smtp-Source: AJdET5dF1NizFK/hmb4V3B1JtV7XAdW72+w0m/Co2T+PaYvSNlPcz4wfxri8kVFPwmeOf7pRC7NFzw==
+X-Received: by 2002:a1c:dc42:: with SMTP id t63-v6mr330185wmg.17.1541665854446;
+        Thu, 08 Nov 2018 00:30:54 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id e66-v6sm6116024wmf.40.2018.11.08.00.30.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 00:30:53 -0800 (PST)
+Date:   Thu, 8 Nov 2018 09:30:51 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
+Message-ID: <20181108083051.GI20032@gmail.com>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107171149.165693799@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107171149.165693799@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed checks and warnings in TCP Vegas
 
-Signed-off-by: Suraj Singh <suraj1998@gmail.com>
----
- net/ipv4/tcp_vegas.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-diff --git a/net/ipv4/tcp_vegas.c b/net/ipv4/tcp_vegas.c
-index ee113ff..0f65cbe 100644
---- a/net/ipv4/tcp_vegas.c
-+++ b/net/ipv4/tcp_vegas.c
-@@ -139,8 +139,7 @@ void tcp_vegas_state(struct sock *sk, u8 ca_state)
- }
- EXPORT_SYMBOL_GPL(tcp_vegas_state);
- 
--/*
-- * If the connection is idle and we are restarting,
-+/* If the connection is idle and we are restarting,
-  * then we don't want to do any Vegas calculations
-  * until we get fresh RTT samples.  So when we
-  * restart, we reset our Vegas state to a clean
-@@ -223,7 +222,7 @@ static void tcp_vegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
- 			 * and the window we would like to have. This quantity
- 			 * is the "Diff" from the Arizona Vegas papers.
- 			 */
--			diff = tp->snd_cwnd * (rtt-vegas->baseRTT) / vegas->baseRTT;
-+			diff = tp->snd_cwnd * (rtt - vegas->baseRTT) / vegas->baseRTT;
- 
- 			if (diff > gamma && tcp_in_slow_start(tp)) {
- 				/* Going too fast. Time to slow down
-@@ -237,7 +236,7 @@ static void tcp_vegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
- 				 * truncation robs us of full link
- 				 * utilization.
- 				 */
--				tp->snd_cwnd = min(tp->snd_cwnd, (u32)target_cwnd+1);
-+				tp->snd_cwnd = min(tp->snd_cwnd, (u32)target_cwnd + 1);
- 				tp->snd_ssthresh = tcp_vegas_ssthresh(tp);
- 
- 			} else if (tcp_in_slow_start(tp)) {
-@@ -254,8 +253,7 @@ static void tcp_vegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
- 					 * we slow down.
- 					 */
- 					tp->snd_cwnd--;
--					tp->snd_ssthresh
--						= tcp_vegas_ssthresh(tp);
-+					tp->snd_ssthresh = tcp_vegas_ssthresh(tp);
- 				} else if (diff < alpha) {
- 					/* We don't have enough extra packets
- 					 * in the network, so speed up.
--- 
-2.7.4
+> +Line breaks
+> +^^^^^^^^^^^
+> +
+> +Restricting line length to 80 characters makes deeply indented code hard to
+> +read.  Consider breaking out code into helper functions to avoid excessive
+> +line breaking.
+> +
+> +The 80 character rule is not a strict rule, so please use common sense when
+> +breaking lines. Especially format strings should never be broken up.
 
+Might make sense to explain that:
+
+  + The reason for that rule is that if for example we have this printk line:
+  +
+  +		if (uh_oh()) {
+  +			pr_info("Something really bad happened, danger"
+  +				"danger, blue smoke reported!\n");
+  +		}
+  +
+  + People would see this message in the syslog:
+  +
+  +   Thu Nov  8 09:22:33: Something really bad happened, dangerdanger, blue smoke reported!
+  +
+  + And chances are that in sheer panic they'd type the most distinctive 
+  + part of that text as a search pattern for the kernel source tree:
+  +
+  +   $ git grep -i 'dangerdanger'
+  +   $
+  +
+  + ... and they'd get absolutely no match on that string due to the 
+  + col80 broken format string, and confusion and frustration would rise, 
+  + in addition to growing amounts of blue smoke.
+  +
+  + We don't want that, so just write out the single line:
+
+  +		if (uh_oh())
+  +			pr_info("Something really bad happened, danger danger, blue smoke reported!\n");
+  +
+  + Also note two other advantages of writing it like this:
+  +
+  +  - We saved two curly braces.
+  +  - We also added a proper space to 'danger danger' which was the original intended message.
+
+?
+
+> +
+> +When splitting function declarations or function calls, then please align
+> +the first argument in the second line with the first argument in the first
+> +line::
+> +
+> +  static int long_function_name(struct foobar *barfoo, unsigned int id,
+> +  				unsigned int offset)
+> +  {
+> +
+> +  	if (!id) {
+> +		ret = longer_function_name(barfoo, DEFAULT_BARFOO_ID,
+> +					   offset);
+
+BTW., in this particular case I think small violations of col80 rule are 
+even more readable, i.e.:
+
+> +		ret = longer_function_name(barfoo, DEFAULT_BARFOO_ID, offset);
+
+And note that in this example we used 78 colums so we didn't even violate 
+the col80 rule. ;-)
+
+Thanks,
+
+	Ingo
