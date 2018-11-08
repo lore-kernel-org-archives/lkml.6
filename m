@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F46ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D93ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1B92089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FE41214DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1goWcKWB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1B92089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAK3YB9P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE41214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732632AbeKIHqG (ORCPT
+        id S1732660AbeKIHqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39692 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:46:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731252AbeKIHqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:05 -0500
+        id S1731402AbeKIHqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:46:06 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D6882089F;
-        Thu,  8 Nov 2018 22:08:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BF36208A3;
+        Thu,  8 Nov 2018 22:08:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714913;
-        bh=LO346Av21OvbT+uppmB8O9ZMiVG+7JLa228iiOb1JUw=;
+        s=default; t=1541714914;
+        bh=xcjZHGFGgrl9V8BbYdsoyaqSiLprZFgrWKj8/+Abw70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1goWcKWB+WarfjU8d6UL+PCKCyk8+FDm8ocFNMZDzr4eoJYwniTpcc+MDbg/Uelme
-         qMoCTkCdppPDUxXizxHhVGxzfgxxgi5Z9+SnR7tj/uOCr0qSmoiUVlL9ih4ciSPAgx
-         elMbJ56ezKpTsfFY0laOKJgV4560mVast5GXeSbA=
+        b=QAK3YB9PGJh74IBcG6o47OFtfMqxfd1KeTuQO6PLzyqaJqe67jjCOBmtG4dKzk91l
+         4N5PWZYcQSe68LlCfcsAqJYdV2aPOMIvfWuKRdUCsis+Tjc0F9bscWGPIQQv/yYcOi
+         CvlepoubLrgok2dksWtu3bMWWLFrrAE7/1uyljaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 04/31] USB: serial: option: add two-endpoints device-id flag
-Date:   Thu,  8 Nov 2018 13:52:28 -0800
-Message-Id: <20181108215129.992313687@linuxfoundation.org>
+Subject: [PATCH 4.14 05/31] bpf: fix partial copy of map_ptr when dst is scalar
+Date:   Thu,  8 Nov 2018 13:52:29 -0800
+Message-Id: <20181108215130.120252336@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -64,69 +64,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 35aecc02b5b621782111f64cbb032c7f6a90bb32 upstream
+commit 0962590e553331db2cc0aef2dc35c57f6300dbbe upstream.
 
-Allow matching on interfaces having two endpoints by adding a new
-device-id flag.
+ALU operations on pointers such as scalar_reg += map_value_ptr are
+handled in adjust_ptr_min_max_vals(). Problem is however that map_ptr
+and range in the register state share a union, so transferring state
+through dst_reg->range = ptr_reg->range is just buggy as any new
+map_ptr in the dst_reg is then truncated (or null) for subsequent
+checks. Fix this by adding a raw member and use it for copying state
+over to dst_reg.
 
-This allows for the handling of devices whose interface numbers can
-change (e.g. Quectel EP06) to be contained in the device-id table.
-
-The upstream commit removes a variable that is still in use in the 4.14
-version of the option-driver, so the removal is undone.
-
-Tested-by: Kristian Evensen <kristian.evensen@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
+Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Edward Cree <ecree@solarflare.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Edward Cree <ecree@solarflare.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/option.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ include/linux/bpf_verifier.h |  3 +++
+ kernel/bpf/verifier.c        | 10 ++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index d8d3cb18e9ea..392fddc80c44 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -564,6 +564,9 @@ static void option_instat_callback(struct urb *urb);
- /* Interface is reserved */
- #define RSVD(ifnum)	((BIT(ifnum) & 0xff) << 0)
- 
-+/* Interface must have two endpoints */
-+#define NUMEP2		BIT(16)
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 73bec75b74c8..a3333004fd2b 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -50,6 +50,9 @@ struct bpf_reg_state {
+ 		 *   PTR_TO_MAP_VALUE_OR_NULL
+ 		 */
+ 		struct bpf_map *map_ptr;
 +
- 
- static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
-@@ -1085,7 +1088,7 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0xff, 0xff),
--	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) },
-+	  .driver_info = RSVD(1) | RSVD(2) | RSVD(3) | RSVD(4) | NUMEP2 },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06, 0xff, 0, 0) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
-@@ -2012,16 +2015,11 @@ static int option_probe(struct usb_serial *serial,
- 		return -ENODEV;
- 
- 	/*
--	 * Don't bind to the QMI device of the Quectel EP06/EG06/EM06. Class,
--	 * subclass and protocol is 0xff for both the diagnostic port and the
--	 * QMI interface, but the diagnostic port only has two endpoints (QMI
--	 * has three).
-+	 * Allow matching on bNumEndpoints for devices whose interface numbers
-+	 * can change (e.g. Quectel EP06).
- 	 */
--	if (dev_desc->idVendor == cpu_to_le16(QUECTEL_VENDOR_ID) &&
--	    dev_desc->idProduct == cpu_to_le16(QUECTEL_PRODUCT_EP06) &&
--	    iface_desc->bInterfaceSubClass && iface_desc->bNumEndpoints == 3) {
-+	if (device_flags & NUMEP2 && iface_desc->bNumEndpoints != 2)
- 		return -ENODEV;
--	}
- 
- 	/* Store the device flags so we can use them during attach. */
- 	usb_set_serial_data(serial, (void *)device_flags);
++		/* Max size from any of the above. */
++		unsigned long raw;
+ 	};
+ 	/* Fixed part of pointer offset, pointer types only */
+ 	s32 off;
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index a0ffc62e7677..013b0cd1958e 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -1935,7 +1935,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst_reg->umax_value = umax_ptr;
+ 			dst_reg->var_off = ptr_reg->var_off;
+ 			dst_reg->off = ptr_reg->off + smin_val;
+-			dst_reg->range = ptr_reg->range;
++			dst_reg->raw = ptr_reg->raw;
+ 			break;
+ 		}
+ 		/* A new variable offset is created.  Note that off_reg->off
+@@ -1965,10 +1965,11 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 		dst_reg->var_off = tnum_add(ptr_reg->var_off, off_reg->var_off);
+ 		dst_reg->off = ptr_reg->off;
++		dst_reg->raw = ptr_reg->raw;
+ 		if (ptr_reg->type == PTR_TO_PACKET) {
+ 			dst_reg->id = ++env->id_gen;
+ 			/* something was added to pkt_ptr, set range to zero */
+-			dst_reg->range = 0;
++			dst_reg->raw = 0;
+ 		}
+ 		break;
+ 	case BPF_SUB:
+@@ -1999,7 +2000,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst_reg->var_off = ptr_reg->var_off;
+ 			dst_reg->id = ptr_reg->id;
+ 			dst_reg->off = ptr_reg->off - smin_val;
+-			dst_reg->range = ptr_reg->range;
++			dst_reg->raw = ptr_reg->raw;
+ 			break;
+ 		}
+ 		/* A new variable offset is created.  If the subtrahend is known
+@@ -2025,11 +2026,12 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 		dst_reg->var_off = tnum_sub(ptr_reg->var_off, off_reg->var_off);
+ 		dst_reg->off = ptr_reg->off;
++		dst_reg->raw = ptr_reg->raw;
+ 		if (ptr_reg->type == PTR_TO_PACKET) {
+ 			dst_reg->id = ++env->id_gen;
+ 			/* something was added to pkt_ptr, set range to zero */
+ 			if (smin_val < 0)
+-				dst_reg->range = 0;
++				dst_reg->raw = 0;
+ 		}
+ 		break;
+ 	case BPF_AND:
 -- 
 2.17.1
 
