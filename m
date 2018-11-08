@@ -4,96 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9331C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D88C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B40D2086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B40D2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C902C2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C902C2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeKHTs7 (ORCPT
+        id S1727074AbeKHTtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:48:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:37618 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbeKHTs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:48:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F5BF80D;
-        Thu,  8 Nov 2018 02:14:14 -0800 (PST)
-Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97BFA3F5CF;
-        Thu,  8 Nov 2018 02:14:13 -0800 (PST)
-Date:   Thu, 8 Nov 2018 10:14:10 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/9] arm64: defconfig: Drop NF_CONNTRACK_IPV{4,6}
-Message-ID: <20181108101410.ir3tws7wduxtdsay@salmiak>
-References: <8b49a92b-ca92-1fca-cd09-3bcd7a3dcbb9@free.fr>
- <ddf4d390-c631-c5ef-03dc-a0579a21d484@free.fr>
+        Thu, 8 Nov 2018 14:49:00 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:43720 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726960AbeKHTtA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 14:49:00 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wA8A9Cej021141;
+        Thu, 8 Nov 2018 04:14:07 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2nm92cgmv4-1;
+        Thu, 08 Nov 2018 04:14:06 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 50BE9611C8B8;
+        Thu,  8 Nov 2018 04:17:17 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
+ 10:14:06 +0000
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wA8AE55t028949; Thu,
+ 8 Nov 2018 10:14:05 GMT
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <broonie@kernel.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH 2/6] regulator: lochnagar: Move driver to binding from DT
+Date:   Thu, 8 Nov 2018 10:14:01 +0000
+Message-ID: <20181108101405.14062-3-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
+References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddf4d390-c631-c5ef-03dc-a0579a21d484@free.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1811080089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 09:15:29PM +0100, Marc Gonzalez wrote:
-> Commit a0ae2562c6c4 ("netfilter: conntrack: remove l3proto abstraction")
-> 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Based on review comments on the MFD driver, move the child drivers for
+the Lochnagar MFD over to binding through device tree.
 
-Again, please describe things in the commit message, e.g.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-  CONFIG_NF_CONNTRACK_IPV4 and CONFIG_NF_CONNTRACK_IPV6 haven't existed since
-  commit:
-
-    a0ae2562c6c4 ("netfilter: conntrack: remove l3proto abstraction")
-
-  ... so we can remove them from the arm64 defconfig.
-
-With that:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-For the rest of this series, please update the commit messages to describe why
-the cited commit means it's safe to drop the option.
+Mark, I would maybe hold on merging this one until discussions
+on this version of the patch chain are done, just incase we
+decide to go back to the single DT entry.
 
 Thanks,
-Mark.
+Charles
 
-> ---
->  arch/arm64/configs/defconfig | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 8d6878c1e794..58741c07a6ef 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -156,14 +156,12 @@ CONFIG_NETFILTER_XT_TARGET_CHECKSUM=m
->  CONFIG_NETFILTER_XT_TARGET_LOG=m
->  CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
->  CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
-> -CONFIG_NF_CONNTRACK_IPV4=m
->  CONFIG_IP_NF_IPTABLES=m
->  CONFIG_IP_NF_FILTER=m
->  CONFIG_IP_NF_TARGET_REJECT=m
->  CONFIG_IP_NF_NAT=m
->  CONFIG_IP_NF_TARGET_MASQUERADE=m
->  CONFIG_IP_NF_MANGLE=m
-> -CONFIG_NF_CONNTRACK_IPV6=m
->  CONFIG_IP6_NF_IPTABLES=m
->  CONFIG_IP6_NF_FILTER=m
->  CONFIG_IP6_NF_TARGET_REJECT=m
-> -- 
-> 2.17.1
+ drivers/regulator/lochnagar-regulator.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+index 182198246479f..d08fe830b39c1 100644
+--- a/drivers/regulator/lochnagar-regulator.c
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -222,7 +222,7 @@ static int lochnagar_regulator_probe(struct platform_device *pdev)
+ 	struct regulator_dev *rdev;
+ 	int ret, i;
+ 
+-	config.dev = lochnagar->dev;
++	config.dev = dev;
+ 	config.regmap = lochnagar->regmap;
+ 	config.driver_data = lochnagar;
+ 
+@@ -241,9 +241,15 @@ static int lochnagar_regulator_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id lochnagar_of_match[] = {
++	{ .compatible = "cirrus,lochnagar-regulator" },
++	{},
++};
++
+ static struct platform_driver lochnagar_regulator_driver = {
+ 	.driver = {
+ 		.name = "lochnagar-regulator",
++		.of_match_table = of_match_ptr(lochnagar_of_match),
+ 	},
+ 
+ 	.probe = lochnagar_regulator_probe,
+-- 
+2.11.0
+
