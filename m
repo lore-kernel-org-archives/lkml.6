@@ -2,99 +2,249 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 729EFECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9581CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4683A20840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4683A20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
+	by mail.kernel.org (Postfix) with ESMTP id 5989E20840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:51:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Dniz5pD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5989E20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbeKID2R (ORCPT
+        id S1727271AbeKID2R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 8 Nov 2018 22:28:17 -0500
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:57958 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726585AbeKID2Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:28:16 -0500
-Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8HfcoQ002629;
-        Thu, 8 Nov 2018 11:51:13 -0600
-Received: from ni.com (skprod2.natinst.com [130.164.80.23])
-        by mx0a-00010702.pphosted.com with ESMTP id 2nktgnx914-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Nov 2018 11:51:13 -0600
-Received: from us-aus-exhub1.ni.corp.natinst.com (us-aus-exhub1.ni.corp.natinst.com [130.164.68.41])
-        by us-aus-skprod2.natinst.com (8.16.0.22/8.16.0.22) with ESMTPS id wA8HpCTM001889
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 8 Nov 2018 11:51:12 -0600
-Received: from us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) by
- us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Thu, 8 Nov 2018 11:51:12 -0600
-Received: from senary.amer.corp.natinst.com (130.164.49.7) by
- us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) with Microsoft SMTP Server
- id 15.0.1395.4 via Frontend Transport; Thu, 8 Nov 2018 11:51:12 -0600
-From:   Kyle Roeschley <kyle.roeschley@ni.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-CC:     "David S . Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Kyle Roeschley <kyle.roeschley@ni.com>
-Subject: [PATCH] net: phy: leds: Don't make our own link speed names
-Date:   Thu, 8 Nov 2018 11:51:06 -0600
-Message-ID: <20181108175106.25684-1-kyle.roeschley@ni.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Received: from mail.kernel.org ([198.145.29.99]:40236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726869AbeKID2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:28:17 -0500
+Received: from localhost.localdomain (unknown [171.76.98.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44F2120827;
+        Thu,  8 Nov 2018 17:51:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541699500;
+        bh=T+p6g0F8jAKv7ODkmKEX/ZT9E4g7uR/098U9KOe2h5o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0Dniz5pDUvP0JFhiznO4pm758z0qIOWltwFlUYRlqBrUo/f3cL1RrAZ3dGTpk6CNE
+         SUJ+brScP39Zbl2rQoLqVJab0DOUuXYBk2w4W8M96NiXXSbBzyMAOmvsG4nc/znaPv
+         1TVIFkxH9wYSnZMAbrGR7NxTIDKphkdDY9o8OqfQ=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v3 01/18] arm64: dts: qcom: qcs404: add base dts files
+Date:   Thu,  8 Nov 2018 23:20:32 +0530
+Message-Id: <20181108175049.7090-2-vkoul@kernel.org>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181108175049.7090-1-vkoul@kernel.org>
+References: <20181108175049.7090-1-vkoul@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The phy core provides a handy phy_speed_to_str() helper, so use that
-instead of doing our own formatting of the different known link speeds.
+Add base dts files for QCS404 chipset along with cpu, timer,
+gcc and uart2 nodes.
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/net/phy/phy_led_triggers.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 175 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 175 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs404.dtsi
 
-diff --git a/drivers/net/phy/phy_led_triggers.c b/drivers/net/phy/phy_led_triggers.c
-index 491efc1bf5c4..2827eb413c9c 100644
---- a/drivers/net/phy/phy_led_triggers.c
-+++ b/drivers/net/phy/phy_led_triggers.c
-@@ -77,20 +77,9 @@ static int phy_led_trigger_register(struct phy_device *phy,
- 				    struct phy_led_trigger *plt,
- 				    unsigned int speed)
- {
--	char name_suffix[PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE];
--
- 	plt->speed = speed;
--
--	if (speed < SPEED_1000)
--		snprintf(name_suffix, sizeof(name_suffix), "%dMbps", speed);
--	else if (speed == SPEED_2500)
--		snprintf(name_suffix, sizeof(name_suffix), "2.5Gbps");
--	else
--		snprintf(name_suffix, sizeof(name_suffix), "%dGbps",
--			 DIV_ROUND_CLOSEST(speed, 1000));
--
- 	phy_led_trigger_format_name(phy, plt->name, sizeof(plt->name),
--				    name_suffix);
-+				    phy_speed_to_str(speed));
- 	plt->trigger.name = plt->name;
- 
- 	return led_trigger_register(&plt->trigger);
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+new file mode 100644
+index 000000000000..b77d1198ba79
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, Linaro Limited
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,gcc-qcs404.h>
++
++/ {
++	interrupt-parent = <&intc>;
++
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	chosen { };
++
++	clocks {
++		xo_board: xo_board {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <19200000>;
++		};
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x100>;
++			enable-method = "psci";
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x101>;
++			enable-method = "psci";
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x102>;
++			enable-method = "psci";
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x103>;
++			enable-method = "psci";
++			next-level-cache = <&L2_0>;
++		};
++
++		L2_0: l2-cache {
++			compatible = "cache";
++			cache-level = <2>;
++		};
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		/* We expect the bootloader to fill in the reg */
++		reg = <0 0x0 0 0>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	soc: soc@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0 0 0xffffffff>;
++		compatible = "simple-bus";
++
++		gcc: clock-controller@1800000 {
++			compatible = "qcom,gcc-qcs404";
++			reg = <0x01800000 0x80000>;
++			#clock-cells = <1>;
++
++			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
++			assigned-clock-rates = <19200000>;
++		};
++
++		blsp1_uart2: serial@78b1000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x078b1000 0x200>;
++			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "okay";
++		};
++
++		intc: interrupt-controller@b000000 {
++			compatible = "qcom,msm-qgic2";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x0b000000 0x1000>,
++			      <0x0b002000 0x1000>;
++		};
++
++		timer@b120000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			compatible = "arm,armv7-timer-mem";
++			reg = <0x0b120000 0x1000>;
++			clock-frequency = <19200000>;
++
++			frame@b121000 {
++				frame-number = <0>;
++				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b121000 0x1000>,
++				      <0x0b122000 0x1000>;
++			};
++
++			frame@b123000 {
++				frame-number = <1>;
++				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b123000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b124000 {
++				frame-number = <2>;
++				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b124000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b125000 {
++				frame-number = <3>;
++				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b125000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b126000 {
++				frame-number = <4>;
++				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b126000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b127000 {
++				frame-number = <5>;
++				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb127000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b128000 {
++				frame-number = <6>;
++				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b128000 0x1000>;
++				status = "disabled";
++			};
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 2 0xff08>,
++			     <GIC_PPI 3 0xff08>,
++			     <GIC_PPI 4 0xff08>,
++			     <GIC_PPI 1 0xff08>;
++	};
++};
 -- 
-2.19.1
+2.14.4
 
