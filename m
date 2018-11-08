@@ -2,1212 +2,172 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A252C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F421FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF40C20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:29:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qIKmQoti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF40C20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B3DC620840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 23:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DC620840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeKIJHH (ORCPT
+        id S1727349AbeKIJM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 04:07:07 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39694 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbeKIJHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 04:07:06 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r10-v6so13787wrv.6;
-        Thu, 08 Nov 2018 15:29:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6GwvQ+Oh1T6z9bc3s/5NXRb84PAiaYkzdrqE8a28VpQ=;
-        b=qIKmQoti6wQJnMsClHrOBxzRkI8yDPSgpy1zT5Vh76mO4o3puEzpNQjwnGl5r18JES
-         QiVtkoH5cN7e+ebw56pbGNJXI0D4yW0514QAKBkQBnB2MNDyUaH964uVJHRPA0SXdeSX
-         s+w8ZIHoU5gHK1nCTdXN/nisHIsKuwWK8am8yf8uluqI1LPuQx2iD8ou5fo7lByX6/1T
-         +HFrez6j94oYXEXnb+jAKZREM5h1pDI2JY/Ae+/Gj/Fy1xHAAXf8PDx5vAgBNBDojmKz
-         g1gm4KGnM0f3cP2+PZchnCn/5YdGBSqNGm3a9PXUSzwX3Kvz/1Se5kXM9kbB9KGMEQHj
-         LobQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6GwvQ+Oh1T6z9bc3s/5NXRb84PAiaYkzdrqE8a28VpQ=;
-        b=YGNAlrwBizFMD/J8dmOSe+lZQTT6cI+5FJYP34D2ggDNFUNiZ/Ut5FCPYBvQ6E1pTx
-         Z4u2byvGxhD0eF1Rq0cH21nIFs70pqZobGbfkTsbBAOhxFlIoNqE8hnlmDy1je76hxfP
-         hTJUSSqVKJ9oG5wJEafjqMrhthO5u+Cw3vDGQSb7NrmwQjQtGRX2W+Xum5vxJxBbPcAR
-         kMLIafi0qwZEdFxdBFdm+l1kRTUhdgCRouiTBkETCUKdMnuKiGULs17H0/KLkhwrC9ue
-         Mw9muVllQ3BwItcyI2CBkmaX+t4b9uV1kkEJuOGavdbx2GR5Q1Rl+moqKBU/0TIC0ntc
-         Ou3g==
-X-Gm-Message-State: AGRZ1gIDdteIPPJPtO+PAJq8bCqIJBVD9Sg7i8t/p6JkEeIBexb+nDbe
-        cjMX3BCQn6UY1oWFCDClitk=
-X-Google-Smtp-Source: AJdET5fU6gQqBqZWy4GuM/oLa8sge7DFi6MNlu8JSHJ/0JTOZHSXUTXew6D+IyZ8/0JxfBH2QZGtlw==
-X-Received: by 2002:a5d:44d2:: with SMTP id z18-v6mr6063414wrr.236.1541719750304;
-        Thu, 08 Nov 2018 15:29:10 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:3cbc:a9ea:9ab8:4b19? (p200300EA8BCFE3003CBCA9EA9AB84B19.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:3cbc:a9ea:9ab8:4b19])
-        by smtp.googlemail.com with ESMTPSA id a18-v6sm6717433wrt.79.2018.11.08.15.29.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 15:29:09 -0800 (PST)
-Subject: [PATCH net-next v2 2/2] net: phy: remove flag PHY_HAS_INTERRUPT from
- driver configs
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Miller <davem@davemloft.net>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "maintainer:BROADCOM BCM63XX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:BROADCOM BCM63XX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson SoC support" 
-        <linux-amlogic@lists.infradead.org>
-References: <a02d084d-291a-dd62-c370-c1a2dec451c7@gmail.com>
-Message-ID: <65e656a4-e5b5-4a51-68e3-515649fc34ef@gmail.com>
-Date:   Fri, 9 Nov 2018 00:29:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 9 Nov 2018 04:12:59 -0500
+Received: from mga03.intel.com ([134.134.136.65]:52518 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726926AbeKIJM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 04:12:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 15:35:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,481,1534834800"; 
+   d="scan'208";a="278307461"
+Received: from amwells-mobl1.amr.corp.intel.com (HELO [10.251.14.246]) ([10.251.14.246])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 15:35:03 -0800
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-5-yu-cheng.yu@intel.com>
+ <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
+ <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
+ <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+ <043a17ef-dc9f-56d2-5fba-1a58b7b0fd4d@intel.com>
+ <20181108220054.GP3074@bombadil.infradead.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ead230ab-a904-50d6-c4cf-46d5804f6151@intel.com>
+Date:   Thu, 8 Nov 2018 15:35:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <a02d084d-291a-dd62-c370-c1a2dec451c7@gmail.com>
+In-Reply-To: <20181108220054.GP3074@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that flag PHY_HAS_INTERRUPT has been replaced with a check for
-callbacks config_intr and ack_interrupt, we can remove setting this
-flag from all driver configs.
-Last but not least remove flag PHY_HAS_INTERRUPT completely.
+On 11/8/18 2:00 PM, Matthew Wilcox wrote:
+> struct a {
+> 	char c;
+> 	struct b b;
+> };
+> 
+> we want struct b to start at offset 8, but with __packed, it will start
+> at offset 1.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-v2:
-- remove flag from all driver configs, not only Realtek
-- remove flag completely to prevent further use
----
- drivers/net/phy/amd.c          |  1 -
- drivers/net/phy/aquantia.c     |  6 ------
- drivers/net/phy/at803x.c       |  3 ---
- drivers/net/phy/bcm63xx.c      |  4 ++--
- drivers/net/phy/bcm87xx.c      |  2 --
- drivers/net/phy/broadcom.c     | 16 ----------------
- drivers/net/phy/cicada.c       |  2 --
- drivers/net/phy/davicom.c      |  4 ----
- drivers/net/phy/dp83640.c      |  1 -
- drivers/net/phy/dp83822.c      |  1 -
- drivers/net/phy/dp83848.c      |  1 -
- drivers/net/phy/dp83867.c      |  1 -
- drivers/net/phy/dp83tc811.c    |  1 -
- drivers/net/phy/icplus.c       |  1 -
- drivers/net/phy/intel-xway.c   | 10 ----------
- drivers/net/phy/lxt.c          |  2 --
- drivers/net/phy/marvell.c      | 15 ---------------
- drivers/net/phy/meson-gxl.c    |  2 +-
- drivers/net/phy/micrel.c       | 14 --------------
- drivers/net/phy/microchip.c    |  1 -
- drivers/net/phy/microchip_t1.c |  1 -
- drivers/net/phy/mscc.c         |  6 ------
- drivers/net/phy/national.c     |  1 -
- drivers/net/phy/qsemi.c        |  1 -
- drivers/net/phy/realtek.c      |  7 -------
- drivers/net/phy/smsc.c         |  7 +------
- drivers/net/phy/ste10Xp.c      |  2 --
- drivers/net/phy/vitesse.c      |  9 ---------
- include/linux/phy.h            |  5 ++---
- 29 files changed, 6 insertions(+), 121 deletions(-)
+You're talking about how we want the struct laid out in memory if we
+have control over the layout.  I'm talking about what happens if
+something *else* tells us the layout, like a hardware specification
+which is what is in play with the XSAVE instruction dictated layout
+that's in question here.
 
-diff --git a/drivers/net/phy/amd.c b/drivers/net/phy/amd.c
-index 6fe5dc920..9d0504f3e 100644
---- a/drivers/net/phy/amd.c
-+++ b/drivers/net/phy/amd.c
-@@ -66,7 +66,6 @@ static struct phy_driver am79c_driver[] = { {
- 	.name		= "AM79C874",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= am79c_config_init,
- 	.ack_interrupt	= am79c_ack_interrupt,
- 	.config_intr	= am79c_config_intr,
-diff --git a/drivers/net/phy/aquantia.c b/drivers/net/phy/aquantia.c
-index 632472cab..efc0fbde9 100644
---- a/drivers/net/phy/aquantia.c
-+++ b/drivers/net/phy/aquantia.c
-@@ -116,7 +116,6 @@ static struct phy_driver aquantia_driver[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Aquantia AQ1202",
- 	.features	= PHY_10GBIT_FULL_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.aneg_done	= genphy_c45_aneg_done,
- 	.config_aneg    = aquantia_config_aneg,
- 	.config_intr	= aquantia_config_intr,
-@@ -128,7 +127,6 @@ static struct phy_driver aquantia_driver[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Aquantia AQ2104",
- 	.features	= PHY_10GBIT_FULL_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.aneg_done	= genphy_c45_aneg_done,
- 	.config_aneg    = aquantia_config_aneg,
- 	.config_intr	= aquantia_config_intr,
-@@ -140,7 +138,6 @@ static struct phy_driver aquantia_driver[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Aquantia AQR105",
- 	.features	= PHY_10GBIT_FULL_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.aneg_done	= genphy_c45_aneg_done,
- 	.config_aneg    = aquantia_config_aneg,
- 	.config_intr	= aquantia_config_intr,
-@@ -152,7 +149,6 @@ static struct phy_driver aquantia_driver[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Aquantia AQR106",
- 	.features	= PHY_10GBIT_FULL_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.aneg_done	= genphy_c45_aneg_done,
- 	.config_aneg    = aquantia_config_aneg,
- 	.config_intr	= aquantia_config_intr,
-@@ -164,7 +160,6 @@ static struct phy_driver aquantia_driver[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Aquantia AQR107",
- 	.features	= PHY_10GBIT_FULL_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.aneg_done	= genphy_c45_aneg_done,
- 	.config_aneg    = aquantia_config_aneg,
- 	.config_intr	= aquantia_config_intr,
-@@ -176,7 +171,6 @@ static struct phy_driver aquantia_driver[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Aquantia AQR405",
- 	.features	= PHY_10GBIT_FULL_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.aneg_done	= genphy_c45_aneg_done,
- 	.config_aneg    = aquantia_config_aneg,
- 	.config_intr	= aquantia_config_intr,
-diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
-index e74a047a8..f9432d053 100644
---- a/drivers/net/phy/at803x.c
-+++ b/drivers/net/phy/at803x.c
-@@ -379,7 +379,6 @@ static struct phy_driver at803x_driver[] = {
- 	.suspend		= at803x_suspend,
- 	.resume			= at803x_resume,
- 	.features		= PHY_GBIT_FEATURES,
--	.flags			= PHY_HAS_INTERRUPT,
- 	.ack_interrupt		= at803x_ack_interrupt,
- 	.config_intr		= at803x_config_intr,
- }, {
-@@ -395,7 +394,6 @@ static struct phy_driver at803x_driver[] = {
- 	.suspend		= at803x_suspend,
- 	.resume			= at803x_resume,
- 	.features		= PHY_BASIC_FEATURES,
--	.flags			= PHY_HAS_INTERRUPT,
- 	.ack_interrupt		= at803x_ack_interrupt,
- 	.config_intr		= at803x_config_intr,
- }, {
-@@ -410,7 +408,6 @@ static struct phy_driver at803x_driver[] = {
- 	.suspend		= at803x_suspend,
- 	.resume			= at803x_resume,
- 	.features		= PHY_GBIT_FEATURES,
--	.flags			= PHY_HAS_INTERRUPT,
- 	.aneg_done		= at803x_aneg_done,
- 	.ack_interrupt		= &at803x_ack_interrupt,
- 	.config_intr		= &at803x_config_intr,
-diff --git a/drivers/net/phy/bcm63xx.c b/drivers/net/phy/bcm63xx.c
-index d95bffdec..6a547b87f 100644
---- a/drivers/net/phy/bcm63xx.c
-+++ b/drivers/net/phy/bcm63xx.c
-@@ -69,7 +69,7 @@ static struct phy_driver bcm63xx_driver[] = {
- 	.phy_id_mask	= 0xfffffc00,
- 	.name		= "Broadcom BCM63XX (1)",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT | PHY_IS_INTERNAL,
-+	.flags		= PHY_IS_INTERNAL,
- 	.config_init	= bcm63xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm63xx_config_intr,
-@@ -78,7 +78,7 @@ static struct phy_driver bcm63xx_driver[] = {
- 	.phy_id		= 0x002bdc00,
- 	.phy_id_mask	= 0xfffffc00,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT | PHY_IS_INTERNAL,
-+	.flags		= PHY_IS_INTERNAL,
- 	.config_init	= bcm63xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm63xx_config_intr,
-diff --git a/drivers/net/phy/bcm87xx.c b/drivers/net/phy/bcm87xx.c
-index f7ebdcff5..64d5ba7bf 100644
---- a/drivers/net/phy/bcm87xx.c
-+++ b/drivers/net/phy/bcm87xx.c
-@@ -193,7 +193,6 @@ static struct phy_driver bcm87xx_driver[] = {
- 	.phy_id		= PHY_ID_BCM8706,
- 	.phy_id_mask	= 0xffffffff,
- 	.name		= "Broadcom BCM8706",
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm87xx_config_init,
- 	.config_aneg	= bcm87xx_config_aneg,
- 	.read_status	= bcm87xx_read_status,
-@@ -205,7 +204,6 @@ static struct phy_driver bcm87xx_driver[] = {
- 	.phy_id		= PHY_ID_BCM8727,
- 	.phy_id_mask	= 0xffffffff,
- 	.name		= "Broadcom BCM8727",
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm87xx_config_init,
- 	.config_aneg	= bcm87xx_config_aneg,
- 	.read_status	= bcm87xx_read_status,
-diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
-index 704537010..aa73c5cc5 100644
---- a/drivers/net/phy/broadcom.c
-+++ b/drivers/net/phy/broadcom.c
-@@ -602,7 +602,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5411",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -611,7 +610,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5421",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -620,7 +618,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM54210E",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -629,7 +626,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5461",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -638,7 +634,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM54612E",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -647,7 +642,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM54616S",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.config_aneg	= bcm54616s_config_aneg,
- 	.ack_interrupt	= bcm_phy_ack_intr,
-@@ -657,7 +651,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5464",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -666,7 +659,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5481",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.config_aneg	= bcm5481_config_aneg,
- 	.ack_interrupt	= bcm_phy_ack_intr,
-@@ -676,7 +668,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask    = 0xfffffff0,
- 	.name           = "Broadcom BCM54810",
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = bcm54xx_config_init,
- 	.config_aneg    = bcm5481_config_aneg,
- 	.ack_interrupt  = bcm_phy_ack_intr,
-@@ -686,7 +677,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5482",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm5482_config_init,
- 	.read_status	= bcm5482_read_status,
- 	.ack_interrupt	= bcm_phy_ack_intr,
-@@ -696,7 +686,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM50610",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -705,7 +694,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM50610M",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -714,7 +702,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM57780",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= bcm54xx_config_init,
- 	.ack_interrupt	= bcm_phy_ack_intr,
- 	.config_intr	= bcm_phy_config_intr,
-@@ -723,7 +710,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCMAC131",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= brcm_fet_config_init,
- 	.ack_interrupt	= brcm_fet_ack_interrupt,
- 	.config_intr	= brcm_fet_config_intr,
-@@ -732,7 +718,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Broadcom BCM5241",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= brcm_fet_config_init,
- 	.ack_interrupt	= brcm_fet_ack_interrupt,
- 	.config_intr	= brcm_fet_config_intr,
-@@ -751,7 +736,6 @@ static struct phy_driver broadcom_drivers[] = {
- 	.phy_id_mask    = 0xfffffff0,
- 	.name           = "Broadcom BCM89610",
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = bcm54xx_config_init,
- 	.ack_interrupt  = bcm_phy_ack_intr,
- 	.config_intr    = bcm_phy_config_intr,
-diff --git a/drivers/net/phy/cicada.c b/drivers/net/phy/cicada.c
-index c05af00bf..fea61c81b 100644
---- a/drivers/net/phy/cicada.c
-+++ b/drivers/net/phy/cicada.c
-@@ -108,7 +108,6 @@ static struct phy_driver cis820x_driver[] = {
- 	.name		= "Cicada Cis8201",
- 	.phy_id_mask	= 0x000ffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= &cis820x_config_init,
- 	.ack_interrupt	= &cis820x_ack_interrupt,
- 	.config_intr	= &cis820x_config_intr,
-@@ -117,7 +116,6 @@ static struct phy_driver cis820x_driver[] = {
- 	.name		= "Cicada Cis8204",
- 	.phy_id_mask	= 0x000fffc0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= &cis820x_config_init,
- 	.ack_interrupt	= &cis820x_ack_interrupt,
- 	.config_intr	= &cis820x_config_intr,
-diff --git a/drivers/net/phy/davicom.c b/drivers/net/phy/davicom.c
-index 5ee99b3b4..97162008f 100644
---- a/drivers/net/phy/davicom.c
-+++ b/drivers/net/phy/davicom.c
-@@ -150,7 +150,6 @@ static struct phy_driver dm91xx_driver[] = {
- 	.name		= "Davicom DM9161E",
- 	.phy_id_mask	= 0x0ffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= dm9161_config_init,
- 	.config_aneg	= dm9161_config_aneg,
- 	.ack_interrupt	= dm9161_ack_interrupt,
-@@ -160,7 +159,6 @@ static struct phy_driver dm91xx_driver[] = {
- 	.name		= "Davicom DM9161B/C",
- 	.phy_id_mask	= 0x0ffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= dm9161_config_init,
- 	.config_aneg	= dm9161_config_aneg,
- 	.ack_interrupt	= dm9161_ack_interrupt,
-@@ -170,7 +168,6 @@ static struct phy_driver dm91xx_driver[] = {
- 	.name		= "Davicom DM9161A",
- 	.phy_id_mask	= 0x0ffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= dm9161_config_init,
- 	.config_aneg	= dm9161_config_aneg,
- 	.ack_interrupt	= dm9161_ack_interrupt,
-@@ -180,7 +177,6 @@ static struct phy_driver dm91xx_driver[] = {
- 	.name		= "Davicom DM9131",
- 	.phy_id_mask	= 0x0ffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.ack_interrupt	= dm9161_ack_interrupt,
- 	.config_intr	= dm9161_config_intr,
- } };
-diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
-index edd4d44a3..18b41bc34 100644
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1521,7 +1521,6 @@ static struct phy_driver dp83640_driver = {
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "NatSemi DP83640",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.probe		= dp83640_probe,
- 	.remove		= dp83640_remove,
- 	.soft_reset	= dp83640_soft_reset,
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 6e8a2a4f3..24c7f149f 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -318,7 +318,6 @@ static struct phy_driver dp83822_driver[] = {
- 		.phy_id_mask = 0xfffffff0,
- 		.name = "TI DP83822",
- 		.features = PHY_BASIC_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.config_init = dp83822_config_init,
- 		.soft_reset = dp83822_phy_reset,
- 		.get_wol = dp83822_get_wol,
-diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
-index 6e8e42361..a6b55909d 100644
---- a/drivers/net/phy/dp83848.c
-+++ b/drivers/net/phy/dp83848.c
-@@ -108,7 +108,6 @@ MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
- 		.phy_id_mask	= 0xfffffff0,			\
- 		.name		= _name,			\
- 		.features	= PHY_BASIC_FEATURES,		\
--		.flags		= PHY_HAS_INTERRUPT,		\
- 								\
- 		.soft_reset	= genphy_soft_reset,		\
- 		.config_init	= _config_init,			\
-diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-index b3935778b..da6a67d47 100644
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -334,7 +334,6 @@ static struct phy_driver dp83867_driver[] = {
- 		.phy_id_mask	= 0xfffffff0,
- 		.name		= "TI DP83867",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 
- 		.config_init	= dp83867_config_init,
- 		.soft_reset	= dp83867_phy_reset,
-diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
-index 78cad134a..da1335699 100644
---- a/drivers/net/phy/dp83tc811.c
-+++ b/drivers/net/phy/dp83tc811.c
-@@ -346,7 +346,6 @@ static struct phy_driver dp83811_driver[] = {
- 		.phy_id_mask = 0xfffffff0,
- 		.name = "TI DP83TC811",
- 		.features = PHY_BASIC_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.config_init = dp83811_config_init,
- 		.config_aneg = dp83811_config_aneg,
- 		.soft_reset = dp83811_phy_reset,
-diff --git a/drivers/net/phy/icplus.c b/drivers/net/phy/icplus.c
-index 791587a49..21ce68964 100644
---- a/drivers/net/phy/icplus.c
-+++ b/drivers/net/phy/icplus.c
-@@ -234,7 +234,6 @@ static struct phy_driver icplus_driver[] = {
- 	.name		= "ICPlus IP101A/G",
- 	.phy_id_mask	= 0x0ffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.ack_interrupt	= ip101a_g_ack_interrupt,
- 	.config_init	= &ip101a_g_config_init,
- 	.suspend	= genphy_suspend,
-diff --git a/drivers/net/phy/intel-xway.c b/drivers/net/phy/intel-xway.c
-index 7d936fb61..fc0f5024a 100644
---- a/drivers/net/phy/intel-xway.c
-+++ b/drivers/net/phy/intel-xway.c
-@@ -242,7 +242,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY11G (PEF 7071/PEF 7072) v1.3",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.config_aneg	= xway_gphy14_config_aneg,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
-@@ -255,7 +254,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY22F (PEF 7061) v1.3",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.config_aneg	= xway_gphy14_config_aneg,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
-@@ -268,7 +266,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY11G (PEF 7071/PEF 7072) v1.4",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.config_aneg	= xway_gphy14_config_aneg,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
-@@ -281,7 +278,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY22F (PEF 7061) v1.4",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.config_aneg	= xway_gphy14_config_aneg,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
-@@ -294,7 +290,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY11G (PEF 7071/PEF 7072) v1.5 / v1.6",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
- 		.did_interrupt	= xway_gphy_did_interrupt,
-@@ -306,7 +301,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY22F (PEF 7061) v1.5 / v1.6",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
- 		.did_interrupt	= xway_gphy_did_interrupt,
-@@ -318,7 +312,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY11G (xRX v1.1 integrated)",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
- 		.did_interrupt	= xway_gphy_did_interrupt,
-@@ -330,7 +323,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY22F (xRX v1.1 integrated)",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
- 		.did_interrupt	= xway_gphy_did_interrupt,
-@@ -342,7 +334,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY11G (xRX v1.2 integrated)",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
- 		.did_interrupt	= xway_gphy_did_interrupt,
-@@ -354,7 +345,6 @@ static struct phy_driver xway_gphy[] = {
- 		.phy_id_mask	= 0xffffffff,
- 		.name		= "Intel XWAY PHY22F (xRX v1.2 integrated)",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= xway_gphy_config_init,
- 		.ack_interrupt	= xway_gphy_ack_interrupt,
- 		.did_interrupt	= xway_gphy_did_interrupt,
-diff --git a/drivers/net/phy/lxt.c b/drivers/net/phy/lxt.c
-index c14b254b2..c9e2c84c2 100644
---- a/drivers/net/phy/lxt.c
-+++ b/drivers/net/phy/lxt.c
-@@ -257,7 +257,6 @@ static struct phy_driver lxt97x_driver[] = {
- 	.name		= "LXT970",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= lxt970_config_init,
- 	.ack_interrupt	= lxt970_ack_interrupt,
- 	.config_intr	= lxt970_config_intr,
-@@ -266,7 +265,6 @@ static struct phy_driver lxt97x_driver[] = {
- 	.name		= "LXT971",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.ack_interrupt	= lxt971_ack_interrupt,
- 	.config_intr	= lxt971_config_intr,
- }, {
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index cbec29610..463c616a7 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -2005,7 +2005,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1101",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &marvell_config_init,
- 		.config_aneg = &m88e1101_config_aneg,
-@@ -2024,7 +2023,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1112",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1111_config_init,
- 		.config_aneg = &marvell_config_aneg,
-@@ -2043,7 +2041,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1111",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1111_config_init,
- 		.config_aneg = &marvell_config_aneg,
-@@ -2063,7 +2060,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1118",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1118_config_init,
- 		.config_aneg = &m88e1118_config_aneg,
-@@ -2082,7 +2078,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1121R",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = &m88e1121_probe,
- 		.config_init = &marvell_config_init,
- 		.config_aneg = &m88e1121_config_aneg,
-@@ -2103,7 +2098,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1318S",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1318_config_init,
- 		.config_aneg = &m88e1318_config_aneg,
-@@ -2126,7 +2120,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1145",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1145_config_init,
- 		.config_aneg = &m88e1101_config_aneg,
-@@ -2146,7 +2139,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1149R",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1149_config_init,
- 		.config_aneg = &m88e1118_config_aneg,
-@@ -2165,7 +2157,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1240",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1111_config_init,
- 		.config_aneg = &marvell_config_aneg,
-@@ -2184,7 +2175,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1116R",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e1116r_config_init,
- 		.ack_interrupt = &marvell_ack_interrupt,
-@@ -2202,7 +2192,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1510",
- 		.features = PHY_GBIT_FIBRE_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = &m88e1510_probe,
- 		.config_init = &m88e1510_config_init,
- 		.config_aneg = &m88e1510_config_aneg,
-@@ -2226,7 +2215,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E1540",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = m88e1510_probe,
- 		.config_init = &marvell_config_init,
- 		.config_aneg = &m88e1510_config_aneg,
-@@ -2248,7 +2236,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.name = "Marvell 88E1545",
- 		.probe = m88e1510_probe,
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.config_init = &marvell_config_init,
- 		.config_aneg = &m88e1510_config_aneg,
- 		.read_status = &marvell_read_status,
-@@ -2268,7 +2255,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E3016",
- 		.features = PHY_BASIC_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = marvell_probe,
- 		.config_init = &m88e3016_config_init,
- 		.aneg_done = &marvell_aneg_done,
-@@ -2289,7 +2275,6 @@ static struct phy_driver marvell_drivers[] = {
- 		.phy_id_mask = MARVELL_PHY_ID_MASK,
- 		.name = "Marvell 88E6390",
- 		.features = PHY_GBIT_FEATURES,
--		.flags = PHY_HAS_INTERRUPT,
- 		.probe = m88e6390_probe,
- 		.config_init = &marvell_config_init,
- 		.config_aneg = &m88e1510_config_aneg,
-diff --git a/drivers/net/phy/meson-gxl.c b/drivers/net/phy/meson-gxl.c
-index ddc2c5ea3..b03bcf2c3 100644
---- a/drivers/net/phy/meson-gxl.c
-+++ b/drivers/net/phy/meson-gxl.c
-@@ -232,7 +232,7 @@ static struct phy_driver meson_gxl_phy[] = {
- 		.phy_id_mask	= 0xfffffff0,
- 		.name		= "Meson GXL Internal PHY",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_IS_INTERNAL | PHY_HAS_INTERRUPT,
-+		.flags		= PHY_IS_INTERNAL,
- 		.config_init	= meson_gxl_config_init,
- 		.aneg_done      = genphy_aneg_done,
- 		.read_status	= meson_gxl_read_status,
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 9265dea79..cb5783905 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -918,7 +918,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KS8737",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ks8737_type,
- 	.config_init	= kszphy_config_init,
- 	.ack_interrupt	= kszphy_ack_interrupt,
-@@ -930,7 +929,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= 0x00ffffff,
- 	.name		= "Micrel KSZ8021 or KSZ8031",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8021_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= kszphy_config_init,
-@@ -946,7 +944,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= 0x00ffffff,
- 	.name		= "Micrel KSZ8031",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8021_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= kszphy_config_init,
-@@ -962,7 +959,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ8041",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8041_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= ksz8041_config_init,
-@@ -979,7 +975,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ8041RNLI",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8041_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= kszphy_config_init,
-@@ -995,7 +990,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ8051",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8051_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= kszphy_config_init,
-@@ -1011,7 +1005,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.name		= "Micrel KSZ8001 or KS8721",
- 	.phy_id_mask	= 0x00fffffc,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8041_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= kszphy_config_init,
-@@ -1027,7 +1020,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.name		= "Micrel KSZ8081 or KSZ8091",
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz8081_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= kszphy_config_init,
-@@ -1043,7 +1035,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.name		= "Micrel KSZ8061",
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= kszphy_config_init,
- 	.ack_interrupt	= kszphy_ack_interrupt,
- 	.config_intr	= kszphy_config_intr,
-@@ -1054,7 +1045,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= 0x000ffffe,
- 	.name		= "Micrel KSZ9021 Gigabit PHY",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz9021_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= ksz9021_config_init,
-@@ -1072,7 +1062,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ9031 Gigabit PHY",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz9021_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= ksz9031_config_init,
-@@ -1089,7 +1078,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Microchip KSZ9131 Gigabit PHY",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz9021_type,
- 	.probe		= kszphy_probe,
- 	.config_init	= ksz9131_config_init,
-@@ -1115,7 +1103,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ886X Switch",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= kszphy_config_init,
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
-@@ -1124,7 +1111,6 @@ static struct phy_driver ksphy_driver[] = {
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ8795",
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= kszphy_config_init,
- 	.config_aneg	= ksz8873mll_config_aneg,
- 	.read_status	= ksz8873mll_read_status,
-diff --git a/drivers/net/phy/microchip.c b/drivers/net/phy/microchip.c
-index 04b12e34d..7557bebd5 100644
---- a/drivers/net/phy/microchip.c
-+++ b/drivers/net/phy/microchip.c
-@@ -346,7 +346,6 @@ static struct phy_driver microchip_phy_driver[] = {
- 	.name		= "Microchip LAN88xx",
- 
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 
- 	.probe		= lan88xx_probe,
- 	.remove		= lan88xx_remove,
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index c600a8509..3d09b4716 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -47,7 +47,6 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.name           = "Microchip LAN87xx T1",
- 
- 		.features       = PHY_BASIC_T1_FEATURES,
--		.flags          = PHY_HAS_INTERRUPT,
- 
- 		.config_init    = genphy_config_init,
- 		.config_aneg    = genphy_config_aneg,
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index a2e59f4f6..62269e578 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -1833,7 +1833,6 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.name		= "Microsemi FE VSC8530",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init	= &vsc85xx_config_init,
- 	.config_aneg    = &vsc85xx_config_aneg,
-@@ -1859,7 +1858,6 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.name		= "Microsemi VSC8531",
- 	.phy_id_mask    = 0xfffffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc85xx_config_init,
- 	.config_aneg    = &vsc85xx_config_aneg,
-@@ -1885,7 +1883,6 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.name		= "Microsemi FE VSC8540 SyncE",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init	= &vsc85xx_config_init,
- 	.config_aneg	= &vsc85xx_config_aneg,
-@@ -1911,7 +1908,6 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.name		= "Microsemi VSC8541 SyncE",
- 	.phy_id_mask    = 0xfffffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc85xx_config_init,
- 	.config_aneg    = &vsc85xx_config_aneg,
-@@ -1937,7 +1933,6 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.name		= "Microsemi GE VSC8574 SyncE",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc8584_config_init,
- 	.config_aneg    = &vsc85xx_config_aneg,
-@@ -1964,7 +1959,6 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.name		= "Microsemi GE VSC8584 SyncE",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc8584_config_init,
- 	.config_aneg    = &vsc85xx_config_aneg,
-diff --git a/drivers/net/phy/national.c b/drivers/net/phy/national.c
-index 2b1e33696..139bed2c8 100644
---- a/drivers/net/phy/national.c
-+++ b/drivers/net/phy/national.c
-@@ -134,7 +134,6 @@ static struct phy_driver dp83865_driver[] = { {
- 	.phy_id_mask = 0xfffffff0,
- 	.name = "NatSemi DP83865",
- 	.features = PHY_GBIT_FEATURES,
--	.flags = PHY_HAS_INTERRUPT,
- 	.config_init = ns_config_init,
- 	.ack_interrupt = ns_ack_interrupt,
- 	.config_intr = ns_config_intr,
-diff --git a/drivers/net/phy/qsemi.c b/drivers/net/phy/qsemi.c
-index 889a4dce1..cfe2313db 100644
---- a/drivers/net/phy/qsemi.c
-+++ b/drivers/net/phy/qsemi.c
-@@ -116,7 +116,6 @@ static struct phy_driver qs6612_driver[] = { {
- 	.name		= "QS6612",
- 	.phy_id_mask	= 0xfffffff0,
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= qs6612_config_init,
- 	.ack_interrupt	= qs6612_ack_interrupt,
- 	.config_intr	= qs6612_config_intr,
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index abff4cdc9..3985b4a4d 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -216,12 +216,10 @@ static struct phy_driver realtek_drvs[] = {
- 		.phy_id         = 0x00008201,
- 		.name           = "RTL8201CP Ethernet",
- 		.features       = PHY_BASIC_FEATURES,
--		.flags          = PHY_HAS_INTERRUPT,
- 	}, {
- 		.phy_id		= 0x001cc816,
- 		.name		= "RTL8201F Fast Ethernet",
- 		.features	= PHY_BASIC_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.ack_interrupt	= &rtl8201_ack_interrupt,
- 		.config_intr	= &rtl8201_config_intr,
- 		.suspend	= genphy_suspend,
-@@ -239,7 +237,6 @@ static struct phy_driver realtek_drvs[] = {
- 		.phy_id		= 0x001cc912,
- 		.name		= "RTL8211B Gigabit Ethernet",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.ack_interrupt	= &rtl821x_ack_interrupt,
- 		.config_intr	= &rtl8211b_config_intr,
- 		.read_mmd	= &genphy_read_mmd_unsupported,
-@@ -257,7 +254,6 @@ static struct phy_driver realtek_drvs[] = {
- 		.phy_id		= 0x001cc914,
- 		.name		= "RTL8211DN Gigabit Ethernet",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.ack_interrupt	= rtl821x_ack_interrupt,
- 		.config_intr	= rtl8211e_config_intr,
- 		.suspend	= genphy_suspend,
-@@ -266,7 +262,6 @@ static struct phy_driver realtek_drvs[] = {
- 		.phy_id		= 0x001cc915,
- 		.name		= "RTL8211E Gigabit Ethernet",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.ack_interrupt	= &rtl821x_ack_interrupt,
- 		.config_intr	= &rtl8211e_config_intr,
- 		.suspend	= genphy_suspend,
-@@ -275,7 +270,6 @@ static struct phy_driver realtek_drvs[] = {
- 		.phy_id		= 0x001cc916,
- 		.name		= "RTL8211F Gigabit Ethernet",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= &rtl8211f_config_init,
- 		.ack_interrupt	= &rtl8211f_ack_interrupt,
- 		.config_intr	= &rtl8211f_config_intr,
-@@ -287,7 +281,6 @@ static struct phy_driver realtek_drvs[] = {
- 		.phy_id		= 0x001cc961,
- 		.name		= "RTL8366RB Gigabit Ethernet",
- 		.features	= PHY_GBIT_FEATURES,
--		.flags		= PHY_HAS_INTERRUPT,
- 		.config_init	= &rtl8366rb_config_init,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
-index c32820838..f9477ff55 100644
---- a/drivers/net/phy/smsc.c
-+++ b/drivers/net/phy/smsc.c
-@@ -219,7 +219,6 @@ static struct phy_driver smsc_phy_driver[] = {
- 	.name		= "SMSC LAN83C185",
- 
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 
- 	.probe		= smsc_phy_probe,
- 
-@@ -239,7 +238,6 @@ static struct phy_driver smsc_phy_driver[] = {
- 	.name		= "SMSC LAN8187",
- 
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 
- 	.probe		= smsc_phy_probe,
- 
-@@ -264,7 +262,6 @@ static struct phy_driver smsc_phy_driver[] = {
- 	.name		= "SMSC LAN8700",
- 
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 
- 	.probe		= smsc_phy_probe,
- 
-@@ -290,7 +287,6 @@ static struct phy_driver smsc_phy_driver[] = {
- 	.name		= "SMSC LAN911x Internal PHY",
- 
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 
- 	.probe		= smsc_phy_probe,
- 
-@@ -309,7 +305,7 @@ static struct phy_driver smsc_phy_driver[] = {
- 	.name		= "SMSC LAN8710/LAN8720",
- 
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT | PHY_RST_AFTER_CLK_EN,
-+	.flags		= PHY_RST_AFTER_CLK_EN,
- 
- 	.probe		= smsc_phy_probe,
- 
-@@ -335,7 +331,6 @@ static struct phy_driver smsc_phy_driver[] = {
- 	.name		= "SMSC LAN8740",
- 
- 	.features	= PHY_BASIC_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 
- 	.probe		= smsc_phy_probe,
- 
-diff --git a/drivers/net/phy/ste10Xp.c b/drivers/net/phy/ste10Xp.c
-index 2fe9a87b5..33d733684 100644
---- a/drivers/net/phy/ste10Xp.c
-+++ b/drivers/net/phy/ste10Xp.c
-@@ -87,7 +87,6 @@ static struct phy_driver ste10xp_pdriver[] = {
- 	.phy_id_mask = 0xfffffff0,
- 	.name = "STe101p",
- 	.features = PHY_BASIC_FEATURES,
--	.flags = PHY_HAS_INTERRUPT,
- 	.config_init = ste10Xp_config_init,
- 	.ack_interrupt = ste10Xp_ack_interrupt,
- 	.config_intr = ste10Xp_config_intr,
-@@ -98,7 +97,6 @@ static struct phy_driver ste10xp_pdriver[] = {
- 	.phy_id_mask = 0xffffffff,
- 	.name = "STe100p",
- 	.features = PHY_BASIC_FEATURES,
--	.flags = PHY_HAS_INTERRUPT,
- 	.config_init = ste10Xp_config_init,
- 	.ack_interrupt = ste10Xp_ack_interrupt,
- 	.config_intr = ste10Xp_config_intr,
-diff --git a/drivers/net/phy/vitesse.c b/drivers/net/phy/vitesse.c
-index fbf9ad429..4ca513feb 100644
---- a/drivers/net/phy/vitesse.c
-+++ b/drivers/net/phy/vitesse.c
-@@ -399,7 +399,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name           = "Vitesse VSC8234",
- 	.phy_id_mask    = 0x000ffff0,
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = &vsc824x_config_init,
- 	.config_aneg    = &vsc82x4_config_aneg,
- 	.ack_interrupt  = &vsc824x_ack_interrupt,
-@@ -409,7 +408,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name		= "Vitesse VSC8244",
- 	.phy_id_mask	= 0x000fffc0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= &vsc824x_config_init,
- 	.config_aneg	= &vsc82x4_config_aneg,
- 	.ack_interrupt	= &vsc824x_ack_interrupt,
-@@ -419,7 +417,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name		= "Vitesse VSC8514",
- 	.phy_id_mask	= 0x000ffff0,
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= &vsc824x_config_init,
- 	.config_aneg	= &vsc82x4_config_aneg,
- 	.ack_interrupt	= &vsc824x_ack_interrupt,
-@@ -429,7 +426,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name           = "Vitesse VSC8572",
- 	.phy_id_mask    = 0x000ffff0,
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = &vsc824x_config_init,
- 	.config_aneg    = &vsc82x4_config_aneg,
- 	.ack_interrupt  = &vsc824x_ack_interrupt,
-@@ -439,7 +435,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name           = "Vitesse VSC8574",
- 	.phy_id_mask    = 0x000ffff0,
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = &vsc824x_config_init,
- 	.config_aneg    = &vsc82x4_config_aneg,
- 	.ack_interrupt  = &vsc824x_ack_interrupt,
-@@ -449,7 +444,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name           = "Vitesse VSC8601",
- 	.phy_id_mask    = 0x000ffff0,
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = &vsc8601_config_init,
- 	.ack_interrupt  = &vsc824x_ack_interrupt,
- 	.config_intr    = &vsc82xx_config_intr,
-@@ -494,7 +488,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.name           = "Vitesse VSC8662",
- 	.phy_id_mask    = 0x000ffff0,
- 	.features       = PHY_GBIT_FEATURES,
--	.flags          = PHY_HAS_INTERRUPT,
- 	.config_init    = &vsc824x_config_init,
- 	.config_aneg    = &vsc82x4_config_aneg,
- 	.ack_interrupt  = &vsc824x_ack_interrupt,
-@@ -505,7 +498,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask	= 0x000ffff0,
- 	.name		= "Vitesse VSC8221",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= &vsc8221_config_init,
- 	.ack_interrupt	= &vsc824x_ack_interrupt,
- 	.config_intr	= &vsc82xx_config_intr,
-@@ -515,7 +507,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask	= 0x000ffff0,
- 	.name		= "Vitesse VSC8211",
- 	.features	= PHY_GBIT_FEATURES,
--	.flags		= PHY_HAS_INTERRUPT,
- 	.config_init	= &vsc8221_config_init,
- 	.ack_interrupt	= &vsc824x_ack_interrupt,
- 	.config_intr	= &vsc82xx_config_intr,
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index fc90af152..649c1ee77 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -66,9 +66,8 @@ extern __ETHTOOL_DECLARE_LINK_MODE_MASK(phy_10gbit_full_features) __ro_after_ini
- #define PHY_POLL		-1
- #define PHY_IGNORE_INTERRUPT	-2
- 
--#define PHY_HAS_INTERRUPT	0x00000001
--#define PHY_IS_INTERNAL		0x00000002
--#define PHY_RST_AFTER_CLK_EN	0x00000004
-+#define PHY_IS_INTERNAL		0x00000001
-+#define PHY_RST_AFTER_CLK_EN	0x00000002
- #define MDIO_DEVICE_IS_PHY	0x80000000
- 
- /* Interface Mode definitions */
--- 
-2.19.1
+What I'm concerned about is a structure like this:
+
+struct foo {
+        u32 i1;
+        u64 i2;
+};
+
+If we leave that to natural alignment, we end up with a 16-byte
+structure laid out like this:
+
+	0-3	i1
+	3-8	alignment gap
+	8-15	i2
+
+Which isn't what we want.  We want a 12-byte structure, laid out like this:
+
+	0-3	i1
+	4-11	i2
+
+Which we get with:
 
 
+struct foo {
+        u32 i1;
+        u64 i2;
+} __packed;
+
+Now, looking at Yu-cheng's specific example, it doesn't matter.  We've
+got 64-bit types and natural 64-bit alignment.  Without __packed, we
+need to look out for natural alignment screwing us up.  With __packed,
+it just does what it *looks* like it does.
