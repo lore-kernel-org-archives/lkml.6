@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6C2ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4599FECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA8AB20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F070A20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWyXhECL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8AB20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtLrPYbn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F070A20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731871AbeKIHnb (ORCPT
+        id S1731879AbeKIHng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:43:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35840 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:43:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731817AbeKIHna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:43:30 -0500
+        id S1729999AbeKIHng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:36 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4CEA208A3;
-        Thu,  8 Nov 2018 22:05:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C76520844;
+        Thu,  8 Nov 2018 22:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714759;
-        bh=8pIylFoXJvt7gljvYoNLM3t0sQH+BLPBBd4VSvOGBQU=;
+        s=default; t=1541714765;
+        bh=k6k8drBhFDgyt7BKyFiC6ddu6nT6JCrIj8IO7wlqPQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eWyXhECLYtI+h8WEVBEbNlgb+ZnHCsb+BQAKIyynFuW7HpqRVRCpIolIpcR57ITTo
-         UItRe6nNsNQ0sAUYt3Sxg2iIXZlIKRimwc95wKxbNHVPWR/ktsAYgFE5ZAbV0PjjTe
-         n0SNVdaoCG6FcPncL1a6Mt+N0n/HoBqoyjZyO110=
+        b=YtLrPYbnwR5rArS17pw4HOKw384L/K+iDKRHYdnIvIdGAmdYsdv6fyRNzlhCCQlmj
+         3wsrKqA9RCJWziXulGBhVZZ+946Xly1UbNyGVth1GeJh92pHaWYmdLXjXK4kPRwte9
+         QwQnPxiuaEx8hTMbUP2y4V2BxQWK/lPqXFBEf7jQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Liam Shepherd <liam@dancer.es>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 113/171] test_bpf: Fix testing with CONFIG_BPF_JIT_ALWAYS_ON=y on other arches
-Date:   Thu,  8 Nov 2018 13:51:23 -0800
-Message-Id: <20181108215135.496714004@linuxfoundation.org>
+Subject: [PATCH 4.9 114/171] xen-netfront: Update features after registering netdev
+Date:   Thu,  8 Nov 2018 13:51:24 -0800
+Message-Id: <20181108215135.564183733@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,41 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 52fda36d63bfc8c8e8ae5eda8eb5ac6f52cd67ed ]
+[ Upstream commit 45c8184c1bed1ca8a7f02918552063a00b909bf5 ]
 
-Function bpf_fill_maxinsns11 is designed to not be able to be JITed on
-x86_64. So, it fails when CONFIG_BPF_JIT_ALWAYS_ON=y, and
-commit 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when
-CONFIG_BPF_JIT_ALWAYS_ON=y") makes sure that failure is detected on that
-case.
+Update the features after calling register_netdev() otherwise the
+device features are not set up correctly and it not possible to change
+the MTU of the device. After this change, the features reported by
+ethtool match the device's features before the commit which introduced
+the issue and it is possible to change the device's MTU.
 
-However, it does not fail on other architectures, which have a different
-JIT compiler design. So, test_bpf has started to fail to load on those.
-
-After this fix, test_bpf loads fine on both x86_64 and ppc64el.
-
-Fixes: 09584b406742 ("bpf: fix selftests/bpf test_kmod.sh failure when CONFIG_BPF_JIT_ALWAYS_ON=y")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Reviewed-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Reported-by: Liam Shepherd <liam@dancer.es>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/test_bpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/xen-netfront.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-index 1586dfdea809..960d4d627361 100644
---- a/lib/test_bpf.c
-+++ b/lib/test_bpf.c
-@@ -4874,7 +4874,7 @@ static struct bpf_test tests[] = {
- 	{
- 		"BPF_MAXINSNS: Jump, gap, jump, ...",
- 		{ },
--#ifdef CONFIG_BPF_JIT_ALWAYS_ON
-+#if defined(CONFIG_BPF_JIT_ALWAYS_ON) && defined(CONFIG_X86)
- 		CLASSIC | FLAG_NO_DATA | FLAG_EXPECTED_FAIL,
- #else
- 		CLASSIC | FLAG_NO_DATA,
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 3c1adb38412b..c85edd161a6c 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1994,10 +1994,6 @@ static int xennet_connect(struct net_device *dev)
+ 	/* talk_to_netback() sets the correct number of queues */
+ 	num_queues = dev->real_num_tx_queues;
+ 
+-	rtnl_lock();
+-	netdev_update_features(dev);
+-	rtnl_unlock();
+-
+ 	if (dev->reg_state == NETREG_UNINITIALIZED) {
+ 		err = register_netdev(dev);
+ 		if (err) {
+@@ -2007,6 +2003,10 @@ static int xennet_connect(struct net_device *dev)
+ 		}
+ 	}
+ 
++	rtnl_lock();
++	netdev_update_features(dev);
++	rtnl_unlock();
++
+ 	/*
+ 	 * All public and private state should now be sane.  Get
+ 	 * ready to start sending and receiving packets and give the driver
 -- 
 2.17.1
 
