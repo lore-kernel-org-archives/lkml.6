@@ -2,94 +2,119 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8258C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B69C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 919DD20685
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:13:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UT4rQyZq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 919DD20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A794A20685
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A794A20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbeKHSrr (ORCPT
+        id S1726892AbeKHStY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:47:47 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:56586 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeKHSrr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:47:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6h+8RgNY/o477uuCGdmzJNW3WcfxeZ5zp4rR7BEDOvE=; b=UT4rQyZqXkaFA3xxS4mwT4Vs9
-        MFjbELyP11Y3TUO55iecryW2zxJfxcylj+MVWD10pia2MY3HHFGKHZDYm/Kf0v1DNc5yIYsdZhcv6
-        5jwQE/y/YZltL9kr0BKGxjdtNazJ6GA4sXRUBJEMJiOpL7O0e/f/JP+iMj/27ITg0HykVPWc2mEYq
-        rXCv0MRbUhRYCPgBH0lpKUcl5mmarfZMcbnCoED63J2lh//CUU/oERI0IRM0iCOKLolCCBn3lQNIt
-        hlaqA5PqY4SjtRyb0C28PV+bN4zYeYnYgxyLfbdEK8BzPqW177licOGEY8EAD83ZG/SoIH6GQT7X1
-        NhZR5wADQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKgMx-0007lD-2Q; Thu, 08 Nov 2018 09:12:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6B21A20284F98; Thu,  8 Nov 2018 10:12:51 +0100 (CET)
-Date:   Thu, 8 Nov 2018 10:12:51 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108091251.GL9761@hirez.programming.kicks-ass.net>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
- <20181108074012.GD20032@gmail.com>
+        Thu, 8 Nov 2018 13:49:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38636 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726133AbeKHStY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:49:24 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 146DF30023A2;
+        Thu,  8 Nov 2018 09:14:51 +0000 (UTC)
+Received: from gondolin (ovpn-117-143.ams2.redhat.com [10.36.117.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C30917575;
+        Thu,  8 Nov 2018 09:14:38 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 10:14:35 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: Re: [PATCH v1 4/7] vfio: ap: AP Queue Interrupt Control VFIO ioctl
+ calls
+Message-ID: <20181108101435.023e835d.cohuck@redhat.com>
+In-Reply-To: <97094e1c-f74c-7b90-8439-5177301d3189@linux.ibm.com>
+References: <1541009577-29656-1-git-send-email-pmorel@linux.ibm.com>
+        <1541009577-29656-5-git-send-email-pmorel@linux.ibm.com>
+        <20181107104624.36707cca.cohuck@redhat.com>
+        <97094e1c-f74c-7b90-8439-5177301d3189@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108074012.GD20032@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 08 Nov 2018 09:14:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
-> > + - Cc: ``cc-ed-person <person@mail>``
-> > +
-> > +   If the patch should be backported to stable, then please add a '``Cc:
-> > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
-> > +   mail.
-> 
-> Can I suggest a more canonical form:
-> 
-> 	Cc: <stable@vger.kernel.org> # v4.18 and later kernels
-> 
-> It would be nice if people adding Cc: stable lines would actually try to 
-> figure out which exact kernel versions are affected.
+On Wed, 7 Nov 2018 23:23:40 +0100
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-I think Greg actually prefers we use stable@kernel.org, which is a
-/dev/null target. His bot will then pick up on the tag once it hits
-Linus' tree.
+> On 07/11/2018 10:46, Cornelia Huck wrote:
+> > On Wed, 31 Oct 2018 19:12:54 +0100
+> > Pierre Morel <pmorel@linux.ibm.com> wrote:
+> >   
+> >> This is the implementation of the VFIO ioctl calls to handle
+> >> the AQIC interception and use GISA to handle interrupts.
+> >>
+> >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> >> ---
+> >>   drivers/s390/crypto/vfio_ap_ops.c | 95 +++++++++++++++++++++++++++++++
+> >>   1 file changed, 95 insertions(+)
+> >>
+> >> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> >> index 272ef427dcc0..f68102163bf4 100644
+> >> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> >> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> >> @@ -895,12 +895,107 @@ static int vfio_ap_mdev_get_device_info(unsigned long arg)
+> >>   	return copy_to_user((void __user *)arg, &info, minsz);
+> >>   }
+> >>   
+> >> +static int ap_ioctl_setirq(struct ap_matrix_mdev *matrix_mdev,
+> >> +			   struct vfio_ap_aqic *parm)
+> >> +{
+> >> +	struct aqic_gisa aqic_gisa = reg2aqic(0);
+> >> +	struct kvm_s390_gisa *gisa = matrix_mdev->kvm->arch.gisa;
+> >> +	struct ap_status ap_status = reg2status(0);
+> >> +	unsigned long p;
+> >> +	int ret = -1;
+> >> +	int apqn;
+> >> +	uint32_t gd;
+> >> +
+> >> +	apqn = (int)(parm->cmd & 0xffff);  
+> > 
+> > It seems you always use cmd & 0xffff only. What if there is other stuff
+> > in the remaining bits of cmd? Do you plan to ignore it in any case, or
+> > should you actively check that there is nothing in it?
+> >   
+> 
+> I do not think that the ioctl interface should reflect the hardware 
+> interface.
+> The ioctl interface ignores the remaining bits.
+> We ignore the FC because we obviously want to make a AQIC FC=3
+> We ignore the T bit.
+> 
+> But we receive the information from the intercepting software, i.e. QEMU 
+> which should I think do the checks before using the ioctl interface.
+
+Yes, it should; but you still can't know whether it actually did...
+
+> 
+> It seemed easier to me to pass the complete registers and to ignore some 
+> bits in them. In case we get any change in the future
+> But we could also only pass the APQN
+
+I'd prefer to use a well-defined structure that explicitly handles the
+userspace<->kernel communication. Not that we start relying on implicit
+assumptions and then things break when userspace does something
+different...
