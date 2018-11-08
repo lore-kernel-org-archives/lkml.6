@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C55ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F72ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D8F20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0600F208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1RXxM8Xm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D8F20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoFTr2iL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0600F208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbeKIHfS (ORCPT
+        id S1729590AbeKIHfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52108 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:35:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbeKIHfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:35:17 -0500
+        id S1726926AbeKIHfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:35:23 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C030520892;
-        Thu,  8 Nov 2018 21:57:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 689E620892;
+        Thu,  8 Nov 2018 21:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714269;
-        bh=fXSRXYrpKzRgBIkDzAyGAfElRUhlJ0Edfl87yHLH3vY=;
+        s=default; t=1541714275;
+        bh=c6aHQjGN6dS0t7GTmSvC8qInOTRIBgOm32XxxhMt4PE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1RXxM8XmzIHyWPMlnzoSRgmUdtdSHGatqvioGI+m1cRALqrlln8BcQWCWm3A6uQFn
-         c/yO5THnn+DcDcl2dwpqetaFq+9hIvTLWhM9S+J5A7mZYLNFolFZG5hDa15d78Yuib
-         WHIO0SBoBDD6LE+oSvRyz8qvzqF0PuZPiszX/ISQ=
+        b=JoFTr2iLtI7H3ubb/jKkWY4rcwKpOPiLmFXns/UiEi73cBt/zsusSyTa4gdN5EgHs
+         FbUKIrl+CPe/td/9IhEadekwyQeIErqgYE8QDThkeG/ZLca25HOu6wXKrG550odHyq
+         645QTRDoDsk8C+e1hIzxlzg4l30FGY0e/AQN/Y78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 140/144] net: sched: gred: pass the right attribute to gred_change_table_def()
-Date:   Thu,  8 Nov 2018 13:51:51 -0800
-Message-Id: <20181108215108.317772647@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH 3.18 141/144] cachefiles: fix the race between cachefiles_bury_object() and rmdir(2)
+Date:   Thu,  8 Nov 2018 13:51:52 -0800
+Message-Id: <20181108215108.413520368@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -63,54 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 38b4f18d56372e1e21771ab7b0357b853330186c ]
+commit 169b803397499be85bdd1e3d07d6f5e3d4bd669e upstream.
 
-gred_change_table_def() takes a pointer to TCA_GRED_DPS attribute,
-and expects it will be able to interpret its contents as
-struct tc_gred_sopt.  Pass the correct gred attribute, instead of
-TCA_OPTIONS.
+the victim might've been rmdir'ed just before the lock_rename();
+unlike the normal callers, we do not look the source up after the
+parents are locked - we know it beforehand and just recheck that it's
+still the child of what used to be its parent.  Unfortunately,
+the check is too weak - we don't spot a dead directory since its
+->d_parent is unchanged, dentry is positive, etc.  So we sail all
+the way to ->rename(), with hosting filesystems _not_ expecting
+to be asked renaming an rmdir'ed subdirectory.
 
-This bug meant the table definition could never be changed after
-Qdisc was initialized (unless whatever TCA_OPTIONS contained both
-passed netlink validation and was a valid struct tc_gred_sopt...).
+The fix is easy, fortunately - the lock on parent is sufficient for
+making IS_DEADDIR() on child safe.
 
-Old behaviour:
-$ ip link add type dummy
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-RTNETLINK answers: Invalid argument
-
-Now:
-$ ip link add type dummy
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-$ tc qdisc replace dev dummy0 parent root handle 7: \
-     gred setup vqs 4 default 0
-
-Fixes: f62d6b936df5 ("[PKT_SCHED]: GRED: Use central VQ change procedure")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Fixes: 9ae326a69004 (CacheFiles: A cache that backs onto a mounted filesystem)
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/sched/sch_gred.c |    2 +-
+ fs/cachefiles/namei.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/sch_gred.c
-+++ b/net/sched/sch_gred.c
-@@ -437,7 +437,7 @@ static int gred_change(struct Qdisc *sch
- 		return err;
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -317,7 +317,7 @@ try_again:
+ 	trap = lock_rename(cache->graveyard, dir);
  
- 	if (tb[TCA_GRED_PARMS] == NULL && tb[TCA_GRED_STAB] == NULL)
--		return gred_change_table_def(sch, opt);
-+		return gred_change_table_def(sch, tb[TCA_GRED_DPS]);
- 
- 	if (tb[TCA_GRED_PARMS] == NULL ||
- 	    tb[TCA_GRED_STAB] == NULL)
+ 	/* do some checks before getting the grave dentry */
+-	if (rep->d_parent != dir) {
++	if (rep->d_parent != dir || IS_DEADDIR(d_inode(rep))) {
+ 		/* the entry was probably culled when we dropped the parent dir
+ 		 * lock */
+ 		unlock_rename(cache->graveyard, dir);
 
 
