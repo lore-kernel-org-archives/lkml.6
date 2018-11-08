@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41050ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8B8ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 082C520844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E86B208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDhKBL6x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 082C520844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3NCjmjs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E86B208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732099AbeKIHoX (ORCPT
+        id S1732113AbeKIHo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37246 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730843AbeKIHoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:22 -0500
+        id S1728311AbeKIHo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:28 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A85120844;
-        Thu,  8 Nov 2018 22:06:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2B9A20844;
+        Thu,  8 Nov 2018 22:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714811;
-        bh=gzzqo2fg97zmKuKcljRD8b+TcYR/wJYKfAESqOoUXlU=;
+        s=default; t=1541714817;
+        bh=AM+kGAL7ebOWF99dbO4zUWzMwcSU/kq0ebg4X3vJKZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HDhKBL6xUSoPeJHa3l3MGklGGOyjRExOwpyzB6AHSbJwB2eV3Z82bm4cq1TooDi9i
-         gibRITEfIxJJXO0gzAweJQYJMxD11FaqbSDeUehDqgMpT15CztJlnXVA+aETqm6SO0
-         mkzhJX3Yx4VQMT1zZqE4niImSXoLYX8znmdpFZt0=
+        b=c3NCjmjsAJEV83/YY6A3XLnVYZq/oLYErW4glVj4RlAYA+hj+SGkKC2Jb76Zl29yM
+         t0ED8GwghpP0PvRmbL9T9iarmM1dzen+Y1ijscxppfXEDEEJr/L9XukQsKJenikc4h
+         WAh/Yhz4LJ5buZPXo1P/sJ6bpxmPZY9c9fH0RWz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 141/171] net: socket: fix a missing-check bug
-Date:   Thu,  8 Nov 2018 13:51:51 -0800
-Message-Id: <20181108215137.187831317@linuxfoundation.org>
+Subject: [PATCH 4.9 142/171] net: stmmac: Fix stmmac_mdio_reset() when building stmmac as modules
+Date:   Thu,  8 Nov 2018 13:51:52 -0800
+Message-Id: <20181108215137.257719607@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -62,56 +62,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-[ Upstream commit b6168562c8ce2bd5a30e213021650422e08764dc ]
+[ Upstream commit 30549aab146ccb1275230c3b4b4bc6b4181fd54e ]
 
-In ethtool_ioctl(), the ioctl command 'ethcmd' is checked through a switch
-statement to see whether it is necessary to pre-process the ethtool
-structure, because, as mentioned in the comment, the structure
-ethtool_rxnfc is defined with padding. If yes, a user-space buffer 'rxnfc'
-is allocated through compat_alloc_user_space(). One thing to note here is
-that, if 'ethcmd' is ETHTOOL_GRXCLSRLALL, the size of the buffer 'rxnfc' is
-partially determined by 'rule_cnt', which is actually acquired from the
-user-space buffer 'compat_rxnfc', i.e., 'compat_rxnfc->rule_cnt', through
-get_user(). After 'rxnfc' is allocated, the data in the original user-space
-buffer 'compat_rxnfc' is then copied to 'rxnfc' through copy_in_user(),
-including the 'rule_cnt' field. However, after this copy, no check is
-re-enforced on 'rxnfc->rule_cnt'. So it is possible that a malicious user
-race to change the value in the 'compat_rxnfc->rule_cnt' between these two
-copies. Through this way, the attacker can bypass the previous check on
-'rule_cnt' and inject malicious data. This can cause undefined behavior of
-the kernel and introduce potential security risk.
+When building stmmac, it is only possible to select CONFIG_DWMAC_GENERIC,
+or any of the glue drivers, when CONFIG_STMMAC_PLATFORM is set.
+The only exception is CONFIG_STMMAC_PCI.
 
-This patch avoids the above issue via copying the value acquired by
-get_user() to 'rxnfc->rule_cn', if 'ethcmd' is ETHTOOL_GRXCLSRLALL.
+When calling of_mdiobus_register(), it will call our ->reset()
+callback, which is set to stmmac_mdio_reset().
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Most of the code in stmmac_mdio_reset() is protected by a
+"#if defined(CONFIG_STMMAC_PLATFORM)", which will evaluate
+to false when CONFIG_STMMAC_PLATFORM=m.
+
+Because of this, the phy reset gpio will only be pulled when
+stmmac is built as built-in, but not when built as modules.
+
+Fix this by using "#if IS_ENABLED()" instead of "#if defined()".
+
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/socket.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2774,9 +2774,14 @@ static int ethtool_ioctl(struct net *net
- 		    copy_in_user(&rxnfc->fs.ring_cookie,
- 				 &compat_rxnfc->fs.ring_cookie,
- 				 (void __user *)(&rxnfc->fs.location + 1) -
--				 (void __user *)&rxnfc->fs.ring_cookie) ||
--		    copy_in_user(&rxnfc->rule_cnt, &compat_rxnfc->rule_cnt,
--				 sizeof(rxnfc->rule_cnt)))
-+				 (void __user *)&rxnfc->fs.ring_cookie))
-+			return -EFAULT;
-+		if (ethcmd == ETHTOOL_GRXCLSRLALL) {
-+			if (put_user(rule_cnt, &rxnfc->rule_cnt))
-+				return -EFAULT;
-+		} else if (copy_in_user(&rxnfc->rule_cnt,
-+					&compat_rxnfc->rule_cnt,
-+					sizeof(rxnfc->rule_cnt)))
- 			return -EFAULT;
- 	}
- 
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -216,7 +216,7 @@ static int stmmac_mdio_write_gmac4(struc
+  */
+ int stmmac_mdio_reset(struct mii_bus *bus)
+ {
+-#if defined(CONFIG_STMMAC_PLATFORM)
++#if IS_ENABLED(CONFIG_STMMAC_PLATFORM)
+ 	struct net_device *ndev = bus->priv;
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+ 	unsigned int mii_address = priv->hw->mii.addr;
 
 
