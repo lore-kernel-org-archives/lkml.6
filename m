@@ -7,55 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81000C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5481C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4853720844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A085C20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:35:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/LZJhZ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4853720844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmByO3iI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A085C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbeKIHhH (ORCPT
+        id S1730001AbeKIIMk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:37:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54802 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:12:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728345AbeKIHhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:06 -0500
+        id S1728803AbeKIHhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:07 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB331208E3;
-        Thu,  8 Nov 2018 21:59:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C916420989;
+        Thu,  8 Nov 2018 21:59:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714377;
-        bh=tpSTC+mQJWlBc2UokP0wU+WBZyHQNE8O5AzazlrlgVs=;
+        s=default; t=1541714378;
+        bh=s2wTjwOp4XfL50Watvv+rbBMg0eNPhYIacqVfsR8nKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B/LZJhZ3s+AF8MkMpAeHDZMhN+sLUB9kFrppF0exEf979ZxtqIFcU97gdf9qCrt3a
-         N0UHCLRylqCDErCHClqm0YH4qBQzl13XoujEjnQyd7GD/EJqx5W311FtcXbY5Di9s7
-         6hRCq6cavcfauvA8Ocuwsw9K0FRh4UlNKi/BQ4Dw=
+        b=DmByO3iIbgBHc9l9Oxri3lxoBIvarsdo4H7XM6W3rDG96pHMbmzd7OiUpSoEiRJoe
+         CAnh4P+KI2hOMJb6EGzrn5ev/84PFXV6iMYtYmG7dttgFmLWb6YxhUsW2+mgh0MQxI
+         grOpHfnuTxgZW/OSWdOzbehwxGhLzxVD0n4ce9sk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Vagin <avagin@openvz.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 017/114] perf/ring_buffer: Prevent concurent ring buffer access
-Date:   Thu,  8 Nov 2018 13:50:32 -0800
-Message-Id: <20181108215100.717156961@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 020/114] ipv6: suppress sparse warnings in IP6_ECN_set_ce()
+Date:   Thu,  8 Nov 2018 13:50:35 -0800
+Message-Id: <20181108215100.973855851@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -73,105 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
+[ Upstream commit c15c0ab12fd62f2b19181d05c62d24bc9fa55a42 ]
 
-Some of the scheduling tracepoints allow the perf_tp_event
-code to write to ring buffer under different cpu than the
-code is running on.
+Pass the correct type __wsum to csum_sub() and csum_add(). This doesn't
+really change anything since __wsum really *is* __be32, but removes the
+address space warnings from sparse.
 
-This results in corrupted ring buffer data demonstrated in
-following perf commands:
-
-  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
-  # Running 'sched/messaging' benchmark:
-  # 20 sender and receiver processes per group
-  # 10 groups == 400 processes run
-
-       Total time: 0.383 [sec]
-  [ perf record: Woken up 8 times to write data ]
-  0x42b890 [0]: failed to process type: -1765585640
-  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
-
-  # perf report --stdio
-  0x42b890 [0]: failed to process type: -1765585640
-
-The reason for the corruption are some of the scheduling tracepoints,
-that have __perf_task dfined and thus allow to store data to another
-cpu ring buffer:
-
-  sched_waking
-  sched_wakeup
-  sched_wakeup_new
-  sched_stat_wait
-  sched_stat_sleep
-  sched_stat_iowait
-  sched_stat_blocked
-
-The perf_tp_event function first store samples for current cpu
-related events defined for tracepoint:
-
-    hlist_for_each_entry_rcu(event, head, hlist_entry)
-      perf_swevent_event(event, count, &data, regs);
-
-And then iterates events of the 'task' and store the sample
-for any task's event that passes tracepoint checks:
-
-  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
-
-  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-    if (event->attr.type != PERF_TYPE_TRACEPOINT)
-      continue;
-    if (event->attr.config != entry->type)
-      continue;
-
-    perf_swevent_event(event, count, &data, regs);
-  }
-
-Above code can race with same code running on another cpu,
-ending up with 2 cpus trying to store under the same ring
-buffer, which is specifically not allowed.
-
-This patch prevents the problem, by allowing only events with the same
-current cpu to receive the event.
-
-NOTE: this requires the use of (per-task-)per-cpu buffers for this
-feature to work; perf-record does this.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-[peterz: small edits to Changelog]
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrew Vagin <avagin@openvz.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
-Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>
+Fixes: 34ae6a1aa054 ("ipv6: update skb->csum when CE mark is propagated")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/net/inet_ecn.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 990ac41d8a5f..330fcd1b1822 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7018,6 +7018,8 @@ void perf_tp_event(u64 addr, u64 count, void *record, int entry_size,
- 			goto unlock;
+diff --git a/include/net/inet_ecn.h b/include/net/inet_ecn.h
+index 0dc0a51da38f..dce2d586d9ce 100644
+--- a/include/net/inet_ecn.h
++++ b/include/net/inet_ecn.h
+@@ -128,7 +128,8 @@ static inline int IP6_ECN_set_ce(struct sk_buff *skb, struct ipv6hdr *iph)
+ 	to = from | htonl(INET_ECN_CE << 20);
+ 	*(__be32 *)iph = to;
+ 	if (skb->ip_summed == CHECKSUM_COMPLETE)
+-		skb->csum = csum_add(csum_sub(skb->csum, from), to);
++		skb->csum = csum_add(csum_sub(skb->csum, (__force __wsum)from),
++				     (__force __wsum)to);
+ 	return 1;
+ }
  
- 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-+			if (event->cpu != smp_processor_id())
-+				continue;
- 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
- 				continue;
- 			if (event->attr.config != entry->type)
 -- 
 2.17.1
 
