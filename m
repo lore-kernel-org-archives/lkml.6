@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17199ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B3CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D511120827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C998720825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:53:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JHo+tAVD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D511120827
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xkYPOaJ4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C998720825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeKIC3g (ORCPT
+        id S1727316AbeKIC3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:29:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44099 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727155AbeKIC3e (ORCPT
+        Thu, 8 Nov 2018 21:29:50 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38008 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbeKIC3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:29:34 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j17-v6so16878509wrq.11
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:53:12 -0800 (PST)
+        Thu, 8 Nov 2018 21:29:33 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d10-v6so22007074wrs.5
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:53:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RTop1/ZKpMeTxQR7kMHNViu+sfNC80EGmmamdx7DZuY=;
-        b=JHo+tAVD4pfManEDrMkNfiShzpIH5mVzw4R69EvVR6l0eMG8pV3VlfdRiNJd31vmo+
-         CER3ae4qjtIaRBO1PmPjisZ2E60gQrD8hdu0EBdnJm+k+tDiZeVLhpDMofVg0qFfL6r6
-         5Y+URFdiLC7cg5ArKmGZFs2SHoo+L8BAax8xWOCJACH+EnhqvnJdxL4QAPwDfaOqzbjm
-         X+XcBPbJDbmZ6SI5byASnWR2OATucBdRN+4WaAnhhEdd1uAWk/+jrI7wJkXF12kSv4pe
-         k6oMpM2lwUMRk+tp9uhnIfuWHiFnCG2Ei/RDYB1PVkfvgEwAg/3rAoRre3QZnztTX4AC
-         DUqA==
+        bh=rPCJyVZmDOYNeLsc4tgwn2k4YrO+TQOoxPdkXRVHMuI=;
+        b=xkYPOaJ4V8RNsgpz0tDtm4p+U0NWEW9+nWXirBy1Bhu2gPeDveN+LbP2NDngyt+ond
+         m0nOnZDw/dfv6N+Xd8YKWgxvFphMBQmAcfXFDx+3amii5D82a9z9lbyXaNok4cUQMxQY
+         wCMisU7MGSTAXECi05MKUUPzvUACJ0Htqd7JT0FndBKmFrZgiz0+OI69cARp5OLHs0+3
+         BOTmJdJPWe+3jzv8W1+iko6JZyArfJ6GqPngsV1KJSaMTHif3kJRn/k7+goDReqYD2e5
+         G17IjOcybrcN/TQrrgEbQYQyyA0C9ihMj89Paqb6yeWC2AvKGKO8z1c8b4WMMzU4lrkc
+         YFQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RTop1/ZKpMeTxQR7kMHNViu+sfNC80EGmmamdx7DZuY=;
-        b=jllTW2hFwxpb7x2UffPEtsi2bjn3Du6Zf3uVYBjof+bubnuOI/ngyvwRVM5Sac7Zfq
-         1OGWq2rCOmXrtI82lvmwIBrRADTDOpNrauPyiIDOHBklsdrKz0ihMCt1mrELS0cbIfve
-         cjIYqFqSeVsBIvKGU/MhX43bsEo8KIu0MzTjK1r/QiMYtFmU1pMdI3UTdXtgU6ZeX4/h
-         Y0R8ogMtYYf/1ZuSL6pkandedHEtMRogCjE+mMG37M4HkZIKLDHyrPOWIkv0S6ixRz+x
-         68e63b9dTfcgE5bSFQuQxnGkFDqXw66qBn+KLY81mX31CawdVnRkPnLgxVdzPIFMs7It
-         Xu/Q==
-X-Gm-Message-State: AGRZ1gJwQb2BXN8y1gfrcU4Q1+y/56jOT4FKQ35UV4HlaEF0uai7piaD
-        50iMLRXzCq+PgXUxtI9Sq1SQdSf7g5I=
-X-Google-Smtp-Source: AJdET5dGnFkZmPm5esPCxIyjBPPuX5HDB6qhW1s3k5075VfTeijcBxr56tE7NkQXQzel/XpmquXkZQ==
-X-Received: by 2002:adf:c189:: with SMTP id x9-v6mr4773949wre.233.1541695992007;
-        Thu, 08 Nov 2018 08:53:12 -0800 (PST)
+        bh=rPCJyVZmDOYNeLsc4tgwn2k4YrO+TQOoxPdkXRVHMuI=;
+        b=PZeKudxQYuGr2qssvVMhUXQ/pem8eXDTglIgNIZiQ5tjVidMn4UoSNu1Fn8B9nExox
+         iArDwd4JUs9jEgL+pzGzkADExIsoUXN+bvklfiss5Qftx6FTLM7RwL8d1ym0f0ax/msr
+         cGEr6HQwpSskdVsBCDQJM3AG0cg2Nn1kxko+5YtCzl3sOuO2LLzAlh3/XFXx5LNH3WOw
+         Zcz6lAUMOxT/fN+J3vtysTte6/KnGWc7/zhbE0gTJC/ae8KTZtPxQ49MCiMzD4aRWmIm
+         JTVB+M6YAj70CiAbQvEcbuKq3i5VuGGOh4R62NXrFswizP03YjSV7kyBbZlsds61+lAQ
+         EouA==
+X-Gm-Message-State: AGRZ1gJ3vG7/YmPR/aSLRG1v8TbgCVXllIJDNI0A770p5exE++AVuLpe
+        JY/YQl1VLfntH2v/DFcZGRi73w==
+X-Google-Smtp-Source: AJdET5cBtnZnbUITLW6R327dO/QhDlm05sTKDZlugw4OeXA+SnFseJ5bepo1tRkUHk8R5Z4IajcnsA==
+X-Received: by 2002:adf:b716:: with SMTP id l22-v6mr5224333wre.157.1541695990620;
+        Thu, 08 Nov 2018 08:53:10 -0800 (PST)
 Received: from debian-brgl.lan ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm7815987wrs.51.2018.11.08.08.53.10
+        by smtp.gmail.com with ESMTPSA id h5-v6sm7815987wrs.51.2018.11.08.08.53.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 08:53:11 -0800 (PST)
+        Thu, 08 Nov 2018 08:53:10 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Bamvor Jian Zhang <bamv2005@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -66,61 +66,147 @@ To:     Bamvor Jian Zhang <bamv2005@gmail.com>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 3/3] gpio: mockup: implement get_multiple()
-Date:   Thu,  8 Nov 2018 17:52:55 +0100
-Message-Id: <20181108165255.9940-4-brgl@bgdev.pl>
+Subject: [PATCH 2/3] gpio: mockup: add locking
+Date:   Thu,  8 Nov 2018 17:52:54 +0100
+Message-Id: <20181108165255.9940-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108165255.9940-1-brgl@bgdev.pl>
 References: <20181108165255.9940-1-brgl@bgdev.pl>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already support set_multiple(). Implement get_multiple() as well.
+While no user reported any race condition problems with gpio-mockup,
+let's be on the safe side and use a mutex when performing any changes
+on the dummy chip structures.
 
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 3cd92912c414..a4c054cf9c5f 100644
+index 6a50f9f59c90..3cd92912c414 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -102,6 +102,22 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
- 	return val;
+@@ -54,6 +54,7 @@ struct gpio_mockup_chip {
+ 	struct gpio_mockup_line_status *lines;
+ 	struct irq_sim irqsim;
+ 	struct dentry *dbg_dir;
++	struct mutex lock;
+ };
+ 
+ struct gpio_mockup_dbgfs_private {
+@@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
+ 	return gpio_mockup_ranges[index * 2 + 1];
  }
  
-+static int gpio_mockup_get_multiple(struct gpio_chip *gc,
-+				    unsigned long *mask, unsigned long *bits)
+-static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
++static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+ 	return chip->lines[offset].value;
+ }
+ 
+-static void gpio_mockup_set(struct gpio_chip *gc,
+-			    unsigned int offset, int value)
++static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
 +{
 +	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	unsigned int bit, val;
++	int val;
 +
 +	mutex_lock(&chip->lock);
-+	for_each_set_bit(bit, mask, gc->ngpio) {
-+		val = __gpio_mockup_get(gc, bit);
-+		__assign_bit(bit, bits, val);
-+	}
++	val = __gpio_mockup_get(gc, offset);
 +	mutex_unlock(&chip->lock);
 +
-+	return 0;
++	return val;
 +}
 +
- static void __gpio_mockup_set(struct gpio_chip *gc,
- 			      unsigned int offset, int value)
++static void __gpio_mockup_set(struct gpio_chip *gc,
++			      unsigned int offset, int value)
  {
-@@ -327,6 +343,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 	gc->parent = dev;
- 	gc->get = gpio_mockup_get;
- 	gc->set = gpio_mockup_set;
-+	gc->get_multiple = gpio_mockup_get_multiple;
- 	gc->set_multiple = gpio_mockup_set_multiple;
- 	gc->direction_output = gpio_mockup_dirout;
- 	gc->direction_input = gpio_mockup_dirin;
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+ 	chip->lines[offset].value = !!value;
+ }
+ 
++static void gpio_mockup_set(struct gpio_chip *gc,
++			   unsigned int offset, int value)
++{
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++
++	mutex_lock(&chip->lock);
++	__gpio_mockup_set(gc, offset, value);
++	mutex_unlock(&chip->lock);
++}
++
+ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
+ 				     unsigned long *mask, unsigned long *bits)
+ {
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	unsigned int bit;
+ 
++	mutex_lock(&chip->lock);
+ 	for_each_set_bit(bit, mask, gc->ngpio)
+-		gpio_mockup_set(gc, bit, test_bit(bit, bits));
+-
++		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
++	mutex_unlock(&chip->lock);
+ }
+ 
+ static int gpio_mockup_dirout(struct gpio_chip *gc,
+@@ -112,8 +137,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	gpio_mockup_set(gc, offset, value);
++	mutex_lock(&chip->lock);
++	__gpio_mockup_set(gc, offset, value);
+ 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
++	mutex_unlock(&chip->lock);
+ 
+ 	return 0;
+ }
+@@ -122,7 +149,9 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
++	mutex_lock(&chip->lock);
+ 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_IN;
++	mutex_unlock(&chip->lock);
+ 
+ 	return 0;
+ }
+@@ -130,8 +159,13 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
+ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	int direction;
+ 
+-	return !chip->lines[offset].dir;
++	mutex_lock(&chip->lock);
++	direction = !chip->lines[offset].dir;
++	mutex_unlock(&chip->lock);
++
++	return direction;
+ }
+ 
+ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+@@ -283,6 +317,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 			return -ENOMEM;
+ 	}
+ 
++	mutex_init(&chip->lock);
++
+ 	gc = &chip->gc;
+ 	gc->base = base;
+ 	gc->ngpio = ngpio;
 -- 
 2.19.1
 
