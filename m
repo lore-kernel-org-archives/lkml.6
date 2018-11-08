@@ -1,134 +1,83 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79263C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 292F6C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C50220825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:46:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlfdqcS0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C50220825
+	by mail.kernel.org (Postfix) with ESMTP id E4EC120825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 07:59:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4EC120825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeKHRVD (ORCPT
+        id S1726883AbeKHRdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:21:03 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52705 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeKHRVD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:21:03 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r11-v6so226982wmb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 23:46:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q/lczE3XIDPd89Q1tErkJcRXSY9Rk0Iau9BXrGYyLGg=;
-        b=VlfdqcS0tDgbBS8e/YbxynmQIN4DD+HUND0dkKgRzvA7CwpyJi0ZhIyGwNHMzAsshh
-         TZdpeRWl3W5EsbzZ1MqVjE5PUckobNWZFy3sf2JwnOXGjTokO5xyYR+Z6fftqKw7vxXS
-         Um28Nsgi4vr5ne4YGgHo27r3+rH+WNdQRA8EsgDgT+CAmaWru7YfHD9ThENmeHMTN5Zz
-         A43BHQB4Ve8I369K/voE/MVaxGgvzFYsLnko59GtABde445pIqwUCVXrBPy3wHrHDR3m
-         ak2xUMEMzUWPpKg92BJJAnFBvHMfZn0dD7AEOrruang2GSkfMNBQPBqnbncyzQabrosi
-         hFkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q/lczE3XIDPd89Q1tErkJcRXSY9Rk0Iau9BXrGYyLGg=;
-        b=VcNRHX4oUCoorucrDNDriH8M4UbJ3LbT/OlTFkN8kw0prqYkru449HTe9boSUgk/P+
-         vwkDrKseCx+IcMK0/UJTl1QjKuvlWYfR+AK2Q+Etrk+oy7LQRADELGtD4MA9INsWfUiF
-         SFPdyeYQmrtWdWaRnzZ0Fg3uQN0GOASM+6DVoLRTzJX0mQp1makD7kSBDGsuqpsYlB5m
-         E/mg+7yLj9fRSy2ayr/328paPNg36xjCChDaEeNG/+iivJC9DCu61AbGbgRhmqFk4ZFm
-         tUOk7cdomgRpN6dx0Opy5Cn40vbxlHaC44J7IAA/VRZ54ToC7JakHN1Efp4abJpZsphW
-         Bi1g==
-X-Gm-Message-State: AGRZ1gKA/uIInFfRHd59dT13COvffpw0qWgEIGsyI1tlX1lkNTBPfhzO
-        mWX4+HHdSE8BuKc4WTwoNxHSjjbP
-X-Google-Smtp-Source: AJdET5eOwq1SFZtvyvIywCesbnvHC8mxRTLH/jKpuUTNBVZbYF8GyH1hqCKIA40aHeQzbt1FWL9bSQ==
-X-Received: by 2002:a1c:6382:: with SMTP id x124-v6mr195174wmb.145.1541663208628;
-        Wed, 07 Nov 2018 23:46:48 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm2445050wro.0.2018.11.07.23.46.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 23:46:48 -0800 (PST)
-Date:   Thu, 8 Nov 2018 08:46:45 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108074645.GE20032@gmail.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
+        Thu, 8 Nov 2018 12:33:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60968 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725945AbeKHRdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 12:33:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 72F56AC6C;
+        Thu,  8 Nov 2018 07:59:35 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 08:59:34 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Baoquan He <bhe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 4/5] mm, memory_hotplug: print reason for the
+ offlining failure
+Message-ID: <20181108075934.GL27423@dhcp22.suse.cz>
+References: <20181107101830.17405-1-mhocko@kernel.org>
+ <20181107101830.17405-5-mhocko@kernel.org>
+ <18bd20ff-7b3c-bcf2-042d-5ab59fdd42e1@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181107171149.165693799@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <18bd20ff-7b3c-bcf2-042d-5ab59fdd42e1@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 08-11-18 11:53:21, Anshuman Khandual wrote:
+> 
+> 
+> On 11/07/2018 03:48 PM, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > The memory offlining failure reporting is inconsistent and insufficient.
+> > Some error paths simply do not report the failure to the log at all.
+> > When we do report there are no details about the reason of the failure
+> > and there are several of them which makes memory offlining failures
+> > hard to debug.
+> > 
+> > Make sure that the
+> > 	memory offlining [mem %#010llx-%#010llx] failed
+> > message is printed for all failures and also provide a short textual
+> > reason for the failure e.g.
+> > 
+> > [ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed due to signal backoff
+> > 
+> > this tells us that the offlining has failed because of a signal pending
+> > aka user intervention.
+> > 
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> 
+> It might help to enumerate these failure reason strings and use macros.
 
+Does it really make sense when all of them are on-off things? I would
+agree if they were reused somewhere.
 
-Lemme fill in the scheduler and locking/atomics bits as well:
-
-> +The tip tree contains the following subsystems:
-> +
-> +   - **x86 architecture**
-> +
-> +     The x86 architecture development takes place in the tip tree except
-> +     for the x86 KVM and XEN specific parts which are maintained in the
-> +     corresponding subsystems and routed directly to mainline from
-> +     there. It's still good practice to Cc the x86 maintainers on
-> +     x86-specific KVM and XEN patches.
-> +
-> +     Some x86 subsystems have their own maintainers in addition to the
-> +     overall x86 maintainers.  Please Cc the overall x86 maintainers on
-> +     patches touching files in arch/x86 even when they are not called out
-> +     by the MAINTAINER file.
-> +
-> +     Note, that ``x86@kernel.org`` is not a mailing list. It is merely a
-> +     mail alias which distributes mails to the x86 top-level maintainer
-> +     team. Please always Cc the Linux Kernel mailing list (LKML)
-> +     ``linux-kernel@vger.kernel.org``, otherwise your mail ends up only in
-> +     the private inboxes of the maintainers.
-> +
-> +   - **Scheduler**
-
-        Scheduler development takes place in the -tip tree, in the 
-        sched/core branch - with occasional sub-topic trees for 
-        work-in-progress patch-sets.
-
-> +
-> +   - **Locking and atomics**
-
-        Locking development (including atomics and other synchronization 
-        primitives that are connected to locking) takes place in the -tip 
-        tree, in the locking/core branch - with occasional sub-topic 
-        trees for work-in-progress patch-sets.
-
-Thanks,
-
-	Ingo
+-- 
+Michal Hocko
+SUSE Labs
