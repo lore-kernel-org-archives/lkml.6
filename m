@@ -2,113 +2,77 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D547FC0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF87C46464
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DEAE20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:20:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DEAE20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 85C2420862
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 03:22:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="vbWRTIAq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C2420862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbeKHMyQ convert rfc822-to-8bit (ORCPT
+        id S1728740AbeKHM4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 07:54:16 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:60444 "EHLO mxct.zte.com.cn"
+        Thu, 8 Nov 2018 07:56:13 -0500
+Received: from imap.thunk.org ([74.207.234.97]:51946 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728618AbeKHMyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 07:54:15 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 094777ADA92E5ED57A6E;
-        Thu,  8 Nov 2018 11:20:50 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wA83KNhA098181;
-        Thu, 8 Nov 2018 11:20:23 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018110811205110-9335681 ;
-          Thu, 8 Nov 2018 11:20:51 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Yi Wang <wang.yi59@zte.com.cn>
-Subject: [PATCH] x86/kvm/vmx: fix old-style function declaration
-Date:   Thu, 8 Nov 2018 11:22:21 +0800
-Message-Id: <1541647341-28751-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S1728618AbeKHM4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 07:56:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=86nfRxobYMW4UkJGkd5eq/fljy7BwxrE/VFNnfMq6h0=; b=vbWRTIAqL4VvR1n6fYBTTbZ9aM
+        eJ4MBauTE47Zqp++NyDjrqGZCa4VGItfnhQiNK7xdMkkhA9QkzZYUqja4I6rTXpJu/BoG56T126HP
+        5esv0V0nirQRb6Ws0tsaz/i767lxMTTAvTV6mDdrYHfVY8fsBtiBEVtj7aeirsvCXLTs=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKauA-0005pY-NK; Thu, 08 Nov 2018 03:22:50 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 6B8EB7A7D2C; Wed,  7 Nov 2018 22:22:49 -0500 (EST)
+Date:   Wed, 7 Nov 2018 22:22:49 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] ext4: lost brelse in ext4_expand_extra_isize_ea()
+Message-ID: <20181108032249.GC22459@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vasily Averin <vvs@virtuozzo.com>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-kernel@vger.kernel.org
+References: <cover.1541011937.git.vvs@virtuozzo.com>
+ <c5dc2118-ac42-c899-f218-4a78aa39c37f@virtuozzo.com>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-08 11:20:51,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-08 11:20:11
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse01.zte.com.cn wA83KNhA098181
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5dc2118-ac42-c899-f218-4a78aa39c37f@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The inline keyword which is not at the beginning of the function
-declaration may trigger the following build warnings, so let's fix it:
+On Wed, Oct 31, 2018 at 10:13:09PM +0300, Vasily Averin wrote:
+> Fixes de05ca852679 ("ext4: move call to ext4_error() into ...") # 4.17
+> 
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 
-arch/x86/kvm/vmx.c:1309:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
-arch/x86/kvm/vmx.c:5947:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
-arch/x86/kvm/vmx.c:5985:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
-arch/x86/kvm/vmx.c:6023:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
+Thanks, applied.  I used the commit description:
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
- arch/x86/kvm/vmx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+    ext4: fix buffer leak in ext4_expand_extra_isize_ea() on error path
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 4555077..cd8355b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1306,7 +1306,7 @@ static void vmx_get_segment(struct kvm_vcpu *vcpu,
- static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
- 					    u16 error_code);
- static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
--static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
-+static __always_inline void vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
- 							  u32 msr, int type);
- 
- static DEFINE_PER_CPU(struct vmcs *, vmxarea);
-@@ -5944,7 +5944,7 @@ static void free_vpid(int vpid)
- 	spin_unlock(&vmx_vpid_lock);
- }
- 
--static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
-+static __always_inline void vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
- 							  u32 msr, int type)
- {
- 	int f = sizeof(unsigned long);
-@@ -5982,7 +5982,7 @@ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bit
- 	}
- }
- 
--static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitmap,
-+static __always_inline void vmx_enable_intercept_for_msr(unsigned long *msr_bitmap,
- 							 u32 msr, int type)
- {
- 	int f = sizeof(unsigned long);
-@@ -6020,7 +6020,7 @@ static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitm
- 	}
- }
- 
--static void __always_inline vmx_set_intercept_for_msr(unsigned long *msr_bitmap,
-+static __always_inline void vmx_set_intercept_for_msr(unsigned long *msr_bitmap,
- 			     			      u32 msr, int type, bool value)
- {
- 	if (value)
--- 
-1.8.3.1
-
+    	      	     	     			- Ted
