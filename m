@@ -2,151 +2,131 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B26ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC488ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88292081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88292081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B2E9B2081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:06:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zkuym8HW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E9B2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbeKIGnh (ORCPT
+        id S1727953AbeKIGnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:43:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:55219 "EHLO mga17.intel.com"
+        Fri, 9 Nov 2018 01:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbeKIGng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:43:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:06:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="278274839"
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 13:06:19 -0800
-Message-ID: <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
-Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
- shadow stack
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        id S1727561AbeKIGnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:43:37 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82F8F20825;
+        Thu,  8 Nov 2018 21:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541711180;
+        bh=SRM0AtAGL7uOS8RowmPD3a3b5t9ji0Ndd6C32yYAloQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Zkuym8HWGBQypgeuRMnMTVr4FGbCWCoS2TA9npKbCb5e6n4LWVjBihbmA3QG4tAfg
+         LlQtYaUgaLyevj593FC+WKwMPVsBm61DTN58Xi0EjpOiE4Jx9BYiU8xO2Hk6i5e37j
+         J4l1fc+5H7uujqpmJlGA/T8oIUrCPTdVPa5pSzrA=
+Date:   Thu, 8 Nov 2018 13:06:15 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Date:   Thu, 08 Nov 2018 13:01:05 -0800
-In-Reply-To: <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
-         <20181011151523.27101-5-yu-cheng.yu@intel.com>
-         <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, John Stultz <john.stultz@linaro.org>,
+        acme@redhat.com, frederic@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
+Message-ID: <20181108210615.GC22691@kroah.com>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107171149.165693799@linutronix.de>
+ <20181108074012.GD20032@gmail.com>
+ <20181108091251.GL9761@hirez.programming.kicks-ass.net>
+ <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
+ <20181108174006.GP4170@linux.ibm.com>
+ <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-08 at 12:46 -0800, Andy Lutomirski wrote:
-> On Thu, Oct 11, 2018 at 8:20 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+On Thu, Nov 08, 2018 at 08:58:32PM +0100, Thomas Gleixner wrote:
+> On Thu, 8 Nov 2018, Paul E. McKenney wrote:
+> > On Thu, Nov 08, 2018 at 09:19:33AM -0800, Dan Williams wrote:
+> > > On Thu, Nov 8, 2018 at 1:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
+> > > > > > + - Cc: ``cc-ed-person <person@mail>``
+> > > > > > +
+> > > > > > +   If the patch should be backported to stable, then please add a '``Cc:
+> > > > > > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
+> > > > > > +   mail.
+> > > > >
+> > > > > Can I suggest a more canonical form:
+> > > > >
+> > > > >       Cc: <stable@vger.kernel.org> # v4.18 and later kernels
+> > > > >
+> > > > > It would be nice if people adding Cc: stable lines would actually try to
+> > > > > figure out which exact kernel versions are affected.
+> > > 
+> > > I know at least StGit mail does not grok that "#"notation. I've
+> > > stopped using it in favor of a "Fixes:" tag. I would think "Fixes:" is
+> > > preferred over "# <KVER>" if only because it can be used to track
+> > > fixes to commits that have been backported to stable. Is there any
+> > > reason for "# <KVER>" to continue in a world where we have "Fixes:"?
 > > 
-> > Intel Control-flow Enforcement Technology (CET) introduces the
-> > following MSRs into the XSAVES system states.
+> > I sometimes have fixes that need to be different for different past
+> > releases.  And there have been cases where RCU patches would apply and
+> > build cleanly against releases for which it was not appropriate, but
+> > would have some low-probability failure.  Which meant that it could be
+> > expected to pass light testing.  :-/
 > > 
-> >     IA32_U_CET (user-mode CET settings),
-> >     IA32_PL3_SSP (user-mode shadow stack),
-> >     IA32_PL0_SSP (kernel-mode shadow stack),
-> >     IA32_PL1_SSP (ring-1 shadow stack),
-> >     IA32_PL2_SSP (ring-2 shadow stack).
-> > 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> >  arch/x86/include/asm/fpu/types.h            | 22 +++++++++++++++++++++
-> >  arch/x86/include/asm/fpu/xstate.h           |  4 +++-
-> >  arch/x86/include/uapi/asm/processor-flags.h |  2 ++
-> >  arch/x86/kernel/fpu/xstate.c                | 10 ++++++++++
-> >  4 files changed, 37 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/include/asm/fpu/types.h
-> > b/arch/x86/include/asm/fpu/types.h
-> > index 202c53918ecf..e55d51d172f1 100644
-> > --- a/arch/x86/include/asm/fpu/types.h
-> > +++ b/arch/x86/include/asm/fpu/types.h
-> > @@ -114,6 +114,9 @@ enum xfeature {
-> >         XFEATURE_Hi16_ZMM,
-> >         XFEATURE_PT_UNIMPLEMENTED_SO_FAR,
-> >         XFEATURE_PKRU,
-> > +       XFEATURE_RESERVED,
-> > +       XFEATURE_SHSTK_USER,
-> > +       XFEATURE_SHSTK_KERNEL,
-> > 
-> >         XFEATURE_MAX,
-> >  };
-> > @@ -128,6 +131,8 @@ enum xfeature {
-> >  #define XFEATURE_MASK_Hi16_ZMM         (1 << XFEATURE_Hi16_ZMM)
-> >  #define XFEATURE_MASK_PT               (1 <<
-> > XFEATURE_PT_UNIMPLEMENTED_SO_FAR)
-> >  #define XFEATURE_MASK_PKRU             (1 << XFEATURE_PKRU)
-> > +#define XFEATURE_MASK_SHSTK_USER       (1 << XFEATURE_SHSTK_USER)
-> > +#define XFEATURE_MASK_SHSTK_KERNEL     (1 << XFEATURE_SHSTK_KERNEL)
-> > 
-> >  #define XFEATURE_MASK_FPSSE            (XFEATURE_MASK_FP |
-> > XFEATURE_MASK_SSE)
-> >  #define XFEATURE_MASK_AVX512           (XFEATURE_MASK_OPMASK \
-> > @@ -229,6 +234,23 @@ struct pkru_state {
-> >         u32                             pad;
-> >  } __packed;
-> > 
-> > +/*
-> > + * State component 11 is Control flow Enforcement user states
-> > + */
-> > +struct cet_user_state {
-> > +       u64 u_cet;      /* user control flow settings */
-> > +       u64 user_ssp;   /* user shadow stack pointer */
-> > +} __packed;
-> > +
-> > +/*
-> > + * State component 12 is Control flow Enforcement kernel states
-> > + */
-> > +struct cet_kernel_state {
-> > +       u64 kernel_ssp; /* kernel shadow stack */
-> > +       u64 pl1_ssp;    /* ring-1 shadow stack */
-> > +       u64 pl2_ssp;    /* ring-2 shadow stack */
-> > +} __packed;
-> > +
+> > So I sometimes need a way of saying which versions a given patch applies
+> > to, independent of the version into which the bug was introduced.
 > 
-> Why are these __packed?  It seems like it'll generate bad code for no
-> obvious purpose.
+> I can understand that you want to limit the scope of automatic backports.
+> 
+> But we really should try to always use of the Fixes: tag. In most cases the
+> SHA1 of the commit in the fixes tag defines the backport scope. 
+> 
+> For the rare cases where the buggy commit is really old, but you want to
+> limit the backport scope for a reason then I really like to avoid to
+> overload the Cc stable tag and have a dedicated tag instead. Something
+> like:
+> 
+>     Fixes: 1234567890AB ("subsys/comp: Short summary")
+>     Backport-to: 4.14
 
-That prevents any possibility that the compiler will insert padding, although in
-64-bit kernel this should not happen to either struct.  Also all xstate
-components here are packed.
+Ick, no.  Just stick to the "Fixes:" tag.  My scripts can now track when
+a patch is backported to a stable tree so that I know to apply it to
+older ones despite the original patch showing up in a newer release.
 
-Yu-cheng
+And yes, those scripts are new, as Sasha is about to point out all of
+the places where I missed this in the past :)
+
+thanks,
+
+greg k-h
