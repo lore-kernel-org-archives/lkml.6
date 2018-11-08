@@ -2,121 +2,398 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD33ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48818ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677EC2081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBBDF20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1iwhRh3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677EC2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t6wg70Bj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBDF20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeKIDZi (ORCPT
+        id S1727005AbeKID1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:25:38 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44663 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeKIDZi (ORCPT
+        Thu, 8 Nov 2018 22:27:20 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39550 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbeKID1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:25:38 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s5-v6so9856037plq.11
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:49:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Sn9YD/aRXB7ZOxgLD7MkEPfRLE73zuHoCyAc48NEeaM=;
-        b=S1iwhRh3GA2OJBeh8ULgOYmY3ziu0fZbT+IvyAG+n/Og6XkyJFiuxAYwOcS7iztOHi
-         VX2UpesY0Po+gdIEnpfDnYbCm58QSZfaZhckq8EoKKAYpWG7YsSbivMmRPJit6MX4yio
-         C2IxvCVIcT7MoyXwYWsRPSctoklK4ApC2LUWk0lQP1/4DXvh29iPDjH/pgqXm7HNFJO4
-         OURgU8BMt7PhDT0pKAFp7jUD+RgBsc4VVLjBsCrZG53nX2bQ+pu7EKc77jyznjqM31eD
-         CM1Z2QT4Za6tPDnpSDuoJljRi1mTGxcmijaSJENgypBQ0s/5ewL0FzOBDE8vNQjwk01+
-         tllw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Sn9YD/aRXB7ZOxgLD7MkEPfRLE73zuHoCyAc48NEeaM=;
-        b=o1rpmIA7wOprAZM1Anh3TGxUfHBmeWa71lTE9a08SY8fSfgGIkxzBCriRL9XisRy4N
-         o9xuAea4cKaLjMYNgWGEIuxfXReVf5sjM7gVXeX8EqTD3/+MYNtj/o7cQryAf5sjwB+I
-         vTKNPHGy6qkoUk7KofWCuHOTCRgkkX5ygnJKFQ8m3AXx0hWx0iJLK2IvWOyv/6xMHK52
-         B1HLxRNRoweUjRDGjyebUg++aEgilT5ovbWCvLtUQ3RI1e2THiOMu5l+eXtuMLEV/bpA
-         aq+hQBBzPZ6R1OqdAbJOeIdbkrUOhUahpOJ/CKvG/KnayW6Ok/pWEPFLvUDWg7EpBiK5
-         Mwxw==
-X-Gm-Message-State: AGRZ1gKc///kKGgI2yfKAANDFy8A01u6nDQ5Mvmj0eiwjpUJJ2Nndp81
-        KWoP1Li6Dj1udXr5vT4gCKU=
-X-Google-Smtp-Source: AJdET5dJmlK+GjpqS8KMHmM0rBjA6Qv6qck1aOqI1Y2F0g5TNX4NAikIiroDnZ6BMWR94Dl21SkEfA==
-X-Received: by 2002:a17:902:6185:: with SMTP id u5-v6mr5378942plj.41.1541699343081;
-        Thu, 08 Nov 2018 09:49:03 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id x63-v6sm5387946pfk.14.2018.11.08.09.49.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 09:49:02 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        dan.j.williams@intel.com, linux@dominikbrodowski.net,
-        dave.hansen@linux.intel.com, dwmw@amazon.co.uk, mhocko@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] mm: mmap: remove verify_mm_writelocked()
-Date:   Thu,  8 Nov 2018 12:48:56 -0500
-Message-Id: <20181108174856.10811-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 8 Nov 2018 22:27:19 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8HoH6f018700;
+        Thu, 8 Nov 2018 11:50:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1541699417;
+        bh=dGQf/bZXjL4f+PPTFL4UQLElesFata494X/XbWTvxQ0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=t6wg70BjfS7EhrtbU4Mi1aFM2Ngt2tGCNN1Db1bs4JyXMAJzdv80tOgsWNF43xoPj
+         Vtg+vUixNbyT2qco+VYdZ/eMOG4VDG2tUClkwRK7wulUvGadu4HbQ984SiyCBhvDp+
+         kkPhTPdejYtvo7nTLN42F7SqBoc/jbzBzjaxTuQs=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8HoHdl004302
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 11:50:17 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
+ 2018 11:50:17 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 8 Nov 2018 11:50:17 -0600
+Received: from [172.22.151.38] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8HoGr2013688;
+        Thu, 8 Nov 2018 11:50:16 -0600
+Subject: Re: [PATCH 01/24] leds: class: Improve LED and LED flash class
+ registration API
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <linux-leds@vger.kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <pavel@ucw.cz>, <robh@kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>,
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-2-git-send-email-jacek.anaszewski@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <166969ae-f5db-cb5f-9334-9934e23aa406@ti.com>
+Date:   Thu, 8 Nov 2018 11:50:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1541542052-10081-2-git-send-email-jacek.anaszewski@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should get rid of this function. It no longer serves its purpose.This
-is a historical artifact from 2005 where do_brk was called outside of
-the core mm.We do have a proper abstraction in vm_brk_flags and that one
-does the locking properly.So there is no need to use this function.
+Jacek
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- mm/mmap.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
+> Replace of_led_classdev_register() with led_classdev_register_ext(), which
+> accepts easily extendable struct led_init_data, instead of the fixed
+> struct device_node argument. The latter can be now passed in a fwnode
+> property of the struct led_init_data.
+> 
+> The modification is driven by the need for passing another argument
+> to the LED class initialization function - a LED class device name.
+> Currently it is conveyed in the "name" char pointer property of
+> struct led_classdev, which is semantically and functionally incorrect
+> since it is needed only on LED class device registration, but persists
+> in system memory throughout the whole LED class device lifetime.
+> 
+> Whereas in case of the name strings coming from DT "label" property or
+> statically initialized ones the cost is only the pointer size, it grows
+> to LED_MAX_NAME_SIZE (64) with the advent of a new LED class device naming
+> scheme, where color and function properties come from separate board
+> firmware properties and the name needs to be constructed in a new buffer.
+> 
+> The change will not break any existing clients since the patch alters
+> also existing led_classdev{_flash}_register() macro wrappers, that pass
+> NULL in place of init_data, which leads to using legacy name
+> initialization path basing on the struct led_classdev's "name" property.
+> 
+> Two existing users of devm_of_led_classdev_registers() are modified
+> to use devm_led_classdev_register(), which will not impact their
+> operation since they in fact didn't need to pass struct device_node on
+> registration from the beginning.
+> 
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Simon Shields <simon@lineageos.org>
+> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+> ---
+>  drivers/leds/led-class-flash.c  |  9 +++++----
+>  drivers/leds/led-class.c        | 34 ++++++++++++++++++++++------------
+>  drivers/leds/leds-cr0014114.c   |  3 +--
+>  drivers/leds/leds-gpio.c        |  2 +-
+>  include/linux/led-class-flash.h | 13 +++++++++----
+>  include/linux/leds.h            | 29 +++++++++++++++++++----------
+>  6 files changed, 57 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+> index cf39827..8d1c117 100644
+> --- a/drivers/leds/led-class-flash.c
+> +++ b/drivers/leds/led-class-flash.c
+> @@ -285,8 +285,9 @@ static void led_flash_init_sysfs_groups(struct led_classdev_flash *fled_cdev)
+>  	led_cdev->groups = flash_groups;
+>  }
+>  
+> -int led_classdev_flash_register(struct device *parent,
+> -				struct led_classdev_flash *fled_cdev)
+> +int led_classdev_flash_register_ext(struct device *parent,
+> +				    struct led_classdev_flash *fled_cdev,
+> +				    struct led_init_data *init_data)
+>  {
+>  	struct led_classdev *led_cdev;
+>  	const struct led_flash_ops *ops;
+> @@ -312,13 +313,13 @@ int led_classdev_flash_register(struct device *parent,
+>  	}
+>  
+>  	/* Register led class device */
+> -	ret = led_classdev_register(parent, led_cdev);
+> +	ret = led_classdev_register_ext(parent, led_cdev, init_data);
+>  	if (ret < 0)
+>  		return ret;
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(led_classdev_flash_register);
+> +EXPORT_SYMBOL_GPL(led_classdev_flash_register_ext);
+>  
+>  void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev)
+>  {
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 3c7e348..8c80763 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/timer.h>
+> @@ -244,18 +245,25 @@ static int led_classdev_next_name(const char *init_name, char *name,
+>  }
+>  
+>  /**
+> - * of_led_classdev_register - register a new object of led_classdev class.
+> + * led_classdev_register_ext - register a new object of led_classdev class.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index f7cd9cb966c0..1cee506494d2 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2910,16 +2910,6 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 	return ret;
- }
- 
--static inline void verify_mm_writelocked(struct mm_struct *mm)
--{
--#ifdef CONFIG_DEBUG_VM
--	if (unlikely(down_read_trylock(&mm->mmap_sem))) {
--		WARN_ON(1);
--		up_read(&mm->mmap_sem);
--	}
--#endif
--}
--
- /*
-  *  this is really a simplified "do_mmap".  it only handles
-  *  anonymous maps.  eventually we may be able to do some
-@@ -2946,12 +2936,6 @@ static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long fla
- 	if (error)
- 		return error;
- 
--	/*
--	 * mm->mmap_sem is required to protect against another thread
--	 * changing the mappings in case we sleep.
--	 */
--	verify_mm_writelocked(mm);
--
- 	/*
- 	 * Clear old maps.  this also does some error checking for us
- 	 */
+For this should the comment indicate a different between the extended and non-extended calls?
+Like the _ext might say register a new object of led_classdev with init_data?
+
+Same comments for each addition below.
+
+Otherwise with Baolin's comments for 1/24
+
+Acked-by: Dan Murphy <dmurphy@ti.com>
+
+Dan
+
+>   *
+>   * @parent: parent of LED device
+>   * @led_cdev: the led_classdev structure for this device.
+> - * @np: DT node describing this LED
+> + * @init_data: LED class device initialization data
+>   */
+> -int of_led_classdev_register(struct device *parent, struct device_node *np,
+> -			    struct led_classdev *led_cdev)
+> +int led_classdev_register_ext(struct device *parent,
+> +			      struct led_classdev *led_cdev,
+> +			      struct led_init_data *init_data)
+>  {
+>  	char name[LED_MAX_NAME_SIZE];
+>  	int ret;
+>  
+> +	if (init_data && init_data->name) {
+> +		led_cdev->name = init_data->name;
+> +	} else {
+> +		dev_info(parent, "init_data not available");
+> +	}
+> +
+>  	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+>  	if (ret < 0)
+>  		return ret;
+> @@ -268,7 +276,8 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+>  		mutex_unlock(&led_cdev->led_access);
+>  		return PTR_ERR(led_cdev->dev);
+>  	}
+> -	led_cdev->dev->of_node = np;
+> +	if (init_data && init_data->fwnode)
+> +		led_cdev->dev->of_node = to_of_node(init_data->fwnode);
+>  
+>  	if (ret)
+>  		dev_warn(parent, "Led %s renamed to %s due to name collision",
+> @@ -313,7 +322,7 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(of_led_classdev_register);
+> +EXPORT_SYMBOL_GPL(led_classdev_register_ext);
+>  
+>  /**
+>   * led_classdev_unregister - unregisters a object of led_properties class.
+> @@ -358,14 +367,15 @@ static void devm_led_classdev_release(struct device *dev, void *res)
+>  }
+>  
+>  /**
+> - * devm_of_led_classdev_register - resource managed led_classdev_register()
+> + * devm_led_classdev_register_ext - resource managed led_classdev_register_ext()
+>   *
+>   * @parent: parent of LED device
+>   * @led_cdev: the led_classdev structure for this device.
+> + * @init_data: LED class device initialization data
+>   */
+> -int devm_of_led_classdev_register(struct device *parent,
+> -				  struct device_node *np,
+> -				  struct led_classdev *led_cdev)
+> +int devm_led_classdev_register_ext(struct device *parent,
+> +				   struct led_classdev *led_cdev,
+> +				   struct led_init_data *init_data)
+>  {
+>  	struct led_classdev **dr;
+>  	int rc;
+> @@ -374,7 +384,7 @@ int devm_of_led_classdev_register(struct device *parent,
+>  	if (!dr)
+>  		return -ENOMEM;
+>  
+> -	rc = of_led_classdev_register(parent, np, led_cdev);
+> +	rc = led_classdev_register_ext(parent, led_cdev, init_data);
+>  	if (rc) {
+>  		devres_free(dr);
+>  		return rc;
+> @@ -385,7 +395,7 @@ int devm_of_led_classdev_register(struct device *parent,
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(devm_of_led_classdev_register);
+> +EXPORT_SYMBOL_GPL(devm_led_classdev_register_ext);
+>  
+>  static int devm_led_classdev_match(struct device *dev, void *res, void *data)
+>  {
+> diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
+> index 0e42624..1c82152 100644
+> --- a/drivers/leds/leds-cr0014114.c
+> +++ b/drivers/leds/leds-cr0014114.c
+> @@ -207,8 +207,7 @@ static int cr0014114_probe_dt(struct cr0014114 *priv)
+>  		led->ldev.max_brightness	  = CR_MAX_BRIGHTNESS;
+>  		led->ldev.brightness_set_blocking = cr0014114_set_sync;
+>  
+> -		ret = devm_of_led_classdev_register(priv->dev, np,
+> -						    &led->ldev);
+> +		ret = devm_led_classdev_register(priv->dev, &led->ldev);
+>  		if (ret) {
+>  			dev_err(priv->dev,
+>  				"failed to register LED device %s, err %d",
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 32fa752..c87fbd3 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -112,7 +112,7 @@ static int create_gpio_led(const struct gpio_led *template,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	return devm_of_led_classdev_register(parent, np, &led_dat->cdev);
+> +	return devm_led_classdev_register(parent, &led_dat->cdev);
+>  }
+>  
+>  struct gpio_leds_priv {
+> diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
+> index 700efaa..28a73d0 100644
+> --- a/include/linux/led-class-flash.h
+> +++ b/include/linux/led-class-flash.h
+> @@ -90,15 +90,20 @@ static inline struct led_classdev_flash *lcdev_to_flcdev(
+>  }
+>  
+>  /**
+> - * led_classdev_flash_register - register a new object of led_classdev class
+> - *				 with support for flash LEDs
+> + * fwnode_led_classdev_flash_register - register a new object of led_classdev
+> + *					class with support for flash LEDs
+>   * @parent: the flash LED to register
+> + * @fwnode: the flash LED fwnode handle
+>   * @fled_cdev: the led_classdev_flash structure for this device
+>   *
+>   * Returns: 0 on success or negative error value on failure
+>   */
+> -extern int led_classdev_flash_register(struct device *parent,
+> -				struct led_classdev_flash *fled_cdev);
+> +extern int led_classdev_flash_register_ext(struct device *parent,
+> +					struct led_classdev_flash *fled_cdev,
+> +					struct led_init_data *init_data);
+> +
+> +#define led_classdev_flash_register(parent, fled_cdev)		\
+> +	led_classdev_flash_register_ext(parent, fled_cdev, NULL)
+>  
+>  /**
+>   * led_classdev_flash_unregister - unregisters an object of led_classdev class
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 834683d..646c49a 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -20,6 +20,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/timer.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/linux/uleds.h>
+>  
+>  struct device;
+>  /*
+> @@ -33,6 +34,13 @@ enum led_brightness {
+>  	LED_FULL	= 255,
+>  };
+>  
+> +struct led_init_data {
+> +	/* Device fwnode handle */
+> +	struct fwnode_handle *fwnode;
+> +	/* Requested LED class device name */
+> +	char name[LED_MAX_NAME_SIZE];
+> +};
+> +
+>  struct led_classdev {
+>  	const char		*name;
+>  	enum led_brightness	 brightness;
+> @@ -73,6 +81,7 @@ struct led_classdev {
+>  	 */
+>  	int (*brightness_set_blocking)(struct led_classdev *led_cdev,
+>  				       enum led_brightness brightness);
+> +
+>  	/* Get LED brightness level */
+>  	enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
+>  
+> @@ -123,16 +132,16 @@ struct led_classdev {
+>  	struct mutex		led_access;
+>  };
+>  
+> -extern int of_led_classdev_register(struct device *parent,
+> -				    struct device_node *np,
+> -				    struct led_classdev *led_cdev);
+> -#define led_classdev_register(parent, led_cdev)				\
+> -	of_led_classdev_register(parent, NULL, led_cdev)
+> -extern int devm_of_led_classdev_register(struct device *parent,
+> -					 struct device_node *np,
+> -					 struct led_classdev *led_cdev);
+> -#define devm_led_classdev_register(parent, led_cdev)			\
+> -	devm_of_led_classdev_register(parent, NULL, led_cdev)
+> +extern int led_classdev_register_ext(struct device *parent,
+> +				     struct led_classdev *led_cdev,
+> +				     struct led_init_data *init_data);
+> +#define led_classdev_register(parent, led_cdev)			\
+> +	led_classdev_register_ext(parent, led_cdev, NULL)
+> +extern int devm_led_classdev_register_ext(struct device *parent,
+> +					  struct led_classdev *led_cdev,
+> +					  struct led_init_data *init_data);
+> +#define devm_led_classdev_register(parent, led_cdev)		\
+> +	devm_led_classdev_register_ext(parent, led_cdev, NULL)
+>  extern void led_classdev_unregister(struct led_classdev *led_cdev);
+>  extern void devm_led_classdev_unregister(struct device *parent,
+>  					 struct led_classdev *led_cdev);
+> 
+
+
 -- 
-2.17.0
-
+------------------
+Dan Murphy
