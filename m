@@ -2,45 +2,45 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 613B0C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DF2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2289520857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2289520857
+	by mail.kernel.org (Postfix) with ESMTP id DD9BB20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:37:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9BB20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbeKHSLm (ORCPT
+        id S1726856AbeKHSLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:11:42 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54086 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeKHSLm (ORCPT
+        Thu, 8 Nov 2018 13:11:43 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:60464 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbeKHSLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Nov 2018 13:11:42 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA88amcY086776;
-        Thu, 8 Nov 2018 02:36:48 -0600
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA88amNK070926
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA88adSR120777;
+        Thu, 8 Nov 2018 02:36:39 -0600
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA88adI0039004
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 02:36:48 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 8 Nov 2018 02:36:39 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 02:36:48 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ 2018 02:36:39 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 02:36:48 -0600
+ Thu, 8 Nov 2018 02:36:39 -0600
 Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA88aamn023819;
-        Thu, 8 Nov 2018 02:36:45 -0600
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA88aamk023819;
+        Thu, 8 Nov 2018 02:36:36 -0600
 From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
@@ -48,12 +48,10 @@ To:     Mark Brown <broonie@kernel.org>,
 CC:     <alsa-devel@alsa-project.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <jsarha@ti.com>
-Subject: [RFC 3/9] ARM: OMAP1: Makefile: Update for new MCBSP Kconfig option
-Date:   Thu, 8 Nov 2018 10:37:48 +0200
-Message-ID: <20181108083754.1746-4-peter.ujfalusi@ti.com>
+Subject: [RFC 0/9] ASoC/ARM: Merge the davinci and omap audio directories
+Date:   Thu, 8 Nov 2018 10:37:45 +0200
+Message-ID: <20181108083754.1746-1-peter.ujfalusi@ti.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108083754.1746-1-peter.ujfalusi@ti.com>
-References: <20181108083754.1746-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -63,26 +61,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MCBSP config option has been changed.
+Hi,
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+This RFC series is on top of the omap-mcbsp cleanup series:
+http://mailman.alsa-project.org/pipermail/alsa-devel/2018-November/141604.html
+
+For Texas Instruments audio support we have two directories at the moment:
+davinci
+omap
+
+In reality TI have the following SoC lines supported by Linux:
+daVinci
+OMAP
+Sitara
+Keystone
+
+We already needed to have cross directory 'links' for DRA7x/AM5 since they use
+McASP (davinci directory) and sDMA (omap directory).
+Keystone II line of SoCs are using drivers from davinci directory (McASP and
+EDMA). Which is kind of fine as they are in the same place.
+
+With the new AM654 (http://www.ti.com/lit/pdf/spruid7) we will have completely
+new DMA and there is no place to put that as it does not belong under davinci
+or omap, but it makes no sense to create yet another TI related directory just
+for the small udma-pcm.
+
+Another issue with the current support is how the Kconfigs are written.
+The DAI drivers are depending on the ASoC platform drivers and it is a bit of a
+mess at the moment.
+For simple-sound-card one need to know what DMA is used and then select the DAI
+driver (if the Kconfig is right).
+I have also cleaned up the Kconfig prompts and comments a bit to be more
+precise.
+
+As can be seen in the diffstat I tried to do the merger with minimal code
+change, resisting the urge to rename the davinci-i2c driver to davinci-asp.
+
+With the merger I have created a new Kconfig structure:
+- Submenu for TI related settings for clarity
+- Only the DAI drivers are selectable and the platform drivers are selected
+  based on the available (enabled) DMA engines
+- The remaining ASoC machine drivers are selecting the DAIs they need
+- The davinci-evm is now a single entry, combining all the various daVinci EVMS
+  it supports and selects the needed DAIs based on the enabled boards
+
+The series also includes patches to updated the arch/arm/ files (defconfigs,
+source files using audio Kconfig symbols).
+
+I believe with v1 all of this can be merged via ASoC tree as the chances of
+conflicts are low for the touched arch/arm files. But Sekhar and Tony can
+correct me if I'm wrong.
+
+I think I have catched all (I hope) issues regarding to Kconfig thanks to the
+various autobuild machines out there kindly testing my linux-next-wip branch.
+
+I would appreciate any testing comments before I send the v1!
+
+Regards,
+Peter
 ---
- arch/arm/mach-omap1/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Peter Ujfalusi (9):
+  ASoC: ti: Merge davinci and omap directories
+  MAINTAINERS: Add entry for sound/soc/ti and update the OMAP audio
+    support
+  ARM: OMAP1: Makefile: Update for new MCBSP Kconfig option
+  ARM: OMAP2: Update for new MCBSP Kconfig option
+  ARM: davinci: dm365-evm: Update for the new ASoC Kcofnig options
+  ARM: omap2plus_defconfig: Update the audio options
+  ARM: omap1_defconfig: Do not select ASoC by default
+  ARM: davinci_all_defconfig: Update the audio options
+  ASoC: ti: Kconfig: Remove the deprecated options
 
-diff --git a/arch/arm/mach-omap1/Makefile b/arch/arm/mach-omap1/Makefile
-index e8ccf51c6f29..a7e9c6d19fb5 100644
---- a/arch/arm/mach-omap1/Makefile
-+++ b/arch/arm/mach-omap1/Makefile
-@@ -8,7 +8,7 @@ obj-y := io.o id.o sram-init.o sram.o time.o irq.o mux.o flash.o \
- 	 serial.o devices.o dma.o fb.o
- obj-y += clock.o clock_data.o opp_data.o reset.o pm_bus.o timer.o
- 
--ifneq ($(CONFIG_SND_OMAP_SOC_MCBSP),)
-+ifneq ($(CONFIG_SND_SOC_OMAP_MCBSP),)
- obj-y += mcbsp.o
- endif
- 
+ MAINTAINERS                                   |  11 +-
+ arch/arm/configs/davinci_all_defconfig        |   5 +-
+ arch/arm/configs/omap1_defconfig              |   2 -
+ arch/arm/configs/omap2plus_defconfig          |  14 +-
+ arch/arm/mach-davinci/board-dm365-evm.c       |   4 +-
+ arch/arm/mach-omap1/Makefile                  |   2 +-
+ arch/arm/mach-omap2/Makefile                  |   2 +-
+ arch/arm/mach-omap2/pdata-quirks.c            |   4 +-
+ sound/soc/Kconfig                             |   3 +-
+ sound/soc/Makefile                            |   3 +-
+ sound/soc/davinci/Kconfig                     | 106 ---------
+ sound/soc/davinci/Makefile                    |  16 --
+ sound/soc/omap/Kconfig                        | 120 ----------
+ sound/soc/omap/Makefile                       |  30 ---
+ sound/soc/ti/Kconfig                          | 209 ++++++++++++++++++
+ sound/soc/ti/Makefile                         |  44 ++++
+ sound/soc/{omap => ti}/ams-delta.c            |   0
+ sound/soc/{davinci => ti}/davinci-evm.c       |   4 +-
+ sound/soc/{davinci => ti}/davinci-i2s.c       |   0
+ sound/soc/{davinci => ti}/davinci-i2s.h       |   0
+ sound/soc/{davinci => ti}/davinci-mcasp.c     |  14 +-
+ sound/soc/{davinci => ti}/davinci-mcasp.h     |   0
+ sound/soc/{davinci => ti}/davinci-vcif.c      |   0
+ sound/soc/{davinci => ti}/edma-pcm.c          |   0
+ sound/soc/{davinci => ti}/edma-pcm.h          |   4 +-
+ sound/soc/{omap => ti}/n810.c                 |   0
+ sound/soc/{omap => ti}/omap-abe-twl6040.c     |   0
+ sound/soc/{omap => ti}/omap-dmic.c            |   0
+ sound/soc/{omap => ti}/omap-dmic.h            |   0
+ .../omap-hdmi-audio.c => ti/omap-hdmi.c}      |   0
+ sound/soc/{omap => ti}/omap-mcbsp-priv.h      |   0
+ sound/soc/{omap => ti}/omap-mcbsp-st.c        |   0
+ sound/soc/{omap => ti}/omap-mcbsp.c           |   0
+ sound/soc/{omap => ti}/omap-mcbsp.h           |   0
+ sound/soc/{omap => ti}/omap-mcpdm.c           |   0
+ sound/soc/{omap => ti}/omap-mcpdm.h           |   0
+ sound/soc/{omap => ti}/omap-twl4030.c         |   0
+ sound/soc/{omap => ti}/omap3pandora.c         |   0
+ sound/soc/{omap => ti}/osk5912.c              |   0
+ sound/soc/{omap => ti}/rx51.c                 |   0
+ sound/soc/{omap => ti}/sdma-pcm.c             |   0
+ sound/soc/{omap => ti}/sdma-pcm.h             |   4 +-
+ 42 files changed, 294 insertions(+), 307 deletions(-)
+ delete mode 100644 sound/soc/davinci/Kconfig
+ delete mode 100644 sound/soc/davinci/Makefile
+ delete mode 100644 sound/soc/omap/Kconfig
+ delete mode 100644 sound/soc/omap/Makefile
+ create mode 100644 sound/soc/ti/Kconfig
+ create mode 100644 sound/soc/ti/Makefile
+ rename sound/soc/{omap => ti}/ams-delta.c (100%)
+ rename sound/soc/{davinci => ti}/davinci-evm.c (99%)
+ rename sound/soc/{davinci => ti}/davinci-i2s.c (100%)
+ rename sound/soc/{davinci => ti}/davinci-i2s.h (100%)
+ rename sound/soc/{davinci => ti}/davinci-mcasp.c (99%)
+ rename sound/soc/{davinci => ti}/davinci-mcasp.h (100%)
+ rename sound/soc/{davinci => ti}/davinci-vcif.c (100%)
+ rename sound/soc/{davinci => ti}/edma-pcm.c (100%)
+ rename sound/soc/{davinci => ti}/edma-pcm.h (91%)
+ rename sound/soc/{omap => ti}/n810.c (100%)
+ rename sound/soc/{omap => ti}/omap-abe-twl6040.c (100%)
+ rename sound/soc/{omap => ti}/omap-dmic.c (100%)
+ rename sound/soc/{omap => ti}/omap-dmic.h (100%)
+ rename sound/soc/{omap/omap-hdmi-audio.c => ti/omap-hdmi.c} (100%)
+ rename sound/soc/{omap => ti}/omap-mcbsp-priv.h (100%)
+ rename sound/soc/{omap => ti}/omap-mcbsp-st.c (100%)
+ rename sound/soc/{omap => ti}/omap-mcbsp.c (100%)
+ rename sound/soc/{omap => ti}/omap-mcbsp.h (100%)
+ rename sound/soc/{omap => ti}/omap-mcpdm.c (100%)
+ rename sound/soc/{omap => ti}/omap-mcpdm.h (100%)
+ rename sound/soc/{omap => ti}/omap-twl4030.c (100%)
+ rename sound/soc/{omap => ti}/omap3pandora.c (100%)
+ rename sound/soc/{omap => ti}/osk5912.c (100%)
+ rename sound/soc/{omap => ti}/rx51.c (100%)
+ rename sound/soc/{omap => ti}/sdma-pcm.c (100%)
+ rename sound/soc/{omap => ti}/sdma-pcm.h (85%)
+
 -- 
 Peter
 
