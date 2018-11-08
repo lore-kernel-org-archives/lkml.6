@@ -2,51 +2,51 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F136AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8652ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA822148E
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 844B7208E3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:00:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZGzrgRr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA822148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba7v2zVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844B7208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbeKIHhq (ORCPT
+        id S1730475AbeKIHht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:37:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56394 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729599AbeKIHhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:45 -0500
+        id S1730428AbeKIHhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:47 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A41420989;
-        Thu,  8 Nov 2018 22:00:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 980B520892;
+        Thu,  8 Nov 2018 22:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714416;
-        bh=v4zzPLf0eCuuM2a55Nnb+FtlRe1ZtwL5hcXD2k9apXw=;
+        s=default; t=1541714418;
+        bh=OWl9NWPu/6LlX6K1rVi8kHLF7o06ZcHului8Bk9MezI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TZGzrgRrlhpSGv4lk7WDage4SqLVTVdTVlDRr7ZXaaBILRImq8p5NRqmOtBGqcZgi
-         fxCWT907wtrXA674oyZO8GnjYRvOnBFYn6Hv9YAaS5z7d9IQ4Wk3qP4+SF7nKXXeMH
-         yxkfyxWf84THn07HRLlW7o8R5yvy5JFT8qTK4dTA=
+        b=ba7v2zVJJaCskwH7OyDbkql4okKS9sWmi21LxOYmxq5Dpbk2MWN/Q75mTm1BeMIX0
+         9hlagzrmhOyfOVprcqhj0qR6Y5Pz8vPxgMaDh9dmTeo4lwidT6aaDk3miwxrBykWeZ
+         OK1lpGk0LbfsdyOCLwidTs+FzxCSyOKEHTnIvCY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 069/114] gpio: msic: fix error return code in platform_msic_gpio_probe()
-Date:   Thu,  8 Nov 2018 13:51:24 -0800
-Message-Id: <20181108215107.276985381@linuxfoundation.org>
+Subject: [PATCH 4.4 042/114] ASoC: ak4613: Enable cache usage to fix crashes on resume
+Date:   Thu,  8 Nov 2018 13:50:57 -0800
+Message-Id: <20181108215104.935906051@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -64,39 +64,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca1f3ae3154ad6d08caa740c99be0d86644a4e44 ]
+[ Upstream commit dcd2d1f78664fdc75eadaaf65257834e24383d01 ]
 
-platform_get_irq() returns an error code, but the gpio-msic driver
-ignores it and always returns -EINVAL. This is not correct, and
-prevents -EPROBE_DEFER from being propagated properly.
+During system resume:
 
-Notice that platform_get_irq() no longer returns 0 on error:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
+    kernel BUG at drivers/base/regmap/regcache.c:347!
+    ...
+    PC is at regcache_sync+0x1c/0x128
+    LR is at ak4613_resume+0x28/0x34
 
-Print and propagate the return value of platform_get_irq on failure.
+The ak4613 driver is using a regmap cache sync to restore the
+configuration of the chip on resume but does not actually define a
+register cache which means that the resume is never going to work and we
+trigger asserts in regmap.  Fix this by enabling caching.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Based on commit d3030d11961a8c10 ("ASoC: ak4642: Enable cache usage to
+fix crashes on resume") by Mark Brown <broonie@kernel.org>.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-msic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/ak4613.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-msic.c b/drivers/gpio/gpio-msic.c
-index 22523aae8abe..3abf066f93d3 100644
---- a/drivers/gpio/gpio-msic.c
-+++ b/drivers/gpio/gpio-msic.c
-@@ -266,8 +266,8 @@ static int platform_msic_gpio_probe(struct platform_device *pdev)
- 	int i;
+diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
+index 07a266460ec3..b4b36cc92ffe 100644
+--- a/sound/soc/codecs/ak4613.c
++++ b/sound/soc/codecs/ak4613.c
+@@ -143,6 +143,7 @@ static const struct regmap_config ak4613_regmap_cfg = {
+ 	.max_register		= 0x16,
+ 	.reg_defaults		= ak4613_reg,
+ 	.num_reg_defaults	= ARRAY_SIZE(ak4613_reg),
++	.cache_type		= REGCACHE_RBTREE,
+ };
  
- 	if (irq < 0) {
--		dev_err(dev, "no IRQ line\n");
--		return -EINVAL;
-+		dev_err(dev, "no IRQ line: %d\n", irq);
-+		return irq;
- 	}
- 
- 	if (!pdata || !pdata->gpio_base) {
+ static const struct of_device_id ak4613_of_match[] = {
 -- 
 2.17.1
 
