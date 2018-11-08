@@ -7,81 +7,73 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19C5ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18271ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 762282081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8BE02081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:48:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZkuWKEZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 762282081C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="doGygrGr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8BE02081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeKIGZX (ORCPT
+        id S1727539AbeKIGZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:25:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35500 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbeKIGZW (ORCPT
+        Fri, 9 Nov 2018 01:25:30 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46046 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbeKIGZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:25:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id d7-v6so15239705lfi.2;
-        Thu, 08 Nov 2018 12:48:08 -0800 (PST)
+        Fri, 9 Nov 2018 01:25:30 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b20so15201761lfa.12;
+        Thu, 08 Nov 2018 12:48:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FrFuQ066lwq0JvRLuAtMRDuTVAScn6IiT1n8AcTD11I=;
-        b=PZkuWKEZLCtg2K85YaqCowb4DExy1EG8aGqioQYAObFHS1rK4+6iAsSjFwFkDBcWYY
-         qgslDz6yr2osWw8B0bxxSA4h9Z+tszdH3tWxhVG8ocsw7iaerZB4YBr5eVn1v3ugYqml
-         x8Ss/gNQVEXYZ1R50ohIZ5fNPPziS0GcCsQoOdDdEJBLW4Tmiev5hqZTXzKwBp2y6fMO
-         zuLrM8EAFw39YRpbaR7cVTfvv+zc79zD3A42u16aMGOSP6yZf4owHV/zjL+VZs3YpFgA
-         LJdrnk0vw3UavxANqL/iZIekRwMLiNBZLgBZ4K+JT7mwM6Ld7/EoqwAP/NFkm830TfUB
-         nQaA==
+        bh=3wsP2JtGnKSq/godFFtWR5Osbsc3a+r/om6gSb8p+yI=;
+        b=doGygrGrtRM0vWOcIM0Sii/3qKNXOV2AR0ViYWj6L9NaxafZmEPDk7JhWjfjmEcQ13
+         zCweQWB8gazofzlKXuJZhXVQ2CkOdIC2jgZnEZg6fSnj6TL/G8C1W0S9yfCGvfn5CM8p
+         fv8H2kniehHyR8a3RsbJ5kLMQuuJzcfXsHdA+zBlN1TL9WZJrEXMhsgzIiIeCt/skNi4
+         /zeQjprY4gSfMAvBrvQICBrmiXC8DEVaPtG7hoXw2mSmvQ2SB7v8gT6mzussZvMst+ci
+         vhvCEEKCf4P//XhOuqtJ/EHBvcKCf6KfQyV7jEU4J9+pcIbXysqz7+CpWvhoUHXyTKik
+         qsNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FrFuQ066lwq0JvRLuAtMRDuTVAScn6IiT1n8AcTD11I=;
-        b=Uprxfh9gyTquYX0T2HPqzGY1PHF0kzPP0YVI/GWMrF7AOVW3XwLbUkW64Ug6H++4kc
-         SPPh9Rb/oZHpG9/JVoVyei0XPXIlVy4ALl7mLNWna6hNB+GnMDL9rRvYMie5qWWJ12Qt
-         o5wvLL2FB3q07Gt/G9P6CLYBiBkascP3Y2GMSc39uQBTZCfuc3oyhSG+lnA1eNfcTsQU
-         nuHbOBb5i91UpiJuIVVIVoE0WrARNiiXFejo0L0OrMXIsdamP0lUBJbxJ8jalNIzm3qZ
-         25GID6JSB9qdzmWbEjZRvZ2UqxbS8123xfdydJm2UXYQjOgyybs31BBHzAJYg+g1aOmX
-         nbFQ==
-X-Gm-Message-State: AGRZ1gKMrvgOL7iaTUE1unTxL9PF5/55EM2a/+3Ixod7plWkMqRqRjCF
-        YfQvYi5Km+KJLOZHmIe5lS6Hu2Gj
-X-Google-Smtp-Source: AJdET5fXj4pxAM3s0YIqjjnTSp5iRnEyK/b0BhaX6LixYNSdZpDqMMixIqTxnk74JQv6+RTcG7FZaA==
-X-Received: by 2002:a19:9a8c:: with SMTP id c134mr3595705lfe.152.1541710087322;
-        Thu, 08 Nov 2018 12:48:07 -0800 (PST)
+        bh=3wsP2JtGnKSq/godFFtWR5Osbsc3a+r/om6gSb8p+yI=;
+        b=BrmJcsniJy4hDX4i0+ywjVhKAVOwcgOjUOo/HvgS6CAmBw+TUGrcrK5eAKDNiDt9W0
+         RdWoImMfAlz52e5jwf2WTPnkJQGZkgNBsKaRRan09WUUXRQrMNWFlrIZvw5VqTVtSnsD
+         rUgPeQZ+FNqG+ylnAHXQfOZ5rZf+7TEkJDu99HIgtxifdEeLQkvIPnLJV3XSIWn02nWU
+         upzlKD9UAzUYjC7IfbimW1Hfoq6Z4Rd7raVp5nmEaqb5uDwsjelW4BYE/YAB1W4nLVnP
+         cwu0UHQgzh8t5XdjN0k3x1dAlQbmLXiJ5AT8vqYNMw7KVr52uYCIAu+P7z0Zqxb1h6md
+         Xhdg==
+X-Gm-Message-State: AGRZ1gK/7DhnNnS2KiqoUdQ9j6Mesl2j9Ly/TRp6bhp9A/FNT5/ssalu
+        0GRPpnijF1KX1wW7979nLEk=
+X-Google-Smtp-Source: AJdET5dVOfoU/ezCbjPaaDT2Rc8A8CxU36LImtOM9zTiD+sG5rdEmwJZMmcQdw/BVC8tm0pAMBkr2w==
+X-Received: by 2002:a19:5a84:: with SMTP id y4mr1195353lfk.156.1541710095217;
+        Thu, 08 Nov 2018 12:48:15 -0800 (PST)
 Received: from [192.168.1.18] (dkl219.neoplus.adsl.tpnet.pl. [83.24.15.219])
-        by smtp.gmail.com with ESMTPSA id c22sm842341lfd.88.2018.11.08.12.48.05
+        by smtp.gmail.com with ESMTPSA id d23sm817801lfc.11.2018.11.08.12.48.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 12:48:06 -0800 (PST)
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
+        Thu, 08 Nov 2018 12:48:14 -0800 (PST)
+Subject: Re: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
 To:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+        pavel@ucw.cz, robh@kernel.org
 References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <84dd8750-883e-1318-df85-f4c6b46b898f@ti.com>
+ <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+ <d1267477-e000-f392-290f-2546f8ee379c@ti.com>
 From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <5e857610-baee-9b4b-7a21-025be1f9670e@gmail.com>
-Date:   Thu, 8 Nov 2018 21:48:04 +0100
+Message-ID: <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
+Date:   Thu, 8 Nov 2018 21:48:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <84dd8750-883e-1318-df85-f4c6b46b898f@ti.com>
+In-Reply-To: <d1267477-e000-f392-290f-2546f8ee379c@ti.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -92,195 +84,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Dan,
 
-On 11/08/2018 07:06 PM, Dan Murphy wrote:
+On 11/08/2018 07:14 PM, Dan Murphy wrote:
 > On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->> Add public led_compose_name() API for composing LED class device
->> name basing on fwnode_handle data. The function composes device name
->> according to either a new <color:function> pattern or the legacy
->> <devicename:color:function> pattern. The decision on using the
->> particular pattern is made basing on whether fwnode contains new
->> "function" and "color" properties, or the legacy "label" proeprty.
->>
->> Backwards compatibility with in-driver hard-coded LED class device
->> names is assured thanks to the default_desc argument.
->>
->> In case none of the aformentioned properties was found, then, for OF
->> nodes, the node name is adopted for LED class device name.
+>> Switch to using generic LED support for composing LED class
+>> device name.
 >>
 >> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> Cc: Baolin Wang <baolin.wang@linaro.org>
->> Cc: Daniel Mack <daniel@zonque.org>
 >> Cc: Dan Murphy <dmurphy@ti.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Cc: Simon Shields <simon@lineageos.org>
->> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 >> ---
->>  Documentation/leds/leds-class.txt |  2 +-
->>  drivers/leds/led-core.c           | 71 +++++++++++++++++++++++++++++++++++++++
->>  include/linux/leds.h              | 32 ++++++++++++++++++
->>  3 files changed, 104 insertions(+), 1 deletion(-)
+>>  drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
+>>  1 file changed, 20 insertions(+), 19 deletions(-)
 >>
->> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
->> index 836cb16..e9009c4 100644
->> --- a/Documentation/leds/leds-class.txt
->> +++ b/Documentation/leds/leds-class.txt
->> @@ -43,7 +43,7 @@ LED Device Naming
+>> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+>> index 4f413a7..9dfc0f2 100644
+>> --- a/drivers/leds/leds-lm3692x.c
+>> +++ b/drivers/leds/leds-lm3692x.c
+>> @@ -13,7 +13,6 @@
+>>  #include <linux/regmap.h>
+>>  #include <linux/regulator/consumer.h>
+>>  #include <linux/slab.h>
+>> -#include <uapi/linux/uleds.h>
 >>  
->>  Is currently of the form:
+>>  #define LM36922_MODEL	0
+>>  #define LM36923_MODEL	1
+>> @@ -95,6 +94,9 @@
+>>  #define LM3692X_FAULT_FLAG_SHRT BIT(3)
+>>  #define LM3692X_FAULT_FLAG_OPEN BIT(4)
 >>  
->> -"devicename:colour:function"
->> +"colour:function"
->>  
->>  There have been calls for LED properties such as colour to be exported as
->>  individual led class attributes. As a solution which doesn't incur as much
->> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->> index ede4fa0..f7371fc 100644
->> --- a/drivers/leds/led-core.c
->> +++ b/drivers/leds/led-core.c
->> @@ -16,6 +16,8 @@
->>  #include <linux/list.h>
->>  #include <linux/module.h>
->>  #include <linux/mutex.h>
->> +#include <linux/of.h>
->> +#include <linux/property.h>
->>  #include <linux/rwsem.h>
->>  #include "leds.h"
->>  
->> @@ -327,3 +329,72 @@ void led_sysfs_enable(struct led_classdev *led_cdev)
->>  	led_cdev->flags &= ~LED_SYSFS_DISABLE;
->>  }
->>  EXPORT_SYMBOL_GPL(led_sysfs_enable);
+>> +#define LM36922_NAME "lm36922"
+>> +#define LM36923_NAME "lm36923"
 >> +
->> +static void led_parse_properties(struct fwnode_handle *fwnode,
->> +				 struct led_properties *props)
->> +{
->> +	int ret;
->> +
->> +	if (!fwnode)
->> +		return;
->> +
->> +	ret = fwnode_property_read_string(fwnode, "label", &props->label);
-> 
-> If we have the label do we need to continue to look for the function and color nodes?
-> 
-> It can be checked and diverted using fwnode_property_present for the "label" property
-
-Good catch. I will respin it as proposed.
-
->> +	if (!ret)
->> +		return;
->> +
->> +	ret = fwnode_property_read_string(fwnode, "function", &props->function);
->> +	if (ret)
->> +		pr_info("Failed to parse function property\n");
->> +
->> +	ret = fwnode_property_read_string(fwnode, "color", &props->color);
->> +	if (ret)
->> +		pr_info("Failed to parse color property\n");
->> +}
->> +
->> +int led_compose_name(struct fwnode_handle *fwnode, const char *led_hw_name,
->> +		     const char *default_desc, char *led_classdev_name)
->> +{
->> +	struct led_properties props = {};
->> +
->> +	if (!led_classdev_name)
->> +		return -EINVAL;
->> +
->> +	led_parse_properties(fwnode, &props);
->> +
->> +	if (props.label) {
->> +		/*
->> +		 * Presence of 'label' DT property implies legacy LED name,
->> +		 * formatted as <devicename:color:function>, with possible
->> +		 * section omission if doesn't apply to given device.
->> +		 *
->> +		 * If no led_hw_name has been passed, then it indicates that
->> +		 * DT label should be used as-is for LED class device name.
->> +		 * Otherwise the label is prepended with led_hw_name to compose
->> +		 * the final LED class device name.
->> +		 */
->> +		if (!led_hw_name) {
->> +			strncpy(led_classdev_name, props.label,
->> +				LED_MAX_NAME_SIZE);
->> +		} else {
->> +			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
->> +				 led_hw_name, props.label);
->> +		}
->> +	} else if (props.function || props.color) {
->> +		snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
->> +			 props.color ?: "", props.function ?: "");
->> +	} else if (default_desc) {
->> +		if (!led_hw_name) {
->> +			pr_err("Legacy LED naming requires devicename segment");
->> +			return -EINVAL;
->> +		}
->> +		snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
->> +			 led_hw_name, default_desc);
->> +	} else if (is_of_node(fwnode)) {
->> +		strncpy(led_classdev_name, to_of_node(fwnode)->name,
->> +			LED_MAX_NAME_SIZE);
->> +	} else
->> +		return -EINVAL;
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(led_compose_name);
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index 646c49a..ddb4001 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -238,6 +238,32 @@ extern void led_sysfs_disable(struct led_classdev *led_cdev);
->>  extern void led_sysfs_enable(struct led_classdev *led_cdev);
->>  
 >>  /**
->> + * led_compose_name - compose LED class device name
->> + * @child: child fwnode_handle describing a LED,
->> + *	   or a group of synchronized LEDs.
->> + * @led_hw_name: name of the LED controller, used when falling back to legacy
->> + *		 LED naming; it should be set to NULL in new LED class drivers
->> + * @default_desc: default <color:function> tuple, for backwards compatibility
->> + *		  with in-driver hard-coded LED names used as a fallback when
->> + *		  "label" DT property was absent; it should be set to NULL
->> + *		  in new LED class drivers
->> + * @led_classdev_name: composed LED class device name
->> + *
->> + * Create LED class device name basing on the configuration provided by the
->> + * board firmware. The name can have a legacy form <devicename:color:function>,
->> + * or a new form <color:function>. The latter is chosen if at least one of
->> + * "color" or "function" properties is present in the fwnode, leaving the
->> + * section blank if the related property is absent. The former is applied
->> + * when legacy "label" property is present in the fwnode. In case none of the
->> + * aformentioned properties was found, then, for OF nodes, the node name
-> 
-> s/aforementioned
-> 
->> + * is adopted for LED class device name.
->> + *
->> + * Returns: 0 on success or negative error value on failure
->> + */
->> +extern int led_compose_name(struct fwnode_handle *child, const char *led_hw_name,
->> +			    const char *default_desc, char *led_classdev_name);
->> +
->> +/**
->>   * led_sysfs_is_disabled - check if LED sysfs interface is disabled
->>   * @led_cdev: the LED to query
->>   *
->> @@ -414,6 +440,12 @@ struct led_platform_data {
->>  	struct led_info	*leds;
+>>   * struct lm3692x_led -
+>>   * @lock - Lock for reading/writing the device
+>> @@ -103,7 +105,6 @@
+>>   * @regmap - Devices register map
+>>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
+>>   * @regulator - LED supply regulator pointer
+>> - * @label - LED label
+>>   * @led_enable - LED sync to be enabled
+>>   * @model_id - Current device model ID enumerated
+>>   */
+>> @@ -114,7 +115,6 @@ struct lm3692x_led {
+>>  	struct regmap *regmap;
+>>  	struct gpio_desc *enable_gpio;
+>>  	struct regulator *regulator;
+>> -	char label[LED_MAX_NAME_SIZE];
+>>  	int led_enable;
+>>  	int model_id;
 >>  };
+>> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
+>>  static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>  {
+>>  	struct fwnode_handle *child = NULL;
+>> -	const char *name;
+>> +	struct led_init_data init_data;
+>> +	char *model_name;
+>>  	int ret;
 >>  
->> +struct led_properties {
->> +	const char *color;
->> +	const char *function;
->> +	const char *label;
->> +};
+>>  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
+>> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>  		dev_err(&led->client->dev, "No LED Child node\n");
+>>  		return -ENODEV;
+>>  	}
+>> +	init_data.fwnode = child;
+>>  
+>> -	fwnode_property_read_string(child, "linux,default-trigger",
+>> -				    &led->led_dev.default_trigger);
+>> +	if (led->model_id == LM36922_MODEL)
+>> +		model_name =  LM36922_NAME;
+>> +	else
+>> +		model_name =  LM36923_NAME;
+>>  
+>> -	ret = fwnode_property_read_string(child, "label", &name);
+>> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
+>> +			       init_data.name);
+>>  	if (ret)
+>> -		snprintf(led->label, sizeof(led->label),
+>> -			"%s::", led->client->name);
+>> -	else
+>> -		snprintf(led->label, sizeof(led->label),
+>> -			 "%s:%s", led->client->name, name);
+>> +		return ret;
 >> +
->>  struct gpio_desc;
->>  typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
->>  				unsigned long *delay_on,
+>> +	fwnode_property_read_string(child, "linux,default-trigger",
+>> +				    &led->led_dev.default_trigger);
+>>  
+>>  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
+>>  	if (ret) {
+>> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>>  		return ret;
+>>  	}
+>>  
+>> -	led->led_dev.name = led->label;
+>> -
+>> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
+>> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
+>> +					     &init_data);
+>>  	if (ret) {
+>>  		dev_err(&led->client->dev, "led register err: %d\n", ret);
+>>  		return ret;
+>>  	}
+>>  
+>> -	led->led_dev.dev->of_node = to_of_node(child);
+>> -
+>>  	return 0;
+>>  }
+>>  
+>> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
+>>  }
+>>  
+>>  static const struct i2c_device_id lm3692x_id[] = {
+>> -	{ "lm36922", LM36922_MODEL },
+>> -	{ "lm36923", LM36923_MODEL },
+>> +	{ LM36922_NAME, LM36922_MODEL },
+>> +	{ LM36923_NAME, LM36923_MODEL },
+> 
+> How is this change relevant?
+> No mention in the comments about this change.
+
+Unrelated. It is a remnant from the stage of development, where I had
+an impression that i2c_client name is taken from this array
+somehow. Only later I learned that it is taken from OF compatible
+property after removing vendor prefix with comma.
+
+Afterwards I decide to abide by this change since it seems to be
+just an improvement - if I'm adding the string definition anyway,
+then why not replace other matching literals?
+
+I will add the explanation if the commit message if there are no
+other objections.
+
+>>  	{ }
+>>  };
+>>  MODULE_DEVICE_TABLE(i2c, lm3692x_id);
 >>
 > 
 > 
