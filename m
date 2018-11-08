@@ -7,56 +7,50 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45ACECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BD7ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A88CC2148E
+	by mail.kernel.org (Postfix) with ESMTP id E52BB2133D
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:56:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgJ37fdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A88CC2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmHP3kJ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52BB2133D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeKIHeC (ORCPT
+        id S1729236AbeKIHeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:34:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbeKIHeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:34:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727463AbeKIHeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:34:00 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0707221104;
-        Thu,  8 Nov 2018 21:56:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D502821019;
+        Thu,  8 Nov 2018 21:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714194;
-        bh=Xiir64usdaUv84kM1vP2AR6koDe2+w5g6wAyQtEzN64=;
+        s=default; t=1541714192;
+        bh=FkO+DPUYMtJ5uDJ1S9M3TOqZMh3NHsM12chFSfGUeG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FgJ37fdwqN/mkjW51fg70Y/YcQQDgpk0pHQQsTS3YzspRh5TnMqRypOc0jkrDf0Hb
-         nJSKCz3HbbUUj918MQ9xp2dx7TmHqFGK3m4RKZu+72XVPL//SJcW4tMTL7czZgYAZA
-         5HIXnuyhfK8tH8JtnLbaHnTYACs69+h3WTs7qFLA=
+        b=FmHP3kJ2oXzFyFy1Q4zuZrUR+gJ0GfTULLGEu70lQy3KMf/pJzGVS0OdhkFD0ViRH
+         0RzFMJXYAsq6RAldZ0i1DktB6U6EnFrxnzdUeXyQ9Lk1lhCCptEwuYHM8VJnx10p0P
+         ZDcE8gn9i3/rPpRofhak9wuuuLfkEN84XuX7m+no=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Vrabel <david.vrabel@citrix.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michal Hocko <mhocko@suse.cz>,
+        Andi Kleen <andi@firstfloor.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 115/144] x86/ldt: Fix small LDT allocation for Xen
-Date:   Thu,  8 Nov 2018 13:51:26 -0800
-Message-Id: <20181108215106.300920029@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 113/144] mm: migrate: hugetlb: putback destination hugepage to active list
+Date:   Thu,  8 Nov 2018 13:51:24 -0800
+Message-Id: <20181108215106.088438909@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -74,62 +68,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f454b478861325f067fd58ba7ee9f1b5c4a9d6a0 ]
+[ Upstream commit 3aaa76e125c1dd58c9b599baa8c6021896874c12 ]
 
-While the following commit:
+Since commit bcc54222309c ("mm: hugetlb: introduce page_huge_active")
+each hugetlb page maintains its active flag to avoid a race condition
+betwe= en multiple calls of isolate_huge_page(), but current kernel
+doesn't set the f= lag on a hugepage allocated by migration because the
+proper putback routine isn= 't called.  This means that users could
+still encounter the race referred to by bcc54222309c in this special
+case, so this patch fixes it.
 
-  37868fe113 ("x86/ldt: Make modify_ldt synchronous")
-
-added a nice comment explaining that Xen needs page-aligned
-whole page chunks for guest descriptor tables, it then
-nevertheless used kzalloc() on the small size path.
-
-As I'm unaware of guarantees for kmalloc(PAGE_SIZE, ) to return
-page-aligned memory blocks, I believe this needs to be switched
-back to __get_free_page() (or better get_zeroed_page()).
-
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Vrabel <david.vrabel@citrix.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/55E735D6020000780009F1E6@prv-mh.provo.novell.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: bcc54222309c ("mm: hugetlb: introduce page_huge_active")
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Michal Hocko <mhocko@suse.cz>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>  [4.1.x]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/ldt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/migrate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 2bcc0525f1c1..6acc9dd91f36 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -58,7 +58,7 @@ static struct ldt_struct *alloc_ldt_struct(int size)
- 	if (alloc_size > PAGE_SIZE)
- 		new_ldt->entries = vzalloc(alloc_size);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 4d743bce5a23..57559f9295f9 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1077,7 +1077,7 @@ out:
+ 	if (rc != MIGRATEPAGE_SUCCESS && put_new_page)
+ 		put_new_page(new_hpage, private);
  	else
--		new_ldt->entries = kzalloc(PAGE_SIZE, GFP_KERNEL);
-+		new_ldt->entries = (void *)get_zeroed_page(GFP_KERNEL);
+-		put_page(new_hpage);
++		putback_active_hugepage(new_hpage);
  
- 	if (!new_ldt->entries) {
- 		kfree(new_ldt);
-@@ -95,7 +95,7 @@ static void free_ldt_struct(struct ldt_struct *ldt)
- 	if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)
- 		vfree(ldt->entries);
- 	else
--		kfree(ldt->entries);
-+		free_page((unsigned long)ldt->entries);
- 	kfree(ldt);
- }
- 
+ 	if (result) {
+ 		if (rc)
 -- 
 2.17.1
 
