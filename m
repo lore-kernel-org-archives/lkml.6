@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD23ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B8DECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDE220818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C282B2133D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:59:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsuUujmc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BDE220818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsP+O0pw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C282B2133D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbeKIHgh (ORCPT
+        id S1729917AbeKIHgm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:36:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54142 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:36:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728284AbeKIHgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:36:36 -0500
+        id S1728109AbeKIHgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:36:42 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 007C120892;
-        Thu,  8 Nov 2018 21:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FC7120818;
+        Thu,  8 Nov 2018 21:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714348;
-        bh=gZgzQQnKU6YjV1AdLCTxMmFhJhYaEwaZeY+EHTUBDic=;
+        s=default; t=1541714353;
+        bh=ZVkD4NL6p39YbzNObOjGWI16qDDrP1hq238hM2LgUrY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IsuUujmcm+zX9+IjAbU2edvjqEsA0mnENfkaWcp1YD1Ime0+WW05v6zBwSdKMEtam
-         2utHE3gGrJObJSfqyqfve4j3DLNWML/uu/zS43rpuvV3uWEdePN1Qu1NP5udu5KTbS
-         Go8mB7D/K0wyk5bpNqri0ffhMsfFMv0rDf9MsctU=
+        b=jsP+O0pwYGo0zhU22LdWr/jONGcnf6+VGQ1QKQyTSHc+0LDLklGCUoXpQG9K0GGgd
+         sjlvIBq82CKraShzQUV3rOeV9Te9waVtUF/FpRP7DrzjHzIIR75BaEVtbIqvTcrKdQ
+         zpinB+iMMLhzZr7gAhVSPnaZnxUWoXKxcxrfoWz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 026/114] btrfs: cleaner_kthread() doesnt need explicit freeze
-Date:   Thu,  8 Nov 2018 13:50:41 -0800
-Message-Id: <20181108215101.483013816@linuxfoundation.org>
+Subject: [PATCH 4.4 027/114] radix-tree: fix radix_tree_iter_retry() for tagged iterators.
+Date:   Thu,  8 Nov 2018 13:50:42 -0800
+Message-Id: <20181108215101.574865326@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,40 +69,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 838fe1887765f4cc679febea60d87d2a06bd300e ]
+[ Upstream commit 3cb9185c67304b2a7ea9be73e7d13df6fb2793a1 ]
 
-cleaner_kthread() is not marked freezable, and therefore calling
-try_to_freeze() in its context is a pointless no-op.
+radix_tree_iter_retry() resets slot to NULL, but it doesn't reset tags.
+Then NULL slot and non-zero iter.tags passed to radix_tree_next_slot()
+leading to crash:
 
-In addition to that, as has been clearly demonstrated by 80ad623edd2d
-("Revert "btrfs: clear PF_NOFREEZE in cleaner_kthread()"), it's perfectly
-valid / legal for cleaner_kthread() to stay scheduled out in an arbitrary
-place during suspend (in that particular example that was waiting for
-reading of extent pages), so there is no need to leave any traces of
-freezer in this kthread.
+  RIP: radix_tree_next_slot include/linux/radix-tree.h:473
+    find_get_pages_tag+0x334/0x930 mm/filemap.c:1452
+  ....
+  Call Trace:
+    pagevec_lookup_tag+0x3a/0x80 mm/swap.c:960
+    mpage_prepare_extent_to_map+0x321/0xa90 fs/ext4/inode.c:2516
+    ext4_writepages+0x10be/0x2b20 fs/ext4/inode.c:2736
+    do_writepages+0x97/0x100 mm/page-writeback.c:2364
+    __filemap_fdatawrite_range+0x248/0x2e0 mm/filemap.c:300
+    filemap_write_and_wait_range+0x121/0x1b0 mm/filemap.c:490
+    ext4_sync_file+0x34d/0xdb0 fs/ext4/fsync.c:115
+    vfs_fsync_range+0x10a/0x250 fs/sync.c:195
+    vfs_fsync fs/sync.c:209
+    do_fsync+0x42/0x70 fs/sync.c:219
+    SYSC_fdatasync fs/sync.c:232
+    SyS_fdatasync+0x19/0x20 fs/sync.c:230
+    entry_SYSCALL_64_fastpath+0x23/0xc1 arch/x86/entry/entry_64.S:207
 
-Fixes: 80ad623edd2d ("Revert "btrfs: clear PF_NOFREEZE in cleaner_kthread()")
-Fixes: 696249132158 ("btrfs: clear PF_NOFREEZE in cleaner_kthread()")
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: David Sterba <dsterba@suse.com>
+We must reset iterator's tags to bail out from radix_tree_next_slot()
+and go to the slow-path in radix_tree_next_chunk().
+
+Fixes: 46437f9a554f ("radix-tree: fix race in gang lookup")
+Link: http://lkml.kernel.org/r/1468495196-10604-1-git-send-email-aryabinin@virtuozzo.com
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Konstantin Khlebnikov <koct9i@gmail.com>
+Cc: Matthew Wilcox <willy@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/disk-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/radix-tree.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index ae6e3a30e61e..a2001abbe379 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1820,7 +1820,7 @@ static int cleaner_kthread(void *arg)
- 		 */
- 		btrfs_delete_unused_bgs(root->fs_info);
- sleep:
--		if (!try_to_freeze() && !again) {
-+		if (!again) {
- 			set_current_state(TASK_INTERRUPTIBLE);
- 			if (!kthread_should_stop())
- 				schedule();
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index 5d5174b59802..673dee29a9b9 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -382,6 +382,7 @@ static inline __must_check
+ void **radix_tree_iter_retry(struct radix_tree_iter *iter)
+ {
+ 	iter->next_index = iter->index;
++	iter->tags = 0;
+ 	return NULL;
+ }
+ 
 -- 
 2.17.1
 
