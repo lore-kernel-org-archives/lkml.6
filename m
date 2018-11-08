@@ -2,135 +2,224 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD63ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA66CECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D992081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83ACA2081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:55:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="CA6uxHWX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D992081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dhI8nrkd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83ACA2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeKIFb3 (ORCPT
+        id S1727310AbeKIFcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:31:29 -0500
-Received: from mail-eopbgr740055.outbound.protection.outlook.com ([40.107.74.55]:6690
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726140AbeKIFb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:31:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Oy+EHUew50a4WwzzL+iPFE1YWFo4MV1tfsCf6ow14A=;
- b=CA6uxHWXY15M1TxhrZ0P9yxn3MTyhf3m6P5+q5/oivfq58ME5xAK+BIxkBMBgUdR0jHGxTejJAD/xrBBKYi85cDbvyv4GSecBO8JeoFvxgKNTw1qLNlfvqbsLxhDJnEZj+Sw6/y3KPLCOlZ1o5mk2I6x3bb05IK2O/T9d/B9O+I=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB5911.namprd05.prod.outlook.com (20.178.50.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.16; Thu, 8 Nov 2018 19:54:22 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1339.009; Thu, 8 Nov 2018
- 19:54:22 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
-CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
- asm
-Thread-Topic: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
- asm
-Thread-Index: AQHUW2CZ0dZfAolPxUG9hT8O5ZUp5qVDToGAgAAFpACAAAwfgIABcMKAgAAOcACAAAERgIAALpuAgAAB5wCAAI3zgIAAt2kAgAAshwA=
-Date:   Thu, 8 Nov 2018 19:54:22 +0000
-Message-ID: <080748A5-2588-47C9-BC2A-E643630FB9A7@vmware.com>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181003213100.189959-3-namit@vmware.com>
- <89262174-6f15-6116-e67f-436f7c1bfe99@deltatee.com>
- <6651971B-E3AB-4CDD-868C-2338593F7D83@vmware.com>
- <d0812681-4a8f-8cc4-24ce-d02002ee34d2@deltatee.com>
- <DC1EA50F-FAC3-4750-BCF7-0622D1FB4756@vmware.com>
- <a3902c4c-64b1-9c49-02fb-d5e4c9b04314@deltatee.com>
- <192946CF-8543-4CF5-B2A3-93674FCD07E2@vmware.com>
- <7bc80811-8ab3-d26a-6fb3-b7aeebcfce43@deltatee.com>
- <85B77A64-5FF3-4B82-8A07-E045E259C985@zytor.com>
- <3B824A03-AB76-4B34-B1CA-F27C0F1B0575@vmware.com>
- <2c022676-9299-bb5f-023b-5c114cd79f81@deltatee.com>
-In-Reply-To: <2c022676-9299-bb5f-023b-5c114cd79f81@deltatee.com>
-Accept-Language: en-US
+        Fri, 9 Nov 2018 00:32:46 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:43971 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbeKIFcq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:32:46 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CDB938365D;
+        Fri,  9 Nov 2018 08:55:44 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1541706944;
+        bh=fJdF5cQhexPTKq1MyMZxQaWnppO8KiJimygjveWqCFI=;
+        h=From:To:CC:Subject:Date:References;
+        b=dhI8nrkdF+/uhSa7JtcFDzzDN94buGBJZva2i8pq4rPANKKz7aeeGdLNFRVHssNFD
+         y2dv67F/AaiyfEsTatgq0HoTktZWDiDxl02geAa/ggt7u7qsOVFzLKnX75AsVJiHIZ
+         hd8VV7gNjaiaoisHWyQnF8VZXeHDViLPp5vgNymhSW8LmGsW0ja3m3VKGunmTisuR2
+         Fwq2QF1TnU5qTzur+a9ZTSPKP6oZxfKfiC73oW0juPsIP7OX1opQN0+YcRhJf5yyfR
+         Qv+14rywuWGUuUtw1Rsu94YApQopjMbdIxn6L65UM8tsX3DO8nNI1CywQJj81VbbWF
+         j42K4X2aeI6+g==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5be494c00000>; Fri, 09 Nov 2018 08:55:44 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Fri, 9 Nov 2018 08:55:40 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Fri, 9 Nov 2018 08:55:40 +1300
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jdelvare@suse.com" <jdelvare@suse.com>
+CC:     "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: add binding documentation for
+ adt7475
+Thread-Topic: [PATCH 1/2] dt-bindings: hwmon: add binding documentation for
+ adt7475
+Thread-Index: AQHUdk5nXr6sO2VXpkGFaxm/KObkRw==
+Date:   Thu, 8 Nov 2018 19:55:39 +0000
+Message-ID: <46001dee3a224ac3b01ceb11421af83d@svr-chch-ex1.atlnz.lc>
+References: <20181107040010.27436-1-chris.packham@alliedtelesis.co.nz>
+ <20181107040010.27436-2-chris.packham@alliedtelesis.co.nz>
+ <64720b73-dddf-783c-a3a4-3f32a748bf5d@roeck-us.net>
+ <1ed7434bfded41bfba3b739f58f69102@svr-chch-ex1.atlnz.lc>
+ <213614fb-1b7a-a06c-6f9f-f3d497750ca6@roeck-us.net>
+Accept-Language: en-NZ, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [2601:647:4580:b719:dc2c:5266:45a2:22ce]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB5911;20:dsVqQPQrYdFEx5Ui2EStRMMdcXUgnTnZ1R6ipJDwXxLKqqd+TV6dvfUqupOs2f20Zu85/tMeBL/K5DZGGjRAysEq8lBUNnyyJAX03QMSNKJbNZNZWQDIzv9LDBnjrO500/ZscdXZJmTIFA61+N3cNp+MWjd5TJCRKi+0RP/wec4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3f20f170-941a-4f0d-3883-08d645b3fa94
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5911;
-x-ms-traffictypediagnostic: BYAPR05MB5911:
-x-microsoft-antispam-prvs: <BYAPR05MB5911621C0F981C06E2142B70D0C50@BYAPR05MB5911.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(61668805478150)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5911;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5911;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(366004)(39860400002)(396003)(199004)(189003)(46003)(6116002)(25786009)(186003)(2906002)(68736007)(2900100001)(71200400001)(106356001)(7416002)(86362001)(6436002)(71190400001)(82746002)(256004)(11346002)(2616005)(8936002)(8676002)(446003)(486006)(81156014)(54906003)(105586002)(110136005)(81166006)(305945005)(4326008)(5660300001)(7736002)(316002)(102836004)(99286004)(97736004)(93886005)(53936002)(229853002)(2501003)(83716004)(6486002)(6246003)(36756003)(478600001)(6506007)(14454004)(76176011)(33656002)(53546011)(6512007)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5911;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VQ19Mh88K0XpXGUlsh8ExwqL7ZpscEz5gpsCeY5lY+K9K7T2pSiTHH6L+l3WiBI79mScIXQ+Fw/nmtZkL4GcBdZEZl/BKe74pOx1t8R/Opl5Pl5vG/erENRLC5aQDrvQJ8EpVWme3E5201jKBY5Cpz8JnUyMpYzxxVMHBNNVda+0bnPIw7qT6P8hpDS8t/s5LGIlEMwgzgOIhkKeS5IHerhu1V1a8AxP74FSOhGvzewEhNfLMgH65AM07oWgp5MCpzwRZE6T32OxzNZvSCljX0uja5My7oAoTsc8Wdj7vJvzID6PYBVxElTqDRK99Si7Zi4RxvWEs8rLNr/NDtRHSDzD5d2+3kWGxQZNa/kNbwU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <12F5485F1E903D4CB4E7F8EFC9A3B29E@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f20f170-941a-4f0d-3883-08d645b3fa94
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 19:54:22.3421
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5911
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTG9nYW4gR3VudGhvcnBlDQpTZW50OiBOb3ZlbWJlciA4LCAyMDE4IGF0IDU6MTQ6NTgg
-UE0gR01UDQo+IFRvOiBOYWRhdiBBbWl0IDxuYW1pdEB2bXdhcmUuY29tPiwgaHBhQHp5dG9yLmNv
-bSA8aHBhQHp5dG9yLmNvbT4sIEluZ28gTW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPg0KPiBDYzog
-TEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4sIFg4NiBNTCA8eDg2QGtlcm5lbC5v
-cmc+LCBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+LCBNaWNoYWwgTWFyZWsgPG1pY2hh
-bC5sa21sQG1hcmtvdmkubmV0PiwgVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+
-LCBMaW51eCBLYnVpbGQgbWFpbGluZyBsaXN0IDxsaW51eC1rYnVpbGRAdmdlci5rZXJuZWwub3Jn
-PiwgU3RlcGhlbiBCYXRlcyA8c2JhdGVzQHJhaXRobGluLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSCB2OSAwMi8xMF0gTWFrZWZpbGU6IFByZXBhcmUgZm9yIHVzaW5nIG1hY3JvcyBmb3IgaW5s
-aW5lIGFzbQ0KPiANCj4gDQo+IA0KPiANCj4gT24gMjAxOC0xMS0wNyAxMToxOCBwLm0uLCBOYWRh
-diBBbWl0IHdyb3RlOg0KPj4+IEFwcGFyZW50bHkgZ2NjIHdpbGwgdHJlYXQgdGhlbSBsaWtlIGJh
-c2ljIGJsb2NrcyBhbmQgcG9zc2libHkgbW92ZSB0aGVtIGFyb3VuZC4NCj4+IA0KPj4gTWF5YmUg
-aXQgaXMgcG9zc2libGUgdG8gYnJlYWsgdGhlIGNvbXBpbGF0aW9uIG9mIGVhY2ggb2JqZWN0IGlu
-dG8gdHdvDQo+PiBzdGFnZXM6IGZpcnN0LCBjb21waWxlIHRoZSBzb3VyY2Ugd2l0aG91dCBhc3Nl
-bWJseSwgYW5kIHRoZW4gdGFrZSB0aGUNCj4+IGdlbmVyYXRlZCAucyBmaWxlIGFuZCBhc3NlbWJs
-ZSBpdCB3aXRoIHRoZSAucyBmaWxlIG9mIHRoZSBtYWNyb3MuDQo+PiANCj4+IERvZXMgaXQgc291
-bmRzIGFzIHNvbWV0aGluZyB0aGF0IG1heSB3b3JrPyBJIGd1ZXNzIGl0IHNob3VsZCBvbmx5IGJl
-IGRvbmUNCj4+IHdoZW4gZGlzdGNjIGlzIHVzZWQuDQo+IA0KPiBJbiB0aGVvcnkgaXQgd291bGQg
-YXQgbGVhc3QgYWxsb3cgdGhlIGNvbXBpbGUgc3RlcCB0byBiZSBkaXN0cmlidXRlZCwNCj4gdGhl
-IGFzc2VtYmx5IHN0ZXAgd291bGQgc3RpbGwgaGF2ZSB0byBiZSBkb25lIGxvY2FsbHkuLi4gSXQn
-ZCBiZSBiZXR0ZXINCj4gdGhhbiBub3RoaW5nLCBJIGd1ZXNzLg0KDQpJIGRvbuKAmXQgdGhpbmsg
-dGhlIGFzc2VtYmx5IHN0YWdlIG5lZWRzIHRvIGJlIGRvbmUgbG9jYWxseS4gZ2NjIGNhbiBzdGls
-bCBiZQ0KdXNlZCB0byBkZXBsb3kgdGhlIGFzc2VtYmxlci4gSSBhbSBub3QgdG9vIGZhbWlsaWFy
-IHdpdGggZGlzdGNjLCBzbyBJIGRvbuKAmXQNCmtub3cgd2hldGhlciB0aGUgcHJlcHJvY2Vzc2lu
-ZyBzdXBwb3J0cyBtdWx0aXBsZSBzb3VyY2UtZmlsZXMsIGFuZCB3aGV0aGVyDQppdCBoYXMgc29t
-ZSBzdHJhbmdlLWJlaGF2aW9yIHdoZW4gaXQgY29tZXMgdG8gLlMvLnMgZmlsZXMuDQoNCldlbGws
-IEnigJlsbCBnaXZlIGl0IGEgdHJ5Lg0KDQo=
+On 7/11/18 6:08 PM, Guenter Roeck wrote:=0A=
+> On 11/6/18 8:27 PM, Chris Packham wrote:=0A=
+>> On 7/11/18 5:24 PM, Guenter Roeck wrote:=0A=
+>>> On 11/6/18 8:00 PM, Chris Packham wrote:=0A=
+>>>> With the addition of the invert-pwm property the adt7475 needs its own=
+=0A=
+>>>> binding documentation rather being captured under trivial-devices.txt.=
+=0A=
+>>>>=0A=
+>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>>>> ---=0A=
+>>>>      .../devicetree/bindings/hwmon/adt7475.txt     | 22 ++++++++++++++=
++++++=0A=
+>>>>      .../devicetree/bindings/trivial-devices.txt   |  4 ----=0A=
+>>>>      2 files changed, 22 insertions(+), 4 deletions(-)=0A=
+>>>>      create mode 100644 Documentation/devicetree/bindings/hwmon/adt747=
+5.txt=0A=
+>>>>=0A=
+>>>> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.txt b/Doc=
+umentation/devicetree/bindings/hwmon/adt7475.txt=0A=
+>>>> new file mode 100644=0A=
+>>>> index 000000000000..79255439e157=0A=
+>>>> --- /dev/null=0A=
+>>>> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.txt=0A=
+>>>> @@ -0,0 +1,22 @@=0A=
+>>>> +*ADT7475 hwmon sensor.=0A=
+>>>> +=0A=
+>>>> +Required properties:=0A=
+>>>> +- compatible: One of=0A=
+>>>> +	"adi,adt7473"=0A=
+>>>> +	"adi,adt7475"=0A=
+>>>> +	"adi,adt7476"=0A=
+>>>> +	"adi,adt7490"=0A=
+>>>> +=0A=
+>>>> +- reg: I2C address=0A=
+>>>> +=0A=
+>>>> +optional properties:=0A=
+>>>> +=0A=
+>>>> +- invert-pwm: This configures the PWM to use logic low for 100% duty =
+cycle.=0A=
+>>>> +=0A=
+>>>> +Example:=0A=
+>>>> +=0A=
+>>>> +hwmon@2e {=0A=
+>>>> +	compatible =3D ;=0A=
+>>>> +	reg =3D <0x2e>;=0A=
+>>>> +	invert-pwm;=0A=
+>>>=0A=
+>>> If I understand correctly, the flag is set per pwm channel. A single gl=
+obal=0A=
+>>> property seems inappropriate.=0A=
+>>=0A=
+>> Yes it is per-channel. But I was having a hard time imagining a hardware=
+=0A=
+>> design that would use both inverted and non-inverted at the same time.=
+=0A=
+>>=0A=
+> =0A=
+> People can be inventive. Sometimes too much so.=0A=
+> =0A=
+>> Do you have a preference for how the properties should look?=0A=
+>>=0A=
+>>      invert-pwm[123]?=0A=
+>>=0A=
+>>      invert-pwm =3D <0x7>;?=0A=
+>>=0A=
+> Ultimately we'll have to find a generic way of defining devicetree proper=
+ties for=0A=
+> hardware monitoring devices, not just for pwm but for all sensor types. A=
+ sub-node=0A=
+> per channel seems to be the most likely answer, but I think that is a lon=
+g way off=0A=
+> (and will require lengthy discussions about acceptable properties).=0A=
+> =0A=
+> I was looking into pwm DT properties, but they define a set of flags=0A=
+> (PWM_POLARITY_INVERTED, PWM_POLARITY_NORMAL).=0A=
+> =0A=
+> The g762 driver uses "pwm_polarity". Underscore - hmm. Other drivers use =
+module=0A=
+> parameters, sysfs attributes (pwmX_invert in asc7621 driver), or platform=
+ data=0A=
+> (g762, max6639).=0A=
+> =0A=
+> Maybe pwm-polarity =3D <PWM_POLARITY_NORMAL | PWM_POLARITY_INVERTED> ?=0A=
+> No idea if that makes sense. Or just a boolean pwm-polarity-inverted.=0A=
+=0A=
+That would allow undoing an earlier invert which is something my initial =
+=0A=
+implementation lacked.=0A=
+=0A=
+In the future we could also make this a list of values to deal with =0A=
+multiple pwm outputs=0A=
+=0A=
+e.g. pwm-polarity =3D <PWM_POLARITY_NORMAL>, <PWM_POLARITY_NORMAL> =0A=
+<PWM_POLARITY_INVERTED>;=0A=
+=0A=
+I'll look at a v2 that does the first part for now.=0A=
+=0A=
+> =0A=
+> Thinking about it per channel vs. per chip ... other drivers also seem to=
+=0A=
+> use a single property / attribute for the entire chip, so that is fine he=
+re=0A=
+> as well. We can always extend it if needed.=0A=
+> =0A=
+> Anyway, I am fine with whatever Rob accepts.=0A=
+> =0A=
+> Guenter=0A=
+> =0A=
+>>>=0A=
+>>> Guenter=0A=
+>>>=0A=
+>>>> +};=0A=
+>>>> diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/D=
+ocumentation/devicetree/bindings/trivial-devices.txt=0A=
+>>>> index 69c934aec13b..4f29100d6bbf 100644=0A=
+>>>> --- a/Documentation/devicetree/bindings/trivial-devices.txt=0A=
+>>>> +++ b/Documentation/devicetree/bindings/trivial-devices.txt=0A=
+>>>> @@ -14,10 +14,6 @@ ad,ad7414		SMBus/I2C Digital Temperature Sensor in =
+6-Pin SOT with SMBus Alert an=0A=
+>>>>      ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProce=
+ssor-Based Systems=0A=
+>>>>      adi,adt7461		+/-1C TDM Extended Temp Range I.C=0A=
+>>>>      adt7461			+/-1C TDM Extended Temp Range I.C=0A=
+>>>> -adi,adt7473		+/-1C TDM Extended Temp Range I.C=0A=
+>>>> -adi,adt7475		+/-1C TDM Extended Temp Range I.C=0A=
+>>>> -adi,adt7476		+/-1C TDM Extended Temp Range I.C=0A=
+>>>> -adi,adt7490		+/-1C TDM Extended Temp Range I.C=0A=
+>>>>      adi,adxl345		Three-Axis Digital Accelerometer=0A=
+>>>>      adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibi=
+lity value "adi,adxl345" must be listed too)=0A=
+>>>>      ams,iaq-core		AMS iAQ-Core VOC Sensor=0A=
+>>>>=0A=
+>>>=0A=
+>>>=0A=
+>>=0A=
+>>=0A=
+> =0A=
+> =0A=
+=0A=
