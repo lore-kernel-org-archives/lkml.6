@@ -2,288 +2,102 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4ADC46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1862C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 113F020857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 113F020857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A53720857
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:56:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A53720857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbeKHM1V (ORCPT
+        id S1728601AbeKHM3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 07:27:21 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:30329 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726726AbeKHM1V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 07:27:21 -0500
-X-UUID: 86ad333d75a9468bae331bb6a66b9b00-20181108
-X-UUID: 86ad333d75a9468bae331bb6a66b9b00-20181108
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1086305309; Thu, 08 Nov 2018 10:53:53 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 8 Nov
- 2018 10:53:51 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 8 Nov 2018 10:53:50 +0800
-Message-ID: <1541645630.11281.18.camel@mhfsdcap03>
-Subject: Re: [PATCH] PCI: mediatek: Use
- devm_of_pci_get_host_bridge_resources() to parse DT
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     <bhelgaas@google.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <ryder.lee@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <youlin.pei@mediatek.com>, <yt.shen@mediatek.com>,
-        <jianjun.wang@mediatek.com>
-Date:   Thu, 8 Nov 2018 10:53:50 +0800
-In-Reply-To: <20181107120333.GB11586@e107981-ln.cambridge.arm.com>
-References: <1539833014-1738-1-git-send-email-honghui.zhang@mediatek.com>
-         <20181107120333.GB11586@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 07:29:47 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12839 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726726AbeKHM3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 07:29:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 18:56:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
+   d="scan'208";a="84192790"
+Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Nov 2018 18:56:29 -0800
+Message-ID: <5BE3A6FD.5040801@intel.com>
+Date:   Thu, 08 Nov 2018 11:01:17 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-X-MTK:  N
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     linux-kernel@vger.kernel.org
+Subject: Re: virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON discussion
+References: <286AC319A985734F985F78AFA26841F73DE40B6C@shsmsx102.ccr.corp.intel.com> <20181107102538-mutt-send-email-mst@kernel.org> <5BE3A430.7030505@intel.com> <20181107214929-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20181107214929-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-07 at 12:03 +0000, Lorenzo Pieralisi wrote:
-> On Thu, Oct 18, 2018 at 11:23:34AM +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
-> > DT parser.
-> > 
-> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > ---
-> >  drivers/pci/controller/pcie-mediatek.c | 109 +++++++++------------------------
-> >  1 file changed, 29 insertions(+), 80 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > index 2a1f97c..6632d4e 100644
-> > --- a/drivers/pci/controller/pcie-mediatek.c
-> > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > @@ -197,29 +197,20 @@ struct mtk_pcie_port {
-> >   * @dev: pointer to PCIe device
-> >   * @base: IO mapped register base
-> >   * @free_ck: free-run reference clock
-> > - * @io: IO resource
-> > - * @pio: PIO resource
-> >   * @mem: non-prefetchable memory resource
-> > - * @busn: bus range
-> > - * @offset: IO / Memory offset
-> >   * @ports: pointer to PCIe port information
-> >   * @soc: pointer to SoC-dependent operations
-> > + * @busnr: root bus number
-> >   */
-> >  struct mtk_pcie {
-> >  	struct device *dev;
-> >  	void __iomem *base;
-> >  	struct clk *free_ck;
-> >  
-> > -	struct resource io;
-> > -	struct resource pio;
-> >  	struct resource mem;
-> > -	struct resource busn;
-> > -	struct {
-> > -		resource_size_t mem;
-> > -		resource_size_t io;
-> > -	} offset;
-> >  	struct list_head ports;
-> >  	const struct mtk_pcie_soc *soc;
-> > +	int busnr;
-> 
-> If you move the code initializing and probing the pci_host_bridge into
-> mtk_pcie_setup() (and rename that function) this variable becomes
-> useless. It should be an unsigned int, by the way.
+On 11/08/2018 10:50 AM, Michael S. Tsirkin wrote:
+> On Thu, Nov 08, 2018 at 10:49:20AM +0800, Wei Wang wrote:
+>> On 11/07/2018 11:27 PM, Michael S. Tsirkin wrote:
+>>
+>> + LKML
+>>
+>>> On Wed, Nov 07, 2018 at 02:29:02PM +0000, Wang, Wei W wrote:
+>>>> Hi Michael,
+>>>>
+>>>>
+>>>> Thanks again for reviewing so many versions of patches, and I learnt a lot from
+>>>> your comments.
+>>>>
+>>>>
+>>>> While I’m writing the virtio-balloon spec patches, I’m thinking probably we
+>>>> don’t need VIRTIO_BALLOON_F_PAGE_POISON to limit
+>>>> VIRTIO_BALLOON_F_FREE_PAGE_HINT, because now the guest frees the allocated
+>>>> pages after the migration is done (that is, the skipped free pages will be
+>>>> poisoned when the guest is already on the destination machine).
+>>> The concern was this:
+>>>
+>>> guest poisons the page by writing a non-0 pattern there
+>>> guest sends page to host
+>>> VM is migrated, page is unmapped
+>>> guest reads page, zero page is mapped
+>> Not sure about this one: I think guest wouldn't read the page,
+>> since they are held by balloon (balloon itself will also
+>> not read it, the page just stays on a list waiting to be freed).
+>> Please see the below example.
+>>
+>>> guest sees 0 in page and detects it as use after free
+>>   - balloon collects (i.e. alloc) a free page X (now it
+>>     has 0xaa poison value) and reports X to host to be skipped in
+>>     migration;
+>>   -  Now VM is migrated to the destination, and on the destination
+>>      side, X is not mapped initially.
+>>   -  Nobody will access X since it has been taken by balloon
+>>      and stays on a list waiting to be freed. So the first chance
+>>      that will get X mapped will be the moment that balloon
+>>      returns X to mm via free(), as free() writes the
+>>      poison value to X.
+>>
+>>
+>> Best,
+>> Wei
+>
+> Oh I see, that was with the previous design where we bypassed alloc.
+> I think you are right, but better stress-test it.
+>
 
-Yes, I can directly assign the busnr to host->busnr in the
-mtk_pcie_setup and remove this variable.
+Sure, will do.
 
-Thanks.
-
-> 
-> >  };
-> >  
-> >  static void mtk_pcie_subsys_powerdown(struct mtk_pcie *pcie)
-> > @@ -1045,55 +1036,42 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
-> >  {
-> >  	struct device *dev = pcie->dev;
-> >  	struct device_node *node = dev->of_node, *child;
-> > -	struct of_pci_range_parser parser;
-> > -	struct of_pci_range range;
-> > -	struct resource res;
-> >  	struct mtk_pcie_port *port, *tmp;
-> > +	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-> > +	struct list_head *windows = &host->windows;
-> > +	struct resource_entry *win, *tmp_win;
-> > +	resource_size_t io_base;
-> >  	int err;
-> >  
-> > -	if (of_pci_range_parser_init(&parser, node)) {
-> > -		dev_err(dev, "missing \"ranges\" property\n");
-> > -		return -EINVAL;
-> > -	}
-> > +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> > +						    windows, &io_base);
-> > +	if (err)
-> > +		return err;
-> >  
-> > -	for_each_of_pci_range(&parser, &range) {
-> > -		err = of_pci_range_to_resource(&range, node, &res);
-> > -		if (err < 0)
-> > -			return err;
-> > +	err = devm_request_pci_bus_resources(dev, windows);
-> > +	if (err < 0)
-> > +		return err;
-> >  
-> > -		switch (res.flags & IORESOURCE_TYPE_BITS) {
-> > +	/* Get the I/O and memory ranges from DT */
-> > +	resource_list_for_each_entry_safe(win, tmp_win, windows) {
-> > +		switch (resource_type(win->res)) {
-> >  		case IORESOURCE_IO:
-> > -			pcie->offset.io = res.start - range.pci_addr;
-> > -
-> > -			memcpy(&pcie->pio, &res, sizeof(res));
-> > -			pcie->pio.name = node->full_name;
-> > -
-> > -			pcie->io.start = range.cpu_addr;
-> > -			pcie->io.end = range.cpu_addr + range.size - 1;
-> > -			pcie->io.flags = IORESOURCE_MEM;
-> > -			pcie->io.name = "I/O";
-> > -
-> > -			memcpy(&res, &pcie->io, sizeof(res));
-> > -			break;
-> > -
-> > +			err = devm_pci_remap_iospace(dev, win->res, io_base);
-> > +			if (err) {
-> > +				dev_warn(dev, "error %d: failed to map resource %pR\n",
-> > +					 err, win->res);
-> > +				resource_list_destroy_entry(win);
-> > +			}
-> 
-> Missing a break.
-
-Thanks.
-> 
-> >  		case IORESOURCE_MEM:
-> > -			pcie->offset.mem = res.start - range.pci_addr;
-> > -
-> > -			memcpy(&pcie->mem, &res, sizeof(res));
-> > +			memcpy(&pcie->mem, win->res, sizeof(*win->res));
-> >  			pcie->mem.name = "non-prefetchable";
-> >  			break;
-> > +		case IORESOURCE_BUS:
-> > +			pcie->busnr = win->res->start;
-> > +			break;
-> >  		}
-> >  	}
-> >  
-> > -	err = of_pci_parse_bus_range(node, &pcie->busn);
-> > -	if (err < 0) {
-> > -		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
-> > -		pcie->busn.name = node->name;
-> > -		pcie->busn.start = 0;
-> > -		pcie->busn.end = 0xff;
-> > -		pcie->busn.flags = IORESOURCE_BUS;
-> > -	}
-> > -
-> >  	for_each_available_child_of_node(node, child) {
-> >  		int slot;
-> >  
-> > @@ -1125,28 +1103,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
-> >  	return 0;
-> >  }
-> >  
-> > -static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
-> > -{
-> > -	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-> > -	struct list_head *windows = &host->windows;
-> > -	struct device *dev = pcie->dev;
-> > -	int err;
-> > -
-> > -	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
-> > -	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
-> > -	pci_add_resource(windows, &pcie->busn);
-> > -
-> > -	err = devm_request_pci_bus_resources(dev, windows);
-> > -	if (err < 0)
-> > -		return err;
-> > -
-> > -	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
-> > -	if (err < 0)
-> > -		return err;
-> > -
-> > -	return 0;
-> > -}
-> > -
-> >  static int mtk_pcie_probe(struct platform_device *pdev)
-> >  {
-> >  	struct device *dev = &pdev->dev;
-> > @@ -1169,11 +1125,7 @@ static int mtk_pcie_probe(struct platform_device *pdev)
-> >  	if (err)
-> >  		return err;
-> >  
-> > -	err = mtk_pcie_request_resources(pcie);
-> > -	if (err)
-> > -		goto put_resources;
-> > -
-> > -	host->busnr = pcie->busn.start;
-> > +	host->busnr = pcie->busnr;
-> >  	host->dev.parent = pcie->dev;
-> >  	host->ops = pcie->soc->ops;
-> >  	host->map_irq = of_irq_parse_and_map_pci;
-> > @@ -1181,12 +1133,9 @@ static int mtk_pcie_probe(struct platform_device *pdev)
-> >  	host->sysdata = pcie;
-> >  
-> >  	err = pci_host_probe(host);
-> > -	if (err)
-> > -		goto put_resources;
-> > -
-> > -	return 0;
-> > +	if (!err)
-> > +		return 0;
-> >  
-> 
-> No, leave the error path.
-> 
-> 	err = pci_host_probe(host);
-> 	if (err)
-> 		goto put_resources;
-> 
-> 	return 0;
-> put_resources:
-> 	...
-> 
-> it is easier to follow.
-> 
-
-OK.
-I will revert this snippet in the next version.
-
-Thanks.
-
-> Thanks,
-> Lorenzo
-> 
-> > -put_resources:
-> >  	if (!list_empty(&pcie->ports))
-> >  		mtk_pcie_put_resources(pcie);
-> >  
-> > -- 
-> > 2.6.4
-> > 
-
-
+Best,
+Wei
