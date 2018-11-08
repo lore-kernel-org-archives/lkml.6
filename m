@@ -2,96 +2,84 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2260ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141EFECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D47E206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:22:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D47E206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id D76B2206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76B2206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeKIC6n (ORCPT
+        id S1727040AbeKIC7D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:58:43 -0500
-Received: from mout.gmx.net ([212.227.17.20]:36733 "EHLO mout.gmx.net"
+        Thu, 8 Nov 2018 21:59:03 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41660 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbeKIC6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:58:43 -0500
-Received: from [66.187.233.206] ([66.187.233.206]) by web-mail.gmx.net
- (3c-app-mailcom-bs15.server.lan [172.19.170.183]) (via HTTP); Thu, 8 Nov
- 2018 18:22:12 +0100
+        id S1726583AbeKIC7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 21:59:03 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id y35k2CV3_SyP; Thu,  8 Nov 2018 18:22:33 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B05681EC0A1D;
+        Thu,  8 Nov 2018 18:22:33 +0100 (CET)
+Date:   Thu, 8 Nov 2018 18:22:25 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Michael Matz <matz@suse.de>
+Cc:     Yi Wang <wang.yi59@zte.com.cn>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        suravee.suthikulpanit@amd.com, puwen@hygon.cn,
+        davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+Subject: Re: [PATCH v2] x86/cpu: fix prototype warning
+Message-ID: <20181108172225.GH7543@zn.tnic>
+References: <1541639548-11149-1-git-send-email-wang.yi59@zte.com.cn>
+ <20181108150318.GD7543@zn.tnic>
+ <20181108153226.GF7543@zn.tnic>
+ <alpine.LSU.2.21.1811081538120.21712@wotan.suse.de>
 MIME-Version: 1.0
-Message-ID: <trinity-73b7af5e-ab88-495b-932a-2ffd6dd81623-1541697732607@3c-app-mailcom-bs15>
-From:   "Qian Cai" <cai@gmx.us>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org
-Subject: Re: BUG: sleeping function called from invalid context at
- mm/slab.h:421
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 8 Nov 2018 18:22:12 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <trinity-7128b38b-7a1d-4584-aa34-174a2906ec88-1541694235634@3c-app-mailcom-bs15>
-References: <trinity-7128b38b-7a1d-4584-aa34-174a2906ec88-1541694235634@3c-app-mailcom-bs15>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:JSDxI+IpPwfSHnC3yq7Bt2wANp76gaE1yGsTsg1Lq/XpBNLTPQ6hLwkZPOZmZCY8zcK9x
- J4ReQaMe7ZBjOHkSb9heJzMySvEvVDyHZY9MA21z3uhIFQ/KlPpnvhBSIGbzPP010mCUGAim3xAJ
- Jnc2qciLVQ9vmyNJu/BQIr9d0VuvCpvL/xNLSDVzWyYQAmj3RBc3hH6A+mk/rRc5vX4Otp2muXcg
- 8rAbnexOYispRRb9xjAsBFzZbxqo7LkCVHxZLG1vuFT5gGYnAWJtU70XBxtFPG7Av6pb6E7b2oU1
- FM=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7CxU67IgCMw=:htSe5oB9k6dw0p2YXUdKIq
- Ik6AC/eMr4nZPhfpvxHFPQlci5xRtONVKM6BkcHWTqGAvDnyp7hIPkD6Cmcpss5b/P5hSNzg3
- KX1rsmMaJhYww4P0eJjDiYf91EJsWIDJXID6Q0jgMFMGLLmjo/gA1tXV2oP8ukjXtIIQQbiLZ
- NDnSI5zbpuAmg82v8fYiW6xHcAZ1NTDJAZtaTSZHa46ozXbHpk/7nuNtVdMWpxxSI+KdatxsM
- H0lD+xuQ47oum59pTo/M4Z3Bqi/lZZq7C8/JILcie7wVQsARj0KaI6D4pXoXrrOO96K7qcKcn
- kmTqPmRzc1QgCud2cToANVDqpsCzEMhgH1xRZb96BjV/HA6va+7wJvj79wO11jY5d+d7mTV6V
- fhxQ1BrftnjK1EL/QX2+VWmBvQnH+utIJeYzwYriMxxgXETAD7HoMbcdfjKZo/es0GEr+y2G6
- hr6wqAVpCMChEvLw1U3rRZ50saFtuSnJxgUEytX/oilr0xPysSp8DEMgeN9Hrj7xF8lrGKrRl
- UJlaIaQRDb6KOaoym+lbO0ujijlqT4ndE1LC465FzIxGrMmISoFHJcFaGdSl7whWA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1811081538120.21712@wotan.suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks like more of an EFI issue where it called efi_mem_reserve_persistent().
+On Thu, Nov 08, 2018 at 03:47:32PM +0000, Michael Matz wrote:
+> What tglx said.  If you don't intend such functions to be called 
+> from other units make them static, if you do intend them to be callable 
+> declare the properly.
+> 
+> [There's also one subtle issue with argument promotions.  prototypeless 
+> functions are called as if they are declared "int name()" that is 
+> default argument promotions take place (float->double, {char,short}->int), 
+> which won't happen with prototypes, and argument type conversions won't 
+> take place (as no parameter types are known).  This might lead to 
+> different values between calling a prototyped and a prototype-less 
+> function arriving at the function even though the call expression looked 
+> the same]
 
-> Sent: Thursday, November 08, 2018 at 11:23 AM
-> From: "Qian Cai" <cai@gmx.us>
-> To: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Subject: BUG: sleeping function called from invalid context at mm/slab.h:421
->
-> Just booting up the latest git master (b00d209) on an aarch64 server and saw this.
-> 
-> Nov  8 11:06:36 huawei-t2280-03 kernel: BUG: sleeping function called from invalid context at mm/slab.h:421
-> Nov  8 11:06:36 huawei-t2280-03 kernel: in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
-> Nov  8 11:06:36 huawei-t2280-03 kernel: no locks held by swapper/1/0.
-> Nov  8 11:06:36 huawei-t2280-03 kernel: irq event stamp: 0
-> Nov  8 11:06:36 huawei-t2280-03 kernel: hardirqs last  enabled at (0): [<0000000000000000>]           (null)
-> Nov  8 11:06:36 huawei-t2280-03 kernel: hardirqs last disabled at (0): [<ffff2000080e24ec>] copy_process.isra.32.part.33+0x460/0x1534
-> Nov  8 11:06:36 huawei-t2280-03 kernel: softirqs last  enabled at (0): [<ffff2000080e24ec>] copy_process.isra.32.part.33+0x460/0x1534
-> Nov  8 11:06:36 huawei-t2280-03 kernel: softirqs last disabled at (0): [<0000000000000000>]           (null)
-> Nov  8 11:06:36 huawei-t2280-03 kernel: CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc1+ #3
-> Nov  8 11:06:36 huawei-t2280-03 kernel: Call trace:
-> Nov  8 11:06:36 huawei-t2280-03 kernel: dump_backtrace+0x0/0x190
-> Nov  8 11:06:36 huawei-t2280-03 kernel: show_stack+0x24/0x2c
-> Nov  8 11:06:36 huawei-t2280-03 kernel: dump_stack+0xa4/0xe0
-> Nov  8 11:06:36 huawei-t2280-03 kernel: ___might_sleep+0x208/0x234
-> Nov  8 11:06:36 huawei-t2280-03 kernel: __might_sleep+0x58/0x8c
-> Nov  8 11:06:36 huawei-t2280-03 kernel: kmem_cache_alloc_trace+0x29c/0x420
-> Nov  8 11:06:36 huawei-t2280-03 kernel: efi_mem_reserve_persistent+0x50/0xe8
-> Nov  8 11:06:36 huawei-t2280-03 kernel: its_cpu_init_lpis+0x298/0x2e0
-> Nov  8 11:06:36 huawei-t2280-03 kernel: its_cpu_init+0x7c/0x1a8
-> Nov  8 11:06:36 huawei-t2280-03 kernel: gic_starting_cpu+0x28/0x34
-> Nov  8 11:06:36 huawei-t2280-03 kernel: cpuhp_invoke_callback+0x104/0xd04
-> Nov  8 11:06:36 huawei-t2280-03 kernel: notify_cpu_starting+0x60/0xa0
-> Nov  8 11:06:36 huawei-t2280-03 kernel: secondary_start_kernel+0xcc/0x178
-> 
-> Any idea?
+Eww, that's yucky.
+
+Ok, so we should enalbe this warning by default then. And doing that in
+the main Makefile gives ~1400 warnings on an allmodconfig build.
+
+Yi Wang, I guess you have a long road in front of you. :-)
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
