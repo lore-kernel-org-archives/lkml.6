@@ -2,353 +2,453 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DD6ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591FEECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5FBC20840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:03:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5FBC20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0721820825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:03:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FwhMRm2A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0721820825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeKICkA convert rfc822-to-8bit (ORCPT
+        id S1727344AbeKICkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:40:00 -0500
-Received: from mga14.intel.com ([192.55.52.115]:24683 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbeKICkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:40:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 09:03:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="278214638"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 09:03:34 -0800
-Received: from fmsmsx152.amr.corp.intel.com (10.18.125.5) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 8 Nov 2018 09:03:33 -0800
-Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
- FMSMSX152.amr.corp.intel.com (10.18.125.5) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 8 Nov 2018 09:03:33 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- hasmsx109.ger.corp.intel.com ([169.254.3.7]) with mapi id 14.03.0415.000;
- Thu, 8 Nov 2018 19:03:30 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 09/17] tpm: move tpm_validate_commmand() to
- tpm2-space.c
-Thread-Topic: [PATCH v5 09/17] tpm: move tpm_validate_commmand() to
- tpm2-space.c
-Thread-Index: AQHUd22+oc6RxW5vx0q+z+0w19EPqqVGGrzA
-Date:   Thu, 8 Nov 2018 17:03:29 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA18589@hasmsx108.ger.corp.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-10-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181108141541.12832-10-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjQ1YjBmMWEtZDRjMy00NDE3LTk5NzQtMmRlMTcyZTNkNDQ3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieDcrUXNNYVF2bHZSVEtaQkJcL2RLRzlweTNkRHBwSHVha0lld2ZTWDZZNlo0RFdGVHRNNEVUM3JNMDk4WFhFVlQifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.255.203.64]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Thu, 8 Nov 2018 21:40:15 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39896 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727299AbeKICkP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 21:40:15 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10-v6so22038643wrv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:03:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=FFj6EpmRM4r0RdFOW+/U4GFaTImNqse5DkY6+z+KS5M=;
+        b=FwhMRm2AShGe6B+mwurftYHOJHFpzIv/4k0/EMgxF1SibZeX8/uO/dLEqFxoxaiZYk
+         0C3luGyMOrMEzwrEwHDiYNOHiqSWrIOzqBFkxpcqO7fIL8KFnagFpJQqr6fGFU4mlEtG
+         sHSjIU2wwTeqEfag8Be8Rbwj9ASXcsGODV30zkCqdGzJFchWNpDViwNzFwTNwqpsvB18
+         K5YLwL77tUgA/HiynO5REYryetLFJfy/zUb4zPc8SzwC2pxoh1iV7N9ADnXA9JS6VvM4
+         6vyoSAvdW3Eaxzom1bVJNWbF4hYZ6mZ8vsEjNy4NAgKLe4FHWkIxmB5cIvSrg7WPTYvQ
+         DYOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=FFj6EpmRM4r0RdFOW+/U4GFaTImNqse5DkY6+z+KS5M=;
+        b=UFN80UnZsdBAVd2UhQS40IuaqPtT3fTfARiX3eHVRv4HqsvJTQZOqPfI33w2fjzN1l
+         GQJDbHPK+X3XYVHVCr+j3NEVyEo22Oh12OG8fQM56D+0kDHRI8Bdz4ht6dzaBREfeZoa
+         IoVh8jqCuyoJEhDluqDBGSaSL0j156D/yhaxuE+mSspqOpHx9uMpS7y5Kmn0P9ClpO7R
+         Bbide36qTDb/kPK79taAorDrvjfKprTbSJd0Lw83a7/Y3/+t3XD+i4vpAvBqwuaIKZUa
+         T+pu+0vZ7eOVWDgWdf2nAgjX2mjGW/xnYW6Sw7HaOqio5rvkbxLvXB2c4jZlGqlmPj2x
+         DsIQ==
+X-Gm-Message-State: AGRZ1gIFRJn/qvc5JFpa1qdgyscj0sT3lBGQwgUJ640h6UVN3xgxQkcR
+        4mGDEygLLL0huOy3YNa2RjW46Q==
+X-Google-Smtp-Source: AJdET5c13Dm0OVEUGL9GRsGm9+CkD6/Gvjnch7hND0cKJm37sZbuRqvecoEqWts3GIzhD3R4kqa16A==
+X-Received: by 2002:adf:800b:: with SMTP id 11-v6mr4763925wrk.106.1541696627638;
+        Thu, 08 Nov 2018 09:03:47 -0800 (PST)
+Received: from boomer.baylibre.com ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s5-v6sm4965738wrq.16.2018.11.08.09.03.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 09:03:46 -0800 (PST)
+Message-ID: <f0439f033d6f23bd489b31ba7c81a8ad6878079d.camel@baylibre.com>
+Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gxl: Add support for the
+ Smartlabs SML-5442TW
+From:   jbrunet@baylibre.com
+To:     Christian Hewitt <christianshewitt@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Noralf =?ISO-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Date:   Thu, 08 Nov 2018 18:03:44 +0100
+In-Reply-To: <1541696475-27454-4-git-send-email-christianshewitt@gmail.com>
+References: <1541691207-24768-1-git-send-email-christianshewitt@gmail.com>
+         <1541696475-27454-1-git-send-email-christianshewitt@gmail.com>
+         <1541696475-27454-4-git-send-email-christianshewitt@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
+On Thu, 2018-11-08 at 21:01 +0400, Christian Hewitt wrote:
+> The Smartlabs SML-5442TW is broadly similar to the P231 reference design
+> but with the following differences:
 > 
-> Move tpm_validate_command() to tpm2-space.c and make it part of the
-> tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
-> functionality in order to detach it from rest of the tpm_transmit() flow.
+> - Yellow and Blue front-panel LEDs are available but disabled
+> - Red/Green LED is used to signal off/on status
+> - GPIOX_17 is set high to enable the QCA9377 wireless module
+> - uart_AO can be accessed after opening the case; soldered pins exist
 > 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 > ---
->  drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
->  drivers/char/tpm/tpm.h           |  9 ++--
->  drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
->  3 files changed, 68 insertions(+), 67 deletions(-)
+>  arch/arm64/boot/dts/amlogic/Makefile               |   1 +
+>  .../boot/dts/amlogic/meson-gxl-s905d-sml5442tw.dts | 316
+> +++++++++++++++++++++
+>  2 files changed, 317 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905d-
+> sml5442tw.dts
 > 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
-> interface.c
-> index f2280bf15339..a6ffd0960ae5 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct
-> tpm_chip *chip, u32 ordinal)  }
-> EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
-> 
-> -static int tpm_validate_command(struct tpm_chip *chip,
-> -				 struct tpm_space *space,
-> -				 const u8 *cmd,
-> -				 size_t len)
-> -{
-> -	const struct tpm_header *header = (const void *)cmd;
-> -	int i;
-> -	u32 cc;
-> -	u32 attrs;
-> -	unsigned int nr_handles;
-> -
-> -	if (len < TPM_HEADER_SIZE)
-> -		return -EINVAL;
-> -
-> -	if (!space)
-> -		return 0;
-> -
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
-> -		cc = be32_to_cpu(header->ordinal);
-> -
-> -		i = tpm2_find_cc(chip, cc);
-> -		if (i < 0) {
-> -			dev_dbg(&chip->dev, "0x%04X is an invalid
-> command\n",
-> -				cc);
-> -			return -EOPNOTSUPP;
-> -		}
-> -
-> -		attrs = chip->cc_attrs_tbl[i];
-> -		nr_handles =
-> -			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) &
-> GENMASK(2, 0));
-> -		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> -			goto err_len;
-> -	}
-> -
-> -	return 0;
-> -err_len:
-> -	dev_dbg(&chip->dev,
-> -		"%s: insufficient command length %zu", __func__, len);
-> -	return -EINVAL;
-> -}
-> -
->  static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)  {
->  	int rc;
-> @@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
->  	u32 count, ordinal;
->  	unsigned long stop;
-> 
-> -	rc = tpm_validate_command(chip, space, buf, bufsiz);
-> -	if (rc == -EINVAL)
-> -		return rc;
-> -	/*
-> -	 * If the command is not implemented by the TPM, synthesize a
-> -	 * response with a TPM2_RC_COMMAND_CODE return for user-
-> space.
-> -	 */
-> -	if (rc == -EOPNOTSUPP) {
-> -		header->length = cpu_to_be32(sizeof(*header));
-> -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> -		header->return_code =
-> cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> -
-> TSS2_RESMGR_TPM_RC_LAYER);
-> -		return sizeof(*header);
-> -	}
-> +	if (bufsiz < TPM_HEADER_SIZE)
-> +		return -EINVAL;
-> 
->  	if (bufsiz > TPM_BUFSIZE)
->  		bufsiz = TPM_BUFSIZE;
-> @@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
->  		return -E2BIG;
->  	}
-> 
-> -	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-> +	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
-> +	/*
-> +	 * If the command is not implemented by the TPM, synthesize a
-> +	 * response with a TPM2_RC_COMMAND_CODE return for user-
-> space.
-> +	 */
-> +	if (rc == -EOPNOTSUPP) {
-> +		header->length = cpu_to_be32(sizeof(*header));
-> +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> +		header->return_code =
-> cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> diff --git a/arch/arm64/boot/dts/amlogic/Makefile
+> b/arch/arm64/boot/dts/amlogic/Makefile
+> index c31f29d6..37d7dbd 100644
+> --- a/arch/arm64/boot/dts/amlogic/Makefile
+> +++ b/arch/arm64/boot/dts/amlogic/Makefile
+> @@ -18,6 +18,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-
+> a95x.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p230.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
+> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-sml5442tw.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-sml5442tw.dts
+> b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-sml5442tw.dts
+> new file mode 100644
+> index 0000000..a081984
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-sml5442tw.dts
+> @@ -0,0 +1,316 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2016 Endless Computers, Inc.
+> + * Author: Carlo Caione <carlo@endlessm.com>
+> + * Copyright (c) 2018 BayLibre, SAS
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + */
 > +
-> TSS2_RESMGR_TPM_RC_LAYER);
-> +		return sizeof(*header);
-> +	}
->  	if (rc)
->  		return rc;
-> 
-> @@ -249,7 +207,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
->  	if (rc)
->  		tpm2_flush_space(chip);
->  	else
-> -		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> +		rc = tpm2_commit_space(chip, space, buf, &len);
-> 
->  	return rc ? rc : len;
->  }
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> 92638ec6ec97..68d78ebba032 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -264,6 +264,7 @@ struct tpm_chip {
->  #endif /* CONFIG_ACPI */
-> 
->  	struct tpm_space work_space;
-> +	u32 last_cc;
->  	u32 nr_commands;
->  	u32 *cc_attrs_tbl;
-> 
-> @@ -577,10 +578,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
-> int tpm2_init_space(struct tpm_space *space);  void tpm2_del_space(struct
-> tpm_chip *chip, struct tpm_space *space);  void tpm2_flush_space(struct
-> tpm_chip *chip); -int tpm2_prepare_space(struct tpm_chip *chip, struct
-> tpm_space *space, u32 cc,
-> -		       u8 *cmd);
-> -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> -		      u32 cc, u8 *buf, size_t *bufsiz);
-> +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space,
-> u8 *cmd,
-> +		       size_t cmdsiz);
-> +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> u8 *buf,
-> +		       size_t *bufsiz);
-> 
->  int tpm_bios_log_setup(struct tpm_chip *chip);  void
-> tpm_bios_log_teardown(struct tpm_chip *chip); diff --git
-> a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c index
-> 393d9aadadce..f35ac941c3a4 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip
-> *chip, u32 cc, u8 *cmd)
->  	return 0;
->  }
-> 
-> -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space,
-> u32 cc,
-> -		       u8 *cmd)
-> +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space
-> *space,
-> +				const u8 *cmd, size_t len)
-> +{
-> +	const struct tpm_input_header *header = (const void *)cmd;
-> +	int i;
-> +	u32 cc;
-> +	u32 attrs;
-> +	unsigned int nr_handles;
+> +/dts-v1/;
 > +
-> +	if (len < TPM_HEADER_SIZE)
-> +		return -EINVAL;
+> +#include "meson-gxl-s905d.dtsi"
 > +
-> +	if (chip->nr_commands) {
-> +		cc = be32_to_cpu(header->ordinal);
-You initialized cc under if only 
+> +/ {
+> +	compatible = "smartlabs,sml5442tw", "amlogic,s905d", "amlogic,meson-
+> gxl";
+> +	model = "Smartlabs SML-5442TW";
 > +
-> +		i = tpm2_find_cc(chip, cc);
-> +		if (i < 0) {
-> +			dev_dbg(&chip->dev, "0x%04X is an invalid
-> command\n",
-> +				cc);
-> +			return -EOPNOTSUPP;
-> +		}
+> +	aliases {
+> +		serial0 = &uart_AO;
+> +		serial1 = &uart_A;
+> +		ethernet0 = &ethmac;
+> +	};
 > +
-> +		attrs = chip->cc_attrs_tbl[i];
-> +		nr_handles =
-> +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) &
-> GENMASK(2, 0));
-> +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> +			goto err_len;
-> +	}
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
 > +
-> +	return cc;
-You can return uninitialized cc here.
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x0 0x0 0x80000000>;
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		yellow {
+> +			label = "sml5442tw:yellow";
+> +			gpios = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +		};
+> +
+> +		blue {
+> +			label = "sml5442tw:blue";
+> +			gpios = <&gpio GPIODV_28 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +		};
+> +
+> +		green {
+> +			label = "sml5442tw:green";
+> +			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +		};
+> +
+> +		red {
+> +			label = "sml5442tw:red";
+> +			gpios = <&gpio GPIODV_27 GPIO_ACTIVE_HIGH>;
+> +			default-state = "off";
+> +		};
+> +	};
+> +
+> +	hdmi_5v: regulator-hdmi-5v {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "HDMI_5V";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +
+> +		gpio = <&gpio GPIOH_3 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +		regulator-always-on;
+> +	};
+> +
+> +	vddio_ao18: regulator-vddio_ao18 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDDIO_AO18";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +	};
+> +
+> +	vddio_boot: regulator-vddio_boot {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDDIO_BOOT";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +	};
+> +
+> +	vddao_3v3: regulator-vddao_3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDDAO_3V3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	vcc_3v3: regulator-vcc_3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VCC_3V3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	emmc_pwrseq: emmc-pwrseq {
+> +		compatible = "mmc-pwrseq-emmc";
+> +		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> +	wifi32k: wifi32k {
+> +		compatible = "pwm-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <32768>;
+> +		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
+> +	};
+> +
+> +	sdio_pwrseq: sdio-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
+> +		clocks = <&wifi32k>;
+> +		clock-names = "ext_clock";
+> +	};
+> +
+> +	cvbs-connector {
+> +		compatible = "composite-video-connector";
+> +
+> +		port {
+> +			cvbs_connector_in: endpoint {
+> +				remote-endpoint = <&cvbs_vdac_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	hdmi-connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi_tx_tmds_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	sound {
+> +		compatible = "simple-audio-card";
+> +		simple-audio-card,name = "meson-gx-audio";
+> +
+> +		simple-audio-card,dai-link@0 {
+> +			/* HDMI Output */
+> +			format = "i2s";
+> +			mclk-fs = <256>;
+> +			bitclock-master =  <&i2s_dai>;
+> +			frame-master = <&i2s_dai>;
+> +			plat {
+> +				sound-dai = <&aiu_i2s_dma>;
+> +			};
+> +
+> +			cpu {
+> +				sound-dai = <&i2s_dai>;
+> +			};
+> +
+> +			codec {
+> +				sound-dai = <&hdmi_tx>;
+> +			};
+> +		};
+> +	};
+> +};
 
-> +err_len:
-> +	dev_dbg(&chip->dev, "%s: insufficient command length %zu",
-> __func__,
-> +		len);
-> +	return -EINVAL;
-> +}
+Still not good, sorry !
+
 > +
-> +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space,
-> u8 *cmd,
-> +		       size_t cmdsiz)
->  {
->  	int rc;
-> +	int cc;
-> 
->  	if (!space)
->  		return 0;
-> 
-> +	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
-> +	if (cc < 0)
-> +		return cc;
+> +&cec_AO {
+> +	status = "okay";
+> +	pinctrl-0 = <&ao_cec_pins>;
+> +	pinctrl-names = "default";
+> +	hdmi-phandle = <&hdmi_tx>;
+> +};
 > +
->  	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
->  	       sizeof(space->context_tbl));
->  	memcpy(&chip->work_space.session_tbl, &space->session_tbl, @@ -
-> 291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct
-> tpm_space *space, u32 cc,
->  		return rc;
->  	}
-> 
-> +	chip->last_cc = cc;
->  	return 0;
->  }
-> 
-> @@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
->  	return 0;
->  }
-> 
-> -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> -		      u32 cc, u8 *buf, size_t *bufsiz)
-> +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> u8 *buf,
-> +		      size_t *bufsiz)
->  {
->  	struct tpm_header *header = (void *)buf;
->  	int rc;
-> @@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip,
-> struct tpm_space *space,
->  	if (!space)
->  		return 0;
-> 
-> -	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-> +	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
->  	if (rc) {
->  		tpm2_flush_space(chip);
->  		goto out;
->  	}
-> 
-> -	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-> +	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
->  	if (rc) {
->  		tpm2_flush_space(chip);
->  		goto out;
-> --
-> 2.19.1
+> +&cvbs_vdac_port {
+> +	cvbs_vdac_out: endpoint {
+> +		remote-endpoint = <&cvbs_connector_in>;
+> +	};
+> +};
+> +
+> +&ethmac {
+> +	status = "okay";
+> +	phy-mode = "rmii";
+> +	phy-handle = <&internal_phy>;
+> +};
+> +
+> +/* This will enable the bluetooth module */
+> +&gpio {
+> +	bt-en {
+> +		gpio-hog;
+> +		gpios = <GPIOX_17 GPIO_ACTIVE_HIGH>;
+> +		output-high;
+> +		line-name = "bt-en";
+> +	};
+> +};
+> +
+> +&hdmi_tx {
+> +	status = "okay";
+> +	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+> +	pinctrl-names = "default";
+> +	hdmi-supply = <&hdmi_5v>;
+> +};
+> +
+> +&hdmi_tx_tmds_port {
+> +	hdmi_tx_tmds_out: endpoint {
+> +		remote-endpoint = <&hdmi_connector_in>;
+> +	};
+> +};
+> +
+> +&i2c_A {
+> +	status = "okay";
+> +	pinctrl-0 = <&i2c_a_pins>;
+> +	pinctrl-names = "default";
+> +};
+> +
+> +&internal_phy {
+> +	pinctrl-0 = <&eth_link_led_pins>, <&eth_act_led_pins>;
+> +	pinctrl-names = "default";
+> +};
+> +
+> +&ir {
+> +	status = "okay";
+> +	pinctrl-0 = <&remote_input_ao_pins>;
+> +	pinctrl-names = "default";
+> +	linux,rc-map-name = "rc-o2cz-khamsin";
+> +};
+> +
+> +&pwm_ef {
+> +	status = "okay";
+> +	pinctrl-0 = <&pwm_e_pins>;
+> +	pinctrl-names = "default";
+> +	clocks = <&clkc CLKID_FCLK_DIV4>;
+> +	clock-names = "clkin0";
+> +};
+> +
+> +&saradc {
+> +	status = "okay";
+> +	vref-supply = <&vddio_ao18>;
+> +};
+> +
+> +/* Wireless SDIO Module */
+> +&sd_emmc_a {
+> +	status = "okay";
+> +	pinctrl-0 = <&sdio_pins>;
+> +	pinctrl-1 = <&sdio_clk_gate_pins>;
+> +	pinctrl-names = "default", "clk-gate";
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	bus-width = <4>;
+> +	cap-sd-highspeed;
+> +	max-frequency = <100000000>;
+> +
+> +	non-removable;
+> +	disable-wp;
+> +
+> +	mmc-pwrseq = <&sdio_pwrseq>;
+> +
+> +	vmmc-supply = <&vddao_3v3>;
+> +	vqmmc-supply = <&vddio_boot>;
+> +};
+> +
+> +/* SD card */
+> +&sd_emmc_b {
+> +	status = "okay";
+> +	pinctrl-0 = <&sdcard_pins>;
+> +	pinctrl-1 = <&sdcard_clk_gate_pins>;
+> +	pinctrl-names = "default", "clk-gate";
+> +
+> +	bus-width = <4>;
+> +	cap-sd-highspeed;
+> +	max-frequency = <100000000>;
+> +	disable-wp;
+> +
+> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+> +	cd-inverted;
+> +
+> +	vmmc-supply = <&vddao_3v3>;
+> +	vqmmc-supply = <&vddio_boot>;
+> +};
+> +
+> +/* eMMC */
+> +&sd_emmc_c {
+> +	status = "okay";
+> +	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+> +	pinctrl-1 = <&emmc_clk_gate_pins>;
+> +	pinctrl-names = "default", "clk-gate";
+> +
+> +	bus-width = <8>;
+> +	cap-mmc-highspeed;
+> +	max-frequency = <100000000>;
+> +	non-removable;
+> +	disable-wp;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +
+> +	mmc-pwrseq = <&emmc_pwrseq>;
+> +	vmmc-supply = <&vcc_3v3>;
+> +	vqmmc-supply = <&vddio_boot>;
+> +};
+> +
+> +/* This is connected to the Bluetooth module: */
+> +&uart_A {
+> +	status = "okay";
+> +	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
+> +	pinctrl-names = "default";
+> +	uart-has-rtscts;
+> +};
+> +
+> +/* This UART is brought out to the debug header */
+> +&uart_AO {
+> +	status = "okay";
+> +	pinctrl-0 = <&uart_ao_a_pins>;
+> +	pinctrl-names = "default";
+> +};
+> +
+> +&usb0 {
+> +	status = "okay";
+> +};
+
 
