@@ -2,271 +2,139 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19305ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452CBECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6A1F20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:45:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuQh/MiZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A1F20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 04C602081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:48:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C602081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbeKIHXG (ORCPT
+        id S1727086AbeKIH0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:23:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41902 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:26:22 -0500
+Received: from mga09.intel.com ([134.134.136.24]:62967 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726140AbeKIHXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:23:06 -0500
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F7B32081C;
-        Thu,  8 Nov 2018 21:45:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541713540;
-        bh=3hRuEueFWIpYrJxje7Y95tqVKrazAjZ1LCzmEIxqJAs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EuQh/MiZBLVJD4+JrNQr4Te42+A9M9AKVvu6V3YYZ+ebUUyIJL4uyQPuxptHkuxl9
-         SB7Fh5eUaB4sjXVYJLbf6B/Yz1NEG8hBaGAWbhXHAOir5kPtFmjJIyhTZHV0S/AtqC
-         glbkUOWGgIQ5N1kUKeHmuEeupUz8Bd8zzvYD10Wo=
-Received: by mail-yb1-f177.google.com with SMTP id t13-v6so8966356ybb.8;
-        Thu, 08 Nov 2018 13:45:40 -0800 (PST)
-X-Gm-Message-State: AGRZ1gK8npocx6Oly7NClfBdVK3Pv1RjjbmZaNFBitjvY71BPyUOviWu
-        g79m8SsPBwAcbkFlqjilghNJgZfYQTAVXsjidw==
-X-Google-Smtp-Source: AJdET5eS+ReyITnV7vV086fuk4XK6GdUNWW50GcvOC8R+PVDYTohJSZ1u/FVUEAxdi0DpAq0Hstk1NvNOeUx7csFWtE=
-X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr6585470qvl.77.1541713539354;
- Thu, 08 Nov 2018 13:45:39 -0800 (PST)
+        id S1725922AbeKIH0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:26:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:48:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="278283513"
+Received: from amwells-mobl1.amr.corp.intel.com (HELO [10.251.14.246]) ([10.251.14.246])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 13:48:54 -0800
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-5-yu-cheng.yu@intel.com>
+ <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
+ <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
+ <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <043a17ef-dc9f-56d2-5fba-1a58b7b0fd4d@intel.com>
+Date:   Thu, 8 Nov 2018 13:48:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181108184009.18430-1-vkoul@kernel.org> <20181108184009.18430-2-vkoul@kernel.org>
-In-Reply-To: <20181108184009.18430-2-vkoul@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 8 Nov 2018 15:45:28 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKsCpofdsP_TojGxeCkv59r5Ce7-4Sz1B1V_QCL1eQDVg@mail.gmail.com>
-Message-ID: <CAL_JsqKsCpofdsP_TojGxeCkv59r5Ce7-4Sz1B1V_QCL1eQDVg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/18] arm64: dts: qcom: qcs404: add base dts files
-To:     Vinod <vkoul@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 12:40 PM Vinod Koul <vkoul@kernel.org> wrote:
->
-> Add base dts files for QCS404 chipset along with cpu, timer,
-> gcc and uart2 nodes.
->
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  arch/arm64/boot/dts/qcom/qcs404.dtsi | 175 +++++++++++++++++++++++++++++++++++
->  1 file changed, 175 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs404.dtsi
->
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> new file mode 100644
-> index 000000000000..b77d1198ba79
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -0,0 +1,175 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2018, Linaro Limited
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/qcom,gcc-qcs404.h>
-> +
-> +/ {
-> +       interrupt-parent = <&intc>;
-> +
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +
-> +       chosen { };
-> +
-> +       clocks {
-> +               xo_board: xo_board {
+On 11/8/18 1:22 PM, Andy Lutomirski wrote:
+>> +struct cet_kernel_state {
+>> +       u64 kernel_ssp; /* kernel shadow stack */
+>> +       u64 pl1_ssp;    /* ring-1 shadow stack */
+>> +       u64 pl2_ssp;    /* ring-2 shadow stack */
+>> +} __packed;
+>> +
+> Why are these __packed?  It seems like it'll generate bad code for no
+> obvious purpose.
 
-Build your dtbs with "W=12" and fix any warnings. You should get a
-warning about '_'.
+It's a hardware-defined in-memory structure.  Granted, we'd need a
+really wonky compiler to make that anything *other* than a nicely-packed
+24-byte structure, but the __packed makes it explicit.
 
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <19200000>;
-> +               };
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               CPU0: cpu@0 {
-
-unit address is wrong.
-
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x100>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_0>;
-> +               };
-> +
-> +               CPU1: cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x101>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_0>;
-> +               };
-> +
-> +               CPU2: cpu@2 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x102>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_0>;
-> +               };
-> +
-> +               CPU3: cpu@3 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x103>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_0>;
-> +               };
-> +
-> +               L2_0: l2-cache {
-> +                       compatible = "cache";
-> +                       cache-level = <2>;
-> +               };
-> +       };
-> +
-> +       memory@80000000 {
-> +               device_type = "memory";
-> +               /* We expect the bootloader to fill in the reg */
-
-Can't you put in a default or base address at least.
-
-> +               reg = <0 0x0 0 0>;
-> +       };
-> +
-> +       psci {
-> +               compatible = "arm,psci-1.0";
-> +               method = "smc";
-> +       };
-> +
-> +       soc: soc@0 {
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               ranges = <0 0 0 0xffffffff>;
-> +               compatible = "simple-bus";
-> +
-> +               gcc: clock-controller@1800000 {
-> +                       compatible = "qcom,gcc-qcs404";
-> +                       reg = <0x01800000 0x80000>;
-> +                       #clock-cells = <1>;
-> +
-> +                       assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
-> +                       assigned-clock-rates = <19200000>;
-> +               };
-> +
-> +               blsp1_uart2: serial@78b1000 {
-> +                       compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-> +                       reg = <0x078b1000 0x200>;
-> +                       interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
-> +                       clock-names = "core", "iface";
-> +                       status = "okay";
-> +               };
-> +
-> +               intc: interrupt-controller@b000000 {
-> +                       compatible = "qcom,msm-qgic2";
-> +                       interrupt-controller;
-> +                       #interrupt-cells = <3>;
-> +                       reg = <0x0b000000 0x1000>,
-> +                             <0x0b002000 0x1000>;
-> +               };
-> +
-> +               timer@b120000 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       ranges;
-> +                       compatible = "arm,armv7-timer-mem";
-> +                       reg = <0x0b120000 0x1000>;
-> +                       clock-frequency = <19200000>;
-> +
-> +                       frame@b121000 {
-> +                               frame-number = <0>;
-> +                               interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +                                            <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x0b121000 0x1000>,
-> +                                     <0x0b122000 0x1000>;
-> +                       };
-> +
-> +                       frame@b123000 {
-> +                               frame-number = <1>;
-> +                               interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x0b123000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@b124000 {
-> +                               frame-number = <2>;
-> +                               interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x0b124000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@b125000 {
-> +                               frame-number = <3>;
-> +                               interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x0b125000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@b126000 {
-> +                               frame-number = <4>;
-> +                               interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x0b126000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@b127000 {
-> +                               frame-number = <5>;
-> +                               interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0xb127000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +
-> +                       frame@b128000 {
-> +                               frame-number = <6>;
-> +                               interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +                               reg = <0x0b128000 0x1000>;
-> +                               status = "disabled";
-> +                       };
-> +               };
-> +       };
-> +
-> +       timer {
-> +               compatible = "arm,armv8-timer";
-> +               interrupts = <GIC_PPI 2 0xff08>,
-> +                            <GIC_PPI 3 0xff08>,
-> +                            <GIC_PPI 4 0xff08>,
-> +                            <GIC_PPI 1 0xff08>;
-> +       };
-> +};
-> --
-> 2.14.4
->
+It is probably a really useful long-term thing to stop using __packed
+and start using "__hw_defined" or something that #defines down to __packed.
