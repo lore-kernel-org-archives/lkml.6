@@ -2,244 +2,97 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101E3C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C85C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72E22086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:01:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72E22086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B8CA2086A
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:05:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jd5DlcOR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8CA2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbeKHSfq (ORCPT
+        id S1726618AbeKHSjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:35:46 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58676 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbeKHSfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:35:46 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B65092072D; Thu,  8 Nov 2018 10:01:14 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4B9FC2039F;
-        Thu,  8 Nov 2018 10:01:14 +0100 (CET)
-Date:   Thu, 8 Nov 2018 10:01:14 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Schrempf Frieder <frieder.schrempf@kontron.De>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH] mtd: nand: spi: Add initial support for Toshiba
- TC58CVG2S0H
-Message-ID: <20181108100114.0874e2ec@bbrezillon>
-In-Reply-To: <1541665796-21092-1-git-send-email-frieder.schrempf@kontron.de>
-References: <1541665796-21092-1-git-send-email-frieder.schrempf@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Nov 2018 13:39:46 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43100 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKHSjq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:39:46 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y3-v6so20043234wrh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 01:05:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ApR5+JTGZKCLP8UbiiJuNXIs+T0w8vUoXZmHnl/mYkY=;
+        b=Jd5DlcORZDb5WSsHgbdofSkjB4aF/Ka/q9HJztSgKWfIMi9bUfMJPC7VSQzZNKG3R2
+         bKDUx9I6Av8je/Dz0etejzxrmHw4Gjmqc0/0J608mc28tZo1j54Isn6uFIT9h+HdJDtB
+         zVgVAmH2zLC2pWRcP1b0vvDBJQiUdsY/qdQF4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ApR5+JTGZKCLP8UbiiJuNXIs+T0w8vUoXZmHnl/mYkY=;
+        b=ld/T2O1T482ZILguoez1HmhRtn0KmNZ4EdFRjdo6e34+XFu7KwSGLWTlGEbmvbOx6F
+         jfRicYfkn9UaLlYv2sNVmx7dwUr9M2qvSbbpf2gPBwglvqIUmqGyEeYsdkBWfEYv0IF2
+         8M+UShXkjnQR44wBYIYrsJTVVl74HZVNKC4+vWIW5stHFOpT/ZokACEuDEOyC6kFBMkQ
+         c0eXye7nBqRbmDuE+UWH2RId6IirwlNDb4MFdm9V7kMeSTWRlTr6+Ryqt8gq3yc60UFw
+         zFMX+JdftxwMWt5tMGbKcW8fBPgMd8tyvML+d0bfwR3i6GniZ5Os9SflURo1m51hbI2W
+         di0w==
+X-Gm-Message-State: AGRZ1gKjCEaU4oO7rGG+rqSNKtt7sG+i0wXZ8Zo1O1cBVYKIxSlP0qta
+        QT7VmnK7fEgIYyw5lWCEY2isUQ==
+X-Google-Smtp-Source: AJdET5fkQz3aou+ljtoJNnptgC9zWuPzPSv0qVPbEOEpYFow6LmV6GPqsxXq0BaKVFWfDP/VD8JOVw==
+X-Received: by 2002:adf:ea82:: with SMTP id s2-v6mr3104433wrm.180.1541667914514;
+        Thu, 08 Nov 2018 01:05:14 -0800 (PST)
+Received: from lmecxl0911.lme.st.com ([2a04:cec0:1094:149:440c:9368:8cda:a020])
+        by smtp.gmail.com with ESMTPSA id l140-v6sm6974469wmb.24.2018.11.08.01.05.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Nov 2018 01:05:13 -0800 (PST)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, alexandre.torgue@st.com
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v2 0/4] Add support of STM32 hwspinlock
+Date:   Thu,  8 Nov 2018 10:04:58 +0100
+Message-Id: <20181108090502.14543-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nitpick: subject prefix should be "mtd: spinand" not
-"mtd: nand: spi" :-).
+This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
 
-On Thu, 8 Nov 2018 08:32:11 +0000
-Schrempf Frieder <frieder.schrempf@kontron.De> wrote:
+version 2:
+- fix comments done by Bjorn about clock naming, license terms in header,
+  alphabetic ordering in Makefile and Kconfig and remove function
+- Do not push test module in this version while waiting for feedbacks about it
 
-> Add minimal support for the Toshiba TC58CVG2S0H SPI NAND chip.
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> ---
->  drivers/mtd/nand/spi/Makefile  |   2 +-
->  drivers/mtd/nand/spi/core.c    |   1 +
->  drivers/mtd/nand/spi/toshiba.c | 136 ++++++++++++++++++++++++++++++++++++
->  include/linux/mtd/spinand.h    |   1 +
->  4 files changed, 139 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
-> index b74e074..be5f735 100644
-> --- a/drivers/mtd/nand/spi/Makefile
-> +++ b/drivers/mtd/nand/spi/Makefile
-> @@ -1,3 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -spinand-objs := core.o macronix.o micron.o winbond.o
-> +spinand-objs := core.o macronix.o micron.o toshiba.o winbond.o
->  obj-$(CONFIG_MTD_SPI_NAND) += spinand.o
-> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> index 30f8364..87bdf2a 100644
-> --- a/drivers/mtd/nand/spi/core.c
-> +++ b/drivers/mtd/nand/spi/core.c
-> @@ -766,6 +766,7 @@ static const struct nand_ops spinand_ops = {
->  static const struct spinand_manufacturer *spinand_manufacturers[] = {
->  	&macronix_spinand_manufacturer,
->  	&micron_spinand_manufacturer,
-> +	&toshiba_spinand_manufacturer,
->  	&winbond_spinand_manufacturer,
->  };
->  
-> diff --git a/drivers/mtd/nand/spi/toshiba.c b/drivers/mtd/nand/spi/toshiba.c
-> new file mode 100644
-> index 0000000..294bcf6
-> --- /dev/null
-> +++ b/drivers/mtd/nand/spi/toshiba.c
-> @@ -0,0 +1,136 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 exceet electronics GmbH
-> + * Copyright (c) 2018 Kontron Electronics GmbH
-> + *
-> + * Author: Frieder Schrempf <frieder.schrempf@kontron.de>
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mtd/spinand.h>
-> +
-> +#define SPINAND_MFR_TOSHIBA		0x98
-> +
-> +static SPINAND_OP_VARIANTS(read_cache_variants,
-> +		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
-> +		SPINAND_PAGE_READ_FROM_CACHE_X2_OP(0, 1, NULL, 0),
-> +		SPINAND_PAGE_READ_FROM_CACHE_OP(true, 0, 1, NULL, 0),
-> +		SPINAND_PAGE_READ_FROM_CACHE_OP(false, 0, 1, NULL, 0));
-> +
-> +static SPINAND_OP_VARIANTS(write_cache_variants,
-> +		SPINAND_PROG_LOAD(true, 0, NULL, 0));
-> +
-> +static SPINAND_OP_VARIANTS(update_cache_variants,
-> +		SPINAND_PROG_LOAD(false, 0, NULL, 0));
-> +
-> +static int tc58cvg2s0h_ooblayout_ecc(struct mtd_info *mtd, int section,
-> +				     struct mtd_oob_region *region)
-> +{
-> +	if (section > 7)
-> +		return -ERANGE;
-> +
-> +	region->offset = 128 + 16 * section;
-> +	region->length = 16;
-> +
-> +
-> +	return 0;
-> +}
-> +
-> +static int tc58cvg2s0h_ooblayout_free(struct mtd_info *mtd, int section,
-> +				      struct mtd_oob_region *region)
-> +{
-> +	if (section > 7)
-> +		return -ERANGE;
-> +
-> +	region->offset = 2 + 16 * section;
-> +	region->length = 14;
-> +
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct mtd_ooblayout_ops tc58cvg2s0h_ooblayout = {
-> +	.ecc = tc58cvg2s0h_ooblayout_ecc,
-> +	.free = tc58cvg2s0h_ooblayout_free,
-> +};
-> +
-> +static int tc58cvg2s0h_ecc_get_status(struct spinand_device *spinand,
-> +				      u8 status)
-> +{
-> +	struct nand_device *nand = spinand_to_nand(spinand);
-> +	u8 mbf = 0;
-> +	struct spi_mem_op op = SPINAND_GET_FEATURE_OP(0x30, &mbf);
-> +
-> +	switch (status & STATUS_ECC_MASK) {
-> +	case STATUS_ECC_NO_BITFLIPS:
-> +		return 0;
-> +
-> +	case STATUS_ECC_UNCOR_ERROR:
-> +		return -EBADMSG;
-> +
-> +	case STATUS_ECC_HAS_BITFLIPS:
-> +		/*
-> +		 * Let's try to retrieve the real maximum number of bitflips
-> +		 * in order to avoid forcing the wear-leveling layer to move
-> +		 * data around if it's not necessary.
-> +		 */
-> +		if (spi_mem_exec_op(spinand->spimem, &op))
-> +			return nand->eccreq.strength;
-> +
-> +		mbf >>= 4;
-> +
-> +		if (WARN_ON(mbf > nand->eccreq.strength || !mbf))
-> +			return nand->eccreq.strength;
-> +
-> +		return mbf;
-> +
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct spinand_info toshiba_spinand_table[] = {
-> +	SPINAND_INFO("TC58CVG2S0H", 0xCD,
-> +		     NAND_MEMORG(1, 4096, 256, 64, 2048, 1, 1, 1),
-> +		     NAND_ECCREQ(8, 512),
-> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> +					      &write_cache_variants,
-> +					      &update_cache_variants),
-> +		     SPINAND_HAS_QE_BIT,
-> +		     SPINAND_ECCINFO(&tc58cvg2s0h_ooblayout,
-> +				     tc58cvg2s0h_ecc_get_status)),
-> +};
-> +
-> +static int toshiba_spinand_detect(struct spinand_device *spinand)
-> +{
-> +	u8 *id = spinand->id.data;
-> +	int ret;
-> +
-> +	/*
-> +	 * Toshiba SPI NAND read ID needs a dummy byte,
-> +	 * so the first byte in id is garbage.
-> +	 */
-> +	if (id[1] != SPINAND_MFR_TOSHIBA)
-> +		return 0;
-> +
-> +	ret = spinand_match_and_init(spinand, toshiba_spinand_table,
-> +				     ARRAY_SIZE(toshiba_spinand_table),
-> +				     id[2]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 1;
-> +}
-> +
-> +static const struct spinand_manufacturer_ops toshiba_spinand_manuf_ops = {
-> +	.detect = toshiba_spinand_detect,
-> +};
-> +
-> +const struct spinand_manufacturer toshiba_spinand_manufacturer = {
-> +	.id = SPINAND_MFR_TOSHIBA,
-> +	.name = "Toshiba",
-> +	.ops = &toshiba_spinand_manuf_ops,
-> +};
-> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-> index 088ff96..816c4b0 100644
-> --- a/include/linux/mtd/spinand.h
-> +++ b/include/linux/mtd/spinand.h
-> @@ -196,6 +196,7 @@ struct spinand_manufacturer {
->  /* SPI NAND manufacturers */
->  extern const struct spinand_manufacturer macronix_spinand_manufacturer;
->  extern const struct spinand_manufacturer micron_spinand_manufacturer;
-> +extern const struct spinand_manufacturer toshiba_spinand_manufacturer;
->  extern const struct spinand_manufacturer winbond_spinand_manufacturer;
->  
->  /**
+Benjamin Gaignard (4):
+  dt-bindings: hwlock: Document STM32 hwspinlock bindings
+  hwspinlock: add STM32 hwspinlock device
+  ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
+  ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+
+ .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 ++++
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
+ drivers/hwspinlock/Kconfig                         |   9 ++
+ drivers/hwspinlock/Makefile                        |   1 +
+ drivers/hwspinlock/stm32_hwspinlock.c              | 144 +++++++++++++++++++++
+ 6 files changed, 190 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+ create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+
+-- 
+2.15.0
 
