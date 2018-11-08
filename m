@@ -2,50 +2,51 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68F4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A765C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B09B20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E69420818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:26:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/VonqPW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B09B20857
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qen99xgr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E69420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbeKIIEN (ORCPT
+        id S1731185AbeKIHko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:04:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:40:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731223AbeKIHkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:40:52 -0500
+        id S1727853AbeKIHkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:40:43 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6421D208A3;
-        Thu,  8 Nov 2018 22:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C10AF20883;
+        Thu,  8 Nov 2018 22:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714602;
-        bh=CZonvM1giLyZtX4yAjpYEpi0AspAo2dwquZhBcqC5gU=;
+        s=default; t=1541714593;
+        bh=stoz+FCVHPNoI1Kz7kTPrir9Wu6DGJIZGdbcfYRGYBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P/VonqPWZIomTyIMX1FOfujyw9D6awFhhHgVUnx+0HYY3wQ8minPxLWr8+BpLVSfz
-         8heCh1GfFfn19z3GIi/S4s9HWJZ7LmdaKPbyYSnYKFsWI02/9MIM3L4VLwlC66/b4v
-         w4h4M5QsF2iZWUm9q3y7SpsLK0ugDlcX9MqNZyLc=
+        b=qen99xgrWOR5mnv6NHyyH8paWL6Y71cL1IzyRnItcXB+HqHfo5DqAmz7NrvcR+fMZ
+         bNQROfFwIh7Hj2YPyO8cbtL7jh+k4pb37OWBrCXttjViFejcNumZbe1UidJAukXMej
+         FvJq2uN1wTrvPjMH2kPXcLmXd/lpWF44VV0Ga14g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prarit Bharava <prarit@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 039/171] ACPI: sysfs: Make ACPI GPE mask kernel parameter cover all GPEs
-Date:   Thu,  8 Nov 2018 13:50:09 -0800
-Message-Id: <20181108215130.269428592@linuxfoundation.org>
+Subject: [PATCH 4.9 018/171] qed: Avoid implicit enum conversion in qed_roce_mode_to_flavor
+Date:   Thu,  8 Nov 2018 13:49:48 -0800
+Message-Id: <20181108215128.586309990@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,87 +64,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0f27cff8597d86f881ea8274b49b63b678c14a3c ]
+[ Upstream commit d3a315795b4ce8b105a64a90699103121bde04a8 ]
 
-The acpi_mask_gpe= kernel parameter documentation states that the range
-of mask is 128 GPEs (0x00 to 0x7F).  The acpi_masked_gpes mask is a u64 so
-only 64 GPEs (0x00 to 0x3F) can really be masked.
+Clang warns when one enumerated type is implicitly converted to another.
 
-Use a bitmap of size 0xFF instead of a u64 for the GPE mask so 256
-GPEs can be masked.
+drivers/net/ethernet/qlogic/qed/qed_roce.c:153:12: warning: implicit
+conversion from enumeration type 'enum roce_mode' to different
+enumeration type 'enum roce_flavor' [-Wenum-conversion]
+                flavor = ROCE_V2_IPV6;
+                       ~ ^~~~~~~~~~~~
+drivers/net/ethernet/qlogic/qed/qed_roce.c:156:12: warning: implicit
+conversion from enumeration type 'enum roce_mode' to different
+enumeration type 'enum roce_flavor' [-Wenum-conversion]
+                flavor = MAX_ROCE_MODE;
+                       ~ ^~~~~~~~~~~~~
+2 warnings generated.
 
-Fixes: 9c4aa1eecb48 (ACPI / sysfs: Provide quirk mechanism to prevent GPE flooding)
-Signed-off-by: Prarit Bharava <prarit@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Use the appropriate values from the expected type, roce_flavor:
+
+ROCE_V2_IPV6 = RROCE_IPV6 = 2
+MAX_ROCE_MODE = MAX_ROCE_FLAVOR = 3
+
+While we're add it, ditch the local variable flavor, we can just return
+the value directly from the switch statement.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/kernel-parameters.txt |  1 -
- drivers/acpi/sysfs.c                | 26 ++++++++------------------
- 2 files changed, 8 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_roce.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
-index f9f67be8d3c3..c708a50b060e 100644
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -313,7 +313,6 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
- 			This facility can be used to prevent such uncontrolled
- 			GPE floodings.
- 			Format: <int>
--			Support masking of GPEs numbered from 0x00 to 0x7f.
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+index d9dcb0d1714c..07783d13df71 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+@@ -1059,23 +1059,16 @@ static void qed_rdma_copy_gids(struct qed_rdma_qp *qp, __le32 *src_gid,
  
- 	acpi_no_auto_serialize	[HW,ACPI]
- 			Disable auto-serialization of AML methods
-diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
-index cf05ae973381..a36d0739dbfe 100644
---- a/drivers/acpi/sysfs.c
-+++ b/drivers/acpi/sysfs.c
-@@ -724,14 +724,8 @@ end:
-  * interface:
-  *   echo unmask > /sys/firmware/acpi/interrupts/gpe00
-  */
--
--/*
-- * Currently, the GPE flooding prevention only supports to mask the GPEs
-- * numbered from 00 to 7f.
-- */
--#define ACPI_MASKABLE_GPE_MAX	0x80
--
--static u64 __initdata acpi_masked_gpes;
-+#define ACPI_MASKABLE_GPE_MAX	0xFF
-+static DECLARE_BITMAP(acpi_masked_gpes_map, ACPI_MASKABLE_GPE_MAX) __initdata;
- 
- static int __init acpi_gpe_set_masked_gpes(char *val)
+ static enum roce_flavor qed_roce_mode_to_flavor(enum roce_mode roce_mode)
  {
-@@ -739,7 +733,7 @@ static int __init acpi_gpe_set_masked_gpes(char *val)
- 
- 	if (kstrtou8(val, 0, &gpe) || gpe > ACPI_MASKABLE_GPE_MAX)
- 		return -EINVAL;
--	acpi_masked_gpes |= ((u64)1<<gpe);
-+	set_bit(gpe, acpi_masked_gpes_map);
- 
- 	return 1;
- }
-@@ -751,15 +745,11 @@ void __init acpi_gpe_apply_masked_gpes(void)
- 	acpi_status status;
- 	u8 gpe;
- 
--	for (gpe = 0;
--	     gpe < min_t(u8, ACPI_MASKABLE_GPE_MAX, acpi_current_gpe_count);
--	     gpe++) {
--		if (acpi_masked_gpes & ((u64)1<<gpe)) {
--			status = acpi_get_gpe_device(gpe, &handle);
--			if (ACPI_SUCCESS(status)) {
--				pr_info("Masking GPE 0x%x.\n", gpe);
--				(void)acpi_mask_gpe(handle, gpe, TRUE);
--			}
-+	for_each_set_bit(gpe, acpi_masked_gpes_map, ACPI_MASKABLE_GPE_MAX) {
-+		status = acpi_get_gpe_device(gpe, &handle);
-+		if (ACPI_SUCCESS(status)) {
-+			pr_info("Masking GPE 0x%x.\n", gpe);
-+			(void)acpi_mask_gpe(handle, gpe, TRUE);
- 		}
+-	enum roce_flavor flavor;
+-
+ 	switch (roce_mode) {
+ 	case ROCE_V1:
+-		flavor = PLAIN_ROCE;
+-		break;
++		return PLAIN_ROCE;
+ 	case ROCE_V2_IPV4:
+-		flavor = RROCE_IPV4;
+-		break;
++		return RROCE_IPV4;
+ 	case ROCE_V2_IPV6:
+-		flavor = ROCE_V2_IPV6;
+-		break;
++		return RROCE_IPV6;
+ 	default:
+-		flavor = MAX_ROCE_MODE;
+-		break;
++		return MAX_ROCE_FLAVOR;
  	}
+-	return flavor;
  }
+ 
+ static int qed_roce_alloc_cid(struct qed_hwfn *p_hwfn, u16 *cid)
 -- 
 2.17.1
 
