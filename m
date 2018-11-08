@@ -2,171 +2,162 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CC7C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E470C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83D9820827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E978A20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:46:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJXT4bAp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D9820827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VBr/7Xxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E978A20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=whitewaterfoundry.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbeKHOSw (ORCPT
+        id S1728888AbeKHOUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 09:18:52 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39653 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728761AbeKHOSw (ORCPT
+        Thu, 8 Nov 2018 09:20:25 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:56271 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726145AbeKHOUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 09:18:52 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n11-v6so8744768pfb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 20:45:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tIHvBPmRozViMDb1Ix2U3lmCo2p90YWjCaHPXBxW35w=;
-        b=AJXT4bApIlc/tUtitc8yzL9cZ1jRPecvhSGVicQOt6zZ5SPbZSVCHWnUVFCoFHZ7aD
-         KM9QpBaU2XyU2nvmX1qtQ8nSBT/LdMINgQErlZrI0CS5ng+oTNvqIxZ8vidJYs0OS2hs
-         HJEWz6MtC6L1B+KK9Kp55a+/OVQ/x5InDKjY/s/BUmIKMcuLxOn5+8wSijDZSSm3tgFt
-         00NTWYQwiVwGTxdMsE7oXF2PiyGNt5cjzB0JGSdYMn1WFwECazQSOS/4p+JyRrMFE22d
-         RpwMo3VVlTPysNnbUVC/ndMKlOAd+nNdW+GZsH0Aj0Yc4NNJ+0J4xaUfiDqNM3w5lOBR
-         4uUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tIHvBPmRozViMDb1Ix2U3lmCo2p90YWjCaHPXBxW35w=;
-        b=JbecowJQXCHYkMU4Um90o3/uOU2TLM7JeHmV402FCdi92p13fDV4IeEH/Li/4rds/E
-         z1U3NP3dNE8UZLTtUCqEKhNODqWfqslEXSzymRqsWfVDj7moNEDaiLM6+nY03GI1yvIM
-         GS0iA8Q23VW6jj8TAR6FWiW9x0PTgJ6p4hzJdkyVFwaM1kBLfqMmlYWBeJC+IwpmyNO6
-         Y8f73yCekn5HB1PJXNOAo8+H0T/OXAWtYTkYVvS+GAlrxUvaRTHawSR3jMuH+xR0V49/
-         74jV0yt0KaaNNcWH9abimPLyEhOHcDIkEQHELatedDpuR4a0vrFzRGp+vz1pBrfkauZj
-         6OGQ==
-X-Gm-Message-State: AGRZ1gJ1adWNUgHBvb7b+CKigSYBHluYsVitU8Mq0SaHejnTtXo1J9W2
-        IzdJzQVVjFTYypedSB1wizE=
-X-Google-Smtp-Source: AJdET5craDvc+dDSRXFgy218WfWBwoD6EHymp1Z0Oh/uxdc8vUcX/1XsaC99ifsonmMFJRCxtGiQ5A==
-X-Received: by 2002:a63:4745:: with SMTP id w5mr2662164pgk.377.1541652314843;
-        Wed, 07 Nov 2018 20:45:14 -0800 (PST)
-Received: from localhost ([39.7.58.178])
-        by smtp.gmail.com with ESMTPSA id u76-v6sm2624807pfa.176.2018.11.07.20.45.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 07 Nov 2018 20:45:13 -0800 (PST)
-Date:   Thu, 8 Nov 2018 13:45:10 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
- messages.
-Message-ID: <20181108044510.GC2343@jagdpanzerIV>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
+        Thu, 8 Nov 2018 09:20:25 -0500
+X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Nov 2018 09:20:24 EST
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6C27A21F21
+        for <linux-kernel@vger.kernel.org>; Wed,  7 Nov 2018 23:39:27 -0500 (EST)
+Received: from web4 ([10.202.2.214])
+  by compute1.internal (MEProxy); Wed, 07 Nov 2018 23:39:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=qUx6A4
+        wm1jEZMm8UUaGTp02dAsUFOz8avM/S5cAAd9c=; b=VBr/7XxgS55Zay0RjD1mCo
+        hmYGtHswT4Flu7kSNfCQS9v0Gb9NzpsyfcaGXQ0KjG9/Gg4/SSLle5fK5PWeIzbp
+        dhfzlxMQixrFubPT15n9KNHa4Z5MUMC3HiFrvEduGFZqi9h3O1TWWlz+8TQlHw3T
+        zU593U8sNN+4uzRydZIOzw12MaO62aaaHWLbUdeuMqXXUgXrvsTHJZq30q7GLOA2
+        55Hlw/s4l5aQMMx+G7CWIPMiv6cHhTkHtaegESQuXjNfuNo3yncfMifgKZqj+hTM
+        xB3YBdJBoAEO0Kd+rVFVFA4UDfL0+vaQxLZ1UoP/YoXxR2YsT2sjPERdzSBSmVEw
+        ==
+X-ME-Sender: <xms:_73jW6OrnpFNF0UYvwfYmcGVZ60pFJIyF8HNFL0P86VXwH7EzxsbxA>
+X-ME-Proxy: <xmx:_73jW_FdZq4QCjz-heTJyLfr2zzsFkXA73hVV9KTajoXZ-TY5OrLIQ>
+    <xmx:_73jW-mJ9tBBBHyUQ4gh45ao2GOJrdPETIj483lhenoZyIWww4oQOw>
+    <xmx:_73jWzbq75Q0oOlPj7-Ttm5aVjx6zweI5nu9weX0frrbeqS1lsEinQ>
+    <xmx:_73jWzGrCkMn9Jg2iz3W9mz4XCXU6uWeHCb_1c5Xp7eqZ0qCqyFE4Q>
+    <xmx:_73jW0K-ObgiIRbJaVL3Il0ujcS2aEY68dGGUFt9t-sVqXPw9bYfaQ>
+    <xmx:_73jWy67-atctcdEwM4LNXMHUY8srlPXnWe_wSu8WLLHp6uKSKKpvw>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id 0B052BA7C4; Wed,  7 Nov 2018 23:39:27 -0500 (EST)
+Message-Id: <1541651966.672153.1569542472.2805F52F@webmail.messagingengine.com>
+From:   Hayden Barnes <hayden@whitewaterfoundry.com>
+To:     linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-c0552f07
+Date:   Wed, 07 Nov 2018 20:39:26 -0800
+Subject: Re: [QUESTION] Microsoft, WSL, and the Linux trademark
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/07/18 16:19), Petr Mladek wrote:
-> > syzbot is sometimes getting mixed output like below due to concurrent
-> > printk(). Mitigate such output by using line-buffered printk() API.
-> > 
-> > @@ -2421,18 +2458,20 @@ static void check_chain_key(struct task_struct *curr)
-> >  print_usage_bug_scenario(struct held_lock *lock)
-> >  {
-> >  	struct lock_class *class = hlock_class(lock);
-> > +	struct printk_buffer *buf = get_printk_buffer();
-> >  
-> >  	printk(" Possible unsafe locking scenario:\n\n");
-> >  	printk("       CPU0\n");
-> >  	printk("       ----\n");
-> > -	printk("  lock(");
-> > -	__print_lock_name(class);
-> > -	printk(KERN_CONT ");\n");
-> > +	printk_buffered(buf, "  lock(");
-> > +	__print_lock_name(class, buf);
-> > +	printk_buffered(buf, ");\n");
-> >  	printk("  <Interrupt>\n");
-> > -	printk("    lock(");
-> > -	__print_lock_name(class);
-> > -	printk(KERN_CONT ");\n");
-> > +	printk_buffered(buf, "    lock(");
-> > +	__print_lock_name(class, buf);
-> > +	printk_buffered(buf, ");\n");
-> >  	printk("\n *** DEADLOCK ***\n\n");
-> > +	put_printk_buffer(buf);
-> >  }
-> >  
-> >  static int
-> 
-> I really hope that the maze of pr_cont() calls in lockdep.c is the most
-> complicated one that we would meet.
+Mr. Caputo,
 
-Hmm... Yes, buffered/seq_buf printk looks like a hard-to-use API,
-when it comes to real world cases like this.
+Please allow me to address some of the concerns you raised.=20
 
-So... here is a random and wild idea.
+The Linux trademark is owned by Linus Torvalds and administered by the Linu=
+x Foundation through the Linux Mark Institute: https://www.linuxmark.org. T=
+he Linux trademark can be used by third parties subject to a Sublicense Agr=
+eement: https://www.linuxmark.org/programs/legal/trademark/sublicense-agree=
+ment. The terms of the Sublicense Agreement permit the use of the Linux tra=
+demark for derivative goods and services that deploy, document, facilitate =
+the use of, or enhance Linux=C2=AD-based goods.
 
-We actually already have an easy-to-use buffered printk. And it's per-CPU.
-And it makes all printk-s on this CPU to behave like as if they were called
-on UP system. And it cures pr_cont(). And it doesn't require anyone to learn
-any new printk API names. And it doesn't require any additional maintenance
-work. And it doesn't require any printk->buffered_printk conversions. And
-it's already in the kernel. And we gave it a name. And it's printk_safe.
+WLinux does contain a bootable Linux kernel in a base image.  The criticism=
+ that 'WSL is not Linux' is because the kernel is not executed when the bas=
+e image is installed and run from within the WSL layer on Windows 10. But W=
+Linux can be used to patch and build the Linux kernel from sources to insta=
+ll on other devices, assist in deploying and configuring Linux on other dev=
+ices, and can cross-compile software using standard Linux libraries, all wh=
+en running on WSL. For more about how WSL works for those unfamiliar: https=
+://github.com/sirredbeard/Awesome-WSL#overview. WLinux unquestionably conta=
+ins derivations of the Linux kernel, relies on the WSL re-implementation of=
+ Linux kernel syscalls, and facilitates the use of and enhances Linux-based=
+ goods, all within the terms of the Linux Sublicense Agreement.
 
-a) lockdep reporting path should be atomic. And it's not a hot path,
-   so local_irq_save/local_irq_restore will not cause a lot of trouble
-   there probably.
+We obtained a valid Sublicense Agreement for the use of the Linux trademark=
+ from the Linux Foundation before launching WLinux. All of our intellectual=
+ property compliance disclosures are here: https://github.com/WhitewaterFou=
+ndry/WLinux/blob/master/LICENSE.md
 
-b) We already have some lockdep reports coming via printk_safe.
-   All those
-	printk->console_driver->scheduler->lockdep
-	printk->console_driver->timekeeping->lockdep
-	etc.
+Users who purchase WLinux from the Microsoft Store are supporting the Linux=
+ ecosystem and free software generally. Everyone working on WLinux are Wind=
+ows and Linux users who are committed to making the Linux software ecosyste=
+m accessible to as many people as possible regardless of what device or ope=
+rating system they are on. WLinux and WSL generally opens up new possibilit=
+ies for bringing people to the Linux ecosystem, cross-platform development,=
+ and expanding access to free software and free software development tools.=
+=20
 
-   came via printk_safe path. So it's not a complete novelty.
+WLinux builds in a number of value-added enhancements and features, we prov=
+ide end user support, and work with various developer communities and other=
+ open source companies to try to make it easy to get into the Linux ecosyst=
+em from Windows 10.  We make it easy to get up and running with Go, Ruby, o=
+ther dev toolchains, soon Docker, install various editors, configure predic=
+tive text input for non-Latin input, and implement a handful of other tweak=
+s to defaults. I personally do not believe a frontend dev stepping into Lin=
+ux should have to know how to partition and dual-boot a system, or even hav=
+e to learn Docker, to get started using node.js and trying different packag=
+es off npm. They will get to that.
 
-c) printk_safe sections can nest.
+Many WLinux users are going to end up working on traditional server Linux e=
+ventually, if they don't already, as many of our users seem to work in hybr=
+id environments as it is. I imagine a few will end up trying and then switc=
+hing to desktop Linux, again if they don't use it already. But desktop Linu=
+x is just one small part of Linux, WLinux is not here to replace it, and WS=
+L is not capable of doing so in it's current limitations. Users are not bei=
+ng 'tricked'. Free upstream distros from Canonical, Debian, SuSE, and Kali =
+are available where you can implement our tweaks and custom packages manual=
+ly. Of the many copies we have sold we have only had two refund requests wh=
+ich we have promptly honored. Users always have the option of building WLin=
+ux from source using instructions we provide. WLinux is also heavily discou=
+nted or free in many less developed countries.
 
-d) No premature flushes. Everything looks the way it was supposed to
-   look.
+We turn the funds WLinux earns around to hire open source developers, spons=
+or bug and feature bounties, donate to upstream projects, and cover overhea=
+d. We are profitable and expect to pay out over $2,000 USD in bounties this=
+ month alone after being on the store for just six weeks. We are focused on=
+ building a sustainable commercial open source project that can direct our =
+own development resources where we see fit to improve the Linux experience =
+on WSL for us, the users of Linux on WSL. Microsoft has had absolutely zero=
+ input into how we have evolved WLinux besides open source code of theirs w=
+e have used.
 
-e) There are no out-of-line printk-s. We keep the actual order of events.
+Hayden Barnes
+Whitewater Foundry, Ltd. Co.
+hayden@whitewaterfoundry.com
+https://www.whitewaterfoundry.com
+https://twitter.com/WLinuxApp
+https://github.com/sirredbeard
+https://github.com/WhitewaterFoundry/WLinux
 
-f) We flush it on panic.
-
-g) Low maintenance costs.
-
-So, can we just do the following? /* a sketch */
-
-lockdep.c
-	printk_safe_enter_irqsave(flags);
-	lockdep_report();
-	printk_safe_exit_irqrestore(flags);
-
-	-ss
+> In reading the news today, I stumbled across an article talking about a $=
+20 "linux-based distro" app for Windows 10.
+> This is just a bundled userspace for WSL, there is no actual Linux in thi=
+s thing, yet the trademarked Linux name is used throughout.
+> Did Microsoft license the trademark or something?  Did I miss a memo? Doe=
+s their joining the Linux Foundation as a Platinum member two years ago inc=
+lude such use of the trademark?=20
+> I'm confused by what seems to be total silence about what _appears_ to be=
+ an obvious large-scale trademark abuse in everything WSL-related.
+> Could somebody informed please shed some light on this?
+> The situation strikes me as harmful to the kernel as the majority of folk=
+s being introduced to "Linux" this way will be tricked into thinking they'r=
+e using/supporting Linux.
+> Has the Linux Foundation deliberately turned a blind eye to this trademar=
+k abuse because MS is throwing money at them or is it a formal licensing si=
+tuation?  Do we, the community, even have any right to know what's going on?
