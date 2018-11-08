@@ -2,75 +2,84 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 354FDECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAEBECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8825204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8825204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E9562081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSXjE72J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9562081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbeKIHaH (ORCPT
+        id S1727369AbeKIHam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:30:07 -0500
-Received: from mga12.intel.com ([192.55.52.136]:1865 "EHLO mga12.intel.com"
+        Fri, 9 Nov 2018 02:30:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbeKIHaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:30:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 13:52:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="90590978"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2018 13:52:39 -0800
-Date:   Thu, 8 Nov 2018 14:49:00 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-pci@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        linux-kernel@vger.kernel.org,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Message-ID: <20181108214900.GB2932@localhost.localdomain>
-References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
- <20181107234257.GC41183@google.com>
- <20181108200855.GE41183@google.com>
+        id S1726140AbeKIHam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:30:42 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4A532081C;
+        Thu,  8 Nov 2018 21:53:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541713995;
+        bh=8ouKYu6iFxoPfS73s5irfElmsrneRho3SNMDLo+sI4A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sSXjE72JSVQHR2LOwnHpR8ETY5j0dR6rFDqiIqCXUekR44qvjhjb+Ty28OKwelKK6
+         jdmZFlzTjnUTPjHZC11f5ga5gYAr2rxeaySkt4X3Tr0xEJv5OeUqNacoc2hEPm5myn
+         3217yBGCjL2DSK/GOBNOyKlK9fZC7XlPsdzCGFHI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lei Yang <Lei.Yang@windriver.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 001/144] selftests/efivarfs: add required kernel configs
+Date:   Thu,  8 Nov 2018 13:49:32 -0800
+Message-Id: <20181108215054.896370713@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
+References: <20181108215054.826084593@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108200855.GE41183@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 02:09:17PM -0600, Bjorn Helgaas wrote:
-> 
-> I'm having second thoughts about this.  One thing I'm uncomfortable
-> with is that sprinkling pci_dev_is_disconnected() around feels ad hoc
-> instead of systematic, in the sense that I don't know how we convince
-> ourselves that this (and only this) is the correct place to put it.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-You know how the kernel provides ZERO_PAGE, wouldn't it be cool if we
-also had a ONES_PAGE and could remap all virtual addresses from a memory
-mapped device to that page on an ungraceful disconnect? I do not know
-how to accomplish that, so might just be crazy talk... But if it is
-possible, that would be a pretty nifty way to solve this problem.
+------------------
+
+From: Lei Yang <Lei.Yang@windriver.com>
+
+[ Upstream commit 53cf59d6c0ad3edc4f4449098706a8f8986258b6 ]
+
+add config file
+
+Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ tools/testing/selftests/efivarfs/config |    1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 tools/testing/selftests/efivarfs/config
+
+--- /dev/null
++++ b/tools/testing/selftests/efivarfs/config
+@@ -0,0 +1 @@
++CONFIG_EFIVAR_FS=y
+
+
