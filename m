@@ -2,174 +2,176 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A7CECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56231ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C262081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:05:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C262081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 087892077B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:05:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="CJlBMWv8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087892077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeKIFmU (ORCPT
+        id S1727265AbeKIFm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:42:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39848 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725199AbeKIFmU (ORCPT
+        Fri, 9 Nov 2018 00:42:58 -0500
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:42502 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725199AbeKIFm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:42:20 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8JsTlw116002
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 15:05:17 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmrq9gkdk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 15:05:17 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 8 Nov 2018 20:05:16 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 20:05:10 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8K59mS27721832
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 20:05:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1441BB2067;
-        Thu,  8 Nov 2018 20:05:09 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CFBFBB205F;
-        Thu,  8 Nov 2018 20:05:08 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.215.156])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 20:05:08 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8BBE216C341E; Thu,  8 Nov 2018 12:05:08 -0800 (PST)
-Date:   Thu, 8 Nov 2018 12:05:08 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, John Stultz <john.stultz@linaro.org>,
-        acme@redhat.com, frederic@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Reply-To: paulmck@linux.ibm.com
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
- <20181108074012.GD20032@gmail.com>
- <20181108091251.GL9761@hirez.programming.kicks-ass.net>
- <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
- <20181108174006.GP4170@linux.ibm.com>
- <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
+        Fri, 9 Nov 2018 00:42:58 -0500
+Received: by mail-wr1-f49.google.com with SMTP id y15-v6so22571820wru.9
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 12:05:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=UL5+Om8tKNJ8qo7eHj5jspqPtmEW4GhB5eb+rBLE75E=;
+        b=CJlBMWv8wLviKdsfsx4K4VEc4/KIHyCa3u/9O+dSsS1bRwx/ZRZIdviuTTeZhl55Hg
+         JjJTN0DcIxYadpK/Obp5Z9KU7f7vazfUcQJQTJuUHLPHdXFeRelrAFzACYkGpOSGNliW
+         2a3qGudWTfbAG8tv2lCuZpN5QDZplS6aekTOXaG+jA82tDiN8k8vVHaxKnYprpezr5FJ
+         mepCX1lN+dG4kFoX06rwrT5CAyzVdJmg09aqEzQn1F3fzInW0FyT7H3uMquQYZOgaEDh
+         n1JhvvXkIGRa60A4QVRrcWloWh6irawhf11K7SmUJNYB6wlxFQb9WQLHmTYcGNdplpTL
+         AKEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UL5+Om8tKNJ8qo7eHj5jspqPtmEW4GhB5eb+rBLE75E=;
+        b=bwlWv/5V+kX1U1ICRRAO+fHKCs3QO2qUxdei9o8q3Dr+6ngPpronMtAqSjxkVU8wQJ
+         CzegbFXxytPvFPPR5zOBTnEcXtkPwkIzRClw34XMvNWAlnnDe+dCBVQv2jSlTSzBROfe
+         GujXsxeDGvdnpYNDjFDDDSNv6CN1RtY0SZ3cU6mJzqalRpJVugrSH5Xm7PWQrwvaNqSL
+         MpO/xbv3+r5nqqD9YbDVF8QjuS7HXMQeSjm61JqgoM0M2v4kP0qeaG3k7l+ZOg2SpN1G
+         TpLY08KZQ5eJmdxLz3qMI9zP0M1eQ8yeF1VCxhRO/dH2a0WRowKfVjduNp0dGuaxVGVk
+         Ibjg==
+X-Gm-Message-State: AGRZ1gIa520U5atbytpKydvLcLkqwZCN/KXoP8ZnHlBoebd5mv6W8Qki
+        MVGxp7DFfg1LxNr7xdxV2isuc8BJxH9zcdC+hRhCwg==
+X-Google-Smtp-Source: AJdET5ckJTIf3NzC/aG0lZ2YlAxhUyvyejRiKZNdsf1QoQjQlaxPeOJr+GQXz5ZwrtQ/8fIaWtrX0HqBmlDsr53n664=
+X-Received: by 2002:a5d:4450:: with SMTP id x16-v6mr5412203wrr.308.1541707554882;
+ Thu, 08 Nov 2018 12:05:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110820-0060-0000-0000-000002CFB2D8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010009; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114590; UDB=6.00577875; IPR=6.00894689;
- MB=3.00024077; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 20:05:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110820-0061-0000-0000-000047225211
-Message-Id: <20181108200508.GB4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080169
+References: <1541518670.7839.31.camel@intel.com> <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com> <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com> <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com> <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com> <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <20181108195420.GA14715@linux.intel.com>
+In-Reply-To: <20181108195420.GA14715@linux.intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Thu, 8 Nov 2018 12:05:42 -0800
+Message-ID: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+Subject: Re: RFC: userspace exception fixups
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 08:58:32PM +0100, Thomas Gleixner wrote:
-> On Thu, 8 Nov 2018, Paul E. McKenney wrote:
-> > On Thu, Nov 08, 2018 at 09:19:33AM -0800, Dan Williams wrote:
-> > > On Thu, Nov 8, 2018 at 1:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
-> > > > > > + - Cc: ``cc-ed-person <person@mail>``
-> > > > > > +
-> > > > > > +   If the patch should be backported to stable, then please add a '``Cc:
-> > > > > > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
-> > > > > > +   mail.
-> > > > >
-> > > > > Can I suggest a more canonical form:
-> > > > >
-> > > > >       Cc: <stable@vger.kernel.org> # v4.18 and later kernels
-> > > > >
-> > > > > It would be nice if people adding Cc: stable lines would actually try to
-> > > > > figure out which exact kernel versions are affected.
-> > > 
-> > > I know at least StGit mail does not grok that "#"notation. I've
-> > > stopped using it in favor of a "Fixes:" tag. I would think "Fixes:" is
-> > > preferred over "# <KVER>" if only because it can be used to track
-> > > fixes to commits that have been backported to stable. Is there any
-> > > reason for "# <KVER>" to continue in a world where we have "Fixes:"?
-> > 
-> > I sometimes have fixes that need to be different for different past
-> > releases.  And there have been cases where RCU patches would apply and
-> > build cleanly against releases for which it was not appropriate, but
-> > would have some low-probability failure.  Which meant that it could be
-> > expected to pass light testing.  :-/
-> > 
-> > So I sometimes need a way of saying which versions a given patch applies
-> > to, independent of the version into which the bug was introduced.
-> 
-> I can understand that you want to limit the scope of automatic backports.
-> 
-> But we really should try to always use of the Fixes: tag. In most cases the
-> SHA1 of the commit in the fixes tag defines the backport scope. 
-> 
-> For the rare cases where the buggy commit is really old, but you want to
-> limit the backport scope for a reason then I really like to avoid to
-> overload the Cc stable tag and have a dedicated tag instead. Something
-> like:
-> 
->     Fixes: 1234567890AB ("subsys/comp: Short summary")
->     Backport-to: 4.14
-> 
-> and have that backport tag right under the Fixes tag. If the Backport-to
-> tag is ommitted, the SHA1 defines the scope, but I'm fine with making it
-> mandatory.
-> 
-> If there is really the special RCU case where each and every stable version
-> needs some special treatment then say:
-> 
->     Backport-to: Manual
-> 
-> or whatever sensible word would express it correctly.
-> 
-> The Fixes tag is really valuable when you need to make connections and I
-> know that the people who are looking into safety-critical Linux value the
-> tag because it can be used for tracking and for metrics.
+On Thu, Nov 8, 2018 at 11:54 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Tue, Nov 06, 2018 at 01:07:54PM -0800, Andy Lutomirski wrote:
+> >
+> >
+> > > On Nov 6, 2018, at 1:00 PM, Dave Hansen <dave.hansen@intel.com> wrote=
+:
+> > >
+> > >> On 11/6/18 12:12 PM, Andy Lutomirski wrote:
+> > >> True, but what if we have a nasty enclave that writes to memory just
+> > >> below SP *before* decrementing SP?
+> > >
+> > > Yeah, that would be unfortunate.  If an enclave did this (roughly):
+> > >
+> > >    1. EENTER
+> > >    2. Hardware sets eenter_hwframe->sp =3D %sp
+> > >    3. Enclave runs... wants to do out-call
+> > >    4. Enclave sets up parameters:
+> > >        memcpy(&eenter_hwframe->sp[-offset], arg1, size);
+> > >        ...
+> > >    5. Enclave sets eenter_hwframe->sp -=3D offset
+> > >
+> > > If we got a signal between 4 and 5, we'd clobber the copy of 'arg1' t=
+hat
+> > > was on the stack.  The enclave could easily fix this by moving ->sp f=
+irst.
+> > >
+> > > But, this is one of those "fun" parts of the ABI that I think we need=
+ to
+> > > talk about.  If we do this, we also basically require that the code
+> > > which handles asynchronous exits must *not* write to the stack.  That=
+'s
+> > > not hard because it's typically just a single ERESUME instruction, bu=
+t
+> > > it *is* a requirement.
+> > >
+> >
+> > I was assuming that the async exit stuff was completely hidden by the
+> > API.  The AEP code would decide whether the exit got fixed up by the
+> > kernel (which may or may not be easy to tell =E2=80=94 can the code eve=
+n tell
+> > without kernel help whether it was, say, an IRQ vs #UD?) and then eithe=
+r
+> > do ERESUME or cause sgx_enter_enclave() to return with an appropriate
+> > return value.
+>
+> Ok, SDK folks came up with an idea that would allow them to use vDSO,
+> albeit with a bit of ugliness and potentially a ROP-attack issue.
+> Definitely some weirdness, but the weirdness is well contained, unlike
+> the magic prefix approach.
+>
+> Provide two enter_enclave() vDSO "functions".  The first is a normal
+> function with a normal C interface.  The second is a blob of code that
+> is "called" and "returns" via indirect jmp, and can be used by SGX
+> runtimes that want to use the untrusted stack for out-calls from the
+> enclave.
+>
+> For the indirect jmp "function", use %rbp to stash the return address
+> of the caller (either in %rbp itself or in memory pointed to by %rbp).
+> It works because hardware also saves/restores %rbp along with %rsp when
+> doing enclave transitions, and the SDK can live with %rbp being
+> off-limits.  Fault info is passed via registers.
 
-Indeed, I do need to get my act together with the Fixes tag.  And I am
-happy with whatever format would limit backports appropriately.
+Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
+not the most terrible thing in the world.  But could the SDK live with
+something more like my suggestion where the vDSO supplies a normal
+function that takes a struct containing registers that are visible to
+the enclave?  This would make it extremely awkward for the enclave to
+use the untrusted stack per se, but it would make it quite easy (I
+think) for the untrusted part of the SDK to allocate some extra memory
+and just tell the enclave that *that* memory is the stack.
 
-							Thanx, Paul
+AFAFICS we do have two registers that genuinely are preserved: FSBASE
+and GSBASE.  Which is a good thing, because otherwise SGX enablement
+would currently be a privilege escalation issue due to making GSBASE
+writable when it should not be.
 
+This whole thing is a mess.  I'm starting to think that the cleanest
+solution would be to provide a way to just tell the kernel that
+certain RIP values have exception fixups.
