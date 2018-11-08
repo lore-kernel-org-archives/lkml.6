@@ -2,203 +2,98 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF798C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF238C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DF120818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8379E20818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:24:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGBgX9io"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DF120818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qt28jviC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8379E20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbeKIHmj (ORCPT
+        id S1730469AbeKIIBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:42:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731548AbeKIHmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:42:38 -0500
-Received: from localhost (unknown [208.72.13.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FD5820892;
-        Thu,  8 Nov 2018 22:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714708;
-        bh=MkguXUI+2WAlfWLnc899SWDXrSSnG0eqFEz2NsPSIAU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGBgX9ioso3v7mfdu5x33SLjb1iQBkhwfMuaARwsxKgM9JPHdaAyFmQdBi0kAA7If
-         Sp6yYjgniVVMxmC8XhuB6PwGO7BlNLyJiul844nq3mpyRn+lT3g8O2GeejFhMbkiKt
-         jPQKM86pUUDjMb48jVIisXRwymO7iPHUeMFI5weg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 054/171] bnxt_en: Dont use rtnl lock to protect link change logic in workqueue.
-Date:   Thu,  8 Nov 2018 13:50:24 -0800
-Message-Id: <20181108215131.407370576@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
-References: <20181108215127.257643509@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 9 Nov 2018 03:01:50 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37302 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbeKIIBu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 03:01:50 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y10-v6so229956edr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 14:24:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=CPFX4uVCKXMP3814gZIQemoLaJE5n/O3zYhVzKP9RT4=;
+        b=Qt28jviCXJO2bQJXP6NQbOo7Ug/1KtCCllivWhfLqi+Jt26bABDOZmncUq0Q1t9lnk
+         USBaTXOnFvrnqjfqFKwik2S2X0OejYB9xClmLjXW4rpoMMah0+jqUuZfccyxC/jJU2oU
+         o8Iy7dUkQDiAg8jneqFGPVLP6GvNt4On3gMaVcQ3LmwAMoGwkLR1cEfbM7wWmODkvV2T
+         sNr8P9Lu8H2N5LIeSrU0LDrGSn2n4tLfle8wbGHLhIOKlY6n9xgTHZTay9d6x2NRoVpX
+         BVcinlxKbLfD8sFJFIQ8GltfRwJVuciun9CM3P/NJszbno3MZ04PI8sZozojk1Ua+WId
+         XpwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=CPFX4uVCKXMP3814gZIQemoLaJE5n/O3zYhVzKP9RT4=;
+        b=ixUqS2c4ymt+OMEhKQOYzMgXYuzP3DSCra0VXK09mL39dtq17XvAgcScdnmzZy5KXS
+         r3wEHrydl2hqNoGkxV7xabgCgOdViO7dFWGvE+J23pou7ngajRPrsnNOe/RMYG1RfS9o
+         o2vvpobKwZxtadFk0FQioggCKkyf77W+TnMloReF1CJ/AvuUI2YnYLXmtSSOUUr50IAK
+         ZFxm6E/UGXhP/6gVGRcGVq4EXZw+ps8ULeFvwD8gd8ACBr2XpQYKJGfS4HWCFk8jl2o8
+         GVsKb9m8MS5ZNXzIV3Ax0wZaPNrnKGYJ/a8b1/1eDPk2b8dRZuMH7waQgVVXEehBdXXO
+         w72Q==
+X-Gm-Message-State: AGRZ1gKIDkd+h2o4pagCwLn4lH0CU4WforFmNU8HB0xRlq+36yMgqwnC
+        J6iqjhb9rQzfxDCTYHVhLQ3bbe5cSRFleLpjllzT5+WC
+X-Google-Smtp-Source: AJdET5c0JEAXr0Nw/eaB909loOyU+y2JQtrnLWX2d4NpMktN3sHTlR4pgDG/dXfjrCPsyLdzeU+HYQu2ggxs7iDAp/4=
+X-Received: by 2002:a50:a1c7:: with SMTP id 65-v6mr27613edk.190.1541715852312;
+ Thu, 08 Nov 2018 14:24:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From:   Rian Quinn <rianquinn@gmail.com>
+Date:   Thu, 8 Nov 2018 15:23:59 -0700
+Message-ID: <CANmpu8XY10CgYsnGn9hVDzGJQyWdwNihpYu3So62KtNwrkwGXw@mail.gmail.com>
+Subject: x86_64 INIT/SIPI Bug
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+I apologize upfront if this is the wrong place to post this, pretty new to this.
 
-------------------
+We are working on the Bareflank Hypervisor (www.bareflank.org), and we
+are passing through the INIT/SIPI process (similar to how a VMX
+rootkit from EFI might boot the OS) and we noticed that on Arch Linux,
+the INIT/SIPI process stalls, something we are not seeing on Ubuntu.
 
-[ Upstream commit e2dc9b6e38fa3919e63d6d7905da70ca41cbf908 ]
+Turns out, to fix the issue, we had to turn on cpu_init_udelay=10000.
+The problem is, once a hypervisor is turned on, even one that is doing
+nothing but passing through the instructions, the "quick" that is
+detailed below fails as the kernel is not giving the CPU enough time
+to perform a VMExit/VMEntry (even through the VMExit is not doing
+anything).
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/smpboot.c?h=v4.20-rc1#n650
 
-As a further improvement to the PF/VF link change logic, use a private
-mutex instead of the rtnl lock to protect link change logic.  With the
-new mutex, we don't have to take the rtnl lock in the workqueue when
-we have to handle link related functions.  If the VF and PF drivers
-are running on the same host and both take the rtnl lock and one is
-waiting for the other, it will cause timeout.  This patch fixes these
-timeouts.
+You can see our INIT/SIPI code here if you are interested:
+https://github.com/rianquinn/extended_apis/blob/hyperkernel_1/bfvmm/src/hve/arch/intel_x64/vmexit/init_signal.cpp
 
-Fixes: 90c694bb7181 ("bnxt_en: Fix RTNL lock usage on bnxt_update_link().")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 25 ++++++++++---------
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  4 +++
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c |  4 +++
- 3 files changed, 21 insertions(+), 12 deletions(-)
+The reason I suggest this is a bug is the manual clearly states that a
+wait is required and the "quirk" that turns off this delay prevents
+code like this from working. Would it be possible to either:
+- Turn this off by default, but still allow someone to turn it on if
+they are confident the delay is not needed?
+- Provide a generic way to turn this off (maybe if a hypervisor is
+detected, it defaults to off)?
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 208e9dacfd34..a036f7039d76 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -5580,7 +5580,9 @@ static int __bnxt_open_nic(struct bnxt *bp, bool irq_re_init, bool link_re_init)
- 	}
- 
- 	if (link_re_init) {
-+		mutex_lock(&bp->link_lock);
- 		rc = bnxt_update_phy_setting(bp);
-+		mutex_unlock(&bp->link_lock);
- 		if (rc)
- 			netdev_warn(bp->dev, "failed to update phy settings\n");
- 	}
-@@ -6230,30 +6232,28 @@ static void bnxt_sp_task(struct work_struct *work)
- 	if (test_and_clear_bit(BNXT_PERIODIC_STATS_SP_EVENT, &bp->sp_event))
- 		bnxt_hwrm_port_qstats(bp);
- 
--	/* These functions below will clear BNXT_STATE_IN_SP_TASK.  They
--	 * must be the last functions to be called before exiting.
--	 */
- 	if (test_and_clear_bit(BNXT_LINK_CHNG_SP_EVENT, &bp->sp_event)) {
--		int rc = 0;
-+		int rc;
- 
-+		mutex_lock(&bp->link_lock);
- 		if (test_and_clear_bit(BNXT_LINK_SPEED_CHNG_SP_EVENT,
- 				       &bp->sp_event))
- 			bnxt_hwrm_phy_qcaps(bp);
- 
--		bnxt_rtnl_lock_sp(bp);
--		if (test_bit(BNXT_STATE_OPEN, &bp->state))
--			rc = bnxt_update_link(bp, true);
--		bnxt_rtnl_unlock_sp(bp);
-+		rc = bnxt_update_link(bp, true);
-+		mutex_unlock(&bp->link_lock);
- 		if (rc)
- 			netdev_err(bp->dev, "SP task can't update link (rc: %x)\n",
- 				   rc);
- 	}
- 	if (test_and_clear_bit(BNXT_HWRM_PORT_MODULE_SP_EVENT, &bp->sp_event)) {
--		bnxt_rtnl_lock_sp(bp);
--		if (test_bit(BNXT_STATE_OPEN, &bp->state))
--			bnxt_get_port_module_status(bp);
--		bnxt_rtnl_unlock_sp(bp);
-+		mutex_lock(&bp->link_lock);
-+		bnxt_get_port_module_status(bp);
-+		mutex_unlock(&bp->link_lock);
- 	}
-+	/* These functions below will clear BNXT_STATE_IN_SP_TASK.  They
-+	 * must be the last functions to be called before exiting.
-+	 */
- 	if (test_and_clear_bit(BNXT_RESET_TASK_SP_EVENT, &bp->sp_event))
- 		bnxt_reset(bp, false);
- 
-@@ -6788,6 +6788,7 @@ static int bnxt_probe_phy(struct bnxt *bp)
- 			   rc);
- 		return rc;
- 	}
-+	mutex_init(&bp->link_lock);
- 
- 	rc = bnxt_update_link(bp, false);
- 	if (rc) {
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index 666bc0608ed7..017c10c53715 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1109,6 +1109,10 @@ struct bnxt {
- 	unsigned long		*ntp_fltr_bmap;
- 	int			ntp_fltr_count;
- 
-+	/* To protect link related settings during link changes and
-+	 * ethtool settings changes.
-+	 */
-+	struct mutex		link_lock;
- 	struct bnxt_link_info	link_info;
- 	struct ethtool_eee	eee;
- 	u32			lpi_tmr_lo;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index cde4b96f3153..3a352f76e633 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -793,6 +793,7 @@ static int bnxt_get_link_ksettings(struct net_device *dev,
- 	u32 ethtool_speed;
- 
- 	ethtool_link_ksettings_zero_link_mode(lk_ksettings, supported);
-+	mutex_lock(&bp->link_lock);
- 	bnxt_fw_to_ethtool_support_spds(link_info, lk_ksettings);
- 
- 	ethtool_link_ksettings_zero_link_mode(lk_ksettings, advertising);
-@@ -840,6 +841,7 @@ static int bnxt_get_link_ksettings(struct net_device *dev,
- 			base->port = PORT_FIBRE;
- 	}
- 	base->phy_address = link_info->phy_addr;
-+	mutex_unlock(&bp->link_lock);
- 
- 	return 0;
- }
-@@ -926,6 +928,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
- 	if (!BNXT_SINGLE_PF(bp))
- 		return -EOPNOTSUPP;
- 
-+	mutex_lock(&bp->link_lock);
- 	if (base->autoneg == AUTONEG_ENABLE) {
- 		BNXT_ETHTOOL_TO_FW_SPDS(fw_advertising, lk_ksettings,
- 					advertising);
-@@ -970,6 +973,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
- 		rc = bnxt_hwrm_set_link_setting(bp, set_pause, false);
- 
- set_setting_exit:
-+	mutex_unlock(&bp->link_lock);
- 	return rc;
- }
- 
--- 
-2.17.1
+I'd be more than happy to provide a patch and test, but I'm not sure
+if there is any interest in changing this code.
 
-
-
+Thanks,
+- Rian Quinn
