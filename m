@@ -2,195 +2,117 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD77AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 507C0ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD6F20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13AF320825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:45:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYZCBrVM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD6F20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z549WAB9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AF320825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeKHXUi (ORCPT
+        id S1727005AbeKHXV2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:20:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbeKHXUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:20:38 -0500
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FA2220825;
-        Thu,  8 Nov 2018 13:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541684704;
-        bh=ROj+ZL+d4mDvNAoRK4w+YlUCWvUL5IWBf/602BMNBh4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rYZCBrVMRdyeA9RETAGGYZ1kFlgni6j7IVro1KpsHo8IEUZzoc7wI6yBXrvYC0Xd5
-         74MRKFzPke3R/ixf0owKZC/S1GaBjE4wxIiJDVV0fjdMhWKZU69IIp5T9bCx5m0Tz4
-         xfztxeCOXeLJkYTYxkqud7ZjTsMdqrwU3YieSXoc=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id EFA0D142D3F; Thu,  8 Nov 2018 10:45:00 -0300 (-03)
-Date:   Thu, 8 Nov 2018 10:45:00 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     akpm@linux-foundation.org, jbaron@akamai.com,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/2] perf-bench: Add epoll parallel epoll_wait benchmark
-Message-ID: <20181108134500.GA15568@kernel.org>
-References: <20181106152226.20883-1-dave@stgolabs.net>
- <20181106152226.20883-2-dave@stgolabs.net>
- <20181106182349.thdkpvshkna5vd7o@linux-r8p5>
- <20181106191325.GM7077@kernel.org>
+        Thu, 8 Nov 2018 18:21:28 -0500
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:39234 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeKHXV2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:21:28 -0500
+Received: by mail-pl1-f178.google.com with SMTP id b5-v6so9566580pla.6
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:45:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wznYTGFkGz2AdNLHraktMTRMurFAVCPD0Mq146J1u5w=;
+        b=Z549WAB9J1fQpiUXszZQbYqT3ogj0Q6vSxt6NQ2AuWF1Nh/mV1drlqjwmxCLem/zdD
+         AdDz1vawlLbNGvGCjRQCleqgSswduM8hBhcR/sOWsf5+RHMu6TD8rq0UZJFm0vA+aJ9Q
+         IrFYtF4SP/UZ7jlbMfuKhNjXeAjcYhzykJoaHAHtzzOVYQAANnOGihDrD0eaj/FdKtcZ
+         hfzemU9QPkvq6bM5K+EgES2uLOvkxW0Un99OJ7cYaaalo82ihmF1Nb6dr58wRRwkZWWu
+         OBWZ/cAsGK1mVzuxa2u02QWOZ2SKe6vKvhPfxrAYzaazfT0igoaCLan577qD/65zx22y
+         HuEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wznYTGFkGz2AdNLHraktMTRMurFAVCPD0Mq146J1u5w=;
+        b=hMhfZFhphaO24TjEIn7V0IF+dA7kf+cybaWll+KVI0JVmR7XLUXaH3gQrqUkc42W9q
+         BKvLRsnPGCqi2Mx/vT7s6MUfB1HNmDP3V7GgD0pJ309hqNEtQCDYhzJMqyBSw5y6E7uT
+         EJO4ubEPgEqGO/1g8Ek/rMnPd8Pg2COoKVI+RM6wSsjAp9tcnGVAm71m6a/A2JXJoCr4
+         XjbKU3+PY/PptpUwIL5c2cOvgNzIZBrHTIYC1NMVVjCrgI7vlQN2DOMcMQFGgnGyl3A/
+         xw/ZnTxlibHijeu3Veo4h8vz1NLm3psRQA1YoMLbY9dw/wyxJ7euCW6f8894kHbIiRxo
+         95zg==
+X-Gm-Message-State: AGRZ1gK0ptE3hNr3aposC/D6BzKNUv4AR5AJ/xJSnOljkJI1MWgJfGzi
+        YNc+ecPON6Zx2E0BZxhcvac=
+X-Google-Smtp-Source: AJdET5fsBGPRq5gaCZ7UfRTPDRsMbPDkxmhSjHtNgZomxpRZqGGs6Dlu7RInEQ4lDrVhe/ix7QYkVA==
+X-Received: by 2002:a17:902:20c5:: with SMTP id v5-v6mr4651056plg.156.1541684754187;
+        Thu, 08 Nov 2018 05:45:54 -0800 (PST)
+Received: from localhost.localdomain ([218.209.14.71])
+        by smtp.gmail.com with ESMTPSA id q15-v6sm3831480pff.49.2018.11.08.05.45.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 05:45:53 -0800 (PST)
+From:   Jongseok Kim <ks77sj@gmail.com>
+To:     Vitaly Wool <vitalywool@gmail.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jongseok Kim <ks77sj@gmail.com>
+Subject: Re: [PATCH] z3fold: fix wrong handling of headless pages
+Date:   Thu,  8 Nov 2018 22:45:40 +0900
+Message-Id: <20181108134540.12756-1-ks77sj@gmail.com>
+X-Mailer: git-send-email 2.19.1.windows.1
+In-Reply-To: <CAMJBoFP3C5NffHf2bPaY-W2qXPLs6z+Ker+Z+Sq_3MHV5xekHQ@mail.gmail.com>
+References: <CAMJBoFP3C5NffHf2bPaY-W2qXPLs6z+Ker+Z+Sq_3MHV5xekHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106191325.GM7077@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Nov 06, 2018 at 04:13:25PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Tue, Nov 06, 2018 at 10:23:49AM -0800, Davidlohr Bueso escreveu:
-> > Mind this fixlet for using et/oneshot and the multiq option.
-> 
-> Yes sir, applied the fixup to the first patch in the series, applied the
-> second, tested, merged.
+Yes, you are right.
+I think that's the best way to deal it.
+Thank you.
 
-So, one of these two is making the build to fail in all the Alpine Linux
-(3.4 -- 3.8 and edge) and also on some others
+Best regards,
+Jongseok
 
-On Alpine the error is:
+> Den tors 8 nov. 2018 kl 13:34 skrev ±Ë¡æºÆ <ks77sj@gmail.com>:
+> >
+> > Hi Vitaly,
+> > thank you for the reply.
+> >
+> > I agree your a new solution is more comprehensive and drop my patch is simple way.
+> > But, I think it's not fair.
+> > If my previous patch was not wrong, is (my patch -> your patch) the right way?
 
-  CC       /tmp/build/perf/bench/futex-lock-pi.o
-  CC       /tmp/build/perf/bench/epoll-wait.o
-bench/epoll-wait.c: In function 'do_threads':
-bench/epoll-wait.c:345:10: error: implicit declaration of function 'pthread_attr_setaffinity_np' [-Werror=implicit-function-declaration]
-    ret = pthread_attr_setaffinity_np(&thread_attr, sizeof(cpu_set_t), &cpuset);
-          ^
-bench/epoll-wait.c:345:4: error: nested extern declaration of 'pthread_attr_setaffinity_np' [-Werror=nested-externs]
-    ret = pthread_attr_setaffinity_np(&thread_attr, sizeof(cpu_set_t), &cpuset);
-    ^
-bench/epoll-wait.c: In function 'bench_epoll_wait':
-bench/epoll-wait.c:462:12: error: format '%lu' expects argument of type 'long unsigned int', but argument 2 has type 'rlim_t {aka long long unsigned int}' [-Werror=format=]
-  printinfo("Setting RLIMIT_NOFILE rlimit from %lu to: %lu\n", prevrl.rlim_max, rl.rlim_max);
-            ^
-bench/epoll-wait.c:85:31: note: in definition of macro 'printinfo'
-  do { if (__verbose) { printf(fmt, ## arg); fflush(stdout); } } while (0)
-                               ^
-bench/epoll-wait.c:462:12: error: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'rlim_t {aka long long unsigned int}' [-Werror=format=]
-  printinfo("Setting RLIMIT_NOFILE rlimit from %lu to: %lu\n", prevrl.rlim_max, rl.rlim_max);
-            ^
-bench/epoll-wait.c:85:31: note: in definition of macro 'printinfo'
-  do { if (__verbose) { printf(fmt, ## arg); fflush(stdout); } } while (0)
-                               ^
-  CC       /tmp/build/perf/util/trace-event-info.o
-  CC       /tmp/build/perf/perf.o
-cc1: all warnings being treated as errors
-mv: can't rename '/tmp/build/perf/bench/.epoll-wait.o.tmp': No such file or directory
-/git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/bench/epoll-wait.o' failed
-make[4]: *** [/tmp/build/perf/bench/epoll-wait.o] Error 1
-/git/linux/tools/build/Makefile.build:139: recipe for target 'bench' failed
-make[3]: *** [bench] Error 2
-make[3]: *** Waiting for unfinished jobs....
-  CC       /tmp/build/perf/util/trace-event-scripting.o
+> I could apply the new patch on top of yours but that would effectively
+> revert most of your changes.
+> Would it be ok for you if I add you to Signed-off-by for the new patch instead?
+
+> ~Vitaly
 
 
-On AmazonLinux 1 and 2, oops, these are mine:
-
-  LINK     /tmp/build/perf/perf
-/tmp/build/perf/perf-in.o: In function `bpf_map__set_filter_pids':
-/git/linux/tools/perf/builtin-trace.c:2573: undefined reference to `bpf_map(float, double)'
-/tmp/build/perf/perf-in.o: In function `cmd_trace':
-(.text+0x4c71e): undefined reference to `bpf_map_update_elem'
-/tmp/build/perf/perf-in.o: In function `cmd_trace':
-(.text+0x4cab6): undefined reference to `bpf_map(float, double)'
-/tmp/build/perf/perf-in.o: In function `cmd_trace':
-(.text+0x4cae8): undefined reference to `bpf_map_update_elem'
-collect2: error: ld returned 1 exit status
-make[2]: *** [/tmp/build/perf/perf] Error 1
-make[1]: *** [sub-make] Error 2
-make: *** [all] Error 2
-make: Leaving directory `/git/linux/tools/perf'
-[root@seventh ~]# 
-
-I need to do that conditionally, i.e. it seems libbpf is not being built
-in that distro...
-
-centos:5 is about perf bench:
-
-  CC       /tmp/build/perf/bench/epoll-wait.o
-bench/epoll-wait.c:74:25: error: sys/eventfd.h: No such file or directory
-cc1: warnings being treated as errors
-bench/epoll-wait.c: In function 'do_threads':
-bench/epoll-wait.c:328: warning: implicit declaration of function 'eventfd'
-bench/epoll-wait.c:328: warning: nested extern declaration of 'eventfd'
-bench/epoll-wait.c:328: error: 'EFD_NONBLOCK' undeclared (first use in this function)
-bench/epoll-wait.c:328: error: (Each undeclared identifier is reported only once
-bench/epoll-wait.c:328: error: for each function it appears in.)
-mv: cannot stat `/tmp/build/perf/bench/.epoll-wait.o.tmp': No such file or directory
-make[4]: *** [/tmp/build/perf/bench/epoll-wait.o] Error 1
-make[3]: *** [bench] Error 2
-make[3]: *** Waiting for unfinished jobs....
-  MKDIR    /tmp/build/perf/tests/
-
-
-centos:6 and 7 are ok with perf bench, not so much with my bpf changes :-\
-
-  LINK     /tmp/build/perf/libperf-gtk.so
-/tmp/build/perf/perf-in.o: In function `bpf_map__set_filter_pids':
-/git/linux/tools/perf/builtin-trace.c:2573: undefined reference to `bpf_map(float, double)'
-/git/linux/tools/perf/builtin-trace.c:2577: undefined reference to `bpf_map_update_elem'
-/git/linux/tools/perf/builtin-trace.c:2573: undefined reference to `bpf_map(float, double)'
-/git/linux/tools/perf/builtin-trace.c:2577: undefined reference to `bpf_map_update_elem'
-collect2: ld returned 1 exit status
-make[2]: *** [/tmp/build/perf/perf] Error 1
-make[1]: *** [sub-make] Error 2
-make: *** [all] Error 2
-make: Leaving directory `/git/linux/tools/perf'
-[root@seventh ~]# 
-[root@seventh ~]#
-
-- Arnaldo
- 
-> - Arnaldo
->  
-> > diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-wait.c
-> > index c4c5ef60feb4..4e4efc5cfe22 100644
-> > --- a/tools/perf/bench/epoll-wait.c
-> > +++ b/tools/perf/bench/epoll-wait.c
-> > @@ -215,13 +215,13 @@ static void *workerfn(void *arg)
-> > 
-> > 		if (et) {
-> > 			ev.events = EPOLLIN | EPOLLET;
-> > -			ret = epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
-> > +			ret = epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
-> > 		}
-> > 
-> > 		if (oneshot) {
-> > 			/* rearm the file descriptor with a new event mask */
-> > 			ev.events |= EPOLLIN | EPOLLONESHOT;
-> > -			ret = epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev);
-> > +			ret = epoll_ctl(efd, EPOLL_CTL_MOD, fd, &ev);
-> > 		}
-> > 
-> > 		ops++;
-> > @@ -249,7 +249,7 @@ static void nest_epollfd(struct worker *w)
-> > 
-> > 	for (i = 0; i < nested; i++) {
-> > 		epollfdp[i] = epoll_create(1);
-> > -		if (epollfd < 0)
-> > +		if (epollfdp[i] < 0)
-> > 			err(EXIT_FAILURE, "epoll_create");
-> > 	}
-> > 
+> > I'm sorry I sent reply twice.
+> >
+> > Best regards,
+> > Jongseok
+> >
+> >
+> > > On 6/11/2018 4:48 PM, Vitaly Wool wrote:
+> > > Hi Jongseok,
+> >
+> > > thank you for your work, we've now got a more comprehensive solution:
+> > > https://lkml.org/lkml/2018/11/5/726
+> >
+> > > Would you please confirm that it works for you? Also, would you be
+> > >okay with dropping your patch in favor of the new one?
+> >
+> > > ~Vitaly
