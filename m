@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0327C0044B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6317BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 962D920844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2951A20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:31:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJILKsyv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962D920844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uwrb4M3J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2951A20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbeKIIIn (ORCPT
+        id S1729589AbeKIII6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:08:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56906 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 03:08:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730524AbeKIHh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:37:59 -0500
+        id S1730504AbeKIHh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:37:57 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6584020989;
-        Thu,  8 Nov 2018 22:00:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF85F21019;
+        Thu,  8 Nov 2018 22:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714430;
-        bh=bFMWE0fkXe9eLtP2K5lVjhvEGJ1M07goUtTz9PAdUoQ=;
+        s=default; t=1541714428;
+        bh=ZhBG7QhBSiuVSTiPZDDHmlwgHoY9Pvg0RTh6T637eJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VJILKsyva+SjcVsaqb0omJgd8JRTnktiHJJvEpW0Hzr+hyxZ4BxBEAcnlmOsnH5Uv
-         7j/G5iqhfIq/+gnMGK65U79UFhOtt7VeX9y1RHh2WwMOCjU+Q10JhzPAFih+DCba9v
-         LG7j3SI0jEiO6ObxT11KcuI0Tk12YdxsSK1A8CE0=
+        b=Uwrb4M3JXWsVH2cTzeeFOF3cFdqB4h9scH/JF53VqI2H0XdylV9wzul50xtS0Okfw
+         lDUzT/8HKIbXn7o8c1ueBCs4tmYVgabCQU/rboz5eQDo6WTTAevMGsgId21bZdOYeY
+         ZKYtKy8yoDrQkq6S5sEJOUZ0PJvWUkikniDTwfxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Adrian Bunk <bunk@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 086/114] mtd: spi-nor: Add support for is25wp series chips
-Date:   Thu,  8 Nov 2018 13:51:41 -0800
-Message-Id: <20181108215108.670873069@linuxfoundation.org>
+        =?UTF-8?q?Christian=20Gr=C3=B6nke?= <c.groenke@infodas.de>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 082/114] igb: Remove superfluous reset to PHY and page 0 selection
+Date:   Thu,  8 Nov 2018 13:51:37 -0800
+Message-Id: <20181108215108.332030439@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -65,37 +66,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d616f81cdd2a21edfa90a595a4e9b143f5ba8414 ]
+[ Upstream commit 2a83fba6cae89dd9c0625e68ff8ffff791c67ac0 ]
 
-Added support for is25wp032, is25wp064 and is25wp128.
+This patch reverts two previous applied patches to fix an issue
+that appeared when using SGMII based SFP modules. In the current
+state the driver will try to reset the PHY before obtaining the
+phy_addr of the SGMII attached PHY. That leads to an error in
+e1000_write_phy_reg_sgmii_82575. Causing the initialization to
+fail:
 
-Signed-off-by: Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-[ Adrian Bunk: Trivial adaption to changed context. ]
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
+    igb: Intel(R) Gigabit Ethernet Network Driver - version 5.4.0-k
+    igb: Copyright (c) 2007-2014 Intel Corporation.
+    igb: probe of ????:??:??.? failed with error -3
+
+The patches being reverted are:
+
+    commit 182785335447957409282ca745aa5bc3968facee
+    Author: Aaron Sierra <asierra@xes-inc.com>
+    Date:   Tue Nov 29 10:03:56 2016 -0600
+
+        igb: reset the PHY before reading the PHY ID
+
+    commit 440aeca4b9858248d8f16d724d9fa87a4f65fa33
+    Author: Matwey V Kornilov <matwey@sai.msu.ru>
+    Date:   Thu Nov 24 13:32:48 2016 +0300
+
+         igb: Explicitly select page 0 at initialization
+
+The first reverted patch directly causes the problem mentioned above.
+In case of SGMII the phy_addr is not known at this point and will
+only be obtained by 'igb_get_phy_id_82575' further down in the code.
+The second removed patch selects forces selection of page 0 in the
+PHY. Something that the reset tries to address as well.
+
+As pointed out by Alexander Duzck, the patch below fixes the same
+issue but in the proper location:
+
+    commit 4e684f59d760a2c7c716bb60190783546e2d08a1
+    Author: Chris J Arges <christopherarges@gmail.com>
+    Date:   Wed Nov 2 09:13:42 2016 -0500
+
+        igb: Workaround for igb i210 firmware issue
+
+Reverts: 440aeca4b9858248d8f16d724d9fa87a4f65fa33.
+Reverts: 182785335447957409282ca745aa5bc3968facee.
+
+Signed-off-by: Christian Grönke <c.groenke@infodas.de>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/intel/igb/e1000_82575.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 64d6f053c2a5..276998ea0267 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -708,6 +708,12 @@ static const struct flash_info spi_nor_ids[] = {
+diff --git a/drivers/net/ethernet/intel/igb/e1000_82575.c b/drivers/net/ethernet/intel/igb/e1000_82575.c
+index f3f3b95d5512..97bf0c3d5c69 100644
+--- a/drivers/net/ethernet/intel/igb/e1000_82575.c
++++ b/drivers/net/ethernet/intel/igb/e1000_82575.c
+@@ -223,17 +223,6 @@ static s32 igb_init_phy_params_82575(struct e1000_hw *hw)
+ 	hw->bus.func = (rd32(E1000_STATUS) & E1000_STATUS_FUNC_MASK) >>
+ 			E1000_STATUS_FUNC_SHIFT;
  
- 	/* ISSI */
- 	{ "is25cd512", INFO(0x7f9d20, 0, 32 * 1024,   2, SECT_4K) },
-+	{ "is25wp032", INFO(0x9d7016, 0, 64 * 1024,  64,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-+	{ "is25wp064", INFO(0x9d7017, 0, 64 * 1024, 128,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
-+	{ "is25wp128", INFO(0x9d7018, 0, 64 * 1024, 256,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 
- 	/* Macronix */
- 	{ "mx25l512e",   INFO(0xc22010, 0, 64 * 1024,   1, SECT_4K) },
+-	/* Make sure the PHY is in a good state. Several people have reported
+-	 * firmware leaving the PHY's page select register set to something
+-	 * other than the default of zero, which causes the PHY ID read to
+-	 * access something other than the intended register.
+-	 */
+-	ret_val = hw->phy.ops.reset(hw);
+-	if (ret_val) {
+-		hw_dbg("Error resetting the PHY.\n");
+-		goto out;
+-	}
+-
+ 	/* Set phy->phy_addr and phy->id. */
+ 	ret_val = igb_get_phy_id_82575(hw);
+ 	if (ret_val)
 -- 
 2.17.1
 
