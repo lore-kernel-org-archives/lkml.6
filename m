@@ -7,45 +7,55 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B2FECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C89ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955A920892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C46720817
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aa8EkXBO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955A920892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SEYy1Gvg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C46720817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbeKIHkY (ORCPT
+        id S1731132AbeKIHkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:40:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60006 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:40:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727427AbeKIHkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727045AbeKIHkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:40:24 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A61ED20817;
-        Thu,  8 Nov 2018 22:02:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 380DC2081C;
+        Thu,  8 Nov 2018 22:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714574;
-        bh=0wGukn3U1QrMOF4o2UUWe52MTBk70CdleoMHK2mo7yQ=;
+        s=default; t=1541714575;
+        bh=SPQbLxBUBiwLXvCblOMvQCVQc2Wt0MF+3/zrJQD765Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Aa8EkXBOm6PTg6Q8Ak4+YvvezLbLPVea71D30oGEw2Vh/B2/DI2oPpfrPsuT5QwPA
-         FElVUHMeyXTgmo5LcSD6SZGi/+tltQkhrOU1oaU+gPdmCRYys2Z7YUwaV2U9Lhc9IK
-         lNoVqyM9xFL6mW95xM060LVzpfbOZQeCtYKRIniA=
+        b=SEYy1Gvgxh42KaE59w8hmJAfR44MpQbcWd/rFEJphu+5PRM/Z3vbVz+kjDsQ7NP5T
+         d3Q95YfLCUU8RfnlrJtWFzBJwS+8kGNQAXsu0yV/J7Z8WtnJdwXYI0E2K8/Vh5SRUh
+         MaeoXVhuV1eqVf7EtdJusxSFDkpL5zR/zGi7+sog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 026/171] smsc95xx: Check for Wake-on-LAN modes
-Date:   Thu,  8 Nov 2018 13:49:56 -0800
-Message-Id: <20181108215129.173420738@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Vagin <avagin@openvz.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 027/171] perf/ring_buffer: Prevent concurent ring buffer access
+Date:   Thu,  8 Nov 2018 13:49:57 -0800
+Message-Id: <20181108215129.257622004@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,34 +73,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c530c471ba37bdd9fe1c7185b01455c00ae606fb ]
+[ Upstream commit cd6fb677ce7e460c25bdd66f689734102ec7d642 ]
 
-The driver does not check for Wake-on-LAN modes specified by an user,
-but will conditionally set the device as wake-up enabled or not based on
-that, which could be a very confusing user experience.
+Some of the scheduling tracepoints allow the perf_tp_event
+code to write to ring buffer under different cpu than the
+code is running on.
 
-Fixes: e0e474a83c18 ("smsc95xx: add wol magic packet support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This results in corrupted ring buffer data demonstrated in
+following perf commands:
+
+  # perf record -e 'sched:sched_switch,sched:sched_wakeup' perf bench sched messaging
+  # Running 'sched/messaging' benchmark:
+  # 20 sender and receiver processes per group
+  # 10 groups == 400 processes run
+
+       Total time: 0.383 [sec]
+  [ perf record: Woken up 8 times to write data ]
+  0x42b890 [0]: failed to process type: -1765585640
+  [ perf record: Captured and wrote 4.825 MB perf.data (29669 samples) ]
+
+  # perf report --stdio
+  0x42b890 [0]: failed to process type: -1765585640
+
+The reason for the corruption are some of the scheduling tracepoints,
+that have __perf_task dfined and thus allow to store data to another
+cpu ring buffer:
+
+  sched_waking
+  sched_wakeup
+  sched_wakeup_new
+  sched_stat_wait
+  sched_stat_sleep
+  sched_stat_iowait
+  sched_stat_blocked
+
+The perf_tp_event function first store samples for current cpu
+related events defined for tracepoint:
+
+    hlist_for_each_entry_rcu(event, head, hlist_entry)
+      perf_swevent_event(event, count, &data, regs);
+
+And then iterates events of the 'task' and store the sample
+for any task's event that passes tracepoint checks:
+
+  ctx = rcu_dereference(task->perf_event_ctxp[perf_sw_context]);
+
+  list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+    if (event->attr.type != PERF_TYPE_TRACEPOINT)
+      continue;
+    if (event->attr.config != entry->type)
+      continue;
+
+    perf_swevent_event(event, count, &data, regs);
+  }
+
+Above code can race with same code running on another cpu,
+ending up with 2 cpus trying to store under the same ring
+buffer, which is specifically not allowed.
+
+This patch prevents the problem, by allowing only events with the same
+current cpu to receive the event.
+
+NOTE: this requires the use of (per-task-)per-cpu buffers for this
+feature to work; perf-record does this.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+[peterz: small edits to Changelog]
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Vagin <avagin@openvz.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: e6dab5ffab59 ("perf/trace: Add ability to set a target task for events")
+Link: http://lkml.kernel.org/r/20180923161343.GB15054@krava
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc95xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/events/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 831aa33d078a..a167116ceeee 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -775,6 +775,9 @@ static int smsc95xx_ethtool_set_wol(struct net_device *net,
- 	struct smsc95xx_priv *pdata = (struct smsc95xx_priv *)(dev->data[0]);
- 	int ret;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 95bd00d9f2c3..3caf1a863a0b 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7737,6 +7737,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 			goto unlock;
  
-+	if (wolinfo->wolopts & ~SUPPORTED_WAKE)
-+		return -EINVAL;
-+
- 	pdata->wolopts = wolinfo->wolopts & SUPPORTED_WAKE;
- 
- 	ret = device_set_wakeup_enable(&dev->udev->dev, pdata->wolopts);
+ 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
++			if (event->cpu != smp_processor_id())
++				continue;
+ 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
+ 				continue;
+ 			if (event->attr.config != entry->type)
 -- 
 2.17.1
 
