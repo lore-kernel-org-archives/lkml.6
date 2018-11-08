@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EEAECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C2DECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF7520989
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407EC2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1SaictxJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF7520989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJuyGOzk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 407EC2086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeKIHcG (ORCPT
+        id S1728311AbeKIHcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:32:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:32:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbeKIHcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:05 -0500
+        id S1728247AbeKIHcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:06 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77257208E3;
-        Thu,  8 Nov 2018 21:54:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E52C2089A;
+        Thu,  8 Nov 2018 21:54:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714078;
-        bh=3WY2PTXAZjzv37tKtoFmpcMqKIEVZKxhtpVNyY7ubH0=;
+        s=default; t=1541714079;
+        bh=8amLbs7YRojqTwzPBX7Xy+U4PcOF/99tig2RE4ZyNic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1SaictxJ4iRLR7wT0zHwXrbthmQqWVcj1u+x39pIvvjYwAqnoKFEkL1WSQL0u9rI2
-         M7f9IMuXJX978JmMI5mBEPHsB9bk4nyd3vCp0Vcj5GU02e5YPiuXE3NdYtSvzCnW2Q
-         A8yh4RJ3o7qWjtpBRtstQGBhvyqDoI9p8FzgNbCg=
+        b=qJuyGOzk2+cK+UH3blwNpfYg+ySCOwW2d/S0TvDgmNkVXReoySurSa/KsSloNAinY
+         c64BbFjF1SZapAIEaX+rTPIaKh2j697Q8JkET9v/5QD8aeGPkGhfmp7AvEqWgtHd2u
+         0rT/LfgmriiYdzj4RltEfLR3AcBuDR+HvrjwvXUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Jim Davis <jim.epost@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 047/144] usb: musb: Fix randconfig build issues for Kconfig options
-Date:   Thu,  8 Nov 2018 13:50:18 -0800
-Message-Id: <20181108215058.255896807@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Zimmerman <paulz@synopsys.com>,
+        Robert Baldyga <r.baldyga@samsung.com>,
+        Felipe Balbi <balbi@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 048/144] usb: dwc2: gadget: kill requests with force in s3c_hsotg_udc_stop()
+Date:   Thu,  8 Nov 2018 13:50:19 -0800
+Message-Id: <20181108215058.326996998@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,69 +63,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c0442479652b99b62dd1ffccb34231caff25751c ]
+[ Upstream commit 62f4f0651ce8ef966a0e5b6db6a7a524c268fdd2 ]
 
-Commit 82c02f58ba3a ("usb: musb: Allow multiple glue layers to be
-built in") enabled selecting multiple glue layers, which in turn
-exposed things more for randconfig builds. If NOP_USB_XCEIV is
-built-in and TUSB6010 is a loadable module, we will get:
+This makes us sure that all requests are completed before we unbind
+gadget. There are assumptions in gadget API that all requests have to
+be completed and leak of complete can break some usb function drivers.
 
-drivers/built-in.o: In function `tusb_remove':
-tusb6010.c:(.text+0x16a817): undefined reference to `usb_phy_generic_unregister'
-drivers/built-in.o: In function `tusb_probe':
-tusb6010.c:(.text+0x16b24e): undefined reference to `usb_phy_generic_register'
-make: *** [vmlinux] Error 1
+For example unbind of ECM function can cause NULL pointer dereference:
 
-Let's fix this the same way as commit 70c1ff4b3c86 ("usb: musb:
-tusb-dma can't be built-in if tusb is not").
+[   26.396595] configfs-gadget gadget: unbind function
+'cdc_ethernet'/e79c4c00
+[   26.414999] Unable to handle kernel NULL pointer dereference at
+virtual address 00000000
+(...)
+[   26.452223] PC is at ecm_unbind+0x6c/0x9c
+[   26.456209] LR is at ecm_unbind+0x68/0x9c
+(...)
+[   26.603696] [<c033fdb4>] (ecm_unbind) from [<c033661c>]
+(purge_configs_funcs+0x94/0xd8)
+[   26.611674] [<c033661c>] (purge_configs_funcs) from [<c0336674>]
+(configfs_composite_unbind+0x14/0x34)
+[   26.620961] [<c0336674>] (configfs_composite_unbind) from
+[<c0337124>] (usb_gadget_remove_driver+0x68/0x9c)
+[   26.630683] [<c0337124>] (usb_gadget_remove_driver) from [<c03376c8>]
+(usb_gadget_unregister_driver+0x64/0x94)
+[   26.640664] [<c03376c8>] (usb_gadget_unregister_driver) from
+[<c0336be8>] (unregister_gadget+0x20/0x3c)
+[   26.650038] [<c0336be8>] (unregister_gadget) from [<c0336c84>]
+(gadget_dev_desc_UDC_store+0x80/0xb8)
+[   26.659152] [<c0336c84>] (gadget_dev_desc_UDC_store) from
+[<c0335120>] (gadget_info_attr_store+0x1c/0x28)
+[   26.668703] [<c0335120>] (gadget_info_attr_store) from [<c012135c>]
+(configfs_write_file+0xe8/0x148)
+[   26.677818] [<c012135c>] (configfs_write_file) from [<c00c8dd4>]
+(vfs_write+0xb0/0x1a0)
+[   26.685801] [<c00c8dd4>] (vfs_write) from [<c00c91b8>]
+(SyS_write+0x44/0x84)
+[   26.692834] [<c00c91b8>] (SyS_write) from [<c000e560>]
+(ret_fast_syscall+0x0/0x30)
+[   26.700381] Code: e30409f8 e34c0069 eb07b88d e59430a8 (e5930000)
+[   26.706485] ---[ end trace f62a082b323838a2 ]---
 
-And while at it, let's not allow selecting the glue layers except
-on platforms really using them unless COMPILE_TEST is specified:
+It's because in some cases request is still running on endpoint during
+unbind and kill_all_requests() called from s3c_hsotg_udc_stop() function
+doesn't cause call of complete() of request. Missing complete() call
+causes ecm->notify_req equals NULL in ecm_unbind() function, and this
+is reason of this bug.
 
-- TUSB6010 is in practise only used on omaps
+Similar breaks can be observed in another usb function drivers.
 
-- DSPS is only used on TI platforms
+This patch fixes this bug forcing usb request completion in when
+s3c_hsotg_ep_disable() is called from s3c_hsotg_udc_stop().
 
-- UX500 is only used on STE platforms
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Paul Zimmerman <paulz@synopsys.com>
+Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
 Signed-off-by: Felipe Balbi <balbi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/musb/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/dwc2/gadget.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
-index dbc56eb5eee4..5ab24cd38f37 100644
---- a/drivers/usb/musb/Kconfig
-+++ b/drivers/usb/musb/Kconfig
-@@ -73,6 +73,8 @@ config USB_MUSB_DA8XX
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 8b5c079c7b7d..cb4c925fb87c 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -2590,7 +2590,7 @@ error:
+  * s3c_hsotg_ep_disable - disable given endpoint
+  * @ep: The endpoint to disable.
+  */
+-static int s3c_hsotg_ep_disable(struct usb_ep *ep)
++static int s3c_hsotg_ep_disable_force(struct usb_ep *ep, bool force)
+ {
+ 	struct s3c_hsotg_ep *hs_ep = our_ep(ep);
+ 	struct s3c_hsotg *hsotg = hs_ep->parent;
+@@ -2611,7 +2611,7 @@ static int s3c_hsotg_ep_disable(struct usb_ep *ep)
  
- config USB_MUSB_TUSB6010
- 	tristate "TUSB6010"
-+	depends on ARCH_OMAP2PLUS || COMPILE_TEST
-+	depends on NOP_USB_XCEIV = USB_MUSB_HDRC # both built-in or both modules
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+ 	/* terminate all requests with shutdown */
+-	kill_all_requests(hsotg, hs_ep, -ESHUTDOWN, false);
++	kill_all_requests(hsotg, hs_ep, -ESHUTDOWN, force);
  
- config USB_MUSB_OMAP2PLUS
- 	tristate "OMAP2430 and onwards"
-@@ -86,6 +88,7 @@ config USB_MUSB_AM35X
- config USB_MUSB_DSPS
- 	tristate "TI DSPS platforms"
- 	select USB_MUSB_AM335X_CHILD
-+	depends on ARCH_OMAP2PLUS || COMPILE_TEST
- 	depends on OF_IRQ
+ 	hsotg->fifo_map &= ~(1<<hs_ep->fifo_index);
+ 	hs_ep->fifo_index = 0;
+@@ -2632,6 +2632,10 @@ static int s3c_hsotg_ep_disable(struct usb_ep *ep)
+ 	return 0;
+ }
  
- config USB_MUSB_BLACKFIN
-@@ -94,6 +97,7 @@ config USB_MUSB_BLACKFIN
++static int s3c_hsotg_ep_disable(struct usb_ep *ep)
++{
++	return s3c_hsotg_ep_disable_force(ep, false);
++}
+ /**
+  * on_list - check request is on the given endpoint
+  * @ep: The endpoint to check.
+@@ -2933,7 +2937,7 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
  
- config USB_MUSB_UX500
- 	tristate "Ux500 platforms"
-+	depends on ARCH_U8500 || COMPILE_TEST
+ 	/* all endpoints should be shutdown */
+ 	for (ep = 1; ep < hsotg->num_of_eps; ep++)
+-		s3c_hsotg_ep_disable(&hsotg->eps[ep].ep);
++		s3c_hsotg_ep_disable_force(&hsotg->eps[ep].ep, true);
  
- config USB_MUSB_JZ4740
- 	tristate "JZ4740"
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+ 
 -- 
 2.17.1
 
