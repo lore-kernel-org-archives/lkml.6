@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 283C4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D38C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA81A20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BF1D20818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0XNhIW60"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA81A20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2RiQLImu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BF1D20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731155AbeKIH5I (ORCPT
+        id S1731407AbeKIH5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:57:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36360 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:57:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731902AbeKIHnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:43:52 -0500
+        id S1731920AbeKIHnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:51 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5C0B21479;
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C75C21486;
         Thu,  8 Nov 2018 22:06:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714781;
-        bh=+ld6kpdjAzEzw9IdBt4Zh1UHHCEDSgcHx+V3vvws71k=;
+        bh=YLpFj+e+Jm7htJfdD5/yqcYE3JF+YBQEWMnwE0cxB5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0XNhIW605St+VtNVEJp/d5nOZZSJ2oRFolXwxhZzPkGgZU+rYxtcsxhM7Tuu4bDKS
-         gcMCcucbSjX+DhjGfxRrTg1rVmVRc4w5x+3AyJivh9l/FkRbwK7fidm1uVKaY3KC/3
-         dkeSkrr+wg4ngSQk26uY1q2I1WWls8ZkCEtRrtHY=
+        b=2RiQLImu5oPoiK1wgpyR0hQ92Kla0cFk1XKukBV9tNKwDDD9m2CkxGcoT1RwxdR5Y
+         vnhOLnpcga509FZ5wHpLJsuDpRZHLQmpdOqldjJ3F+2USGoFqjpQ1BkJmKBARRdziU
+         wi/wbBUKnAbb5zs4g2cBdafcSbVoXyQYXEGBXduM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 124/171] xhci: Fix USB3 NULL pointer dereference at logical disconnect.
-Date:   Thu,  8 Nov 2018 13:51:34 -0800
-Message-Id: <20181108215136.225961233@linuxfoundation.org>
+Subject: [PATCH 4.9 123/171] libertas: call into generic suspend code before turning off power
+Date:   Thu,  8 Nov 2018 13:51:33 -0800
+Message-Id: <20181108215136.187890648@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,61 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2278446e2b7cd33ad894b32e7eb63afc7db6c86e ]
+[ Upstream commit 4f666675cdff0b986195413215eb062b7da6586f ]
 
-Hub driver will try to disable a USB3 device twice at logical disconnect,
-racing with xhci_free_dev() callback from the first port disable.
+When powering down a SDIO connected card during suspend, make sure to call
+into the generic lbs_suspend() function before pulling the plug. This will
+make sure the card is successfully deregistered from the system to avoid
+communication to the card starving out.
 
-This can be triggered with "udisksctl power-off --block-device <disk>"
-or by writing "1" to the "remove" sysfs file for a USB3 device
-in 4.17-rc4.
-
-USB3 devices don't have a similar disabled link state as USB2 devices,
-and use a U3 suspended link state instead. In this state the port
-is still enabled and connected.
-
-hub_port_connect() first disconnects the device, then later it notices
-that device is still enabled (due to U3 states) it will try to disable
-the port again (set to U3).
-
-The xhci_free_dev() called during device disable is async, so checking
-for existing xhci->devs[i] when setting link state to U3 the second time
-was successful, even if device was being freed.
-
-The regression was caused by, and whole thing revealed by,
-Commit 44a182b9d177 ("xhci: Fix use-after-free in xhci_free_virt_device")
-which sets xhci->devs[i]->udev to NULL before xhci_virt_dev() returned.
-and causes a NULL pointer dereference the second time we try to set U3.
-
-Fix this by checking xhci->devs[i]->udev exists before setting link state.
-
-The original patch went to stable so this fix needs to be applied there as
-well.
-
-Fixes: 44a182b9d177 ("xhci: Fix use-after-free in xhci_free_virt_device")
-Cc: <stable@vger.kernel.org>
-Reported-by: Jordan Glover <Golden_Miller83@protonmail.ch>
-Tested-by: Jordan Glover <Golden_Miller83@protonmail.ch>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 7444a8092906 ("libertas: fix suspend and resume for SDIO connected cards")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 45a03eff4db1..0f09ab5399f4 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -366,7 +366,7 @@ int xhci_find_slot_id_by_port(struct usb_hcd *hcd, struct xhci_hcd *xhci,
- 
- 	slot_id = 0;
- 	for (i = 0; i < MAX_HC_SLOTS; i++) {
--		if (!xhci->devs[i])
-+		if (!xhci->devs[i] || !xhci->devs[i]->udev)
- 			continue;
- 		speed = xhci->devs[i]->udev->speed;
- 		if (((speed >= USB_SPEED_SUPER) == (hcd->speed >= HCD_USB3))
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
+index a0ae8d8763bb..06a57c708992 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1368,6 +1368,10 @@ static int if_sdio_suspend(struct device *dev)
+ 	if (priv->wol_criteria == EHS_REMOVE_WAKEUP) {
+ 		dev_info(dev, "Suspend without wake params -- powering down card\n");
+ 		if (priv->fw_ready) {
++			ret = lbs_suspend(priv);
++			if (ret)
++				return ret;
++
+ 			priv->power_up_on_resume = true;
+ 			if_sdio_power_off(card);
+ 		}
 -- 
 2.17.1
 
