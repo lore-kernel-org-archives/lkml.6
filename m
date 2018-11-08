@@ -2,147 +2,166 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6216AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEC7ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F40DA2077B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:07:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40DA2077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 354212077B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:08:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="buNmfCEh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354212077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbeKICnm (ORCPT
+        id S1727082AbeKICpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:43:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51906 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726583AbeKICnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:43:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 19DDEB0BB;
-        Thu,  8 Nov 2018 17:07:15 +0000 (UTC)
-Subject: Re: [PATCH v2 1/3] dt-bindings: Add vendor prefix for Smartlabs
-To:     Christian Hewitt <christianshewitt@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-References: <1541691207-24768-1-git-send-email-christianshewitt@gmail.com>
- <1541696475-27454-1-git-send-email-christianshewitt@gmail.com>
- <1541696475-27454-2-git-send-email-christianshewitt@gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <c3c6ecbb-13c3-79ac-7587-c41b1d49bc42@suse.de>
-Date:   Thu, 8 Nov 2018 18:07:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1541696475-27454-2-git-send-email-christianshewitt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 8 Nov 2018 21:45:01 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39398 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeKICpB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 21:45:01 -0500
+Received: by mail-pf1-f196.google.com with SMTP id n11-v6so9578084pfb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:08:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=A9/0kpOkbUFX6Cs4ROIwbJe6H8AsAc8U63ivXKgPQgs=;
+        b=buNmfCEh3PM2toAPVWAiYB4BadC2IIXG3TEfFRkQueEi4CG5vjInU2IY7aw2M12JoY
+         yUiBEkMcZCyz1hPxpxyMUwpe7rpH0izeauucNSsYMQ3P6pK57yUKgeNb58UHZ84+Col3
+         FpLoz7Go3sz49DnYoHBCVGJ3cRlI3eCWNh2sU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=A9/0kpOkbUFX6Cs4ROIwbJe6H8AsAc8U63ivXKgPQgs=;
+        b=bwjxONmVJ4mr86YxYjzqPjTBQP2Ign/4+QKDFdvaO6kJiJsBhbJDI6XLNVdvsNbTc4
+         F1WSrmJ6W2NJxdcqZPvnoz7lkBVPvMx4eOG+DyYLRUZ98nFC9WLm8vhMrk/ImCKdL4qN
+         dIOnebQ3YUuNY6R0oX48N2HXOp39SdVpkurmmcVS7pRkOujs1DBADktJNwHS0jUk8+ua
+         xt6kR5deduDNaflhBFbH66A8YBsocHoF/ZLzDsUggUe14QtD1Hl0WLGOGN8VdZZS/i4Z
+         4bw47PnqCSTi/TqBTeGkCD6YijPljIqyawjzOlTlemmk+Qn6CdOS1xWLz9nm4wNTHmeW
+         06pw==
+X-Gm-Message-State: AGRZ1gLyRTHkSU4l39r6or1h51y96F7+BAJPV8hGG+tRkM9OmPENRily
+        xeSLuMt4g4pUaDvJ1CREe40adxifG/82SA==
+X-Google-Smtp-Source: AJdET5czrxPZpCQU0tWB0hs1DV0tm9Z/7P9qS4q36EG58ZF52vEsRqH98vOJ/f4FCttoYg2DiBMbfA==
+X-Received: by 2002:a62:6143:: with SMTP id v64-v6mr5391265pfb.125.1541696914909;
+        Thu, 08 Nov 2018 09:08:34 -0800 (PST)
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id u9-v6sm4102228pfm.175.2018.11.08.09.08.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 08 Nov 2018 09:08:34 -0800 (PST)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     Wei Li <liwei213@huawei.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [RESEND][PATCH v3] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
+Date:   Thu,  8 Nov 2018 09:08:29 -0800
+Message-Id: <1541696909-31620-1-git-send-email-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 08.11.18 um 18:01 schrieb Christian Hewitt:
-> Smartlabs are a professional integrator of Interactive TV solutions
-> and IPTV/VOD devices.
-> 
-> [1] (https://www.smartlabs.tv/en/about/)
+From: Wei Li <liwei213@huawei.com>
 
-"[1]" is not referenced anywhere, so you could just as well use a plain
-link?
+Hynix ufs has deviations on hi36xx platform which will result in
+ufs bursts transfer failures.
 
-> 
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 4b1a2a8..4e087f9 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -357,6 +357,7 @@ sirf	SiRF Technology, Inc.
->  sis	Silicon Integrated Systems Corp.
->  sitronix	Sitronix Technology Corporation
->  skyworks	Skyworks Solutions, Inc.
-> +smartlabs	Smartlabs
+To fix the problem, the Hynix device must set the register
+VS_DebugSaveConfigTime to 0x10, which will set time reference
+for SaveConfigTime is 250 ns. The time reference for SaveConfigTime
+is 40 ns by default.
 
-"SmartLabs LLC" according to your link above!
+This patch is necessary to boot on HiKey960 boards that use
+Hynix UFS chips (H28U62301AMR model: hB8aL1).
 
-Otherwise looks okay.
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Wei Li <liwei213@huawei.com>
+Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
+[jstultz: Forward ported from older code, slight tweak to commit message]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+v2:
+* Narrowed the UFS chip model to the specific model where
+  the issue has been seen. (SKhynix  H28U62301AMR model: hB8aL1)
+* Reworked logic to be contained in ufs-hisi.c since it seems to
+  be a controller issue that crops up with this specific chip
+v3:
+* Reworked back to using generic hba quriks which we then key on
+  in the hisi driver.
+---
+ drivers/scsi/ufs/ufs-hisi.c   | 9 +++++++++
+ drivers/scsi/ufs/ufs_quirks.h | 6 ++++++
+ drivers/scsi/ufs/ufshcd.c     | 2 ++
+ 3 files changed, 17 insertions(+)
 
-Regards,
-Andreas
-
->  smsc	Standard Microsystems Corporation
->  snps	Synopsys, Inc.
->  socionext	Socionext Inc.
-> 
-
-
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 46df707..452e19f 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -20,6 +20,7 @@
+ #include "unipro.h"
+ #include "ufs-hisi.h"
+ #include "ufshci.h"
++#include "ufs_quirks.h"
+ 
+ static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
+ {
+@@ -390,6 +391,14 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
+ 
+ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+ {
++	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
++		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
++		/* VS_DebugSaveConfigTime */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
++		/* sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
++	}
++
+ 	/* update */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A8), 0x1);
+ 	/* PA_TxSkip */
+diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
+index 71f73d1..5d2dfdb 100644
+--- a/drivers/scsi/ufs/ufs_quirks.h
++++ b/drivers/scsi/ufs/ufs_quirks.h
+@@ -131,4 +131,10 @@ struct ufs_dev_fix {
+  */
+ #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
+ 
++/*
++ * Some UFS devices require VS_DebugSaveConfigTime is 0x10,
++ * enabling this quirk ensure this.
++ */
++#define UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME	(1 << 9)
++
+ #endif /* UFS_QUIRKS_H_ */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 23d7cca..ce2b4df 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -231,6 +231,8 @@ static struct ufs_dev_fix ufs_fixups[] = {
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
+ 		UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME),
++	UFS_FIX(UFS_VENDOR_SKHYNIX, "hB8aL1" /*H28U62301AMR*/,
++		UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME),
+ 
+ 	END_FIX
+ };
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.7.4
+
