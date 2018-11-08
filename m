@@ -2,116 +2,144 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3095CC46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41E7C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82CD2086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BE5D20685
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:52:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5AvSY7A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82CD2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uIxNB/iJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE5D20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeKHT0v (ORCPT
+        id S1727136AbeKHT10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:26:51 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37356 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726517AbeKHT0v (ORCPT
+        Thu, 8 Nov 2018 14:27:26 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57654 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbeKHT10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:26:51 -0500
-Received: by mail-vs1-f68.google.com with SMTP id h18so11232548vsj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 01:52:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+fdqrZGWaYe24d3IZyFZ6tMU0m7UiAizlKQbjnRGHdg=;
-        b=P5AvSY7AYsuxl55FTwAw1OoiNjU4KTmN7SqJc28xuq5+j1GAp+EWLcV6tXiBgKpkMU
-         HBGbPuF3n1w6foomY/39M5raOI+RsxVAwRErGZxLmFEbslmfp7Gtw+c9GSzgXOeABqc8
-         xA5JAICZk4kIG3jQawPs4oDN6904pyWhuz9raOqFuXMuBMiRCOI61sNqZ5E3fZIRfqv2
-         fbxhZPKtxvnUwLxqaVFPzGpaiRfEKsVwqyaLhZg0Da4pY9t2bqTGPDLh/b7FqH1bFjPC
-         SSkx2WWfsloYkIDvg7mWE4R/s1BhCGK61mkIzdnuodw5i2h1GKF2uVqqsveV7Fw64k1i
-         7aSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+fdqrZGWaYe24d3IZyFZ6tMU0m7UiAizlKQbjnRGHdg=;
-        b=ClXKkoOfReRCcQM5Un8i9KRVoDsKARc5BzlUuMazV6w48zVSjIJzVln9RG83dzS+PJ
-         Sb9tf2z6lSWzSfVUJ7ZGt3WWu4fB7WjGOaqVYBX76iSBCwUt6AEC54zKoy7kl10hkmWG
-         brwZW4RAuZP8gCMbRugDJFBahzZPZmjNONii/xUiIG5RYCXYxEHeK0TJpZ3zUk8mf+NN
-         C3037iRhEFAMVLdBj3Sd6/cvdzubMTn0Phi5VxUPcHBE8+6FUwg3XkNa6erJ167nrrmw
-         SuHmb15TAsWCpX9OvRyaWcrfPTG+VGNdbmBLHQReEuLQ/5qXTnSkjpD8LlCWrViLwbIJ
-         qSRw==
-X-Gm-Message-State: AGRZ1gI6dvvfTkt8hnOfCnWgQceYLLDgyl5CKBUexHY/9gx3dizZLITZ
-        3EYK8DyIMmyV5pezoAnmHBMwlRvZZbUQSnjsXgYiEA==
-X-Google-Smtp-Source: AJdET5dlx5PpcOF6f8pQtDqiayBy28Ga2q62qg+YgXUMzlymseLnPW5aLxXNmWQzpVyJkuLnkdmnkcyzV74ussfCNdw=
-X-Received: by 2002:a67:f756:: with SMTP id w22mr1624766vso.30.1541670729401;
- Thu, 08 Nov 2018 01:52:09 -0800 (PST)
+        Thu, 8 Nov 2018 14:27:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=LlkJUTLDNsaj+mk6xpXWJLdd4sLNgs8yF4/l4NiECRU=; b=uIxNB/iJt7uxD8nPM776cm+1dT
+        oQ7g9d0STGAJutUxCjhbeGvv100HZ6BbQmhKSYhVm5iwtWv/MTvqDQnLor8kxoIc2gAxGO3MMm0NV
+        AjqVUcq49JWcilnSisSeCot1VEdQkc5YMyO3TBM9uQR72o3p8WnA8Bvfo6r+OtE4GLuehYKGwaxDn
+        3P9zCLHc2XRZ9m4wmbBPBwU41G+sbCRV3tMFiz/OcvitIrpfvSoDHsjfL3XVJYtBB6xVsU6jWwepn
+        nH1A1jEAQ4dHilIBUcwSn4gY08GTx7sWmJzdXSX+1vlXVA2eTIP5IzUP5RHMtUCUngOyxy6PpNKar
+        UeX/4eOA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKgzR-00087b-BJ; Thu, 08 Nov 2018 09:52:42 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AED2D20284F98; Thu,  8 Nov 2018 10:52:39 +0100 (CET)
+Date:   Thu, 8 Nov 2018 10:52:39 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Muchun Song <smuchun@gmail.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org
+Subject: Re: [PATCH] sched/rt: Introduce prio_{higher,lower}() helper for
+ comparing RT task prority
+Message-ID: <20181108095239.GO9761@hirez.programming.kicks-ass.net>
+References: <20181107161505.42769-1-smuchun@gmail.com>
+ <20181107173140.GK9761@hirez.programming.kicks-ass.net>
+ <CAPSr9jGXPr-fcywjBTmGa5myeKSoGn+N3ybs9b2s2ayfU=sL2A@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAOuPNLjuM5qq3go9ZFZcK0G5pQxTQb0DY36xu+8SL4vC4zJntw@mail.gmail.com>
- <20181105155815.i654i5ctmfpqhggj@angband.pl> <79d0c96a-a0a2-63ec-db91-42fd349d50c1@gmail.com>
-In-Reply-To: <79d0c96a-a0a2-63ec-db91-42fd349d50c1@gmail.com>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Thu, 8 Nov 2018 15:21:58 +0530
-Message-ID: <CAOuPNLi4GS_xbqugQSbQJygSeKFnaNyq1e7DguSpPbY2TfMyaw@mail.gmail.com>
-Subject: Re: Creating compressed backing_store as swapfile
-To:     ahferroin7@gmail.com
-Cc:     kilobyte@angband.pl, linux-mm@kvack.org,
-        open list <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPSr9jGXPr-fcywjBTmGa5myeKSoGn+N3ybs9b2s2ayfU=sL2A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 9:37 PM Austin S. Hemmelgarn
-<ahferroin7@gmail.com> wrote:
->
-> On 11/5/2018 10:58 AM, Adam Borowski wrote:
-> > On Mon, Nov 05, 2018 at 08:31:46PM +0530, Pintu Agarwal wrote:
-> >> Hi,
-> >>
-> >> I have one requirement:
-> >> I wanted to have a swapfile (64MB to 256MB) on my system.
-> >> But I wanted the data to be compressed and stored on the disk in my swapfile.
-> >> [Similar to zram, but compressed data should be moved to disk, instead of RAM].
-> >>
-> >> Note: I wanted to optimize RAM space, so performance is not important
-> >> right now for our requirement.
-> >>
-> >> So, what are the options available, to perform this in 4.x kernel version.
-> >> My Kernel: 4.9.x
-> >> Board: any - (arm64 mostly).
-> >>
-> >> As I know, following are the choices:
-> >> 1) ZRAM: But it compresses and store data in RAM itself
-> >> 2) frontswap + zswap : Didn't explore much on this, not sure if this
-> >> is helpful for our case.
-> >> 3) Manually creating swapfile: but how to compress it ?
-> >> 4) Any other options ?
-> >
-> > Loop device on any filesystem that can compress (such as btrfs)?  The
-> > performance would suck, though -- besides the indirection of loop, btrfs
-> > compresses in blocks of 128KB while swap wants 4KB writes.  Other similar
-> > option is qemu-nbd -- it can use compressed disk images and expose them to a
-> > (local) nbd client.
->
-> Swap on any type of a networked storage device (NBD, iSCSI, ATAoE, etc)
-> served from the local system is _really_ risky.  The moment the local
-> server process for the storage device gets forced out to swap, you deadlock.
->
-> Performance isn't _too_ bad for the BTRFS case though (I've actually
-> tested this before), just make sure you disable direct I/O mode on the
-> loop device, otherwise you run the risk of data corruption.
+On Thu, Nov 08, 2018 at 10:15:49AM +0800, Muchun Song wrote:
+> Peter Zijlstra <peterz@infradead.org> 于2018年11月8日周四 上午1:31写道：
 
-Sorry, btrfs is not an option for us. We want something more lighter
-weight as our requirement is just < 200 MBs.
+> > I think you only need the less thing, because:
+> >
+> > static inline bool prio_lower(int a, int b)
+> > {
+> >         return a > b;
+> > }
+> >
+> > prio_higher(a,b) := prio_lower(b,a)
+> > prio_higher_eq(a,b) := !prio_lower(a,b)
+> > prio_lower_eq(a,b) := !prio_lower(b,a)
+> 
+> Yeah, it can be simpler here. Thanks for your advice.
+> I will send a v2 patch which will fix it.
+> 
+> >
+> > Now, I'm not sure if that actually improves readability if you go around
+> > and directly substitute those identities instead of doing those defines.
+> >
+> 
+> When I first read rt.c, I couldn't quickly realize which priority was higher
+> in if condition. With this patch applied, if I know what's the meaning
+> of prio_higher()
+> or prio_lower() so that I can quickly know who's priority is higher.
+> So I think that
+> it can improves readability.
+
+Ah, yes, I agree it improves readability; what I wondered was if instead
+of doing:
+
+@@ -1424,7 +1446,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 	 */
+ 	if (curr && unlikely(rt_task(curr)) &&
+ 	    (curr->nr_cpus_allowed < 2 ||
+-	     curr->prio <= p->prio)) {
++	     prio_higher_eq(curr->prio, p->prio))) {
+ 		int target = find_lowest_rq(p);
+ 
+ 		/*
+@@ -1432,7 +1454,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 		 * not running a lower priority task.
+ 		 */
+ 		if (target != -1 &&
+-		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
++		    prio_higher(p->prio, cpu_rq(target)->rt.highest_prio.curr))
+ 			cpu = target;
+ 	}
+ 	rcu_read_unlock();
+
+
+Something like so might be better:
+
+
+@@ -1424,7 +1446,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 	 */
+ 	if (curr && unlikely(rt_task(curr)) &&
+ 	    (curr->nr_cpus_allowed < 2 ||
+-	     curr->prio <= p->prio)) {
++	     !prio_lower(curr->prio, p->prio))) {
+ 		int target = find_lowest_rq(p);
+ 
+ 		/*
+@@ -1432,7 +1454,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 		 * not running a lower priority task.
+ 		 */
+ 		if (target != -1 &&
+-		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
++		    prio_lower(cpu_rq(target)->rt.highest_prio.curr, p->prio))
+ 			cpu = target;
+ 	}
+ 	rcu_read_unlock();
+
+That is, always use prio_lower() and not introduce the other helpers.
+
+I'm not sure; those identities are faily basic for me; but I can imagine
+someone who's not yet read code for 30 odd years might struggle with
+that a bit.
