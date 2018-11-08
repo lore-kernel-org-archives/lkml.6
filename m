@@ -2,138 +2,257 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A17ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF02ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0576120684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:37:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBMbSbtn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0576120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CCC4420684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC4420684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeKIEOS (ORCPT
+        id S1727427AbeKIEPv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:14:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57474 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 23:15:51 -0500
+Received: from mga07.intel.com ([134.134.136.100]:5225 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727485AbeKIEOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:14:17 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30CAA2081C;
-        Thu,  8 Nov 2018 18:28:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541701728;
-        bh=0kvz1cgnIX528UcnUKDxkJ1gsIEwI7ms/33cUKH1/MM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=BBMbSbtnZQTc6iwuXvbv4n3L3xdo+3XqW66UuT/V/DJ3UZZUyT/7N+4Nnm/j/tSEX
-         UVcP+EhOS2pYUrVlkox8kcclENeDCT9QN4wfF8L0pVOiPQ0bqaxr2NRWxOj9Kosgus
-         fhLgAIgAE+iadN97/M9gD/5ywBSdqXFw2hi5zTWg=
-Content-Type: text/plain; charset="utf-8"
+        id S1726801AbeKIEPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:15:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 10:39:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="85006210"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Nov 2018 10:39:03 -0800
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 8 Nov 2018 10:39:03 -0800
+Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 8 Nov 2018 10:39:02 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
+ LCSMSX153.ger.corp.intel.com ([169.254.8.236]) with mapi id 14.03.0415.000;
+ Thu, 8 Nov 2018 20:39:00 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Nayna Jain" <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Thread-Topic: [PATCH v5 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Thread-Index: AQHUd238CNv13jYvhU+0nbO7Ml7SjKVGNDsw
+Date:   Thu, 8 Nov 2018 18:38:59 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTg0NzZhNmItYTVmMC00NzViLWE4ZDAtMDRiNTcxMDlkMDZmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWHl3Q0V0M2FHS3JwMklsekdjeGlMTmx6cHJYZ2c2REJickZuRUsxM2hwSWNucWZrSGdKdTN5SmRPUUdiR25wKyJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.255.203.64]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181108122938.mnhu3ttnlztfeyot@fsr-ub1664-175>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
- <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
- <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
- <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
- <20181107202624.oya2runvbbwcilzu@fsr-ub1664-175>
- <154163631513.88331.1765456171211364913@swboyd.mtv.corp.google.com>
- <20181108122938.mnhu3ttnlztfeyot@fsr-ub1664-175>
-Message-ID: <154170172752.88331.2213352243956732809@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Date:   Thu, 08 Nov 2018 10:28:47 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2018-11-08 04:29:39)
-> On Wed, Nov 07, 2018 at 04:18:35PM -0800, Stephen Boyd wrote:
-> > Quoting Abel Vesa (2018-11-07 12:26:25)
-> > > On Wed, Nov 07, 2018 at 11:01:02AM -0800, Stephen Boyd wrote:
-> > > > =
-
-> > > > =
-
-> > > > What's the plan to clean it up?
-> > > =
-
-> > > So I'm doing this in our internal tree first to make sure I don't bre=
-ak the
-> > > other (newer) socs.
-> > > =
-
-> > > I already have a prototype in testing but it's a long way to upstream=
- it.
-> > > =
-
-> > > Basically, I'm replacing all of this with a single, more like a compo=
-site,
-> > > more complex, clock type that does all the magic inside.
-> > > =
-
-> > > One of the problems is the fact that the bypasses can have the same s=
-ources
-> > > and in my case, I'm implementing that as a list of parents name, but =
-the
-> > > parent names list doesn't work with duplicates, so I have to find som=
-e other
-> > > way to do it.
-> > > =
-
-> > > Once I have something clean and tested enough I'll send it upstream.
-> > =
-
-> > Ok. Thanks for the info.
-> > =
-
-> =
-
-> Just to avoid any kind of confusion.
-> =
-
-> The whole refactoring of the SCCG clock will be done in a separate (later=
-) change
-> and will not be part of this patchset.
-> =
-
-> I already sent the 12th version of this current patch series and I would =
-really
-> like to get this in ASAP so that the booting up of imx8mq will not be del=
-ayed.
-> =
 
 
-Ok. Well we're in rc1 right now, and so we're not merging new drivers
-into mainline. I can merge the clk driver into clk-next, but you'll have
-to wait for the stabilization period to end (approximately 6 or 7 weeks)
-before this can get into the next kernel version. It will be in
-linux-next much sooner of course.
+> Call tpm_chip_start() and tpm_chip_stop() in
+> 
+> * tpm_try_get_ops() and tpm_put_ops()
+> * tpm_chip_register()
+> * tpm2_del_space()
+> 
+> And remove these calls from tpm_transmit(). The core reason for this change
+> is that in tpm_vtpm_proxy a locality change requires a virtual TPM command
+> (a command made up just for that driver).
+> 
+I don't think you can do that,  locality has to be request for each command, as  for example tboot can request higher locality any time. 
+Same for cmd_ready()/go_idle() powergatin, you will prevent the whole platform entering power save state.
+Thanks
+Tomas
+
+
+
+> The consequence of this is that this commit removes the remaining nested
+> calls.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm-chip.c       | 19 ++++++-------------
+>  drivers/char/tpm/tpm-interface.c  |  4 ----
+>  drivers/char/tpm/tpm.h            |  9 ---------
+>  drivers/char/tpm/tpm2-space.c     |  5 ++++-
+>  drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
+>  5 files changed, 11 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c index
+> 65f1561eba81..87570182f75e 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip,
+> unsigned int flags)  {
+>  	int rc;
+> 
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>  	if (!chip->ops->request_locality)
+>  		return 0;
+> 
+> @@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip
+> *chip, unsigned int flags)  {
+>  	int rc;
+> 
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return;
+> -
+>  	if (!chip->ops->relinquish_locality)
+>  		return;
+> 
+> @@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip
+> *chip, unsigned int flags)
+> 
+>  static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)  {
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>  	if (!chip->ops->cmd_ready)
+>  		return 0;
+> 
+> @@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip,
+> unsigned int flags)
+> 
+>  static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)  {
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>  	if (!chip->ops->go_idle)
+>  		return 0;
+> 
+> @@ -169,7 +157,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>  		goto out_lock;
+> 
+>  	mutex_lock(&chip->tpm_mutex);
+> -	return 0;
+> +	return tpm_chip_start(chip, 0);
+>  out_lock:
+>  	up_read(&chip->ops_sem);
+>  	put_device(&chip->dev);
+> @@ -186,6 +174,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+>   */
+>  void tpm_put_ops(struct tpm_chip *chip)  {
+> +	tpm_chip_stop(chip, 0);
+>  	mutex_unlock(&chip->tpm_mutex);
+>  	up_read(&chip->ops_sem);
+>  	put_device(&chip->dev);
+> @@ -563,7 +552,11 @@ int tpm_chip_register(struct tpm_chip *chip)  {
+>  	int rc;
+> 
+> +	rc = tpm_chip_start(chip, 0);
+> +	if (rc)
+> +		return rc;
+>  	rc = tpm_auto_startup(chip);
+> +	tpm_chip_stop(chip, 0);
+>  	if (rc)
+>  		return rc;
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> interface.c
+> index 888c9923fca1..5c04c0d9aaba 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -168,11 +168,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8
+> *buf, size_t bufsiz,
+>  	memcpy(save, buf, save_size);
+> 
+>  	for (;;) {
+> -		ret = tpm_chip_start(chip, flags);
+> -		if (ret)
+> -			return ret;
+>  		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
+> -		tpm_chip_stop(chip, flags);
+> 
+>  		rc = be32_to_cpu(header->return_code);
+>  		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING) diff --
+> git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
+> c42a75710b70..f9d56dfd0d20 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -485,15 +485,6 @@ extern const struct file_operations tpm_fops;
+> extern const struct file_operations tpmrm_fops;  extern struct idr
+> dev_nums_idr;
+> 
+> -/**
+> - * enum tpm_transmit_flags - flags for tpm_transmit()
+> - *
+> - * %TPM_TRANSMIT_NESTED:	discard setup steps (power management,
+> locality)
+> - */
+> -enum tpm_transmit_flags {
+> -	TPM_TRANSMIT_NESTED      = BIT(0),
+> -};
+> -
+>  ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>  		     unsigned int flags);
+>  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf, diff -
+> -git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index 341d4b90ba2f..8ed063b54040 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)  void
+> tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)  {
+>  	mutex_lock(&chip->tpm_mutex);
+> -	tpm2_flush_sessions(chip, space);
+> +	if (!tpm_chip_start(chip, 0)) {
+> +		tpm2_flush_sessions(chip, space);
+> +		tpm_chip_stop(chip, 0);
+> +	}
+>  	mutex_unlock(&chip->tpm_mutex);
+>  	kfree(space->context_buf);
+>  	kfree(space->session_buf);
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c
+> b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index e8a1da2810a9..a4bb60e163cc 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct
+> tpm_chip *chip, int locality)
+> 
+>  	proxy_dev->state |= STATE_DRIVER_COMMAND;
+> 
+> -	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
+> -			      "attempting to set locality");
+> +	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
+> 
+>  	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
+> 
+> --
+> 2.19.1
 
