@@ -4,48 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58ECCECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D5BECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2042C20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9684520892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QS2SLh5q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2042C20844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+q8to/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9684520892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731271AbeKIHlJ (ORCPT
+        id S1731280AbeKIHlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:41:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:41:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727992AbeKIHlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:41:07 -0500
+        id S1727992AbeKIHlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:41:12 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C8F42086C;
-        Thu,  8 Nov 2018 22:03:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 818E52086C;
+        Thu,  8 Nov 2018 22:03:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714616;
-        bh=dhnUnc0E+HqfCUqS0wiFpt6RX/pP3ZiQb4osFCx40hE=;
+        s=default; t=1541714622;
+        bh=lNMjUCfdqUKn0f+iojqqZCINf1mqw22jjseHWugAA1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QS2SLh5qTYByTD4JlYIH8VR9fJFJR1xo9poj9sqjs0Hax0FBKXhYSlRgwk2U0r81C
-         uoCIarP00aNwEa+kQnAevGfr+Yqs22bPI9tWCO151DEwpmuQzjfXS7BMZSwiiVDUu3
-         C+/cfcaFvEksIV0c45emVrNZBy33VyhwjFP+G+xw=
+        b=L+q8to/52YsrHB08UE3xqBQ8G1kW/Zn7pjOAr2tVzvPoxDQwFHtbb/ZOIMG5NWyAA
+         FX2AKf8qUtsDH0UqZMRvYg0Bx/9Oxs+S8AXmUg9NlAhbBLn9KVqpCQFFI++UkGh3WO
+         IaCYHMdT4R/gl8xjcrf73pskBKM6BSwUEbAWfXsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Kim Phillips <kim.phillips@arm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 031/171] net: cxgb3_main: fix a missing-check bug
-Date:   Thu,  8 Nov 2018 13:50:01 -0800
-Message-Id: <20181108215129.595381668@linuxfoundation.org>
+Subject: [PATCH 4.9 032/171] perf symbols: Fix memory corruption because of zero length symbols
+Date:   Thu,  8 Nov 2018 13:50:02 -0800
+Message-Id: <20181108215129.659515934@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,109 +72,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2c05d88818ab6571816b93edce4d53703870d7ae ]
+[ Upstream commit 331c7cb307971eac38e9470340e10c87855bf4bc ]
 
-In cxgb_extension_ioctl(), the command of the ioctl is firstly copied from
-the user-space buffer 'useraddr' to 'cmd' and checked through the
-switch statement. If the command is not as expected, an error code
-EOPNOTSUPP is returned. In the following execution, i.e., the cases of the
-switch statement, the whole buffer of 'useraddr' is copied again to a
-specific data structure, according to what kind of command is requested.
-However, after the second copy, there is no re-check on the newly-copied
-command. Given that the buffer 'useraddr' is in the user space, a malicious
-user can race to change the command between the two copies. By doing so,
-the attacker can supply malicious data to the kernel and cause undefined
-behavior.
+Perf top is often crashing at very random locations on powerpc.  After
+investigating, I found the crash only happens when sample is of zero
+length symbol. Powerpc kernel has many such symbols which does not
+contain length details in vmlinux binary and thus start and end
+addresses of such symbols are same.
 
-This patch adds a re-check in each case of the switch statement if there is
-a second copy in that case, to re-check whether the command obtained in the
-second copy is the same as the one in the first copy. If not, an error code
-EINVAL is returned.
+Structure
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  struct sym_hist {
+        u64                   nr_samples;
+        u64                   period;
+        struct sym_hist_entry addr[0];
+  };
+
+has last member 'addr[]' of size zero. 'addr[]' is an array of addresses
+that belongs to one symbol (function). If function consist of 100
+instructions, 'addr' points to an array of 100 'struct sym_hist_entry'
+elements. For zero length symbol, it points to the *empty* array, i.e.
+no members in the array and thus offset 0 is also invalid for such
+array.
+
+  static int __symbol__inc_addr_samples(...)
+  {
+        ...
+        offset = addr - sym->start;
+        h = annotation__histogram(notes, evidx);
+        h->nr_samples++;
+        h->addr[offset].nr_samples++;
+        h->period += sample->period;
+        h->addr[offset].period += sample->period;
+        ...
+  }
+
+Here, when 'addr' is same as 'sym->start', 'offset' becomes 0, which is
+valid for normal symbols but *invalid* for zero length symbols and thus
+updating h->addr[offset] causes memory corruption.
+
+Fix this by adding one dummy element for zero length symbols.
+
+Link: https://lkml.org/lkml/2016/10/10/148
+Fixes: edee44be5919 ("perf annotate: Don't throw error for zero length symbols")
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Link: http://lkml.kernel.org/r/1508854806-10542-1-git-send-email-ravi.bangoria@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ tools/perf/util/annotate.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-index dc0efbd91c32..ddd1ec8f7bd0 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-@@ -2150,6 +2150,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EPERM;
- 		if (copy_from_user(&t, useraddr, sizeof(t)))
- 			return -EFAULT;
-+		if (t.cmd != CHELSIO_SET_QSET_PARAMS)
-+			return -EINVAL;
- 		if (t.qset_idx >= SGE_QSETS)
- 			return -EINVAL;
- 		if (!in_range(t.intr_lat, 0, M_NEWTIMER) ||
-@@ -2249,6 +2251,9 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 		if (copy_from_user(&t, useraddr, sizeof(t)))
- 			return -EFAULT;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a38227eb5450..3336cbc6ec48 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -495,9 +495,19 @@ static struct ins *ins__find(const char *name)
+ int symbol__alloc_hist(struct symbol *sym)
+ {
+ 	struct annotation *notes = symbol__annotation(sym);
+-	const size_t size = symbol__size(sym);
++	size_t size = symbol__size(sym);
+ 	size_t sizeof_sym_hist;
  
-+		if (t.cmd != CHELSIO_GET_QSET_PARAMS)
-+			return -EINVAL;
++	/*
++	 * Add buffer of one element for zero length symbol.
++	 * When sample is taken from first instruction of
++	 * zero length symbol, perf still resolves it and
++	 * shows symbol name in perf report and allows to
++	 * annotate it.
++	 */
++	if (size == 0)
++		size = 1;
 +
- 		/* Display qsets for all ports when offload enabled */
- 		if (test_bit(OFFLOAD_DEVMAP_BIT, &adapter->open_device_map)) {
- 			q1 = 0;
-@@ -2294,6 +2299,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EBUSY;
- 		if (copy_from_user(&edata, useraddr, sizeof(edata)))
- 			return -EFAULT;
-+		if (edata.cmd != CHELSIO_SET_QSET_NUM)
-+			return -EINVAL;
- 		if (edata.val < 1 ||
- 			(edata.val > 1 && !(adapter->flags & USING_MSIX)))
- 			return -EINVAL;
-@@ -2334,6 +2341,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EPERM;
- 		if (copy_from_user(&t, useraddr, sizeof(t)))
- 			return -EFAULT;
-+		if (t.cmd != CHELSIO_LOAD_FW)
-+			return -EINVAL;
- 		/* Check t.len sanity ? */
- 		fw_data = memdup_user(useraddr + sizeof(t), t.len);
- 		if (IS_ERR(fw_data))
-@@ -2357,6 +2366,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EBUSY;
- 		if (copy_from_user(&m, useraddr, sizeof(m)))
- 			return -EFAULT;
-+		if (m.cmd != CHELSIO_SETMTUTAB)
-+			return -EINVAL;
- 		if (m.nmtus != NMTUS)
- 			return -EINVAL;
- 		if (m.mtus[0] < 81)	/* accommodate SACK */
-@@ -2398,6 +2409,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EBUSY;
- 		if (copy_from_user(&m, useraddr, sizeof(m)))
- 			return -EFAULT;
-+		if (m.cmd != CHELSIO_SET_PM)
-+			return -EINVAL;
- 		if (!is_power_of_2(m.rx_pg_sz) ||
- 			!is_power_of_2(m.tx_pg_sz))
- 			return -EINVAL;	/* not power of 2 */
-@@ -2431,6 +2444,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EIO;	/* need the memory controllers */
- 		if (copy_from_user(&t, useraddr, sizeof(t)))
- 			return -EFAULT;
-+		if (t.cmd != CHELSIO_GET_MEM)
-+			return -EINVAL;
- 		if ((t.addr & 7) || (t.len & 7))
- 			return -EINVAL;
- 		if (t.mem_id == MEM_CM)
-@@ -2483,6 +2498,8 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
- 			return -EAGAIN;
- 		if (copy_from_user(&t, useraddr, sizeof(t)))
- 			return -EFAULT;
-+		if (t.cmd != CHELSIO_SET_TRACE_FILTER)
-+			return -EINVAL;
- 
- 		tp = (const struct trace_params *)&t.sip;
- 		if (t.config_tx)
+ 	/* Check for overflow when calculating sizeof_sym_hist */
+ 	if (size > (SIZE_MAX - sizeof(struct sym_hist)) / sizeof(u64))
+ 		return -1;
 -- 
 2.17.1
 
