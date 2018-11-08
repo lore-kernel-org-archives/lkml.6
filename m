@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D946C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095DEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1367E20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D0920844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:41:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgG+N8kN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1367E20857
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wQ6QE70M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D0920844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbeKIHdk (ORCPT
+        id S1728977AbeKIHdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:33:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728986AbeKIHdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:33:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728951AbeKIHdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:33:38 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C4222089A;
-        Thu,  8 Nov 2018 21:56:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C31D220892;
+        Thu,  8 Nov 2018 21:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714172;
-        bh=JBuBtnGOQevxA6UIRXQUUAqdywB8btiS0m72H66gZHw=;
+        s=default; t=1541714170;
+        bh=YLmCx82ocb9RuUFgAsuHuhj8YE/KYq8DRgy4fJa4RQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VgG+N8kNrUm2l4Ic2JA+GHo+7MEP/cH1HT8Kd8Jygo6/DIepKf5Z6sQyPQUG9W6OB
-         gQtlB9DOGEzmUV9MbvgdeWyzVcwfX5cPt0/3wcieimQEPVZqd8Caljz5VN9XN0aUhk
-         WCOBw6y99FKM1PdX7rIaKYHXHeiuyV+p/CFIgluw=
+        b=wQ6QE70MomBCDQbB5DZUNxYz9eEkBc19K+Iuya6d3cLpjjB9mu0F1J2Id8LhUoI9E
+         po4Sj7ElgCh2XNnUjKZ8yI2WEHy4c27A3Ti0HiNo1j3npx50CH9SXbsuxz6+kBeFHJ
+         IP8RZBi2VImQV6Lk9v3ziUO2Ps8JcRMZceZWOp8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Abhilash Kesavan <a.kesavan@samsung.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Kevin Hilman <khilman@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 078/144] drivers: bus: check cci device tree node status
-Date:   Thu,  8 Nov 2018 13:50:49 -0800
-Message-Id: <20181108215100.936726705@linuxfoundation.org>
+Subject: [PATCH 3.18 093/144] tty: serial: fsl_lpuart: fix clearing of receive flag
+Date:   Thu,  8 Nov 2018 13:51:04 -0800
+Message-Id: <20181108215103.075842925@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -66,37 +63,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 896ddd600ba4a3426aeb11710ae9c28dd7ce68ce ]
+[ Upstream commit d68827c62a105eec547945daedf4d1d3e283717d ]
 
-The arm-cci driver completes the probe sequence even if the cci node is
-marked as disabled. Add a check in the driver to honour the cci status
-in the device tree.
+Commit 8e4934c6d6c6 ("tty: serial: fsl_lpuart: clear receive flag on FIFO
+flush") implemented clearing of the receive flag by reading the status register
+only. It turned out that even though we flush the FIFO afterwards, a explicit
+read of the data register is still required.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Kevin Hilman <khilman@linaro.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+This leads to a FIFO underrun. To avoid this, follow the advice in the overrun
+"Operation section": Unconditionally clear RXUF after using RXFLUSH.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/arm-cci.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/tty/serial/fsl_lpuart.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-index 7af78df241f2..99cad3ac38f2 100644
---- a/drivers/bus/arm-cci.c
-+++ b/drivers/bus/arm-cci.c
-@@ -976,6 +976,9 @@ static int cci_probe(void)
- 	if (!np)
- 		return -ENODEV;
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index af3047d8322a..92b7a5bf7c4d 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -910,13 +910,16 @@ static void lpuart_setup_watermark(struct lpuart_port *sport)
+ 	writeb(val | UARTPFIFO_TXFE | UARTPFIFO_RXFE,
+ 			sport->port.membase + UARTPFIFO);
  
-+	if (!of_device_is_available(np))
-+		return -ENODEV;
+-	/* explicitly clear RDRF */
+-	readb(sport->port.membase + UARTSR1);
+-
+ 	/* flush Tx and Rx FIFO */
+ 	writeb(UARTCFIFO_TXFLUSH | UARTCFIFO_RXFLUSH,
+ 			sport->port.membase + UARTCFIFO);
+ 
++	/* explicitly clear RDRF */
++	if (readb(sport->port.membase + UARTSR1) & UARTSR1_RDRF) {
++		readb(sport->port.membase + UARTDR);
++		writeb(UARTSFIFO_RXUF, sport->port.membase + UARTSFIFO);
++	}
 +
- 	cci_config = of_match_node(arm_cci_matches, np)->data;
- 	if (!cci_config)
- 		return -ENODEV;
+ 	writeb(0, sport->port.membase + UARTTWFIFO);
+ 	writeb(1, sport->port.membase + UARTRWFIFO);
+ 
 -- 
 2.17.1
 
