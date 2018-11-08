@@ -2,98 +2,115 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A901ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7292AECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97C420827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:23:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsLZnGI/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97C420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4518D20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4518D20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeKIB73 (ORCPT
+        id S1727171AbeKICAJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:59:29 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:44448 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbeKIB73 (ORCPT
+        Thu, 8 Nov 2018 21:00:09 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46866 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeKICAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:59:29 -0500
-Received: by mail-yw1-f65.google.com with SMTP id k6-v6so8204608ywa.11;
-        Thu, 08 Nov 2018 08:23:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6UV5rKx0JWAL8nhbHyTsgN66oDJ3QeL3SQOwfYJ7n1g=;
-        b=IsLZnGI/TBl5xtgZZwkzMeKOAvqhlXTTVXaDVBohW0tG0SxLb7G9OzmEcdtpxshQ9h
-         p8Mrxcewg2h55sz4E3K0KjMJ+x45IaDL1z0AHZ8zfbr8m3ttZ+0FPh7xI2Q8evc2iB3F
-         wgL3ybNyV0Q6UOAxAhIRkYG+Xf0qiDsIGiGLPYavHTgS1y1RtOraMBx5nLg6TZ/bAxMb
-         KVV9WN5toGZ9cWNWCbuvA3+AC/TbUUHb8L5FZtIXLpbyueZNX0S1eTMNB4aoekF8NGWe
-         bm0DsPryQA/UVMCEbS/+f7c+K0MlImNZK3S9Td89guwwml0IyVnGbIREvESIHsuarCqK
-         9J5Q==
+        Thu, 8 Nov 2018 21:00:09 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 74-v6so21875072wrb.13
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:23:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6UV5rKx0JWAL8nhbHyTsgN66oDJ3QeL3SQOwfYJ7n1g=;
-        b=OsnvN5IYPRBzfFDA4/a+C/2EPwntj+7+hPsGibQk0cUWgNrwDA18WGQEtZX/+guGIb
-         4I1qqFI4pdyz4oSKLODSPxt4qTh0Nee5yBFqSqMauwaw37pGrSstxmvunYkwmpLLPptX
-         a3VKQPkmQUw/D96sVOGUWHphdCFs10rRAfReG2oeyC3av6vVEqy9dCc6jpz4xBf5+lP/
-         7dAVZalJlcMuigQsoYkXryOdOePhabx8CvV5nmynSTRT0+/5gT6GVpg49FsfVhJOxZ8v
-         7ql741WvQHeTIzKLmpE36Nyh8WbTfkAydsymOjH8FkXITRPjYnnAscrAELwyVlRfQ5lp
-         +QhA==
-X-Gm-Message-State: AGRZ1gL43OUTIORv+VDTCSvNJgJAxJpM1TFv2uL0XT2tNbjXX6z2qp7Z
-        6phjAoOvM6SqQiR3qzF5TaeLaEcLgbB8Ar5LNGE=
-X-Google-Smtp-Source: AJdET5d1jiZKRzPaLkB472To3Gvmxtm3ilvzsjZm0/6qDKhxClfy889nDm8rZCaXAgPAIZnaC6sXROlNvDxQwhfoucw=
-X-Received: by 2002:a0d:e810:: with SMTP id r16-v6mr4921126ywe.36.1541694193723;
- Thu, 08 Nov 2018 08:23:13 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pRJEuZpsP/isRWp0fK+g9nX6y2RlIuO7JNJ59TU/ORU=;
+        b=OQedu5E3WxH15cExN01z9yLYqNE/NV9SUkUn3qvSF0seVyQDo4V5dONlqr3UVJQ+n1
+         dHLOGBqhg4n0ZAalWFTnPX+MSVYRS9Lw4GwXbQ02vuMCbhsqmK/2JZ+DR+JgRjA+X3GU
+         Ml4Qd8Fm9HGxUutvIhL7qS0Mh4+LIpaG/aBygeDS4z9K7cTD9DAatx2S3gGlL8UARHvV
+         xcPaBqK0dQGpTQqkShnvhmbrTcs9V6/kAk9MKUDUeT16x1cnLHEemvzRa86QLBchqjtX
+         FittJzV+WXmy0HAHwDlfTt6OP6HQcAoLvt4nd2yCP/pc9xNRx7JRTDysUd/KThKsf2zw
+         2IBQ==
+X-Gm-Message-State: AGRZ1gLLffbJr3EbWrDxJcAUAfhts9YFraN+W5KUpdg4Z08fluFEp0eK
+        ZdVMV5/TTSvh51JpnQAoXYq8XA==
+X-Google-Smtp-Source: AJdET5ekGrcgL9KmPpXAouiJA0Xe5LLTNyRp1En0dcWJAv4a9eKgzxvZSoLAygyJ3RUPOWc1aweGCQ==
+X-Received: by 2002:adf:fb12:: with SMTP id c18-v6mr4868721wrr.200.1541694232737;
+        Thu, 08 Nov 2018 08:23:52 -0800 (PST)
+Received: from localhost.localdomain ([151.15.207.85])
+        by smtp.gmail.com with ESMTPSA id 74-v6sm5637931wmi.23.2018.11.08.08.23.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 08:23:51 -0800 (PST)
+Date:   Thu, 8 Nov 2018 17:23:48 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Waiman Long <longman9394@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, peterz@infradead.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v5 4/5] sched/core: Prevent race condition between cpuset
+ and __sched_setscheduler()
+Message-ID: <20181108162348.GF18091@localhost.localdomain>
+References: <20180903142801.20046-1-juri.lelli@redhat.com>
+ <20180903142801.20046-5-juri.lelli@redhat.com>
+ <20181003154230.4b8792fb@gandalf.local.home>
+ <20181004090401.GB12774@localhost.localdomain>
+ <16587a21-ed6e-809d-78a8-5f76d1787665@gmail.com>
 MIME-Version: 1.0
-References: <20181009112021.756-1-peron.clem@gmail.com> <CAJiuCceqyPY+dYr+1xdSyUh5x1Fr=M_p1nsMF9h52v5CXt1uYw@mail.gmail.com>
- <20181023085208.GL30658@n2100.armlinux.org.uk> <CAJiuCcdKFKmwB5mqW-bP+4A4HtVr=1z9avxoDPrD3NL9X9i8MQ@mail.gmail.com>
- <27e04998-8e67-e543-d717-2ac7e47b1732@kernel.org>
-In-Reply-To: <27e04998-8e67-e543-d717-2ac7e47b1732@kernel.org>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Thu, 8 Nov 2018 17:23:02 +0100
-Message-ID: <CAJiuCcfzPRgmq9rytE5rcg7XPBL9LvTSs6FV5ys0hhLMMVH98g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: socfpga: Clean unused functions
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16587a21-ed6e-809d-78a8-5f76d1787665@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dinh
+Hi,
 
-On Thu, 8 Nov 2018 at 16:38, Dinh Nguyen <dinguyen@kernel.org> wrote:
->
-> Hi Cl=C3=A9ment,
->
-> On 11/2/18 10:58 AM, Cl=C3=A9ment P=C3=A9ron wrote:
-> > Hi Dinh,
-> >
-> > Could you have a look at this serie ?
-> >
->
-> I've applied 1/3 and 3/3. I need to look over 2/3 to determine if that
-> patch is still valid. I think a better solution would be to set a clock
-> as critical so that it doesn't get gated.
+On 08/11/18 10:49, Waiman Long wrote:
+> On 10/04/2018 05:04 AM, Juri Lelli wrote:
 
-Ok,
-Thanks,
-Cl=C3=A9ment
+[...]
 
->
-> Thanks,
-> Dinh
+> > +/**
+> > + * cpuset_read_only_lock - Grab the callback_lock from cpuset subsystem.
+> > + *
+> > + * Description: As described in full details the comment above cpuset_mutex
+> > + * and callback_lock definitions, holding callback_lock gives the holder
+> > + * read-only access to cpusets. Even though it might look counter-intuitive
+> > + * (as callback_lock is a spinlock), in fact a task must hold both
+> > + * callback_lock _and_ cpuset_mutex to modify cpusets (write access).
+> > + */
+> > +void cpuset_read_only_lock(void)
+> > +{
+> > +	raw_spin_lock(&callback_lock);
+> > +}
+> > +
+> > +/**
+> > + * cpuset_read_only_unlock - Release the callback_lock from cpuset subsystem.
+> > + */
+> > +void cpuset_read_only_unlock(void)
+> > +{
+> > +	raw_spin_unlock(&callback_lock);
+> > +}
+> > +
+> 
+> Maybe you can drop the "_only" part to be consistent with the rwlock
+> APIs (read_lock/write_lock).
+
+I called it this way because it looked more descriptive of which kind of
+guarantee the holder gets using these. Can change of course, what others
+think?
+
+Thanks for reviewing!
+
+Best,
+
+- Juri
