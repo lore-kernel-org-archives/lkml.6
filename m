@@ -2,82 +2,86 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C25A3ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A830C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2A520825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:07:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+rOrC0r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2A520825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2259C2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:09:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2259C2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeKHTmA (ORCPT
+        id S1726751AbeKHTo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:42:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbeKHTmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:42:00 -0500
-Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BF452086A;
-        Thu,  8 Nov 2018 10:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541671637;
-        bh=05S/zBqjC9RS2AVCCmjFb0kN6AECFnjqYtyW9ksPBAY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y+rOrC0reItmL/kXl+dmoFt5yOSkwlgtdcXfKtl5ohV+CEa9rLj+XobZUHUZV5deh
-         Le/QWXpVGSPIEThdomzs+bU/tNyNRfVrnUS5VCCYWzP22+yyeBLR18AaICLsPGuaVe
-         PLAynr7q+HP2nS51Vnd1ZEOjjeRb0tFpcc2C2jp8=
-Date:   Thu, 8 Nov 2018 02:05:55 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Brown <broonie@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v1] PCI: Move Rohm vendor ID to generic list
-Message-ID: <20181108100555.GB27328@kroah.com>
-References: <20181107195856.43223-1-andriy.shevchenko@linux.intel.com>
+        Thu, 8 Nov 2018 14:44:29 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37548 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbeKHTo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 14:44:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EEEC80D;
+        Thu,  8 Nov 2018 02:09:46 -0800 (PST)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051753F5CF;
+        Thu,  8 Nov 2018 02:09:44 -0800 (PST)
+Date:   Thu, 8 Nov 2018 10:09:42 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/9] arm64: defconfig: Drop ARM_BIG_LITTLE_CPUFREQ
+Message-ID: <20181108100941.f7vv5pivq24vz7kx@salmiak>
+References: <8b49a92b-ca92-1fca-cd09-3bcd7a3dcbb9@free.fr>
+ <596a4b64-e2ef-878d-0873-dd59d14c2d85@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181107195856.43223-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <596a4b64-e2ef-878d-0873-dd59d14c2d85@free.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 09:58:56PM +0200, Andy Shevchenko wrote:
-> Move the Rohm vendor ID to pci_ids.h from dozen of drivers.
+On Wed, Nov 07, 2018 at 09:14:57PM +0100, Marc Gonzalez wrote:
+> Commit a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+
+Please elaborate the situation in the commit message, e.g.
+
+  The big.LITTLE cpufreq driver has been banned for arm64 since commit:
+
+  a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
+
+  ... so it can be removed from defconfig.
+
+With that:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
 > ---
+>  arch/arm64/configs/defconfig | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> I believe the best chance to get it merged and be less intrusive to ongoing
-> work is through PCI subsystem as a _fix_ for v4.20.
-
-What?  Why?  Who cares?
-
-This can trickle in over the next year or never, as it isn't a bugfix,
-or "necessary" at all.  Just add it to pci_ids.h and when that gets
-merged, you can try to remove it from the individual drivers if it
-really is annoying to you.
-
-But this is _NOT_ a fix for anything, don't try to mask it as one, that
-feels like "crying wolf" here :(
-
-thanks,
-
-greg k-h
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index f786c95504d3..8d6878c1e794 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -107,7 +107,6 @@ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+>  CONFIG_CPUFREQ_DT=y
+>  CONFIG_ACPI_CPPC_CPUFREQ=m
+>  CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
+> -CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
+>  CONFIG_ARM_SCPI_CPUFREQ=y
+>  CONFIG_ARM_TEGRA186_CPUFREQ=y
+>  CONFIG_ARM_SCPI_PROTOCOL=y
+> -- 
+> 2.17.1
