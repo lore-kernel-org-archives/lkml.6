@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2CFECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD1CECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B19421019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACB921019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNqt6W2g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B19421019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ytIND3rl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACB921019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbeKIHqQ (ORCPT
+        id S1732726AbeKIHqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:46:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40110 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:46:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S1731192AbeKIHqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:46:16 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71D1720989;
-        Thu,  8 Nov 2018 22:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A257E2147A;
+        Thu,  8 Nov 2018 22:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714924;
-        bh=kC2FUFXsoF+YZQC/vy5cGUprEt7/gDSYLpd1qjqQwrI=;
+        s=default; t=1541714925;
+        bh=0imOKen8+wCPOY8HYSLLxk6B0fUsfzj2AJXx/jyddyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NNqt6W2gyjhIekXof57oZXJxhnMFMNKO8bMPJEu6zLm6Alb/vyCHJSpC8XzZcSCrF
-         L7UGL4uBT3+ByTpQw4jgoNW41UfHzHhHrB6MWa5XyNpi+3C61cfH6LPnGRanm+UAZo
-         Yyxcxa5LuZ5ollsD2BrPJ6USHWVf+HUA3gxtGADg=
+        b=ytIND3rltEXh/OfUrWzIdyp1l67pTFV1BDN5hRiTYZ0l6hhSPhkOIUDhLLy8S6FlP
+         ksNrVF9boAchl6Og/7ecwgc4rIR03J+4DE2eQb5acSAdlRrPzi2q1hRiJrFavKFi5B
+         19TlpsPVsO+lNIKO0tD/FxjgqGBgQ1dTO5QDLHW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Felipe Balbi <felipe.balbi@intel.com>
-Subject: [PATCH 4.14 22/31] usb: gadget: storage: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Nov 2018 13:52:46 -0800
-Message-Id: <20181108215131.515278793@linuxfoundation.org>
+        Mikhail Nikiforov <jackxviichaos@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 24/31] Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15IGM
+Date:   Thu,  8 Nov 2018 13:52:48 -0800
+Message-Id: <20181108215131.676952325@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
 References: <20181108215129.641434673@linuxfoundation.org>
@@ -63,54 +63,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Mikhail Nikiforov <jackxviichaos@gmail.com>
 
-commit 9ae24af3669111d418242caec8dd4ebd9ba26860 upstream.
+commit 13c1c5e4d7f887cba36c5e3df3faa22071c1469f upstream.
 
-num can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Add ELAN061C to the ACPI table to support Elan touchpad found in Lenovo
+IdeaPad 330-15IGM.
 
-This issue was detected with the help of Smatch:
-
-drivers/usb/gadget/function/f_mass_storage.c:3177 fsg_lun_make() warn:
-potential spectre issue 'fsg_opts->common->luns' [r] (local cap)
-
-Fix this by sanitizing num before using it to index
-fsg_opts->common->luns
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
+Signed-off-by: Mikhail Nikiforov <jackxviichaos@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Felipe Balbi <felipe.balbi@intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_mass_storage.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/gadget/function/f_mass_storage.c
-+++ b/drivers/usb/gadget/function/f_mass_storage.c
-@@ -221,6 +221,8 @@
- #include <linux/usb/gadget.h>
- #include <linux/usb/composite.h>
- 
-+#include <linux/nospec.h>
-+
- #include "configfs.h"
- 
- 
-@@ -3170,6 +3172,7 @@ static struct config_group *fsg_lun_make
- 	fsg_opts = to_fsg_opts(&group->cg_item);
- 	if (num >= FSG_MAX_LUNS)
- 		return ERR_PTR(-ERANGE);
-+	num = array_index_nospec(num, FSG_MAX_LUNS);
- 
- 	mutex_lock(&fsg_opts->lock);
- 	if (fsg_opts->refcnt || fsg_opts->common->luns[num]) {
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1262,6 +1262,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0611", 0 },
+ 	{ "ELAN0612", 0 },
+ 	{ "ELAN0618", 0 },
++	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
+ 	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
 
 
