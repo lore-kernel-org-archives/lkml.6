@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F08ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51162ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA7E21019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A8662089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0rKt9dI3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA7E21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrxjgR38"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8662089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732844AbeKIHrG (ORCPT
+        id S1732850AbeKIHrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40886 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:47:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730057AbeKIHrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730877AbeKIHrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:47:06 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 193F221019;
+        by mail.kernel.org (Postfix) with ESMTPSA id AC42A2147A;
         Thu,  8 Nov 2018 22:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714974;
-        bh=WV5Bp7FOvNzUeg+29b3fYKBsd0MrQJGxt1aEEnldADY=;
+        bh=28iVcZyyRuGpTcZh4ZLX26lUnJR/kBlSW7jTTv8Muwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0rKt9dI3/WXCeGTKjelrmwkFvZoTIgnTgW8NAZyiA6dukihPnrDz+/ou4Dd9V/76r
-         CPp0eb46e1B5wU2KAkvT0IriujKYNY8YEfLSqhdTrQawZq1tgB4qdHM5GGBNEQwt86
-         wvIL5zv+ycuOC5CGnKPP38rWHA4/ESshEEKf0bDo=
+        b=FrxjgR38e4Y5h3aPuCZmDaBR1r0UgwGTtLQetwC+vvNJ9WjBbR9bnWG4CWl9i6Oql
+         8axz6C4PWEQr0nFLdndq4Zf12Nm01rTKZa9UjljtyAMpV+MoH5nHPEjD0W0fQc74xh
+         OhxBfajOeFdPJYdkcFXzd8SoziWKOEsGKE79h+KI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tobias Herzog <t-herzog@gmx.de>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.18 16/34] cdc-acm: correct counting of UART states in serial state notification
-Date:   Thu,  8 Nov 2018 13:52:45 -0800
-Message-Id: <20181108215139.917858184@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.18 17/34] cdc-acm: fix race between reset and control messaging
+Date:   Thu,  8 Nov 2018 13:52:46 -0800
+Message-Id: <20181108215139.972329313@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -62,55 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tobias Herzog <t-herzog@gmx.de>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit f976d0e5747ca65ccd0fb2a4118b193d70aa1836 upstream.
+commit 9397940ed812b942c520e0c25ed4b2c64d57e8b9 upstream.
 
-The usb standard ("Universal Serial Bus Class Definitions for Communication
-Devices") distiguishes between "consistent signals" (DSR, DCD), and
-"irregular signals" (break, ring, parity error, framing error, overrun).
-The bits of "irregular signals" are set, if this error/event occurred on
-the device side and are immeadeatly unset, if the serial state notification
-was sent.
-Like other drivers of real serial ports do, just the occurence of those
-events should be counted in serial_icounter_struct (but no 1->0
-transitions).
+If a device splits up a control message and a reset() happens
+between the parts, the message is lost and already recieved parts
+must be dropped.
 
-Signed-off-by: Tobias Herzog <t-herzog@gmx.de>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Fixes: 1aba579f3cf51 ("cdc-acm: handle read pipe errors")
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/usb/class/cdc-acm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/usb/class/cdc-acm.c
 +++ b/drivers/usb/class/cdc-acm.c
-@@ -309,17 +309,17 @@ static void acm_process_notification(str
+@@ -1641,6 +1641,7 @@ static int acm_pre_reset(struct usb_inte
+ 	struct acm *acm = usb_get_intfdata(intf);
  
- 		if (difference & ACM_CTRL_DSR)
- 			acm->iocount.dsr++;
--		if (difference & ACM_CTRL_BRK)
--			acm->iocount.brk++;
--		if (difference & ACM_CTRL_RI)
--			acm->iocount.rng++;
- 		if (difference & ACM_CTRL_DCD)
- 			acm->iocount.dcd++;
--		if (difference & ACM_CTRL_FRAMING)
-+		if (newctrl & ACM_CTRL_BRK)
-+			acm->iocount.brk++;
-+		if (newctrl & ACM_CTRL_RI)
-+			acm->iocount.rng++;
-+		if (newctrl & ACM_CTRL_FRAMING)
- 			acm->iocount.frame++;
--		if (difference & ACM_CTRL_PARITY)
-+		if (newctrl & ACM_CTRL_PARITY)
- 			acm->iocount.parity++;
--		if (difference & ACM_CTRL_OVERRUN)
-+		if (newctrl & ACM_CTRL_OVERRUN)
- 			acm->iocount.overrun++;
- 		spin_unlock(&acm->read_lock);
+ 	clear_bit(EVENT_RX_STALL, &acm->flags);
++	acm->nb_index = 0; /* pending control transfers are lost */
  
+ 	return 0;
+ }
 
 
