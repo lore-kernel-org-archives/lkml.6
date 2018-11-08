@@ -6,224 +6,347 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ED0ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C434ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DCFF2081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DCFF2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 53DBE2145D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DBE2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeKIAhe (ORCPT
+        id S1727214AbeKIAiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:37:34 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14630 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726469AbeKIAhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:37:34 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 802FDA61D1582;
-        Thu,  8 Nov 2018 23:01:29 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
- 23:01:22 +0800
-Subject: Re: [PATCH v2] of, numa: Validate some distance map rules
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        <robh+dt@kernel.org>, <frowand.list@gmail.com>
-References: <1541672223-131326-1-git-send-email-john.garry@huawei.com>
- <ee4cc102-6602-9f4f-d00c-d07ad7567401@arm.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <ec84abdd-ad11-329c-e859-20bfe71d5771@huawei.com>
-Date:   Thu, 8 Nov 2018 15:01:16 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Thu, 8 Nov 2018 19:38:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726417AbeKIAiV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:38:21 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8ExMZb060290
+        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 10:02:26 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmqb1gchc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 10:02:26 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 8 Nov 2018 15:02:25 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 8 Nov 2018 15:02:21 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8F2KGE46399590
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 15:02:20 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3885BB205F;
+        Thu,  8 Nov 2018 15:02:20 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79060B2067;
+        Thu,  8 Nov 2018 15:02:19 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Nov 2018 15:02:19 +0000 (GMT)
+Subject: Re: [PATCH v5 07/17] tpm: declare struct tpm_header
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Microchip (AT91) SoC support" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-8-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 8 Nov 2018 10:02:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <ee4cc102-6602-9f4f-d00c-d07ad7567401@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20181108141541.12832-8-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18110815-0052-0000-0000-00000352ADD8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01114489; UDB=6.00577814; IPR=6.00894588;
+ MB=3.00024075; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 15:02:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110815-0053-0000-0000-00005EB2BBB0
+Message-Id: <0683a6db-109f-e08e-eae7-636ee9c28540@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/2018 13:41, Anshuman Khandual wrote:
-> On 11/08/2018 03:47 PM, John Garry wrote:
->> Currently the NUMA distance map parsing does not validate the distance
->> table for the distance-matrix rules 1-2 in [1].
+On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
+> Decleare struct tpm_header that replaces struct tpm_input_header and
+> struct tpm_output_header.
 >
-> Right.
->
->>
->> However the arch NUMA code may enforce some of these rules, but not all.
->
-> Either it does enforce all these rules again or it does not. What is the
-> purpose it serves when enforcing parts of it ! Rather it should focus on
-> looking for boundary conditions (e.g maximum number of nodes supported
-> on a platform against whats present on the table) which are important
-> from kernel point of view.
->
->> Such is the case for the arm64 port, which does not enforce the rule that
->> the distance between separates nodes cannot equal LOCAL_DISTANCE.
->>
->> The patch adds the following rules validation:
->> - distance of node to self equals LOCAL_DISTANCE
->> - distance of separate nodes > LOCAL_DISTANCE
->
-> Which exactly corresponds to first two rules as mentioned in the DT doc
-> (Documents/devicetree/bindings/numa.txt)
->
->         1. Each entry represents distance from first node to second node.
->         The distances are equal in either direction.
->         2. The distance from a node to self (local distance) is represented
->         with value 10 and all internode distance should be represented with
->         a value greater than 10.
->
->>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Not exactly. As you know, it does not add validation of distance 
-equality in either direction (for values present in the table).
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
->> This change avoids a yet-unresolved crash reported in [2].
->>
->> A note on dealing with symmetrical distances between nodes:
->>
->> Validating symmetrical distances between nodes is difficult. If it were
->> mandated in the bindings that every distance must be recorded in the
->> table, then it would be easy. However, it isn't.
->
-> But if [a, b] and [b, a] both are present, they must be equal.
->
->>
->> In addition to this, it is also possible to record [b, a] distance only
->> (and not [a, b]). So, when processing the table for [b, a], we cannot
->> assert that current distance of [a, b] != [b, a] as invalid, as [a, b]
->> distance may not be present in the table and current distance would be
->> default at REMOTE_DISTANCE.
->
-> Falling back to REMOTE_DISTANCE is right in case one of the symmetrical
-> distances is not present. But it must abort if they are present and not
-> identical. That rule should be enforced here while processing DT.
 
-Do you really think it's worth the effort?
-
-For this, we would need something considerably more complicated than 
-what we have today. Maybe similar to the arm64 NUMA code does, in 
-allocating a memblock and then doing some 2-phase table parsing. But 
-then we're just replicated this same functionality.
-
-On this point, I will also note that there is another problem with the 
-DT NUMA bindings (first problem being that both distance entries are not 
-required to be present in the table).
-
-That is, it's inconsistency with ACPI SLIT. ACPI SLIT allows 
-asymmetrical distance. So that's why I'm not too hung up on this issue 
-of validating equality of distances.
-
-This patch does not change the current kernel policy: if the table has 
-entries with unequal distances, then it's not rejected nor fixed up.
-
+> ---
+>   drivers/char/tpm/tpm-interface.c  |  9 ++++-----
+>   drivers/char/tpm/tpm.h            | 27 ++++++++++++---------------
+>   drivers/char/tpm/tpm2-cmd.c       |  4 ++--
+>   drivers/char/tpm/tpm2-space.c     |  6 +++---
+>   drivers/char/tpm/tpm_i2c_atmel.c  |  5 ++---
+>   drivers/char/tpm/tpm_vtpm_proxy.c |  8 ++++----
+>   drivers/char/tpm/xen-tpmfront.c   |  2 +-
+>   7 files changed, 28 insertions(+), 33 deletions(-)
 >
->>
->> As such, we maintain the policy that we overwrite distance [a, b] = [b, a]
->> for b > a. This policy is different to kernel ACPI SLIT validation, which
->> allows non-symmetrical distances (ACPI spec SLIT rules allow it). However,
->> the distance debug message is dropped as it may be misleading (for a distance
->> which is later overwritten).
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 28d48799b044..6abbcedc87a3 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -67,7 +67,7 @@ static int tpm_validate_command(struct tpm_chip *chip,
+>   				 const u8 *cmd,
+>   				 size_t len)
+>   {
+> -	const struct tpm_input_header *header = (const void *)cmd;
+> +	const struct tpm_header *header = (const void *)cmd;
+>   	int i;
+>   	u32 cc;
+>   	u32 attrs;
+> @@ -166,7 +166,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   				u8 *buf, size_t bufsiz,
+>   				unsigned int flags)
+>   {
+> -	struct tpm_output_header *header = (void *)buf;
+> +	struct tpm_header *header = (void *)buf;
+>   	int rc;
+>   	ssize_t len = 0;
+>   	u32 count, ordinal;
+> @@ -276,7 +276,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   		     u8 *buf, size_t bufsiz, unsigned int flags)
+>   {
+> -	struct tpm_output_header *header = (struct tpm_output_header *)buf;
+> +	struct tpm_header *header = (struct tpm_header *)buf;
+>   	/* space for header and handles */
+>   	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+>   	unsigned int delay_msec = TPM2_DURATION_SHORT;
+> @@ -375,8 +375,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>   			 struct tpm_buf *buf, size_t min_rsp_body_length,
+>   			 unsigned int flags, const char *desc)
+>   {
+> -	const struct tpm_output_header *header =
+> -		(struct tpm_output_header *)buf->data;
+> +	const struct tpm_header *header = (struct tpm_header *)buf->data;
+>   	int err;
+>   	ssize_t len;
 >
-> We could override but if the DT passed table is inconsistent then it must
-> abort as non-symmetrical distance is not supported. Hence overriding the
-> distance should happen only in case the inverse set is absent (probably
-> outside the first loop).
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 229ac42b644e..92638ec6ec97 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -273,16 +273,13 @@ struct tpm_chip {
 >
->>
->> Some final notes on semantics:
->>
->> - It is implied that it is the responsibility of the arch NUMA code to
->>   reset the NUMA distance map for an error in distance map parsing.
+>   #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
 >
-> Right.
+> -struct tpm_input_header {
+> -	__be16	tag;
+> -	__be32	length;
+> -	__be32	ordinal;
+> -} __packed;
+> -
+> -struct tpm_output_header {
+> -	__be16	tag;
+> -	__be32	length;
+> -	__be32	return_code;
+> +struct tpm_header {
+> +	__be16 tag;
+> +	__be32 length;
+> +	union {
+> +		__be32 ordinal;
+> +		__be32 return_code;
+> +	};
+>   } __packed;
 >
->>
->> - It is the responsibility of the FW NUMA topology parsing (whether OF or
->>   ACPI) to enforce NUMA distance rules, and not arch NUMA code.
+>   #define TPM_TAG_RQU_COMMAND 193
+> @@ -401,8 +398,8 @@ struct tpm_buf {
 >
-> This is where we still have some inconsistencies. Arch NUMA code on arm64
-> should either enforce rule 1 and 2 as stated above or should not at all.
-
-It was implied that any validation can be later dropped from the arch 
-NUMA code.
-
-  As
-> discussed previously numa_set_distance() enforces first part of rule 2
-> (self distance should be 10) but not the second part of rule 2 (internode
-> distance > 10). So either the following condition should be dropped from
+>   static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+>   {
+> -	struct tpm_input_header *head;
+> -	head = (struct tpm_input_header *)buf->data;
+> +	struct tpm_header *head = (struct tpm_header *)buf->data;
+> +
+>   	head->tag = cpu_to_be16(tag);
+>   	head->length = cpu_to_be32(sizeof(*head));
+>   	head->ordinal = cpu_to_be32(ordinal);
+> @@ -428,14 +425,14 @@ static inline void tpm_buf_destroy(struct tpm_buf *buf)
 >
-> (from == to && distance != LOCAL_DISTANCE)
+>   static inline u32 tpm_buf_length(struct tpm_buf *buf)
+>   {
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	struct tpm_header *head = (struct tpm_header *) buf->data;
 >
-> or the following condition should be added to
+>   	return be32_to_cpu(head->length);
+>   }
 >
-> (from != to && distance <= LOCAL_DISTANCE)
+>   static inline u16 tpm_buf_tag(struct tpm_buf *buf)
+>   {
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	struct tpm_header *head = (struct tpm_header *) buf->data;
 >
-> numa_set_distance() in order to conform to the semantics described above.
-> But thats for a separate discussion how much and what should be enforced
-> in any given DT compatible arch NUMA node. May not be part of this patch.
+>   	return be16_to_cpu(head->tag);
+>   }
+> @@ -444,7 +441,7 @@ static inline void tpm_buf_append(struct tpm_buf *buf,
+>   				  const unsigned char *new_data,
+>   				  unsigned int new_len)
+>   {
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	struct tpm_header *head = (struct tpm_header *) buf->data;
+>   	u32 len = tpm_buf_length(buf);
 >
->>
->> [1] Documents/devicetree/bindings/numa.txt
->> [2] https://www.spinics.net/lists/arm-kernel/msg683304.html
->>
->> Cc: stable@vger.kernel.org # 4.7
->> Signed-off-by: John Garry <john.garry@huawei.com>
->> Acked-by: Will Deacon <will.deacon@arm.com>
->> ---
->> Changes from v1:
->> - Add note on masking crash reported
->> - Add Will's tag
->> - Add cc stable
->>
->> diff --git a/drivers/of/of_numa.c b/drivers/of/of_numa.c
->> index 35c64a4295e0..fe6b13608e51 100644
->> --- a/drivers/of/of_numa.c
->> +++ b/drivers/of/of_numa.c
->> @@ -104,9 +104,14 @@ static int __init of_numa_parse_distance_map_v1(struct device_node *map)
->>  		distance = of_read_number(matrix, 1);
->>  		matrix++;
->>
->> +		if ((nodea == nodeb && distance != LOCAL_DISTANCE) ||
->> +		    (nodea != nodeb && distance <= LOCAL_DISTANCE)) {
->> +			pr_err("Invalid distance[node%d -> node%d] = %d\n",
->> +			       nodea, nodeb, distance);
->> +			return -EINVAL;
->> +		}
->> +
->>  		numa_set_distance(nodea, nodeb, distance);
->> -		pr_debug("distance[node%d -> node%d] = %d\n",
->> -			 nodea, nodeb, distance);
+>   	/* Return silently if overflow has already happened. */
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 2bcf470c8e5d..ab03f8600f89 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -784,7 +784,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+>    */
+>   int tpm2_probe(struct tpm_chip *chip)
+>   {
+> -	struct tpm_output_header *out;
+> +	struct tpm_header *out;
+>   	struct tpm_buf buf;
+>   	int rc;
 >
-> It makes sense to go through the table and print the finalized values
-> (being passed to arch NUMA) out side of this loop after any identical
-> replacement is done.
->>
->>  		/* Set default distance of node B->A same as A->B */
->>  		if (nodeb > nodea)
->>
+> @@ -797,7 +797,7 @@ int tpm2_probe(struct tpm_chip *chip)
+>   	rc = tpm_transmit_cmd(chip, NULL, &buf, 0, 0, NULL);
+>   	/* We ignore TPM return codes on purpose. */
+>   	if (rc >=  0) {
+> -		out = (struct tpm_output_header *)buf.data;
+> +		out = (struct tpm_header *)buf.data;
+>   		if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
+>   			chip->flags |= TPM_CHIP_FLAG_TPM2;
+>   	}
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index 3d5f9577e5de..393d9aadadce 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -334,7 +334,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
+>   				    size_t len)
+>   {
+>   	struct tpm_space *space = &chip->work_space;
+> -	struct tpm_output_header *header = (void *)rsp;
+> +	struct tpm_header *header = (void *)rsp;
+>   	u32 phandle;
+>   	u32 phandle_type;
+>   	u32 vhandle;
+> @@ -394,7 +394,7 @@ static int tpm2_map_response_body(struct tpm_chip *chip, u32 cc, u8 *rsp,
+>   				  size_t len)
+>   {
+>   	struct tpm_space *space = &chip->work_space;
+> -	struct tpm_output_header *header = (void *)rsp;
+> +	struct tpm_header *header = (void *)rsp;
+>   	struct tpm2_cap_handles *data;
+>   	u32 phandle;
+>   	u32 phandle_type;
+> @@ -492,7 +492,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
+>   int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+>   		      u32 cc, u8 *buf, size_t *bufsiz)
+>   {
+> -	struct tpm_output_header *header = (void *)buf;
+> +	struct tpm_header *header = (void *)buf;
+>   	int rc;
 >
-> As mentioned before it should invalidate the table [a, b] != [b, a] in
-> case they are present and not equal.
+>   	if (!space)
+> diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
+> index 95ce2e9ccdc6..4720b2442ffe 100644
+> --- a/drivers/char/tpm/tpm_i2c_atmel.c
+> +++ b/drivers/char/tpm/tpm_i2c_atmel.c
+> @@ -46,7 +46,7 @@ struct priv_data {
+>   	/* This is the amount we read on the first try. 25 was chosen to fit a
+>   	 * fair number of read responses in the buffer so a 2nd retry can be
+>   	 * avoided in small message cases. */
+> -	u8 buffer[sizeof(struct tpm_output_header) + 25];
+> +	u8 buffer[sizeof(struct tpm_header) + 25];
+>   };
 >
-
-I think that most of these comments are related to earlier points.
-
-> .
+>   static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> @@ -72,8 +72,7 @@ static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>   {
+>   	struct priv_data *priv = dev_get_drvdata(&chip->dev);
+>   	struct i2c_client *client = to_i2c_client(chip->dev.parent);
+> -	struct tpm_output_header *hdr =
+> -		(struct tpm_output_header *)priv->buffer;
+> +	struct tpm_header *hdr = (struct tpm_header *)priv->buffer;
+>   	u32 expected_len;
+>   	int rc;
 >
-
-Thanks,
-John
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index 5f95fbfb7f6b..28eb5ab15b99 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -303,9 +303,9 @@ static int vtpm_proxy_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>   static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
+>   					u8 *buf, size_t count)
+>   {
+> -	struct tpm_input_header *hdr = (struct tpm_input_header *)buf;
+> +	struct tpm_header *hdr = (struct tpm_header *)buf;
+>
+> -	if (count < sizeof(struct tpm_input_header))
+> +	if (count < sizeof(struct tpm_header))
+>   		return 0;
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> @@ -402,7 +402,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+>   {
+>   	struct tpm_buf buf;
+>   	int rc;
+> -	const struct tpm_output_header *header;
+> +	const struct tpm_header *header;
+>   	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> @@ -427,7 +427,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+>   		goto out;
+>   	}
+>
+> -	header = (const struct tpm_output_header *)buf.data;
+> +	header = (const struct tpm_header *)buf.data;
+>   	rc = be32_to_cpu(header->return_code);
+>   	if (rc)
+>   		locality = -1;
+> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> index b150f87f38f5..1259e935fd58 100644
+> --- a/drivers/char/tpm/xen-tpmfront.c
+> +++ b/drivers/char/tpm/xen-tpmfront.c
+> @@ -163,7 +163,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+>   	wmb();
+>   	notify_remote_via_evtchn(priv->evtchn);
+>
+> -	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
+> +	ordinal = be32_to_cpu(((struct tpm_header *)buf)->ordinal);
+>   	duration = tpm_calc_ordinal_duration(chip, ordinal);
+>
+>   	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
 
 
