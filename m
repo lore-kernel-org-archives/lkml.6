@@ -2,167 +2,208 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D06ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED508ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7115220684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB73B20684
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:00:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfmgDaOR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7115220684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="okSIkPap"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB73B20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeKIDgl (ORCPT
+        id S1727128AbeKIDhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:36:41 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:34823 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbeKIDgl (ORCPT
+        Thu, 8 Nov 2018 22:37:09 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52068 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726634AbeKIDhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:36:41 -0500
-Received: by mail-yw1-f65.google.com with SMTP id w135-v6so8355366ywd.2;
-        Thu, 08 Nov 2018 10:00:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a3ZQ95EjHKvLIc50X3Fuqq5o9w1oaPKktFkHFIugYck=;
-        b=GfmgDaORstRsBJAD5f/AIWsfsNNjaKSviT24zZq0HIz/H8nm9IID45ywVsCSz9tQFE
-         vcVDtq4SsNKKFsrwUoZC7rbj0VKIrFXogIUviEm+eifiCsbmThH5y34lFsBjnv5O/R0R
-         cB1FDB39rf/TYI4foNILYRm8fKAPX2lU8frPzWCt5bYYVvA5Yes4PMIuPunpb1DJVwLT
-         +CrPtKMbPrOAUGQX0SsNfG1Q81kh65y8YRuIcArXkj3FtyXAR+MBBZM55KC0P5nMao8l
-         WwFBsqBuOfgLqjIMeEG90wPMzYWDTGT5NFk/VfyULI2og1SCBOfY28fxtOqgzWGkDQeP
-         t22Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=a3ZQ95EjHKvLIc50X3Fuqq5o9w1oaPKktFkHFIugYck=;
-        b=TnMvgmKvILanvGRlx3kRzCj5XHYaPbhcmsjnGFogpT84uLKEpBhQuOODVSFkfDrYTB
-         s2JKfbd01mNjMA72g7rtzViUSlKpjs2UUl6ZQSAZeQg7wUsFR8+M74AQCzF9QaiqcsVk
-         audlfNOEXXvj4FRparbVuF++cBuGL6+1PimyQ3ghwILiLLjYDlGa3rOIlGbkxii3OE3E
-         XN3ivREa7tPERLeHGXEmRTCp+H9m0dTiGDoREvN7UMrVhC4ui+LOkf+Zxr6+BMU5luAP
-         25Tgy6lkQnOX4yYIzO+FUIfknRzskGnydwkaSjOSjcJx7AHUbkuF+xtzhZmoddVznF8e
-         htHg==
-X-Gm-Message-State: AGRZ1gKa3TmAlmJxpdljol9cs0EWiXiaPfzBbGy9ltia2iuUeJ/HYOw7
-        q0T7iL5V4WQBbu/BFhAJfGcfBie2
-X-Google-Smtp-Source: AJdET5chSY4B3kE7HXyhpk+RpCC2ovvhx0XqQIlTzxOnhUctLBnrcF00X9t4dCkpzpJhDtL0oq70LA==
-X-Received: by 2002:a81:ae64:: with SMTP id g36-v6mr5335076ywk.370.1541700001658;
-        Thu, 08 Nov 2018 10:00:01 -0800 (PST)
-Received: from [10.67.49.62] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id m16-v6sm3285567ywh.18.2018.11.08.10.00.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 10:00:00 -0800 (PST)
-Subject: Re: [PATCH] net: phy: leds: Don't make our own link speed names
-To:     Kyle Roeschley <kyle.roeschley@ni.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181108175106.25684-1-kyle.roeschley@ni.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <fa2751d5-a15c-6414-9b80-15f54fd9f135@gmail.com>
-Date:   Thu, 8 Nov 2018 09:59:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 22:37:08 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8I0GKO045668;
+        Thu, 8 Nov 2018 12:00:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1541700016;
+        bh=nGkUEE3U00RiOrTXp61Xn/QktaC1mM2VBZMKG4OkLGM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=okSIkPap0Jr+5xZ1I4olnAjGa5/MMWFQ392ll6nqKangYeO5TzSiPsUxbtAR99ZKA
+         OMJQedCAFKSAu13+cuJqRHX0SW19Veqx9hzI4RXvibYEroQJE5d6jYIZzJFC1IugzE
+         /uRsBW0lF0ufc3LKMLZSR3yPVu3V9hM0tdyUVXUk=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8I0Gwj049475
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 12:00:16 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
+ 2018 12:00:16 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 8 Nov 2018 12:00:16 -0600
+Received: from [172.22.151.38] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8I0F5T015320;
+        Thu, 8 Nov 2018 12:00:15 -0600
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
+ properties
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <linux-leds@vger.kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <pavel@ucw.cz>, <robh@kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>,
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <26714494-06f8-163d-1ef8-75f75c25a467@ti.com>
+Date:   Thu, 8 Nov 2018 12:00:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181108175106.25684-1-kyle.roeschley@ni.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/8/18 9:51 AM, Kyle Roeschley wrote:
-> The phy core provides a handy phy_speed_to_str() helper, so use that
-> instead of doing our own formatting of the different known link speeds.
+Jacek
 
-In case the speed is not supported, phy_speed_to_str() would return
-"Unsupported (update phy-core.c)" which is bigger (by 21 characters)
-than name_suffix.
-
-If you bumped name_suffix/PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE to 11
-characters, that would be just large enough to accommodate for the
-"Unsupported" part of the string and that might be an acceptable
-solution in between.
-
+On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
+> Introduce dedicated properties for conveying information about
+> LED function and color. Mark old "label" property as deprecated.
 > 
-> Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Cc: Simon Shields <simon@lineageos.org>
+> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 > ---
->  drivers/net/phy/phy_led_triggers.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
+>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
+>  1 file changed, 44 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/net/phy/phy_led_triggers.c b/drivers/net/phy/phy_led_triggers.c
-> index 491efc1bf5c4..2827eb413c9c 100644
-> --- a/drivers/net/phy/phy_led_triggers.c
-> +++ b/drivers/net/phy/phy_led_triggers.c
-> @@ -77,20 +77,9 @@ static int phy_led_trigger_register(struct phy_device *phy,
->  				    struct phy_led_trigger *plt,
->  				    unsigned int speed)
->  {
-> -	char name_suffix[PHY_LED_TRIGGER_SPEED_SUFFIX_SIZE];
-> -
->  	plt->speed = speed;
-> -
-> -	if (speed < SPEED_1000)
-> -		snprintf(name_suffix, sizeof(name_suffix), "%dMbps", speed);
-> -	else if (speed == SPEED_2500)
-> -		snprintf(name_suffix, sizeof(name_suffix), "2.5Gbps");
-> -	else
-> -		snprintf(name_suffix, sizeof(name_suffix), "%dGbps",
-> -			 DIV_ROUND_CLOSEST(speed, 1000));
-> -
->  	phy_led_trigger_format_name(phy, plt->name, sizeof(plt->name),
-> -				    name_suffix);
-> +				    phy_speed_to_str(speed));
->  	plt->trigger.name = plt->name;
+> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
+> index aa13998..3efc826 100644
+> --- a/Documentation/devicetree/bindings/leds/common.txt
+> +++ b/Documentation/devicetree/bindings/leds/common.txt
+> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
+>  have to be tightly coupled with the LED device binding. They are represented
+>  by child nodes of the parent LED device binding.
 >  
->  	return led_trigger_register(&plt->trigger);
+> +
+>  Optional properties for child nodes:
+>  - led-sources : List of device current outputs the LED is connected to. The
+>  		outputs are identified by the numbers that must be defined
+>  		in the LED device binding documentation.
+> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
+> +	    from the header include/dt-bindings/leds/functions.h.
+> +	    If there is no matching LED_FUNCTION available, add a new one.
+> +- color : Color of the LED.
+
+Should we define the colors too?  There are only really 4.  Red, green, blue and white.
+
+Generally varying colors are created base on the primary colors.  Even the amber color
+
+Dan
+
+>  - label : The label for this LED. If omitted, the label is taken from the node
+>  	  name (excluding the unit address). It has to uniquely identify
+>  	  a device, i.e. no other LED class device can be assigned the same
+> -	  label.
+> +	  label. This property is deprecated - use 'function' and 'color'
+> +	  properties instead.
+>  
+>  - default-state : The initial state of the LED. Valid values are "on", "off",
+>    and "keep". If the LED is already on or off and the default-state property is
+> @@ -87,29 +93,59 @@ Required properties for trigger source:
+>  
+>  * Examples
+>  
+> -gpio-leds {
+> +#include <dt-bindings/leds/functions.h>
+> +
+> +led-controller@0 {
+>  	compatible = "gpio-leds";
+>  
+> -	system-status {
+> -		label = "Status";
+> +	led0 {
+> +		function = LED_FUNCTION_STATUS;
+>  		linux,default-trigger = "heartbeat";
+>  		gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+>  	};
+>  
+> -	usb {
+> +	led1 {
+> +		function = LED_FUNCTION_USB;
+>  		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+>  		trigger-sources = <&ohci_port1>, <&ehci_port1>;
+>  	};
+>  };
+>  
+> -max77693-led {
+> +led-controller@0 {
+>  	compatible = "maxim,max77693-led";
+>  
+> -	camera-flash {
+> -		label = "Flash";
+> +	led {
+> +		function = LED_FUNCTION_FLASH;
+> +		color = "white";
+>  		led-sources = <0>, <1>;
+>  		led-max-microamp = <50000>;
+>  		flash-max-microamp = <320000>;
+>  		flash-max-timeout-us = <500000>;
+>  	};
+>  };
+> +
+> +led-controller@68 {
+> +	compatible = "ti,tlc59116";
+> +	reg = <0x68>;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	led@0 {
+> +		function = LED_FUNCTION_WAN;
+> +		color = "amber";
+> +		reg = <0x0>;
+> +	};
+> +
+> +	led@2 {
+> +		function = LED_FUNCTION_2G;
+> +		color = "white";
+> +		reg = <0x2>;
+> +	};
+> +
+> +	led@9 {
+> +		function = LED_FUNCTION_ALIVE;
+> +		color = "green";
+> +		reg = <0x9>;
+> +		linux,default_trigger = "heartbeat";
+> +	};
+> +};
 > 
 
 
 -- 
-Florian
+------------------
+Dan Murphy
