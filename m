@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47FEECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FCBECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61169208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F66208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnE55ONp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61169208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLIfSiAN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F66208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732406AbeKIHpR (ORCPT
+        id S1732411AbeKIHpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:45:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38638 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:45:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729884AbeKIHpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:16 -0500
+        id S1728376AbeKIHpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:45:22 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 619E92089F;
-        Thu,  8 Nov 2018 22:07:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC55B208A3;
+        Thu,  8 Nov 2018 22:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714865;
-        bh=O4f4BCyZB4TPNReQw//FOws+cprLyYsCE8aEAPBPX3c=;
+        s=default; t=1541714871;
+        bh=IrYlzdAQicNicksk1fjweZYjpf4CZBkGIDOgj2mIJI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cnE55ONpcqrgIXAgdwsHKtZXkq/I7F4IRsb93XUKEIOx0udyP4A68Ts89blf1e+zo
-         zp2gyp2/wtqUNXf3+1datIKY2R5Sfhw1kSvJMkPH80rytiUGP/3jwzEssi+1xwMf3V
-         2OcNmiQkyz8mwnX3Arz4fjjrm2iVfDDvd/RVJeIg=
+        b=lLIfSiANB5NixV7BuGZ5i8Hv0e+INyIdRkH6qBp5Vg7rJ64NHmo+tTMZnAGn3Pf/N
+         UNjT0mZzGFdIyZkK0RCJh6pxMlsnFYMzfrZw6+fND5Hd+84+qkxSH4i4XFyHdKYuvp
+         4yjyi7Mk6XptFcgCFI+J6qqyAblFX2jgkXpBDGUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Felipe Balbi <felipe.balbi@intel.com>
-Subject: [PATCH 4.9 164/171] usb: gadget: storage: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Nov 2018 13:52:14 -0800
-Message-Id: <20181108215138.854437480@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 165/171] USB: fix the usbfs flag sanitization for control transfers
+Date:   Thu,  8 Nov 2018 13:52:15 -0800
+Message-Id: <20181108215138.909341842@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,54 +62,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 9ae24af3669111d418242caec8dd4ebd9ba26860 upstream.
+commit 665c365a77fbfeabe52694aedf3446d5f2f1ce42 upstream.
 
-num can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Commit 7a68d9fb8510 ("USB: usbdevfs: sanitize flags more") checks the
+transfer flags for URBs submitted from userspace via usbfs.  However,
+the check for whether the USBDEVFS_URB_SHORT_NOT_OK flag should be
+allowed for a control transfer was added in the wrong place, before
+the code has properly determined the direction of the control
+transfer.  (Control transfers are special because for them, the
+direction is set by the bRequestType byte of the Setup packet rather
+than direction bit of the endpoint address.)
 
-This issue was detected with the help of Smatch:
+This patch moves code which sets up the allow_short flag for control
+transfers down after is_in has been set to the correct value.
 
-drivers/usb/gadget/function/f_mass_storage.c:3177 fsg_lun_make() warn:
-potential spectre issue 'fsg_opts->common->luns' [r] (local cap)
-
-Fix this by sanitizing num before using it to index
-fsg_opts->common->luns
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Felipe Balbi <felipe.balbi@intel.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: syzbot+24a30223a4b609bb802e@syzkaller.appspotmail.com
+Fixes: 7a68d9fb8510 ("USB: usbdevfs: sanitize flags more")
+CC: Oliver Neukum <oneukum@suse.com>
+CC: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_mass_storage.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/core/devio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/gadget/function/f_mass_storage.c
-+++ b/drivers/usb/gadget/function/f_mass_storage.c
-@@ -220,6 +220,8 @@
- #include <linux/usb/gadget.h>
- #include <linux/usb/composite.h>
- 
-+#include <linux/nospec.h>
-+
- #include "configfs.h"
- 
- 
-@@ -3260,6 +3262,7 @@ static struct config_group *fsg_lun_make
- 	fsg_opts = to_fsg_opts(&group->cg_item);
- 	if (num >= FSG_MAX_LUNS)
- 		return ERR_PTR(-ERANGE);
-+	num = array_index_nospec(num, FSG_MAX_LUNS);
- 
- 	mutex_lock(&fsg_opts->lock);
- 	if (fsg_opts->refcnt || fsg_opts->common->luns[num]) {
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -1490,8 +1490,6 @@ static int proc_do_submiturb(struct usb_
+ 	u = 0;
+ 	switch (uurb->type) {
+ 	case USBDEVFS_URB_TYPE_CONTROL:
+-		if (is_in)
+-			allow_short = true;
+ 		if (!usb_endpoint_xfer_control(&ep->desc))
+ 			return -EINVAL;
+ 		/* min 8 byte setup packet */
+@@ -1521,6 +1519,8 @@ static int proc_do_submiturb(struct usb_
+ 			is_in = 0;
+ 			uurb->endpoint &= ~USB_DIR_IN;
+ 		}
++		if (is_in)
++			allow_short = true;
+ 		snoop(&ps->dev->dev, "control urb: bRequestType=%02x "
+ 			"bRequest=%02x wValue=%04x "
+ 			"wIndex=%04x wLength=%04x\n",
 
 
