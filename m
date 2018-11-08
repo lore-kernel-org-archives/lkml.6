@@ -2,121 +2,117 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB53C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE13C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA3A20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:33:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA3A20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id 8EE2B20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE2B20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeKHSHr (ORCPT
+        id S1726846AbeKHSI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:07:47 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:58088 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbeKHSHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:07:47 -0500
-Received: from [192.168.178.170] (pD95EF942.dip0.t-ipconnect.de [217.94.249.66])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 3231A2A7776;
-        Thu,  8 Nov 2018 08:31:00 +0000 (UTC)
-Subject: Re: [PATCH 08/24] leds: lt3593: Use led_compose_name()
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
- <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
- <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <b7deca0c-bb4f-0ec6-8b73-aec6617d2b8e@zonque.org>
-Date:   Thu, 8 Nov 2018 09:33:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 13:08:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38250 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726252AbeKHSI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:08:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8E7DAE4F;
+        Thu,  8 Nov 2018 08:34:01 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 09:34:00 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Arun KS <arunks@codeaurora.org>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        khlebnikov@yandex-team.ru, minchan@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, getarunks@gmail.com
+Subject: Re: [PATCH v3 4/4] mm: Remove managed_page_count spinlock
+Message-ID: <20181108083400.GQ27423@dhcp22.suse.cz>
+References: <1541665398-29925-1-git-send-email-arunks@codeaurora.org>
+ <1541665398-29925-5-git-send-email-arunks@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541665398-29925-5-git-send-email-arunks@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/11/2018 8:49 PM, Jacek Anaszewski wrote:
-> On 11/07/2018 08:37 PM, Daniel Mack wrote:
->> On 6/11/2018 11:07 PM, Jacek Anaszewski wrote:
->>> Switch to using generic LED support for composing LED class
->>> device name.
->>
->> Thanks for the rework!
->>
->>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> ---
->>>    drivers/leds/leds-lt3593.c | 19 ++++++++-----------
->>>    1 file changed, 8 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
->>> index de3623e..d005abc 100644
->>> --- a/drivers/leds/leds-lt3593.c
->>> +++ b/drivers/leds/leds-lt3593.c
->>> @@ -10,10 +10,10 @@
->>>    #include <linux/slab.h>
->>>    #include <linux/module.h>
->>>    #include <linux/of.h>
->>> -#include <uapi/linux/uleds.h>
->>> +
->>> +#define LED_LT3593_NAME "lt3593"
->>>      struct lt3593_led_data {
->>> -    char name[LED_MAX_NAME_SIZE];
->>>        struct led_classdev cdev;
->>>        struct gpio_desc *gpiod;
->>>    };
->>> @@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device
->>> *pdev)
->>>        struct fwnode_handle *child;
->>>        int ret, state = LEDS_GPIO_DEFSTATE_OFF;
->>>        enum gpiod_flags flags = GPIOD_OUT_LOW;
->>> +    struct led_init_data init_data;
->>>        const char *tmp;
->>>          if (dev_get_platdata(dev)) {
->>> @@ -138,14 +139,11 @@ static int lt3593_led_probe(struct
->>> platform_device *pdev)
->>>            return PTR_ERR(led_data->gpiod);
->>>          child = device_get_next_child_node(dev, NULL);
->>> +    init_data.fwnode = child;
->>
->> Not quite following. `fwnode' is the only member of that struct that is
->> initialized?
->>
->>>    -    ret = fwnode_property_read_string(child, "label", &tmp);
->>> -    if (ret < 0)
->>> -        snprintf(led_data->name, sizeof(led_data->name),
->>> -             "lt3593::");
->>> -    else
->>> -        snprintf(led_data->name, sizeof(led_data->name),
->>> -             "lt3593:%s", tmp);
->>> +    ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
->>
->> ... and here, a member that wasn't written before is used? What am I
->> missing?
+On Thu 08-11-18 13:53:18, Arun KS wrote:
+> Now totalram_pages and managed_pages are atomic varibles. No need
+> of managed_page_count spinlock.
+
+As explained earlier. Please add a motivation here. Feel free to reuse
+wording from http://lkml.kernel.org/r/20181107103630.GF2453@dhcp22.suse.cz
+
 > 
-> init_data.name pointer is passed to led_compose_name(), which fills
-> this array with the composed name.
+> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  include/linux/mmzone.h | 6 ------
+>  mm/page_alloc.c        | 5 -----
+>  2 files changed, 11 deletions(-)
+> 
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index e73dc31..c71b4d9 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -428,12 +428,6 @@ struct zone {
+>  	 * Write access to present_pages at runtime should be protected by
+>  	 * mem_hotplug_begin/end(). Any reader who can't tolerant drift of
+>  	 * present_pages should get_online_mems() to get a stable value.
+> -	 *
+> -	 * Read access to managed_pages should be safe because it's unsigned
+> -	 * long. Write access to zone->managed_pages and totalram_pages are
+> -	 * protected by managed_page_count_lock at runtime. Idealy only
+> -	 * adjust_managed_page_count() should be used instead of directly
+> -	 * touching zone->managed_pages and totalram_pages.
+>  	 */
+>  	atomic_long_t		managed_pages;
+>  	unsigned long		spanned_pages;
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index f8b64cc..26c5e14 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -122,9 +122,6 @@
+>  };
+>  EXPORT_SYMBOL(node_states);
+>  
+> -/* Protect totalram_pages and zone->managed_pages */
+> -static DEFINE_SPINLOCK(managed_page_count_lock);
+> -
+>  atomic_long_t _totalram_pages __read_mostly;
+>  EXPORT_SYMBOL(_totalram_pages);
+>  unsigned long totalreserve_pages __read_mostly;
+> @@ -7065,14 +7062,12 @@ static int __init cmdline_parse_movablecore(char *p)
+>  
+>  void adjust_managed_page_count(struct page *page, long count)
+>  {
+> -	spin_lock(&managed_page_count_lock);
+>  	atomic_long_add(count, &page_zone(page)->managed_pages);
+>  	totalram_pages_add(count);
+>  #ifdef CONFIG_HIGHMEM
+>  	if (PageHighMem(page))
+>  		totalhigh_pages_add(count);
+>  #endif
+> -	spin_unlock(&managed_page_count_lock);
+>  }
+>  EXPORT_SYMBOL(adjust_managed_page_count);
+>  
+> -- 
+> 1.9.1
 
-Ah, that's the target. Stupid me!
-
-With this:
-
-Acked-by: Daniel Mack <daniel@zonque.org>
-
-
-Thanks,
-Daniel
-
+-- 
+Michal Hocko
+SUSE Labs
