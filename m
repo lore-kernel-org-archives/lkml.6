@@ -2,80 +2,91 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1973ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9562ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 878BA20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878BA20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id BA4C020825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:21:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4C020825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbeKIAz6 (ORCPT
+        id S1727055AbeKIA5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:55:58 -0500
-Received: from ms.lwn.net ([45.79.88.28]:59064 "EHLO ms.lwn.net"
+        Thu, 8 Nov 2018 19:57:30 -0500
+Received: from mga04.intel.com ([192.55.52.120]:13857 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbeKIAz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:55:58 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id E1D226EC;
-        Thu,  8 Nov 2018 15:19:58 +0000 (UTC)
-Date:   Thu, 8 Nov 2018 08:19:57 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        john.stultz@linaro.org, acme@redhat.com, frederic@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>, daniel.lezcano@linaro.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
-Message-ID: <20181108081957.4350d22d@lwn.net>
-In-Reply-To: <20181108150517.GV9761@hirez.programming.kicks-ass.net>
-References: <20181107171010.421878737@linutronix.de>
-        <20181107124855.328133e7@lwn.net>
-        <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
-        <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
-        <20181108074920.4c601ee3@lwn.net>
-        <20181108150517.GV9761@hirez.programming.kicks-ass.net>
-Organization: LWN.net
+        id S1726541AbeKIA5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:57:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:21:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="94677167"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 07:21:25 -0800
+Date:   Thu, 8 Nov 2018 17:21:24 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        Ken Goldman <kgold@linux.vnet.ibm.com>,
+        Kenneth Goldman <kgoldman@us.ibm.com>
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+Message-ID: <20181108152124.GE14072@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+ <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+ <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
+ <086944ab-dd56-5522-af26-e9bb545556fd@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <086944ab-dd56-5522-af26-e9bb545556fd@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018 16:05:17 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Thu, Nov 08, 2018 at 07:49:20AM -0700, Jonathan Corbet wrote:
-> > Might it be worth asking Ted for a kernel summit slot to talk about this
-> > next week?  
+On Thu, Nov 08, 2018 at 07:20:51PM +0530, Nayna Jain wrote:
+> Based on a discussion with Ken, the count in the TPML_PCR_SELECTION returns
+> the number of possible algorithms supported. In the example below, two
+> possible algorithms - SHA1 and SHA256 - are returned.
 > 
-> Ah, on that, let me complain :-)
+> # /usr/local/bin/tssgetcapability -cap 5
+> 2 PCR selections
+>     hash TPM_ALG_SHA1
+>     TPMS_PCR_SELECTION length 3
+>     ff ff ff
+>     hash TPM_ALG_SHA256
+>     TPMS_PCR_SELECTION length 3
+>     00 00 00
 > 
-> My plumbers schedule is already 100% booked with MCs and other things.
-> There is no kernel-summit schedule details available as of yet, but it
-> is already almost certain that I will not have time for anything in that
-> track anyway :/
+> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for the
+> enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while the SHA256
+> bank is not enabled.
+> 
+> The current code works, but it unnecessarily extends some banks. Instead of
+> basing the number of active banks on the number of algorithms returned, it
+> should be based on the pcr_select field.
+> 
+>    - Mimi & Nayna
 
-But surely you can find a few minutes to drop by and throw catchboxes at
-the docs maintainer? :)
+I would just allocate array of the size of possible banks and grow
+nr_active_banks for active algorithms to keep the code simple because
+we are talking about insignificant amount of wasted space (might be
+even zero bytes given how kernel allocators works)>
 
-I do understand, though, it's going to be a crazy week.
-
-jon
+/Jarkko
