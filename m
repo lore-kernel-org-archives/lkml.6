@@ -2,129 +2,149 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06139ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFFAECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C854D20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C854D20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 3474020827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:13:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="cXd8Dwct"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3474020827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeKHXrT (ORCPT
+        id S1726831AbeKHXsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:47:19 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36208 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKHXrT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:47:19 -0500
-Received: by mail-qk1-f193.google.com with SMTP id o125so26634854qkf.3;
-        Thu, 08 Nov 2018 06:11:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y3h+/TmjXAwBioDeAEfts2CcghM88XUbwzj81+sRc5Y=;
-        b=TDB17Z6cm6JPxNwtn9M41egje/LRvtfSdd95/MaG1P3WEpdxQT3vn1lMc4Z8LanpQb
-         MGAZg/nuUd1C3q60TG+vIYnCO5a74dN9BelvtxHvYS265arm9cOGyQeH3nIUW+2nx9z1
-         k5hWjICBB1rkKwgEqAHpfoz25Q13vO9bHbgbq10MPf0awtdoxlCADk1MAQXG5mVt/cyz
-         BwYmQiecwX1FcvTVXf8srrjV7ivkc/Nh5a86ZiagDRglJjTIlFBF9O15N68kIPEvK2XN
-         XoVyJTKw/7Mf5pwkaiPR4Xbd6KWEo3AEDRMTVT4UWJMfVCiIssHJxmT6Wtt7BiA8RF80
-         tJFw==
-X-Gm-Message-State: AGRZ1gJ566l5WjKRSR3L53+eFgtykZj1gMEFUC8Ryt8s7MZ1VKYncuuN
-        m38poDQI+pE8OfEy/KQXdONilr4THCfno8kodfo=
-X-Google-Smtp-Source: AJdET5eHHLLnJptRavWaJ39Hbe5nq0PLvlR/imHnLzWAYTCXdWIvCtxWyCWHFbeI4kNg4F8S8JWqeCYeQL+gya/Yfss=
-X-Received: by 2002:a37:324a:: with SMTP id y71mr4304902qky.291.1541686298291;
- Thu, 08 Nov 2018 06:11:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20181104155501.14767-1-TheSven73@googlemail.com> <20181104155501.14767-6-TheSven73@googlemail.com>
-In-Reply-To: <20181104155501.14767-6-TheSven73@googlemail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 8 Nov 2018 15:11:22 +0100
-Message-ID: <CAK8P3a1ZUaxJzfzYoqAK+_ZBazHzF6nG1V2aiZSoiQr6nDhiSQ@mail.gmail.com>
-Subject: Re: [PATCH anybus v3 5/6] dt-bindings: anybuss-host: document
- devicetree binding
-To:     thesven73@gmail.com
-Cc:     svendev@arcx.com, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>, noralf@tronnes.org,
-        Johan Hovold <johan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        gregkh <gregkh@linuxfoundation.org>,
-        John Garry <john.garry@huawei.com>,
+        Thu, 8 Nov 2018 18:48:46 -0500
+Received: from mail-os2jpn01on0128.outbound.protection.outlook.com ([104.47.92.128]:7296
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726417AbeKHXsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:48:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3ee6ujWf8Ztw7OwtRjvprWSun7GVzNKWHN2MwaTrfJk=;
+ b=cXd8Dwctj2qqMQPt70EADuXiFLXPIXzEtmIpG9Ef7Gu3NwyNNeBT/faKDUGcxIAgNjVmCdRnVSmh8fr2kvFU1aNUJb42RZ4LfYwiIIvm7cn0e3L0amPL7il349viwY2b9rZ7pBT8MiCxA3T7iRlmYznywYe+kL3zGRxprSFQbLc=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
+ TY1PR01MB1165.jpnprd01.prod.outlook.com (10.174.225.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.24; Thu, 8 Nov 2018 14:12:59 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::708f:601d:1cf4:6095]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::708f:601d:1cf4:6095%5]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
+ 14:12:59 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Biju Das <biju.das@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
+ r8a774a1
+Thread-Topic: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
+ r8a774a1
+Thread-Index: AQHUO3/950BhN4Ey1UKDiDbJFMgUuKVGYxgQ
+Date:   Thu, 8 Nov 2018 14:12:59 +0000
+Message-ID: <TY1PR01MB17701846C753070EE6D572B6C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1165;20:8kSpHomHZZ/rLYZ8cVFX42m9U7SFO47dYicmda/6F4tkNVlpjsuRU1FkAzPbxPSwkQHhOMl5tNJd/NM/0bdq84y6SzDzhp2nKHsqYfSdL0DG11OWJ9NzeykB0aFurrLK5f0WadEAwMabDKTmZQcxVzynid9ERi81AbhumuhBD+A=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: c00a563b-b7bb-4383-3c78-08d6458449c2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1165;
+x-ms-traffictypediagnostic: TY1PR01MB1165:
+x-microsoft-antispam-prvs: <TY1PR01MB1165661F0D4368FCE673736BC0C50@TY1PR01MB1165.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1165;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1165;
+x-forefront-prvs: 0850800A29
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39860400002)(366004)(376002)(346002)(189003)(199004)(81156014)(86362001)(102836004)(478600001)(7736002)(44832011)(97736004)(2900100001)(81166006)(6116002)(476003)(33656002)(3846002)(14454004)(76176011)(74316002)(305945005)(7416002)(2906002)(6506007)(11346002)(446003)(256004)(53546011)(8676002)(26005)(7696005)(486006)(99286004)(186003)(106356001)(105586002)(8936002)(5660300001)(6436002)(68736007)(6246003)(53936002)(4326008)(25786009)(229853002)(54906003)(110136005)(71200400001)(316002)(66066001)(55016002)(9686003)(71190400001)(138113003)(98903001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1165;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 1X6WZ90F/xD4ohLDY7N1EjU2EGnwXGNZwQ6aZLbcpOziV7w7Q8c1yIPoXPNCAw0zXL7uvF70mylFOl5FEEMhCoaDOjd//LaeRUpWCqB/5QG7pOxLPb+85y2Bo2wTIxttxbYVtQGyBn2qU5V4kDGJsEKbRoxzIju3TUHjFbi1WJWIWvJO2rhj/pUtk0BTjOu0W1Y7ccsHHtmSeVpfWPK6kWHYIjVGXvV5EMeVsgiQ774+dMH1U+NKxnUGlvNj3XNC9EtG7eIHq4uk/7p+FjBFzwcat75N7ZRS81o8JC7doTD+fUy+if8PAj6VcMRJXwBjLKkzUvZOq43okPm9VPG+jHMCKkc6Rz0UZLIjFe0sCQs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c00a563b-b7bb-4383-3c78-08d6458449c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 14:12:59.4659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 4, 2018 at 4:55 PM <thesven73@gmail.com> wrote:
+Hello Vinod,
 
+Do you think you can take this patch?
 
-> ---
->  .../bindings/bus/arcx,anybuss-host.txt        | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/arcx,anybuss-host.txt
+Thanks,
+Fab
+
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 24 August 2018 08:56
+> Subject: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for r8=
+a774a1
 >
-> diff --git a/Documentation/devicetree/bindings/bus/arcx,anybuss-host.txt b/Documentation/devicetree/bindings/bus/arcx,anybuss-host.txt
-> new file mode 100644
-> index 000000000000..5c28e4e09bb2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/arcx,anybuss-host.txt
-> @@ -0,0 +1,36 @@
-> +* Arcx Anybus-S host
-> +
-> +This host communicates with the SoC over a parallel bus. It is
-> +expected that its Device Tree node is specified as the child of a node
-> +corresponding to the parallel bus used for communication.
-> +
-> +Required properties:
-> +
-> +  - compatible : The following string:
-> +        "arcx,anybuss-host"
-> +
-> +  - reg : bus memory area where the Anybus-S host dpram is located.
-> +
-> +  - interrupts : interrupt connected to the Anybus-S host interrupt line.
-> +       Generic interrupt client node bindings are described in
-> +               interrupt-controller/interrupts.txt
-> +
-> +  - resets : the reset line associated with the Anybus-S host.
-> +
-> +Example of usage:
-> +
-> +This example places the Anybus-S host on top of the i.MX WEIM parallel bus, see:
-> +Documentation/devicetree/bindings/bus/imx-weim.txt
+> From: Biju Das <biju.das@bp.renesas.com>
+>
+> This patch adds binding for r8a774a1 (RZ/G2M).
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> index 482e543..417ca90 100644
+> --- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> +++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+> @@ -5,6 +5,7 @@ Required Properties:
+>  Examples with soctypes are:
+>    - "renesas,r8a7743-usb-dmac" (RZ/G1M)
+>    - "renesas,r8a7745-usb-dmac" (RZ/G1E)
+> +  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
+>    - "renesas,r8a7790-usb-dmac" (R-Car H2)
+>    - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
+>    - "renesas,r8a7793-usb-dmac" (R-Car M2-N)
+> --
+> 2.7.4
 
-To allow describing connected devices, I think we need a #address-cells
-and #size-cells property here, with fixed values. If a device is attached by
-a single 32-bit integer, then
 
- #address-cells = <1>;
- #size-cells = <0>;
 
-should be enough, otherwise you might need additional address cells.
-Actually listing the device(s) can be optional, but we do need the
-adress in order
-to let the bus code associate a device_node pointer with the child
-device structure to let a driver read the properties.
 
-       Arnd
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
