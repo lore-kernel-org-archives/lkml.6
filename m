@@ -2,146 +2,228 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3FDECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF53ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E0AA206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDDAB2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:49:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BoYuWw+l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0AA206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdqCVp6O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDDAB2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeKICZM (ORCPT
+        id S1727316AbeKICZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:25:12 -0500
-Received: from mail-eopbgr700087.outbound.protection.outlook.com ([40.107.70.87]:57300
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726684AbeKICZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:25:11 -0500
+        Thu, 8 Nov 2018 21:25:23 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39342 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeKICZX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 21:25:23 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n18so14681320lfh.6;
+        Thu, 08 Nov 2018 08:49:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GNPPmvB8JYwElZsHHHv54A1gmluCUlEA1Rs5IotHmgo=;
- b=BoYuWw+lyzxreG97aY3ctcleICQrgwiQ+fMF+vebZTzlYkBihzVMnDWj4gwnvCrPZuXsPSQ1oU9GASV6r/YzFEMZSURpUZ0kXi1YJrBKI2leyGyddqn3/fDGZZo1m3yvoAiKEnPQOiLrZLlFnyH8I/XwHt7NiERdSglmHLj02Mk=
-Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
- BN6PR12MB1396.namprd12.prod.outlook.com (10.168.228.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.21; Thu, 8 Nov 2018 16:48:48 +0000
-Received: from BN6PR12MB1714.namprd12.prod.outlook.com
- ([fe80::5472:26e2:affa:2b41]) by BN6PR12MB1714.namprd12.prod.outlook.com
- ([fe80::5472:26e2:affa:2b41%7]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 16:48:48 +0000
-From:   "Koenig, Christian" <Christian.Koenig@amd.com>
-To:     Eric Anholt <eric@anholt.net>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nayan Deshmukh <nayan26deshmukh@gmail.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: Re: [PATCH 1/2] Revert "drm/sched: fix timeout handling v2"
-Thread-Topic: [PATCH 1/2] Revert "drm/sched: fix timeout handling v2"
-Thread-Index: AQHUd3y6io7m8AE8QUWtBmK5h9zRj6VGDBOAgAACrICAAAgXAA==
-Date:   Thu, 8 Nov 2018 16:48:48 +0000
-Message-ID: <da2b3215-9904-b7f6-4f45-4e5e4242fa12@amd.com>
-References: <20181108160422.17743-1-eric@anholt.net>
- <20181108160422.17743-2-eric@anholt.net>
- <2f577af9-9ff7-4e9d-b198-02727a995393@amd.com> <875zx7o82m.fsf@anholt.net>
-In-Reply-To: <875zx7o82m.fsf@anholt.net>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-originating-ip: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
-x-clientproxiedby: AM5PR0701CA0012.eurprd07.prod.outlook.com
- (2603:10a6:203:51::22) To BN6PR12MB1714.namprd12.prod.outlook.com
- (2603:10b6:404:106::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR12MB1396;20:VM9pXAA5SLbIItCPhBOAjl36lNc/wmitL1jOciUIj/JqZ0bBOvnydqp4SzHlI7iEM0DczrULBtDNVeu5LNAGIAK1wuY3W6GD+swKfX1O5J+kr4VwZHg2YT4V1mlW/tcx9nn05R1FgJEfPp/EO95c7q/K0yx7BojyXkZ+pKu5DxQo13bOzFiEnWWEtXVRmsfG7DK5QtFFCRo5JQpmGh4WAljGa819K7zBX/nOZy/4zwlIw+lYFLcreutcY37HG38P
-x-ms-office365-filtering-correlation-id: 282a1e95-2536-4129-c9a7-08d6459a0dee
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1396;
-x-ms-traffictypediagnostic: BN6PR12MB1396:
-x-microsoft-antispam-prvs: <BN6PR12MB13960D3C9FB3DDD70E6A70B283C50@BN6PR12MB1396.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR12MB1396;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1396;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(366004)(346002)(199004)(189003)(51234002)(97736004)(31686004)(14454004)(72206003)(6512007)(36756003)(316002)(2900100001)(93886005)(2501003)(53936002)(6246003)(99286004)(446003)(6436002)(14444005)(256004)(86362001)(6486002)(64126003)(71200400001)(25786009)(31696002)(65826007)(71190400001)(5660300001)(305945005)(186003)(4326008)(65956001)(7736002)(46003)(65806001)(39060400002)(478600001)(45080400002)(66574009)(8936002)(486006)(6116002)(54906003)(110136005)(52116002)(229853002)(2616005)(2906002)(58126008)(105586002)(106356001)(8676002)(102836004)(76176011)(81156014)(68736007)(476003)(11346002)(81166006)(6506007)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1396;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: POa/bRPthFzAYMyoa/xl6oSpKWY9DDMoIitiOy52KWHDnvUGdsTnG2lQUgzVabUfdpc8yZVNEoV+4LQkaaoiMT4a64dUmJ71XtFn/i0oL/TTBl4m+Q20JEyRqtWJaUvjlZDM2vBKxV2Ygxnj2ZAYsPv/gDr4bVQFgn7MC0LnzSatbVfE2/rLGAMXzzawefnE/28oPkhTZjNY5eqcdgB2+W1SJkJzNBRAEf51Qx2cMNIOb36FJsSRJkhlst/8r4kn2AFoBH9YgiWL2j5JJRiRQ/IWdTVdQrQ4E7t4Ds/s8xFw5Mgf8xNdBrJReccGZ+goHR7VsJqS2jfMab0PVlXjoU2O/m7ulHOKw/LnzOznwJU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3E896E5AE0E4114C85A3DFFC6F4B3C81@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zXnRXOfnvVT0kIMLcmYurg6s0QlYf/CqB1SBtFRg1cM=;
+        b=VdqCVp6OgS5jIsHCb+hkr945Jln6ZrRtVT9dmJXFaeoSglquVIDOiEm95ZPAsj4SN9
+         0mrmvW3bAZT/hZng9vxlcwPCTnsOXIirLAnzYyFH4xgZVyr8UIJOy8nLLQDBVmKA58ec
+         uRwFaQxt9RXhjnlmDQ4dSZIkPgOVc6ZYHKHiae3i6gg+cv0+sbc8RpOHxV+2qQRE7WzZ
+         +ZkCKPIR0i9rr6OSEIElVnW1Xcb8wK5Jk93SyKRAq6ICyWwBz8igY4u9sbFx/nrhiwP2
+         tSc4WxVbcNK2CsRDerhspNNC8g+4Q5wOkLggQmMGfoek7UZsWtcHdS4VktYAU3oZZZV4
+         wJ1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zXnRXOfnvVT0kIMLcmYurg6s0QlYf/CqB1SBtFRg1cM=;
+        b=HRWtPvqkOC/2v0aD8swOiXvlLIhLa3FRuFlz6DRdd7SX+11M+7gwtEalMbWpsGDnnu
+         bHtQhPkEmjBpm+xU6YGxV4PJEvQAiT8N9vHpj7F4qMX7ohKVuNGkn9L/Z6a4IPGmM3Lu
+         QFouUarcnmsRQAbP1ktETXhu8zdogvZdNwKlad15dXPjbSGEisWPX0AZWn/tkAclDMWY
+         ANhtqZ3rYIafORYO5FWqS8hdRC5s2Xi4Wz3yY4Q1p353CKDC6R1BhRA4yeeFH9VJb/cG
+         xgyV37hmhri122lpBUwMgVI/o+wJqEdicMudMMFQpIXb5oMoAezvckmv8KHTqP3Bi4Nu
+         P79Q==
+X-Gm-Message-State: AGRZ1gKrjWkKD6eNyxuaFwEJ1ijtnPKS4vFIMxu6Mfqk3uyGTAgzCvUi
+        Hn9VXVtbcVyKPhZ4Y20Ygx/qWVlW
+X-Google-Smtp-Source: AJdET5eGB2r40VzH4GZvBpMYw0BqqjU8uvEOaQu/27yL/fKPoQanQiTa5EnhWZhZzJ4AMMMsuyrLrw==
+X-Received: by 2002:a19:4287:: with SMTP id p129mr3358044lfa.135.1541695740228;
+        Thu, 08 Nov 2018 08:49:00 -0800 (PST)
+Received: from [192.168.2.145] (109-252-91-202.nat.spd-mgts.ru. [109.252.91.202])
+        by smtp.googlemail.com with ESMTPSA id j13-v6sm758668ljh.42.2018.11.08.08.48.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 08:48:59 -0800 (PST)
+Subject: Re: [RFC PATCH v2 03/17] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-4-digetx@gmail.com> <20181105213000.GA13425@bogus>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0fc53853-862c-4cc3-6548-d347bc68bdd6@gmail.com>
+Date:   Thu, 8 Nov 2018 19:48:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 282a1e95-2536-4129-c9a7-08d6459a0dee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 16:48:48.6491
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1396
+In-Reply-To: <20181105213000.GA13425@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QW0gMDguMTEuMTggdW0gMTc6MTkgc2NocmllYiBFcmljIEFuaG9sdDoNCj4gIktvZW5pZywgQ2hy
-aXN0aWFuIiA8Q2hyaXN0aWFuLktvZW5pZ0BhbWQuY29tPiB3cml0ZXM6DQo+DQo+PiBBbSAwOC4x
-MS4xOCB1bSAxNzowNCBzY2hyaWViIEVyaWMgQW5ob2x0Og0KPj4+IFRoaXMgcmV2ZXJ0cyBjb21t
-aXQgMGVmZDJkMmY2OGNkNWRiZGRmNGVjZDk3NGMzMzEzMzI1N2QxNmE4ZS4gIEZpeGVzDQo+Pj4g
-dGhpcyBmYWlsdXJlIGluIFYzRCBHUFUgcmVzZXQ6DQo+Pj4NCj4+PiBbIDE0MTguMjI3Nzk2XSBV
-bmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVh
-bCBhZGRyZXNzIDAwMDAwMDE4DQo+Pj4gWyAxNDE4LjIzNTk0N10gcGdkID0gZGM0YzU1Y2ENCj4+
-PiBbIDE0MTguMjM4Njk1XSBbMDAwMDAwMThdICpwZ2Q9ODAwMDAwNDAwMDQwMDMsICpwbWQ9MDAw
-MDAwMDANCj4+PiBbIDE0MTguMjQ0MTMyXSBJbnRlcm5hbCBlcnJvcjogT29wczogMjA2IFsjMV0g
-U01QIEFSTQ0KPj4+IFsgMTQxOC4yNDg5MzRdIE1vZHVsZXMgbGlua2VkIGluOg0KPj4+IFsgMTQx
-OC4yNTIwMDFdIENQVTogMCBQSUQ6IDEwMjUzIENvbW06IGt3b3JrZXIvMDowIE5vdCB0YWludGVk
-IDQuMTkuMC1yYzYrICM0ODYNCj4+PiBbIDE0MTguMjU5MDU4XSBIYXJkd2FyZSBuYW1lOiBCcm9h
-ZGNvbSBTVEIgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkNCj4+PiBbIDE0MTguMjY1MDAyXSBXb3Jr
-cXVldWU6IGV2ZW50cyBkcm1fc2NoZWRfam9iX3RpbWVkb3V0DQo+Pj4gWyAxNDE4LjI2OTk4Nl0g
-UEMgaXMgYXQgZG1hX2ZlbmNlX3JlbW92ZV9jYWxsYmFjaysweDgvMHg1MA0KPj4+IFsgMTQxOC4y
-NzUyMThdIExSIGlzIGF0IGRybV9zY2hlZF9qb2JfdGltZWRvdXQrMHg0Yy8weDExOA0KPj4+IC4u
-Lg0KPj4+IFsgMTQxOC40MTU4OTFdIFs8YzA4NmI3NTQ+XSAoZG1hX2ZlbmNlX3JlbW92ZV9jYWxs
-YmFjaykgZnJvbSBbPGMwNmU3ZTZjPl0gKGRybV9zY2hlZF9qb2JfdGltZWRvdXQrMHg0Yy8weDEx
-OCkNCj4+PiBbIDE0MTguNDI1NTcxXSBbPGMwNmU3ZTZjPl0gKGRybV9zY2hlZF9qb2JfdGltZWRv
-dXQpIGZyb20gWzxjMDI0MjUwMD5dIChwcm9jZXNzX29uZV93b3JrKzB4MmM4LzB4N2JjKQ0KPj4+
-IFsgMTQxOC40MzQ1NTJdIFs8YzAyNDI1MDA+XSAocHJvY2Vzc19vbmVfd29yaykgZnJvbSBbPGMw
-MjQyYTM4Pl0gKHdvcmtlcl90aHJlYWQrMHg0NC8weDU5MCkNCj4+PiBbIDE0MTguNDQyNjYzXSBb
-PGMwMjQyYTM4Pl0gKHdvcmtlcl90aHJlYWQpIGZyb20gWzxjMDI0OWIxMD5dIChrdGhyZWFkKzB4
-MTYwLzB4MTY4KQ0KPj4+IFsgMTQxOC40NTAwNzZdIFs8YzAyNDliMTA+XSAoa3RocmVhZCkgZnJv
-bSBbPGMwMjAxMGFjPl0gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDI4KQ0KPj4+DQo+Pj4gQ2M6IENo
-cmlzdGlhbiBLw7ZuaWcgPGNocmlzdGlhbi5rb2VuaWdAYW1kLmNvbT4NCj4+PiBDYzogTmF5YW4g
-RGVzaG11a2ggPG5heWFuMjZkZXNobXVraEBnbWFpbC5jb20+DQo+Pj4gQ2M6IEFsZXggRGV1Y2hl
-ciA8YWxleGFuZGVyLmRldWNoZXJAYW1kLmNvbT4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBFcmljIEFu
-aG9sdCA8ZXJpY0BhbmhvbHQubmV0Pg0KPj4gV2VsbCBOQUsuIFRoZSBwcm9ibGVtIGhlcmUgaXMg
-dGhhdCBmZW5jZS0+cGFyZW50IGlzIE5VTEwgd2hpY2ggaXMgbW9zdA0KPj4gbGlrZWx5IGNhdXNl
-ZCBieSBhbiBpc3N1ZSBzb21ld2hlcmUgZWxzZS4NCj4+DQo+PiBXZSBjb3VsZCBlYXNpbHkgd29y
-ayBhcm91bmQgdGhhdCB3aXRoIGFuIGV4dHJhIE5VTEwgY2hlY2ssIGJ1dCByZXZlcnRpbmcNCj4+
-IHRoZSBwYXRjaCB3b3VsZCBicmVhayBHUFUgcmVjb3ZlcnkgYWdhaW4uDQo+IE15IEdQVSByZWNv
-dmVyeSB3b3JrcyB3aXRoIHRoZSByZXZlcnQgYW5kIHJlbGlhYmx5IGRvZXNuJ3Qgd29yayB3aXRo
-b3V0DQo+IGl0LCBzbyBteSBpZGVhIG9mICJicmVhayBHUFUgcmVjb3ZlcnkiIGlzIHRoZSBvcHBv
-c2l0ZSBvZiB5b3Vycy4gIENhbg0KPiB5b3UgaGVscCBmaWd1cmUgb3V0IHdoYXQgaW4gdGhpcyBj
-aGFuZ2UgYnJva2UgbXkgZHJpdmVyPw0KDQpUaGUgcHJvYmxlbSBpcyBoZXJlOg0KDQo+IC0JbGlz
-dF9mb3JfZWFjaF9lbnRyeV9yZXZlcnNlKGpvYiwgJnNjaGVkLT5yaW5nX21pcnJvcl9saXN0LCBu
-b2RlKSB7DQo+IC0JCXN0cnVjdCBkcm1fc2NoZWRfZmVuY2UgKmZlbmNlID0gam9iLT5zX2ZlbmNl
-Ow0KPiAtDQo+IC0JCWlmICghZG1hX2ZlbmNlX3JlbW92ZV9jYWxsYmFjayhmZW5jZS0+cGFyZW50
-LCAmZmVuY2UtPmNiKSkNCj4gLQkJCWdvdG8gYWxyZWFkeV9zaWduYWxlZDsNCg0KZG1hX2ZlbmNl
-X3JlbW92ZV9jYWxsYmFjaygpIHdpbGwgZmF1bHQgaWYgZmVuY2UtPnBhcmVudCBpcyBOVUxMLiBB
-IA0Kc2ltcGxlICJpZiAoIWZlbmNlLT5wYXJlbnQpIGNvbnRpbnVlOyIgc2hvdWxkIGJlIGVub3Vn
-aCB0byB3b3JrIGFyb3VuZCB0aGF0Lg0KDQpCdXQgSSdtIG5vdCBzdXJlIGhvdyBleGFjdGx5IGZl
-bmNlLT5wYXJlbnQgYmVjYW1lIE5VTEwgaW4gdGhlIGZpcnN0IHBsYWNlLg0KDQpHb2luZyB0byBk
-b3VibGUgY2hlY2sgdGhlIGNvZGUgb25jZSBtb3JlLA0KQ2hyaXN0aWFuLg0K
+On 06.11.2018 0:30, Rob Herring wrote:
+> On Sun, Oct 21, 2018 at 11:54:47PM +0300, Dmitry Osipenko wrote:
+>> Add device-tree binding that describes CPU frequency-scaling hardware
+>> found on NVIDIA Tegra20/30 SoC's.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 96 +++++++++++++++++++
+>>  1 file changed, 96 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> new file mode 100644
+>> index 000000000000..a8023ea7a99f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> @@ -0,0 +1,96 @@
+>> +Binding for NVIDIA Tegra20 CPUFreq
+>> +==================================
+>> +
+>> +Required properties:
+>> +- clocks: Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names: Must include the following entries:
+>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>> +  - intermediate: intermediate-parent for CPU clock
+>> +  - cclk: the CPU clock
+>> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
+>> +- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
+>> +
+>> +For each opp entry in 'operating-points-v2' table:
+>> +- opp-supported-hw: Two bitfields indicating:
+>> +	On Tegra20:
+>> +	1. CPU process ID mask
+>> +	2. SoC speedo ID mask
+>> +
+>> +	On Tegra30:
+>> +	1. CPU process ID mask
+>> +	2. CPU speedo ID mask
+>> +
+>> +	A bitwise AND is performed against these values and if any bit
+>> +	matches, the OPP gets enabled.
+>> +
+>> +- opp-microvolt: CPU voltage triplet.
+>> +
+>> +Optional properties:
+>> +- cpu-supply: Phandle to the CPU power supply.
+>> +- core-supply: Phandle to the CORE power supply.
+>> +- rtc-supply: Phandle to the RTC power supply, required only for Tegra20.
+>> +
+>> +Voltage supply requirements:
+>> +- Tegra20:
+>> +	CORE and RTC regulators must be coupled using the regulator-coupled-with
+>> +	property and regulator-coupled-max-spread property must be set to no
+>> +	more than 170mV.
+>> +
+>> +	See ../regulator/regulator.txt for more detail about the properties.
+>> +
+>> +- Tegra30:
+>> +	CORE and CPU regulators must be coupled using the regulator-coupled-with
+>> +	property and regulator-coupled-max-spread property must be set to no
+>> +	more than 300mV. Each of CORE and CPU regulators must set
+>> +	regulator-max-step-microvolt property to no more than 100mV.
+>> +
+>> +	See ../regulator/regulator.txt for more detail about the properties.
+>> +
+>> +
+>> +Example:
+>> +	regulators {
+>> +		cpu_reg: regulator0 {
+>> +			regulator-name = "vdd_cpu";
+>> +		};
+>> +
+>> +		core_reg: regulator1 {
+>> +			regulator-name = "vdd_core";
+>> +			regulator-coupled-with = <&rtc_reg>;
+>> +			regulator-coupled-max-spread = <170000>;
+>> +		};
+>> +
+>> +		rtc_reg: regulator2 {
+>> +			regulator-name = "vdd_rtc";
+>> +			regulator-coupled-with = <&core_reg>;
+>> +			regulator-coupled-max-spread = <170000>;
+>> +		};
+>> +	};
+>> +
+>> +	cpu0_opp_table: opp_table0 {
+>> +		compatible = "operating-points-v2";
+>> +
+>> +		opp@456000000 {
+>> +			clock-latency-ns = <125000>;
+>> +			opp-microvolt = <825000 825000 1125000>;
+>> +			opp-supported-hw = <0x03 0x0001>;
+>> +			opp-hz = /bits/ 64 <456000000>;
+>> +		};
+>> +
+>> +		...
+>> +	};
+>> +
+>> +	cpus {
+>> +		cpu@0 {
+>> +			compatible = "arm,cortex-a9";
+>> +			clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
+>> +				 <&tegra_car TEGRA20_CLK_PLL_P>,
+>> +				 <&tegra_car TEGRA20_CLK_CCLK>;
+>> +			clock-names = "pll_x", "intermediate", "cclk";
+> 
+> I still object to having clocks (and supplies) which don't reflect the 
+> h/w and are documented in the CA9 TRM.
+> 
+>> +			operating-points-v2 = <&cpu0_opp_table>;
+>> +			cpu-supply = <&cpu_reg>;
+>> +			core-supply = <&core_reg>;
+>> +			rtc-supply = <&rtc_reg>;
+> 
+> Supplies are suspect too, but perhaps supplies and power domains are 
+> beyond the scope of the TRM and part of the physical design.
+
+Is it possible to have a "firmware" device-tree node specifically for cpufreq driver? Something like this:
+
+cpufreq {
+	compatible = "nvidia,tegra20-cpufreq";
+	clocks = <&tegra_car TEGRA20_CLK_PLL_X>,
+		 <&tegra_car TEGRA20_CLK_PLL_P>;
+	clock-names = "pll_x", "intermediate";
+};
+
+We may also need a Tegra-specific DVFS helper-driver that will help to manage CPU-CORE voltage dependency. Yet I'll have to examine this all in more details, but maybe it will be nicer if DVFS could be instantiated via device-tree as well. It will provide a Tegra-specific DVFS API and manage CORE / RTC dependencies for the CPUFreq and peripheral drivers, also helping to maintain proper voltages during kernel boot-up until all drivers are brought into action.
+
+cpufreq {
+	compatible = "nvidia,tegra20-dvfs";
+	cpu-supply = <&cpu_vdd_reg>;
+	core-supply = <&core_vdd_reg>;
+	rtc-supply = <&rtc_vdd_reg>;
+};
+
+So my question is:
+
+Is it possible to have device-tree nodes that solely describe firmware? Kernel drivers in this case.
