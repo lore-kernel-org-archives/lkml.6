@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3C6C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA068C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D551720857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:10:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D551720857
+	by mail.kernel.org (Postfix) with ESMTP id AB5302086A
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:10:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5302086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbeKHOoI (ORCPT
+        id S1728940AbeKHOoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 09:44:08 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:55028 "EHLO
+        Thu, 8 Nov 2018 09:44:06 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:45010 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728967AbeKHOoI (ORCPT
+        with ESMTP id S1726145AbeKHOoG (ORCPT
         <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 8 Nov 2018 09:44:08 -0500
+        Thu, 8 Nov 2018 09:44:06 -0500
 Received: from linux-r8p5.suse.de (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 07 Nov 2018 22:10:20 -0700
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 07 Nov 2018 22:10:17 -0700
 From:   Davidlohr Bueso <dave@stgolabs.net>
 To:     akpm@linux-foundation.org
 Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk, dave@stgolabs.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 5/6] fs/epoll: reduce the scope of wq lock in epoll_wait()
-Date:   Wed,  7 Nov 2018 21:10:05 -0800
-Message-Id: <20181108051006.18751-6-dave@stgolabs.net>
+Subject: [PATCH 1/6] fs/epoll: remove max_nests argument from ep_call_nested()
+Date:   Wed,  7 Nov 2018 21:10:01 -0800
+Message-Id: <20181108051006.18751-2-dave@stgolabs.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181108051006.18751-1-dave@stgolabs.net>
 References: <20181108051006.18751-1-dave@stgolabs.net>
@@ -41,213 +41,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch aims at reducing ep wq.lock hold times in epoll_wait(2).
-For the blocking case, there is no need to constantly take and drop
-the spinlock, which is only needed to manipulate the waitqueue.
-
-The call to ep_events_available() is now lockless, and only exposed
-to benign races. Here, if false positive (returns available events
-and does not see another thread deleting an epi from the list) we call
-into send_events and then the list's state is correctly seen. Otoh,
-if a false negative and we don't see a list_add_tail(), for example,
-from irq callback, then it is rechecked again before blocking, which
-will see the correct state.
-
-In order for more accuracy to see concurrent list_del_init(), use
-the list_empty_careful() variant  -- of course, this won't the safe
-against insertions from wakeup.
-
-For the overflow list we obviously need to prevent load/store tearing
-as we don't want to see partial values while the ready list is disabled.
+All callers pass the EP_MAX_NESTS constant already, so lets
+simplify this a tad and get rid of the redundant parameter
+for nested eventpolls.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- fs/eventpoll.c | 114 ++++++++++++++++++++++++++++++---------------------------
- 1 file changed, 60 insertions(+), 54 deletions(-)
+ fs/eventpoll.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 6a0c2591e57e..f6c023f085f6 100644
+index 42bbe6824b4b..7ad020f1353b 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -381,7 +381,8 @@ static void ep_nested_calls_init(struct nested_calls *ncalls)
+@@ -471,7 +471,6 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+  *                  no re-entered.
+  *
+  * @ncalls: Pointer to the nested_calls structure to be used for this call.
+- * @max_nests: Maximum number of allowed nesting calls.
+  * @nproc: Nested call core function pointer.
+  * @priv: Opaque data to be passed to the @nproc callback.
+  * @cookie: Cookie to be used to identify this nested call.
+@@ -480,7 +479,7 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+  * Returns: Returns the code returned by the @nproc callback, or -1 if
+  *          the maximum recursion limit has been exceeded.
   */
- static inline int ep_events_available(struct eventpoll *ep)
+-static int ep_call_nested(struct nested_calls *ncalls, int max_nests,
++static int ep_call_nested(struct nested_calls *ncalls,
+ 			  int (*nproc)(void *, void *, int), void *priv,
+ 			  void *cookie, void *ctx)
  {
--	return !list_empty(&ep->rdllist) || ep->ovflist != EP_UNACTIVE_PTR;
-+	return !list_empty(&ep->rdllist) ||
-+		READ_ONCE(ep->ovflist) != EP_UNACTIVE_PTR;
- }
- 
- #ifdef CONFIG_NET_RX_BUSY_POLL
-@@ -698,7 +699,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
+@@ -499,7 +498,7 @@ static int ep_call_nested(struct nested_calls *ncalls, int max_nests,
  	 */
- 	spin_lock_irq(&ep->wq.lock);
- 	list_splice_init(&ep->rdllist, &txlist);
--	ep->ovflist = NULL;
-+	WRITE_ONCE(ep->ovflist, NULL);
- 	spin_unlock_irq(&ep->wq.lock);
+ 	list_for_each_entry(tncur, lsthead, llink) {
+ 		if (tncur->ctx == ctx &&
+-		    (tncur->cookie == cookie || ++call_nests > max_nests)) {
++		    (tncur->cookie == cookie || ++call_nests > EP_MAX_NESTS)) {
+ 			/*
+ 			 * Ops ... loop detected or maximum nest level reached.
+ 			 * We abort this wake by breaking the cycle itself.
+@@ -573,7 +572,7 @@ static void ep_poll_safewake(wait_queue_head_t *wq)
+ {
+ 	int this_cpu = get_cpu();
  
- 	/*
-@@ -712,7 +713,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	 * other events might have been queued by the poll callback.
- 	 * We re-insert them inside the main ready-list here.
- 	 */
--	for (nepi = ep->ovflist; (epi = nepi) != NULL;
-+	for (nepi = READ_ONCE(ep->ovflist); (epi = nepi) != NULL;
- 	     nepi = epi->next, epi->next = EP_UNACTIVE_PTR) {
- 		/*
- 		 * We need to check if the item is already in the list.
-@@ -730,7 +731,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
- 	 * releasing the lock, events will be queued in the normal way inside
- 	 * ep->rdllist.
- 	 */
--	ep->ovflist = EP_UNACTIVE_PTR;
-+	WRITE_ONCE(ep->ovflist, EP_UNACTIVE_PTR);
+-	ep_call_nested(&poll_safewake_ncalls, EP_MAX_NESTS,
++	ep_call_nested(&poll_safewake_ncalls,
+ 		       ep_poll_wakeup_proc, NULL, wq, (void *) (long) this_cpu);
  
- 	/*
- 	 * Quickly re-inject items left on "txlist".
-@@ -1153,10 +1154,10 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
- 	 * semantics). All the events that happen during that period of time are
- 	 * chained in ep->ovflist and requeued later on.
- 	 */
--	if (ep->ovflist != EP_UNACTIVE_PTR) {
-+	if (READ_ONCE(ep->ovflist) != EP_UNACTIVE_PTR) {
- 		if (epi->next == EP_UNACTIVE_PTR) {
--			epi->next = ep->ovflist;
--			ep->ovflist = epi;
-+			epi->next = READ_ONCE(ep->ovflist);
-+			WRITE_ONCE(ep->ovflist, epi);
- 			if (epi->ws) {
- 				/*
- 				 * Activate ep->ws since epi->ws may get
-@@ -1762,10 +1763,17 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 	} else if (timeout == 0) {
- 		/*
- 		 * Avoid the unnecessary trip to the wait queue loop, if the
--		 * caller specified a non blocking operation.
-+		 * caller specified a non blocking operation. We still need
-+		 * lock because we could race and not see an epi being added
-+		 * to the ready list while in irq callback. Thus incorrectly
-+		 * returning 0 back to userspace.
- 		 */
- 		timed_out = 1;
-+
- 		spin_lock_irq(&ep->wq.lock);
-+		eavail = ep_events_available(ep);
-+		spin_unlock_irq(&ep->wq.lock);
-+
- 		goto check_events;
- 	}
+ 	put_cpu();
+@@ -1333,7 +1332,6 @@ static int reverse_path_check_proc(void *priv, void *cookie, int call_nests)
+ 				}
+ 			} else {
+ 				error = ep_call_nested(&poll_loop_ncalls,
+-							EP_MAX_NESTS,
+ 							reverse_path_check_proc,
+ 							child_file, child_file,
+ 							current);
+@@ -1367,7 +1365,7 @@ static int reverse_path_check(void)
+ 	/* let's call this for all tfiles */
+ 	list_for_each_entry(current_file, &tfile_check_list, f_tfile_llink) {
+ 		path_count_init();
+-		error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
++		error = ep_call_nested(&poll_loop_ncalls,
+ 					reverse_path_check_proc, current_file,
+ 					current_file, current);
+ 		if (error)
+@@ -1876,7 +1874,7 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
+ 			ep_tovisit = epi->ffd.file->private_data;
+ 			if (ep_tovisit->visited)
+ 				continue;
+-			error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
++			error = ep_call_nested(&poll_loop_ncalls,
+ 					ep_loop_check_proc, epi->ffd.file,
+ 					ep_tovisit, current);
+ 			if (error != 0)
+@@ -1916,7 +1914,7 @@ static int ep_loop_check(struct eventpoll *ep, struct file *file)
+ 	int ret;
+ 	struct eventpoll *ep_cur, *ep_next;
  
-@@ -1774,64 +1782,62 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 	if (!ep_events_available(ep))
- 		ep_busy_loop(ep, timed_out);
- 
-+	eavail = ep_events_available(ep);
-+	if (eavail)
-+		goto check_events;
-+
-+	/*
-+	 * Busy poll timed out.  Drop NAPI ID for now, we can add
-+	 * it back in when we have moved a socket with a valid NAPI
-+	 * ID onto the ready list.
-+	 */
-+	ep_reset_busy_poll_napi_id(ep);
-+
-+	/*
-+	 * We don't have any available event to return to the caller.
-+	 * We need to sleep here, and we will be wake up by
-+	 * ep_poll_callback() when events will become available.
-+	 */
-+	init_waitqueue_entry(&wait, current);
- 	spin_lock_irq(&ep->wq.lock);
-+	__add_wait_queue_exclusive(&ep->wq, &wait);
-+	spin_unlock_irq(&ep->wq.lock);
- 
--	if (!ep_events_available(ep)) {
-+	for (;;) {
- 		/*
--		 * Busy poll timed out.  Drop NAPI ID for now, we can add
--		 * it back in when we have moved a socket with a valid NAPI
--		 * ID onto the ready list.
-+		 * We don't want to sleep if the ep_poll_callback() sends us
-+		 * a wakeup in between. That's why we set the task state
-+		 * to TASK_INTERRUPTIBLE before doing the checks.
- 		 */
--		ep_reset_busy_poll_napi_id(ep);
--
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		/*
--		 * We don't have any available event to return to the caller.
--		 * We need to sleep here, and we will be wake up by
--		 * ep_poll_callback() when events will become available.
-+		 * Always short-circuit for fatal signals to allow
-+		 * threads to make a timely exit without the chance of
-+		 * finding more events available and fetching
-+		 * repeatedly.
- 		 */
--		init_waitqueue_entry(&wait, current);
--		__add_wait_queue_exclusive(&ep->wq, &wait);
--
--		for (;;) {
--			/*
--			 * We don't want to sleep if the ep_poll_callback() sends us
--			 * a wakeup in between. That's why we set the task state
--			 * to TASK_INTERRUPTIBLE before doing the checks.
--			 */
--			set_current_state(TASK_INTERRUPTIBLE);
--			/*
--			 * Always short-circuit for fatal signals to allow
--			 * threads to make a timely exit without the chance of
--			 * finding more events available and fetching
--			 * repeatedly.
--			 */
--			if (fatal_signal_pending(current)) {
--				res = -EINTR;
--				break;
--			}
--			if (ep_events_available(ep) || timed_out)
--				break;
--			if (signal_pending(current)) {
--				res = -EINTR;
--				break;
--			}
--
--			spin_unlock_irq(&ep->wq.lock);
--			if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS))
--				timed_out = 1;
--
--			spin_lock_irq(&ep->wq.lock);
-+		if (fatal_signal_pending(current)) {
-+			res = -EINTR;
-+			break;
-+		}
-+		if (ep_events_available(ep) || timed_out)
-+			break;
-+		if (signal_pending(current)) {
-+			res = -EINTR;
-+			break;
- 		}
- 
--		__remove_wait_queue(&ep->wq, &wait);
--		__set_current_state(TASK_RUNNING);
-+		if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS))
-+			timed_out = 1;
- 	}
--check_events:
--	/* Is it worth to try to dig for events ? */
--	eavail = ep_events_available(ep);
- 
-+	__set_current_state(TASK_RUNNING);
-+
-+	spin_lock_irq(&ep->wq.lock);
-+	__remove_wait_queue(&ep->wq, &wait);
- 	spin_unlock_irq(&ep->wq.lock);
- 
-+check_events:
- 	/*
- 	 * Try to transfer events to user space. In case we get 0 events and
- 	 * there's still timeout left over, we go trying again in search of
+-	ret = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
++	ret = ep_call_nested(&poll_loop_ncalls,
+ 			      ep_loop_check_proc, file, ep, current);
+ 	/* clear visited list */
+ 	list_for_each_entry_safe(ep_cur, ep_next, &visited_list,
 -- 
 2.16.4
 
