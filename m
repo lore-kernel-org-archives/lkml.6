@@ -1,128 +1,137 @@
-Return-Path: <SRS0=alsP=NS=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A98DC0044C
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C287BC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 383AD2077B
-	for <linux-kernel@archiver.kernel.org>; Wed,  7 Nov 2018 23:56:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383AD2077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 8982A2086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 00:03:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8982A2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=80x24.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbeKHJ3V (ORCPT
+        id S1728061AbeKHJgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 04:29:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:50035 "EHLO ozlabs.org"
+        Thu, 8 Nov 2018 04:36:22 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:38132 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727591AbeKHJ3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 04:29:21 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42r3Gl10Jqz9sBZ;
-        Thu,  8 Nov 2018 10:56:30 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Rob Herring <rob.herring@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        kirill@shutemov.name, "Linus Walleij" <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>, jacek.anaszewski@gmail.com,
-        axboe@kernel.dk, "Ulf Hansson" <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Git pull ack emails..
-In-Reply-To: <20181107114153.187fbc25@bbrezillon>
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com> <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com> <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com> <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1> <CAHk-=wh6i5t5jYHrC-ZCdj8qoZWP3BptV87U=G9G4UyunzPf7Q@mail.gmail.com> <20181023200408.GA13179@chatter.qube.local> <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com> <CABGGiszsw=QXPwTe3mf26BG=Pxig6zGcXXJfRA+w0Pawrm5qpQ@mail.gmail.com> <20181026211504.GG27137@sirena.org.uk> <87zhutdrt7.fsf@concordia.ellerman.id.au> <20181107114153.187fbc25@bbrezillon>
-Date:   Thu, 08 Nov 2018 10:56:31 +1100
-Message-ID: <87efbwqw5s.fsf@concordia.ellerman.id.au>
+        id S1727695AbeKHJgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 04:36:22 -0500
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id CE3261F453;
+        Thu,  8 Nov 2018 00:03:35 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 00:03:35 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     David Airlie <airlied@linux.ie>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Subject: Re: radeon vs radeonfb Mobility quirks (Thinkpad X32)
+Message-ID: <20181108000335.a7usqftcmxvu7ywk@untitled>
+References: <20181104042328.jzavn47y2wloprbs@untitled>
+ <365d8b24f1c6a28c32998924a95b6a2a74655526.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <365d8b24f1c6a28c32998924a95b6a2a74655526.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boris Brezillon <boris.brezillon@bootlin.com> writes:
-> Hello Michael,
->
-> On Thu, 01 Nov 2018 21:18:28 +1100
-> Michael Ellerman <mpe@ellerman.id.au> wrote:
->
->> Mark Brown <broonie@kernel.org> writes:
->> 
->> > On Fri, Oct 26, 2018 at 12:36:14PM -0500, Rob Herring wrote:  
->> >> On Thu, Oct 25, 2018 at 9:14 AM Linus Torvalds
->> >> <torvalds@linux-foundation.org> wrote:  
->> >  
->> >> > Are there other situations where you might want to track something
->> >> > _outside_ of a pull request? Maybe. I can't really think of a lot of
->> >> > them, though. Patches etc don't have commit ID's to track, but it  
->> >
->> > patchwork gives them IDs and lets you do lookups using them, that's what
->> > I'm doing.  You can get the ID from a git commit by piping the output of
->> > git show into parser.py from the patchwork source, it works a lot of the
->> > time but things like editing the commit message will break it (this is a
->> > theme with my scripting around the mail stuff...).
->> >  
->> >> submissions. For example, with Greg and Mark B you can expect an
->> >> automated replies. Mark's reply gets threaded with the original, but
->> >> Greg's do not. For networking, you may or may not get a manual reply,  
->> >
->> > Mine *mostly* gets threaded, it's relying on being able to talk to
->> > patchwork to figure out the message ID at the minute so if the patchwork
->> > lookup fails for whatever reason it'll just use on what's in the commit
->> > for the CC list and not thread.  That isn't ideal, especially when I'm
->> > travelling and my network connection isn't the best, I keep meaning to
->> > try to figure out a better way which would probably be based on git
->> > notes as discussed earlier.  
->> 
->> Yeah I use git notes for this.
->> 
->> When I apply a patch I record the patchwork id in a git note, I have a
->> custom hacked pwclient that does it automatically. I also download the
->> full mbox from patchwork and stash it in .git/patchwork/<patch id>.
->> 
->> Then I have everything I need to generate a properly threaded reply to
->> the original mail.
->> 
->> The git notes work well, if you add the following to your .git/config:
->> 
->> [notes]
->> 	rewriteRef = refs/notes/*
->> 	displayRef = refs/notes/*
->> 
->> Then all notes are copied when you rewrite a commit (rebase), and also
->> displayed by eg. git show.
->> 
->> Every now and then if you do extensive rebasing/splitting you get
->> commits with the wrong or no patchwork ids. But that's pretty rare and
->> not that hard to fixup when it happens.
->> 
->> There's a slightly sanitised version of some of my scripts here:
->>   https://github.com/mpe/patchwork-scripts
->
-> I had pretty much the same workflow to automatically update the patch
-> status in patchwork when I push things to the MTD tree, but I was
-> lacking the part sending notifications (this was done manually).
->
-> With your scripts this is now addressed, thanks a lot for sharing
-> them!
+Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+> There's a whole pile of power management stuff for ancient laptops that
+> never quite made it from radeonfb to the radeon DRM driver... sadly it
+> also prevents sleep on old PowerBooks but I haven't had many complaints
+> so...
 
-Awesome, glad they helped!
+Thanks for the confirmation that stuff is missing from the DRM driver.
 
-I have some modifications locally to detect when I've merged an entire
-series and only reply to the first patch. At the moment that's all a bit
-too hacky for public viewing, but I'll try and clean it up at some point
-and push it out :)
+> The code for D2 and D3 on those old things is reasonably self
+> contained, it shouldn't be that hard to move it over I suppose.
 
-cheers
+I started working on the following (dirty) patch for my X32,
+but hasn't made a difference with just PCI_D2:
+
+diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/radeon/radeon_device.c
+index 59c8a6647ff2..acc587b18ad2 100644
+--- a/drivers/gpu/drm/radeon/radeon_device.c
++++ b/drivers/gpu/drm/radeon/radeon_device.c
+@@ -1548,6 +1548,23 @@ void radeon_device_fini(struct radeon_device *rdev)
+ 		radeon_doorbell_fini(rdev);
+ }
+ 
++/* XXX copy of radeonfb_whack_power_state */
++static void radeon_whack_power_state(struct pci_dev *pdev, pci_power_t state)
++{
++	u16 pwr_cmd;
++
++	for (;;) {
++		pci_read_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL,
++				     &pwr_cmd);
++		if (pwr_cmd & state)
++			break;
++		pwr_cmd = (pwr_cmd & ~PCI_PM_CTRL_STATE_MASK) | state;
++		pci_write_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL,
++				      pwr_cmd);
++		msleep(500);
++	}
++	pdev->current_state = state;
++}
+ 
+ /*
+  * Suspend & resume.
+@@ -1596,6 +1613,7 @@ int radeon_suspend_kms(struct drm_device *dev, bool suspend,
+ 
+ 		if (radeon_crtc->cursor_bo) {
+ 			struct radeon_bo *robj = gem_to_radeon_bo(radeon_crtc->cursor_bo);
++
+ 			r = radeon_bo_reserve(robj, false);
+ 			if (r == 0) {
+ 				radeon_bo_unpin(robj);
+@@ -1647,7 +1665,13 @@ int radeon_suspend_kms(struct drm_device *dev, bool suspend,
+ 	} else if (suspend) {
+ 		/* Shut down the device */
+ 		pci_disable_device(dev->pdev);
+-		pci_set_power_state(dev->pdev, PCI_D3hot);
++
++		if ("X32") {
++			radeon_whack_power_state(dev->pdev, PCI_D2);
++			__pci_complete_power_transition(dev->pdev, PCI_D2);
++		} else {
++			pci_set_power_state(dev->pdev, PCI_D3hot);
++		}
+ 	}
+ 
+ 	if (fbcon) {
+
+
+I suppose some of the mobility stuff from
+drivers/video/fbdev/aty/radeon_pm.c is necessary, but I haven't
+figured it out for the DRM driver.  Not sure when/if I'll have
+time to figure it out, or if I'll stick to the radeonfb driver
+for now.
+
+		/* Prepare mobility chips for suspend.
+		 */
+		if (rinfo->is_mobility) {
+			/* Program V2CLK */
+			radeon_pm_program_v2clk(rinfo);
+		
+			/* Disable IO PADs */
+			radeon_pm_disable_iopad(rinfo);
+
+			/* Set low current */
+			radeon_pm_low_current(rinfo);
+
+			/* Prepare chip for power management */
+			radeon_pm_setup_for_suspend(rinfo);
