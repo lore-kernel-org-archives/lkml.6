@@ -2,169 +2,205 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D43CC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DD0C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5227920685
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:40:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0225C20685
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:42:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ViX1jaj/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5227920685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="xU9v3aYt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0225C20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbeKHWPd (ORCPT
+        id S1726960AbeKHWRR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:15:33 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33728 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeKHWPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:15:33 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u9-v6so10751800wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 04:40:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=KhM3UgL+WnMff4RzuxPzQBpJ2IQ6KV8e/r/JF6NPFDQ=;
-        b=ViX1jaj/eZCy3YwRbAYj+8dzScdNSTokm1xLPisbAzVI/3C1onJQ4bllZZZDZB5Is8
-         o0RQz3ZEFynH/cOQ4PgVfh3apt0B/MkrYRYS0jS+jMLbjudRUq/juoYgRb0xKWztEvFc
-         Fu0Mtn+Goz5b9NB3FTPsVBhKTBOGHdW6Gdjhw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
-        bh=KhM3UgL+WnMff4RzuxPzQBpJ2IQ6KV8e/r/JF6NPFDQ=;
-        b=H8QokI1vt2c1mjnswE6RNr+Iic5zakkxqeZduwozTlaJxHrYeUzMjpMx6s7+6f5PJk
-         TOpdDE7YJUqxYNHegU09O3BIzCUw8i3Qzv2557tb0dQXjIiX+6bO+PnAkgrs9MHOENBE
-         v/q0o9SKbUstwHD64ScQ5PiX4qrhI/tkVG9WPz17E06DZxszWVZH2IMZKe/O85wDjVC/
-         iipe8pK7dwumZNlVByjPklit6aE/zZ+QrT5hFYPRAZQoRv3MqcMAqau9mt6Mr1zF5UXq
-         beRh8tAAuFK21Dv7pxhxugG2L9FinlcAMyQkgDZY6hRE9/sOSRouqx5YI9F3QzgdcEJ4
-         l3BA==
-X-Gm-Message-State: AGRZ1gJGaZM52+Dl6nBbtx6wznOIRUxALMptzf9svDXgctTI9Pa/ZF45
-        NFN5HrHKajTwzHEQL7Vq9HjNd4Ybcaw=
-X-Google-Smtp-Source: AJdET5cV7bp5TsxiEMN7t3FnZcLupSW5vpQFWv+sDNTx9WN9oc7dmcT+zqGlG3/r/GkQa5GbrjGtOw==
-X-Received: by 2002:adf:ff4e:: with SMTP id u14-v6mr4051890wrs.232.1541680812809;
-        Thu, 08 Nov 2018 04:40:12 -0800 (PST)
-Received: from zen.linaro.local ([81.128.185.34])
-        by smtp.gmail.com with ESMTPSA id v2-v6sm4176697wru.20.2018.11.08.04.40.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 04:40:12 -0800 (PST)
-Received: from zen (localhost [127.0.0.1])
-        by zen.linaro.local (Postfix) with ESMTPS id 9542F3E03FE;
-        Thu,  8 Nov 2018 12:40:11 +0000 (GMT)
-References: <20181107171031.22573-1-alex.bennee@linaro.org> <20181107180120.urnvkcrkh46ytsdb@lakrids.cambridge.arm.com> <20181107180829.sex54bxhd5wyqvan@lakrids.cambridge.arm.com>
-User-agent: mu4e 1.1.0; emacs 26.1.50
-From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     kvm@vger.kernel.org, marc.zyngier@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        christoffer.dall@linaro.org
-Subject: Re: [RFC PATCH] KVM: arm64: don't single-step for non-emulated faults
-In-reply-to: <20181107180829.sex54bxhd5wyqvan@lakrids.cambridge.arm.com>
-Date:   Thu, 08 Nov 2018 12:40:11 +0000
-Message-ID: <87r2fv68us.fsf@linaro.org>
+        Thu, 8 Nov 2018 17:17:17 -0500
+Received: from mail.kdab.com ([176.9.126.58]:62470 "EHLO mail.kdab.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726571AbeKHWRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 17:17:17 -0500
+Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
+ reason="pass (just generated,
+ assumed good)" header.d=kdab.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-type:content-type:mime-version:references:in-reply-to
+ :organization:message-id:date:date:subject:subject:from:from; s=
+ dkim; t=1541680914; x=1542544915; bh=URKLhhXryJtfzfaRMk3nwYFsslz
+ rb6ATrlX7iqUpdJY=; b=xU9v3aYtnUB4PsmeHmDHxEFROOYqKRW/ZbT4jbdYvEv
+ uarFos3hkNYwS+V115Df3IkrSgQfGJGHkwNa+4Z9eYeOc+Ad7+Klzq1j4bazuXga
+ 8GYhVSNseFSp4u5DPfq/U5l1SX35yiPKVlPCNHy6cKETO/V89fL8RlhnicnBBZkg
+ =
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho <acme@kernel.org>
+Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
+ unwinding - wrong stack pointer register value?]
+Date:   Thu, 08 Nov 2018 13:41:50 +0100
+Message-ID: <7105958.qy8IzDpmRc@agathebauer>
+Organization: KDAB
+In-Reply-To: <1584560.aXQ729uQp3@agathebauer>
+References: <2335309.gnWok9HYb4@agathebauer>
+ <20181106202411.GU6218@tassilo.jf.intel.com> <1584560.aXQ729uQp3@agathebauer>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart1543118.cLrsxmjIBU";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--nextPart1543118.cLrsxmjIBU
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Mark Rutland <mark.rutland@arm.com> writes:
+On Mittwoch, 7. November 2018 23:41:31 CET Milian Wolff wrote:
+> On Dienstag, 6. November 2018 21:24:11 CET Andi Kleen wrote:
+> > > Where would I look for the source to change here? So far, I only
+> > > concentrated on the userspace side of perf in tools/perf.
+> > 
+> > Kind of similar to
+> > 
+> > a405bad5ad20 perf/x86: Add Haswell specific transaction flag reporting
+> > fdfbbd07e91f perf: Add generic transaction flags
+> > 
+> > Report the original (not overwritten) regs->ip and regs->sp
+> 
+> Thanks a lot Andi! With your help, I have managed to find the exact issue
+> for my scenario. Turns out, it really is "just" the instruction pointer
+> that is wrong. I.e. originally we have IP = 0x7feda32ca68c, but with PEBS
+> we correct that to IP = 7feda32ca688. The SP register value stays the same
+> according to my printk output. Using the original IP value, we can unwind
+> correctly since we point to the correct place in the .eh_frame section. The
+> PEBS IP points to a different position in the .eh_frame section, which is
+> "too early".
+> 
+> That brings up some questions:
+> 
+> - I noticed `perf record --intr-regs`, but the values recorded in the
+> perf.data file are always the same. I.e. comparing uregs and iregs, I always
+> see the same values printed by `perf script`. This smells like a bug to me,
+> but so far I haven't figured out why this happens...
 
-> On Wed, Nov 07, 2018 at 06:01:20PM +0000, Mark Rutland wrote:
->> On Wed, Nov 07, 2018 at 05:10:31PM +0000, Alex Benn=C3=A9e wrote:
->> > Not all faults handled by handle_exit are instruction emulations. For
->> > example a ESR_ELx_EC_IABT will result in the page tables being updated
->> > but the instruction that triggered the fault hasn't actually executed
->> > yet. We use the simple heuristic of checking for a changed PC before
->> > seeing if kvm_arm_handle_step_debug wants to claim we stepped an
->> > instruction.
->> >
->> > Signed-off-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
->> > ---
->> >  arch/arm64/kvm/handle_exit.c | 4 +++-
->> >  1 file changed, 3 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit=
-.c
->> > index e5e741bfffe1..b8252e72f882 100644
->> > --- a/arch/arm64/kvm/handle_exit.c
->> > +++ b/arch/arm64/kvm/handle_exit.c
->> > @@ -214,6 +214,7 @@ static exit_handle_fn kvm_get_exit_handler(struct =
-kvm_vcpu *vcpu)
->> >  static int handle_trap_exceptions(struct kvm_vcpu *vcpu, struct kvm_r=
-un *run)
->> >  {
->> >  	int handled;
->> > +        unsigned long old_pc =3D *vcpu_pc(vcpu);
->> >
->> >  	/*
->> >  	 * See ARM ARM B1.14.1: "Hyp traps on instructions
->> > @@ -233,7 +234,8 @@ static int handle_trap_exceptions(struct kvm_vcpu =
-*vcpu, struct kvm_run *run)
->> >  	 * kvm_arm_handle_step_debug() sets the exit_reason on the kvm_run
->> >  	 * structure if we need to return to userspace.
->> >  	 */
->> > -	if (handled > 0 && kvm_arm_handle_step_debug(vcpu, run))
->> > +	if (handled > 0 && *vcpu_pc(vcpu) !=3D old_pc &&
->>
->> This doesn't work if the emulation is equivalent to a branch-to-self, so
->> I don't think that we want to do this.
->>
->> When are we failing to advance the single-step state machine
->> correctly?
+The reason seems to be that perf_event_output only takes one set of registers, 
+which then gets handed down into perf_prepare_sample where it gets sampled. 
+Thus if sample type has both PERF_SAMPLE_REGS_USER and PERF_SAMPLE_REGS_INTR 
+set, then by design both will store the same values for user space samples.
 
-When the trap is not actually an instruction emulation - e.g. setting up
-the page tables on a fault. Because we are in the act of single-stepping
-an instruction that didn't actually execute we erroneously return to
-userspace pretending we did even though we shouldn't.
+Can we change this, such that perf_event_output also takes a second set of 
+registers (iregs) that get sampled for PERF_SAMPLE_REGS_INTR? I'm very new to 
+real kernel development, what kind of ABI/API stability guarantees exist for 
+something like "perf_event_output"?
 
->
-> I don't understand how this is intended to work currently.
->
-> Surely kvm_skip_instr() should advance the state machine as necessary,
-> so that we can rely on the HW to generate any necessary single-step
-> exception when we next return to the guest?
+> - Independently, when I add a custom printk manually in `arch/x86/events/
+> intel/ds.c` at the end of `setup_pebs_sample_data`, then I'm never seeing
+> any differences between SP in iregs/pebs/regs. Shouldn't it also be
+> recorded via PEBS? Or is it just chance that I'm never seeing any
+> difference in setup_pebs_sample_data between iregs->sp and regs->sp?
 
-It doesn't currently (at least for aarch64, the aarch32 skip code does
-more messing about). But the decision isn't really about futzing with
-the single-step flags but about returning to userspace so the
-single-step is seen. Changing a > 0 to return to the guest to a 0 to
-exit to userspace while setting the exit reason.
->
-> ... and if userspace decides to emulate something, it's up to it to
-> advance the state machine consistently.
+The reason here seems to be that the registers stored in "pebs" are 
+essentially the same as iregs for the setup for `perf record --call-graph 
+dwarf`. The difference is the availability of `pebs->real_ip` which gets used 
+on my system to fixup the IP. SP stays untouched and is thus only truly valid 
+for the untouched IP (which is discarded currently - see above).
 
-Well that's a little more complex. We actually exit to handle the MMIO
-stuff and then return so it can complete before exiting again for the
-step (see virt/kvm/arm/arm.c):
-
-	if (run->exit_reason =3D=3D KVM_EXIT_MMIO) {
-		ret =3D kvm_handle_mmio_return(vcpu, vcpu->run);
-		if (ret)
-			return ret;
-		if (kvm_arm_handle_step_debug(vcpu, vcpu->run))
-			return 0;
-	}
+> - Generally, how do we want to handle this bug? If `--intr-regs` would
+> actually record a different IP than stored in uregs in the perf.data file,
+> then we could use that as a fallback for unwinding, when it fails the first
+> time. Or should we always unwind from that IP? How do we mark the "actual"
+> frame/IP then, if that differs?
+> 
+> Thanks
 
 
->
-> Thanks,
-> Mark.
+-- 
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart1543118.cLrsxmjIBU
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMTA4MTI0MTUwWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgJlP5JaEyDAQfz9ZzoYvAR3qpTJni
+mhITJxVxQdgzuRIwDQYJKoZIhvcNAQEBBQAEggEAc/agt+U3MTfQCLY1Z4vrIfmIScmTrbvzaGNM
++/ryknfSwujWGXQXec+kTL7pSfmp3nGFmD51gHBFnXcOaIFRgYeN3jLRuFQHHOqHn/1I25OQq3Y9
+5WA3dlcJaEUf5MoKk5b0COSP/yVZFGdNv2nqiH9bZsSaQ2vSJMBhdmgKumPgSrR48M/c0DiFkZCG
+kigg1+ZbLCuE/ElfC12FnfnqF3ottSyuSukok8H3uJ/Xb+T4GvpCzzA5tgo6LqWugHdLpCsef2lD
+NXaZRkOoouKkOUCP0k4CON+a2Eq5Ueof4Y9AnwgWUNkBR8KDdBFTDH2p8C9tEgqdtwUh09fON3QO
+tgAAAAAAAA==
 
 
---
-Alex Benn=C3=A9e
+--nextPart1543118.cLrsxmjIBU--
+
+
