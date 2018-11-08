@@ -2,204 +2,153 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91462C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4AFC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F0B20817
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:11:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N5UCVEdf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F0B20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=whitewaterfoundry.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D69320827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 05:27:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D69320827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbeKHOp2 (ORCPT
+        id S1728006AbeKHPA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 09:45:28 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50393 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726145AbeKHOp2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 09:45:28 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id CF1AA21F49
-        for <linux-kernel@vger.kernel.org>; Thu,  8 Nov 2018 00:11:47 -0500 (EST)
-Received: from web4 ([10.202.2.214])
-  by compute1.internal (MEProxy); Thu, 08 Nov 2018 00:11:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=tfDMUC
-        2ykUsXRQ+42/y5Ab9luo5eOkcge3dGsDt+cN4=; b=N5UCVEdf+RnMcNFzfO4gkB
-        KFLW9M3WzMMdZzqu2leou1c+hvreT92b1ZoJq2X6vLknb9RvrKSMlgoZVE11abdX
-        Ke2dgk6jeETDI63DO9cKKQmupkzPKzCGKSinG5IZ3vebjUhpSFZe+A1jeb0gQU/E
-        u4yZiLqPH1DavsvdS/B/cfS4d2Yq7lktFDfBeREI6ad3bSlGIsHKe/NOPYUheAMT
-        jbBBGqszGxTPo3ttQms63pZbR2daYJUaxe9RmJpOclaoewc96r+aJsPf22OdkN9q
-        dOM8brt1NUXTxYEoadKLTcpKdZox8ighSO+WAhDse+CcKCLgcjKWXUBf0O7czAIQ
-        ==
-X-ME-Sender: <xms:k8XjW25UAv3ILHJSqBFHp-atFrBcarxGDRgWvqcvcgQQQbPMr71s3A>
-X-ME-Proxy: <xmx:k8XjW6yWdr55n6dhVxyoIoSxJyLI-1LONG_UmbBgUzDMY8TyPpQ0qg>
-    <xmx:k8XjW_e4HQKJNFqHYPsAm16NR5wi9bp6zjkUP3OvvpRVuEqdGlhqCQ>
-    <xmx:k8XjW2eMN04Wb5ezRvXh4CY9IZOPRoUfppH-c1cqz6ZrBEt8CssnbA>
-    <xmx:k8XjWxal4jMUGhNTtf43fLShlDjnUmQ3TFP-FPj895EkkDDG6sOL3g>
-    <xmx:k8XjW3_41OA1xm4Uha67RSeosNGGH6l8eoxzdS5XzbkXWFE4aMlHAg>
-    <xmx:k8XjW6XmcPl29s4Ydw6yIDi1EIxpBjJBskJT5raQxzu1g7dFkJeODQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 99)
-        id 8D979BA7C4; Thu,  8 Nov 2018 00:11:47 -0500 (EST)
-Message-Id: <1541653907.680493.1569636320.38B54221@webmail.messagingengine.com>
-From:   Hayden Barnes <hayden@whitewaterfoundry.com>
-To:     linux-kernel@vger.kernel.org
+        Thu, 8 Nov 2018 10:00:58 -0500
+Received: from mga01.intel.com ([192.55.52.88]:5424 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727598AbeKHPA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 10:00:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 21:27:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
+   d="scan'208";a="94566549"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Nov 2018 21:27:12 -0800
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 04/12] iommu/vt-d: Add 256-bit invalidation descriptor
+ support
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
+ <20181105053151.7173-5-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439D5FAA2@SHSMSX104.ccr.corp.intel.com>
+ <a6e43ddd-0889-4a4a-b908-993db28c6d87@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439D604DF@SHSMSX104.ccr.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <915876cd-6a1f-097b-b9be-9cb3df18a1df@linux.intel.com>
+Date:   Thu, 8 Nov 2018 13:24:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-c0552f07
-Subject: Re: [QUESTION] Microsoft, WSL,
- and the Linux trademark (Edited For Readability)
-Date:   Wed, 07 Nov 2018 21:11:47 -0800
+In-Reply-To: <A2975661238FB949B60364EF0F2C257439D604DF@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mr. Caputo,
+Hi,
 
-> In reading the news today, I stumbled across an article talking about a $=
-20=20
-> "linux-based distro" app for Windows 10.
+On 11/8/18 11:49 AM, Liu, Yi L wrote:
+> Hi,
+> 
+>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>> Sent: Thursday, November 8, 2018 10:17 AM
+>> Subject: Re: [PATCH v4 04/12] iommu/vt-d: Add 256-bit invalidation descriptor
+>> support
+>>
+>> Hi Yi,
+>>
+>> On 11/7/18 2:07 PM, Liu, Yi L wrote:
+>>> Hi Baolu,
+>>>
+>>>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>>>> Sent: Monday, November 5, 2018 1:32 PM
+>>>
+>>> [...]
+>>>
+>>>> ---
+>>>>    drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
+>>>>    drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
+>>>>    drivers/iommu/intel_irq_remapping.c |  6 ++-
+>>>>    include/linux/intel-iommu.h         |  9 +++-
+>>>>    4 files changed, 115 insertions(+), 59 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c index
+>>>> d9c748b6f9e4..ec10427b98ac 100644
+>>>> --- a/drivers/iommu/dmar.c
+>>>> +++ b/drivers/iommu/dmar.c
+>>>> @@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu
+>>>> *iommu, int
+>>>> index)
+>>>>    	int head, tail;
+>>>>    	struct q_inval *qi = iommu->qi;
+>>>>    	int wait_index = (index + 1) % QI_LENGTH;
+>>>> +	int shift = qi_shift(iommu);
+>>>>
+>>>>    	if (qi->desc_status[wait_index] == QI_ABORT)
+>>>>    		return -EAGAIN;
+>>>> @@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu
+>>>> *iommu, int index)
+>>>>    	 */
+>>>>    	if (fault & DMA_FSTS_IQE) {
+>>>>    		head = readl(iommu->reg + DMAR_IQH_REG);
+>>>> -		if ((head >> DMAR_IQ_SHIFT) == index) {
+>>>> +		if ((head >> shift) == index) {
+>>>> +			struct qi_desc *desc = qi->desc + head;
+>>>> +
+>>>>    			pr_err("VT-d detected invalid descriptor: "
+>>>>    				"low=%llx, high=%llx\n",
+>>>> -				(unsigned long long)qi->desc[index].low,
+>>>> -				(unsigned long long)qi->desc[index].high);
+>>>> -			memcpy(&qi->desc[index], &qi->desc[wait_index],
+>>>> -					sizeof(struct qi_desc));
+>>>> +				(unsigned long long)desc->qw0,
+>>>> +				(unsigned long long)desc->qw1);
+>>>
+>>> Still missing qw2 and qw3. May make the print differ based on if smts is configed.
+>>
+>> qw2 and qw3 are reserved from software point of view. We don't need to print it for
+>> information.
+> 
+> But for Scalable mode, it should be valid?
 
-Hello. That was my idea. Please allow me to address some of the concerns yo=
-u raised.=20
+No. It's reserved for software.
 
-> This is just a bundled userspace for WSL, there is no actual Linux in thi=
-s thing,=20
-> yet the trademarked Linux name is used throughout.
-> Did Microsoft license the trademark or something?  Did I miss a memo?
-> Does their joining the Linux Foundation as a Platinum member two years ag=
-o=20
-> include such use of the trademark?=20
-> I'm confused by what seems to be total silence about what _appears_ to be=
- an=20
-> obvious large-scale trademark abuse in everything WSL-related.
-> Could somebody informed please shed some light on this?
+> 
+>>
+>>>
+>>>> +			memcpy(desc, qi->desc + (wait_index << shift),
+>>>
+>>> Would "memcpy(desc, (unsigned long long) (qi->desc +  (wait_index <<
+>>> shift)," be more safe?
+>>
+>> Can that be compiled? memcpy() requires a "const void *" for the second parameter.
+>> By the way, why it's safer with this casting?
+> 
+> This is just an example. My point is the possibility that "qi->desc + (wait_index << shift)"
+> would be treated as "qi->desc plus (wait_index << shift)*sizeof(*qi->desc)". Is it possible
+> for kernel build?
 
-The Linux trademark is owned by Linus Torvalds and administered by the Linu=
-x Foundation=20
-through the Linux Mark Institute: https://www.linuxmark.org. The Linux trad=
-emark can be=20
-used by third parties subject to a Sublicense Agreement:=20
-https://www.linuxmark.org/programs/legal/trademark/sublicense-agreement.=20
+qi->desc is of type of "void *".
 
-The terms of the Sublicense Agreement permit the use of the Linux trademark=
- for derivative=20
-goods and services that deploy, document, facilitate the use of, or enhance=
- Linux=C2=AD-based goods.
-
-WLinux does contain a bootable Linux kernel in a base image.  The criticism=
- that 'WSL is=20
-not Linux' is because the kernel is not executed when the base image is ins=
-talled and run=20
-from within the WSL layer on Windows 10. But WLinux can be used to patch an=
-d build the=20
-Linux kernel from sources to install on other devices, assist in deploying =
-and configuring=20
-Linux on other devices, and can cross-compile software using standard Linux=
- libraries,=20
-all when running on WSL. For more about how WSL works for those unfamiliar:=
-=20
-https://github.com/sirredbeard/Awesome-WSL#overview. WLinux unquestionably =
-contains=20
-derivations of the Linux kernel, relies on the WSL re-implementation of Lin=
-ux kernel syscalls,=20
-and facilitates the use of and enhances Linux-based goods, all within the t=
-erms of the=20
-Linux Sublicense Agreement.
-
-We obtained a valid Sublicense Agreement for the use of the Linux trademark=
- for WLinux=20
-from the Linux Foundation before launching WLinux. All of our intellectual =
-property=20
-compliance disclosures are here:=20
-https://github.com/WhitewaterFoundry/WLinux/blob/master/LICENSE.md
-
-> The situation strikes me as harmful to the kernel as the majority of folk=
-s being=20
-introduced to "Linux" this way will be tricked into thinking they're using/=
-supporting Linux.
-
-Users who purchase WLinux from the Microsoft Store are supporting the Linux=
- ecosystem=20
-and free software generally. Everyone working on WLinux are Windows and Lin=
-ux users
-who are committed to making the Linux software ecosystem accessible to as m=
-any people=20
-as possible regardless of what device or operating system they are on. WLin=
-ux and WSL=20
-generally opens up new possibilities for bringing people to the Linux ecosy=
-stem,=20
-cross-platform development, and expanding access to free software and free =
-software=20
-development tools.=20
-
-WLinux builds in a number of value-added enhancements and features, we prov=
-ide=20
-end user support, and work with various developer communities and other ope=
-n source=20
-companies to try to make it easy to get into the Linux ecosystem from Windo=
-ws 10.  We=20
-make it easy to get up and running with Go, Ruby, other dev toolchains, soo=
-n Docker, install=20
-various editors, configure predictive text input for non-Latin input, and i=
-mplement a handful=20
-of other tweaks to defaults. I personally do not believe a frontend dev ste=
-pping into Linux=20
-should have to know how to partition and dual-boot a system, or even have t=
-o learn Docker,=20
-to get started using node.js and trying different packages off npm. They wi=
-ll get to that.
-
-Many WLinux users are going to end up working on traditional server Linux e=
-ventually,=20
-if they don't already, as many of our users seem to work in hybrid environm=
-ents as it is.=20
-I imagine a few will end up trying and then switching to desktop Linux, aga=
-in if they don't=20
-use it already. But desktop Linux is just one small part of Linux, WLinux i=
-s not here to=20
-replace it, and WSL is not capable of doing so in it's current limitations.=
- Users are not being
- 'tricked'. Free upstream distros from Canonical, Debian, SuSE, and Kali ar=
-e available where=20
-you can implement our tweaks and custom packages manually. Of the many copi=
-es we have
- sold we have only had two refund requests which we have promptly honored. =
-Users always=20
-have the option of building WLinux from source using instructions we provid=
-e. WLinux is also=20
-heavily discounted or free in many less developed countries.
-
-We turn the funds WLinux earns around to hire open source developers, spons=
-or bug and=20
-feature bounties, donate to upstream projects, and cover overhead. We are p=
-rofitable and=20
-expect to pay out over $2,000 USD in bounties this month alone after being =
-on the store for
- just six weeks. We are focused on building a sustainable commercial open s=
-ource project=20
-that can direct our own development resources where we see fit to improve t=
-he Linux=20
-experience on WSL for us, the users of Linux on WSL. Microsoft has had abso=
-lutely zero=20
-input into how we have evolved WLinux besides open source code of theirs we=
- have used.
-
-Hayden Barnes
-Whitewater Foundry, Ltd. Co.
-hayden@whitewaterfoundry.com
-https://www.whitewaterfoundry.com
-https://twitter.com/WLinuxApp
-https://github.com/sirredbeard
-https://github.com/WhitewaterFoundry/WLinux
+Best regards,
+Lu Baolu
