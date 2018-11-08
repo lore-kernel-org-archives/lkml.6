@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AFEECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1225ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B64E214F0
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74CB6214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:01:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1nLL8Gll"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B64E214F0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3rdN/+0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74CB6214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730812AbeKIHih (ORCPT
+        id S1730824AbeKIHij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:38:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57990 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:38:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728491AbeKIHig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:38:36 -0500
+        id S1730799AbeKIHih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:38:37 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E478521019;
-        Thu,  8 Nov 2018 22:01:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 923562146E;
+        Thu,  8 Nov 2018 22:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714468;
-        bh=ZZmmqm4tgWLLx5WwXOmvqZxIiPdwvpFg2Agi+5J9BUo=;
+        bh=jkB59swUCrDCDkeglrJdCguzb444iD+LCObfdxPEYdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1nLL8GllJiOwoDrHPmV+Ff2azBLnj/FLjCdFxQV6mQt1VHwVkd0UNvggI30Y7vs98
-         xyAXUpXoY1RB1OcEamJSVLcAabalMqws/RpxOItAq4u2HzCw26NNESvwxXECooDCZP
-         D3lH677nd82FyGRMteMQTgEQ2G0C3Nt6bKmWqJNI=
+        b=n3rdN/+0y10TadVllDZRWlkDLOSCxfdcSQUsE3lOuWdfmJ/qTDmNxShF136GpRCB7
+         IJBYPyG6gNAZIptYOlHwGRE56mPFI/X98gbdCdotSuhmEvLHNt0PmhOXEhdvHKvEHf
+         FDcK2utJo3HY6uEM/kLr9OZyR13lA2DdmKQmkj7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.4 104/114] cachefiles: fix the race between cachefiles_bury_object() and rmdir(2)
-Date:   Thu,  8 Nov 2018 13:51:59 -0800
-Message-Id: <20181108215110.180957173@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 105/114] ptp: fix Spectre v1 vulnerability
+Date:   Thu,  8 Nov 2018 13:52:00 -0800
+Message-Id: <20181108215110.278036964@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -61,42 +63,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 169b803397499be85bdd1e3d07d6f5e3d4bd669e upstream.
+commit efa61c8cf2950ab5c0e66cff3cabe2a2b24e81ba upstream.
 
-the victim might've been rmdir'ed just before the lock_rename();
-unlike the normal callers, we do not look the source up after the
-parents are locked - we know it beforehand and just recheck that it's
-still the child of what used to be its parent.  Unfortunately,
-the check is too weak - we don't spot a dead directory since its
-->d_parent is unchanged, dentry is positive, etc.  So we sail all
-the way to ->rename(), with hosting filesystems _not_ expecting
-to be asked renaming an rmdir'ed subdirectory.
+pin_index can be indirectly controlled by user-space, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-The fix is easy, fortunately - the lock on parent is sufficient for
-making IS_DEADDIR() on child safe.
+This issue was detected with the help of Smatch:
+
+drivers/ptp/ptp_chardev.c:253 ptp_ioctl() warn: potential spectre issue
+'ops->pin_config' [r] (local cap)
+
+Fix this by sanitizing pin_index before using it to index
+ops->pin_config, and before passing it as an argument to
+function ptp_set_pinfunc(), in which it is used to index
+info->pin_config.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
 Cc: stable@vger.kernel.org
-Fixes: 9ae326a69004 (CacheFiles: A cache that backs onto a mounted filesystem)
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cachefiles/namei.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ptp/ptp_chardev.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -317,7 +317,7 @@ try_again:
- 	trap = lock_rename(cache->graveyard, dir);
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -23,6 +23,8 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
  
- 	/* do some checks before getting the grave dentry */
--	if (rep->d_parent != dir) {
-+	if (rep->d_parent != dir || IS_DEADDIR(d_inode(rep))) {
- 		/* the entry was probably culled when we dropped the parent dir
- 		 * lock */
- 		unlock_rename(cache->graveyard, dir);
++#include <linux/nospec.h>
++
+ #include "ptp_private.h"
+ 
+ static int ptp_disable_pinfunc(struct ptp_clock_info *ops,
+@@ -224,6 +226,7 @@ long ptp_ioctl(struct posix_clock *pc, u
+ 			err = -EINVAL;
+ 			break;
+ 		}
++		pin_index = array_index_nospec(pin_index, ops->n_pins);
+ 		if (mutex_lock_interruptible(&ptp->pincfg_mux))
+ 			return -ERESTARTSYS;
+ 		pd = ops->pin_config[pin_index];
+@@ -242,6 +245,7 @@ long ptp_ioctl(struct posix_clock *pc, u
+ 			err = -EINVAL;
+ 			break;
+ 		}
++		pin_index = array_index_nospec(pin_index, ops->n_pins);
+ 		if (mutex_lock_interruptible(&ptp->pincfg_mux))
+ 			return -ERESTARTSYS;
+ 		err = ptp_set_pinfunc(ptp, pin_index, pd.func, pd.chan);
 
 
