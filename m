@@ -2,100 +2,153 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B07C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC24C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD86020825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CDCC20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:03:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUkx8auz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD86020825
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdEPqE/B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDCC20825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeKHWid (ORCPT
+        id S1727086AbeKHWiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:38:33 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44099 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeKHWic (ORCPT
+        Thu, 8 Nov 2018 17:38:51 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38063 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHWiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:38:32 -0500
-Received: by mail-qk1-f194.google.com with SMTP id n12so26171265qkh.11;
-        Thu, 08 Nov 2018 05:03:08 -0800 (PST)
+        Thu, 8 Nov 2018 17:38:51 -0500
+Received: by mail-qk1-f195.google.com with SMTP id d19so26239423qkg.5;
+        Thu, 08 Nov 2018 05:03:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=sUR7VTLIRaI011Np0xxYMZqLrPu+H6IpuQbiDwJZflE=;
-        b=gUkx8auzpFIlis6A85zX3Bkq+VbG2GNiJIUt+bKNqmWkMfrV5+U/C8RoA0z9FRGvi8
-         dkK4h7B3K/T8P9AYnZoYLNRESns2rDFzeXieKXpkT8uH1OIMzDBGXXyt6RfpYooM7NQU
-         hZTkhhKrbCHMEdx+mvCeTlERx55jsCmdrEHV+YeOubNSjUumHfsK4HVhObWVFGvDWIui
-         RD5c8Vgs/zYBhQrqYGZjk5QYgGrArh3mP7nAFq1/1uiqgj30D7jEeGEaakjqGpay94Vx
-         6QPqArV0dPGbkoCLq2crrd/Nq+qG6u2kyx+Ayg1iI0z/wF+9pjP2LL2rysLhzb/b6wQs
-         qM2A==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CSTyTQVebQoEyb5YW7uEXU9YiShfNNKeiURGdRFNLfI=;
+        b=MdEPqE/B1Wtw1OYqbGAW7Lj/WKKQpHBYYd0PUOkrnX+b190sKb2OVhqQ8VyaIPaXdF
+         cXd++AtOAlrnujv8SjdrmKPktMVtol8tIuv8YG+rp3m0j+FJ+EpJDH9GxnmLwMkCVoZA
+         AS/D9UG6AttwXzeASvaxMBn5I9YYhls5g+KWf56U8e0lGlr4oWKEUQeFwF7legBWa4e+
+         iY2+TH8l3X7ALfJ7ASwX/kYrZ1kgTvDyuF+mfMAtxkJRFjwyn7uNlc4Lf+YGmNE9U/KM
+         /5SkDLoelN7LxwTuum9tgLflPbcZ2ougWYom+zJcoIQQ7LgdKado/tJh0zHTibS71MiV
+         xXZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=sUR7VTLIRaI011Np0xxYMZqLrPu+H6IpuQbiDwJZflE=;
-        b=GjRprOYFb+aKJN7/dU4DEdb6ILjDGKNYHqeCy3yyXoqhDfrOgKTVNGk2iEKXin2mJk
-         /i7qacY2uZ2G8IPVo6cJ+n2LVBqXb6U4/h7SBHTomgaMMK7KPmhL9K4/3Ud7vf+v2ZI+
-         9e+uBdcfrW0PwfnPm4b/IK7MR+DOpHgPkF3OQIf79M/mR1Cu/lSxGzQYe4yYZYzYwPTy
-         sUvFjwpExSSD7ax1hC6DBuGR+MWxkOLeH45AhEU7KVtt5z8w012oODz5eP1Mq0y+dolx
-         R8a1pFEMrnurUyqy1cOej8l1RI4nZ+YjaAXzmZJU+17aKj9iRq47TJO54xlPt5QqWV3J
-         lK0Q==
-X-Gm-Message-State: AGRZ1gKTZ82f2EB1Oy3XfVG0STJqVbgSSrNQ4Hj54OR8p6hRRsfawKlY
-        f57TyGFhWbCuOuXQbrBAZ0M=
-X-Google-Smtp-Source: AJdET5e2rsviW+3UbyQVkcHmoBgN91yB+AALy0dKuQHGMDZpKM+1w4yJzk7edopH5CIWVtjXvymM7A==
-X-Received: by 2002:a0c:aa84:: with SMTP id f4mr4170835qvb.243.1541682188532;
-        Thu, 08 Nov 2018 05:03:08 -0800 (PST)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CSTyTQVebQoEyb5YW7uEXU9YiShfNNKeiURGdRFNLfI=;
+        b=M60Xgs5/TtkfRuGLBFJ6kyiQXjAcFcI5RJYaGrExm51PqEaBANU/Tew27pl6b272al
+         Jh4ZwP6H/bnzQh75p/Ut6dJxDuNO79u2xIl6A8AekbUn1/WhLBhriaiOmvFptExKElfH
+         xKMmR5JqKk97xj1H7GJpC2A4BdJWnTiIKcBvDIyvR/vwNGIC7Ydoj8f6scW9/8V3sSqj
+         7pIaCHc6JJqZc0nG9qzB8XDCFx6nxY3L7I6dmEoT1AgYoSL2dqbGMjw198CACR2CHqUK
+         ZS64vpnngchf8HnZTbfo41x3nSz/gA9yUFauoBT54KH/DzFlGy527Ci2ssPtfmJt32Il
+         3Z/Q==
+X-Gm-Message-State: AGRZ1gI2v4fGdMzpzh23EU3+JL4l7Qbyg0xZ3DAkpQjIUIUR4FxsqtIh
+        vmqJe1/qTXyeyfIW4d8xOiw=
+X-Google-Smtp-Source: AJdET5fNc/a3SPtBSNZIqg7QhoeagN6KPuracQDOYFH4n8QH3YXe4moAdKY10ZQpFzcOTLubwdIgnA==
+X-Received: by 2002:ac8:17f0:: with SMTP id r45mr4124425qtk.206.1541682206102;
+        Thu, 08 Nov 2018 05:03:26 -0800 (PST)
 Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm1799752qth.18.2018.11.08.05.03.04
+        by smtp.gmail.com with ESMTPSA id h66-v6sm1920259qkc.53.2018.11.08.05.03.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 05:03:07 -0800 (PST)
+        Thu, 08 Nov 2018 05:03:25 -0800 (PST)
 From:   Giuliano Belinassi <giuliano.belinassi@gmail.com>
 X-Google-Original-From: Giuliano Belinassi <giuliano.belinassi@usp.br>
-Date:   Thu, 8 Nov 2018 11:03:02 -0200
+Date:   Thu, 8 Nov 2018 11:03:20 -0200
 To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
         renatogeh@gmail.com
 Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v2 0/2] pattern generation and gain update
-Message-ID: <cover.1541681371.git.giuliano.belinassi@usp.br>
+Subject: [PATCH v2 1/2] staging: iio: ad7780: check if ad778x before gain
+ update
+Message-ID: <762e851dd819f27e3955cb695cd8422d84a19438.1541681371.git.giuliano.belinassi@usp.br>
+References: <cover.1541681371.git.giuliano.belinassi@usp.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1541681371.git.giuliano.belinassi@usp.br>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches fixes a bug in ad717x chips where the PAT2 bit
-was wrongly read as a GAIN bit. It also refactors the pattern_mask
-generation with the PAT bits.
+Only the ad778x have the 'gain' status bit. Check it before updating
+through a new variable is_ad778x in chip_info.
 
-Changelog:
-* v2
-	- Squashed is_add778x flag commit with the gain update fix
-	- Changed u8 is_add778x to bool is_add778x
-	- Set pattern and pattern_mask as macros
-	- Aligned identation of macros
+Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
+---
+Changes in v2:
+	- Squashed is_ad778x declaration commit with the ad778x checkage
+	- Changed is_ad778x type to bool
+ 
+ drivers/staging/iio/adc/ad7780.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Giuliano Belinassi (2):
-  staging: iio: ad7780: check if ad778x before gain update
-  staging: iio: ad7780: generates pattern_mask from PAT bits
-
- drivers/staging/iio/adc/ad7780.c | 55 ++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index 91e016d534ed..9ec2b002539e 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -35,6 +35,7 @@ struct ad7780_chip_info {
+ 	struct iio_chan_spec	channel;
+ 	unsigned int		pattern_mask;
+ 	unsigned int		pattern;
++	bool			is_ad778x;
+ };
+ 
+ struct ad7780_state {
+@@ -113,10 +114,12 @@ static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
+ 	    ((raw_sample & chip_info->pattern_mask) != chip_info->pattern))
+ 		return -EIO;
+ 
+-	if (raw_sample & AD7780_GAIN)
+-		st->gain = 1;
+-	else
+-		st->gain = 128;
++	if (chip_info->is_ad778x) {
++		if (raw_sample & AD7780_GAIN)
++			st->gain = 1;
++		else
++			st->gain = 128;
++	}
+ 
+ 	return 0;
+ }
+@@ -135,21 +138,25 @@ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
+ 		.channel = AD7780_CHANNEL(12, 24),
+ 		.pattern = 0x5,
+ 		.pattern_mask = 0x7,
++		.is_ad778x = false,
+ 	},
+ 	[ID_AD7171] = {
+ 		.channel = AD7780_CHANNEL(16, 24),
+ 		.pattern = 0x5,
+ 		.pattern_mask = 0x7,
++		.is_ad778x = false,
+ 	},
+ 	[ID_AD7780] = {
+ 		.channel = AD7780_CHANNEL(24, 32),
+ 		.pattern = 0x1,
+ 		.pattern_mask = 0x3,
++		.is_ad778x = true,
+ 	},
+ 	[ID_AD7781] = {
+ 		.channel = AD7780_CHANNEL(20, 32),
+ 		.pattern = 0x1,
+ 		.pattern_mask = 0x3,
++		.is_ad778x = true,
+ 	},
+ };
+ 
 -- 
 2.19.1
 
