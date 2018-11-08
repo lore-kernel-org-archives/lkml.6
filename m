@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C302EECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFD2ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871AC20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871AC20825
+	by mail.kernel.org (Postfix) with ESMTP id F27A320825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27A320825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeKIAp2 (ORCPT
+        id S1727576AbeKIAph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:45:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43832 "EHLO mx1.redhat.com"
+        Thu, 8 Nov 2018 19:45:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58760 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeKIAp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:45:26 -0500
+        id S1727473AbeKIApZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:45:25 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD4503AA1E;
-        Thu,  8 Nov 2018 15:09:30 +0000 (UTC)
-Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 10269648C8;
+        by mx1.redhat.com (Postfix) with ESMTPS id F2E5A80F79;
         Thu,  8 Nov 2018 15:09:28 +0000 (UTC)
+Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 30F62648B4;
+        Thu,  8 Nov 2018 15:09:27 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -43,158 +43,110 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Tom Hromatka <tom.hromatka@oracle.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v15 12/12] cpuset: Expose cpuset.cpus.subpartitions with cgroup_debug
-Date:   Thu,  8 Nov 2018 10:08:46 -0500
-Message-Id: <1541689726-20088-13-git-send-email-longman@redhat.com>
+Subject: [PATCH v15 11/12] cpuset: Add documentation about the new "cpuset.sched.partition" flag
+Date:   Thu,  8 Nov 2018 10:08:45 -0500
+Message-Id: <1541689726-20088-12-git-send-email-longman@redhat.com>
 In-Reply-To: <1541689726-20088-1-git-send-email-longman@redhat.com>
 References: <1541689726-20088-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 08 Nov 2018 15:09:31 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 08 Nov 2018 15:09:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For debugging purpose, it will be useful to expose the content of the
-subparts_cpus as a read-only file to see if the code work correctly.
-However, subparts_cpus will not be used at all in most use cases. So
-adding a new cpuset file that clutters the cgroup directory may not be
-desirable.  This is now being done by using the hidden "cgroup_debug"
-kernel command line option to expose a new "cpuset.cpus.subpartitions"
-file.
-
-That option was originally used by the debug controller to expose
-itself when configured into the kernel. This is now extended to set an
-internal flag used by cgroup_addrm_files(). A new CFTYPE_DEBUG flag
-can now be used to specify that a cgroup file should only be created
-when the "cgroup_debug" option is specified.
+The cgroup-v2.rst file is updated to document the purpose of the new
+"cpuset.sched.partition" flag and how its usage.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/cgroup-defs.h     |  1 +
- kernel/cgroup/cgroup-internal.h |  2 ++
- kernel/cgroup/cgroup.c          | 14 +++++++++++++-
- kernel/cgroup/cpuset.c          | 11 +++++++++++
- kernel/cgroup/debug.c           |  4 +---
- 5 files changed, 28 insertions(+), 4 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst | 73 +++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 5e1694f..8fcbae1 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -92,6 +92,7 @@ enum {
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 595b075..f83a523 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1708,6 +1708,79 @@ Cpuset Interface Files
  
- 	CFTYPE_NO_PREFIX	= (1 << 3),	/* (DON'T USE FOR NEW FILES) no subsys prefix */
- 	CFTYPE_WORLD_WRITABLE	= (1 << 4),	/* (DON'T USE FOR NEW FILES) S_IWUGO */
-+	CFTYPE_DEBUG		= (1 << 5),	/* create when cgroup_debug */
+ 	Its value will be affected by memory nodes hotplug events.
  
- 	/* internal flags, do not use outside cgroup core proper */
- 	__CFTYPE_ONLY_ON_DFL	= (1 << 16),	/* only on default hierarchy */
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index 75568fc..c950864 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -11,6 +11,8 @@
- #define TRACE_CGROUP_PATH_LEN 1024
- extern spinlock_t trace_cgroup_path_lock;
- extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
-+extern bool cgroup_debug;
-+extern void __init enable_debug_cgroup(void);
- 
- /*
-  * cgroup_path() takes a spin lock. It is good practice not to take
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 6aaf5dd..f0a8c68 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -86,6 +86,7 @@
- 
- DEFINE_SPINLOCK(trace_cgroup_path_lock);
- char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
-+bool cgroup_debug __read_mostly;
- 
- /*
-  * Protects cgroup_idr and css_idr so that IDs can be released without
-@@ -3639,7 +3640,8 @@ static int cgroup_addrm_files(struct cgroup_subsys_state *css,
- 			continue;
- 		if ((cft->flags & CFTYPE_ONLY_ON_ROOT) && cgroup_parent(cgrp))
- 			continue;
--
-+		if ((cft->flags & CFTYPE_DEBUG) && !cgroup_debug)
-+			continue;
- 		if (is_add) {
- 			ret = cgroup_add_file(css, cgrp, cft);
- 			if (ret) {
-@@ -5743,6 +5745,16 @@ static int __init cgroup_disable(char *str)
- }
- __setup("cgroup_disable=", cgroup_disable);
- 
-+void __init __weak enable_debug_cgroup(void) { }
++  cpuset.sched.partition
++	A read-write single value file which exists on non-root
++	cpuset-enabled cgroups.  This flag is owned by the parent cgroup
++	and is not delegatable.
 +
-+static int __init enable_cgroup_debug(char *str)
-+{
-+	cgroup_debug = true;
-+	enable_debug_cgroup();
-+	return 1;
-+}
-+__setup("cgroup_debug", enable_cgroup_debug);
++        It accepts only the following input values when written to.
 +
- /**
-  * css_tryget_online_from_dir - get corresponding css from a cgroup dentry
-  * @dentry: directory dentry of interest
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c739fda..b897314 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2204,6 +2204,7 @@ static void cpuset_attach(struct cgroup_taskset *tset)
- 	FILE_MEMLIST,
- 	FILE_EFFECTIVE_CPULIST,
- 	FILE_EFFECTIVE_MEMLIST,
-+	FILE_SUBPARTS_CPULIST,
- 	FILE_CPU_EXCLUSIVE,
- 	FILE_MEM_EXCLUSIVE,
- 	FILE_MEM_HARDWALL,
-@@ -2382,6 +2383,9 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
- 	case FILE_EFFECTIVE_MEMLIST:
- 		seq_printf(sf, "%*pbl\n", nodemask_pr_args(&cs->effective_mems));
- 		break;
-+	case FILE_SUBPARTS_CPULIST:
-+		seq_printf(sf, "%*pbl\n", cpumask_pr_args(cs->subparts_cpus));
-+		break;
- 	default:
- 		ret = -EINVAL;
- 	}
-@@ -2634,6 +2638,13 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
- 		.flags = CFTYPE_NOT_ON_ROOT,
- 	},
- 
-+	{
-+		.name = "cpus.subpartitions",
-+		.seq_show = cpuset_common_seq_show,
-+		.private = FILE_SUBPARTS_CPULIST,
-+		.flags = CFTYPE_DEBUG,
-+	},
++        "root" or "1"   - a paritition root
++        "member" or "0" - a non-root member of a partition
 +
- 	{ }	/* terminate */
- };
++	When set to be a partition root, the current cgroup is the
++	root of a new partition or scheduling domain that comprises
++	itself and all its descendants except those that are separate
++	partition roots themselves and their descendants.  The root
++	cgroup is always a partition root.
++
++	There are constraints on where a partition root can be set.
++	It can only be set in a cgroup if all the following conditions
++	are true.
++
++	1) The "cpuset.cpus" is not empty and the list of CPUs are
++	   exclusive, i.e. they are not shared by any of its siblings.
++	2) The parent cgroup is a partition root.
++	3) The "cpuset.cpus" is also a proper subset of the parent's
++	   "cpuset.cpus.effective".
++	4) There is no child cgroups with cpuset enabled.  This is for
++	   eliminating corner cases that have to be handled if such a
++	   condition is allowed.
++
++	Setting it to partition root will take the CPUs away from the
++	effective CPUs of the parent cgroup.  Once it is set, this
++	file cannot be reverted back to "member" if there are any child
++	cgroups with cpuset enabled.
++
++	A parent partition cannot distribute all its CPUs to its
++	child partitions.  There must be at least one cpu left in the
++	parent partition.
++
++	Once becoming a partition root, changes to "cpuset.cpus" is
++	generally allowed as long as the first condition above is true,
++	the change will not take away all the CPUs from the parent
++	partition and the new "cpuset.cpus" value is a superset of its
++	children's "cpuset.cpus" values.
++
++	Sometimes, external factors like changes to ancestors'
++	"cpuset.cpus" or cpu hotplug can cause the state of the partition
++	root to change.  On read, the "cpuset.sched.partition" file
++	can show the following values.
++
++	"member"       Non-root member of a partition
++	"root"         Partition root
++	"root invalid" Invalid partition root
++
++	It is a partition root if the first 2 partition root conditions
++	above are true and at least one CPU from "cpuset.cpus" is
++	granted by the parent cgroup.
++
++	A partition root can become invalid if none of CPUs requested
++	in "cpuset.cpus" can be granted by the parent cgroup or the
++	parent cgroup is no longer a partition root itself.  In this
++	case, it is not a real partition even though the restriction
++	of the first partition root condition above will still apply.
++	The cpu affinity of all the tasks in the cgroup will then be
++	associated with CPUs in the nearest ancestor partition.
++
++	An invalid partition root can be transitioned back to a
++	real partition root if at least one of the requested CPUs
++	can now be granted by its parent.  In this case, the cpu
++	affinity of all the tasks in the formerly invalid partition
++	will be associated to the CPUs of the newly formed partition.
++	Changing the partition state of an invalid partition root to
++	"member" is always allowed even if child cpusets are present.
++
  
-diff --git a/kernel/cgroup/debug.c b/kernel/cgroup/debug.c
-index 9caeda6..5f1b873 100644
---- a/kernel/cgroup/debug.c
-+++ b/kernel/cgroup/debug.c
-@@ -373,11 +373,9 @@ struct cgroup_subsys debug_cgrp_subsys = {
-  * On v2, debug is an implicit controller enabled by "cgroup_debug" boot
-  * parameter.
-  */
--static int __init enable_cgroup_debug(char *str)
-+void __init enable_debug_cgroup(void)
- {
- 	debug_cgrp_subsys.dfl_cftypes = debug_files;
- 	debug_cgrp_subsys.implicit_on_dfl = true;
- 	debug_cgrp_subsys.threaded = true;
--	return 1;
- }
--__setup("cgroup_debug", enable_cgroup_debug);
+ Device controller
+ -----------------
 -- 
 1.8.3.1
 
