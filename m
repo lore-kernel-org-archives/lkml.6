@@ -2,136 +2,201 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A588EECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C182C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 723182086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 723182086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 59C0420827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:29:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C0420827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeKHUBY (ORCPT
+        id S1726581AbeKHUEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:01:24 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53734 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeKHUBY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:01:24 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8AQEll010324;
-        Thu, 8 Nov 2018 04:26:14 -0600
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8AQETu058923
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 04:26:14 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 04:26:13 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 04:26:13 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8AQAAt017734;
-        Thu, 8 Nov 2018 04:26:11 -0600
-Subject: Re: [PATCH 2/2] arm: omap_hwmod disable ick autoidling when a hwmod
- requires that
-To:     Andreas Kemnade <andreas@kemnade.info>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>, <tony@atomide.com>,
-        <letux-kernel@openphoenux.org>
-References: <20181004203817.22101-1-andreas@kemnade.info>
- <20181004203817.22101-3-andreas@kemnade.info>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <bac125b7-68c5-4c90-ad98-22872db9ccff@ti.com>
-Date:   Thu, 8 Nov 2018 12:26:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 8 Nov 2018 15:04:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34072 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726145AbeKHUEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 15:04:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7D0B1AEE7;
+        Thu,  8 Nov 2018 10:29:18 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 11:29:17 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [RFC PATCH] mm, memory_hotplug: do not clear numa_node
+ association after hot_remove
+Message-ID: <20181108102917.GV27423@dhcp22.suse.cz>
+References: <20181108100413.966-1-mhocko@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181004203817.22101-3-andreas@kemnade.info>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108100413.966-1-mhocko@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 23:38, Andreas Kemnade wrote:
-> Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
-> that makes hwmods working properly which cannot handle
-> autoidle properly in lower power states.
-> Affected is e. g. the omap_hdq.
-> Since an ick might have mulitple users, autoidle is disabled
-> when an individual user requires that rather than in
-> _setup_iclk_autoidle. dss_ick is an example for that.
+[Removing Wen Congyang and Tang Chen from the CC list because their
+ emails bounce. It seems that we will never learn about their motivation]
+
+On Thu 08-11-18 11:04:13, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Per-cpu numa_node provides a default node for each possible cpu. The
+> association gets initialized during the boot when the architecture
+> specific code explores cpu->NUMA affinity. When the whole NUMA node is
+> removed though we are clearing this association
+> 
+> try_offline_node
+>   check_and_unmap_cpu_on_node
+>     unmap_cpu_on_node
+>       numa_clear_node
+>         numa_set_node(cpu, NUMA_NO_NODE)
+> 
+> This means that whoever calls cpu_to_node for a cpu associated with such
+> a node will get NUMA_NO_NODE. This is problematic for two reasons. First
+> it is fragile because __alloc_pages_node would simply blow up on an
+> out-of-bound access. We have encountered this when loading kvm module
+> BUG: unable to handle kernel paging request at 00000000000021c0
+> IP: [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+> PGD 800000ffe853e067 PUD 7336bbc067 PMD 0
+> Oops: 0000 [#1] SMP
+> [...]
+> CPU: 88 PID: 1223749 Comm: modprobe Tainted: G        W          4.4.156-94.64-default #1
+> task: ffff88727eff1880 ti: ffff887354490000 task.ti: ffff887354490000
+> RIP: 0010:[<ffffffff8119ccb3>]  [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+> RSP: 0018:ffff887354493b40  EFLAGS: 00010202
+> RAX: 00000000000021c0 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00000000014000c0
+> RBP: 00000000014000c0 R08: ffffffffffffffff R09: 0000000000000000
+> R10: ffff88fffc89e790 R11: 0000000000014000 R12: 0000000000000101
+> R13: ffffffffa0772cd4 R14: ffffffffa0769ac0 R15: 0000000000000000
+> FS:  00007fdf2f2f1700(0000) GS:ffff88fffc880000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000000021c0 CR3: 00000077205ee000 CR4: 0000000000360670
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Stack:
+>  0000000000000086 014000c014d20400 ffff887354493bb8 ffff882614d20f4c
+>  0000000000000000 0000000000000046 0000000000000046 ffffffff810ac0c9
+>  ffff88ffe78c0000 ffffffff0000009f ffffe8ffe82d3500 ffff88ff8ac55000
+> Call Trace:
+>  [<ffffffffa07476cd>] alloc_vmcs_cpu+0x3d/0x90 [kvm_intel]
+>  [<ffffffffa0772c0c>] hardware_setup+0x781/0x849 [kvm_intel]
+>  [<ffffffffa04a1c58>] kvm_arch_hardware_setup+0x28/0x190 [kvm]
+>  [<ffffffffa04856fc>] kvm_init+0x7c/0x2d0 [kvm]
+>  [<ffffffffa0772cf2>] vmx_init+0x1e/0x32c [kvm_intel]
+>  [<ffffffff8100213a>] do_one_initcall+0xca/0x1f0
+>  [<ffffffff81193886>] do_init_module+0x5a/0x1d7
+>  [<ffffffff81112083>] load_module+0x1393/0x1c90
+>  [<ffffffff81112b30>] SYSC_finit_module+0x70/0xa0
+>  [<ffffffff8161cbc3>] entry_SYSCALL_64_fastpath+0x1e/0xb7
+> DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xb7
+> 
+> on an older kernel but the code is basically the same in the current
+> Linus tree as well. alloc_vmcs_cpu could use alloc_pages_nodemask which
+> would recognize NUMA_NO_NODE and use alloc_pages_node which would translate
+> it to numa_mem_id but that is wrong as well because it would use a cpu
+> affinity of the local CPU which might be quite far from the original node.
+> It is also reasonable to expect that cpu_to_node will provide a sane value
+> and there might be many more callers like that.
+> 
+> The second problem is that __register_one_node relies on cpu_to_node
+> to properly associate cpus back to the node when it is onlined. We do
+> not want to lose that link as there is no arch independent way to get it
+> from the early boot time AFAICS.
+> 
+> Drop the whole check_and_unmap_cpu_on_node machinery and keep the
+> association to fix both issues. The NODE_DATA(nid) is not deallocated
+> so it will stay in place and if anybody wants to allocate from that node
+> then a fallback node will be used.
+> 
+> Thanks to Vlastimil Babka for his live system debugging skills that
+> helped debugging the issue.
+> 
+> Debugged-by: Vlastimil Babka <vbabka@suse.cz>
+> Reported-by: Miroslav Benes <mbenes@suse.cz>
+> Fixes: e13fe8695c57 ("cpu-hotplug,memory-hotplug: clear cpu_to_node() when offlining the node")
+> Cc: Wen Congyang <tangchen@cn.fujitsu.com>
+> Cc: Tang Chen <wency@cn.fujitsu.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 > ---
->   arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
->   1 file changed, 12 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-> index bb641e6c93d0..0078b0e1d242 100644
-> --- a/arch/arm/mach-omap2/omap_hwmod.c
-> +++ b/arch/arm/mach-omap2/omap_hwmod.c
-> @@ -986,8 +986,10 @@ static int _enable_clocks(struct omap_hwmod *oh)
->   		clk_enable(oh->_clk);
->   
->   	list_for_each_entry(os, &oh->slave_ports, node) {
-> -		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-> +		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
-> +			omap2_clk_deny_idle(os->_clk);
-
-I think calling this unconditionally across all platforms / clock types 
-might cause problems. Checking kernel, am33xx seems to have one clock 
-with this flag that is not of omap2 type. Do we have any testing data 
-that this doesn't break things?
-
--Tero
-
->   			clk_enable(os->_clk);
-> +		}
->   	}
->   
->   	/* The opt clocks are controlled by the device driver. */
-> @@ -1039,8 +1041,10 @@ static int _disable_clocks(struct omap_hwmod *oh)
->   		clk_disable(oh->_clk);
->   
->   	list_for_each_entry(os, &oh->slave_ports, node) {
-> -		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-> +		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
->   			clk_disable(os->_clk);
-> +			omap2_clk_allow_idle(os->_clk);
-> +		}
->   	}
->   
->   	if (oh->flags & HWMOD_OPT_CLKS_NEEDED)
-> @@ -2410,9 +2414,13 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
->   			continue;
->   
->   		if (os->flags & OCPIF_SWSUP_IDLE) {
-> -			/* XXX omap_iclk_deny_idle(c); */
-> +			/*
-> +			 * we might have multiple users of one iclk with
-> +			 * different requirements, disable autoidle when
-> +			 * the module is enabled, e.g. dss iclk
-> +			 */
->   		} else {
-> -			/* XXX omap_iclk_allow_idle(c); */
-> +			/* we are enabling autoidle afterwards anyways */
->   			clk_enable(os->_clk);
->   		 >   	}
+> Hi,
+> please note that I am sending this as an RFC even though this has been
+> confirmed to fix the oops in kvm_intel module because I cannot simply
+> tell that there are no other side effect that I do not see from the code
+> reading. I would appreciate some background from people who have
+> introduced this code e13fe8695c57 ("cpu-hotplug,memory-hotplug: clear
+> cpu_to_node() when offlining the node") because the changelog doesn't
+> really explain the motivation much.
 > 
+>  mm/memory_hotplug.c | 30 +-----------------------------
+>  1 file changed, 1 insertion(+), 29 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 2b2b3ccbbfb5..87aeafac54ee 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1753,34 +1753,6 @@ static int check_cpu_on_node(pg_data_t *pgdat)
+>  	return 0;
+>  }
+>  
+> -static void unmap_cpu_on_node(pg_data_t *pgdat)
+> -{
+> -#ifdef CONFIG_ACPI_NUMA
+> -	int cpu;
+> -
+> -	for_each_possible_cpu(cpu)
+> -		if (cpu_to_node(cpu) == pgdat->node_id)
+> -			numa_clear_node(cpu);
+> -#endif
+> -}
+> -
+> -static int check_and_unmap_cpu_on_node(pg_data_t *pgdat)
+> -{
+> -	int ret;
+> -
+> -	ret = check_cpu_on_node(pgdat);
+> -	if (ret)
+> -		return ret;
+> -
+> -	/*
+> -	 * the node will be offlined when we come here, so we can clear
+> -	 * the cpu_to_node() now.
+> -	 */
+> -
+> -	unmap_cpu_on_node(pgdat);
+> -	return 0;
+> -}
+> -
+>  /**
+>   * try_offline_node
+>   * @nid: the node ID
+> @@ -1813,7 +1785,7 @@ void try_offline_node(int nid)
+>  		return;
+>  	}
+>  
+> -	if (check_and_unmap_cpu_on_node(pgdat))
+> +	if (check_cpu_on_node(pgdat))
+>  		return;
+>  
+>  	/*
+> -- 
+> 2.19.1
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-- 
+Michal Hocko
+SUSE Labs
