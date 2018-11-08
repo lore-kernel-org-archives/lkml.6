@@ -2,106 +2,404 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7CBC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A95C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D728920892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58CC20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:03:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FvSqmL0h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D728920892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="nwqgzA6o";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="KSrYYaDq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58CC20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbeKHVf7 (ORCPT
+        id S1726811AbeKHVi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 16:35:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36586 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbeKHVf7 (ORCPT
+        Thu, 8 Nov 2018 16:38:27 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:50876 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726252AbeKHVi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 16:35:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oDB5ESdlEd1AUvYQZ6+MrH0HDe6+2XvpP/jdcsk7x4Q=; b=FvSqmL0h2wKzGruU/c/+1b0I0
-        iMBpO/Dlr5lrdGChwOzqlRxy+Obnx/1uylEb81R9jWtrotrUiTmeMZTRij5BJy2Q7+pnzWJSvH4b7
-        48Uzt6U+q3SGdaqQkA+f1Y/EIq1WNNsD5Wj3UF2cCyz0Bk3UlNLgx45B9MdzFi3BFpSoE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gKiyw-0008HB-Ap; Thu, 08 Nov 2018 12:00:18 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 021901124E16; Thu,  8 Nov 2018 12:00:17 +0000 (GMT)
-Date:   Thu, 8 Nov 2018 12:00:17 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Olof Johansson <olof@lixom.net>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>, rmk@armlinux.org.uk,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [TECH TOPIC] SoC maintainer group
-Message-ID: <20181108120017.GB6675@sirena.org.uk>
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
- <20181107171723.GI9919@thunk.org>
+        Thu, 8 Nov 2018 16:38:26 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wA8BxeQL028750;
+        Thu, 8 Nov 2018 04:03:09 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=4xGH+Jh3yv3R1bn0+Mlwcy9GKjrt7SzvGme2v8IR6JU=;
+ b=nwqgzA6obxJtAr/aR/t/Bbk/0e0l3myQwr9UTxeBbRf4lrfUjcplVhE42i47GrkIHsG0
+ VMs1atkd/ZkpGluYpS5vjFjc5H2i/29DKOmEw0GDA6wNvaONPAB4f0KOKy45IfhaL4oz
+ BSXp4tmViUhsqmlvDL0QS9moAvGi8SrWoekhantZnG43CqwSmo2bIU/LarbGJuvCAgNo
+ JkWjswOxsghIASg6kRZ1+4PYayk2aestF+W4VZVJqBB8ELjobcz2ZYi4o1Cv8/PZAq17
+ QrPUMW24X5YLk3POBvFsveE4BDUOWdIFQdAbF138Nytwv/NvFiXSSA/SaRvHYX9bg3Yi Vg== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp0049.outbound.protection.outlook.com [207.46.163.49])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2nm92j364c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 08 Nov 2018 04:03:08 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4xGH+Jh3yv3R1bn0+Mlwcy9GKjrt7SzvGme2v8IR6JU=;
+ b=KSrYYaDqUJzXUdFSsO6mFRW6tm/fEVwv4K1vsFjcfK2RoVYNiczN0E6rKnQ4zD6icQ5/uRNjAyxufuhcPZt+vxfxPEsovbhieB+rwoZHcZ5nWQ872lHpc/oqd0QFxuS3A3MHBpJ43U+a2i0WAYawTZzxCe7LOknXsg0AcCXNzaA=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4440.namprd07.prod.outlook.com (52.135.224.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Thu, 8 Nov 2018 12:03:06 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::8000:536f:b287:710f]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::8000:536f:b287:710f%4]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
+ 12:03:04 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Roger Quadros <rogerq@ti.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [RFC PATCH v1 13/14] usb:cdns3: Adds debugging function.
+Thread-Topic: [RFC PATCH v1 13/14] usb:cdns3: Adds debugging function.
+Thread-Index: AQHUc539qGP+3mxG50STZ9AW8y3lVqVFpVCAgAAmnFA=
+Date:   Thu, 8 Nov 2018 12:03:04 +0000
+Message-ID: <BYAPR07MB47095AEDBB8F4877CC977A88DDC50@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1541267487-3664-1-git-send-email-pawell@cadence.com>
+ <1541267487-3664-14-git-send-email-pawell@cadence.com>
+ <5BE40331.90107@ti.com>
+In-Reply-To: <5BE40331.90107@ti.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNDA2MDE1ZGEtZTM0ZS0xMWU4LTg3MjUtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDQwNjAxNWRiLWUzNGUtMTFlOC04NzI1LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iOTMwNyIgdD0iMTMxODYxNTIxODczMTc1ODAxIiBoPSJCMFI5MUlGblNsZUdLZDI1cnMvOGdXZmFHck09IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4440;20:i9kYvvW1jey7OTzaFbLF3W9PMsN/JT56ulpJ6SvTPgb+0SBJ70Tqa/uIrEAfoNJzWRq1hlrmBNG28016uoT/twEa7WAeV0nSn3fXensYjrRMXaUg8yvRXEucaUHD8KrLrK988FIZ1qY+TlNrc9g+GSjggZoECyiczP/JZJlGxbOwZyIZGSv92uOjOPP9WyhxEsBFCHqYNsCp2ZcNKFo/q16ewforfJvOB9GUN0+/JY7U2Ap5QCawb5s2bPO5YnUN
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(376002)(366004)(39860400002)(189003)(199004)(36092001)(476003)(81156014)(8676002)(68736007)(11346002)(74316002)(486006)(81166006)(305945005)(66066001)(446003)(8936002)(7736002)(2501003)(2900100001)(2906002)(3846002)(6116002)(14454004)(71190400001)(9686003)(55016002)(71200400001)(25786009)(6436002)(217873002)(4326008)(186003)(5660300001)(6246003)(107886003)(229853002)(7696005)(97736004)(575784001)(99286004)(76176011)(478600001)(33656002)(54906003)(106356001)(110136005)(105586002)(26005)(14444005)(102836004)(316002)(256004)(6506007)(53936002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4440;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 04ca155b-15f8-4e07-c96c-08d6457223ce
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4440;
+x-ms-traffictypediagnostic: BYAPR07MB4440:
+x-microsoft-antispam-prvs: <BYAPR07MB4440E34BB7489FB712002501DDC50@BYAPR07MB4440.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089)(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4440;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4440;
+x-forefront-prvs: 0850800A29
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: On47ZL0v4fsdRf356H08iA9DvHeI4P+xtZLlPnzqd3cVxJFFKL2139DFJw7X3nhqCt4MqsF1TlzVqFPJLjrCbe2Nh8gyMJmXX4d5lNeCv4NCHYsSSGO4W+aQNNgDA3QmNcyu1m/I/sReF6kwTRoRkuPqwOCS5XyQ/jYunEX//NlDLgDfXcuNBFoj7CbV/8fyfl3n4DiyJkREkjQ5X47QUAhRdneo9qx4H2Bi5x8+hePzPjlpgVvUPemshqirczKMeoR/mOJesxal2jY0Myafsm6WavjN/GgyqNsHQhcyhLMESc+RzTAofZui6jol6gu9XCJOlg1oMl0vy1OKOPg9gCFsxWxNm8NGUfD9B+/6RPc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
-Content-Disposition: inline
-In-Reply-To: <20181107171723.GI9919@thunk.org>
-X-Cookie: I'm having a BIG BANG THEORY!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04ca155b-15f8-4e07-c96c-08d6457223ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 12:03:04.7615
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4440
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
+ a:mx-sanjose5.Cadence.COM include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>Hi,
+>
+>On 03/11/18 19:51, Pawel Laszczak wrote:
+>> Patch implements some function used for debugging driver.
+>>
+>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+>> ---
+>>  drivers/usb/cdns3/Makefile |   2 +-
+>>  drivers/usb/cdns3/debug.c  | 128 +++++++++++++++++++++++++++++++++++++
+>>  drivers/usb/cdns3/ep0.c    |   3 +
+>>  drivers/usb/cdns3/gadget.c |  12 ++++
+>>  drivers/usb/cdns3/gadget.h |  13 +++-
+>>  5 files changed, 156 insertions(+), 2 deletions(-)
+>>  create mode 100644 drivers/usb/cdns3/debug.c
+>>
+>> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+>> index f4cfc978626f..34e60d03c4ec 100644
+>> --- a/drivers/usb/cdns3/Makefile
+>> +++ b/drivers/usb/cdns3/Makefile
+>> @@ -2,6 +2,6 @@ obj-$(CONFIG_USB_CDNS3)			+=3D cdns3.o
+>>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+=3D cdns3-pci.o
+>>
+>>  cdns3-y					:=3D core.o drd.o
+>> -cdns3-$(CONFIG_USB_CDNS3_GADGET)	+=3D gadget.o ep0.o
+>> +cdns3-$(CONFIG_USB_CDNS3_GADGET)	+=3D gadget.o ep0.o debug.o
+>>  cdns3-$(CONFIG_USB_CDNS3_HOST)		+=3D host.o
+>>  cdns3-pci-y		 		:=3D cdns3-pci-wrap.o
+>> diff --git a/drivers/usb/cdns3/debug.c b/drivers/usb/cdns3/debug.c
+>> new file mode 100644
+>> index 000000000000..bebf22c4d18e
+>> --- /dev/null
+>> +++ b/drivers/usb/cdns3/debug.c
+>> @@ -0,0 +1,128 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Cadence USBSS DRD Driver.
+>> + *
+>> + * Copyright (C) 2018 Cadence.
+>> + *
+>> + * Author: Pawel Laszczak <pawell@cadence.com>
+>> + */
+>> +
+>> +#include "gadget.h"
+>> +
+>> +static inline char *cdns3_decode_ep_irq(u32 ep_sts, const char *ep_name=
+)
+>> +{
+>> +	static char str[256];
+>> +	int ret;
+>> +
+>> +	ret =3D sprintf(str, "IRQ for %s: %08x ", ep_name, ep_sts);
+>> +
+>> +	if (ep_sts & EP_STS_SETUP)
+>> +		ret +=3D sprintf(str + ret, "SETUP ");
+>> +	if (ep_sts & EP_STS_IOC)
+>> +		ret +=3D sprintf(str + ret, "IOC ");
+>> +	if (ep_sts & EP_STS_ISP)
+>> +		ret +=3D sprintf(str + ret, "ISP ");
+>> +	if (ep_sts & EP_STS_DESCMIS)
+>> +		ret +=3D sprintf(str + ret, "DESCMIS ");
+>> +	if (ep_sts & EP_STS_STREAMR)
+>> +		ret +=3D sprintf(str + ret, "STREAMR ");
+>> +	if (ep_sts & EP_STS_MD_EXIT)
+>> +		ret +=3D sprintf(str + ret, "MD_EXIT ");
+>> +	if (ep_sts & EP_STS_TRBERR)
+>> +		ret +=3D sprintf(str + ret, "TRBERR ");
+>> +	if (ep_sts & EP_STS_NRDY)
+>> +		ret +=3D sprintf(str + ret, "NRDY ");
+>> +	if (ep_sts & EP_STS_PRIME)
+>> +		ret +=3D sprintf(str + ret, "PRIME ");
+>> +	if (ep_sts & EP_STS_SIDERR)
+>> +		ret +=3D sprintf(str + ret, "SIDERRT ");
+>> +	if (ep_sts & EP_STS_OUTSMM)
+>> +		ret +=3D sprintf(str + ret, "OUTSMM ");
+>> +	if (ep_sts & EP_STS_ISOERR)
+>> +		ret +=3D sprintf(str + ret, "ISOERR ");
+>> +	if (ep_sts & EP_STS_IOT)
+>> +		ret +=3D sprintf(str + ret, "IOT ");
+>> +
+>> +	return str;
+>> +}
+>> +
+>> +char *cdns3_decode_epx_irq(struct cdns3_endpoint *priv_ep)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D priv_ep->cdns3_dev;
+>> +
+>> +	return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
+>> +				   priv_ep->name);
+>> +}
+>> +
+>> +char *cdns3_decode_ep0_irq(struct cdns3_device *priv_dev, int dir)
+>> +{
+>> +	if (dir)
+>> +		return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
+>> +					   "ep0IN");
+>> +	else
+>> +		return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
+>> +					   "ep0OUT");
+>> +}
+>> +
+>> +void cdns3_dbg_setup(struct cdns3_device *priv_dev)
+>> +{
+>> +	struct usb_ctrlrequest *setup =3D priv_dev->setup;
+>> +
+>> +	dev_dbg(&priv_dev->dev,
+>> +		"SETUP BRT: %02x BR: %02x V: %04x I: %04x L: %04x\n",
+>> +		setup->bRequestType,
+>> +		setup->bRequest,
+>> +		le16_to_cpu(setup->wValue),
+>> +		le16_to_cpu(setup->wIndex),
+>> +		le16_to_cpu(setup->wLength));
+>> +}
+>> +
+>> +/**
+>> + * Debug a transfer ring.
+>> + *
+>> + * Prints out all TRBs in the endpoint ring, even those after the Link =
+TRB.
+>> + *.
+>> + */
+>> +void cdns3_dbg_ring(struct cdns3_device *priv_dev,
+>> +		    struct cdns3_endpoint *priv_ep)
+>> +{
+>> +	u64 addr =3D priv_ep->trb_pool_dma;
+>> +	struct cdns3_trb *trb;
+>> +	int i;
+>> +
+>> +	for (i =3D 0; i < TRBS_PER_SEGMENT; ++i) {
+>> +		trb =3D &priv_ep->trb_pool[i];
+>> +		dev_dbg(&priv_dev->dev, "@%016llx %08x %08x %08x\n", addr,
+>> +			le32_to_cpu(trb->buffer),
+>> +			le32_to_cpu(trb->length),
+>> +			le32_to_cpu(trb->control));
+>> +		addr +=3D sizeof(*trb);
+>> +	}
+>> +}
+>> +
+>> +void cdns3_dbg_ring_ptrs(struct cdns3_device *priv_dev,
+>> +			 struct cdns3_endpoint *priv_ep)
+>> +{
+>> +	struct cdns3_trb *trb;
+>> +
+>> +	trb =3D &priv_ep->trb_pool[priv_ep->dequeue];
+>> +	dev_dbg(&priv_dev->dev,
+>> +		"Ring deq index: %d, trb: %p (virt), 0x%llx (dma)\n",
+>> +		priv_ep->dequeue, trb,
+>> +		cdns3_trb_virt_to_dma(priv_ep, trb));
+>> +
+>> +	trb =3D &priv_ep->trb_pool[priv_ep->enqueue];
+>> +	dev_dbg(&priv_dev->dev,
+>> +		"Ring enq index: %d, trb: %p (virt), 0x%llx (dma)\n",
+>> +		priv_ep->enqueue, trb,
+>> +		cdns3_trb_virt_to_dma(priv_ep, trb));
+>> +}
+>> +
+>> +void cdns3_dbg_ep_rings(struct cdns3_device *priv_dev,
+>> +			struct cdns3_endpoint *priv_ep)
+>> +{
+>> +	dev_dbg(&priv_dev->dev, "Endpoint ring %s:\n", priv_ep->name);
+>> +
+>> +	cdns3_dbg_ring_ptrs(priv_dev, priv_ep);
+>> +	cdns3_dbg_ring(priv_dev, priv_ep);
+>> +}
+>> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
+>> index 555ac7f6842e..46c943a74f77 100644
+>> --- a/drivers/usb/cdns3/ep0.c
+>> +++ b/drivers/usb/cdns3/ep0.c
+>> @@ -604,12 +604,15 @@ void cdns3_check_ep0_interrupt_proceed(struct cdns=
+3_device *priv_dev, int dir)
+>>  	cdns3_select_ep(priv_dev, 0 | (dir ? USB_DIR_IN : USB_DIR_OUT));
+>>  	ep_sts_reg =3D readl(&regs->ep_sts);
+>>
+>> +	dev_dbg(&priv_dev->dev, "%s\n", cdns3_decode_ep0_irq(priv_dev, dir));
+>> +
+>>  	__pending_setup_status_handler(priv_dev);
+>>
+>>  	if ((ep_sts_reg & EP_STS_SETUP) && dir =3D=3D 0) {
+>>  		struct usb_ctrlrequest *setup =3D priv_dev->setup;
+>>
+>>  		writel(EP_STS_SETUP | EP_STS_IOC | EP_STS_ISP, &regs->ep_sts);
+>> +		cdns3_dbg_setup(priv_dev);
+>>
+>>  		priv_dev->ep0_data_dir =3D setup->bRequestType & USB_DIR_IN;
+>>  		cdns3_ep0_setup_phase(priv_dev);
+>> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+>> index 905cad1a8229..ba4a36ce6e9a 100644
+>> --- a/drivers/usb/cdns3/gadget.c
+>> +++ b/drivers/usb/cdns3/gadget.c
+>> @@ -124,6 +124,14 @@ void cdns3_select_ep(struct cdns3_device *priv_dev,=
+ u32 ep)
+>>  	wmb();
+>>  }
+>>
+>> +dma_addr_t cdns3_trb_virt_to_dma(struct cdns3_endpoint *priv_ep,
+>> +				 struct cdns3_trb *trb)
+>> +{
+>> +	u32 offset =3D (char *)trb - (char *)priv_ep->trb_pool;
+>> +
+>> +	return priv_ep->trb_pool_dma + offset;
+>> +}
+>> +
+>>  /**
+>>   * cdns3_allocate_trb_pool - Allocates TRB's pool for selected endpoint
+>>   * @priv_ep:  endpoint object
+>> @@ -428,6 +436,8 @@ int cdns3_ep_run_transfer(struct cdns3_endpoint *pri=
+v_ep,
+>>  		trb->control |=3D first_pcs;
+>>
+>>  	priv_req->on_ring =3D 1;
+>> +
+>> +	cdns3_dbg_ep_rings(priv_dev, priv_ep);
+>>  arm:
+>>  	/* arm transfer on selected endpoint */
+>>  	cdns3_select_ep(priv_ep->cdns3_dev, address);
+>> @@ -537,6 +547,8 @@ static int cdns3_check_ep_interrupt_proceed(struct c=
+dns3_endpoint *priv_ep)
+>>  	cdns3_select_ep(priv_dev, priv_ep->endpoint.address);
+>>  	ep_sts_reg =3D readl(&regs->ep_sts);
+>>
+>> +	dev_dbg(&priv_dev->dev, "%s\n", cdns3_decode_epx_irq(priv_ep));
+>> +
+>>  	if (ep_sts_reg & EP_STS_TRBERR)
+>>  		writel(EP_STS_TRBERR, &regs->ep_sts);
+>>
+>> diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
+>> index 3f67ef1e5cda..3b2c01ff655b 100644
+>> --- a/drivers/usb/cdns3/gadget.h
+>> +++ b/drivers/usb/cdns3/gadget.h
+>> @@ -1085,5 +1085,16 @@ struct usb_request *cdns3_gadget_ep_alloc_request=
+(struct usb_ep *ep,
+>>  void cdns3_gadget_ep_free_request(struct usb_ep *ep,
+>>  				  struct usb_request *request);
+>>  int cdns3_gadget_ep_dequeue(struct usb_ep *ep, struct usb_request *requ=
+est);
+>> -
+>> +dma_addr_t cdns3_trb_virt_to_dma(struct cdns3_endpoint *priv_ep,
+>> +				 struct cdns3_trb *trb);
+>> +
+>> +char *cdns3_decode_epx_irq(struct cdns3_endpoint *priv_ep);
+>> +char *cdns3_decode_ep0_irq(struct cdns3_device *priv_dev, int dir);
+>> +void cdns3_dbg_ring(struct cdns3_device *priv_dev,
+>> +		    struct cdns3_endpoint *priv_ep);
+>> +void cdns3_dbg_ring_ptrs(struct cdns3_device *priv_dev,
+>> +			 struct cdns3_endpoint *priv_ep);
+>> +void cdns3_dbg_ep_rings(struct cdns3_device *priv_dev,
+>> +			struct cdns3_endpoint *priv_ep);
+>> +void cdns3_dbg_setup(struct cdns3_device *priv_dev);
+>>  #endif /* __LINUX_CDNS3_GADGET */
+>>
+>
+>How often are these invoked?
+>
+>For I/O intensive cases dev_dbg() will not be useful as it will affect tim=
+ing adversely
+>because of which it might prevent the issue from happening when debug is e=
+nabled.
+>
+>How about using tracepoints instead?
 
---v9Ux+11Zm5mwPlX6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, I know and I agree with you.=20
+I have plan to replace this with tracepoints.=20
+But I need some time for this. Currently I'm focusing on testing.
+Probably  I will change It by the end of this month, so it should be in=20
+RFC PATCH v3.=20
 
-On Wed, Nov 07, 2018 at 12:17:23PM -0500, Theodore Y. Ts'o wrote:
+>
+>cheers,
+>-roger
+>--
+>Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+>Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
-> Could the poeple listed on this list please list potential schedule conflicts?
+Thanks,
+Cheers,
+Pawell
 
-> I'm going to assume we should avoid: Andriod uConf, RISC-V uConf,
-> Device Tree uConf.  What are other potential conflicts.  I'm going to
-> guess this might be "interesting" to schedule.  :-)
-
-The clang BoFs, RT and testing would be bad for me.  Possibly some other
-stuff but I've not seen the schedule yet.
-
---v9Ux+11Zm5mwPlX6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvkJVEACgkQJNaLcl1U
-h9Adywf9GyoY0UZYREXkaC5CCJhw3ZhxhUYk8hx1KGUeuzSfvnhzAzEcVY2UkXcT
-yxDZsQSeI0DsyvHM2pyRcGGSXaTIweK/zRUzoBpEUACs9fUTy7HfI6KoW89JYXhk
-kv6mF7BxxTsKzq7eLp0L6LxPTUw6CIwlc3LkFFf/wJet4OAL0P4hItTdA2Hm/pu8
-W2Zqd/DyEAORzJzz4WYfo8gtMXKwi50KWW4Z0gHDLViYghJLOYKDKBNpQEEEwfF4
-qrMle5CebGGbNFbutCsET0cD60CSitfr7RSWYwaujy8cQugLeS9gK1RvWsgvw7wi
-SM4lSkB5qoanBUZb2uFQbXQcKFTQMQ==
-=VxM9
------END PGP SIGNATURE-----
-
---v9Ux+11Zm5mwPlX6--
