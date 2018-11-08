@@ -2,79 +2,77 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9309AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A9EECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66EBC20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:16:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66EBC20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BAC1B20840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:19:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvVRi1by"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC1B20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeKIDxQ (ORCPT
+        id S1726995AbeKID4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:53:16 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44989 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbeKIDxP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:53:15 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gKor0-0006hU-NQ; Thu, 08 Nov 2018 19:16:30 +0100
-Date:   Thu, 8 Nov 2018 19:16:30 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: srcu: use cpu_online() instead custom check
-Message-ID: <20181108181630.nsr3cyjwsch2y2r5@linutronix.de>
-References: <20181101231228.GA9118@linux.ibm.com>
- <20181108163850.sjedoaom64tzvqgc@linutronix.de>
- <20181108171024.GM4170@linux.ibm.com>
- <20181108174655.mnm3cr4wn2hrrtep@linutronix.de>
- <20181108180517.GR4170@linux.ibm.com>
+        Thu, 8 Nov 2018 22:56:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726751AbeKID4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:56:13 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3438720825;
+        Thu,  8 Nov 2018 18:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541701170;
+        bh=hyuGyPWsjoFKYyWOu9UL+k0JbgP06pF32daBf9nnD20=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=hvVRi1byTfQYvkp8D+ScGxNZwK0svBIhfeqlMRyshXbg7YsnajjCXTmx8BBDFkd83
+         TnO+96v/Q2rMEr5f4ge3YfBnmcU5d1Pkn65I1kmepxrdCQnBv9pJkx3EMf5Y+XnXej
+         G1/FNbE1Y9u10H02vZf+EvtMZCXrzndWvFhjOmTI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181108180517.GR4170@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+To:     Yi Wang <wang.yi59@zte.com.cn>, paul.burton@mips.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1540971702-3133-2-git-send-email-wang.yi59@zte.com.cn>
+Cc:     mturquette@baylibre.com, linux-mips@linux-mips.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Yi Wang <wang.yi59@zte.com.cn>
+References: <1540971702-3133-1-git-send-email-wang.yi59@zte.com.cn>
+ <1540971702-3133-2-git-send-email-wang.yi59@zte.com.cn>
+Message-ID: <154170116960.88331.164103375264551287@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/2] clk: boston: fix possible memory leak in
+ clk_boston_setup()
+Date:   Thu, 08 Nov 2018 10:19:29 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-08 10:05:17 [-0800], Paul E. McKenney wrote:
-> Just to make sure I understand, this is the call to queue_delayed_work_on()
-> from srcu_queue_delayed_work_on(), right?
+Quoting Yi Wang (2018-10-31 00:41:41)
+> Smatch report warnings:
+> drivers/clk/imgtec/clk-boston.c:76 clk_boston_setup() warn: possible memo=
+ry leak of 'onecell'
+> drivers/clk/imgtec/clk-boston.c:83 clk_boston_setup() warn: possible memo=
+ry leak of 'onecell'
+> drivers/clk/imgtec/clk-boston.c:90 clk_boston_setup() warn: possible memo=
+ry leak of 'onecell'
+> =
 
-correct.
+> 'onecell' is malloced in clk_boston_setup(), but not be freed
+> before leaving from the error handling cases.
+> =
 
-> And if I am guessing correctly, you would like to get rid of the
-> constraint requiring CPUHP_RCUTREE_PREP to precede CPUHP_TIMERS_PREPARE?
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> ---
 
-no, my problem is the preempt_disable() around queue_delayed_work_on().
-If the CPUs goes offline _after_ queue_delayed_work_on() then the timer
-gets migrated and work item should show up on another CPU. 
-If the CPU is offline at queue_delayed_work_on() time then the timer
-gets enqueued and won't fire until the CPU is back online and I *think*
-that is the reason behind this "is CPU online" check.
+Applied to clk-next
 
-> If so, the swait_event_idle_timeout_exclusive() in rcu_gp_fqs_loop()
-> in kernel/rcu/tree.c also requires this ordering.  There are probably
-> other pieces of code needing this.
-> 
-> Plus the reason for running this on a specific CPU is that the workqueue
-> item is processing that CPU's per-CPU variables, including invoking that
-> CPU's callbacks.  The item is srcu_invoke_callbacks().
-
-The SRCU callback is invoking per-CPU variables? Like this_cpu_ptr()?
-But if the CPU is offline then you fallback to queue_delayed_work()?
-
-> 							Thanx, Paul
-
-Sebastian
