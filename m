@@ -2,192 +2,276 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E53C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460B9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE6220840
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4E2620840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:48:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+dM6KIG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE6220840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="wKjl2OHF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E2620840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbeKIIZW (ORCPT
+        id S1728162AbeKIIZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:25:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbeKIHbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:31:01 -0500
-Received: from localhost (unknown [208.72.13.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56B1420840;
-        Thu,  8 Nov 2018 21:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714014;
-        bh=V25McM5Jnm5POl9TXVX3LQOMLz2eRXcv8sYTmWi16mc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m+dM6KIGY4nx0jNOFaiuk0IOvizPnwXqZ7jSDNu0FdXRafUhDuHbxK+HkVhlwv+0H
-         YSHKL52sERoWHe13wp2UtuEWMG11FAJRKE+iy4jIdlGeUTLkL7swoHh+5+UV64F09f
-         NB+4C0TU1yv5q6b81SnChyEBQ9Y87WNoBAr8Yqxk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>
-Subject: [PATCH 3.18 004/144] mach64: detect the dot clock divider correctly on sparc
-Date:   Thu,  8 Nov 2018 13:49:35 -0800
-Message-Id: <20181108215055.101568591@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
-References: <20181108215054.826084593@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 9 Nov 2018 03:25:58 -0500
+Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:9015 "EHLO
+        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726875AbeKIIZ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 03:25:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1541717265; x=1573253265;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=AOJmLMFBXuxlygFAH8ErW7rAwtqR7VQCkCJ0VwvnvcQ=;
+  b=wKjl2OHFPfUn7BjUFMqh0deCVSHkDRM1W4Q0mgHLW0d8hpw/J/OzSRml
+   99pIguvVrUl3Dz3P1tPyEwVj9ZSSdtc7BQvJhdkXsTAs1l/+sAc06lus0
+   91JZtd4VTjJga9wKS+/sLp6H4KnF6lVcSgabf/wNZOqabwqMgAJUxO0MO
+   8=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FHAADmvORbhiWd50NkHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBVAQBAQsBgVWCBBIxjGWmVgsBAYRsAoM7NwoNAQMBAQIBAQIBAQIQAQE?=
+ =?us-ascii?q?BCgkLCCkvgjYigmQCAQMSFRMtEhACAQg2EFcCBAENDRqCfwGCAZxqAoEQiVg?=
+ =?us-ascii?q?BAQGBaTOKLI4QgRABgxKKWQKBKgGNV5BGBgECihcFgxaDXCCBVyKEX4oUl0k?=
+ =?us-ascii?q?CBAIEBQIUgVmBeHCBboFPgiYOCRKOCkABizkpgQWBHwEB?=
+X-IPAS-Result: =?us-ascii?q?A2FHAADmvORbhiWd50NkHAEBAQQBAQcEAQGBVAQBAQsBg?=
+ =?us-ascii?q?VWCBBIxjGWmVgsBAYRsAoM7NwoNAQMBAQIBAQIBAQIQAQEBCgkLCCkvgjYig?=
+ =?us-ascii?q?mQCAQMSFRMtEhACAQg2EFcCBAENDRqCfwGCAZxqAoEQiVgBAQGBaTOKLI4Qg?=
+ =?us-ascii?q?RABgxKKWQKBKgGNV5BGBgECihcFgxaDXCCBVyKEX4oUl0kCBAIEBQIUgVmBe?=
+ =?us-ascii?q?HCBboFPgiYOCRKOCkABizkpgQWBHwEB?=
+Received: from mx0b-00154901.pphosted.com (HELO mx0a-00154901.pphosted.com) ([67.231.157.37])
+  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Nov 2018 16:47:44 -0600
+Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8MmC3J000825;
+        Thu, 8 Nov 2018 17:48:12 -0500
+Received: from esa3.dell-outbound2.iphmx.com (esa3.dell-outbound2.iphmx.com [68.232.154.63])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nmmntubj9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 08 Nov 2018 17:48:12 -0500
+From:   <Justin.Lee1@Dell.com>
+Received: from ausxippc110.us.dell.com ([143.166.85.200])
+  by esa3.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Nov 2018 04:48:09 +0600
+X-LoopCount0: from 10.166.135.98
+X-IronPort-AV: E=Sophos;i="5.54,481,1534827600"; 
+   d="scan'208";a="727009260"
+To:     <sam@mendozajonas.com>, <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>
+Subject: RE: [PATCH net-next v3 6/6] net/ncsi: Configure multi-package,
+ multi-channel modes with failover
+Thread-Topic: [PATCH net-next v3 6/6] net/ncsi: Configure multi-package,
+ multi-channel modes with failover
+Thread-Index: AQHUdw3T7sTeKH7RI0a85rjfghKYaaVGRmNg
+Date:   Thu, 8 Nov 2018 22:48:09 +0000
+Message-ID: <f9d0309dafe248a6aac8198f96f9bc4b@AUSX13MPS306.AMER.DELL.COM>
+References: <20181108024909.9897-1-sam@mendozajonas.com>
+ <20181108024909.9897-7-sam@mendozajonas.com>
+In-Reply-To: <20181108024909.9897-7-sam@mendozajonas.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+Hi Samuel,
 
-------------------
+For multi-package and multi-channel case, channel seems to be select correc=
+tly. Expect that,
+I still see the timing issue for back-to-back netlink command. Due to that,=
+ channel might be
+set to invisible state. Please refer to ncsi0 and ncsi2 below. The channel =
+state is set to 3.
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+cat /sys/kernel/debug/ncsi_protocol/ncsi_device_status
+IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+  2   eth2   ncsi0  000 000 1  1  1  1  1  0  0  3  0  1  1  1  0  1
+  2   eth2   ncsi1  000 001 0  0  1  1  1  0  0  1  0  1  1  1  0  1
+  2   eth2   ncsi2  001 000 1  0  1  1  1  1  0  3  0  1  1  1  0  1
+  2   eth2   ncsi3  001 001 1  0  1  1  1  1  0  2  1  1  1  1  0  1
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+MP: Multi-mode Package  WP: Whitelist Package
+MC: Multi-mode Channel  WC: Whitelist Channel
+PC: Primary Channel     CS: Channel State IA/A/IV 1/2/3
+PS: Poll Status         LS: Link Status
+RU: Running             CR: Carrier OK
+NQ: Queue Stopped       HA: Hardware Arbitration
 
-commit 76ebebd2464c5c8a4453c98b6dbf9c95a599e810 upstream.
+The timing issue is not only happening in application. If I use using the f=
+ollowing way
+to send the request, I can see the issue as well.=20
 
-On Sun Ultra 5, it happens that the dot clock is not set up properly for
-some videomodes. For example, if we set the videomode "r1024x768x60" in
-the firmware, Linux would incorrectly set a videomode with refresh rate
-180Hz when booting (suprisingly, my LCD monitor can display it, although
-display quality is very low).
+ncsi_netlink -l 2 -a 0x01 -m; ncsi_netlink -l 2 -p 0 -b 0x03 -m; ncsi_netli=
+nk -l 2 -p 1 -b 0x00 -m;
+ncsi_netlink -l 2 -a 0x03 -m; ncsi_netlink -l 2 -p 0 -b 0x00 -m; ncsi_netli=
+nk -l 2 -p 1 -b 0x03 -m;
 
-The reason is this: Older mach64 cards set the divider in the register
-VCLK_POST_DIV. The register has four 2-bit fields (the field that is
-actually used is specified in the lowest two bits of the register
-CLOCK_CNTL). The 2 bits select divider "1, 2, 4, 8". On newer mach64 cards,
-there's another bit added - the top four bits of PLL_EXT_CNTL extend the
-divider selection, so we have possible dividers "1, 2, 4, 8, 3, 5, 6, 12".
-The Linux driver clears the top four bits of PLL_EXT_CNTL and never sets
-them, so it can work regardless if the card supports them. However, the
-sparc64 firmware may set these extended dividers during boot - and the
-mach64 driver detects incorrect dot clock in this case.
 
-This patch makes the driver read the additional divider bit from
-PLL_EXT_CNTL and calculate the initial refresh rate properly.
+Also, there is one issue below for non-multi-package/non-multi-channel case=
+.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-Acked-by: David S. Miller <davem@davemloft.net>
-Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks,
+Justin
 
----
- drivers/video/fbdev/aty/atyfb.h      |    3 ++-
- drivers/video/fbdev/aty/atyfb_base.c |    7 ++++---
- drivers/video/fbdev/aty/mach64_ct.c  |   10 +++++-----
- 3 files changed, 11 insertions(+), 9 deletions(-)
 
---- a/drivers/video/fbdev/aty/atyfb.h
-+++ b/drivers/video/fbdev/aty/atyfb.h
-@@ -335,6 +335,8 @@ extern const struct aty_pll_ops aty_pll_
- extern void aty_set_pll_ct(const struct fb_info *info, const union aty_pll *pll);
- extern u8 aty_ld_pll_ct(int offset, const struct atyfb_par *par);
- 
-+extern const u8 aty_postdividers[8];
-+
- 
-     /*
-      *  Hardware cursor support
-@@ -361,7 +363,6 @@ static inline void wait_for_idle(struct
- 
- extern void aty_reset_engine(const struct atyfb_par *par);
- extern void aty_init_engine(struct atyfb_par *par, struct fb_info *info);
--extern u8   aty_ld_pll_ct(int offset, const struct atyfb_par *par);
- 
- void atyfb_copyarea(struct fb_info *info, const struct fb_copyarea *area);
- void atyfb_fillrect(struct fb_info *info, const struct fb_fillrect *rect);
---- a/drivers/video/fbdev/aty/atyfb_base.c
-+++ b/drivers/video/fbdev/aty/atyfb_base.c
-@@ -3112,17 +3112,18 @@ static int atyfb_setup_sparc(struct pci_
- 		/*
- 		 * PLL Reference Divider M:
- 		 */
--		M = pll_regs[2];
-+		M = pll_regs[PLL_REF_DIV];
- 
- 		/*
- 		 * PLL Feedback Divider N (Dependent on CLOCK_CNTL):
- 		 */
--		N = pll_regs[7 + (clock_cntl & 3)];
-+		N = pll_regs[VCLK0_FB_DIV + (clock_cntl & 3)];
- 
- 		/*
- 		 * PLL Post Divider P (Dependent on CLOCK_CNTL):
- 		 */
--		P = 1 << (pll_regs[6] >> ((clock_cntl & 3) << 1));
-+		P = aty_postdividers[((pll_regs[VCLK_POST_DIV] >> ((clock_cntl & 3) << 1)) & 3) |
-+		                     ((pll_regs[PLL_EXT_CNTL] >> (2 + (clock_cntl & 3))) & 4)];
- 
- 		/*
- 		 * PLL Divider Q:
---- a/drivers/video/fbdev/aty/mach64_ct.c
-+++ b/drivers/video/fbdev/aty/mach64_ct.c
-@@ -114,7 +114,7 @@ static void aty_st_pll_ct(int offset, u8
-  */
- 
- #define Maximum_DSP_PRECISION 7
--static u8 postdividers[] = {1,2,4,8,3};
-+const u8 aty_postdividers[8] = {1,2,4,8,3,5,6,12};
- 
- static int aty_dsp_gt(const struct fb_info *info, u32 bpp, struct pll_ct *pll)
- {
-@@ -221,7 +221,7 @@ static int aty_valid_pll_ct(const struct
- 		pll->vclk_post_div += (q <  64*8);
- 		pll->vclk_post_div += (q <  32*8);
- 	}
--	pll->vclk_post_div_real = postdividers[pll->vclk_post_div];
-+	pll->vclk_post_div_real = aty_postdividers[pll->vclk_post_div];
- 	//    pll->vclk_post_div <<= 6;
- 	pll->vclk_fb_div = q * pll->vclk_post_div_real / 8;
- 	pllvclk = (1000000 * 2 * pll->vclk_fb_div) /
-@@ -512,7 +512,7 @@ static int aty_init_pll_ct(const struct
- 		u8 mclk_fb_div, pll_ext_cntl;
- 		pll->ct.pll_ref_div = aty_ld_pll_ct(PLL_REF_DIV, par);
- 		pll_ext_cntl = aty_ld_pll_ct(PLL_EXT_CNTL, par);
--		pll->ct.xclk_post_div_real = postdividers[pll_ext_cntl & 0x07];
-+		pll->ct.xclk_post_div_real = aty_postdividers[pll_ext_cntl & 0x07];
- 		mclk_fb_div = aty_ld_pll_ct(MCLK_FB_DIV, par);
- 		if (pll_ext_cntl & PLL_MFB_TIMES_4_2B)
- 			mclk_fb_div <<= 1;
-@@ -534,7 +534,7 @@ static int aty_init_pll_ct(const struct
- 		xpost_div += (q <  64*8);
- 		xpost_div += (q <  32*8);
- 	}
--	pll->ct.xclk_post_div_real = postdividers[xpost_div];
-+	pll->ct.xclk_post_div_real = aty_postdividers[xpost_div];
- 	pll->ct.mclk_fb_div = q * pll->ct.xclk_post_div_real / 8;
- 
- #ifdef CONFIG_PPC
-@@ -583,7 +583,7 @@ static int aty_init_pll_ct(const struct
- 			mpost_div += (q <  64*8);
- 			mpost_div += (q <  32*8);
- 		}
--		sclk_post_div_real = postdividers[mpost_div];
-+		sclk_post_div_real = aty_postdividers[mpost_div];
- 		pll->ct.sclk_fb_div = q * sclk_post_div_real / 8;
- 		pll->ct.spll_cntl2 = mpost_div << 4;
- #ifdef DEBUG
+> @@ -1008,32 +1164,49 @@ static int ncsi_choose_active_channel(struct ncsi=
+_dev_priv *ndp)
+> =20
+>  			ncm =3D &nc->modes[NCSI_MODE_LINK];
+>  			if (ncm->data[2] & 0x1) {
+> -				spin_unlock_irqrestore(&nc->lock, flags);
+>  				found =3D nc;
+> -				goto out;
+> +				with_link =3D true;
+>  			}
+> =20
+> -			spin_unlock_irqrestore(&nc->lock, flags);
+> +			/* If multi_channel is enabled configure all valid
+> +			 * channels whether or not they currently have link
+> +			 * so they will have AENs enabled.
+> +			 */
+> +			if (with_link || np->multi_channel) {
+> +				spin_lock_irqsave(&ndp->lock, flags);
+> +				list_add_tail_rcu(&nc->link,
+> +						  &ndp->channel_queue);
+> +				spin_unlock_irqrestore(&ndp->lock, flags);
+> +
+> +				netdev_dbg(ndp->ndev.dev,
+> +					   "NCSI: Channel %u added to queue (link %s)\n",
+> +					   nc->id,
+> +					   ncm->data[2] & 0x1 ? "up" : "down");
+> +			}
+> +
+> +			spin_unlock_irqrestore(&nc->lock, cflags);
+> +
+> +			if (with_link && !np->multi_channel)
+> +				break;
 
+The line needs to change to "goto found". If not, all channels with link wi=
+ll be added
+even if the multi-channel is not enabled for that package. The ncsi1 below =
+is enabled.
+There is no netlink command sent to enable multi-package or multi-channel.
+
+IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+  2   eth2   ncsi0  000 000 1  1  0  0  1  1  0  2  1  1  1  1  0  1
+  2   eth2   ncsi1  000 001 1  0  0  0  1  1  0  2  1  1  1  1  0  1
+  2   eth2   ncsi2  001 000 0  0  0  0  1  1  0  1  0  1  1  1  0  1
+  2   eth2   ncsi3  001 001 0  0  0  0  1  1  0  1  0  1  1  1  0  1
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+MP: Multi-mode Package  WP: Whitelist Package
+MC: Multi-mode Channel  WC: Whitelist Channel
+PC: Primary Channel     CS: Channel State IA/A/IV 1/2/3
+PS: Poll Status         LS: Link Status
+RU: Running             CR: Carrier OK
+NQ: Queue Stopped       HA: Hardware Arbitration
+
+>  		}
+> +		if (with_link && !ndp->multi_package)
+> +			break;
+>  	}
+
+found:
+
+After applying this change, I notice that if there is no link available to =
+BMC when BMC
+starts, NC-SI can't properly configure channel once I plug in the Ethernet =
+cable.=20
+
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_aen_handler_lsc() - pkg 0 ch 0 st=
+ate up
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_aen_handler_lsc() - had_link 0, h=
+as_link 1, chained 0
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_stop_channel_monitor() - pkg 0 ch=
+ 0
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_process_next_channel()
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_process_next_channel() - pkg 0 ch=
+ 0 INVISIBLE
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_process_next_channel() - suspendi=
+ng pkg 0 ch 0
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 st=
+ate 0400 select
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 st=
+ate 0403 dc
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 st=
+ate 0404 deselect
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 st=
+ate 0405 done
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_rsp_handler_dp() - pkg 0 ch 0 INA=
+CTIVE
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_rsp_handler_dp() - pkg 0 ch 1 INA=
+CTIVE
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_dev_work()
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 st=
+ate 0406 deselect
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_suspend_channel() - pkg 0 ch 0 IN=
+ACTIVE
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_process_next_channel()
+npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_process_next_channel() - No more =
+channels to process
+npcm7xx-emc f0825000.eth eth2: NCSI interface down
+
+> =20
+> -	if (!found) {
+> +	if (list_empty(&ndp->channel_queue) && found) {
+> +		netdev_info(ndp->ndev.dev,
+> +			    "NCSI: No channel with link found, configuring channel %u\n",
+> +			    found->id);
+> +		spin_lock_irqsave(&ndp->lock, flags);
+> +		list_add_tail_rcu(&found->link, &ndp->channel_queue);
+> +		spin_unlock_irqrestore(&ndp->lock, flags);
+> +	} else if (!found) {
+>  		netdev_warn(ndp->ndev.dev,
+> -			    "NCSI: No channel found with link\n");
+> +			    "NCSI: No channel found to configure!\n");
+>  		ncsi_report_link(ndp, true);
+>  		return -ENODEV;
+>  	}
+> =20
+> -	ncm =3D &found->modes[NCSI_MODE_LINK];
+> -	netdev_dbg(ndp->ndev.dev,
+> -		   "NCSI: Channel %u added to queue (link %s)\n",
+> -		   found->id, ncm->data[2] & 0x1 ? "up" : "down");
+> -
+> -out:
+> -	spin_lock_irqsave(&ndp->lock, flags);
+> -	list_add_tail_rcu(&found->link, &ndp->channel_queue);
+> -	spin_unlock_irqrestore(&ndp->lock, flags);
+> -
+>  	return ncsi_process_next_channel(ndp);
+>  }
 
