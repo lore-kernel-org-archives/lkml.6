@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D515ECDE4B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDAEECDE4C
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE1620989
+	by mail.kernel.org (Postfix) with ESMTP id 2498620892
 	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:02:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMW0NC0s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE1620989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0eFMnGKi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2498620892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731083AbeKIHjq (ORCPT
+        id S1731071AbeKIHjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:39:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731061AbeKIHjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:39:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729704AbeKIHjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:39:44 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 496ED21019;
-        Thu,  8 Nov 2018 22:02:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1417420892;
+        Thu,  8 Nov 2018 22:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714536;
-        bh=PEiZqX/dTSF1px0cnTGwg++L+CZFAA5BVh9WYRKr2AY=;
+        s=default; t=1541714535;
+        bh=bSdnLv9XsirxEJftrWWyqLBnHsjMvmvilWi1rCgmyf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uMW0NC0svbILqMXlXo2d7ZpMihnZMN7ImkUbV+FHS6b3fQI9HXlxOUg5yCxuc1LtS
-         kfoedyYOhpopuJnaS1IXaQ1lNiQRgu9FtAk5d/vXSGDBjDGp40Tv1HECeUxGyiHzvd
-         HK8t3KV15rcZG4pJ2xULP9trNoQs01ruFrpK6yq4=
+        b=0eFMnGKiHgL5j/PjUFPNSQRuuIbIAKynqjrqDc4641NXhZPcO833+IdZdCVm9vUW9
+         AplA/yRrsJKva3brNsoa/4So0+h1b4XUMp+aS1duv0vJzkaRJR2EjjxwvrvhlUp0Kp
+         Lzki8TOKxuNMh7YyEcU64itpyrqiIK+munMn52SY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Roy Pledge <roy.pledge@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 012/171] soc: fsl: qbman: qman: avoid allocating from non existing gen_pool
-Date:   Thu,  8 Nov 2018 13:49:42 -0800
-Message-Id: <20181108215128.141248662@linuxfoundation.org>
+Subject: [PATCH 4.9 009/171] xfrm: validate template mode
+Date:   Thu,  8 Nov 2018 13:49:39 -0800
+Message-Id: <20181108215127.902616823@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -65,37 +63,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 64e9e22e68512da8df3c9a7430f07621e48db3c2 ]
+[ Upstream commit 32bf94fb5c2ec4ec842152d0e5937cd4bb6738fa ]
 
-If the qman driver didn't probe, calling qman_alloc_fqid_range,
-qman_alloc_pool_range or qman_alloc_cgrid_range (as done in dpaa_eth) will
-pass a NULL pointer to gen_pool_alloc, leading to a NULL pointer
-dereference.
+XFRM mode parameters passed as part of the user templates
+in the IP_XFRM_POLICY are never properly validated. Passing
+values other than valid XFRM modes can cause stack-out-of-bounds
+reads to occur later in the XFRM processing:
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Roy Pledge <roy.pledge@nxp.com>
-Signed-off-by: Li Yang <leoyang.li@nxp.com>
-(cherry picked from commit f72487a2788aa70c3aee1d0ebd5470de9bac953a)
-Signed-off-by: Olof Johansson <olof@lixom.net>
+[  140.535608] ================================================================
+[  140.543058] BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x17e4/0x1cc4
+[  140.550306] Read of size 4 at addr ffffffc0238a7a58 by task repro/5148
+[  140.557369]
+[  140.558927] Call trace:
+[  140.558936] dump_backtrace+0x0/0x388
+[  140.558940] show_stack+0x24/0x30
+[  140.558946] __dump_stack+0x24/0x2c
+[  140.558949] dump_stack+0x8c/0xd0
+[  140.558956] print_address_description+0x74/0x234
+[  140.558960] kasan_report+0x240/0x264
+[  140.558963] __asan_report_load4_noabort+0x2c/0x38
+[  140.558967] xfrm_state_find+0x17e4/0x1cc4
+[  140.558971] xfrm_resolve_and_create_bundle+0x40c/0x1fb8
+[  140.558975] xfrm_lookup+0x238/0x1444
+[  140.558977] xfrm_lookup_route+0x48/0x11c
+[  140.558984] ip_route_output_flow+0x88/0xc4
+[  140.558991] raw_sendmsg+0xa74/0x266c
+[  140.558996] inet_sendmsg+0x258/0x3b0
+[  140.559002] sock_sendmsg+0xbc/0xec
+[  140.559005] SyS_sendto+0x3a8/0x5a8
+[  140.559008] el0_svc_naked+0x34/0x38
+[  140.559009]
+[  140.592245] page dumped because: kasan: bad access detected
+[  140.597981] page_owner info is not active (free page?)
+[  140.603267]
+[  140.653503] ================================================================
+
+Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/fsl/qbman/qman.c | 3 +++
+ net/xfrm/xfrm_user.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
-index 2caacd9d2526..2cc82ed6433a 100644
---- a/drivers/soc/fsl/qbman/qman.c
-+++ b/drivers/soc/fsl/qbman/qman.c
-@@ -2713,6 +2713,9 @@ static int qman_alloc_range(struct gen_pool *p, u32 *result, u32 cnt)
- {
- 	unsigned long addr;
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index b7ac834a6091..026770884d46 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1412,6 +1412,9 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
+ 		    (ut[i].family != prev_family))
+ 			return -EINVAL;
  
-+	if (!p)
-+		return -ENODEV;
++		if (ut[i].mode >= XFRM_MODE_MAX)
++			return -EINVAL;
 +
- 	addr = gen_pool_alloc(p, cnt);
- 	if (!addr)
- 		return -ENOMEM;
+ 		prev_family = ut[i].family;
+ 
+ 		switch (ut[i].family) {
 -- 
 2.17.1
 
