@@ -2,140 +2,112 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D32CECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF788ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E1220818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:32:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7F7120840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:32:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q0BtwzS9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E1220818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="OvWpKhjq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F7120840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeKIDIh (ORCPT
+        id S1727051AbeKIDJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:08:37 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:33516 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbeKIDIg (ORCPT
+        Thu, 8 Nov 2018 22:09:01 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:46610 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeKIDJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:08:36 -0500
-Received: by mail-it1-f193.google.com with SMTP id p11-v6so2342699itf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:32:05 -0800 (PST)
+        Thu, 8 Nov 2018 22:09:00 -0500
+Received: by mail-oi1-f172.google.com with SMTP id e19-v6so1843292oii.13
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:32:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VdYF3WX3GJAY0kanvw201TBbKXMrlke2gUcOPt/8g8c=;
-        b=Q0BtwzS9i0uXnSMZNmNl8gwVXuSQbdCrM8x2W8oYKA4/XBi02mzkXWg+GdsDS61dz7
-         N12JEEoas3U0c1dZ/eRnN8cHJgB8GgDV4ol9SPH0Cs3+Ha7X+RMB2RNCcisBd5LMMRUS
-         hjNLY0GgTI+TxRyd+p3SaCm+Odt91x2OuzMws=
+        bh=jhr3DtJr5hHG40nJ43PZkz4HjRD/MEosnMu6p+jKu7s=;
+        b=OvWpKhjq8+ogeWawJE9I/rdBQqXBwGERKQbm0lV31BcZvk2XiZR5fP9uVN6kKY8deB
+         jW+mMIyfiaknnPN7lsMNvG8dLt51tJFyXOru9+c7aUp1oiEAZcGO11lFiNniCtHDIR66
+         +wbD7vSG+FGxIK6mCWTUlf/q0RC0XNROoNP5jshC4/RT/Ntj0041OLFfUN0Jn4mfRwYM
+         nY6gw39Xe2cG2EMCT96Tju5V7s3LQAMVBTNZz6dwWymbgNAasG3LSez//JkR3q/mzPF8
+         ma5623Ru4UDYB7aY8KEDGdVtNPk89OOkjWJRPRThpf4pxOWlUg3tWPu/fDSEZEUdCGXY
+         1jSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VdYF3WX3GJAY0kanvw201TBbKXMrlke2gUcOPt/8g8c=;
-        b=kTazzlIZf5n729sU19mABBDw5IU62ahdxx2cSfKyxzhocLf/JbAq9ItBTd90ipfdfi
-         RE3fGXFrF564sO+WzrDcNfyWHV73/yADLkio1Esej66pLIVgvHXDBsXf4R3iEOKv5XnX
-         JCVily5J2uh31WcHoywwCwXoLspNDufZGwG5/1uSy01k39uRSP2BeNUKfqXD67ZZh1Af
-         hASSZq0J872FPz7KzkGKzPP9Blf0VqG682u9fkoqVdnaOm2b1cKicFBVeiVatsQ5YVeF
-         M1u7aKjMRYJkygeHUC++sW7zZPR6Qftj6EAKQ5YRxmEUCBpXcq4/tEe0CKOh/hbrVw/v
-         KPqw==
-X-Gm-Message-State: AGRZ1gIH3rt5hs583psGTOoaNYylUHj6s8Nb4B4gfg6fL3Gp1OJGP6Xn
-        BUL/IZ5QZW+DASZNs4Q9jRpnjIHTQGE=
-X-Google-Smtp-Source: AJdET5d9biBFG1ffBkp4MAMZZhVTFPFalRBofy7MCdjWicge6yzWJpZvZzk3XoIqBfqt8ykF3b3BcQ==
-X-Received: by 2002:a02:a98e:: with SMTP id q14-v6mr4879559jam.109.1541698324837;
-        Thu, 08 Nov 2018 09:32:04 -0800 (PST)
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com. [209.85.166.48])
-        by smtp.gmail.com with ESMTPSA id h137-v6sm2108517itb.39.2018.11.08.09.30.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 09:31:30 -0800 (PST)
-Received: by mail-io1-f48.google.com with SMTP id d80-v6so15241816iof.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:30:58 -0800 (PST)
-X-Received: by 2002:a6b:d541:: with SMTP id x1-v6mr4659579ioc.113.1541698256286;
- Thu, 08 Nov 2018 09:30:56 -0800 (PST)
+        bh=jhr3DtJr5hHG40nJ43PZkz4HjRD/MEosnMu6p+jKu7s=;
+        b=lIvdsfOh2K3cyNTG9gP/KQdvdOq/ZX/gYsUo5/taXZH15K6x/DgiAGhNfteK0dySKH
+         X/aKoWphqMY1nA+QWs9flYV3YmzQIFez7ciy5/Z+lp+uQDmTHyWOh0AeaDI5Kr436gAd
+         riyZ7SNwkT+vAwDrtl27WdU//l3JZ+LaYTnfnQgZvMHzTouDCaIkloWEOoqNfB3JF8QI
+         CKlD4LrYVyenD6/LDdTifQZ64dRAHwerL7AYExOPbRYU0snKFjqLiL1ynB9MmhWwYpdn
+         AZZZdd+LA0TjvwQYy0YKIYJeHQWytHBJNK48gBihy9nWpaVt7Z8bpjKhT2ysBqT0hJSu
+         HFTg==
+X-Gm-Message-State: AGRZ1gJ88/6D0s9aa+IyMOZWO7kQiFVWhjAABHvCuibLejei/IwtKP7X
+        METqjr4MK/NKOotJjf7Qbz8mxH6vJll5nMo6SRIOLQ==
+X-Google-Smtp-Source: AJdET5e2KwN4nyhCA6bgt4OfNQ8rUOjZnrFsSMXxuufyCDXxORZBCJ0GCvwo0OXlw+xrazct/Icfza6akCpw9yxL9C0=
+X-Received: by 2002:aca:5204:: with SMTP id g4-v6mr3264326oib.149.1541698349024;
+ Thu, 08 Nov 2018 09:32:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20181107185643.240346-1-briannorris@chromium.org>
- <7f2ef494f4a2aba1845a157da8fec449@codeaurora.org> <b1a64bd66fa25f274af8c018c6fc02f4@codeaurora.org>
-In-Reply-To: <b1a64bd66fa25f274af8c018c6fc02f4@codeaurora.org>
-From:   Brian Norris <briannorris@chromium.org>
-Date:   Thu, 8 Nov 2018 09:30:43 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXOqJ1-G2amyu7sJCnzKf1oY_2j9Qw4WS0VTf8EqGr6Uqw@mail.gmail.com>
-Message-ID: <CA+ASDXOqJ1-G2amyu7sJCnzKf1oY_2j9Qw4WS0VTf8EqGr6Uqw@mail.gmail.com>
-Subject: Re: [PATCH REGRESSION] Revert "ath10k: add quiet mode support for QCA6174/QCA9377"
-To:     govinds@codeaurora.org
-Cc:     rmanohar@codeaurora.org, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        yyuwang@codeaurora.org, pillair@codeaurora.org,
-        stable <stable@vger.kernel.org>,
-        linux-wireless-owner@vger.kernel.org
+References: <20181107171010.421878737@linutronix.de> <20181107124855.328133e7@lwn.net>
+ <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
+ <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
+ <20181108074920.4c601ee3@lwn.net> <20181108150517.GV9761@hirez.programming.kicks-ass.net>
+ <20181108162133.GC1080@thunk.org> <20181108163223.GH6675@sirena.org.uk>
+In-Reply-To: <20181108163223.GH6675@sirena.org.uk>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 8 Nov 2018 09:32:18 -0800
+Message-ID: <CAPcyv4h1ABBz7OaZB5d--fjtwvfrM=TZs7XFCG54PYRm_Fr8WQ@mail.gmail.com>
+Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, acme@redhat.com,
+        frederic@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 8:32 PM Govind Singh <govinds@codeaurora.org> wrote:
-> On 2018-11-08 03:00, Rajkumar Manoharan wrote:
-> > On 2018-11-07 10:56, Brian Norris wrote:
-> >> This reverts commit cfb353c0dc058bc1619cc226d3cbbda1f360bdd3.
-> >>
-> >> WCN3990 firmware does not yet implement this feature, and so it
-> >> crashes
-> >> like this:
-> >>
-> >>   fatal error received: err_qdi.c:456:EX:wlan_process:1:WLAN
-> >> RT:207a:PC=b001b4f0
-> >>
-> >> This feature can be re-implemented with a proper service bitmap or
-> >> other
-> >> feature-discovery mechanism in the future. But it should not break
-> >> working boards.
-> >>
-> > Brian,
-> >
-> > The change "ath10k: add quiet mode support for QCA6174/QCA9377" was
-> > merged even
-> > before full WCN3990 device support was added in ath10k. How come it
-> > could be regression
-> > for WCN3990. I know both are sharing same WMI-TLV interface but
-> > reverting this
-> > will break QCA6174/QCA9377. no?
-
-I don't see how the revert would "break" QCA6174 -- QCA6174 worked
-just fine without this feature and should continue to do so.
-
-> This regression is found while we switched from 4.18 + WCN3990
-> back-ports to 4.19.
-
-^^ What Govind said. WCN3990 support has been trickling in over a few
-releases, and it doesn't seem kosher to allow people to submit
-regressions in the midst of that.
-
-> > I would prefer to handle this within WMI callback or upper layer.
-> >
+On Thu, Nov 8, 2018 at 8:32 AM Mark Brown <broonie@kernel.org> wrote:
 >
-> IMO, we should use (WMI_SERVICE_THERMAL_MGMT | WMI_SERVICE_THERM_THROT )
-> service bitmap check and call
-> ath10k_thermal_set_throttling only if fw supports THERMAL THROTTLE
-> feature. But we need to ensure all
-> available ath10k fw's are reporting this service.
+> On Thu, Nov 08, 2018 at 11:21:33AM -0500, Theodore Y. Ts'o wrote:
+> > On Thu, Nov 08, 2018 at 04:05:17PM +0100, Peter Zijlstra wrote:
+>
+> > > My plumbers schedule is already 100% booked with MCs and other things.
+> > > There is no kernel-summit schedule details available as of yet, but it
+> > > is already almost certain that I will not have time for anything in that
+> > > track anyway :/
+>
+> > I thought there was a slot already scheduled on the refereed track,
+> > "Towards a Linux Kernel Mainainer Handbook" (Tuesday at 4:45pm) for
+> > this purpose?
+>
+> I'm not 100% sure that people will pick up that the topic is about a
+> handbook for working with maintainers rather than a handbook for being a
+> maintainer from that title...
 
-And the above notes from Govind highlight this -- if the feature was
-not protected by the appropriate service flags, then we can't be sure
-that you didn't break a bunch of other firmware releases out there.
-Linux should not break for everyone just because you spun a firmware
-release.
-
-Of course, I'll leave it up to Kalle as to how he wants to mediate
-this. And if you come up with a solid patch soon that can fix this
-without dropping the feature, then so be it.
-
-Brian
+The intent is a handbook for being a maintainer. However, in the
+process of describing how a given sub-system is maintained one also
+needs to describe the local rules. So contributors should be able to
+glean what matters to a sub-system from a description of how that
+sub-system is maintained. In other words the direct audience is
+maintainers, but it also hopefully makes the process more transparent
+for contributors.
