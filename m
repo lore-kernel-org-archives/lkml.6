@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC50ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB80BECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F5C20684
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95AE420827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:42:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQZMIo2Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F5C20684
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjQY1vhB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AE420827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeKIESw (ORCPT
+        id S1728169AbeKIES4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:18:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 23:18:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbeKIESv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:18:51 -0500
+        id S1727114AbeKIESz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:18:55 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B4CB20684;
-        Thu,  8 Nov 2018 18:42:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 208D32081C;
+        Thu,  8 Nov 2018 18:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541702524;
-        bh=XQGUX7FXLThpmMrnjxcgYaDQ2NjHhFje+TMM+vBZuKg=;
+        s=default; t=1541702528;
+        bh=RGABxJleL75APNr1ziO5fqyhLnfnpLWsiAq9r37kPP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQZMIo2YaUiW9K00E0Vo+pJOPf2Dv4wQhda3QNPs4X3wAl5E2FblpwcR4SyESdz3P
-         XodrABEv6mjctsVJ7fZ5aYkmILRVxqjaUQ9ORjS/bV8hnke7QR2fp1Xlnsa90VviK1
-         OH+DW4W1rkSLKGtjwBCFHmGYaIL1ucfNj1UnzxXA=
+        b=kjQY1vhBn9cuSMqFLsB9rOLw5F1JE+luEhj9IJQhJUhF6xKgZqgBlbOFOB8rVVPnI
+         IiE7d78SuiiZOMyeuONSV5Enkewm8QT3c/C6H5aSvRau75074nOy5o0E/h0lbbkf9F
+         Eg4DgaPw2o7qiPvIfhD9G5QWa197Z8K/LD9mznjY=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
@@ -45,9 +45,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v4 17/18] arm64: dts: qcom: qcs404: Use BAM DMA for serial uart2
-Date:   Fri,  9 Nov 2018 00:10:08 +0530
-Message-Id: <20181108184009.18430-18-vkoul@kernel.org>
+Subject: [PATCH v4 18/18] arm64: dts: qcom: pms405: Add pon and pwrkey nodes
+Date:   Fri,  9 Nov 2018 00:10:09 +0530
+Message-Id: <20181108184009.18430-19-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181108184009.18430-1-vkoul@kernel.org>
 References: <20181108184009.18430-1-vkoul@kernel.org>
@@ -56,27 +56,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can use BAM DAM for serial UART data transfers, so add it
+PMS405 also features PON block, so add PON and PWRKEY nodes
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/qcom/pms405.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index ae7e73e137c6..690ff70ce595 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -341,6 +341,8 @@
- 			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
- 			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 5>, <&blsp1_dma 4>;
-+			dma-names = "rx", "tx";
- 			status = "okay";
+diff --git a/arch/arm64/boot/dts/qcom/pms405.dtsi b/arch/arm64/boot/dts/qcom/pms405.dtsi
+index 85a3228abaf9..8b540b7eec13 100644
+--- a/arch/arm64/boot/dts/qcom/pms405.dtsi
++++ b/arch/arm64/boot/dts/qcom/pms405.dtsi
+@@ -2,6 +2,7 @@
+ // Copyright (c) 2018, Linaro Limited
+ 
+ #include <dt-bindings/spmi/spmi.h>
++#include <dt-bindings/input/linux-event-codes.h>
+ 
+ &spmi_bus {
+ 	pms405_0: pms405@0 {
+@@ -29,6 +30,21 @@
+ 				<0 0xcb 0 IRQ_TYPE_NONE>;
  		};
  
++		pon@800 {
++			compatible = "qcom,pms405-pon";
++			reg = <0x0800>;
++			mode-bootloader = <0x2>;
++			mode-recovery = <0x1>;
++
++			pwrkey {
++				compatible = "qcom,pm8941-pwrkey";
++				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
++				debounce = <15625>;
++				bias-pull-up;
++				linux,code = <KEY_POWER>;
++			};
++		};
++
+ 		rtc@6000 {
+ 			compatible = "qcom,pm8941-rtc";
+ 			reg = <0x6000>;
 -- 
 2.14.4
 
