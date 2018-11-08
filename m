@@ -2,86 +2,107 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A1FC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215BCC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 884DA20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884DA20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id DF1DE20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:25:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF1DE20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbeKHT5p (ORCPT
+        id S1727037AbeKHUAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:57:45 -0500
-Received: from mout.gmx.net ([212.227.15.15]:42863 "EHLO mout.gmx.net"
+        Thu, 8 Nov 2018 15:00:13 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60670 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726274AbeKHT5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:57:45 -0500
-Received: from [213.144.13.140] ([213.144.13.140]) by web-mail.gmx.net
- (3c-app-gmx-bs57.server.lan [172.19.170.141]) (via HTTP); Thu, 8 Nov 2018
- 11:22:50 +0100
+        id S1726274AbeKHUAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 15:00:13 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5A951224CB; Thu,  8 Nov 2018 11:25:24 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0B46820970;
+        Thu,  8 Nov 2018 11:25:14 +0100 (CET)
+Date:   Thu, 8 Nov 2018 11:25:13 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marex@denx.de>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [GIT PULL] mtd: Fixes for 4.20-rc2
+Message-ID: <20181108112513.3daf0053@bbrezillon>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Message-ID: <trinity-0d747914-3749-46c4-a5e8-fb7141a9b7c2-1541672570683@3c-app-gmx-bs57>
-From:   "Lino Sanfilippo" <LinoSanfilippo@gmx.de>
-To:     "Suraj Singh" <suraj1998@gmail.com>
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        suraj1998@gmail.com
-Subject: Aw: [PATCH] staging: net: ipv4: tcp_westwood: fixed warnings and
- checks
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 8 Nov 2018 11:22:50 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <1541670377-17483-1-git-send-email-suraj1998@gmail.com>
-References: <1541425985-31869-1-git-send-email-suraj1998@gmail.com>
- <1541670377-17483-1-git-send-email-suraj1998@gmail.com>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:wESOkapkNCVM5/neREw5PgsTy7Jf5xXP0WjRIlmblGiXotpihG4njykYrl3zk+bvdFNZm
- vbhPMLyDkcvnj9OZ3+o33B2I4shnUZYBuKFVfip5rdF+Zsm18sdSXTx4VCG3Oob/SiYWloSImj6e
- U1PUzE6lZUQDsy6TgJ4+YZqWuXQpVbmBi1+rIEOXi4SzL92FgQtse/snG4frzOGBfE+LeMrTUzip
- SJGGRcDVL68+8/z9g+MQP8xeycAKWea+J2as2Z0IDInqjEC0ejxA2PjP8NqfqSkMwS1iy9wOvhV9
- nI=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:21yCKqWQ7Kw=:nQ6dOrhUPYvA8dB+FOysgx
- x2lQugVqzy2qMSgCQpRm2EOZU2NiPxYOmW2xwMW6myGxiThbNkz4/AaKbxPZEV4RG2tXBtGwm
- ODm2iKNznOFheIy1WQKyNLgj4aYrdjreDbSWGtwPZ68XZ8Q88WVLmOkJfaeSV1ZXrmr0/qpnA
- w2A22BApkv3ICMDRHLnrsKsDxyi39DeChGm/B/Q7QpbojArEOl/gFyv25oHcMoONX3Vzne23/
- O2YuYaVTwSp73JqriC2/oDGS/JXD0gpV/zH2G5FxMKQ+a1Jxfh3j9USD0d/OgL+FhHoXH5Jxt
- TXqRRHF5usGqLIboerGaU/ORzCHiqmoalmC36UO6PZ3426/NgjppKglf2A7wAhzZADyMgyuZy
- 6IIsZOmfzxK6Ld4Haye0PHDj+HNDsgGD4AI+BAPDy7ohmyLbTUv2S1GbSwX8P7gRfNfXpLBv8
- SdElCwVGsLu7aOpxxFhDD4s0ScKZypuHUT8B6zVh28NMg9GaTT/rFmejZlWHt92cZvS845IJf
- HjlVCwSN867mMldDZtM/J6jGLLf9pmfKoJ7megV5S58o6H4+2BZnLTGDOFHviKLSDUCl5NCaN
- DFXgbX5lD2J6c=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Linus,
 
-> Gesendet: Donnerstag, 08. November 2018 um 10:46 Uhr
-> Von: "Suraj Singh" <suraj1998@gmail.com>
-> An: davem@davemloft.net
-> Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, suraj1998@gmail.com
-> Betreff: [PATCH] staging: net: ipv4: tcp_westwood: fixed warnings and checks
->
-> Fixed warnings and checks for TCP Westwood
-> 
-> Signed-off-by: Suraj Singh <suraj1998@gmail.com>
-> ---
-
-
-You use the prefix "staging" again in you subject line, which still is wrong. "staging" means that you
-fix something from the staging area (see drivers/staging/ in the kernel sources. BTW: the staging area is a much
-better starting point for first patches than the core parts of the network subsystem).
-Also if you send a subsequent version of a patch you have to write the version number (e.g. v2) in the 
-subject line. Have a look at other patch submissions on this mailing list for examples.
+Here is the MTD fixes PR for 4.20-rc2.
 
 Regards,
-Lino
+
+Boris
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.20-rc2
+
+for you to fetch changes up to 98ee3fc7ef8395f8b7a379e6608aee91efc66d48:
+
+  mtd: nand: Fix nanddev_pos_next_page() kernel-doc header (2018-11-06 17:40:31 +0100)
+
+----------------------------------------------------------------
+MTD changes:
+* Kill a VLA in sa1100
+
+SPI NOR changes:
+* Make sure ->addr_width is restored when SFDP parsing fails
+* Propate errors happening in cqspi_direct_read_execute()
+
+NAND changes:
+* Fix kernel-doc mismatch
+* Fix nanddev_neraseblocks() to return the correct value
+* Avoid selection of BCH_CONST_PARAMS when some users require
+  dynamic BCH settings
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      mtd: docg3: don't set conflicting BCH_CONST_PARAMS option
+
+Boris Brezillon (4):
+      mtd: nand: Fix nanddev_neraseblocks()
+      mtd: spi-nor: Reset nor->addr_width when SFDP parsing failed
+      mtd: sa1100: avoid VLA in sa1100_setup_mtd
+      mtd: nand: Fix nanddev_pos_next_page() kernel-doc header
+
+Christophe JAILLET (1):
+      mtd: spi-nor: cadence-quadspi: Return error code in cqspi_direct_read_execute()
+
+Randy Dunlap (1):
+      mtd: nand: drop kernel-doc notation for a deleted function parameter
+
+ drivers/mtd/devices/Kconfig           |  2 +-
+ drivers/mtd/maps/sa1100-flash.c       | 10 +++++++++-
+ drivers/mtd/nand/raw/nand_base.c      |  1 -
+ drivers/mtd/spi-nor/cadence-quadspi.c |  2 +-
+ drivers/mtd/spi-nor/spi-nor.c         |  6 ++++--
+ include/linux/mtd/nand.h              |  7 +++----
+ 6 files changed, 18 insertions(+), 10 deletions(-)
