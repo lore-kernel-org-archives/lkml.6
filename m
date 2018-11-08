@@ -2,211 +2,109 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B3CECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DBCECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C998720825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 091A320840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 16:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xkYPOaJ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C998720825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLfMjTKj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091A320840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbeKIC3u (ORCPT
+        id S1727158AbeKICaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:29:50 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38008 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeKIC3d (ORCPT
+        Thu, 8 Nov 2018 21:30:55 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35309 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbeKICay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:29:33 -0500
-Received: by mail-wr1-f66.google.com with SMTP id d10-v6so22007074wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 08:53:11 -0800 (PST)
+        Thu, 8 Nov 2018 21:30:54 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so18632145ljb.2;
+        Thu, 08 Nov 2018 08:54:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rPCJyVZmDOYNeLsc4tgwn2k4YrO+TQOoxPdkXRVHMuI=;
-        b=xkYPOaJ4V8RNsgpz0tDtm4p+U0NWEW9+nWXirBy1Bhu2gPeDveN+LbP2NDngyt+ond
-         m0nOnZDw/dfv6N+Xd8YKWgxvFphMBQmAcfXFDx+3amii5D82a9z9lbyXaNok4cUQMxQY
-         wCMisU7MGSTAXECi05MKUUPzvUACJ0Htqd7JT0FndBKmFrZgiz0+OI69cARp5OLHs0+3
-         BOTmJdJPWe+3jzv8W1+iko6JZyArfJ6GqPngsV1KJSaMTHif3kJRn/k7+goDReqYD2e5
-         G17IjOcybrcN/TQrrgEbQYQyyA0C9ihMj89Paqb6yeWC2AvKGKO8z1c8b4WMMzU4lrkc
-         YFQw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=U1mIQ0dunOnrqDDsmLDruczBjJ/DdXuddnoL7xJFOD4=;
+        b=DLfMjTKjfl+0yj/oOcUt5Zh4XLgkWalwUvxFmdA5whFIz+ajKsOwTn8sUpf62eHg7q
+         cOJYhjPsZg5OKJtIE3aJr9FDgg8tdwjB6huCQzo63I2hKIZHzugIGm+RDNthhoea7L8q
+         Z0GvAr9phZaTV+hYaz7DbFfoBzoHVyq9pOzaUWw3U0JPPIixPB798F8W0g2FhsxH0JPv
+         3t9bAxsIfRbaCHSuwmwk45xCFYwmCmwbtbDEY27McT+lr88mOdjwXAot6qCBLUzKQ2LE
+         3Cy1+zhE5SQO0GAdHHLEGulKzxwd7U/GUKJplUxNcM8kw+TnIwA13zxzSGdJpsddsmUR
+         QeWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rPCJyVZmDOYNeLsc4tgwn2k4YrO+TQOoxPdkXRVHMuI=;
-        b=PZeKudxQYuGr2qssvVMhUXQ/pem8eXDTglIgNIZiQ5tjVidMn4UoSNu1Fn8B9nExox
-         iArDwd4JUs9jEgL+pzGzkADExIsoUXN+bvklfiss5Qftx6FTLM7RwL8d1ym0f0ax/msr
-         cGEr6HQwpSskdVsBCDQJM3AG0cg2Nn1kxko+5YtCzl3sOuO2LLzAlh3/XFXx5LNH3WOw
-         Zcz6lAUMOxT/fN+J3vtysTte6/KnGWc7/zhbE0gTJC/ae8KTZtPxQ49MCiMzD4aRWmIm
-         JTVB+M6YAj70CiAbQvEcbuKq3i5VuGGOh4R62NXrFswizP03YjSV7kyBbZlsds61+lAQ
-         EouA==
-X-Gm-Message-State: AGRZ1gJ3vG7/YmPR/aSLRG1v8TbgCVXllIJDNI0A770p5exE++AVuLpe
-        JY/YQl1VLfntH2v/DFcZGRi73w==
-X-Google-Smtp-Source: AJdET5cBtnZnbUITLW6R327dO/QhDlm05sTKDZlugw4OeXA+SnFseJ5bepo1tRkUHk8R5Z4IajcnsA==
-X-Received: by 2002:adf:b716:: with SMTP id l22-v6mr5224333wre.157.1541695990620;
-        Thu, 08 Nov 2018 08:53:10 -0800 (PST)
-Received: from debian-brgl.lan ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm7815987wrs.51.2018.11.08.08.53.09
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=U1mIQ0dunOnrqDDsmLDruczBjJ/DdXuddnoL7xJFOD4=;
+        b=g1bXTioFKSk+0Z7ONL+2Jr6fNTM18zYiAWYrSw6MhOyZ1QquppjXO6nu/1TXLMKBK/
+         QBdQi1lkKImApCETs6i3T+kVoF1wfrgiX6F8WW83+8RN1TyRiYq340pgOzV7iIaSlabe
+         itnRBmkKdiaSKwmjZ9ESRSgxg482WwB6jRo2MUIs1frpAh8iRAg/A9lcT4SmawW494pI
+         Txo4eud9cENZBpXC9qxEC8BtOsxXlJqpPSphfKU/yRvqXW3l2sTnF+QXPfPNUtzNEJvM
+         TSlPx0tDIvk0QXGmDbBQbS2BwBAkjCV5zXnk5jgr+LxMBCaKAk2nLGJ7ok3pvW1dJZDh
+         6BlQ==
+X-Gm-Message-State: AGRZ1gK5i5eBkgEgjMoUmAzX7AsCOsV2pX7S0vgT+cIc8lC9+5/pH7bA
+        QZnrmMffeYFu7TapS9hlMyUHQKTC
+X-Google-Smtp-Source: AJdET5cCKnQ5zOQ4WxxdrNwu35Ps/NMhVq0ehik/Q2MPd3XDsitV4PG7Stf9feBDyrYz5iUwHqDNbw==
+X-Received: by 2002:a2e:9603:: with SMTP id v3-v6mr2912040ljh.15.1541696070433;
+        Thu, 08 Nov 2018 08:54:30 -0800 (PST)
+Received: from [192.168.2.145] (109-252-91-202.nat.spd-mgts.ru. [109.252.91.202])
+        by smtp.googlemail.com with ESMTPSA id a2-v6sm787610lji.13.2018.11.08.08.54.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 08:53:10 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/3] gpio: mockup: add locking
-Date:   Thu,  8 Nov 2018 17:52:54 +0100
-Message-Id: <20181108165255.9940-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108165255.9940-1-brgl@bgdev.pl>
-References: <20181108165255.9940-1-brgl@bgdev.pl>
+        Thu, 08 Nov 2018 08:54:29 -0800 (PST)
+Subject: Re: [PATCH v1 10/11] regulator: core: Use ww_mutex for regulators
+ locking
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maciej Purski <m.purski@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20181005153638.1886-1-digetx@gmail.com>
+ <20181005153638.1886-11-digetx@gmail.com>
+ <20181108130714.GE6675@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <31841457-32c5-f28e-707e-a2eca012acc5@gmail.com>
+Date:   Thu, 8 Nov 2018 19:53:47 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181108130714.GE6675@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While no user reported any race condition problems with gpio-mockup,
-let's be on the safe side and use a mutex when performing any changes
-on the dummy chip structures.
+On 08.11.2018 16:07, Mark Brown wrote:
+> On Fri, Oct 05, 2018 at 06:36:37PM +0300, Dmitry Osipenko wrote:
+> 
+>> Wait/wound mutex shall be used in order to avoid lockups on locking of
+>> coupled regulators.
+> 
+> This breaks the build due to a few of the drivers (wm8350 and da9210 at
+> least) taking rdev locks in their interrupt handlers.  I'd suggest
+> adding a function for those drivers to use - exposing the ww context
+> seems like the wrong thing to do there.
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
- 1 file changed, 43 insertions(+), 7 deletions(-)
+I totally missed those drivers, will fix them in v2.
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 6a50f9f59c90..3cd92912c414 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -54,6 +54,7 @@ struct gpio_mockup_chip {
- 	struct gpio_mockup_line_status *lines;
- 	struct irq_sim irqsim;
- 	struct dentry *dbg_dir;
-+	struct mutex lock;
- };
- 
- struct gpio_mockup_dbgfs_private {
-@@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
- 	return gpio_mockup_ranges[index * 2 + 1];
- }
- 
--static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	return chip->lines[offset].value;
- }
- 
--static void gpio_mockup_set(struct gpio_chip *gc,
--			    unsigned int offset, int value)
-+static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int val;
-+
-+	mutex_lock(&chip->lock);
-+	val = __gpio_mockup_get(gc, offset);
-+	mutex_unlock(&chip->lock);
-+
-+	return val;
-+}
-+
-+static void __gpio_mockup_set(struct gpio_chip *gc,
-+			      unsigned int offset, int value)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	chip->lines[offset].value = !!value;
- }
- 
-+static void gpio_mockup_set(struct gpio_chip *gc,
-+			   unsigned int offset, int value)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+
-+	mutex_lock(&chip->lock);
-+	__gpio_mockup_set(gc, offset, value);
-+	mutex_unlock(&chip->lock);
-+}
-+
- static void gpio_mockup_set_multiple(struct gpio_chip *gc,
- 				     unsigned long *mask, unsigned long *bits)
- {
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 	unsigned int bit;
- 
-+	mutex_lock(&chip->lock);
- 	for_each_set_bit(bit, mask, gc->ngpio)
--		gpio_mockup_set(gc, bit, test_bit(bit, bits));
--
-+		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
-+	mutex_unlock(&chip->lock);
- }
- 
- static int gpio_mockup_dirout(struct gpio_chip *gc,
-@@ -112,8 +137,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	gpio_mockup_set(gc, offset, value);
-+	mutex_lock(&chip->lock);
-+	__gpio_mockup_set(gc, offset, value);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -122,7 +149,9 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
-+	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_IN;
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -130,8 +159,13 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int direction;
- 
--	return !chip->lines[offset].dir;
-+	mutex_lock(&chip->lock);
-+	direction = !chip->lines[offset].dir;
-+	mutex_unlock(&chip->lock);
-+
-+	return direction;
- }
- 
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
-@@ -283,6 +317,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 			return -ENOMEM;
- 	}
- 
-+	mutex_init(&chip->lock);
-+
- 	gc = &chip->gc;
- 	gc->base = base;
- 	gc->ngpio = ngpio;
--- 
-2.19.1
+> Otherwise the series looks good, I've applied everything up to here.
+> Thanks for taking the time to pick this up, and especially for figuring
+> out the ww_mutex conversion.
+> 
 
+Thank you.
