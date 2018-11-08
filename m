@@ -2,105 +2,98 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAB8ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817BBECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D6B920825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D6B920825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4880A2081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:07:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rpXVov7h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4880A2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeKIEmS (ORCPT
+        id S1727251AbeKIEn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:42:18 -0500
-Received: from mga07.intel.com ([134.134.136.100]:7392 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbeKIEmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:42:18 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:05:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="279498180"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Nov 2018 11:05:24 -0800
-Date:   Thu, 8 Nov 2018 21:05:23 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v4 2/6] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181108190523.GE20608@linux.intel.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-3-roberto.sassu@huawei.com>
+        Thu, 8 Nov 2018 23:43:56 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32897 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbeKIEnz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:43:55 -0500
+Received: by mail-wr1-f67.google.com with SMTP id u9-v6so12091984wrr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 11:07:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tHsK0hhrKmdeeb3ghMdlBw0MAo3rlZFjyqHNm6Q0ZR0=;
+        b=rpXVov7hv6/psus9dpe+GRQrRwrJI6lSNw64tpPO97PeC/DUs5VBDTUMFjmHJ131Pg
+         oJVFCkIuAhOqE3RrExVlvVZsqpZlyrcCpJ7yJNgbNccOBbRT622zi5K1BDnxKyyzrYrT
+         9Kqy/LMqJxqq+5F7DLPi3DGnVAtlHRjr6A9AKH283vEu2qMwgkIz2Ah4uyQc7lvv8Jc+
+         LXlmlv/yqQe/25jHzYhiI3UbQqRpHMK+kRbNn7vDzW5aYL6tD+T5TrKKbWSHcXJiLZyS
+         74xhdl4xx0JRuEGP9mBPF3hW3JDRumRo+lC5kCL3uWdaTt9FV3kEemo4BGFZmXcUxPGb
+         HC3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tHsK0hhrKmdeeb3ghMdlBw0MAo3rlZFjyqHNm6Q0ZR0=;
+        b=alXC97JjpAG3ZqimezcWXTEomzxsXSbe7Ll/vbpQp++G+G+AMZwrS01azsnHzXgMqb
+         2UvUSOp/lbbDJN1oUS9b5HKwY0XOEYNjY2cKYXiIQu+iOj/Cq6Hket+7qxZ/xjMpf5ac
+         HfoHJY9o4wFMY4R6B9iqRtZ0js2fRMJlM+BNi98bD4CycXhxcvjsgR5DDlGO0gkRHyXr
+         b4E2gMgHpQekHrp4U69Wxi9G2axdcdALOFYVBaxGGFWixywtOtvMGo9ZCyb6182tKPet
+         WX0P7O+uktkSPsOAhlsCq7qj7Ine8Xd41udwhT52aTPbY5tIrF+0H1isCYKql8xMp46J
+         8/dA==
+X-Gm-Message-State: AGRZ1gKDCMO/dfsNwuq+OgNzdqqqD1FYXGwayTDgqOn6L1Cy2UaDmrcd
+        9HN5GP/bp8kvaNwG3IH2CvU=
+X-Google-Smtp-Source: AJdET5fut7tiCpoKcNQEH1HIxdbI46PYanxIm3fghms0xgWRCgt93ADAyeh7ZaKotZnfe76NRAObsw==
+X-Received: by 2002:a5d:664e:: with SMTP id f14-v6mr5398407wrw.218.1541704023838;
+        Thu, 08 Nov 2018 11:07:03 -0800 (PST)
+Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm3010547wrv.93.2018.11.08.11.07.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 11:07:03 -0800 (PST)
+From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
+To:     palmer@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Subject: [PATCH] riscv: fix warning in arch/riscv/include/asm/module.h
+Date:   Thu,  8 Nov 2018 20:07:00 +0100
+Message-Id: <20181108190700.30825-1-david.abdurachmanov@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106150159.1136-3-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 04:01:55PM +0100, Roberto Sassu wrote:
-> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
-> for a list of hash algorithms used for event logs and event log digests.
-> However, according to TCG EFI Protocol Specification, these arrays have
-> variable sizes and are not suitable for parsing events with type casting.
-> 
-> Since declaring static arrays with hard-coded sizes does not help to parse
-> data after these arrays, this patch removes the declaration of
-> TPM2_ACTIVE_PCR_BANKS and sets the size of the arrays above to zero.
-> 
-> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
-> event log")
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-> index 20d9da77fc11..3d5d162f09cc 100644
-> --- a/include/linux/tpm_eventlog.h
-> +++ b/include/linux/tpm_eventlog.h
-> @@ -8,7 +8,6 @@
->  #define TCG_EVENT_NAME_LEN_MAX	255
->  #define MAX_TEXT_EVENT		1000	/* Max event string length */
->  #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
-> -#define TPM2_ACTIVE_PCR_BANKS	3
->  
->  #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
->  #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
-> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
->  	u8 spec_errata;
->  	u8 uintnsize;
->  	u32 num_algs;
-> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
-> +	struct tcg_efi_specid_event_algs digest_sizes[0];
->  	u8 vendor_info_size;
->  	u8 vendor_info[0];
->  } __packed;
-> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
->  	u32 pcr_idx;
->  	u32 event_type;
->  	u32 count;
-> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
-> +	struct tpm2_digest digests[0];
->  	struct tcg_event_field event;
->  } __packed;
->  
-> -- 
-> 2.17.1
-> 
+Fixes warning: 'struct module' declared inside parameter list will not be
+visible outside of this definition or declaration
 
-I somehow lost your response but what you must do is to explain why is
-it OK for last two fields to overlap.
+Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+---
+ arch/riscv/include/asm/module.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-/Jarkko
+diff --git a/arch/riscv/include/asm/module.h b/arch/riscv/include/asm/module.h
+index 349df33808c4..cd2af4b013e3 100644
+--- a/arch/riscv/include/asm/module.h
++++ b/arch/riscv/include/asm/module.h
+@@ -8,6 +8,7 @@
+ 
+ #define MODULE_ARCH_VERMAGIC    "riscv"
+ 
++struct module;
+ u64 module_emit_got_entry(struct module *mod, u64 val);
+ u64 module_emit_plt_entry(struct module *mod, u64 val);
+ 
+-- 
+2.19.1
+
