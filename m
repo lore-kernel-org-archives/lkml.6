@@ -2,84 +2,104 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817CDECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C99ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367582081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 805012081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 18:26:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2VfHeAqf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367582081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rZyfVkdz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805012081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeKIECW (ORCPT
+        id S1727316AbeKIEDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:02:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeKIECW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:02:22 -0500
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4F2C2089F
-        for <linux-kernel@vger.kernel.org>; Thu,  8 Nov 2018 18:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541701537;
-        bh=1btlQgstCpJizvq6kZHc76gmMfvapjxjFfB1YtKv9hc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2VfHeAqf4tFX+DYTLht0rE/yFHZSWTdDscN+eUuluGJQZWsVxLJImPu31/5CDLlJY
-         Z5a7BKHEQl2U5UNa153jX14kxXDWNkGTdyhFgIe0dVr6pSKMy+uc/tL8w+6p4CP/qy
-         NwBBwunfmBpETFlGkFeC5XcOajMQMEbEMzw4A7tk=
-Received: by mail-wr1-f51.google.com with SMTP id k15-v6so19331151wre.12
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 10:25:36 -0800 (PST)
-X-Gm-Message-State: AGRZ1gL7TKzZTQu1FBdELQDZ5SQKOGsDha2t0WyAqQkwxFB+nNg//USz
-        eMN3ydud9wo1tHgaSbMiNSCjDOU07ejyz4uLaUsPyg==
-X-Google-Smtp-Source: AJdET5do1Uf3kJUumJuaQnyEV+8v4EhWSLxxilj2b5xH5OQNhEhauVGSjkMI2hceJ2XuhXXw18Y0214DtJB8UGiScP0=
-X-Received: by 2002:adf:82c9:: with SMTP id 67-v6mr4882257wrc.131.1541701535293;
- Thu, 08 Nov 2018 10:25:35 -0800 (PST)
+        Thu, 8 Nov 2018 23:03:01 -0500
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:46970 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeKIEDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:03:01 -0500
+Received: by mail-pg1-f181.google.com with SMTP id w7so9188486pgp.13;
+        Thu, 08 Nov 2018 10:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7zaR5hXeVvGo1yXffIBxsrQ+olUdCy833Oop8XT0fbY=;
+        b=rZyfVkdzy+1wHXm6+IXYCM7Uo1TQYP5a7WfMYJIzyVRaXFJ/Nxop9yjKU5Zd++oLBf
+         PzbE7edkWvY71tgOjC0cjb4OPZwBCUBHIiJ5W0ov/BfGn6LOTo4/xkeJMgH+SM6GGmDs
+         +AE1wa/SCNv1/kynlrgtDxXmmrmC7U3gE1vk+pmVn78H9lA0K9CVyV6IISyYi1wgXLnR
+         IWmimlETVG+6Jq1t6ZM26CbdeomAllFUD9tMx87Y4c6YTBpwrDUrN8TYQdJC7P19QpkB
+         CjdxyYRzphtp/5s4yIiSvILvHt9NvDHujz5BAgLJJ2n+JdMCE+4L0u5XutQtn+HGkah2
+         bPtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7zaR5hXeVvGo1yXffIBxsrQ+olUdCy833Oop8XT0fbY=;
+        b=WB1k7BLI0h+g4IGb2ds2pfmeuu+LjnTMjjkzBU7Mj8/3WZMq7ub7OX5uOqhXaIbGWe
+         4VfQqqP/SN26DKiQwAvEP/7nPUdUrQhkRw3GhxoWB3o2MghamXIwO2FTSgmbPGOKWUzm
+         QRpKdP9kzHMcF7dgSAmcv/0ry5GvCDlRtswZ6T5zg8bwiE6yjsJ7Yit8C6/W651Qtb9O
+         /AXKnt9iV+gY8P1uKysTH89iSyS65/RCjgnigrUervHfZ2jmXryOM7pwAbumI+nFKw2u
+         MjlLi6lOzyuIfIoGObxuF0ouRwR4RuLCKjI+0L89dlH+Ha9ZnYKl5hjK9KRasf++pQpG
+         WY8A==
+X-Gm-Message-State: AGRZ1gLuW0IYLKto8BauF78brgFVG8b+nojkzvpLhGiRr/N+eIYM6zFi
+        VZf9meduybe1ZzVsrgHIZpBpkIja
+X-Google-Smtp-Source: AJdET5eFhISP0sDBcDZfVIVzZOIMicRmbZMzSnbX8/CO8wfaC8bh94/faz3+NKyV815unUUVInwB3w==
+X-Received: by 2002:a63:fa46:: with SMTP id g6mr4703275pgk.18.1541701575903;
+        Thu, 08 Nov 2018 10:26:15 -0800 (PST)
+Received: from ?IPv6:2601:282:800:fd80:3ded:1ded:5c12:ca8f? ([2601:282:800:fd80:3ded:1ded:5c12:ca8f])
+        by smtp.googlemail.com with ESMTPSA id n23-v6sm8145453pfg.84.2018.11.08.10.26.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 10:26:14 -0800 (PST)
+Subject: Re: [RFC perf,bpf 1/5] perf, bpf: Introduce PERF_RECORD_BPF_EVENT
+To:     Song Liu <songliubraving@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "acme@kernel.org" <acme@kernel.org>
+References: <20181106205246.567448-1-songliubraving@fb.com>
+ <20181106205246.567448-2-songliubraving@fb.com>
+ <20181107084057.GG9781@hirez.programming.kicks-ass.net>
+ <31067290-4B66-4AA1-8027-607397BC0264@fb.com>
+ <20181108150028.GU9761@hirez.programming.kicks-ass.net>
+ <C858C862-E523-4CE8-AB39-CC9B27BE2538@fb.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <d5043aae-69b0-fd49-e82a-5a13834a3f32@gmail.com>
+Date:   Thu, 8 Nov 2018 11:26:12 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181107194858.9380-1-bigeasy@linutronix.de> <20181107194858.9380-23-bigeasy@linutronix.de>
-In-Reply-To: <20181107194858.9380-23-bigeasy@linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 8 Nov 2018 10:25:24 -0800
-X-Gmail-Original-Message-ID: <CALCETrXYTSsxYUmxb6FmvQrSaMPJ77jqgnfzG_7yRGxLUw3_QQ@mail.gmail.com>
-Message-ID: <CALCETrXYTSsxYUmxb6FmvQrSaMPJ77jqgnfzG_7yRGxLUw3_QQ@mail.gmail.com>
-Subject: Re: [PATCH 22/23] x86/fpu: Don't restore the FPU state directly from
- userland in __fpu__restore_sig()
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <C858C862-E523-4CE8-AB39-CC9B27BE2538@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 11:49 AM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> __fpu__restore_sig() restores the CPU's FPU state directly from
-> userland. If we restore registers on return to userland then we can't
-> load them directly from userland because a context switch/BH could
-> destroy them.
->
-> Restore the FPU registers after they have been copied from userland.
-> __fpregs_changes_begin() ensures that they are not modified while beeing
-> worked on. TIF_NEED_FPU_LOAD is clreared we want to keep our state, not
-> the saved state.
+On 11/8/18 11:04 AM, Song Liu wrote:
+> On the other hand, processing BPF load/unload events synchronously should
+> not introduce too much overhead for meaningful use cases. If many BPF progs
+> are being loaded/unloaded within short period of time, it is not the steady
+> state that profiling works care about. 
 
-I'm conceptually okay with this change, but what happens if the
-registers that are copied into the kernel are garbage?  We used to
-fail the restore and presumably kill the task.  What happens now?
+but, profiling is not the only use case, and perf-record is common with
+those other use cases.
+
+I think that answers why your RFC set does not fork a thread for the bpf
+events. You are focused on profiling and for already loaded programs or
+for a small number of programs loaded by a specific workload started by
+perf.
