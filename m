@@ -2,87 +2,153 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4FFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCB6C0044B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0B420844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:49:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0B420844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3028620840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:49:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="r6px+p66"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3028620840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeKII0n (ORCPT
+        id S1728048AbeKII05 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:26:43 -0500
-Received: from mga14.intel.com ([192.55.52.115]:53143 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbeKII0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 03:26:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 14:48:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,481,1534834800"; 
-   d="scan'208";a="272544316"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2018 14:48:59 -0800
-Message-ID: <b92d7ea58dafefc30128dacebc6de6fb9c7fa8e8.camel@linux.intel.com>
-Subject: Re: [driver-core PATCH v6 3/9] device core: Consolidate locking and
- unlocking of parent and device
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     jane.chu@oracle.com, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     len.brown@intel.com, bvanassche@acm.org, linux-pm@vger.kernel.org,
-        rafael@kernel.org, jiangshanlai@gmail.com,
-        linux-nvdimm@lists.01.org, pavel@ucw.cz, zwisler@kernel.org,
-        tj@kernel.org, akpm@linux-foundation.org
-Date:   Thu, 08 Nov 2018 14:48:59 -0800
-In-Reply-To: <791408d3-bf97-0f54-adc5-9b06540015c6@oracle.com>
-References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
-         <154170041590.12967.4367086895437513524.stgit@ahduyck-desk1.jf.intel.com>
-         <791408d3-bf97-0f54-adc5-9b06540015c6@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 9 Nov 2018 03:26:57 -0500
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:3947 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726875AbeKII05 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 03:26:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1541717353; x=1573253353;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=N60mzE6xZJ2Jy7Icwu1jrfOXy7ZLretMSb1Cfesa4Tg=;
+  b=r6px+p66sKhZuVdb9myzMa51bQUrxX3BnzMPtajMPcUvzVxfPPLzPLx6
+   FD5KQGkS5zFiN/WdnfKRKnjRXv7JY3J1nW+30tRexLvADsRTm3w3p88aC
+   OATiNXRfDinhX1X70fDbj4U7lDHoaUi87oIoFIU72wqWyfL+UePy8EuY8
+   s=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EFAAB5vORbhiWd50NYDBsBAQEBAwE?=
+ =?us-ascii?q?BAQcDAQEBgVEGAQEBCwGDazGMBl+LHYINepY4FIFmCwEBgXeCdYMbIjQNDQE?=
+ =?us-ascii?q?DAQECAQECAQECEAEBAQoJCwgpL4I2IoJkAQEBAxILHT8QAgEIGB4QVwIEARo?=
+ =?us-ascii?q?agn+CApxrAoEQiVgBAQGCHIosi3mCF4ERgl01hD4BDAESAQcGEiyFLwKKfZR?=
+ =?us-ascii?q?LCQWRCSCBV4UBgyKGcoJ0lFUCBAIEBQIUgUOBHXFwgz2CNBuOCkABi0iBH4E?=
+ =?us-ascii?q?fAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EFAAB5vORbhiWd50NYDBsBAQEBAwEBAQcDAQEBgVEGA?=
+ =?us-ascii?q?QEBCwGDazGMBl+LHYINepY4FIFmCwEBgXeCdYMbIjQNDQEDAQECAQECAQECE?=
+ =?us-ascii?q?AEBAQoJCwgpL4I2IoJkAQEBAxILHT8QAgEIGB4QVwIEARoagn+CApxrAoEQi?=
+ =?us-ascii?q?VgBAQGCHIosi3mCF4ERgl01hD4BDAESAQcGEiyFLwKKfZRLCQWRCSCBV4UBg?=
+ =?us-ascii?q?yKGcoJ0lFUCBAIEBQIUgUOBHXFwgz2CNBuOCkABi0iBH4EfAQE?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Nov 2018 16:49:12 -0600
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8MmAhq034574;
+        Thu, 8 Nov 2018 17:49:12 -0500
+Received: from esa6.dell-outbound2.iphmx.com (esa6.dell-outbound2.iphmx.com [68.232.154.99])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nmnhub2sh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 08 Nov 2018 17:49:11 -0500
+Cc:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>,
+        <linux-pci@vger.kernel.org>, <Austin.Bolen@dell.com>,
+        <Shyam.Iyer@dell.com>, <linux-kernel@vger.kernel.org>,
+        <jonathan.derrick@intel.com>, <lukas@wunner.de>,
+        <ruscur@russell.cc>, <sbobroff@linux.ibm.com>, <oohall@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>
+Received: from ausc60pc101.us.dell.com ([143.166.85.206])
+  by esa6.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 09 Nov 2018 04:49:10 +0600
+X-LoopCount0: from 10.166.134.87
+X-IronPort-AV: E=Sophos;i="5.54,481,1534827600"; 
+   d="scan'208";a="1323441867"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <gregkh@linuxfoundation.org>, <keith.busch@intel.com>
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Thread-Topic: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Thread-Index: AQHUT50UQ290XPGvJEGnaSTTjbCF+g==
+Date:   Thu, 8 Nov 2018 22:49:08 +0000
+Message-ID: <20d68e586fff4dcca5616d5056f6fc21@ausx13mps321.AMER.DELL.COM>
+References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
+ <20181107234257.GC41183@google.com> <20181108200855.GE41183@google.com>
+ <20181108220117.GA11466@kroah.com>
+ <20181108223258.GD2932@localhost.localdomain>
+ <20181108224255.GA20619@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.177.90.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-08 at 14:43 -0800, jane.chu@oracle.com wrote:
-> Hi, Alex,
-> 
-> 
-> On 11/08/2018 10:06 AM, Alexander Duyck wrote:
-> > +/*
-> > + * __device_driver_lock - release locks needed to manipulate dev->drv
-> 
-> You meant to say __device_driver_unlock, right?
-
-Yes, you are correct.
-
-> > + * @dev: Device we will update driver info for
-> > + * @parent: Parent device. Needed if the bus requires parent lock
-> > + *
-> > + * This function will release the required locks for manipulating dev->drv.
-> > + * Normally this will just be the the @dev lock, but when called for a
-> > + * USB interface, @parent lock will be released as well.
-> > + */
-> > +static void __device_driver_unlock(struct device *dev, struct device *parent)
-> > +{
-> > +	device_unlock(dev);
-> > +	if (parent && dev->bus->need_parent_lock)
-> > +		device_unlock(parent);
-> > +}
-> 
-> -jane
-
-Thanks.
-
-- Alex
-
+On 11/08/2018 04:43 PM, Greg Kroah-Hartman wrote:=0A=
+> =0A=
+> [EXTERNAL EMAIL]=0A=
+> Please report any suspicious attachments, links, or requests for sensitiv=
+e information.=0A=
+> =0A=
+> =0A=
+> On Thu, Nov 08, 2018 at 03:32:58PM -0700, Keith Busch wrote:=0A=
+>> On Thu, Nov 08, 2018 at 02:01:17PM -0800, Greg Kroah-Hartman wrote:=0A=
+>>> On Thu, Nov 08, 2018 at 02:09:17PM -0600, Bjorn Helgaas wrote:=0A=
+>>>> I'm having second thoughts about this.  One thing I'm uncomfortable=0A=
+>>>> with is that sprinkling pci_dev_is_disconnected() around feels ad hoc=
+=0A=
+>>>> instead of systematic, in the sense that I don't know how we convince=
+=0A=
+>>>> ourselves that this (and only this) is the correct place to put it.=0A=
+>>>=0A=
+>>> I think my stance always has been that this call is not good at all=0A=
+>>> because once you call it you never really know if it is still true as=
+=0A=
+>>> the device could have been removed right afterward.=0A=
+>>>=0A=
+>>> So almost any code that relies on it is broken, there is no locking and=
+=0A=
+>>> it can and will race and you will loose.=0A=
+>>=0A=
+>> AIUI, we're not trying to create code to rely on this. This more about=
+=0A=
+>> reducing reliance on hardware. If the software misses the race once and=
+=0A=
+>> accesses disconnected device memory, that's usually not a big deal to=0A=
+>> let hardware sort it out, but the point is not to push our luck.=0A=
+> =0A=
+> Then why even care about this call at all?  If you need to really know=0A=
+> if the read worked, you have to check the value.  If the value is FF=0A=
+> then you have a huge hint that the hardware is now gone.  And you can=0A=
+> rely on it being gone, you can never rely on making the call to the=0A=
+> function to check if the hardware is there to be still valid any point=0A=
+> in time after the call returns.=0A=
+=0A=
+In the case that we're trying to fix, this code executing is a result of =
+=0A=
+the device being gone, so we can guarantee race-free operation. I agree =0A=
+that there is a race, in the general case. As far as checking the result =
+=0A=
+for all F's, that's not an option when firmware crashes the system as a =0A=
+result of the mmio read/write. It's never pretty when firmware gets =0A=
+involved.=0A=
+=0A=
+Alex=0A=
