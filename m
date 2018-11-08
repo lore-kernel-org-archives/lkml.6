@@ -7,70 +7,70 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9913CC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FE3C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B8E72086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 107462086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:48:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euL+hg3r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8E72086C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0UvrWDc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107462086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeKHUWX (ORCPT
+        id S1727064AbeKHUW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:22:23 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:47017 "EHLO
+        Thu, 8 Nov 2018 15:22:58 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:36949 "EHLO
         mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbeKHUWW (ORCPT
+        with ESMTP id S1726252AbeKHUW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:22:22 -0500
-Received: by mail-yw1-f67.google.com with SMTP id v5-v6so3354419ywa.13;
-        Thu, 08 Nov 2018 02:47:29 -0800 (PST)
+        Thu, 8 Nov 2018 15:22:58 -0500
+Received: by mail-yw1-f67.google.com with SMTP id v77-v6so7825177ywc.4;
+        Thu, 08 Nov 2018 02:48:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=PzVp2vehovBKgbVNnHHKfUEFWz4EG4q13FH78e+GO6o=;
-        b=euL+hg3riR0hcLsDR+TA0Nw19YLiLP37xHRb4ugzqC+OY64XYGWIdGttm+BiwP+EXM
-         lxqcGPb147nieelu0mfR23DX1LAWPvZxh2GIaXphnx4S+7u6N/DSA2F1ymrDAZIMHZ9m
-         Ec0F+foMCZqP6htaf+FjGQFG4RM/1eyRYSvT1ctppmnq8ic7GqhbK35WHIrRm9wNiSs4
-         tln1JInogVIwqmxfV0eKtroMPVypnMfUb+2HTgYXjhJsA3LuRe0huYXvwTuD9DrXHBIK
-         GpTpNk3twT27nkF+UQJXq1ygiOlyABoZ1oX3ZztTwYkOGoUa8qKmYF8c+hwVHy9NPCMC
-         ly/A==
+        bh=Hsk+Q2J3Wg5Qckzl+HJrRNpuJs8lpknR+FIAmR6dFQg=;
+        b=J0UvrWDc53ros8JlFf8XMm9RKlpF8E9Ib6PtxqloGElop844ed9SFIjUp/YeAJn/UA
+         jJvHtk8xxYttfx6on+9pd18GtLl3U5fShRutvrqqy0TRjh7XFtDTcQ688AjcIDV3xMLC
+         Cxnt/PZq+1Rt74/fArnHUaOIX9M6EULWSzzn8Mw3kCDJiK7wCZvNGB4hQElSiHu+Giiy
+         3O+9HJG3j5iE3Gse4X48Vqw0puRGwYO3cfDgLvsu5iaHjMXIFBVweFMYtAaYofRyD5Gf
+         BFcIxivIhiBNaC53uABu/hTTnGNM4iOjE/EAkkRJPGBsRiR3ps2aSKeo9qekjjhiYVfs
+         Oemg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PzVp2vehovBKgbVNnHHKfUEFWz4EG4q13FH78e+GO6o=;
-        b=gcu2BLlT8XrlDWGYIWd2i+DTOfSqBODkxGyoyULdt9+l2ovzobi/WLtgwLQEZacF0u
-         cA0SD9DLMndnylCHvXJ96U0fYe/AefYh1ZecGIvAt8GX4L9qguXGp0k7UrN8hJ56SrKI
-         VXKg/82/jEBUOYTZ8s1sN2/g3WTntl5n5QMFLpYTwpo7qbQlHAW3icwqub6fJLzKCfPx
-         u/cbu788Rjq73Hi9emaJR3IE/+Q8knl8GyjZLuC/66BH4sJbOCtsTQeCRSicZeNCuyks
-         /gbKW2VC5WXxq9jxfB+dWLMe5yJwyS3e/2GtbB4PMopWALyNjoKYFZWdwhOQr4ShPvbh
-         nKVg==
-X-Gm-Message-State: AGRZ1gL/hlBA+ElW9E0nKE2rqucvk008Eoiwm4SNyJelPuGRUAbjacAm
-        E40wRckWxjndXsfgZ/QzSNrH+Nkn6tdLN9NuCQk=
-X-Google-Smtp-Source: AJdET5fy398feTlGoe4qZvv3jPaxfj+errinRqUNbuhRpx2ZvH2gUD6T4gYB6C56Ifcr83p5cm2+gopyCB6rIO1LlNU=
-X-Received: by 2002:a81:5044:: with SMTP id e65-v6mr3663155ywb.392.1541674049220;
- Thu, 08 Nov 2018 02:47:29 -0800 (PST)
+        bh=Hsk+Q2J3Wg5Qckzl+HJrRNpuJs8lpknR+FIAmR6dFQg=;
+        b=TZchfltz/YUNspWZbPdvJiw/hZJ89zTbIkcI1H0omI7fGCUkl7gNRggApYzWESUVK1
+         xWS4UouGk7wfGMCQ1mjDyubYqbGs3dM/1hXKt2pZWBHUPw01z7niG0sCEbbA51Y4bNfb
+         shYWyHSzlnQpdTI2hTa81TVtbPUT3FJh0r0J0rVzia/hYsdTBt+dewOGMS1UuQ3EroVn
+         hynRQg5sLH1zKtlrPIt9gN3v1+9aR6IrkbjyZ9OwsvbMjJQvqb04i1C3IWCJwUlQwNwV
+         2IwYesV71eUrSxu7rMgUlawKdrqH/5O1H7yb5LQ2+RqJaiLn4DmS2GgQGIyTF3EHuCib
+         V0gQ==
+X-Gm-Message-State: AGRZ1gKtK7HJCGYEGiCevJ/D6n5/uAuU0PHh3MVs8OwA4TOlHm45hI76
+        2pHtZi2w04ZYPIsKZ35OG3nXQvVwvB//oBFq38Q=
+X-Google-Smtp-Source: AJdET5c9Al8bs5wB0VITyPyTlr73xz6AJy98kGL68PvXKsOmFXV/2SAB8jMc4B5fdBnayAl48OsR54uXg4DF9OhMWwM=
+X-Received: by 2002:a81:9f8b:: with SMTP id w133-v6mr3615474ywg.163.1541674084296;
+ Thu, 08 Nov 2018 02:48:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20181107093613.26734-1-peron.clem@gmail.com> <20181107093613.26734-2-peron.clem@gmail.com>
- <20181107162908.tejzekhc35pbknut@pengutronix.de>
-In-Reply-To: <20181107162908.tejzekhc35pbknut@pengutronix.de>
+References: <20181107093613.26734-1-peron.clem@gmail.com> <20181107161247.sesu2comhes2d4kx@pengutronix.de>
+ <dbd99d36-4ff2-8e14-cc54-0896459fdb0e@broadcom.com>
+In-Reply-To: <dbd99d36-4ff2-8e14-cc54-0896459fdb0e@broadcom.com>
 From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Thu, 8 Nov 2018 11:47:17 +0100
-Message-ID: <CAJiuCccMtBsCVHeqxQhXRj_Ltdv91Qk-6WDKAhb5S7whZOWsAw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pwm: bcm-kona: apply pwm settings on enable
-To:     u.kleine-koenig@pengutronix.de
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+Date:   Thu, 8 Nov 2018 11:47:53 +0100
+Message-ID: <CAJiuCccuFKaht93QPvT+taaT8g7CHGS9uP9Ekr0VWASp+ZGZmA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pwm: kconfig: enable kona pwm to be built for cygnus arch
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     u.kleine-koenig@pengutronix.de,
+        Thierry Reding <thierry.reding@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
         bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Suji Velupillai <suji.velupillai@broadcom.com>
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,86 +78,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
+Hi Uwe, Scott,
 
-On Wed, 7 Nov 2018 at 17:29, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Wed, 7 Nov 2018 at 17:48, Scott Branden <scott.branden@broadcom.com> wro=
+te:
 >
-> Hello,
 >
-> On Wed, Nov 07, 2018 at 10:36:13AM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
-> > From: Suji Velupillai <suji.velupillai@broadcom.com>
+> On 2018-11-07 8:12 a.m., Uwe Kleine-K=C3=B6nig wrote:
+> > On Wed, Nov 07, 2018 at 10:36:12AM +0100, Cl=C3=A9ment P=C3=A9ron wrote=
+:
+> >> The Cygnus architecture use a Kona PWM. This is already present
+> >> in the device tree but can't be built actually. Hence, allow the
+> >> Kona PWM to be built for Cygnus arch.
+> >>
+> >> Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> >> ---
+> >>   drivers/pwm/Kconfig | 3 ++-
+> >>   1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> >> index 763ee50ea57d..76d56fc8b1b7 100644
+> >> --- a/drivers/pwm/Kconfig
+> >> +++ b/drivers/pwm/Kconfig
+> >> @@ -88,7 +88,8 @@ config PWM_BCM_IPROC
+> >>
+> >>   config PWM_BCM_KONA
+> >>      tristate "Kona PWM support"
+> >> -    depends on ARCH_BCM_MOBILE
+> >> +    depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS
+> >> +    default ARCH_BCM_CYGNUS
+> > Is it possible to build this driver also on other arches? Then you migh=
+t
+> > want to consider
 > >
-> > When pwm_bl framework calls enable, a call to pwm_is_enabled(pwm) still
-> > return false, this prevents the backlight being turn on at boot time.
-> >
-> > Signed-off-by: Suji Velupillai <suji.velupillai@broadcom.com>
-> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> > ---
-> >  drivers/pwm/pwm-bcm-kona.c | 16 +++++++++++-----
-> >  1 file changed, 11 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
-> > index 09a95aeb3a70..d991d53c4b38 100644
-> > --- a/drivers/pwm/pwm-bcm-kona.c
-> > +++ b/drivers/pwm/pwm-bcm-kona.c
-> > @@ -108,8 +108,8 @@ static void kona_pwmc_apply_settings(struct kona_pw=
-mc *kp, unsigned int chan)
-> >       ndelay(400);
-> >  }
-> >
-> > -static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *=
-pwm,
-> > -                         int duty_ns, int period_ns)
-> > +static int __pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm=
-,
-> > +                      int duty_ns, int period_ns, bool pwmc_enabled)
-> >  {
-> >       struct kona_pwmc *kp =3D to_kona_pwmc(chip);
-> >       u64 val, div, rate;
-> > @@ -155,7 +155,7 @@ static int kona_pwmc_config(struct pwm_chip *chip, =
-struct pwm_device *pwm,
-> >        * always calculated above to ensure the new values are
-> >        * validated immediately instead of on enable.
-> >        */
-> > -     if (pwm_is_enabled(pwm)) {
-> > +     if (pwm_is_enabled(pwm) || pwmc_enabled) {
->
-> Having pwm-API-calls in hw-drivers is ugly. Apart from not giving the
-> intended return code this function should IMHO be reserved to pwm
-> consumers. The underlaying problem is that pwm-bl does:
->
->         pwm_config(pwm, duty_cycle, period);
->         pwm_enable(pwm);
->
-> and expects that the duty_cycle and period is used then. Doesn't
-> everything works just fine if the if-block is always executed?
+> >       depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
+> good idea to add the COMPILE_TEST just to increase compile coverage
 
-Tested and works fine for me. But I only have a Cygnus proc.
-Maybe there is some issue with Kona as explained by the comment (even
-if I don't understand it well).
+Will Do.
 
- * Don't apply settings if disabled. The period and duty cycle are
- * always calculated above to ensure the new values are
- * validated immediately instead of on enable.
-
-Regards,
+Thanks,
 Clement
 
->
-> The better fix here would be to convert the driver to the atomic API
-> (i.e. implement .apply instead of .config, .set_polarity, .enable and
-> .disable).
->
-> Alternatively in .enable ensure that the hardware is programmed with the
-> parameters from pwm->state. (But converting to the atomic API is the
-> better approach.)
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+> >
+> > Best regards
+> > Uwe
+> >
