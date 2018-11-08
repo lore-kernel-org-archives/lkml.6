@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35128C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88525C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E333220892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF3120883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhTJUmRt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E333220892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKLHKfu8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF3120883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732149AbeKIHob (ORCPT
+        id S1732136AbeKIHoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37320 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730843AbeKIHo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728311AbeKIHo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:44:29 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 907CF208A3;
-        Thu,  8 Nov 2018 22:06:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB90F20892;
+        Thu,  8 Nov 2018 22:06:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714817;
-        bh=BGRUwpaTkapS3aSGnMbAVZ0HBX23gH4RTryQC02F0Q4=;
+        s=default; t=1541714818;
+        bh=gwn+4+QimNsjzrlo/bc5tu1o5+4SJ9vdpxkeZy8FKnk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MhTJUmRtqTNr0e4RnLko3+bpaTxX7JTHXoI6qYP5Iymd7/3qs6Y+hJkhBb4vm9fIq
-         7hN+jQwe+Yj2bwyQuWfL5ibznwOkjD4wF3HMNvP6abczXBy7WlEUU4lt4dqh+WuVJj
-         aPd2fcfUCAdem7JGGJOBioMfzXtr4SU0pVl9Wirw=
+        b=sKLHKfu8n+dkEP+HcaWeVk1I+HQon2THPGz5xwff/rYsDNPmInTJnyCJN1g2ghlmd
+         PY0W07CArmmxiFBoHYCYTCyd9+h3oTfR7mGLJi3xcNDpBMTUB0470dY1WoDR9h7BDp
+         dUPN7gzFBL7O51YrRv82wSumVA2Qj/n9kiqWK/GQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Kumar <samanthakumar@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Sean Tranchetti <stranche@codeaurora.org>,
+        stable@vger.kernel.org,
+        syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 143/171] net: udp: fix handling of CHECKSUM_COMPLETE packets
-Date:   Thu,  8 Nov 2018 13:51:53 -0800
-Message-Id: <20181108215137.317545751@linuxfoundation.org>
+Subject: [PATCH 4.9 145/171] sctp: fix race on sctp_id2asoc
+Date:   Thu,  8 Nov 2018 13:51:55 -0800
+Message-Id: <20181108215137.437612172@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,146 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Tranchetti <stranche@codeaurora.org>
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 
-[ Upstream commit db4f1be3ca9b0ef7330763d07bf4ace83ad6f913 ]
+[ Upstream commit b336decab22158937975293aea79396525f92bb3 ]
 
-Current handling of CHECKSUM_COMPLETE packets by the UDP stack is
-incorrect for any packet that has an incorrect checksum value.
+syzbot reported an use-after-free involving sctp_id2asoc.  Dmitry Vyukov
+helped to root cause it and it is because of reading the asoc after it
+was freed:
 
-udp4/6_csum_init() will both make a call to
-__skb_checksum_validate_complete() to initialize/validate the csum
-field when receiving a CHECKSUM_COMPLETE packet. When this packet
-fails validation, skb->csum will be overwritten with the pseudoheader
-checksum so the packet can be fully validated by software, but the
-skb->ip_summed value will be left as CHECKSUM_COMPLETE so that way
-the stack can later warn the user about their hardware spewing bad
-checksums. Unfortunately, leaving the SKB in this state can cause
-problems later on in the checksum calculation.
+        CPU 1                       CPU 2
+(working on socket 1)            (working on socket 2)
+	                         sctp_association_destroy
+sctp_id2asoc
+   spin lock
+     grab the asoc from idr
+   spin unlock
+                                   spin lock
+				     remove asoc from idr
+				   spin unlock
+				   free(asoc)
+   if asoc->base.sk != sk ... [*]
 
-Since the the packet is still marked as CHECKSUM_COMPLETE,
-udp_csum_pull_header() will SUBTRACT the checksum of the UDP header
-from skb->csum instead of adding it, leaving us with a garbage value
-in that field. Once we try to copy the packet to userspace in the
-udp4/6_recvmsg(), we'll make a call to skb_copy_and_csum_datagram_msg()
-to checksum the packet data and add it in the garbage skb->csum value
-to perform our final validation check.
+This can only be hit if trying to fetch asocs from different sockets. As
+we have a single IDR for all asocs, in all SCTP sockets, their id is
+unique on the system. An application can try to send stuff on an id
+that matches on another socket, and the if in [*] will protect from such
+usage. But it didn't consider that as that asoc may belong to another
+socket, it may be freed in parallel (read: under another socket lock).
 
-Since the value we're validating is not the proper checksum, it's possible
-that the folded value could come out to 0, causing us not to drop the
-packet. Instead, we believe that the packet was checksummed incorrectly
-by hardware since skb->ip_summed is still CHECKSUM_COMPLETE, and we attempt
-to warn the user with netdev_rx_csum_fault(skb->dev);
+We fix it by moving the checks in [*] into the protected region. This
+fixes it because the asoc cannot be freed while the lock is held.
 
-Unfortunately, since this is the UDP path, skb->dev has been overwritten
-by skb->dev_scratch and is no longer a valid pointer, so we end up
-reading invalid memory.
-
-This patch addresses this problem in two ways:
-	1) Do not use the dev pointer when calling netdev_rx_csum_fault()
-	   from skb_copy_and_csum_datagram_msg(). Since this gets called
-	   from the UDP path where skb->dev has been overwritten, we have
-	   no way of knowing if the pointer is still valid. Also for the
-	   sake of consistency with the other uses of
-	   netdev_rx_csum_fault(), don't attempt to call it if the
-	   packet was checksummed by software.
-
-	2) Add better CHECKSUM_COMPLETE handling to udp4/6_csum_init().
-	   If we receive a packet that's CHECKSUM_COMPLETE that fails
-	   verification (i.e. skb->csum_valid == 0), check who performed
-	   the calculation. It's possible that the checksum was done in
-	   software by the network stack earlier (such as Netfilter's
-	   CONNTRACK module), and if that says the checksum is bad,
-	   we can drop the packet immediately instead of waiting until
-	   we try and copy it to userspace. Otherwise, we need to
-	   mark the SKB as CHECKSUM_NONE, since the skb->csum field
-	   no longer contains the full packet checksum after the
-	   call to __skb_checksum_validate_complete().
-
-Fixes: e6afc8ace6dd ("udp: remove headers from UDP packets before queueing")
-Fixes: c84d949057ca ("udp: copy skb->truesize in the first cache line")
-Cc: Sam Kumar <samanthakumar@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Sean Tranchetti <stranche@codeaurora.org>
+Reported-by: syzbot+c7dd55d7aec49d48e49a@syzkaller.appspotmail.com
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/datagram.c     |    5 +++--
- net/ipv4/udp.c          |   20 ++++++++++++++++++--
- net/ipv6/ip6_checksum.c |   20 ++++++++++++++++++--
- 3 files changed, 39 insertions(+), 6 deletions(-)
+ net/sctp/socket.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -754,8 +754,9 @@ int skb_copy_and_csum_datagram_msg(struc
- 			return -EINVAL;
- 		}
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -248,11 +248,10 @@ struct sctp_association *sctp_id2assoc(s
  
--		if (unlikely(skb->ip_summed == CHECKSUM_COMPLETE))
--			netdev_rx_csum_fault(skb->dev);
-+		if (unlikely(skb->ip_summed == CHECKSUM_COMPLETE) &&
-+		    !skb->csum_complete_sw)
-+			netdev_rx_csum_fault(NULL);
- 	}
- 	return 0;
- fault:
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1726,8 +1726,24 @@ static inline int udp4_csum_init(struct
- 	/* Note, we are only interested in != 0 or == 0, thus the
- 	 * force to int.
- 	 */
--	return (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
--							 inet_compute_pseudo);
-+	err = (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
-+							inet_compute_pseudo);
-+	if (err)
-+		return err;
-+
-+	if (skb->ip_summed == CHECKSUM_COMPLETE && !skb->csum_valid) {
-+		/* If SW calculated the value, we know it's bad */
-+		if (skb->csum_complete_sw)
-+			return 1;
-+
-+		/* HW says the value is bad. Let's validate that.
-+		 * skb->csum is no longer the full packet checksum,
-+		 * so don't treat it as such.
-+		 */
-+		skb_checksum_complete_unset(skb);
-+	}
-+
-+	return 0;
- }
+ 	spin_lock_bh(&sctp_assocs_id_lock);
+ 	asoc = (struct sctp_association *)idr_find(&sctp_assocs_id, (int)id);
++	if (asoc && (asoc->base.sk != sk || asoc->base.dead))
++		asoc = NULL;
+ 	spin_unlock_bh(&sctp_assocs_id_lock);
  
- /* wrapper for udp_queue_rcv_skb tacking care of csum conversion and
---- a/net/ipv6/ip6_checksum.c
-+++ b/net/ipv6/ip6_checksum.c
-@@ -87,8 +87,24 @@ int udp6_csum_init(struct sk_buff *skb,
- 	 * Note, we are only interested in != 0 or == 0, thus the
- 	 * force to int.
- 	 */
--	return (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
--							 ip6_compute_pseudo);
-+	err = (__force int)skb_checksum_init_zero_check(skb, proto, uh->check,
-+							ip6_compute_pseudo);
-+	if (err)
-+		return err;
-+
-+	if (skb->ip_summed == CHECKSUM_COMPLETE && !skb->csum_valid) {
-+		/* If SW calculated the value, we know it's bad */
-+		if (skb->csum_complete_sw)
-+			return 1;
-+
-+		/* HW says the value is bad. Let's validate that.
-+		 * skb->csum is no longer the full packet checksum,
-+		 * so don't treat is as such.
-+		 */
-+		skb_checksum_complete_unset(skb);
-+	}
-+
-+	return 0;
+-	if (!asoc || (asoc->base.sk != sk) || asoc->base.dead)
+-		return NULL;
+-
+ 	return asoc;
  }
- EXPORT_SYMBOL(udp6_csum_init);
  
 
 
