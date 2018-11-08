@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABDAECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FFBECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 118A82147A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DA982089F
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:10:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyVk7bhw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 118A82147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFzd+ZR9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DA982089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733036AbeKIHsC (ORCPT
+        id S1733011AbeKIHsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:48:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732999AbeKIHsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:48:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729365AbeKIHsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:48:00 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48DC9208A3;
-        Thu,  8 Nov 2018 22:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A957821019;
+        Thu,  8 Nov 2018 22:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541715029;
-        bh=yLavgf0a/Z1xb1iHnfmRYDblmDxheKbcPlRB6+Nq3qo=;
+        s=default; t=1541715028;
+        bh=u+xEhDMbmXN2dEEJbQEoh7gf+Ws5w6t/JlyOCY+DsmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UyVk7bhwdw+n4F9MHSBHVZ7yIqMfWgAS6tc82DypHu8dwxfFjb7DqJKh5rlDw1LRD
-         gZMIB0WpKvs6PZeJ7kGldggJ1KyYkEmQJ2/rXIS+eaHAevee1tTTyaz9OkTz9QNHV1
-         tnN2hpRWhHDfcLiuS33t9l5r8TLTAjw1axhLa5X4=
+        b=pFzd+ZR9peK7b2WPLr7Sb5ZyR+Iru/Ywox432ujM5nzLv2operVzeSNTKGROJuD6A
+         Mqy2aGGa+ZKjxbBlCq33A97Zc+SHPL5LKXPa0d445glt0bwGBHEVnrjJ/ql+kzZ5D4
+         IUDB9siS6GhaucUiM6VM9NX3uWEdmz3JDlXjno8E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.18 32/34] x86/time: Correct the attribute on jiffies definition
-Date:   Thu,  8 Nov 2018 13:53:01 -0800
-Message-Id: <20181108215140.860636450@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        eric.dumazet@gmail.com, bp@alien8.de
+Subject: [PATCH 4.18 31/34] x86/percpu: Fix this_cpu_read()
+Date:   Thu,  8 Nov 2018 13:53:00 -0800
+Message-Id: <20181108215140.807567360@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -66,61 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 53c13ba8ed39e89f21a0b98f4c8a241bb44e483d upstream.
+commit b59167ac7bafd804c91e49ad53c6d33a7394d4c8 upstream.
 
-Clang warns that the declaration of jiffies in include/linux/jiffies.h
-doesn't match the definition in arch/x86/time/kernel.c:
+Eric reported that a sequence count loop using this_cpu_read() got
+optimized out. This is wrong, this_cpu_read() must imply READ_ONCE()
+because the interface is IRQ-safe, therefore an interrupt can have
+changed the per-cpu value.
 
-arch/x86/kernel/time.c:29:42: warning: section does not match previous declaration [-Wsection]
-__visible volatile unsigned long jiffies __cacheline_aligned = INITIAL_JIFFIES;
-                                         ^
-./include/linux/cache.h:49:4: note: expanded from macro '__cacheline_aligned'
-                 __section__(".data..cacheline_aligned")))
-                 ^
-./include/linux/jiffies.h:81:31: note: previous attribute is here
-extern unsigned long volatile __cacheline_aligned_in_smp __jiffy_arch_data jiffies;
-                              ^
-./arch/x86/include/asm/cache.h:20:2: note: expanded from macro '__cacheline_aligned_in_smp'
-        __page_aligned_data
-        ^
-./include/linux/linkage.h:39:29: note: expanded from macro '__page_aligned_data'
-#define __page_aligned_data     __section(.data..page_aligned) __aligned(PAGE_SIZE)
-                                ^
-./include/linux/compiler_attributes.h:233:56: note: expanded from macro '__section'
-#define __section(S)                    __attribute__((__section__(#S)))
-                                                       ^
-1 warning generated.
-
-The declaration was changed in commit 7c30f352c852 ("jiffies.h: declare
-jiffies and jiffies_64 with ____cacheline_aligned_in_smp") but wasn't
-updated here. Make them match so Clang no longer warns.
-
-Fixes: 7c30f352c852 ("jiffies.h: declare jiffies and jiffies_64 with ____cacheline_aligned_in_smp")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: 7c3576d261ce ("[PATCH] i386: Convert PDA into the percpu section")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Cc: hpa@zytor.com
+Cc: eric.dumazet@gmail.com
+Cc: bp@alien8.de
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181013005311.28617-1-natechancellor@gmail.com
+Link: https://lkml.kernel.org/r/20181011104019.748208519@infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/time.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/percpu.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/time.c
-+++ b/arch/x86/kernel/time.c
-@@ -25,7 +25,7 @@
- #include <asm/time.h>
- 
- #ifdef CONFIG_X86_64
--__visible volatile unsigned long jiffies __cacheline_aligned = INITIAL_JIFFIES;
-+__visible volatile unsigned long jiffies __cacheline_aligned_in_smp = INITIAL_JIFFIES;
- #endif
- 
- unsigned long profile_pc(struct pt_regs *regs)
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -185,22 +185,22 @@ do {									\
+ 	typeof(var) pfo_ret__;				\
+ 	switch (sizeof(var)) {				\
+ 	case 1:						\
+-		asm(op "b "__percpu_arg(1)",%0"		\
++		asm volatile(op "b "__percpu_arg(1)",%0"\
+ 		    : "=q" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 2:						\
+-		asm(op "w "__percpu_arg(1)",%0"		\
++		asm volatile(op "w "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 4:						\
+-		asm(op "l "__percpu_arg(1)",%0"		\
++		asm volatile(op "l "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 8:						\
+-		asm(op "q "__percpu_arg(1)",%0"		\
++		asm volatile(op "q "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
 
 
