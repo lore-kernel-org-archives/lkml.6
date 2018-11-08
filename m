@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F646ECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2499ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA71020892
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9612520844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:05:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="biNgziEb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA71020892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbPwucoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9612520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeKIHma (ORCPT
+        id S1731535AbeKIHmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:42:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34292 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:42:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730387AbeKIHm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:42:29 -0500
+        id S1730387AbeKIHma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:42:30 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5122208E3;
-        Thu,  8 Nov 2018 22:04:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AEB72133D;
+        Thu,  8 Nov 2018 22:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714699;
-        bh=vyGYesc0dt+9pf0eNefoniaTpCXdtNVJLjvAuAEkHI4=;
+        s=default; t=1541714700;
+        bh=bnKe0QPt6/blWpVM3dp+ygigpm2qpX/fceBJR8utqZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=biNgziEbdzeSklYz5jomrmfjgVlm1OdFKJcG6tt8bioToz9BsLj4rhDRFv0XvN7pp
-         G21VjtRtIgZD+6qOjB+q7cgw9G1jMRTov9UNH9NJQfGFFjl1HwpT29iLZSLibOsvsC
-         vCcmvwyyR+4UWA49qwH/2dxLBE7StiWYmEQ4NaY8=
+        b=GbPwucoEfXUsp9pgStxqxej7EJpkPCTFbhvIYYgS3Ba+bTz2juhGtLU0XCkreIn1p
+         gBHjKi23oujUkT3+Cc7rnU5S9ytLE87rMZK8gqd3vwwMpSTGH3xZVtAm4M5HUeHNQ9
+         gWTVCwY4C8cHn+pyyV6ojoFExyIkDYeznaQtNC60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>,
-        Jens Axboe <axboe@fb.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 069/171] elevator: fix truncation of icq_cache_name
-Date:   Thu,  8 Nov 2018 13:50:39 -0800
-Message-Id: <20181108215132.604328413@linuxfoundation.org>
+        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 049/171] nvme-pci: fix CMB sysfs file removal in reset path
+Date:   Thu,  8 Nov 2018 13:50:19 -0800
+Message-Id: <20181108215131.068100065@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,47 +63,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9bd2bbc01d17ddd567cc0f81f77fe1163e497462 ]
+[ Upstream commit 1c78f7735b2bdd0afbe5d14c5c8b6d8d381b6f13 ]
 
-gcc 7.1 reports the following warning:
+Currently we create the sysfs entry even if we fail mapping
+it. In that case, the unmapping will not remove the sysfs created
+file. There is no good reason to create a sysfs entry for a non
+working CMB and show his characteristics.
 
-    block/elevator.c: In function ‘elv_register’:
-    block/elevator.c:898:5: warning: ‘snprintf’ output may be truncated before the last format character [-Wformat-truncation=]
-         "%s_io_cq", e->elevator_name);
-         ^~~~~~~~~~
-    block/elevator.c:897:3: note: ‘snprintf’ output between 7 and 22 bytes into a destination of size 21
-       snprintf(e->icq_cache_name, sizeof(e->icq_cache_name),
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         "%s_io_cq", e->elevator_name);
-         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The bug is that the name of the icq_cache is 6 characters longer than
-the elevator name, but only ELV_NAME_MAX + 5 characters were reserved
-for it --- so in the case of a maximum-length elevator name, the 'q'
-character in "_io_cq" would be truncated by snprintf().  Fix it by
-reserving ELV_NAME_MAX + 6 characters instead.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Bart Van Assche <Bart.VanAssche@sandisk.com>
-Signed-off-by: Jens Axboe <axboe@fb.com>
+Fixes: f63572dff ("nvme: unmap CMB and remove sysfs file in reset path")
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Reviewed-by: Stephen Bates <sbates@raithlin.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/elevator.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index e7f358d2e5fc..eaa58c0f894b 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -102,7 +102,7 @@ struct elevator_type
- 	struct module *elevator_owner;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index fadf151ce830..1ac4cec5f4f7 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1393,11 +1393,9 @@ static inline void nvme_release_cmb(struct nvme_dev *dev)
+ 	if (dev->cmb) {
+ 		iounmap(dev->cmb);
+ 		dev->cmb = NULL;
+-		if (dev->cmbsz) {
+-			sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
+-						     &dev_attr_cmb.attr, NULL);
+-			dev->cmbsz = 0;
+-		}
++		sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
++					     &dev_attr_cmb.attr, NULL);
++		dev->cmbsz = 0;
+ 	}
+ }
  
- 	/* managed by elevator core */
--	char icq_cache_name[ELV_NAME_MAX + 5];	/* elvname + "_io_cq" */
-+	char icq_cache_name[ELV_NAME_MAX + 6];	/* elvname + "_io_cq" */
- 	struct list_head list;
- };
+@@ -1632,16 +1630,14 @@ static int nvme_pci_enable(struct nvme_dev *dev)
  
+ 	/*
+ 	 * CMBs can currently only exist on >=1.2 PCIe devices. We only
+-	 * populate sysfs if a CMB is implemented. Note that we add the
+-	 * CMB attribute to the nvme_ctrl kobj which removes the need to remove
+-	 * it on exit. Since nvme_dev_attrs_group has no name we can pass
+-	 * NULL as final argument to sysfs_add_file_to_group.
++	 * populate sysfs if a CMB is implemented. Since nvme_dev_attrs_group
++	 * has no name we can pass NULL as final argument to
++	 * sysfs_add_file_to_group.
+ 	 */
+ 
+ 	if (readl(dev->bar + NVME_REG_VS) >= NVME_VS(1, 2, 0)) {
+ 		dev->cmb = nvme_map_cmb(dev);
+-
+-		if (dev->cmbsz) {
++		if (dev->cmb) {
+ 			if (sysfs_add_file_to_group(&dev->ctrl.device->kobj,
+ 						    &dev_attr_cmb.attr, NULL))
+ 				dev_warn(dev->dev,
 -- 
 2.17.1
 
