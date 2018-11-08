@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDE9C46465
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A097C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11DEC2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7F56208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 10:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="S44hyV6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DEC2086C
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kVaPTjce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F56208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbeKHUTq (ORCPT
+        id S1727083AbeKHUTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:19:46 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50803 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKHUTo (ORCPT
+        Thu, 8 Nov 2018 15:19:48 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51747 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbeKHUTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 15:19:44 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 124-v6so768301wmw.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 02:44:51 -0800 (PST)
+        Thu, 8 Nov 2018 15:19:47 -0500
+Received: by mail-wm1-f68.google.com with SMTP id w7-v6so759339wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 02:44:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5sBBc5EvtxV7NFthSUI3pE8N+JW8dWzJOFUjmWOYU4c=;
-        b=S44hyV6oX2gQqDevXVlPEM0uThd19akWHw7+rGLYEKPtKHJ6y+G+OlZ39dLp84D6GQ
-         vwun83B+KrwgFri+7ShmDgbwzQKMtRDjK5AwP9yfFQAZLSv0wRlJx756FJ88i+bwOrBg
-         fNuG2lUJmOdMKkQTFeLyXWcK8dB/ZTeVKHdq9Lqjg9NCIl1Emi5qqYZh1r3MXklCjr4J
-         2GbhyyVQwOr8+vgHAoCLVgpbwo9bnS0pzMof7LgTdx9vr3z27T2FlJVtCDzwYhTA/g6B
-         RbHyB8TDaAH1CrddCJkXU+licY+1wACBLZXIUpizE6MmMbsv4uSeWZ0ywHrUyGWzy5L3
-         44FA==
+        bh=Ej2YST9rdgBvI/3S+E/v4xZNuOxlt8n1LsFdJ1JaCwE=;
+        b=kVaPTjceCYjCUMMCNJHYyespSLFNykzmSK1sKH6uqlOxEtJmWi2UNBZO30j4GKcFpx
+         RzxPfpo9R98AYm+5BP4ut9PcuRPRDwyJ9sv+5OPwfLZ+1DLZ0b2QbGbwJUgSr+CdHvNs
+         kjXRPTxXZM4EyAkMfDnZnB4lcYSjqrwMMprPITwokYmrRfJs2t6BBvXY+dd/uDfihurl
+         bF6kNAUo8hoYSoVFdRSOv77bdiMTpmbSvgS5nZJ4vp9S1zJh7zCjD+V47L6yKHFfkbQG
+         pJfugqOE2/UfsdNpYsPvVZ/4wrGRrcEjczkqhxImNwirc/xJxFZYsQNAerkKIEANAL7B
+         w5nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5sBBc5EvtxV7NFthSUI3pE8N+JW8dWzJOFUjmWOYU4c=;
-        b=Zhb9LHDZV6fA0qtZ79qw8nlhP5nniEM5ViBTB9nHtzp/w+vty/YYMeLo58sSsvQWLi
-         sLhpD0aO43+0pHRZJDNc/YC65mIsqBApAczy8mGEJZZuZm1GddnEYuXtUTE6RM8OrgxW
-         TPvcV4yb9vDZvOT6/PYgzeOEi21eDYCwael3YjuyaCakJljIyVPMpUme2colILQJQXWh
-         gRtGg86/IL7uotdPlZf95ttf32msl9ZxGoWqOrazJv0OjmL8fsT1oBrTSQEP8urVSLcB
-         c/vF06auolexFjWuoWwddpjxNyv8FDwXOrjgRk2t+5B+wsSVeMd3kJH/rD9gSPnSejq5
-         +iWw==
-X-Gm-Message-State: AGRZ1gKm2TBD4TenP43q0FYg6Epro9Kz86TCtQi8HinciRFTAGH6QNSD
-        IPuRyZS+3Hz8oxiA+ePuXi67bg==
-X-Google-Smtp-Source: AJdET5cdyqQPrEvG3wPmyRkN21LQ8qzCs4Og5g2HXJzVgvONm0U8cJVK17OSg03fWr+sETOqAkaM+g==
-X-Received: by 2002:a1c:98ce:: with SMTP id a197-v6mr752717wme.135.1541673891104;
-        Thu, 08 Nov 2018 02:44:51 -0800 (PST)
+        bh=Ej2YST9rdgBvI/3S+E/v4xZNuOxlt8n1LsFdJ1JaCwE=;
+        b=nxjhFdcsbLqzTegCAcEhSAJ56xZEuVgkMoApKDA6u5imL0z65+czJrmH35+yafZ5iH
+         YmjdjQ1p9PeNddVoq3ylIE6EC87QElCJ8jGKOjyHh/KvLyZt9HhCTLNrs58bHDFrg7rn
+         A/v/jkBIasxU5UpGi+UJQ3K1xWKeMi8loErzBDDKPVMwSQDKy/KMHG0vd1qlRxyS7K29
+         KrWfzlvl70GggZFZDWe9JD2ybenl3DQSbb9CjTMHAEq9/OMNg3lIXOyEwYsb9t3Qxl7T
+         pHooPbqcJ36ovCZ+bmT6mpUmKljQtbRhbvg3RqOhNbXDxWi5EDOMK9GxPSvQcGyBu886
+         GEbQ==
+X-Gm-Message-State: AGRZ1gKlhUc+clXDtKomnWneu5WaQSu5hdW0/Qbgoz1VVQ7Z6sesdHNA
+        +kEtIRdFx+xFn3DgJfjG22aZag==
+X-Google-Smtp-Source: AJdET5fFBtoKY7h6IChvJJVCsOVJDwqX9+4WLhf3+gnaiLkjfu77l90tW7epnk0pLjGRPo34UW9row==
+X-Received: by 2002:a1c:8d86:: with SMTP id p128-v6mr746220wmd.48.1541673894163;
+        Thu, 08 Nov 2018 02:44:54 -0800 (PST)
 Received: from boomer.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id o130-v6sm5884800wmd.11.2018.11.08.02.44.49
+        by smtp.googlemail.com with ESMTPSA id o130-v6sm5884800wmd.11.2018.11.08.02.44.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 02:44:50 -0800 (PST)
+        Thu, 08 Nov 2018 02:44:53 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] arm64: dts: meson: remove extra subnode in mmc clk_gate pinmux
-Date:   Thu,  8 Nov 2018 11:44:23 +0100
-Message-Id: <20181108104426.1877-2-jbrunet@baylibre.com>
+Subject: [PATCH 4/4] ARM: dts: meson: consistently disable pin bias
+Date:   Thu,  8 Nov 2018 11:44:26 +0100
+Message-Id: <20181108104426.1877-5-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108104426.1877-1-jbrunet@baylibre.com>
 References: <20181108104426.1877-1-jbrunet@baylibre.com>
@@ -77,109 +77,220 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the pinmux of the mmc clk_gate nodes, we define 2 subnodes. One for
-the function definition, the other for the bias. This is not necessary
-since we can define the function and the bias in the same subnode.
+On Amlogic chipsets, the bias set through pinconf applies to the pad
+itself, not only the GPIO function. This means that even when we change
+the function of the pad from GPIO to anything else, the bias previously
+set still applies.
+
+As we have seen with the eMMC, depending on the bias type and the function,
+it may trigger problems.
+
+The underlying issue is that we inherit whatever was left by previous user
+of the pad (pinconf, u-boot or the ROM code). As a consequence, the actual
+setup we will get is undefined.
+
+There is nothing mentioned in the documentation about pad bias and pinmux
+function, however leaving it undefined is not an option.
+
+This change consistently disable the pad bias for every pinmux functions.
+It seems to work well, we can only assume that the necessary bias (if any)
+is already provided by the pin function itself.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 6 ------
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 9 ---------
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 9 ---------
- 3 files changed, 24 deletions(-)
+ arch/arm/boot/dts/meson8.dtsi   | 12 ++++++++++++
+ arch/arm/boot/dts/meson8b.dtsi  |  9 +++++++++
+ arch/arm/boot/dts/meson8m2.dtsi |  1 +
+ 3 files changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index eb46db001ce0..e86f5f721f8f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -280,9 +280,6 @@
- 					mux {
- 						groups = "BOOT_8";
- 						function = "gpio_periphs";
--					};
--					cfg-pull-down {
--						pins = "BOOT_8";
- 						bias-pull-down;
- 					};
- 				};
-@@ -513,9 +510,6 @@
- 					mux {
- 						groups = "GPIOX_4";
- 						function = "gpio_periphs";
--					};
--					cfg-pull-down {
--						pins = "GPIOX_4";
- 						bias-pull-down;
- 					};
- 				};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 524f533e41d4..1cb8e7e0d0da 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -377,9 +377,6 @@
- 			mux {
- 				groups = "BOOT_8";
- 				function = "gpio_periphs";
--			};
--			cfg-pull-down {
--				pins = "BOOT_8";
- 				bias-pull-down;
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 7162e0ca05b0..1e735c0d92e3 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -164,6 +164,7 @@
+ 				groups = "uart_tx_ao_a", "uart_rx_ao_a";
+ 				function = "uart_ao";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		i2c_ao_pins: i2c_mst_ao {
+@@ -171,6 +172,7 @@
+ 				groups = "i2c_mst_sck_ao", "i2c_mst_sda_ao";
+ 				function = "i2c_mst_ao";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		ir_recv_pins: remote {
+@@ -178,6 +180,7 @@
+ 				groups = "remote_input";
+ 				function = "remote";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		pwm_f_ao_pins: pwm-f-ao {
+@@ -185,6 +188,7 @@
+ 				groups = "pwm_f_ao";
+ 				function = "pwm_f_ao";
+ 			};
++			bias-disable;
+ 		};
+ 	};
+ };
+@@ -239,6 +243,7 @@
+ 					"sd_d3_a", "sd_clk_a", "sd_cmd_a";
+ 				function = "sd_a";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		sd_b_pins: sd-b {
+@@ -247,6 +252,7 @@
+ 					"sd_d3_b", "sd_clk_b", "sd_cmd_b";
+ 				function = "sd_b";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		sd_c_pins: sd-c {
+@@ -255,6 +261,7 @@
+ 					"sd_d3_c", "sd_clk_c", "sd_cmd_c";
+ 				function = "sd_c";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		spi_nor_pins: nor {
+@@ -262,6 +269,7 @@
+ 				groups = "nor_d", "nor_q", "nor_c", "nor_cs";
+ 				function = "nor";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		eth_pins: ethernet {
+@@ -273,6 +281,7 @@
+ 					 "eth_mdc";
+ 				function = "ethernet";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		pwm_e_pins: pwm-e {
+@@ -280,6 +289,7 @@
+ 				groups = "pwm_e";
+ 				function = "pwm_e";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		uart_a1_pins: uart-a1 {
+@@ -288,6 +298,7 @@
+ 				       "uart_rx_a1";
+ 				function = "uart_a";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		uart_a1_cts_rts_pins: uart-a1-cts-rts {
+@@ -296,6 +307,7 @@
+ 				       "uart_rts_a1";
+ 				function = "uart_a";
+ 			};
++			bias-disable;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index cd1ca9dda126..6fc129ab4453 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -147,6 +147,7 @@
+ 				groups = "uart_tx_ao_a", "uart_rx_ao_a";
+ 				function = "uart_ao";
+ 			};
++			bias-disable;
+ 		};
+ 
+ 		ir_recv_pins: remote {
+@@ -154,6 +155,7 @@
+ 				groups = "remote_input";
+ 				function = "remote";
+ 			};
++			bias-disable;
+ 		};
+ 	};
+ };
+@@ -220,6 +222,7 @@
+ 					 "eth_txd2",
+ 					 "eth_txd3";
+ 				function = "ethernet";
++				bias-disable;
  			};
  		};
-@@ -426,9 +423,6 @@
- 			mux {
- 				groups = "CARD_2";
- 				function = "gpio_periphs";
--			};
--			cfg-pull-down {
--				pins = "CARD_2";
- 				bias-pull-down;
+ 
+@@ -235,6 +238,7 @@
+ 					 "eth_mdio_en",
+ 					 "eth_mdc";
+ 				function = "ethernet";
++				bias-disable;
  			};
  		};
-@@ -449,9 +443,6 @@
+ 
+@@ -242,6 +246,7 @@
  			mux {
- 				groups = "GPIOX_4";
- 				function = "gpio_periphs";
--			};
--			cfg-pull-down {
--				pins = "GPIOX_4";
- 				bias-pull-down;
+ 				groups = "i2c_sda_a", "i2c_sck_a";
+ 				function = "i2c_a";
++				bias-disable;
  			};
  		};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 8ccab9a1ebcc..7cfee40d89e9 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -324,9 +324,6 @@
- 			mux {
- 				groups = "BOOT_8";
- 				function = "gpio_periphs";
--			};
--			cfg-pull-down {
--				pins = "BOOT_8";
- 				bias-pull-down;
+ 
+@@ -250,6 +255,7 @@
+ 				groups = "sd_d0_b", "sd_d1_b", "sd_d2_b",
+ 					"sd_d3_b", "sd_clk_b", "sd_cmd_b";
+ 				function = "sd_b";
++				bias-disable;
  			};
  		};
-@@ -373,9 +370,6 @@
+ 
+@@ -257,6 +263,7 @@
  			mux {
- 				groups = "CARD_2";
- 				function = "gpio_periphs";
--			};
--			cfg-pull-down {
--				pins = "CARD_2";
- 				bias-pull-down;
+ 				groups = "pwm_c1";
+ 				function = "pwm_c";
++				bias-disable;
  			};
  		};
-@@ -396,9 +390,6 @@
- 			mux {
- 				groups = "GPIOX_4";
- 				function = "gpio_periphs";
--			};
--			cfg-pull-down {
--				pins = "GPIOX_4";
- 				bias-pull-down;
+ 
+@@ -265,6 +272,7 @@
+ 				groups = "uart_tx_b0",
+ 				       "uart_rx_b0";
+ 				function = "uart_b";
++				bias-disable;
  			};
  		};
+ 
+@@ -273,6 +281,7 @@
+ 				groups = "uart_cts_b0",
+ 				       "uart_rts_b0";
+ 				function = "uart_b";
++				bias-disable;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/meson8m2.dtsi b/arch/arm/boot/dts/meson8m2.dtsi
+index 3e1f92273d7b..d1a28c2adac5 100644
+--- a/arch/arm/boot/dts/meson8m2.dtsi
++++ b/arch/arm/boot/dts/meson8m2.dtsi
+@@ -45,6 +45,7 @@
+ 				 "eth_rxd1", "eth_rxd0",
+ 				 "eth_mdio", "eth_mdc";
+ 			function = "ethernet";
++			bias-disable;
+ 		};
+ 	};
+ };
 -- 
 2.19.1
 
