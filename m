@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA21C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A855C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248EE20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4286620844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS7TfYhn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248EE20844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v+C6VU9y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4286620844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729948AbeKIIKk (ORCPT
+        id S1729788AbeKIIKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 03:10:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:55750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728162AbeKIHh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730282AbeKIHh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:37:29 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90F3320818;
-        Thu,  8 Nov 2018 22:00:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B36F21479;
+        Thu,  8 Nov 2018 22:00:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714400;
-        bh=S0CNCWfSjsRdsBymq8tpcGU1DcMCmeY34XOBZhtfV+U=;
+        s=default; t=1541714401;
+        bh=4RgqZNm+Eje2qleYdiDI4V/CEzmxU4jd04Uq7e1WigM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZS7TfYhn0Or24XWWKHFEtPezeAfv38Yi44TacsECgAS81/L/nje01zguk9LfQ9NjM
-         sbVk2z4Ua+/GkDQymbiXlaDmpFlliuPs//doQPyhEkhmakOOW/E2V/wDEXRn1p1xgM
-         pVb82uCrmE8rZAluvc7tBHnf1QjZvzzPJHqyKi0Y=
+        b=v+C6VU9yXYqEfMZ4UDuSB+p5DKWLts6i1tImDfBizxxJeB0w09YTtoeldnyoUnAc9
+         K6znMO7XJv0RpacIK4w9g+F4/Kr57cqviRjg7gycnlDRYI/Aia27TdDP2pYdYkDVAH
+         R6O2n7V3JZ/4cnIEDNxlUXS8k8w5TJy5FXcF1pZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Duyck <aduyck@mirantis.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, "Peter S. Housel" <housel@acm.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 061/114] gro: Allow tunnel stacking in the case of FOU/GUE
-Date:   Thu,  8 Nov 2018 13:51:16 -0800
-Message-Id: <20181108215106.615048628@linuxfoundation.org>
+Subject: [PATCH 4.4 062/114] brcmfmac: Fix glom_skb leak in brcmf_sdiod_recv_chain
+Date:   Thu,  8 Nov 2018 13:51:17 -0800
+Message-Id: <20181108215106.708059832@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -63,57 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c3483384ee511ee2af40b4076366cd82a6a47b86 ]
+[ Upstream commit 5ea59db8a375216e6c915c5586f556766673b5a7 ]
 
-This patch should fix the issues seen with a recent fix to prevent
-tunnel-in-tunnel frames from being generated with GRO.  The fix itself is
-correct for now as long as we do not add any devices that support
-NETIF_F_GSO_GRE_CSUM.  When such a device is added it could have the
-potential to mess things up due to the fact that the outer transport header
-points to the outer UDP header and not the GRE header as would be expected.
+An earlier change to this function (3bdae810721b) fixed a leak in the
+case of an unsuccessful call to brcmf_sdiod_buffrw(). However, the
+glom_skb buffer, used for emulating a scattering read, is never used
+or referenced after its contents are copied into the destination
+buffers, and therefore always needs to be freed by the end of the
+function.
 
-Fixes: fac8e0f579695 ("tunnels: Don't apply GRO to multiple layers of encapsulation.")
-Signed-off-by: Alexander Duyck <aduyck@mirantis.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 3bdae810721b ("brcmfmac: Fix glob_skb leak in brcmf_sdiod_recv_chain")
+Fixes: a413e39a38573 ("brcmfmac: fix brcmf_sdcard_recv_chain() for host without sg support")
+Cc: stable@vger.kernel.org # 4.9.x-
+Signed-off-by: Peter S. Housel <housel@acm.org>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/fou.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
-index 08d8ee124538..d83888bc33d3 100644
---- a/net/ipv4/fou.c
-+++ b/net/ipv4/fou.c
-@@ -195,6 +195,14 @@ static struct sk_buff **fou_gro_receive(struct sk_buff **head,
- 	u8 proto = NAPI_GRO_CB(skb)->proto;
- 	const struct net_offload **offloads;
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c
+index 91da67657f81..72e1796c8167 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c
+@@ -705,7 +705,7 @@ done:
+ int brcmf_sdiod_recv_chain(struct brcmf_sdio_dev *sdiodev,
+ 			   struct sk_buff_head *pktq, uint totlen)
+ {
+-	struct sk_buff *glom_skb;
++	struct sk_buff *glom_skb = NULL;
+ 	struct sk_buff *skb;
+ 	u32 addr = sdiodev->sbwad;
+ 	int err = 0;
+@@ -726,10 +726,8 @@ int brcmf_sdiod_recv_chain(struct brcmf_sdio_dev *sdiodev,
+ 			return -ENOMEM;
+ 		err = brcmf_sdiod_buffrw(sdiodev, SDIO_FUNC_2, false, addr,
+ 					 glom_skb);
+-		if (err) {
+-			brcmu_pkt_buf_free_skb(glom_skb);
++		if (err)
+ 			goto done;
+-		}
  
-+	/* We can clear the encap_mark for FOU as we are essentially doing
-+	 * one of two possible things.  We are either adding an L4 tunnel
-+	 * header to the outer L3 tunnel header, or we are are simply
-+	 * treating the GRE tunnel header as though it is a UDP protocol
-+	 * specific header such as VXLAN or GENEVE.
-+	 */
-+	NAPI_GRO_CB(skb)->encap_mark = 0;
-+
- 	rcu_read_lock();
- 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
- 	ops = rcu_dereference(offloads[proto]);
-@@ -354,6 +362,14 @@ static struct sk_buff **gue_gro_receive(struct sk_buff **head,
- 		}
- 	}
+ 		skb_queue_walk(pktq, skb) {
+ 			memcpy(skb->data, glom_skb->data, skb->len);
+@@ -740,6 +738,7 @@ int brcmf_sdiod_recv_chain(struct brcmf_sdio_dev *sdiodev,
+ 					    pktq);
  
-+	/* We can clear the encap_mark for GUE as we are essentially doing
-+	 * one of two possible things.  We are either adding an L4 tunnel
-+	 * header to the outer L3 tunnel header, or we are are simply
-+	 * treating the GRE tunnel header as though it is a UDP protocol
-+	 * specific header such as VXLAN or GENEVE.
-+	 */
-+	NAPI_GRO_CB(skb)->encap_mark = 0;
-+
- 	rcu_read_lock();
- 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
- 	ops = rcu_dereference(offloads[guehdr->proto_ctype]);
+ done:
++	brcmu_pkt_buf_free_skb(glom_skb);
+ 	return err;
+ }
+ 
 -- 
 2.17.1
 
