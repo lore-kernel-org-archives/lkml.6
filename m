@@ -2,104 +2,111 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4176AECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822E9ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15A120844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fw++toYZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F15A120844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 522CF208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:04:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522CF208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731372AbeKIHlr (ORCPT
+        id S1731384AbeKIHlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:41:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33458 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:41:50 -0500
+Received: from mga03.intel.com ([134.134.136.65]:46002 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730305AbeKIHlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:41:47 -0500
-Received: from localhost (unknown [208.72.13.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C636F208A3;
-        Thu,  8 Nov 2018 22:04:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714656;
-        bh=F3jrL2jwmsiLxXXIKCcJTywJZZ9z9376IycS1RLYVk0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fw++toYZ5s7UV3C+QqoriYXXYAHwuf85lFaPh832vMe0dhTLVceE5OYi78F+IVJnY
-         GHtQ3UYFnQ1y1pmO29H2f45DNGt9oppU3PT14023cYOjtTBNK9gDZe9upiHnsp+ITs
-         KB4tCKVaQj4Lh7jtNfmQZYoHyeW2Mca6dG8sxJzQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/171] ARM: dts: bcm283x: Reserve first page for firmware
-Date:   Thu,  8 Nov 2018 13:50:26 -0800
-Message-Id: <20181108215131.551748040@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
-References: <20181108215127.257643509@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1730305AbeKIHls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:41:48 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 14:04:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="104641689"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga004.fm.intel.com with ESMTP; 08 Nov 2018 14:04:17 -0800
+Date:   Thu, 8 Nov 2018 14:04:16 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108220416.GA18263@linux.intel.com>
+References: <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <20181108195420.GA14715@linux.intel.com>
+ <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+ <7027c3dc-addb-1b96-027e-a57fccf1f812@intel.com>
+ <20181108211600.GA17167@linux.intel.com>
+ <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d965299-0402-f730-6e1a-515a836a3956@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Nov 08, 2018 at 01:50:31PM -0800, Dave Hansen wrote:
+> On 11/8/18 1:16 PM, Sean Christopherson wrote:
+> > On Thu, Nov 08, 2018 at 12:10:30PM -0800, Dave Hansen wrote:
+> >> On 11/8/18 12:05 PM, Andy Lutomirski wrote:
+> >>> Hmm.  The idea being that the SDK preserves RBP but not RSP.  That's
+> >>> not the most terrible thing in the world.  But could the SDK live with
+> >>> something more like my suggestion where the vDSO supplies a normal
+> >>> function that takes a struct containing registers that are visible to
+> >>> the enclave?  This would make it extremely awkward for the enclave to
+> >>> use the untrusted stack per se, but it would make it quite easy (I
+> >>> think) for the untrusted part of the SDK to allocate some extra memory
+> >>> and just tell the enclave that *that* memory is the stack.
+> >>
+> >> I really think the enclave should keep its grubby mitts off the
+> >> untrusted stack.  There are lots of ways to get memory, even with
+> >> stack-like semantics, that don't involve mucking with the stack itself.
+> >>
+> >> I have not heard a good, hard argument for why there is an absolute
+> >> *need* to store things on the actual untrusted stack.
+> > 
+> > Convenience and performance are the only arguments I've heard, e.g. so
+> > that allocating memory doesn't require an extra EEXIT->EENTER round trip.
+> 
+> Well, for the first access, it's going to cost a bunch asynchronous
+> exits to fault in all the stack pages.  Instead of that, if you had a
+> single area, or an explicit out-call to allocate and populate the area,
+> you could do it in a single EEXIT and zero asynchronous exits for demand
+> page faults.
+> 
+> So, it might be convenient, but I'm rather suspicious of any performance
+> arguments.
 
-------------------
-
-[ Upstream commit b0804ed0cadd7e38d94d2f15cdcc0d9695818856 ]
-
-The Raspberry Pi startup stub files for multi-core BCM283X processors
-make the secondary CPUs spin until the corresponding mailbox is
-written. These stubs are loaded at physical address 0x00000xxx (as seen
-by the ARMs), but this page will be reused by the kernel unless it is
-explicitly reserved, causing the waiting cores to execute random code.
-
-Use the /memreserve/ Device Tree directive to mark the first page as
-off-limits to the kernel.
-
-See: https://github.com/raspberrypi/linux/issues/1989
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/bcm283x.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index c51b88ee3cec..31563007772c 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -3,6 +3,11 @@
- #include <dt-bindings/clock/bcm2835-aux.h>
- #include <dt-bindings/gpio/gpio.h>
- 
-+/* firmware-provided startup stubs live here, where the secondary CPUs are
-+ * spinning.
-+ */
-+/memreserve/ 0x00000000 0x00001000;
-+
- /* This include file covers the common peripherals and configuration between
-  * bcm2835 and bcm2836 implementations, leaving the CPU configuration to
-  * bcm2835.dtsi and bcm2836.dtsi.
--- 
-2.17.1
-
-
-
+Ya, I meant versus doing an EEXIT on every allocation, i.e. a very
+naive allocation scheme.
