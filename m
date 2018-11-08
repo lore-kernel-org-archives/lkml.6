@@ -2,51 +2,49 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03212C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5965C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6E320844
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6302020844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:29:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuPu58oW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6E320844
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wvmyNnVt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6302020844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbeKIIGw (ORCPT
+        id S1730800AbeKIHih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 03:06:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58036 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:38:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728491AbeKIHii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:38:38 -0500
+        id S1727602AbeKIHig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:38:36 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42B5A21479;
-        Thu,  8 Nov 2018 22:01:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 453DA21479;
+        Thu,  8 Nov 2018 22:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714469;
-        bh=JQeSYdHZs6lW9p/bVCWuYVS9Lz02X1PgU4UBC75vd+I=;
+        s=default; t=1541714467;
+        bh=71PEbRKgNwv6pIjyfPyAQhZwTsZq5Lhde5gPaYZoYtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cuPu58oW3U96IydayyMS8AHHbdESrL6xF/+tle87A0sQXrRUEFDw1tQ6e3+awpKvn
-         dY2G5vS05zAu6l0/xpqxQZKJUhS35Dcl7hZ4viTkSWEdAvvLbmlBougcPssnwPFbaN
-         KsFZTNNMSBpWCwQ1u5JOLcpxaNR3iLFKpCm92eNA=
+        b=wvmyNnVtRLgl2X0vgzLwxHzSVU8/530Ur2ThMKeq8ohxz0EVnCywjZ0isde2lDqJ5
+         X1klxB3vhXmlGoFEVzpkkYyR4/iAGp9ZD9edVZmUCxBDdeL4EwPpQ/HNpKnjtVXd7V
+         ixLwy0nVjVCqGsgJhZirDz1HG8Le9cWf6o2xUgVg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 075/114] spi/bcm63xx: fix error return code in bcm63xx_spi_probe()
-Date:   Thu,  8 Nov 2018 13:51:30 -0800
-Message-Id: <20181108215107.776162596@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 103/114] ahci: dont ignore result code of ahci_reset_controller()
+Date:   Thu,  8 Nov 2018 13:51:58 -0800
+Message-Id: <20181108215110.046988855@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 References: <20181108215059.051093652@linuxfoundation.org>
@@ -64,41 +62,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ba8afe94723e9ba665aee9cca649fb2c80f7304c ]
+[ Upstream commit d312fefea8387503375f728855c9a62de20c9665 ]
 
-platform_get_irq() returns an error code, but the spi-bcm63xx driver
-ignores it and always returns -ENXIO. This is not correct and,
-prevents -EPROBE_DEFER from being propagated properly.
+ahci_pci_reset_controller() calls ahci_reset_controller(), which may
+fail, but ignores the result code and always returns success. This
+may result in failures like below
 
-Notice that platform_get_irq() no longer returns 0 on error:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e330b9a6bb35dc7097a4f02cb1ae7b6f96df92af
+  ahci 0000:02:00.0: version 3.0
+  ahci 0000:02:00.0: enabling device (0000 -> 0003)
+  ahci 0000:02:00.0: SSS flag set, parallel bus scan disabled
+  ahci 0000:02:00.0: controller reset failed (0xffffffff)
+  ahci 0000:02:00.0: failed to stop engine (-5)
+    ... repeated many times ...
+  ahci 0000:02:00.0: failed to stop engine (-5)
+  Unable to handle kernel paging request at virtual address ffff0000093f9018
+    ...
+  PC is at ahci_stop_engine+0x5c/0xd8 [libahci]
+  LR is at ahci_deinit_port.constprop.12+0x1c/0xc0 [libahci]
+    ...
+  [<ffff000000a17014>] ahci_stop_engine+0x5c/0xd8 [libahci]
+  [<ffff000000a196b4>] ahci_deinit_port.constprop.12+0x1c/0xc0 [libahci]
+  [<ffff000000a197d8>] ahci_init_controller+0x80/0x168 [libahci]
+  [<ffff000000a260f8>] ahci_pci_init_controller+0x60/0x68 [ahci]
+  [<ffff000000a26f94>] ahci_init_one+0x75c/0xd88 [ahci]
+  [<ffff000008430324>] local_pci_probe+0x3c/0xb8
+  [<ffff000008431728>] pci_device_probe+0x138/0x170
+  [<ffff000008585e54>] driver_probe_device+0x2dc/0x458
+  [<ffff0000085860e4>] __driver_attach+0x114/0x118
+  [<ffff000008583ca8>] bus_for_each_dev+0x60/0xa0
+  [<ffff000008585638>] driver_attach+0x20/0x28
+  [<ffff0000085850b0>] bus_add_driver+0x1f0/0x2a8
+  [<ffff000008586ae0>] driver_register+0x60/0xf8
+  [<ffff00000842f9b4>] __pci_register_driver+0x3c/0x48
+  [<ffff000000a3001c>] ahci_pci_driver_init+0x1c/0x1000 [ahci]
+  [<ffff000008083918>] do_one_initcall+0x38/0x120
 
-Print and propagate the return value of platform_get_irq on failure.
+where an obvious hardware level failure results in an unnecessary 15 second
+delay and a subsequent crash.
 
-This issue was detected with the help of Coccinelle.
+So record the result code of ahci_reset_controller() and relay it, rather
+than ignoring it.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-bcm63xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/ahci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
-index bf9a610e5b89..f14500910bc2 100644
---- a/drivers/spi/spi-bcm63xx.c
-+++ b/drivers/spi/spi-bcm63xx.c
-@@ -496,8 +496,8 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index 34fdaa6e99ba..5f1f049063dd 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -619,8 +619,11 @@ static void ahci_pci_save_initial_config(struct pci_dev *pdev,
+ static int ahci_pci_reset_controller(struct ata_host *host)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(host->dev);
++	int rc;
  
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(dev, "no irq\n");
--		return -ENXIO;
-+		dev_err(dev, "no irq: %d\n", irq);
-+		return irq;
- 	}
+-	ahci_reset_controller(host);
++	rc = ahci_reset_controller(host);
++	if (rc)
++		return rc;
  
- 	clk = devm_clk_get(dev, "spi");
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
+ 		struct ahci_host_priv *hpriv = host->private_data;
 -- 
 2.17.1
 
