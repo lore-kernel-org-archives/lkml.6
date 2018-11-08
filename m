@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE15CECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA206ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F612081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF512081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:53:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+eWDEX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F612081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VM/nfZSn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF512081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeKIHbC (ORCPT
+        id S1727665AbeKIHbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:31:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45462 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:31:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeKIHbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:31:01 -0500
+        id S1726915AbeKIHbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:31:07 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E87A020844;
-        Thu,  8 Nov 2018 21:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 874CC2081C;
+        Thu,  8 Nov 2018 21:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714015;
-        bh=LThJV54ncOWaGyEgyXRWKV1uCb6j2Mx8Ix29I0gtsGQ=;
+        s=default; t=1541714020;
+        bh=0/fplM3A0e8O6rFr5ZLfsvMRrwOWSaqTQSd5DmjVgm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+eWDEX4VM2pNTv+nn8ekOqyOQbhJHBR1IzTpMCEGIU0Qnyx62aXX8SsOvGU4s/OU
-         VgnXKnmEr1ysl7ipa7CIkvT5oy5/Mz/utFOpqkTJffIPyw7/G8VsRhC31WjqdqIPPR
-         1ByBckcy9R3ZuYOB7yTEiHSMvNs+RxDgKt5Vpwrs=
+        b=VM/nfZSnvPxYT8NfoABPL5tQYSi44mjZ1NF/UefdY71DtLNvwLcW39Dxt6HHLeit0
+         Dk5D9rID9Va0FwpQlanNoR8K2DDy57vfGU9xyzXI04ti/8JbszExHLOAZtil9dZQ0m
+         S8iZ2jMhOXn08xxOHjbs7WNdihAa2tEM3I+FRL4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
-        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
-        Michael Brunner <Michael.Brunner@kontron.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 3.18 005/144] i2c: i2c-scmi: fix for i2c_smbus_write_block_data
-Date:   Thu,  8 Nov 2018 13:49:36 -0800
-Message-Id: <20181108215055.184950244@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ross Zwisler <zwisler@google.com>
+Subject: [PATCH 3.18 006/144] xhci: Dont print a warning when setting link state for disabled ports
+Date:   Thu,  8 Nov 2018 13:49:37 -0800
+Message-Id: <20181108215055.277446882@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,60 +64,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 08d9db00fe0e300d6df976e6c294f974988226dd upstream.
+commit 1208d8a84fdcae6b395c57911cdf907450d30e70 upstream.
 
-The i2c-scmi driver crashes when the SMBus Write Block transaction is
-executed:
+When disabling a USB3 port the hub driver will set the port link state to
+U3 to prevent "ejected" or "safely removed" devices that are still
+physically connected from immediately re-enumerating.
 
-WARNING: CPU: 9 PID: 2194 at mm/page_alloc.c:3931 __alloc_pages_slowpath+0x9db/0xec0
- Call Trace:
-  ? get_page_from_freelist+0x49d/0x11f0
-  ? alloc_pages_current+0x6a/0xe0
-  ? new_slab+0x499/0x690
-  __alloc_pages_nodemask+0x265/0x280
-  alloc_pages_current+0x6a/0xe0
-  kmalloc_order+0x18/0x40
-  kmalloc_order_trace+0x24/0xb0
-  ? acpi_ut_allocate_object_desc_dbg+0x62/0x10c
-  __kmalloc+0x203/0x220
-  acpi_os_allocate_zeroed+0x34/0x36
-  acpi_ut_copy_eobject_to_iobject+0x266/0x31e
-  acpi_evaluate_object+0x166/0x3b2
-  acpi_smbus_cmi_access+0x144/0x530 [i2c_scmi]
-  i2c_smbus_xfer+0xda/0x370
-  i2cdev_ioctl_smbus+0x1bd/0x270
-  i2cdev_ioctl+0xaa/0x250
-  do_vfs_ioctl+0xa4/0x600
-  SyS_ioctl+0x79/0x90
-  do_syscall_64+0x73/0x130
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-ACPI Error: Evaluating _SBW: 4 (20170831/smbus_cmi-185)
+If the device was really unplugged, then error messages were printed
+as the hub tries to set the U3 link state for a port that is no longer
+enabled.
 
-This problem occurs because the length of ACPI Buffer object is not
-defined/initialized in the code before a corresponding ACPI method is
-called. The obvious patch below fixes this issue.
+xhci-hcd ee000000.usb: Cannot set link state.
+usb usb8-port1: cannot disable (err = -32)
 
-Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
-Acked-by: Michael Brunner <Michael.Brunner@kontron.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Don't print error message in xhci-hub if hub tries to set port link state
+for a disabled port. Return -ENODEV instead which also silences hub driver.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ross Zwisler <zwisler@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-scmi.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/xhci-hub.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -152,6 +152,7 @@ acpi_smbus_cmi_access(struct i2c_adapter
- 			mt_params[3].type = ACPI_TYPE_INTEGER;
- 			mt_params[3].integer.value = len;
- 			mt_params[4].type = ACPI_TYPE_BUFFER;
-+			mt_params[4].buffer.length = len;
- 			mt_params[4].buffer.pointer = data->block + 1;
- 		}
- 		break;
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -926,17 +926,17 @@ int xhci_hub_control(struct usb_hcd *hcd
+ 				temp = readl(port_array[wIndex]);
+ 				break;
+ 			}
+-
+-			/* Software should not attempt to set
+-			 * port link state above '3' (U3) and the port
+-			 * must be enabled.
+-			 */
+-			if ((temp & PORT_PE) == 0 ||
+-				(link_state > USB_SS_PORT_LS_U3)) {
+-				xhci_warn(xhci, "Cannot set link state.\n");
++			/* Port must be enabled */
++			if (!(temp & PORT_PE)) {
++				retval = -ENODEV;
++				break;
++			}
++			/* Can't set port link state above '3' (U3) */
++			if (link_state > USB_SS_PORT_LS_U3) {
++				xhci_warn(xhci, "Cannot set port %d link state %d\n",
++					 wIndex, link_state);
+ 				goto error;
+ 			}
+-
+ 			if (link_state == USB_SS_PORT_LS_U3) {
+ 				slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+ 						wIndex + 1);
 
 
