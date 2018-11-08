@@ -2,547 +2,312 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF7AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25283ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB7F2081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB7F2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BAD4B2081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:04:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT92qkdU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD4B2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeKIFiJ (ORCPT
+        id S1727003AbeKIFl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 00:38:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41979 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeKIFiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 00:38:09 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 129A130B930B;
-        Thu,  8 Nov 2018 20:01:08 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 369D4106A793;
-        Thu,  8 Nov 2018 20:01:07 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3EF3F2239AE; Thu,  8 Nov 2018 15:01:06 -0500 (EST)
-Date:   Thu, 8 Nov 2018 15:01:06 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v8 2/2] overlayfs: override_creds=off option bypass
- creator_cred
-Message-ID: <20181108200106.GB3663@redhat.com>
-References: <20181106230117.127616-1-salyzyn@android.com>
- <20181106230117.127616-2-salyzyn@android.com>
+        Fri, 9 Nov 2018 00:41:58 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38226 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725199AbeKIFl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 00:41:57 -0500
+Received: by mail-qk1-f195.google.com with SMTP id d19so28768692qkg.5;
+        Thu, 08 Nov 2018 12:04:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rGF2lpgC7Dgp/+bXyvLhWSCCLA9lFrB2X+dDiPnm5fM=;
+        b=cT92qkdU0UY+L19oMETKNaUhytTKekzpptLaVrwk/lecb9wwv++aE43nOJGMMxGFvX
+         m0AQK3XFKgxE7iVyqz/6IkRFP7BUcbbWcBkRZQ7BS2jnBwt8z38bD0z7WqQMFhjuk0w9
+         AvSpB3PP0qe8CxJloqiXdI61hQwvdlFgyGXdERA5nIDTfuGBh6yah4y3Q9sBgMNh6bLa
+         eoZXzQgUMW35+Gz+IecZt+QpQyRI0Ipy5pcpFAImwHzQ7hKT8mfWz9zJ8QzsvF/CvRgQ
+         bWC6G2CPQpRGMKls+SVuUp11Njst1Mpt6OND7b18u6874kzI19+dRaNojL9OVmlAHvF7
+         0YWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rGF2lpgC7Dgp/+bXyvLhWSCCLA9lFrB2X+dDiPnm5fM=;
+        b=pF4pWmofrbZX46DL7iwpLkgwcfTsk6UdYjGuo0WGyGN1H5PjHzB39SdUstPvr0rVqV
+         +NfxPaKvpr3LHtW2gy/OL/nWiZPYV0d/wQlEtz7yotcEkHVtlFKEAOTx0OzZO0s6XOde
+         oVGviU60uo0y7eaAKwDfihYX0OA9Eg0FHV8V8i9gl+hl5ymvBZoBAPfpDXSxsuWxrmqP
+         k1F9bf+nEUTMF/3ll/7Vql29ZkL6TArOw5H+/O8Egh/T/tjIg7Fzzxh+3tQlx5vQiDV9
+         BORsEl9F1vpmPO9YrxwCp369bZt/ioRPHAocsrDSgsC/vxaNOswRmojvQVHMlaBGqnyw
+         1Wfw==
+X-Gm-Message-State: AGRZ1gIev4VwNi6ssrWJv4AOOcD198DIchG5/7iQV6IY2CzrlN6eCwUd
+        f4dJt7sCnoVzHrOIHxd0CufMmTe888nVC3o4dzo=
+X-Google-Smtp-Source: AJdET5d1Mek+zgArcWaI10Fz2Pt44cKz4vF1CxKQ1ML1unSc279J18/Ehds4mQoZuSzGs2yr49nOAWj2tpkn5+WRZR0=
+X-Received: by 2002:aed:2d42:: with SMTP id h60mr6044069qtd.373.1541707494952;
+ Thu, 08 Nov 2018 12:04:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106230117.127616-2-salyzyn@android.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 08 Nov 2018 20:01:08 +0000 (UTC)
+References: <20181108190244.19204-1-rajneesh.bhardwaj@linux.intel.com>
+In-Reply-To: <20181108190244.19204-1-rajneesh.bhardwaj@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 8 Nov 2018 22:04:43 +0200
+Message-ID: <CAHp75VezOYCO1KCR8Fkain-gWffnHVCzBgmwDMrVs37-S76ttQ@mail.gmail.com>
+Subject: Re: [Patch v4 1/3] platform/x86: intel_pmc_core: Show Latency
+ Tolerance info
+To:     rajneesh.bhardwaj@linux.intel.com
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 03:01:15PM -0800, Mark Salyzyn wrote:
-> By default, all access to the upper, lower and work directories is the
-> recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> checked against the caller's credentials.
+On Thu, Nov 8, 2018 at 9:05 PM Rajneesh Bhardwaj
+<rajneesh.bhardwaj@linux.intel.com> wrote:
+>
+> This adds support to show the Latency Tolerance Reporting for the IPs on
+> the PCH as reported by the PMC. The format shown here is raw LTR data
+> payload that can further be decoded as per the PCI specification.
+>
+> This also fixes some minor alignment issues in the header file by
+> removing spaces and converting to tabs at some places.
+>
 
-Ok, I am trying to think of scenarios where override_creds=off can 
-provide any privilege escalation. How about following.
+All three pushed to my review and testing queue, thanks!
 
-$ mkdir lower lower/foo upper upper/foo work merged
-$ touch lower/foo/bar.txt
-$ chmod 700 lower/foo/
-
-# Mount overlay with override_creds=off
-
-$ mount -t overlay -o
-lowerdir=lower,upperdir=upper,workdir=work,override_creds=off none merged
-
-# Try to read lower/foo as unpriviliged user. Say "test"
-# su test
-# ls merged/foo/
-ls: cannot access 'merged/foo/': Operation not permitted
-
-# Now first try to do same operation as root and retry as test user.
-$ exit
-$ ls merged/foo
-bar.txt
-$ su test
-$ ls merged/foo
-bar.txt
-
-lower/foo/ is not readable by user "test". So it fails in first try. Later
-"root" accesses it and it populates cache in overlayfs. When test retries,
-it gets these entries from cache.
-
-With override_creds=on this is not a problem because overlay provides
-this as functionality as long as mounter as access to lower/foo/.
-
-But with override_creds=off, mounter is not providing any such
-functionality and we are exposing an issue where cache will make
-something available which is not normally available.
-
-I think it probably is a good idea to do something about it?
-
-Thanks
-Vivek
-
-
-> 
-> If the principles of least privilege are applied, the mounter's
-> credentials might not overlap the credentials of the caller's when
-> accessing the overlayfs filesystem.  For example, a file that a lower
-> DAC privileged caller can execute, is MAC denied to the generally
-> higher DAC privileged mounter, to prevent an attack vector.
-> 
-> We add the option to turn off override_creds in the mount options; all
-> subsequent operations after mount on the filesystem will be only the
-> caller's credentials.  The module boolean parameter and mount option
-> override_creds is also added as a presence check for this "feature",
-> existence of /sys/module/overlay/parameters/override_creds.
-> 
-> It was not always this way.  Circa 4.4 there was no recorded mounter's
-> credentials, instead privileged access to upper or work directories
-> were temporarily increased to perform the operations.  The MAC
-> (selinux) policies were caller's in all cases.  override_creds=off
-> partially returns us to this older access model minus the insecure
-> temporary credential increases.  This is to permit use in a system
-> with non-overlapping security models for each executable including
-> the agent that mounts the overlayfs filesystem.  In Android
-> this is the case since init, which performs the mount operations,
-> has a minimal MAC set of privileges to reduce any attack surface,
-> and services that use the content have a different set of MAC
-> privileges (eg: read, for vendor labelled configuration, execute for
-> vendor libraries and modules).
-> 
-> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: kernel-team@android.com
+> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 > ---
-> v8:
-> - drop pr_warn message after straw poll to remove it.
-> - added a use case in the commit message
-> 
-> v7:
-> - change name of internal parameter to ovl_override_creds_def
-> - report override_creds only if different than default
-> 
-> v6:
-> - Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
-> - Do better with the documentation.
-> - pr_warn message adjusted to report consequences.
-> 
-> v5:
-> - beefed up the caveats in the Documentation
-> - Is dependent on
->   "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
->   "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
-> - Added prwarn when override_creds=off
-> 
-> v4:
-> - spelling and grammar errors in text
-> 
-> v3:
-> - Change name from caller_credentials / creator_credentials to the
->   boolean override_creds.
-> - Changed from creator to mounter credentials.
-> - Updated and fortified the documentation.
-> - Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
-> 
-> v2:
-> - Forward port changed attr to stat, resulting in a build error.
-> - altered commit message.
-> 
->  Documentation/filesystems/overlayfs.txt | 17 +++++++++++++++++
->  fs/overlayfs/copy_up.c                  |  2 +-
->  fs/overlayfs/dir.c                      |  9 +++++----
->  fs/overlayfs/inode.c                    | 16 ++++++++--------
->  fs/overlayfs/namei.c                    |  6 +++---
->  fs/overlayfs/overlayfs.h                |  1 +
->  fs/overlayfs/ovl_entry.h                |  1 +
->  fs/overlayfs/readdir.c                  |  4 ++--
->  fs/overlayfs/super.c                    | 22 +++++++++++++++++++++-
->  fs/overlayfs/util.c                     | 12 ++++++++++--
->  10 files changed, 69 insertions(+), 21 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
-> index eef7d9d259e8..5cc299df4436 100644
-> --- a/Documentation/filesystems/overlayfs.txt
-> +++ b/Documentation/filesystems/overlayfs.txt
-> @@ -102,6 +102,23 @@ Only the lists of names from directories are merged.  Other content
->  such as metadata and extended attributes are reported for the upper
->  directory only.  These attributes of the lower directory are hidden.
->  
-> +credentials
-> +-----------
-> +
-> +By default, all access to the upper, lower and work directories is the
-> +recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> +checked against the caller's credentials.
-> +
-> +override_creds mount flag turned off is reserved for when mounter and
-> +caller MAC or DAC credentials do not overlap.  Several unintended side
-> +effects will occur.  The caller with a lower privilege will not be
-> +able to delete files or directories, create nodes, or search some
-> +directories.  The caller with higher privilege can perform unexpected
-> +or unsecured operations.  The uneven security model where upperdir
-> +and workdir are opened at privilege, but accessed without, should only
-> +be used with strict understanding of the side effects and of the
-> +security policies.
-> +
->  whiteouts and opaque directories
->  --------------------------------
->  
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index 9e62dcf06fc4..dfab62ce7504 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -860,7 +860,7 @@ int ovl_copy_up_flags(struct dentry *dentry, int flags)
->  		dput(parent);
->  		dput(next);
->  	}
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	return err;
->  }
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index c6289147c787..b7052e23c467 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -566,7 +566,8 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
->  		override_cred->fsgid = inode->i_gid;
->  		if (!attr->hardlink) {
->  			err = security_dentry_create_files_as(dentry,
-> -					attr->mode, &dentry->d_name, old_cred,
-> +					attr->mode, &dentry->d_name,
-> +					old_cred ? old_cred : current_cred(),
->  					override_cred);
->  			if (err) {
->  				put_cred(override_cred);
-> @@ -582,7 +583,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
->  			err = ovl_create_over_whiteout(dentry, inode, attr);
->  	}
->  out_revert_creds:
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	return err;
->  }
->  
-> @@ -842,7 +843,7 @@ static int ovl_do_remove(struct dentry *dentry, bool is_dir)
->  		err = ovl_remove_upper(dentry, is_dir, &list);
->  	else
->  		err = ovl_remove_and_whiteout(dentry, &list);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	if (!err) {
->  		if (is_dir)
->  			clear_nlink(dentry->d_inode);
-> @@ -1212,7 +1213,7 @@ static int ovl_rename(struct inode *olddir, struct dentry *old,
->  out_unlock:
->  	unlock_rename(new_upperdir, old_upperdir);
->  out_revert_creds:
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	if (update_nlink)
->  		ovl_nlink_end(new);
->  out_drop_write:
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index 6bcc9dedc342..192f5508ed45 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -64,7 +64,7 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
->  		inode_lock(upperdentry->d_inode);
->  		old_cred = ovl_override_creds(dentry->d_sb);
->  		err = notify_change(upperdentry, attr, NULL);
-> -		revert_creds(old_cred);
-> +		ovl_revert_creds(old_cred);
->  		if (!err)
->  			ovl_copyattr(upperdentry->d_inode, dentry->d_inode);
->  		inode_unlock(upperdentry->d_inode);
-> @@ -260,7 +260,7 @@ int ovl_getattr(const struct path *path, struct kstat *stat,
->  		stat->nlink = dentry->d_inode->i_nlink;
->  
->  out:
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	return err;
->  }
-> @@ -303,7 +303,7 @@ int ovl_permission(struct inode *inode, int mask)
->  
->  	old_cred = ovl_override_creds(inode->i_sb);
->  	err = inode_permission(realinode, mask);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	return err;
->  }
-> @@ -320,7 +320,7 @@ static const char *ovl_get_link(struct dentry *dentry,
->  
->  	old_cred = ovl_override_creds(dentry->d_sb);
->  	p = vfs_get_link(ovl_dentry_real(dentry), done);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	return p;
->  }
->  
-> @@ -363,7 +363,7 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
->  		WARN_ON(flags != XATTR_REPLACE);
->  		err = vfs_removexattr(realdentry, name);
->  	}
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	/* copy c/mtime */
->  	ovl_copyattr(d_inode(realdentry), inode);
-> @@ -384,7 +384,7 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
->  
->  	old_cred = ovl_override_creds(dentry->d_sb);
->  	res = vfs_getxattr(realdentry, name, value, size);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	return res;
->  }
->  
-> @@ -408,7 +408,7 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
->  
->  	old_cred = ovl_override_creds(dentry->d_sb);
->  	res = vfs_listxattr(realdentry, list, size);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	if (res <= 0 || size == 0)
->  		return res;
->  
-> @@ -443,7 +443,7 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type)
->  
->  	old_cred = ovl_override_creds(inode->i_sb);
->  	acl = get_acl(realinode, type);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	return acl;
->  }
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index 3ac9dc8f6cc0..c32fa8ed72e6 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -1072,7 +1072,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
->  			goto out_free_oe;
->  	}
->  
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	if (origin_path) {
->  		dput(origin_path->dentry);
->  		kfree(origin_path);
-> @@ -1099,7 +1099,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
->  	kfree(upperredirect);
->  out:
->  	kfree(d.redirect);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	return ERR_PTR(err);
->  }
->  
-> @@ -1153,7 +1153,7 @@ bool ovl_lower_positive(struct dentry *dentry)
->  			dput(this);
->  		}
->  	}
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	return positive;
->  }
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 5e45cb3630a0..6f8b6f9ff357 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -208,6 +208,7 @@ int ovl_want_write(struct dentry *dentry);
->  void ovl_drop_write(struct dentry *dentry);
->  struct dentry *ovl_workdir(struct dentry *dentry);
->  const struct cred *ovl_override_creds(struct super_block *sb);
-> +void ovl_revert_creds(const struct cred *oldcred);
->  struct super_block *ovl_same_sb(struct super_block *sb);
->  int ovl_can_decode_fh(struct super_block *sb);
->  struct dentry *ovl_indexdir(struct super_block *sb);
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index ec237035333a..e38eea8104be 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -20,6 +20,7 @@ struct ovl_config {
->  	bool nfs_export;
->  	int xino;
->  	bool metacopy;
-> +	bool override_creds;
+> Changes in v4:
+>  * Removed unnecessary comments related to reserved IPs
+>  * Reordered #defines in the header in chronological order
+>  * Worked on patch taken from review-andy branch that removed LTR
+>    duplication strings and other style fixes.
+>
+>  drivers/platform/x86/intel_pmc_core.c | 69 +++++++++++++++++++++++++++
+>  drivers/platform/x86/intel_pmc_core.h | 57 +++++++++++++++++++---
+>  2 files changed, 119 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index 6b31d410cb09..54080c0e52fb 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -101,10 +101,35 @@ static const struct pmc_bit_map spt_pfear_map[] = {
+>         {},
 >  };
->  
->  struct ovl_sb {
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index cc8303a806b4..ec591b49e902 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -289,7 +289,7 @@ static int ovl_check_whiteouts(struct dentry *dir, struct ovl_readdir_data *rdd)
->  		}
->  		inode_unlock(dir->d_inode);
->  	}
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  	return err;
->  }
-> @@ -921,7 +921,7 @@ int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
->  
->  	old_cred = ovl_override_creds(dentry->d_sb);
->  	err = ovl_dir_read_merged(dentry, list, &root);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  	if (err)
->  		return err;
->  
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 0116735cc321..933829ca7d7d 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -56,6 +56,11 @@ module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
->  MODULE_PARM_DESC(ovl_xino_auto_def,
->  		 "Auto enable xino feature");
->  
-> +static bool __read_mostly ovl_override_creds_def = true;
-> +module_param_named(override_creds, ovl_override_creds_def, bool, 0644);
-> +MODULE_PARM_DESC(ovl_override_creds_def,
-> +		 "Use mounter's credentials for accesses");
+>
+> +static const struct pmc_bit_map spt_ltr_show_map[] = {
+> +       {"SOUTHPORT_A",         SPT_PMC_LTR_SPA},
+> +       {"SOUTHPORT_B",         SPT_PMC_LTR_SPB},
+> +       {"SATA",                SPT_PMC_LTR_SATA},
+> +       {"GIGABIT_ETHERNET",    SPT_PMC_LTR_GBE},
+> +       {"XHCI",                SPT_PMC_LTR_XHCI},
+> +       {"ME",                  SPT_PMC_LTR_ME},
+> +       /* EVA is Enterprise Value Add, doesn't really exist on PCH */
+> +       {"EVA",                 SPT_PMC_LTR_EVA},
+> +       {"SOUTHPORT_C",         SPT_PMC_LTR_SPC},
+> +       {"HD_AUDIO",            SPT_PMC_LTR_AZ},
+> +       {"LPSS",                SPT_PMC_LTR_LPSS},
+> +       {"SOUTHPORT_D",         SPT_PMC_LTR_SPD},
+> +       {"SOUTHPORT_E",         SPT_PMC_LTR_SPE},
+> +       {"CAMERA",              SPT_PMC_LTR_CAM},
+> +       {"ESPI",                SPT_PMC_LTR_ESPI},
+> +       {"SCC",                 SPT_PMC_LTR_SCC},
+> +       {"ISH",                 SPT_PMC_LTR_ISH},
+> +       /* Below two cannot be used for LTR_IGNORE */
+> +       {"CURRENT_PLATFORM",    SPT_PMC_LTR_CUR_PLT},
+> +       {"AGGREGATED_SYSTEM",   SPT_PMC_LTR_CUR_ASLT},
+> +       {}
+> +};
 > +
->  static void ovl_entry_stack_free(struct ovl_entry *oe)
->  {
->  	unsigned int i;
-> @@ -362,6 +367,9 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
->  	if (ofs->config.metacopy != ovl_metacopy_def)
->  		seq_printf(m, ",metacopy=%s",
->  			   ofs->config.metacopy ? "on" : "off");
-> +	if (ofs->config.override_creds != ovl_override_creds_def)
-> +		seq_show_option(m, "override_creds",
-> +				ofs->config.override_creds ? "on" : "off");
->  	return 0;
->  }
->  
-> @@ -401,6 +409,8 @@ enum {
->  	OPT_XINO_AUTO,
->  	OPT_METACOPY_ON,
->  	OPT_METACOPY_OFF,
-> +	OPT_OVERRIDE_CREDS_ON,
-> +	OPT_OVERRIDE_CREDS_OFF,
->  	OPT_ERR,
+>  static const struct pmc_reg_map spt_reg_map = {
+>         .pfear_sts = spt_pfear_map,
+>         .mphy_sts = spt_mphy_map,
+>         .pll_sts = spt_pll_map,
+> +       .ltr_show_sts = spt_ltr_show_map,
+>         .slp_s0_offset = SPT_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>         .ltr_ignore_offset = SPT_PMC_LTR_IGNORE_OFFSET,
+>         .regmap_length = SPT_PMC_MMIO_REG_LEN,
+> @@ -243,10 +268,38 @@ static const struct pmc_bit_map *cnp_slps0_dbg_maps[] = {
+>         NULL,
 >  };
->  
-> @@ -419,6 +429,8 @@ static const match_table_t ovl_tokens = {
->  	{OPT_XINO_AUTO,			"xino=auto"},
->  	{OPT_METACOPY_ON,		"metacopy=on"},
->  	{OPT_METACOPY_OFF,		"metacopy=off"},
-> +	{OPT_OVERRIDE_CREDS_ON,		"override_creds=on"},
-> +	{OPT_OVERRIDE_CREDS_OFF,	"override_creds=off"},
->  	{OPT_ERR,			NULL}
->  };
->  
-> @@ -477,6 +489,7 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
->  	config->redirect_mode = kstrdup(ovl_redirect_mode_def(), GFP_KERNEL);
->  	if (!config->redirect_mode)
->  		return -ENOMEM;
-> +	config->override_creds = ovl_override_creds_def;
->  
->  	while ((p = ovl_next_opt(&opt)) != NULL) {
->  		int token;
-> @@ -557,6 +570,14 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
->  			config->metacopy = false;
->  			break;
->  
-> +		case OPT_OVERRIDE_CREDS_ON:
-> +			config->override_creds = true;
-> +			break;
+>
+> +static const struct pmc_bit_map cnp_ltr_show_map[] = {
+> +       {"SOUTHPORT_A",         CNP_PMC_LTR_SPA},
+> +       {"SOUTHPORT_B",         CNP_PMC_LTR_SPB},
+> +       {"SATA",                CNP_PMC_LTR_SATA},
+> +       {"GIGABIT_ETHERNET",    CNP_PMC_LTR_GBE},
+> +       {"XHCI",                CNP_PMC_LTR_XHCI},
+> +       {"ME",                  CNP_PMC_LTR_ME},
+> +       /* EVA is Enterprise Value Add, doesn't really exist on PCH */
+> +       {"EVA",                 CNP_PMC_LTR_EVA},
+> +       {"SOUTHPORT_C",         CNP_PMC_LTR_SPC},
+> +       {"HD_AUDIO",            CNP_PMC_LTR_AZ},
+> +       {"CNV",                 CNP_PMC_LTR_CNV},
+> +       {"LPSS",                CNP_PMC_LTR_LPSS},
+> +       {"SOUTHPORT_D",         CNP_PMC_LTR_SPD},
+> +       {"SOUTHPORT_E",         CNP_PMC_LTR_SPE},
+> +       {"CAMERA",              CNP_PMC_LTR_CAM},
+> +       {"ESPI",                CNP_PMC_LTR_ESPI},
+> +       {"SCC",                 CNP_PMC_LTR_SCC},
+> +       {"ISH",                 CNP_PMC_LTR_ISH},
+> +       {"UFSX2",               CNP_PMC_LTR_UFSX2},
+> +       {"EMMC",                CNP_PMC_LTR_EMMC},
+> +       /* Below two cannot be used for LTR_IGNORE */
+> +       {"CURRENT_PLATFORM",    CNP_PMC_LTR_CUR_PLT},
+> +       {"AGGREGATED_SYSTEM",   CNP_PMC_LTR_CUR_ASLT},
+> +       {}
+> +};
 > +
-> +		case OPT_OVERRIDE_CREDS_OFF:
-> +			config->override_creds = false;
-> +			break;
-> +
->  		default:
->  			pr_err("overlayfs: unrecognized mount option \"%s\" or missing value\n", p);
->  			return -EINVAL;
-> @@ -1549,7 +1570,6 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
->  		       ovl_dentry_lower(root_dentry), NULL);
->  
->  	sb->s_root = root_dentry;
-> -
->  	return 0;
->  
->  out_free_oe:
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 7c01327b1852..484d7f76ac9c 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -40,9 +40,17 @@ const struct cred *ovl_override_creds(struct super_block *sb)
->  {
->  	struct ovl_fs *ofs = sb->s_fs_info;
->  
-> +	if (!ofs->config.override_creds)
-> +		return NULL;
->  	return override_creds(ofs->creator_cred);
+>  static const struct pmc_reg_map cnp_reg_map = {
+>         .pfear_sts = cnp_pfear_map,
+>         .slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>         .slps0_dbg_maps = cnp_slps0_dbg_maps,
+> +       .ltr_show_sts = cnp_ltr_show_map,
+>         .slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+>         .ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+>         .regmap_length = CNP_PMC_MMIO_REG_LEN,
+> @@ -583,6 +636,20 @@ static int pmc_core_slps0_dbg_show(struct seq_file *s, void *unused)
 >  }
->  
-> +void ovl_revert_creds(const struct cred *old_cred)
+>  DEFINE_SHOW_ATTRIBUTE(pmc_core_slps0_dbg);
+>
+> +static int pmc_core_ltr_show(struct seq_file *s, void *unused)
 > +{
-> +	if (old_cred)
-> +		revert_creds(old_cred);
-> +}
+> +       struct pmc_dev *pmcdev = s->private;
+> +       const struct pmc_bit_map *map = pmcdev->map->ltr_show_sts;
+> +       int index;
 > +
->  struct super_block *ovl_same_sb(struct super_block *sb)
+> +       for (index = 0; map[index].name ; index++) {
+> +               seq_printf(s, "%-32s\tRAW LTR: 0x%x\n", map[index].name,
+> +                          pmc_core_reg_read(pmcdev, map[index].bit_mask));
+> +       }
+> +       return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(pmc_core_ltr);
+> +
+>  static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
 >  {
->  	struct ovl_fs *ofs = sb->s_fs_info;
-> @@ -782,7 +790,7 @@ int ovl_nlink_start(struct dentry *dentry)
->  	 * value relative to the upper inode nlink in an upper inode xattr.
->  	 */
->  	err = ovl_set_nlink_upper(dentry);
-> -	revert_creds(old_cred);
-> +	ovl_revert_creds(old_cred);
->  
->  out:
->  	if (err)
-> @@ -800,7 +808,7 @@ void ovl_nlink_end(struct dentry *dentry)
->  
->  		old_cred = ovl_override_creds(dentry->d_sb);
->  		ovl_cleanup_index(dentry);
-> -		revert_creds(old_cred);
-> +		ovl_revert_creds(old_cred);
->  	}
->  
->  	ovl_inode_unlock(inode);
-> -- 
-> 2.19.1.930.g4563a0d9d0-goog
-> 
+>         debugfs_remove_recursive(pmcdev->dbgfs_dir);
+> @@ -607,6 +674,8 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+>         debugfs_create_file("ltr_ignore", 0644, dir, pmcdev,
+>                             &pmc_core_ltr_ignore_ops);
+>
+> +       debugfs_create_file("ltr_show", 0644, dir, pmcdev, &pmc_core_ltr_fops);
+> +
+>         if (pmcdev->map->pll_sts)
+>                 debugfs_create_file("pll_status", 0444, dir, pmcdev,
+>                                     &pmc_core_pll_ops);
+> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+> index be045348ad86..fcb13ca1f2bd 100644
+> --- a/drivers/platform/x86/intel_pmc_core.h
+> +++ b/drivers/platform/x86/intel_pmc_core.h
+> @@ -37,6 +37,25 @@
+>  #define NUM_RETRIES                            100
+>  #define NUM_IP_IGN_ALLOWED                     17
+>
+> +#define SPT_PMC_LTR_CUR_PLT                    0x350
+> +#define SPT_PMC_LTR_CUR_ASLT                   0x354
+> +#define SPT_PMC_LTR_SPA                                0x360
+> +#define SPT_PMC_LTR_SPB                                0x364
+> +#define SPT_PMC_LTR_SATA                       0x368
+> +#define SPT_PMC_LTR_GBE                                0x36C
+> +#define SPT_PMC_LTR_XHCI                       0x370
+> +#define SPT_PMC_LTR_ME                         0x378
+> +#define SPT_PMC_LTR_EVA                                0x37C
+> +#define SPT_PMC_LTR_SPC                                0x380
+> +#define SPT_PMC_LTR_AZ                         0x384
+> +#define SPT_PMC_LTR_LPSS                       0x38C
+> +#define SPT_PMC_LTR_CAM                                0x390
+> +#define SPT_PMC_LTR_SPD                                0x394
+> +#define SPT_PMC_LTR_SPE                                0x398
+> +#define SPT_PMC_LTR_ESPI                       0x39C
+> +#define SPT_PMC_LTR_SCC                                0x3A0
+> +#define SPT_PMC_LTR_ISH                                0x3A4
+> +
+>  /* Sunrise Point: PGD PFET Enable Ack Status Registers */
+>  enum ppfear_regs {
+>         SPT_PMC_XRAM_PPFEAR0A = 0x590,
+> @@ -115,18 +134,40 @@ enum ppfear_regs {
+>  #define SPT_PMC_BIT_MPHY_CMN_LANE3             BIT(3)
+>
+>  /* Cannonlake Power Management Controller register offsets */
+> -#define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+> -#define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+> -#define CNP_PMC_PM_CFG_OFFSET                  0x1818
+>  #define CNP_PMC_SLPS0_DBG_OFFSET               0x10B4
+> +#define CNP_PMC_PM_CFG_OFFSET                  0x1818
+> +#define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+> +#define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+>  /* Cannonlake: PGD PFET Enable Ack Status Register(s) start */
+> -#define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+> +#define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+>
+> -#define CNP_PMC_MMIO_REG_LEN                   0x2000
+> -#define CNP_PPFEAR_NUM_ENTRIES                 8
+> -#define CNP_PMC_READ_DISABLE_BIT               22
+>  #define CNP_PMC_LATCH_SLPS0_EVENTS             BIT(31)
+>
+> +#define CNP_PMC_MMIO_REG_LEN                   0x2000
+> +#define CNP_PPFEAR_NUM_ENTRIES                 8
+> +#define CNP_PMC_READ_DISABLE_BIT               22
+> +#define CNP_PMC_LTR_CUR_PLT                    0x1B50
+> +#define CNP_PMC_LTR_CUR_ASLT                   0x1B54
+> +#define CNP_PMC_LTR_SPA                                0x1B60
+> +#define CNP_PMC_LTR_SPB                                0x1B64
+> +#define CNP_PMC_LTR_SATA                       0x1B68
+> +#define CNP_PMC_LTR_GBE                                0x1B6C
+> +#define CNP_PMC_LTR_XHCI                       0x1B70
+> +#define CNP_PMC_LTR_ME                         0x1B78
+> +#define CNP_PMC_LTR_EVA                                0x1B7C
+> +#define CNP_PMC_LTR_SPC                                0x1B80
+> +#define CNP_PMC_LTR_AZ                         0x1B84
+> +#define CNP_PMC_LTR_LPSS                       0x1B8C
+> +#define CNP_PMC_LTR_CAM                                0x1B90
+> +#define CNP_PMC_LTR_SPD                                0x1B94
+> +#define CNP_PMC_LTR_SPE                                0x1B98
+> +#define CNP_PMC_LTR_ESPI                       0x1B9C
+> +#define CNP_PMC_LTR_SCC                                0x1BA0
+> +#define CNP_PMC_LTR_ISH                                0x1BA4
+> +#define CNP_PMC_LTR_CNV                                0x1BF0
+> +#define CNP_PMC_LTR_EMMC                       0x1BF4
+> +#define CNP_PMC_LTR_UFSX2                      0x1BF8
+> +
+>  struct pmc_bit_map {
+>         const char *name;
+>         u32 bit_mask;
+> @@ -139,6 +180,7 @@ struct pmc_bit_map {
+>   * @mphy_sts:          Maps name of MPHY lane to MPHY status lane status bit
+>   * @pll_sts:           Maps name of PLL to corresponding bit status
+>   * @slps0_dbg_maps:    Array of SLP_S0_DBG* registers containing debug info
+> + * @ltr_show_sts:      Maps PCH IP Names to their MMIO register offsets
+>   * @slp_s0_offset:     PWRMBASE offset to read SLP_S0 residency
+>   * @ltr_ignore_offset: PWRMBASE offset to read/write LTR ignore bit
+>   * @regmap_length:     Length of memory to map from PWRMBASE address to access
+> @@ -157,6 +199,7 @@ struct pmc_reg_map {
+>         const struct pmc_bit_map *mphy_sts;
+>         const struct pmc_bit_map *pll_sts;
+>         const struct pmc_bit_map **slps0_dbg_maps;
+> +       const struct pmc_bit_map *ltr_show_sts;
+>         const u32 slp_s0_offset;
+>         const u32 ltr_ignore_offset;
+>         const int regmap_length;
+> --
+> 2.17.1
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
