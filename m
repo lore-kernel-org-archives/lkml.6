@@ -1,126 +1,133 @@
 Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FEEC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316E1C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C19FB20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:18:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CO3jmVYW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C19FB20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0124020825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0124020825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbeKHRwk (ORCPT
+        id S1726814AbeKHRw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 12:52:40 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:53859 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbeKHRwj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 12:52:39 -0500
-Received: by mail-wm1-f49.google.com with SMTP id f10-v6so302228wme.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 00:18:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zI6RaRH5sHDGDEy6cj3UWUjITtxf7WuNyeDYvV5PfQg=;
-        b=CO3jmVYWlpC21DBnYq0wsa5Vj1XX5UTNb2vle456fqfacBeEoJs60S017KI6h0o0KK
-         +CvRh6KdNbLMBVzmYmgiFK8OnhbmtV1BVcqAgCdvrzTBKqs2nkpJ9YX0HYVh8QQnXZks
-         0Ro4ShrhSw6VNX3oVFOYS/wOhgW+A9e+ue7vvBZdbkbSXKAlZqwkpK4VDpNeZmEqHLgQ
-         NXjejgsIch/XCwthhGGBWPD8UuONNEJJ047Pb7xNZ1BaD4LnPEGklzufjsJsUy7cDPa9
-         4gg5DUItZQRsFepGQGVUzsAVwkoxcQSxRg5GPZXGE6BZ0AZkSpz2zSoFrZt0+PVliu7J
-         bA+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zI6RaRH5sHDGDEy6cj3UWUjITtxf7WuNyeDYvV5PfQg=;
-        b=QHjvO/C0vTn58LPrhRYAWi7J6oHKMPXSu0N463hLZ1Yk+/JOXouWeJZcAqIeLRpcZm
-         euhFGMMgdPhckZgUtnDLJMrVNeqm0///QVQzN10b5QRFNy7rfvM/lAyACbxYWIztDDKT
-         H/vGzQkt+c/pXg2Rw7DHzxFVBTUvkOpFzQIN89ovO4wvd+GLZpMtObsnGFZIskkz3Wl+
-         oRjg/+pJDE9dm3GsZ8oEte/mF53tBuC7elijVPU2LGRbahXdZMxB3UXphMr6GsVxyi8z
-         vybrmpkyVYR+sPLw6hFN9/7303pOIxPbVK6W5VcIZxwLcNMQCTF/CCd4W/lpFjm/f4bn
-         W2qg==
-X-Gm-Message-State: AGRZ1gJ7c1aEJF469XFiBAMbSJ8MIqjsOyz+n2rFlNfpu9MQ+zwM22tE
-        kPnt8uFUh20XuW0boI9tig4=
-X-Google-Smtp-Source: AJdET5fHDvtDJe/7wQ4FLtmDmPbhFJx2Pvx9BWgOBpa7KOiAFXXHtkdwzrQf34YH36QQ102TTbYn9A==
-X-Received: by 2002:a7b:c1d1:: with SMTP id a17-v6mr318360wmj.10.1541665098002;
-        Thu, 08 Nov 2018 00:18:18 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x12-v6sm1864871wrt.87.2018.11.08.00.18.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 00:18:17 -0800 (PST)
-Date:   Thu, 8 Nov 2018 09:18:14 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-Message-ID: <20181108081814.GH20032@gmail.com>
-References: <20181107171010.421878737@linutronix.de>
- <20181107171149.165693799@linutronix.de>
+        Thu, 8 Nov 2018 12:52:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54632 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726509AbeKHRw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 12:52:56 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F329089ACD;
+        Thu,  8 Nov 2018 08:18:36 +0000 (UTC)
+Received: from [10.72.12.31] (ovpn-12-31.pek2.redhat.com [10.72.12.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF39960C60;
+        Thu,  8 Nov 2018 08:18:29 +0000 (UTC)
+Subject: Re: [PATCH net-next v2 3/5] virtio_ring: add packed ring support
+To:     Tiwei Bie <tiwei.bie@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180711022711.7090-4-tiwei.bie@intel.com>
+ <20181107123933-mutt-send-email-mst@kernel.org>
+ <20181108013759.GA20591@debian>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <2d46a41e-bc00-276a-e19a-105c9dffc75a@redhat.com>
+Date:   Thu, 8 Nov 2018 16:18:25 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107171149.165693799@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181108013759.GA20591@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 08 Nov 2018 08:18:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+On 2018/11/8 上午9:38, Tiwei Bie wrote:
+>>> +
+>>> +	if (vq->vq.num_free < descs_used) {
+>>> +		pr_debug("Can't add buf len %i - avail = %i\n",
+>>> +			 descs_used, vq->vq.num_free);
+>>> +		/* FIXME: for historical reasons, we force a notify here if
+>>> +		 * there are outgoing parts to the buffer.  Presumably the
+>>> +		 * host should service the ring ASAP. */
+>> I don't think we have a reason to do this for packed ring.
+>> No historical baggage there, right?
+> Based on the original commit log, it seems that the notify here
+> is just an "optimization". But I don't quite understand what does
+> the "the heuristics which KVM uses" refer to. If it's safe to drop
+> this in packed ring, I'd like to do it.
 
-> +Commit notifications
-> +--------------------
-> +
-> +The tip tree is monitored by a bot for new commits. The bot sends an email
-> +for each new commit to a dedicated mailing list
-> +(``linux-tip-commits@vger.kernel.org``) and Cc's all people who are
-> +mentioned in one of the commit tags. It uses the email message id from the
-> +Link tag at the end of the tag list to set the In-Reply-To email header so
-> +the message is properly threaded with the patch submission email.
 
-s/id
- /ID
+According to the commit log, it seems like a workaround of lguest 
+networking backend. I agree to drop it, we should not have such burden.
 
-> +
-> +The maintainers try to reply to the submitter when merging a patch, but
-> +they sometimes forget or it does not fit the workflow of the moment. While
-> +the bot message is purely mechanical assume it implies a 'Thank you!
-> +Applied.'.
+But we should notice that, with this removed, the compare between packed 
+vs split is kind of unfair. Consider the removal of lguest support 
+recently, maybe we can drop this for split ring as well?
 
-s/The maintainers
- /The -tip maintainers and submaintainers
+Thanks
 
-s/is purely mechanical assume it implies a 'Thank you! Applied.'
- /is purely mechanical, it also implies a 'Thank you! Applied.' message.
 
-... added a missing comma, plus there's nothing to assume, that the 
-thank-you note is implied is a given! :-)
-
-Thanks,
-
-	Ingo
+>
+> commit 44653eae1407f79dff6f52fcf594ae84cb165ec4
+> Author: Rusty Russell<rusty@rustcorp.com.au>
+> Date:   Fri Jul 25 12:06:04 2008 -0500
+>
+>      virtio: don't always force a notification when ring is full
+>      
+>      We force notification when the ring is full, even if the host has
+>      indicated it doesn't want to know.  This seemed like a good idea at
+>      the time: if we fill the transmit ring, we should tell the host
+>      immediately.
+>      
+>      Unfortunately this logic also applies to the receiving ring, which is
+>      refilled constantly.  We should introduce real notification thesholds
+>      to replace this logic.  Meanwhile, removing the logic altogether breaks
+>      the heuristics which KVM uses, so we use a hack: only notify if there are
+>      outgoing parts of the new buffer.
+>      
+>      Here are the number of exits with lguest's crappy network implementation:
+>      Before:
+>              network xmit 7859051 recv 236420
+>      After:
+>              network xmit 7858610 recv 118136
+>      
+>      Signed-off-by: Rusty Russell<rusty@rustcorp.com.au>
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 72bf8bc09014..21d9a62767af 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -87,8 +87,11 @@ static int vring_add_buf(struct virtqueue *_vq,
+>   	if (vq->num_free < out + in) {
+>   		pr_debug("Can't add buf len %i - avail = %i\n",
+>   			 out + in, vq->num_free);
+> -		/* We notify*even if*  VRING_USED_F_NO_NOTIFY is set here. */
+> -		vq->notify(&vq->vq);
+> +		/* FIXME: for historical reasons, we force a notify here if
+> +		 * there are outgoing parts to the buffer.  Presumably the
+> +		 * host should service the ring ASAP. */
+> +		if (out)
+> +			vq->notify(&vq->vq);
+>   		END_USE(vq);
+>   		return -ENOSPC;
+>   	}
+>
+>
