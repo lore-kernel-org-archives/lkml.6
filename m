@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBECECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5002FECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 466E4206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:35:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 466E4206BA
+	by mail.kernel.org (Postfix) with ESMTP id 1C62620840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C62620840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeKIGMo (ORCPT
+        id S1727474AbeKIGMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:12:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45538 "EHLO mx1.redhat.com"
+        Fri, 9 Nov 2018 01:12:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44268 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbeKIGMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:12:43 -0500
+        id S1727029AbeKIGMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:12:45 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 254813001A6C;
-        Thu,  8 Nov 2018 20:35:35 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92B7B4DB1F;
+        Thu,  8 Nov 2018 20:35:36 +0000 (UTC)
 Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A9CD105705B;
-        Thu,  8 Nov 2018 20:35:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 41EB11062249;
+        Thu,  8 Nov 2018 20:35:35 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -42,39 +42,39 @@ Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
         Tejun Heo <tj@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Waiman Long <longman@redhat.com>
-Subject: [RFC PATCH 04/12] printk: Make logbuf_lock a terminal lock
-Date:   Thu,  8 Nov 2018 15:34:20 -0500
-Message-Id: <1541709268-3766-5-git-send-email-longman@redhat.com>
+Subject: [RFC PATCH 05/12] debugobjects: Mark pool_lock as a terminal lock
+Date:   Thu,  8 Nov 2018 15:34:21 -0500
+Message-Id: <1541709268-3766-6-git-send-email-longman@redhat.com>
 In-Reply-To: <1541709268-3766-1-git-send-email-longman@redhat.com>
 References: <1541709268-3766-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 08 Nov 2018 20:35:35 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 08 Nov 2018 20:35:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By making logbuf_lock a terminal lock, it reduces the performance
-overhead when lockdep is enabled.
+By marking the internal pool_lock as a terminal lock, lockdep will be
+able to skip full validation to improve locking performance.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/printk/printk.c | 2 +-
+ lib/debugobjects.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1b2a029..6b63fda 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -367,7 +367,7 @@ __packed __aligned(4)
-  * within the scheduler's rq lock. It must be released before calling
-  * console_unlock() or anything else that might wake up a process.
-  */
--DEFINE_RAW_SPINLOCK(logbuf_lock);
-+DEFINE_RAW_TERMINAL_SPINLOCK(logbuf_lock);
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 70935ed..403dd95 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -39,7 +39,7 @@ struct debug_bucket {
  
- /*
-  * Helper macros to lock/unlock logbuf_lock and switch between
+ static struct debug_obj		obj_static_pool[ODEBUG_POOL_SIZE] __initdata;
+ 
+-static DEFINE_RAW_SPINLOCK(pool_lock);
++static DEFINE_RAW_TERMINAL_SPINLOCK(pool_lock);
+ 
+ static HLIST_HEAD(obj_pool);
+ static HLIST_HEAD(obj_to_free);
 -- 
 1.8.3.1
 
