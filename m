@@ -2,240 +2,153 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF50BECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC713ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7248520825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:29:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PU07YfsJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7248520825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F84220825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:29:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F84220825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726929AbeKIHGq (ORCPT
+        id S1727285AbeKIHHH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:06:46 -0500
-Received: from mail-eopbgr60087.outbound.protection.outlook.com ([40.107.6.87]:14496
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbeKIHGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:06:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XFb5Ga54tpAxdNapXn4d4PxtEy0JhCXNk8KroqXdbcA=;
- b=PU07YfsJ/s8FDWn3FMr9Mv43iCmjqgKwF14RlcDQBB+LZ4l9mwhjMHaMa0mUvP3WfSbcyRxYqa7EO8W5UrK5YHnE9cWyFljtl3OZZw/w3S07SLbzJDAYUyguvn47LI1lzFFzS6DhAKgKhJuNJoXprXlgVXf9gVRQKRPiNRYZJNk=
-Received: from AM6PR04MB5863.eurprd04.prod.outlook.com (20.179.3.87) by
- AM6PR04MB4071.eurprd04.prod.outlook.com (52.135.167.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.25; Thu, 8 Nov 2018 21:29:04 +0000
-Received: from AM6PR04MB5863.eurprd04.prod.outlook.com
- ([fe80::8997:7719:b47f:d7dd]) by AM6PR04MB5863.eurprd04.prod.outlook.com
- ([fe80::8997:7719:b47f:d7dd%2]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 21:29:04 +0000
-From:   Leo Li <leoyang.li@nxp.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: RE: [PATCH 21/23] dt-bindings: pci: Add NXP LX SoCs PCIe controller
-Thread-Topic: [PATCH 21/23] dt-bindings: pci: Add NXP LX SoCs PCIe controller
-Thread-Index: AQHUddOb6NF1nSu2a02ug+wCobpaOKVGZgTg
-Date:   Thu, 8 Nov 2018 21:29:04 +0000
-Message-ID: <AM6PR04MB58639AF03E732FCF491113728FC50@AM6PR04MB5863.eurprd04.prod.outlook.com>
-References: <20181106131807.29951-1-Zhiqiang.Hou@nxp.com>
- <20181106131807.29951-22-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181106131807.29951-22-Zhiqiang.Hou@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leoyang.li@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4071;6:fhOGIdFqTXncxuTUdbvsxkmhoez+O5lUiwGeEkldEXr4UVq/xB5kkqa4giKqit0wqlKxYjeFqzsJtizLyIvx4l40rCN3C1UcQsDFOam7o+D8hKEo20MxI+YNRmeBpI1t+rA28mmlMVzs06g05vwSo/vUX7a+niQ9Bx+dK+yt5SeIrHJpyl0GQ1OPD2DXtipJSqrH7a5X36JAaTOzOYZLE5/Z9IKdu9FIl4NxoohfViieI5yba/rJf6Tk3wZyFrBLjmFV+gSo7YThwWtXWzBkyUs6waBkzlQ3bIamEwDZgexUB0GHDLOTXPad/Exk5F6Tl821iBp/tgXlaa76Pw6NZE4hefilGobEU1F04ZyWKC9yi960+cuEYlpwGi9tvZZMg2k3qOPskQdcfiJD2WHjlh+6aNsq8QkhvjeOfGcPXyZsD1i1CIGrBhY1qwFUPtU0xvBdk9z+ggE3fOWbtioMhQ==;5:G2avCJEkjsEyMwdaIE9In0JzBUGOI0PQo39BKhVnLyX3pP777V7dJm1115YNKL/ByBGHkGMqTSfRnltKAeMNANOJU64J9WSxm27b8ATYAu7RjTGxMv8v0lMHxx4zW5jhYfUN9Xjo35HILSPdtULI5fBlvSgbUD9lq1zyaloEZL4=;7:gNql69Qi30GLZLTH7o5wKSxpgKPsa8bU/BViojY1a9TlUhSNQTTo+Q0vnx7rBw5JuxNFSsBVsHCxBgNkFoxGy746t6noV0Hpq+A5JfJF5i6nlwnmfa4LwF9nd9t2XDxuIhkRHyMJTeSX6iz6m7m2gg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 94a9d7a4-16c0-401f-b4b7-08d645c13589
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4071;
-x-ms-traffictypediagnostic: AM6PR04MB4071:
-x-microsoft-antispam-prvs: <AM6PR04MB4071DA933AB0762DDF8930A98FC50@AM6PR04MB4071.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(211936372134217)(180628864354917)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4071;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4071;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(376002)(346002)(136003)(396003)(366004)(39860400002)(13464003)(189003)(199004)(55016002)(476003)(9686003)(99286004)(186003)(2906002)(71190400001)(71200400001)(53936002)(66066001)(6246003)(6436002)(11346002)(446003)(86362001)(33656002)(3846002)(6116002)(486006)(478600001)(102836004)(4326008)(2201001)(26005)(25786009)(6506007)(14454004)(7696005)(7416002)(76176011)(229853002)(256004)(68736007)(53546011)(5660300001)(105586002)(7736002)(2900100001)(106356001)(74316002)(81156014)(54906003)(305945005)(8676002)(2501003)(110136005)(81166006)(8936002)(97736004)(316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4071;H:AM6PR04MB5863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: pb8EKmiZePiKD0jHOPkeGLbteFNuslA11b3xHMCmTRxgn3kU3e8brupVcj9ipjN/9MK2TUTN2VwDiJMJEdPoY5KQqEh617ZJbYr1nB9j/HS3YpdmdHW6kAzDKpzCUFRnLcLHo+92WazmdyUL18o4HZCK7IZDjALVxAjErTq28oe/GATre0JO6BkQOfMjxbeqyVmyuVQOfYI7uXhBN+dMOHIVHIzFora4hTBS4TOaTK+/ld/T+vhyECbcV9AgvKdfTIG4in96FqsIm3Si3NnQWV8ZSdI0cyDVgjmqa8Z+5UKLyL5ElGjnoqDAsJ39J7X5Ql+RCdLYaN6IkaKDn+hkAurFjowkdLmYKwvCCRqesmE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 9 Nov 2018 02:07:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45654 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbeKIHHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:07:06 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EA24F307D857;
+        Thu,  8 Nov 2018 21:29:43 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 39262600D4;
+        Thu,  8 Nov 2018 21:29:42 +0000 (UTC)
+Subject: Re: [PATCH v10 1/4] ipc: Allow boot time extension of IPCMNI from 32k
+ to 8M
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
+        Manfred Spraul <manfred@colorfullife.com>
+References: <1541432626-27780-1-git-send-email-longman@redhat.com>
+ <1541432626-27780-2-git-send-email-longman@redhat.com>
+ <20181106132059.GD3074@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <f1267a9d-fb6c-72f6-8909-4e32b5bf6d6d@redhat.com>
+Date:   Thu, 8 Nov 2018 16:29:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94a9d7a4-16c0-401f-b4b7-08d645c13589
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 21:29:04.7134
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4071
+In-Reply-To: <20181106132059.GD3074@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 08 Nov 2018 21:29:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/06/2018 08:20 AM, Matthew Wilcox wrote:
+> On Mon, Nov 05, 2018 at 10:43:43AM -0500, Waiman Long wrote:
+>> The maximum number of unique System V IPC identifiers was limited to
+>> 32k.  That limit should be big enough for most use cases.
+>>
+>> However, there are some users out there requesting for more, especially
+>> those that are migrating from Solaris which uses 24 bits for unique
+>> identifiers. To satisfy the need of those users, a new boot time kernel
+>> option "ipcmni_extend" is added to extend the IPCMNI value to 8M. This
+>> is a 256X increase which hopefully is big enough for them.
+> Why go to 23 bits when people are coming from systems with 24 bits?
+> Let's just go to 24 bits.  This happens to fit well with the underlying
+> data structure which uses 6 bits per layer of the tree.
 
+Sure. I can move it up to 24 bits leave 7 bits for the sequence number.
 
-> -----Original Message-----
-> From: Z.q. Hou
-> Sent: Tuesday, November 6, 2018 7:21 AM
-> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
-> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
-> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com
-> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
-> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
-> <zhiqiang.hou@nxp.com>
-> Subject: [PATCH 21/23] dt-bindings: pci: Add NXP LX SoCs PCIe controller
->=20
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->=20
-> Add PCIe controller DT bindings of NXP LX series SoCs.
+>
+>> The use of this new option will change the pattern of the IPC identifiers
+>> returned by functions like shmget(2). An application that depends on
+>> such pattern may not work properly.  So it should only be used if the
+>> users really need more than 32k of unique IPC numbers.
+> Are there applications out there that rely on the internal structure of
+> the IPC identifiers?!
 
-I'm not sure if this is a good idea to name this controller LX PCIe control=
-ler.  Right now, it could be true that it is only used on LX series SoCs.  =
-But I'm not sure if the LS series will not use this controller or LX series=
- will only use this controller in the future.
+That is a question that may not have a clear answer. Most applications
+won't do that, but there are always some outliners that do crazy thing.
+So you never know for sure.
 
-Since the LX series is still using the layerscape branding, so probably we =
-should keep using the layerscape-pci.txt and define the PCIe Gen4 variant?
+>
+> How about scrapping all this and just doing the following:
+>
+> Allocate 24 bits of the ID cyclically.  Increment the top 7 bits of the
+> ID every time the cursor wraps.  That's not going to give us a perfect
+> progression from 0-2 billion, because it'll skip the ones in use.
+> But it'll ensure the ID isn't reused particularly quickly unless the
+> application is really using millions of IDs.
 
-Same comment for other places using the LX naming in this driver.
+Eric Biederman had sent out a patch somewhat like that before. Again,
+there is a slight chance that it may break existing applications. So the
+question is whether we are willing to take the risk. I won't mind if
+upstream decide to go this route.
 
->=20
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
->  .../devicetree/bindings/pci/lx-pci.txt        | 52 +++++++++++++++++++
->  MAINTAINERS                                   |  8 +++
->  2 files changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/lx-pci.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/pci/lx-pci.txt
-> b/Documentation/devicetree/bindings/pci/lx-pci.txt
-> new file mode 100644
-> index 000000000000..dc602fef93b0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/lx-pci.txt
-> @@ -0,0 +1,52 @@
-> +NXP LX PCIe controller
-> +
-> +This PCIe controller is based on the Mobiveil PCIe IP and thus inherits
-> +all the common properties defined in mobiveil-pcie.txt.
-> +
-> +Required properties:
-> +- compatible: should contain the platform identifier such as:
-> +  "fsl,lx2160a-pcie"
-> +- reg: base addresses and lengths of the PCIe controller register blocks=
-.
-> +  "config_axi_slave": PCIe controller registers
-> +  "csr_axi_slave": Bridge config registers
-> +- interrupts: A list of interrupt outputs of the controller. Must
-> +contain an
-> +  entry for each entry in the interrupt-names property.
-> +- interrupt-names: It could include the following entries:
-> +  "intr": The interrupt that is asserted for controller interrupts
-> +  "aer": Asserted for aer interrupt when chip support the aer interrupt =
-with
-> +		 none MSI/MSI-X/INTx mode,but there is interrupt line for
-> aer.
-> +  "pme": Asserted for pme interrupt when chip support the pme interrupt
-> with
-> +		 none MSI/MSI-X/INTx mode,but there is interrupt line for
-> pme.
-> +- dma-coherent: Indicates that the hardware IP block can ensure the
-> +coherency
-> +  of the data transferred from/to the IP block. This can avoid the
-> +software
-> +  cache flush/invalid actions, and improve the performance significantly=
-.
-> +- msi-parent : See the generic MSI binding described in
-> +  Documentation/devicetree/bindings/interrupt-controller/msi.txt.
-> +
-> +Example:
-> +
-> +	pcie@3400000 {
-> +		compatible =3D "fsl,lx2160a-pcie";
-> +		reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller
-> registers */
-> +		       0x80 0x00000000 0x0 0x00001000>; /* configuration
-> space */
-> +		reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +		interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* AER
-> interrupt */
-> +			     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* PME
-> interrupt */
-> +			     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +		interrupt-names =3D "aer", "pme", "intr";
-> +		#address-cells =3D <3>;
-> +		#size-cells =3D <2>;
-> +		device_type =3D "pci";
-> +		apio-wins =3D <8>;
-> +		ppio-wins =3D <8>;
-> +		dma-coherent;
-> +		bus-range =3D <0x0 0xff>;
-> +		msi-parent =3D <&its>;
-> +		ranges =3D <0x82000000 0x0 0x40000000 0x80 0x40000000 0x0
-> 0x40000000>;
-> +		#interrupt-cells =3D <1>;
-> +		interrupt-map-mask =3D <0 0 0 7>;
-> +		interrupt-map =3D <0000 0 0 1 &gic GIC_SPI 109
-> IRQ_TYPE_LEVEL_HIGH>,
-> +				<0000 0 0 2 &gic GIC_SPI 110
-> IRQ_TYPE_LEVEL_HIGH>,
-> +				<0000 0 0 3 &gic GIC_SPI 111
-> IRQ_TYPE_LEVEL_HIGH>,
-> +				<0000 0 0 4 &gic GIC_SPI 112
-> IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0c57ccff3188..7da555c8e2f5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11252,6 +11252,14 @@ L:	linux-arm-kernel@lists.infradead.org
->  S:	Maintained
->  F:	drivers/pci/controller/dwc/*layerscape*
->=20
-> +PCI DRIVER FOR NXP LX
-> +M:	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/pci/lx-pci.txt
-> +F:	drivers/pci/controller/mobibeil/pci-lx.c
-> +
->  PCI DRIVER FOR GENERIC OF HOSTS
->  M:	Will Deacon <will.deacon@arm.com>
->  L:	linux-pci@vger.kernel.org
-> --
-> 2.17.1
+Cheers,
+Longman
+
 
