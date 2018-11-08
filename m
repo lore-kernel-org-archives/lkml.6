@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2588EECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455E0ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2DE2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08A272086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCZg19uZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2DE2086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJNhFMZj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A272086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbeKIHck (ORCPT
+        id S1728578AbeKIHcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:32:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47976 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727055AbeKIHck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:40 -0500
+        id S1727266AbeKIHcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:41 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBF5D2086C;
-        Thu,  8 Nov 2018 21:55:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DF7620892;
+        Thu,  8 Nov 2018 21:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714113;
-        bh=6CqUx3LUdLBqCz8zfw01CqvQkJXu6nZa3fgYW/BMau0=;
+        bh=YeFWPC0ljN2PlGZIBBIo0Q4Fw73e1v7Il7vUBuNs7Sk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aCZg19uZYUcteVLDZS8tw0O0AOhIzYoNATdnEFFwNzJMgwM0ltVOA2EcWPiHM5HaY
-         TpqO7qXhZ9YlSlBTd2aqLYWEtgmfVopvaO2+NXSA+c+6K+oaQ8Wxy88cC+npXOUDOr
-         TmxU+r2KEMz63YoqQW5RB0nazRogiZIIBJw1Td5M=
+        b=fJNhFMZjg7wnIwEbr/7ld1PBRnNPVJMmpn/Lvw7lnfv3zM+CZKM0ilebwa5kRek9y
+         nmlIJVQYWwM/cJO28wWKja3djry5zfqLyFeqKnQ3fxK1qBhENN1PVm/fav7N8iWD8e
+         OhUi8AolNh+tG3kKAB9g5ZL0CEDbQESGsd8SMm3g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        linux-serial@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Geunsik Lim <geunsik.lim@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 055/144] NFSv4/v4.1: Verify the client owner id during trunking detection
-Date:   Thu,  8 Nov 2018 13:50:26 -0800
-Message-Id: <20181108215058.824631804@linuxfoundation.org>
+Subject: [PATCH 3.18 064/144] serial: samsung: Add the support for Exynos5433 SoC
+Date:   Thu,  8 Nov 2018 13:50:35 -0800
+Message-Id: <20181108215059.507617653@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -63,71 +65,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 55b9df93ddd684cbc4c2dee9b8a99f6e48348212 ]
+[ Upstream commit 31ec77aca72ee5920ed3ec3d047734dc0bc43342 ]
 
-While we normally expect the NFSv4 client to always send the same client
-owner to all servers, there are a couple of situations where that is not
-the case:
- 1) In NFSv4.0, switching between use of '-omigration' and not will cause
-    the kernel to switch between using the non-uniform and uniform client
-    strings.
- 2) In NFSv4.1, or NFSv4.0 when using uniform client strings, if the
-    uniquifier string is suddenly changed.
+This patch adds new s3c24xx_serial_drv_data structure for Exynos5433 SoC
+because Exynos5433 has different fifo size from existing Exynos4 SoC.
 
-This patch will catch those situations by checking the client owner id
-in the trunking detection code, and will do the right thing if it notices
-that the strings differ.
-
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: linux-serial@vger.kernel.org
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4client.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/tty/serial/samsung.c | 56 +++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 20 deletions(-)
 
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index d748d403bab1..a8a9be4c6cf4 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -456,6 +456,14 @@ static void nfs4_swap_callback_idents(struct nfs_client *keep,
- 	spin_unlock(&nn->nfs_client_lock);
- }
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index ba59a76edc8b..957992ceba0a 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1785,32 +1785,43 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+ #endif
  
-+static bool nfs4_match_client_owner_id(const struct nfs_client *clp1,
-+		const struct nfs_client *clp2)
-+{
-+	if (clp1->cl_owner_id == NULL || clp2->cl_owner_id == NULL)
-+		return true;
-+	return strcmp(clp1->cl_owner_id, clp2->cl_owner_id) == 0;
-+}
+ #if defined(CONFIG_ARCH_EXYNOS)
++#define EXYNOS_COMMON_SERIAL_DRV_DATA				\
++	.info = &(struct s3c24xx_uart_info) {			\
++		.name		= "Samsung Exynos UART",	\
++		.type		= PORT_S3C6400,			\
++		.has_divslot	= 1,				\
++		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,	\
++		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,	\
++		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,	\
++		.tx_fifofull	= S5PV210_UFSTAT_TXFULL,	\
++		.tx_fifomask	= S5PV210_UFSTAT_TXMASK,	\
++		.tx_fifoshift	= S5PV210_UFSTAT_TXSHIFT,	\
++		.def_clk_sel	= S3C2410_UCON_CLKSEL0,		\
++		.num_clks	= 1,				\
++		.clksel_mask	= 0,				\
++		.clksel_shift	= 0,				\
++	},							\
++	.def_cfg = &(struct s3c2410_uartcfg) {			\
++		.ucon		= S5PV210_UCON_DEFAULT,		\
++		.ufcon		= S5PV210_UFCON_DEFAULT,	\
++		.has_fracval	= 1,				\
++	}							\
 +
- /**
-  * nfs40_walk_client_list - Find server that recognizes a client ID
-  *
-@@ -515,6 +523,9 @@ int nfs40_walk_client_list(struct nfs_client *new,
- 		if (pos->cl_clientid != new->cl_clientid)
- 			continue;
- 
-+		if (!nfs4_match_client_owner_id(pos, new))
-+			continue;
+ static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+-	.info = &(struct s3c24xx_uart_info) {
+-		.name		= "Samsung Exynos4 UART",
+-		.type		= PORT_S3C6400,
+-		.has_divslot	= 1,
+-		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,
+-		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,
+-		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,
+-		.tx_fifofull	= S5PV210_UFSTAT_TXFULL,
+-		.tx_fifomask	= S5PV210_UFSTAT_TXMASK,
+-		.tx_fifoshift	= S5PV210_UFSTAT_TXSHIFT,
+-		.def_clk_sel	= S3C2410_UCON_CLKSEL0,
+-		.num_clks	= 1,
+-		.clksel_mask	= 0,
+-		.clksel_shift	= 0,
+-	},
+-	.def_cfg = &(struct s3c2410_uartcfg) {
+-		.ucon		= S5PV210_UCON_DEFAULT,
+-		.ufcon		= S5PV210_UFCON_DEFAULT,
+-		.has_fracval	= 1,
+-	},
++	EXYNOS_COMMON_SERIAL_DRV_DATA,
+ 	.fifosize = { 256, 64, 16, 16 },
+ };
 +
- 		atomic_inc(&pos->cl_count);
- 		spin_unlock(&nn->nfs_client_lock);
- 
-@@ -664,6 +675,13 @@ int nfs41_walk_client_list(struct nfs_client *new,
- 		if (!nfs4_check_clientid_trunking(pos, new))
- 			continue;
- 
-+		/* Unlike NFSv4.0, we know that NFSv4.1 always uses the
-+		 * uniform string, however someone might switch the
-+		 * uniquifier string on us.
-+		 */
-+		if (!nfs4_match_client_owner_id(pos, new))
-+			continue;
++static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
++	EXYNOS_COMMON_SERIAL_DRV_DATA,
++	.fifosize = { 64, 256, 16, 256 },
++};
 +
- 		atomic_inc(&pos->cl_count);
- 		*result = pos;
- 		status = 0;
+ #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos4210_serial_drv_data)
++#define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos5433_serial_drv_data)
+ #else
+ #define EXYNOS4210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define EXYNOS5433_SERIAL_DRV_DATA (kernel_ulong_t)NULL
+ #endif
+ 
+ static struct platform_device_id s3c24xx_serial_driver_ids[] = {
+@@ -1832,6 +1843,9 @@ static struct platform_device_id s3c24xx_serial_driver_ids[] = {
+ 	}, {
+ 		.name		= "exynos4210-uart",
+ 		.driver_data	= EXYNOS4210_SERIAL_DRV_DATA,
++	}, {
++		.name		= "exynos5433-uart",
++		.driver_data	= EXYNOS5433_SERIAL_DRV_DATA,
+ 	},
+ 	{ },
+ };
+@@ -1851,6 +1865,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
+ 		.data = (void *)S5PV210_SERIAL_DRV_DATA },
+ 	{ .compatible = "samsung,exynos4210-uart",
+ 		.data = (void *)EXYNOS4210_SERIAL_DRV_DATA },
++	{ .compatible = "samsung,exynos5433-uart",
++		.data = (void *)EXYNOS5433_SERIAL_DRV_DATA },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
 -- 
 2.17.1
 
